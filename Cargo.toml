@@ -1,0 +1,52 @@
+[workspace]
+resolver = "2"
+members = ["crates/engine", "crates/server", "crates/cae-claude"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+ahash = "0.8"
+blake3 = "1"
+ulid = { version = "1", features = ["serde"] }
+tokio = { version = "1", features = ["full"] }
+axum = "0.8"
+tower = "0.5"
+tower-http = { version = "0.6", features = ["trace", "cors"] }
+sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio-rustls", "postgres", "json", "macros", "migrate"] }
+pgvector = { version = "0.4", features = ["sqlx"] }
+statrs = "0.18"
+ordered-float = "5"
+fastembed = { version = "5", default-features = false, features = ["hf-hub-rustls-tls", "ort-download-binaries-rustls-tls"] }
+pulldown-cmark = { version = "0.13", default-features = false }
+tree-sitter = "0.26"
+tree-sitter-rust = "0.24"
+tree-sitter-python = "0.25"
+tree-sitter-typescript = "0.23"
+tree-sitter-go = "0.25"
+tree-sitter-javascript = "0.25"
+tree-sitter-java = "0.23"
+tree-sitter-c = "0.24"
+tree-sitter-cpp = "0.23"
+tree-sitter-ruby = "0.23"
+git2 = { version = "0.20", default-features = false, features = ["vendored-libgit2"] }
+ignore = "0.4"
+pdf-extract = "0.10"
+base64 = "0.22"
+criterion = { version = "0.5", default-features = false, features = ["cargo_bench_support"] }
+ureq = { version = "2", features = ["json", "rustls"], default-features = false }
+
+engine = { path = "crates/engine", package = "cae-engine" }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true

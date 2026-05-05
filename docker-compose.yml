@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: docker.io/pgvector/pgvector:pg16
+    container_name: cae-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cae
+      POSTGRES_PASSWORD: cae_dev
+      POSTGRES_DB: context_engine
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - cae-pg-data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/00-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cae -d context_engine"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  cae-pg-data:

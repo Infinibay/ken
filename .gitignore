@@ -1,0 +1,19 @@
+target/
+**/*.rs.bk
+.idea
+.vscode
+*.swp
+.DS_Store
+
+/data
+.env
+.env.local
+
+# Cached embedding models (downloaded on first run, hundreds of MB).
+.fastembed_cache/
+
+# Per-user / per-machine config — Claude Code workspace state, MCP wiring,
+# and the engine state sentinel are written by `cae-claude install` and
+# point to absolute paths on the dev's machine. Not portable.
+.claude/
+.mcp.json
