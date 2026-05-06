@@ -103,6 +103,8 @@ fn print_usage() {
            DATABASE_URL      Postgres connection string (required for serve / ingest-*)\n  \
            BIND              Address:port the server listens on (default: 0.0.0.0:8080)\n  \
            EMBEDDER=mock     Use deterministic MockEmbedder instead of fastembed\n  \
+           KEN_EMBEDDER_MODEL  fastembed model: nomic-q (default, 768d), nomic,\n  \
+                             bge-small-q (384d, ~5x faster, needs DB wipe), mini-q\n  \
            KEN_ENGINE_URL    Override engine endpoint for mcp + hook subcommands"
     );
 }
@@ -499,9 +501,11 @@ async fn run_ingest_url(args: Vec<String>) -> Result<()> {
 
 /// Pick the embedder. `EMBEDDER=mock` forces the deterministic 768-dim
 /// `MockEmbedder` (used in CI / tests / dev with no internet); otherwise the
-/// production `FastEmbedder` (nomic-embed-text-v1.5) is built. Construction
-/// of `FastEmbedder` triggers a one-time model download to the fastembed
-/// cache and is heavy enough that we run it on a blocking thread.
+/// production `FastEmbedder` is built — the model is selected by
+/// `KEN_EMBEDDER_MODEL` (defaults to `nomic-q`, the quantized 768-dim
+/// nomic-embed-text-v1.5 — same schema as `nomic` but ~2× faster on CPU).
+/// Construction triggers a one-time model download to the fastembed cache
+/// and is heavy enough that we run it on a blocking thread.
 async fn build_embedder() -> Result<Arc<dyn Embedder>> {
     let mode = std::env::var("EMBEDDER").unwrap_or_default();
     if mode.eq_ignore_ascii_case("mock") {
@@ -511,8 +515,8 @@ async fn build_embedder() -> Result<Arc<dyn Embedder>> {
 
     #[cfg(feature = "fastembed")]
     {
-        tracing::info!("loading FastEmbedder (nomic-embed-text-v1.5)…");
-        let embedder = tokio::task::spawn_blocking(engine::embed_fast::FastEmbedder::nomic_v15)
+        tracing::info!("loading FastEmbedder (model picked by KEN_EMBEDDER_MODEL — default nomic-q)…");
+        let embedder = tokio::task::spawn_blocking(engine::embed_fast::FastEmbedder::from_env)
             .await
             .map_err(|e| anyhow::anyhow!("fastembed init task panicked: {e}"))?
             .map_err(|e| anyhow::anyhow!("fastembed init failed: {e}"))?;
