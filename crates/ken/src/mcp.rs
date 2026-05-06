@@ -698,7 +698,7 @@ fn handle_ingest_file(
         .context("missing arguments.bytes_base64")?;
     let mime = args.get("mime").and_then(|s| s.as_str());
     let mut body = json!({
-        "workspace_id": state.workspace_id,
+        "workspace": state.workspace_id.to_string(),
         "source_name": "uploads",
         "external_id": external_id,
         "bytes_base64": bytes_b64,
@@ -740,7 +740,7 @@ fn handle_ingest_url(
         .and_then(|b| b.as_bool())
         .unwrap_or(true);
     let body = json!({
-        "workspace_id": state.workspace_id,
+        "workspace": state.workspace_id.to_string(),
         "source_name": "web",
         "url": url,
         "depth": depth,

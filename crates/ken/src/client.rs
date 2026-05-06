@@ -208,6 +208,37 @@ impl EngineClient {
         Ok(resp)
     }
 
+    /// Walk a codebase under `root` (path on the server) and ingest every
+    /// file an adapter accepts. Server-side does the heavy work — CLI
+    /// blocks until done. Long-running on big repos; we lift the per-call
+    /// timeout to 30 minutes.
+    pub fn ingest_codebase_raw(&self, body: Value) -> Result<Value> {
+        let resp: Value = self
+            .agent
+            .post(&format!("{}/ingest_codebase", self.base))
+            .timeout(Duration::from_secs(30 * 60))
+            .send_json(body)
+            .map_err(|e| anyhow!("POST /ingest_codebase: {e}"))?
+            .into_json()
+            .context("decode /ingest_codebase response")?;
+        Ok(resp)
+    }
+
+    /// Walk a repo's git history and ingest commits. Same long-running
+    /// shape as `ingest_codebase_raw` — bumped timeout, server does the
+    /// work.
+    pub fn ingest_git_raw(&self, body: Value) -> Result<Value> {
+        let resp: Value = self
+            .agent
+            .post(&format!("{}/ingest_git", self.base))
+            .timeout(Duration::from_secs(30 * 60))
+            .send_json(body)
+            .map_err(|e| anyhow!("POST /ingest_git: {e}"))?
+            .into_json()
+            .context("decode /ingest_git response")?;
+        Ok(resp)
+    }
+
     /// Index a single file (base64 bytes) into the workspace's KG. Used by
     /// the agent-facing `ingest_file` MCP tool.
     pub fn ingest_file_raw(&self, body: Value) -> Result<Value> {

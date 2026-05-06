@@ -46,6 +46,8 @@ pub fn router() -> Router<Arc<AppState>> {
         .route("/ingest_blob", post(ingest_blob))
         .route("/ingest_file", post(ingest_file))
         .route("/ingest_url", post(ingest_url))
+        .route("/ingest_codebase", post(ingest_codebase))
+        .route("/ingest_git", post(ingest_git))
         .route("/rank", post(rank))
         .route("/symbols", post(search_symbols))
         .route("/symbols_in_file", post(list_symbols_in_file))
@@ -761,7 +763,8 @@ const INGEST_FILE_MAX_BYTES: usize = 8 * 1024 * 1024;
 
 #[derive(Debug, Deserialize)]
 struct IngestFileBody {
-    workspace_id: WorkspaceId,
+    /// Workspace numeric id OR a name (find-or-created under tenant `"local"`).
+    workspace: String,
     /// Used to find-or-create the `Source` row. Stable identifier for the
     /// uploader — typically `"uploads"` (manual MCP) or `"http"` (URL crawl).
     source_name: String,
@@ -805,9 +808,10 @@ async fn ingest_file(
         )));
     }
 
+    let workspace_id = resolve_workspace_input(&state.storage, &body.workspace).await?;
     let source_id = match state
         .storage
-        .find_source_by_name(body.workspace_id, &body.source_name)
+        .find_source_by_name(workspace_id, &body.source_name)
         .await
     {
         Some(id) => id,
@@ -815,7 +819,7 @@ async fn ingest_file(
             state
                 .storage
                 .create_source(NewSource {
-                    workspace_id: body.workspace_id,
+                    workspace_id,
                     kind: SourceKind::Manual,
                     name: body.source_name.clone(),
                     config_json: serde_json::json!({"kind": "manual_upload"}),
@@ -842,7 +846,7 @@ async fn ingest_file(
     let outcome = ingest_uri(
         &state.storage,
         &state.embedder,
-        body.workspace_id,
+        workspace_id,
         source_id,
         adapter,
         &body.external_id,
@@ -890,7 +894,8 @@ const INGEST_URL_WALL_SECS: u64 = 30;
 
 #[derive(Debug, Deserialize)]
 struct IngestUrlBody {
-    workspace_id: WorkspaceId,
+    /// Workspace numeric id OR a name (find-or-created under tenant `"local"`).
+    workspace: String,
     /// Find-or-create source name; defaults to `"web"` if omitted.
     #[serde(default = "default_url_source")]
     source_name: String,
@@ -959,9 +964,10 @@ async fn ingest_url(
         .map_err(|e| ApiError::Invalid(format!("invalid url: {e}")))?;
     let start_host = start.host_str().map(|s| s.to_string());
 
+    let workspace_id = resolve_workspace_input(&state.storage, &body.workspace).await?;
     let source_id = match state
         .storage
-        .find_source_by_name(body.workspace_id, &body.source_name)
+        .find_source_by_name(workspace_id, &body.source_name)
         .await
     {
         Some(id) => id,
@@ -969,7 +975,7 @@ async fn ingest_url(
             state
                 .storage
                 .create_source(NewSource {
-                    workspace_id: body.workspace_id,
+                    workspace_id,
                     kind: SourceKind::Http,
                     name: body.source_name.clone(),
                     config_json: serde_json::json!({"kind": "url_crawl"}),
@@ -1046,7 +1052,7 @@ async fn ingest_url(
         let result = ingest_uri(
             &state.storage,
             &state.embedder,
-            body.workspace_id,
+            workspace_id,
             source_id,
             adapter,
             url.as_str(),
@@ -1096,6 +1102,212 @@ async fn ingest_url(
         skipped,
         timed_out,
     }))
+}
+
+// ============================================================================
+// Ingest codebase (full filesystem walk — server reads the path directly)
+// ============================================================================
+
+/// Resolve `--workspace VALUE` server-side: numeric -> use as id, otherwise
+/// find-or-create under tenant `"local"`. Mirrors the CLI helper so the
+/// HTTP route accepts the same flexible argument.
+async fn resolve_workspace_input(
+    storage: &engine::postgres::PostgresStorage,
+    value: &str,
+) -> ApiResult<WorkspaceId> {
+    if let Ok(id) = value.parse::<u64>() {
+        return Ok(WorkspaceId(id));
+    }
+    let (id, _, _) = storage
+        .find_or_create_workspace("local", value)
+        .await?;
+    Ok(id)
+}
+
+#[derive(Debug, Deserialize)]
+struct IngestCodebaseBody {
+    /// Workspace numeric id OR a name (find-or-created under tenant `"local"`).
+    workspace: String,
+    /// Absolute path on the SERVER's filesystem. The CLI canonicalizes
+    /// before sending so a relative `.` becomes `/abs/path`. For local
+    /// dev this is fine; if `ken serve` ever runs on a different host
+    /// from the CLI, the path must be reachable there.
+    root: String,
+    #[serde(default = "default_codebase_max_bytes")]
+    max_bytes: u64,
+    #[serde(default = "default_true_bool")]
+    respect_gitignore: bool,
+    #[serde(default)]
+    follow_symlinks: bool,
+}
+
+fn default_codebase_max_bytes() -> u64 {
+    1024 * 1024
+}
+fn default_true_bool() -> bool {
+    true
+}
+
+#[derive(Debug, Serialize)]
+struct IngestCodebaseResult {
+    files_visited: u64,
+    documents_written: u64,
+    documents_unchanged: u64,
+    files_skipped_no_adapter: u64,
+    files_skipped_too_large: u64,
+    files_skipped_adapter_error: u64,
+    files_skipped_io_error: u64,
+    chunks_written: u64,
+    edges_written: u64,
+    elapsed_ms: u64,
+}
+
+async fn ingest_codebase(
+    State(state): State<Arc<AppState>>,
+    Json(body): Json<IngestCodebaseBody>,
+) -> ApiResult<Json<IngestCodebaseResult>> {
+    use engine::ingest_fs::{ensure_source, ingest_codebase as ingest_fn, IngestCodebaseConfig};
+    use std::path::PathBuf;
+
+    let workspace_id = resolve_workspace_input(&state.storage, &body.workspace).await?;
+
+    let root = PathBuf::from(&body.root);
+    if !root.exists() {
+        return Err(ApiError::Invalid(format!("root path does not exist: {}", body.root)));
+    }
+    let source_name = format!("codebase:{}", root.display());
+    let source_id = ensure_source(&state.storage, workspace_id, &source_name, &root).await?;
+
+    let mut cfg = IngestCodebaseConfig::new(&root, workspace_id, source_id);
+    cfg.max_file_bytes = body.max_bytes;
+    cfg.respect_gitignore = body.respect_gitignore;
+    cfg.follow_symlinks = body.follow_symlinks;
+
+    let stats = ingest_fn(&state.storage, state.embedder.clone(), &cfg)
+        .await
+        .map_err(|e| ApiError::Invalid(format!("ingest_codebase: {e}")))?;
+
+    Ok(Json(IngestCodebaseResult {
+        files_visited: stats.files_visited,
+        documents_written: stats.documents_written,
+        documents_unchanged: stats.documents_unchanged,
+        files_skipped_no_adapter: stats.files_skipped_no_adapter,
+        files_skipped_too_large: stats.files_skipped_too_large,
+        files_skipped_adapter_error: stats.files_skipped_adapter_error,
+        files_skipped_io_error: stats.files_skipped_io_error,
+        chunks_written: stats.chunks_written,
+        edges_written: stats.edges_written,
+        elapsed_ms: stats.elapsed.as_millis() as u64,
+    }))
+}
+
+// ============================================================================
+// Ingest git (full repo history walk — server reads the .git directly)
+// ============================================================================
+
+#[derive(Debug, Deserialize)]
+struct IngestGitBody {
+    workspace: String,
+    /// Absolute repository path on the server.
+    repo: String,
+    #[serde(default)]
+    branch: Option<String>,
+    /// Limit history to commits within the last N years. `null` (omitted)
+    /// means full history. Default 2.
+    #[serde(default = "default_since_years")]
+    since_years: Option<u64>,
+    #[serde(default)]
+    max_commits: u64,
+    #[serde(default = "default_git_mode")]
+    mode: String,
+    #[serde(default = "default_true_bool")]
+    skip_merges: bool,
+    #[serde(default = "default_true_bool")]
+    skip_whitespace_only: bool,
+}
+
+fn default_since_years() -> Option<u64> {
+    Some(2)
+}
+fn default_git_mode() -> String {
+    "both".to_string()
+}
+
+#[derive(Debug, Serialize)]
+struct IngestGitResult {
+    visited: u64,
+    kept: u64,
+    skipped_merge: u64,
+    skipped_bot: u64,
+    skipped_whitespace: u64,
+    documents_written: u64,
+    documents_unchanged: u64,
+    sessions_created: u64,
+    edges_written: u64,
+}
+
+#[cfg(feature = "git")]
+async fn ingest_git(
+    State(state): State<Arc<AppState>>,
+    Json(body): Json<IngestGitBody>,
+) -> ApiResult<Json<IngestGitResult>> {
+    use engine::ingest_git::{ensure_source, ingest_repo, IngestGitConfig, IngestMode};
+    use std::path::PathBuf;
+
+    let workspace_id = resolve_workspace_input(&state.storage, &body.workspace).await?;
+
+    let repo = PathBuf::from(&body.repo);
+    if !repo.exists() {
+        return Err(ApiError::Invalid(format!("repo path does not exist: {}", body.repo)));
+    }
+
+    let mode = match body.mode.as_str() {
+        "docs" | "documents_only" => IngestMode::DocumentsOnly,
+        "sessions" | "sessions_only" => IngestMode::SessionsOnly,
+        "both" => IngestMode::Both,
+        other => return Err(ApiError::Invalid(format!("unknown mode: {other}"))),
+    };
+
+    let source_name = format!("git:{}", repo.display());
+    let source_id = ensure_source(&state.storage, workspace_id, &source_name, &repo)
+        .await
+        .map_err(|e| ApiError::Invalid(format!("ensure_source: {e}")))?;
+
+    let mut cfg = IngestGitConfig::new(&repo, workspace_id, source_id);
+    cfg.branch = body.branch;
+    cfg.skip_merges = body.skip_merges;
+    cfg.skip_whitespace_only = body.skip_whitespace_only;
+    cfg.max_commits = body.max_commits;
+    cfg.mode = mode;
+    if let Some(y) = body.since_years {
+        cfg = cfg.since_years(y);
+    }
+
+    let stats = ingest_repo(&state.storage, state.embedder.clone(), &cfg)
+        .await
+        .map_err(|e| ApiError::Invalid(format!("ingest_repo: {e}")))?;
+
+    Ok(Json(IngestGitResult {
+        visited: stats.walk.visited,
+        kept: stats.walk.kept,
+        skipped_merge: stats.walk.skipped_merge,
+        skipped_bot: stats.walk.skipped_bot,
+        skipped_whitespace: stats.walk.skipped_whitespace,
+        documents_written: stats.documents_written,
+        documents_unchanged: stats.documents_unchanged,
+        sessions_created: stats.sessions_created,
+        edges_written: stats.edges_written,
+    }))
+}
+
+#[cfg(not(feature = "git"))]
+async fn ingest_git(
+    State(_state): State<Arc<AppState>>,
+    Json(_body): Json<IngestGitBody>,
+) -> ApiResult<Json<IngestGitResult>> {
+    Err(ApiError::Invalid(
+        "server compiled without the `git` feature".into(),
+    ))
 }
 
 // ============================================================================

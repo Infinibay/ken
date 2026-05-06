@@ -18,16 +18,8 @@ async fn main() -> Result<()> {
         None => run_server(Vec::new()).await,
         Some("serve") => run_server(args.collect()).await,
         Some("ingest-git") => {
-            #[cfg(feature = "git")]
-            {
-                let rest: Vec<String> = args.collect();
-                run_ingest_git(rest).await
-            }
-            #[cfg(not(feature = "git"))]
-            {
-                let _ = args;
-                anyhow::bail!("`ingest-git` requires the `git` feature at build time");
-            }
+            let rest: Vec<String> = args.collect();
+            run_ingest_git(rest).await
         }
         Some("ingest-codebase") => {
             let rest: Vec<String> = args.collect();
@@ -163,28 +155,6 @@ fn run_install(rest: Vec<String>) -> Result<()> {
     install::run(args)
 }
 
-/// Shared between every `ingest-*` subcommand: resolve `--workspace VALUE`
-/// to a `WorkspaceId`. Numeric → use as id; otherwise find-or-create
-/// the named workspace under tenant `"local"`.
-async fn resolve_workspace_arg(
-    storage: &engine::postgres::PostgresStorage,
-    value: &str,
-) -> Result<engine::types::WorkspaceId> {
-    use engine::types::WorkspaceId;
-    if let Ok(id) = value.parse::<u64>() {
-        return Ok(WorkspaceId(id));
-    }
-    let (id, _, created) = storage
-        .find_or_create_workspace("local", value)
-        .await
-        .with_context(|| format!("find-or-create workspace {value:?}"))?;
-    if created {
-        eprintln!("→ created workspace {value:?} under tenant \"local\" (id {})", id.0);
-    } else {
-        eprintln!("→ workspace {value:?} resolved to id {}", id.0);
-    }
-    Ok(id)
-}
 
 fn run_hook(rest: Vec<String>) -> Result<()> {
     let event = rest
@@ -251,19 +221,16 @@ async fn run_server(rest: Vec<String>) -> Result<()> {
     Ok(())
 }
 
-#[cfg(feature = "git")]
 async fn run_ingest_git(args: Vec<String>) -> Result<()> {
-    use engine::ingest_git::{ensure_source, ingest_repo, IngestGitConfig, IngestMode};
-    use engine::types::SourceId;
+    use ken::client::EngineClient;
     use std::path::PathBuf;
 
     let mut repo: Option<PathBuf> = None;
     let mut workspace_raw: Option<String> = None;
-    let mut source: Option<u64> = None;
     let mut branch: Option<String> = None;
     let mut since_years: Option<u64> = Some(2);
     let mut max_commits: u64 = 0;
-    let mut mode = IngestMode::Both;
+    let mut mode = "both".to_string();
     let mut keep_merges = false;
     let mut keep_whitespace = false;
 
@@ -272,93 +239,82 @@ async fn run_ingest_git(args: Vec<String>) -> Result<()> {
         match arg.as_str() {
             "--repo" => repo = it.next().map(PathBuf::from),
             "--workspace" => workspace_raw = it.next(),
-            "--source" => source = it.next().and_then(|s| s.parse().ok()),
             "--branch" => branch = it.next(),
             "--since" => since_years = it.next().and_then(|s| s.parse().ok()),
             "--max" => max_commits = it.next().and_then(|s| s.parse().ok()).unwrap_or(0),
             "--mode" => {
-                mode = match it.next().as_deref() {
-                    Some("docs") | Some("documents_only") => IngestMode::DocumentsOnly,
-                    Some("sessions") | Some("sessions_only") => IngestMode::SessionsOnly,
-                    Some("both") | None => IngestMode::Both,
-                    Some(other) => anyhow::bail!("unknown --mode: {other}"),
-                }
+                mode = it
+                    .next()
+                    .filter(|s| matches!(s.as_str(), "docs" | "documents_only" | "sessions" | "sessions_only" | "both"))
+                    .unwrap_or_else(|| "both".to_string());
             }
             "--keep-merges" => keep_merges = true,
             "--keep-whitespace" => keep_whitespace = true,
             "--full-history" => since_years = None,
+            // `--source` is no longer needed — the server picks/creates one
+            // by repo path. Accept it silently for backwards-compat.
+            "--source" => {
+                let _ = it.next();
+            }
             other => anyhow::bail!("unknown ingest-git arg: {other}"),
         }
     }
 
     let repo = repo.context("--repo PATH is required")?;
+    let repo = repo
+        .canonicalize()
+        .with_context(|| format!("canonicalize {}", repo.display()))?;
     let workspace_raw = workspace_raw.context("--workspace WS_ID_OR_NAME is required")?;
 
-    let database_url =
-        std::env::var("DATABASE_URL").map_err(|_| anyhow::anyhow!("DATABASE_URL is required"))?;
-    let storage = PostgresStorage::connect(&database_url).await?;
-    storage
-        .migrate()
-        .await
-        .map_err(|e| anyhow::anyhow!("migrate failed: {e}"))?;
-    let workspace_id = resolve_workspace_arg(&storage, &workspace_raw).await?;
-
-    let source_id = match source {
-        Some(s) => SourceId(s),
-        None => {
-            let name = format!("git:{}", repo.display());
-            ensure_source(&storage, workspace_id, &name, &repo).await?
-        }
+    let url = engine_url();
+    let client = EngineClient::new(&url);
+    let mut body = serde_json::json!({
+        "workspace": workspace_raw,
+        "repo": repo.to_string_lossy(),
+        "max_commits": max_commits,
+        "mode": mode,
+        "skip_merges": !keep_merges,
+        "skip_whitespace_only": !keep_whitespace,
+    });
+    if let Some(b) = branch {
+        body["branch"] = serde_json::json!(b);
+    }
+    body["since_years"] = match since_years {
+        Some(y) => serde_json::json!(y),
+        None => serde_json::Value::Null,
     };
 
-    let mut cfg = IngestGitConfig::new(&repo, workspace_id, source_id);
-    cfg.branch = branch;
-    cfg.skip_merges = !keep_merges;
-    cfg.skip_whitespace_only = !keep_whitespace;
-    cfg.max_commits = max_commits;
-    cfg.mode = mode;
-    if let Some(y) = since_years {
-        cfg = cfg.since_years(y);
-    }
-
-    let embedder = build_embedder().await?;
-
     let started = std::time::Instant::now();
-    tracing::info!(
-        repo = %repo.display(),
-        ?workspace_id,
-        ?source_id,
-        ?cfg.branch,
-        ?cfg.since_seconds_unix,
-        "starting git ingest"
-    );
-    let stats = ingest_repo(&storage, embedder, &cfg)
-        .await
-        .map_err(|e| anyhow::anyhow!("ingest failed: {e}"))?;
+    eprintln!("→ POST {url}/ingest_git");
+    let resp = client
+        .ingest_git_raw(body)
+        .with_context(|| format!("ingest_git via {url}"))?;
     let elapsed = started.elapsed();
+    let g = |k: &str| resp.get(k).and_then(|v| v.as_u64()).unwrap_or(0);
     println!(
-        "ingest-git complete in {elapsed:?}\n  visited:           {visited}\n  kept:              {kept}\n  skipped (merge):   {sm}\n  skipped (bot):     {sb}\n  skipped (ws-only): {sw}\n  documents written:   {dw}\n  documents unchanged: {du}\n  sessions created:    {sc}\n  edges written:       {ew}",
-        visited = stats.walk.visited,
-        kept = stats.walk.kept,
-        sm = stats.walk.skipped_merge,
-        sb = stats.walk.skipped_bot,
-        sw = stats.walk.skipped_whitespace,
-        dw = stats.documents_written,
-        du = stats.documents_unchanged,
-        sc = stats.sessions_created,
-        ew = stats.edges_written,
+        "ingest-git complete in {elapsed:?}\n  visited:             {}\n  kept:                {}\n  skipped (merge):     {}\n  skipped (bot):       {}\n  skipped (ws-only):   {}\n  documents written:   {}\n  documents unchanged: {}\n  sessions created:    {}\n  edges written:       {}",
+        g("visited"),
+        g("kept"),
+        g("skipped_merge"),
+        g("skipped_bot"),
+        g("skipped_whitespace"),
+        g("documents_written"),
+        g("documents_unchanged"),
+        g("sessions_created"),
+        g("edges_written"),
     );
     Ok(())
 }
 
+fn engine_url() -> String {
+    std::env::var("KEN_ENGINE_URL").unwrap_or_else(|_| "http://127.0.0.1:8080".into())
+}
+
 async fn run_ingest_codebase(args: Vec<String>) -> Result<()> {
-    use engine::ingest_fs::{ensure_source, ingest_codebase, IngestCodebaseConfig};
-    use engine::types::SourceId;
     use std::path::PathBuf;
 
     let mut root: Option<PathBuf> = None;
     let mut workspace_raw: Option<String> = None;
-    let mut source: Option<u64> = None;
     let mut max_bytes: u64 = 1024 * 1024;
     let mut respect_gitignore = true;
     let mut follow_symlinks = false;
@@ -368,77 +324,64 @@ async fn run_ingest_codebase(args: Vec<String>) -> Result<()> {
         match arg.as_str() {
             "--root" => root = it.next().map(PathBuf::from),
             "--workspace" => workspace_raw = it.next(),
-            "--source" => source = it.next().and_then(|s| s.parse().ok()),
             "--max-bytes" => {
                 max_bytes = it.next().and_then(|s| s.parse().ok()).unwrap_or(max_bytes);
             }
             "--no-gitignore" => respect_gitignore = false,
             "--follow-symlinks" => follow_symlinks = true,
+            // `--source` is no longer needed — the server picks/creates one
+            // by root path. Accept it silently for backwards-compat.
+            "--source" => {
+                let _ = it.next();
+            }
             other => anyhow::bail!("unknown ingest-codebase arg: {other}"),
         }
     }
 
     let root = root.context("--root PATH is required")?;
+    let root = root
+        .canonicalize()
+        .with_context(|| format!("canonicalize {}", root.display()))?;
     let workspace_raw = workspace_raw.context("--workspace WS_ID_OR_NAME is required")?;
 
-    let database_url =
-        std::env::var("DATABASE_URL").map_err(|_| anyhow::anyhow!("DATABASE_URL is required"))?;
-    let storage = PostgresStorage::connect(&database_url).await?;
-    storage
-        .migrate()
-        .await
-        .map_err(|e| anyhow::anyhow!("migrate failed: {e}"))?;
-    let workspace_id = resolve_workspace_arg(&storage, &workspace_raw).await?;
+    let url = engine_url();
+    let client = ken::client::EngineClient::new(&url);
+    let body = serde_json::json!({
+        "workspace": workspace_raw,
+        "root": root.to_string_lossy(),
+        "max_bytes": max_bytes,
+        "respect_gitignore": respect_gitignore,
+        "follow_symlinks": follow_symlinks,
+    });
 
-    let source_id = match source {
-        Some(s) => SourceId(s),
-        None => {
-            let name = format!("codebase:{}", root.display());
-            ensure_source(&storage, workspace_id, &name, &root).await?
-        }
-    };
-
-    let mut cfg = IngestCodebaseConfig::new(&root, workspace_id, source_id);
-    cfg.max_file_bytes = max_bytes;
-    cfg.respect_gitignore = respect_gitignore;
-    cfg.follow_symlinks = follow_symlinks;
-
-    let embedder = build_embedder().await?;
-
-    tracing::info!(
-        root = %root.display(),
-        ?workspace_id,
-        ?source_id,
-        "starting codebase ingest"
-    );
-    let stats = ingest_codebase(&storage, embedder, &cfg)
-        .await
-        .map_err(|e| anyhow::anyhow!("ingest failed: {e}"))?;
+    let started = std::time::Instant::now();
+    eprintln!("→ POST {url}/ingest_codebase");
+    let resp = client
+        .ingest_codebase_raw(body)
+        .with_context(|| format!("ingest_codebase via {url}"))?;
+    let elapsed = started.elapsed();
+    let g = |k: &str| resp.get(k).and_then(|v| v.as_u64()).unwrap_or(0);
     println!(
-        "ingest-codebase complete in {elapsed:?}\n  files visited:        {visited}\n  documents written:    {dw}\n  documents unchanged:  {du}\n  skipped (no adapter): {snm}\n  skipped (too large):  {stl}\n  skipped (adapter err):{sae}\n  skipped (io err):     {sio}\n  chunks written:       {cw}\n  edges written:        {ew}",
-        elapsed = stats.elapsed,
-        visited = stats.files_visited,
-        dw = stats.documents_written,
-        du = stats.documents_unchanged,
-        snm = stats.files_skipped_no_adapter,
-        stl = stats.files_skipped_too_large,
-        sae = stats.files_skipped_adapter_error,
-        sio = stats.files_skipped_io_error,
-        cw = stats.chunks_written,
-        ew = stats.edges_written,
+        "ingest-codebase complete in {elapsed:?}\n  files visited:         {}\n  documents written:     {}\n  documents unchanged:   {}\n  skipped (no adapter):  {}\n  skipped (too large):   {}\n  skipped (adapter err): {}\n  skipped (io err):      {}\n  chunks written:        {}\n  edges written:         {}",
+        g("files_visited"),
+        g("documents_written"),
+        g("documents_unchanged"),
+        g("files_skipped_no_adapter"),
+        g("files_skipped_too_large"),
+        g("files_skipped_adapter_error"),
+        g("files_skipped_io_error"),
+        g("chunks_written"),
+        g("edges_written"),
     );
     Ok(())
 }
 
 async fn run_ingest_file(args: Vec<String>) -> Result<()> {
-    use engine::ingest::{default_adapters, pick_adapter, MimeHint};
-    use engine::ingest_fs::{ensure_source, ingest_uri, FileOutcome, IngestFileError};
-    use engine::types::{MetadataMap, SourceId};
+    use base64::Engine;
     use std::path::PathBuf;
 
     let mut path: Option<PathBuf> = None;
     let mut workspace_raw: Option<String> = None;
-    let mut source: Option<u64> = None;
     let mut mime_override: Option<String> = None;
 
     let mut it = args.into_iter();
@@ -446,94 +389,53 @@ async fn run_ingest_file(args: Vec<String>) -> Result<()> {
         match arg.as_str() {
             "--path" => path = it.next().map(PathBuf::from),
             "--workspace" => workspace_raw = it.next(),
-            "--source" => source = it.next().and_then(|s| s.parse().ok()),
             "--mime" => mime_override = it.next(),
+            "--source" => {
+                let _ = it.next();
+            }
             other => anyhow::bail!("unknown ingest-file arg: {other}"),
         }
     }
     let path = path.context("--path PATH is required")?;
     let workspace_raw = workspace_raw.context("--workspace WS_ID_OR_NAME is required")?;
-
-    let database_url =
-        std::env::var("DATABASE_URL").map_err(|_| anyhow::anyhow!("DATABASE_URL is required"))?;
-    let storage = PostgresStorage::connect(&database_url).await?;
-    storage
-        .migrate()
-        .await
-        .map_err(|e| anyhow::anyhow!("migrate failed: {e}"))?;
-    let workspace_id = resolve_workspace_arg(&storage, &workspace_raw).await?;
-
-    let source_id = match source {
-        Some(s) => SourceId(s),
-        None => {
-            // Reuse `ensure_source` from ingest_fs (codebase tag is the closest
-            // match for one-off filesystem uploads). For a true "manual upload"
-            // tag we'd add a new helper, but the engine doesn't dispatch on
-            // SourceKind anywhere — it's purely descriptive.
-            let name = format!("file:{}", path.display());
-            ensure_source(&storage, workspace_id, &name, &path).await?
-        }
-    };
-
-    let bytes = std::fs::read(&path)
-        .with_context(|| format!("read {}", path.display()))?;
-    let uri = path.to_string_lossy().to_string();
-    let extension = path
-        .extension()
-        .and_then(|e| e.to_str())
-        .map(|s| s.to_ascii_lowercase());
-    let hint = MimeHint {
-        mime: mime_override.clone(),
-        extension,
-    };
-    let adapters = default_adapters();
-    let adapter = pick_adapter(&adapters, &hint)
-        .with_context(|| format!("no adapter accepts mime={:?} ext={:?}", hint.mime, hint.extension))?;
-
-    let embedder = build_embedder().await?;
-    tracing::info!(path = %path.display(), ?workspace_id, ?source_id, "ingesting one file");
-
-    let started = std::time::Instant::now();
-    let outcome = ingest_uri(
-        &storage,
-        &embedder,
-        workspace_id,
-        source_id,
-        adapter,
-        &uri,
-        bytes,
-        mime_override,
-        MetadataMap::default(),
-    )
-    .await
-    .map_err(|e| match e {
-        IngestFileError::Adapter(err) => anyhow::anyhow!("adapter rejected: {err}"),
-        IngestFileError::Storage(err) => anyhow::anyhow!("storage error: {err}"),
-    })?;
-    let elapsed = started.elapsed();
-
-    match outcome {
-        FileOutcome::Written { chunks, edges, document_id, outcome } => println!(
-            "ingest-file complete in {elapsed:?}\n  {outcome}: doc {document_id:?}, {chunks} chunks, {edges} edges"
-        ),
-        FileOutcome::Unchanged { document_id } => println!("ingest-file complete in {elapsed:?} — unchanged (doc {document_id:?})"),
+    let bytes = std::fs::read(&path).with_context(|| format!("read {}", path.display()))?;
+    let bytes_b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
+    let external_id = path
+        .file_name()
+        .and_then(|n| n.to_str())
+        .map(str::to_string)
+        .unwrap_or_else(|| path.to_string_lossy().into_owned());
+    let mut body = serde_json::json!({
+        "workspace": workspace_raw,
+        "source_name": "uploads",
+        "external_id": external_id,
+        "bytes_base64": bytes_b64,
+    });
+    if let Some(m) = mime_override {
+        body["mime"] = serde_json::json!(m);
     }
+
+    let url = engine_url();
+    let client = ken::client::EngineClient::new(&url);
+    let started = std::time::Instant::now();
+    eprintln!("→ POST {url}/ingest_file ({} bytes)", bytes.len());
+    let resp = client
+        .ingest_file_raw(body)
+        .with_context(|| format!("ingest_file via {url}"))?;
+    let elapsed = started.elapsed();
+    let outcome = resp.get("outcome").and_then(|v| v.as_str()).unwrap_or("?");
+    let doc = resp.get("document_id").map(|v| v.to_string()).unwrap_or_else(|| "?".into());
+    let chunks = resp.get("chunks").and_then(|v| v.as_u64()).unwrap_or(0);
+    let edges = resp.get("edges").and_then(|v| v.as_u64()).unwrap_or(0);
+    println!("ingest-file complete in {elapsed:?}\n  {outcome}: doc {doc}, {chunks} chunks, {edges} edges");
     Ok(())
 }
 
 async fn run_ingest_url(args: Vec<String>) -> Result<()> {
-    use ken::url_crawl::{build_agent, canonical_url, extract_links, fetch_url};
-    use engine::ingest::{default_adapters, pick_adapter, MimeHint};
-    use engine::ingest_fs::{ingest_uri, FileOutcome, IngestFileError};
-    use engine::storage::NewSource;
-    use engine::types::{Acl, MetadataMap, SourceId, SourceKind};
-    use std::collections::{HashSet, VecDeque};
-
     let mut url_arg: Option<String> = None;
     let mut workspace_raw: Option<String> = None;
-    let mut source: Option<u64> = None;
     let mut depth: u32 = 0;
-    let mut max_pages: u32 = 10;
+    let mut max_pages: u32 = 1;
     let mut same_host_only = true;
 
     let mut it = args.into_iter();
@@ -541,167 +443,57 @@ async fn run_ingest_url(args: Vec<String>) -> Result<()> {
         match arg.as_str() {
             "--url" => url_arg = it.next(),
             "--workspace" => workspace_raw = it.next(),
-            "--source" => source = it.next().and_then(|s| s.parse().ok()),
             "--depth" => depth = it.next().and_then(|s| s.parse().ok()).unwrap_or(0),
-            "--max-pages" => max_pages = it.next().and_then(|s| s.parse().ok()).unwrap_or(10),
+            "--max-pages" => max_pages = it.next().and_then(|s| s.parse().ok()).unwrap_or(1),
             "--same-host-only" => same_host_only = true,
             "--no-same-host" => same_host_only = false,
+            "--source" => {
+                let _ = it.next();
+            }
             other => anyhow::bail!("unknown ingest-url arg: {other}"),
         }
     }
     let start_url = url_arg.context("--url URL is required")?;
     let workspace_raw = workspace_raw.context("--workspace WS_ID_OR_NAME is required")?;
-    let start = url::Url::parse(&start_url).context("invalid --url")?;
-    let start_host = start.host_str().map(|s| s.to_string());
 
-    let database_url =
-        std::env::var("DATABASE_URL").map_err(|_| anyhow::anyhow!("DATABASE_URL is required"))?;
-    let storage = PostgresStorage::connect(&database_url).await?;
-    storage
-        .migrate()
-        .await
-        .map_err(|e| anyhow::anyhow!("migrate failed: {e}"))?;
-    let workspace_id = resolve_workspace_arg(&storage, &workspace_raw).await?;
-
-    let source_id = match source {
-        Some(s) => SourceId(s),
-        None => {
-            let name = match &start_host {
-                Some(h) => format!("url:{h}"),
-                None => format!("url:{start_url}"),
-            };
-            if let Some(existing) = storage.find_source_by_name(workspace_id, &name).await {
-                existing
-            } else {
-                storage
-                    .create_source(NewSource {
-                        workspace_id,
-                        kind: SourceKind::Http,
-                        name,
-                        config_json: serde_json::json!({
-                            "kind": "url",
-                            "start": start_url,
-                            "depth": depth,
-                            "max_pages": max_pages,
-                            "same_host_only": same_host_only,
-                        }),
-                        keep_history: false,
-                        default_acl: Acl::default(),
-                    })
-                    .await?
-            }
-        }
-    };
-
-    let embedder = build_embedder().await?;
-    let adapters = default_adapters();
-    // ureq is sync. Each fetch runs on a blocking thread so the tokio
-    // runtime stays free for embedding tasks.
-    let agent = build_agent(20);
-
-    let mut queue: VecDeque<(url::Url, u32)> = VecDeque::new();
-    let mut visited: HashSet<String> = HashSet::new();
-    queue.push_back((start.clone(), 0));
-    visited.insert(canonical_url(&start));
-
-    let mut pages_fetched = 0u32;
-    let mut pages_written = 0u32;
-    let mut pages_unchanged = 0u32;
-    let mut pages_failed = 0u32;
-    let mut chunks_total = 0u64;
+    let url = engine_url();
+    let client = ken::client::EngineClient::new(&url);
+    let body = serde_json::json!({
+        "workspace": workspace_raw,
+        "source_name": "web",
+        "url": start_url,
+        "depth": depth,
+        "max_pages": max_pages,
+        "same_host_only": same_host_only,
+    });
 
     let started = std::time::Instant::now();
-    while let Some((url, d)) = queue.pop_front() {
-        if pages_fetched >= max_pages {
-            break;
-        }
-        pages_fetched += 1;
-        let url_string = url.to_string();
-        tracing::info!(url = %url_string, depth = d, "fetching");
-        let agent_clone = agent.clone();
-        let fetched = tokio::task::spawn_blocking(move || fetch_url(&agent_clone, &url_string))
-            .await
-            .map_err(|e| anyhow::anyhow!("fetch task panicked: {e}"))?;
-        let (mime, bytes) = match fetched {
-            Ok(v) => v,
-            Err(err) => {
-                tracing::warn!(url = %url, error = %err, "fetch failed");
-                pages_failed += 1;
-                continue;
-            }
-        };
-
-        let extension = url
-            .path_segments()
-            .and_then(|mut s| s.next_back())
-            .and_then(|name| name.rsplit_once('.'))
-            .map(|(_, ext)| ext.to_ascii_lowercase());
-        let hint = MimeHint {
-            mime: Some(mime.clone()),
-            extension,
-        };
-        let Some(adapter) = pick_adapter(&adapters, &hint) else {
-            tracing::warn!(url = %url, mime = %mime, "no adapter for this content type");
-            pages_failed += 1;
-            continue;
-        };
-
-        // For HTML: extract links BEFORE bytes are moved into ingest_uri.
-        let next_links: Vec<url::Url> = if d < depth && mime.starts_with("text/html") {
-            extract_links(&url, std::str::from_utf8(&bytes).unwrap_or(""))
-        } else {
-            Vec::new()
-        };
-
-        let result = ingest_uri(
-            &storage,
-            &embedder,
-            workspace_id,
-            source_id,
-            adapter,
-            url.as_str(),
-            bytes,
-            Some(mime.clone()),
-            MetadataMap::default(),
-        )
-        .await;
-        match result {
-            Ok(FileOutcome::Written { chunks, .. }) => {
-                pages_written += 1;
-                chunks_total += chunks as u64;
-            }
-            Ok(FileOutcome::Unchanged { .. }) => pages_unchanged += 1,
-            Err(IngestFileError::Adapter(err)) => {
-                tracing::warn!(url = %url, error = %err, "adapter rejected");
-                pages_failed += 1;
-                continue;
-            }
-            Err(IngestFileError::Storage(err)) => {
-                anyhow::bail!("storage error on {url}: {err}");
-            }
-        }
-
-        // Enqueue next-hop links once the page is persisted, applying the
-        // same-host filter and dedup against `visited`.
-        for link in next_links {
-            if same_host_only && link.host_str() != start_host.as_deref() {
-                continue;
-            }
-            let canon = canonical_url(&link);
-            if visited.insert(canon) {
-                queue.push_back((link, d + 1));
-            }
-        }
-    }
+    eprintln!("→ POST {url}/ingest_url (depth={depth}, max_pages={max_pages})");
+    let resp = client
+        .ingest_url_raw(body)
+        .with_context(|| format!("ingest_url via {url}"))?;
     let elapsed = started.elapsed();
+
+    let pages = resp.get("pages").and_then(|v| v.as_array()).cloned().unwrap_or_default();
+    let skipped = resp.get("skipped").and_then(|v| v.as_array()).cloned().unwrap_or_default();
+    let timed_out = resp.get("timed_out").and_then(|v| v.as_bool()).unwrap_or(false);
     println!(
-        "ingest-url complete in {elapsed:?}\n  pages fetched:  {pf}\n  written:        {pw}\n  unchanged:      {pu}\n  failed:         {ff}\n  chunks written: {ct}",
-        pf = pages_fetched,
-        pw = pages_written,
-        pu = pages_unchanged,
-        ff = pages_failed,
-        ct = chunks_total,
+        "ingest-url complete in {elapsed:?}\n  pages indexed: {}\n  skipped:       {}\n  timed_out:     {}",
+        pages.len(),
+        skipped.len(),
+        timed_out,
     );
+    for p in &pages {
+        let pu = p.get("url").and_then(|v| v.as_str()).unwrap_or("?");
+        let outcome = p.get("outcome").and_then(|v| v.as_str()).unwrap_or("?");
+        let chunks = p.get("chunks").and_then(|v| v.as_u64()).unwrap_or(0);
+        println!("  - {pu}  [{outcome}, {chunks} chunks]");
+    }
+    for s in &skipped {
+        let su = s.get("url").and_then(|v| v.as_str()).unwrap_or("?");
+        let r = s.get("reason").and_then(|v| v.as_str()).unwrap_or("?");
+        println!("  ! {su}  ({r})");
+    }
     Ok(())
 }
 
