@@ -54,7 +54,7 @@ Estas ideas son matemática portable a Rust sin cambios:
 | **Modelo de datos** | `File/Symbol/Import/Finding` (code-céntrico) | `Document/Chunk/Entity/Edge` (genérico, code es un Adapter) |
 | **Tipos de dato** | Solo código + findings | Code + PDF + Markdown + Email + DOCX + tickets + ... (cada uno con su Adapter) |
 | **Embedding storage** | BLOB en SQLite (deserializar c/query) | Slab mmap'd, slice directo a `&[f32]` |
-| **Embedder** | ChromaDB ONNX runtime (CPU) o MNN (10× más rápido) | `fastembed-rs` con `nomic-embed-text-v1.5` (768d, contexto 8192) |
+| **Embedder** | ChromaDB ONNX runtime (CPU) o MNN (10× más rápido) | `fastembed-rs` con `all-MiniLM-L6-v2` quantized (384d, contexto 256) |
 | **Knowledge graph** | Solo import-graph (file→file) | KG real con storage propio: Imports, Cites, Replies, Authored, Mentions, References, SimilarTo, ... |
 | **Tenancy** | Single-user CLI local | Multi-tenant desde day 1 (aislamiento físico por tenant) |
 | **API** | No tiene (es CLI) | HTTP+JSON (gRPC follow-up) |

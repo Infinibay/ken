@@ -24,7 +24,7 @@ async fn try_setup() -> Option<axum::Router> {
     let url = std::env::var("DATABASE_URL").ok()?;
     let storage = PostgresStorage::connect(&url).await.expect("connect");
     storage.migrate().await.expect("migrate");
-    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(768));
+    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(384));
     let state = Arc::new(AppState { storage, embedder });
     Some(build_router(state))
 }

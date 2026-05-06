@@ -105,6 +105,10 @@ pub async fn ensure_source(
 /// Walk `cfg.root`, ingest every file an adapter accepts, and persist
 /// Documents + Chunks + embeddings. Idempotent: re-running keeps existing
 /// Documents whose content hash hasn't changed (`UpsertOutcome::Unchanged`).
+///
+/// Emits a `tracing::info!` summary every `KEN_INGEST_PROGRESS_EVERY` files
+/// (default 25) so a long ingest is observable in the server log. Per-file
+/// outcomes log at DEBUG.
 pub async fn ingest_codebase(
     storage: &PostgresStorage,
     embedder: Arc<dyn Embedder>,
@@ -113,6 +117,42 @@ pub async fn ingest_codebase(
     let started = Instant::now();
     let mut stats = IngestCodebaseStats::default();
     let adapters = default_adapters();
+
+    let progress_every: u64 = std::env::var("KEN_INGEST_PROGRESS_EVERY")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .filter(|n: &u64| *n > 0)
+        .unwrap_or(25);
+
+    // The ONNX runtime under fastembed accumulates internal state across
+    // inferences (per-batch quant buffers, arena pages) that Rust can't
+    // reclaim — RSS climbs unbounded on long ingests. We periodically drop
+    // and rebuild the embedder to release that state. 0 disables.
+    let reload_every: u64 = std::env::var("KEN_EMBEDDER_RELOAD_EVERY")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(500);
+
+    tracing::info!(
+        root = %cfg.root.display(),
+        max_file_bytes = cfg.max_file_bytes,
+        respect_gitignore = cfg.respect_gitignore,
+        progress_every,
+        "starting codebase ingest",
+    );
+
+    // Drop the chunks HNSW index for the duration of the walk. pgvector
+    // maintains HNSW per-row on INSERT, which on a large ingest is both
+    // the dominant write cost and the main source of PG memory pressure
+    // (in extreme cases triggering the OOM killer mid-ingest). We rebuild
+    // the index in one shot at the end. Side effect: semantic search via
+    // the chunks vector is unindexed during the walk — bulk ingests are
+    // expected to be off-peak operations, so this is acceptable.
+    if let Err(err) = storage.drop_chunks_embedding_index().await {
+        tracing::warn!(error = %err, "could not drop chunks embedding index; continuing");
+    } else {
+        tracing::info!("dropped chunks HNSW index for bulk ingest");
+    }
 
     let mut builder = ignore::WalkBuilder::new(&cfg.root);
     builder
@@ -145,6 +185,7 @@ pub async fn ingest_codebase(
         if let Ok(meta) = entry.metadata() {
             if meta.len() > cfg.max_file_bytes {
                 stats.files_skipped_too_large += 1;
+                tracing::debug!(path = %rel, size = meta.len(), "skip: too large");
                 continue;
             }
         }
@@ -164,6 +205,7 @@ pub async fn ingest_codebase(
             continue;
         };
 
+        let file_t0 = Instant::now();
         match ingest_uri(
             storage,
             &embedder,
@@ -181,18 +223,106 @@ pub async fn ingest_codebase(
                 stats.documents_written += 1;
                 stats.chunks_written += chunks as u64;
                 stats.edges_written += edges as u64;
+                tracing::debug!(
+                    path = %rel,
+                    chunks,
+                    edges,
+                    took_ms = file_t0.elapsed().as_millis() as u64,
+                    "ingested",
+                );
             }
-            Ok(FileOutcome::Unchanged { .. }) => stats.documents_unchanged += 1,
+            Ok(FileOutcome::Unchanged { .. }) => {
+                stats.documents_unchanged += 1;
+                tracing::debug!(path = %rel, "unchanged");
+            }
             Err(IngestFileError::Adapter(err)) => {
                 tracing::debug!(path = %rel, error = %err, "adapter rejected file");
                 stats.files_skipped_adapter_error += 1;
             }
             Err(IngestFileError::Storage(err)) => return Err(err),
         }
+
+        if reload_every > 0 && stats.files_visited > 0 && stats.files_visited % reload_every == 0 {
+            let t0 = Instant::now();
+            match embedder.reset() {
+                Ok(()) => tracing::info!(
+                    after_files = stats.files_visited,
+                    took_ms = t0.elapsed().as_millis() as u64,
+                    rss_mb = current_rss_mb().map(|m| format!("{m:.0}")).unwrap_or_else(|| "?".into()),
+                    "reloaded embedder (releases ORT state)",
+                ),
+                Err(e) => tracing::warn!(
+                    error = %e,
+                    "embedder reset failed; continuing with existing session",
+                ),
+            }
+        }
+
+        if stats.files_visited % progress_every == 0 {
+            let elapsed = started.elapsed();
+            let rate = stats.files_visited as f64 / elapsed.as_secs_f64().max(1e-3);
+            tracing::info!(
+                visited = stats.files_visited,
+                written = stats.documents_written,
+                unchanged = stats.documents_unchanged,
+                skipped_adapter = stats.files_skipped_no_adapter,
+                skipped_too_large = stats.files_skipped_too_large,
+                skipped_error = stats.files_skipped_adapter_error + stats.files_skipped_io_error,
+                chunks = stats.chunks_written,
+                elapsed_s = elapsed.as_secs(),
+                rate_per_s = format!("{rate:.1}"),
+                rss_mb = current_rss_mb().map(|m| format!("{m:.0}")).unwrap_or_else(|| "?".into()),
+                "ingest progress",
+            );
+        }
+    }
+
+    // Rebuild the HNSW index in one shot now that all rows are inserted.
+    // pgvector builds the whole graph from scratch which is far faster (and
+    // bounded in memory) than per-row maintenance during INSERT. Logged at
+    // INFO so the user knows the post-ingest pause is the index build.
+    let index_t0 = Instant::now();
+    tracing::info!("rebuilding chunks HNSW index (this can take a minute on large corpora)…");
+    match storage.rebuild_chunks_embedding_index().await {
+        Ok(()) => tracing::info!(took_s = index_t0.elapsed().as_secs(), "chunks HNSW index rebuilt"),
+        Err(err) => tracing::error!(error = %err, "rebuild HNSW index failed; semantic search will fall back to seq scan until manual rebuild"),
     }
 
     stats.elapsed = started.elapsed();
+    tracing::info!(
+        visited = stats.files_visited,
+        written = stats.documents_written,
+        unchanged = stats.documents_unchanged,
+        skipped = stats.files_skipped_no_adapter
+            + stats.files_skipped_too_large
+            + stats.files_skipped_adapter_error
+            + stats.files_skipped_io_error,
+        chunks = stats.chunks_written,
+        edges = stats.edges_written,
+        elapsed_s = stats.elapsed.as_secs(),
+        "codebase ingest done",
+    );
     Ok(stats)
+}
+
+/// Best-effort current resident-set in MB for the calling process. Linux-only;
+/// other platforms return `None`. Used purely for progress logs — a bad
+/// reading is logged as `?`, never propagated.
+#[cfg(target_os = "linux")]
+fn current_rss_mb() -> Option<f64> {
+    let s = std::fs::read_to_string("/proc/self/status").ok()?;
+    for line in s.lines() {
+        if let Some(rest) = line.strip_prefix("VmRSS:") {
+            let kb: f64 = rest.trim().split_whitespace().next()?.parse().ok()?;
+            return Some(kb / 1024.0);
+        }
+    }
+    None
+}
+
+#[cfg(not(target_os = "linux"))]
+fn current_rss_mb() -> Option<f64> {
+    None
 }
 
 /// Outcome of `ingest_uri`. Both variants carry the resolved `DocumentId`
@@ -266,6 +396,27 @@ pub async fn ingest_uri(
     let IngestOutput { document, chunks, edges: edge_drafts, .. } =
         adapter.ingest(raw, &ctx).map_err(IngestFileError::Adapter)?;
 
+    // Safety cap: pathological files (auto-generated, vendored, gigantic
+    // notebooks) can produce thousands of chunks and dominate ingest memory
+    // / time. KEN_MAX_CHUNKS_PER_FILE (default 200) gates this — files past
+    // the cap surface as adapter errors so the walker's stats reflect them.
+    // 200 chunks ≈ a 1 MiB code file's real content; files exceeding this
+    // are almost always machine-generated or vendored.
+    let chunks_cap = std::env::var("KEN_MAX_CHUNKS_PER_FILE")
+        .ok()
+        .and_then(|v| v.parse::<usize>().ok())
+        .filter(|n| *n > 0)
+        .unwrap_or(200);
+    if chunks.len() > chunks_cap {
+        return Err(IngestFileError::Adapter(
+            crate::ingest::IngestError::Invalid(format!(
+                "{} chunks exceeds cap {} (raise KEN_MAX_CHUNKS_PER_FILE if intentional)",
+                chunks.len(),
+                chunks_cap,
+            )),
+        ));
+    }
+
     let new_doc = NewDocument {
         workspace_id,
         source_id,
@@ -296,6 +447,7 @@ pub async fn ingest_uri(
     // Embed all chunks in one batch on a blocking thread (matches the
     // /ingest_text path), then write chunks + embeddings inline.
     let texts: Vec<String> = chunks.iter().map(|c| c.text.clone()).collect();
+    let expected = texts.len();
     let embedder_clone = embedder.clone();
     let vectors = tokio::task::spawn_blocking(move || {
         let refs: Vec<&str> = texts.iter().map(|s| s.as_str()).collect();
@@ -307,6 +459,20 @@ pub async fn ingest_uri(
             "embed task panicked: {e}"
         )))
     })?;
+
+    // The Embedder trait is infallible at the type level — a fallible call
+    // (fastembed inference error) surfaces here as a length mismatch. Bail
+    // out rather than zip-and-pad: zero or default vectors silently corrupt
+    // retrieval calibration, and re-running the ingest is cheap.
+    if vectors.len() != expected {
+        return Err(IngestFileError::Adapter(
+            crate::ingest::IngestError::Invalid(format!(
+                "embedder returned {} vectors for {} chunks (likely inference failure)",
+                vectors.len(),
+                expected,
+            )),
+        ));
+    }
 
     let new_chunks: Vec<NewChunk> = chunks
         .iter()

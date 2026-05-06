@@ -118,7 +118,7 @@ storage corren contra Docker Postgres vía
 - **Costo concreto que pagábamos**: el macro `async-trait` no hace elisión
   de lifetimes en parámetros con vidas implícitas (`dyn FnMut(...)`),
   obligando a contratos `list_chunk_embeddings -> Vec<(_, Vec<f32>)>` que
-  fuerzan a clonar 768 floats × N para satisfacer la forma de Postgres.
+  fuerzan a clonar 384 floats × N para satisfacer la forma de Postgres.
 - 38 métodos CRUD mantenidos en dos impls.
 - `MemoryStorage` no cumplía los requisitos ACID/multi-conn que el trait
   documentaba — era una mentira a nivel de trait.

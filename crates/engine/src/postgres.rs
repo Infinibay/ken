@@ -97,6 +97,36 @@ impl PostgresStorage {
         Ok(())
     }
 
+    /// Drop the chunks HNSW embedding index. Used by bulk ingest paths so
+    /// each per-file INSERT doesn't pay the per-row index maintenance cost
+    /// (which both slows down the insert and is the dominant source of
+    /// Postgres memory growth during large ingests — pgvector keeps the
+    /// in-flight graph in `maintenance_work_mem` and grows it incrementally).
+    /// Idempotent: noop if the index is already gone.
+    pub async fn drop_chunks_embedding_index(&self) -> PgStorageResult<()> {
+        sqlx::query("DROP INDEX IF EXISTS idx_chunks_embedding")
+            .execute(&self.pool)
+            .await?;
+        Ok(())
+    }
+
+    /// Recreate the chunks HNSW embedding index using the same parameters as
+    /// migration `0003_perf_indexes.sql`. Call after a bulk ingest finishes;
+    /// pgvector builds the whole graph in one shot, which is dramatically
+    /// faster (and cheaper memory-wise) than the per-row maintenance path.
+    /// Idempotent: noop if the index already exists.
+    pub async fn rebuild_chunks_embedding_index(&self) -> PgStorageResult<()> {
+        sqlx::query(
+            "CREATE INDEX IF NOT EXISTS idx_chunks_embedding \
+             ON chunks USING hnsw (embedding vector_cosine_ops) \
+             WITH (m = 24, ef_construction = 128) \
+             WHERE embedding IS NOT NULL",
+        )
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
     /// Confirms the `vector` extension is loaded (returns extension version).
     pub async fn vector_extension_version(&self) -> PgStorageResult<Option<String>> {
         let row: Option<(String,)> =
@@ -776,7 +806,7 @@ impl PostgresStorage {
         let rows: Vec<(i64, i32)> = sqlx::query_as(
             "INSERT INTO chunks (document_id, workspace_id, kind, position, text, metadata, embedding)
              SELECT $1, $2, t.kind, t.position, t.text, t.metadata, t.emb
-             FROM UNNEST($3::jsonb[], $4::jsonb[], $5::text[], $6::jsonb[], $7::vector(768)[])
+             FROM UNNEST($3::jsonb[], $4::jsonb[], $5::text[], $6::jsonb[], $7::vector(384)[])
                   WITH ORDINALITY AS t(kind, position, text, metadata, emb, ord)
              ORDER BY t.ord
              RETURNING id, 0::int AS ord_dummy",
@@ -817,7 +847,7 @@ impl PostgresStorage {
         }
         sqlx::query(
             "UPDATE chunks AS c SET embedding = u.emb
-             FROM UNNEST($1::bigint[], $2::vector(768)[]) AS u(id, emb)
+             FROM UNNEST($1::bigint[], $2::vector(384)[]) AS u(id, emb)
              WHERE c.id = u.id",
         )
         .bind(&ids)
@@ -1637,7 +1667,7 @@ impl PostgresStorage {
 
     /// Aggregated per-session retrieval for the predictive ranker. Pushes
     /// the cosine computation + per-session max into Postgres so we don't
-    /// drag every recent context's 768-dim embedding back to the app
+    /// drag every recent context's 384-dim embedding back to the app
     /// process. Returns `(session_id, max_similarity, last_context_at)`
     /// for sessions whose best context similarity clears `min_similarity`,
     /// ordered by similarity descending and capped at `top_n_sessions`.
@@ -1690,7 +1720,7 @@ impl PostgresStorage {
 
     /// Legacy variant retained for callers that need the raw embeddings
     /// (e.g. offline analysis tools). The hot path uses
-    /// `recent_session_max_sims`. Avoid in the ranker — pulls a 768-dim
+    /// `recent_session_max_sims`. Avoid in the ranker — pulls a 384-dim
     /// vector per row over the wire.
     pub async fn list_recent_context_embeddings(
         &self,

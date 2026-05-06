@@ -119,7 +119,7 @@ fn loose_config() -> RankerConfig {
 #[ignore]
 async fn recall_at_k_finds_each_target_in_topk() {
     let Some((s, w, src)) = setup().await else { return };
-    let embedder = MockEmbedder::new(768);
+    let embedder = MockEmbedder::new(384);
 
     // 6 thematic chunks; each query verbatim-quotes one of them so cosine
     // for the right chunk is ≈1.0 even under MockEmbedder.
@@ -184,7 +184,7 @@ async fn recall_at_k_finds_each_target_in_topk() {
 #[ignore]
 async fn confidence_gate_rejects_unrelated_query() {
     let Some((s, w, src)) = setup().await else { return };
-    let embedder = MockEmbedder::new(768);
+    let embedder = MockEmbedder::new(384);
 
     // Tightly-themed corpus: nothing about meteorology in here.
     for (i, text) in [
@@ -226,7 +226,7 @@ async fn confidence_gate_rejects_unrelated_query() {
 #[ignore]
 async fn mad_filter_trims_long_tail() {
     let Some((s, w, src)) = setup().await else { return };
-    let embedder = MockEmbedder::new(768);
+    let embedder = MockEmbedder::new(384);
 
     let target_text = "exactly the kind of unique phrase that hashes well";
     let (_did, target_cid) =

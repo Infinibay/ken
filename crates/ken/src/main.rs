@@ -7,11 +7,23 @@ use ken::{build_router, hook, install, mcp, AppState};
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 
+// Use mimalloc as the global allocator. The default glibc malloc holds
+// onto freed pages in per-thread arenas, which makes long ingests look
+// like memory leaks (RSS climbs even though logical memory is freed when
+// each file's chunks/embeddings drop). mimalloc is far more aggressive
+// about returning pages to the kernel, keeping a long-running `ken serve`
+// at a steady working set.
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 #[tokio::main]
 async fn main() -> Result<()> {
-    tracing_subscriber::fmt()
-        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
-        .init();
+    // Default to INFO if RUST_LOG isn't set so users see ingest progress
+    // and connect/migrate banners without ceremony. Anything explicit in
+    // RUST_LOG (e.g. `RUST_LOG=engine=debug,sqlx=warn`) still wins.
+    let filter = tracing_subscriber::EnvFilter::try_from_default_env()
+        .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info"));
+    tracing_subscriber::fmt().with_env_filter(filter).init();
 
     let mut args = std::env::args().skip(1);
     match args.next().as_deref() {
@@ -103,8 +115,8 @@ fn print_usage() {
            DATABASE_URL      Postgres connection string (required for serve / ingest-*)\n  \
            BIND              Address:port the server listens on (default: 0.0.0.0:8080)\n  \
            EMBEDDER=mock     Use deterministic MockEmbedder instead of fastembed\n  \
-           KEN_EMBEDDER_MODEL  fastembed model: nomic-q (default, 768d), nomic,\n  \
-                             bge-small-q (384d, ~5x faster, needs DB wipe), mini-q\n  \
+           KEN_EMBEDDER_MODEL  fastembed model: mini-q (default, 384d, all-MiniLM-L6-v2),\n  \
+                             bge-small-q (384d, slightly better on prose)\n  \
            KEN_ENGINE_URL    Override engine endpoint for mcp + hook subcommands"
     );
 }
@@ -499,23 +511,23 @@ async fn run_ingest_url(args: Vec<String>) -> Result<()> {
     Ok(())
 }
 
-/// Pick the embedder. `EMBEDDER=mock` forces the deterministic 768-dim
+/// Pick the embedder. `EMBEDDER=mock` forces the deterministic 384-dim
 /// `MockEmbedder` (used in CI / tests / dev with no internet); otherwise the
 /// production `FastEmbedder` is built — the model is selected by
-/// `KEN_EMBEDDER_MODEL` (defaults to `nomic-q`, the quantized 768-dim
-/// nomic-embed-text-v1.5 — same schema as `nomic` but ~2× faster on CPU).
+/// `KEN_EMBEDDER_MODEL` (defaults to `mini-q`, all-MiniLM-L6-v2 quantized,
+/// 384 dims — light enough to run on a developer laptop).
 /// Construction triggers a one-time model download to the fastembed cache
 /// and is heavy enough that we run it on a blocking thread.
 async fn build_embedder() -> Result<Arc<dyn Embedder>> {
     let mode = std::env::var("EMBEDDER").unwrap_or_default();
     if mode.eq_ignore_ascii_case("mock") {
         tracing::warn!("EMBEDDER=mock — using deterministic MockEmbedder (development only)");
-        return Ok(Arc::new(MockEmbedder::new(768)));
+        return Ok(Arc::new(MockEmbedder::new(384)));
     }
 
     #[cfg(feature = "fastembed")]
     {
-        tracing::info!("loading FastEmbedder (model picked by KEN_EMBEDDER_MODEL — default nomic-q)…");
+        tracing::info!("loading FastEmbedder (model picked by KEN_EMBEDDER_MODEL — default mini-q)…");
         let embedder = tokio::task::spawn_blocking(engine::embed_fast::FastEmbedder::from_env)
             .await
             .map_err(|e| anyhow::anyhow!("fastembed init task panicked: {e}"))?
@@ -526,7 +538,7 @@ async fn build_embedder() -> Result<Arc<dyn Embedder>> {
     #[cfg(not(feature = "fastembed"))]
     {
         tracing::warn!("compiled without `fastembed` feature — falling back to MockEmbedder");
-        Ok(Arc::new(MockEmbedder::new(768)))
+        Ok(Arc::new(MockEmbedder::new(384)))
     }
 }
 
@@ -615,7 +627,15 @@ fn container_state(runtime: &str, name: &str) -> Result<ContainerState> {
 }
 
 fn create_pg_container(runtime: &str) -> Result<()> {
-    let args = [
+    // Mirrors `docker-compose.yml`. Two reasons to keep this in lockstep:
+    //  1. `--memory` caps PG so a runaway HNSW build / autovacuum can't OOM
+    //     the host (Docker kills the container instead).
+    //  2. The `-c` command-line knobs size shared_buffers, work_mem and
+    //     maintenance_work_mem to fit inside the cap. `maintenance_work_mem`
+    //     is the one that matters for the post-ingest HNSW index rebuild —
+    //     bigger value = faster rebuild, but bounded so PG doesn't blow up.
+    let volume_arg = format!("{PG_VOLUME}:/var/lib/postgresql/data");
+    let args: &[&str] = &[
         "run",
         "-d",
         "--name",
@@ -633,7 +653,11 @@ fn create_pg_container(runtime: &str) -> Result<()> {
         "-p",
         "5432:5432",
         "-v",
-        &format!("{PG_VOLUME}:/var/lib/postgresql/data"),
+        &volume_arg,
+        "--memory",
+        "4g",
+        "--memory-swap",
+        "4g",
         "--health-cmd",
         "pg_isready -U cae -d context_engine",
         "--health-interval",
@@ -643,6 +667,19 @@ fn create_pg_container(runtime: &str) -> Result<()> {
         "--health-retries",
         "10",
         PG_IMAGE,
+        // Postgres command-line tuning — applied after the image name so
+        // they replace the default `postgres` entrypoint args.
+        "postgres",
+        "-c",
+        "shared_buffers=1GB",
+        "-c",
+        "work_mem=32MB",
+        "-c",
+        "maintenance_work_mem=1GB",
+        "-c",
+        "max_connections=30",
+        "-c",
+        "effective_cache_size=2GB",
     ];
     let status = std::process::Command::new(runtime)
         .args(args)

@@ -25,6 +25,19 @@ pub trait Embedder: Send + Sync + 'static {
     fn embed_passage(&self, text: &str) -> Vec<f32> {
         self.embed_passages(&[text]).into_iter().next().unwrap_or_default()
     }
+
+    /// Drop and re-initialise any heavy internal state. The default is a
+    /// no-op (mock embedders have nothing to release). The fastembed-backed
+    /// implementation overrides this to throw away its ONNX runtime session
+    /// — that runtime accumulates per-batch quantisation buffers and arena
+    /// pages that are not reachable from Rust's allocator, so calling
+    /// `reset()` periodically during a long ingest is the only reliable way
+    /// to keep RSS bounded. Returns an opaque error if the rebuild fails;
+    /// callers should treat that as fatal because the embedder's internal
+    /// state is now indeterminate.
+    fn reset(&self) -> Result<(), String> {
+        Ok(())
+    }
 }
 
 pub struct MockEmbedder {

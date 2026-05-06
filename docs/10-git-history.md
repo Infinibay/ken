@@ -169,7 +169,7 @@ commit messages said."
 ## Volume / cost estimates (Linux kernel as worst case)
 
 * ~1.2M commits, ~600 active contributors, ~30M LoC.
-* Mode A only: 1.2M Documents = ~3.5GB embeddings (768d × 4 bytes ×
+* Mode A only: 1.2M Documents = ~1.8GB embeddings (384d × 4 bytes ×
   avg 1 chunk per commit message). HNSW handles it at our tuned
   `m=24, ef_construction=128` — tested in pgvector at 5–10M vectors.
 * Mode B replay: ~1.2M synthetic sessions, ~50M synthetic

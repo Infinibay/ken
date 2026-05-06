@@ -18,6 +18,33 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    # Memory cap: protects the host from PG OOM during heavy ingests (HNSW
+    # index maintenance + work_mem can otherwise grow until Linux's OOM
+    # killer takes the host down with PG). 4 GiB is a comfortable ceiling
+    # for dev hardware; tune up for production.
+    mem_limit: 4g
+    memswap_limit: 4g
+    # Postgres knobs sized to live within mem_limit.
+    #   shared_buffers ≈ 25% of mem_limit (1 GiB) — pgvector benefits from
+    #     shared_buffers fitting hot vectors.
+    #   work_mem keeps per-sort/hash bounded; 32 MiB × max_connections caps
+    #     the temporary peak.
+    #   maintenance_work_mem 1 GiB — used during HNSW index build (the
+    #     post-ingest rebuild step). Higher = faster build, but bounded by
+    #     mem_limit minus shared_buffers.
+    #   max_connections 30 leaves headroom over the engine's pool of 20.
+    command:
+      - postgres
+      - -c
+      - shared_buffers=1GB
+      - -c
+      - work_mem=32MB
+      - -c
+      - maintenance_work_mem=1GB
+      - -c
+      - max_connections=30
+      - -c
+      - effective_cache_size=2GB
 
 volumes:
   cae-pg-data:

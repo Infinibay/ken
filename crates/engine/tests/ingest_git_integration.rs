@@ -175,7 +175,7 @@ async fn ingest_fixture_repo_filters_and_persists() {
 
     let source_id = ensure_source(&storage, ws, "fixture", &tmp).await.expect("source");
 
-    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(768));
+    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(384));
     let mut cfg = IngestGitConfig::new(&tmp, ws, source_id);
     cfg.skip_merges = true;
     cfg.skip_whitespace_only = true;
@@ -248,7 +248,7 @@ async fn ingest_fixture_repo_documents_only_skips_sessions() {
     make_fixture_repo(&tmp);
     let source_id = ensure_source(&storage, ws, "fixture-docs", &tmp).await.expect("source");
 
-    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(768));
+    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(384));
     let mut cfg = IngestGitConfig::new(&tmp, ws, source_id);
     cfg.mode = IngestMode::DocumentsOnly;
 
@@ -267,7 +267,7 @@ async fn ingest_respects_max_commits_cap() {
     make_fixture_repo(&tmp);
     let source_id = ensure_source(&storage, ws, "fixture-cap", &tmp).await.expect("source");
 
-    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(768));
+    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(384));
     let mut cfg = IngestGitConfig::new(&tmp, ws, source_id);
     cfg.max_commits = 2;
     cfg.mode = IngestMode::Both;
@@ -313,7 +313,7 @@ async fn ingest_extracts_commit_message_linkages() {
     );
 
     let source_id = ensure_source(&storage, ws, "linkage", &tmp).await.expect("source");
-    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(768));
+    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(384));
     let cfg = IngestGitConfig::new(&tmp, ws, source_id);
 
     let stats = ingest_repo(&storage, embedder, &cfg).await.expect("ingest");
@@ -453,7 +453,7 @@ impl User {
     }
 
     let source_id = ensure_source(&storage, ws, "rename", &tmp).await.expect("source");
-    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(768));
+    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(384));
     let cfg = IngestGitConfig::new(&tmp, ws, source_id);
 
     let stats = ingest_repo(&storage, embedder, &cfg).await.expect("ingest");
@@ -568,7 +568,7 @@ async fn ingest_aggregates_branch_as_single_session() {
     assert_eq!(branch_commits.len(), 3);
 
     let source_id = ensure_source(&storage, ws, "branch", &tmp).await.expect("source");
-    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(768));
+    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(384));
     let cfg = IngestGitConfig::new(&tmp, ws, source_id);
     // branch_as_session is the default
 
@@ -690,7 +690,7 @@ impl User {
     let _c2 = commit_file(&repo, "src/user.rs", V2, "fix: stricter email validation", &alice, Some(c1));
 
     let source_id = ensure_source(&storage, ws, "symbols", &tmp).await.expect("source");
-    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(768));
+    let embedder: Arc<dyn Embedder> = Arc::new(MockEmbedder::new(384));
     let cfg = IngestGitConfig::new(&tmp, ws, source_id);
 
     let stats = ingest_repo(&storage, embedder, &cfg).await.expect("ingest");

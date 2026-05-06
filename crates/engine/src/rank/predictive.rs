@@ -62,7 +62,7 @@ pub async fn predictive_scores(
 
     // Postgres does the cosine + per-session aggregation, returning only
     // (session_id, max_sim, last_ts). Replaces the old "pull every recent
-    // 768-dim embedding to app memory" pattern that was HIGH-5 in the audit.
+    // 384-dim embedding to app memory" pattern that was HIGH-5 in the audit.
     let passing = storage
         .recent_session_max_sims(
             workspace,

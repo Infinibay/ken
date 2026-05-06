@@ -113,15 +113,21 @@ Tres mecanismos de edge-creation:
 
 ## Embedder
 
-Único modelo: **`nomic-embed-text-v1.5`** (Apache 2.0).
+Modelo por defecto: **`all-MiniLM-L6-v2`** (Apache 2.0), variante cuantizada
+(`AllMiniLML6V2Q`).
 
 | Propiedad | Valor |
 |---|---|
-| Dimensiones | 768 |
-| Contexto máximo | 8192 tokens |
-| Multilingual | Razonable (incl. ES) |
-| Performance código | Mejor que MiniLM/BGE-small |
+| Dimensiones | 384 |
+| Contexto máximo | 256 tokens |
+| Multilingual | Pobre (mayormente EN) |
+| Performance código | Aceptable; menor que nomic en prosa larga |
 | Distribución | Disponible vía `fastembed-rs` |
+
+El modelo anterior (`nomic-embed-text-v1.5`, 768 dims) era demasiado pesado
+para máquinas dev modestas (~280 MB residentes). MiniLM-L6 ronda los ~80 MB
+y corre 5–10× más rápido en CPU. La migración `0005` redujo las columnas
+`vector(768)` → `vector(384)` cuando se hizo el cambio.
 
 Trait `Embedder` permite swap. MVP usa `MockEmbedder` determinista para tests
 (no requiere modelo descargado). Server enable feature `fastembed` para

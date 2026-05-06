@@ -28,7 +28,7 @@ Cada entidad del modelo de datos (`docs/02-data-model.md`) → una tabla:
 | `Workspace` | `workspaces` |
 | `Source` | `sources` |
 | `Document` | `documents` |
-| `Chunk` | `chunks` (incluye columna `embedding vector(768)` y FTS generated) |
+| `Chunk` | `chunks` (incluye columna `embedding vector(384)` y FTS generated) |
 | `Entity` | `entities` |
 | `Edge` | `edges` (NodeRef como `(kind, id, uri)` triplet) |
 | `Session` | `sessions` |
@@ -48,9 +48,10 @@ verdad ejecutable son las migraciones en `crates/engine/migrations/`.
   variantes canónicas (`"pdf"`) y extendidas (`{"other": "Custom"}`).
 - **Enums sin extensión** (`Pattern`, `EventType`, `ContextKind`, etc.)
   → `TEXT` plano.
-- **`embedding`**: columna `vector(768)` (dim de `nomic-embed-text-v1.5`).
+- **`embedding`**: columna `vector(384)` (dim de `all-MiniLM-L6-v2`).
   Índice **HNSW** sobre `vector_cosine_ops` con filtro `WHERE embedding
-  IS NOT NULL`.
+  IS NOT NULL`. La migración `0005` bajó este campo de `vector(768)` a
+  `vector(384)` cuando se cambió el embedder por defecto a `mini-q`.
 - **FTS**: columna `fts tsvector GENERATED ALWAYS AS to_tsvector('simple',
   text) STORED` en `chunks` y `session_contexts`. Índice GIN. Da el canal
   keyword del ranker gratis.

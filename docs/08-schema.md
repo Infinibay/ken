@@ -81,7 +81,7 @@ CREATE TABLE chunks (
     kind            JSONB NOT NULL,
     position        JSONB NOT NULL,
     text            TEXT NOT NULL,
-    embedding       vector(768),                                            -- pgvector
+    embedding       vector(384),                                            -- pgvector
     metadata        JSONB NOT NULL DEFAULT '{}',
     fts             tsvector GENERATED ALWAYS AS
                     (to_tsvector('simple', text)) STORED                    -- FTS
@@ -104,7 +104,7 @@ CREATE TABLE entities (
     kind            JSONB NOT NULL,
     canonical_name  TEXT NOT NULL,
     aliases         TEXT[] NOT NULL DEFAULT '{}',
-    embedding       vector(768),
+    embedding       vector(384),
     metadata        JSONB NOT NULL DEFAULT '{}'
 );
 CREATE INDEX ON entities (workspace_id);
@@ -152,7 +152,7 @@ CREATE TABLE session_contexts (
     kind            TEXT NOT NULL,
     content         TEXT NOT NULL,
     iteration       INT NOT NULL,
-    embedding       vector(768),
+    embedding       vector(384),
     created_at      BIGINT NOT NULL
 );
 CREATE INDEX ON session_contexts (session_id);

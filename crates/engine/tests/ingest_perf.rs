@@ -48,7 +48,7 @@ async fn setup() -> Option<(PostgresStorage, WorkspaceId, SourceId)> {
 #[ignore]
 async fn ingest_50_chunks_with_inline_embeddings_under_budget() {
     let Some((s, w, src)) = setup().await else { return };
-    let embedder = MockEmbedder::new(768);
+    let embedder = MockEmbedder::new(384);
     const N: usize = 50;
 
     let doc_t0 = Instant::now();

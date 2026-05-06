@@ -35,6 +35,10 @@ blake3.workspace = true
 base64.workspace = true
 ureq.workspace = true
 url.workspace = true
+# Aggressive allocator that returns freed memory to the OS far better
+# than glibc malloc — matters for long ingests where Rust drops chunks/
+# embeddings per-file but glibc keeps the arenas, growing RSS unbounded.
+mimalloc = { version = "0.1", default-features = false }
 
 [dev-dependencies]
 tokio = { workspace = true }

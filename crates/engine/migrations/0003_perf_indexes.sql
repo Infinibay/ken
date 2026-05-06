@@ -3,7 +3,7 @@
 -- 1. Bump HNSW build params (m, ef_construction) for higher recall ceiling.
 --    Defaults are m=16, ef_construction=64 — ok for tiny corpora, slightly
 --    underbuilt for retrieval at top_k=200. m=24, ef_construction=128 is the
---    sweet spot recommended in pgvector docs for 768-dim embeddings.
+--    sweet spot recommended in pgvector docs; values still apply at 384-dim.
 -- 2. Add a dedicated partial index on session_contexts(workspace_id, created_at)
 --    WHERE embedding IS NOT NULL. The existing idx_session_contexts_ws_time
 --    is full-table; the partial variant is what predictive_scores actually

@@ -31,8 +31,9 @@ Estado: **diseño + scaffolding del MVP** (mayo 2026).
   *especialización* — no la base. Cada tipo (PDF, email, código, markdown, …)
   tiene su propio "mini-engine" (Adapter) que extrae, parsea, chunkea y
   anota.
-- **Embedder**: uno solo (`nomic-embed-text-v1.5` — open source, 768 dim,
-  contexto 8192).
+- **Embedder**: uno solo por defecto (`all-MiniLM-L6-v2` quantized — open
+  source, 384 dim, contexto 256). Liviano, corre cómodo en CPU; suficiente
+  para retrieval de chunks de código y prosa corta.
 - **Knowledge graph**: capa separada con storage propio (CSR/CSC mmap'd) para
   no entorpecer el path de retrieval por documento.
 - **Multi-tenant + ACL** desde el día 1.

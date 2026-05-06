@@ -131,11 +131,11 @@ async fn replace_chunks_and_embeddings() {
         .unwrap();
     assert_eq!(cids.len(), 3);
 
-    s.put_embedding(EmbedKey::chunk(cids[0]), vec![1.0; 768])
+    s.put_embedding(EmbedKey::chunk(cids[0]), vec![1.0; 384])
         .await
         .unwrap();
     let v = s.get_embedding_by_owner(EmbedKey::chunk(cids[0])).await.unwrap();
-    assert_eq!(v.len(), 768);
+    assert_eq!(v.len(), 384);
     assert_eq!(v[0], 1.0);
 
     let listed = s.list_chunk_embeddings(w, true).await;
@@ -238,7 +238,7 @@ async fn snapshot_session_scores_roundtrip() {
         })
         .await
         .unwrap();
-    s.put_embedding(EmbedKey::context(cid), vec![0.5; 768])
+    s.put_embedding(EmbedKey::context(cid), vec![0.5; 384])
         .await
         .unwrap();
     assert!(s.get_context(cid).await.unwrap().embedding_id.is_some());
@@ -267,7 +267,7 @@ async fn snapshot_session_scores_roundtrip() {
     assert!(got.was_edited);
 
     let recent = s.list_recent_context_embeddings(w, 0, None).await;
-    assert!(recent.iter().any(|(c, v)| c.id == cid && v.len() == 768));
+    assert!(recent.iter().any(|(c, v)| c.id == cid && v.len() == 384));
 }
 
 #[tokio::test]
@@ -513,7 +513,7 @@ async fn delete_document_cascades_chunks_embeddings_edges() {
         )
         .await
         .unwrap()[0];
-    s.put_embedding(EmbedKey::chunk(cid), vec![1.0; 768])
+    s.put_embedding(EmbedKey::chunk(cid), vec![1.0; 384])
         .await
         .unwrap();
     s.add_edge(NewEdge {
@@ -616,8 +616,8 @@ async fn predictive_context_sweep_excludes_session() {
         })
         .await
         .unwrap();
-    s.put_embedding(EmbedKey::context(c1), vec![1.0; 768]).await.unwrap();
-    s.put_embedding(EmbedKey::context(c2), vec![2.0; 768]).await.unwrap();
+    s.put_embedding(EmbedKey::context(c1), vec![1.0; 384]).await.unwrap();
+    s.put_embedding(EmbedKey::context(c2), vec![2.0; 384]).await.unwrap();
 
     let hits: Vec<ContextId> = s
         .list_recent_context_embeddings(w, 0, Some(s1))
@@ -690,7 +690,7 @@ async fn reactive_channel_ranks_cited_above_dismissed() {
 async fn ranker_end_to_end_finds_semantic_match() {
     use engine::embed::Embedder;
     let Some((s, _, w, src)) = setup().await else { return };
-    let embedder = MockEmbedder::new(768);
+    let embedder = MockEmbedder::new(384);
 
     // Seed: ingest two documents with chunks. Embed query-similar text into
     // one of them; query-unrelated text into the other.
