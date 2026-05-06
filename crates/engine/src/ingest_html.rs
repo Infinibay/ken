@@ -334,7 +334,11 @@ fn skip_block(html: &str, start: usize, tag: &str) -> Option<usize> {
     if rest.len() < tag.len() {
         return None;
     }
-    if !rest[..tag.len()].eq_ignore_ascii_case(tag) {
+    // Byte-level compare: `rest[..tag.len()]` would panic when the byte
+    // after `<` is the middle of a multi-byte UTF-8 sequence (e.g. an
+    // emoji used as page content like `<h1>⚡ ...`). Tag names are ASCII,
+    // so comparing the leading bytes is correct and never panics.
+    if !rest.as_bytes()[..tag.len()].eq_ignore_ascii_case(tag.as_bytes()) {
         return None;
     }
     // Must be followed by `>` or whitespace (to rule out e.g. `<scripts>`).
@@ -508,6 +512,20 @@ mod tests {
             hint_metadata: MetadataMap::default(),
             source_modified_at: None,
         }
+    }
+
+    #[test]
+    fn skip_block_does_not_panic_on_multibyte_after_lt() {
+        // Regression: a `<` followed by a multi-byte UTF-8 character (emoji,
+        // accented letter, CJK, etc.) used to panic via byte-slicing inside
+        // a char. We now compare on `as_bytes()` so the slice is byte-safe.
+        // Returns None here because no `<script>` / `<style>` follows the `<`.
+        let html = "<h1>⚡ Adaptive Router</h1>";
+        assert_eq!(skip_block(html, 0, "script"), None);
+        assert_eq!(skip_block(html, 0, "style"), None);
+        // A real document with an emoji body should ingest end-to-end.
+        let a = HtmlAdapter;
+        let _ = a.ingest(raw(html, "doc.html"), &ctx()).unwrap();
     }
 
     #[test]

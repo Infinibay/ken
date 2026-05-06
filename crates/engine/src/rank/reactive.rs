@@ -90,6 +90,12 @@ pub fn score_from_events(
 ) -> Vec<ChannelHit> {
     let mut sum_by_target: AHashMap<NodeRef, f32> = AHashMap::new();
     let mut events_by_target: AHashMap<NodeRef, Vec<EventType>> = AHashMap::new();
+    // Targets that the session committed to (received an `Edited` event).
+    // Used by `classify_pattern` to distinguish "Read once, never edited
+    // anywhere" (neutral — agent may still be exploring) from "Read once,
+    // session edited *something else*" (the agent looked at this file and
+    // moved on — a soft rejection signal).
+    let mut edited_targets: ahash::AHashSet<NodeRef> = ahash::AHashSet::new();
 
     for ev in events {
         let delta = current_iteration.saturating_sub(ev.iteration);
@@ -100,11 +106,19 @@ pub fn score_from_events(
             .entry(ev.target.clone())
             .or_default()
             .push(ev.event_type);
+        if ev.event_type == EventType::Edited {
+            edited_targets.insert(ev.target.clone());
+        }
     }
 
     let mut out = Vec::with_capacity(sum_by_target.len());
     for (target, raw) in sum_by_target {
-        let pattern = classify_pattern(events_by_target.get(&target).map(|v| v.as_slice()).unwrap_or(&[]));
+        let target_events = events_by_target.get(&target).map(|v| v.as_slice()).unwrap_or(&[]);
+        // "Edit elsewhere" = at least one *other* target in the session got
+        // an `Edited` event. A single edited target is enough to make a
+        // read-only file in the same session look like a discarded lead.
+        let edit_elsewhere = edited_targets.iter().any(|t| t != &target);
+        let pattern = classify_pattern(target_events, edit_elsewhere);
         let final_score = raw * pattern.multiplier();
         if final_score > 0.0 {
             out.push(ChannelHit {
@@ -123,8 +137,10 @@ pub fn score_from_events(
 ///   3. `Read` + `Edited` (in any order) ⇒ ReadEdit
 ///   4. `Edited` only (no `Read`) ⇒ EditOnly
 ///   5. ≥3 `Read` events without `Edited` or `Cited` ⇒ ReadRepeated
-///   6. otherwise ⇒ Neutral
-fn classify_pattern(events: &[EventType]) -> Pattern {
+///   6. 1–2 `Read` events, no edit on this target, *and the session edited
+///      somewhere else* ⇒ ReadSkipped (the agent looked here and moved on)
+///   7. otherwise ⇒ Neutral (single read, session still exploring)
+fn classify_pattern(events: &[EventType], session_edited_elsewhere: bool) -> Pattern {
     use EventType::*;
 
     let has = |target: EventType| events.iter().any(|e| *e == target);
@@ -140,6 +156,8 @@ fn classify_pattern(events: &[EventType]) -> Pattern {
         Pattern::EditOnly
     } else if count(Read) >= 3 {
         Pattern::ReadRepeated
+    } else if has(Read) && session_edited_elsewhere {
+        Pattern::ReadSkipped
     } else {
         Pattern::Neutral
     }
@@ -162,13 +180,56 @@ mod tests {
     #[test]
     fn classify_pattern_priority() {
         use EventType::*;
-        assert_eq!(classify_pattern(&[Read, Edited, Cited]), Pattern::Cited);
-        assert_eq!(classify_pattern(&[Read, Dismissed]), Pattern::Dismissed);
-        assert_eq!(classify_pattern(&[Read, Edited]), Pattern::ReadEdit);
-        assert_eq!(classify_pattern(&[Edited]), Pattern::EditOnly);
-        assert_eq!(classify_pattern(&[Read, Read, Read]), Pattern::ReadRepeated);
-        assert_eq!(classify_pattern(&[Read]), Pattern::Neutral);
-        assert_eq!(classify_pattern(&[Retrieved]), Pattern::Neutral);
+        // Single-target priorities — `session_edited_elsewhere=false` so the
+        // ReadSkipped branch never fires here.
+        assert_eq!(classify_pattern(&[Read, Edited, Cited], false), Pattern::Cited);
+        assert_eq!(classify_pattern(&[Read, Dismissed], false), Pattern::Dismissed);
+        assert_eq!(classify_pattern(&[Read, Edited], false), Pattern::ReadEdit);
+        assert_eq!(classify_pattern(&[Edited], false), Pattern::EditOnly);
+        assert_eq!(classify_pattern(&[Read, Read, Read], false), Pattern::ReadRepeated);
+        assert_eq!(classify_pattern(&[Read], false), Pattern::Neutral);
+        assert_eq!(classify_pattern(&[Retrieved], false), Pattern::Neutral);
+    }
+
+    #[test]
+    fn read_only_with_edit_elsewhere_is_skipped() {
+        use EventType::*;
+        // 1–2 reads + edit-elsewhere = ReadSkipped (the agent looked here
+        // and committed somewhere else — soft rejection signal).
+        assert_eq!(classify_pattern(&[Read], true), Pattern::ReadSkipped);
+        assert_eq!(classify_pattern(&[Read, Read], true), Pattern::ReadSkipped);
+        // ≥3 reads still wins as ReadRepeated (the agent kept coming back).
+        assert_eq!(classify_pattern(&[Read, Read, Read], true), Pattern::ReadRepeated);
+        // Without edit-elsewhere, single read stays Neutral (still exploring).
+        assert_eq!(classify_pattern(&[Read], false), Pattern::Neutral);
+        // Edit on this target wins regardless — being the file that got
+        // edited beats the cross-target signal.
+        assert_eq!(classify_pattern(&[Read, Edited], true), Pattern::ReadEdit);
+    }
+
+    #[test]
+    fn read_skipped_dampens_score_when_other_target_edited() {
+        // End-to-end: a.rs read once, b.rs read+edited. a.rs should land
+        // at 0.3× its raw weight (ReadSkipped) while b.rs gets 2.0×
+        // (ReadEdit) — the file actually edited dominates.
+        let cfg = ReactiveConfig::default();
+        let evs = vec![
+            ev(1, EventType::Read, 0, 1.0),    // a.rs: read only
+            ev(2, EventType::Read, 0, 1.0),    // b.rs: read
+            ev(2, EventType::Edited, 0, 1.0),  // b.rs: edited
+        ];
+        let out = score_from_events(&evs, 0, &cfg);
+        let by = |id: u64| {
+            out.iter()
+                .find(|h| h.target == NodeRef::Document(DocumentId(id)))
+                .map(|h| h.score)
+                .expect("target must be present")
+        };
+        // a.rs: base 1.0 × decay 1.0 × 0.3 (ReadSkipped) = 0.3
+        assert!((by(1) - 0.3).abs() < 1e-5, "a.rs got {}, expected 0.3", by(1));
+        // b.rs: (1.0 read + 2.0 edit) × decay 1.0 × 2.0 (ReadEdit) = 6.0
+        assert!((by(2) - 6.0).abs() < 1e-5, "b.rs got {}, expected 6.0", by(2));
+        assert!(by(2) > by(1) * 10.0);
     }
 
     #[test]

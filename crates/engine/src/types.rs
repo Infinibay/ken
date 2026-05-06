@@ -551,6 +551,13 @@ pub enum Pattern {
     #[default]
     Neutral,
     ReadRepeated,
+    /// Read 1–2× and never edited, *while the same session edited a
+    /// different target*. The agent looked at the file and moved on —
+    /// a softer-but-real form of rejection that historically aliased
+    /// into `Neutral`. Damped to 0.3× so the file still ranks (it's
+    /// the first time the agent saw it) but loses cleanly to the
+    /// target that was actually edited.
+    ReadSkipped,
     Dismissed,
 }
 
@@ -562,6 +569,7 @@ impl Pattern {
             Pattern::EditOnly => 1.5,
             Pattern::Neutral => 1.0,
             Pattern::ReadRepeated => 0.7,
+            Pattern::ReadSkipped => 0.3,
             Pattern::Dismissed => 0.3,
         }
     }
@@ -624,6 +632,7 @@ mod tests {
         assert_eq!(Pattern::EditOnly.multiplier(), 1.5);
         assert_eq!(Pattern::Neutral.multiplier(), 1.0);
         assert_eq!(Pattern::ReadRepeated.multiplier(), 0.7);
+        assert_eq!(Pattern::ReadSkipped.multiplier(), 0.3);
         assert_eq!(Pattern::Dismissed.multiplier(), 0.3);
     }
 

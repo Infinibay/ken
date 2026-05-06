@@ -252,6 +252,7 @@ fn pattern_str(p: Pattern) -> &'static str {
         Pattern::EditOnly => "edit_only",
         Pattern::Neutral => "neutral",
         Pattern::ReadRepeated => "read_repeated",
+        Pattern::ReadSkipped => "read_skipped",
         Pattern::Dismissed => "dismissed",
     }
 }
@@ -263,6 +264,7 @@ fn pattern_from_str(s: &str) -> Option<Pattern> {
         "edit_only" => Pattern::EditOnly,
         "neutral" => Pattern::Neutral,
         "read_repeated" => Pattern::ReadRepeated,
+        "read_skipped" => Pattern::ReadSkipped,
         "dismissed" => Pattern::Dismissed,
         _ => return None,
     })
