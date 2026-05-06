@@ -400,6 +400,13 @@ pub enum EdgeKind {
     /// sweep can rewrite these to `Chunk(id)` once a `CodeAdapter` has
     /// ingested the same file through the regular pipeline.
     ChangesSymbol,
+    /// Inferred at session-close: both endpoints were productively
+    /// co-accessed during the same session (productivity > 1.0 — Cited,
+    /// ReadEdit, or EditOnly). Symmetric — both directions are emitted.
+    /// The ranker can use this as a 1-hop expansion signal once we wire
+    /// edge-following into the predictive channel. Metadata carries the
+    /// session id and both endpoints' patterns for forensics.
+    CoAccessed,
     Other(String),
 }
 

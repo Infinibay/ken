@@ -2,7 +2,7 @@
 //! channel merge. These are inside `Ranker::rank()`'s hot path so even a
 //! 2x regression here is measurable end-to-end.
 //!
-//! Run with:  cargo bench --bench rank_math -p cae-engine
+//! Run with:  cargo bench --bench rank_math -p ken-engine
 
 use criterion::{black_box, criterion_group, criterion_main, BatchSize, Criterion, Throughput};
 use engine::rank::merge::{apply_confidence_and_mad, max_merge, ChannelHit, MergeConfig};

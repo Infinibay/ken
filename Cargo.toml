@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/engine", "crates/server", "crates/cae-claude"]
+members = ["crates/engine", "crates/ken"]
 
 [workspace.package]
 version = "0.1.0"
@@ -42,9 +42,10 @@ ignore = "0.4"
 pdf-extract = "0.10"
 base64 = "0.22"
 criterion = { version = "0.5", default-features = false, features = ["cargo_bench_support"] }
-ureq = { version = "2", features = ["json", "rustls"], default-features = false }
+ureq = { version = "2", features = ["json", "tls"], default-features = false }
+url = "2"
 
-engine = { path = "crates/engine", package = "cae-engine" }
+engine = { path = "crates/engine", package = "ken-engine" }
 
 [profile.release]
 lto = "thin"

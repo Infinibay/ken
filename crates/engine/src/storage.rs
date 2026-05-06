@@ -178,6 +178,49 @@ pub struct SyntheticSessionWrite {
 }
 
 // ============================================================================
+// Query result types
+// ============================================================================
+
+/// A commit that touched a particular file or symbol. Returned by
+/// `git_history_for_target`. Carries enough metadata to render a citation
+/// without a follow-up document fetch — the route would otherwise N+1.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CommitTouch {
+    pub document_id: DocumentId,
+    /// Hex commit sha (extracted from the commit Document's `external_id`).
+    pub sha: String,
+    /// First line of the commit message.
+    pub summary: String,
+    /// `Name <email>` if known, else `None`.
+    pub author: Option<String>,
+    /// Committer time in milliseconds since epoch.
+    pub time_ms: u64,
+    /// Which edge kind matched: `"file"` for `ChangesFile`, `"symbol"` for
+    /// `ChangesSymbol`. When both match the same commit the edge with the
+    /// higher weight wins (symbol-level edges have weight 1.0; file-level
+    /// edges weight depends on FileStatus).
+    pub matched_kind: String,
+}
+
+/// One symbol declared in a file. Returned by `list_symbols_in_file`. The
+/// `head` field carries the first lines of the chunk's text (signature +
+/// adjacent doc-comment / docstring) only when the caller asked for it —
+/// otherwise it stays `None` to keep the response cheap.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FileSymbol {
+    pub chunk_id: ChunkId,
+    pub qualified_name: String,
+    pub line_start: u32,
+    pub line_end: u32,
+    /// First N lines of the symbol's chunk text — covers the signature and
+    /// (for adapters that include them) the leading doc comment / docstring.
+    /// Cross-language heuristic; works because every code adapter starts the
+    /// chunk at the symbol's signature.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub head: Option<String>,
+}
+
+// ============================================================================
 // Filter / outcome types
 // ============================================================================
 

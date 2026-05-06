@@ -9,7 +9,7 @@
 //!
 //! Run explicitly:
 //!
-//!     cargo test -p cae-engine --features fastembed -- --ignored fastembed
+//!     cargo test -p ken-engine --features fastembed -- --ignored fastembed
 //!
 //! Verifies:
 //!   * model loads and reports the expected 768 dimensions,

@@ -3,7 +3,7 @@
 //! catch regressions in tree-sitter walkers (where a small AST traversal
 //! mistake can collapse throughput by 10x) and Markdown / PDF parsing.
 //!
-//! Run with:  cargo bench --bench adapters -p cae-engine --features "code pdf"
+//! Run with:  cargo bench --bench adapters -p ken-engine --features "code pdf"
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use engine::ingest::{ContentAdapter, IngestContext, PlainTextAdapter, RawDocument};

@@ -660,7 +660,10 @@ pub async fn ensure_source(
     name: &str,
     repo_path: &std::path::Path,
 ) -> StorageResult<SourceId> {
-    let id = storage
+    if let Some(id) = storage.find_source_by_name(workspace_id, name).await {
+        return Ok(id);
+    }
+    storage
         .create_source(NewSource {
             workspace_id,
             kind: SourceKind::Custom("git".into()),
@@ -672,8 +675,7 @@ pub async fn ensure_source(
             keep_history: false,
             default_acl: Acl::default(),
         })
-        .await?;
-    Ok(id)
+        .await
 }
 
 /// Convert a `serde_json` value to a `serde_json::Value` representing

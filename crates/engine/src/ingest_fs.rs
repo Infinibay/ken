@@ -73,14 +73,20 @@ pub struct IngestCodebaseStats {
     pub elapsed: Duration,
 }
 
-/// Create (or reuse) a Source row tagged as a filesystem codebase.
-/// Mirrors `ingest_git::ensure_source` — same shape, different `kind`.
+/// Create (or reuse) a Source row tagged as a filesystem codebase. Find-or-
+/// create on `(workspace_id, name)` so re-running an ingest command without
+/// `--source` doesn't pile up duplicate Source rows — the second run reuses
+/// the first, and document idempotency via `(source_id, external_id)` keeps
+/// re-ingestion cheap.
 pub async fn ensure_source(
     storage: &PostgresStorage,
     workspace_id: WorkspaceId,
     name: &str,
     repo_path: &Path,
 ) -> StorageResult<SourceId> {
+    if let Some(id) = storage.find_source_by_name(workspace_id, name).await {
+        return Ok(id);
+    }
     storage
         .create_source(NewSource {
             workspace_id,
@@ -158,13 +164,25 @@ pub async fn ingest_codebase(
             continue;
         };
 
-        match ingest_one_file(storage, &embedder, cfg, adapter, &rel, bytes).await {
-            Ok(FileOutcome::Written { chunks, edges }) => {
+        match ingest_uri(
+            storage,
+            &embedder,
+            cfg.workspace_id,
+            cfg.source_id,
+            adapter,
+            &rel,
+            bytes,
+            None,
+            MetadataMap::default(),
+        )
+        .await
+        {
+            Ok(FileOutcome::Written { chunks, edges, .. }) => {
                 stats.documents_written += 1;
                 stats.chunks_written += chunks as u64;
                 stats.edges_written += edges as u64;
             }
-            Ok(FileOutcome::Unchanged) => stats.documents_unchanged += 1,
+            Ok(FileOutcome::Unchanged { .. }) => stats.documents_unchanged += 1,
             Err(IngestFileError::Adapter(err)) => {
                 tracing::debug!(path = %rel, error = %err, "adapter rejected file");
                 stats.files_skipped_adapter_error += 1;
@@ -177,12 +195,32 @@ pub async fn ingest_codebase(
     Ok(stats)
 }
 
-enum FileOutcome {
-    Written { chunks: usize, edges: usize },
-    Unchanged,
+/// Outcome of `ingest_uri`. Both variants carry the resolved `DocumentId`
+/// so callers (HTTP routes, MCP tools) can echo it back regardless of
+/// whether the content was already up-to-date.
+///
+/// A re-ingest of the same content (same hash) short-circuits to
+/// `Unchanged`; otherwise the chunk and edge counts are
+/// what was actually persisted.
+pub enum FileOutcome {
+    Written {
+        document_id: DocumentId,
+        chunks: usize,
+        edges: usize,
+        /// `"created"`, `"updated"`, or `"versioned"` — mirrors the
+        /// `UpsertOutcome` variant. Useful for HTTP responses that want to
+        /// distinguish between a fresh upload and an update.
+        outcome: &'static str,
+    },
+    Unchanged {
+        document_id: DocumentId,
+    },
 }
 
-enum IngestFileError {
+/// Either the adapter rejected the bytes (corrupt PDF, non-utf8 plaintext,
+/// etc.) or the storage call failed. Adapter errors are recoverable per
+/// document; storage errors are usually fatal for the run.
+pub enum IngestFileError {
     Adapter(crate::ingest::IngestError),
     Storage(crate::storage::StorageError),
 }
@@ -193,37 +231,49 @@ impl From<crate::storage::StorageError> for IngestFileError {
     }
 }
 
-async fn ingest_one_file(
+/// Public, generic version of the per-document ingest path. Used by:
+///   * `ingest_codebase` (one call per file under a root)
+///   * `ken ingest-file` (one shot for a single file)
+///   * `ken ingest-url` (one shot per fetched URL)
+///
+/// Caller picks the adapter (usually via `pick_adapter(&adapters, &hint)`).
+/// `source_uri` becomes the document's `path_or_url` and `external_id` —
+/// re-ingesting the same URI updates the existing Document via the upsert's
+/// content-hash check.
+pub async fn ingest_uri(
     storage: &PostgresStorage,
     embedder: &Arc<dyn Embedder>,
-    cfg: &IngestCodebaseConfig,
+    workspace_id: WorkspaceId,
+    source_id: SourceId,
     adapter: &dyn ContentAdapter,
-    rel_path: &str,
+    source_uri: &str,
     bytes: Vec<u8>,
+    mime_hint: Option<String>,
+    hint_metadata: MetadataMap,
 ) -> Result<FileOutcome, IngestFileError> {
     let raw = RawDocument {
         bytes,
-        source_uri: rel_path.to_string(),
-        mime_hint: None,
-        external_id: Some(rel_path.to_string()),
-        hint_metadata: MetadataMap::default(),
+        source_uri: source_uri.to_string(),
+        mime_hint,
+        external_id: Some(source_uri.to_string()),
+        hint_metadata,
         source_modified_at: None,
     };
     let ctx = IngestContext {
-        workspace_id: cfg.workspace_id,
-        source_id: cfg.source_id,
+        workspace_id,
+        source_id,
     };
     let IngestOutput { document, chunks, edges: edge_drafts, .. } =
         adapter.ingest(raw, &ctx).map_err(IngestFileError::Adapter)?;
 
     let new_doc = NewDocument {
-        workspace_id: cfg.workspace_id,
-        source_id: cfg.source_id,
+        workspace_id,
+        source_id,
         external_id: document.external_id,
         kind: document.kind,
         mime: document.mime,
         title: document.title,
-        path_or_url: document.path_or_url.or_else(|| Some(rel_path.to_string())),
+        path_or_url: document.path_or_url.or_else(|| Some(source_uri.to_string())),
         content_hash: document.content_hash,
         acl: document.acl,
         metadata: document.metadata,
@@ -231,9 +281,17 @@ async fn ingest_one_file(
     };
     let outcome = storage.upsert_document(new_doc).await?;
     if outcome.is_unchanged() {
-        return Ok(FileOutcome::Unchanged);
+        return Ok(FileOutcome::Unchanged {
+            document_id: outcome.current_id(),
+        });
     }
     let doc_id = outcome.current_id();
+    let outcome_label = match outcome {
+        UpsertOutcome::Created(_) => "created",
+        UpsertOutcome::Updated(_) => "updated",
+        UpsertOutcome::Versioned { .. } => "versioned",
+        UpsertOutcome::Unchanged(_) => "unchanged", // unreachable per the early return above
+    };
 
     // Embed all chunks in one batch on a blocking thread (matches the
     // /ingest_text path), then write chunks + embeddings inline.
@@ -266,7 +324,7 @@ async fn ingest_one_file(
     // Adapter edges + URL annotator edges, batched.
     let mut all_edges: Vec<NewEdge> = Vec::new();
     for edge in edge_drafts {
-        if let Some(new_edge) = resolve_edge(&edge, cfg.workspace_id, doc_id, &chunk_ids) {
+        if let Some(new_edge) = resolve_edge(&edge, workspace_id, doc_id, &chunk_ids) {
             all_edges.push(new_edge);
         }
     }
@@ -275,13 +333,18 @@ async fn ingest_one_file(
         .zip(chunks.iter())
         .map(|(cid, c)| (*cid, c.text.clone()))
         .collect();
-    all_edges.extend(url_edges_for_chunks(cfg.workspace_id, &url_pairs));
+    all_edges.extend(url_edges_for_chunks(workspace_id, &url_pairs));
     let edges_count = all_edges.len();
     if !all_edges.is_empty() {
         let _ = storage.add_edges(all_edges).await;
     }
 
-    Ok(FileOutcome::Written { chunks: chunk_ids.len(), edges: edges_count })
+    Ok(FileOutcome::Written {
+        document_id: doc_id,
+        chunks: chunk_ids.len(),
+        edges: edges_count,
+        outcome: outcome_label,
+    })
 }
 
 fn resolve_endpoint(

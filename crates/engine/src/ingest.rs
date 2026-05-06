@@ -189,6 +189,7 @@ pub fn default_adapters() -> Vec<Box<dyn ContentAdapter>> {
     #[cfg(feature = "pdf")]
     adapters.push(Box::new(crate::ingest_pdf::PdfAdapter));
     adapters.push(Box::new(crate::ingest_md::MarkdownAdapter));
+    adapters.push(Box::new(crate::ingest_html::HtmlAdapter));
     adapters.push(Box::new(PlainTextAdapter));
     adapters
 }
@@ -315,7 +316,7 @@ impl ContentAdapter for PlainTextAdapter {
 /// Split text into paragraph spans separated by blank lines. Tolerant of
 /// `\r\n` and whitespace-only "blank" lines. Returns (byte_start, byte_end,
 /// borrowed slice).
-fn split_paragraphs(text: &str) -> Vec<(u64, u64, &str)> {
+pub(crate) fn split_paragraphs(text: &str) -> Vec<(u64, u64, &str)> {
     let bytes = text.as_bytes();
     let mut out: Vec<(u64, u64, &str)> = Vec::new();
     let mut start = 0usize;
@@ -373,7 +374,7 @@ fn blank_line_separator_at(s: &[u8], i: usize) -> Option<usize> {
 /// Split a paragraph that exceeds `max_chars` into char-aligned subchunks.
 /// Returns sub-spans with corrected byte offsets relative to the original
 /// document.
-fn split_oversize<'a>(
+pub(crate) fn split_oversize<'a>(
     start: u64,
     end: u64,
     text: &'a str,

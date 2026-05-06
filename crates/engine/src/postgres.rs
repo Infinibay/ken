@@ -29,9 +29,9 @@ use sqlx::Row;
 use thiserror::Error;
 
 use crate::storage::{
-    now_millis, ChunkFilter, NewChunk, NewContext, NewDocument, NewEdge, NewEntity,
-    NewInteraction, NewSessionScore, NewSource, StorageError, StorageResult, SyntheticSessionWrite,
-    UpsertOutcome,
+    now_millis, ChunkFilter, CommitTouch, FileSymbol, NewChunk, NewContext, NewDocument, NewEdge,
+    NewEntity, NewInteraction, NewSessionScore, NewSource, StorageError, StorageResult,
+    SyntheticSessionWrite, UpsertOutcome,
 };
 use crate::types::*;
 
@@ -376,6 +376,27 @@ impl PostgresStorage {
             last_sync_at: row.get::<Option<i64>, _>(7).map(|t| t as u64),
             created_at: row.get::<i64, _>(8) as u64,
         })
+    }
+
+    /// Lookup a source by name within a workspace. Returns `None` if absent
+    /// or the workspace doesn't exist. Used by the `ensure_source` helpers
+    /// to make re-running ingest commands idempotent without forcing the
+    /// caller to remember a `--source` id.
+    pub async fn find_source_by_name(
+        &self,
+        workspace_id: WorkspaceId,
+        name: &str,
+    ) -> Option<SourceId> {
+        let id: Option<i64> = sqlx::query_scalar(
+            "SELECT id FROM sources WHERE workspace_id = $1 AND name = $2 LIMIT 1",
+        )
+        .bind(workspace_id.0 as i64)
+        .bind(name)
+        .fetch_optional(&self.pool)
+        .await
+        .ok()
+        .flatten();
+        id.map(|i| SourceId(i as u64))
     }
 
     pub async fn touch_source_synced(&self, id: SourceId, ts: Timestamp) -> StorageResult<()> {
@@ -885,6 +906,176 @@ impl PostgresStorage {
         .await
         .unwrap_or_default();
         ids.into_iter().map(|i| ChunkId(i as u64)).collect()
+    }
+
+    /// Find commits (Documents with `external_id = "git+sha:<sha>"`) that
+    /// touched a given file path or symbol qualified-name. Matches three
+    /// patterns against `edges.to_uri`:
+    ///
+    ///   1. `git+path:<ws>:<target>` — exact file path (covers `ChangesFile`)
+    ///   2. `git+symbol:<ws>:<target>:%` — any symbol declared in `<target>`
+    ///      when the user passes a path (covers `ChangesSymbol` for any
+    ///      symbol in that file)
+    ///   3. `git+symbol:<ws>:%:<target>` — when the user passes a qualified
+    ///      symbol name; matches that symbol regardless of file
+    ///
+    /// Returns commits ordered by committer time descending. Optional
+    /// `since_ms` filters out commits older than that timestamp.
+    ///
+    /// Phase-1.5-aware: requires the git ingest to have run with the `git`
+    /// feature (which now implies `code`) so that `ChangesSymbol` edges
+    /// exist. Without symbol edges only pattern 1 produces hits.
+    pub async fn git_history_for_target(
+        &self,
+        workspace_id: WorkspaceId,
+        target: &str,
+        since_ms: Option<u64>,
+        limit: usize,
+    ) -> Vec<CommitTouch> {
+        let ws = workspace_id.0 as i64;
+        let exact_path = format!("git+path:{}:{}", workspace_id.0, target);
+        let symbol_in_path = format!("git+symbol:{}:{}:%", workspace_id.0, target);
+        let symbol_by_qname = format!("git+symbol:{}:%:{}", workspace_id.0, target);
+        let since = since_ms.map(|m| m as i64);
+
+        // The CTE collapses many edges-per-commit (one ChangesFile + N
+        // ChangesSymbol when the file/symbol both match) into one row per
+        // commit. The match label tracks which pattern produced the
+        // strongest hit so the response can show file vs. symbol provenance.
+        let rows = sqlx::query(
+            "WITH matched AS (
+                SELECT
+                    e.from_id AS doc_id,
+                    bool_or(e.kind::text = '\"changes_symbol\"') AS hit_symbol,
+                    bool_or(e.kind::text = '\"changes_file\"')   AS hit_file
+                FROM edges e
+                WHERE e.workspace_id = $1
+                  AND e.from_kind    = 'doc'
+                  AND e.from_id      IS NOT NULL
+                  AND e.kind::text IN ('\"changes_file\"', '\"changes_symbol\"')
+                  AND (
+                       e.to_uri = $2
+                    OR e.to_uri LIKE $3
+                    OR e.to_uri LIKE $4
+                  )
+                GROUP BY e.from_id
+             )
+             SELECT d.id, d.external_id, d.title, d.metadata, d.source_modified_at,
+                    m.hit_symbol, m.hit_file
+             FROM matched m
+             JOIN documents d ON d.id = m.doc_id
+             WHERE d.workspace_id = $1
+               AND d.current      = TRUE
+               AND ($5::bigint IS NULL OR COALESCE(d.source_modified_at, 0) >= $5)
+             ORDER BY COALESCE(d.source_modified_at, 0) DESC, d.id DESC
+             LIMIT $6",
+        )
+        .bind(ws)
+        .bind(exact_path)
+        .bind(symbol_in_path)
+        .bind(symbol_by_qname)
+        .bind(since)
+        .bind(limit as i64)
+        .fetch_all(&self.pool)
+        .await
+        .unwrap_or_default();
+
+        rows.into_iter()
+            .map(|row| {
+                let doc_id = DocumentId(row.get::<i64, _>(0) as u64);
+                let external_id: Option<String> = row.get(1);
+                let summary: Option<String> = row.get(2);
+                let metadata: Json<MetadataMap> = row.get(3);
+                let modified: Option<i64> = row.get(4);
+                let hit_symbol: bool = row.get(5);
+                let hit_file: bool = row.get(6);
+                let sha = external_id
+                    .as_deref()
+                    .and_then(|s| s.strip_prefix("git+sha:"))
+                    .map(str::to_string)
+                    .unwrap_or_default();
+                let matched_kind = if hit_symbol && hit_file {
+                    "symbol+file".to_string()
+                } else if hit_symbol {
+                    "symbol".to_string()
+                } else {
+                    "file".to_string()
+                };
+                CommitTouch {
+                    document_id: doc_id,
+                    sha,
+                    summary: summary.unwrap_or_default(),
+                    author: metadata.0.author.clone(),
+                    time_ms: modified.unwrap_or(0).max(0) as u64,
+                    matched_kind,
+                }
+            })
+            .collect()
+    }
+
+    /// List `SymbolRange` chunks declared in `path`, ordered by line number.
+    /// Skips paragraph / page chunks (markdown / pdf) — they have no symbol
+    /// shape. When `include_head` is true, the first ~10 lines of each
+    /// symbol's chunk text are returned in `head` (signature + adjacent doc
+    /// comment for code adapters that span them).
+    pub async fn list_symbols_in_file(
+        &self,
+        workspace_id: WorkspaceId,
+        path: &str,
+        include_head: bool,
+        limit: usize,
+    ) -> Vec<FileSymbol> {
+        // Two queries are unwelcome but the alternative — pulling text in
+        // every call — costs tokens proportional to the file size when most
+        // callers just want the symbol map. Branch on the flag.
+        let rows = sqlx::query(
+            "SELECT c.id,
+                    c.position->>'qualified_name' AS qname,
+                    (c.position->>'line_start')::int AS line_start,
+                    (c.position->>'line_end')::int   AS line_end,
+                    CASE WHEN $3::boolean THEN c.text ELSE NULL END AS text
+             FROM chunks c
+             JOIN documents d ON d.id = c.document_id
+             WHERE c.workspace_id = $1
+               AND d.path_or_url  = $2
+               AND d.current      = TRUE
+               AND c.position->>'kind' = 'symbol_range'
+             ORDER BY (c.position->>'line_start')::int, c.id
+             LIMIT $4",
+        )
+        .bind(workspace_id.0 as i64)
+        .bind(path)
+        .bind(include_head)
+        .bind(limit as i64)
+        .fetch_all(&self.pool)
+        .await
+        .unwrap_or_default();
+
+        rows.into_iter()
+            .map(|row| {
+                let chunk_id = ChunkId(row.get::<i64, _>(0) as u64);
+                let qualified_name: String = row.get::<Option<String>, _>(1).unwrap_or_default();
+                let line_start = row.get::<Option<i32>, _>(2).unwrap_or(0).max(0) as u32;
+                let line_end = row.get::<Option<i32>, _>(3).unwrap_or(0).max(0) as u32;
+                let head = if include_head {
+                    row.get::<Option<String>, _>(4).map(|t| {
+                        // Trim to the first 10 lines — covers the signature
+                        // and adjacent doc comments without dragging a long
+                        // function body into the response.
+                        t.lines().take(10).collect::<Vec<_>>().join("\n")
+                    })
+                } else {
+                    None
+                };
+                FileSymbol {
+                    chunk_id,
+                    qualified_name,
+                    line_start,
+                    line_end,
+                    head,
+                }
+            })
+            .collect()
     }
 
     // ---------- Entities ----------
@@ -1531,7 +1722,158 @@ impl PostgresStorage {
                 return Err(StorageError::SessionNotFound(id));
             }
         }
+        // Best-effort: infer co-access edges from this session's interaction
+        // history. Errors here don't fail the close — the row is already
+        // marked `ended_at`, so the session is closed regardless.
+        if let Err(err) = self.persist_coaccessed_edges(id).await {
+            tracing::warn!(session_id = id.0, error = %err, "co-access inference failed");
+        }
         Ok(())
+    }
+
+    /// Infer `EdgeKind::CoAccessed` edges from this session's interaction
+    /// history and persist via `add_edges`. Idempotent through the existing
+    /// ON CONFLICT path on `add_edges`. See `EdgeKind::CoAccessed` for the
+    /// semantics; this is the producer.
+    async fn persist_coaccessed_edges(&self, session_id: SessionId) -> StorageResult<()> {
+        let edges = self.infer_coaccessed_edges(session_id).await?;
+        if edges.is_empty() {
+            return Ok(());
+        }
+        let _ = self.add_edges(edges).await?;
+        Ok(())
+    }
+
+    /// Build `NewEdge` rows for every unordered pair of distinct
+    /// productively co-accessed targets in this session. Productive =
+    /// `Pattern` ∈ {`Cited`, `ReadEdit`, `EditOnly`} (productivity > 1.0).
+    /// Caps the working set at 20 highest-productivity targets per session
+    /// to keep `O(n²)` from blowing up on long-running sessions.
+    pub(crate) async fn infer_coaccessed_edges(
+        &self,
+        session_id: SessionId,
+    ) -> StorageResult<Vec<NewEdge>> {
+        let workspace_id: Option<i64> =
+            sqlx::query_scalar("SELECT workspace_id FROM sessions WHERE id = $1")
+                .bind(session_id.0 as i64)
+                .fetch_optional(&self.pool)
+                .await
+                .map_err(map_sqlx)?;
+        let Some(ws) = workspace_id else {
+            return Err(StorageError::SessionNotFound(session_id));
+        };
+        let workspace_id = WorkspaceId(ws as u64);
+
+        // Aggregate per-target event counts. `event_type` already covers the
+        // 5-verb vocabulary; we collapse counts and classify into `Pattern`
+        // in code.
+        let rows = sqlx::query(
+            "SELECT target_kind, target_id, target_uri, event_type, COUNT(*) AS n
+             FROM session_interactions
+             WHERE session_id = $1
+             GROUP BY target_kind, target_id, target_uri, event_type",
+        )
+        .bind(session_id.0 as i64)
+        .fetch_all(&self.pool)
+        .await
+        .map_err(map_sqlx)?;
+
+        // (target_key) → counts by event type
+        type TargetKey = (String, Option<i64>, Option<String>);
+        let mut counts: std::collections::HashMap<TargetKey, [u32; 5]> =
+            std::collections::HashMap::new();
+        for row in rows {
+            let kind: String = row.get(0);
+            let id: Option<i64> = row.get(1);
+            let uri: Option<String> = row.get(2);
+            let event: String = row.get(3);
+            let n: i64 = row.get(4);
+            let Some(ev) = event_type_from_str(&event) else {
+                continue;
+            };
+            let idx = match ev {
+                EventType::Retrieved => 0,
+                EventType::Read => 1,
+                EventType::Edited => 2,
+                EventType::Cited => 3,
+                EventType::Dismissed => 4,
+            };
+            counts.entry((kind, id, uri)).or_default()[idx] += n as u32;
+        }
+
+        // Classify each target into a Pattern. Order of checks matters:
+        // a Cited target trumps Edited, which trumps Read.
+        let mut productive: Vec<(NodeRef, Pattern, f32)> = Vec::new();
+        for ((kind, id, uri), c) in counts {
+            let Some(node) = from_pg_ref(&kind, id, uri) else {
+                continue;
+            };
+            let cited = c[3] > 0;
+            let edited = c[2] > 0;
+            let read = c[1] > 0;
+            let dismissed = c[4] > 0;
+            let pattern = if dismissed {
+                Pattern::Dismissed
+            } else if cited {
+                Pattern::Cited
+            } else if edited && read {
+                Pattern::ReadEdit
+            } else if edited {
+                Pattern::EditOnly
+            } else if read && c[1] > 1 {
+                Pattern::ReadRepeated
+            } else {
+                Pattern::Neutral
+            };
+            let productivity = pattern.multiplier();
+            if productivity > 1.0 {
+                productive.push((node, pattern, productivity));
+            }
+        }
+
+        if productive.len() < 2 {
+            return Ok(Vec::new());
+        }
+
+        // Cap to top-20 by productivity. Keeps `O(n^2)` bounded at 380
+        // unordered pairs (× 2 for symmetric direction = 760 edges max).
+        productive.sort_by(|a, b| b.2.partial_cmp(&a.2).unwrap_or(std::cmp::Ordering::Equal));
+        productive.truncate(20);
+
+        let session_id_v = serde_json::json!(session_id.0);
+        let mut edges: Vec<NewEdge> = Vec::with_capacity(productive.len() * (productive.len() - 1));
+        for i in 0..productive.len() {
+            for j in 0..productive.len() {
+                if i == j {
+                    continue;
+                }
+                let (a, pa, prod_a) = &productive[i];
+                let (b, pb, prod_b) = &productive[j];
+                let weight = prod_a.min(*prod_b);
+                let mut metadata = MetadataMap::default();
+                metadata.extra = serde_json::json!({
+                    "session_id": session_id_v,
+                    "pattern_a": pattern_str(*pa),
+                    "pattern_b": pattern_str(*pb),
+                    "rationale": format!(
+                        "co-accessed in session {}: {} + {}",
+                        session_id.0,
+                        pattern_str(*pa),
+                        pattern_str(*pb)
+                    ),
+                });
+                edges.push(NewEdge {
+                    workspace_id,
+                    from: a.clone(),
+                    to: b.clone(),
+                    kind: EdgeKind::CoAccessed,
+                    weight,
+                    metadata,
+                    created_by: EdgeOrigin::Background,
+                });
+            }
+        }
+        Ok(edges)
     }
 
     // ---------- Session contexts ----------

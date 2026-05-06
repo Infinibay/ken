@@ -1,4 +1,4 @@
-//! `cae-claude install` — wires Claude Code into a project so every
+//! `ken install` — wires Claude Code into a project so every
 //! Edit/Write/Read tool call publishes an event to the engine, and the
 //! agent can call `query_context` via MCP.
 //!
@@ -6,7 +6,7 @@
 //! `settings.local.json` over `settings.json` because the latter is
 //! checked-in shared config and the former is gitignored per-developer
 //! state — perfect fit for "this dev's instance has the engine plugged
-//! in." We also write a sentinel under `.claude/cae-state.json` with
+//! in." We also write a sentinel under `.claude/ken-state.json` with
 //! the workspace + session ids so the hooks can find them without
 //! re-reading the agent's environment.
 
@@ -19,7 +19,7 @@ use crate::client::EngineClient;
 pub struct InstallArgs {
     /// Where Claude Code reads `.claude/settings.local.json` from — i.e.
     /// the directory you launch Claude Code in. Both `settings.local.json`
-    /// and `cae-state.json` are written under `<root>/.claude/`.
+    /// and `ken-state.json` are written under `<root>/.claude/`.
     pub root: PathBuf,
     /// The project the agent is actually working on. Path-relativization
     /// in hooks strips this prefix (so events land as `<rel-path>` not
@@ -64,7 +64,7 @@ pub fn run(args: InstallArgs) -> Result<()> {
             .unwrap_or_else(|_| workdir.clone())
             .to_string_lossy(),
     });
-    let state_path = claude_dir.join("cae-state.json");
+    let state_path = claude_dir.join("ken-state.json");
     std::fs::write(&state_path, serde_json::to_string_pretty(&state)?)
         .with_context(|| format!("write {}", state_path.display()))?;
 
@@ -113,8 +113,8 @@ fn merge_hooks(settings: &mut Value, exe: &str) -> Result<()> {
         .as_array_mut()
         .context("settings.hooks.PostToolUse is not an array")?;
 
-    // Drop any prior entries we'd overwrite — match by `cae-claude` in
-    // the hook command. Anything else stays.
+    // Drop any prior entries we'd overwrite — match by `ken hook` (or
+    // legacy `cae-claude`) in the hook command. Anything else stays.
     arr.retain(|entry| {
         !entry
             .get("hooks")
@@ -123,7 +123,7 @@ fn merge_hooks(settings: &mut Value, exe: &str) -> Result<()> {
                 hs.iter().any(|hh| {
                     hh.get("command")
                         .and_then(|c| c.as_str())
-                        .is_some_and(|c| c.contains("cae-claude"))
+                        .is_some_and(|c| c.contains("ken hook") || c.contains("cae-claude"))
                 })
             })
             .unwrap_or(false)
@@ -146,8 +146,9 @@ fn merge_hooks(settings: &mut Value, exe: &str) -> Result<()> {
     Ok(())
 }
 
-/// Register the `cae` MCP server. Existing entries with the same key are
-/// overwritten (idempotent re-install).
+/// Register the `ken` MCP server. Existing entries with the same key are
+/// overwritten (idempotent re-install). The legacy `cae` entry from older
+/// installs is removed if present so we don't end up with two MCP rows.
 fn merge_mcp(settings: &mut Value, exe: &str) -> Result<()> {
     let mcp = settings
         .as_object_mut()
@@ -157,8 +158,9 @@ fn merge_mcp(settings: &mut Value, exe: &str) -> Result<()> {
     let obj = mcp
         .as_object_mut()
         .context("settings.mcpServers is not a JSON object")?;
+    obj.remove("cae");
     obj.insert(
-        "cae".into(),
+        "ken".into(),
         json!({
             "command": exe,
             "args": ["mcp"]
@@ -167,12 +169,12 @@ fn merge_mcp(settings: &mut Value, exe: &str) -> Result<()> {
     Ok(())
 }
 
-/// Read `<root>/.claude/cae-state.json` (the sentinel `install` writes).
+/// Read `<root>/.claude/ken-state.json` (the sentinel `install` writes).
 /// Hooks + MCP need workspace_id + session_id + engine_url; rather than
 /// read them from env each time we keep them in a tiny per-project
 /// sidecar so the hook command stays a clean one-liner.
 pub fn load_state(root: &Path) -> Result<State> {
-    let path = root.join(".claude/cae-state.json");
+    let path = root.join(".claude/ken-state.json");
     let bytes = std::fs::read(&path)
         .with_context(|| format!("read {}", path.display()))?;
     let state: State = serde_json::from_slice(&bytes)
@@ -198,7 +200,7 @@ pub struct State {
 pub fn find_state_root(start: &Path) -> Option<PathBuf> {
     let mut cur = start.to_path_buf();
     loop {
-        if cur.join(".claude/cae-state.json").is_file() {
+        if cur.join(".claude/ken-state.json").is_file() {
             return Some(cur);
         }
         if !cur.pop() {

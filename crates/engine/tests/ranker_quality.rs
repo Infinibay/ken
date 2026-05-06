@@ -17,7 +17,7 @@
 //!
 //! Run with:
 //!     DATABASE_URL=postgres://cae:cae_dev@localhost:5432/context_engine \
-//!     cargo test -p cae-engine --features postgres --test ranker_quality \
+//!     cargo test -p ken-engine --features postgres --test ranker_quality \
 //!         --ignored
 
 #![cfg(feature = "postgres")]

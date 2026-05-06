@@ -272,6 +272,104 @@ async fn snapshot_session_scores_roundtrip() {
 
 #[tokio::test]
 #[ignore]
+async fn end_session_emits_coaccessed_edges_and_is_idempotent() {
+    let Some((s, _, w, src)) = setup().await else { return };
+    // Three documents — productive (Cited, ReadEdit) get linked; Dismissed
+    // does not.
+    let cited = s
+        .upsert_document(doc_draft(w, src, "co-cited", 0x10))
+        .await
+        .unwrap()
+        .current_id();
+    let edited = s
+        .upsert_document(doc_draft(w, src, "co-edited", 0x11))
+        .await
+        .unwrap()
+        .current_id();
+    let dismissed = s
+        .upsert_document(doc_draft(w, src, "co-dismissed", 0x12))
+        .await
+        .unwrap()
+        .current_id();
+
+    let sid = s.create_session(w, Some("agent")).await.unwrap();
+    s.append_interaction(NewInteraction {
+        session_id: sid,
+        context_id: None,
+        iteration: 0,
+        event_type: EventType::Cited,
+        target: NodeRef::Document(cited),
+        weight: 2.5,
+        tool_name: None,
+    })
+    .await
+    .unwrap();
+    s.append_interaction(NewInteraction {
+        session_id: sid,
+        context_id: None,
+        iteration: 0,
+        event_type: EventType::Read,
+        target: NodeRef::Document(edited),
+        weight: 1.0,
+        tool_name: None,
+    })
+    .await
+    .unwrap();
+    s.append_interaction(NewInteraction {
+        session_id: sid,
+        context_id: None,
+        iteration: 1,
+        event_type: EventType::Edited,
+        target: NodeRef::Document(edited),
+        weight: 2.0,
+        tool_name: None,
+    })
+    .await
+    .unwrap();
+    s.append_interaction(NewInteraction {
+        session_id: sid,
+        context_id: None,
+        iteration: 2,
+        event_type: EventType::Dismissed,
+        target: NodeRef::Document(dismissed),
+        weight: -1.0,
+        tool_name: None,
+    })
+    .await
+    .unwrap();
+
+    s.end_session(sid).await.unwrap();
+
+    // Two productive targets → 2 directional edges (cited↔edited).
+    // The Dismissed target is filtered out.
+    let from_cited = s
+        .edges_from(&NodeRef::Document(cited), Some(&EdgeKind::CoAccessed))
+        .await;
+    let from_edited = s
+        .edges_from(&NodeRef::Document(edited), Some(&EdgeKind::CoAccessed))
+        .await;
+    let from_dismissed = s
+        .edges_from(&NodeRef::Document(dismissed), Some(&EdgeKind::CoAccessed))
+        .await;
+    assert_eq!(from_cited.len(), 1, "expected one outgoing co-access edge from cited");
+    assert_eq!(from_edited.len(), 1, "expected one outgoing co-access edge from edited");
+    assert!(from_dismissed.is_empty(), "dismissed target must not emit co-access edges");
+    let edge = &from_cited[0];
+    assert_eq!(edge.to, NodeRef::Document(edited));
+    assert_eq!(edge.created_by, EdgeOrigin::Background);
+    assert!(edge.metadata.extra.get("rationale").is_some());
+
+    // Idempotent: a second close re-runs inference; ON CONFLICT keeps the
+    // count stable.
+    s.end_session(sid).await.unwrap();
+    let from_cited_again = s
+        .edges_from(&NodeRef::Document(cited), Some(&EdgeKind::CoAccessed))
+        .await;
+    assert_eq!(from_cited_again.len(), 1, "second close must not duplicate edges");
+}
+
+#[tokio::test]
+#[ignore]
 async fn upsert_document_versioned_when_keep_history() {
     let Some((s, _, w, _)) = setup().await else { return };
     let src = versioned_source(&s, w).await;

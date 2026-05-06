@@ -4,6 +4,7 @@ pub mod embed;
 pub mod rank;
 pub mod ingest;
 pub mod ingest_md;
+pub mod ingest_html;
 pub mod annotate;
 
 #[cfg(feature = "code")]

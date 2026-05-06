@@ -17,7 +17,7 @@
 //!
 //! Run with:
 //!     DATABASE_URL=postgres://cae:cae_dev@localhost:5432/context_engine \
-//!     cargo test -p cae-engine --features "postgres fastembed" \
+//!     cargo test -p ken-engine --features "postgres fastembed" \
 //!         --test end_to_end_quality -- --ignored
 
 #![cfg(all(feature = "postgres", feature = "fastembed"))]

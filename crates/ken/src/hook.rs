@@ -1,7 +1,7 @@
-//! `cae-claude hook <event>` — Claude Code calls this on every
+//! `ken hook <event>` — Claude Code calls this on every
 //! PostToolUse(Edit|Write|MultiEdit|Read) per the settings written by
 //! `install`. We read the JSON event off stdin, look up the per-project
-//! state under `.claude/cae-state.json`, and POST a `/events` interaction
+//! state under `.claude/ken-state.json`, and POST a `/events` interaction
 //! to the engine. Events drive the reactive ranker channel: chunks
 //! whose Document the agent is editing right now get their session
 //! score boosted, so a later `/rank` call surfaces neighbors first.
@@ -62,7 +62,7 @@ pub fn run(kind: HookKind) -> Result<()> {
     let Some(state_root) = find_state_root(&cwd) else {
         // No state installed in this tree — silently no-op so the hook
         // doesn't punish a project that hasn't opted in.
-        eprintln!("cae-claude: no .claude/cae-state.json under {} — skipping", cwd.display());
+        eprintln!("ken: no .claude/ken-state.json under {} — skipping", cwd.display());
         return Ok(());
     };
     let state = load_state(&state_root)?;

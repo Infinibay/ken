@@ -5,7 +5,7 @@
 //!
 //! Run with:
 //!     DATABASE_URL=postgres://cae:cae_dev@localhost:5432/context_engine \
-//!     cargo test -p cae-engine --features "git fastembed" \
+//!     cargo test -p ken-engine --features "git fastembed" \
 //!         --test ingest_git_integration -- --ignored
 //!
 //! The fixture covers: a regular author, a bot author (must be filtered),

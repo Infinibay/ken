@@ -41,9 +41,13 @@ pub fn router() -> Router<Arc<AppState>> {
         .route("/ingest", post(ingest_document))
         .route("/ingest_text", post(ingest_text))
         .route("/ingest_blob", post(ingest_blob))
+        .route("/ingest_file", post(ingest_file))
+        .route("/ingest_url", post(ingest_url))
         .route("/rank", post(rank))
         .route("/symbols", post(search_symbols))
+        .route("/symbols_in_file", post(list_symbols_in_file))
         .route("/files", post(rank_files))
+        .route("/git_history", post(git_history))
         .route("/events", post(record_event))
 }
 
@@ -661,6 +665,354 @@ async fn ingest_blob(
 }
 
 // ============================================================================
+// Ingest file (upload-style: bytes + mime, find-or-create source by name)
+// ============================================================================
+
+/// Hard cap on decoded bytes the route accepts. MCP-over-stdio has no
+/// streaming, so a runaway upload would block the agent — this keeps the
+/// failure mode "obvious" rather than "hung".
+const INGEST_FILE_MAX_BYTES: usize = 8 * 1024 * 1024;
+
+#[derive(Debug, Deserialize)]
+struct IngestFileBody {
+    workspace_id: WorkspaceId,
+    /// Used to find-or-create the `Source` row. Stable identifier for the
+    /// uploader — typically `"uploads"` (manual MCP) or `"http"` (URL crawl).
+    source_name: String,
+    /// Canonical reference for this document. Becomes both `external_id` and
+    /// `path_or_url`. Typically the original filename (`report.pdf`) or a
+    /// URL when the same document is also web-fetched.
+    external_id: String,
+    /// Optional explicit content-type. When absent the adapter is picked
+    /// from the extension on `external_id` (`*.pdf` → PDF, `*.html` → HTML).
+    #[serde(default)]
+    mime: Option<String>,
+    /// Standard base64-encoded bytes. Capped at 8 MiB after decode.
+    bytes_base64: String,
+}
+
+#[derive(Debug, Serialize)]
+struct IngestFileResponse {
+    outcome: String,
+    document_id: DocumentId,
+    chunks: usize,
+    edges: usize,
+}
+
+async fn ingest_file(
+    State(state): State<Arc<AppState>>,
+    Json(body): Json<IngestFileBody>,
+) -> ApiResult<Json<IngestFileResponse>> {
+    use base64::Engine;
+    use engine::ingest_fs::{ingest_uri, FileOutcome, IngestFileError};
+    use engine::storage::NewSource;
+    use engine::types::{Acl, MetadataMap, SourceKind};
+
+    let bytes = base64::engine::general_purpose::STANDARD
+        .decode(body.bytes_base64.as_bytes())
+        .map_err(|e| ApiError::Invalid(format!("bytes_base64 decode: {e}")))?;
+    if bytes.len() > INGEST_FILE_MAX_BYTES {
+        return Err(ApiError::Invalid(format!(
+            "decoded body {} bytes exceeds {} MiB cap",
+            bytes.len(),
+            INGEST_FILE_MAX_BYTES / (1024 * 1024)
+        )));
+    }
+
+    let source_id = match state
+        .storage
+        .find_source_by_name(body.workspace_id, &body.source_name)
+        .await
+    {
+        Some(id) => id,
+        None => {
+            state
+                .storage
+                .create_source(NewSource {
+                    workspace_id: body.workspace_id,
+                    kind: SourceKind::Manual,
+                    name: body.source_name.clone(),
+                    config_json: serde_json::json!({"kind": "manual_upload"}),
+                    keep_history: false,
+                    default_acl: Acl::default(),
+                })
+                .await?
+        }
+    };
+
+    let extension = uri_extension(&body.external_id);
+    let hint = MimeHint {
+        mime: body.mime.clone(),
+        extension,
+    };
+    let adapters = default_adapters();
+    let adapter = pick_adapter(&adapters, &hint).ok_or_else(|| {
+        ApiError::Invalid(format!(
+            "no adapter accepts mime={:?} extension={:?}",
+            hint.mime, hint.extension
+        ))
+    })?;
+
+    let outcome = ingest_uri(
+        &state.storage,
+        &state.embedder,
+        body.workspace_id,
+        source_id,
+        adapter,
+        &body.external_id,
+        bytes,
+        body.mime.clone(),
+        MetadataMap::default(),
+    )
+    .await
+    .map_err(|e| match e {
+        IngestFileError::Adapter(err) => ApiError::Invalid(format!("adapter rejected: {err}")),
+        IngestFileError::Storage(err) => ApiError::Storage(err),
+    })?;
+
+    let response = match outcome {
+        FileOutcome::Written {
+            document_id,
+            chunks,
+            edges,
+            outcome,
+        } => IngestFileResponse {
+            outcome: outcome.to_string(),
+            document_id,
+            chunks,
+            edges,
+        },
+        FileOutcome::Unchanged { document_id } => IngestFileResponse {
+            outcome: "unchanged".to_string(),
+            document_id,
+            chunks: 0,
+            edges: 0,
+        },
+    };
+    Ok(Json(response))
+}
+
+// ============================================================================
+// Ingest URL (single page or shallow BFS crawl)
+// ============================================================================
+
+/// Hard ceilings on the crawl. MCP stdio has no streaming so the route
+/// blocks until done — these caps bound how long the agent can wait.
+const INGEST_URL_MAX_DEPTH: u32 = 2;
+const INGEST_URL_MAX_PAGES: u32 = 10;
+const INGEST_URL_WALL_SECS: u64 = 30;
+
+#[derive(Debug, Deserialize)]
+struct IngestUrlBody {
+    workspace_id: WorkspaceId,
+    /// Find-or-create source name; defaults to `"web"` if omitted.
+    #[serde(default = "default_url_source")]
+    source_name: String,
+    url: String,
+    /// Depth of follow-link expansion (0 = single page only). Clamped to
+    /// `INGEST_URL_MAX_DEPTH`.
+    #[serde(default)]
+    depth: u32,
+    /// Total pages to fetch, including the start URL. Clamped to
+    /// `INGEST_URL_MAX_PAGES`.
+    #[serde(default = "default_url_max_pages")]
+    max_pages: u32,
+    #[serde(default = "default_true")]
+    same_host_only: bool,
+}
+
+fn default_url_source() -> String {
+    "web".to_string()
+}
+fn default_url_max_pages() -> u32 {
+    1
+}
+fn default_true() -> bool {
+    true
+}
+
+#[derive(Debug, Serialize)]
+struct IngestUrlPage {
+    url: String,
+    outcome: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    document_id: Option<DocumentId>,
+    chunks: usize,
+}
+
+#[derive(Debug, Serialize)]
+struct IngestUrlSkipped {
+    url: String,
+    reason: String,
+}
+
+#[derive(Debug, Serialize)]
+struct IngestUrlResponse {
+    pages: Vec<IngestUrlPage>,
+    skipped: Vec<IngestUrlSkipped>,
+    /// `true` when the wall-clock cap fired and the queue still had items.
+    /// Useful for the agent to know whether retrying with a higher depth is
+    /// worth it.
+    timed_out: bool,
+}
+
+async fn ingest_url(
+    State(state): State<Arc<AppState>>,
+    Json(body): Json<IngestUrlBody>,
+) -> ApiResult<Json<IngestUrlResponse>> {
+    use crate::url_crawl::{build_agent, canonical_url, extract_links, fetch_url};
+    use engine::ingest_fs::{ingest_uri, FileOutcome, IngestFileError};
+    use engine::storage::NewSource;
+    use engine::types::{Acl, MetadataMap, SourceKind};
+    use std::collections::{HashSet, VecDeque};
+
+    let depth = body.depth.min(INGEST_URL_MAX_DEPTH);
+    let max_pages = body.max_pages.clamp(1, INGEST_URL_MAX_PAGES);
+
+    let start = url::Url::parse(&body.url)
+        .map_err(|e| ApiError::Invalid(format!("invalid url: {e}")))?;
+    let start_host = start.host_str().map(|s| s.to_string());
+
+    let source_id = match state
+        .storage
+        .find_source_by_name(body.workspace_id, &body.source_name)
+        .await
+    {
+        Some(id) => id,
+        None => {
+            state
+                .storage
+                .create_source(NewSource {
+                    workspace_id: body.workspace_id,
+                    kind: SourceKind::Http,
+                    name: body.source_name.clone(),
+                    config_json: serde_json::json!({"kind": "url_crawl"}),
+                    keep_history: false,
+                    default_acl: Acl::default(),
+                })
+                .await?
+        }
+    };
+
+    let adapters = default_adapters();
+    let agent = build_agent(20);
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(INGEST_URL_WALL_SECS);
+
+    let mut queue: VecDeque<(url::Url, u32)> = VecDeque::new();
+    let mut visited: HashSet<String> = HashSet::new();
+    queue.push_back((start.clone(), 0));
+    visited.insert(canonical_url(&start));
+
+    let mut pages: Vec<IngestUrlPage> = Vec::new();
+    let mut skipped: Vec<IngestUrlSkipped> = Vec::new();
+    let mut fetched = 0u32;
+    let mut timed_out = false;
+
+    while let Some((url, d)) = queue.pop_front() {
+        if fetched >= max_pages {
+            break;
+        }
+        if std::time::Instant::now() >= deadline {
+            timed_out = true;
+            break;
+        }
+        fetched += 1;
+        let url_str = url.to_string();
+        let agent_clone = agent.clone();
+        let url_for_task = url_str.clone();
+        let fetched_res = tokio::task::spawn_blocking(move || fetch_url(&agent_clone, &url_for_task))
+            .await
+            .map_err(|e| ApiError::Invalid(format!("fetch task panicked: {e}")))?;
+        let (mime, bytes) = match fetched_res {
+            Ok(v) => v,
+            Err(err) => {
+                skipped.push(IngestUrlSkipped {
+                    url: url_str,
+                    reason: format!("fetch: {err}"),
+                });
+                continue;
+            }
+        };
+
+        let extension = url
+            .path_segments()
+            .and_then(|mut s| s.next_back())
+            .and_then(|name| name.rsplit_once('.'))
+            .map(|(_, ext)| ext.to_ascii_lowercase());
+        let hint = MimeHint {
+            mime: Some(mime.clone()),
+            extension,
+        };
+        let Some(adapter) = pick_adapter(&adapters, &hint) else {
+            skipped.push(IngestUrlSkipped {
+                url: url_str,
+                reason: format!("no adapter for mime={mime}"),
+            });
+            continue;
+        };
+
+        let next_links: Vec<url::Url> = if d < depth && mime.starts_with("text/html") {
+            extract_links(&url, std::str::from_utf8(&bytes).unwrap_or(""))
+        } else {
+            Vec::new()
+        };
+
+        let result = ingest_uri(
+            &state.storage,
+            &state.embedder,
+            body.workspace_id,
+            source_id,
+            adapter,
+            url.as_str(),
+            bytes,
+            Some(mime.clone()),
+            MetadataMap::default(),
+        )
+        .await;
+        match result {
+            Ok(FileOutcome::Written {
+                document_id,
+                chunks,
+                outcome,
+                ..
+            }) => pages.push(IngestUrlPage {
+                url: url_str,
+                outcome: outcome.to_string(),
+                document_id: Some(document_id),
+                chunks,
+            }),
+            Ok(FileOutcome::Unchanged { document_id }) => pages.push(IngestUrlPage {
+                url: url_str,
+                outcome: "unchanged".to_string(),
+                document_id: Some(document_id),
+                chunks: 0,
+            }),
+            Err(IngestFileError::Adapter(err)) => skipped.push(IngestUrlSkipped {
+                url: url_str,
+                reason: format!("adapter: {err}"),
+            }),
+            Err(IngestFileError::Storage(err)) => return Err(ApiError::Storage(err)),
+        }
+
+        for link in next_links {
+            if body.same_host_only && link.host_str() != start_host.as_deref() {
+                continue;
+            }
+            let canon = canonical_url(&link);
+            if visited.insert(canon) {
+                queue.push_back((link, d + 1));
+            }
+        }
+    }
+
+    Ok(Json(IngestUrlResponse {
+        pages,
+        skipped,
+        timed_out,
+    }))
+}
+
+// ============================================================================
 // Rank
 // ============================================================================
 
@@ -988,6 +1340,123 @@ async fn rank_files(
     items.truncate(limit);
 
     Ok(Json(RankFilesResponse { items }))
+}
+
+// ============================================================================
+// Git history (commits that touched a file or symbol)
+// ============================================================================
+
+#[derive(Debug, Deserialize)]
+struct GitHistoryBody {
+    workspace_id: WorkspaceId,
+    /// File path (e.g. `src/user.rs`) or qualified symbol name (e.g.
+    /// `User::validate`). The query tries both at once — exact-path match
+    /// for `ChangesFile`, prefix-of-symbol match for "any symbol in this
+    /// file", and suffix-match for "this symbol in any file".
+    target: String,
+    /// Optional lower bound on committer time (ms since epoch). Commits
+    /// older than this are dropped.
+    #[serde(default)]
+    since_ms: Option<u64>,
+    /// Cap on commits returned. Default 20.
+    #[serde(default)]
+    limit: Option<usize>,
+}
+
+#[derive(Debug, Serialize)]
+struct GitHistoryItem {
+    sha: String,
+    summary: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    author: Option<String>,
+    time_ms: u64,
+    /// `"file"`, `"symbol"`, or `"symbol+file"` — which edge kind matched.
+    /// Useful for the agent to know whether a commit hit the exact symbol
+    /// or just touched the surrounding file.
+    matched_kind: String,
+}
+
+#[derive(Debug, Serialize)]
+struct GitHistoryResponse {
+    items: Vec<GitHistoryItem>,
+}
+
+async fn git_history(
+    State(state): State<Arc<AppState>>,
+    Json(body): Json<GitHistoryBody>,
+) -> ApiResult<Json<GitHistoryResponse>> {
+    let limit = body.limit.unwrap_or(20).clamp(1, 200);
+    let touches = state
+        .storage
+        .git_history_for_target(body.workspace_id, &body.target, body.since_ms, limit)
+        .await;
+    let items = touches
+        .into_iter()
+        .map(|t| GitHistoryItem {
+            sha: t.sha,
+            summary: t.summary,
+            author: t.author,
+            time_ms: t.time_ms,
+            matched_kind: t.matched_kind,
+        })
+        .collect();
+    Ok(Json(GitHistoryResponse { items }))
+}
+
+// ============================================================================
+// List symbols in file (cheap structural overview, no embedder)
+// ============================================================================
+
+#[derive(Debug, Deserialize)]
+struct ListSymbolsInFileBody {
+    workspace_id: WorkspaceId,
+    /// Repo-relative path (matches `documents.path_or_url`). Must equal what
+    /// the ingest pipeline stored — usually relative to the repo root.
+    path: String,
+    /// When true, include the first ~10 lines of each symbol's chunk text
+    /// (signature + adjacent doc comment / docstring). Default false to
+    /// keep responses small for the common "give me a map of this file"
+    /// use case.
+    #[serde(default)]
+    with_docstrings: bool,
+    /// Cap on symbols returned. Default 100.
+    #[serde(default)]
+    limit: Option<usize>,
+}
+
+#[derive(Debug, Serialize)]
+struct ListSymbolsItem {
+    qualified_name: String,
+    line_start: u32,
+    line_end: u32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    head: Option<String>,
+}
+
+#[derive(Debug, Serialize)]
+struct ListSymbolsResponse {
+    items: Vec<ListSymbolsItem>,
+}
+
+async fn list_symbols_in_file(
+    State(state): State<Arc<AppState>>,
+    Json(body): Json<ListSymbolsInFileBody>,
+) -> ApiResult<Json<ListSymbolsResponse>> {
+    let limit = body.limit.unwrap_or(100).clamp(1, 500);
+    let symbols = state
+        .storage
+        .list_symbols_in_file(body.workspace_id, &body.path, body.with_docstrings, limit)
+        .await;
+    let items = symbols
+        .into_iter()
+        .map(|s| ListSymbolsItem {
+            qualified_name: s.qualified_name,
+            line_start: s.line_start,
+            line_end: s.line_end,
+            head: s.head,
+        })
+        .collect();
+    Ok(Json(ListSymbolsResponse { items }))
 }
 
 // ============================================================================

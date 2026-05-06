@@ -6,7 +6,7 @@
 //! Postgres; run with:
 //!
 //!     DATABASE_URL=postgres://cae:cae@localhost:5432/cae \
-//!     cargo test -p cae-server --all-features --ignored
+//!     cargo test -p ken --all-features --ignored
 
 #![cfg(feature = "postgres")]
 
@@ -14,7 +14,7 @@ use std::sync::Arc;
 
 use axum::body::{to_bytes, Body};
 use axum::http::{Method, Request, StatusCode};
-use cae_server::{build_router, AppState};
+use ken::{build_router, AppState};
 use engine::embed::{Embedder, MockEmbedder};
 use engine::postgres::PostgresStorage;
 use serde_json::{json, Value};

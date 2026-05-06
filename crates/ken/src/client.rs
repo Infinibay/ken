@@ -1,4 +1,4 @@
-//! Synchronous HTTP client for the cae-server. Used by hooks (where
+//! Synchronous HTTP client for the ken HTTP server. Used by hooks (where
 //! sub-100ms latency matters) and the MCP server (where stdio dispatch
 //! is single-threaded anyway). Async would only buy us concurrency we
 //! don't need here.
@@ -107,6 +107,62 @@ impl EngineClient {
             .map_err(|e| anyhow!("POST /files: {e}"))?
             .into_json()
             .context("decode /files response")?;
+        Ok(resp)
+    }
+
+    /// Commits (from the git-history ingest) that touched a path or symbol.
+    pub fn git_history_raw(&self, body: Value) -> Result<Value> {
+        let resp: Value = self
+            .agent
+            .post(&format!("{}/git_history", self.base))
+            .send_json(body)
+            .map_err(|e| anyhow!("POST /git_history: {e}"))?
+            .into_json()
+            .context("decode /git_history response")?;
+        Ok(resp)
+    }
+
+    /// All symbols declared in a file (cheap structural overview; no
+    /// embedder traffic).
+    pub fn symbols_in_file_raw(&self, body: Value) -> Result<Value> {
+        let resp: Value = self
+            .agent
+            .post(&format!("{}/symbols_in_file", self.base))
+            .send_json(body)
+            .map_err(|e| anyhow!("POST /symbols_in_file: {e}"))?
+            .into_json()
+            .context("decode /symbols_in_file response")?;
+        Ok(resp)
+    }
+
+    /// Index a single file (base64 bytes) into the workspace's KG. Used by
+    /// the agent-facing `ingest_file` MCP tool.
+    pub fn ingest_file_raw(&self, body: Value) -> Result<Value> {
+        // 60s — embedding can be slow on first run when fastembed has to
+        // download model weights.
+        let resp: Value = self
+            .agent
+            .post(&format!("{}/ingest_file", self.base))
+            .timeout(Duration::from_secs(60))
+            .send_json(body)
+            .map_err(|e| anyhow!("POST /ingest_file: {e}"))?
+            .into_json()
+            .context("decode /ingest_file response")?;
+        Ok(resp)
+    }
+
+    /// Fetch + index a URL (single page or shallow crawl). The server caps
+    /// depth ≤ 2, max_pages ≤ 10, wall ≤ 30s; we mirror the wall here as
+    /// the request timeout (+5s slack for the response).
+    pub fn ingest_url_raw(&self, body: Value) -> Result<Value> {
+        let resp: Value = self
+            .agent
+            .post(&format!("{}/ingest_url", self.base))
+            .timeout(Duration::from_secs(35))
+            .send_json(body)
+            .map_err(|e| anyhow!("POST /ingest_url: {e}"))?
+            .into_json()
+            .context("decode /ingest_url response")?;
         Ok(resp)
     }
 }
