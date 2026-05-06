@@ -18,6 +18,10 @@ fastembed = ["engine/fastembed"]
 code = ["engine/code"]
 pdf = ["engine/pdf"]
 git = ["engine/git"]
+# Build with `cargo build --release --features cuda` on a host with CUDA
+# + cuDNN available. Off by default so the standard build needs no GPU
+# stack. Runtime: ORT tries CUDA, falls back to CPU if libs are missing.
+cuda = ["engine/cuda"]
 
 [dependencies]
 engine.workspace = true

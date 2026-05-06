@@ -101,8 +101,9 @@ impl FastEmbedder {
             }
         };
         let batch_size = read_batch_size_env();
-        tracing::info!(model = %label, dim, batch_size, "loading FastEmbedder");
-        let inner = TextEmbedding::try_new(InitOptions::new(model.clone()))
+        let device = build_init_options(model.clone());
+        tracing::info!(model = %label, dim, batch_size, device = %device.device, "loading FastEmbedder");
+        let inner = TextEmbedding::try_new(device.options)
             .map_err(|e| FastEmbedderError::Init(e.to_string()))?;
         Ok(Self {
             inner: Mutex::new(inner),
@@ -116,7 +117,8 @@ impl FastEmbedder {
     /// an explicit constructor for tests that need to bypass env config.
     pub fn mini_q() -> Result<Self, FastEmbedderError> {
         let model = EmbeddingModel::AllMiniLML6V2Q;
-        let inner = TextEmbedding::try_new(InitOptions::new(model.clone()))
+        let device = build_init_options(model.clone());
+        let inner = TextEmbedding::try_new(device.options)
             .map_err(|e| FastEmbedderError::Init(e.to_string()))?;
         Ok(Self {
             inner: Mutex::new(inner),
@@ -196,7 +198,8 @@ impl Embedder for FastEmbedder {
         // ORT's per-session arenas) and build a fresh one. This is the only
         // reliable way to reclaim ORT's accumulated working memory during a
         // long-running ingest — that memory lives outside Rust's allocator.
-        let new_inner = TextEmbedding::try_new(InitOptions::new(self.model.clone()))
+        let device = build_init_options(self.model.clone());
+        let new_inner = TextEmbedding::try_new(device.options)
             .map_err(|e| format!("reset failed: {e}"))?;
         let mut guard = self.inner.lock().map_err(|_| "FastEmbedder mutex poisoned")?;
         *guard = new_inner;
@@ -210,4 +213,69 @@ fn read_batch_size_env() -> usize {
         .and_then(|v| v.parse().ok())
         .filter(|n: &usize| *n > 0)
         .unwrap_or(64)
+}
+
+/// What `build_init_options` returns: the configured `InitOptions` plus a
+/// label for logging the active device.
+struct DeviceConfig {
+    options: InitOptions,
+    device: &'static str,
+}
+
+/// Build `InitOptions` and pick the execution provider based on the build
+/// features and `KEN_EMBEDDER_GPU` env (`auto` | `cpu` | `cuda`).
+///
+/// - Without the `cuda` feature: always CPU. The env var is informational
+///   only; `cuda` is rejected with a warning and we fall back to CPU.
+/// - With the `cuda` feature: `auto` (default) and `cuda` add the CUDA
+///   execution provider; ORT auto-falls back to CPU at runtime if libcuda /
+///   libcudnn aren't loadable. `cpu` forces CPU even on GPU hosts.
+fn build_init_options(model: EmbeddingModel) -> DeviceConfig {
+    let mode = std::env::var("KEN_EMBEDDER_GPU")
+        .unwrap_or_else(|_| "auto".to_string())
+        .to_ascii_lowercase();
+
+    #[cfg(feature = "cuda")]
+    {
+        match mode.as_str() {
+            "cpu" => DeviceConfig {
+                options: InitOptions::new(model),
+                device: "cpu",
+            },
+            // `auto` and `cuda` both try GPU; difference is only in semantics
+            // for the user — `auto` accepts CPU fallback as fine, `cuda`
+            // accepts it as fine too because ORT falls back automatically.
+            "auto" | "cuda" | "" => {
+                use ort::execution_providers::CUDAExecutionProvider;
+                let providers = vec![CUDAExecutionProvider::default().build()];
+                DeviceConfig {
+                    options: InitOptions::new(model).with_execution_providers(providers),
+                    device: "cuda(auto-fallback-to-cpu)",
+                }
+            }
+            other => {
+                tracing::warn!(value = %other, "unknown KEN_EMBEDDER_GPU; using auto");
+                use ort::execution_providers::CUDAExecutionProvider;
+                let providers = vec![CUDAExecutionProvider::default().build()];
+                DeviceConfig {
+                    options: InitOptions::new(model).with_execution_providers(providers),
+                    device: "cuda(auto-fallback-to-cpu)",
+                }
+            }
+        }
+    }
+
+    #[cfg(not(feature = "cuda"))]
+    {
+        if mode == "cuda" {
+            tracing::warn!(
+                "KEN_EMBEDDER_GPU=cuda but ken was built without the `cuda` feature; \
+                 rebuild with `--features cuda` on a CUDA-capable host. Using CPU."
+            );
+        }
+        DeviceConfig {
+            options: InitOptions::new(model),
+            device: "cpu",
+        }
+    }
 }

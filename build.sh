@@ -25,8 +25,37 @@ fi
 
 cd "$(dirname "$(readlink -f "$0")")"
 
-echo "→ cargo build --release -p ken (with default features: postgres, fastembed, code, pdf, git)"
-cargo build --release -p ken
+# CUDA auto-detect. Three positive signals; any one is enough to opt in:
+#   1. `nvidia-smi` is on PATH and reports a GPU (the canonical check).
+#   2. `/dev/nvidia0` exists (driver loaded even if smi is missing).
+#   3. Caller forced it via KEN_BUILD_CUDA=1.
+# Override with KEN_BUILD_CUDA=0 to opt out even on a GPU host (useful when
+# the host has a GPU but you want a portable CPU-only artefact).
+detect_cuda() {
+    case "${KEN_BUILD_CUDA:-}" in
+        1|true|yes) return 0 ;;
+        0|false|no) return 1 ;;
+    esac
+    if command -v nvidia-smi >/dev/null 2>&1 && nvidia-smi -L >/dev/null 2>&1; then
+        return 0
+    fi
+    [ -e /dev/nvidia0 ] && return 0
+    return 1
+}
+
+features=""
+if detect_cuda; then
+    features="--features cuda"
+    echo "→ NVIDIA GPU detected — building with --features cuda"
+    echo "  (override with KEN_BUILD_CUDA=0 to force a CPU-only build)"
+else
+    echo "→ No NVIDIA GPU detected — building CPU-only"
+    echo "  (override with KEN_BUILD_CUDA=1 to force a CUDA build)"
+fi
+
+echo "→ cargo build --release -p ken $features"
+# shellcheck disable=SC2086
+cargo build --release -p ken $features
 
 bin="target/release/ken"
 if [ ! -x "$bin" ]; then

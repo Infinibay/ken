@@ -12,6 +12,12 @@ path = "src/lib.rs"
 default = []
 postgres = ["dep:sqlx", "dep:pgvector", "dep:tokio", "dep:ignore"]
 fastembed = ["dep:fastembed"]
+# CUDA acceleration for the fastembed runtime. Off by default so the dev
+# build never needs CUDA headers/libs. When on, we add `ort` with its
+# `cuda` feature and configure the CUDA execution provider on the embedder.
+# At runtime, if CUDA libs aren't loadable, ORT falls back to CPU silently
+# — same binary works on both NVIDIA and CPU-only hosts.
+cuda = ["fastembed", "dep:ort"]
 code = [
     "dep:tree-sitter",
     "dep:tree-sitter-rust",
@@ -46,6 +52,11 @@ tokio = { workspace = true, optional = true }
 
 # production embedder
 fastembed = { workspace = true, optional = true }
+
+# Direct ort dep, gated on the `cuda` feature. Pinned to the same version
+# fastembed re-exports so Cargo unifies the two into a single ort instance
+# with the cuda execution provider enabled.
+ort = { version = "=2.0.0-rc.12", features = ["cuda"], optional = true }
 
 # code adapter (tree-sitter)
 tree-sitter = { workspace = true, optional = true }
