@@ -200,6 +200,7 @@ fn context_kind_str(k: ContextKind) -> &'static str {
         ContextKind::ToolResult => "tool_result",
         ContextKind::StepDescription => "step_description",
         ContextKind::Reflection => "reflection",
+        ContextKind::AssistantReply => "assistant_reply",
     }
 }
 
@@ -209,6 +210,7 @@ fn context_kind_from_str(s: &str) -> Option<ContextKind> {
         "tool_result" => ContextKind::ToolResult,
         "step_description" => ContextKind::StepDescription,
         "reflection" => ContextKind::Reflection,
+        "assistant_reply" => ContextKind::AssistantReply,
         _ => return None,
     })
 }
@@ -275,6 +277,24 @@ impl PostgresStorage {
         Ok(id)
     }
 
+    /// Find a tenant by name. Returns the most recently created match if
+    /// names happen to collide (the name column has no unique index — that
+    /// stays a product decision: tenants might share a "default" identity
+    /// across deployments). Used by the workspace-by-name CLI shortcut.
+    pub async fn find_tenant_by_name(&self, name: &str) -> Option<TenantId> {
+        let id_str: Option<String> = sqlx::query_scalar(
+            "SELECT id FROM tenants WHERE name = $1 ORDER BY created_at DESC LIMIT 1",
+        )
+        .bind(name)
+        .fetch_optional(&self.pool)
+        .await
+        .ok()
+        .flatten();
+        id_str
+            .and_then(|s| ulid::Ulid::from_str(&s).ok())
+            .map(TenantId)
+    }
+
     pub async fn get_tenant(&self, id: TenantId) -> Option<Tenant> {
         let row = sqlx::query("SELECT id, name, plan, created_at FROM tenants WHERE id = $1")
             .bind(id.to_string())
@@ -311,6 +331,56 @@ impl PostgresStorage {
         .await
         .map_err(map_sqlx)?;
         Ok(WorkspaceId(id as u64))
+    }
+
+    /// Find a workspace by `(tenant_id, name)`. Used by the CLI to resolve
+    /// `--workspace my-project` to a `WorkspaceId`. The schema has a unique
+    /// index on `(tenant_id, name)` so at most one row matches.
+    pub async fn find_workspace_by_name(
+        &self,
+        tenant_id: TenantId,
+        name: &str,
+    ) -> Option<WorkspaceId> {
+        let id: Option<i64> = sqlx::query_scalar(
+            "SELECT id FROM workspaces WHERE tenant_id = $1 AND name = $2 LIMIT 1",
+        )
+        .bind(tenant_id.to_string())
+        .bind(name)
+        .fetch_optional(&self.pool)
+        .await
+        .ok()
+        .flatten();
+        id.map(|i| WorkspaceId(i as u64))
+    }
+
+    /// Find-or-create a workspace by name. The CLI shortcut for the common
+    /// "I just want one workspace per project, give me a stable id" use
+    /// case. Tenant `tenant_name` is also find-or-created (Free plan); a
+    /// single shared "local" tenant per host is the typical setup for
+    /// solo-developer use. Returns the resolved (workspace_id, tenant_id,
+    /// `created` flag — true if anything was newly inserted).
+    pub async fn find_or_create_workspace(
+        &self,
+        tenant_name: &str,
+        workspace_name: &str,
+    ) -> StorageResult<(WorkspaceId, TenantId, bool)> {
+        let mut created = false;
+        let tenant_id = match self.find_tenant_by_name(tenant_name).await {
+            Some(t) => t,
+            None => {
+                created = true;
+                self.create_tenant(tenant_name, PlanTier::Free).await?
+            }
+        };
+        let workspace_id = match self.find_workspace_by_name(tenant_id, workspace_name).await {
+            Some(w) => w,
+            None => {
+                created = true;
+                self.create_workspace(tenant_id, workspace_name, WorkspaceSettings::default())
+                    .await?
+            }
+        };
+        Ok((workspace_id, tenant_id, created))
     }
 
     pub async fn get_workspace(&self, id: WorkspaceId) -> Option<Workspace> {
@@ -1701,6 +1771,136 @@ impl PostgresStorage {
             created_at: row.get::<i64, _>(4) as u64,
             ended_at: row.get::<Option<i64>, _>(5).map(|t| t as u64),
         })
+    }
+
+    /// Anchor every tool target the agent touched in turn `iteration` to the
+    /// turn's user-prompt and assistant-reply contexts. Two edges per
+    /// interaction: `PromptAnchored` (weight decays with position — first
+    /// tool answers the prompt most directly) and `ReplyAnchored` (weight
+    /// grows with position — last tool is what the reply summarizes).
+    /// Both endpoints are batched into a single `add_edges` call so all
+    /// 2N rows go in one round-trip via UNNEST + ON CONFLICT.
+    ///
+    /// No-op if the turn has no interactions, no UserInput context, or no
+    /// AssistantReply context yet — the typical "agent stopped before any
+    /// tool calls" or "Stop fired before prompt was recorded" cases.
+    pub async fn anchor_turn(
+        &self,
+        session_id: SessionId,
+        iteration: u32,
+    ) -> StorageResult<usize> {
+        let workspace_id: Option<i64> =
+            sqlx::query_scalar("SELECT workspace_id FROM sessions WHERE id = $1")
+                .bind(session_id.0 as i64)
+                .fetch_optional(&self.pool)
+                .await
+                .map_err(map_sqlx)?;
+        let Some(ws) = workspace_id else {
+            return Err(StorageError::SessionNotFound(session_id));
+        };
+        let workspace_id = WorkspaceId(ws as u64);
+
+        let user_ctx_id: Option<i64> = sqlx::query_scalar(
+            "SELECT id FROM session_contexts
+             WHERE session_id = $1 AND iteration = $2 AND kind = 'user_input'
+             ORDER BY id LIMIT 1",
+        )
+        .bind(session_id.0 as i64)
+        .bind(iteration as i32)
+        .fetch_optional(&self.pool)
+        .await
+        .map_err(map_sqlx)?;
+        let Some(user_ctx) = user_ctx_id else { return Ok(0) };
+
+        let reply_ctx_id: Option<i64> = sqlx::query_scalar(
+            "SELECT id FROM session_contexts
+             WHERE session_id = $1 AND iteration = $2 AND kind = 'assistant_reply'
+             ORDER BY id DESC LIMIT 1",
+        )
+        .bind(session_id.0 as i64)
+        .bind(iteration as i32)
+        .fetch_optional(&self.pool)
+        .await
+        .map_err(map_sqlx)?;
+        let Some(reply_ctx) = reply_ctx_id else { return Ok(0) };
+
+        // Window functions assign the chronological position + total size
+        // in a single pass; both feed the linear-decay weight calculation
+        // below.
+        let rows = sqlx::query(
+            "SELECT target_kind, target_id, target_uri,
+                    ROW_NUMBER() OVER (ORDER BY id) - 1 AS pos,
+                    COUNT(*) OVER () AS total
+             FROM session_interactions
+             WHERE session_id = $1 AND iteration = $2
+             ORDER BY id",
+        )
+        .bind(session_id.0 as i64)
+        .bind(iteration as i32)
+        .fetch_all(&self.pool)
+        .await
+        .map_err(map_sqlx)?;
+        if rows.is_empty() {
+            return Ok(0);
+        }
+
+        let user_uri = format!("ctx:{user_ctx}");
+        let reply_uri = format!("ctx:{reply_ctx}");
+        let mut edges: Vec<NewEdge> = Vec::with_capacity(rows.len() * 2);
+
+        for row in rows {
+            let kind: String = row.get(0);
+            let id: Option<i64> = row.get(1);
+            let uri: Option<String> = row.get(2);
+            let pos: i64 = row.get(3);
+            let total: i64 = row.get(4);
+
+            let Some(target) = from_pg_ref(&kind, id, uri) else {
+                continue;
+            };
+
+            // Linear interpolation between 0.3 (farthest) and 1.0 (closest).
+            // `denom == 1` for a single-tool turn so the weight always lands
+            // on the "closest" end (1.0) — fine, it's the only tool.
+            let denom = ((total - 1).max(1)) as f32;
+            let normalized = pos as f32 / denom;
+            let prompt_w = 1.0 - 0.7 * normalized;
+            let reply_w = 0.3 + 0.7 * normalized;
+
+            let extra = serde_json::json!({
+                "session_id": session_id.0,
+                "iteration": iteration,
+                "position": pos,
+                "total": total,
+            });
+            let mut prompt_meta = MetadataMap::default();
+            prompt_meta.extra = extra.clone();
+            let mut reply_meta = MetadataMap::default();
+            reply_meta.extra = extra;
+
+            edges.push(NewEdge {
+                workspace_id,
+                from: NodeRef::External(user_uri.clone()),
+                to: target.clone(),
+                kind: EdgeKind::PromptAnchored,
+                weight: prompt_w,
+                metadata: prompt_meta,
+                created_by: EdgeOrigin::Background,
+            });
+            edges.push(NewEdge {
+                workspace_id,
+                from: NodeRef::External(reply_uri.clone()),
+                to: target,
+                kind: EdgeKind::ReplyAnchored,
+                weight: reply_w,
+                metadata: reply_meta,
+                created_by: EdgeOrigin::Background,
+            });
+        }
+
+        let count = edges.len();
+        self.add_edges(edges).await?;
+        Ok(count)
     }
 
     pub async fn end_session(&self, id: SessionId) -> StorageResult<()> {

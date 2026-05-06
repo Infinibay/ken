@@ -75,7 +75,7 @@ fn print_usage() {
            ken hook tool-edit | tool-read           Run as PostToolUse hook (called by Claude)\n\n\
          INGEST-GIT OPTIONS:\n  \
            --repo PATH           Local repository path (required)\n  \
-           --workspace WS_ID     Workspace id (required, integer)\n  \
+           --workspace WS_OR_NAME Workspace numeric id, OR a name (find-or-created)\n  \
            --source SOURCE_ID    Existing source id (default: create one)\n  \
            --branch NAME         Branch / ref to walk (default: HEAD)\n  \
            --since YEARS         Only walk commits newer than N years (default: 2)\n  \
@@ -85,25 +85,25 @@ fn print_usage() {
            --keep-whitespace     Don't skip whitespace-only commits\n\n\
          INGEST-CODEBASE OPTIONS:\n  \
            --root PATH           Working tree root (required)\n  \
-           --workspace WS_ID     Workspace id (required, integer)\n  \
+           --workspace WS_OR_NAME Workspace numeric id, OR a name (find-or-created)\n  \
            --source SOURCE_ID    Existing source id (default: create one)\n  \
            --max-bytes N         Skip files larger than N bytes (default: 1048576)\n  \
            --no-gitignore        Ingest .gitignore'd files too (default: respect)\n  \
            --follow-symlinks     Follow symlinks during walk (default: skip)\n\n\
          INGEST-FILE OPTIONS:\n  \
            --path PATH           File to ingest (required; PDF, MD, HTML, code, txt)\n  \
-           --workspace WS_ID     Workspace id (required, integer)\n  \
+           --workspace WS_OR_NAME Workspace numeric id, OR a name (find-or-created)\n  \
            --source SOURCE_ID    Existing source id (default: create one)\n  \
            --mime MIME           Override MIME hint (e.g. text/markdown)\n\n\
          INGEST-URL OPTIONS:\n  \
            --url URL             Starting URL (required)\n  \
-           --workspace WS_ID     Workspace id (required, integer)\n  \
+           --workspace WS_OR_NAME Workspace numeric id, OR a name (find-or-created)\n  \
            --source SOURCE_ID    Existing source id (default: create one)\n  \
            --depth N             BFS crawl depth (default: 0 = single page)\n  \
            --max-pages M         Hard cap on pages fetched (default: 10)\n  \
            --same-host-only      Restrict crawl to the start URL's host (default: on)\n\n\
          INSTALL OPTIONS:\n  \
-           --workspace WS_ID     Engine workspace id (required, integer)\n  \
+           --workspace WS_OR_NAME Workspace numeric id, OR a name (find-or-created)\n  \
            --root PATH           Project root (default: current dir)\n  \
            --engine-url URL      Engine HTTP endpoint (default: http://127.0.0.1:8080)\n  \
            --agent-id ID         Agent identifier for the session (default: claude-code)\n\n\
@@ -116,7 +116,8 @@ fn print_usage() {
 }
 
 fn run_install(rest: Vec<String>) -> Result<()> {
-    let mut workspace: Option<u64> = None;
+    use ken::client::EngineClient;
+    let mut workspace_raw: Option<String> = None;
     let mut root: Option<std::path::PathBuf> = None;
     let mut workdir: Option<std::path::PathBuf> = None;
     let mut engine_url: Option<String> = None;
@@ -125,7 +126,7 @@ fn run_install(rest: Vec<String>) -> Result<()> {
     let mut it = rest.into_iter();
     while let Some(arg) = it.next() {
         match arg.as_str() {
-            "--workspace" => workspace = it.next().and_then(|s| s.parse().ok()),
+            "--workspace" => workspace_raw = it.next(),
             "--root" => root = it.next().map(std::path::PathBuf::from),
             "--workdir" => workdir = it.next().map(std::path::PathBuf::from),
             "--engine-url" => engine_url = it.next(),
@@ -134,26 +135,69 @@ fn run_install(rest: Vec<String>) -> Result<()> {
         }
     }
 
+    let workspace_raw = workspace_raw.context("--workspace WS_ID_OR_NAME is required")?;
+    let url = engine_url
+        .or_else(|| std::env::var("KEN_ENGINE_URL").ok())
+        .unwrap_or_else(|| "http://127.0.0.1:8080".into());
+    let workspace_id = if let Ok(id) = workspace_raw.parse::<u64>() {
+        id
+    } else {
+        let client = EngineClient::new(&url);
+        let id = client
+            .resolve_workspace(&workspace_raw)
+            .with_context(|| format!("resolve workspace {:?} via engine", workspace_raw))?;
+        eprintln!(
+            "→ workspace {:?} resolved to id {} (tenant \"local\")",
+            workspace_raw, id
+        );
+        id
+    };
+
     let args = install::InstallArgs {
         root: root.unwrap_or_else(|| std::path::PathBuf::from(".")),
         workdir,
-        workspace_id: workspace.context("--workspace WS_ID is required")?,
-        engine_url: engine_url
-            .or_else(|| std::env::var("KEN_ENGINE_URL").ok())
-            .unwrap_or_else(|| "http://127.0.0.1:8080".into()),
+        workspace_id,
+        engine_url: url,
         agent_id: agent_id.unwrap_or_else(|| "claude-code".into()),
     };
     install::run(args)
+}
+
+/// Shared between every `ingest-*` subcommand: resolve `--workspace VALUE`
+/// to a `WorkspaceId`. Numeric → use as id; otherwise find-or-create
+/// the named workspace under tenant `"local"`.
+async fn resolve_workspace_arg(
+    storage: &engine::postgres::PostgresStorage,
+    value: &str,
+) -> Result<engine::types::WorkspaceId> {
+    use engine::types::WorkspaceId;
+    if let Ok(id) = value.parse::<u64>() {
+        return Ok(WorkspaceId(id));
+    }
+    let (id, _, created) = storage
+        .find_or_create_workspace("local", value)
+        .await
+        .with_context(|| format!("find-or-create workspace {value:?}"))?;
+    if created {
+        eprintln!("→ created workspace {value:?} under tenant \"local\" (id {})", id.0);
+    } else {
+        eprintln!("→ workspace {value:?} resolved to id {}", id.0);
+    }
+    Ok(id)
 }
 
 fn run_hook(rest: Vec<String>) -> Result<()> {
     let event = rest
         .into_iter()
         .next()
-        .context("hook requires an event name (tool-edit | tool-read)")?;
+        .context("hook requires an event name (tool-edit | tool-read | session-start | session-end | prompt | stop)")?;
     let kind = match event.as_str() {
         "tool-edit" => hook::HookKind::ToolEdit,
         "tool-read" => hook::HookKind::ToolRead,
+        "session-start" => hook::HookKind::SessionStart,
+        "session-end" => hook::HookKind::SessionEnd,
+        "prompt" => hook::HookKind::Prompt,
+        "stop" => hook::HookKind::Stop,
         other => anyhow::bail!("unknown hook event: {other}"),
     };
     hook::run(kind)
@@ -210,11 +254,11 @@ async fn run_server(rest: Vec<String>) -> Result<()> {
 #[cfg(feature = "git")]
 async fn run_ingest_git(args: Vec<String>) -> Result<()> {
     use engine::ingest_git::{ensure_source, ingest_repo, IngestGitConfig, IngestMode};
-    use engine::types::{SourceId, WorkspaceId};
+    use engine::types::SourceId;
     use std::path::PathBuf;
 
     let mut repo: Option<PathBuf> = None;
-    let mut workspace: Option<u64> = None;
+    let mut workspace_raw: Option<String> = None;
     let mut source: Option<u64> = None;
     let mut branch: Option<String> = None;
     let mut since_years: Option<u64> = Some(2);
@@ -227,7 +271,7 @@ async fn run_ingest_git(args: Vec<String>) -> Result<()> {
     while let Some(arg) = it.next() {
         match arg.as_str() {
             "--repo" => repo = it.next().map(PathBuf::from),
-            "--workspace" => workspace = it.next().and_then(|s| s.parse().ok()),
+            "--workspace" => workspace_raw = it.next(),
             "--source" => source = it.next().and_then(|s| s.parse().ok()),
             "--branch" => branch = it.next(),
             "--since" => since_years = it.next().and_then(|s| s.parse().ok()),
@@ -248,7 +292,7 @@ async fn run_ingest_git(args: Vec<String>) -> Result<()> {
     }
 
     let repo = repo.context("--repo PATH is required")?;
-    let workspace_id = WorkspaceId(workspace.context("--workspace WS_ID is required")?);
+    let workspace_raw = workspace_raw.context("--workspace WS_ID_OR_NAME is required")?;
 
     let database_url =
         std::env::var("DATABASE_URL").map_err(|_| anyhow::anyhow!("DATABASE_URL is required"))?;
@@ -257,6 +301,7 @@ async fn run_ingest_git(args: Vec<String>) -> Result<()> {
         .migrate()
         .await
         .map_err(|e| anyhow::anyhow!("migrate failed: {e}"))?;
+    let workspace_id = resolve_workspace_arg(&storage, &workspace_raw).await?;
 
     let source_id = match source {
         Some(s) => SourceId(s),
@@ -308,11 +353,11 @@ async fn run_ingest_git(args: Vec<String>) -> Result<()> {
 
 async fn run_ingest_codebase(args: Vec<String>) -> Result<()> {
     use engine::ingest_fs::{ensure_source, ingest_codebase, IngestCodebaseConfig};
-    use engine::types::{SourceId, WorkspaceId};
+    use engine::types::SourceId;
     use std::path::PathBuf;
 
     let mut root: Option<PathBuf> = None;
-    let mut workspace: Option<u64> = None;
+    let mut workspace_raw: Option<String> = None;
     let mut source: Option<u64> = None;
     let mut max_bytes: u64 = 1024 * 1024;
     let mut respect_gitignore = true;
@@ -322,7 +367,7 @@ async fn run_ingest_codebase(args: Vec<String>) -> Result<()> {
     while let Some(arg) = it.next() {
         match arg.as_str() {
             "--root" => root = it.next().map(PathBuf::from),
-            "--workspace" => workspace = it.next().and_then(|s| s.parse().ok()),
+            "--workspace" => workspace_raw = it.next(),
             "--source" => source = it.next().and_then(|s| s.parse().ok()),
             "--max-bytes" => {
                 max_bytes = it.next().and_then(|s| s.parse().ok()).unwrap_or(max_bytes);
@@ -334,7 +379,7 @@ async fn run_ingest_codebase(args: Vec<String>) -> Result<()> {
     }
 
     let root = root.context("--root PATH is required")?;
-    let workspace_id = WorkspaceId(workspace.context("--workspace WS_ID is required")?);
+    let workspace_raw = workspace_raw.context("--workspace WS_ID_OR_NAME is required")?;
 
     let database_url =
         std::env::var("DATABASE_URL").map_err(|_| anyhow::anyhow!("DATABASE_URL is required"))?;
@@ -343,6 +388,7 @@ async fn run_ingest_codebase(args: Vec<String>) -> Result<()> {
         .migrate()
         .await
         .map_err(|e| anyhow::anyhow!("migrate failed: {e}"))?;
+    let workspace_id = resolve_workspace_arg(&storage, &workspace_raw).await?;
 
     let source_id = match source {
         Some(s) => SourceId(s),
@@ -387,11 +433,11 @@ async fn run_ingest_codebase(args: Vec<String>) -> Result<()> {
 async fn run_ingest_file(args: Vec<String>) -> Result<()> {
     use engine::ingest::{default_adapters, pick_adapter, MimeHint};
     use engine::ingest_fs::{ensure_source, ingest_uri, FileOutcome, IngestFileError};
-    use engine::types::{MetadataMap, SourceId, WorkspaceId};
+    use engine::types::{MetadataMap, SourceId};
     use std::path::PathBuf;
 
     let mut path: Option<PathBuf> = None;
-    let mut workspace: Option<u64> = None;
+    let mut workspace_raw: Option<String> = None;
     let mut source: Option<u64> = None;
     let mut mime_override: Option<String> = None;
 
@@ -399,14 +445,14 @@ async fn run_ingest_file(args: Vec<String>) -> Result<()> {
     while let Some(arg) = it.next() {
         match arg.as_str() {
             "--path" => path = it.next().map(PathBuf::from),
-            "--workspace" => workspace = it.next().and_then(|s| s.parse().ok()),
+            "--workspace" => workspace_raw = it.next(),
             "--source" => source = it.next().and_then(|s| s.parse().ok()),
             "--mime" => mime_override = it.next(),
             other => anyhow::bail!("unknown ingest-file arg: {other}"),
         }
     }
     let path = path.context("--path PATH is required")?;
-    let workspace_id = WorkspaceId(workspace.context("--workspace WS_ID is required")?);
+    let workspace_raw = workspace_raw.context("--workspace WS_ID_OR_NAME is required")?;
 
     let database_url =
         std::env::var("DATABASE_URL").map_err(|_| anyhow::anyhow!("DATABASE_URL is required"))?;
@@ -415,6 +461,7 @@ async fn run_ingest_file(args: Vec<String>) -> Result<()> {
         .migrate()
         .await
         .map_err(|e| anyhow::anyhow!("migrate failed: {e}"))?;
+    let workspace_id = resolve_workspace_arg(&storage, &workspace_raw).await?;
 
     let source_id = match source {
         Some(s) => SourceId(s),
@@ -479,11 +526,11 @@ async fn run_ingest_url(args: Vec<String>) -> Result<()> {
     use engine::ingest::{default_adapters, pick_adapter, MimeHint};
     use engine::ingest_fs::{ingest_uri, FileOutcome, IngestFileError};
     use engine::storage::NewSource;
-    use engine::types::{Acl, MetadataMap, SourceId, SourceKind, WorkspaceId};
+    use engine::types::{Acl, MetadataMap, SourceId, SourceKind};
     use std::collections::{HashSet, VecDeque};
 
     let mut url_arg: Option<String> = None;
-    let mut workspace: Option<u64> = None;
+    let mut workspace_raw: Option<String> = None;
     let mut source: Option<u64> = None;
     let mut depth: u32 = 0;
     let mut max_pages: u32 = 10;
@@ -493,7 +540,7 @@ async fn run_ingest_url(args: Vec<String>) -> Result<()> {
     while let Some(arg) = it.next() {
         match arg.as_str() {
             "--url" => url_arg = it.next(),
-            "--workspace" => workspace = it.next().and_then(|s| s.parse().ok()),
+            "--workspace" => workspace_raw = it.next(),
             "--source" => source = it.next().and_then(|s| s.parse().ok()),
             "--depth" => depth = it.next().and_then(|s| s.parse().ok()).unwrap_or(0),
             "--max-pages" => max_pages = it.next().and_then(|s| s.parse().ok()).unwrap_or(10),
@@ -503,7 +550,7 @@ async fn run_ingest_url(args: Vec<String>) -> Result<()> {
         }
     }
     let start_url = url_arg.context("--url URL is required")?;
-    let workspace_id = WorkspaceId(workspace.context("--workspace WS_ID is required")?);
+    let workspace_raw = workspace_raw.context("--workspace WS_ID_OR_NAME is required")?;
     let start = url::Url::parse(&start_url).context("invalid --url")?;
     let start_host = start.host_str().map(|s| s.to_string());
 
@@ -514,6 +561,7 @@ async fn run_ingest_url(args: Vec<String>) -> Result<()> {
         .migrate()
         .await
         .map_err(|e| anyhow::anyhow!("migrate failed: {e}"))?;
+    let workspace_id = resolve_workspace_arg(&storage, &workspace_raw).await?;
 
     let source_id = match source {
         Some(s) => SourceId(s),

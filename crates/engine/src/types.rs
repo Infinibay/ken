@@ -407,6 +407,22 @@ pub enum EdgeKind {
     /// edge-following into the predictive channel. Metadata carries the
     /// session id and both endpoints' patterns for forensics.
     CoAccessed,
+    /// Inferred at turn-close (`Stop` hook): connects the user's prompt
+    /// context for that turn to every tool target the agent touched while
+    /// answering it. Weight decays linearly by position — the FIRST tool
+    /// in the turn is most strongly anchored to the prompt (it's
+    /// "answering" it most directly); later tools earn lower weight.
+    /// `from` is the user-input SessionContext encoded as
+    /// `External("ctx:<id>")`; `to` is the tool target.
+    PromptAnchored,
+    /// Mirror of `PromptAnchored` but anchored on the agent's final reply
+    /// SessionContext. Weight *grows* by position — the LAST tool is most
+    /// strongly anchored to the reply (the reply summarizes the work
+    /// closest to it). Together with `PromptAnchored` these two edges
+    /// give the ranker a way to retrieve "which files did I touch when
+    /// I asked X last week?" by semantically matching the prompt context
+    /// and following its outgoing edges.
+    ReplyAnchored,
     Other(String),
 }
 
@@ -464,10 +480,25 @@ pub struct Session {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ContextKind {
+    /// What the user typed at the start of a turn. Captured by the
+    /// `UserPromptSubmit` hook in Claude Code. Embedded so the predictive
+    /// channel can compare future queries against past intent.
     UserInput,
+    /// The result returned by a tool call (Read, Bash, …). Reserved for
+    /// future fine-grained capture; not currently emitted by hooks.
     ToolResult,
+    /// One step in a planned breakdown of work — e.g. "I'll first survey
+    /// the auth code, then refactor the middleware."
     StepDescription,
+    /// The agent's internal reflection — thinking, deliberation. Not
+    /// captured by default (intentionally — see `AssistantReply`).
     Reflection,
+    /// The agent's final user-facing reply at the end of a turn. Captured
+    /// by the `Stop` hook reading the transcript. Carries the
+    /// conclusions / explanations / answers the user actually sees, which
+    /// makes it high-signal for the predictive channel — much higher than
+    /// inner deliberation that never lands.
+    AssistantReply,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

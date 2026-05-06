@@ -45,28 +45,31 @@ pub fn run(args: InstallArgs) -> Result<()> {
         .to_string_lossy()
         .into_owned();
 
-    // Mint a session up front so every hook + every MCP rank call lands
-    // on the same session row. A single session per project install is
-    // the right granularity for the demo: the ranker's reactive channel
-    // depends on co-occurrences within a session.
+    // Mint an initial session so the MCP server has a valid id even if
+    // Claude Code is opened without firing `SessionStart` for some reason.
+    // The `SessionStart` hook rotates `session_id` on every Claude Code
+    // launch (see `hook::handle_session_start`), so this initial value is
+    // a transient bootstrap, not the long-lived ranker session.
     let client = EngineClient::new(&args.engine_url);
     let session_id = client
         .create_session(args.workspace_id, &args.agent_id)
         .context("create session against engine")?;
 
     let workdir = args.workdir.clone().unwrap_or_else(|| args.root.clone());
-    let state = json!({
-        "workspace_id": args.workspace_id,
-        "session_id": session_id,
-        "engine_url": args.engine_url,
-        "agent_id": args.agent_id,
-        "root": workdir.canonicalize()
+    let state = State {
+        workspace_id: args.workspace_id,
+        session_id,
+        engine_url: args.engine_url.clone(),
+        agent_id: args.agent_id.clone(),
+        root: workdir
+            .canonicalize()
             .unwrap_or_else(|_| workdir.clone())
-            .to_string_lossy(),
-    });
+            .to_string_lossy()
+            .into_owned(),
+        iteration: 0,
+    };
     let state_path = claude_dir.join("ken-state.json");
-    std::fs::write(&state_path, serde_json::to_string_pretty(&state)?)
-        .with_context(|| format!("write {}", state_path.display()))?;
+    save_state(&args.root, &state).context("write initial ken-state.json")?;
 
     let settings_path = claude_dir.join("settings.local.json");
     let mut settings: Value = if settings_path.exists() {
@@ -143,6 +146,48 @@ fn merge_hooks(settings: &mut Value, exe: &str) -> Result<()> {
             "command": format!("{exe} hook tool-read")
         }]
     }));
+
+    // Session-lifecycle + dialog-capture hooks. SessionStart rotates the
+    // ken session_id (so each Claude Code launch is a separate rank
+    // session). UserPromptSubmit captures the user's message + bumps
+    // iteration. Stop captures the agent's final user-facing reply by
+    // reading the transcript. SessionEnd closes the session and triggers
+    // co-access edge inference.
+    let single_hooks: &[(&str, &str)] = &[
+        ("SessionStart", "session-start"),
+        ("UserPromptSubmit", "prompt"),
+        ("Stop", "stop"),
+        ("SessionEnd", "session-end"),
+    ];
+    for (event, sub) in single_hooks {
+        let bucket = hooks_obj
+            .entry((*event).to_string())
+            .or_insert_with(|| json!([]));
+        let arr = bucket
+            .as_array_mut()
+            .with_context(|| format!("settings.hooks.{event} is not an array"))?;
+        // Drop our prior entry for this event (idempotent re-install).
+        arr.retain(|entry| {
+            !entry
+                .get("hooks")
+                .and_then(|h| h.as_array())
+                .map(|hs| {
+                    hs.iter().any(|hh| {
+                        hh.get("command")
+                            .and_then(|c| c.as_str())
+                            .is_some_and(|c| c.contains(&format!("ken hook {sub}")))
+                    })
+                })
+                .unwrap_or(false)
+        });
+        arr.push(json!({
+            "hooks": [{
+                "type": "command",
+                "command": format!("{exe} hook {sub}")
+            }]
+        }));
+    }
+
     Ok(())
 }
 
@@ -182,15 +227,36 @@ pub fn load_state(root: &Path) -> Result<State> {
     Ok(state)
 }
 
-#[derive(Debug, serde::Deserialize)]
+/// Atomically write `<root>/.claude/ken-state.json`. Writes to a sibling
+/// temp file then renames so concurrent readers either see the previous
+/// state or the new one — never a half-written truncation. The
+/// `SessionStart` and `UserPromptSubmit` hooks both mutate state, so
+/// atomicity matters.
+pub fn save_state(root: &Path, state: &State) -> Result<()> {
+    let path = root.join(".claude/ken-state.json");
+    let tmp = root.join(".claude/.ken-state.json.tmp");
+    let json = serde_json::to_string_pretty(state).context("serialize ken state")?;
+    std::fs::write(&tmp, json)
+        .with_context(|| format!("write {}", tmp.display()))?;
+    std::fs::rename(&tmp, &path)
+        .with_context(|| format!("rename to {}", path.display()))?;
+    Ok(())
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct State {
     pub workspace_id: u64,
     pub session_id: u64,
     pub engine_url: String,
-    #[allow(dead_code)]
     pub agent_id: String,
-    #[allow(dead_code)]
     pub root: String,
+    /// Monotonic counter advanced by the `UserPromptSubmit` hook. Hooks +
+    /// MCP read this when recording interactions so the reactive channel
+    /// can decay older turns. Starts at 0 (no prompts yet) and bumps to 1
+    /// on the first user message of the session. Defaulted to 0 so old
+    /// state files that predate this field still parse.
+    #[serde(default)]
+    pub iteration: u32,
 }
 
 /// Walk up from `start` looking for a directory containing `.claude/`.

@@ -40,9 +40,9 @@ ken serve --with-pg
 
 # wire your project (in another terminal)
 cd /path/to/your/project
-ken install --workspace 1
-ken ingest-codebase --root . --workspace 1
-ken ingest-git --repo . --workspace 1
+ken install --workspace my-project
+ken ingest-codebase --root . --workspace my-project
+ken ingest-git --repo . --workspace my-project
 
 # restart Claude Code in that directory; the new MCP tools (`query_context`,
 # `list_files`, `search_symbols`, `list_symbols`, `git_history`, `ingest_file`,
@@ -143,33 +143,36 @@ of isolation is a **workspace**: every query (semantic search, symbol lookup,
 git history…) is filtered by `workspace_id` at the SQL level, so projects in
 different workspaces never bleed into each other's results.
 
-### Why workspace ids matter
+### Why workspaces matter
 
-The DB can hold many projects. If you run `ken install --workspace 1` in
-project A *and* project B, both share workspace 1 → MCP queries return mixed
-results from both. **Use a different workspace id per project.**
+The DB can hold many projects. If you run `ken install --workspace foo` in
+project A *and* project B, both share workspace `foo` → MCP queries return
+mixed results from both. **Use a different workspace name (or id) per
+project.**
 
-Today, creating a workspace is a single HTTP call (a one-shot `ken init` is on
-the roadmap):
+`--workspace VALUE` accepts either a numeric id (`--workspace 1`) or a name
+(`--workspace my-project`). Names are find-or-created automatically under a
+shared tenant (`"local"`), so you don't need to manually create the
+workspace via HTTP first — the first `ken install` (or any `ken ingest-*`)
+that references the name will mint it.
+
+If you prefer explicit creation (e.g. for a non-default tenant), the HTTP
+routes are still available:
 
 ```bash
-# one tenant for you (only needed once)
 TENANT_ID=$(curl -s -XPOST http://localhost:8080/tenants \
   -H 'Content-Type: application/json' \
   -d '{"name":"andres"}' | jq -r .id)
-
-# one workspace per project
 WS_ID=$(curl -s -XPOST http://localhost:8080/workspaces \
   -H 'Content-Type: application/json' \
-  -d "{\"tenant_id\":$TENANT_ID,\"name\":\"my-project\"}" | jq -r .id)
-echo "workspace_id = $WS_ID"
+  -d "{\"tenant_id\":\"$TENANT_ID\",\"name\":\"my-project\"}" | jq -r .id)
 ```
 
 ### Install the hooks
 
 ```bash
 cd /path/to/your/project
-ken install --workspace $WS_ID
+ken install --workspace my-project
 ```
 
 This writes two files under `<project>/.claude/`:
@@ -194,8 +197,8 @@ Hooks fire on **future** edits/reads but the KG starts empty. Seed it with
 the codebase + git history:
 
 ```bash
-ken ingest-codebase --root . --workspace $WS_ID
-ken ingest-git --repo . --workspace $WS_ID
+ken ingest-codebase --root . --workspace my-project
+ken ingest-git --repo . --workspace my-project
 ```
 
 `ingest-codebase` walks the working tree (respecting `.gitignore`), picks the
@@ -243,15 +246,15 @@ skipped on the storage side.
 
 ```bash
 cd /path/to/project
-ken ingest-codebase --root . --workspace $WS_ID
-ken ingest-git --repo . --workspace $WS_ID
+ken ingest-codebase --root . --workspace my-project
+ken ingest-git --repo . --workspace my-project
 ```
 
 Add new sources (PDFs, web pages):
 
 ```bash
-ken ingest-file --path ./design-doc.pdf --workspace $WS_ID
-ken ingest-url --url https://docs.example.com --workspace $WS_ID --depth 1 --max-pages 10
+ken ingest-file --path ./design-doc.pdf --workspace my-project
+ken ingest-url --url https://docs.example.com --workspace my-project --depth 1 --max-pages 10
 ```
 
 Or let the agent do it via `ingest_file` / `ingest_url` MCP tools.
@@ -270,9 +273,9 @@ Arch / CachyOS: `pacman -S podman podman-compose`. On Ubuntu:
 The MCP / hook clients pick up the engine URL from `.claude/ken-state.json`
 written by `ken install --engine-url http://127.0.0.1:9000 …`.
 
-**Mixed results from multiple projects** — they share the same
-`workspace_id`. Run the workspace-creation curl in §4 for the second project
-and re-run `ken install --workspace $NEW_WS_ID` there.
+**Mixed results from multiple projects** — they share the same workspace.
+Pass a different name to `ken install --workspace OTHER_NAME` in the
+second project (it'll be auto-created on first reference).
 
 **MCP not appearing in Claude Code** — restart Claude Code in the project
 dir; it reads `.claude/settings.local.json` at startup. `cat

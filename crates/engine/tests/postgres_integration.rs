@@ -272,6 +272,109 @@ async fn snapshot_session_scores_roundtrip() {
 
 #[tokio::test]
 #[ignore]
+async fn anchor_turn_emits_prompt_and_reply_anchored_edges() {
+    let Some((s, _, w, src)) = setup().await else { return };
+
+    let first = s
+        .upsert_document(doc_draft(w, src, "anchor-first", 0x20))
+        .await
+        .unwrap()
+        .current_id();
+    let middle = s
+        .upsert_document(doc_draft(w, src, "anchor-middle", 0x21))
+        .await
+        .unwrap()
+        .current_id();
+    let last = s
+        .upsert_document(doc_draft(w, src, "anchor-last", 0x22))
+        .await
+        .unwrap()
+        .current_id();
+
+    let sid = s.create_session(w, Some("agent")).await.unwrap();
+
+    // Iteration 1 — prompt context
+    let user_ctx = s
+        .append_context(NewContext {
+            session_id: sid,
+            kind: ContextKind::UserInput,
+            content: "fixea el bug".into(),
+            iteration: 1,
+        })
+        .await
+        .unwrap();
+    // Three tool interactions in order
+    for (i, target) in [first, middle, last].iter().enumerate() {
+        s.append_interaction(NewInteraction {
+            session_id: sid,
+            context_id: None,
+            iteration: 1,
+            event_type: if i == 1 { EventType::Read } else { EventType::Edited },
+            target: NodeRef::Document(*target),
+            weight: 1.5,
+            tool_name: None,
+        })
+        .await
+        .unwrap();
+    }
+    // Reply context
+    let reply_ctx = s
+        .append_context(NewContext {
+            session_id: sid,
+            kind: ContextKind::AssistantReply,
+            content: "modifiqué auth.rs y token.rs".into(),
+            iteration: 1,
+        })
+        .await
+        .unwrap();
+
+    let count = s.anchor_turn(sid, 1).await.unwrap();
+    // 3 tools × 2 edges (Prompt + Reply) = 6
+    assert_eq!(count, 6);
+
+    let user_uri = format!("ctx:{}", user_ctx.0);
+    let reply_uri = format!("ctx:{}", reply_ctx.0);
+
+    let from_user = s
+        .edges_from(&NodeRef::External(user_uri.clone()), Some(&EdgeKind::PromptAnchored))
+        .await;
+    assert_eq!(from_user.len(), 3, "3 PromptAnchored edges from user prompt");
+    // First tool (closest to prompt) should have the highest weight.
+    let weight_of = |target: DocumentId| -> f32 {
+        from_user
+            .iter()
+            .find(|e| matches!(e.to, NodeRef::Document(d) if d == target))
+            .unwrap()
+            .weight
+    };
+    assert!(weight_of(first) > weight_of(middle));
+    assert!(weight_of(middle) > weight_of(last));
+
+    let from_reply = s
+        .edges_from(&NodeRef::External(reply_uri.clone()), Some(&EdgeKind::ReplyAnchored))
+        .await;
+    assert_eq!(from_reply.len(), 3, "3 ReplyAnchored edges from reply");
+    // Last tool (closest to reply) should have the highest weight.
+    let reply_weight_of = |target: DocumentId| -> f32 {
+        from_reply
+            .iter()
+            .find(|e| matches!(e.to, NodeRef::Document(d) if d == target))
+            .unwrap()
+            .weight
+    };
+    assert!(reply_weight_of(last) > reply_weight_of(middle));
+    assert!(reply_weight_of(middle) > reply_weight_of(first));
+
+    // Idempotent under ON CONFLICT — second call leaves the same edge count.
+    let _ = s.anchor_turn(sid, 1).await.unwrap();
+    let from_user_again = s
+        .edges_from(&NodeRef::External(user_uri), Some(&EdgeKind::PromptAnchored))
+        .await;
+    assert_eq!(from_user_again.len(), 3);
+}
+
+#[tokio::test]
+#[ignore]
 async fn end_session_emits_coaccessed_edges_and_is_idempotent() {
     let Some((s, _, w, src)) = setup().await else { return };
     // Three documents — productive (Cited, ReadEdit) get linked; Dismissed

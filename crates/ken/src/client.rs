@@ -23,6 +23,22 @@ impl EngineClient {
         Self { base: base.into(), agent }
     }
 
+    /// Find-or-create a workspace by name (under tenant `"local"` by
+    /// default). Returns the workspace id. Used by `ken install` so the
+    /// user can pass `--workspace my-project` instead of memorizing
+    /// numeric ids.
+    pub fn resolve_workspace(&self, name: &str) -> Result<u64> {
+        let body = json!({ "name": name });
+        let resp: ResolveWorkspaceResponse = self
+            .agent
+            .post(&format!("{}/workspaces/resolve", self.base))
+            .send_json(body)
+            .map_err(|e| anyhow!("POST /workspaces/resolve: {e}"))?
+            .into_json()
+            .context("decode /workspaces/resolve response")?;
+        Ok(resp.id)
+    }
+
     /// Create a session and return its id. Idempotent at the caller's
     /// discretion — the engine creates a fresh session every call.
     pub fn create_session(&self, workspace_id: u64, agent_id: &str) -> Result<u64> {
@@ -37,6 +53,63 @@ impl EngineClient {
             .map_err(|e| anyhow!("POST /sessions: {e}"))?
             .into_json()
             .context("decode /sessions response")?;
+        Ok(resp.id)
+    }
+
+    /// Mark a session as ended. The engine fires `infer_coaccessed_edges`
+    /// internally on close — best-effort, but worth waiting for the call
+    /// to complete so the next session sees the new edges.
+    pub fn end_session(&self, session_id: u64) -> Result<()> {
+        let body = json!({ "session_id": session_id });
+        self.agent
+            .post(&format!("{}/sessions/end", self.base))
+            .send_json(body)
+            .map_err(|e| anyhow!("POST /sessions/end: {e}"))?;
+        Ok(())
+    }
+
+    /// Tell the engine to emit per-turn anchor edges (`PromptAnchored` /
+    /// `ReplyAnchored`). The `Stop` hook calls this after appending the
+    /// assistant reply so the turn's tool interactions get linked to both
+    /// dialog endpoints. Server-side it's a single batched insert.
+    pub fn anchor_turn(&self, session_id: u64, iteration: u32) -> Result<()> {
+        let body = json!({
+            "session_id": session_id,
+            "iteration": iteration,
+        });
+        self.agent
+            .post(&format!("{}/sessions/anchor_turn", self.base))
+            .send_json(body)
+            .map_err(|e| anyhow!("POST /sessions/anchor_turn: {e}"))?;
+        Ok(())
+    }
+
+    /// Append a `SessionContext` (UserInput / AssistantReply / …) and
+    /// optionally embed it. Used by the `UserPromptSubmit` and `Stop` hooks
+    /// to persist the outer dialog so the predictive ranker can compare
+    /// future queries against past intent + answers.
+    pub fn append_context(
+        &self,
+        session_id: u64,
+        kind: &str,
+        content: &str,
+        iteration: u32,
+        embed: bool,
+    ) -> Result<u64> {
+        let body = json!({
+            "session_id": session_id,
+            "kind": kind,
+            "content": content,
+            "iteration": iteration,
+            "embed": embed,
+        });
+        let resp: ContextResponse = self
+            .agent
+            .post(&format!("{}/contexts", self.base))
+            .send_json(body)
+            .map_err(|e| anyhow!("POST /contexts: {e}"))?
+            .into_json()
+            .context("decode /contexts response")?;
         Ok(resp.id)
     }
 
@@ -169,6 +242,16 @@ impl EngineClient {
 
 #[derive(Deserialize)]
 struct SessionResponse {
+    id: u64,
+}
+
+#[derive(Deserialize)]
+struct ResolveWorkspaceResponse {
+    id: u64,
+}
+
+#[derive(Deserialize)]
+struct ContextResponse {
     id: u64,
 }
 

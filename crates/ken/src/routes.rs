@@ -35,8 +35,11 @@ pub fn router() -> Router<Arc<AppState>> {
         .route("/health", get(health))
         .route("/tenants", post(create_tenant))
         .route("/workspaces", post(create_workspace))
+        .route("/workspaces/resolve", post(resolve_workspace))
         .route("/sources", post(create_source))
         .route("/sessions", post(create_session))
+        .route("/sessions/end", post(end_session))
+        .route("/sessions/anchor_turn", post(anchor_turn))
         .route("/contexts", post(append_context))
         .route("/ingest", post(ingest_document))
         .route("/ingest_text", post(ingest_text))
@@ -112,6 +115,41 @@ async fn create_workspace(
     Ok(Json(CreateWorkspaceResponse { id }))
 }
 
+#[derive(Debug, Deserialize)]
+struct ResolveWorkspaceBody {
+    name: String,
+    /// Tenant name; defaults to `"local"` when omitted. Solo-developer
+    /// installs all share one tenant.
+    #[serde(default = "default_tenant_name")]
+    tenant_name: String,
+}
+
+fn default_tenant_name() -> String {
+    "local".to_string()
+}
+
+#[derive(Debug, Serialize)]
+struct ResolveWorkspaceResponse {
+    id: WorkspaceId,
+    tenant_id: TenantId,
+    created: bool,
+}
+
+async fn resolve_workspace(
+    State(state): State<Arc<AppState>>,
+    Json(body): Json<ResolveWorkspaceBody>,
+) -> ApiResult<Json<ResolveWorkspaceResponse>> {
+    let (id, tenant_id, created) = state
+        .storage
+        .find_or_create_workspace(&body.tenant_name, &body.name)
+        .await?;
+    Ok(Json(ResolveWorkspaceResponse {
+        id,
+        tenant_id,
+        created,
+    }))
+}
+
 // ============================================================================
 // Sources
 // ============================================================================
@@ -177,6 +215,54 @@ async fn create_session(
         .create_session(body.workspace_id, body.agent_id.as_deref())
         .await?;
     Ok(Json(CreateSessionResponse { id }))
+}
+
+#[derive(Debug, Deserialize)]
+struct EndSessionBody {
+    session_id: SessionId,
+}
+
+#[derive(Debug, Serialize)]
+struct EndSessionResponse {
+    ok: bool,
+}
+
+/// Mark a session as ended. The storage layer's `end_session` also fires the
+/// session-close inferences (`snapshot_session_scores` would, if the caller
+/// pushed scores; `infer_coaccessed_edges` runs from interactions on the
+/// session).
+async fn end_session(
+    State(state): State<Arc<AppState>>,
+    Json(body): Json<EndSessionBody>,
+) -> ApiResult<Json<EndSessionResponse>> {
+    state.storage.end_session(body.session_id).await?;
+    Ok(Json(EndSessionResponse { ok: true }))
+}
+
+#[derive(Debug, Deserialize)]
+struct AnchorTurnBody {
+    session_id: SessionId,
+    iteration: u32,
+}
+
+#[derive(Debug, Serialize)]
+struct AnchorTurnResponse {
+    edges: usize,
+}
+
+/// Emit `PromptAnchored` + `ReplyAnchored` edges for a finished turn. The
+/// `Stop` hook calls this after appending the assistant reply so all the
+/// turn's tool interactions are anchored to both dialog endpoints in a
+/// single batched insert.
+async fn anchor_turn(
+    State(state): State<Arc<AppState>>,
+    Json(body): Json<AnchorTurnBody>,
+) -> ApiResult<Json<AnchorTurnResponse>> {
+    let edges = state
+        .storage
+        .anchor_turn(body.session_id, body.iteration)
+        .await?;
+    Ok(Json(AnchorTurnResponse { edges }))
 }
 
 // ============================================================================
