@@ -27,11 +27,12 @@ def test_render_terse_caps_files_and_symbols(conn):
     )
     out = render_block(conn, result, verbose=0)
     # verbose=0: 3 files, 0 outline, 2 symbols
-    file_lines = [ln for ln in out.splitlines() if ln.endswith(".py [5.0] x") or ln.startswith("f")]
-    assert sum(1 for ln in out.splitlines() if ln.startswith("f") and ".py" in ln) == 3
-    # symbol lines start with "  ↳"
-    assert sum(1 for ln in out.splitlines() if ln.startswith("  ↳")) == 2
-    assert "verbose=0" in out
+    assert sum(1 for ln in out.splitlines() if ln.startswith("- f") and ".py" in ln) == 3
+    assert sum(1 for ln in out.splitlines() if ln.startswith("- S")) == 2
+    assert out.startswith("<context-rank>\nRelevant context:")
+    assert "verbose=0" not in out
+    assert "[5.0]" not in out
+    assert " x" not in out
 
 
 def test_render_verbose_l1_includes_outline(conn, make_file, make_symbol):
@@ -80,12 +81,12 @@ def test_file_outline_empty_when_no_symbols(conn, make_file):
     assert _file_outline(conn, "src/empty.py", 5) == []
 
 
-def test_render_includes_score_and_reason(conn):
+def test_render_terse_hides_score_and_reason(conn):
     result = RankResult(files=[_file("src/a.py", 7.3, "reactive:read_edit")])
     out = render_block(conn, result, verbose=0)
     assert "src/a.py" in out
-    assert "[7.3]" in out
-    assert "reactive:read_edit" in out
+    assert "[7.3]" not in out
+    assert "reactive:read_edit" not in out
 
 
 def test_render_terse_includes_capped_finding_note(conn):
@@ -98,7 +99,9 @@ def test_render_terse_includes_capped_finding_note(conn):
 
     out = render_block(conn, result, verbose=0)
 
-    assert "note: codex wiring [3.2] finding:1.00" in out
+    assert "Notes:" in out
+    assert "- codex wiring" in out
+    assert "finding:1.00" not in out
     assert "Other note" not in out
 
 

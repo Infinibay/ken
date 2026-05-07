@@ -7,11 +7,12 @@ swamp the prompt budget with information the model didn't ask for.
 
 Level 0 — terse (default for hook injection):
 
-    <context-rank verbose=0>
-    src/auth.py [5.2] reactive:read_edit
-    src/payments.py [3.4] fuzzy:0.62
-    tests/test_auth.py [2.8] cooc(3sess)
-    (Call ken_rank(verbose=1|2) for outlines or to expand.)
+    <context-rank>
+    Relevant context:
+    Files:
+    - src/auth.py
+    - src/payments.py
+    - tests/test_auth.py
     </context-rank>
 
 Level 1 — medium: top 5 files + symbols/findings sections + 3-line outline.
@@ -64,16 +65,19 @@ def render_block(
 def _render_terse(
     result: RankResult, max_files: int, max_symbols: int, max_findings: int
 ) -> str:
-    lines = ["<context-rank verbose=0>"]
-    for it in result.files[:max_files]:
-        lines.append(f"{it.target} [{it.score:.1f}] {it.reason}")
+    lines = ["<context-rank>", "Relevant context:"]
+    if result.files:
+        lines.append("Files:")
+        for it in result.files[:max_files]:
+            lines.append(f"- {it.target}")
     if max_symbols and result.symbols:
+        lines.append("Symbols:")
         for it in result.symbols[:max_symbols]:
-            lines.append(f"  ↳ {it.target} [{it.score:.1f}]")
+            lines.append(f"- {it.target}")
     if max_findings and result.findings:
+        lines.append("Notes:")
         for it in result.findings[:max_findings]:
-            lines.append(f"  note: {it.topic} [{it.score:.1f}] {it.reason}")
-    lines.append("(Call ken_rank(verbose=1|2) for outlines or to expand.)")
+            lines.append(f"- {it.topic}")
     lines.append("</context-rank>")
     return "\n".join(lines)
 

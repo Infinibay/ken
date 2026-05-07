@@ -134,8 +134,8 @@ The hooks fire automatically:
 
 1. **Session start** → ken daemon spawns in the background (logs to
    `.ken/daemon.log`).
-2. **Each user prompt** → daemon runs the ranker, prepends a
-   `<context-rank verbose=0>` block listing top-relevant files, symbols,
+2. **Each user prompt** → daemon runs the ranker, prepends a compact
+   `<context-rank>` block listing top-relevant files, symbols,
    docstring-derived intent matches, and matching saved findings.
 3. **Each tool call** (Read, Edit, etc.) → recorded as a reactive signal so
    the ranker learns what *this* session is touching.

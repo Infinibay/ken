@@ -110,8 +110,8 @@ def ken_rank(query: str = "", verbose: int = 1, max_chars: int = 0) -> dict:
     The default ``<context-rank>`` block injected before each user
     prompt is intentionally terse. Call this when you want more detail:
 
-    * ``verbose=0`` — same one-line-per-file format as the auto-injected
-      block (useful if you missed it).
+    * ``verbose=0`` — same compact list-only format as the auto-injected
+      block.
     * ``verbose=1`` — top 5 files with a 3-line outline of each and a
       ranked symbols section.
     * ``verbose=2`` — top 8 files with a 12-line outline of each plus
