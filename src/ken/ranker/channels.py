@@ -322,6 +322,7 @@ _TRACEBACK_FILE_RE = re.compile(
 # identifier in plain prose (group 2). Lowercase identifiers without
 # backticks are too noisy ("the function" → "the").
 _IDENT_RE = re.compile(r"`([^`\n]+)`|\b([A-Z][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)?)\b")
+_SNAKE_IDENT_RE = re.compile(r"\b[A-Za-z_][A-Za-z0-9_]*_[A-Za-z0-9_]*\b")
 
 _KNOWN_EXTS = frozenset(
     "py pyi rs js jsx mjs cjs ts tsx go java md rst json yaml yml toml sh sql html css".split()
@@ -405,6 +406,10 @@ def explicit_mentions(
     candidates: set[str] = set()
     for backtick, camel in _IDENT_RE.findall(prompt):
         token = (backtick or camel).strip().rstrip("()").strip()
+        if 3 <= len(token) <= 80:
+            candidates.add(token)
+    for token in _SNAKE_IDENT_RE.findall(prompt):
+        token = token.strip().rstrip("()").strip()
         if 3 <= len(token) <= 80:
             candidates.add(token)
 
@@ -519,6 +524,7 @@ LEXICAL_FILE_MIN_OVERLAP = 1
 LEXICAL_SYMBOL_MIN_OVERLAP = 1
 LEXICAL_FILE_SCALE = 1.4
 LEXICAL_SYMBOL_SCALE = 1.8
+LEXICAL_EXACT_SYMBOL_BONUS = 1.0
 CONTEXTUAL_LEXICAL_RECENT_PROMPTS = 3
 CONTEXTUAL_LEXICAL_BONUS = 0.6
 _WORD_RE = re.compile(r"[A-Za-z][A-Za-z0-9_]{2,}")
@@ -533,6 +539,10 @@ _STOPWORDS = frozenset(
     "este esta esto ese esa eso con para que por los las una uno momento ahora "
     "sigue seguir continua continuar continuemos seguimos path foco extra".split()
 )
+_TOKEN_ALIASES = {
+    "scheduler": {"sched"},
+    "scheduling": {"sched"},
+}
 
 
 def lexical_scores(
@@ -648,16 +658,21 @@ def _lexical_symbols(
         overlap = query_tokens & tokens
         if len(overlap) < LEXICAL_SYMBOL_MIN_OVERLAP:
             continue
+        exact_name = str(row["name"]).strip("_").lower()
+        exact_bonus = LEXICAL_EXACT_SYMBOL_BONUS if exact_name in query_tokens else 0.0
         score = min(
-            LEXICAL_SYMBOL_SCALE + score_bonus,
-            0.8 + 0.5 * len(overlap) + score_bonus,
+            LEXICAL_SYMBOL_SCALE + LEXICAL_EXACT_SYMBOL_BONUS + score_bonus,
+            0.8 + 0.5 * len(overlap) + exact_bonus + score_bonus,
         )
+        reason = f"{reason_prefix}:{','.join(sorted(overlap)[:3])}"
+        if exact_bonus:
+            reason += "+exact"
         out.append(
             RankedItem(
                 target=f"{row['qualname']} ({row['file_path']}:{row['line_start']})",
                 target_type="symbol",
                 score=score,
-                reason=f"{reason_prefix}:{','.join(sorted(overlap)[:3])}",
+                reason=reason,
             )
         )
     return out
@@ -668,7 +683,10 @@ def _name_tokens(text: str) -> set[str]:
     for raw in _WORD_RE.findall(text.replace("-", "_").replace(".", "_").replace("/", "_")):
         for piece in raw.split("_"):
             parts.update(_split_camel(piece))
-    return {p.lower() for p in parts if len(p) >= 3 and p.lower() not in _STOPWORDS}
+    tokens = {p.lower() for p in parts if len(p) >= 3 and p.lower() not in _STOPWORDS}
+    for token in list(tokens):
+        tokens.update(_TOKEN_ALIASES.get(token, set()))
+    return tokens
 
 
 def _split_camel(text: str) -> list[str]:

@@ -86,6 +86,18 @@ def test_backtick_quoted_lifts_symbol(conn, make_file, make_symbol):
     assert "login" in syms[0].target
 
 
+def test_snake_case_identifier_lifts_symbol(conn, make_file, make_symbol):
+    fid = make_file("mm/memory.c")
+    make_symbol(fid, name="handle_mm_fault", qualname="handle_mm_fault", kind="function")
+
+    files, syms = explicit_mentions(conn, "trace handle_mm_fault page fault handling")
+
+    assert len(syms) == 1
+    assert syms[0].target == "handle_mm_fault (mm/memory.c:1)"
+    assert syms[0].score == EXPLICIT_SYMBOL_SCORE
+    assert any(f.target == "mm/memory.c" for f in files)
+
+
 def test_qualname_match(conn, make_file, make_symbol):
     fid = make_file("src/auth.py")
     make_symbol(fid, name="expire", qualname="Session.expire", kind="method")

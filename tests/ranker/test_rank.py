@@ -99,6 +99,44 @@ def test_rank_surfaces_file_for_high_scoring_symbol(conn, make_session, make_fil
     assert any("DaemonServer.CriticalEntrypoint" in it.target for it in result.symbols)
 
 
+def test_rank_surfaces_file_for_exact_snake_case_symbol(conn, make_session, make_file, make_symbol, fake_emb):
+    make_session("alpha")
+    fid = make_file("mm/memory.c")
+    make_symbol(fid, name="handle_mm_fault", qualname="handle_mm_fault", line_start=4323)
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="trace handle_mm_fault page fault handling",
+        prompt_embedding=fake_emb("unrelated embedding text"),
+    )
+
+    assert result.files[0].target == "mm/memory.c"
+    assert result.symbols[0].target == "handle_mm_fault (mm/memory.c:4323)"
+
+
+def test_rank_surfaces_scheduler_core_from_exact_lowercase_symbol(
+    conn, make_session, make_file, make_symbol, fake_emb
+):
+    make_session("alpha")
+    fid = make_file("kernel/sched/core.c")
+    make_symbol(fid, name="schedule", qualname="schedule", line_start=4103)
+    noisy = make_file("drivers/gpu/drm/i915/gvt/scheduler.h")
+    make_symbol(noisy, name="intel_gvt_schedule", qualname="intel_gvt_schedule", line_start=10)
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="look at core scheduler schedule implementation",
+        prompt_embedding=fake_emb("unrelated embedding text"),
+    )
+
+    assert result.files[0].target == "kernel/sched/core.c"
+    assert result.symbols[0].target == "schedule (kernel/sched/core.c:4103)"
+
+
 def test_rank_includes_relevant_findings(conn, make_session, fake_emb, now_ms):
     make_session("alpha")
     conn.execute(

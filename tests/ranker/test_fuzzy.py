@@ -145,6 +145,27 @@ def test_lexical_symbols_match_camelcase_tokens(conn, make_file, make_symbol):
     assert "lexical:" in syms[0].reason
 
 
+def test_lexical_exact_lowercase_symbol_gets_bonus(conn, make_file, make_symbol):
+    fid = make_file("kernel/sched/core.c")
+    make_symbol(fid, name="schedule", qualname="schedule", line_start=4103)
+    make_symbol(fid, name="schedule_work", qualname="schedule_work", line_start=20)
+
+    _, syms = lexical_scores(conn, "look at core scheduler schedule implementation")
+
+    assert syms[0].target == "schedule (kernel/sched/core.c:4103)"
+    assert "+exact" in syms[0].reason
+    assert syms[0].score > syms[1].score
+
+
+def test_lexical_scheduler_alias_matches_sched_path(conn, make_file):
+    make_file("kernel/sched/core.c")
+
+    files, _ = lexical_scores(conn, "core scheduler schedule implementation")
+
+    assert files[0].target == "kernel/sched/core.c"
+    assert "sched" in files[0].reason
+
+
 def test_lexical_ignores_stopwords(conn, make_file):
     make_file("src/ken/status.py")
 
