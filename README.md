@@ -182,6 +182,10 @@ sqlite3 .ken/ken.db ".tables"               # explore the index
 sqlite3 .ken/ken.db "SELECT path FROM ci_files LIMIT 10"
 ```
 
+`ken status` also reports embedding coverage. If a repo was installed with
+`--embed-limit` or warmed lazily, partial coverage is expected; the status
+recommendation tells you when to warm more files for better semantic recall.
+
 ### Probe the ranker without hooks
 
 ```fish

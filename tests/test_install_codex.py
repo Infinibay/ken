@@ -7,6 +7,8 @@ import stat
 
 from pathlib import Path
 
+import pytest
+
 from ken.indexer import IndexStats
 from ken.install import _prioritize_embed_rels, _wire_codex, install
 from ken.cli import main
@@ -63,6 +65,13 @@ def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path):
 
     assert rc == 0
     assert calls == [(tmp_path, False, True, True, True, 7)]
+
+
+def test_install_cli_rejects_embed_limit_without_embed(tmp_path):
+    with pytest.raises(SystemExit) as exc:
+        main(["install", "--embed-limit", "7", str(tmp_path)])
+
+    assert exc.value.code == 2
 
 
 def test_prioritize_embed_rels_prefers_source_over_docs_and_tests():

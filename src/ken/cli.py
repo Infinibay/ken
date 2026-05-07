@@ -154,6 +154,9 @@ def main(argv: list[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
 
+    if args.cmd == "install" and args.embed_limit is not None and not args.embed:
+        parser.error("--embed-limit requires --embed")
+
     if args.cmd == "install":
         from ken.install import install
 

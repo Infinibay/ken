@@ -75,6 +75,7 @@ def status_report(start: Path) -> dict:
         "installed": True,
         "counts": counts.__dict__,
         "rank_signals": _rank_signals(counts),
+        "embedding_coverage": _embedding_coverage(counts),
         "recommendations": _recommendations(counts),
         "daemon": _daemon_health(root),
     }
@@ -101,6 +102,13 @@ def _print_report(report: dict) -> None:
     print(f"interactions  : {counts['interactions']}")
     print(f"findings      : {counts['findings']} ({counts['findings_embedded']} embedded)")
     print(f"rank signals  : {_rank_signal_summary_from_dict(report['rank_signals'])}")
+    coverage = report.get("embedding_coverage")
+    if coverage and coverage["total"] > 0:
+        print(
+            "embedding cov : "
+            f"{coverage['embedded']}/{coverage['total']} "
+            f"({coverage['percent']:.1f}%)"
+        )
     for rec in report.get("recommendations", []):
         print(f"recommendation: {rec}")
     daemon = report["daemon"]
@@ -187,6 +195,13 @@ def _rank_signals(counts: StatusCounts) -> dict[str, str]:
     }
 
 
+def _embedding_coverage(counts: StatusCounts) -> dict[str, int | float]:
+    embedded = counts.files_embedded + counts.symbols_embedded
+    total = counts.files + counts.symbols
+    percent = (embedded / total * 100.0) if total else 0.0
+    return {"embedded": embedded, "total": total, "percent": round(percent, 1)}
+
+
 def _rank_signal_summary_from_dict(signals: dict[str, str]) -> str:
     return (
         f"index={signals['index']}, "
@@ -198,10 +213,17 @@ def _rank_signal_summary_from_dict(signals: dict[str, str]) -> str:
 
 def _recommendations(counts: StatusCounts) -> list[str]:
     recs: list[str] = []
+    embedded = counts.files_embedded + counts.symbols_embedded
+    total = counts.files + counts.symbols
     if counts.files == 0:
         recs.append("run `ken install .` or re-run it to populate the code index")
-    elif counts.files_embedded + counts.symbols_embedded == 0:
+    elif embedded == 0:
         recs.append("run `ken rank \"your task\"` once to lazily build embeddings")
+    elif embedded < total:
+        recs.append(
+            "embeddings are partial; use `ken install . --embed --embed-limit N` "
+            "to warm more of the project when semantic recall matters"
+        )
     if counts.prompt_contexts_embedded == 0:
         recs.append("submit at least one prompt through a hooked agent to seed context history")
     elif counts.interactions == 0:

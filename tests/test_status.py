@@ -82,6 +82,7 @@ def test_status_prints_index_memory_and_daemon_counts(monkeypatch, capsys, tmp_p
     assert "interactions  : 1" in out
     assert "findings      : 1 (1 embedded)" in out
     assert "rank signals  : index=yes, embeddings=ready, predictive=yes, findings=yes" in out
+    assert "embedding cov : 2/2 (100.0%)" in out
     assert "daemon        : running (sessions=1, idle=2.5s)" in out
 
 
@@ -101,6 +102,7 @@ def test_status_report_is_machine_readable(monkeypatch, tmp_path):
         "predictive": "no",
         "findings": "no",
     }
+    assert report["embedding_coverage"] == {"embedded": 0, "total": 0, "percent": 0.0}
     assert report["recommendations"] == [
         "run `ken install .` or re-run it to populate the code index",
         "submit at least one prompt through a hooked agent to seed context history",
@@ -180,6 +182,59 @@ def test_status_recommends_tool_hook_check_when_prompts_have_no_interactions(
     out = capsys.readouterr().out
     assert rc == 0
     assert "verify tool hooks are recording reads/edits" in out
+
+
+def test_status_reports_partial_embedding_coverage(monkeypatch, capsys, tmp_path):
+    root = _installed_project(tmp_path)
+    now_ms = int(time.time() * 1000)
+    emb = vec_to_blob(np.ones(384, dtype=np.float32))
+    with connect(_paths.db_path(root)) as conn:
+        embedded = conn.execute(
+            "INSERT INTO ci_files(path, language, content_hash, mtime, indexed_at, embedding) "
+            "VALUES ('src/a.py', 'python', ?, ?, ?, ?)",
+            (b"\x00" * 32, int(time.time() * 1e9), now_ms, emb),
+        ).lastrowid
+        conn.execute(
+            "INSERT INTO ci_symbols(file_id, kind, name, qualname, line_start, line_end, embedding) "
+            "VALUES (?, 'function', 'a', 'a', 1, 2, ?)",
+            (embedded, emb),
+        )
+        plain = conn.execute(
+            "INSERT INTO ci_files(path, language, content_hash, mtime, indexed_at, embedding) "
+            "VALUES ('src/b.py', 'python', ?, ?, ?, NULL)",
+            (b"\x01" * 32, int(time.time() * 1e9), now_ms),
+        ).lastrowid
+        conn.execute(
+            "INSERT INTO ci_symbols(file_id, kind, name, qualname, line_start, line_end, embedding) "
+            "VALUES (?, 'function', 'b', 'b', 1, 2, NULL)",
+            (plain,),
+        )
+    monkeypatch.setattr("ken.daemon.client.health", lambda _root: None)
+
+    rc = show_status(root)
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "rank signals  : index=yes, embeddings=partial(2/4)" in out
+    assert "embedding cov : 2/4 (50.0%)" in out
+    assert "embeddings are partial" in out
+
+
+def test_status_json_includes_embedding_coverage(monkeypatch, tmp_path):
+    root = _installed_project(tmp_path)
+    now_ms = int(time.time() * 1000)
+    emb = vec_to_blob(np.ones(384, dtype=np.float32))
+    with connect(_paths.db_path(root)) as conn:
+        conn.execute(
+            "INSERT INTO ci_files(path, language, content_hash, mtime, indexed_at, embedding) "
+            "VALUES ('src/a.py', 'python', ?, ?, ?, ?)",
+            (b"\x00" * 32, int(time.time() * 1e9), now_ms, emb),
+        )
+    monkeypatch.setattr("ken.daemon.client.health", lambda _root: None)
+
+    report = status_report(root)
+
+    assert report["embedding_coverage"] == {"embedded": 1, "total": 1, "percent": 100.0}
 
 
 def test_status_json_reports_missing_project(capsys, tmp_path):
