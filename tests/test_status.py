@@ -237,6 +237,35 @@ def test_status_json_includes_embedding_coverage(monkeypatch, tmp_path):
     assert report["embedding_coverage"] == {"embedded": 1, "total": 1, "percent": 100.0}
 
 
+def test_status_reports_stale_indexed_files(monkeypatch, capsys, tmp_path):
+    root = _installed_project(tmp_path)
+    now_ms = int(time.time() * 1000)
+    live = root / "src" / "live.py"
+    live.parent.mkdir()
+    live.write_text("def live(): return 1\n")
+    with connect(_paths.db_path(root)) as conn:
+        conn.execute(
+            "INSERT INTO ci_files(path, language, content_hash, mtime, indexed_at) "
+            "VALUES ('src/live.py', 'python', ?, ?, ?)",
+            (b"\x00" * 32, int(time.time() * 1e9), now_ms),
+        )
+        conn.execute(
+            "INSERT INTO ci_files(path, language, content_hash, mtime, indexed_at) "
+            "VALUES ('src/stale.py', 'python', ?, ?, ?)",
+            (b"\x01" * 32, int(time.time() * 1e9), now_ms),
+        )
+    monkeypatch.setattr("ken.daemon.client.health", lambda _root: None)
+
+    rc = show_status(root)
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "index health  : 1 stale files (src/stale.py)" in out
+    assert "indexed files are missing on disk" in out
+    report = status_report(root)
+    assert report["index_health"] == {"stale_files": 1, "sample": ["src/stale.py"]}
+
+
 def test_status_json_reports_missing_project(capsys, tmp_path):
     rc = show_status(tmp_path, as_json=True)
 

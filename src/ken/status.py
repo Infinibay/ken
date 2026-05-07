@@ -70,13 +70,15 @@ def status_report(start: Path) -> dict:
         return {**base, "installed": False}
 
     counts = _read_counts(db_p)
+    index_health = _index_health(root, db_p)
     return {
         **base,
         "installed": True,
         "counts": counts.__dict__,
+        "index_health": index_health,
         "rank_signals": _rank_signals(counts),
         "embedding_coverage": _embedding_coverage(counts),
-        "recommendations": _recommendations(counts),
+        "recommendations": _recommendations(counts, index_health),
         "daemon": _daemon_health(root),
     }
 
@@ -101,6 +103,11 @@ def _print_report(report: dict) -> None:
     )
     print(f"interactions  : {counts['interactions']}")
     print(f"findings      : {counts['findings']} ({counts['findings_embedded']} embedded)")
+    index_health = report.get("index_health")
+    if index_health and index_health["stale_files"]:
+        sample = ", ".join(index_health["sample"])
+        suffix = f" ({sample})" if sample else ""
+        print(f"index health  : {index_health['stale_files']} stale files{suffix}")
     print(f"rank signals  : {_rank_signal_summary_from_dict(report['rank_signals'])}")
     coverage = report.get("embedding_coverage")
     if coverage and coverage["total"] > 0:
@@ -150,6 +157,21 @@ def _count(conn, table: str, where: str | None = None) -> int:
     if where:
         sql += f" WHERE {where}"
     return int(conn.execute(sql).fetchone()["n"])
+
+
+def _index_health(root: Path, db_p: Path) -> dict[str, int | list[str]]:
+    conn = connect(db_p)
+    try:
+        rows = conn.execute("SELECT path FROM ci_files ORDER BY path").fetchall()
+    finally:
+        conn.close()
+
+    stale: list[str] = []
+    for row in rows:
+        rel = row["path"]
+        if not (root / rel).exists():
+            stale.append(rel)
+    return {"stale_files": len(stale), "sample": stale[:5]}
 
 
 def _daemon_health(root: Path) -> dict:
@@ -211,15 +233,23 @@ def _rank_signal_summary_from_dict(signals: dict[str, str]) -> str:
     )
 
 
-def _recommendations(counts: StatusCounts) -> list[str]:
+def _recommendations(
+    counts: StatusCounts,
+    index_health: dict[str, int | list[str]] | None = None,
+) -> list[str]:
     recs: list[str] = []
     embedded = counts.files_embedded + counts.symbols_embedded
     total = counts.files + counts.symbols
     if counts.files == 0:
         recs.append("run `ken install .` or re-run it to populate the code index")
-    elif embedded == 0:
+    elif index_health and index_health.get("stale_files"):
+        recs.append(
+            "indexed files are missing on disk; run `ken install .` "
+            "to resync after branch changes"
+        )
+    if counts.files and embedded == 0:
         recs.append("run `ken rank \"your task\"` once to lazily build embeddings")
-    elif embedded < total:
+    elif counts.files and embedded < total:
         recs.append(
             "embeddings are partial; use `ken install . --embed --embed-limit N` "
             "to warm more of the project when semantic recall matters"
