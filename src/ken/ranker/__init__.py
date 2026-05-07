@@ -119,13 +119,18 @@ def rank(
     reactive = channels.reactive_scores(conn, agent_id, current_iteration)
     predictive = channels.predictive_scores(conn, similar)
     fuzzy_files, fuzzy_symbols = channels.fuzzy_scores(conn, prompt_embedding)
+    doc_files, doc_symbols = channels.doc_intent_scores(conn, prompt_embedding)
     lexical_files, lexical_symbols = channels.lexical_scores(
         conn, prompt, agent_id=agent_id
     )
     findings = channels.finding_scores(conn, prompt_embedding)
 
-    symbols = merge.merge_symbols([*explicit_symbols, *fuzzy_symbols, *lexical_symbols])
-    files = merge.merge_files(explicit_files, reactive, predictive, fuzzy_files, lexical_files)
+    symbols = merge.merge_symbols(
+        [*explicit_symbols, *fuzzy_symbols, *doc_symbols, *lexical_symbols]
+    )
+    files = merge.merge_files(
+        explicit_files, reactive, predictive, fuzzy_files, doc_files, lexical_files
+    )
 
     boosts.apply_symbol_file_affinity(conn, files, symbols)
     boosts.apply_freshness(conn, files)

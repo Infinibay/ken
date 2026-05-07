@@ -39,15 +39,20 @@ def explain(
     reactive = channels.reactive_scores(conn, agent_id, current_iteration)
     predictive = channels.predictive_scores(conn, similar)
     fuzzy_files, fuzzy_symbols = channels.fuzzy_scores(conn, prompt_embedding)
+    doc_files, doc_symbols = channels.doc_intent_scores(conn, prompt_embedding)
     lexical_files, lexical_symbols = channels.lexical_scores(
         conn, prompt, agent_id=agent_id
     )
     findings = channels.finding_scores(conn, prompt_embedding)
 
-    symbols = merge.merge_symbols([*explicit_symbols, *fuzzy_symbols, *lexical_symbols])
+    symbols = merge.merge_symbols(
+        [*explicit_symbols, *fuzzy_symbols, *doc_symbols, *lexical_symbols]
+    )
     symbols.sort(reverse=True)
 
-    files = merge.merge_files(explicit_files, reactive, predictive, fuzzy_files, lexical_files)
+    files = merge.merge_files(
+        explicit_files, reactive, predictive, fuzzy_files, doc_files, lexical_files
+    )
     files.sort(reverse=True)
     pre_boost = {it.target: it.score for it in files}
 
@@ -83,6 +88,8 @@ def explain(
             "predictive": _to_dicts(predictive, top),
             "fuzzy_files": _to_dicts(fuzzy_files, top),
             "fuzzy_symbols": _to_dicts(fuzzy_symbols, top),
+            "doc_intent_files": _to_dicts(doc_files, top),
+            "doc_intent_symbols": _to_dicts(doc_symbols, top),
             "lexical_files": _to_dicts(lexical_files, top),
             "lexical_symbols": _to_dicts(lexical_symbols, top),
             "findings": _findings_dicts(findings, top),

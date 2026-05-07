@@ -31,7 +31,7 @@ from ken.parsers import detect_language
 if TYPE_CHECKING:  # pragma: no cover
     from ken.embedder import Embedder
 
-PARSER_VERSION = 2
+PARSER_VERSION = 3
 
 
 @dataclass
@@ -130,9 +130,16 @@ def index_files(
         # take tens of ms on a cold session, and we don't want to hold
         # the SQLite write lock that long.
         symbol_blobs: list[bytes | None] = [None] * len(parsed.symbols)
+        intent_file_blob: bytes | None = None
+        intent_symbol_blobs: list[bytes | None] = [None] * len(parsed.symbols)
         file_blob: bytes | None = None
         if embedder is not None:
-            from ken.embedder import embed_file_text, embed_symbol_text, vec_to_blob
+            from ken.embedder import (
+                embed_file_text,
+                embed_intent_text,
+                embed_symbol_text,
+                vec_to_blob,
+            )
 
             if parsed.symbols:
                 texts = [
@@ -140,10 +147,29 @@ def index_files(
                 ]
                 vecs = embedder.embed_passages(texts)
                 symbol_blobs = [vec_to_blob(v) for v in vecs]
+                intent_texts = [
+                    embed_intent_text("symbol_docstring", s.docstring or "")
+                    if s.docstring
+                    else ""
+                    for s in parsed.symbols
+                ]
+                doc_indices = [i for i, text in enumerate(intent_texts) if text]
+                if doc_indices:
+                    intent_vecs = embedder.embed_passages(
+                        [intent_texts[i] for i in doc_indices]
+                    )
+                    for i, vec in zip(doc_indices, intent_vecs):
+                        intent_symbol_blobs[i] = vec_to_blob(vec)
             stem = Path(rel_posix).stem
             top_names = [s.name for s in parsed.symbols[:8]]
             file_text = embed_file_text(language, stem, top_names)
             file_blob = vec_to_blob(embedder.embed_query(file_text))
+            if parsed.docstring:
+                intent_file_blob = vec_to_blob(
+                    embedder.embed_query(
+                        embed_intent_text("module_docstring", parsed.docstring)
+                    )
+                )
 
         with conn:  # implicit BEGIN/COMMIT around the whole file write
             file_id = _upsert_file_row(
@@ -160,11 +186,20 @@ def index_files(
             # bounded.
             conn.execute("DELETE FROM ci_symbols WHERE file_id = ?", (file_id,))
             conn.execute("DELETE FROM ci_imports WHERE from_file_id = ?", (file_id,))
+            conn.execute("DELETE FROM ci_intent_sources WHERE file_id = ?", (file_id,))
+            if parsed.docstring:
+                _insert_file_intent_source(
+                    conn,
+                    file_id,
+                    source_kind="module_docstring",
+                    text=parsed.docstring,
+                    embedding=intent_file_blob,
+                )
             if parsed.symbols:
-                conn.executemany(
-                    "INSERT INTO ci_symbols(file_id, kind, name, qualname, line_start, line_end, docstring, embedding) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    [
+                for i, s in enumerate(parsed.symbols):
+                    cur = conn.execute(
+                        "INSERT INTO ci_symbols(file_id, kind, name, qualname, line_start, line_end, docstring, embedding) "
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                         (
                             file_id,
                             s.kind,
@@ -174,10 +209,17 @@ def index_files(
                             s.line_end,
                             s.docstring,
                             symbol_blobs[i],
+                        ),
+                    )
+                    if s.docstring:
+                        _insert_symbol_intent_source(
+                            conn,
+                            file_id,
+                            int(cur.lastrowid),
+                            source_kind="symbol_docstring",
+                            text=s.docstring,
+                            embedding=intent_symbol_blobs[i],
                         )
-                        for i, s in enumerate(parsed.symbols)
-                    ],
-                )
             if parsed.imports:
                 conn.executemany(
                     "INSERT INTO ci_imports(from_file_id, to_module, line) VALUES (?, ?, ?)",
@@ -282,6 +324,37 @@ def _upsert_file_row(
     )
     row = conn.execute("SELECT id FROM ci_files WHERE path = ?", (rel,)).fetchone()
     return int(row["id"])
+
+
+def _insert_file_intent_source(
+    conn: sqlite3.Connection,
+    file_id: int,
+    *,
+    source_kind: str,
+    text: str,
+    embedding: bytes | None,
+) -> None:
+    conn.execute(
+        "INSERT INTO ci_intent_sources(file_id, source_kind, text, embedding, weight, updated_at) "
+        "VALUES (?, ?, ?, ?, 1.0, ?)",
+        (file_id, source_kind, text, embedding, int(time.time() * 1000)),
+    )
+
+
+def _insert_symbol_intent_source(
+    conn: sqlite3.Connection,
+    file_id: int,
+    symbol_id: int,
+    *,
+    source_kind: str,
+    text: str,
+    embedding: bytes | None,
+) -> None:
+    conn.execute(
+        "INSERT INTO ci_intent_sources(file_id, symbol_id, source_kind, text, embedding, weight, updated_at) "
+        "VALUES (?, ?, ?, ?, ?, 1.0, ?)",
+        (file_id, symbol_id, source_kind, text, embedding, int(time.time() * 1000)),
+    )
 
 
 def _resolve_internal_imports(conn: sqlite3.Connection) -> None:

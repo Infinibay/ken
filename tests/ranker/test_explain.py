@@ -23,6 +23,8 @@ def test_explain_returns_all_channel_keys(conn, make_session, fake_emb):
         "predictive",
         "fuzzy_files",
         "fuzzy_symbols",
+        "doc_intent_files",
+        "doc_intent_symbols",
         "lexical_files",
         "lexical_symbols",
         "findings",

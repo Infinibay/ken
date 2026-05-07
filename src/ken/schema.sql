@@ -64,6 +64,22 @@ CREATE TABLE IF NOT EXISTS ci_references (
 );
 CREATE INDEX IF NOT EXISTS idx_ci_references_to ON ci_references(to_symbol_id);
 
+CREATE TABLE IF NOT EXISTS ci_intent_sources (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    file_id         INTEGER REFERENCES ci_files(id) ON DELETE CASCADE,
+    symbol_id       INTEGER REFERENCES ci_symbols(id) ON DELETE CASCADE,
+    source_kind     TEXT NOT NULL,                -- module_docstring | symbol_docstring | …
+    text            TEXT NOT NULL,
+    embedding       BLOB,                         -- float32[384]
+    weight          REAL NOT NULL DEFAULT 1.0,
+    updated_at      INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_ci_intent_file ON ci_intent_sources(file_id);
+CREATE INDEX IF NOT EXISTS idx_ci_intent_symbol ON ci_intent_sources(symbol_id);
+CREATE INDEX IF NOT EXISTS idx_ci_intent_embedding
+    ON ci_intent_sources(source_kind)
+    WHERE embedding IS NOT NULL;
+
 -- ----------------------------------------------------------------------------
 -- Context-rank: sessions, contexts (task descriptions / prompts / tool calls),
 -- interactions (file/symbol touches), and per-session productivity scores.

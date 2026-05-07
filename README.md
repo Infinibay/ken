@@ -136,7 +136,7 @@ The hooks fire automatically:
    `.ken/daemon.log`).
 2. **Each user prompt** → daemon runs the ranker, prepends a
    `<context-rank verbose=0>` block listing top-relevant files, symbols,
-   and matching saved findings.
+   docstring-derived intent matches, and matching saved findings.
 3. **Each tool call** (Read, Edit, etc.) → recorded as a reactive signal so
    the ranker learns what *this* session is touching.
 4. **Stop / SessionEnd** → snapshots productivity scores so future similar
@@ -216,7 +216,7 @@ src/ken/
     watcher.py        # watchfiles wrapper
     client.py         # Hook-side HTTP client (spawns daemon if needed)
   ranker/
-    channels.py       # Reactive, predictive, fuzzy, lexical, traceback/explicit-mention, findings
+    channels.py       # Reactive, predictive, fuzzy, doc-intent, lexical, explicit, findings
     boosts.py         # Freshness, co-occurrence, symbol-file/test/import affinity, dismissal penalty
     merge.py          # Per-target dedup + synergy bonus
     output.py         # `<context-rank>` rendering at verbose 0/1/2
@@ -229,7 +229,7 @@ src/ken/
   hooks_template.py   # `.claude/settings.json` merge logic
   codex_hooks_template.py  # `.codex/hooks.json` + `[mcp_servers.ken]` merge
   schema.sql          # SQLite schema (cr_*, ci_*)
-tests/                # 256 tests, ~0.7s suite
+tests/                # 288 tests, ~0.8s suite
 ```
 
 ## Architecture in one paragraph
@@ -238,10 +238,14 @@ ken stores everything in a per-project SQLite DB at `.ken/ken.db`. A long-lived
 daemon (one process per project, idle-shutdown after 10 min) holds a single
 write connection. Claude Code hooks POST events to the daemon over localhost
 HTTP with a Bearer token from `.ken/meta.json`. On `UserPromptSubmit` the
-daemon runs the ranker — reactive, predictive, fuzzy, lexical, traceback/explicit-mention,
-and finding channels merged with synergy-bonus dedup, then post-boosts (symbol-file
-affinity, freshness, co-occurrence, source/test/import-affinity, dismissal-penalty) — and returns the formatted block via stdout
-so Claude Code prepends it to the prompt. Embeddings are MiniLM-L6-v2 384-dim
+daemon runs the ranker — reactive, predictive, fuzzy, doc-intent, lexical,
+traceback/explicit-mention, and finding channels merged with synergy-bonus
+dedup, then post-boosts (symbol-file affinity, freshness, co-occurrence,
+source/test/import-affinity, dismissal-penalty) — and returns the formatted
+block via stdout so Claude Code prepends it to the prompt. Doc-intent stores
+module and symbol docstrings as separate purpose embeddings, so a prompt can
+find files by what they are for, not only by names or content. Embeddings are
+MiniLM-L6-v2 384-dim
 floats stored as BLOBs; cosine sweeps in numpy run in single-digit ms even at
 ~50k symbols.
 
@@ -254,7 +258,7 @@ Phase 6 complete and validated on real projects:
 - ✅ File watcher + incremental reindex
 - ✅ Parsers for Python, Rust, JS, TS, Go, Java, and C/C headers
 - ✅ ONNX embedder (fastembed)
-- ✅ Ranker (files, symbols, findings + 6 boosts + confidence gate)
+- ✅ Ranker (files, symbols, doc-intent, findings + 6 boosts + confidence gate)
 - ✅ Verbose-level rendering + hook context budget/stats + per-turn decay
 - ✅ Status diagnostics/JSON with recommendations for embedding coverage, findings, scores, daemon health
 - ✅ MCP server (7 tools)

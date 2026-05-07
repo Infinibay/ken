@@ -65,6 +65,11 @@ def test_status_prints_index_memory_and_daemon_counts(monkeypatch, capsys, tmp_p
             "VALUES ('status', 'status finding', '[]', ?, ?, ?)",
             (emb, now_ms, now_ms),
         )
+        conn.execute(
+            "INSERT INTO ci_intent_sources(file_id, source_kind, text, embedding, updated_at) "
+            "VALUES (?, 'module_docstring', 'Status diagnostics.', ?, ?)",
+            (file_id, emb, now_ms),
+        )
 
     monkeypatch.setattr(
         "ken.daemon.client.health",
@@ -81,6 +86,7 @@ def test_status_prints_index_memory_and_daemon_counts(monkeypatch, capsys, tmp_p
     assert "contexts      : 1 (1 prompts, 1 embedded)" in out
     assert "interactions  : 1" in out
     assert "findings      : 1 (1 embedded)" in out
+    assert "doc intents   : 1 (1 embedded)" in out
     assert "rank signals  : index=yes, embeddings=ready, predictive=yes, findings=yes" in out
     assert "embedding cov : 2/2 (100.0%)" in out
     assert "daemon        : running (sessions=1, idle=2.5s)" in out

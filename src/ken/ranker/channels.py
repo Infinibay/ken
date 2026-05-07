@@ -493,6 +493,9 @@ FUZZY_FILE_SCALE = 4.5
 FUZZY_SYMBOL_MIN_SIM = 0.45
 FUZZY_SYMBOL_SCALE = 5.0
 FUZZY_SYMBOL_BONUS = 0.5  # symbols slightly preferred over their file
+DOC_INTENT_MIN_SIM = 0.42
+DOC_INTENT_FILE_SCALE = 3.2
+DOC_INTENT_SYMBOL_SCALE = 3.6
 
 # In-channel recency: small additive bump to similarity *before* the
 # threshold check, so a file modified yesterday with sim=0.38 can clear
@@ -518,6 +521,92 @@ def fuzzy_scores(
     file_items = _fuzzy_files(conn, q)
     symbol_items = _fuzzy_symbols(conn, q)
     return file_items, symbol_items
+
+
+def doc_intent_scores(
+    conn: sqlite3.Connection, prompt_embedding: np.ndarray
+) -> tuple[list[RankedItem], list[RankedItem]]:
+    """Score files/symbols by explicit purpose text such as docstrings."""
+    q = prompt_embedding.astype(np.float32, copy=False)
+    q = q / (np.linalg.norm(q) + 1e-12)
+    rows = conn.execute(
+        """
+        SELECT i.source_kind, i.text, i.embedding, i.weight,
+               f.path AS file_path,
+               s.qualname, s.line_start
+        FROM ci_intent_sources i
+        JOIN ci_files f ON f.id = i.file_id
+        LEFT JOIN ci_symbols s ON s.id = i.symbol_id
+        WHERE i.embedding IS NOT NULL
+        """
+    ).fetchall()
+    if not rows:
+        return [], []
+
+    mat = np.asarray([blob_to_vec(r["embedding"]) for r in rows], dtype=np.float32)
+    norms = np.linalg.norm(mat, axis=1) + 1e-12
+    sims = (mat @ q) / norms
+    file_scores: dict[str, RankedItem] = {}
+    symbol_scores: dict[str, RankedItem] = {}
+    for row, sim in zip(rows, sims):
+        sim_raw = float(sim)
+        if sim_raw < DOC_INTENT_MIN_SIM:
+            continue
+        target_path = str(row["file_path"])
+        weight = float(row["weight"])
+        source_kind = str(row["source_kind"])
+        if row["qualname"] is None:
+            score = (
+                (sim_raw - DOC_INTENT_MIN_SIM)
+                * DOC_INTENT_FILE_SCALE
+                / (1.0 - DOC_INTENT_MIN_SIM)
+                * weight
+            )
+            _keep_best(
+                file_scores,
+                target_path,
+                RankedItem(
+                    target=target_path,
+                    target_type="file",
+                    score=score,
+                    reason=f"doc-intent:{source_kind}:{sim_raw:.2f}",
+                ),
+            )
+        else:
+            target = f"{row['qualname']} ({target_path}:{row['line_start']})"
+            score = (
+                (sim_raw - DOC_INTENT_MIN_SIM)
+                * DOC_INTENT_SYMBOL_SCALE
+                / (1.0 - DOC_INTENT_MIN_SIM)
+                * weight
+            )
+            _keep_best(
+                symbol_scores,
+                target,
+                RankedItem(
+                    target=target,
+                    target_type="symbol",
+                    score=score,
+                    reason=f"doc-intent:{source_kind}:{sim_raw:.2f}",
+                ),
+            )
+            _keep_best(
+                file_scores,
+                target_path,
+                RankedItem(
+                    target=target_path,
+                    target_type="file",
+                    score=score * 0.65,
+                    reason=f"doc-intent-symbol:{source_kind}:{sim_raw:.2f}",
+                ),
+            )
+    return list(file_scores.values()), list(symbol_scores.values())
+
+
+def _keep_best(items: dict[str, RankedItem], key: str, candidate: RankedItem) -> None:
+    current = items.get(key)
+    if current is None or candidate.score > current.score:
+        items[key] = candidate
 
 
 LEXICAL_FILE_MIN_OVERLAP = 1

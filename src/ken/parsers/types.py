@@ -27,3 +27,4 @@ class ParsedFile:
 
     symbols: list[ParsedSymbol] = field(default_factory=list)
     imports: list[ParsedImport] = field(default_factory=list)
+    docstring: str | None = None

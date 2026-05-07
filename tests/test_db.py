@@ -31,6 +31,17 @@ def test_init_schema_idempotent(tmp_path):
     conn.close()
 
 
+def test_init_schema_creates_intent_sources(tmp_path):
+    db = tmp_path / "test.db"
+    conn = connect(db)
+    init_schema(conn)
+    row = conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='ci_intent_sources'"
+    ).fetchone()
+    assert row is not None
+    conn.close()
+
+
 def test_set_get_meta_roundtrip(tmp_path):
     db = tmp_path / "test.db"
     conn = connect(db)

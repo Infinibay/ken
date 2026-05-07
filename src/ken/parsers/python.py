@@ -28,7 +28,7 @@ _PARSER = Parser(_LANG)
 def parse_python_file(source: bytes, path_hint: str) -> ParsedFile:  # noqa: ARG001
     """Parse *source* and return the symbols / imports it defines."""
     tree = _PARSER.parse(source)
-    out = ParsedFile()
+    out = ParsedFile(docstring=_extract_module_docstring(tree.root_node, source))
     _walk(tree.root_node, source, scope_name="", out=out)
     return out
 
@@ -142,12 +142,29 @@ def _extract_docstring(node: Node, src: bytes) -> str | None:
         # First named child of the expression statement.
         for inner in stmt.children:
             if inner.type == "string":
-                raw = _node_text(inner, src) or ""
-                clean = raw.strip().strip("'\"").strip()
-                first_line = next((ln.strip() for ln in clean.splitlines() if ln.strip()), "")
-                return first_line or None
+                return _clean_docstring_literal(_node_text(inner, src) or "")
         return None
     return None
+
+
+def _extract_module_docstring(root: Node, src: bytes) -> str | None:
+    """Return the first module-level string literal, following Python convention."""
+    for stmt in root.children:
+        if stmt.type != "expression_statement":
+            if stmt.is_named:
+                return None
+            continue
+        for inner in stmt.children:
+            if inner.type == "string":
+                return _clean_docstring_literal(_node_text(inner, src) or "")
+        return None
+    return None
+
+
+def _clean_docstring_literal(raw: str) -> str | None:
+    clean = raw.strip().strip("'\"").strip()
+    first_line = next((ln.strip() for ln in clean.splitlines() if ln.strip()), "")
+    return first_line or None
 
 
 # --- tree-sitter helpers ----------------------------------------------------

@@ -167,6 +167,31 @@ def test_rank_includes_relevant_findings(conn, make_session, fake_emb, now_ms):
     assert result.findings[0].tags == ["codex"]
 
 
+def test_rank_uses_doc_intent_channel(conn, make_session, make_file, fake_emb, now_ms):
+    make_session("alpha")
+    fid = make_file("src/ken/daemon/index_queue.py")
+    conn.execute(
+        "INSERT INTO ci_intent_sources(file_id, source_kind, text, embedding, weight, updated_at) "
+        "VALUES (?, 'module_docstring', 'Background re-index queue for filesystem changes.', ?, 1.0, ?)",
+        (
+            fid,
+            vec_to_blob(fake_emb("Background re-index queue for filesystem changes.")),
+            now_ms,
+        ),
+    )
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="filesystem change queue",
+        prompt_embedding=fake_emb("Background re-index queue for filesystem changes."),
+    )
+
+    assert result.files[0].target == "src/ken/daemon/index_queue.py"
+    assert "doc-intent:module_docstring" in result.files[0].reason
+
+
 def test_rank_surfaces_related_tests(conn, make_session, make_file, fake_emb):
     make_session("alpha")
     make_file("src/ken/status.py")

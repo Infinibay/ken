@@ -26,6 +26,8 @@ class StatusCounts:
     session_scores: int
     findings: int
     findings_embedded: int
+    intent_sources: int
+    intent_sources_embedded: int
 
 
 def show_status(start: Path, *, as_json: bool = False) -> int:
@@ -103,6 +105,10 @@ def _print_report(report: dict) -> None:
     )
     print(f"interactions  : {counts['interactions']}")
     print(f"findings      : {counts['findings']} ({counts['findings_embedded']} embedded)")
+    print(
+        f"doc intents   : {counts['intent_sources']} "
+        f"({counts['intent_sources_embedded']} embedded)"
+    )
     index_health = report.get("index_health")
     if index_health and index_health["stale_files"]:
         sample = ", ".join(index_health["sample"])
@@ -147,6 +153,10 @@ def _read_counts(db_p: Path) -> StatusCounts:
             session_scores=_count(conn, "cr_session_scores"),
             findings=_count(conn, "cr_findings"),
             findings_embedded=_count(conn, "cr_findings", "embedding IS NOT NULL"),
+            intent_sources=_count(conn, "ci_intent_sources"),
+            intent_sources_embedded=_count(
+                conn, "ci_intent_sources", "embedding IS NOT NULL"
+            ),
         )
     finally:
         conn.close()

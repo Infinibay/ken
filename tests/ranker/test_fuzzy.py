@@ -16,9 +16,11 @@ from ken.ranker.channels import (
     FUZZY_SYMBOL_MIN_SIM,
     FUZZY_SYMBOL_SCALE,
     _recency_bump,
+    doc_intent_scores,
     fuzzy_scores,
     lexical_scores,
 )
+from ken.embedder import vec_to_blob
 
 
 # ── _recency_bump ────────────────────────────────────────────────────
@@ -118,6 +120,37 @@ def test_fuzzy_symbols_target_includes_path_and_line(conn, make_file, make_symbo
     assert len(syms) == 1
     # Contract: target = "qualname (path:line)"
     assert syms[0].target == "Session (src/auth.py:42)"
+
+
+def test_doc_intent_scores_file_docstring(conn, make_file, fake_emb, now_ms):
+    fid = make_file("src/auth.py")
+    conn.execute(
+        "INSERT INTO ci_intent_sources(file_id, source_kind, text, embedding, weight, updated_at) "
+        "VALUES (?, 'module_docstring', 'Authenticate browser sessions.', ?, 1.0, ?)",
+        (fid, vec_to_blob(fake_emb("Authenticate browser sessions.")), now_ms),
+    )
+
+    files, symbols = doc_intent_scores(conn, fake_emb("Authenticate browser sessions."))
+
+    assert symbols == []
+    assert files[0].target == "src/auth.py"
+    assert "doc-intent:module_docstring" in files[0].reason
+
+
+def test_doc_intent_scores_symbol_docstring(conn, make_file, make_symbol, fake_emb, now_ms):
+    fid = make_file("src/auth.py")
+    sid = make_symbol(fid, name="login", qualname="Session.login", line_start=42)
+    conn.execute(
+        "INSERT INTO ci_intent_sources(file_id, symbol_id, source_kind, text, embedding, weight, updated_at) "
+        "VALUES (?, ?, 'symbol_docstring', 'Authenticate browser sessions.', ?, 1.0, ?)",
+        (fid, sid, vec_to_blob(fake_emb("Authenticate browser sessions.")), now_ms),
+    )
+
+    files, symbols = doc_intent_scores(conn, fake_emb("Authenticate browser sessions."))
+
+    assert symbols[0].target == "Session.login (src/auth.py:42)"
+    assert files[0].target == "src/auth.py"
+    assert "doc-intent-symbol:symbol_docstring" in files[0].reason
 
 
 # ── lexical_scores ──────────────────────────────────────────────────

@@ -130,6 +130,37 @@ def test_index_files_with_embedder_populates_embedding(project):
     assert row["has_emb"] == 1
 
 
+def test_index_files_persists_docstring_intent_sources(project):
+    root, conn = project
+    src = root / "mod.py"
+    src.write_text(
+        '''"""Module role for auth sessions."""
+
+def login():
+    """Authenticate a user session."""
+    return 1
+'''
+    )
+    index_files(conn, root, [Path("mod.py")], embedder=_FakeEmbedder())
+
+    rows = conn.execute(
+        """
+        SELECT source_kind, text, embedding IS NOT NULL AS has_embedding,
+               symbol_id IS NOT NULL AS is_symbol
+        FROM ci_intent_sources
+        ORDER BY source_kind
+        """
+    ).fetchall()
+
+    assert [
+        (row["source_kind"], row["text"], row["has_embedding"], row["is_symbol"])
+        for row in rows
+    ] == [
+        ("module_docstring", "Module role for auth sessions.", 1, 0),
+        ("symbol_docstring", "Authenticate a user session.", 1, 1),
+    ]
+
+
 def test_delete_file_cascades_to_symbols(project):
     root, conn = project
     src = root / "mod.py"

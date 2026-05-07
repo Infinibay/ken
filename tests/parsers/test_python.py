@@ -3,6 +3,19 @@
 from __future__ import annotations
 
 
+def test_extracts_module_docstring(parse_python):
+    src = '''"""Module purpose.
+
+    Longer details.
+    """
+
+def foo():
+    return 1
+'''
+    out = parse_python(src)
+    assert out.docstring == "Module purpose."
+
+
 def test_extracts_top_level_function(parse_python):
     src = '''def foo():
     """First-line doc.

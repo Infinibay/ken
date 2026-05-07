@@ -74,6 +74,11 @@ def embed_file_text(language: str | None, stem: str, top_symbols: list[str]) -> 
     return f"{lang} {stem}"
 
 
+def embed_intent_text(source_kind: str, text: str) -> str:
+    """Canonical text for explicit purpose/intent sources such as docstrings."""
+    return f"{source_kind} — {' '.join(text.split())}"
+
+
 def vec_to_blob(vec: np.ndarray) -> bytes:
     """Serialise a 384-dim float32 array for SQLite storage."""
     return np.ascontiguousarray(vec, dtype=np.float32).tobytes()
