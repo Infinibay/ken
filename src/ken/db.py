@@ -27,8 +27,13 @@ def connect(db_path: Path) -> sqlite3.Connection:
     * `foreign_keys = ON` (sqlite ships it OFF by default).
     * `busy_timeout = 5000` so a slow writer doesn't make hooks fail
       with `database is locked` — they just wait.
+    * `check_same_thread = False` so the daemon's HTTP threads can
+      share its single writer connection. Safety comes from a
+      ``threading.Lock`` around every write inside the daemon — sqlite
+      itself serialises journaling, but the Python wrapper would
+      otherwise reject cross-thread use even when properly locked.
     """
-    conn = sqlite3.connect(str(db_path), isolation_level=None)
+    conn = sqlite3.connect(str(db_path), isolation_level=None, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode = WAL")
     conn.execute("PRAGMA synchronous = NORMAL")

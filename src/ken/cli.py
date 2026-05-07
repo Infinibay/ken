@@ -39,8 +39,13 @@ def main(argv: list[str] | None = None) -> int:
     p_status = sub.add_parser("status", help="show ken project status")
     p_status.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
 
-    p_serve = sub.add_parser("serve", help="run the ken daemon (TODO)")
+    p_serve = sub.add_parser("serve", help="run the ken daemon")
     p_serve.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
+    p_serve.add_argument(
+        "--background",
+        action="store_true",
+        help="redirect logs to .ken/daemon.log (used when spawned by a hook)",
+    )
 
     p_hook = sub.add_parser("hook", help="hook handlers invoked by Claude Code")
     hook_sub = p_hook.add_subparsers(dest="hook_cmd", required=True)
@@ -71,7 +76,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "serve":
         from ken.serve import serve
 
-        return serve(Path(args.path))
+        return serve(Path(args.path), background=args.background)
 
     if args.cmd == "hook":
         from ken.hook import dispatch_hook

@@ -1,25 +1,34 @@
-"""`ken serve` — daemon that owns the file watcher, index queue, and the
-HTTP API the hooks talk to.
-
-Stub for v1 of the rewrite. The real implementation lands in the next
-phase. For now we just confirm the project is installed and exit
-non-zero with an actionable message — so users running `ken serve`
-during the install bring-up get told what to expect.
-"""
+"""`ken serve` entrypoint."""
 
 from __future__ import annotations
 
+import logging
 import sys
 from pathlib import Path
 
 from ken import _paths
+from ken.daemon.server import run as run_server
 
 
-def serve(start: Path) -> int:
-    root = _paths.find_project_root(start.resolve())
-    if root is None:
-        print(f"no ken project found at or above {start.resolve()}", file=sys.stderr)
+def serve(start: Path, *, background: bool = False) -> int:
+    root = _paths.find_project_root(start.resolve()) or start.resolve()
+    if not _paths.meta_path(root).is_file():
+        print(f"no ken project at {root} — run `ken install .` first", file=sys.stderr)
         return 1
-    print(f"`ken serve` is not yet implemented (project_root={root}).", file=sys.stderr)
-    print("Phase 2 will start the daemon (file watcher + HTTP API).", file=sys.stderr)
-    return 2
+
+    if background:
+        # When spawned by a hook we want a friendly file log; otherwise
+        # foreground mode logs to stderr so `ken serve` in a terminal is
+        # interactive-debuggable.
+        logging.basicConfig(
+            filename=str(_paths.log_path(root)),
+            level=logging.INFO,
+            format="%(asctime)s %(levelname)s %(name)s %(message)s",
+        )
+    else:
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s %(levelname)s %(name)s %(message)s",
+        )
+
+    return run_server(root)
