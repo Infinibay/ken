@@ -206,6 +206,23 @@ def delete_file(conn: sqlite3.Connection, rel: str) -> bool:
         return cur.rowcount > 0
 
 
+def delete_path(conn: sqlite3.Connection, rel: str) -> int:
+    """Drop an indexed file or every indexed file below a deleted directory.
+
+    Filesystem backends may report a branch-switch directory removal as a
+    single delete event for ``src/pkg`` instead of one event per child.  Matching
+    both the exact path and the ``rel/`` prefix prevents stale indexed files
+    from surviving that compact event.
+    """
+    prefix = rel.rstrip("/") + "/"
+    with conn:
+        cur = conn.execute(
+            "DELETE FROM ci_files WHERE path = ? OR substr(path, 1, ?) = ?",
+            (rel.rstrip("/"), len(prefix), prefix),
+        )
+        return cur.rowcount
+
+
 def _hash(data: bytes) -> bytes:
     return hashlib.blake2b(data, digest_size=32).digest()
 

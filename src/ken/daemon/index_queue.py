@@ -30,7 +30,7 @@ from typing import Literal
 from ken import _paths
 from ken.db import connect
 from ken.gitignore_filter import iter_files
-from ken.indexer import IndexStats, delete_file, index_files
+from ken.indexer import IndexStats, delete_path, index_files
 
 if False:  # TYPE_CHECKING-only — avoid heavy fastembed import at queue start
     from ken.embedder import Embedder
@@ -149,8 +149,7 @@ class IndexQueue:
         delete_paths = [rel for rel, action in batch.items() if action == "delete"]
         deleted = 0
         for rel in delete_paths:
-            if delete_file(self._conn, rel):
-                deleted += 1
+            deleted += delete_path(self._conn, rel)
         stats = IndexStats()
         if reindex_paths:
             stats = index_files(
@@ -190,8 +189,7 @@ class IndexQueue:
 
         deleted = 0
         for rel in stale:
-            if delete_file(self._conn, rel):
-                deleted += 1
+            deleted += delete_path(self._conn, rel)
 
         stats = index_files(
             self._conn,

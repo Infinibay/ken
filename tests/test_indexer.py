@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 
 from ken.db import connect, init_schema
-from ken.indexer import _hash, _is_unchanged, delete_file, index_files
+from ken.indexer import _hash, _is_unchanged, delete_file, delete_path, index_files
 
 
 class _FakeEmbedder:
@@ -143,3 +143,25 @@ def test_delete_file_cascades_to_symbols(project):
 def test_delete_file_returns_false_when_missing(project):
     _, conn = project
     assert delete_file(conn, "nope.py") is False
+
+
+def test_delete_path_removes_indexed_subtree(project):
+    root, conn = project
+    kept = root / "pkg_extra.py"
+    wildcard_neighbor = root / "pkgA" / "nested.py"
+    nested = root / "pkg" / "nested.py"
+    nested.parent.mkdir()
+    wildcard_neighbor.parent.mkdir()
+    kept.write_text("def kept(): return 1\n")
+    wildcard_neighbor.write_text("def neighbor(): return 3\n")
+    nested.write_text("def nested(): return 2\n")
+    index_files(
+        conn,
+        root,
+        [Path("pkg_extra.py"), Path("pkgA/nested.py"), Path("pkg/nested.py")],
+    )
+
+    assert delete_path(conn, "pkg") == 1
+
+    rows = conn.execute("SELECT path FROM ci_files ORDER BY path").fetchall()
+    assert [row["path"] for row in rows] == ["pkgA/nested.py", "pkg_extra.py"]
