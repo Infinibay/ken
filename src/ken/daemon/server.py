@@ -260,14 +260,12 @@ class _Handler(BaseHTTPRequestHandler):
                 pk = st.session_start(payload["session_id"])
                 self._respond(200, {"ok": True, "ken_session_pk": pk})
             elif self.path == "/sessions/end":
-                st.session_end(payload["session_id"])
+                _handle_session_end(st, payload["session_id"])
                 self._respond(200, {"ok": True})
             elif self.path == "/prompts":
                 content = str(payload.get("prompt", ""))
-                st.record_context(payload["session_id"], "user_prompt", content, embed=True)
-                # Phase 5 will compute the actual ranking. For now, no
-                # injection — the hook prints nothing extra to stdout.
-                self._respond(200, {"ok": True, "context_block": ""})
+                block = _handle_prompt(st, payload["session_id"], content)
+                self._respond(200, {"ok": True, "context_block": block})
             elif self.path == "/tools/pre":
                 _record_tool_pre(st, payload)
                 self._respond(200, {"ok": True})
@@ -321,6 +319,67 @@ class _Handler(BaseHTTPRequestHandler):
                 "uptime_s": round(time.monotonic() - st.started_at, 1),
                 "idle_s": round(time.monotonic() - st.last_activity, 1),
             }
+
+
+def _handle_prompt(st: DaemonState, agent_id: str, content: str) -> str:
+    """Record the prompt + run the ranker, return the formatted block.
+
+    Embedding is computed inline inside ``record_context(embed=True)``;
+    the ranker reuses it via a single round-trip — keeps the call to
+    `get_embedder()` minimal (one inference per /prompts).
+    """
+    from ken.embedder import get_embedder
+    from ken.ranker import rank
+    from ken.ranker.output import render_block
+
+    st.record_context(agent_id, "user_prompt", content, embed=True)
+    if not content.strip():
+        return ""
+    try:
+        prompt_vec = get_embedder().embed_query(content)
+    except Exception:  # pragma: no cover
+        logger.exception("prompt embedding failed during rank")
+        return ""
+
+    # current_iteration is whatever the session's at right now.
+    with st.lock:
+        sess = st.sessions.get(agent_id)
+        current_iter = sess["iter"] if sess else 0
+
+    try:
+        result = rank(
+            st.conn,
+            agent_id=agent_id,
+            current_iteration=current_iter,
+            prompt=content,
+            prompt_embedding=prompt_vec,
+        )
+    except Exception:  # pragma: no cover
+        logger.exception("ranker failed")
+        return ""
+    return render_block(st.conn, result)
+
+
+def _handle_session_end(st: DaemonState, agent_id: str) -> None:
+    """End the session AND snapshot its productivity scores.
+
+    Snapshot first (we still need the in-memory iteration counter),
+    then drop the session from the active set.
+    """
+    from ken.ranker.snapshot import snapshot_session_scores
+
+    with st.lock:
+        sess = st.sessions.get(agent_id)
+        current_iter = sess["iter"] if sess else 0
+
+    try:
+        n = snapshot_session_scores(st.conn, agent_id, current_iter)
+        if n:
+            logger.info("snapshotted %d session scores for agent_id=%s", n, agent_id)
+    except Exception:  # pragma: no cover
+        logger.exception("session_scores snapshot failed")
+
+    st.session_end(agent_id)
 
 
 def _record_tool_pre(st: DaemonState, payload: dict[str, Any]) -> None:
