@@ -14,7 +14,7 @@ from pathlib import Path
 
 from ken import _paths
 from ken.hooks_template import remove_ken_hooks, write_settings
-from ken.install import CLAUDE_SETTINGS
+from ken.install import CLAUDE_SETTINGS, MCP_SETTINGS
 
 
 def uninstall(project_path: Path, *, keep_db: bool) -> int:
@@ -36,6 +36,21 @@ def uninstall(project_path: Path, *, keep_db: bool) -> int:
         else:
             settings_p.unlink()
             print(f"[hooks] {CLAUDE_SETTINGS} now empty — deleted")
+
+    mcp_p = root / MCP_SETTINGS
+    if mcp_p.is_file():
+        try:
+            mcp_existing = json.loads(mcp_p.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            mcp_existing = {}
+        if isinstance(mcp_existing.get("mcpServers"), dict) and "ken" in mcp_existing["mcpServers"]:
+            del mcp_existing["mcpServers"]["ken"]
+            if mcp_existing["mcpServers"]:
+                mcp_p.write_text(json.dumps(mcp_existing, indent=2) + "\n", encoding="utf-8")
+                print(f"[mcp] removed ken entry from {MCP_SETTINGS}")
+            else:
+                mcp_p.unlink()
+                print(f"[mcp] {MCP_SETTINGS} now empty — deleted")
 
     if keep_db:
         print(f"[db] keeping .ken/ ({_paths.db_path(root)})")

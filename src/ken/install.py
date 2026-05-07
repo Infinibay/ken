@@ -31,6 +31,7 @@ from ken.hooks_template import merge_settings, write_settings
 from ken.indexer import index_files
 
 CLAUDE_SETTINGS = ".claude/settings.json"
+MCP_SETTINGS = ".mcp.json"
 
 
 @dataclass
@@ -85,6 +86,9 @@ def install(project_path: Path, *, verbose: bool = True) -> InstallResult:
 
         # Step 4: Claude Code hooks.
         _wire_claude_hooks(root, verbose=verbose)
+
+        # Step 4b: MCP server registration.
+        _wire_mcp(root, verbose=verbose)
 
         # Step 5: initial index.
         if verbose:
@@ -168,6 +172,32 @@ def _wire_claude_hooks(root: Path, *, verbose: bool) -> None:
             print(f"[hooks] wired {', '.join(touched)} into {CLAUDE_SETTINGS}")
         else:
             print(f"[hooks] {CLAUDE_SETTINGS} already had ken hooks — left alone")
+
+
+def _wire_mcp(root: Path, *, verbose: bool) -> None:
+    """Add ken's MCP server to the project's `.mcp.json`. Preserves any
+    existing `mcpServers` entries — we only touch the `ken` key.
+    """
+    mcp_p = root / MCP_SETTINGS
+    existing: dict = {}
+    if mcp_p.is_file():
+        try:
+            existing = json.loads(mcp_p.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            print(
+                f"[mcp] {mcp_p} is not valid JSON ({exc}); aborting", file=sys.stderr
+            )
+            raise SystemExit(2)
+    servers = existing.setdefault("mcpServers", {})
+    desired = {"command": "ken", "args": ["mcp"]}
+    if servers.get("ken") == desired:
+        if verbose:
+            print(f"[mcp] {MCP_SETTINGS} already registers ken — leaving alone")
+        return
+    servers["ken"] = desired
+    mcp_p.write_text(json.dumps(existing, indent=2) + "\n", encoding="utf-8")
+    if verbose:
+        print(f"[mcp] registered `ken` MCP server in {MCP_SETTINGS}")
 
 
 def _ken_version() -> str:

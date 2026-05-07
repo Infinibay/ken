@@ -119,3 +119,20 @@ CREATE TABLE IF NOT EXISTS cr_session_scores (
 );
 CREATE INDEX IF NOT EXISTS idx_cr_session_scores_session ON cr_session_scores(session_id);
 CREATE INDEX IF NOT EXISTS idx_cr_session_scores_target ON cr_session_scores(target_path);
+
+-- ----------------------------------------------------------------------------
+-- Findings: explicit notes the agent (or the user) leaves for future runs.
+-- Populated by the MCP `ken_remember` / `ken_recall` tools. Embedded so the
+-- predictive ranker (channel 4 — currently unused) can surface them later.
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS cr_findings (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic       TEXT NOT NULL,
+    content     TEXT NOT NULL,
+    tags        TEXT NOT NULL DEFAULT '[]',   -- JSON array
+    embedding   BLOB,
+    created_at  INTEGER NOT NULL,
+    updated_at  INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_cr_findings_topic ON cr_findings(topic);
+CREATE UNIQUE INDEX IF NOT EXISTS uniq_cr_findings_topic ON cr_findings(topic);

@@ -56,6 +56,9 @@ def main(argv: list[str] | None = None) -> int:
     p_tool = hook_sub.add_parser("tool-call")
     p_tool.add_argument("--phase", choices=("pre", "post"), required=True)
 
+    p_mcp = sub.add_parser("mcp", help="run as MCP stdio server (invoked by Claude Code)")
+    p_mcp.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
+
     p_uninstall = sub.add_parser("uninstall", help="remove ken hooks from a project")
     p_uninstall.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
     p_uninstall.add_argument("--keep-db", action="store_true", help="don't delete .ken/ken.db")
@@ -82,6 +85,11 @@ def main(argv: list[str] | None = None) -> int:
         from ken.hook import dispatch_hook
 
         return dispatch_hook(args)
+
+    if args.cmd == "mcp":
+        from ken.mcp.server import run as run_mcp
+
+        return run_mcp(Path(args.path))
 
     if args.cmd == "uninstall":
         from ken.install_uninstall import uninstall

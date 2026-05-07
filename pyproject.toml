@@ -16,6 +16,8 @@ dependencies = [
     # CPU; same model infinidev runs in production.
     "fastembed>=0.5",
     "numpy>=1.26",
+    # MCP SDK — exposes ken's tools to Claude Code over stdio.
+    "mcp>=1.0",
 ]
 
 [project.scripts]

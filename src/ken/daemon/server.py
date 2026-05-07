@@ -303,6 +303,9 @@ class _Handler(BaseHTTPRequestHandler):
             elif self.path == "/tools/post":
                 _record_tool_post(st, payload)
                 self._respond(200, {"ok": True})
+            elif self.path == "/interactions/dismiss":
+                _record_dismiss(st, payload)
+                self._respond(200, {"ok": True})
             elif self.path == "/turn-end":
                 # Phase 5: snapshot session_scores. For now just touch.
                 st.record_context(payload["session_id"], "turn_end", "")
@@ -411,6 +414,42 @@ def _handle_session_end(st: DaemonState, agent_id: str) -> None:
         logger.exception("session_scores snapshot failed")
 
     st.session_end(agent_id)
+
+
+def _record_dismiss(st: DaemonState, payload: dict[str, Any]) -> None:
+    """Record a `dismissed` interaction for the active session.
+
+    Called by the MCP `ken_dismiss` tool. We pick the *most recent*
+    active session — there's almost always exactly one, and if the
+    user has two claude windows open against the same project, the
+    last to start wins (a heuristic that matches "the one the user
+    is currently typing in" in practice).
+    """
+    target = payload.get("target")
+    if not isinstance(target, str) or not target.strip():
+        return
+    with st.lock:
+        if not st.sessions:
+            logger.warning("dismiss received but no active session")
+            return
+        # `dict` preserves insertion order; the most recently started
+        # session is the last key.
+        agent_id = next(reversed(st.sessions))
+
+    st.record_interaction(
+        agent_id,
+        event_type="dismissed",
+        target_kind="file",
+        target_path=target.strip(),
+        weight=1.0,
+    )
+    reason = payload.get("reason") or ""
+    if reason:
+        st.record_context(
+            agent_id,
+            kind="dismiss_reason",
+            content=f"{target}: {reason}",
+        )
 
 
 def _record_tool_pre(st: DaemonState, payload: dict[str, Any]) -> None:
