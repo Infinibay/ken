@@ -1,0 +1,132 @@
+"""End-to-end ranker pipeline: rank() entrypoint + RankResult/RankedItem."""
+
+from __future__ import annotations
+
+import pytest
+
+from ken.ranker import MIN_CONFIDENCE, RankedItem, RankResult, rank
+
+
+def test_rank_runs_full_pipeline(conn, make_session, make_interaction, fake_emb):
+    """A clear winner on reactive should make it through the gate and out."""
+    make_session("alpha")
+    make_interaction(1, event="read", target="src/a.py", iteration=1)
+    make_interaction(1, event="edit", target="src/a.py", iteration=1)
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="hello",
+        prompt_embedding=fake_emb("hello"),
+    )
+    assert not result.empty
+    assert any(it.target == "src/a.py" for it in result.files)
+
+
+def test_rank_sorts_descending_with_alpha_tiebreak(conn, make_session, make_interaction, fake_emb):
+    """Equal-score files come back in alphabetical (ascending) order."""
+    make_session("alpha")
+    # Two files with identical reactive patterns → identical scores.
+    for path in ("src/zebra.py", "src/apple.py", "src/mango.py"):
+        make_interaction(1, event="read", target=path, iteration=1)
+        make_interaction(1, event="edit", target=path, iteration=1)
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="hello",
+        prompt_embedding=fake_emb("hello"),
+    )
+    paths = [it.target for it in result.files]
+    # Equal scores → ascending alpha after reverse-sort. Apple wins.
+    assert paths == sorted(paths)
+
+
+def test_rank_caps_top_files(conn, make_session, make_interaction, fake_emb):
+    make_session("alpha")
+    for i in range(15):
+        make_interaction(1, event="read", target=f"src/f{i}.py", iteration=1)
+        make_interaction(1, event="edit", target=f"src/f{i}.py", iteration=1)
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="hello",
+        prompt_embedding=fake_emb("hello"),
+        top_files=4,
+    )
+    assert len(result.files) == 4
+
+
+def test_rank_caps_top_symbols(conn, make_session, make_file, make_symbol, fake_emb):
+    make_session("alpha")
+    fid = make_file("src/a.py")
+    # Create many symbols that all match the query embedding.
+    for i in range(10):
+        make_symbol(fid, name=f"hello_{i}", qualname=f"hello_{i}", line_start=i + 1)
+    # Query embeds same as a symbol name to clear the threshold.
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="hello_0",
+        prompt_embedding=fake_emb("hello_0"),
+        top_symbols=2,
+    )
+    assert len(result.symbols) <= 2
+
+
+def test_rank_confidence_gate_returns_empty(conn, make_session, fake_emb):
+    """No interactions, no past sessions → top_score below gate → empty."""
+    make_session("alpha")
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="nothing relevant here",
+        prompt_embedding=fake_emb("nothing relevant here"),
+    )
+    assert result.empty
+    assert result.top_score == 0.0
+
+
+def test_rank_includes_reasons(conn, make_session, make_interaction, fake_emb):
+    make_session("alpha")
+    make_interaction(1, event="read", target="src/a.py", iteration=1)
+    make_interaction(1, event="edit", target="src/a.py", iteration=1)
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="hello",
+        prompt_embedding=fake_emb("hello"),
+    )
+    assert any("reactive" in it.reason for it in result.files)
+
+
+def test_ranked_item_lt_score_difference():
+    a = RankedItem(target="a", target_type="file", score=1.0)
+    b = RankedItem(target="b", target_type="file", score=2.0)
+    assert a < b
+    assert not (b < a)
+
+
+def test_rank_result_empty_property():
+    assert RankResult().empty is True
+    r = RankResult(files=[RankedItem("a", "file", 1.0)])
+    assert r.empty is False
+    s = RankResult(symbols=[RankedItem("S", "symbol", 1.0)])
+    assert s.empty is False
+
+
+def test_rank_result_top_score_max_across_files_and_symbols():
+    r = RankResult(
+        files=[RankedItem("a", "file", 3.0), RankedItem("b", "file", 1.0)],
+        symbols=[RankedItem("S", "symbol", 4.0)],
+    )
+    assert r.top_score == pytest.approx(4.0)
+
+
+def test_min_confidence_threshold_value():
+    """Sanity: the gate is meaningful (above zero, below typical good scores)."""
+    assert 0 < MIN_CONFIDENCE < 5.0
