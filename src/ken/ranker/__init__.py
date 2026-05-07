@@ -84,15 +84,17 @@ def rank(
     """Run all channels + boosts and return a confidence-gated result."""
     from ken.ranker import boosts, channels, merge
 
+    explicit_files, explicit_symbols = channels.explicit_mentions(conn, prompt)
     reactive = channels.reactive_scores(conn, agent_id, current_iteration)
     predictive = channels.predictive_scores(conn, prompt_embedding)
     fuzzy_files, fuzzy_symbols = channels.fuzzy_scores(conn, prompt_embedding)
 
-    files = merge.merge_files(reactive, predictive, fuzzy_files)
-    symbols = merge.merge_symbols(fuzzy_symbols)
+    files = merge.merge_files(explicit_files, reactive, predictive, fuzzy_files)
+    symbols = merge.merge_symbols([*explicit_symbols, *fuzzy_symbols])
 
     boosts.apply_freshness(conn, files)
     boosts.apply_cooc(conn, files)
+    boosts.apply_dismissal_penalty(conn, prompt_embedding, files)
 
     files.sort(reverse=True)
     symbols.sort(reverse=True)

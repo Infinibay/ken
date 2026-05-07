@@ -8,7 +8,9 @@ qualnames; the merge step in ``ranker.merge`` reconciles them.
 from __future__ import annotations
 
 import math
+import re
 import sqlite3
+import time
 from collections import defaultdict
 from collections.abc import Iterable
 
@@ -241,6 +243,105 @@ def _now_ms(conn: sqlite3.Connection) -> int:
     return int(row["ms"])
 
 
+# ── Explicit mentions ────────────────────────────────────────────────
+#
+# Targeted prompts ("fix the bug in src/auth.py", "what does Session.expire
+# do?") shouldn't depend on fuzzy embedding luck — if the user named a
+# real file or symbol, surface it directly. These items go through the
+# same merge as the channels above, so they compete cleanly with reactive
+# / predictive / fuzzy hits on the same target.
+
+_PATH_RE = re.compile(r"\b[\w./\-]+\.[a-zA-Z]{1,5}\b(?::\d+(?:-\d+)?)?")
+# Either backtick-quoted (group 1) or a CamelCase / Class.method
+# identifier in plain prose (group 2). Lowercase identifiers without
+# backticks are too noisy ("the function" → "the").
+_IDENT_RE = re.compile(r"`([^`\n]+)`|\b([A-Z][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)?)\b")
+
+_KNOWN_EXTS = frozenset(
+    "py pyi rs js jsx mjs cjs ts tsx go java md rst json yaml yml toml sh sql html css".split()
+)
+
+EXPLICIT_FILE_SCORE = 5.0
+EXPLICIT_SYMBOL_SCORE = 5.5
+EXPLICIT_FILE_FROM_SYMBOL = 3.5  # symbol named → boost its file too, but less
+
+
+def explicit_mentions(
+    conn: sqlite3.Connection, prompt: str
+) -> tuple[list[RankedItem], list[RankedItem]]:
+    """Lift any indexed file / symbol the user named in their prompt.
+
+    Returns ``(file_items, symbol_items)``. Empty when nothing matches.
+    """
+    if not prompt:
+        return [], []
+
+    file_items: list[RankedItem] = []
+    symbol_items: list[RankedItem] = []
+    seen_files: set[str] = set()
+    seen_symbols: set[str] = set()
+
+    for m in _PATH_RE.findall(prompt):
+        base = m.split(":")[0]
+        ext = base.rsplit(".", 1)[-1].lower()
+        if ext not in _KNOWN_EXTS:
+            continue
+        if base in seen_files:
+            continue
+        seen_files.add(base)
+        rows = conn.execute(
+            "SELECT path FROM ci_files WHERE path = ? OR path LIKE ?",
+            (base, f"%/{base}"),
+        ).fetchall()
+        for r in rows:
+            file_items.append(
+                RankedItem(
+                    target=r["path"],
+                    target_type="file",
+                    score=EXPLICIT_FILE_SCORE,
+                    reason="explicit-mention",
+                )
+            )
+
+    candidates: set[str] = set()
+    for backtick, camel in _IDENT_RE.findall(prompt):
+        token = (backtick or camel).strip().rstrip("()").strip()
+        if 3 <= len(token) <= 80:
+            candidates.add(token)
+
+    for token in candidates:
+        if token in seen_symbols:
+            continue
+        seen_symbols.add(token)
+        rows = conn.execute(
+            "SELECT s.qualname, s.name, f.path AS file_path, s.line_start "
+            "FROM ci_symbols s JOIN ci_files f ON f.id = s.file_id "
+            "WHERE s.qualname = ? OR s.name = ?",
+            (token, token),
+        ).fetchall()
+        for r in rows:
+            target = f"{r['qualname']} ({r['file_path']}:{r['line_start']})"
+            symbol_items.append(
+                RankedItem(
+                    target=target,
+                    target_type="symbol",
+                    score=EXPLICIT_SYMBOL_SCORE,
+                    reason="explicit-mention",
+                )
+            )
+            if r["file_path"] not in seen_files:
+                file_items.append(
+                    RankedItem(
+                        target=r["file_path"],
+                        target_type="file",
+                        score=EXPLICIT_FILE_FROM_SYMBOL,
+                        reason="explicit-symbol-mention",
+                    )
+                )
+
+    return file_items, symbol_items
+
+
 # ── Channel 3: Fuzzy symbol / file ───────────────────────────────────
 
 FUZZY_FILE_MIN_SIM = 0.40
@@ -248,6 +349,13 @@ FUZZY_FILE_SCALE = 4.5
 FUZZY_SYMBOL_MIN_SIM = 0.45
 FUZZY_SYMBOL_SCALE = 5.0
 FUZZY_SYMBOL_BONUS = 0.5  # symbols slightly preferred over their file
+
+# In-channel recency: small additive bump to similarity *before* the
+# threshold check, so a file modified yesterday with sim=0.38 can clear
+# the 0.40 cutoff. Multiplicative `apply_freshness` still runs later for
+# already-ranked winners — these are complementary.
+FUZZY_RECENCY_BUMP = 0.10
+FUZZY_RECENCY_DAYS = 14.0
 
 
 def fuzzy_scores(
@@ -270,23 +378,33 @@ def fuzzy_scores(
 
 def _fuzzy_files(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
     rows = conn.execute(
-        "SELECT path, embedding FROM ci_files WHERE embedding IS NOT NULL"
+        "SELECT path, embedding, mtime FROM ci_files WHERE embedding IS NOT NULL"
     ).fetchall()
     if not rows:
         return []
     paths = [r["path"] for r in rows]
+    mtimes = [int(r["mtime"]) for r in rows]
     mat = np.asarray(
         [blob_to_vec(r["embedding"]) for r in rows], dtype=np.float32
     )
     norms = np.linalg.norm(mat, axis=1) + 1e-12
     sims = (mat @ q) / norms
+    now_ns = int(time.time() * 1e9)
     out: list[RankedItem] = []
-    for path, sim in zip(paths, sims):
-        s = float(sim)
+    for path, sim, mtime_ns in zip(paths, sims, mtimes):
+        sim_raw = float(sim)
+        days_old = max(0.0, (now_ns - mtime_ns) / 1e9 / 86_400)
+        bump = 0.0
+        if days_old < FUZZY_RECENCY_DAYS:
+            bump = FUZZY_RECENCY_BUMP * (1.0 - days_old / FUZZY_RECENCY_DAYS)
+        s = sim_raw + bump
         if s < FUZZY_FILE_MIN_SIM:
             continue
         score = (s - FUZZY_FILE_MIN_SIM) * FUZZY_FILE_SCALE / (1.0 - FUZZY_FILE_MIN_SIM)
-        out.append(RankedItem(target=path, target_type="file", score=score, reason=f"fuzzy:{s:.2f}"))
+        reason = f"fuzzy:{sim_raw:.2f}"
+        if bump > 0:
+            reason += f"+recent{bump:.2f}"
+        out.append(RankedItem(target=path, target_type="file", score=score, reason=reason))
     return out
 
 

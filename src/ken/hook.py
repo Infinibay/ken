@@ -19,7 +19,9 @@ print nothing extra.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
+from pathlib import Path
 from typing import Any
 
 from ken import _paths
@@ -59,7 +61,12 @@ def dispatch_hook(args: argparse.Namespace) -> int:
             phase_path = "/tools/pre" if args.phase == "pre" else "/tools/post"
             client.post(root, phase_path, _tool_call_body(session_id, args.phase, payload))
         elif args.hook_cmd == "stop":
-            client.post(root, "/turn-end", {"session_id": session_id})
+            assistant_text = _extract_last_assistant_text(payload.get("transcript_path"))
+            client.post(
+                root,
+                "/turn-end",
+                {"session_id": session_id, "assistant_text": assistant_text},
+            )
         else:
             print(f"ken: unknown hook subcommand: {args.hook_cmd}", file=sys.stderr)
             return 0
@@ -93,6 +100,58 @@ def _tool_call_body(session_id: str, phase: str, payload: dict[str, Any]) -> dic
         body["output"] = payload.get("tool_response") or payload.get("output")
         body["success"] = bool(payload.get("success", True))
     return body
+
+
+def _extract_last_assistant_text(
+    transcript_path: Any, max_bytes: int = 50_000
+) -> str:
+    """Return concatenated text content of the most recent assistant entry.
+
+    Claude Code writes the conversation to a JSONL file; on the Stop
+    hook it gives us ``transcript_path``. We tail the last ~50 KB, walk
+    backwards to the latest ``type=assistant`` line, and pull out its
+    ``text`` content blocks. Returns ``""`` on any error — the caller
+    treats that as "no transcript signal".
+    """
+    if not isinstance(transcript_path, str) or not transcript_path:
+        return ""
+    p = Path(transcript_path)
+    if not p.is_file():
+        return ""
+    try:
+        size = p.stat().st_size
+        with p.open("rb") as fh:
+            if size > max_bytes:
+                fh.seek(size - max_bytes)
+                fh.readline()  # discard the partial first line
+            chunk = fh.read().decode("utf-8", errors="replace")
+    except OSError:
+        return ""
+
+    for raw in reversed(chunk.splitlines()):
+        line = raw.strip()
+        if not line:
+            continue
+        try:
+            entry = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if entry.get("type") != "assistant":
+            continue
+        msg = entry.get("message") or {}
+        content = msg.get("content") or []
+        if isinstance(content, str):
+            return content
+        if isinstance(content, list):
+            texts: list[str] = []
+            for block in content:
+                if isinstance(block, dict) and block.get("type") == "text":
+                    txt = block.get("text")
+                    if isinstance(txt, str):
+                        texts.append(txt)
+            return "\n".join(texts)
+        return ""
+    return ""
 
 
 __all__ = ["dispatch_hook"]

@@ -96,6 +96,11 @@ class DaemonState:
                 # prompt arrives. Tool calls between prompts inherit this
                 # so the ranker can apply per-turn decay.
                 "last_prompt_context_id": None,
+                # Cache of the most recent ranker output for this session
+                # so the `ken_rank` MCP tool can re-render at higher
+                # verbose without re-running the channels.
+                "last_rank_result": None,
+                "last_rank_prompt": "",
             }
             self.empty_since = None
             self._touch()
@@ -145,6 +150,8 @@ class DaemonState:
             "iter": 0,
             "started_at": now_ms,
             "last_prompt_context_id": None,
+            "last_rank_result": None,
+            "last_rank_prompt": "",
         }
         return pk
 
@@ -229,6 +236,29 @@ class DaemonState:
             )
             self._touch()
 
+    def invalidate_last_interaction(self, agent_id: str, target_path: str) -> None:
+        """Drop the most-recent cr_interactions row for this session+target.
+
+        Called from PostToolUse when the tool reported failure — keeping
+        the row would let a failed Edit count as ``edit:2.0`` and pull a
+        broken file into the rank. The pre/post pairing in Claude Code is
+        strictly sequential per tool, so "most recent matching row" is
+        always the one ``record_interaction`` just inserted in the pre.
+        """
+        sess = self.sessions.get(agent_id)
+        if sess is None:
+            return
+        with self.lock:
+            self.conn.execute(
+                "DELETE FROM cr_interactions WHERE id = ("
+                "  SELECT id FROM cr_interactions "
+                "  WHERE session_id = ? AND target_path = ? "
+                "  ORDER BY id DESC LIMIT 1"
+                ")",
+                (sess["pk"], target_path),
+            )
+            self._touch()
+
     # ---------- shutdown logic ----------------------------------------
 
     def _touch(self) -> None:
@@ -306,9 +336,12 @@ class _Handler(BaseHTTPRequestHandler):
             elif self.path == "/interactions/dismiss":
                 _record_dismiss(st, payload)
                 self._respond(200, {"ok": True})
+            elif self.path == "/rank":
+                self._respond(200, _handle_rank(st, payload))
+            elif self.path == "/explain":
+                self._respond(200, _handle_explain(st, payload))
             elif self.path == "/turn-end":
-                # Phase 5: snapshot session_scores. For now just touch.
-                st.record_context(payload["session_id"], "turn_end", "")
+                _handle_turn_end(st, payload)
                 self._respond(200, {"ok": True})
             elif self.path == "/shutdown":
                 self._respond(200, {"ok": True})
@@ -361,6 +394,9 @@ def _handle_prompt(st: DaemonState, agent_id: str, content: str) -> str:
     Embedding is computed inline inside ``record_context(embed=True)``;
     the ranker reuses it via a single round-trip — keeps the call to
     `get_embedder()` minimal (one inference per /prompts).
+
+    The RankResult is cached on the session so the ``ken_rank`` MCP
+    tool can re-render at a higher verbose level without re-running.
     """
     from ken.embedder import get_embedder
     from ken.ranker import rank
@@ -375,7 +411,6 @@ def _handle_prompt(st: DaemonState, agent_id: str, content: str) -> str:
         logger.exception("prompt embedding failed during rank")
         return ""
 
-    # current_iteration is whatever the session's at right now.
     with st.lock:
         sess = st.sessions.get(agent_id)
         current_iter = sess["iter"] if sess else 0
@@ -391,7 +426,90 @@ def _handle_prompt(st: DaemonState, agent_id: str, content: str) -> str:
     except Exception:  # pragma: no cover
         logger.exception("ranker failed")
         return ""
-    return render_block(st.conn, result)
+
+    with st.lock:
+        sess = st.sessions.get(agent_id)
+        if sess is not None:
+            sess["last_rank_result"] = result
+            sess["last_rank_prompt"] = content
+
+    return render_block(st.conn, result, verbose=0)
+
+
+def _handle_rank(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
+    """Re-render (or recompute) the ranker output at a chosen verbose level.
+
+    Called by the ``ken_rank`` MCP tool. Two modes:
+
+    * **No query / empty query** — re-render the cached last RankResult
+      from the most-recent active session. Cheap; just changes how much
+      detail is in the output.
+    * **Query provided** — re-run the ranker with that query, against
+      the same session's reactive context (so "what's hot in this
+      session" still applies). Costs one embedding + one rank.
+    """
+    from ken.embedder import get_embedder
+    from ken.ranker import rank as rank_fn
+    from ken.ranker.output import render_block
+
+    verbose_raw = payload.get("verbose", 1)
+    try:
+        verbose = int(verbose_raw)
+    except (TypeError, ValueError):
+        verbose = 1
+    verbose = max(0, min(2, verbose))
+    query = str(payload.get("query") or "").strip()
+
+    with st.lock:
+        if not st.sessions:
+            return {"ok": False, "error": "no active session"}
+        agent_id = next(reversed(st.sessions))
+        sess = st.sessions[agent_id]
+        cached_result = sess.get("last_rank_result")
+        cached_prompt = sess.get("last_rank_prompt") or ""
+        current_iter = sess.get("iter", 0)
+
+    if not query:
+        if cached_result is None:
+            return {
+                "ok": False,
+                "error": "no cached rank yet — submit a prompt first",
+            }
+        block = render_block(st.conn, cached_result, verbose=verbose)
+        return {
+            "ok": True,
+            "context_block": block,
+            "prompt": cached_prompt,
+            "files": len(cached_result.files),
+            "symbols": len(cached_result.symbols),
+        }
+
+    try:
+        prompt_vec = get_embedder().embed_query(query)
+    except Exception:  # pragma: no cover
+        logger.exception("rank-on-demand embedding failed")
+        return {"ok": False, "error": "embedder failed"}
+
+    try:
+        result = rank_fn(
+            st.conn,
+            agent_id=agent_id,
+            current_iteration=current_iter,
+            prompt=query,
+            prompt_embedding=prompt_vec,
+        )
+    except Exception:  # pragma: no cover
+        logger.exception("rank-on-demand failed")
+        return {"ok": False, "error": "ranker failed"}
+
+    block = render_block(st.conn, result, verbose=verbose)
+    return {
+        "ok": True,
+        "context_block": block,
+        "prompt": query,
+        "files": len(result.files),
+        "symbols": len(result.symbols),
+    }
 
 
 def _handle_session_end(st: DaemonState, agent_id: str) -> None:
@@ -414,6 +532,119 @@ def _handle_session_end(st: DaemonState, agent_id: str) -> None:
         logger.exception("session_scores snapshot failed")
 
     st.session_end(agent_id)
+
+
+def _handle_explain(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
+    """Per-channel decomposition of the rank for *query* (or last prompt)."""
+    from ken.embedder import get_embedder
+    from ken.ranker.explain import explain
+
+    query = str(payload.get("query") or "").strip()
+    with st.lock:
+        if not st.sessions:
+            return {"ok": False, "error": "no active session"}
+        agent_id = next(reversed(st.sessions))
+        sess = st.sessions[agent_id]
+        cached_prompt = sess.get("last_rank_prompt") or ""
+        current_iter = sess.get("iter", 0)
+
+    target_prompt = query or cached_prompt
+    if not target_prompt:
+        return {"ok": False, "error": "no cached prompt — submit one or pass query"}
+
+    try:
+        prompt_vec = get_embedder().embed_query(target_prompt)
+    except Exception:  # pragma: no cover
+        logger.exception("explain embedding failed")
+        return {"ok": False, "error": "embedder failed"}
+
+    try:
+        result = explain(
+            st.conn,
+            agent_id=agent_id,
+            current_iteration=current_iter,
+            prompt=target_prompt,
+            prompt_embedding=prompt_vec,
+        )
+    except Exception:  # pragma: no cover
+        logger.exception("explain failed")
+        return {"ok": False, "error": "explain failed"}
+
+    result["ok"] = True
+    return result
+
+
+def _handle_turn_end(st: DaemonState, payload: dict[str, Any]) -> None:
+    """Record turn-end with the assistant's response text + extract cites.
+
+    Files mentioned in the assistant's reply (without necessarily being
+    read or edited) are a strong "the model considered this" signal —
+    they fire the ``cited`` pattern multiplier (2.5×). We scan the text
+    for path-shaped tokens, validate against ci_files, and emit one
+    ``cr_interactions(event_type='cited')`` per match.
+
+    The text itself is also stored on a turn_end context so future
+    sessions can semantic-match against past *responses*, not just past
+    prompts.
+    """
+    agent_id = payload["session_id"]
+    text = str(payload.get("assistant_text") or "")
+    # Cap stored text to avoid bloating the DB on long replies.
+    st.record_context(agent_id, "turn_end", text[:8000])
+    if not text:
+        return
+    cited = _extract_cited_paths(st.conn, text)
+    for path in cited:
+        st.record_interaction(
+            agent_id,
+            event_type="cited",
+            target_kind="file",
+            target_path=path,
+        )
+
+
+def _extract_cited_paths(conn: sqlite3.Connection, text: str) -> list[str]:
+    """Find indexed file paths mentioned in *text*.
+
+    Two-pass match against ci_files:
+      1. Exact path match (e.g. ``src/auth.py``).
+      2. Bare filename → suffix match (e.g. ``auth.py`` → ``src/auth.py``)
+         but only if exactly one ci_files entry suffix-matches; otherwise
+         we don't know which file the assistant meant and skip it.
+    """
+    from ken.ranker.channels import _KNOWN_EXTS, _PATH_RE
+
+    candidates: set[str] = set()
+    for m in _PATH_RE.findall(text):
+        base = m.split(":")[0]
+        ext = base.rsplit(".", 1)[-1].lower()
+        if ext not in _KNOWN_EXTS:
+            continue
+        candidates.add(base)
+    if not candidates:
+        return []
+
+    full_paths = [c for c in candidates if "/" in c]
+    bare_names = [c for c in candidates if "/" not in c]
+    hits: set[str] = set()
+
+    if full_paths:
+        ph = ",".join("?" * len(full_paths))
+        rows = conn.execute(
+            f"SELECT path FROM ci_files WHERE path IN ({ph})",
+            full_paths,
+        ).fetchall()
+        hits.update(r["path"] for r in rows)
+
+    for name in bare_names:
+        rows = conn.execute(
+            "SELECT path FROM ci_files WHERE path LIKE ? LIMIT 2",
+            (f"%/{name}",),
+        ).fetchall()
+        if len(rows) == 1:
+            hits.add(rows[0]["path"])
+
+    return sorted(hits)
 
 
 def _record_dismiss(st: DaemonState, payload: dict[str, Any]) -> None:
@@ -480,6 +711,9 @@ def _record_tool_pre(st: DaemonState, payload: dict[str, Any]) -> None:
 
 
 def _record_tool_post(st: DaemonState, payload: dict[str, Any]) -> None:
+    """Record the post phase. If the tool reported failure, retract the
+    pre-phase interaction so a broken Read/Edit doesn't poison the rank.
+    """
     agent_id = payload["session_id"]
     tool = str(payload.get("tool", payload.get("tool_name", "")))
     success = bool(payload.get("success", True))
@@ -488,6 +722,11 @@ def _record_tool_post(st: DaemonState, payload: dict[str, Any]) -> None:
         kind="tool_call_post",
         content=json.dumps({"tool": tool, "success": success}, ensure_ascii=False),
     )
+    if not success:
+        tool_input = payload.get("input") or payload.get("tool_input") or {}
+        target = _extract_target(tool_input)
+        if target:
+            st.invalidate_last_interaction(agent_id, target)
 
 
 def _classify_tool(tool: str, tool_input: dict[str, Any]) -> tuple[str, str | None]:

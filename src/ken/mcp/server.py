@@ -212,6 +212,71 @@ def ken_recall(query: str, limit: int = 5) -> list[dict]:
 
 
 @mcp.tool()
+def ken_rank(query: str = "", verbose: int = 1) -> dict:
+    """Re-render the context-rank for the current session at a chosen verbosity.
+
+    The default ``<context-rank>`` block injected before each user
+    prompt is intentionally terse. Call this when you want more detail:
+
+    * ``verbose=0`` — same one-line-per-file format as the auto-injected
+      block (useful if you missed it).
+    * ``verbose=1`` — top 5 files with a 3-line outline of each and a
+      ranked symbols section.
+    * ``verbose=2`` — top 8 files with a 12-line outline of each plus
+      symbols. Largest payload.
+
+    With *query* empty (default), this re-renders the ranker's cached
+    output for the most recent prompt — cheap, no recomputation. Pass
+    a *query* to run the ranker against a different intent (still using
+    your current session's reactive context).
+    """
+    from ken.daemon import client as daemon_client
+
+    assert _PROJECT_ROOT is not None
+    health = daemon_client.health(_PROJECT_ROOT)
+    if not health or health.get("sessions_active", 0) == 0:
+        return {
+            "ok": False,
+            "error": (
+                "no active claude session — open claude inside the project "
+                "and try again"
+            ),
+        }
+    resp = daemon_client.post(
+        _PROJECT_ROOT,
+        "/rank",
+        {"query": query, "verbose": int(verbose)},
+    )
+    if resp is None:
+        return {"ok": False, "error": "daemon unreachable"}
+    return resp
+
+
+@mcp.tool()
+def ken_explain_rank(query: str = "") -> dict:
+    """Per-channel breakdown of the ranker for a query (or the last prompt).
+
+    Returns each channel's raw output (explicit / reactive / predictive
+    / fuzzy), the merged pre-boost scores, the per-boost score deltas
+    (freshness, co-occurrence, dismissal penalty), and the final
+    ordering. Use this when "why didn't file X show up?" or "where did
+    that score come from?" matters more than the rendered block.
+
+    *query* defaults to the most recent prompt in the active session.
+    """
+    from ken.daemon import client as daemon_client
+
+    assert _PROJECT_ROOT is not None
+    health = daemon_client.health(_PROJECT_ROOT)
+    if not health or health.get("sessions_active", 0) == 0:
+        return {"ok": False, "error": "no active claude session"}
+    resp = daemon_client.post(_PROJECT_ROOT, "/explain", {"query": query})
+    if resp is None:
+        return {"ok": False, "error": "daemon unreachable"}
+    return resp
+
+
+@mcp.tool()
 def ken_dismiss(target: str, reason: str = "") -> dict:
     """Explicit "this file wasn't what I was looking for" signal.
 
