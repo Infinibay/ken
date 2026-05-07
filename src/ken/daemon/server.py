@@ -55,6 +55,11 @@ EMPTY_GRACE_S = 60.0
 # Background thread checks idle/empty every this many seconds.
 SHUTDOWN_TICK_S = 5.0
 
+# Let the first hook/rank request use the already-built index before the
+# daemon starts its full filesystem warm pass. This matters on giant repos
+# where thousands of hash-skip reindex checks can contend with ranking.
+MAINTENANCE_START_DELAY_S = 2.0
+
 # Hard budget for the hook-injected block. Users can still ask for the
 # uncapped expanded view with `ken rank --verbose 2` / `ken_rank`.
 HOOK_CONTEXT_MAX_CHARS = 3500
@@ -374,11 +379,14 @@ class _Handler(BaseHTTPRequestHandler):
 
     def _respond(self, status: int, payload: dict[str, Any]) -> None:
         body = json.dumps(payload).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError):
+            logger.info("client disconnected before response path=%s", self.path)
 
     def _health_payload(self) -> dict[str, Any]:
         st = self.server.state
@@ -914,6 +922,46 @@ def run(project_root: Path) -> int:
         bound_port,
     )
 
+    # Start accepting HTTP before background maintenance. On very large
+    # repositories the warm pass can take longer than the hook client's
+    # spawn wait; serving first keeps /health responsive and prevents a
+    # false "daemon unreachable" on first prompt.
+    sd_watcher = threading.Thread(target=_shutdown_watcher, args=(state,), daemon=True)
+    sd_watcher.start()
+    serve_thread = threading.Thread(target=server.serve_forever, daemon=True)
+    serve_thread.start()
+
+    maintenance: dict[str, Any] = {}
+    maintenance_thread = threading.Thread(
+        target=_maintenance_loop,
+        args=(state, maintenance),
+        name="ken-maintenance-startup",
+        daemon=True,
+    )
+    maintenance_thread.start()
+
+    state.shutdown_event.wait()
+    logger.info("ken daemon shutting down")
+    _finalize_active_sessions(state)
+    server.shutdown()
+    server.server_close()
+    file_watcher = maintenance.get("file_watcher")
+    if file_watcher is not None:
+        file_watcher.stop()
+    index_queue = maintenance.get("index_queue")
+    if index_queue is not None:
+        index_queue.stop()
+    maintenance_thread.join(timeout=5.0)
+    state.conn.close()
+    _clear_runtime_files(project_root)
+    return 0
+
+
+def _maintenance_loop(state: DaemonState, holder: dict[str, Any]) -> None:
+    if state.shutdown_event.wait(MAINTENANCE_START_DELAY_S):
+        return
+
+    project_root = state.project_root
     # Index queue + file watcher run in their own threads with their own
     # SQLite connections. We start the queue first so the watcher's first
     # events have a worker to hand off to.
@@ -922,10 +970,14 @@ def run(project_root: Path) -> int:
     # instance the request handlers use for cr_contexts embeddings, so we
     # only pay one model-load cost per process.
     index_queue = IndexQueue(project_root, embedder=get_embedder())
+    if state.shutdown_event.is_set():
+        return
     index_queue.start()
+    holder["index_queue"] = index_queue
 
     file_watcher = FileWatcher(project_root, index_queue)
     file_watcher.start()
+    holder["file_watcher"] = file_watcher
 
     # Warm pass: enqueue every gitignore-respecting file. The indexer
     # short-circuits on content_hash so this is cheap on a clean DB —
@@ -933,26 +985,11 @@ def run(project_root: Path) -> int:
     # (between sessions, after a `git pull`, …).
     warm_count = 0
     for rel in iter_files(project_root):
+        if state.shutdown_event.is_set():
+            break
         index_queue.reindex(rel.as_posix())
         warm_count += 1
     logger.info("warm pass: queued %s files for hash-skip / reindex", warm_count)
-
-    # Idle/empty shutdown watcher and the HTTP serve loop.
-    sd_watcher = threading.Thread(target=_shutdown_watcher, args=(state,), daemon=True)
-    sd_watcher.start()
-    serve_thread = threading.Thread(target=server.serve_forever, daemon=True)
-    serve_thread.start()
-
-    state.shutdown_event.wait()
-    logger.info("ken daemon shutting down")
-    _finalize_active_sessions(state)
-    server.shutdown()
-    server.server_close()
-    file_watcher.stop()
-    index_queue.stop()
-    state.conn.close()
-    _clear_runtime_files(project_root)
-    return 0
 
 
 def _shutdown_watcher(state: DaemonState) -> None:

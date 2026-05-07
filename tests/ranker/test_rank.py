@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from ken.ranker import MIN_CONFIDENCE, RankedItem, RankResult, rank
+from ken.ranker import MIN_CONFIDENCE, RankedItem, RankResult, _drop_missing_paths, rank
 from ken.embedder import vec_to_blob
 
 
@@ -299,6 +299,55 @@ def test_rank_drops_missing_symbols_when_project_root_is_known(
 
     assert [it.target for it in result.files] == ["src/live.py"]
     assert [it.target for it in result.symbols] == ["live_func (src/live.py:1)"]
+
+
+def test_rank_drops_missing_symbols_with_parenthesized_qualname(
+    tmp_path, conn, make_session, make_file, make_symbol, fake_emb
+):
+    make_session("alpha")
+    live = tmp_path / "static" / "chunk.js"
+    live.parent.mkdir()
+    live.write_text("export const iterator = Symbol.asyncIterator;\n")
+    live_id = make_file("static/chunk.js")
+    make_symbol(
+        live_id,
+        name="Symbol.asyncIterator",
+        qualname="stream[Symbol.asyncIterator)]",
+        line_start=1,
+    )
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="async iterator stream",
+        prompt_embedding=fake_emb("Symbol.asyncIterator"),
+        project_root=tmp_path,
+    )
+
+    assert result.symbols[0].target == "stream[Symbol.asyncIterator)] (static/chunk.js:1)"
+
+
+def test_drop_missing_paths_filters_invalid_long_paths(tmp_path):
+    live = tmp_path / "src" / "live.py"
+    live.parent.mkdir()
+    live.write_text("x = 1\n")
+    too_long = "x" * 5000 + ".py"
+
+    files, symbols = _drop_missing_paths(
+        tmp_path,
+        [
+            RankedItem("src/live.py", "file", 2.0),
+            RankedItem(too_long, "file", 2.0),
+        ],
+        [
+            RankedItem("live (src/live.py:1)", "symbol", 2.0),
+            RankedItem(f"bad ({too_long}:1)", "symbol", 2.0),
+        ],
+    )
+
+    assert [it.target for it in files] == ["src/live.py"]
+    assert [it.target for it in symbols] == ["live (src/live.py:1)"]
 
 
 def test_ranked_item_lt_score_difference():

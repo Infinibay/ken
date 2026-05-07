@@ -36,7 +36,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-import re
 
 import numpy as np
 
@@ -155,9 +154,6 @@ def rank(
     return result
 
 
-_SYMBOL_TARGET_PATH_RE = re.compile(r"\((.+):\d+\)$")
-
-
 def _drop_missing_paths(
     project_root: Path,
     files: list[RankedItem],
@@ -165,18 +161,32 @@ def _drop_missing_paths(
 ) -> tuple[list[RankedItem], list[RankedItem]]:
     """Remove ranked files/symbols whose indexed path no longer exists."""
     root = project_root.resolve()
-    live_files = [it for it in files if (root / it.target).exists()]
+    live_files = [it for it in files if _path_exists(root, it.target)]
     live_symbols = [
         it for it in symbols
         if (path := _symbol_target_path(it.target)) is not None
-        and (root / path).exists()
+        and _path_exists(root, path)
     ]
     return live_files, live_symbols
 
 
+def _path_exists(root: Path, rel: str) -> bool:
+    try:
+        return (root / rel).exists()
+    except OSError:
+        return False
+
+
 def _symbol_target_path(target: str) -> str | None:
-    match = _SYMBOL_TARGET_PATH_RE.search(target)
-    return match.group(1) if match else None
+    try:
+        _qualname, location = target.rsplit(" (", 1)
+        path, line = location.rsplit(":", 1)
+    except ValueError:
+        return None
+    if not line.endswith(")"):
+        return None
+    line_no = line[:-1]
+    return path if line_no.isdigit() else None
 
 
 __all__ = [

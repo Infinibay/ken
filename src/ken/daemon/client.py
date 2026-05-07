@@ -34,10 +34,14 @@ from ken import _paths
 SPAWN_POLL_TIMEOUT_S = 5.0
 SPAWN_POLL_INTERVAL_S = 0.05
 
-# Hook → daemon timeouts. Reads/health small; POSTs slightly bigger to
-# tolerate a brief lock-contention spike when many hooks fire at once.
+# Hook → daemon timeouts. Reads/health small; cheap POSTs slightly bigger
+# to tolerate a brief lock-contention spike when many hooks fire at once.
+# Ranking endpoints can legitimately take longer on huge repos, especially
+# the first time the process loads the embedding model.
 HEALTH_TIMEOUT_S = 1.0
 POST_TIMEOUT_S = 3.0
+RANK_POST_TIMEOUT_S = 60.0
+RANKING_PATHS = {"/prompts", "/rank", "/explain"}
 
 logger = logging.getLogger("ken.client")
 
@@ -77,10 +81,17 @@ def health(project_root: Path) -> dict[str, Any] | None:
 
 
 def _post_with_spawn(project_root: Path, path: str, payload: dict[str, Any]) -> dict[str, Any] | None:
+    timeout = _post_timeout(path)
     port = _read_port(project_root)
     if port is not None:
         try:
-            return _request("POST", project_root, port, path, body=payload, timeout=POST_TIMEOUT_S)
+            return _request("POST", project_root, port, path, body=payload, timeout=timeout)
+        except TimeoutError:
+            # The daemon accepted the request but did not respond before
+            # the hook budget. Do not clear the port or spawn another
+            # daemon: the in-flight request may still complete.
+            logger.warning("daemon POST %s timed out after %.1fs", path, timeout)
+            return None
         except (urllib.error.URLError, ConnectionRefusedError, OSError):
             # Stale port file (daemon crashed without cleanup).  Spawn a
             # fresh one and retry once.
@@ -88,7 +99,11 @@ def _post_with_spawn(project_root: Path, path: str, payload: dict[str, Any]) -> 
             _clear_port_file(project_root)
 
     spawned_port = _spawn_and_wait(project_root)
-    return _request("POST", project_root, spawned_port, path, body=payload, timeout=POST_TIMEOUT_S)
+    return _request("POST", project_root, spawned_port, path, body=payload, timeout=timeout)
+
+
+def _post_timeout(path: str) -> float:
+    return RANK_POST_TIMEOUT_S if path in RANKING_PATHS else POST_TIMEOUT_S
 
 
 def _spawn_and_wait(project_root: Path) -> int:
