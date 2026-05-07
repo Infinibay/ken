@@ -169,6 +169,31 @@ def test_explain_includes_import_affinity_diff(conn, make_session, make_file, fa
     assert any(d["target"] == "src/util.py" for d in out["boosts"]["import_affinity"])
 
 
+def test_explain_final_order_drops_missing_paths_when_project_root_is_known(
+    tmp_path, conn, make_session, make_interaction, fake_emb
+):
+    make_session("alpha")
+    live = tmp_path / "src" / "live.py"
+    live.parent.mkdir()
+    live.write_text("def live(): return 1\n")
+    make_interaction(1, event="read", target="src/live.py", iteration=1)
+    make_interaction(1, event="edit", target="src/live.py", iteration=1)
+    make_interaction(1, event="read", target="src/stale.py", iteration=1)
+    make_interaction(1, event="edit", target="src/stale.py", iteration=1)
+
+    out = explain(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="hello",
+        prompt_embedding=fake_emb("hello"),
+        project_root=tmp_path,
+    )
+
+    assert any(row["target"] == "src/stale.py" for row in out["channels"]["reactive"])
+    assert [row["target"] for row in out["final_files"]] == ["src/live.py"]
+
+
 def test_diff_skips_unchanged():
     before = {"a": 1.0, "b": 2.0}
     after = {"a": 1.0, "b": 3.0}

@@ -32,6 +32,9 @@ def _project(tmp_path: Path) -> Path:
             ("src/parser.py", np.array([1.0, 0.0], dtype=np.float32)),
             ("src/status.py", np.array([0.0, 1.0], dtype=np.float32)),
         ]:
+            src = tmp_path / path
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_text("def indexed():\n    return 1\n", encoding="utf-8")
             conn.execute(
                 "INSERT INTO ci_files(path, language, content_hash, mtime, indexed_at, embedding) "
                 "VALUES (?, 'python', ?, ?, ?, ?)",

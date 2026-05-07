@@ -227,6 +227,55 @@ def test_rank_includes_reasons(conn, make_session, make_interaction, fake_emb):
     assert any("reactive" in it.reason for it in result.files)
 
 
+def test_rank_drops_missing_files_when_project_root_is_known(
+    tmp_path, conn, make_session, make_interaction, fake_emb
+):
+    make_session("alpha")
+    live = tmp_path / "src" / "live.py"
+    live.parent.mkdir()
+    live.write_text("def live(): return 1\n")
+    make_interaction(1, event="read", target="src/live.py", iteration=1)
+    make_interaction(1, event="edit", target="src/live.py", iteration=1)
+    make_interaction(1, event="read", target="src/stale.py", iteration=1)
+    make_interaction(1, event="edit", target="src/stale.py", iteration=1)
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="hello",
+        prompt_embedding=fake_emb("hello"),
+        project_root=tmp_path,
+    )
+
+    assert [it.target for it in result.files] == ["src/live.py"]
+
+
+def test_rank_drops_missing_symbols_when_project_root_is_known(
+    tmp_path, conn, make_session, make_file, make_symbol, fake_emb
+):
+    make_session("alpha")
+    live = tmp_path / "src" / "live.py"
+    live.parent.mkdir()
+    live.write_text("def live_func(): return 1\n")
+    live_id = make_file("src/live.py")
+    stale_id = make_file("src/stale.py")
+    make_symbol(live_id, name="live_func", qualname="live_func", line_start=1)
+    make_symbol(stale_id, name="stale_func", qualname="stale_func", line_start=1)
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="live_func stale_func",
+        prompt_embedding=fake_emb("unrelated"),
+        project_root=tmp_path,
+    )
+
+    assert [it.target for it in result.files] == ["src/live.py"]
+    assert [it.target for it in result.symbols] == ["live_func (src/live.py:1)"]
+
+
 def test_ranked_item_lt_score_difference():
     a = RankedItem(target="a", target_type="file", score=1.0)
     b = RankedItem(target="b", target_type="file", score=2.0)

@@ -13,6 +13,7 @@ normal rank — fine for a debug-only path.
 from __future__ import annotations
 
 import sqlite3
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -28,8 +29,9 @@ def explain(
     prompt: str,
     prompt_embedding: np.ndarray,
     top: int = 10,
+    project_root: Path | None = None,
 ) -> dict[str, Any]:
-    from ken.ranker import boosts, channels, merge
+    from ken.ranker import _drop_missing_paths, boosts, channels, merge
 
     similar = channels.similar_past_sessions(conn, prompt_embedding)
 
@@ -66,6 +68,9 @@ def explain(
 
     boosts.apply_dismissal_penalty(conn, files, similar)
     post_dismiss = {it.target: it.score for it in files}
+
+    if project_root is not None:
+        files, symbols = _drop_missing_paths(project_root, files, symbols)
 
     files.sort(reverse=True)
 

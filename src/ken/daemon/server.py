@@ -426,6 +426,7 @@ def _handle_prompt(st: DaemonState, agent_id: str, content: str) -> str:
             current_iteration=current_iter,
             prompt=content,
             prompt_embedding=prompt_vec,
+            project_root=st.project_root,
         )
     except Exception:  # pragma: no cover
         logger.exception("ranker failed")
@@ -510,6 +511,7 @@ def _handle_rank(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
             current_iteration=current_iter,
             prompt=query,
             prompt_embedding=prompt_vec,
+            project_root=st.project_root,
         )
     except Exception:  # pragma: no cover
         logger.exception("rank-on-demand failed")
@@ -600,6 +602,7 @@ def _handle_explain(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
             current_iteration=current_iter,
             prompt=target_prompt,
             prompt_embedding=prompt_vec,
+            project_root=st.project_root,
         )
     except Exception:  # pragma: no cover
         logger.exception("explain failed")

@@ -462,6 +462,7 @@ def _bench_cli(
                 prompt=prompt,
                 prompt_embedding=embedder.embed_query(prompt),
                 top_files=max(1, top),
+                project_root=root,
             )
             ranked = [it.target for it in result.files[:top]]
             hits = sorted(expected & set(ranked))

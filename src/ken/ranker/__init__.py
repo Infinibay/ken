@@ -35,6 +35,8 @@ Post-processing boosts:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
+import re
 
 import numpy as np
 
@@ -104,6 +106,7 @@ def rank(
     top_files: int = 8,
     top_symbols: int = 5,
     top_findings: int = 3,
+    project_root: Path | None = None,
 ) -> RankResult:
     """Run all channels + boosts and return a confidence-gated result."""
     from ken.ranker import boosts, channels, merge
@@ -130,6 +133,8 @@ def rank(
     boosts.apply_test_affinity(conn, files)
     boosts.apply_import_affinity(conn, files)
     boosts.apply_dismissal_penalty(conn, files, similar)
+    if project_root is not None:
+        files, symbols = _drop_missing_paths(project_root, files, symbols)
 
     files.sort(reverse=True)
     symbols.sort(reverse=True)
@@ -143,6 +148,30 @@ def rank(
     if result.top_score < MIN_CONFIDENCE:
         return RankResult()  # confidence gate
     return result
+
+
+_SYMBOL_TARGET_PATH_RE = re.compile(r"\((.+):\d+\)$")
+
+
+def _drop_missing_paths(
+    project_root: Path,
+    files: list[RankedItem],
+    symbols: list[RankedItem],
+) -> tuple[list[RankedItem], list[RankedItem]]:
+    """Remove ranked files/symbols whose indexed path no longer exists."""
+    root = project_root.resolve()
+    live_files = [it for it in files if (root / it.target).exists()]
+    live_symbols = [
+        it for it in symbols
+        if (path := _symbol_target_path(it.target)) is not None
+        and (root / path).exists()
+    ]
+    return live_files, live_symbols
+
+
+def _symbol_target_path(target: str) -> str | None:
+    match = _SYMBOL_TARGET_PATH_RE.search(target)
+    return match.group(1) if match else None
 
 
 __all__ = [

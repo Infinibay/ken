@@ -39,6 +39,9 @@ def fake_embedder(monkeypatch):
 
 def _index_file(st: DaemonState, path: str = "src/a.py") -> None:
     now_ms = int(time.time() * 1000)
+    src = st.project_root / path
+    src.parent.mkdir(parents=True, exist_ok=True)
+    src.write_text("def indexed():\n    return 1\n", encoding="utf-8")
     st.conn.execute(
         "INSERT INTO ci_files(path, language, content_hash, mtime, indexed_at, embedding) "
         "VALUES (?, 'python', ?, ?, ?, ?)",
