@@ -1,19 +1,23 @@
-target/
-**/*.rs.bk
-.idea
-.vscode
+# uv / Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+
+# Editor / OS
+.idea/
+.vscode/
 *.swp
 .DS_Store
 
-/data
+# Local env
 .env
 .env.local
 
-# Cached embedding models (downloaded on first run, hundreds of MB).
-.fastembed_cache/
-
-# Per-user / per-machine config — Claude Code workspace state, MCP wiring,
-# and the engine state sentinel are written by `cae-claude install` and
-# point to absolute paths on the dev's machine. Not portable.
+# Per-user Claude Code workspace state — points to absolute paths.
 .claude/
 .mcp.json
