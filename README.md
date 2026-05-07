@@ -53,7 +53,7 @@ ken --version
 If you already have `uv` and prefer the direct command:
 
 ```fish
-uv tool install --from . ken --force
+uv tool install --editable . --force --reinstall --refresh
 ```
 
 ## Wire it into a project

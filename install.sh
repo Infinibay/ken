@@ -3,15 +3,18 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: ./install.sh [--project PATH] [--codex] [--no-bootstrap-uv]
+Usage: ./install.sh [--project PATH] [--claude] [--codex] [--embed] [--embed-limit N] [--no-bootstrap-uv]
 
 Installs the ken CLI from this checkout using uv:
 
-  uv tool install --from <repo> ken --force
+  uv tool install --editable <repo> --force --reinstall --refresh
 
 Options:
   --project PATH      After installing the CLI, run `ken install PATH`.
+  --claude            Pass `--claude` to `ken install` when --project is used.
   --codex             Pass `--codex` to `ken install` when --project is used.
+  --embed             Pass `--embed` to `ken install` when --project is used.
+  --embed-limit N     Pass `--embed-limit N` to `ken install` when --project is used.
   --no-bootstrap-uv   Fail if uv is not already installed.
   -h, --help          Show this help.
 EOF
@@ -19,7 +22,7 @@ EOF
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 project_path=""
-codex_flag=()
+install_flags=()
 bootstrap_uv=1
 
 while [[ $# -gt 0 ]]; do
@@ -33,8 +36,24 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     --codex)
-      codex_flag=(--codex)
+      install_flags+=(--codex)
       shift
+      ;;
+    --claude)
+      install_flags+=(--claude)
+      shift
+      ;;
+    --embed)
+      install_flags+=(--embed)
+      shift
+      ;;
+    --embed-limit)
+      if [[ $# -lt 2 ]]; then
+        echo "install.sh: --embed-limit requires a value" >&2
+        exit 2
+      fi
+      install_flags+=(--embed-limit "$2")
+      shift 2
       ;;
     --no-bootstrap-uv)
       bootstrap_uv=0
@@ -70,7 +89,7 @@ if ! command -v uv >/dev/null 2>&1; then
 fi
 
 echo "Installing ken from $repo_root..."
-uv tool install --from "$repo_root" ken --force
+uv tool install --editable "$repo_root" --force --reinstall --refresh
 
 if ! command -v ken >/dev/null 2>&1; then
   export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
@@ -86,7 +105,7 @@ fi
 
 if [[ -n "$project_path" ]]; then
   echo "Wiring ken into project: $project_path"
-  ken install "$project_path" "${codex_flag[@]}"
+  ken install "$project_path" "${install_flags[@]}"
 fi
 
 echo "Done."
