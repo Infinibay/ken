@@ -106,6 +106,32 @@ def test_explain_includes_finding_channel(conn, make_session, fake_emb, now_ms):
     assert out["final_findings"][0]["tags"] == ["codex"]
 
 
+def test_explain_shows_doc_intent_evidence(conn, make_session, make_file, fake_emb, now_ms):
+    make_session("alpha")
+    fid = make_file("src/ken/daemon/index_queue.py")
+    conn.execute(
+        "INSERT INTO ci_intent_sources(file_id, source_kind, text, embedding, weight, updated_at) "
+        "VALUES (?, 'module_docstring', 'Coordinate filesystem change batches.', ?, 1.0, ?)",
+        (
+            fid,
+            vec_to_blob(fake_emb("Coordinate filesystem change batches.")),
+            now_ms,
+        ),
+    )
+
+    out = explain(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="background file change batching",
+        prompt_embedding=fake_emb("Coordinate filesystem change batches."),
+    )
+
+    assert out["channels"]["doc_intent_files"][0]["target"] == "src/ken/daemon/index_queue.py"
+    assert "doc-intent:module_docstring" in out["channels"]["doc_intent_files"][0]["reason"]
+    assert out["final_files"][0]["target"] == "src/ken/daemon/index_queue.py"
+
+
 def test_explain_includes_test_affinity_diff(conn, make_session, make_file, fake_emb):
     make_session("alpha")
     make_file("src/ken/status.py")

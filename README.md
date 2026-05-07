@@ -229,7 +229,7 @@ src/ken/
   hooks_template.py   # `.claude/settings.json` merge logic
   codex_hooks_template.py  # `.codex/hooks.json` + `[mcp_servers.ken]` merge
   schema.sql          # SQLite schema (cr_*, ci_*)
-tests/                # 288 tests, ~0.8s suite
+tests/                # 291 tests, ~0.8s suite
 ```
 
 ## Architecture in one paragraph
