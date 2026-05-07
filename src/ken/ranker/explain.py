@@ -17,7 +17,7 @@ from typing import Any
 
 import numpy as np
 
-from ken.ranker import RankedItem
+from ken.ranker import FindingItem, RankedItem
 
 
 def explain(
@@ -37,10 +37,20 @@ def explain(
     reactive = channels.reactive_scores(conn, agent_id, current_iteration)
     predictive = channels.predictive_scores(conn, similar)
     fuzzy_files, fuzzy_symbols = channels.fuzzy_scores(conn, prompt_embedding)
+    lexical_files, lexical_symbols = channels.lexical_scores(
+        conn, prompt, agent_id=agent_id
+    )
+    findings = channels.finding_scores(conn, prompt_embedding)
 
-    files = merge.merge_files(explicit_files, reactive, predictive, fuzzy_files)
+    symbols = merge.merge_symbols([*explicit_symbols, *fuzzy_symbols, *lexical_symbols])
+    symbols.sort(reverse=True)
+
+    files = merge.merge_files(explicit_files, reactive, predictive, fuzzy_files, lexical_files)
     files.sort(reverse=True)
     pre_boost = {it.target: it.score for it in files}
+
+    boosts.apply_symbol_file_affinity(conn, files, symbols)
+    post_symbol_file = {it.target: it.score for it in files}
 
     boosts.apply_freshness(conn, files)
     post_fresh = {it.target: it.score for it in files}
@@ -48,12 +58,16 @@ def explain(
     boosts.apply_cooc(conn, files)
     post_cooc = {it.target: it.score for it in files}
 
+    boosts.apply_test_affinity(conn, files)
+    post_test_affinity = {it.target: it.score for it in files}
+
+    boosts.apply_import_affinity(conn, files)
+    post_import_affinity = {it.target: it.score for it in files}
+
     boosts.apply_dismissal_penalty(conn, files, similar)
     post_dismiss = {it.target: it.score for it in files}
 
     files.sort(reverse=True)
-    symbols = merge.merge_symbols([*explicit_symbols, *fuzzy_symbols])
-    symbols.sort(reverse=True)
 
     return {
         "prompt": prompt,
@@ -64,15 +78,22 @@ def explain(
             "predictive": _to_dicts(predictive, top),
             "fuzzy_files": _to_dicts(fuzzy_files, top),
             "fuzzy_symbols": _to_dicts(fuzzy_symbols, top),
+            "lexical_files": _to_dicts(lexical_files, top),
+            "lexical_symbols": _to_dicts(lexical_symbols, top),
+            "findings": _findings_dicts(findings, top),
         },
         "merge_before_boosts": _scores_dict(pre_boost, top),
         "boosts": {
-            "freshness": _diff(pre_boost, post_fresh),
+            "symbol_file_affinity": _diff(pre_boost, post_symbol_file),
+            "freshness": _diff(post_symbol_file, post_fresh),
             "cooc": _diff(post_fresh, post_cooc),
-            "dismissal": _diff(post_cooc, post_dismiss),
+            "test_affinity": _diff(post_cooc, post_test_affinity),
+            "import_affinity": _diff(post_test_affinity, post_import_affinity),
+            "dismissal": _diff(post_import_affinity, post_dismiss),
         },
         "final_files": _to_dicts(files, top),
         "final_symbols": _to_dicts(symbols, top),
+        "final_findings": _findings_dicts(sorted(findings, reverse=True), top),
     }
 
 
@@ -87,6 +108,19 @@ def _to_dicts(items: list[RankedItem], top: int) -> list[dict[str, Any]]:
 def _scores_dict(scores: dict[str, float], top: int) -> list[dict[str, Any]]:
     ordered = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)[:top]
     return [{"target": k, "score": round(v, 3)} for k, v in ordered]
+
+
+def _findings_dicts(items: list[FindingItem], top: int) -> list[dict[str, Any]]:
+    sortable = sorted(items, reverse=True)
+    return [
+        {
+            "topic": it.topic,
+            "score": round(it.score, 3),
+            "reason": it.reason,
+            "tags": it.tags,
+        }
+        for it in sortable[:top]
+    ]
 
 
 def _diff(before: dict[str, float], after: dict[str, float]) -> list[dict[str, Any]]:

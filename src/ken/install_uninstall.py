@@ -1,8 +1,9 @@
-"""`ken uninstall` — remove ken hooks from a project, optionally drop the DB.
+"""Remove ken's project wiring while preserving user-owned config.
 
-We only touch what we put there: ken's hook entries in
-`.claude/settings.json`, and (unless `--keep-db`) the `.ken/` directory.
-The user's own hooks / settings stay untouched.
+Uninstall removes ken hook entries from Claude and Codex config, removes
+ken MCP registrations, and optionally deletes `.ken/`. It deliberately
+matches only ken-owned entries so user hooks, unrelated MCP servers, and
+other project settings stay intact.
 """
 
 from __future__ import annotations

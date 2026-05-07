@@ -18,16 +18,17 @@ Channels (each independently scores rows from scratch):
      prompts ended up using (`ranker.channels.predictive`).
   3. **Fuzzy** — cosine sim of the prompt against indexed symbol /
      file embeddings (`ranker.channels.fuzzy`).
-  4. *(skipped)* — Findings; no `findings` table yet. Hook back in
-     later if we add a "scratch notes" surface.
+  4. **Findings** — durable notes saved by `ken_remember` / `ken remember`.
 
-Post-processing boosts (modify scored items, never create new ones):
+Post-processing boosts:
 
-  5. **Co-occurrence** — files frequently accessed alongside the
+  5. **Symbol-file affinity** — high-confidence symbol hits surface
+     their containing file (`ranker.boosts.symbol_file_affinity`).
+  6. **Co-occurrence** — files frequently accessed alongside the
      current top-ranked files in past sessions (`ranker.boosts.cooc`).
-  6. *(skipped)* — Import graph; needs an import resolver to map
-     "from auth import login" → src/auth.py before the join is useful.
-  7. **Freshness** — multiplicative bump for files modified recently
+  7. **Import/test affinity** — direct import neighbours and likely
+     tests for current anchors (`ranker.boosts`).
+  8. **Freshness** — multiplicative bump for files modified recently
      on disk (`ranker.boosts.freshness`).
 """
 
@@ -60,18 +61,35 @@ class RankedItem:
 
 
 @dataclass
+class FindingItem:
+    topic: str
+    content: str
+    tags: list[str] = field(default_factory=list)
+    score: float = 0.0
+    reason: str = "finding"
+
+    def __lt__(self, other: "FindingItem") -> bool:
+        if self.score != other.score:
+            return self.score < other.score
+        return self.topic > other.topic
+
+
+@dataclass
 class RankResult:
     files: list[RankedItem] = field(default_factory=list)
     symbols: list[RankedItem] = field(default_factory=list)
+    findings: list[FindingItem] = field(default_factory=list)
 
     @property
     def empty(self) -> bool:
-        return not self.files and not self.symbols
+        return not self.files and not self.symbols and not self.findings
 
     @property
     def top_score(self) -> float:
         best = 0.0
         for item in (*self.files, *self.symbols):
+            best = max(best, item.score)
+        for item in self.findings:
             best = max(best, item.score)
         return best
 
@@ -85,6 +103,7 @@ def rank(
     prompt_embedding: np.ndarray,
     top_files: int = 8,
     top_symbols: int = 5,
+    top_findings: int = 3,
 ) -> RankResult:
     """Run all channels + boosts and return a confidence-gated result."""
     from ken.ranker import boosts, channels, merge
@@ -97,18 +116,30 @@ def rank(
     reactive = channels.reactive_scores(conn, agent_id, current_iteration)
     predictive = channels.predictive_scores(conn, similar)
     fuzzy_files, fuzzy_symbols = channels.fuzzy_scores(conn, prompt_embedding)
+    lexical_files, lexical_symbols = channels.lexical_scores(
+        conn, prompt, agent_id=agent_id
+    )
+    findings = channels.finding_scores(conn, prompt_embedding)
 
-    files = merge.merge_files(explicit_files, reactive, predictive, fuzzy_files)
-    symbols = merge.merge_symbols([*explicit_symbols, *fuzzy_symbols])
+    symbols = merge.merge_symbols([*explicit_symbols, *fuzzy_symbols, *lexical_symbols])
+    files = merge.merge_files(explicit_files, reactive, predictive, fuzzy_files, lexical_files)
 
+    boosts.apply_symbol_file_affinity(conn, files, symbols)
     boosts.apply_freshness(conn, files)
     boosts.apply_cooc(conn, files)
+    boosts.apply_test_affinity(conn, files)
+    boosts.apply_import_affinity(conn, files)
     boosts.apply_dismissal_penalty(conn, files, similar)
 
     files.sort(reverse=True)
     symbols.sort(reverse=True)
+    findings.sort(reverse=True)
 
-    result = RankResult(files=files[:top_files], symbols=symbols[:top_symbols])
+    result = RankResult(
+        files=files[:top_files],
+        symbols=symbols[:top_symbols],
+        findings=findings[:top_findings],
+    )
     if result.top_score < MIN_CONFIDENCE:
         return RankResult()  # confidence gate
     return result
@@ -116,6 +147,7 @@ def rank(
 
 __all__ = [
     "MIN_CONFIDENCE",
+    "FindingItem",
     "RankedItem",
     "RankResult",
     "rank",

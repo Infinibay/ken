@@ -31,7 +31,7 @@ from ken.parsers import detect_language
 if TYPE_CHECKING:  # pragma: no cover
     from ken.embedder import Embedder
 
-PARSER_VERSION = 1
+PARSER_VERSION = 2
 
 
 @dataclass
@@ -191,6 +191,7 @@ def index_files(
             on_progress(rel_posix, "indexed")
 
     stats.elapsed_s = time.monotonic() - t0
+    _resolve_internal_imports(conn)
     return stats
 
 
@@ -264,3 +265,47 @@ def _upsert_file_row(
     )
     row = conn.execute("SELECT id FROM ci_files WHERE path = ?", (rel,)).fetchone()
     return int(row["id"])
+
+
+def _resolve_internal_imports(conn: sqlite3.Connection) -> None:
+    """Resolve import module strings to indexed files when the mapping is obvious."""
+    imports = conn.execute(
+        "SELECT id, to_module FROM ci_imports WHERE to_file_id IS NULL"
+    ).fetchall()
+    if not imports:
+        return
+    file_rows = conn.execute("SELECT id, path FROM ci_files").fetchall()
+    files = [r["path"] for r in file_rows]
+    by_path = {r["path"]: int(r["id"]) for r in file_rows}
+    updates: list[tuple[int, int]] = []
+    for row in imports:
+        target = _resolve_import_target(str(row["to_module"]), files)
+        if target is not None:
+            updates.append((by_path[target], int(row["id"])))
+    if updates:
+        conn.executemany("UPDATE ci_imports SET to_file_id = ? WHERE id = ?", updates)
+
+
+def _resolve_import_target(module: str, files: list[str]) -> str | None:
+    mod = module.strip().strip("'\"")
+    if not mod:
+        return None
+    if mod.startswith("."):
+        mod = mod.lstrip(".")
+    slash = mod.replace(".", "/")
+    candidates = {
+        f"{slash}.py",
+        f"{slash}/__init__.py",
+        f"{slash}.ts",
+        f"{slash}.tsx",
+        f"{slash}.js",
+        f"{slash}.jsx",
+        f"{slash}.go",
+        f"{slash}.java",
+        f"{slash}.rs",
+    }
+    if mod.startswith("./") or mod.startswith("../") or "/" in mod:
+        candidates.update({mod, f"{mod}.py", f"{mod}.ts", f"{mod}.js"})
+    matches = [path for path in files if path in candidates or path.endswith(f"/{slash}.py")]
+    unique = sorted(set(matches))
+    return unique[0] if len(unique) == 1 else None

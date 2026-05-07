@@ -17,12 +17,19 @@ from ken.ranker.boosts import (
     apply_cooc,
     apply_dismissal_penalty,
     apply_freshness,
+    apply_import_affinity,
+    apply_symbol_file_affinity,
+    apply_test_affinity,
 )
 from ken.ranker.channels import SimilarPrompt
 
 
 def _file(target: str, score: float, reason: str = "") -> RankedItem:
     return RankedItem(target=target, target_type="file", score=score, reason=reason)
+
+
+def _sym(target: str, score: float, reason: str = "") -> RankedItem:
+    return RankedItem(target=target, target_type="symbol", score=score, reason=reason)
 
 
 # ── apply_freshness ──────────────────────────────────────────────────
@@ -215,3 +222,163 @@ def test_dismissal_floors_at_zero(conn, make_session, make_interaction):
 def test_dismissal_empty_inputs_noop(conn):
     apply_dismissal_penalty(conn, [], [])  # no crash
     apply_dismissal_penalty(conn, [_file("a", 1.0)], [])  # no similar → noop
+
+
+# ── apply_symbol_file_affinity ───────────────────────────────────────
+
+
+def test_symbol_file_affinity_adds_containing_file_from_symbol_target(conn, make_file):
+    make_file("src/ken/ranker/channels.py")
+    symbols = [
+        _sym(
+            "lexical_scores (src/ken/ranker/channels.py:529)",
+            3.0,
+            "lexical:lexical",
+        )
+    ]
+    files: list[RankedItem] = []
+
+    apply_symbol_file_affinity(conn, files, symbols)
+
+    by_target = {it.target: it for it in files}
+    assert "src/ken/ranker/channels.py" in by_target
+    assert by_target["src/ken/ranker/channels.py"].score > 0
+    assert "symbol-file(" in by_target["src/ken/ranker/channels.py"].reason
+
+
+def test_symbol_file_affinity_boosts_existing_containing_file(conn, make_file):
+    make_file("src/ken/ranker/channels.py")
+    files = [_file("src/ken/ranker/channels.py", 0.4, "lexical")]
+    symbols = [_sym("lexical_scores (src/ken/ranker/channels.py:529)", 3.0)]
+
+    apply_symbol_file_affinity(conn, files, symbols)
+
+    assert len(files) == 1
+    assert files[0].score > 0.4
+    assert "symbol-file+" in files[0].reason
+
+
+def test_symbol_file_affinity_ignores_weak_symbols(conn, make_file):
+    make_file("src/ken/ranker/channels.py")
+    files: list[RankedItem] = []
+    symbols = [_sym("lexical_scores (src/ken/ranker/channels.py:529)", 0.5)]
+
+    apply_symbol_file_affinity(conn, files, symbols)
+
+    assert files == []
+
+
+# ── apply_test_affinity ─────────────────────────────────────────────
+
+
+def test_test_affinity_adds_matching_test_file(conn, make_file):
+    make_file("src/ken/status.py")
+    make_file("tests/test_status.py")
+
+    files = [_file("src/ken/status.py", 4.0, "fuzzy")]
+    apply_test_affinity(conn, files)
+
+    by_target = {it.target: it for it in files}
+    assert "tests/test_status.py" in by_target
+    assert by_target["tests/test_status.py"].score > 0
+    assert "test-affinity(src/ken/status.py)" in by_target["tests/test_status.py"].reason
+
+
+def test_test_affinity_boosts_existing_test_file(conn, make_file):
+    make_file("src/ken/status.py")
+    make_file("tests/test_status.py")
+
+    files = [_file("src/ken/status.py", 4.0), _file("tests/test_status.py", 0.2, "fuzzy")]
+    apply_test_affinity(conn, files)
+
+    by_target = {it.target: it for it in files}
+    assert sum(1 for it in files if it.target == "tests/test_status.py") == 1
+    assert by_target["tests/test_status.py"].score > 0.2
+    assert "test-affinity+" in by_target["tests/test_status.py"].reason
+
+
+def test_test_affinity_adds_source_file_from_test_anchor(conn, make_file):
+    make_file("src/ken/status.py")
+    make_file("tests/test_status.py")
+
+    files = [_file("tests/test_status.py", 4.0, "explicit-mention")]
+    apply_test_affinity(conn, files)
+
+    by_target = {it.target: it for it in files}
+    assert "src/ken/status.py" in by_target
+    assert by_target["src/ken/status.py"].score > 0
+    assert "test-affinity(tests/test_status.py)" in by_target["src/ken/status.py"].reason
+
+
+def test_test_affinity_boosts_existing_source_file_from_test_anchor(conn, make_file):
+    make_file("src/ken/status.py")
+    make_file("tests/test_status.py")
+
+    files = [_file("tests/test_status.py", 4.0), _file("src/ken/status.py", 0.2, "fuzzy")]
+    apply_test_affinity(conn, files)
+
+    by_target = {it.target: it for it in files}
+    assert sum(1 for it in files if it.target == "src/ken/status.py") == 1
+    assert by_target["src/ken/status.py"].score > 0.2
+    assert "test-affinity+" in by_target["src/ken/status.py"].reason
+
+
+def test_test_affinity_ignores_low_score_anchor(conn, make_file):
+    make_file("src/ken/status.py")
+    make_file("tests/test_status.py")
+
+    files = [_file("src/ken/status.py", 0.1)]
+    apply_test_affinity(conn, files)
+
+    assert [it.target for it in files] == ["src/ken/status.py"]
+
+
+# ── apply_import_affinity ───────────────────────────────────────────
+
+
+def test_import_affinity_adds_direct_import_neighbor(conn, make_file):
+    src_id = make_file("src/app.py")
+    util_id = make_file("src/util.py")
+    conn.execute(
+        "INSERT INTO ci_imports(from_file_id, to_module, to_file_id, line) VALUES (?, 'src.util', ?, 1)",
+        (src_id, util_id),
+    )
+
+    files = [_file("src/app.py", 4.0, "fuzzy")]
+    apply_import_affinity(conn, files)
+
+    by_target = {it.target: it for it in files}
+    assert "src/util.py" in by_target
+    assert by_target["src/util.py"].score > 0
+    assert "import-affinity(src/app.py)" in by_target["src/util.py"].reason
+
+
+def test_import_affinity_adds_reverse_importer(conn, make_file):
+    src_id = make_file("src/app.py")
+    util_id = make_file("src/util.py")
+    conn.execute(
+        "INSERT INTO ci_imports(from_file_id, to_module, to_file_id, line) VALUES (?, 'src.util', ?, 1)",
+        (src_id, util_id),
+    )
+
+    files = [_file("src/util.py", 4.0, "fuzzy")]
+    apply_import_affinity(conn, files)
+
+    assert any(it.target == "src/app.py" for it in files)
+
+
+def test_import_affinity_boosts_existing_neighbor(conn, make_file):
+    src_id = make_file("src/app.py")
+    util_id = make_file("src/util.py")
+    conn.execute(
+        "INSERT INTO ci_imports(from_file_id, to_module, to_file_id, line) VALUES (?, 'src.util', ?, 1)",
+        (src_id, util_id),
+    )
+
+    files = [_file("src/app.py", 4.0), _file("src/util.py", 0.2, "lexical")]
+    apply_import_affinity(conn, files)
+
+    by_target = {it.target: it for it in files}
+    assert sum(1 for it in files if it.target == "src/util.py") == 1
+    assert by_target["src/util.py"].score > 0.2
+    assert "import-affinity+" in by_target["src/util.py"].reason

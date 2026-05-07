@@ -17,6 +17,7 @@ from ken.ranker.channels import (
     FUZZY_SYMBOL_SCALE,
     _recency_bump,
     fuzzy_scores,
+    lexical_scores,
 )
 
 
@@ -117,3 +118,66 @@ def test_fuzzy_symbols_target_includes_path_and_line(conn, make_file, make_symbo
     assert len(syms) == 1
     # Contract: target = "qualname (path:line)"
     assert syms[0].target == "Session (src/auth.py:42)"
+
+
+# ── lexical_scores ──────────────────────────────────────────────────
+
+
+def test_lexical_files_match_name_tokens(conn, make_file):
+    make_file("src/ken/codex_hooks_template.py")
+
+    files, syms = lexical_scores(conn, "repair codex hook wiring")
+
+    assert syms == []
+    assert len(files) == 1
+    assert files[0].target == "src/ken/codex_hooks_template.py"
+    assert "lexical:codex" in files[0].reason
+
+
+def test_lexical_symbols_match_camelcase_tokens(conn, make_file, make_symbol):
+    fid = make_file("src/ken/status.py")
+    make_symbol(fid, name="StatusCounts", qualname="StatusCounts", line_start=12)
+
+    _, syms = lexical_scores(conn, "status counts diagnostics")
+
+    assert len(syms) == 1
+    assert syms[0].target == "StatusCounts (src/ken/status.py:12)"
+    assert "lexical:" in syms[0].reason
+
+
+def test_lexical_ignores_stopwords(conn, make_file):
+    make_file("src/ken/status.py")
+
+    files, syms = lexical_scores(conn, "what is the function")
+
+    assert files == []
+    assert syms == []
+
+
+def test_lexical_continuation_uses_recent_session_prompt(
+    conn, make_session, make_prompt, make_file
+):
+    sess = make_session("alpha")
+    make_prompt(sess, "improve codex hook wiring")
+    make_prompt(sess, "sigue tu path")
+    make_file("src/ken/codex_hooks_template.py")
+
+    files, syms = lexical_scores(conn, "sigue tu path", agent_id="alpha")
+
+    assert syms == []
+    assert len(files) == 1
+    assert files[0].target == "src/ken/codex_hooks_template.py"
+    assert "lexical-context:codex" in files[0].reason
+
+
+def test_lexical_specific_prompt_does_not_inherit_recent_session_prompt(
+    conn, make_session, make_prompt, make_file
+):
+    sess = make_session("alpha")
+    make_prompt(sess, "improve codex hook wiring")
+    make_file("src/ken/codex_hooks_template.py")
+
+    files, syms = lexical_scores(conn, "status diagnostics", agent_id="alpha")
+
+    assert files == []
+    assert syms == []

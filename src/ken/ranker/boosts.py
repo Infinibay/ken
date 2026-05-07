@@ -1,7 +1,8 @@
-"""Post-processing boosts. Modify scored items, never create new ones."""
+"""Post-processing boosts over merged file scores."""
 
 from __future__ import annotations
 
+import re
 import sqlite3
 import time
 
@@ -171,6 +172,279 @@ def apply_dismissal_penalty(
         item = by_path[r["target_path"]]
         item.score = max(0.0, item.score - damp)
         item.reason = _append_reason(item.reason, f"-dismiss({damp:.1f})")
+
+
+# ── Symbol-file affinity ────────────────────────────────────────────
+
+SYMBOL_TARGET_RE = re.compile(r"^(?P<qualname>.+) \((?P<path>.+):(?P<line>\d+)\)$")
+SYMBOL_FILE_AFFINITY_MIN_SYMBOL_SCORE = 1.8
+SYMBOL_FILE_AFFINITY_MAX_SYMBOLS = 5
+SYMBOL_FILE_AFFINITY_PROPAGATION = 0.35
+SYMBOL_FILE_AFFINITY_MIN_SCORE = 0.7
+SYMBOL_FILE_AFFINITY_MAX_SCORE = 2.0
+
+
+def apply_symbol_file_affinity(
+    conn: sqlite3.Connection, files: list[RankedItem], symbols: list[RankedItem]
+) -> None:
+    """Surface the containing file for high-confidence symbol hits.
+
+    Fuzzy/lexical symbol search often identifies the exact function or
+    class before the file embedding does. The agent still needs the file
+    path to read or edit, so propagate a capped score from top symbols
+    to their indexed files.
+    """
+    anchors = [
+        it
+        for it in sorted(symbols, reverse=True)
+        if it.score >= SYMBOL_FILE_AFFINITY_MIN_SYMBOL_SCORE
+    ][:SYMBOL_FILE_AFFINITY_MAX_SYMBOLS]
+    if not anchors:
+        return
+    by_path = {it.target: it for it in files}
+    for symbol in anchors:
+        path = _symbol_file_path(conn, symbol.target)
+        if path is None:
+            continue
+        contribution = min(
+            SYMBOL_FILE_AFFINITY_MAX_SCORE,
+            max(
+                SYMBOL_FILE_AFFINITY_MIN_SCORE,
+                symbol.score * SYMBOL_FILE_AFFINITY_PROPAGATION,
+            ),
+        )
+        if path in by_path:
+            by_path[path].score += contribution
+            by_path[path].reason = _append_reason(
+                by_path[path].reason, f"symbol-file+{contribution:.1f}"
+            )
+        else:
+            item = RankedItem(
+                target=path,
+                target_type="file",
+                score=contribution,
+                reason=f"symbol-file({symbol.target})",
+            )
+            files.append(item)
+            by_path[path] = item
+
+
+def _symbol_file_path(conn: sqlite3.Connection, target: str) -> str | None:
+    match = SYMBOL_TARGET_RE.match(target)
+    if match:
+        return match.group("path")
+    row = conn.execute(
+        """
+        SELECT f.path
+        FROM ci_symbols s
+        JOIN ci_files f ON f.id = s.file_id
+        WHERE s.qualname = ? OR s.name = ?
+        ORDER BY s.line_start
+        LIMIT 1
+        """,
+        (target, target),
+    ).fetchone()
+    return None if row is None else str(row["path"])
+
+
+# ── Test affinity ───────────────────────────────────────────────────
+
+TEST_AFFINITY_ANCHOR_MIN_SCORE = 1.2
+TEST_AFFINITY_MAX_ANCHORS = 5
+TEST_AFFINITY_PROPAGATION = 0.35
+TEST_AFFINITY_MIN_SCORE = 0.5
+
+
+def apply_test_affinity(conn: sqlite3.Connection, files: list[RankedItem]) -> None:
+    """Surface obvious source/test counterparts for high-scoring anchors.
+
+    This is deliberately name-based and conservative. It rescues files
+    such as ``tests/test_status.py`` when ``src/ken/status.py`` is
+    already likely relevant, and ``src/ken/status.py`` when the ranked
+    anchor is ``tests/test_status.py``, without trying to infer arbitrary
+    coverage.
+    """
+    anchors = [
+        it
+        for it in files
+        if it.score >= TEST_AFFINITY_ANCHOR_MIN_SCORE
+    ][:TEST_AFFINITY_MAX_ANCHORS]
+    if not anchors:
+        return
+    rows = conn.execute("SELECT path FROM ci_files").fetchall()
+    all_paths = [r["path"] for r in rows]
+    by_path = {it.target: it for it in files}
+
+    for anchor in anchors:
+        related = (
+            _related_source_files(anchor.target, all_paths)
+            if _is_test_path(anchor.target)
+            else _related_tests(anchor.target, all_paths)
+        )
+        if not related:
+            continue
+        contribution = max(
+            TEST_AFFINITY_MIN_SCORE,
+            anchor.score * TEST_AFFINITY_PROPAGATION,
+        )
+        for path in related:
+            if path in by_path:
+                by_path[path].score += contribution
+                by_path[path].reason = _append_reason(
+                    by_path[path].reason, f"test-affinity+{contribution:.1f}"
+                )
+            else:
+                item = RankedItem(
+                    target=path,
+                    target_type="file",
+                    score=contribution,
+                    reason=f"test-affinity({anchor.target})",
+                )
+                files.append(item)
+                by_path[path] = item
+
+
+def _related_tests(source_path: str, all_paths: list[str]) -> list[str]:
+    stem = source_path.rsplit("/", 1)[-1].rsplit(".", 1)[0]
+    if not stem or stem.startswith("test_"):
+        return []
+    candidates = {
+        f"test_{stem}.py",
+        f"{stem}_test.py",
+        f"{stem}.test.py",
+        f"test_{stem}.ts",
+        f"{stem}.test.ts",
+        f"{stem}.spec.ts",
+        f"test_{stem}.js",
+        f"{stem}.test.js",
+        f"{stem}.spec.js",
+    }
+    out: list[str] = []
+    for path in all_paths:
+        name = path.rsplit("/", 1)[-1]
+        if name in candidates or (
+            _is_test_path(path) and stem.lower() in name.lower()
+        ):
+            out.append(path)
+    return sorted(set(out))
+
+
+def _related_source_files(test_path: str, all_paths: list[str]) -> list[str]:
+    stem = _source_stem_from_test(test_path)
+    if not stem:
+        return []
+    candidates = {
+        f"{stem}.py",
+        f"{stem}.pyi",
+        f"{stem}.ts",
+        f"{stem}.tsx",
+        f"{stem}.js",
+        f"{stem}.jsx",
+        f"{stem}.go",
+        f"{stem}.rs",
+        f"{stem}.java",
+    }
+    out: list[str] = []
+    for path in all_paths:
+        if _is_test_path(path):
+            continue
+        name = path.rsplit("/", 1)[-1]
+        if name in candidates:
+            out.append(path)
+    return sorted(set(out))
+
+
+def _source_stem_from_test(path: str) -> str:
+    name = path.rsplit("/", 1)[-1]
+    stem = name.rsplit(".", 1)[0]
+    for suffix in (".test", ".spec", "_test"):
+        if stem.endswith(suffix):
+            stem = stem[: -len(suffix)]
+            break
+    if stem.startswith("test_"):
+        stem = stem[5:]
+    return stem
+
+
+def _is_test_path(path: str) -> bool:
+    lower = path.lower()
+    name = lower.rsplit("/", 1)[-1]
+    return (
+        "/test/" in lower
+        or "/tests/" in lower
+        or lower.startswith("test/")
+        or lower.startswith("tests/")
+        or name.startswith("test_")
+        or name.endswith("_test.py")
+        or ".test." in name
+        or ".spec." in name
+    )
+
+
+# ── Import affinity ─────────────────────────────────────────────────
+
+IMPORT_AFFINITY_ANCHOR_MIN_SCORE = 1.2
+IMPORT_AFFINITY_MAX_ANCHORS = 5
+IMPORT_AFFINITY_PROPAGATION = 0.25
+IMPORT_AFFINITY_MIN_SCORE = 0.4
+
+
+def apply_import_affinity(conn: sqlite3.Connection, files: list[RankedItem]) -> None:
+    """Surface direct import neighbours for high-scoring anchors."""
+    anchors = [it for it in files if it.score >= IMPORT_AFFINITY_ANCHOR_MIN_SCORE][
+        :IMPORT_AFFINITY_MAX_ANCHORS
+    ]
+    if not anchors:
+        return
+    anchor_paths = [a.target for a in anchors]
+    placeholders = ",".join("?" * len(anchor_paths))
+    rows = conn.execute(
+        f"""
+        SELECT src.path AS source_path, dst.path AS target_path
+        FROM ci_imports i
+        JOIN ci_files src ON src.id = i.from_file_id
+        JOIN ci_files dst ON dst.id = i.to_file_id
+        WHERE src.path IN ({placeholders}) OR dst.path IN ({placeholders})
+        """,
+        (*anchor_paths, *anchor_paths),
+    ).fetchall()
+    if not rows:
+        return
+    by_path = {it.target: it for it in files}
+    anchor_score = {it.target: it.score for it in anchors}
+    for row in rows:
+        src = row["source_path"]
+        dst = row["target_path"]
+        if src in anchor_score:
+            _apply_import_neighbor(files, by_path, dst, src, anchor_score[src])
+        if dst in anchor_score:
+            _apply_import_neighbor(files, by_path, src, dst, anchor_score[dst])
+
+
+def _apply_import_neighbor(
+    files: list[RankedItem],
+    by_path: dict[str, RankedItem],
+    path: str,
+    anchor: str,
+    anchor_score: float,
+) -> None:
+    if path == anchor:
+        return
+    contribution = max(IMPORT_AFFINITY_MIN_SCORE, anchor_score * IMPORT_AFFINITY_PROPAGATION)
+    if path in by_path:
+        by_path[path].score += contribution
+        by_path[path].reason = _append_reason(
+            by_path[path].reason, f"import-affinity+{contribution:.1f}"
+        )
+    else:
+        item = RankedItem(
+            target=path,
+            target_type="file",
+            score=contribution,
+            reason=f"import-affinity({anchor})",
+        )
+        files.append(item)
+        by_path[path] = item
 
 
 # ── Helpers ──────────────────────────────────────────────────────────

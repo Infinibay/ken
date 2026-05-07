@@ -11,6 +11,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from pathlib import Path
 
+from ken.parsers.c import parse_c_file
 from ken.parsers.go import parse_go_file
 from ken.parsers.java import parse_java_file
 from ken.parsers.javascript import parse_js_file
@@ -23,6 +24,8 @@ ParserFn = Callable[[bytes, str], ParsedFile]
 
 # Extension → (language label, parser fn).
 LANGUAGE_BY_EXT: dict[str, tuple[str, ParserFn]] = {
+    ".c": ("c", parse_c_file),
+    ".h": ("c", parse_c_file),
     ".py": ("python", parse_python_file),
     ".pyi": ("python", parse_python_file),
     ".rs": ("rust", parse_rust_file),

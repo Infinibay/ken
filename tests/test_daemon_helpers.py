@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from ken.daemon.server import _extract_cited_paths
+from ken.daemon.server import _classify_tool, _extract_cited_paths
 from ken.db import init_schema
 
 
@@ -74,3 +74,27 @@ def test_extract_handles_path_with_line_number(conn):
 def test_extract_empty_input(conn):
     assert _extract_cited_paths(conn, "") == []
     assert _extract_cited_paths(conn, "no paths here") == []
+
+
+def test_classify_codex_function_tools():
+    assert _classify_tool("functions.apply_patch", {"file_path": "src/a.py"}) == (
+        "edit",
+        "src/a.py",
+    )
+    assert _classify_tool(
+        "functions.exec_command",
+        {"cmd": "sed -n '1,80p' src/ken/status.py", "workdir": "."},
+    ) == ("read", "src/ken/status.py")
+    assert _classify_tool("functions.apply_patch", "raw patch text") == ("edit", None)
+
+
+def test_classify_extracts_patch_paths_from_text():
+    patch = "*** Begin Patch\n*** Update File: src/ken/status.py\n@@\n"
+    assert _classify_tool("functions.apply_patch", patch) == ("edit", "src/ken/status.py")
+
+
+def test_classify_exec_command_falls_back_to_workdir():
+    assert _classify_tool("functions.exec_command", {"cmd": "uv run pytest", "workdir": "."}) == (
+        "read",
+        ".",
+    )

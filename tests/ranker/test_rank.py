@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from ken.ranker import MIN_CONFIDENCE, RankedItem, RankResult, rank
+from ken.embedder import vec_to_blob
 
 
 def test_rank_runs_full_pipeline(conn, make_session, make_interaction, fake_emb):
@@ -76,6 +77,90 @@ def test_rank_caps_top_symbols(conn, make_session, make_file, make_symbol, fake_
     assert len(result.symbols) <= 2
 
 
+def test_rank_surfaces_file_for_high_scoring_symbol(conn, make_session, make_file, make_symbol, fake_emb):
+    make_session("alpha")
+    fid = make_file("src/ken/daemon/server.py")
+    make_symbol(
+        fid,
+        name="CriticalEntrypoint",
+        qualname="DaemonServer.CriticalEntrypoint",
+        line_start=42,
+    )
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="critical entrypoint",
+        prompt_embedding=fake_emb("unrelated embedding text"),
+    )
+
+    assert any(it.target == "src/ken/daemon/server.py" for it in result.files)
+    assert any("DaemonServer.CriticalEntrypoint" in it.target for it in result.symbols)
+
+
+def test_rank_includes_relevant_findings(conn, make_session, fake_emb, now_ms):
+    make_session("alpha")
+    conn.execute(
+        """
+        INSERT INTO cr_findings(topic, content, tags, embedding, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (
+            "codex wiring",
+            "Use ken install . --codex to repair invalid project hooks.",
+            '["codex"]',
+            vec_to_blob(fake_emb("codex hook repair")),
+            now_ms,
+            now_ms,
+        ),
+    )
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="codex hook repair",
+        prompt_embedding=fake_emb("codex hook repair"),
+    )
+
+    assert not result.empty
+    assert result.findings[0].topic == "codex wiring"
+    assert result.findings[0].tags == ["codex"]
+
+
+def test_rank_surfaces_related_tests(conn, make_session, make_file, fake_emb):
+    make_session("alpha")
+    make_file("src/ken/status.py")
+    make_file("tests/test_status.py")
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="src/ken/status.py",
+        prompt_embedding=fake_emb("src/ken/status.py"),
+    )
+
+    assert any(it.target == "tests/test_status.py" for it in result.files)
+
+
+def test_rank_surfaces_source_for_ranked_test_file(conn, make_session, make_file, fake_emb):
+    make_session("alpha")
+    make_file("src/ken/status.py")
+    make_file("tests/test_status.py")
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="tests/test_status.py failing",
+        prompt_embedding=fake_emb("tests/test_status.py failing"),
+    )
+
+    assert any(it.target == "src/ken/status.py" for it in result.files)
+
+
 def test_rank_confidence_gate_returns_empty(conn, make_session, fake_emb):
     """No interactions, no past sessions → top_score below gate → empty."""
     make_session("alpha")
@@ -117,6 +202,8 @@ def test_rank_result_empty_property():
     assert r.empty is False
     s = RankResult(symbols=[RankedItem("S", "symbol", 1.0)])
     assert s.empty is False
+    f = RankResult(findings=[])
+    assert f.empty is True
 
 
 def test_rank_result_top_score_max_across_files_and_symbols():

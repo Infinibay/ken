@@ -6,6 +6,8 @@ daemon, no network. Indexes your codebase, watches it for changes, and feeds
 the model a ranked `<context-rank>` block on every prompt — based on what
 you've been touching this session, what was useful in past similar sessions,
 and what looks semantically relevant to the current request.
+Saved findings from `ken remember` / `ken_remember` can also appear in the
+ranked block when they match the current prompt.
 
 ## Why
 
@@ -39,13 +41,19 @@ Or from a local checkout:
 ```fish
 git clone https://github.com/Infinibay/ken.git
 cd ken
-uv tool install --from . ken
+./install.sh
 ```
 
 This puts `ken` on your `PATH`. Verify:
 
 ```fish
 ken --version
+```
+
+If you already have `uv` and prefer the direct command:
+
+```fish
+uv tool install --from . ken --force
 ```
 
 ## Wire it into a project
@@ -56,6 +64,24 @@ Run once per project:
 cd my-project
 ken install .
 ```
+
+`ken install .` wires Claude Code and Codex CLI by default. `--claude`
+exists as an explicit no-op-for-now flag for symmetry with `--codex`:
+
+```fish
+ken install . --claude
+ken install . --codex
+ken install . --claude --codex
+```
+
+If a project already has a locked-down `.codex/` directory or an invalid
+`.codex/hooks.json`, rerun with `ken install . --codex` to force Codex hook
+and MCP config wiring while still preserving valid existing user entries.
+By default install does structural indexing and leaves embeddings to the
+daemon's lazy warm path. For large cold-start experiments where semantic
+ranking quality matters immediately, run `ken install . --embed` (or
+`ken install . --claude --codex --embed`) to compute file and symbol embeddings
+up front.
 
 This:
 
@@ -69,8 +95,8 @@ This:
   `.codex/config.toml` (Codex CLI). Exposes `ken_rank`,
   `ken_search_files`, `ken_search_symbols`, `ken_recall`, `ken_remember`,
   `ken_dismiss`, `ken_explain_rank`.
-- Runs the initial code index (parser-only, ~10s for medium projects;
-  embeddings are computed lazily by the daemon on first prompt).
+- Runs the initial code index. Embeddings are lazy by default, or eager
+  when `--embed` is passed.
 
 **Codex trust note**: Codex won't load project-local hooks until you
 mark the project as trusted. Either run `codex` once in the project
@@ -101,7 +127,8 @@ The hooks fire automatically:
 1. **Session start** → ken daemon spawns in the background (logs to
    `.ken/daemon.log`).
 2. **Each user prompt** → daemon runs the ranker, prepends a
-   `<context-rank verbose=0>` block listing top-relevant files + symbols.
+   `<context-rank verbose=0>` block listing top-relevant files, symbols,
+   and matching saved findings.
 3. **Each tool call** (Read, Edit, etc.) → recorded as a reactive signal so
    the ranker learns what *this* session is touching.
 4. **Stop / SessionEnd** → snapshots productivity scores so future similar
@@ -110,28 +137,51 @@ The hooks fire automatically:
 The model can also call `ken_rank(verbose=1|2)` to expand the block, or
 `ken_explain_rank(query)` to debug why a particular file is/isn't surfaced.
 
+You can ask the daemon directly from a shell too:
+
+```fish
+ken rank "where is codex install wiring handled"
+ken rank --verbose 2 "how does predictive ranking work"
+ken rank --max-chars 1200 "give me only the strongest hints"
+ken rank --stats "how much context would this add"
+ken explain "why did src/ken/cli.py appear"
+ken search-files "semantic file retrieval"
+ken search-symbols "merge codex hooks"
+ken bench .ken/bench.jsonl
+ken bench examples/bench/ken-dogfood.jsonl --fail-under-case-recall 0.7
+ken remember "codex wiring" "Use ken install . --codex to repair invalid hooks."
+ken recall "codex hook repair"
+```
+
+Benchmark datasets are JSONL, one prompt per line:
+
+```json
+{"prompt":"fix src/ken/status.py diagnostics","expected_files":["src/ken/status.py","tests/test_status.py"]}
+```
+
+`ken bench` reports recall@N and average injected context size, so ranker
+changes can be judged against labeled prompts instead of intuition alone. Add
+`--fail-under-case-recall 0.8` or `--fail-under-expected-file-recall 0.7` to
+make the benchmark a CI gate.
+
 ### Inspect what's happening
 
 ```fish
 ken status .                                # daemon + DB summary
+ken status --json                          # same health report for agents/scripts
 tail -f .ken/daemon.log                     # live hook traffic
 sqlite3 .ken/ken.db ".tables"               # explore the index
 sqlite3 .ken/ken.db "SELECT path FROM ci_files LIMIT 10"
 ```
 
-### Probe the ranker without claude
+### Probe the ranker without hooks
 
 ```fish
 # What would ken inject for this query?
-set TOKEN (jq -r .auth_token .ken/meta.json)
-set PORT (cat .ken/daemon.port)
-curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
-    -d '{"session_id":"smoke","prompt":"how does cost tracking work"}' \
-    http://127.0.0.1:$PORT/sessions/start
+ken rank "how does cost tracking work"
 
-curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
-    -d '{"session_id":"smoke","prompt":"how does cost tracking work"}' \
-    http://127.0.0.1:$PORT/prompts | jq -r .context_block
+# Why did those files win?
+ken explain "how does cost tracking work"
 ```
 
 ## Uninstall
@@ -145,15 +195,15 @@ ken uninstall . --keep-db    # keep .ken/ken.db for later
 
 ```
 src/ken/
-  cli.py              # `ken install / serve / status / hook / mcp / uninstall`
+  cli.py              # `ken install / rank / explain / search-* / remember / recall / serve / status / hook / mcp / uninstall`
   daemon/
     server.py         # HTTP daemon: hooks → DB writes, ranker, MCP backend
     index_queue.py    # Coalesced batch reindex on file changes
     watcher.py        # watchfiles wrapper
     client.py         # Hook-side HTTP client (spawns daemon if needed)
   ranker/
-    channels.py       # Reactive, predictive, fuzzy, explicit-mention
-    boosts.py         # Freshness, co-occurrence, dismissal penalty
+    channels.py       # Reactive, predictive, fuzzy, lexical, traceback/explicit-mention, findings
+    boosts.py         # Freshness, co-occurrence, symbol-file/test/import affinity, dismissal penalty
     merge.py          # Per-target dedup + synergy bonus
     output.py         # `<context-rank>` rendering at verbose 0/1/2
     explain.py        # Per-channel breakdown for ken_explain_rank
@@ -165,7 +215,7 @@ src/ken/
   hooks_template.py   # `.claude/settings.json` merge logic
   codex_hooks_template.py  # `.codex/hooks.json` + `[mcp_servers.ken]` merge
   schema.sql          # SQLite schema (cr_*, ci_*)
-tests/                # 171 tests, ~0.5s suite
+tests/                # 256 tests, ~0.7s suite
 ```
 
 ## Architecture in one paragraph
@@ -174,9 +224,9 @@ ken stores everything in a per-project SQLite DB at `.ken/ken.db`. A long-lived
 daemon (one process per project, idle-shutdown after 10 min) holds a single
 write connection. Claude Code hooks POST events to the daemon over localhost
 HTTP with a Bearer token from `.ken/meta.json`. On `UserPromptSubmit` the
-daemon runs the ranker — four scoring channels (reactive, predictive, fuzzy,
-explicit-mention) merged with synergy-bonus dedup, then post-boosts (freshness,
-co-occurrence, dismissal-penalty) — and returns the formatted block via stdout
+daemon runs the ranker — reactive, predictive, fuzzy, lexical, traceback/explicit-mention,
+and finding channels merged with synergy-bonus dedup, then post-boosts (symbol-file
+affinity, freshness, co-occurrence, source/test/import-affinity, dismissal-penalty) — and returns the formatted block via stdout
 so Claude Code prepends it to the prompt. Embeddings are MiniLM-L6-v2 384-dim
 floats stored as BLOBs; cosine sweeps in numpy run in single-digit ms even at
 ~50k symbols.
@@ -188,13 +238,14 @@ Phase 6 complete and validated on real projects:
 - ✅ Project install + uninstall
 - ✅ HTTP daemon with auth + idle shutdown
 - ✅ File watcher + incremental reindex
-- ✅ Tree-sitter parsers for Python, Rust, JS, TS, Go, Java
+- ✅ Parsers for Python, Rust, JS, TS, Go, Java, and C/C headers
 - ✅ ONNX embedder (fastembed)
-- ✅ Ranker (4 channels + 3 boosts + confidence gate)
-- ✅ Verbose-level rendering + per-turn decay
+- ✅ Ranker (files, symbols, findings + 6 boosts + confidence gate)
+- ✅ Verbose-level rendering + hook context budget/stats + per-turn decay
+- ✅ Status diagnostics/JSON with recommendations for embedding coverage, findings, scores, daemon health
 - ✅ MCP server (7 tools)
 - ✅ Claude Code + Codex CLI integration (hooks + MCP)
-- ✅ Test suite (183 tests, ranker math + Codex template fully covered)
+- ✅ Test suite (run `uv run pytest`; ranker math + agent install/template fully covered)
 - ✅ End-to-end benchmark: 24-35% token cost reduction on realistic tasks
 
 The Rust+Postgres prototype lives at the [`legacy-rust`](https://github.com/Infinibay/ken/tree/legacy-rust) tag.

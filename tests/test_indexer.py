@@ -78,6 +78,25 @@ def foo():
     assert rows[0]["name"] == "foo"
 
 
+def test_index_files_resolves_internal_python_import(project):
+    root, conn = project
+    (root / "pkg").mkdir()
+    (root / "pkg" / "util.py").write_text("def helper(): return 1\n")
+    (root / "main.py").write_text("import pkg.util\n")
+
+    index_files(conn, root, [Path("pkg/util.py"), Path("main.py")])
+
+    row = conn.execute(
+        """
+        SELECT f.path AS target
+        FROM ci_imports i
+        JOIN ci_files f ON f.id = i.to_file_id
+        WHERE i.to_module = 'pkg.util'
+        """
+    ).fetchone()
+    assert row["target"] == "pkg/util.py"
+
+
 def test_index_files_skips_unchanged_on_rerun(project):
     root, conn = project
     src = root / "mod.py"

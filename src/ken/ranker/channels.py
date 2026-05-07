@@ -19,7 +19,7 @@ from typing import Any
 import numpy as np
 
 from ken.embedder import blob_to_vec
-from ken.ranker import RankedItem
+from ken.ranker import FindingItem, RankedItem
 
 # ── Channel 1: Reactive ──────────────────────────────────────────────
 
@@ -315,6 +315,9 @@ def _now_ms(conn: sqlite3.Connection) -> int:
 # / predictive / fuzzy hits on the same target.
 
 _PATH_RE = re.compile(r"\b[\w./\-]+\.[a-zA-Z]{1,5}\b(?::\d+(?:-\d+)?)?")
+_TRACEBACK_FILE_RE = re.compile(
+    r'File "([^"\n]+)", line (\d+)|File\s+([\w./\-]+\.[a-zA-Z]{1,5})\s+line\s+(\d+)'
+)
 # Either backtick-quoted (group 1) or a CamelCase / Class.method
 # identifier in plain prose (group 2). Lowercase identifiers without
 # backticks are too noisy ("the function" → "the").
@@ -327,6 +330,7 @@ _KNOWN_EXTS = frozenset(
 EXPLICIT_FILE_SCORE = 5.0
 EXPLICIT_SYMBOL_SCORE = 5.5
 EXPLICIT_FILE_FROM_SYMBOL = 3.5  # symbol named → boost its file too, but less
+EXPLICIT_LINE_SYMBOL_SCORE = 6.0
 
 
 def explicit_mentions(
@@ -345,7 +349,9 @@ def explicit_mentions(
     seen_symbols: set[str] = set()
 
     for m in _PATH_RE.findall(prompt):
-        base = m.split(":")[0]
+        parts = m.split(":")
+        base = parts[0]
+        line_no = _line_number(parts[1]) if len(parts) > 1 else None
         ext = base.rsplit(".", 1)[-1].lower()
         if ext not in _KNOWN_EXTS:
             continue
@@ -365,6 +371,36 @@ def explicit_mentions(
                     reason="explicit-mention",
                 )
             )
+            if line_no is not None:
+                _append_symbols_at_line(
+                    conn, symbol_items, seen_symbols, r["path"], line_no
+                )
+
+    for quoted_path, quoted_line, bare_path, bare_line in _TRACEBACK_FILE_RE.findall(prompt):
+        base = quoted_path or bare_path
+        raw_line = quoted_line or bare_line
+        line_no = _line_number(raw_line)
+        if line_no is None:
+            continue
+        ext = base.rsplit(".", 1)[-1].lower()
+        if ext not in _KNOWN_EXTS:
+            continue
+        rows = conn.execute(
+            "SELECT path FROM ci_files WHERE path = ? OR path LIKE ?",
+            (base, f"%/{base}"),
+        ).fetchall()
+        for r in rows:
+            if r["path"] not in seen_files:
+                seen_files.add(r["path"])
+                file_items.append(
+                    RankedItem(
+                        target=r["path"],
+                        target_type="file",
+                        score=EXPLICIT_FILE_SCORE,
+                        reason="explicit-mention",
+                    )
+                )
+            _append_symbols_at_line(conn, symbol_items, seen_symbols, r["path"], line_no)
 
     candidates: set[str] = set()
     for backtick, camel in _IDENT_RE.findall(prompt):
@@ -405,6 +441,46 @@ def explicit_mentions(
     return file_items, symbol_items
 
 
+def _line_number(raw: str) -> int | None:
+    try:
+        return int(raw.split("-", 1)[0])
+    except ValueError:
+        return None
+
+
+def _append_symbols_at_line(
+    conn: sqlite3.Connection,
+    symbol_items: list[RankedItem],
+    seen_symbols: set[str],
+    path: str,
+    line_no: int,
+) -> None:
+    rows = conn.execute(
+        """
+        SELECT s.qualname, s.line_start, f.path AS file_path
+        FROM ci_symbols s
+        JOIN ci_files f ON f.id = s.file_id
+        WHERE f.path = ? AND s.line_start <= ? AND s.line_end >= ?
+        ORDER BY (s.line_end - s.line_start), s.line_start
+        LIMIT 2
+        """,
+        (path, line_no, line_no),
+    ).fetchall()
+    for r in rows:
+        target = f"{r['qualname']} ({r['file_path']}:{r['line_start']})"
+        if target in seen_symbols:
+            continue
+        seen_symbols.add(target)
+        symbol_items.append(
+            RankedItem(
+                target=target,
+                target_type="symbol",
+                score=EXPLICIT_LINE_SYMBOL_SCORE,
+                reason="explicit-line-mention",
+            )
+        )
+
+
 # ── Channel 3: Fuzzy symbol / file ───────────────────────────────────
 
 FUZZY_FILE_MIN_SIM = 0.40
@@ -437,6 +513,166 @@ def fuzzy_scores(
     file_items = _fuzzy_files(conn, q)
     symbol_items = _fuzzy_symbols(conn, q)
     return file_items, symbol_items
+
+
+LEXICAL_FILE_MIN_OVERLAP = 1
+LEXICAL_SYMBOL_MIN_OVERLAP = 1
+LEXICAL_FILE_SCALE = 1.4
+LEXICAL_SYMBOL_SCALE = 1.8
+CONTEXTUAL_LEXICAL_RECENT_PROMPTS = 3
+CONTEXTUAL_LEXICAL_BONUS = 0.6
+_WORD_RE = re.compile(r"[A-Za-z][A-Za-z0-9_]{2,}")
+_CONTINUATION_RE = re.compile(
+    r"\b(continue|continuing|keep going|carry on|resume|sigue|seguir|continua|"
+    r"continuar|contin[uú]a|segu[ií]|seguimos)\b",
+    re.IGNORECASE,
+)
+_STOPWORDS = frozenset(
+    "the and for with from into this that what where when why how fix bug error "
+    "traceback file line test tests code src function class method module "
+    "este esta esto ese esa eso con para que por los las una uno momento ahora "
+    "sigue seguir continua continuar continuemos seguimos path foco extra".split()
+)
+
+
+def lexical_scores(
+    conn: sqlite3.Connection, prompt: str, *, agent_id: str | None = None
+) -> tuple[list[RankedItem], list[RankedItem]]:
+    """Name-token fallback for prompts that describe code in plain words.
+
+    For continuation prompts ("continue", "sigue", "resume"), merge in
+    name tokens from the recent user prompts in the same active session.
+    This gives coding agents useful context when the user intentionally
+    avoids restating the task.
+    """
+    query_tokens = _name_tokens(prompt)
+    reason_prefix = "lexical"
+    score_bonus = 0.0
+    if _should_expand_lexical_context(prompt, query_tokens, agent_id):
+        context_tokens = _recent_session_prompt_tokens(conn, agent_id or "", prompt)
+        if context_tokens:
+            query_tokens |= context_tokens
+            reason_prefix = "lexical-context"
+            score_bonus = CONTEXTUAL_LEXICAL_BONUS
+    if not query_tokens:
+        return [], []
+    return (
+        _lexical_files(conn, query_tokens, reason_prefix=reason_prefix, score_bonus=score_bonus),
+        _lexical_symbols(conn, query_tokens, reason_prefix=reason_prefix, score_bonus=score_bonus),
+    )
+
+
+def _should_expand_lexical_context(
+    prompt: str, query_tokens: set[str], agent_id: str | None
+) -> bool:
+    if not agent_id:
+        return False
+    return not query_tokens or _CONTINUATION_RE.search(prompt) is not None
+
+
+def _recent_session_prompt_tokens(
+    conn: sqlite3.Connection, agent_id: str, current_prompt: str
+) -> set[str]:
+    row = conn.execute("SELECT id FROM cr_sessions WHERE agent_id = ?", (agent_id,)).fetchone()
+    if row is None:
+        return set()
+    rows = conn.execute(
+        """
+        SELECT content
+        FROM cr_contexts
+        WHERE session_id = ? AND kind = 'user_prompt'
+        ORDER BY id DESC
+        LIMIT ?
+        """,
+        (int(row["id"]), CONTEXTUAL_LEXICAL_RECENT_PROMPTS + 1),
+    ).fetchall()
+    tokens: set[str] = set()
+    skipped_current = False
+    used = 0
+    for recent in rows:
+        content = str(recent["content"])
+        if not skipped_current and content == current_prompt:
+            skipped_current = True
+            continue
+        tokens.update(_name_tokens(content))
+        used += 1
+        if used >= CONTEXTUAL_LEXICAL_RECENT_PROMPTS:
+            break
+    return tokens
+
+
+def _lexical_files(
+    conn: sqlite3.Connection,
+    query_tokens: set[str],
+    *,
+    reason_prefix: str = "lexical",
+    score_bonus: float = 0.0,
+) -> list[RankedItem]:
+    rows = conn.execute("SELECT path FROM ci_files").fetchall()
+    out: list[RankedItem] = []
+    for row in rows:
+        path = row["path"]
+        tokens = _name_tokens(path)
+        overlap = query_tokens & tokens
+        if len(overlap) < LEXICAL_FILE_MIN_OVERLAP:
+            continue
+        score = min(LEXICAL_FILE_SCALE + score_bonus, 0.6 + 0.4 * len(overlap) + score_bonus)
+        out.append(
+            RankedItem(
+                target=path,
+                target_type="file",
+                score=score,
+                reason=f"{reason_prefix}:{','.join(sorted(overlap)[:3])}",
+            )
+        )
+    return out
+
+
+def _lexical_symbols(
+    conn: sqlite3.Connection,
+    query_tokens: set[str],
+    *,
+    reason_prefix: str = "lexical",
+    score_bonus: float = 0.0,
+) -> list[RankedItem]:
+    rows = conn.execute(
+        """
+        SELECT s.qualname, s.name, s.line_start, f.path AS file_path
+        FROM ci_symbols s
+        JOIN ci_files f ON f.id = s.file_id
+        """
+    ).fetchall()
+    out: list[RankedItem] = []
+    for row in rows:
+        tokens = _name_tokens(f"{row['qualname']} {row['name']}")
+        overlap = query_tokens & tokens
+        if len(overlap) < LEXICAL_SYMBOL_MIN_OVERLAP:
+            continue
+        score = min(
+            LEXICAL_SYMBOL_SCALE + score_bonus,
+            0.8 + 0.5 * len(overlap) + score_bonus,
+        )
+        out.append(
+            RankedItem(
+                target=f"{row['qualname']} ({row['file_path']}:{row['line_start']})",
+                target_type="symbol",
+                score=score,
+                reason=f"{reason_prefix}:{','.join(sorted(overlap)[:3])}",
+            )
+        )
+    return out
+
+
+def _name_tokens(text: str) -> set[str]:
+    parts: set[str] = set()
+    for raw in _WORD_RE.findall(text.replace("-", "_").replace(".", "_").replace("/", "_")):
+        for piece in raw.split("_"):
+            parts.update(_split_camel(piece))
+    return {p.lower() for p in parts if len(p) >= 3 and p.lower() not in _STOPWORDS}
+
+
+def _split_camel(text: str) -> list[str]:
+    return re.findall(r"[A-Z]?[a-z]+|[A-Z]+(?=[A-Z]|$)|\d+", text)
 
 
 def _recency_bump(mtime_ns: int, now_ns: int) -> float:
@@ -512,3 +748,53 @@ def _fuzzy_symbols(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
             reason += f"+recent{bump:.2f}"
         out.append(RankedItem(target=target, target_type="symbol", score=score, reason=reason))
     return out
+
+
+# ── Channel 4: Findings ─────────────────────────────────────────────
+
+FINDING_MIN_SIM = 0.48
+FINDING_SCALE = 3.5
+
+
+def finding_scores(
+    conn: sqlite3.Connection, prompt_embedding: np.ndarray
+) -> list[FindingItem]:
+    """Surface durable notes semantically close to the current prompt."""
+    rows = conn.execute(
+        "SELECT topic, content, tags, embedding FROM cr_findings WHERE embedding IS NOT NULL"
+    ).fetchall()
+    if not rows:
+        return []
+    q = prompt_embedding.astype(np.float32, copy=False)
+    q = q / (np.linalg.norm(q) + 1e-12)
+    mat = np.asarray([blob_to_vec(r["embedding"]) for r in rows], dtype=np.float32)
+    norms = np.linalg.norm(mat, axis=1) + 1e-12
+    sims = (mat @ q) / norms
+    out: list[FindingItem] = []
+    for row, sim in zip(rows, sims):
+        sim_raw = float(sim)
+        if sim_raw < FINDING_MIN_SIM:
+            continue
+        score = (sim_raw - FINDING_MIN_SIM) * FINDING_SCALE / (1.0 - FINDING_MIN_SIM)
+        out.append(
+            FindingItem(
+                topic=row["topic"],
+                content=row["content"],
+                tags=_parse_tags(row["tags"]),
+                score=score,
+                reason=f"finding:{sim_raw:.2f}",
+            )
+        )
+    return out
+
+
+def _parse_tags(raw: str | None) -> list[str]:
+    if not raw:
+        return []
+    try:
+        import json
+
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        return []
+    return [t for t in parsed if isinstance(t, str)]

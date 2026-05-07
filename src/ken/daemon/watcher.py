@@ -36,6 +36,7 @@ logger = logging.getLogger("ken.watcher")
 # tight enough to feel live in a save-and-rerun loop, loose enough to
 # absorb the truncate+write pair vim emits per save.
 DEBOUNCE_MS = 200
+MASS_CHANGE_THRESHOLD = 512
 
 
 class FileWatcher:
@@ -85,6 +86,11 @@ class FileWatcher:
         gi_path = self.project_root / ".gitignore"
         if any(p == str(gi_path) for _, p in changes):
             self._spec = self._load_spec()
+
+        if len(changes) >= MASS_CHANGE_THRESHOLD:
+            logger.info("large filesystem batch detected; scheduling index resync")
+            self.queue.resync()
+            return
 
         for change, abs_path in changes:
             rel = self._rel(abs_path)

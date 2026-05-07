@@ -55,6 +55,10 @@ EMPTY_GRACE_S = 60.0
 # Background thread checks idle/empty every this many seconds.
 SHUTDOWN_TICK_S = 5.0
 
+# Hard budget for the hook-injected block. Users can still ask for the
+# uncapped expanded view with `ken rank --verbose 2` / `ken_rank`.
+HOOK_CONTEXT_MAX_CHARS = 3500
+
 logger = logging.getLogger("ken.daemon")
 
 
@@ -433,7 +437,7 @@ def _handle_prompt(st: DaemonState, agent_id: str, content: str) -> str:
             sess["last_rank_result"] = result
             sess["last_rank_prompt"] = content
 
-    return render_block(st.conn, result, verbose=0)
+    return render_block(st.conn, result, verbose=0, max_chars=HOOK_CONTEXT_MAX_CHARS)
 
 
 def _handle_rank(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
@@ -458,31 +462,40 @@ def _handle_rank(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
     except (TypeError, ValueError):
         verbose = 1
     verbose = max(0, min(2, verbose))
+    max_chars = _optional_positive_int(payload.get("max_chars"))
     query = str(payload.get("query") or "").strip()
 
-    with st.lock:
-        if not st.sessions:
-            return {"ok": False, "error": "no active session"}
-        agent_id = next(reversed(st.sessions))
-        sess = st.sessions[agent_id]
-        cached_result = sess.get("last_rank_result")
-        cached_prompt = sess.get("last_rank_prompt") or ""
-        current_iter = sess.get("iter", 0)
+    active = _active_rank_context(st)
+    agent_id = active["agent_id"]
+    cached_result = active["cached_result"]
+    cached_prompt = active["cached_prompt"]
+    current_iter = active["current_iter"]
 
     if not query:
         if cached_result is None:
+            latest = _latest_prompt_context(st)
+            if latest is None:
+                return {
+                    "ok": False,
+                    "error": "no cached prompt — submit one or pass query",
+                }
+            agent_id = latest["agent_id"]
+            query = latest["prompt"]
+            current_iter = latest["current_iter"]
+        else:
+            block = render_block(
+                st.conn, cached_result, verbose=verbose, max_chars=max_chars
+            )
+            stats = _context_stats(block)
             return {
-                "ok": False,
-                "error": "no cached rank yet — submit a prompt first",
+                "ok": True,
+                "context_block": block,
+                "prompt": cached_prompt,
+                "files": len(cached_result.files),
+                "symbols": len(cached_result.symbols),
+                "findings": len(cached_result.findings),
+                **stats,
             }
-        block = render_block(st.conn, cached_result, verbose=verbose)
-        return {
-            "ok": True,
-            "context_block": block,
-            "prompt": cached_prompt,
-            "files": len(cached_result.files),
-            "symbols": len(cached_result.symbols),
-        }
 
     try:
         prompt_vec = get_embedder().embed_query(query)
@@ -502,14 +515,34 @@ def _handle_rank(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
         logger.exception("rank-on-demand failed")
         return {"ok": False, "error": "ranker failed"}
 
-    block = render_block(st.conn, result, verbose=verbose)
+    block = render_block(st.conn, result, verbose=verbose, max_chars=max_chars)
+    stats = _context_stats(block)
     return {
         "ok": True,
         "context_block": block,
         "prompt": query,
         "files": len(result.files),
         "symbols": len(result.symbols),
+        "findings": len(result.findings),
+        **stats,
     }
+
+
+def _context_stats(block: str) -> dict[str, int]:
+    """Cheap size telemetry for deciding when context is too noisy."""
+    chars = len(block)
+    # Four chars/token is the standard rough estimate for English/code
+    # telemetry. It is intentionally approximate and model-agnostic.
+    est_tokens = (chars + 3) // 4 if chars else 0
+    return {"context_chars": chars, "context_est_tokens": est_tokens}
+
+
+def _optional_positive_int(value: Any) -> int | None:
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return None
+    return parsed if parsed > 0 else None
 
 
 def _handle_session_end(st: DaemonState, agent_id: str) -> None:
@@ -540,17 +573,19 @@ def _handle_explain(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
     from ken.ranker.explain import explain
 
     query = str(payload.get("query") or "").strip()
-    with st.lock:
-        if not st.sessions:
-            return {"ok": False, "error": "no active session"}
-        agent_id = next(reversed(st.sessions))
-        sess = st.sessions[agent_id]
-        cached_prompt = sess.get("last_rank_prompt") or ""
-        current_iter = sess.get("iter", 0)
+    active = _active_rank_context(st)
+    agent_id = active["agent_id"]
+    cached_prompt = active["cached_prompt"]
+    current_iter = active["current_iter"]
 
     target_prompt = query or cached_prompt
     if not target_prompt:
-        return {"ok": False, "error": "no cached prompt — submit one or pass query"}
+        latest = _latest_prompt_context(st)
+        if latest is None:
+            return {"ok": False, "error": "no cached prompt — submit one or pass query"}
+        agent_id = latest["agent_id"]
+        target_prompt = latest["prompt"]
+        current_iter = latest["current_iter"]
 
     try:
         prompt_vec = get_embedder().embed_query(target_prompt)
@@ -572,6 +607,54 @@ def _handle_explain(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
 
     result["ok"] = True
     return result
+
+
+def _active_rank_context(st: DaemonState) -> dict[str, Any]:
+    """Return in-memory rank context, or an inert fallback for MCP queries.
+
+    MCP clients are not guaranteed to have lifecycle hooks installed or
+    active. Query-based rank/explain still works without reactive session
+    state, and empty-query calls can fall back to the last prompt stored
+    in SQLite.
+    """
+    with st.lock:
+        if not st.sessions:
+            return {
+                "agent_id": "__ken_mcp__",
+                "cached_result": None,
+                "cached_prompt": "",
+                "current_iter": 0,
+            }
+        agent_id = next(reversed(st.sessions))
+        sess = st.sessions[agent_id]
+        return {
+            "agent_id": agent_id,
+            "cached_result": sess.get("last_rank_result"),
+            "cached_prompt": sess.get("last_rank_prompt") or "",
+            "current_iter": sess.get("iter", 0),
+        }
+
+
+def _latest_prompt_context(st: DaemonState) -> dict[str, Any] | None:
+    """Return the most recent persisted user prompt, across sessions."""
+    with st.lock:
+        row = st.conn.execute(
+            """
+            SELECT s.agent_id, c.content, c.iteration
+            FROM cr_contexts c
+            JOIN cr_sessions s ON s.id = c.session_id
+            WHERE c.kind = 'user_prompt' AND c.content <> ''
+            ORDER BY c.created_at DESC, c.id DESC
+            LIMIT 1
+            """
+        ).fetchone()
+    if row is None:
+        return None
+    return {
+        "agent_id": row["agent_id"],
+        "prompt": row["content"],
+        "current_iter": int(row["iteration"] or 0),
+    }
 
 
 def _handle_turn_end(st: DaemonState, payload: dict[str, Any]) -> None:
@@ -729,18 +812,32 @@ def _record_tool_post(st: DaemonState, payload: dict[str, Any]) -> None:
             st.invalidate_last_interaction(agent_id, target)
 
 
-def _classify_tool(tool: str, tool_input: dict[str, Any]) -> tuple[str, str | None]:
-    name = tool.lower()
+def _classify_tool(tool: str, tool_input: Any) -> tuple[str, str | None]:
+    name = _canonical_tool_name(tool)
     if name in {"read", "glob", "grep"}:
         target = _extract_target(tool_input)
         return "read", target
-    if name in {"edit", "write", "multiedit"}:
+    if name in {"edit", "write", "multiedit", "apply_patch"}:
         target = _extract_target(tool_input)
         return "edit", target
-    return "neutral", None
+    if name in {"bash", "exec_command"}:
+        target = _extract_target(tool_input)
+        return ("read", target) if target else ("neutral", None)
+    return "neutral", _extract_target(tool_input)
 
 
-def _extract_target(tool_input: dict[str, Any]) -> str | None:
+def _canonical_tool_name(tool: str) -> str:
+    name = tool.strip().lower()
+    if "." in name:
+        name = name.rsplit(".", 1)[-1]
+    if name == "functions.apply_patch":
+        return "apply_patch"
+    if name == "functions.exec_command":
+        return "exec_command"
+    return name
+
+
+def _extract_target(tool_input: Any) -> str | None:
     """Pull the file path out of a tool input dict.
 
     Claude Code's tool inputs use a small set of field names:
@@ -748,9 +845,32 @@ def _extract_target(tool_input: dict[str, Any]) -> str | None:
       * Glob: ``pattern`` (we surface the pattern as path-ish)
       * Grep: ``path`` for scope, ``pattern`` for regex — we use ``path``
     """
+    if isinstance(tool_input, str):
+        return _extract_path_from_text(tool_input)
+    if not isinstance(tool_input, dict):
+        return None
     for key in ("file_path", "path"):
         if key in tool_input and isinstance(tool_input[key], str):
             return tool_input[key]
+    for key in ("cmd", "command", "patch"):
+        if key in tool_input and isinstance(tool_input[key], str):
+            target = _extract_path_from_text(tool_input[key])
+            if target:
+                return target
+    if "workdir" in tool_input and isinstance(tool_input["workdir"], str):
+        return tool_input["workdir"]
+    return None
+
+
+def _extract_path_from_text(text: str) -> str | None:
+    """Pull the first source-like path token out of shell or patch text."""
+    from ken.ranker.channels import _KNOWN_EXTS, _PATH_RE
+
+    for match in _PATH_RE.findall(text):
+        base = match.split(":", 1)[0]
+        ext = base.rsplit(".", 1)[-1].lower()
+        if ext in _KNOWN_EXTS:
+            return base
     return None
 
 

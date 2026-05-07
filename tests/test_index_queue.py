@@ -47,6 +47,42 @@ def test_drain_batch_stop_sentinel_breaks(tmp_path):
     assert "never-seen.py" not in batch
 
 
+def test_drain_batch_resync_drops_pending_events(tmp_path):
+    """A resync supersedes fine-grained events from a large tree change."""
+    (tmp_path / ".ken").mkdir()
+    q = IndexQueue(tmp_path)
+    q._queue.put(_Event(action="reindex", rel="src/a.py"))
+    q._queue.put(_Event(action="delete", rel="src/b.py"))
+    batch = q._drain_batch(_Event(action="resync", rel=""))
+    assert batch == {"": "resync"}
+    assert q._queue.empty()
+
+
+def test_apply_resync_removes_stale_files(tmp_path):
+    """A snapshot resync prunes DB rows for files no longer on disk."""
+    (tmp_path / ".ken").mkdir()
+    live = tmp_path / "live.py"
+    stale = tmp_path / "stale.py"
+    live.write_text("def live():\n    return 1\n")
+    stale.write_text("def stale():\n    return 2\n")
+
+    from ken.db import connect, init_schema
+    from ken.indexer import index_files
+
+    conn = connect(tmp_path / ".ken" / "ken.db")
+    init_schema(conn)
+    index_files(conn, tmp_path, [live.relative_to(tmp_path), stale.relative_to(tmp_path)])
+    stale.unlink()
+
+    q = IndexQueue(tmp_path)
+    q._conn = conn
+    q._apply_resync()
+
+    rows = conn.execute("SELECT path FROM ci_files ORDER BY path").fetchall()
+    conn.close()
+    assert [row["path"] for row in rows] == ["live.py"]
+
+
 def test_queue_lifecycle_start_stop(tmp_path):
     """start() launches a thread; stop() joins it cleanly."""
     (tmp_path / ".ken").mkdir()

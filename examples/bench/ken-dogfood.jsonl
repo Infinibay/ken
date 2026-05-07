@@ -1,0 +1,6 @@
+{"prompt":"fix codex hook installation and config wiring","expected_files":["src/ken/install.py","src/ken/codex_hooks_template.py","tests/test_install_codex.py","tests/test_codex_hooks_template.py"]}
+{"prompt":"why are tool interactions not being recorded for exec_command or apply_patch","expected_files":["src/ken/codex_hooks_template.py","src/ken/daemon/server.py","tests/test_daemon_helpers.py"]}
+{"prompt":"add a CLI command to inspect ranked context stats and max chars","expected_files":["src/ken/cli.py","src/ken/daemon/server.py","src/ken/ranker/output.py","tests/test_cli_rank.py"]}
+{"prompt":"rank source file when its test file is explicitly mentioned as failing","expected_files":["src/ken/ranker/boosts.py","tests/ranker/test_boosts.py","tests/ranker/test_rank.py"]}
+{"prompt":"explain why a file appeared from lexical fuzzy findings and affinity boosts","expected_files":["src/ken/ranker/explain.py","src/ken/ranker/channels.py","src/ken/ranker/boosts.py","tests/ranker/test_explain.py"]}
+{"prompt":"install ken from a local checkout with uv","expected_files":["install.sh","README.md"]}

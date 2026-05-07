@@ -29,6 +29,7 @@ from typing import Literal
 
 from ken import _paths
 from ken.db import connect
+from ken.gitignore_filter import iter_files
 from ken.indexer import IndexStats, delete_file, index_files
 
 if False:  # TYPE_CHECKING-only — avoid heavy fastembed import at queue start
@@ -36,7 +37,7 @@ if False:  # TYPE_CHECKING-only — avoid heavy fastembed import at queue start
 
 logger = logging.getLogger("ken.queue")
 
-Action = Literal["reindex", "delete"]
+Action = Literal["reindex", "delete", "resync"]
 BATCH_DRAIN_S = 0.5
 BATCH_MAX_SIZE = 256
 
@@ -93,6 +94,9 @@ class IndexQueue:
     def delete(self, rel: str) -> None:
         self._queue.put(_Event(action="delete", rel=rel))
 
+    def resync(self) -> None:
+        self._queue.put(_Event(action="resync", rel=""))
+
     # ---- worker ----------------------------------------------------------
 
     def _run(self) -> None:
@@ -115,6 +119,9 @@ class IndexQueue:
         followed by a delete (or vice-versa) collapses to whichever came
         last — matches the on-disk state we'll observe when we run.
         """
+        if head.action == "resync":
+            self._discard_pending_events()
+            return {"": "resync"}
         batch: dict[str, Action] = {head.rel: head.action}
         deadline = time.monotonic() + BATCH_DRAIN_S
         while time.monotonic() < deadline and len(batch) < BATCH_MAX_SIZE:
@@ -125,12 +132,18 @@ class IndexQueue:
             if ev is None:
                 # Stop sentinel — process what we have, then return.
                 break
+            if ev.action == "resync":
+                self._discard_pending_events()
+                return {"": "resync"}
             batch[ev.rel] = ev.action
         return batch
 
     def _apply(self, batch: dict[str, Action]) -> None:
         assert self._conn is not None
         if not batch:
+            return
+        if "resync" in batch.values():
+            self._apply_resync()
             return
         reindex_paths = [Path(rel) for rel, action in batch.items() if action == "reindex"]
         delete_paths = [rel for rel, action in batch.items() if action == "delete"]
@@ -155,5 +168,44 @@ class IndexQueue:
                 deleted,
                 stats.skipped_no_lang,
             )
+        if self._on_batch is not None:
+            self._on_batch(stats, deleted)
+
+    def _discard_pending_events(self) -> None:
+        while True:
+            try:
+                ev = self._queue.get_nowait()
+            except queue.Empty:
+                return
+            if ev is None:
+                self._queue.put(None)
+                return
+
+    def _apply_resync(self) -> None:
+        assert self._conn is not None
+        rels = list(iter_files(self.project_root))
+        current = {rel.as_posix() for rel in rels}
+        rows = self._conn.execute("SELECT path FROM ci_files").fetchall()
+        stale = [row["path"] for row in rows if row["path"] not in current]
+
+        deleted = 0
+        for rel in stale:
+            if delete_file(self._conn, rel):
+                deleted += 1
+
+        stats = index_files(
+            self._conn,
+            self.project_root,
+            rels,
+            on_progress=None,
+            embedder=self._embedder,
+        )
+        logger.info(
+            "resynced index parsed=%s unchanged=%s deleted=%s no-parser=%s",
+            stats.parsed,
+            stats.unchanged,
+            deleted,
+            stats.skipped_no_lang,
+        )
         if self._on_batch is not None:
             self._on_batch(stats, deleted)

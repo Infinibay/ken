@@ -1,19 +1,20 @@
-"""`ken hook ...` — short-lived shims invoked by Claude Code hooks.
+"""Short-lived hook shims invoked by supported coding agents.
 
-Each subcommand reads Claude Code's JSON event payload from stdin,
-finds the project via walk-up, and POSTs an event to the per-project
-daemon (spawning it if it isn't running yet).
+Each `ken hook ...` subcommand reads the agent's JSON event payload from
+stdin, finds the installed project via walk-up, and POSTs an event to
+the per-project daemon, spawning it if needed.
 
-Hooks **never** raise to Claude Code:
+Hooks **never** raise to the caller:
   * If we can't find a project, we print to stderr and exit 0 — the
     user just isn't in a ken-installed project.
   * If the daemon can't be reached after a spawn attempt, we log
-    silently and exit 0 — keeping ken from blocking Claude is more
+    silently and exit 0 — keeping ken from blocking the agent is more
     important than capturing every event.
 
-Stdout is reserved for hook-driven *injection* (`UserPromptSubmit`
-prepends to Claude's context). Until Phase 5 wires the ranker, we
-print nothing extra.
+Stdout is reserved for hook-driven context injection. On
+`UserPromptSubmit`, the daemon may return a `<context-rank>` block and
+the hook prints only that block so the host CLI can prepend it to the
+model-visible prompt.
 """
 
 from __future__ import annotations
@@ -53,7 +54,7 @@ def dispatch_hook(args: argparse.Namespace) -> int:
                 {"session_id": session_id, "prompt": payload.get("prompt", "")},
             )
             # The daemon may want to inject context — print it to stdout so
-            # Claude Code prepends it to the model's view of the prompt.
+            # the host CLI prepends it to the model's view of the prompt.
             block = (resp or {}).get("context_block") or ""
             if block.strip():
                 sys.stdout.write(block)
@@ -90,13 +91,12 @@ def _session_id(payload: dict[str, Any]) -> str | None:
 
 
 def _tool_call_body(session_id: str, phase: str, payload: dict[str, Any]) -> dict[str, Any]:
-    """Project a Claude Code PreToolUse / PostToolUse payload into the
-    daemon's tool-call API.
+    """Project a hook tool payload into the daemon's tool-call API.
 
-    Claude Code's payload uses ``tool_name`` + ``tool_input`` + (post)
-    ``tool_response`` / ``success``.  We pass through whatever we got
-    so the daemon can record it without us caring about minor schema
-    drift.
+    Claude Code and Codex use slightly different field names, so this
+    helper accepts both the explicit hook shape (`tool_name`,
+    `tool_input`, `tool_response`) and ken's already-normalized shape
+    (`tool`, `input`, `output`).
     """
     body: dict[str, Any] = {
         "session_id": session_id,
@@ -114,11 +114,11 @@ def _extract_last_assistant_text(
 ) -> str:
     """Return concatenated text content of the most recent assistant entry.
 
-    Claude Code writes the conversation to a JSONL file; on the Stop
-    hook it gives us ``transcript_path``. We tail the last ~50 KB, walk
-    backwards to the latest ``type=assistant`` line, and pull out its
-    ``text`` content blocks. Returns ``""`` on any error — the caller
-    treats that as "no transcript signal".
+    Some hosts provide the final assistant text directly; Claude Code
+    instead gives us a transcript JSONL path on `Stop`. We tail the last
+    ~50 KB, walk backwards to the latest ``type=assistant`` line, and
+    pull out text content blocks. Returns ``""`` on any error because
+    missing transcript signal should not block the hook.
     """
     if not isinstance(transcript_path, str) or not transcript_path:
         return ""

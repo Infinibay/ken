@@ -14,8 +14,8 @@ Level 0 — terse (default for hook injection):
     (Call ken_rank(verbose=1|2) for outlines or to expand.)
     </context-rank>
 
-Level 1 — medium: top 5 files + 3-line outline + symbols section.
-Level 2 — full: top 8 files + 12-line outlines + symbols section.
+Level 1 — medium: top 5 files + symbols/findings sections + 3-line outline.
+Level 2 — full: top 8 files + symbols/findings sections + 12-line outlines.
 """
 
 from __future__ import annotations
@@ -24,18 +24,24 @@ import sqlite3
 
 from ken.ranker import RankResult
 
-# Per-level caps. Tuple is (max_files, outline_per_file, max_symbols).
+# Per-level caps. Tuple is (max_files, outline_per_file, max_symbols, max_findings).
 # Even at verbose=0 we surface up to 2 ranked symbols — explicit-mention
 # symbols often outrank everything and are exactly what the model needs
 # for targeted prompts ("what does Session.expire do?").
-_LEVEL_CAPS: dict[int, tuple[int, int, int]] = {
-    0: (3, 0, 2),
-    1: (5, 3, 5),
-    2: (8, 12, 5),
+_LEVEL_CAPS: dict[int, tuple[int, int, int, int]] = {
+    0: (3, 0, 2, 1),
+    1: (5, 3, 5, 3),
+    2: (8, 12, 5, 3),
 }
 
 
-def render_block(conn: sqlite3.Connection, result: RankResult, *, verbose: int = 0) -> str:
+def render_block(
+    conn: sqlite3.Connection,
+    result: RankResult,
+    *,
+    verbose: int = 0,
+    max_chars: int | None = None,
+) -> str:
     """Format *result* at the requested verbose level.
 
     Returns ``""`` when the result is empty, regardless of level — there
@@ -44,20 +50,29 @@ def render_block(conn: sqlite3.Connection, result: RankResult, *, verbose: int =
     if result.empty:
         return ""
     level = verbose if verbose in _LEVEL_CAPS else 1
-    max_files, outline_n, max_symbols = _LEVEL_CAPS[level]
+    max_files, outline_n, max_symbols, max_findings = _LEVEL_CAPS[level]
 
     if level == 0:
-        return _render_terse(result, max_files, max_symbols)
-    return _render_verbose(conn, result, max_files, outline_n, max_symbols, level)
+        block = _render_terse(result, max_files, max_symbols, max_findings)
+    else:
+        block = _render_verbose(
+            conn, result, max_files, outline_n, max_symbols, max_findings, level
+        )
+    return _fit_block(block, max_chars=max_chars)
 
 
-def _render_terse(result: RankResult, max_files: int, max_symbols: int) -> str:
+def _render_terse(
+    result: RankResult, max_files: int, max_symbols: int, max_findings: int
+) -> str:
     lines = ["<context-rank verbose=0>"]
     for it in result.files[:max_files]:
         lines.append(f"{it.target} [{it.score:.1f}] {it.reason}")
     if max_symbols and result.symbols:
         for it in result.symbols[:max_symbols]:
             lines.append(f"  ↳ {it.target} [{it.score:.1f}]")
+    if max_findings and result.findings:
+        for it in result.findings[:max_findings]:
+            lines.append(f"  note: {it.topic} [{it.score:.1f}] {it.reason}")
     lines.append("(Call ken_rank(verbose=1|2) for outlines or to expand.)")
     lines.append("</context-rank>")
     return "\n".join(lines)
@@ -69,25 +84,42 @@ def _render_verbose(
     max_files: int,
     outline_n: int,
     max_symbols: int,
+    max_findings: int,
     level: int,
 ) -> str:
     lines: list[str] = [
         f"<context-rank verbose={level}>",
         "Based on your current task and past sessions, these resources are likely relevant.",
     ]
+    outline_rows: list[tuple[str, list[str]]] = []
     if result.files:
         lines.append("")
         lines.append("Files (by relevance):")
         for i, it in enumerate(result.files[:max_files], 1):
             lines.append(f"  {i}. {it.target}  [score={it.score:.1f}] — {it.reason}")
             if outline_n:
-                for outline_line in _file_outline(conn, it.target, outline_n):
-                    lines.append(f"       {outline_line}")
+                outline = _file_outline(conn, it.target, outline_n)
+                if outline:
+                    outline_rows.append((it.target, outline))
     if result.symbols and max_symbols:
         lines.append("")
         lines.append("Symbols:")
         for i, it in enumerate(result.symbols[:max_symbols], 1):
             lines.append(f"  {i}. {it.target}  [score={it.score:.1f}] — {it.reason}")
+    if result.findings and max_findings:
+        lines.append("")
+        lines.append("Findings:")
+        for i, it in enumerate(result.findings[:max_findings], 1):
+            tags = f" [{' '.join(it.tags)}]" if it.tags else ""
+            lines.append(f"  {i}. {it.topic}{tags}  [score={it.score:.1f}] — {it.reason}")
+            lines.append(f"       {_one_line(it.content)}")
+    if outline_rows:
+        lines.append("")
+        lines.append("Outlines:")
+        for path, outline in outline_rows:
+            lines.append(f"  {path}:")
+            for outline_line in outline:
+                lines.append(f"       {outline_line}")
     lines.append("</context-rank>")
     return "\n".join(lines)
 
@@ -105,3 +137,36 @@ def _file_outline(conn: sqlite3.Connection, path: str, limit: int) -> list[str]:
         (path, limit),
     ).fetchall()
     return [f"{r['kind']} {r['qualname']} (line {r['line_start']})" for r in rows]
+
+
+def _one_line(text: str, *, limit: int = 220) -> str:
+    compact = " ".join(text.split())
+    if len(compact) <= limit:
+        return compact
+    return compact[: limit - 1].rstrip() + "…"
+
+
+def _fit_block(block: str, *, max_chars: int | None) -> str:
+    """Keep block under a character budget by dropping whole interior lines."""
+    if max_chars is None or max_chars <= 0 or len(block) <= max_chars:
+        return block
+    lines = block.splitlines()
+    if len(lines) <= 2:
+        return block[:max_chars]
+    footer = "</context-rank>"
+    if lines[-1] != footer:
+        return block[:max_chars]
+    if len("\n".join([lines[0], footer])) > max_chars:
+        return ""
+    marker = "(truncated by context budget; call ken_rank(verbose=2) to expand.)"
+    if len("\n".join([lines[0], marker, footer])) > max_chars:
+        marker = "(truncated)"
+    if len("\n".join([lines[0], marker, footer])) > max_chars:
+        return "\n".join([lines[0], footer])
+    kept = [lines[0]]
+    for line in lines[1:-1]:
+        candidate = "\n".join([*kept, line, marker, footer])
+        if len(candidate) > max_chars:
+            break
+        kept.append(line)
+    return "\n".join([*kept, marker, footer])

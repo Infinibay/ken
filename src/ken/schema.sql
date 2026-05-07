@@ -123,7 +123,7 @@ CREATE INDEX IF NOT EXISTS idx_cr_session_scores_target ON cr_session_scores(tar
 -- ----------------------------------------------------------------------------
 -- Findings: explicit notes the agent (or the user) leaves for future runs.
 -- Populated by the MCP `ken_remember` / `ken_recall` tools. Embedded so the
--- predictive ranker (channel 4 — currently unused) can surface them later.
+-- ranker can surface durable project knowledge near relevant prompts.
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS cr_findings (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,

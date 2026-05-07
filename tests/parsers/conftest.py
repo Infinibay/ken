@@ -9,12 +9,20 @@ from __future__ import annotations
 
 import pytest
 
+from ken.parsers.c import parse_c_file
 from ken.parsers.go import parse_go_file
 from ken.parsers.java import parse_java_file
 from ken.parsers.javascript import parse_js_file
 from ken.parsers.python import parse_python_file
 from ken.parsers.rust import parse_rust_file
 from ken.parsers.typescript import parse_ts_file
+
+
+@pytest.fixture
+def parse_c():
+    def _p(src: str):
+        return parse_c_file(src.encode("utf-8"), "inline.c")
+    return _p
 
 
 @pytest.fixture

@@ -40,13 +40,13 @@ KEN_CODEX_HOOKS: dict[str, list[dict[str, Any]]] = {
     ],
     "PreToolUse": [
         {
-            "matcher": "Bash|apply_patch",
+            "matcher": "Bash|apply_patch|functions.exec_command|functions.apply_patch|functions.view_image",
             "hooks": [{"type": "command", "command": "ken hook tool-call --phase pre"}],
         }
     ],
     "PostToolUse": [
         {
-            "matcher": "Bash|apply_patch",
+            "matcher": "Bash|apply_patch|functions.exec_command|functions.apply_patch|functions.view_image",
             "hooks": [{"type": "command", "command": "ken hook tool-call --phase post"}],
         }
     ],

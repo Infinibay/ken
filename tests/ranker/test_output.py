@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from ken.ranker import RankedItem, RankResult
-from ken.ranker.output import _file_outline, render_block
+from ken.ranker import FindingItem, RankedItem, RankResult
+from ken.ranker.output import _file_outline, _fit_block, render_block
 
 
 def _file(target: str, score: float, reason: str = "x") -> RankedItem:
@@ -46,6 +46,7 @@ def test_render_verbose_l1_includes_outline(conn, make_file, make_symbol):
     # 3-line outline at level 1.
     outline_lines = [ln for ln in out.splitlines() if ln.startswith("       ")]
     assert len(outline_lines) == 3
+    assert "Outlines:" in out
     assert "verbose=1" in out
 
 
@@ -85,3 +86,87 @@ def test_render_includes_score_and_reason(conn):
     assert "src/a.py" in out
     assert "[7.3]" in out
     assert "reactive:read_edit" in out
+
+
+def test_render_terse_includes_capped_finding_note(conn):
+    result = RankResult(
+        findings=[
+            FindingItem("codex wiring", "Use --codex.", ["codex"], 3.2, "finding:1.00"),
+            FindingItem("other", "Other note.", [], 3.1, "finding:0.99"),
+        ]
+    )
+
+    out = render_block(conn, result, verbose=0)
+
+    assert "note: codex wiring [3.2] finding:1.00" in out
+    assert "Other note" not in out
+
+
+def test_render_verbose_includes_findings_with_truncated_content(conn):
+    long = "x " * 200
+    result = RankResult(
+        findings=[FindingItem("codex wiring", long, ["codex"], 3.2, "finding:1.00")]
+    )
+
+    out = render_block(conn, result, verbose=1)
+
+    assert "Findings:" in out
+    assert "codex wiring [codex]" in out
+    assert "finding:1.00" in out
+    assert "…" in out
+
+
+def test_render_respects_max_chars_with_valid_footer(conn):
+    result = RankResult(files=[_file(f"src/file_{i}.py", 5.0 - i * 0.1) for i in range(8)])
+
+    out = render_block(conn, result, verbose=2, max_chars=150)
+
+    assert len(out) <= 150
+    assert out.startswith("<context-rank verbose=2>")
+    assert "truncated by context budget" in out
+    assert out.endswith("</context-rank>")
+
+
+def test_verbose_budget_keeps_ranked_symbols_before_outlines(conn, make_file, make_symbol):
+    fid = make_file("src/large.py")
+    for i in range(20):
+        make_symbol(
+            fid,
+            name=f"very_long_function_name_{i}",
+            qualname=f"VeryVerboseClass.very_long_function_name_{i}",
+            line_start=i + 1,
+        )
+    result = RankResult(
+        files=[_file("src/large.py", 5.0, "fuzzy:0.95")],
+        symbols=[_sym("VeryVerboseClass.critical_entrypoint", 4.9, "explicit-symbol")],
+    )
+
+    out = render_block(conn, result, verbose=2, max_chars=420)
+
+    assert len(out) <= 420
+    assert "VeryVerboseClass.critical_entrypoint" in out
+    assert "truncated" in out
+    assert out.endswith("</context-rank>")
+
+
+def test_fit_block_drops_whole_lines():
+    block = "\n".join(
+        [
+            "<context-rank verbose=1>",
+            "first line",
+            "second line with enough text to overflow",
+            "</context-rank>",
+        ]
+    )
+
+    out = _fit_block(block, max_chars=80)
+
+    assert len(out) <= 80
+    assert "second line" not in out
+    assert out.endswith("</context-rank>")
+
+
+def test_fit_block_returns_empty_when_budget_cannot_fit_tags():
+    block = "<context-rank verbose=1>\nuseful\n</context-rank>"
+
+    assert _fit_block(block, max_chars=10) == ""

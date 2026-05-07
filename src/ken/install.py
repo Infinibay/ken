@@ -7,7 +7,15 @@ Steps:
   4. Add `.ken/` to the project's `.gitignore` (if there is one and the
      entry isn't there yet).
   5. Merge ken's hook entries into `.claude/settings.json`.
-  6. Run the initial code index, verbose by default.
+  6. Register ken in `.mcp.json`.
+  7. Merge Codex hooks and MCP config into `.codex/`.
+  8. Run the initial code index, verbose by default. Embeddings are
+     optional via ``ken install --embed`` because full-repo embedding can
+     be expensive on very large codebases.
+
+``ken install --claude`` is accepted as an explicit/symmetric spelling
+for the default Claude Code wiring. ``ken install --codex`` additionally
+forces repair of Codex project-local config when needed.
 
 Idempotent. Re-running on an installed project re-applies the schema
 (noop), re-merges hooks (dedup), and runs an incremental re-index
@@ -18,6 +26,7 @@ from __future__ import annotations
 
 import json
 import secrets
+import stat
 import sys
 import time
 import uuid
@@ -46,8 +55,16 @@ class InstallResult:
     elapsed_s: float
 
 
-def install(project_path: Path, *, verbose: bool = True) -> InstallResult:
+def install(
+    project_path: Path,
+    *,
+    verbose: bool = True,
+    force_claude: bool = False,
+    force_codex: bool = False,
+    embed: bool = False,
+) -> InstallResult:
     """Install ken into *project_path*.  Prints progress to stdout."""
+    del force_claude  # Claude wiring is currently always enabled; flag is for CLI symmetry.
     root = project_path.resolve()
     if not root.is_dir():
         raise SystemExit(f"error: not a directory: {root}")
@@ -94,7 +111,7 @@ def install(project_path: Path, *, verbose: bool = True) -> InstallResult:
 
         # Step 4c: Codex CLI hooks + MCP. Same role as 4 + 4b for the
         # other CLI we support.
-        _wire_codex(root, verbose=verbose)
+        _wire_codex(root, verbose=verbose, force=force_codex)
 
         # Step 5: initial index.
         if verbose:
@@ -102,6 +119,13 @@ def install(project_path: Path, *, verbose: bool = True) -> InstallResult:
         rels = list(iter_files(root))
         if verbose:
             print(f"[index] {len(rels)} candidate files; parsing…")
+        embedder = None
+        if embed:
+            from ken.embedder import get_embedder
+
+            if verbose:
+                print("[index] embedding enabled; warming file + symbol embeddings…")
+            embedder = get_embedder()
 
         def progress(rel: str, status: str) -> None:
             if not verbose:
@@ -114,7 +138,7 @@ def install(project_path: Path, *, verbose: bool = True) -> InstallResult:
             elif status.startswith("skipped:"):
                 print(f"  ! {rel}  ({status[len('skipped:'):]})")
 
-        stats = index_files(conn, root, rels, on_progress=progress)
+        stats = index_files(conn, root, rels, on_progress=progress, embedder=embedder)
         if verbose:
             print()
             print(
@@ -183,7 +207,7 @@ def _wire_claude_hooks(root: Path, *, verbose: bool) -> None:
             print(f"[hooks] {CLAUDE_SETTINGS} already had ken hooks — left alone")
 
 
-def _wire_codex(root: Path, *, verbose: bool) -> None:
+def _wire_codex(root: Path, *, verbose: bool, force: bool = False) -> None:
     """Wire Codex CLI hooks (`.codex/hooks.json`) + MCP (`.codex/config.toml`).
 
     Project-local Codex hooks only fire if the user has marked the
@@ -198,17 +222,24 @@ def _wire_codex(root: Path, *, verbose: bool) -> None:
         write_codex_hooks,
     )
 
+    codex_dir = root / ".codex"
+    _ensure_codex_dir(codex_dir, verbose=verbose, force=force)
+
     hooks_p = root / CODEX_HOOKS_FILE
     existing: dict | None = None
     if hooks_p.is_file():
         try:
             existing = json.loads(hooks_p.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
-            print(
-                f"[codex] {hooks_p} is not valid JSON ({exc}); aborting",
-                file=sys.stderr,
-            )
-            raise SystemExit(2)
+            if not force:
+                print(
+                    f"[codex] {hooks_p} is not valid JSON ({exc}); aborting",
+                    file=sys.stderr,
+                )
+                raise SystemExit(2)
+            if verbose:
+                print(f"[codex] replacing invalid {CODEX_HOOKS_FILE} ({exc})")
+            existing = None
     merged, touched = merge_codex_hooks(existing)
     write_codex_hooks(hooks_p, merged)
     if verbose:
@@ -229,6 +260,20 @@ def _wire_codex(root: Path, *, verbose: bool) -> None:
         config_p.write_text(append_ken_mcp_block(cur_text), encoding="utf-8")
         if verbose:
             print(f"[codex] registered `ken` MCP server in {CODEX_CONFIG_FILE}")
+
+
+def _ensure_codex_dir(codex_dir: Path, *, verbose: bool, force: bool) -> None:
+    if codex_dir.exists() and not codex_dir.is_dir():
+        raise SystemExit(f"error: {codex_dir} exists and is not a directory")
+    codex_dir.mkdir(parents=True, exist_ok=True)
+    if not force:
+        return
+    mode = codex_dir.stat().st_mode
+    if mode & stat.S_IWUSR:
+        return
+    codex_dir.chmod(mode | stat.S_IWUSR)
+    if verbose:
+        print("[codex] enabled owner write permission on .codex/")
 
 
 def _wire_mcp(root: Path, *, verbose: bool) -> None:

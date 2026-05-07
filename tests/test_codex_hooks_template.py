@@ -88,6 +88,15 @@ def test_no_session_end_event():
     assert "SessionEnd" not in KEN_CODEX_HOOKS
 
 
+def test_tool_matchers_include_codex_function_tools():
+    """Codex tool names can include the `functions.` namespace used by
+    developer tools in this environment."""
+    for event in ("PreToolUse", "PostToolUse"):
+        matcher = KEN_CODEX_HOOKS[event][0]["matcher"]
+        assert "functions.exec_command" in matcher
+        assert "functions.apply_patch" in matcher
+
+
 # ── MCP TOML helpers ────────────────────────────────────────────────
 
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 from ken.ranker.channels import (
     EXPLICIT_FILE_FROM_SYMBOL,
     EXPLICIT_FILE_SCORE,
+    EXPLICIT_LINE_SYMBOL_SCORE,
     EXPLICIT_SYMBOL_SCORE,
     explicit_mentions,
 )
@@ -31,6 +32,28 @@ def test_path_with_line_number(conn, make_file):
     files, _ = explicit_mentions(conn, "the bug is at src/auth.py:42")
     assert len(files) == 1
     assert files[0].target == "src/auth.py"
+
+
+def test_path_with_line_number_lifts_containing_symbol(conn, make_file, make_symbol):
+    fid = make_file("src/auth.py")
+    make_symbol(fid, name="login", qualname="login", line_start=35, line_end=50)
+
+    _, syms = explicit_mentions(conn, 'File "src/auth.py", line 42, in login')
+
+    assert len(syms) == 1
+    assert syms[0].target == "login (src/auth.py:35)"
+    assert syms[0].score == EXPLICIT_LINE_SYMBOL_SCORE
+    assert syms[0].reason == "explicit-line-mention"
+
+
+def test_unquoted_traceback_line_lifts_containing_symbol(conn, make_file, make_symbol):
+    fid = make_file("src/auth.py")
+    make_symbol(fid, name="login", qualname="login", line_start=35, line_end=50)
+
+    _, syms = explicit_mentions(conn, "Traceback File src/auth.py line 42")
+
+    assert len(syms) == 1
+    assert syms[0].target == "login (src/auth.py:35)"
 
 
 def test_unknown_extension_ignored(conn, make_file):
