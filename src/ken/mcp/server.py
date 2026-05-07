@@ -68,7 +68,7 @@ def ken_search_files(query: str, limit: int = 8) -> list[dict]:
     their score and a short symbol outline.
     """
     with _conn() as conn:
-        return search_files(conn, query, limit=limit)
+        return search_files(conn, query, limit=limit, project_root=_PROJECT_ROOT)
 
 
 @mcp.tool()
@@ -81,7 +81,7 @@ def ken_search_symbols(query: str, limit: int = 10) -> list[dict]:
     *limit* hits with their location and one-line doc.
     """
     with _conn() as conn:
-        return search_symbols(conn, query, limit=limit)
+        return search_symbols(conn, query, limit=limit, project_root=_PROJECT_ROOT)
 
 
 @mcp.tool()

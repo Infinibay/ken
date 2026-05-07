@@ -359,10 +359,10 @@ def _search_cli(
         return 1
     with connect(db_path) as conn:
         if kind == "files":
-            hits = search_files(conn, query, limit=limit)
+            hits = search_files(conn, query, limit=limit, project_root=root)
             rendered = format_file_hits(hits)
         else:
-            hits = search_symbols(conn, query, limit=limit)
+            hits = search_symbols(conn, query, limit=limit, project_root=root)
             rendered = format_symbol_hits(hits)
     if as_json:
         print(json.dumps(hits, indent=2))

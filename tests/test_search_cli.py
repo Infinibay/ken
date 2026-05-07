@@ -33,6 +33,9 @@ def _project(tmp_path: Path) -> Path:
             ("src/parser.py", np.array([1.0, 0.0], dtype=np.float32)),
             ("src/status.py", np.array([0.0, 1.0], dtype=np.float32)),
         ]:
+            src = tmp_path / path
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_text("def indexed():\n    return 1\n", encoding="utf-8")
             conn.execute(
                 "INSERT INTO ci_files(path, language, content_hash, mtime, indexed_at, embedding) "
                 "VALUES (?, 'python', ?, ?, ?, ?)",
@@ -63,6 +66,17 @@ def test_search_files_orders_by_similarity(monkeypatch, tmp_path):
     assert hits[0]["symbols"][0]["name"] == "parse_symbol"
 
 
+def test_search_files_filters_missing_paths_when_project_root_is_known(monkeypatch, tmp_path):
+    root = _project(tmp_path)
+    (root / "src/parser.py").unlink()
+    monkeypatch.setattr("ken.search.get_embedder", lambda: FakeEmbedder())
+
+    with connect(_paths.db_path(root)) as conn:
+        hits = search_files(conn, "parser", limit=2, project_root=root)
+
+    assert [h["path"] for h in hits] == ["src/status.py"]
+
+
 def test_search_symbols_orders_by_similarity(monkeypatch, tmp_path):
     root = _project(tmp_path)
     monkeypatch.setattr("ken.search.get_embedder", lambda: FakeEmbedder())
@@ -73,6 +87,17 @@ def test_search_symbols_orders_by_similarity(monkeypatch, tmp_path):
     assert len(hits) == 1
     assert hits[0]["file"] == "src/parser.py"
     assert hits[0]["qualname"] == "parse_symbol"
+
+
+def test_search_symbols_filters_missing_paths_when_project_root_is_known(monkeypatch, tmp_path):
+    root = _project(tmp_path)
+    (root / "src/parser.py").unlink()
+    monkeypatch.setattr("ken.search.get_embedder", lambda: FakeEmbedder())
+
+    with connect(_paths.db_path(root)) as conn:
+        hits = search_symbols(conn, "symbol lookup", limit=5, project_root=root)
+
+    assert hits == []
 
 
 def test_search_files_cli_prints_hits(monkeypatch, capsys, tmp_path):

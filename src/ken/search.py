@@ -10,12 +10,19 @@ import numpy as np
 from ken.embedder import blob_to_vec, get_embedder
 
 
-def search_files(conn: sqlite3.Connection, query: str, limit: int = 8) -> list[dict]:
+def search_files(
+    conn: sqlite3.Connection,
+    query: str,
+    limit: int = 8,
+    *,
+    project_root: Path | None = None,
+) -> list[dict]:
     """Return indexed files nearest to *query* by embedding cosine similarity."""
     q = _query_vec(query)
     rows = conn.execute(
         "SELECT id, path, language, embedding FROM ci_files WHERE embedding IS NOT NULL"
     ).fetchall()
+    rows = _filter_live_rows(rows, "path", project_root)
     ranked = _rank_rows(q, rows, limit)
 
     out: list[dict] = []
@@ -39,7 +46,13 @@ def search_files(conn: sqlite3.Connection, query: str, limit: int = 8) -> list[d
     return out
 
 
-def search_symbols(conn: sqlite3.Connection, query: str, limit: int = 10) -> list[dict]:
+def search_symbols(
+    conn: sqlite3.Connection,
+    query: str,
+    limit: int = 10,
+    *,
+    project_root: Path | None = None,
+) -> list[dict]:
     """Return indexed symbols nearest to *query* by embedding cosine similarity."""
     q = _query_vec(query)
     rows = conn.execute(
@@ -50,6 +63,7 @@ def search_symbols(conn: sqlite3.Connection, query: str, limit: int = 10) -> lis
         WHERE s.embedding IS NOT NULL
         """
     ).fetchall()
+    rows = _filter_live_rows(rows, "file_path", project_root)
     return [
         {
             "qualname": r["qualname"],
@@ -67,6 +81,17 @@ def search_symbols(conn: sqlite3.Connection, query: str, limit: int = 10) -> lis
 def _query_vec(query: str) -> np.ndarray:
     q = get_embedder().embed_query(query)
     return q / (np.linalg.norm(q) + 1e-12)
+
+
+def _filter_live_rows(
+    rows: list[sqlite3.Row],
+    path_key: str,
+    project_root: Path | None,
+) -> list[sqlite3.Row]:
+    if project_root is None:
+        return rows
+    root = project_root.resolve()
+    return [row for row in rows if (root / row[path_key]).exists()]
 
 
 def _rank_rows(
