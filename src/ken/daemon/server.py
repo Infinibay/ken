@@ -457,9 +457,9 @@ def _handle_rank(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
     * **No query / empty query** — re-render the cached last RankResult
       from the most-recent active session. Cheap; just changes how much
       detail is in the output.
-    * **Query provided** — re-run the ranker with that query, against
-      the same session's reactive context (so "what's hot in this
-      session" still applies). Costs one embedding + one rank.
+    * **Query provided** — re-run the ranker for that query without
+      reactive session carry-over. Manual rank/explain should behave
+      like direct retrieval, not like a continuation prompt.
     """
     from ken.embedder import get_embedder
     from ken.ranker import rank as rank_fn
@@ -512,6 +512,7 @@ def _handle_rank(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
         logger.exception("rank-on-demand embedding failed")
         return {"ok": False, "error": "embedder failed"}
 
+    include_reactive = not bool(query)
     try:
         result = rank_fn(
             st.conn,
@@ -520,6 +521,7 @@ def _handle_rank(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
             prompt=query,
             prompt_embedding=prompt_vec,
             project_root=st.project_root,
+            include_reactive=include_reactive,
         )
     except Exception:  # pragma: no cover
         logger.exception("rank-on-demand failed")
@@ -583,6 +585,7 @@ def _handle_explain(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
     from ken.ranker.explain import explain
 
     query = str(payload.get("query") or "").strip()
+    include_reactive = not bool(query)
     active = _active_rank_context(st)
     agent_id = active["agent_id"]
     cached_prompt = active["cached_prompt"]
@@ -611,6 +614,7 @@ def _handle_explain(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
             prompt=target_prompt,
             prompt_embedding=prompt_vec,
             project_root=st.project_root,
+            include_reactive=include_reactive,
         )
     except Exception:  # pragma: no cover
         logger.exception("explain failed")

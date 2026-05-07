@@ -30,13 +30,18 @@ def explain(
     prompt_embedding: np.ndarray,
     top: int = 10,
     project_root: Path | None = None,
+    include_reactive: bool = True,
 ) -> dict[str, Any]:
     from ken.ranker import _drop_missing_paths, boosts, channels, merge
 
     similar = channels.similar_past_sessions(conn, prompt_embedding)
 
     explicit_files, explicit_symbols = channels.explicit_mentions(conn, prompt)
-    reactive = channels.reactive_scores(conn, agent_id, current_iteration)
+    reactive = (
+        channels.reactive_scores(conn, agent_id, current_iteration)
+        if include_reactive
+        else []
+    )
     predictive = channels.predictive_scores(conn, similar)
     fuzzy_files, fuzzy_symbols = channels.fuzzy_scores(conn, prompt_embedding)
     doc_files, doc_symbols = channels.doc_intent_scores(conn, prompt_embedding)

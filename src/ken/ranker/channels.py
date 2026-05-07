@@ -614,6 +614,7 @@ LEXICAL_SYMBOL_MIN_OVERLAP = 1
 LEXICAL_FILE_SCALE = 1.4
 LEXICAL_SYMBOL_SCALE = 1.8
 LEXICAL_EXACT_SYMBOL_BONUS = 1.0
+LEXICAL_KIND_BONUS = 1.2
 CONTEXTUAL_LEXICAL_RECENT_PROMPTS = 3
 CONTEXTUAL_LEXICAL_BONUS = 0.6
 _WORD_RE = re.compile(r"[A-Za-z][A-Za-z0-9_]{2,}")
@@ -626,11 +627,26 @@ _STOPWORDS = frozenset(
     "the and for with from into this that what where when why how fix bug error "
     "traceback file line test tests code src function class method module "
     "este esta esto ese esa eso con para que por los las una uno momento ahora "
-    "sigue seguir continua continuar continuemos seguimos path foco extra".split()
+    "sigue seguir continua continuar continuemos seguimos path foco extra cual "
+    "quien donde cuando como clase codigo código fichero archivo funcion función".split()
 )
 _TOKEN_ALIASES = {
+    "class": {"class"},
+    "code": {"code"},
+    "file": {"file"},
     "scheduler": {"sched"},
     "scheduling": {"sched"},
+    "parsear": {"parse", "parser", "parsers", "parsed"},
+    "parsea": {"parse", "parser", "parsers", "parsed"},
+    "parseo": {"parse", "parser", "parsers", "parsed"},
+    "parse": {"parser", "parsers", "parsed"},
+    "parser": {"parse", "parsers", "parsed"},
+    "parsing": {"parse", "parser", "parsers", "parsed"},
+    "archivo": {"file", "source"},
+    "fichero": {"file", "source"},
+    "codigo": {"code", "source"},
+    "código": {"code", "source"},
+    "clase": {"class"},
 }
 
 
@@ -736,26 +752,33 @@ def _lexical_symbols(
 ) -> list[RankedItem]:
     rows = conn.execute(
         """
-        SELECT s.qualname, s.name, s.line_start, f.path AS file_path
+        SELECT s.kind, s.qualname, s.name, s.line_start, f.path AS file_path
         FROM ci_symbols s
         JOIN ci_files f ON f.id = s.file_id
         """
     ).fetchall()
     out: list[RankedItem] = []
     for row in rows:
-        tokens = _name_tokens(f"{row['qualname']} {row['name']}")
+        kind = str(row["kind"] or "")
+        tokens = _name_tokens(f"{kind} {row['qualname']} {row['name']}")
         overlap = query_tokens & tokens
         if len(overlap) < LEXICAL_SYMBOL_MIN_OVERLAP:
             continue
         exact_name = str(row["name"]).strip("_").lower()
         exact_bonus = LEXICAL_EXACT_SYMBOL_BONUS if exact_name in query_tokens else 0.0
+        kind_bonus = LEXICAL_KIND_BONUS if kind.lower() in query_tokens else 0.0
         score = min(
-            LEXICAL_SYMBOL_SCALE + LEXICAL_EXACT_SYMBOL_BONUS + score_bonus,
-            0.8 + 0.5 * len(overlap) + exact_bonus + score_bonus,
+            LEXICAL_SYMBOL_SCALE
+            + LEXICAL_EXACT_SYMBOL_BONUS
+            + LEXICAL_KIND_BONUS
+            + score_bonus,
+            0.8 + 0.5 * len(overlap) + exact_bonus + kind_bonus + score_bonus,
         )
         reason = f"{reason_prefix}:{','.join(sorted(overlap)[:3])}"
         if exact_bonus:
             reason += "+exact"
+        if kind_bonus:
+            reason += "+kind"
         out.append(
             RankedItem(
                 target=f"{row['qualname']} ({row['file_path']}:{row['line_start']})",
@@ -772,8 +795,9 @@ def _name_tokens(text: str) -> set[str]:
     for raw in _WORD_RE.findall(text.replace("-", "_").replace(".", "_").replace("/", "_")):
         for piece in raw.split("_"):
             parts.update(_split_camel(piece))
-    tokens = {p.lower() for p in parts if len(p) >= 3 and p.lower() not in _STOPWORDS}
-    for token in list(tokens):
+    raw_tokens = {p.lower() for p in parts if len(p) >= 3}
+    tokens = {p for p in raw_tokens if p not in _STOPWORDS}
+    for token in raw_tokens:
         tokens.update(_TOKEN_ALIASES.get(token, set()))
     return tokens
 

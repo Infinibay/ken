@@ -192,6 +192,35 @@ def test_rank_uses_doc_intent_channel(conn, make_session, make_file, fake_emb, n
     assert "doc-intent:module_docstring" in result.files[0].reason
 
 
+def test_rank_manual_spanish_parser_query_uses_lexical_aliases(
+    conn, make_session, make_file, make_symbol, make_interaction, fake_emb
+):
+    session_id = make_session("alpha")
+    make_interaction(session_id, event="cited", target="src/ken/status.py", iteration=1)
+    parser_file = make_file("src/ken/parsers/types.py")
+    make_symbol(
+        parser_file,
+        name="ParsedFile",
+        qualname="ParsedFile",
+        kind="class",
+        line_start=25,
+        line_end=30,
+    )
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="Que clase se encarga de parsear el codigo de un fichero?",
+        prompt_embedding=fake_emb("unrelated"),
+        include_reactive=False,
+    )
+
+    assert result.symbols[0].target == "ParsedFile (src/ken/parsers/types.py:25)"
+    assert result.files[0].target == "src/ken/parsers/types.py"
+    assert all(it.target != "src/ken/status.py" for it in result.files)
+
+
 def test_rank_surfaces_related_tests(conn, make_session, make_file, fake_emb):
     make_session("alpha")
     make_file("src/ken/status.py")

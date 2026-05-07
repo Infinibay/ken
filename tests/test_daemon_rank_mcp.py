@@ -122,6 +122,24 @@ def test_explain_with_query_works_without_active_session(state):
     assert out["channels"]["explicit_files"][0]["target"] == "src/a.py"
 
 
+def test_explain_with_query_ignores_active_reactive_context(state):
+    _index_file(state, "src/a.py")
+    _index_file(state, "src/reactive.py")
+    state.session_start("codex-session")
+    state.record_interaction(
+        "codex-session",
+        "cited",
+        "file",
+        target_path="src/reactive.py",
+    )
+
+    out = _handle_explain(state, {"query": "please inspect src/a.py"})
+
+    assert out["ok"] is True
+    assert out["channels"]["reactive"] == []
+    assert out["channels"]["explicit_files"][0]["target"] == "src/a.py"
+
+
 def test_explain_without_query_uses_latest_persisted_prompt(state):
     _index_file(state)
     _stored_prompt(state, "please inspect src/a.py")

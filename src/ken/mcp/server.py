@@ -122,8 +122,8 @@ def ken_rank(query: str = "", verbose: int = 1, max_chars: int = 0) -> dict:
 
     With *query* empty (default), this re-renders the ranker's cached
     output for the most recent prompt — cheap, no recomputation. Pass
-    a *query* to run the ranker against a different intent (still using
-    your current session's reactive context).
+    a *query* to run the ranker against that intent without reactive
+    session carry-over.
     """
     from ken.daemon import client as daemon_client
 
