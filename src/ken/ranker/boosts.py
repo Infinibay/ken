@@ -5,10 +5,8 @@ from __future__ import annotations
 import sqlite3
 import time
 
-import numpy as np
-
-from ken.embedder import blob_to_vec
 from ken.ranker import RankedItem
+from ken.ranker.channels import SimilarPrompt
 
 # ── Freshness ────────────────────────────────────────────────────────
 
@@ -102,8 +100,7 @@ def apply_cooc(conn: sqlite3.Connection, files: list[RankedItem]) -> None:
     ).fetchall()
 
     by_path = {it.target: it for it in files}
-    anchor_score_by_path = {a.target: a.score for a in anchors}
-    avg_anchor = sum(anchor_score_by_path.values()) / len(anchors)
+    avg_anchor = sum(a.score for a in anchors) / len(anchors)
     for r in rows:
         path = r["target_path"]
         sess_count = int(r["sess"])
@@ -135,43 +132,21 @@ def apply_cooc(conn: sqlite3.Connection, files: list[RankedItem]) -> None:
 # its score down. Floors at zero — never negative, since merge already
 # decided this file is in the running.
 #
-# We look at cr_interactions directly (rather than cr_session_scores)
-# because a dismissed file's reactive score is filtered out at score≤0,
-# so the snapshot pipeline drops it. The raw event survives in
-# cr_interactions for exactly this reason.
+# Reads cr_interactions directly: a dismissed file's reactive score
+# gets filtered out at score≤0, so the snapshot pipeline drops it; the
+# raw event survives in cr_interactions for exactly this reason.
 
-DISMISS_SIM_THRESHOLD = 0.45
 DISMISS_PENALTY = 1.5
-DISMISS_LOOKBACK_PROMPTS = 50
 
 
 def apply_dismissal_penalty(
-    conn: sqlite3.Connection, prompt_embedding: np.ndarray, files: list[RankedItem]
+    conn: sqlite3.Connection,
+    files: list[RankedItem],
+    similar: list[SimilarPrompt],
 ) -> None:
-    if not files:
+    if not files or not similar:
         return
-    rows = conn.execute(
-        """
-        SELECT id, session_id, embedding FROM cr_contexts
-        WHERE kind = 'user_prompt' AND embedding IS NOT NULL
-        ORDER BY created_at DESC LIMIT ?
-        """,
-        (DISMISS_LOOKBACK_PROMPTS,),
-    ).fetchall()
-    if not rows:
-        return
-    q = prompt_embedding.astype(np.float32, copy=False)
-    q = q / (np.linalg.norm(q) + 1e-12)
-
-    similar_session_ids: set[int] = set()
-    for r in rows:
-        v = blob_to_vec(r["embedding"])
-        sim = float(np.dot(q, v / (np.linalg.norm(v) + 1e-12)))
-        if sim >= DISMISS_SIM_THRESHOLD:
-            similar_session_ids.add(int(r["session_id"]))
-    if not similar_session_ids:
-        return
-
+    similar_session_ids = {sp.session_id for sp in similar}
     paths = [it.target for it in files]
     path_ph = ",".join("?" * len(paths))
     sess_ph = ",".join("?" * len(similar_session_ids))

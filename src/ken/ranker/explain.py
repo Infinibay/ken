@@ -31,9 +31,11 @@ def explain(
 ) -> dict[str, Any]:
     from ken.ranker import boosts, channels, merge
 
+    similar = channels.similar_past_sessions(conn, prompt_embedding)
+
     explicit_files, explicit_symbols = channels.explicit_mentions(conn, prompt)
     reactive = channels.reactive_scores(conn, agent_id, current_iteration)
-    predictive = channels.predictive_scores(conn, prompt_embedding)
+    predictive = channels.predictive_scores(conn, similar)
     fuzzy_files, fuzzy_symbols = channels.fuzzy_scores(conn, prompt_embedding)
 
     files = merge.merge_files(explicit_files, reactive, predictive, fuzzy_files)
@@ -46,7 +48,7 @@ def explain(
     boosts.apply_cooc(conn, files)
     post_cooc = {it.target: it.score for it in files}
 
-    boosts.apply_dismissal_penalty(conn, prompt_embedding, files)
+    boosts.apply_dismissal_penalty(conn, files, similar)
     post_dismiss = {it.target: it.score for it in files}
 
     files.sort(reverse=True)

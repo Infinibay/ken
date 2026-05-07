@@ -25,8 +25,11 @@ import sqlite3
 from ken.ranker import RankResult
 
 # Per-level caps. Tuple is (max_files, outline_per_file, max_symbols).
+# Even at verbose=0 we surface up to 2 ranked symbols — explicit-mention
+# symbols often outrank everything and are exactly what the model needs
+# for targeted prompts ("what does Session.expire do?").
 _LEVEL_CAPS: dict[int, tuple[int, int, int]] = {
-    0: (3, 0, 0),
+    0: (3, 0, 2),
     1: (5, 3, 5),
     2: (8, 12, 5),
 }
@@ -44,14 +47,17 @@ def render_block(conn: sqlite3.Connection, result: RankResult, *, verbose: int =
     max_files, outline_n, max_symbols = _LEVEL_CAPS[level]
 
     if level == 0:
-        return _render_terse(result, max_files)
+        return _render_terse(result, max_files, max_symbols)
     return _render_verbose(conn, result, max_files, outline_n, max_symbols, level)
 
 
-def _render_terse(result: RankResult, max_files: int) -> str:
+def _render_terse(result: RankResult, max_files: int, max_symbols: int) -> str:
     lines = ["<context-rank verbose=0>"]
     for it in result.files[:max_files]:
         lines.append(f"{it.target} [{it.score:.1f}] {it.reason}")
+    if max_symbols and result.symbols:
+        for it in result.symbols[:max_symbols]:
+            lines.append(f"  ↳ {it.target} [{it.score:.1f}]")
     lines.append("(Call ken_rank(verbose=1|2) for outlines or to expand.)")
     lines.append("</context-rank>")
     return "\n".join(lines)

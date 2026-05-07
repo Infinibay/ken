@@ -13,6 +13,8 @@ import sqlite3
 import time
 from collections import defaultdict
 from collections.abc import Iterable
+from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 
@@ -44,10 +46,13 @@ EVENT_WEIGHTS = {
     "write": 2.0,
 }
 
-# Pattern → multiplier (matches the Rust port we shipped earlier in
-# this conversation; same constants infinidev uses).
+# Pattern → multiplier. Productivity weight applied on top of the raw
+# event sum. Note that ``cited`` already carries 2.5 in EVENT_WEIGHTS,
+# so we keep its pattern multiplier modest (1.5) — otherwise a single
+# transcript citation would compound to 6.25 (2.5 × 2.5) and tower
+# over read_edit.
 PATTERN_MULTIPLIERS = {
-    "cited": 2.5,
+    "cited": 1.5,
     "read_edit": 2.0,
     "edit_only": 1.5,
     "neutral": 1.0,
@@ -55,6 +60,12 @@ PATTERN_MULTIPLIERS = {
     "read_skipped": 0.3,
     "dismissed": 0.3,
 }
+
+# When pattern is read_repeated we cap raw to a single read's worth
+# *before* applying the multiplier — otherwise N reads → N×0.7 gives
+# higher scores the more confused the session was, contradicting the
+# pattern's intent.
+READ_REPEATED_RAW_CAP = 1.0  # = EVENT_WEIGHTS["read"]
 
 
 def reactive_scores(conn: sqlite3.Connection, agent_id: str, current_iteration: int) -> list[RankedItem]:
@@ -112,7 +123,9 @@ def reactive_scores(conn: sqlite3.Connection, agent_id: str, current_iteration: 
         iteration = int(row["iteration"])
         caller_weight = float(row["weight"])
         base = EVENT_WEIGHTS.get(event_type, 0.0) * caller_weight
-        iter_decay = math.exp(-LAMBDA * (current_iteration - iteration))
+        # Clamp at 0 in case of any race that gave us iteration > current —
+        # exp(positive) would otherwise blow the score up.
+        iter_decay = math.exp(-LAMBDA * max(0, current_iteration - iteration))
         turn_mult = _turn_multiplier(row["context_id"], turn_rank, latest_turn)
         raw[path] += base * iter_decay * turn_mult
         events[path].append(event_type)
@@ -122,7 +135,12 @@ def reactive_scores(conn: sqlite3.Connection, agent_id: str, current_iteration: 
     out: list[RankedItem] = []
     for path, raw_score in raw.items():
         pattern = _classify_pattern(events[path], edited_elsewhere=any(t != path for t in edited_targets))
-        final = raw_score * PATTERN_MULTIPLIERS.get(pattern, 1.0)
+        capped_raw = (
+            min(raw_score, READ_REPEATED_RAW_CAP)
+            if pattern == "read_repeated"
+            else raw_score
+        )
+        final = capped_raw * PATTERN_MULTIPLIERS.get(pattern, 1.0)
         if final > 0.0:
             out.append(RankedItem(target=path, target_type="file", score=final, reason=f"reactive:{pattern}"))
     return out
@@ -171,67 +189,112 @@ def _classify_pattern(events: Iterable[str], *, edited_elsewhere: bool) -> str:
     return "neutral"
 
 
-# ── Channel 2: Predictive ────────────────────────────────────────────
+# ── Similar-prompt search (shared by predictive + dismissal boost) ───
+#
+# Computing cosine similarity over recent user prompts is expensive
+# enough that we want to do it once per rank() and share the result
+# between the predictive channel and the dismissal-penalty boost.
 
-# How many past prompts we sweep for similarity. Past that, the cosine
-# sweep is wasted work — distant matches don't carry useful signal.
 PREDICTIVE_TOP_PROMPTS = 50
-# Cosine threshold below which a past prompt is too dissimilar to count.
-PREDICTIVE_MIN_SIM = 0.45
-# Day-based decay: half-life of ~14 days. Old sessions get less weight.
-PREDICTIVE_DECAY_DAYS = 14.0
-PREDICTIVE_SCALE = 4.0
+SIMILAR_MIN_SIM = 0.45
 
 
-def predictive_scores(conn: sqlite3.Connection, prompt_embedding: np.ndarray) -> list[RankedItem]:
-    """Score files by what past sessions with similar prompts edited / read.
+@dataclass(frozen=True)
+class SimilarPrompt:
+    """A past user_prompt close enough in embedding-space to matter."""
 
-    On a fresh install this is empty (no past prompts yet). It kicks
-    in once the user has accumulated a few sessions.
-    """
+    session_id: int
+    sim: float
+    days_ago: float
+
+
+def similar_past_sessions(
+    conn: sqlite3.Connection,
+    prompt_embedding: np.ndarray,
+    *,
+    top: int = PREDICTIVE_TOP_PROMPTS,
+    threshold: float = SIMILAR_MIN_SIM,
+) -> list[SimilarPrompt]:
     rows = conn.execute(
         """
-        SELECT id, session_id, embedding, created_at
+        SELECT session_id, embedding, created_at
         FROM cr_contexts
         WHERE kind = 'user_prompt' AND embedding IS NOT NULL
         ORDER BY created_at DESC LIMIT ?
         """,
-        (PREDICTIVE_TOP_PROMPTS,),
+        (top,),
     ).fetchall()
     if not rows:
         return []
-
     q = prompt_embedding.astype(np.float32, copy=False)
     q = q / (np.linalg.norm(q) + 1e-12)
+    now_ms = _now_ms(conn)
+    out: list[SimilarPrompt] = []
+    for r in rows:
+        v = blob_to_vec(r["embedding"])
+        sim = float(np.dot(q, v / (np.linalg.norm(v) + 1e-12)))
+        if sim < threshold:
+            continue
+        days_ago = max(0.0, (now_ms - int(r["created_at"])) / (1000 * 60 * 60 * 24))
+        out.append(SimilarPrompt(int(r["session_id"]), sim, days_ago))
+    return out
+
+
+# ── Channel 2: Predictive ────────────────────────────────────────────
+
+PREDICTIVE_DECAY_DAYS = 14.0
+PREDICTIVE_SCALE = 4.0
+# Hard cap so a file co-occurring across many similar past sessions
+# can't dominate fuzzy/reactive (which max out near ~5–6).
+PREDICTIVE_CAP = 6.0
+
+
+def predictive_scores(
+    conn: sqlite3.Connection, similar: list[SimilarPrompt]
+) -> list[RankedItem]:
+    """Score files by what past similar-prompt sessions ended up using.
+
+    *similar* is the precomputed list from :func:`similar_past_sessions`
+    so we don't redo the cosine sweep here. Session scores are pulled
+    in a single grouped fetch; we then iterate per-similar-prompt to
+    accumulate ``sim² × decay × stored_raw_score × pattern_mult``.
+
+    Important: ``cr_session_scores.score`` now stores the *raw*
+    productivity volume from the snapshot (no pattern multiplier
+    applied). The multiplier is applied here at consumption — that way
+    persisted history doesn't double-count when a hot-pattern session
+    feeds future ranks.
+    """
+    if not similar:
+        return []
+    sess_ids = list({sp.session_id for sp in similar})
+    placeholders = ",".join("?" * len(sess_ids))
+    score_rows = conn.execute(
+        f"""
+        SELECT session_id, target_path, score, pattern
+        FROM cr_session_scores
+        WHERE session_id IN ({placeholders})
+          AND target_kind = 'file' AND target_path IS NOT NULL
+        """,
+        sess_ids,
+    ).fetchall()
+    if not score_rows:
+        return []
+    by_session: dict[int, list[Any]] = defaultdict(list)
+    for sr in score_rows:
+        by_session[int(sr["session_id"])].append(sr)
 
     accum: dict[str, float] = defaultdict(float)
-    now_ms = _now_ms(conn)
-
-    for row in rows:
-        v = blob_to_vec(row["embedding"])
-        sim = float(np.dot(q, v / (np.linalg.norm(v) + 1e-12)))
-        if sim < PREDICTIVE_MIN_SIM:
-            continue
-        days_ago = max(0.0, (now_ms - int(row["created_at"])) / (1000 * 60 * 60 * 24))
-        decay = math.exp(-days_ago / PREDICTIVE_DECAY_DAYS)
-        contribution = sim * sim * decay  # sim² rewards confident matches
-        # Pull every target the past session interacted with, weighted by
-        # the session's own pattern multiplier (read_edit etc.).
-        score_rows = conn.execute(
-            """
-            SELECT target_path, score, pattern
-            FROM cr_session_scores
-            WHERE session_id = ? AND target_kind = 'file' AND target_path IS NOT NULL
-            """,
-            (int(row["session_id"]),),
-        ).fetchall()
-        for sr in score_rows:
+    for sp in similar:
+        decay = math.exp(-sp.days_ago / PREDICTIVE_DECAY_DAYS)
+        contribution = sp.sim * sp.sim * decay  # sim² rewards confident matches
+        for sr in by_session.get(sp.session_id, ()):
             mult = PATTERN_MULTIPLIERS.get(sr["pattern"], 1.0)
             accum[sr["target_path"]] += contribution * float(sr["score"]) * mult
 
     out: list[RankedItem] = []
     for path, val in accum.items():
-        score = val * PREDICTIVE_SCALE
+        score = min(PREDICTIVE_CAP, val * PREDICTIVE_SCALE)
         if score > 0:
             out.append(RankedItem(target=path, target_type="file", score=score, reason="predictive"))
     return out
@@ -376,6 +439,13 @@ def fuzzy_scores(
     return file_items, symbol_items
 
 
+def _recency_bump(mtime_ns: int, now_ns: int) -> float:
+    days_old = max(0.0, (now_ns - mtime_ns) / 1e9 / 86_400)
+    if days_old >= FUZZY_RECENCY_DAYS:
+        return 0.0
+    return FUZZY_RECENCY_BUMP * (1.0 - days_old / FUZZY_RECENCY_DAYS)
+
+
 def _fuzzy_files(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
     rows = conn.execute(
         "SELECT path, embedding, mtime FROM ci_files WHERE embedding IS NOT NULL"
@@ -393,11 +463,10 @@ def _fuzzy_files(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
     out: list[RankedItem] = []
     for path, sim, mtime_ns in zip(paths, sims, mtimes):
         sim_raw = float(sim)
-        days_old = max(0.0, (now_ns - mtime_ns) / 1e9 / 86_400)
-        bump = 0.0
-        if days_old < FUZZY_RECENCY_DAYS:
-            bump = FUZZY_RECENCY_BUMP * (1.0 - days_old / FUZZY_RECENCY_DAYS)
-        s = sim_raw + bump
+        bump = _recency_bump(mtime_ns, now_ns)
+        # Clamp to 1.0 — overshoot would push the linear-mapped score
+        # past FUZZY_FILE_SCALE and break the "max ≈ scale" invariant.
+        s = min(1.0, sim_raw + bump)
         if s < FUZZY_FILE_MIN_SIM:
             continue
         score = (s - FUZZY_FILE_MIN_SIM) * FUZZY_FILE_SCALE / (1.0 - FUZZY_FILE_MIN_SIM)
@@ -411,7 +480,8 @@ def _fuzzy_files(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
 def _fuzzy_symbols(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
     rows = conn.execute(
         """
-        SELECT s.qualname, s.name, s.embedding, f.path AS file_path, s.line_start
+        SELECT s.qualname, s.name, s.embedding, s.line_start, f.path AS file_path,
+               f.mtime AS file_mtime
         FROM ci_symbols s
         JOIN ci_files f ON f.id = s.file_id
         WHERE s.embedding IS NOT NULL
@@ -424,15 +494,21 @@ def _fuzzy_symbols(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
     )
     norms = np.linalg.norm(mat, axis=1) + 1e-12
     sims = (mat @ q) / norms
+    now_ns = int(time.time() * 1e9)
 
     out: list[RankedItem] = []
     for r, sim in zip(rows, sims):
-        s = float(sim)
+        sim_raw = float(sim)
+        bump = _recency_bump(int(r["file_mtime"]), now_ns)
+        s = min(1.0, sim_raw + bump)
         if s < FUZZY_SYMBOL_MIN_SIM:
             continue
         # Score similarly to files but a bit tighter and bonused: a hit
         # at sim 0.6 lands at ~3 (vs the file's ~2.7).
         score = (s - FUZZY_SYMBOL_MIN_SIM) * FUZZY_SYMBOL_SCALE / (1.0 - FUZZY_SYMBOL_MIN_SIM) + FUZZY_SYMBOL_BONUS
         target = f"{r['qualname']} ({r['file_path']}:{r['line_start']})"
-        out.append(RankedItem(target=target, target_type="symbol", score=score, reason=f"fuzzy:{s:.2f}"))
+        reason = f"fuzzy:{sim_raw:.2f}"
+        if bump > 0:
+            reason += f"+recent{bump:.2f}"
+        out.append(RankedItem(target=target, target_type="symbol", score=score, reason=reason))
     return out

@@ -51,7 +51,12 @@ class RankedItem:
     reason: str = ""
 
     def __lt__(self, other: "RankedItem") -> bool:
-        return self.score < other.score
+        if self.score != other.score:
+            return self.score < other.score
+        # Stable tiebreak by target. We invert the comparison so that
+        # post-`reverse=True` sort gives ascending alphabetical order
+        # for ties — predictable across runs and platforms.
+        return self.target > other.target
 
 
 @dataclass
@@ -84,9 +89,13 @@ def rank(
     """Run all channels + boosts and return a confidence-gated result."""
     from ken.ranker import boosts, channels, merge
 
+    # One cosine sweep over recent prompts, shared between predictive
+    # (positive evidence) and the dismissal penalty (negative).
+    similar = channels.similar_past_sessions(conn, prompt_embedding)
+
     explicit_files, explicit_symbols = channels.explicit_mentions(conn, prompt)
     reactive = channels.reactive_scores(conn, agent_id, current_iteration)
-    predictive = channels.predictive_scores(conn, prompt_embedding)
+    predictive = channels.predictive_scores(conn, similar)
     fuzzy_files, fuzzy_symbols = channels.fuzzy_scores(conn, prompt_embedding)
 
     files = merge.merge_files(explicit_files, reactive, predictive, fuzzy_files)
@@ -94,7 +103,7 @@ def rank(
 
     boosts.apply_freshness(conn, files)
     boosts.apply_cooc(conn, files)
-    boosts.apply_dismissal_penalty(conn, prompt_embedding, files)
+    boosts.apply_dismissal_penalty(conn, files, similar)
 
     files.sort(reverse=True)
     symbols.sort(reverse=True)
