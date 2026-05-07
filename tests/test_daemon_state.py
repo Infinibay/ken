@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from ken.daemon.server import DaemonState
+from ken.daemon.server import DaemonState, _finalize_active_sessions
 
 
 @pytest.fixture
@@ -88,3 +88,23 @@ def test_invalidate_last_interaction_drops_only_recent(state):
 def test_invalidate_last_interaction_no_session_is_noop(state):
     """Calling for an unknown agent_id shouldn't crash or touch DB."""
     state.invalidate_last_interaction("ghost", "src/a.py")  # no error
+
+
+def test_finalize_active_sessions_snapshots_and_marks_ended(state):
+    state.session_start("a")
+    state.record_interaction("a", "read", "file", target_path="src/a.py")
+    state.record_interaction("a", "edit", "file", target_path="src/a.py", weight=2.0)
+
+    _finalize_active_sessions(state)
+
+    assert state.sessions == {}
+    session = state.conn.execute(
+        "SELECT id, ended_at FROM cr_sessions WHERE agent_id = 'a'"
+    ).fetchone()
+    assert session["ended_at"] is not None
+    scores = state.conn.execute(
+        "SELECT target_path, score FROM cr_session_scores WHERE session_id = ?",
+        (session["id"],),
+    ).fetchall()
+    assert [row["target_path"] for row in scores] == ["src/a.py"]
+    assert scores[0]["score"] > 0

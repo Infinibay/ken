@@ -942,6 +942,7 @@ def run(project_root: Path) -> int:
 
     state.shutdown_event.wait()
     logger.info("ken daemon shutting down")
+    _finalize_active_sessions(state)
     server.shutdown()
     server.server_close()
     file_watcher.stop()
@@ -960,6 +961,14 @@ def _shutdown_watcher(state: DaemonState) -> None:
             logger.info("shutdown trigger: %s", reason)
             state.shutdown_event.set()
             return
+
+
+def _finalize_active_sessions(state: DaemonState) -> None:
+    """Snapshot and close any sessions still active when the daemon exits."""
+    with state.lock:
+        agent_ids = list(state.sessions)
+    for agent_id in agent_ids:
+        _handle_session_end(state, agent_id)
 
 
 def _write_runtime_files(project_root: Path, *, port: int, pid: int) -> None:
