@@ -83,6 +83,14 @@ ranking quality matters immediately, run `ken install . --embed` (or
 `ken install . --claude --codex --embed`) to compute file and symbol embeddings
 up front.
 
+On very large repos, eager full-repo embedding can take a long time. Use
+`--embed-limit N` to eagerly embed only the N highest-priority source files
+while still structurally indexing the whole project:
+
+```fish
+ken install . --embed --embed-limit 5000
+```
+
 This:
 
 - Creates `.ken/{meta.json,ken.db}` (the local index + auth token).

@@ -60,6 +60,12 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="compute file and symbol embeddings during install instead of lazily",
     )
+    p_install.add_argument(
+        "--embed-limit",
+        type=int,
+        default=None,
+        help="with --embed, eagerly embed at most N prioritized files; index the rest structurally",
+    )
 
     p_status = sub.add_parser("status", help="show ken project status")
     p_status.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
@@ -157,6 +163,7 @@ def main(argv: list[str] | None = None) -> int:
             force_claude=args.claude,
             force_codex=args.codex,
             embed=args.embed,
+            embed_limit=args.embed_limit,
         )
         return 0
 

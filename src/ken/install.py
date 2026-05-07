@@ -43,6 +43,31 @@ CLAUDE_SETTINGS = ".claude/settings.json"
 MCP_SETTINGS = ".mcp.json"
 CODEX_HOOKS_FILE = ".codex/hooks.json"
 CODEX_CONFIG_FILE = ".codex/config.toml"
+EMBED_PRIORITY_SUFFIXES = {
+    ".py",
+    ".rs",
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx",
+    ".go",
+    ".java",
+    ".c",
+    ".h",
+}
+LOW_PRIORITY_PARTS = {
+    ".github",
+    "docs",
+    "doc",
+    "documentation",
+    "examples",
+    "fixtures",
+    "samples",
+    "test",
+    "tests",
+    "tools",
+    "vendor",
+}
 
 
 @dataclass
@@ -62,9 +87,12 @@ def install(
     force_claude: bool = False,
     force_codex: bool = False,
     embed: bool = False,
+    embed_limit: int | None = None,
 ) -> InstallResult:
     """Install ken into *project_path*.  Prints progress to stdout."""
     del force_claude  # Claude wiring is currently always enabled; flag is for CLI symmetry.
+    if embed_limit is not None and embed_limit < 0:
+        raise SystemExit("error: --embed-limit must be >= 0")
     root = project_path.resolve()
     if not root.is_dir():
         raise SystemExit(f"error: not a directory: {root}")
@@ -138,7 +166,28 @@ def install(
             elif status.startswith("skipped:"):
                 print(f"  ! {rel}  ({status[len('skipped:'):]})")
 
-        stats = index_files(conn, root, rels, on_progress=progress, embedder=embedder)
+        if embedder is not None and embed_limit is not None and embed_limit < len(rels):
+            embed_rels = _prioritize_embed_rels(rels)[:embed_limit]
+            embed_set = set(embed_rels)
+            rest = [rel for rel in rels if rel not in embed_set]
+            if verbose:
+                print(
+                    f"[index] embedding limited to {len(embed_rels)} prioritized files; "
+                    f"{len(rest)} files indexed structurally"
+                )
+            stats = index_files(conn, root, embed_rels, on_progress=progress, embedder=embedder)
+            rest_stats = index_files(conn, root, rest, on_progress=progress, embedder=None)
+            stats.visited += rest_stats.visited
+            stats.parsed += rest_stats.parsed
+            stats.unchanged += rest_stats.unchanged
+            stats.skipped_no_lang += rest_stats.skipped_no_lang
+            stats.skipped_too_large += rest_stats.skipped_too_large
+            stats.skipped_io_error += rest_stats.skipped_io_error
+            stats.symbols += rest_stats.symbols
+            stats.imports += rest_stats.imports
+            stats.elapsed_s += rest_stats.elapsed_s
+        else:
+            stats = index_files(conn, root, rels, on_progress=progress, embedder=embedder)
         if verbose:
             print()
             print(
@@ -187,6 +236,31 @@ def _ensure_gitignore(root: Path, *, verbose: bool) -> None:
         fh.write(appended)
     if verbose:
         print(f"[gitignore] appended `{line}` to .gitignore")
+
+
+def _prioritize_embed_rels(rels: list[Path]) -> list[Path]:
+    """Order files for bounded eager embedding.
+
+    The goal is not perfect semantic selection; it is a cheap cold-start
+    heuristic that spends the limited embedding budget on source files an
+    agent is most likely to edit or inspect first.
+    """
+    return sorted(rels, key=_embed_priority_key)
+
+
+def _embed_priority_key(rel: Path) -> tuple[int, int, int, str]:
+    parts = {part.lower() for part in rel.parts}
+    suffix = rel.suffix.lower()
+    is_code = suffix in EMBED_PRIORITY_SUFFIXES
+    low_priority = bool(parts & LOW_PRIORITY_PARTS)
+    # Shorter source paths tend to be core modules; generated/vendor/docs
+    # trees often sit deeper and are less useful for first-turn retrieval.
+    return (
+        0 if is_code else 1,
+        1 if low_priority else 0,
+        len(rel.parts),
+        rel.as_posix(),
+    )
 
 
 def _wire_claude_hooks(root: Path, *, verbose: bool) -> None:
