@@ -35,7 +35,10 @@ from pathlib import Path
 from typing import Any
 
 from ken import _paths
+from ken.daemon.index_queue import IndexQueue
+from ken.daemon.watcher import FileWatcher
 from ken.db import connect, init_schema, set_meta
+from ken.gitignore_filter import iter_files
 
 # How long without ANY HTTP activity before we exit. The user's directive
 # was "claude should kill it on close, otherwise 10 minutes" — this is the
@@ -400,13 +403,28 @@ def run(project_root: Path) -> int:
         bound_port,
     )
 
-    # Background watcher thread: checks empty/idle every SHUTDOWN_TICK_S
-    # and triggers shutdown_event when it's time to exit.
-    watcher = threading.Thread(target=_shutdown_watcher, args=(state,), daemon=True)
-    watcher.start()
+    # Index queue + file watcher run in their own threads with their own
+    # SQLite connections. We start the queue first so the watcher's first
+    # events have a worker to hand off to.
+    index_queue = IndexQueue(project_root)
+    index_queue.start()
 
-    # Server loop in its own thread so the main thread can wait on the
-    # shutdown event (handler-driven /shutdown also triggers it).
+    file_watcher = FileWatcher(project_root, index_queue)
+    file_watcher.start()
+
+    # Warm pass: enqueue every gitignore-respecting file. The indexer
+    # short-circuits on content_hash so this is cheap on a clean DB —
+    # but it catches anything that changed while the daemon was dead
+    # (between sessions, after a `git pull`, …).
+    warm_count = 0
+    for rel in iter_files(project_root):
+        index_queue.reindex(rel.as_posix())
+        warm_count += 1
+    logger.info("warm pass: queued %s files for hash-skip / reindex", warm_count)
+
+    # Idle/empty shutdown watcher and the HTTP serve loop.
+    sd_watcher = threading.Thread(target=_shutdown_watcher, args=(state,), daemon=True)
+    sd_watcher.start()
     serve_thread = threading.Thread(target=server.serve_forever, daemon=True)
     serve_thread.start()
 
@@ -414,6 +432,8 @@ def run(project_root: Path) -> int:
     logger.info("ken daemon shutting down")
     server.shutdown()
     server.server_close()
+    file_watcher.stop()
+    index_queue.stop()
     state.conn.close()
     _clear_runtime_files(project_root)
     return 0

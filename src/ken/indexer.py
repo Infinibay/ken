@@ -158,6 +158,17 @@ def index_files(
     return stats
 
 
+def delete_file(conn: sqlite3.Connection, rel: str) -> bool:
+    """Drop a file from the index (cascades to symbols / imports / refs).
+
+    Returns True if a row was actually deleted.  Used by the watcher when
+    a file disappears from disk.
+    """
+    with conn:
+        cur = conn.execute("DELETE FROM ci_files WHERE path = ?", (rel,))
+        return cur.rowcount > 0
+
+
 def _hash(data: bytes) -> bytes:
     return hashlib.blake2b(data, digest_size=32).digest()
 
