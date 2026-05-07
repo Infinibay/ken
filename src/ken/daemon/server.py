@@ -87,7 +87,16 @@ class DaemonState:
                 (agent_id, now_ms),
             )
             pk = int(cur.lastrowid or 0)
-            self.sessions[agent_id] = {"pk": pk, "iter": 0, "started_at": now_ms}
+            self.sessions[agent_id] = {
+                "pk": pk,
+                "iter": 0,
+                "started_at": now_ms,
+                # Anchor for the turn currently being recorded — the most
+                # recent user_prompt's context_id. NULL until the first
+                # prompt arrives. Tool calls between prompts inherit this
+                # so the ranker can apply per-turn decay.
+                "last_prompt_context_id": None,
+            }
             self.empty_since = None
             self._touch()
             return pk
@@ -131,7 +140,12 @@ class DaemonState:
             (agent_id, now_ms),
         )
         pk = int(cur.lastrowid or 0)
-        self.sessions[agent_id] = {"pk": pk, "iter": 0, "started_at": now_ms}
+        self.sessions[agent_id] = {
+            "pk": pk,
+            "iter": 0,
+            "started_at": now_ms,
+            "last_prompt_context_id": None,
+        }
         return pk
 
     # ---------- recording events --------------------------------------
@@ -143,8 +157,11 @@ class DaemonState:
         content: str,
         *,
         embed: bool = False,
-    ) -> None:
+    ) -> int:
         """Insert a cr_contexts row, optionally with the content embedding.
+
+        Returns the inserted ``context_id`` so callers (notably
+        ``_handle_prompt``) can correlate later events with this one.
 
         We embed *outside* the lock — fastembed is the slow step (5-50ms
         cold) and we don't want to hold the SQLite lock that long. The
@@ -153,6 +170,11 @@ class DaemonState:
         ``embed`` is opt-in because most contexts (tool_call_pre, etc.)
         don't need to be searchable; only user prompts and assistant
         messages drive predictive ranking.
+
+        For ``kind == "user_prompt"`` we update the session's
+        ``last_prompt_context_id`` so that subsequent tool-call
+        interactions inherit it as their turn anchor. The ranker then
+        weights interactions by how many turns ago they happened.
         """
         session_pk, iteration = self.next_iteration(agent_id)
         emb_blob: bytes | None = None
@@ -163,12 +185,18 @@ class DaemonState:
             except Exception:  # pragma: no cover
                 logger.exception("context embedding failed; storing without")
         with self.lock:
-            self.conn.execute(
+            cur = self.conn.execute(
                 "INSERT INTO cr_contexts(session_id, kind, content, iteration, embedding, created_at) "
                 "VALUES (?, ?, ?, ?, ?, ?)",
                 (session_pk, kind, content, iteration, emb_blob, int(time.time() * 1000)),
             )
+            ctx_id = int(cur.lastrowid or 0)
+            if kind == "user_prompt":
+                sess = self.sessions.get(agent_id)
+                if sess is not None:
+                    sess["last_prompt_context_id"] = ctx_id
             self._touch()
+            return ctx_id
 
     def record_interaction(
         self,
@@ -182,11 +210,14 @@ class DaemonState:
     ) -> None:
         session_pk, iteration = self.next_iteration(agent_id)
         with self.lock:
+            anchor_id = (self.sessions.get(agent_id) or {}).get("last_prompt_context_id")
             self.conn.execute(
-                "INSERT INTO cr_interactions(session_id, iteration, event_type, target_kind, "
-                "target_id, target_path, weight, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO cr_interactions(session_id, context_id, iteration, event_type, "
+                "target_kind, target_id, target_path, weight, created_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     session_pk,
+                    anchor_id,
                     iteration,
                     event_type,
                     target_kind,

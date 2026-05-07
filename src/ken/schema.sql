@@ -102,6 +102,10 @@ CREATE TABLE IF NOT EXISTS cr_interactions (
 );
 CREATE INDEX IF NOT EXISTS idx_cr_interactions_session ON cr_interactions(session_id);
 CREATE INDEX IF NOT EXISTS idx_cr_interactions_target_path ON cr_interactions(target_path);
+-- Lookup interactions by their anchoring user_prompt — the reactive
+-- channel groups by turn (= context_id of the user_prompt that started
+-- the turn) to apply per-turn decay on top of iteration decay.
+CREATE INDEX IF NOT EXISTS idx_cr_interactions_context ON cr_interactions(context_id) WHERE context_id IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS cr_session_scores (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,

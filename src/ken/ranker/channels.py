@@ -22,6 +22,14 @@ from ken.ranker import RankedItem
 LAMBDA = 0.15            # per-iteration decay rate (half-life ≈ 4.6 iters)
 WINDOW_ITERATIONS = 30   # cap how far back we pull events from
 
+# Per-turn decay applied on top of per-iteration decay. Each turn = one
+# user→assistant ping-pong. Tool calls anchored to the just-finished
+# turn (distance 1) keep full weight; one turn earlier gets 0.5×, two
+# turns earlier 0.25×, etc. Aggressive on purpose — captures the
+# user's directive to make recent prompts dominate older ones, even
+# when older turns produced more raw events.
+TURN_DECAY = 0.5
+
 # Per-event base weights. Mirrors infinidev / our own Rust port.
 EVENT_WEIGHTS = {
     "retrieved": 0.5,
@@ -50,21 +58,46 @@ PATTERN_MULTIPLIERS = {
 def reactive_scores(conn: sqlite3.Connection, agent_id: str, current_iteration: int) -> list[RankedItem]:
     """Score files/symbols by what THIS session is touching.
 
-    Decays old events exponentially; classifies the per-target event
-    sequence into a productivity pattern; multiplies by the pattern.
-    Drops final scores ≤ 0 (Dismissed clamps out, ReadSkipped barely
-    dampens).
+    Two stacked decays:
+
+    * **Per iteration**: ``exp(-λ·Δi)`` — events older than ~5 iterations
+      lose half their weight. Catches fine-grained "this just happened"
+      vs "this happened a few tool calls ago".
+    * **Per turn** (= ping-pong with the user): tool calls anchored to
+      the just-finished turn keep full weight; each prior turn applies
+      another ``TURN_DECAY`` factor. Reflects that the user's intent
+      shifts with each new prompt.
+
+    Productivity pattern then multiplies (Dismissed → 0.3×,
+    ReadSkipped → 0.3× when session edited elsewhere, ReadEdit → 2.0×,
+    etc.). Final scores ≤ 0 are dropped.
     """
+    session_row = conn.execute(
+        "SELECT id FROM cr_sessions WHERE agent_id = ?", (agent_id,)
+    ).fetchone()
+    if session_row is None:
+        return []
+    session_pk = int(session_row["id"])
+
+    # Build the turn map: ordered user_prompt context_ids in this session,
+    # 1-indexed by chronological order. The most recent prompt is the one
+    # we just inserted via record_context — its rank == len(rank_map).
+    prompt_rows = conn.execute(
+        "SELECT id FROM cr_contexts WHERE session_id = ? AND kind = 'user_prompt' ORDER BY id",
+        (session_pk,),
+    ).fetchall()
+    turn_rank: dict[int, int] = {int(r["id"]): i for i, r in enumerate(prompt_rows, start=1)}
+    latest_turn = len(prompt_rows)
+
     min_iter = max(0, current_iteration - WINDOW_ITERATIONS)
     rows = conn.execute(
         """
-        SELECT i.event_type, i.target_path, i.iteration, i.weight
+        SELECT i.event_type, i.target_path, i.iteration, i.weight, i.context_id
         FROM cr_interactions i
-        JOIN cr_sessions s ON s.id = i.session_id
-        WHERE s.agent_id = ? AND i.iteration >= ?
+        WHERE i.session_id = ? AND i.iteration >= ?
           AND i.target_kind = 'file' AND i.target_path IS NOT NULL
         """,
-        (agent_id, min_iter),
+        (session_pk, min_iter),
     ).fetchall()
 
     raw: dict[str, float] = defaultdict(float)
@@ -77,8 +110,9 @@ def reactive_scores(conn: sqlite3.Connection, agent_id: str, current_iteration: 
         iteration = int(row["iteration"])
         caller_weight = float(row["weight"])
         base = EVENT_WEIGHTS.get(event_type, 0.0) * caller_weight
-        decayed = base * math.exp(-LAMBDA * (current_iteration - iteration))
-        raw[path] += decayed
+        iter_decay = math.exp(-LAMBDA * (current_iteration - iteration))
+        turn_mult = _turn_multiplier(row["context_id"], turn_rank, latest_turn)
+        raw[path] += base * iter_decay * turn_mult
         events[path].append(event_type)
         if event_type in {"edit", "edited"}:
             edited_targets.add(path)
@@ -90,6 +124,27 @@ def reactive_scores(conn: sqlite3.Connection, agent_id: str, current_iteration: 
         if final > 0.0:
             out.append(RankedItem(target=path, target_type="file", score=final, reason=f"reactive:{pattern}"))
     return out
+
+
+def _turn_multiplier(context_id: int | None, turn_rank: dict[int, int], latest_turn: int) -> float:
+    """Per-turn decay factor for an interaction.
+
+    * NULL context_id (event with no anchor — happens before the first
+      prompt or in legacy data) → no per-turn adjustment (1.0).
+    * Anchor unknown to the turn map → also 1.0; treated as
+      "neutral" rather than penalising what we can't classify.
+    * Otherwise: distance = ``latest_turn - anchor_turn`` ≥ 0.
+      ``distance == 0`` means the event was attached to the prompt
+      we're ranking *for* (rare, only if /prompts and a tool call
+      raced) — treat as the just-finished turn (distance 1).
+    """
+    if context_id is None:
+        return 1.0
+    anchor_turn = turn_rank.get(int(context_id))
+    if anchor_turn is None:
+        return 1.0
+    distance = max(1, latest_turn - anchor_turn)
+    return TURN_DECAY ** (distance - 1)
 
 
 def _classify_pattern(events: Iterable[str], *, edited_elsewhere: bool) -> str:
