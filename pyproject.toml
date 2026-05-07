@@ -11,6 +11,11 @@ dependencies = [
     "tree-sitter-python>=0.23",
     "pathspec>=0.12",
     "watchfiles>=0.22",
+    # fastembed brings ONNX Runtime + a managed all-MiniLM-L6-v2 download
+    # (~25 MB cached in ~/.cache/fastembed on first use). 384-dim, fast on
+    # CPU; same model infinidev runs in production.
+    "fastembed>=0.5",
+    "numpy>=1.26",
 ]
 
 [project.scripts]

@@ -38,6 +38,7 @@ from ken import _paths
 from ken.daemon.index_queue import IndexQueue
 from ken.daemon.watcher import FileWatcher
 from ken.db import connect, init_schema, set_meta
+from ken.embedder import get_embedder, vec_to_blob
 from ken.gitignore_filter import iter_files
 
 # How long without ANY HTTP activity before we exit. The user's directive
@@ -140,13 +141,32 @@ class DaemonState:
         agent_id: str,
         kind: str,
         content: str,
+        *,
+        embed: bool = False,
     ) -> None:
+        """Insert a cr_contexts row, optionally with the content embedding.
+
+        We embed *outside* the lock — fastembed is the slow step (5-50ms
+        cold) and we don't want to hold the SQLite lock that long. The
+        embedder itself is thread-safe (its own internal lock).
+
+        ``embed`` is opt-in because most contexts (tool_call_pre, etc.)
+        don't need to be searchable; only user prompts and assistant
+        messages drive predictive ranking.
+        """
         session_pk, iteration = self.next_iteration(agent_id)
+        emb_blob: bytes | None = None
+        if embed and content.strip():
+            try:
+                vec = get_embedder().embed_query(content)
+                emb_blob = vec_to_blob(vec)
+            except Exception:  # pragma: no cover
+                logger.exception("context embedding failed; storing without")
         with self.lock:
             self.conn.execute(
-                "INSERT INTO cr_contexts(session_id, kind, content, iteration, created_at) "
-                "VALUES (?, ?, ?, ?, ?)",
-                (session_pk, kind, content, iteration, int(time.time() * 1000)),
+                "INSERT INTO cr_contexts(session_id, kind, content, iteration, embedding, created_at) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (session_pk, kind, content, iteration, emb_blob, int(time.time() * 1000)),
             )
             self._touch()
 
@@ -244,7 +264,7 @@ class _Handler(BaseHTTPRequestHandler):
                 self._respond(200, {"ok": True})
             elif self.path == "/prompts":
                 content = str(payload.get("prompt", ""))
-                st.record_context(payload["session_id"], "user_prompt", content)
+                st.record_context(payload["session_id"], "user_prompt", content, embed=True)
                 # Phase 5 will compute the actual ranking. For now, no
                 # injection — the hook prints nothing extra to stdout.
                 self._respond(200, {"ok": True, "context_block": ""})
@@ -406,7 +426,11 @@ def run(project_root: Path) -> int:
     # Index queue + file watcher run in their own threads with their own
     # SQLite connections. We start the queue first so the watcher's first
     # events have a worker to hand off to.
-    index_queue = IndexQueue(project_root)
+    #
+    # The embedder is the *singleton* — `get_embedder()` returns the same
+    # instance the request handlers use for cr_contexts embeddings, so we
+    # only pay one model-load cost per process.
+    index_queue = IndexQueue(project_root, embedder=get_embedder())
     index_queue.start()
 
     file_watcher = FileWatcher(project_root, index_queue)

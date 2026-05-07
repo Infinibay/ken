@@ -8,10 +8,12 @@ The pipeline per file:
      (no symbols, but the file row is created so context-rank can score
      it via path / mtime even without parsing).
   4. Run the parser, persist file + symbols + imports atomically.
+  5. If an embedder was supplied, embed every symbol (one batch per
+     file) plus the file as a whole, store as float32 BLOB.
 
-Embeddings are *not* computed here — the indexer's job is structure
-only.  The daemon's embedder pass (next phase) walks rows where
-`embedding IS NULL` and fills them in.
+Callers that don't pass an embedder (e.g. `ken install` on a slow
+laptop) get structural-only indexing; the daemon's IndexQueue passes
+its lazy embedder so live edits get embeddings on the spot.
 """
 
 from __future__ import annotations
@@ -22,8 +24,12 @@ import time
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from ken.parsers import detect_language
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ken.embedder import Embedder
 
 PARSER_VERSION = 1
 
@@ -48,6 +54,7 @@ def index_files(
     *,
     max_file_bytes: int = 1024 * 1024,
     on_progress=None,
+    embedder: "Embedder | None" = None,
 ) -> IndexStats:
     """Index every relative path in *rels* into *conn*.
 
@@ -105,7 +112,7 @@ def index_files(
             continue
 
         content_hash = _hash(data)
-        if _is_unchanged(conn, rel_posix, content_hash):
+        if _is_unchanged(conn, rel_posix, content_hash, need_embedding=embedder is not None):
             stats.unchanged += 1
             if on_progress:
                 on_progress(rel_posix, "unchanged")
@@ -119,6 +126,25 @@ def index_files(
                 on_progress(rel_posix, "skipped:parse_error")
             continue
 
+        # Compute embeddings *outside* the transaction — fastembed can
+        # take tens of ms on a cold session, and we don't want to hold
+        # the SQLite write lock that long.
+        symbol_blobs: list[bytes | None] = [None] * len(parsed.symbols)
+        file_blob: bytes | None = None
+        if embedder is not None:
+            from ken.embedder import embed_file_text, embed_symbol_text, vec_to_blob
+
+            if parsed.symbols:
+                texts = [
+                    embed_symbol_text(s.kind, s.name, s.docstring) for s in parsed.symbols
+                ]
+                vecs = embedder.embed_passages(texts)
+                symbol_blobs = [vec_to_blob(v) for v in vecs]
+            stem = Path(rel_posix).stem
+            top_names = [s.name for s in parsed.symbols[:8]]
+            file_text = embed_file_text(language, stem, top_names)
+            file_blob = vec_to_blob(embedder.embed_query(file_text))
+
         with conn:  # implicit BEGIN/COMMIT around the whole file write
             file_id = _upsert_file_row(
                 conn,
@@ -127,6 +153,7 @@ def index_files(
                 content_hash=content_hash,
                 mtime_ns=st.st_mtime_ns,
                 symbol_count=len(parsed.symbols),
+                embedding=file_blob,
             )
             # Wipe and re-insert symbols/imports for this file. Cheap:
             # CASCADE drops references too, and the file's symbols are
@@ -135,11 +162,20 @@ def index_files(
             conn.execute("DELETE FROM ci_imports WHERE from_file_id = ?", (file_id,))
             if parsed.symbols:
                 conn.executemany(
-                    "INSERT INTO ci_symbols(file_id, kind, name, qualname, line_start, line_end, docstring) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO ci_symbols(file_id, kind, name, qualname, line_start, line_end, docstring, embedding) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                     [
-                        (file_id, s.kind, s.name, s.qualname, s.line_start, s.line_end, s.docstring)
-                        for s in parsed.symbols
+                        (
+                            file_id,
+                            s.kind,
+                            s.name,
+                            s.qualname,
+                            s.line_start,
+                            s.line_end,
+                            s.docstring,
+                            symbol_blobs[i],
+                        )
+                        for i, s in enumerate(parsed.symbols)
                     ],
                 )
             if parsed.imports:
@@ -173,14 +209,33 @@ def _hash(data: bytes) -> bytes:
     return hashlib.blake2b(data, digest_size=32).digest()
 
 
-def _is_unchanged(conn: sqlite3.Connection, rel: str, content_hash: bytes) -> bool:
+def _is_unchanged(
+    conn: sqlite3.Connection,
+    rel: str,
+    content_hash: bytes,
+    *,
+    need_embedding: bool,
+) -> bool:
+    """A row is unchanged iff hash + parser match.
+
+    With ``need_embedding=True``, we additionally require the row's
+    ``embedding`` column to be populated. This lets the daemon's warm
+    pass (running with an embedder) re-process files that were
+    structurally indexed by ``ken install`` (no embedder) without
+    forcing the user to wait for fastembed during the install.
+    """
     row = conn.execute(
-        "SELECT content_hash, parser_version FROM ci_files WHERE path = ?",
+        "SELECT content_hash, parser_version, embedding IS NOT NULL AS has_emb "
+        "FROM ci_files WHERE path = ?",
         (rel,),
     ).fetchone()
     if not row:
         return False
-    return row["content_hash"] == content_hash and row["parser_version"] == PARSER_VERSION
+    if row["content_hash"] != content_hash or row["parser_version"] != PARSER_VERSION:
+        return False
+    if need_embedding and not row["has_emb"]:
+        return False
+    return True
 
 
 def _upsert_file_row(
@@ -191,19 +246,21 @@ def _upsert_file_row(
     content_hash: bytes,
     mtime_ns: int,
     symbol_count: int,
+    embedding: bytes | None = None,
 ) -> int:
     now_ms = int(time.time() * 1000)
     conn.execute(
-        "INSERT INTO ci_files(path, language, content_hash, parser_version, symbol_count, mtime, indexed_at) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?) "
+        "INSERT INTO ci_files(path, language, content_hash, parser_version, symbol_count, mtime, indexed_at, embedding) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?) "
         "ON CONFLICT(path) DO UPDATE SET "
         "  language = excluded.language, "
         "  content_hash = excluded.content_hash, "
         "  parser_version = excluded.parser_version, "
         "  symbol_count = excluded.symbol_count, "
         "  mtime = excluded.mtime, "
-        "  indexed_at = excluded.indexed_at",
-        (rel, language, content_hash, PARSER_VERSION, symbol_count, mtime_ns, now_ms),
+        "  indexed_at = excluded.indexed_at, "
+        "  embedding = excluded.embedding",
+        (rel, language, content_hash, PARSER_VERSION, symbol_count, mtime_ns, now_ms, embedding),
     )
     row = conn.execute("SELECT id FROM ci_files WHERE path = ?", (rel,)).fetchone()
     return int(row["id"])

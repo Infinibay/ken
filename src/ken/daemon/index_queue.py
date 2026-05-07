@@ -31,6 +31,9 @@ from ken import _paths
 from ken.db import connect
 from ken.indexer import IndexStats, delete_file, index_files
 
+if False:  # TYPE_CHECKING-only — avoid heavy fastembed import at queue start
+    from ken.embedder import Embedder
+
 logger = logging.getLogger("ken.queue")
 
 Action = Literal["reindex", "delete"]
@@ -47,9 +50,16 @@ class _Event:
 class IndexQueue:
     """Thread-safe queue + worker for incremental reindexing."""
 
-    def __init__(self, project_root: Path, *, on_batch: Callable[[IndexStats, int], None] | None = None) -> None:
+    def __init__(
+        self,
+        project_root: Path,
+        *,
+        embedder: "Embedder | None" = None,
+        on_batch: Callable[[IndexStats, int], None] | None = None,
+    ) -> None:
         self.project_root = project_root.resolve()
         self._on_batch = on_batch
+        self._embedder = embedder
         self._queue: queue.Queue[_Event | None] = queue.Queue()
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
@@ -130,7 +140,13 @@ class IndexQueue:
                 deleted += 1
         stats = IndexStats()
         if reindex_paths:
-            stats = index_files(self._conn, self.project_root, reindex_paths, on_progress=None)
+            stats = index_files(
+                self._conn,
+                self.project_root,
+                reindex_paths,
+                on_progress=None,
+                embedder=self._embedder,
+            )
         if deleted or stats.parsed or stats.unchanged:
             logger.info(
                 "indexed batch parsed=%s unchanged=%s deleted=%s no-parser=%s",
