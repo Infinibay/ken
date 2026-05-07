@@ -1,10 +1,11 @@
 # ken
 
-Per-project context-rank index for [Claude Code](https://claude.com/claude-code).
-Local SQLite, local daemon, no network. Indexes your codebase, watches it for
-changes, and feeds Claude a ranked `<context-rank>` block on every prompt —
-based on what you've been touching this session, what was useful in past
-similar sessions, and what looks semantically relevant to the current request.
+Per-project context-rank index for [Claude Code](https://claude.com/claude-code)
+and [Codex CLI](https://developers.openai.com/codex/cli). Local SQLite, local
+daemon, no network. Indexes your codebase, watches it for changes, and feeds
+the model a ranked `<context-rank>` block on every prompt — based on what
+you've been touching this session, what was useful in past similar sessions,
+and what looks semantically relevant to the current request.
 
 ## Why
 
@@ -60,13 +61,25 @@ This:
 
 - Creates `.ken/{meta.json,ken.db}` (the local index + auth token).
 - Adds `.ken/` to `.gitignore` (if you have one).
-- Writes hooks into `.claude/settings.json` (`UserPromptSubmit`, `PreToolUse`,
-  `PostToolUse`, `SessionStart`, `SessionEnd`, `Stop`).
-- Registers ken's MCP server in `.mcp.json` (exposes `ken_rank`,
+- Writes hooks into `.claude/settings.json` (Claude Code) and
+  `.codex/hooks.json` (Codex CLI), covering `UserPromptSubmit`,
+  `PreToolUse`, `PostToolUse`, `SessionStart`, `Stop`, and
+  `SessionEnd` (Claude only — Codex relies on the daemon's idle timeout).
+- Registers ken's MCP server in `.mcp.json` (Claude Code) and
+  `.codex/config.toml` (Codex CLI). Exposes `ken_rank`,
   `ken_search_files`, `ken_search_symbols`, `ken_recall`, `ken_remember`,
-  `ken_dismiss`, `ken_explain_rank`).
+  `ken_dismiss`, `ken_explain_rank`.
 - Runs the initial code index (parser-only, ~10s for medium projects;
   embeddings are computed lazily by the daemon on first prompt).
+
+**Codex trust note**: Codex won't load project-local hooks until you
+mark the project as trusted. Either run `codex` once in the project
+and approve the prompt, or add this to `~/.codex/config.toml`:
+
+```toml
+[projects."/abs/path/to/my-project"]
+trust_level = "trusted"
+```
 
 Idempotent — re-running on an installed project re-applies the schema (noop),
 re-merges hooks (dedup), and incrementally re-indexes (unchanged files
@@ -74,11 +87,13 @@ short-circuit on hash).
 
 ## Use it
 
-Just open Claude Code in the project:
+Open either CLI in the project:
 
 ```fish
 cd my-project
-claude
+claude       # Claude Code
+# or
+codex        # Codex CLI
 ```
 
 The hooks fire automatically:
@@ -146,7 +161,9 @@ src/ken/
   embedder/           # ONNX MiniLM-L6-v2 (384d) via fastembed
   indexer.py          # File hashing, parsing, persistence
   mcp/server.py       # MCP stdio server with 7 tools
-  hook.py             # `ken hook ...` shim invoked by Claude Code
+  hook.py             # `ken hook ...` shim invoked by Claude Code / Codex
+  hooks_template.py   # `.claude/settings.json` merge logic
+  codex_hooks_template.py  # `.codex/hooks.json` + `[mcp_servers.ken]` merge
   schema.sql          # SQLite schema (cr_*, ci_*)
 tests/                # 171 tests, ~0.5s suite
 ```
@@ -176,7 +193,8 @@ Phase 6 complete and validated on real projects:
 - ✅ Ranker (4 channels + 3 boosts + confidence gate)
 - ✅ Verbose-level rendering + per-turn decay
 - ✅ MCP server (7 tools)
-- ✅ Test suite (171 tests, ranker math fully covered)
+- ✅ Claude Code + Codex CLI integration (hooks + MCP)
+- ✅ Test suite (183 tests, ranker math + Codex template fully covered)
 - ✅ End-to-end benchmark: 24-35% token cost reduction on realistic tasks
 
 The Rust+Postgres prototype lives at the [`legacy-rust`](https://github.com/Infinibay/ken/tree/legacy-rust) tag.

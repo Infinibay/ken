@@ -61,7 +61,14 @@ def dispatch_hook(args: argparse.Namespace) -> int:
             phase_path = "/tools/pre" if args.phase == "pre" else "/tools/post"
             client.post(root, phase_path, _tool_call_body(session_id, args.phase, payload))
         elif args.hook_cmd == "stop":
-            assistant_text = _extract_last_assistant_text(payload.get("transcript_path"))
+            # Codex passes ``last_assistant_message`` directly in the
+            # payload; Claude Code passes a ``transcript_path`` we tail-
+            # read. Prefer the direct field when present.
+            direct = payload.get("last_assistant_message")
+            if isinstance(direct, str) and direct:
+                assistant_text = direct
+            else:
+                assistant_text = _extract_last_assistant_text(payload.get("transcript_path"))
             client.post(
                 root,
                 "/turn-end",

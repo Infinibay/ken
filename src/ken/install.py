@@ -32,6 +32,8 @@ from ken.indexer import index_files
 
 CLAUDE_SETTINGS = ".claude/settings.json"
 MCP_SETTINGS = ".mcp.json"
+CODEX_HOOKS_FILE = ".codex/hooks.json"
+CODEX_CONFIG_FILE = ".codex/config.toml"
 
 
 @dataclass
@@ -90,6 +92,10 @@ def install(project_path: Path, *, verbose: bool = True) -> InstallResult:
         # Step 4b: MCP server registration.
         _wire_mcp(root, verbose=verbose)
 
+        # Step 4c: Codex CLI hooks + MCP. Same role as 4 + 4b for the
+        # other CLI we support.
+        _wire_codex(root, verbose=verbose)
+
         # Step 5: initial index.
         if verbose:
             print("[index] walking project (respecting .gitignore)…")
@@ -125,6 +131,9 @@ def install(project_path: Path, *, verbose: bool = True) -> InstallResult:
         print()
         print(f"✓ ken installed in {root}")
         print(f"  next: cd {root} && claude")
+        print(f"        (Codex users: open {root} with `codex` and approve")
+        print(f"         project trust, OR add `[projects.\"{root}\"]`")
+        print(f"         `trust_level = \"trusted\"` to ~/.codex/config.toml)")
 
     return InstallResult(
         project_root=root,
@@ -172,6 +181,54 @@ def _wire_claude_hooks(root: Path, *, verbose: bool) -> None:
             print(f"[hooks] wired {', '.join(touched)} into {CLAUDE_SETTINGS}")
         else:
             print(f"[hooks] {CLAUDE_SETTINGS} already had ken hooks — left alone")
+
+
+def _wire_codex(root: Path, *, verbose: bool) -> None:
+    """Wire Codex CLI hooks (`.codex/hooks.json`) + MCP (`.codex/config.toml`).
+
+    Project-local Codex hooks only fire if the user has marked the
+    project as trusted in their user-level config — we print an
+    instruction at the end of install rather than auto-editing
+    ``~/.codex/config.toml``.
+    """
+    from ken.codex_hooks_template import (
+        append_ken_mcp_block,
+        has_ken_mcp_block,
+        merge_codex_hooks,
+        write_codex_hooks,
+    )
+
+    hooks_p = root / CODEX_HOOKS_FILE
+    existing: dict | None = None
+    if hooks_p.is_file():
+        try:
+            existing = json.loads(hooks_p.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            print(
+                f"[codex] {hooks_p} is not valid JSON ({exc}); aborting",
+                file=sys.stderr,
+            )
+            raise SystemExit(2)
+    merged, touched = merge_codex_hooks(existing)
+    write_codex_hooks(hooks_p, merged)
+    if verbose:
+        if touched:
+            print(f"[codex] wired {', '.join(touched)} into {CODEX_HOOKS_FILE}")
+        else:
+            print(f"[codex] {CODEX_HOOKS_FILE} already had ken hooks — left alone")
+
+    config_p = root / CODEX_CONFIG_FILE
+    config_p.parent.mkdir(parents=True, exist_ok=True)
+    cur_text = config_p.read_text(encoding="utf-8") if config_p.is_file() else ""
+    if has_ken_mcp_block(cur_text):
+        if verbose:
+            print(
+                f"[codex] {CODEX_CONFIG_FILE} already registers ken MCP — leaving alone"
+            )
+    else:
+        config_p.write_text(append_ken_mcp_block(cur_text), encoding="utf-8")
+        if verbose:
+            print(f"[codex] registered `ken` MCP server in {CODEX_CONFIG_FILE}")
 
 
 def _wire_mcp(root: Path, *, verbose: bool) -> None:

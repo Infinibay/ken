@@ -13,8 +13,13 @@ import sys
 from pathlib import Path
 
 from ken import _paths
+from ken.codex_hooks_template import (
+    remove_ken_codex_hooks,
+    remove_ken_mcp_block,
+    write_codex_hooks,
+)
 from ken.hooks_template import remove_ken_hooks, write_settings
-from ken.install import CLAUDE_SETTINGS, MCP_SETTINGS
+from ken.install import CLAUDE_SETTINGS, CODEX_CONFIG_FILE, CODEX_HOOKS_FILE, MCP_SETTINGS
 
 
 def uninstall(project_path: Path, *, keep_db: bool) -> int:
@@ -51,6 +56,32 @@ def uninstall(project_path: Path, *, keep_db: bool) -> int:
             else:
                 mcp_p.unlink()
                 print(f"[mcp] {MCP_SETTINGS} now empty — deleted")
+
+    codex_hooks_p = root / CODEX_HOOKS_FILE
+    if codex_hooks_p.is_file():
+        try:
+            existing = json.loads(codex_hooks_p.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            existing = {}
+        cleaned = remove_ken_codex_hooks(existing)
+        if cleaned.get("hooks"):
+            write_codex_hooks(codex_hooks_p, cleaned)
+            print(f"[codex] removed ken entries from {CODEX_HOOKS_FILE}")
+        else:
+            codex_hooks_p.unlink()
+            print(f"[codex] {CODEX_HOOKS_FILE} now empty — deleted")
+
+    codex_cfg_p = root / CODEX_CONFIG_FILE
+    if codex_cfg_p.is_file():
+        cur = codex_cfg_p.read_text(encoding="utf-8")
+        cleaned_text = remove_ken_mcp_block(cur)
+        if cleaned_text != cur:
+            if cleaned_text.strip():
+                codex_cfg_p.write_text(cleaned_text, encoding="utf-8")
+                print(f"[codex] removed ken MCP entry from {CODEX_CONFIG_FILE}")
+            else:
+                codex_cfg_p.unlink()
+                print(f"[codex] {CODEX_CONFIG_FILE} now empty — deleted")
 
     if keep_db:
         print(f"[db] keeping .ken/ ({_paths.db_path(root)})")
