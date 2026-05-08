@@ -63,3 +63,43 @@ def test_iter_files_skips_pyc_via_glob_pattern(tmp_path):
     rels = {p.as_posix() for p in iter_files(tmp_path)}
     assert "x.py" in rels
     assert "x.pyc" not in rels
+
+
+def test_iter_files_respects_nested_gitignore(tmp_path):
+    _touch(tmp_path / "pkg" / "app.py")
+    _touch(tmp_path / "pkg" / "local.env")
+    _touch(tmp_path / "pkg" / "cache" / "data.json")
+    (tmp_path / "pkg" / ".gitignore").write_text("*.env\ncache/\n")
+
+    rels = {p.as_posix() for p in iter_files(tmp_path)}
+
+    assert "pkg/app.py" in rels
+    assert "pkg/.gitignore" in rels
+    assert "pkg/local.env" not in rels
+    assert "pkg/cache/data.json" not in rels
+
+
+def test_iter_files_nested_gitignore_scope_does_not_escape(tmp_path):
+    _touch(tmp_path / "app.py")
+    _touch(tmp_path / "keep.env")
+    _touch(tmp_path / "nested" / "drop.env")
+    (tmp_path / "nested" / ".gitignore").write_text("*.env\n")
+
+    rels = {p.as_posix() for p in iter_files(tmp_path)}
+
+    assert "keep.env" in rels
+    assert "nested/drop.env" not in rels
+
+
+def test_iter_files_respects_subrepo_gitignore(tmp_path):
+    _touch(tmp_path / "service-a" / "src" / "app.py")
+    _touch(tmp_path / "service-a" / "out" / "bundle.js")
+    _touch(tmp_path / "service-b" / "out" / "bundle.js")
+    (tmp_path / "service-a" / ".git").mkdir(parents=True)
+    (tmp_path / "service-a" / ".gitignore").write_text("out/\n")
+
+    rels = {p.as_posix() for p in iter_files(tmp_path)}
+
+    assert "service-a/src/app.py" in rels
+    assert "service-a/out/bundle.js" not in rels
+    assert "service-b/out/bundle.js" in rels

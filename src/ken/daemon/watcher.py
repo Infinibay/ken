@@ -8,11 +8,9 @@ macOS) in a daemon thread.  Per FS event:
 
 Filtering happens **before** an event becomes a queue entry — we don't
 want to even acknowledge writes inside `.ken/` (we'd echo our own DB
-journals back at ourselves).  The filter composes:
-
-1. ``ALWAYS_IGNORE`` from ``gitignore_filter`` (.git/, .ken/, .venv/, …),
-2. the project root's ``.gitignore`` (loaded once at watcher start,
-   reloaded on changes to that file).
+journals back at ourselves). The filter composes ``ALWAYS_IGNORE`` from
+``gitignore_filter`` with every applicable `.gitignore` from the project
+root down to the event's parent directory.
 
 Shutdown is cooperative: ``watch()`` accepts a ``stop_event`` —
 flipping it returns the generator immediately.
@@ -24,11 +22,10 @@ import logging
 import threading
 from pathlib import Path
 
-from pathspec import GitIgnoreSpec
 from watchfiles import Change, watch
 
 from ken.daemon.index_queue import IndexQueue
-from ken.gitignore_filter import ALWAYS_IGNORE
+from ken.gitignore_filter import GitignoreMatcher
 
 logger = logging.getLogger("ken.watcher")
 
@@ -47,14 +44,14 @@ class FileWatcher:
         self.queue = queue
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
-        # Built lazily in start() so a slow .gitignore parse doesn't run
-        # on the wrong thread.
-        self._spec: GitIgnoreSpec | None = None
+        # Built lazily in start() so gitignore parsing doesn't run on the
+        # wrong thread.
+        self._matcher: GitignoreMatcher | None = None
 
     def start(self) -> None:
         if self._thread is not None:
             return
-        self._spec = self._load_spec()
+        self._matcher = self._load_matcher()
         self._thread = threading.Thread(target=self._run, name="ken-watcher", daemon=True)
         self._thread.start()
 
@@ -81,11 +78,13 @@ class FileWatcher:
             logger.exception("watcher loop crashed")
 
     def _handle(self, changes: set[tuple[Change, str]]) -> None:
-        # Reload .gitignore if the file itself changed — keeps the spec
-        # honest after a `git pull` rewrites it.
-        gi_path = self.project_root / ".gitignore"
-        if any(p == str(gi_path) for _, p in changes):
-            self._spec = self._load_spec()
+        # Reload if any gitignore changed. A pattern change can make
+        # already-indexed paths stale, so ask the queue for a full resync.
+        if any(Path(p).name == ".gitignore" for _, p in changes):
+            self._matcher = self._load_matcher()
+            logger.info("gitignore changed; scheduling index resync")
+            self.queue.resync()
+            return
 
         if len(changes) >= MASS_CHANGE_THRESHOLD:
             logger.info("large filesystem batch detected; scheduling index resync")
@@ -117,22 +116,12 @@ class FileWatcher:
             return False
         if not rel:
             return False
-        spec = self._spec
-        if spec is None:
+        matcher = self._matcher
+        if matcher is None:
             return True
-        # gitignore matches dirs only with a trailing slash. We don't
-        # know if a deleted entry was a dir from the path alone, so try
-        # both: if either form matches the ignore set, drop the event.
-        if spec.match_file(rel) or spec.match_file(rel + "/"):
+        if matcher.is_ignored(Path(rel)) or matcher.is_ignored(Path(rel), is_dir=True):
             return False
         return True
 
-    def _load_spec(self) -> GitIgnoreSpec:
-        patterns = list(ALWAYS_IGNORE)
-        gi = self.project_root / ".gitignore"
-        if gi.is_file():
-            try:
-                patterns.extend(gi.read_text(encoding="utf-8", errors="replace").splitlines())
-            except OSError:
-                pass
-        return GitIgnoreSpec.from_lines(patterns)
+    def _load_matcher(self) -> GitignoreMatcher:
+        return GitignoreMatcher(self.project_root)

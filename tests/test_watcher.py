@@ -26,7 +26,7 @@ class _Queue:
 def test_watcher_large_batch_schedules_resync(tmp_path):
     queue = _Queue()
     watcher = FileWatcher(tmp_path, queue)  # type: ignore[arg-type]
-    watcher._spec = watcher._load_spec()
+    watcher._matcher = watcher._load_matcher()
 
     changes = {
         (Change.modified, str(tmp_path / f"file_{i}.py"))
@@ -42,7 +42,7 @@ def test_watcher_large_batch_schedules_resync(tmp_path):
 def test_watcher_small_batch_uses_incremental_events(tmp_path):
     queue = _Queue()
     watcher = FileWatcher(tmp_path, queue)  # type: ignore[arg-type]
-    watcher._spec = watcher._load_spec()
+    watcher._matcher = watcher._load_matcher()
 
     added = tmp_path / "a.py"
     removed = tmp_path / "b.py"
@@ -51,3 +51,27 @@ def test_watcher_small_batch_uses_incremental_events(tmp_path):
     assert queue.resyncs == 0
     assert queue.reindexed == ["a.py"]
     assert queue.deleted == ["b.py"]
+
+
+def test_watcher_filters_with_nested_gitignore(tmp_path):
+    (tmp_path / "pkg").mkdir()
+    (tmp_path / "pkg" / ".gitignore").write_text("*.env\n")
+    queue = _Queue()
+    watcher = FileWatcher(tmp_path, queue)  # type: ignore[arg-type]
+    watcher._matcher = watcher._load_matcher()
+
+    assert watcher._watch_filter(Change.added, str(tmp_path / "pkg" / "app.py"))
+    assert not watcher._watch_filter(Change.added, str(tmp_path / "pkg" / "local.env"))
+
+
+def test_watcher_nested_gitignore_change_schedules_resync(tmp_path):
+    (tmp_path / "pkg").mkdir()
+    queue = _Queue()
+    watcher = FileWatcher(tmp_path, queue)  # type: ignore[arg-type]
+    watcher._matcher = watcher._load_matcher()
+
+    watcher._handle({(Change.modified, str(tmp_path / "pkg" / ".gitignore"))})
+
+    assert queue.resyncs == 1
+    assert queue.reindexed == []
+    assert queue.deleted == []
