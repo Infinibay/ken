@@ -18,7 +18,19 @@ from mcp.server.fastmcp import FastMCP
 from ken import _paths
 from ken.db import connect
 from ken.memory import recall, remember
-from ken.search import search_files, search_symbols
+from ken.search import (
+    changed_context,
+    file_neighbors,
+    file_outline,
+    file_snippets,
+    file_symbols,
+    find_tests,
+    module_graph,
+    project_overview,
+    search_files,
+    search_symbols,
+    symbol_detail,
+)
 
 logger = logging.getLogger("ken.mcp")
 
@@ -82,6 +94,121 @@ def ken_search_symbols(query: str, limit: int = 10) -> list[dict]:
     """
     with _conn() as conn:
         return search_symbols(conn, query, limit=limit, project_root=_PROJECT_ROOT)
+
+
+@mcp.tool()
+def ken_file_symbols(path: str, include_docstrings: bool = True) -> dict:
+    """Return the indexed symbol structure for one file.
+
+    *path* is the project-relative file path stored in Ken's index, such
+    as ``src/ken/search.py``. Returns all symbols ordered by source line
+    with kind, name, qualified name, start/end lines, and optionally the
+    first docstring/comment line captured by the parser.
+    """
+    with _conn() as conn:
+        return file_symbols(
+            conn,
+            path,
+            include_docstrings=include_docstrings,
+            project_root=_PROJECT_ROOT,
+        )
+
+
+@mcp.tool()
+def ken_file_outline(
+    path: str,
+    include_symbols: bool = True,
+    include_imports: bool = True,
+    include_docstrings: bool = True,
+) -> dict:
+    """Return a structural outline for one indexed file.
+
+    Includes language, symbol count, optional symbols, optional imports,
+    optional reverse imports, and optional first-line docstrings.
+    """
+    with _conn() as conn:
+        return file_outline(
+            conn,
+            path,
+            include_symbols=include_symbols,
+            include_imports=include_imports,
+            include_docstrings=include_docstrings,
+            project_root=_PROJECT_ROOT,
+        )
+
+
+@mcp.tool()
+def ken_file_neighbors(path: str, limit: int = 20) -> dict:
+    """Return files directly related to *path*.
+
+    Uses resolved internal imports, reverse imports, and test-file
+    heuristics to suggest files worth inspecting alongside the target.
+    """
+    with _conn() as conn:
+        return file_neighbors(conn, path, limit=limit, project_root=_PROJECT_ROOT)
+
+
+@mcp.tool()
+def ken_symbol_detail(path: str, qualname: str, include_snippet: bool = False) -> dict:
+    """Return metadata for one symbol in one file, optionally with source."""
+    with _conn() as conn:
+        return symbol_detail(
+            conn,
+            path,
+            qualname,
+            include_snippet=include_snippet,
+            project_root=_PROJECT_ROOT,
+        )
+
+
+@mcp.tool()
+def ken_module_graph(path: str, depth: int = 1, limit: int = 100) -> dict:
+    """Return a bounded local import graph around one indexed file."""
+    with _conn() as conn:
+        return module_graph(conn, path, depth=depth, limit=limit, project_root=_PROJECT_ROOT)
+
+
+@mcp.tool()
+def ken_find_tests(path: str, limit: int = 20) -> dict:
+    """Return likely test files for an indexed source file."""
+    with _conn() as conn:
+        return find_tests(conn, path, limit=limit, project_root=_PROJECT_ROOT)
+
+
+@mcp.tool()
+def ken_changed_context() -> dict:
+    """Return current git changes enriched with indexed symbols and tests."""
+    assert _PROJECT_ROOT is not None
+    with _conn() as conn:
+        return changed_context(conn, _PROJECT_ROOT)
+
+
+@mcp.tool()
+def ken_file_snippets(
+    path: str,
+    symbols: list[str] | None = None,
+    start_line: int | None = None,
+    end_line: int | None = None,
+    max_chars: int = 12000,
+) -> dict:
+    """Return source snippets for selected symbols or a line range."""
+    with _conn() as conn:
+        return file_snippets(
+            conn,
+            path,
+            symbols=symbols,
+            start_line=start_line,
+            end_line=end_line,
+            max_chars=max_chars,
+            project_root=_PROJECT_ROOT,
+        )
+
+
+@mcp.tool()
+def ken_project_overview(depth: int = 2, limit: int = 20) -> dict:
+    """Return a compact structural overview of the indexed project."""
+    with _conn() as conn:
+        return project_overview(conn, depth=depth, limit=limit)
 
 
 @mcp.tool()

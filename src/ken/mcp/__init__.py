@@ -1,12 +1,26 @@
 """ken's MCP (Model Context Protocol) server.
 
 Spawned over stdio when the project's MCP config registers ken. Exposes
-seven tools:
+read-only code intelligence tools plus memory/rank feedback tools:
 
   * ``ken_search_files(query, limit=8)`` — semantically rank indexed
     files against the query (cosine sweep on ``ci_files.embedding``).
   * ``ken_search_symbols(query, limit=10)`` — same but for symbols
     (functions / classes / methods).
+  * ``ken_file_symbols(path, include_docstrings=True)`` — return every
+    indexed symbol for one project-relative file path.
+  * ``ken_file_outline(path, ...)`` — return one file's symbols/imports.
+  * ``ken_file_neighbors(path, limit=20)`` — imports, importers, and
+    likely tests for a file.
+  * ``ken_symbol_detail(path, qualname, include_snippet=False)`` — one
+    symbol's indexed metadata and optional source.
+  * ``ken_module_graph(path, depth=1)`` — bounded local import graph.
+  * ``ken_find_tests(path, limit=20)`` — likely tests for a file.
+  * ``ken_changed_context()`` — git status enriched with indexed
+    symbols and likely tests.
+  * ``ken_file_snippets(path, symbols=[...])`` — source snippets by
+    symbol or line range.
+  * ``ken_project_overview(depth=2)`` — compact index overview.
   * ``ken_remember(topic, content, tags=[])`` — write a note into
     ``cr_findings`` so future sessions can recall it.
   * ``ken_recall(query, limit=5)`` — search findings by similarity.
