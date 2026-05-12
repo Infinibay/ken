@@ -17,7 +17,9 @@ from ken.ranker.boosts import (
     apply_cooc,
     apply_dismissal_penalty,
     apply_freshness,
+    apply_implementation_intent,
     apply_import_affinity,
+    apply_language_intent,
     apply_symbol_file_affinity,
     apply_test_affinity,
 )
@@ -30,6 +32,58 @@ def _file(target: str, score: float, reason: str = "") -> RankedItem:
 
 def _sym(target: str, score: float, reason: str = "") -> RankedItem:
     return RankedItem(target=target, target_type="symbol", score=score, reason=reason)
+
+
+def test_implementation_intent_demotes_tests_when_prompt_asks_source_location():
+    files = [
+        _file("tests/test_memory.py", 2.0, "lexical"),
+        _file("src/memory.py", 1.0, "symbol-file"),
+    ]
+
+    apply_implementation_intent(files, "where is anchored memory implemented")
+
+    by_path = {item.target: item for item in files}
+    assert by_path["tests/test_memory.py"].score == pytest.approx(0.9)
+    assert by_path["src/memory.py"].score == pytest.approx(1.3)
+    assert "impl-intent" in by_path["tests/test_memory.py"].reason
+    assert "impl-intent" in by_path["src/memory.py"].reason
+
+
+def test_implementation_intent_keeps_tests_when_prompt_mentions_tests():
+    files = [
+        _file("tests/test_memory.py", 2.0, "lexical"),
+        _file("src/memory.py", 1.0, "symbol-file"),
+    ]
+
+    apply_implementation_intent(files, "which tests cover anchored memory")
+
+    assert [item.score for item in files] == [2.0, 1.0]
+
+
+def test_language_intent_boosts_named_parser_language_and_demotes_siblings():
+    files = [
+        _file("src/ken/parsers/typescript.py", 2.0, "lexical"),
+        _file("src/ken/parsers/c.py", 2.0, "lexical"),
+        _file("tests/parsers/test_typescript.py", 1.0, "lexical"),
+        _file("tests/parsers/test_c.py", 1.0, "lexical"),
+    ]
+    symbols = [
+        _sym("parse_ts_file (src/ken/parsers/typescript.py:21)", 2.0, "lexical"),
+        _sym("test_c_parser_extracts_top_level_functions (tests/parsers/test_c.py:6)", 2.0, "lexical"),
+    ]
+
+    apply_language_intent(files, symbols, "parser extracts TypeScript class methods")
+
+    by_path = {item.target: item for item in files}
+    by_symbol = {item.target: item for item in symbols}
+    assert by_path["src/ken/parsers/typescript.py"].score == pytest.approx(2.4)
+    assert by_path["src/ken/parsers/c.py"].score == pytest.approx(1.1)
+    assert by_path["tests/parsers/test_typescript.py"].score == pytest.approx(1.4)
+    assert by_path["tests/parsers/test_c.py"].score == pytest.approx(0.55)
+    assert by_symbol["parse_ts_file (src/ken/parsers/typescript.py:21)"].score == pytest.approx(2.3)
+    assert by_symbol[
+        "test_c_parser_extracts_top_level_functions (tests/parsers/test_c.py:6)"
+    ].score == pytest.approx(1.1)
 
 
 # ── apply_freshness ──────────────────────────────────────────────────
@@ -258,6 +312,38 @@ def test_symbol_file_affinity_boosts_existing_containing_file(conn, make_file):
     assert "symbol-file+" in files[0].reason
 
 
+def test_symbol_file_affinity_counts_one_symbol_per_file(conn, make_file):
+    make_file("src/ken/ranker/channels.py")
+    files = [_file("src/ken/ranker/channels.py", 0.4, "lexical")]
+    symbols = [
+        _sym("lexical_scores (src/ken/ranker/channels.py:529)", 3.0),
+        _sym("fuzzy_scores (src/ken/ranker/channels.py:219)", 2.5),
+    ]
+
+    apply_symbol_file_affinity(conn, files, symbols)
+
+    assert len(files) == 1
+    assert files[0].score == pytest.approx(0.4 + 3.0 * 0.35)
+    assert files[0].reason.count("symbol-file+") == 1
+
+
+def test_symbol_file_affinity_limits_by_distinct_files(conn, make_file):
+    make_file("tests/ranker/test_rank.py")
+    make_file("tests/ranker/test_boosts.py")
+    symbols = [
+        _sym(f"test_rank_{idx} (tests/ranker/test_rank.py:{idx})", 3.0 - idx * 0.01)
+        for idx in range(10, 15)
+    ]
+    symbols.append(_sym("test_test_affinity (tests/ranker/test_boosts.py:20)", 1.8))
+    files: list[RankedItem] = []
+
+    apply_symbol_file_affinity(conn, files, symbols)
+
+    by_target = {it.target: it for it in files}
+    assert "tests/ranker/test_rank.py" in by_target
+    assert "tests/ranker/test_boosts.py" in by_target
+
+
 def test_symbol_file_affinity_ignores_weak_symbols(conn, make_file):
     make_file("src/ken/ranker/channels.py")
     files: list[RankedItem] = []
@@ -306,7 +392,7 @@ def test_test_affinity_adds_source_file_from_test_anchor(conn, make_file):
 
     by_target = {it.target: it for it in files}
     assert "src/ken/status.py" in by_target
-    assert by_target["src/ken/status.py"].score > 0
+    assert by_target["src/ken/status.py"].score >= 1.0
     assert "test-affinity(tests/test_status.py)" in by_target["src/ken/status.py"].reason
 
 
@@ -321,6 +407,25 @@ def test_test_affinity_boosts_existing_source_file_from_test_anchor(conn, make_f
     assert sum(1 for it in files if it.target == "src/ken/status.py") == 1
     assert by_target["src/ken/status.py"].score > 0.2
     assert "test-affinity+" in by_target["src/ken/status.py"].reason
+
+
+def test_test_affinity_uses_highest_scoring_anchors(conn, make_file):
+    for name in ("a", "b", "c", "d", "status"):
+        make_file(f"src/ken/{name}.py")
+        make_file(f"tests/test_{name}.py")
+    files = [
+        _file("tests/test_a.py", 1.1),
+        _file("tests/test_b.py", 1.1),
+        _file("tests/test_c.py", 1.1),
+        _file("tests/test_d.py", 1.1),
+        _file("tests/test_status.py", 3.0),
+    ]
+
+    apply_test_affinity(conn, files)
+
+    by_target = {it.target: it for it in files}
+    assert "src/ken/status.py" in by_target
+    assert "test-affinity(tests/test_status.py)" in by_target["src/ken/status.py"].reason
 
 
 def test_test_affinity_ignores_low_score_anchor(conn, make_file):

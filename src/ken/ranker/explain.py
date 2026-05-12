@@ -45,8 +45,11 @@ def explain(
     predictive = channels.predictive_scores(conn, similar)
     fuzzy_files, fuzzy_symbols = channels.fuzzy_scores(conn, prompt_embedding)
     doc_files, doc_symbols = channels.doc_intent_scores(conn, prompt_embedding)
+    literal_files = channels.literal_content_scores(
+        conn, prompt, project_root=project_root
+    )
     lexical_files, lexical_symbols = channels.lexical_scores(
-        conn, prompt, agent_id=agent_id
+        conn, prompt, agent_id=agent_id, project_root=project_root
     )
     findings = channels.finding_scores(conn, prompt_embedding)
 
@@ -56,7 +59,13 @@ def explain(
     symbols.sort(reverse=True)
 
     files = merge.merge_files(
-        explicit_files, reactive, predictive, fuzzy_files, doc_files, lexical_files
+        explicit_files,
+        reactive,
+        predictive,
+        fuzzy_files,
+        doc_files,
+        literal_files,
+        lexical_files,
     )
     files.sort(reverse=True)
     pre_boost = {it.target: it.score for it in files}
@@ -79,6 +88,14 @@ def explain(
     boosts.apply_dismissal_penalty(conn, files, similar)
     post_dismiss = {it.target: it.score for it in files}
 
+    boosts.apply_implementation_intent(files, prompt)
+    post_impl_intent = {it.target: it.score for it in files}
+    post_impl_symbols = {it.target: it.score for it in symbols}
+
+    boosts.apply_language_intent(files, symbols, prompt)
+    post_language_intent = {it.target: it.score for it in files}
+    post_language_symbols = {it.target: it.score for it in symbols}
+
     if project_root is not None:
         files, symbols = _drop_missing_paths(project_root, files, symbols)
 
@@ -95,6 +112,7 @@ def explain(
             "fuzzy_symbols": _to_dicts(fuzzy_symbols, top),
             "doc_intent_files": _to_dicts(doc_files, top),
             "doc_intent_symbols": _to_dicts(doc_symbols, top),
+            "literal_files": _to_dicts(literal_files, top),
             "lexical_files": _to_dicts(lexical_files, top),
             "lexical_symbols": _to_dicts(lexical_symbols, top),
             "findings": _findings_dicts(findings, top),
@@ -107,6 +125,9 @@ def explain(
             "test_affinity": _diff(post_cooc, post_test_affinity),
             "import_affinity": _diff(post_test_affinity, post_import_affinity),
             "dismissal": _diff(post_import_affinity, post_dismiss),
+            "implementation_intent": _diff(post_dismiss, post_impl_intent),
+            "language_intent": _diff(post_impl_intent, post_language_intent),
+            "language_symbol_intent": _diff(post_impl_symbols, post_language_symbols),
         },
         "final_files": _to_dicts(files, top),
         "final_symbols": _to_dicts(symbols, top),

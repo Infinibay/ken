@@ -14,6 +14,7 @@ import time
 from collections import defaultdict
 from collections.abc import Iterable
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -609,12 +610,131 @@ def _keep_best(items: dict[str, RankedItem], key: str, candidate: RankedItem) ->
         items[key] = candidate
 
 
+# ── Literal content tokens ───────────────────────────────────────────
+
+LITERAL_FILE_MIN_OVERLAP = 1
+LITERAL_FILE_SCALE = 0.45
+LITERAL_FILE_BASE = 1.15
+LITERAL_FILE_MAX_SCORE = 2.5
+LITERAL_MAX_FILE_BYTES = 256 * 1024
+_LITERAL_TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9_.-]{2,}")
+_LITERAL_PAIR_LEFT = frozenset(
+    {"case", "context", "expected", "file", "max", "min", "num", "rank", "top"}
+)
+_LITERAL_PAIR_RIGHT = frozenset(
+    {
+        "chars",
+        "count",
+        "findings",
+        "files",
+        "id",
+        "limit",
+        "line",
+        "path",
+        "rank",
+        "recall",
+        "size",
+        "symbols",
+        "tokens",
+    }
+)
+
+
+def literal_content_scores(
+    conn: sqlite3.Connection,
+    prompt: str,
+    *,
+    project_root: Path | None = None,
+) -> list[RankedItem]:
+    """Score files containing exact rare/API-like prompt tokens.
+
+    Embeddings and name tokens often miss stringly contracts such as
+    ``exec_command``, ``apply_patch``, env vars, matcher names, and
+    protocol constants. Exact literal matching is only used for those
+    high-signal tokens and only when a live project root is available.
+    """
+    if project_root is None:
+        return []
+    tokens = _literal_tokens(prompt)
+    if not tokens:
+        return []
+    rows = conn.execute("SELECT path FROM ci_files").fetchall()
+    root = project_root.resolve()
+    out: list[RankedItem] = []
+    for row in rows:
+        path = str(row["path"])
+        if not _literal_candidate_path(path):
+            continue
+        abs_path = root / path
+        try:
+            if not abs_path.is_file() or abs_path.stat().st_size > LITERAL_MAX_FILE_BYTES:
+                continue
+            text = abs_path.read_text(encoding="utf-8", errors="ignore").lower()
+        except OSError:
+            continue
+        overlap = {token for token in tokens if token.lower() in text}
+        if len(overlap) < LITERAL_FILE_MIN_OVERLAP:
+            continue
+        score = min(
+            LITERAL_FILE_MAX_SCORE,
+            LITERAL_FILE_BASE + LITERAL_FILE_SCALE * len(overlap),
+        )
+        out.append(
+            RankedItem(
+                target=path,
+                target_type="file",
+                score=score,
+                reason=f"literal:{','.join(sorted(overlap)[:3])}",
+            )
+        )
+    return out
+
+
+def _literal_candidate_path(path: str) -> bool:
+    # Labeled benchmark fixtures intentionally repeat task prompts; if
+    # literal matching indexes them, the evaluator starts retrieving its
+    # own answer key instead of the implementation surface.
+    if path.startswith("examples/bench/"):
+        return False
+    return True
+
+
+def _literal_tokens(prompt: str) -> set[str]:
+    raw_list = [
+        token.strip("`'\"()[]{}").lower()
+        for token in _LITERAL_TOKEN_RE.findall(prompt)
+    ]
+    raw = set(raw_list)
+    out: set[str] = set()
+    for token in raw:
+        if len(token) < 4 or token in _STOPWORDS:
+            continue
+        if "_" in token or "." in token or "-" in token:
+            out.add(token)
+    meaningful = [
+        token
+        for token in raw_list
+        if len(token) >= 3 and token not in _STOPWORDS
+    ]
+    for left, right in zip(meaningful, meaningful[1:]):
+        if len(left) < 3 or len(right) < 3:
+            continue
+        if left not in _LITERAL_PAIR_LEFT and right not in _LITERAL_PAIR_RIGHT:
+            continue
+        out.add(f"{left}_{right}")
+        out.add(f"{left}-{right}")
+    return out
+
+
 LEXICAL_FILE_MIN_OVERLAP = 1
 LEXICAL_SYMBOL_MIN_OVERLAP = 1
 LEXICAL_FILE_SCALE = 1.4
 LEXICAL_SYMBOL_SCALE = 1.8
 LEXICAL_EXACT_SYMBOL_BONUS = 1.0
 LEXICAL_KIND_BONUS = 1.2
+LEXICAL_GENERIC_EXACT_SYMBOLS = frozenset(
+    {"chars", "class", "code", "context", "file", "source", "stats", "test"}
+)
 CONTEXTUAL_LEXICAL_RECENT_PROMPTS = 3
 CONTEXTUAL_LEXICAL_BONUS = 0.6
 _WORD_RE = re.compile(r"[A-Za-z][A-Za-z0-9_]{2,}")
@@ -651,7 +771,11 @@ _TOKEN_ALIASES = {
 
 
 def lexical_scores(
-    conn: sqlite3.Connection, prompt: str, *, agent_id: str | None = None
+    conn: sqlite3.Connection,
+    prompt: str,
+    *,
+    agent_id: str | None = None,
+    project_root: Path | None = None,
 ) -> tuple[list[RankedItem], list[RankedItem]]:
     """Name-token fallback for prompts that describe code in plain words.
 
@@ -660,11 +784,17 @@ def lexical_scores(
     This gives coding agents useful context when the user intentionally
     avoids restating the task.
     """
-    query_tokens = _name_tokens(prompt)
+    project_stopwords = _project_stopwords(project_root)
+    query_tokens = _name_tokens(prompt, extra_stopwords=project_stopwords)
     reason_prefix = "lexical"
     score_bonus = 0.0
     if _should_expand_lexical_context(prompt, query_tokens, agent_id):
-        context_tokens = _recent_session_prompt_tokens(conn, agent_id or "", prompt)
+        context_tokens = _recent_session_prompt_tokens(
+            conn,
+            agent_id or "",
+            prompt,
+            extra_stopwords=project_stopwords,
+        )
         if context_tokens:
             query_tokens |= context_tokens
             reason_prefix = "lexical-context"
@@ -672,8 +802,20 @@ def lexical_scores(
     if not query_tokens:
         return [], []
     return (
-        _lexical_files(conn, query_tokens, reason_prefix=reason_prefix, score_bonus=score_bonus),
-        _lexical_symbols(conn, query_tokens, reason_prefix=reason_prefix, score_bonus=score_bonus),
+        _lexical_files(
+            conn,
+            query_tokens,
+            reason_prefix=reason_prefix,
+            score_bonus=score_bonus,
+            extra_stopwords=project_stopwords,
+        ),
+        _lexical_symbols(
+            conn,
+            query_tokens,
+            reason_prefix=reason_prefix,
+            score_bonus=score_bonus,
+            extra_stopwords=project_stopwords,
+        ),
     )
 
 
@@ -686,7 +828,11 @@ def _should_expand_lexical_context(
 
 
 def _recent_session_prompt_tokens(
-    conn: sqlite3.Connection, agent_id: str, current_prompt: str
+    conn: sqlite3.Connection,
+    agent_id: str,
+    current_prompt: str,
+    *,
+    extra_stopwords: set[str] | None = None,
 ) -> set[str]:
     row = conn.execute("SELECT id FROM cr_sessions WHERE agent_id = ?", (agent_id,)).fetchone()
     if row is None:
@@ -709,7 +855,7 @@ def _recent_session_prompt_tokens(
         if not skipped_current and content == current_prompt:
             skipped_current = True
             continue
-        tokens.update(_name_tokens(content))
+        tokens.update(_name_tokens(content, extra_stopwords=extra_stopwords))
         used += 1
         if used >= CONTEXTUAL_LEXICAL_RECENT_PROMPTS:
             break
@@ -722,12 +868,13 @@ def _lexical_files(
     *,
     reason_prefix: str = "lexical",
     score_bonus: float = 0.0,
+    extra_stopwords: set[str] | None = None,
 ) -> list[RankedItem]:
     rows = conn.execute("SELECT path FROM ci_files").fetchall()
     out: list[RankedItem] = []
     for row in rows:
         path = row["path"]
-        tokens = _name_tokens(path)
+        tokens = _name_tokens(path, extra_stopwords=extra_stopwords)
         overlap = query_tokens & tokens
         if len(overlap) < LEXICAL_FILE_MIN_OVERLAP:
             continue
@@ -749,6 +896,7 @@ def _lexical_symbols(
     *,
     reason_prefix: str = "lexical",
     score_bonus: float = 0.0,
+    extra_stopwords: set[str] | None = None,
 ) -> list[RankedItem]:
     rows = conn.execute(
         """
@@ -760,12 +908,19 @@ def _lexical_symbols(
     out: list[RankedItem] = []
     for row in rows:
         kind = str(row["kind"] or "")
-        tokens = _name_tokens(f"{kind} {row['qualname']} {row['name']}")
+        tokens = _name_tokens(
+            f"{kind} {row['qualname']} {row['name']}",
+            extra_stopwords=extra_stopwords,
+        )
         overlap = query_tokens & tokens
         if len(overlap) < LEXICAL_SYMBOL_MIN_OVERLAP:
             continue
         exact_name = str(row["name"]).strip("_").lower()
-        exact_bonus = LEXICAL_EXACT_SYMBOL_BONUS if exact_name in query_tokens else 0.0
+        exact_bonus = (
+            LEXICAL_EXACT_SYMBOL_BONUS
+            if exact_name in query_tokens and exact_name not in LEXICAL_GENERIC_EXACT_SYMBOLS
+            else 0.0
+        )
         kind_bonus = LEXICAL_KIND_BONUS if kind.lower() in query_tokens else 0.0
         score = min(
             LEXICAL_SYMBOL_SCALE
@@ -790,16 +945,27 @@ def _lexical_symbols(
     return out
 
 
-def _name_tokens(text: str) -> set[str]:
+def _name_tokens(text: str, *, extra_stopwords: set[str] | None = None) -> set[str]:
     parts: set[str] = set()
     for raw in _WORD_RE.findall(text.replace("-", "_").replace(".", "_").replace("/", "_")):
         for piece in raw.split("_"):
             parts.update(_split_camel(piece))
     raw_tokens = {p.lower() for p in parts if len(p) >= 3}
-    tokens = {p for p in raw_tokens if p not in _STOPWORDS}
+    stopwords = _STOPWORDS if not extra_stopwords else _STOPWORDS | extra_stopwords
+    tokens = {p for p in raw_tokens if p not in stopwords}
     for token in raw_tokens:
         tokens.update(_TOKEN_ALIASES.get(token, set()))
     return tokens
+
+
+def _project_stopwords(project_root: Path | None) -> set[str]:
+    if project_root is None:
+        return set()
+    tokens = _name_tokens(project_root.name)
+    # One-token project/package names often appear in every path
+    # (e.g. src/ken/...), so lexical matching should not treat them as
+    # task intent unless another channel corroborates them.
+    return {token for token in tokens if len(token) >= 3}
 
 
 def _split_camel(text: str) -> list[str]:

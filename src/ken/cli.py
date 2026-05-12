@@ -113,6 +113,11 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="exit non-zero if expected-file recall is below this 0..1 threshold",
     )
+    p_bench.add_argument(
+        "--explain-misses",
+        action="store_true",
+        help="include missed expected files and top ranked reasons per case",
+    )
     p_bench.add_argument("--json", action="store_true", help="print machine-readable metrics")
 
     p_remember = sub.add_parser("remember", help="save a reusable finding")
@@ -214,6 +219,7 @@ def main(argv: list[str] | None = None) -> int:
             max_chars=args.max_chars,
             fail_under_case_recall=args.fail_under_case_recall,
             fail_under_expected_file_recall=args.fail_under_expected_file_recall,
+            explain_misses=args.explain_misses,
             as_json=args.json,
         )
 
@@ -425,6 +431,7 @@ def _bench_cli(
     max_chars: int,
     fail_under_case_recall: float | None,
     fail_under_expected_file_recall: float | None,
+    explain_misses: bool,
     as_json: bool,
 ) -> int:
     from ken.db import connect
@@ -465,7 +472,16 @@ def _bench_cli(
                 project_root=root,
             )
             ranked = [it.target for it in result.files[:top]]
+            ranked_details = [
+                {
+                    "path": it.target,
+                    "score": round(float(it.score), 3),
+                    "reason": it.reason,
+                }
+                for it in result.files[:top]
+            ]
             hits = sorted(expected & set(ranked))
+            misses = sorted(expected - set(ranked))
             block = render_block(
                 conn,
                 result,
@@ -473,18 +489,20 @@ def _bench_cli(
                 max_chars=max_chars if max_chars > 0 else None,
             )
             chars = len(block)
-            rows.append(
-                {
-                    "case": idx,
-                    "prompt": prompt,
-                    "expected_files": sorted(expected),
-                    "ranked_files": ranked,
-                    "hits": hits,
-                    "hit": bool(hits),
-                    "context_chars": chars,
-                    "context_est_tokens": (chars + 3) // 4 if chars else 0,
-                }
-            )
+            row = {
+                "case": idx,
+                "prompt": prompt,
+                "expected_files": sorted(expected),
+                "ranked_files": ranked,
+                "hits": hits,
+                "hit": bool(hits),
+                "context_chars": chars,
+                "context_est_tokens": (chars + 3) // 4 if chars else 0,
+            }
+            if explain_misses:
+                row["misses"] = misses
+                row["ranked_details"] = ranked_details
+            rows.append(row)
             hit_cases += 1 if hits else 0
             total_expected += len(expected)
             found_expected += len(hits)
@@ -536,6 +554,13 @@ def _bench_cli(
                 f"{row['case']}. {status}: {row['prompt']} "
                 f"expected={row['expected_files']} hits={row['hits']}"
             )
+            if explain_misses and row.get("misses"):
+                print(f"   misses={row['misses']}")
+                for detail in row.get("ranked_details", [])[:3]:
+                    print(
+                        f"   top: {detail['path']} "
+                        f"score={detail['score']} reason={detail['reason']}"
+                    )
         for failure in failed:
             print(f"FAIL: {failure}", file=sys.stderr)
     return 1 if failed else 0

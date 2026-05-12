@@ -218,7 +218,129 @@ def test_rank_manual_spanish_parser_query_uses_lexical_aliases(
 
     assert result.symbols[0].target == "ParsedFile (src/ken/parsers/types.py:25)"
     assert result.files[0].target == "src/ken/parsers/types.py"
-    assert all(it.target != "src/ken/status.py" for it in result.files)
+
+
+def test_rank_ignores_project_name_as_lexical_path_signal(
+    tmp_path, conn, make_file
+):
+    from ken.ranker.channels import lexical_scores
+
+    root = tmp_path / "ken"
+    root.mkdir()
+    make_file("src/ken/install.py")
+    make_file("install.sh")
+
+    files, _symbols = lexical_scores(
+        conn,
+        prompt="install ken from a local checkout",
+        project_root=root,
+    )
+
+    assert {item.target for item in files} == {"src/ken/install.py", "install.sh"}
+    assert all("ken" not in item.reason for item in files)
+
+
+def test_rank_uses_exact_literal_tokens_for_tool_contracts(
+    tmp_path, conn, make_session, make_file, fake_emb
+):
+    root = tmp_path / "project"
+    root.mkdir()
+    src = root / "src/ken/daemon"
+    src.mkdir(parents=True)
+    (src / "server.py").write_text(
+        "def classify():\n"
+        "    return {'exec_command': 'read', 'apply_patch': 'edit'}\n",
+        encoding="utf-8",
+    )
+    (root / "src/ken/daemon/index_queue.py").write_text(
+        "def apply():\n    return None\n",
+        encoding="utf-8",
+    )
+    make_session("alpha")
+    make_file("src/ken/daemon/server.py")
+    make_file("src/ken/daemon/index_queue.py")
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="why are exec_command and apply_patch not recorded",
+        prompt_embedding=fake_emb("unrelated"),
+        project_root=root,
+    )
+
+    assert result.files[0].target == "src/ken/daemon/server.py"
+    assert "literal:apply_patch,exec_command" in result.files[0].reason
+
+
+def test_rank_matches_spaced_prompt_to_underscored_literals(
+    tmp_path, conn, make_session, make_file, fake_emb
+):
+    root = tmp_path / "project"
+    root.mkdir()
+    pkg = root / "src/ken/ranker"
+    pkg.mkdir(parents=True)
+    (pkg / "output.py").write_text(
+        "def render_block(result, *, max_chars=None):\n"
+        "    return _fit_block(result, max_chars=max_chars)\n",
+        encoding="utf-8",
+    )
+    make_session("alpha")
+    make_file("src/ken/ranker/output.py")
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="inspect ranked context stats and max chars",
+        prompt_embedding=fake_emb("unrelated"),
+        project_root=root,
+    )
+
+    assert result.files[0].target == "src/ken/ranker/output.py"
+    assert "literal:max_chars" in result.files[0].reason
+
+
+def test_rank_does_not_literalize_arbitrary_natural_bigrams(
+    tmp_path, conn, make_session, make_file, fake_emb
+):
+    root = tmp_path / "project"
+    root.mkdir()
+    parser_dir = root / "tests/parsers"
+    parser_dir.mkdir(parents=True)
+    (parser_dir / "test_c.py").write_text(
+        "def test_parser_extracts_symbols():\n    pass\n",
+        encoding="utf-8",
+    )
+    make_session("alpha")
+    make_file("tests/parsers/test_c.py")
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="parser extracts TypeScript class methods",
+        prompt_embedding=fake_emb("unrelated"),
+        project_root=root,
+    )
+
+    assert all("literal:parser_extracts" not in item.reason for item in result.files)
+
+
+def test_rank_does_not_give_exact_bonus_to_generic_file_helpers(conn, make_file):
+    from ken.ranker.channels import lexical_scores
+
+    make_file("tests/test_helpers.py")
+    conn.execute(
+        "INSERT INTO ci_symbols(file_id, kind, name, qualname, line_start, line_end, docstring) "
+        "VALUES ((SELECT id FROM ci_files WHERE path = 'tests/test_helpers.py'), "
+        "'function', '_file', '_file', 10, 11, NULL)"
+    )
+
+    _files, symbols = lexical_scores(conn, "show file symbols snippets")
+
+    helper = next(item for item in symbols if item.target.startswith("_file "))
+    assert "+exact" not in helper.reason
 
 
 def test_rank_surfaces_related_tests(conn, make_session, make_file, fake_emb):

@@ -157,6 +157,7 @@ ken search-files "semantic file retrieval"
 ken search-symbols "merge codex hooks"
 ken bench .ken/bench.jsonl
 ken bench examples/bench/ken-dogfood.jsonl --fail-under-case-recall 0.7
+ken bench examples/bench/ken-dogfood.jsonl --explain-misses
 ken remember "codex wiring" "Use ken install . --codex to repair invalid hooks."
 ken recall "codex hook repair"
 ```
@@ -170,7 +171,8 @@ Benchmark datasets are JSONL, one prompt per line:
 `ken bench` reports recall@N and average injected context size, so ranker
 changes can be judged against labeled prompts instead of intuition alone. Add
 `--fail-under-case-recall 0.8` or `--fail-under-expected-file-recall 0.7` to
-make the benchmark a CI gate.
+make the benchmark a CI gate. Add `--explain-misses` to include missed expected
+files and the top ranked reasons for each case.
 
 ### Inspect what's happening
 
