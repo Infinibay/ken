@@ -7,7 +7,8 @@ the model a ranked `<context-rank>` block on every prompt — based on what
 you've been touching this session, what was useful in past similar sessions,
 and what looks semantically relevant to the current request.
 Saved findings from `ken remember` / `ken_remember` can also appear in the
-ranked block when they match the current prompt.
+ranked block when they match the current prompt; direct recall filters weak
+matches by default so unrelated prompts do not return nearest-neighbor noise.
 
 ## Why
 
@@ -159,7 +160,9 @@ ken bench .ken/bench.jsonl
 ken bench examples/bench/ken-dogfood.jsonl --fail-under-case-recall 0.7
 ken bench examples/bench/ken-dogfood.jsonl --explain-misses
 ken remember "codex wiring" "Use ken install . --codex to repair invalid hooks."
+ken remember --kind persistent_rule "codex wiring rule" "Use ken install . --codex before editing generated hooks."
 ken recall "codex hook repair"
+ken recall --min-score 0 "codex hook repair"  # inspect raw nearest neighbors
 ```
 
 Benchmark datasets are JSONL, one prompt per line:

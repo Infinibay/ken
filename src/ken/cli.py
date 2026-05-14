@@ -163,6 +163,11 @@ def main(argv: list[str] | None = None) -> int:
     p_remember.add_argument("content", help="finding content")
     p_remember.add_argument("--path", default=".", help="project path (default: cwd)")
     p_remember.add_argument("--tag", action="append", default=[], help="tag for the finding")
+    p_remember.add_argument(
+        "--kind",
+        choices=("finding", "persistent_rule", "experimental_finding", "hypothesis"),
+        help="explicit finding kind (stored as a reserved kind:<value> tag)",
+    )
     p_remember.add_argument("--json", action="store_true", help="print raw JSON response")
 
     p_forget = sub.add_parser("forget", help="delete a saved finding by exact topic")
@@ -180,6 +185,12 @@ def main(argv: list[str] | None = None) -> int:
     p_recall.add_argument("query", nargs="+", help="query text")
     p_recall.add_argument("--path", default=".", help="project path (default: cwd)")
     p_recall.add_argument("-n", "--limit", type=int, default=5)
+    p_recall.add_argument(
+        "--min-score",
+        type=float,
+        default=0.25,
+        help="minimum cosine similarity to return; use 0 to show nearest neighbors",
+    )
     p_recall.add_argument("--json", action="store_true", help="print raw JSON response")
 
     p_serve = sub.add_parser("serve", help="run the ken daemon")
@@ -289,6 +300,7 @@ def main(argv: list[str] | None = None) -> int:
             args.topic,
             args.content,
             tags=args.tag,
+            kind=args.kind,
             as_json=args.json,
         )
 
@@ -305,7 +317,11 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.cmd == "recall":
         return _recall_cli(
-            Path(args.path), " ".join(args.query), args.limit, as_json=args.json
+            Path(args.path),
+            " ".join(args.query),
+            args.limit,
+            args.min_score,
+            as_json=args.json,
         )
 
     if args.cmd == "serve":
@@ -520,6 +536,7 @@ def _remember_cli(
     content: str,
     *,
     tags: list[str],
+    kind: str | None,
     as_json: bool,
 ) -> int:
     from ken.memory import remember
@@ -531,7 +548,7 @@ def _remember_cli(
     from ken.db import connect
 
     with connect(db_path) as conn:
-        resp = remember(conn, topic, content, tags=tags)
+        resp = remember(conn, topic, content, tags=tags, kind=kind)
     if as_json:
         print(json.dumps(resp, indent=2))
     elif resp.get("ok"):
@@ -585,7 +602,14 @@ def _findings_cli(
     return 0
 
 
-def _recall_cli(project_path: Path, query: str, limit: int, *, as_json: bool) -> int:
+def _recall_cli(
+    project_path: Path,
+    query: str,
+    limit: int,
+    min_score: float,
+    *,
+    as_json: bool,
+) -> int:
     from ken.db import connect
     from ken.memory import format_recall_hits, recall
 
@@ -594,13 +618,15 @@ def _recall_cli(project_path: Path, query: str, limit: int, *, as_json: bool) ->
         print(f"error: no .ken project at {root}", file=sys.stderr)
         return 1
     with connect(db_path) as conn:
-        hits = recall(conn, query, limit=limit)
+        hits = recall(conn, query, limit=limit, min_score=min_score)
     if as_json:
         print(json.dumps(hits, indent=2))
     else:
         rendered = format_recall_hits(hits)
         if rendered:
             print(rendered)
+        else:
+            print(f"no relevant findings (min_score={min_score:.3f})")
     return 0
 
 

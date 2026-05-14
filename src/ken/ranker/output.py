@@ -210,12 +210,21 @@ def _channel_summary(reason: str, *, item_type: str) -> str:
 
 
 def _finding_kind(tags: list[str], topic: str, content: str) -> str:
-    haystack = " ".join([topic, content, *tags]).lower()
-    if "ken-rule" in haystack or "rule" in haystack or "objective" in haystack:
+    del topic, content
+    normalized = [tag.strip().lower() for tag in tags if isinstance(tag, str)]
+    for prefix in ("kind:", "type:"):
+        for tag in normalized:
+            if tag.startswith(prefix):
+                kind = tag.split(":", 1)[1]
+                if kind in {"finding", "persistent_rule", "experimental_finding", "hypothesis"}:
+                    return kind
+
+    legacy = set(normalized)
+    if "ken-rule" in legacy:
         return "persistent_rule"
-    if "negative-result" in haystack or "bugfix" in haystack or "test" in haystack:
+    if {"negative-result", "bugfix"} & legacy:
         return "experimental_finding"
-    if "hypothesis" in haystack or "research" in haystack:
+    if {"hypothesis", "research"} & legacy:
         return "hypothesis"
     return "finding"
 

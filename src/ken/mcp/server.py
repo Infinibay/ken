@@ -212,15 +212,22 @@ def ken_project_overview(depth: int = 2, limit: int = 20) -> dict:
 
 
 @mcp.tool()
-def ken_remember(topic: str, content: str, tags: list[str] | None = None) -> dict:
+def ken_remember(
+    topic: str,
+    content: str,
+    tags: list[str] | None = None,
+    kind: str | None = None,
+) -> dict:
     """Write a finding for future sessions to recall.
 
     *topic* is a short lookup key (unique — re-using a topic updates
     the existing row). *content* is the body — usually a few sentences
-    capturing a fact you don't want to re-derive next time.
+    capturing a fact you don't want to re-derive next time. *kind* can
+    explicitly classify the note as finding, persistent_rule,
+    experimental_finding, or hypothesis.
     """
     with _conn() as conn:
-        return remember(conn, topic, content, tags=tags)
+        return remember(conn, topic, content, tags=tags, kind=kind)
 
 
 @mcp.tool()
@@ -242,10 +249,14 @@ def ken_findings(limit: int = 20, tag: str | None = None) -> list[dict]:
 
 
 @mcp.tool()
-def ken_recall(query: str, limit: int = 5) -> list[dict]:
-    """Search previously-saved findings by semantic similarity to *query*."""
+def ken_recall(query: str, limit: int = 5, min_score: float = 0.25) -> list[dict]:
+    """Search previously-saved findings by semantic similarity to *query*.
+
+    Results below *min_score* are omitted. Set ``min_score=0`` to inspect
+    nearest neighbors even when they are likely noise.
+    """
     with _conn() as conn:
-        return recall(conn, query, limit=limit)
+        return recall(conn, query, limit=limit, min_score=min_score)
 
 
 @mcp.tool()

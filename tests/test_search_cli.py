@@ -336,14 +336,43 @@ def test_remember_and_recall_helpers(monkeypatch, tmp_path):
 
     with connect(_paths.db_path(root)) as conn:
         out = remember(conn, "codex wiring", "Use --codex to repair hooks.", tags=["codex"])
-        hits = recall(conn, "codex symbol", limit=3)
+        hits = recall(conn, "codex", limit=3)
 
     assert out == {"ok": True, "topic": "codex wiring"}
     assert hits[0]["topic"] == "codex wiring"
     assert hits[0]["tags"] == ["codex"]
     assert hits[0]["type"] == "finding"
+    assert hits[0]["type_source"] == "default"
+    assert hits[0]["score_kind"] == "cosine_similarity"
+    assert hits[0]["min_score"] == 0.25
     assert hits[0]["created_at"].endswith("Z")
     assert hits[0]["updated_at"].endswith("Z")
+
+
+def test_recall_filters_weak_matches_by_default(monkeypatch, tmp_path):
+    root = _project(tmp_path)
+    monkeypatch.setattr("ken.memory.get_embedder", lambda: FakeEmbedder())
+
+    with connect(_paths.db_path(root)) as conn:
+        remember(conn, "parser note", "Symbol parser internals.", tags=["parser"])
+        filtered = recall(conn, "codex", limit=3)
+        raw = recall(conn, "codex", limit=3, min_score=0)
+
+    assert filtered == []
+    assert raw[0]["topic"] == "parser note"
+    assert raw[0]["score"] == 0.0
+
+
+def test_recall_does_not_infer_type_from_content_words(monkeypatch, tmp_path):
+    root = _project(tmp_path)
+    monkeypatch.setattr("ken.memory.get_embedder", lambda: FakeEmbedder())
+
+    with connect(_paths.db_path(root)) as conn:
+        remember(conn, "fixtures", "Testing strategy uses fixtures.")
+        hits = recall(conn, "fixtures", limit=1)
+
+    assert hits[0]["type"] == "finding"
+    assert hits[0]["type_source"] == "default"
 
 
 def test_recall_classifies_rules_and_formats_dates(monkeypatch, tmp_path):
@@ -355,9 +384,24 @@ def test_recall_classifies_rules_and_formats_dates(monkeypatch, tmp_path):
         hits = recall(conn, "optimizer", limit=1)
 
     assert hits[0]["type"] == "persistent_rule"
+    assert hits[0]["type_source"] == "legacy_tag"
     rendered = format_recall_hits(hits)
     assert "persistent_rule" in rendered
     assert "updated " in rendered
+
+
+def test_remember_accepts_explicit_kind(monkeypatch, tmp_path):
+    root = _project(tmp_path)
+    monkeypatch.setattr("ken.memory.get_embedder", lambda: FakeEmbedder())
+
+    with connect(_paths.db_path(root)) as conn:
+        out = remember(conn, "optimizer gate", "Validate on real data.", kind="persistent_rule")
+        hits = recall(conn, "optimizer", limit=1)
+
+    assert out == {"ok": True, "topic": "optimizer gate"}
+    assert hits[0]["tags"] == ["kind:persistent_rule"]
+    assert hits[0]["type"] == "persistent_rule"
+    assert hits[0]["type_source"] == "explicit"
 
 
 def test_forget_deletes_finding_by_topic(monkeypatch, tmp_path):
@@ -408,6 +452,28 @@ def test_remember_cli_prints_confirmation(monkeypatch, capsys, tmp_path):
     assert "remembered: codex wiring" in capsys.readouterr().out
 
 
+def test_remember_cli_accepts_kind(monkeypatch, tmp_path):
+    root = _project(tmp_path)
+    monkeypatch.setattr("ken.memory.get_embedder", lambda: FakeEmbedder())
+
+    rc = main(
+        [
+            "remember",
+            "--path",
+            str(root),
+            "--kind",
+            "hypothesis",
+            "optimizer idea",
+            "Try validating on real data.",
+        ]
+    )
+
+    assert rc == 0
+    with connect(_paths.db_path(root)) as conn:
+        hits = recall(conn, "optimizer", limit=1)
+    assert hits[0]["type"] == "hypothesis"
+
+
 def test_forget_cli_deletes_finding(monkeypatch, capsys, tmp_path):
     root = _project(tmp_path)
     monkeypatch.setattr("ken.memory.get_embedder", lambda: FakeEmbedder())
@@ -444,3 +510,15 @@ def test_recall_cli_prints_json(monkeypatch, capsys, tmp_path):
 
     assert rc == 0
     assert '"topic": "codex wiring"' in capsys.readouterr().out
+
+
+def test_recall_cli_reports_no_relevant_findings(monkeypatch, capsys, tmp_path):
+    root = _project(tmp_path)
+    monkeypatch.setattr("ken.memory.get_embedder", lambda: FakeEmbedder())
+    with connect(_paths.db_path(root)) as conn:
+        remember(conn, "parser note", "Symbol parser internals.", tags=["parser"])
+
+    rc = main(["recall", "--path", str(root), "codex"])
+
+    assert rc == 0
+    assert "no relevant findings (min_score=0.250)" in capsys.readouterr().out
