@@ -42,6 +42,42 @@ def remember(
     return {"ok": True, "topic": topic}
 
 
+def forget(conn: sqlite3.Connection, topic: str) -> dict:
+    """Delete a saved finding by exact topic."""
+    topic = topic.strip()
+    if not topic:
+        return {"ok": False, "error": "topic must be non-empty"}
+    cur = conn.execute("DELETE FROM cr_findings WHERE topic = ?", (topic,))
+    deleted = int(cur.rowcount if cur.rowcount is not None else 0)
+    return {"ok": deleted > 0, "topic": topic, "deleted": deleted}
+
+
+def list_findings(
+    conn: sqlite3.Connection,
+    *,
+    limit: int = 20,
+    tag: str | None = None,
+) -> list[dict]:
+    """Return recent findings, optionally filtered by tag."""
+    rows = conn.execute(
+        """
+        SELECT topic, content, tags, created_at, updated_at
+        FROM cr_findings
+        ORDER BY updated_at DESC, topic
+        LIMIT ?
+        """,
+        (max(1, limit),),
+    ).fetchall()
+    out: list[dict] = []
+    wanted = tag.strip() if isinstance(tag, str) and tag.strip() else None
+    for r in rows:
+        tags = json.loads(r["tags"] or "[]")
+        if wanted is not None and wanted not in tags:
+            continue
+        out.append(_finding_row_to_dict(r, tags=tags))
+    return out
+
+
 def recall(conn: sqlite3.Connection, query: str, limit: int = 5) -> list[dict]:
     """Search saved findings by embedding cosine similarity."""
     q = get_embedder().embed_query(query)
@@ -57,15 +93,7 @@ def recall(conn: sqlite3.Connection, query: str, limit: int = 5) -> list[dict]:
     sims = (mat @ q) / norms
     ranked = sorted(zip(sims.tolist(), rows), key=lambda x: x[0], reverse=True)[: max(1, limit)]
     return [
-        {
-            "topic": r["topic"],
-            "content": r["content"],
-            "tags": json.loads(r["tags"] or "[]"),
-            "type": _finding_kind(json.loads(r["tags"] or "[]"), r["topic"], r["content"]),
-            "created_at": _ms_to_iso(int(r["created_at"])),
-            "updated_at": _ms_to_iso(int(r["updated_at"])),
-            "score": round(float(score), 3),
-        }
+        {**_finding_row_to_dict(r), "score": round(float(score), 3)}
         for score, r in ranked
     ]
 
@@ -84,6 +112,22 @@ def format_recall_hits(hits: list[dict]) -> str:
         lines.append(f"{hit['score']:.3f}  {hit['topic']}{suffix}{meta_text}")
         lines.append(f"       {hit['content']}")
     return "\n".join(lines)
+
+
+def _finding_row_to_dict(
+    row: sqlite3.Row,
+    *,
+    tags: list[str] | None = None,
+) -> dict:
+    parsed_tags = json.loads(row["tags"] or "[]") if tags is None else tags
+    return {
+        "topic": row["topic"],
+        "content": row["content"],
+        "tags": parsed_tags,
+        "type": _finding_kind(parsed_tags, row["topic"], row["content"]),
+        "created_at": _ms_to_iso(int(row["created_at"])),
+        "updated_at": _ms_to_iso(int(row["updated_at"])),
+    }
 
 
 def _ms_to_iso(ms: int) -> str:

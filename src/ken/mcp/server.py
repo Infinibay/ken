@@ -17,7 +17,7 @@ from mcp.server.fastmcp import FastMCP
 
 from ken import _paths
 from ken.db import connect
-from ken.memory import recall, remember
+from ken.memory import forget, list_findings, recall, remember
 from ken.search import (
     changed_context,
     file_neighbors,
@@ -221,6 +221,24 @@ def ken_remember(topic: str, content: str, tags: list[str] | None = None) -> dic
     """
     with _conn() as conn:
         return remember(conn, topic, content, tags=tags)
+
+
+@mcp.tool()
+def ken_forget(topic: str) -> dict:
+    """Delete a saved finding by exact *topic*.
+
+    Use ``ken_findings`` or ``ken_recall`` first if you need to discover
+    the exact topic. Returns ``deleted=0`` when no finding matched.
+    """
+    with _conn() as conn:
+        return forget(conn, topic)
+
+
+@mcp.tool()
+def ken_findings(limit: int = 20, tag: str | None = None) -> list[dict]:
+    """List recent saved findings, optionally filtering by exact tag."""
+    with _conn() as conn:
+        return list_findings(conn, limit=limit, tag=tag)
 
 
 @mcp.tool()

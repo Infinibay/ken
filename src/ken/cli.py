@@ -11,6 +11,8 @@ Subcommand layout:
     ken search-symbols QUERY            semantic symbol search
     ken bench DATASET.jsonl             evaluate ranker recall on labeled prompts
     ken remember TOPIC CONTENT          save a reusable finding
+    ken forget TOPIC                    delete a saved finding
+    ken findings                        list saved findings
     ken recall QUERY                    search saved findings
     ken serve  [PATH]                   start the daemon
     ken hook session-start              hooks invoked by coding agents
@@ -163,6 +165,17 @@ def main(argv: list[str] | None = None) -> int:
     p_remember.add_argument("--tag", action="append", default=[], help="tag for the finding")
     p_remember.add_argument("--json", action="store_true", help="print raw JSON response")
 
+    p_forget = sub.add_parser("forget", help="delete a saved finding by exact topic")
+    p_forget.add_argument("topic", help="exact finding topic to delete")
+    p_forget.add_argument("--path", default=".", help="project path (default: cwd)")
+    p_forget.add_argument("--json", action="store_true", help="print raw JSON response")
+
+    p_findings = sub.add_parser("findings", help="list saved findings")
+    p_findings.add_argument("--path", default=".", help="project path (default: cwd)")
+    p_findings.add_argument("-n", "--limit", type=int, default=20)
+    p_findings.add_argument("--tag", help="filter by exact tag")
+    p_findings.add_argument("--json", action="store_true", help="print raw JSON response")
+
     p_recall = sub.add_parser("recall", help="semantic search over saved findings")
     p_recall.add_argument("query", nargs="+", help="query text")
     p_recall.add_argument("--path", default=".", help="project path (default: cwd)")
@@ -276,6 +289,17 @@ def main(argv: list[str] | None = None) -> int:
             args.topic,
             args.content,
             tags=args.tag,
+            as_json=args.json,
+        )
+
+    if args.cmd == "forget":
+        return _forget_cli(Path(args.path), args.topic, as_json=args.json)
+
+    if args.cmd == "findings":
+        return _findings_cli(
+            Path(args.path),
+            args.limit,
+            tag=args.tag,
             as_json=args.json,
         )
 
@@ -515,6 +539,50 @@ def _remember_cli(
     else:
         print(f"error: {resp.get('error', 'remember failed')}", file=sys.stderr)
     return 0 if resp.get("ok") else 1
+
+
+def _forget_cli(project_path: Path, topic: str, *, as_json: bool) -> int:
+    from ken.db import connect
+    from ken.memory import forget
+
+    root, db_path = _resolve_project_db(project_path)
+    if db_path is None:
+        print(f"error: no .ken project at {root}", file=sys.stderr)
+        return 1
+    with connect(db_path) as conn:
+        resp = forget(conn, topic)
+    if as_json:
+        print(json.dumps(resp, indent=2))
+    elif resp.get("deleted", 0):
+        print(f"forgot: {resp['topic']}")
+    else:
+        print(f"not found: {resp['topic']}", file=sys.stderr)
+    return 0 if resp.get("deleted", 0) else 1
+
+
+def _findings_cli(
+    project_path: Path,
+    limit: int,
+    *,
+    tag: str | None,
+    as_json: bool,
+) -> int:
+    from ken.db import connect
+    from ken.memory import format_recall_hits, list_findings
+
+    root, db_path = _resolve_project_db(project_path)
+    if db_path is None:
+        print(f"error: no .ken project at {root}", file=sys.stderr)
+        return 1
+    with connect(db_path) as conn:
+        hits = list_findings(conn, limit=limit, tag=tag)
+    if as_json:
+        print(json.dumps(hits, indent=2))
+    else:
+        rendered = format_recall_hits([{**hit, "score": 0.0} for hit in hits])
+        if rendered:
+            print(rendered)
+    return 0
 
 
 def _recall_cli(project_path: Path, query: str, limit: int, *, as_json: bool) -> int:

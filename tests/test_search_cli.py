@@ -11,7 +11,7 @@ from ken import _paths
 from ken.cli import main
 from ken.db import connect, init_schema
 from ken.embedder import vec_to_blob
-from ken.memory import format_recall_hits, recall, remember
+from ken.memory import forget, format_recall_hits, list_findings, recall, remember
 from ken.search import (
     changed_context,
     file_neighbors,
@@ -360,6 +360,34 @@ def test_recall_classifies_rules_and_formats_dates(monkeypatch, tmp_path):
     assert "updated " in rendered
 
 
+def test_forget_deletes_finding_by_topic(monkeypatch, tmp_path):
+    root = _project(tmp_path)
+    monkeypatch.setattr("ken.memory.get_embedder", lambda: FakeEmbedder())
+
+    with connect(_paths.db_path(root)) as conn:
+        remember(conn, "codex wiring", "Use --codex to repair hooks.", tags=["codex"])
+        resp = forget(conn, "codex wiring")
+        missing = forget(conn, "codex wiring")
+        hits = recall(conn, "codex symbol", limit=3)
+
+    assert resp == {"ok": True, "topic": "codex wiring", "deleted": 1}
+    assert missing == {"ok": False, "topic": "codex wiring", "deleted": 0}
+    assert hits == []
+
+
+def test_list_findings_returns_recent_and_filters_tags(monkeypatch, tmp_path):
+    root = _project(tmp_path)
+    monkeypatch.setattr("ken.memory.get_embedder", lambda: FakeEmbedder())
+
+    with connect(_paths.db_path(root)) as conn:
+        remember(conn, "codex wiring", "Use --codex.", tags=["codex"])
+        remember(conn, "optimizer gate", "Persistent rule.", tags=["ken-rule"])
+        hits = list_findings(conn, limit=10, tag="codex")
+
+    assert [hit["topic"] for hit in hits] == ["codex wiring"]
+    assert hits[0]["type"] == "finding"
+
+
 def test_remember_cli_prints_confirmation(monkeypatch, capsys, tmp_path):
     root = _project(tmp_path)
     monkeypatch.setattr("ken.memory.get_embedder", lambda: FakeEmbedder())
@@ -378,6 +406,32 @@ def test_remember_cli_prints_confirmation(monkeypatch, capsys, tmp_path):
 
     assert rc == 0
     assert "remembered: codex wiring" in capsys.readouterr().out
+
+
+def test_forget_cli_deletes_finding(monkeypatch, capsys, tmp_path):
+    root = _project(tmp_path)
+    monkeypatch.setattr("ken.memory.get_embedder", lambda: FakeEmbedder())
+    with connect(_paths.db_path(root)) as conn:
+        remember(conn, "codex wiring", "Use --codex to repair hooks.", tags=["codex"])
+
+    rc = main(["forget", "--path", str(root), "codex wiring"])
+
+    assert rc == 0
+    assert "forgot: codex wiring" in capsys.readouterr().out
+    with connect(_paths.db_path(root)) as conn:
+        assert list_findings(conn) == []
+
+
+def test_findings_cli_lists_saved_findings(monkeypatch, capsys, tmp_path):
+    root = _project(tmp_path)
+    monkeypatch.setattr("ken.memory.get_embedder", lambda: FakeEmbedder())
+    with connect(_paths.db_path(root)) as conn:
+        remember(conn, "codex wiring", "Use --codex to repair hooks.", tags=["codex"])
+
+    rc = main(["findings", "--path", str(root), "--tag", "codex"])
+
+    assert rc == 0
+    assert "codex wiring" in capsys.readouterr().out
 
 
 def test_recall_cli_prints_json(monkeypatch, capsys, tmp_path):

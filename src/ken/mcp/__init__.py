@@ -23,6 +23,8 @@ read-only code intelligence tools plus memory/rank feedback tools:
   * ``ken_project_overview(depth=2)`` — compact index overview.
   * ``ken_remember(topic, content, tags=[])`` — write a note into
     ``cr_findings`` so future sessions can recall it.
+  * ``ken_forget(topic)`` — delete a saved finding by exact topic.
+  * ``ken_findings(limit=20, tag=None)`` — list recent saved findings.
   * ``ken_recall(query, limit=5)`` — search findings by similarity.
   * ``ken_rank(query="", verbose=1)`` — render or recompute ranked
     context.
