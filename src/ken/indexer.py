@@ -86,7 +86,10 @@ def index_files(
         lang_match = detect_language(rel)
         if lang_match is None:
             # Track the file row anyway — context-rank can score files
-            # without symbols (path, mtime, edit history).
+            # without symbols (path, mtime, edit history). For small
+            # project docs/config/scripts, also keep a restrained
+            # intent source so setup prompts can find README.md,
+            # install.sh, pyproject.toml, etc. without a language parser.
             try:
                 data = abs_path.read_bytes()
             except OSError:
@@ -95,7 +98,56 @@ def index_files(
                     on_progress(rel_posix, "skipped:io_error")
                 continue
             content_hash = _hash(data)
-            _upsert_file_row(conn, rel_posix, language=None, content_hash=content_hash, mtime_ns=st.st_mtime_ns, symbol_count=0)
+            if _is_unchanged(
+                conn,
+                rel_posix,
+                content_hash,
+                need_embedding=embedder is not None,
+            ):
+                stats.unchanged += 1
+                if on_progress:
+                    on_progress(rel_posix, "unchanged")
+                continue
+
+            file_blob: bytes | None = None
+            intent_texts = _plain_text_intents(rel_posix, data)
+            intent_blobs: list[bytes | None] = [None] * len(intent_texts)
+            if embedder is not None:
+                from ken.embedder import embed_file_text, embed_intent_text, vec_to_blob
+
+                stem = Path(rel_posix).stem
+                top_terms = intent_texts[:1]
+                file_blob = vec_to_blob(
+                    embedder.embed_query(embed_file_text(None, stem, top_terms))
+                )
+                if intent_texts:
+                    intent_vecs = embedder.embed_passages(
+                        [embed_intent_text("plain_text", text) for text in intent_texts]
+                    )
+                    intent_blobs = [vec_to_blob(vec) for vec in intent_vecs]
+
+            with conn:
+                file_id = _upsert_file_row(
+                    conn,
+                    rel_posix,
+                    language=None,
+                    content_hash=content_hash,
+                    mtime_ns=st.st_mtime_ns,
+                    symbol_count=0,
+                    embedding=file_blob,
+                )
+                conn.execute("DELETE FROM ci_symbols WHERE file_id = ?", (file_id,))
+                conn.execute("DELETE FROM ci_imports WHERE from_file_id = ?", (file_id,))
+                conn.execute("DELETE FROM ci_intent_sources WHERE file_id = ?", (file_id,))
+                for intent_text, intent_blob in zip(intent_texts, intent_blobs):
+                    _insert_file_intent_source(
+                        conn,
+                        file_id,
+                        source_kind="plain_text",
+                        text=intent_text,
+                        embedding=intent_blob,
+                        weight=0.55,
+                    )
             stats.skipped_no_lang += 1
             if on_progress:
                 on_progress(rel_posix, "indexed:noparse")
@@ -333,11 +385,12 @@ def _insert_file_intent_source(
     source_kind: str,
     text: str,
     embedding: bytes | None,
+    weight: float = 1.0,
 ) -> None:
     conn.execute(
         "INSERT INTO ci_intent_sources(file_id, source_kind, text, embedding, weight, updated_at) "
-        "VALUES (?, ?, ?, ?, 1.0, ?)",
-        (file_id, source_kind, text, embedding, int(time.time() * 1000)),
+        "VALUES (?, ?, ?, ?, ?, ?)",
+        (file_id, source_kind, text, embedding, weight, int(time.time() * 1000)),
     )
 
 
@@ -399,3 +452,74 @@ def _resolve_import_target(module: str, files: list[str]) -> str | None:
     matches = [path for path in files if path in candidates or path.endswith(f"/{slash}.py")]
     unique = sorted(set(matches))
     return unique[0] if len(unique) == 1 else None
+
+
+_PLAIN_TEXT_EXTS = {
+    ".md",
+    ".rst",
+    ".txt",
+    ".sh",
+    ".toml",
+    ".json",
+    ".jsonl",
+    ".yaml",
+    ".yml",
+}
+_PLAIN_TEXT_MAX_CHARS = 4000
+_PLAIN_TEXT_CHUNK_CHARS = 1200
+
+
+def _plain_text_intents(rel_posix: str, data: bytes) -> list[str]:
+    """Extract compact purpose strings from unparsed project text files."""
+    path = Path(rel_posix)
+    if path.suffix.lower() not in _PLAIN_TEXT_EXTS:
+        return []
+    if len(path.parts) > 2:
+        return []
+
+    raw = data.decode("utf-8", errors="ignore")
+    if path.suffix.lower() in {".md", ".rst"}:
+        return _section_intents(raw)
+    intent = _clean_plain_text(raw, path)
+    return [intent] if intent else []
+
+
+def _section_intents(raw: str) -> list[str]:
+    chunks: list[str] = []
+    current: list[str] = []
+    for line in raw.splitlines():
+        text = line.strip()
+        if text.startswith("#") and current:
+            _append_intent_chunk(chunks, current)
+            current = []
+        if text:
+            current.append(text.lstrip("#").strip())
+    _append_intent_chunk(chunks, current)
+    return chunks[:8]
+
+
+def _append_intent_chunk(chunks: list[str], lines: list[str]) -> None:
+    text = " ".join(" ".join(lines).split())
+    if text:
+        chunks.append(text[:_PLAIN_TEXT_CHUNK_CHARS])
+
+
+def _clean_plain_text(raw: str, path: Path) -> str | None:
+    lines: list[str] = []
+    for line in raw.splitlines():
+        text = line.strip()
+        if not text:
+            continue
+        if text.startswith("<!--") or text.startswith("//"):
+            continue
+        if path.suffix.lower() == ".sh" and text.startswith("#") and not text.startswith("#!"):
+            continue
+        if path.suffix.lower() in {".json", ".jsonl"} and text in {"{", "}", "[", "]"}:
+            continue
+        lines.append(text.lstrip("#").strip())
+        if sum(len(item) for item in lines) >= _PLAIN_TEXT_MAX_CHARS:
+            break
+    if not lines:
+        return None
+    text = " ".join(lines)
+    return " ".join(text.split())[:_PLAIN_TEXT_MAX_CHARS]

@@ -81,6 +81,26 @@ def test_bench_cli_prints_json(monkeypatch, capsys, tmp_path):
     assert data["results"][0]["hits"] == ["src/status.py"]
 
 
+def test_bench_cli_explain_misses_includes_ranked_reasons(monkeypatch, capsys, tmp_path):
+    root = _project(tmp_path)
+    dataset = tmp_path / "bench.jsonl"
+    dataset.write_text(
+        json.dumps({"prompt": "parser behavior", "expected_files": ["src/missing.py"]})
+        + "\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("ken.embedder.get_embedder", lambda: FakeEmbedder())
+
+    rc = main(["bench", "--path", str(root), "--json", "--explain-misses", str(dataset)])
+
+    assert rc == 0
+    data = json.loads(capsys.readouterr().out)
+    row = data["results"][0]
+    assert row["misses"] == ["src/missing.py"]
+    assert row["ranked_details"][0]["path"] == "src/parser.py"
+    assert "reason" in row["ranked_details"][0]
+
+
 def test_bench_cli_fails_under_case_recall_threshold(monkeypatch, capsys, tmp_path):
     root = _project(tmp_path)
     dataset = tmp_path / "bench.jsonl"

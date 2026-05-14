@@ -130,6 +130,35 @@ def test_index_files_with_embedder_populates_embedding(project):
     assert row["has_emb"] == 1
 
 
+def test_index_files_with_embedder_populates_plain_text_intent(project):
+    root, conn = project
+    readme = root / "README.md"
+    readme.write_text(
+        """# Ken
+
+Install from a local checkout with uv tool install --editable.
+""",
+        encoding="utf-8",
+    )
+
+    index_files(conn, root, [Path("README.md")], embedder=_FakeEmbedder())
+
+    row = conn.execute(
+        "SELECT embedding IS NOT NULL AS has_emb FROM ci_files WHERE path = 'README.md'"
+    ).fetchone()
+    assert row["has_emb"] == 1
+    intent = conn.execute(
+        """
+        SELECT source_kind, text, weight, embedding IS NOT NULL AS has_embedding
+        FROM ci_intent_sources
+        """
+    ).fetchone()
+    assert intent["source_kind"] == "plain_text"
+    assert "local checkout" in intent["text"]
+    assert intent["weight"] == pytest.approx(0.55)
+    assert intent["has_embedding"] == 1
+
+
 def test_index_files_persists_docstring_intent_sources(project):
     root, conn = project
     src = root / "mod.py"

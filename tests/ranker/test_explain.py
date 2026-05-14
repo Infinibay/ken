@@ -25,6 +25,7 @@ def test_explain_returns_all_channel_keys(conn, make_session, fake_emb):
         "fuzzy_symbols",
         "doc_intent_files",
         "doc_intent_symbols",
+        "literal_files",
         "lexical_files",
         "lexical_symbols",
         "findings",
@@ -38,6 +39,9 @@ def test_explain_returns_all_channel_keys(conn, make_session, fake_emb):
         "test_affinity",
         "import_affinity",
         "dismissal",
+        "implementation_intent",
+        "language_intent",
+        "language_symbol_intent",
     }
     assert "final_files" in out
     assert "final_symbols" in out

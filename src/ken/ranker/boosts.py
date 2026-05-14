@@ -9,6 +9,98 @@ import time
 from ken.ranker import RankedItem
 from ken.ranker.channels import SimilarPrompt
 
+IMPLEMENTATION_INTENT_RE = re.compile(
+    r"\b(implement(?:ed|ation|s)?|where\s+is|where\s+are|source|logic)\b",
+    re.IGNORECASE,
+)
+TEST_INTENT_RE = re.compile(r"\b(test|tests|testing|failing|failure|pytest|spec)\b", re.IGNORECASE)
+IMPLEMENTATION_TEST_DEMOTE = 0.45
+IMPLEMENTATION_SOURCE_BONUS = 0.3
+LANGUAGE_INTENTS = {
+    "c": {"c"},
+    "go": {"go", "golang"},
+    "java": {"java"},
+    "javascript": {"javascript", "js"},
+    "python": {"python", "py"},
+    "rust": {"rust", "rs"},
+    "typescript": {"typescript", "ts"},
+}
+LANGUAGE_TARGET_RE = re.compile(r"^(?:src/ken/parsers/|tests/parsers/test_)(?P<lang>[a-z]+)")
+LANGUAGE_FILE_BONUS = 0.4
+LANGUAGE_SYMBOL_BONUS = 0.3
+LANGUAGE_MISMATCH_DEMOTE = 0.55
+
+
+def apply_implementation_intent(files: list[RankedItem], prompt: str) -> None:
+    """Prefer implementation files over tests for source-location prompts."""
+    if not files:
+        return
+    if TEST_INTENT_RE.search(prompt) or IMPLEMENTATION_INTENT_RE.search(prompt) is None:
+        return
+    for item in files:
+        if _is_test_path(item.target):
+            item.score *= IMPLEMENTATION_TEST_DEMOTE
+            item.reason = _append_reason(item.reason, f"impl-intent×{IMPLEMENTATION_TEST_DEMOTE:.2f}")
+        else:
+            item.score += IMPLEMENTATION_SOURCE_BONUS
+            item.reason = _append_reason(item.reason, f"impl-intent+{IMPLEMENTATION_SOURCE_BONUS:.1f}")
+
+
+def apply_language_intent(
+    files: list[RankedItem], symbols: list[RankedItem], prompt: str
+) -> None:
+    """Prefer parser files for the language explicitly named in the prompt."""
+    wanted = _prompt_languages(prompt)
+    if not wanted:
+        return
+    for item in files:
+        lang = _parser_path_language(item.target)
+        if lang is None:
+            continue
+        if lang in wanted:
+            item.score += LANGUAGE_FILE_BONUS
+            item.reason = _append_reason(item.reason, f"lang-intent+{LANGUAGE_FILE_BONUS:.1f}")
+        else:
+            item.score *= LANGUAGE_MISMATCH_DEMOTE
+            item.reason = _append_reason(item.reason, f"lang-intent×{LANGUAGE_MISMATCH_DEMOTE:.2f}")
+    for item in symbols:
+        path = _symbol_target_path(item.target)
+        if path is None:
+            continue
+        lang = _parser_path_language(path)
+        if lang is None:
+            continue
+        if lang in wanted:
+            item.score += LANGUAGE_SYMBOL_BONUS
+            item.reason = _append_reason(item.reason, f"lang-intent+{LANGUAGE_SYMBOL_BONUS:.1f}")
+        else:
+            item.score *= LANGUAGE_MISMATCH_DEMOTE
+            item.reason = _append_reason(item.reason, f"lang-intent×{LANGUAGE_MISMATCH_DEMOTE:.2f}")
+
+
+def _prompt_languages(prompt: str) -> set[str]:
+    tokens = {token.lower() for token in re.findall(r"[A-Za-z][A-Za-z0-9_+-]*", prompt)}
+    out: set[str] = set()
+    for lang, aliases in LANGUAGE_INTENTS.items():
+        if tokens & aliases:
+            out.add(lang)
+    return out
+
+
+def _parser_path_language(path: str) -> str | None:
+    match = LANGUAGE_TARGET_RE.match(path)
+    if not match:
+        return None
+    lang = match.group("lang")
+    return lang if lang in LANGUAGE_INTENTS else None
+
+
+def _symbol_target_path(target: str) -> str | None:
+    match = SYMBOL_TARGET_RE.match(target)
+    if match:
+        return match.group("path")
+    return None
+
 # ── Freshness ────────────────────────────────────────────────────────
 
 FRESH_MAX_MULT = 1.3
@@ -177,8 +269,8 @@ def apply_dismissal_penalty(
 # ── Symbol-file affinity ────────────────────────────────────────────
 
 SYMBOL_TARGET_RE = re.compile(r"^(?P<qualname>.+) \((?P<path>.+):(?P<line>\d+)\)$")
-SYMBOL_FILE_AFFINITY_MIN_SYMBOL_SCORE = 1.8
-SYMBOL_FILE_AFFINITY_MAX_SYMBOLS = 5
+SYMBOL_FILE_AFFINITY_MIN_SYMBOL_SCORE = 1.5
+SYMBOL_FILE_AFFINITY_MAX_SYMBOLS = 8
 SYMBOL_FILE_AFFINITY_PROPAGATION = 0.35
 SYMBOL_FILE_AFFINITY_MIN_SCORE = 0.7
 SYMBOL_FILE_AFFINITY_MAX_SCORE = 2.0
@@ -194,15 +286,11 @@ def apply_symbol_file_affinity(
     path to read or edit, so propagate a capped score from top symbols
     to their indexed files.
     """
-    anchors = [
-        it
-        for it in sorted(symbols, reverse=True)
-        if it.score >= SYMBOL_FILE_AFFINITY_MIN_SYMBOL_SCORE
-    ][:SYMBOL_FILE_AFFINITY_MAX_SYMBOLS]
-    if not anchors:
-        return
     by_path = {it.target: it for it in files}
-    for symbol in anchors:
+    best_by_path: dict[str, tuple[float, str]] = {}
+    for symbol in sorted(symbols, reverse=True):
+        if symbol.score < SYMBOL_FILE_AFFINITY_MIN_SYMBOL_SCORE:
+            continue
         path = _symbol_file_path(conn, symbol.target)
         if path is None:
             continue
@@ -213,6 +301,18 @@ def apply_symbol_file_affinity(
                 symbol.score * SYMBOL_FILE_AFFINITY_PROPAGATION,
             ),
         )
+        current = best_by_path.get(path)
+        if current is None or contribution > current[0]:
+            best_by_path[path] = (contribution, symbol.target)
+
+    anchors = sorted(
+        best_by_path.items(),
+        key=lambda item: item[1][0],
+        reverse=True,
+    )[:SYMBOL_FILE_AFFINITY_MAX_SYMBOLS]
+    if not anchors:
+        return
+    for path, (contribution, symbol_target) in anchors:
         if path in by_path:
             by_path[path].score += contribution
             by_path[path].reason = _append_reason(
@@ -223,7 +323,7 @@ def apply_symbol_file_affinity(
                 target=path,
                 target_type="file",
                 score=contribution,
-                reason=f"symbol-file({symbol.target})",
+                reason=f"symbol-file({symbol_target})",
             )
             files.append(item)
             by_path[path] = item
@@ -249,10 +349,11 @@ def _symbol_file_path(conn: sqlite3.Connection, target: str) -> str | None:
 
 # ── Test affinity ───────────────────────────────────────────────────
 
-TEST_AFFINITY_ANCHOR_MIN_SCORE = 1.2
+TEST_AFFINITY_ANCHOR_MIN_SCORE = 1.0
 TEST_AFFINITY_MAX_ANCHORS = 5
 TEST_AFFINITY_PROPAGATION = 0.35
 TEST_AFFINITY_MIN_SCORE = 0.5
+TEST_SOURCE_AFFINITY_MIN_SCORE = 1.0
 
 
 def apply_test_affinity(conn: sqlite3.Connection, files: list[RankedItem]) -> None:
@@ -266,7 +367,7 @@ def apply_test_affinity(conn: sqlite3.Connection, files: list[RankedItem]) -> No
     """
     anchors = [
         it
-        for it in files
+        for it in sorted(files, reverse=True)
         if it.score >= TEST_AFFINITY_ANCHOR_MIN_SCORE
     ][:TEST_AFFINITY_MAX_ANCHORS]
     if not anchors:
@@ -276,15 +377,17 @@ def apply_test_affinity(conn: sqlite3.Connection, files: list[RankedItem]) -> No
     by_path = {it.target: it for it in files}
 
     for anchor in anchors:
+        test_to_source = _is_test_path(anchor.target)
         related = (
             _related_source_files(anchor.target, all_paths)
-            if _is_test_path(anchor.target)
+            if test_to_source
             else _related_tests(anchor.target, all_paths)
         )
         if not related:
             continue
+        min_score = TEST_SOURCE_AFFINITY_MIN_SCORE if test_to_source else TEST_AFFINITY_MIN_SCORE
         contribution = max(
-            TEST_AFFINITY_MIN_SCORE,
+            min_score,
             anchor.score * TEST_AFFINITY_PROPAGATION,
         )
         for path in related:
