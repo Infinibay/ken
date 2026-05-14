@@ -387,6 +387,8 @@ IMPORT_AFFINITY_ANCHOR_MIN_SCORE = 1.2
 IMPORT_AFFINITY_MAX_ANCHORS = 5
 IMPORT_AFFINITY_PROPAGATION = 0.25
 IMPORT_AFFINITY_MIN_SCORE = 0.4
+IMPORT_AFFINITY_HUB_DEGREE = 8
+IMPORT_AFFINITY_HUB_MIN_MULT = 0.35
 
 
 def apply_import_affinity(conn: sqlite3.Connection, files: list[RankedItem]) -> None:
@@ -412,13 +414,14 @@ def apply_import_affinity(conn: sqlite3.Connection, files: list[RankedItem]) -> 
         return
     by_path = {it.target: it for it in files}
     anchor_score = {it.target: it.score for it in anchors}
+    degrees = _import_degrees(conn)
     for row in rows:
         src = row["source_path"]
         dst = row["target_path"]
         if src in anchor_score:
-            _apply_import_neighbor(files, by_path, dst, src, anchor_score[src])
+            _apply_import_neighbor(files, by_path, dst, src, anchor_score[src], degrees)
         if dst in anchor_score:
-            _apply_import_neighbor(files, by_path, src, dst, anchor_score[dst])
+            _apply_import_neighbor(files, by_path, src, dst, anchor_score[dst], degrees)
 
 
 def _apply_import_neighbor(
@@ -427,24 +430,46 @@ def _apply_import_neighbor(
     path: str,
     anchor: str,
     anchor_score: float,
+    degrees: dict[str, int],
 ) -> None:
     if path == anchor:
         return
-    contribution = max(IMPORT_AFFINITY_MIN_SCORE, anchor_score * IMPORT_AFFINITY_PROPAGATION)
+    base = max(IMPORT_AFFINITY_MIN_SCORE, anchor_score * IMPORT_AFFINITY_PROPAGATION)
+    hub_mult = _import_hub_multiplier(degrees.get(path, 0))
+    contribution = base * hub_mult
+    suffix = "" if hub_mult >= 1.0 else f";hub×{hub_mult:.2f}"
     if path in by_path:
         by_path[path].score += contribution
         by_path[path].reason = _append_reason(
-            by_path[path].reason, f"import-affinity+{contribution:.1f}"
+            by_path[path].reason, f"import-affinity+{contribution:.1f}{suffix}"
         )
     else:
         item = RankedItem(
             target=path,
             target_type="file",
             score=contribution,
-            reason=f"import-affinity({anchor})",
+            reason=f"import-affinity({anchor}{suffix})",
         )
         files.append(item)
         by_path[path] = item
+
+
+def _import_degrees(conn: sqlite3.Connection) -> dict[str, int]:
+    rows = conn.execute(
+        """
+        SELECT f.path AS path, COUNT(i.id) AS degree
+        FROM ci_files f
+        LEFT JOIN ci_imports i ON i.from_file_id = f.id OR i.to_file_id = f.id
+        GROUP BY f.id, f.path
+        """
+    ).fetchall()
+    return {str(r["path"]): int(r["degree"]) for r in rows}
+
+
+def _import_hub_multiplier(degree: int) -> float:
+    if degree <= IMPORT_AFFINITY_HUB_DEGREE:
+        return 1.0
+    return max(IMPORT_AFFINITY_HUB_MIN_MULT, IMPORT_AFFINITY_HUB_DEGREE / degree)
 
 
 # ── Helpers ──────────────────────────────────────────────────────────

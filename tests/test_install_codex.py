@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 from ken.indexer import IndexStats
-from ken.install import _prioritize_embed_rels, _wire_codex, install
+from ken.install import _detect_agent_wiring, _prioritize_embed_rels, _wire_codex, install
 from ken.cli import main
 
 
@@ -72,6 +72,41 @@ def test_install_cli_rejects_embed_limit_without_embed(tmp_path):
         main(["install", "--embed-limit", "7", str(tmp_path)])
 
     assert exc.value.code == 2
+
+
+def test_detect_agent_wiring_defaults_fresh_project_to_claude(tmp_path):
+    assert _detect_agent_wiring(tmp_path, force_claude=False, force_codex=False) == (
+        True,
+        False,
+    )
+
+
+def test_detect_agent_wiring_uses_existing_codex_only(tmp_path):
+    (tmp_path / ".codex").mkdir()
+
+    assert _detect_agent_wiring(tmp_path, force_claude=False, force_codex=False) == (
+        False,
+        True,
+    )
+
+
+def test_detect_agent_wiring_uses_both_when_both_configs_exist(tmp_path):
+    (tmp_path / ".claude").mkdir()
+    (tmp_path / ".codex").mkdir()
+
+    assert _detect_agent_wiring(tmp_path, force_claude=False, force_codex=False) == (
+        True,
+        True,
+    )
+
+
+def test_detect_agent_wiring_explicit_flags_override_detection(tmp_path):
+    (tmp_path / ".codex").mkdir()
+
+    assert _detect_agent_wiring(tmp_path, force_claude=True, force_codex=False) == (
+        True,
+        False,
+    )
 
 
 def test_prioritize_embed_rels_prefers_source_over_docs_and_tests():

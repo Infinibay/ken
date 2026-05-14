@@ -3,6 +3,7 @@
 Subcommand layout:
 
     ken install [PATH]                  install + initial index
+    ken reinstall [PATH]                reinstall CLI + re-apply project install
     ken status [PATH]                   show project state
     ken rank [QUERY...]                 print ranked context for a query
     ken explain [QUERY...]              explain rank scoring for a query
@@ -30,6 +31,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -65,6 +68,39 @@ def main(argv: list[str] | None = None) -> int:
         type=int,
         default=None,
         help="with --embed, eagerly embed at most N prioritized files; index the rest structurally",
+    )
+
+    p_reinstall = sub.add_parser(
+        "reinstall",
+        help="reinstall ken from this checkout and re-apply project wiring",
+    )
+    p_reinstall.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
+    p_reinstall.add_argument("-q", "--quiet", action="store_true", help="suppress install output")
+    p_reinstall.add_argument(
+        "--no-project",
+        action="store_true",
+        help="only reinstall the ken CLI; do not run `ken install PATH` afterwards",
+    )
+    p_reinstall.add_argument(
+        "--claude",
+        action="store_true",
+        help="pass --claude to the project install step",
+    )
+    p_reinstall.add_argument(
+        "--codex",
+        action="store_true",
+        help="pass --codex to the project install step",
+    )
+    p_reinstall.add_argument(
+        "--embed",
+        action="store_true",
+        help="pass --embed to the project install step",
+    )
+    p_reinstall.add_argument(
+        "--embed-limit",
+        type=int,
+        default=None,
+        help="with --embed, eagerly embed at most N prioritized files during project install",
     )
 
     p_status = sub.add_parser("status", help="show ken project status")
@@ -154,7 +190,7 @@ def main(argv: list[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
 
-    if args.cmd == "install" and args.embed_limit is not None and not args.embed:
+    if args.cmd in {"install", "reinstall"} and args.embed_limit is not None and not args.embed:
         parser.error("--embed-limit requires --embed")
 
     if args.cmd == "install":
@@ -169,6 +205,17 @@ def main(argv: list[str] | None = None) -> int:
             embed_limit=args.embed_limit,
         )
         return 0
+
+    if args.cmd == "reinstall":
+        return _reinstall_cli(
+            Path(args.path),
+            quiet=args.quiet,
+            project=not args.no_project,
+            force_claude=args.claude,
+            force_codex=args.codex,
+            embed=args.embed,
+            embed_limit=args.embed_limit,
+        )
 
     if args.cmd == "status":
         from ken.status import show_status
@@ -253,6 +300,72 @@ def main(argv: list[str] | None = None) -> int:
 
     parser.error(f"unknown command: {args.cmd}")
     return 2
+
+
+def _reinstall_cli(
+    project_path: Path,
+    *,
+    quiet: bool,
+    project: bool,
+    force_claude: bool,
+    force_codex: bool,
+    embed: bool,
+    embed_limit: int | None,
+) -> int:
+    repo_root = Path(__file__).resolve().parents[2]
+    if not (repo_root / "pyproject.toml").is_file():
+        print(
+            "error: cannot locate ken source checkout for editable reinstall",
+            file=sys.stderr,
+        )
+        return 1
+    uv = shutil.which("uv")
+    if uv is None:
+        print("error: uv is required for `ken reinstall`", file=sys.stderr)
+        return 1
+
+    reinstall_cmd = [
+        uv,
+        "tool",
+        "install",
+        "--editable",
+        str(repo_root),
+        "--force",
+        "--reinstall",
+        "--refresh",
+    ]
+    stdout = subprocess.DEVNULL if quiet else None
+    stderr = subprocess.DEVNULL if quiet else None
+    try:
+        subprocess.run(reinstall_cmd, check=True, stdout=stdout, stderr=stderr)
+    except subprocess.CalledProcessError as exc:
+        print(f"error: CLI reinstall failed with exit code {exc.returncode}", file=sys.stderr)
+        return int(exc.returncode or 1)
+
+    if not project:
+        return 0
+
+    ken = shutil.which("ken")
+    if ken is None:
+        print("error: ken was reinstalled but is not on PATH", file=sys.stderr)
+        return 1
+    install_cmd = [ken, "install", str(project_path)]
+    if quiet:
+        install_cmd.append("--quiet")
+    if force_claude:
+        install_cmd.append("--claude")
+    if force_codex:
+        install_cmd.append("--codex")
+    if embed:
+        install_cmd.append("--embed")
+    if embed_limit is not None:
+        install_cmd.extend(["--embed-limit", str(embed_limit)])
+    try:
+        subprocess.run(install_cmd, check=True, stdout=stdout, stderr=stderr)
+    except subprocess.CalledProcessError as exc:
+        print(f"error: project install failed with exit code {exc.returncode}", file=sys.stderr)
+        return int(exc.returncode or 1)
+    return 0
 
 
 def _read_hook_payload() -> dict:

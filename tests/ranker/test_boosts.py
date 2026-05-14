@@ -382,3 +382,25 @@ def test_import_affinity_boosts_existing_neighbor(conn, make_file):
     assert sum(1 for it in files if it.target == "src/util.py") == 1
     assert by_target["src/util.py"].score > 0.2
     assert "import-affinity+" in by_target["src/util.py"].reason
+
+
+def test_import_affinity_dampens_high_degree_hub_neighbor(conn, make_file):
+    app_id = make_file("src/app.py")
+    hub_id = make_file("src/hub.py")
+    conn.execute(
+        "INSERT INTO ci_imports(from_file_id, to_module, to_file_id, line) VALUES (?, 'src.hub', ?, 1)",
+        (app_id, hub_id),
+    )
+    for i in range(12):
+        leaf_id = make_file(f"src/leaf_{i}.py")
+        conn.execute(
+            "INSERT INTO ci_imports(from_file_id, to_module, to_file_id, line) VALUES (?, 'src.hub', ?, 1)",
+            (leaf_id, hub_id),
+        )
+
+    files = [_file("src/app.py", 4.0, "fuzzy")]
+    apply_import_affinity(conn, files)
+
+    hub = next(it for it in files if it.target == "src/hub.py")
+    assert hub.score < 4.0 * 0.25
+    assert "hub×" in hub.reason

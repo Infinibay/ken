@@ -21,6 +21,7 @@ Level 2 — full: top 8 files + symbols/findings sections + 12-line outlines.
 
 from __future__ import annotations
 
+import re
 import sqlite3
 
 from ken.ranker import RankResult
@@ -93,14 +94,18 @@ def _render_verbose(
 ) -> str:
     lines: list[str] = [
         f"<context-rank verbose={level}>",
-        "Based on your current task and past sessions, these resources are likely relevant.",
+        "Likely relevant resources.",
     ]
     outline_rows: list[tuple[str, list[str]]] = []
     if result.files:
         lines.append("")
         lines.append("Files (by relevance):")
         for i, it in enumerate(result.files[:max_files], 1):
-            lines.append(f"  {i}. {it.target}  [score={it.score:.1f}] — {it.reason}")
+            priority = _file_priority(i)
+            channels = _channel_summary(it.reason, item_type="file")
+            lines.append(
+                f"  {i}. {it.target}  [{priority}; score={it.score:.1f}; {channels}] — {it.reason}"
+            )
             if outline_n:
                 outline = _file_outline(conn, it.target, outline_n)
                 if outline:
@@ -115,7 +120,11 @@ def _render_verbose(
         lines.append("Findings:")
         for i, it in enumerate(result.findings[:max_findings], 1):
             tags = f" [{' '.join(it.tags)}]" if it.tags else ""
-            lines.append(f"  {i}. {it.topic}{tags}  [score={it.score:.1f}] — {it.reason}")
+            kind = _finding_kind(it.tags, it.topic, it.content)
+            channels = _channel_summary(it.reason, item_type="finding")
+            lines.append(
+                f"  {i}. {it.topic}{tags}  [type={kind}; score={it.score:.1f}; {channels}] — {it.reason}"
+            )
             lines.append(f"       {_one_line(it.content)}")
     if outline_rows:
         lines.append("")
@@ -131,7 +140,7 @@ def _render_verbose(
 def _file_outline(conn: sqlite3.Connection, path: str, limit: int) -> list[str]:
     rows = conn.execute(
         """
-        SELECT s.kind, s.name, s.qualname, s.line_start
+        SELECT s.kind, s.name, s.qualname, s.line_start, s.docstring
         FROM ci_symbols s
         JOIN ci_files f ON f.id = s.file_id
         WHERE f.path = ?
@@ -140,7 +149,75 @@ def _file_outline(conn: sqlite3.Connection, path: str, limit: int) -> list[str]:
         """,
         (path, limit),
     ).fetchall()
-    return [f"{r['kind']} {r['qualname']} (line {r['line_start']})" for r in rows]
+    out: list[str] = []
+    for r in rows:
+        line = f"{r['kind']} {r['qualname']} (line {r['line_start']})"
+        doc = _one_line(str(r["docstring"] or ""), limit=96)
+        if doc:
+            line = f"{line} — {doc}"
+        out.append(line)
+    return out
+
+
+def _file_priority(index: int) -> str:
+    if index == 1:
+        return "open-first"
+    if index <= 3:
+        return "open-early"
+    return "secondary"
+
+
+def _channel_summary(reason: str, *, item_type: str) -> str:
+    semantic = 0.0
+    recentness = 0.0
+    dependency = 0.0
+    finding = 0.0
+
+    for value in re.findall(r"fuzzy:([0-9.]+)", reason):
+        semantic = max(semantic, float(value))
+    for value in re.findall(r"doc-intent(?:-symbol)?:[^:|+]+:([0-9.]+)", reason):
+        semantic = max(semantic, float(value))
+    if "explicit-mention" in reason or "explicit-symbol-mention" in reason:
+        semantic = max(semantic, 1.0)
+    if "explicit-line-mention" in reason:
+        semantic = max(semantic, 0.9)
+    if "lexical" in reason:
+        semantic = max(semantic, 0.6)
+    if "reactive:" in reason or "predictive" in reason:
+        semantic = max(semantic, 0.5)
+
+    fresh = re.search(r"fresh×([0-9.]+)", reason)
+    if fresh:
+        recentness = max(0.0, float(fresh.group(1)) - 1.0)
+
+    for value in re.findall(r"(?:symbol-file|import-affinity|test-affinity|cooc)\+([0-9.]+)", reason):
+        dependency += float(value)
+    if any(marker in reason for marker in ("symbol-file(", "import-affinity(", "test-affinity(", "cooc(")):
+        dependency = max(dependency, 0.4)
+
+    finding_match = re.search(r"finding:([0-9.]+)", reason)
+    if finding_match:
+        finding = float(finding_match.group(1))
+    elif item_type == "finding":
+        finding = 1.0
+
+    return (
+        f"semantic_relevance={semantic:.2f}, "
+        f"recentness={recentness:.2f}, "
+        f"dependency_affinity={dependency:.1f}, "
+        f"remembered_finding={finding:.2f}"
+    )
+
+
+def _finding_kind(tags: list[str], topic: str, content: str) -> str:
+    haystack = " ".join([topic, content, *tags]).lower()
+    if "ken-rule" in haystack or "rule" in haystack or "objective" in haystack:
+        return "persistent_rule"
+    if "negative-result" in haystack or "bugfix" in haystack or "test" in haystack:
+        return "experimental_finding"
+    if "hypothesis" in haystack or "research" in haystack:
+        return "hypothesis"
+    return "finding"
 
 
 def _one_line(text: str, *, limit: int = 220) -> str:

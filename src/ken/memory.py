@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import sqlite3
 import time
+from datetime import datetime, timezone
 
 import numpy as np
 
@@ -46,7 +47,7 @@ def recall(conn: sqlite3.Connection, query: str, limit: int = 5) -> list[dict]:
     q = get_embedder().embed_query(query)
     q = q / (np.linalg.norm(q) + 1e-12)
     rows = conn.execute(
-        "SELECT topic, content, tags, embedding, updated_at "
+        "SELECT topic, content, tags, embedding, created_at, updated_at "
         "FROM cr_findings WHERE embedding IS NOT NULL"
     ).fetchall()
     if not rows:
@@ -60,6 +61,9 @@ def recall(conn: sqlite3.Connection, query: str, limit: int = 5) -> list[dict]:
             "topic": r["topic"],
             "content": r["content"],
             "tags": json.loads(r["tags"] or "[]"),
+            "type": _finding_kind(json.loads(r["tags"] or "[]"), r["topic"], r["content"]),
+            "created_at": _ms_to_iso(int(r["created_at"])),
+            "updated_at": _ms_to_iso(int(r["updated_at"])),
             "score": round(float(score), 3),
         }
         for score, r in ranked
@@ -71,6 +75,27 @@ def format_recall_hits(hits: list[dict]) -> str:
     for hit in hits:
         tags = hit.get("tags") or []
         suffix = f" [{' '.join(tags)}]" if tags else ""
-        lines.append(f"{hit['score']:.3f}  {hit['topic']}{suffix}")
+        meta = []
+        if hit.get("type"):
+            meta.append(str(hit["type"]))
+        if hit.get("updated_at"):
+            meta.append(f"updated {hit['updated_at']}")
+        meta_text = f" ({'; '.join(meta)})" if meta else ""
+        lines.append(f"{hit['score']:.3f}  {hit['topic']}{suffix}{meta_text}")
         lines.append(f"       {hit['content']}")
     return "\n".join(lines)
+
+
+def _ms_to_iso(ms: int) -> str:
+    return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _finding_kind(tags: list[str], topic: str, content: str) -> str:
+    haystack = " ".join([topic, content, *tags]).lower()
+    if "ken-rule" in haystack or "rule" in haystack or "objective" in haystack:
+        return "persistent_rule"
+    if "negative-result" in haystack or "bugfix" in haystack or "test" in haystack:
+        return "experimental_finding"
+    if "hypothesis" in haystack or "research" in haystack:
+        return "hypothesis"
+    return "finding"

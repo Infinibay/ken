@@ -37,18 +37,28 @@ def test_render_terse_caps_files_and_symbols(conn):
 
 def test_render_verbose_l1_includes_outline(conn, make_file, make_symbol):
     fid = make_file("src/a.py")
-    make_symbol(fid, name="f1", qualname="f1", line_start=1)
+    first_symbol = make_symbol(fid, name="f1", qualname="f1", line_start=1)
     make_symbol(fid, name="f2", qualname="f2", line_start=2)
     make_symbol(fid, name="f3", qualname="f3", line_start=3)
     make_symbol(fid, name="f4", qualname="f4", line_start=4)
+    conn.execute(
+        "UPDATE ci_symbols SET docstring = 'Short purpose line.' WHERE id = ?",
+        (first_symbol,),
+    )
 
-    result = RankResult(files=[_file("src/a.py", 5.0)])
+    result = RankResult(files=[_file("src/a.py", 5.0, "fuzzy:0.80 + fresh×1.20")])
     out = render_block(conn, result, verbose=1)
     # 3-line outline at level 1.
     outline_lines = [ln for ln in out.splitlines() if ln.startswith("       ")]
     assert len(outline_lines) == 3
     assert "Outlines:" in out
     assert "verbose=1" in out
+    assert "open-first" in out
+    assert "semantic_relevance=0.80" in out
+    assert "recentness=0.20" in out
+    assert "dependency_affinity=0.0" in out
+    assert "remembered_finding=0.00" in out
+    assert "Short purpose line." in out
 
 
 def test_render_verbose_l2_more_outline(conn, make_file, make_symbol):
@@ -108,13 +118,23 @@ def test_render_terse_includes_capped_finding_note(conn):
 def test_render_verbose_includes_findings_with_truncated_content(conn):
     long = "x " * 200
     result = RankResult(
-        findings=[FindingItem("codex wiring", long, ["codex"], 3.2, "finding:1.00")]
+        findings=[
+            FindingItem(
+                "codex wiring",
+                long,
+                ["codex", "negative-result"],
+                3.2,
+                "finding:1.00",
+            )
+        ]
     )
 
     out = render_block(conn, result, verbose=1)
 
     assert "Findings:" in out
-    assert "codex wiring [codex]" in out
+    assert "codex wiring [codex negative-result]" in out
+    assert "type=experimental_finding" in out
+    assert "remembered_finding=1.00" in out
     assert "finding:1.00" in out
     assert "…" in out
 

@@ -11,7 +11,7 @@ from ken import _paths
 from ken.cli import main
 from ken.db import connect, init_schema
 from ken.embedder import vec_to_blob
-from ken.memory import recall, remember
+from ken.memory import format_recall_hits, recall, remember
 from ken.search import (
     changed_context,
     file_neighbors,
@@ -341,6 +341,23 @@ def test_remember_and_recall_helpers(monkeypatch, tmp_path):
     assert out == {"ok": True, "topic": "codex wiring"}
     assert hits[0]["topic"] == "codex wiring"
     assert hits[0]["tags"] == ["codex"]
+    assert hits[0]["type"] == "finding"
+    assert hits[0]["created_at"].endswith("Z")
+    assert hits[0]["updated_at"].endswith("Z")
+
+
+def test_recall_classifies_rules_and_formats_dates(monkeypatch, tmp_path):
+    root = _project(tmp_path)
+    monkeypatch.setattr("ken.memory.get_embedder", lambda: FakeEmbedder())
+
+    with connect(_paths.db_path(root)) as conn:
+        remember(conn, "optimizer gate", "Persistent rule: validate on real data.", tags=["ken-rule"])
+        hits = recall(conn, "optimizer", limit=1)
+
+    assert hits[0]["type"] == "persistent_rule"
+    rendered = format_recall_hits(hits)
+    assert "persistent_rule" in rendered
+    assert "updated " in rendered
 
 
 def test_remember_cli_prints_confirmation(monkeypatch, capsys, tmp_path):

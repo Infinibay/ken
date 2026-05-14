@@ -6,16 +6,18 @@ Steps:
   3. Open / create the SQLite DB, apply the schema.
   4. Add `.ken/` to the project's `.gitignore` (if there is one and the
      entry isn't there yet).
-  5. Merge ken's hook entries into `.claude/settings.json`.
-  6. Register ken in `.mcp.json`.
-  7. Merge Codex hooks and MCP config into `.codex/`.
+  5. Merge ken's hook entries into `.claude/settings.json` when Claude is
+     requested/detected, or by default for a fresh project.
+  6. Register ken in `.mcp.json` for Claude installs.
+  7. Merge Codex hooks and MCP config into `.codex/` when Codex is
+     requested/detected.
   8. Run the initial code index, verbose by default. Embeddings are
      optional via ``ken install --embed`` because full-repo embedding can
      be expensive on very large codebases.
 
-``ken install --claude`` is accepted as an explicit/symmetric spelling
-for the default Claude Code wiring. ``ken install --codex`` additionally
-forces repair of Codex project-local config when needed.
+``ken install --claude`` and ``ken install --codex`` force wiring for
+their respective agents. Without explicit flags, install detects existing
+`.claude/` / `.codex/` project config; fresh projects default to Claude.
 
 Idempotent. Re-running on an installed project re-applies the schema
 (noop), re-merges hooks (dedup), and runs an incremental re-index
@@ -90,7 +92,6 @@ def install(
     embed_limit: int | None = None,
 ) -> InstallResult:
     """Install ken into *project_path*.  Prints progress to stdout."""
-    del force_claude  # Claude wiring is currently always enabled; flag is for CLI symmetry.
     if embed_limit is not None and embed_limit < 0:
         raise SystemExit("error: --embed-limit must be >= 0")
     root = project_path.resolve()
@@ -131,15 +132,24 @@ def install(
         # Step 3: .gitignore — add `.ken/` if there's a gitignore at project root.
         _ensure_gitignore(root, verbose=verbose)
 
-        # Step 4: Claude Code hooks.
-        _wire_claude_hooks(root, verbose=verbose)
+        install_claude, install_codex = _detect_agent_wiring(
+            root,
+            force_claude=force_claude,
+            force_codex=force_codex,
+        )
 
-        # Step 4b: MCP server registration.
-        _wire_mcp(root, verbose=verbose)
+        # Step 4: Claude Code hooks + MCP registration.
+        if install_claude:
+            _wire_claude_hooks(root, verbose=verbose)
+            _wire_mcp(root, verbose=verbose)
+        elif verbose:
+            print("[hooks] Claude config not detected — skipping .claude/.mcp.json wiring")
 
-        # Step 4c: Codex CLI hooks + MCP. Same role as 4 + 4b for the
-        # other CLI we support.
-        _wire_codex(root, verbose=verbose, force=force_codex)
+        # Step 4b: Codex CLI hooks + MCP.
+        if install_codex:
+            _wire_codex(root, verbose=verbose, force=force_codex)
+        elif verbose:
+            print("[codex] Codex config not detected — skipping .codex wiring")
 
         # Step 5: initial index.
         if verbose:
@@ -203,10 +213,12 @@ def install(
     if verbose:
         print()
         print(f"✓ ken installed in {root}")
-        print(f"  next: cd {root} && claude")
-        print(f"        (Codex users: open {root} with `codex` and approve")
-        print(f"         project trust, OR add `[projects.\"{root}\"]`")
-        print(f"         `trust_level = \"trusted\"` to ~/.codex/config.toml)")
+        if install_claude:
+            print(f"  next: cd {root} && claude")
+        if install_codex:
+            print(f"        (Codex users: open {root} with `codex` and approve")
+            print(f"         project trust, OR add `[projects.\"{root}\"]`")
+            print(f"         `trust_level = \"trusted\"` to ~/.codex/config.toml)")
 
     return InstallResult(
         project_root=root,
@@ -216,6 +228,36 @@ def install(
         symbols=stats.symbols,
         elapsed_s=stats.elapsed_s,
     )
+
+
+def _detect_agent_wiring(
+    root: Path,
+    *,
+    force_claude: bool,
+    force_codex: bool,
+) -> tuple[bool, bool]:
+    """Return ``(install_claude, install_codex)`` for project wiring.
+
+    Fresh projects keep the original Claude-first default. Once a
+    project has agent-local config, re-installs follow those signals so
+    `ken reinstall .` does not create config for an agent the project
+    does not use.
+    """
+    if force_claude or force_codex:
+        return force_claude, force_codex
+    uses_claude = _project_uses_claude(root)
+    uses_codex = _project_uses_codex(root)
+    if not uses_claude and not uses_codex:
+        uses_claude = True
+    return uses_claude, uses_codex
+
+
+def _project_uses_claude(root: Path) -> bool:
+    return (root / ".claude").exists() or (root / MCP_SETTINGS).is_file()
+
+
+def _project_uses_codex(root: Path) -> bool:
+    return (root / ".codex").exists()
 
 
 def _ensure_gitignore(root: Path, *, verbose: bool) -> None:
