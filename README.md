@@ -106,29 +106,38 @@ From a ken checkout, `install.sh` can install the CLI and then run `ken install`
 
 ## Tell the assistant to use ken
 
-ken works through hooks automatically, but it is still useful to add a short instruction to your project agent guide so the assistant uses ken first for code queries.
-
-For Codex, add something like this to `AGENTS.md`:
+ken works through hooks automatically, but assistants behave better when your project instructions explicitly tell them how to use the ken MCP tools. Add the same guidance to the agent instruction file for the tool you use: `AGENTS.md` for Codex, `CLAUDE.md` for Claude Code, or both.
 
 ```md
 ## Code Search
 
-Use ken as the first attempt for codebase queries before broad text search.
-Prefer `ken rank`, `ken search-files`, `ken search-symbols`, and `ken explain`
-when looking for relevant files, symbols, implementation locations, or why a
-file is relevant. Fall back to `rg` or direct file reads after ken has narrowed
-the search space.
+Use ken as the first attempt for codebase questions. Prefer ken MCP tools before
+broad text search or reading many files:
+
+- Start with `ken_rank` for the current task, or pass a query when the question
+  needs a focused search.
+- Use `ken_search_files` to find files by intent, feature, behavior, or concept.
+- Use `ken_search_symbols` to find functions, classes, methods, APIs, and other
+  named code objects.
+- Use `ken_file_outline`, `ken_file_symbols`, and `ken_file_snippets` to inspect
+  surfaced files precisely before opening larger chunks of code.
+- Use `ken_file_neighbors`, `ken_module_graph`, and `ken_find_tests` to follow
+  imports, related modules, and source/test pairs.
+- Use `ken_changed_context` when working from an existing diff or local edits.
+- Use `ken_project_overview` for a compact map of an unfamiliar project area.
+- Use `ken_recall` and `ken_findings` for saved project knowledge, and
+  `ken_remember` when a durable finding should help future sessions.
+- Use `ken_explain_rank` when rankings look surprising or an expected file is
+  missing.
+- Use `ken_dismiss` when ken surfaces a file that is clearly not relevant, so
+  future similar tasks get better results.
+
+After ken narrows the search space, read the relevant files directly. Fall back
+to `rg` when ken is insufficient, when an exact literal search is required, or
+when verifying a specific string occurrence.
 ```
 
-For Claude Code, the same guidance can go in `CLAUDE.md`:
-
-```md
-## Code Search
-
-Use ken first when investigating the codebase. Start with `ken rank <query>` or
-the ken MCP tools for file/symbol search, then read the surfaced files directly.
-Use broad grep only after ken's ranked results are insufficient.
-```
+The shell commands (`ken rank`, `ken search-files`, `ken search-symbols`, and `ken explain`) expose the same ideas for humans or agents without MCP. For assistants with MCP available, the MCP tools are the preferred path because they return structured results and feed ken's local task memory.
 
 ## Use ken directly
 
