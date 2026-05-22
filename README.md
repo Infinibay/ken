@@ -1,278 +1,175 @@
 # ken
 
-Per-project context-rank index for [Claude Code](https://claude.com/claude-code)
-and [Codex CLI](https://developers.openai.com/codex/cli). Local SQLite, local
-daemon, no network. Indexes your codebase, watches it for changes, and feeds
-the model a ranked `<context-rank>` block on every prompt — based on what
-you've been touching this session, what was useful in past similar sessions,
-and what looks semantically relevant to the current request.
-Saved findings from `ken remember` / `ken_remember` can also appear in the
-ranked block when they match the current prompt; direct recall filters weak
-matches by default so unrelated prompts do not return nearest-neighbor noise.
+ken is a local context-rank index for coding agents such as [Claude Code](https://claude.com/claude-code) and [Codex CLI](https://developers.openai.com/codex/cli). It indexes each project into a local SQLite database, watches for changes, and gives the assistant a ranked `<context-rank>` block before each prompt so it can start from the most relevant files instead of exploring from scratch.
 
-## Why
+Everything runs locally: project metadata, embeddings, the daemon, and the SQLite index stay on your machine.
 
-Cold-start exploration burns tokens. Without ken, Claude reaches for `Glob` /
-`Grep` to figure out which files matter for your task. With ken, the relevant
-files are surfaced upfront via embedding similarity + reactive scoring, so
-Claude reads them directly instead of grepping around.
+## Why it works
 
-Measured on real-world tasks against [BerriAI/litellm](https://github.com/BerriAI/litellm)
-(7,772 files, 5,050 of them parsed code) using `claude -p` with opus 4.7:
+ken is not only a code embedding index. It builds several local signals and ranks files by combining them:
 
-| Task | Cost (no ken) | Cost (with ken) | Δ | Wall time Δ |
-|---|---:|---:|---:|---:|
-| Plan an implementation (read-only) | $0.83 | $0.63 | **−24%** | −39% |
-| Implement `litellm.estimate_cost` (write) | $1.43 | $0.93 | **−35%** | −33% |
+- **Structural code index**: each file is hashed and parsed when possible. The AST parser extracts symbols, line ranges, imports, module docstrings, and symbol docstrings. Files that cannot be parsed are still tracked by path, mtime, and lightweight text intent when useful.
+- **Semantic index**: ken embeds files, symbols, and explicit purpose text. File embeddings are based on language, filename, and top symbol names. Symbol embeddings include kind, name, and docstring. Docstrings are also stored as separate intent sources, so a prompt can find code by what it is for, not only by what it is named.
+- **Live task memory**: hooks record local interactions in the project SQLite DB: prompts, reads, edits, writes, dismissals, and the files touched in each turn. Recent interactions are weighted more heavily, and useful patterns such as read-then-edit score higher than repeated reads with no follow-through.
+- **Predictive memory**: at the end of a session, ken snapshots which files were productive for that task. Later, when a new prompt is semantically similar to a previous one, those files get a predictive boost.
+- **Relationship boosts**: after the main channels rank candidates, ken applies conservative boosts for things like recently modified files, symbols pointing to their containing file, source/test counterparts, imports, and files that often co-occurred in past similar sessions.
 
-Same prompt, same model, same project state. The win comes from the model
-reading fewer files and reusing the cached `<context-rank>` injection across
-turns instead of re-grepping.
+The result is closer to a local project memory than a plain search tool. Raw text search can find exact strings. Embeddings can find semantic neighbors. AST indexing can find named symbols. ken combines all of that with how the assistant actually used the project over time. That is why results are often better after a few real sessions: the database accumulates project-specific evidence about which files matter for which kinds of tasks.
 
-## Install
+All of these signals stay local in `.ken/ken.db`. They are not sent to a any server.
 
-ken is a Python CLI installed via `uv tool`:
+## Install the CLI
 
-```fish
-uv tool install --from git+https://github.com/Infinibay/ken.git ken
-```
+From this checkout, run:
 
-Or from a local checkout:
-
-```fish
-git clone https://github.com/Infinibay/ken.git
-cd ken
+```sh
 ./install.sh
 ```
 
-This puts `ken` on your `PATH`. Verify:
+The installer uses `uv` to install the `ken` command into your user-local tool directory. If `uv` is not present, the script bootstraps it with Astral's official installer unless you pass `--no-bootstrap-uv`.
 
-```fish
+Verify the install:
+
+```sh
 ken --version
 ```
 
-If you already have `uv` and prefer the direct command:
+You can also install directly with `uv`:
 
-```fish
+```sh
 uv tool install --editable . --force --reinstall --refresh
 ```
 
-## Wire it into a project
+## Install ken in a project
 
-Run once per project:
+Run this once from the project you want ken to index:
 
-```fish
-cd my-project
+```sh
 ken install .
 ```
 
-`ken install .` wires Claude Code and Codex CLI by default. `--claude`
-exists as an explicit no-op-for-now flag for symmetry with `--codex`:
+By default, ken detects the assistant setup you use and wires itself into the supported local agent config. The install creates `.ken/`, adds it to `.gitignore`, installs hooks/MCP config where applicable, and performs the initial structural code index.
 
-```fish
-ken install . --claude
-ken install . --codex
-ken install . --claude --codex
+Embeddings are lazy by default. That means `ken install .` does not eagerly embed the whole repository; the daemon warms embeddings as they are needed. This keeps install fast and avoids doing expensive work before the project needs it.
+
+ken also gets better with use. The first run starts from the project index, names, symbols, docstrings, and any available embeddings. As you and the assistant read files, edit code, dismiss weak context, and save findings, ken records those interactions as local ranking signals. Results should improve after real sessions because the system learns which files were useful for similar work in this project.
+
+### Force a target assistant
+
+Use `--claude` when you specifically want Claude Code wiring:
+
+```sh
+ken install --claude .
 ```
 
-If a project already has a locked-down `.codex/` directory or an invalid
-`.codex/hooks.json`, rerun with `ken install . --codex` to force Codex hook
-and MCP config wiring while still preserving valid existing user entries.
-By default install does structural indexing and leaves embeddings to the
-daemon's lazy warm path. For large cold-start experiments where semantic
-ranking quality matters immediately, run `ken install . --embed` (or
-`ken install . --claude --codex --embed`) to compute file and symbol embeddings
-up front.
+Use `--codex` when you specifically want Codex CLI wiring:
 
-On very large repos, eager full-repo embedding can take a long time. Use
-`--embed-limit N` to eagerly embed only the N highest-priority source files
-while still structurally indexing the whole project:
-
-```fish
-ken install . --embed --embed-limit 5000
+```sh
+ken install --codex .
 ```
 
-This:
+You can pass both when a project uses both assistants:
 
-- Creates `.ken/{meta.json,ken.db}` (the local index + auth token).
-- Adds `.ken/` to `.gitignore` (if you have one).
-- Writes hooks into `.claude/settings.json` (Claude Code) and
-  `.codex/hooks.json` (Codex CLI), covering `UserPromptSubmit`,
-  `PreToolUse`, `PostToolUse`, `SessionStart`, `Stop`, and
-  `SessionEnd` (Claude only — Codex relies on the daemon's idle timeout).
-- Registers ken's MCP server in `.mcp.json` (Claude Code) and
-  `.codex/config.toml` (Codex CLI). Exposes `ken_rank`,
-  `ken_search_files`, `ken_search_symbols`, `ken_recall`, `ken_remember`,
-  `ken_dismiss`, `ken_explain_rank`.
-- Runs the initial code index. Embeddings are lazy by default, or eager
-  when `--embed` is passed.
+```sh
+ken install --claude --codex .
+```
 
-**Codex trust note**: Codex won't load project-local hooks until you
-mark the project as trusted. Either run `codex` once in the project
-and approve the prompt, or add this to `~/.codex/config.toml`:
+### Eagerly build embeddings
+
+For better first-run semantic ranking, especially on projects where initial context quality matters, force the initial embedding pass:
+
+```sh
+ken install --embed .
+```
+
+This is recommended when you can afford the extra install time. The cost depends on repository size. On very large projects, cap the eager pass while still structurally indexing the whole repo:
+
+```sh
+ken install --embed --embed-limit 5000 .
+```
+
+You can combine assistant selection and eager embeddings:
+
+```sh
+ken install --codex --embed .
+ken install --claude --embed .
+```
+
+### Install CLI and wire a project in one step
+
+From a ken checkout, `install.sh` can install the CLI and then run `ken install` for a project:
+
+```sh
+./install.sh --project /path/to/my-project
+./install.sh --project /path/to/my-project --codex --embed
+```
+
+## Tell the assistant to use ken
+
+ken works through hooks automatically, but it is still useful to add a short instruction to your project agent guide so the assistant uses ken first for code queries.
+
+For Codex, add something like this to `AGENTS.md`:
+
+```md
+## Code Search
+
+Use ken as the first attempt for codebase queries before broad text search.
+Prefer `ken rank`, `ken search-files`, `ken search-symbols`, and `ken explain`
+when looking for relevant files, symbols, implementation locations, or why a
+file is relevant. Fall back to `rg` or direct file reads after ken has narrowed
+the search space.
+```
+
+For Claude Code, the same guidance can go in `CLAUDE.md`:
+
+```md
+## Code Search
+
+Use ken first when investigating the codebase. Start with `ken rank <query>` or
+the ken MCP tools for file/symbol search, then read the surfaced files directly.
+Use broad grep only after ken's ranked results are insufficient.
+```
+
+## Use ken directly
+
+The hooks run automatically when the assistant is active, but the CLI is useful for checking what ken sees:
+
+```sh
+ken status .
+ken rank "where is codex install wiring handled"
+ken rank --verbose 2 "how does predictive ranking work"
+ken explain "why did src/ken/cli.py appear"
+ken search-files "semantic file retrieval"
+ken search-symbols "merge codex hooks"
+```
+
+You can save and recall project-specific findings:
+
+```sh
+ken remember "codex wiring" "Use ken install --codex . to repair invalid hooks."
+ken recall "codex hook repair"
+```
+
+## Codex hook setup
+
+After `ken install --codex .`, start Codex in the project and run `/hooks` to enable the project hooks. Codex only loads project-local hooks after the project is trusted, so also approve the trust prompt when Codex asks.
+
+You can mark the project as trusted manually in `~/.codex/config.toml`:
 
 ```toml
 [projects."/abs/path/to/my-project"]
 trust_level = "trusted"
 ```
 
-Idempotent — re-running on an installed project re-applies the schema (noop),
-re-merges hooks (dedup), and incrementally re-indexes (unchanged files
-short-circuit on hash).
-
-## Use it
-
-Open either CLI in the project:
-
-```fish
-cd my-project
-claude       # Claude Code
-# or
-codex        # Codex CLI
-```
-
-The hooks fire automatically:
-
-1. **Session start** → ken daemon spawns in the background (logs to
-   `.ken/daemon.log`).
-2. **Each user prompt** → daemon runs the ranker, prepends a compact
-   `<context-rank>` block listing top-relevant files, symbols,
-   docstring-derived intent matches, and matching saved findings.
-3. **Each tool call** (Read, Edit, etc.) → recorded as a reactive signal so
-   the ranker learns what *this* session is touching.
-4. **Stop / SessionEnd** → snapshots productivity scores so future similar
-   sessions get a predictive boost. Daemon idles down after 10 min.
-
-The model can also call `ken_rank(verbose=1|2)` to expand the block, or
-`ken_explain_rank(query)` to debug why a particular file is/isn't surfaced.
-
-You can ask the daemon directly from a shell too:
-
-```fish
-ken rank "where is codex install wiring handled"
-ken rank --verbose 2 "how does predictive ranking work"
-ken rank --max-chars 1200 "give me only the strongest hints"
-ken rank --stats "how much context would this add"
-ken explain "why did src/ken/cli.py appear"
-ken search-files "semantic file retrieval"
-ken search-symbols "merge codex hooks"
-ken bench .ken/bench.jsonl
-ken bench examples/bench/ken-dogfood.jsonl --fail-under-case-recall 0.7
-ken bench examples/bench/ken-dogfood.jsonl --explain-misses
-ken remember "codex wiring" "Use ken install . --codex to repair invalid hooks."
-ken remember --kind persistent_rule "codex wiring rule" "Use ken install . --codex before editing generated hooks."
-ken recall "codex hook repair"
-ken recall --min-score 0 "codex hook repair"  # inspect raw nearest neighbors
-```
-
-Benchmark datasets are JSONL, one prompt per line:
-
-```json
-{"prompt":"fix src/ken/status.py diagnostics","expected_files":["src/ken/status.py","tests/test_status.py"]}
-```
-
-`ken bench` reports recall@N and average injected context size, so ranker
-changes can be judged against labeled prompts instead of intuition alone. Add
-`--fail-under-case-recall 0.8` or `--fail-under-expected-file-recall 0.7` to
-make the benchmark a CI gate. Add `--explain-misses` to include missed expected
-files and the top ranked reasons for each case.
-
-### Inspect what's happening
-
-```fish
-ken status .                                # daemon + DB summary
-ken status --json                          # same health report for agents/scripts
-tail -f .ken/daemon.log                     # live hook traffic
-sqlite3 .ken/ken.db ".tables"               # explore the index
-sqlite3 .ken/ken.db "SELECT path FROM ci_files LIMIT 10"
-```
-
-`ken status` also reports embedding coverage and stale indexed files. If a repo
-was installed with `--embed-limit` or warmed lazily, partial coverage is
-expected; the status recommendation tells you when to warm more files for better
-semantic recall. If files disappeared after a branch switch, status recommends a
-resync before stale paths can pollute ranker context.
-
-### Probe the ranker without hooks
-
-```fish
-# What would ken inject for this query?
-ken rank "how does cost tracking work"
-
-# Why did those files win?
-ken explain "how does cost tracking work"
-```
-
 ## Uninstall
 
-```fish
-ken uninstall .              # removes hooks, MCP entry, and the .ken/ index
-ken uninstall . --keep-db    # keep .ken/ken.db for later
+```sh
+ken uninstall .
+ken uninstall --keep-db .
 ```
 
-## What's inside
-
-```
-src/ken/
-  cli.py              # `ken install / rank / explain / search-* / remember / recall / serve / status / hook / mcp / uninstall`
-  daemon/
-    server.py         # HTTP daemon: hooks → DB writes, ranker, MCP backend
-    index_queue.py    # Coalesced batch reindex on file changes
-    watcher.py        # watchfiles wrapper
-    client.py         # Hook-side HTTP client (spawns daemon if needed)
-  ranker/
-    channels.py       # Reactive, predictive, fuzzy, doc-intent, lexical, explicit, findings
-    boosts.py         # Freshness, co-occurrence, symbol-file/test/import affinity, dismissal penalty
-    merge.py          # Per-target dedup + synergy bonus
-    output.py         # `<context-rank>` rendering at verbose 0/1/2
-    explain.py        # Per-channel breakdown for ken_explain_rank
-  parsers/            # Tree-sitter extractors (py, rs, js, ts, go, java)
-  embedder/           # ONNX MiniLM-L6-v2 (384d) via fastembed
-  indexer.py          # File hashing, parsing, persistence
-  mcp/server.py       # MCP stdio server with 7 tools
-  hook.py             # `ken hook ...` shim invoked by Claude Code / Codex
-  hooks_template.py   # `.claude/settings.json` merge logic
-  codex_hooks_template.py  # `.codex/hooks.json` + `[mcp_servers.ken]` merge
-  schema.sql          # SQLite schema (cr_*, ci_*)
-tests/                # 291 tests, ~0.8s suite
-```
-
-## Architecture in one paragraph
-
-ken stores everything in a per-project SQLite DB at `.ken/ken.db`. A long-lived
-daemon (one process per project, idle-shutdown after 10 min) holds a single
-write connection. Claude Code hooks POST events to the daemon over localhost
-HTTP with a Bearer token from `.ken/meta.json`. On `UserPromptSubmit` the
-daemon runs the ranker — reactive, predictive, fuzzy, doc-intent, lexical,
-traceback/explicit-mention, and finding channels merged with synergy-bonus
-dedup, then post-boosts (symbol-file affinity, freshness, co-occurrence,
-source/test/import-affinity, dismissal-penalty) — and returns the formatted
-block via stdout so Claude Code prepends it to the prompt. Doc-intent stores
-module and symbol docstrings as separate purpose embeddings, so a prompt can
-find files by what they are for, not only by names or content. Embeddings are
-MiniLM-L6-v2 384-dim
-floats stored as BLOBs; cosine sweeps in numpy run in single-digit ms even at
-~50k symbols.
-
-## Status
-
-Phase 6 complete and validated on real projects:
-
-- ✅ Project install + uninstall
-- ✅ HTTP daemon with auth + idle shutdown
-- ✅ File watcher + incremental reindex
-- ✅ Parsers for Python, Rust, JS, TS, Go, Java, and C/C headers
-- ✅ ONNX embedder (fastembed)
-- ✅ Ranker (files, symbols, doc-intent, findings + 6 boosts + confidence gate)
-- ✅ Verbose-level rendering + hook context budget/stats + per-turn decay
-- ✅ Status diagnostics/JSON with recommendations for embedding coverage, findings, scores, daemon health
-- ✅ MCP server (7 tools)
-- ✅ Claude Code + Codex CLI integration (hooks + MCP)
-- ✅ Test suite (run `uv run pytest`; ranker math + agent install/template fully covered)
-- ✅ End-to-end benchmark: 24-35% token cost reduction on realistic tasks
-
-The Rust+Postgres prototype lives at the [`legacy-rust`](https://github.com/Infinibay/ken/tree/legacy-rust) tag.
+`ken uninstall .` removes hooks, MCP entries, and the local `.ken/` index. Use `--keep-db` if you want to keep `.ken/ken.db` for later.
 
 ## License
 
-MIT.
+ken is released under the MIT License. See [LICENSE](LICENSE).
