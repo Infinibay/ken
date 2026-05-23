@@ -24,7 +24,7 @@ from typing import Any
 KEN_HOOKS: dict[str, list[dict[str, Any]]] = {
     "SessionStart": [
         {
-            "matcher": "*",
+            "matcher": "startup|resume|clear|compact",
             "hooks": [{"type": "command", "command": "ken hook session-start"}],
         }
     ],
