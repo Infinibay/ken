@@ -44,7 +44,15 @@ def dispatch_hook(args: argparse.Namespace) -> int:
 
     try:
         if args.hook_cmd == "session-start":
-            client.post(root, "/sessions/start", {"session_id": session_id, "cwd": payload.get("cwd")})
+            resp = client.post(
+                root, "/sessions/start", {"session_id": session_id, "cwd": payload.get("cwd")}
+            )
+            # The daemon returns a resume brief ("where you left off").
+            # Print it to stdout so the host CLI injects it as the new
+            # session's context — no recall call from the model required.
+            block = (resp or {}).get("context_block") or ""
+            if block.strip():
+                sys.stdout.write(block)
         elif args.hook_cmd == "session-end":
             client.post(root, "/sessions/end", {"session_id": session_id})
         elif args.hook_cmd == "user-prompt":

@@ -327,8 +327,10 @@ class _Handler(BaseHTTPRequestHandler):
         st = self.server.state
         try:
             if self.path == "/sessions/start":
-                pk = st.session_start(payload["session_id"])
-                self._respond(200, {"ok": True, "ken_session_pk": pk})
+                pk, block = _handle_session_start(st, payload["session_id"])
+                self._respond(
+                    200, {"ok": True, "ken_session_pk": pk, "context_block": block}
+                )
             elif self.path == "/sessions/end":
                 _handle_session_end(st, payload["session_id"])
                 self._respond(200, {"ok": True})
@@ -398,6 +400,30 @@ class _Handler(BaseHTTPRequestHandler):
                 "uptime_s": round(time.monotonic() - st.started_at, 1),
                 "idle_s": round(time.monotonic() - st.last_activity, 1),
             }
+
+
+def _handle_session_start(st: DaemonState, agent_id: str) -> tuple[int, str]:
+    """Create the session and build a resume brief for injection.
+
+    The brief is computed right after the session row is created, before
+    that session contributes any prompt — so it naturally recaps the most
+    recent *prior* session (fresh startup) or the in-flight session whose
+    model context was just wiped (``/clear``, ``compact``). In every case
+    that is "where you left off".
+
+    A brief failure must never block the session: we log and inject
+    nothing, letting the session start exactly as it did before.
+    """
+    from ken.session_brief import build_session_brief
+
+    pk = st.session_start(agent_id)
+    try:
+        with st.lock:
+            block = build_session_brief(st.conn, project_root=st.project_root)
+    except Exception:  # pragma: no cover
+        logger.exception("session brief build failed")
+        block = ""
+    return pk, block
 
 
 def _handle_prompt(st: DaemonState, agent_id: str, content: str) -> str:

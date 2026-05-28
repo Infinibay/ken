@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from ken.daemon.server import DaemonState, _finalize_active_sessions
+from ken.daemon.server import DaemonState, _finalize_active_sessions, _handle_session_start
 
 
 @pytest.fixture
@@ -22,6 +22,28 @@ def test_session_start_inserts_and_returns_pk(state):
         "SELECT id, agent_id FROM cr_sessions WHERE id = ?", (pk,)
     ).fetchone()
     assert row["agent_id"] == "agent-1"
+
+
+def test_handle_session_start_returns_pk_and_brief(state):
+    """A prior session's activity is surfaced as a resume brief."""
+    prev = state.session_start("prev")
+    state.conn.execute(
+        "INSERT INTO cr_contexts(session_id, kind, content, iteration, created_at) "
+        "VALUES (?, 'user_prompt', 'fix the parser', 0, 1)",
+        (prev,),
+    )
+    state.session_end("prev")
+
+    pk, block = _handle_session_start(state, "fresh")
+    assert pk > 0
+    assert "<ken-session-brief>" in block
+    assert "fix the parser" in block
+
+
+def test_handle_session_start_empty_db_has_no_brief(state):
+    pk, block = _handle_session_start(state, "agent-1")
+    assert pk > 0
+    assert block == ""
 
 
 def test_session_start_idempotent(state):
