@@ -31,7 +31,7 @@ from ken.parsers import detect_language
 if TYPE_CHECKING:  # pragma: no cover
     from ken.embedder import Embedder
 
-PARSER_VERSION = 3
+PARSER_VERSION = 4
 
 
 @dataclass
@@ -446,6 +446,7 @@ def _resolve_import_target(module: str, files: list[str]) -> str | None:
         f"{slash}.go",
         f"{slash}.java",
         f"{slash}.rs",
+        f"{slash}.dart",
     }
     if mod.startswith("./") or mod.startswith("../") or "/" in mod:
         candidates.update({mod, f"{mod}.py", f"{mod}.ts", f"{mod}.js"})

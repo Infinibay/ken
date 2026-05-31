@@ -10,6 +10,7 @@ from __future__ import annotations
 import pytest
 
 from ken.parsers.c import parse_c_file
+from ken.parsers.dart import parse_dart_file
 from ken.parsers.go import parse_go_file
 from ken.parsers.java import parse_java_file
 from ken.parsers.javascript import parse_js_file
@@ -65,4 +66,11 @@ def parse_go():
 def parse_java():
     def _p(src: str):
         return parse_java_file(src.encode("utf-8"), "Inline.java")
+    return _p
+
+
+@pytest.fixture
+def parse_dart():
+    def _p(src: str):
+        return parse_dart_file(src.encode("utf-8"), "inline.dart")
     return _p

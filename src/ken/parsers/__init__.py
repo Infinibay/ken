@@ -12,6 +12,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from ken.parsers.c import parse_c_file
+from ken.parsers.dart import parse_dart_file
 from ken.parsers.go import parse_go_file
 from ken.parsers.java import parse_java_file
 from ken.parsers.javascript import parse_js_file
@@ -37,6 +38,7 @@ LANGUAGE_BY_EXT: dict[str, tuple[str, ParserFn]] = {
     ".tsx": ("typescript", parse_ts_file),
     ".go": ("go", parse_go_file),
     ".java": ("java", parse_java_file),
+    ".dart": ("dart", parse_dart_file),
 }
 
 
