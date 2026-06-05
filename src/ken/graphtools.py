@@ -43,6 +43,34 @@ def _import_graph(conn) -> tuple[dict[int, str], dict[int, set[int]], int, int]:
     return paths, adj, resolved, int(total)
 
 
+def _coverage(conn) -> dict:
+    """Honest import-resolution breakdown: internal coverage excludes external deps."""
+    row = conn.execute(
+        """
+        SELECT
+          SUM(to_file_id IS NOT NULL)                         AS internal_resolved,
+          SUM(resolution = 'unresolved')                      AS internal_gap,
+          SUM(resolution = 'external')                        AS external,
+          COUNT(*)                                            AS total
+        FROM ci_imports
+        """
+    ).fetchone()
+    internal_resolved = int(row["internal_resolved"] or 0)
+    internal_gap = int(row["internal_gap"] or 0)
+    external = int(row["external"] or 0)
+    internal_total = internal_resolved + internal_gap
+    pct = round(100.0 * internal_resolved / internal_total, 1) if internal_total else None
+    return {
+        "resolved": internal_resolved,
+        "total": int(row["total"] or 0),
+        "internal_resolved": internal_resolved,
+        "internal_unresolved": internal_gap,
+        "internal_total": internal_total,
+        "external": external,
+        "internal_coverage_pct": pct,
+    }
+
+
 def _tarjan_scc(nodes: list[int], adj: dict[int, set[int]]) -> list[list[int]]:
     """Iterative Tarjan strongly-connected-components (avoids recursion limit)."""
     index: dict[int, int] = {}
@@ -144,12 +172,13 @@ def _communities(nodes: list[int], adj: dict[int, set[int]], *, iters: int = 20)
 def architecture(conn, *, depth: int = 2, limit: int = 20) -> dict:
     """Subsystems, layers, cycles, and hubs of the import graph (coverage-honest)."""
     paths, adj, resolved, total = _import_graph(conn)
+    coverage = _coverage(conn)
     nodes = [n for n in paths if adj.get(n) or any(n in tos for tos in adj.values())]
     nodes = sorted(set(nodes))
     if not nodes:
         return {
             "ok": True,
-            "edge_coverage": {"resolved": resolved, "total": total},
+            "edge_coverage": coverage,
             "cycles": [], "layers": [], "clusters": [], "hubs": [], "sinks": [],
             "note": "no resolved import edges — graph queries unavailable",
         }
@@ -203,7 +232,7 @@ def architecture(conn, *, depth: int = 2, limit: int = 20) -> dict:
     sinks = sorted(nodes, key=lambda v: rpr.get(v, 0.0), reverse=True)[: max(1, int(limit))]
     return {
         "ok": True,
-        "edge_coverage": {"resolved": resolved, "total": total},
+        "edge_coverage": coverage,
         "trust": (
             "cycles are exact; layers/communities are approximate and degrade "
             "as unresolved imports rise"
@@ -262,9 +291,13 @@ def blast_radius(conn, path: str, *, max_hops: int = 4, project_root: Path | Non
         "SELECT from_file_id, to_file_id FROM ci_imports WHERE to_file_id IS NOT NULL"
     ):
         rev[int(r["to_file_id"])].add(int(r["from_file_id"]))
-    total_imports = conn.execute("SELECT COUNT(*) AS n FROM ci_imports").fetchone()["n"]
+    # Count only *internal* resolution gaps — external deps would never be a
+    # traceable edge, so including them would overstate the blind spot.
     unresolved = conn.execute(
-        "SELECT COUNT(*) AS n FROM ci_imports WHERE to_file_id IS NULL"
+        "SELECT COUNT(*) AS n FROM ci_imports WHERE resolution = 'unresolved'"
+    ).fetchone()["n"]
+    internal_total = conn.execute(
+        "SELECT COUNT(*) AS n FROM ci_imports WHERE to_file_id IS NOT NULL OR resolution = 'unresolved'"
     ).fetchone()["n"]
 
     hops: dict[int, int] = {target_id: 0}
@@ -315,7 +348,8 @@ def blast_radius(conn, path: str, *, max_hops: int = 4, project_root: Path | Non
                              and any(x.startswith("imports") for x in e["evidence"])],
         "impacted": out,
         "coverage_note": (
-            f"{unresolved}/{total_imports} imports are unresolved and not traced — "
-            "this is a LOWER bound; verify before assuming safety"
+            f"{unresolved}/{internal_total} internal imports are unresolved and not "
+            "traced (external deps excluded) — this is a LOWER bound; verify before "
+            "assuming safety"
         ),
     }

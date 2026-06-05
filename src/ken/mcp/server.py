@@ -410,8 +410,8 @@ def ken_callgraph(
     to a symbol only in confidence tiers: **T1** = same-file or repo-unique
     name; **T2** = name resolves to a single imported file; **T3** = ambiguous,
     reported as an unresolved call-site, never argmax'd into a false edge.
-    ``direction`` is callers | callees | both. Python only for now; other
-    languages return an explicit error rather than a wrong answer.
+    ``direction`` is callers | callees | both. Works for any tree-sitter
+    language ken indexes (Python, JS/TS, Go, Rust, Java, C, Dart, …).
     """
     assert _PROJECT_ROOT is not None
     with _conn() as conn:
@@ -427,9 +427,9 @@ def ken_wiring(query: str | None = None, trigger_kind: str | None = None, limit:
 
     Extracts decorator/registration nodes (``@app.route``, ``@click.command``)
     and ``os.environ``/``getenv`` reads from the AST, binding each to its
-    enclosing symbol by line range. Filter by ``trigger_kind`` (route | cli |
-    env | decorator) or a substring ``query``. Line-cited and verifiable.
-    Python only for now.
+    enclosing symbol by line range. Recognises Flask/NestJS/Spring-style route
+    decorators and annotations across languages. Filter by ``trigger_kind``
+    (route | cli | env | decorator) or a substring ``query``. Line-cited.
     """
     assert _PROJECT_ROOT is not None
     with _conn() as conn:
@@ -445,7 +445,8 @@ def ken_type_hierarchy(qualname: str, direction: str = "sub", with_overrides: bo
     closure: ``direction='sub'`` lists descendants, ``'super'`` lists ancestors
     (including unresolved external bases like ``BaseModel``, kept verbatim).
     With ``with_overrides``, flags subclasses that redefine a method name of the
-    target class (best-effort — ignores signatures). Python only for now.
+    target class (best-effort — ignores signatures). Works across OO languages
+    ken indexes (Python, JS/TS, Java, Dart).
     """
     assert _PROJECT_ROOT is not None
     with _conn() as conn:

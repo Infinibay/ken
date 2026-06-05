@@ -43,9 +43,32 @@ def connect(db_path: Path) -> sqlite3.Connection:
 
 
 def init_schema(conn: sqlite3.Connection) -> None:
-    """Apply `schema.sql`. Idempotent — every CREATE has IF NOT EXISTS."""
+    """Apply `schema.sql`, then run additive column migrations. Idempotent."""
     sql = resources.files("ken").joinpath("schema.sql").read_text(encoding="utf-8")
     conn.executescript(sql)
+    _migrate(conn)
+
+
+# Additive ``ALTER TABLE ... ADD COLUMN`` migrations for databases created
+# before a column existed. ``CREATE TABLE IF NOT EXISTS`` never alters an
+# existing table, so new columns must be added here; each is guarded against
+# the "duplicate column" error so re-running is a no-op.
+_COLUMN_MIGRATIONS: tuple[tuple[str, str, str], ...] = (
+    ("ci_imports", "resolution", "TEXT"),
+)
+
+
+def _migrate(conn: sqlite3.Connection) -> None:
+    for table, column, decl in _COLUMN_MIGRATIONS:
+        try:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {decl}")
+        except sqlite3.OperationalError:
+            pass  # column already present
+    # Indexes on migrated columns must come after the ALTER above so the column
+    # exists on databases created before it.
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_ci_imports_resolution ON ci_imports(resolution)"
+    )
 
 
 def set_meta(conn: sqlite3.Connection, key: str, value: str) -> None:

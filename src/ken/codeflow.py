@@ -8,8 +8,10 @@ an ambiguous name into a confident edge:
 * **T2** — the name resolves to a single file that the caller imports.
 * **T3** — ambiguous; reported as an unresolved call-site, not an edge.
 
-Python only for now (see ``ken.structure.SUPPORTED``); other languages return
-an explicit ``unsupported`` note instead of a wrong answer.
+Language-agnostic: ``ken.structure`` drives extraction off per-language
+tree-sitter node registries (Python, JS/TS, Rust, Go, Java, C, Dart, …); a
+language with no registered call/wiring nodes returns an explicit
+``unsupported`` note instead of a wrong answer.
 """
 
 from __future__ import annotations
@@ -20,9 +22,10 @@ from pathlib import Path
 from ken import structure
 
 
-def _py_files(conn) -> list[tuple[int, str]]:
-    return [(int(r["id"]), r["path"]) for r in conn.execute(
-        "SELECT id, path FROM ci_files WHERE language = 'python'")]
+def _code_files(conn) -> list[tuple[int, str, str]]:
+    """Every indexed file with a parseable language: (id, path, language)."""
+    return [(int(r["id"]), r["path"], r["language"]) for r in conn.execute(
+        "SELECT id, path, language FROM ci_files WHERE language IS NOT NULL")]
 
 
 def _name_defs(conn) -> dict[str, list[dict]]:
@@ -30,15 +33,16 @@ def _name_defs(conn) -> dict[str, list[dict]]:
     for r in conn.execute(
         """
         SELECT s.id, s.name, s.qualname, s.kind, s.line_start, s.line_end,
-               s.file_id, f.path
+               s.file_id, f.path, f.language
         FROM ci_symbols s JOIN ci_files f ON f.id = s.file_id
-        WHERE f.language = 'python'
+        WHERE f.language IS NOT NULL
         """
     ):
         defs[r["name"]].append({
             "symbol_id": int(r["id"]), "name": r["name"], "qualname": r["qualname"],
             "kind": r["kind"], "line_start": int(r["line_start"]),
-            "line_end": int(r["line_end"]), "file_id": int(r["file_id"]), "path": r["path"],
+            "line_end": int(r["line_end"]), "file_id": int(r["file_id"]),
+            "path": r["path"], "language": r["language"],
         })
     return defs
 
@@ -58,7 +62,7 @@ def _symbols_by_file(conn) -> dict[str, list[dict]]:
         """
         SELECT s.name, s.qualname, s.line_start, s.line_end, f.path
         FROM ci_symbols s JOIN ci_files f ON f.id = s.file_id
-        WHERE f.language = 'python'
+        WHERE f.language IS NOT NULL
         """
     ):
         by_file[r["path"]].append({
@@ -131,16 +135,19 @@ def callgraph(
                 target = c
                 break
     if target is None:
-        return {"ok": False, "error": "symbol not found (python only)", "qualname": qualname}
+        return {"ok": False, "error": "symbol not found", "qualname": qualname}
+    if not structure.supports(target.get("language")):
+        return {"ok": False, "error": f"language not parseable: {target.get('language')}",
+                "qualname": qualname}
 
     out: dict = {"ok": True, "qualname": target["qualname"], "file": target["path"],
-                 "min_confidence": min_confidence}
+                 "language": target["language"], "min_confidence": min_confidence}
 
     if direction in ("callees", "both"):
         src = _read_bytes(project_root, target["path"])
         edges, unresolved = [], []
         seen = set()
-        for call in structure.extract_calls(src, "python"):
+        for call in structure.extract_calls(src, target["language"]):
             if not (target["line_start"] <= call.line <= target["line_end"]):
                 continue
             cand, tier = _resolve(call.name, target["file_id"], defs, imports)
@@ -158,11 +165,12 @@ def callgraph(
 
     if direction in ("callers", "both"):
         callers = []
-        for fid, fpath in _py_files(conn):
+        needle = target["name"].encode()
+        for fid, fpath, lang in _code_files(conn):
             src = _read_bytes(project_root, fpath)
-            if target["name"].encode() not in src:
+            if needle not in src:
                 continue
-            for call in structure.extract_calls(src, "python"):
+            for call in structure.extract_calls(src, lang):
                 if call.name != target["name"]:
                     continue
                 cand, tier = _resolve(call.name, fid, defs, imports)
@@ -192,9 +200,9 @@ def wiring(
         return {"ok": False, "error": "project_root required"}
     by_file = _symbols_by_file(conn)
     rows = []
-    for _fid, fpath in _py_files(conn):
+    for _fid, fpath, lang in _code_files(conn):
         src = _read_bytes(project_root, fpath)
-        for w in structure.extract_wiring(src, "python"):
+        for w in structure.extract_wiring(src, lang):
             if trigger_kind and w.kind != trigger_kind:
                 continue
             if query and query.lower() not in (w.trigger + " " + w.decorator).lower():
@@ -226,26 +234,26 @@ def type_hierarchy(
         """
         SELECT s.name, s.qualname, s.kind, f.path
         FROM ci_symbols s JOIN ci_files f ON f.id = s.file_id
-        WHERE f.language = 'python'
+        WHERE f.language IS NOT NULL
         """
     ):
-        if r["kind"] == "class":
+        if r["kind"] in ("class", "interface", "trait", "struct", "enum"):
             all_classes[r["name"]].append({"name": r["name"], "qualname": r["qualname"],
                                            "path": r["path"]})
         elif r["kind"] == "method" and r["qualname"]:
             cls = r["qualname"].rsplit(".", 1)[0]
             methods_by_class[cls].add(r["name"])
 
-    # child class name -> [base names], from live extraction
+    # child class name -> [base names], from live extraction (any OO language)
     child_to_bases: dict[str, list[str]] = {}
-    for _fid, fpath in _py_files(conn):
+    for _fid, fpath, lang in _code_files(conn):
         src = _read_bytes(project_root, fpath)
-        for cb in structure.extract_bases(src, "python"):
+        for cb in structure.extract_bases(src, lang):
             child_to_bases[cb.name] = cb.bases
 
     target_name = qualname.rsplit(".", 1)[-1]
     if target_name not in all_classes:
-        return {"ok": False, "error": "class not found (python only)", "qualname": qualname}
+        return {"ok": False, "error": "class/type not found", "qualname": qualname}
 
     if direction == "super":
         ancestors: list[str] = []

@@ -51,9 +51,16 @@ CREATE TABLE IF NOT EXISTS ci_imports (
     from_file_id    INTEGER NOT NULL REFERENCES ci_files(id) ON DELETE CASCADE,
     to_module       TEXT NOT NULL,                -- raw import target ("os.path", "./utils")
     to_file_id      INTEGER REFERENCES ci_files(id) ON DELETE SET NULL,  -- resolved if internal
+    -- 'internal'  = resolved to an indexed file (to_file_id set)
+    -- 'external'  = a third-party / stdlib package (npm, crate, std, java.*)
+    -- 'unresolved'= looks internal (relative / crate:: / alias / own module)
+    --               but ken could not map it — a real resolution gap, not a dep
+    resolution      TEXT,
     line            INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_ci_imports_from ON ci_imports(from_file_id);
+-- NB: the index on ci_imports(resolution) is created in db._migrate, after the
+-- column is guaranteed to exist (ALTER for pre-existing DBs runs there).
 CREATE INDEX IF NOT EXISTS idx_ci_imports_to_file ON ci_imports(to_file_id) WHERE to_file_id IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS ci_references (
