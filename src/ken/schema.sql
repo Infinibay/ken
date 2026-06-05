@@ -152,3 +152,39 @@ CREATE TABLE IF NOT EXISTS cr_findings (
 );
 CREATE INDEX IF NOT EXISTS idx_cr_findings_topic ON cr_findings(topic);
 CREATE UNIQUE INDEX IF NOT EXISTS uniq_cr_findings_topic ON cr_findings(topic);
+
+-- ----------------------------------------------------------------------------
+-- Commit history: each commit is a market-basket transaction of changed files.
+-- Mined by ken_cochange for logical coupling imports can't see. Ingested
+-- incrementally from `git log` (last SHA tracked in meta['cochange_last_sha']).
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS cr_commits (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    sha           TEXT NOT NULL UNIQUE,
+    committed_at  INTEGER NOT NULL,             -- unix seconds
+    author        TEXT,
+    subject       TEXT,
+    n_files       INTEGER NOT NULL DEFAULT 0    -- changed-file count (pre-cap)
+);
+CREATE INDEX IF NOT EXISTS idx_cr_commits_time ON cr_commits(committed_at);
+
+CREATE TABLE IF NOT EXISTS cr_commit_files (
+    commit_id     INTEGER NOT NULL REFERENCES cr_commits(id) ON DELETE CASCADE,
+    path          TEXT NOT NULL                 -- repo-relative, forward slashes
+);
+CREATE INDEX IF NOT EXISTS idx_cr_commit_files_commit ON cr_commit_files(commit_id);
+CREATE INDEX IF NOT EXISTS idx_cr_commit_files_path ON cr_commit_files(path);
+
+-- ----------------------------------------------------------------------------
+-- Literal/BM25 search: per-file body mirrored into an FTS5 index, kept fresh by
+-- comparing ci_fts_state.content_hash against the live worktree. Powers ken_grep.
+-- ----------------------------------------------------------------------------
+CREATE VIRTUAL TABLE IF NOT EXISTS fts_files USING fts5(
+    path,
+    body,
+    tokenize = "unicode61 tokenchars '_.-'"
+);
+CREATE TABLE IF NOT EXISTS ci_fts_state (
+    path          TEXT PRIMARY KEY,
+    content_hash  BLOB NOT NULL
+);

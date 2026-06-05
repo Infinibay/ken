@@ -125,6 +125,8 @@ broad text search or reading many files:
   imports, related modules, and source/test pairs.
 - Use `ken_changed_context` when working from an existing diff or local edits.
 - Use `ken_project_overview` for a compact map of an unfamiliar project area.
+- Use `ken_grep` for exact-literal or BM25-ranked text search (preserves
+  identifiers like `MY_ENV_VAR` and `os.path`) instead of falling back to `rg`.
 - Use `ken_recall` and `ken_findings` for saved project knowledge, and
   `ken_remember` when a durable finding should help future sessions.
 - Use `ken_explain_rank` when rankings look surprising or an expected file is
@@ -132,9 +134,30 @@ broad text search or reading many files:
 - Use `ken_dismiss` when ken surfaces a file that is clearly not relevant, so
   future similar tasks get better results.
 
+To understand *how something works* — answered by local algorithms, not an LLM,
+so the output is fast, deterministic, and evidence-cited:
+
+- Use `ken_architecture` for subsystems, layers, dependency cycles, and
+  load-bearing hub files (graph algorithms over the import graph, with honest
+  edge-coverage).
+- Use `ken_callgraph` to find who calls a symbol and what it calls
+  (precision-tiered T1/T2; Python).
+- Use `ken_type_hierarchy` for subclasses, ancestors, and method overrides
+  (Python).
+- Use `ken_wiring` to map routes / CLI commands / env vars to their handler
+  symbols (Python).
+- Use `ken_profile` to learn what a file or package is *for* and what
+  distinguishes it from its siblings (distinctive-term statistics).
+- Use `ken_cochange` to see what historically changes together with a file —
+  including hidden coupling imports can't show (schema↔migration, code↔config).
+- Use `ken_blast_radius` before an edit to estimate what it might affect, with
+  per-channel evidence (imports, tests, co-change).
+- Use `ken_clones` to find copy-pasted / near-duplicate code.
+- Use `ken_intent_history` to see which files requests *like the current one*
+  have historically touched.
+
 After ken narrows the search space, read the relevant files directly. Fall back
-to `rg` when ken is insufficient, when an exact literal search is required, or
-when verifying a specific string occurrence.
+to `rg` only when ken is insufficient.
 ```
 
 The shell commands (`ken rank`, `ken search-files`, `ken search-symbols`, and `ken explain`) expose the same ideas for humans or agents without MCP. For assistants with MCP available, the MCP tools are the preferred path because they return structured results and feed ken's local task memory.

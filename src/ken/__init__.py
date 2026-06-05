@@ -6,4 +6,4 @@ index to surface compact, ranked context before an agent spends tokens
 rediscovering the codebase.
 """
 
-__version__ = "0.1.5"
+__version__ = "0.1.6"

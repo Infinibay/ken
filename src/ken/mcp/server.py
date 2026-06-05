@@ -16,8 +16,15 @@ from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
 from ken import _paths
+from ken.clones import clones
+from ken.cochange import cochange
+from ken.codeflow import callgraph, type_hierarchy, wiring
 from ken.db import connect
+from ken.graphtools import architecture, blast_radius
+from ken.grep import grep
+from ken.intent import intent_history
 from ken.memory import forget, list_findings, recall, remember
+from ken.profile import profile
 from ken.search import (
     changed_context,
     file_neighbors,
@@ -257,6 +264,193 @@ def ken_recall(query: str, limit: int = 5, min_score: float = 0.25) -> list[dict
     """
     with _conn() as conn:
         return recall(conn, query, limit=limit, min_score=min_score)
+
+
+@mcp.tool()
+def ken_cochange(
+    path: str,
+    min_confidence: float = 0.4,
+    min_support: int = 3,
+    limit: int = 15,
+) -> dict:
+    """Files historically changed together with *path* — including hidden coupling.
+
+    Mines git commit history as market-basket transactions (support /
+    confidence / lift with recency decay) and **subtracts the import graph**,
+    so the headline is the logical coupling imports can't see: schema <->
+    migration, code <-> config, parallel implementations. Partners with no
+    import edge are flagged ``hidden_coupling`` and sorted first. Returns an
+    empty list rather than guessing when evidence is below threshold.
+    """
+    assert _PROJECT_ROOT is not None
+    with _conn() as conn:
+        return cochange(
+            conn,
+            path,
+            min_confidence=min_confidence,
+            min_support=min_support,
+            limit=limit,
+            project_root=_PROJECT_ROOT,
+        )
+
+
+@mcp.tool()
+def ken_blast_radius(path: str, max_hops: int = 4) -> dict:
+    """Files likely affected by editing *path*, with per-channel evidence.
+
+    Reverse import reachability (transitive importers + hop distance) unioned
+    with test heuristics and git co-change. Every impacted file lists its
+    evidence ("imports(hop 2)", "test-of", "co-changed 8x") — never a fused
+    black-box score. Reports unresolved-import coverage as an explicit lower
+    bound, so the agent knows the result is a floor, not a ceiling.
+    """
+    assert _PROJECT_ROOT is not None
+    with _conn() as conn:
+        return blast_radius(conn, path, max_hops=max_hops, project_root=_PROJECT_ROOT)
+
+
+@mcp.tool()
+def ken_architecture(depth: int = 2, limit: int = 20) -> dict:
+    """Subsystems, layers, dependency cycles, and load-bearing hubs of the project.
+
+    Graph algorithms over the resolved import graph: Tarjan SCC (import
+    cycles — exact), topological layering (approximate), label-propagation
+    communities, and PageRank hubs + reverse-PageRank foundations. Every
+    result carries an ``edge_coverage`` header ("resolves 140/210 imports")
+    so the agent calibrates: cycles are high-trust, layers/communities degrade
+    as unresolved imports rise.
+    """
+    with _conn() as conn:
+        return architecture(conn, depth=depth, limit=limit)
+
+
+@mcp.tool()
+def ken_profile(path: str, granularity: str = "file", top_terms: int = 12) -> dict:
+    """What a file/package is *for* and what distinguishes it from its siblings.
+
+    Weighted log-odds-ratio with an informative Dirichlet prior (Monroe et
+    al.) over the file's symbol names, qualnames, and docstrings — every term
+    is a real, verifiable token from the index, not a generated summary. Set
+    ``granularity='dir'`` to profile a whole package. Reports evidence
+    strength so thin directories are flagged.
+    """
+    with _conn() as conn:
+        return profile(conn, path, granularity=granularity, top_terms=top_terms)
+
+
+@mcp.tool()
+def ken_clones(
+    path: str | None = None,
+    qualname: str | None = None,
+    min_similarity: float = 0.75,
+    limit: int = 10,
+) -> dict:
+    """Find near-duplicate / copy-pasted symbols (MinHash + LSH over token shingles).
+
+    With *path* (and optionally *qualname*), returns clones of that symbol.
+    Without a path, returns the strongest duplicate pairs project-wide. Purely
+    lexical set-similarity — no embeddings, no LLM. Anti-boilerplate floor
+    keeps tiny identical stubs from flooding results.
+    """
+    assert _PROJECT_ROOT is not None
+    with _conn() as conn:
+        return clones(
+            conn,
+            path,
+            qualname=qualname,
+            min_similarity=min_similarity,
+            limit=limit,
+            project_root=_PROJECT_ROOT,
+        )
+
+
+@mcp.tool()
+def ken_intent_history(query: str, k_prompts: int = 12, limit: int = 15) -> dict:
+    """Which files a request *like this one* historically ended up touching.
+
+    Relevance-by-outcome: finds the nearest historical ``user_prompt`` turns by
+    embedding cosine, then tallies the files those sessions touched (weighted by
+    prompt similarity x interaction weight). Distinct from ``ken_search_files``
+    (content match) — this routes by what past similar work actually did.
+    Returns the matched prompts so you see *why* each file was routed.
+    """
+    assert _PROJECT_ROOT is not None
+    with _conn() as conn:
+        return intent_history(
+            conn, query, k_prompts=k_prompts, limit=limit, project_root=_PROJECT_ROOT
+        )
+
+
+@mcp.tool()
+def ken_grep(query: str, mode: str = "literal", language: str | None = None, limit: int = 20) -> dict:
+    """Exact-literal or BM25-ranked search over the live worktree.
+
+    ``mode='literal'`` (default): exact substring match scanned fresh from
+    disk, with line-cited snippets — never stale. ``mode='bm25'``: ranked
+    relevance via an FTS5 index whose tokenizer preserves identifier
+    characters (``_ . -``) so ``MY_ENV_VAR`` and ``os.path`` are findable.
+    Optional ``language`` filter (e.g. "python").
+    """
+    assert _PROJECT_ROOT is not None
+    with _conn() as conn:
+        return grep(conn, query, mode=mode, language=language, limit=limit, project_root=_PROJECT_ROOT)
+
+
+@mcp.tool()
+def ken_callgraph(
+    qualname: str,
+    path: str | None = None,
+    direction: str = "both",
+    min_confidence: str = "T2",
+    limit: int = 50,
+) -> dict:
+    """Who calls *qualname* and what it calls — precision-tiered call graph.
+
+    Extracts real call-sites from the AST (no token scans) and resolves each
+    to a symbol only in confidence tiers: **T1** = same-file or repo-unique
+    name; **T2** = name resolves to a single imported file; **T3** = ambiguous,
+    reported as an unresolved call-site, never argmax'd into a false edge.
+    ``direction`` is callers | callees | both. Python only for now; other
+    languages return an explicit error rather than a wrong answer.
+    """
+    assert _PROJECT_ROOT is not None
+    with _conn() as conn:
+        return callgraph(
+            conn, qualname, path=path, direction=direction,
+            min_confidence=min_confidence, limit=limit, project_root=_PROJECT_ROOT,
+        )
+
+
+@mcp.tool()
+def ken_wiring(query: str | None = None, trigger_kind: str | None = None, limit: int = 50) -> dict:
+    """How features are wired up: routes / CLI / env-var triggers -> handler symbols.
+
+    Extracts decorator/registration nodes (``@app.route``, ``@click.command``)
+    and ``os.environ``/``getenv`` reads from the AST, binding each to its
+    enclosing symbol by line range. Filter by ``trigger_kind`` (route | cli |
+    env | decorator) or a substring ``query``. Line-cited and verifiable.
+    Python only for now.
+    """
+    assert _PROJECT_ROOT is not None
+    with _conn() as conn:
+        return wiring(conn, query=query, trigger_kind=trigger_kind, limit=limit,
+                      project_root=_PROJECT_ROOT)
+
+
+@mcp.tool()
+def ken_type_hierarchy(qualname: str, direction: str = "sub", with_overrides: bool = True) -> dict:
+    """Subclasses / ancestors of a class, with best-effort override detection.
+
+    Extracts ``class X(Base)`` clauses from the AST and walks the transitive
+    closure: ``direction='sub'`` lists descendants, ``'super'`` lists ancestors
+    (including unresolved external bases like ``BaseModel``, kept verbatim).
+    With ``with_overrides``, flags subclasses that redefine a method name of the
+    target class (best-effort — ignores signatures). Python only for now.
+    """
+    assert _PROJECT_ROOT is not None
+    with _conn() as conn:
+        return type_hierarchy(conn, qualname, direction=direction,
+                              with_overrides=with_overrides, project_root=_PROJECT_ROOT)
 
 
 @mcp.tool()
