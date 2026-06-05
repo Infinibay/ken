@@ -319,6 +319,12 @@ def ken_architecture(depth: int = 2, limit: int = 20) -> dict:
     result carries an ``edge_coverage`` header ("resolves 140/210 imports")
     so the agent calibrates: cycles are high-trust, layers/communities degrade
     as unresolved imports rise.
+
+    Output is bounded for large monorepos: ``limit`` caps items per list and
+    files listed per item (cycles/clusters/layers report a ``size`` plus a
+    capped sample), and ``depth`` is how many layers carry file samples (deeper
+    layers are size-only). A ``summary`` reports the full counts. Raise either
+    to see more.
     """
     with _conn() as conn:
         return architecture(conn, depth=depth, limit=limit)

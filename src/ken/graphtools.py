@@ -183,11 +183,16 @@ def architecture(conn, *, depth: int = 2, limit: int = 20) -> dict:
             "note": "no resolved import edges — graph queries unavailable",
         }
 
+    cap = max(1, int(limit))
+
     # --- cycles (high trust: only real edges) ---
     sccs = _tarjan_scc(nodes, adj)
     comp_of = {v: i for i, comp in enumerate(sccs) for v in comp}
-    cycles = [sorted(paths[v] for v in comp) for comp in sccs if len(comp) > 1]
-    cycles.sort(key=lambda c: (-len(c), c[0]))
+    cycles_full = [sorted(paths[v] for v in comp) for comp in sccs if len(comp) > 1]
+    cycles_full.sort(key=lambda c: (-len(c), c[0]))
+    # A single import cycle in a large monorepo can hold thousands of files;
+    # report its size and a capped sample rather than dumping every member.
+    cycles = [_sized_sample(c, cap) for c in cycles_full[:cap]]
 
     # --- topological layers over the SCC condensation (approximate) ---
     cond_adj: dict[int, set[int]] = defaultdict(set)
@@ -200,7 +205,20 @@ def architecture(conn, *, depth: int = 2, limit: int = 20) -> dict:
     for comp_idx, comp in enumerate(sccs):
         for v in comp:
             layers_by_idx[layer[comp_idx]].append(paths[v])
-    layers = [sorted(layers_by_idx[i]) for i in sorted(layers_by_idx)]
+    # Every node lives in some layer, so the raw partition is the whole graph.
+    # Report each layer's size with a capped file sample; only the first
+    # ``depth`` layers carry samples (deeper ones are size-only) so output
+    # stays bounded regardless of repo size.
+    n_detail = max(1, int(depth))
+    layers = []
+    for rank, i in enumerate(sorted(layers_by_idx)):
+        files = sorted(layers_by_idx[i])
+        entry = {"layer": i, "size": len(files)}
+        if rank < n_detail:
+            entry["files"] = files[:cap]
+            if len(files) > cap:
+                entry["truncated"] = len(files) - cap
+        layers.append(entry)
 
     # --- communities + hubs ---
     label = _communities(nodes, adj)
@@ -214,22 +232,24 @@ def architecture(conn, *, depth: int = 2, limit: int = 20) -> dict:
             rev_adj[b].add(a)
     rpr = _pagerank(nodes, rev_adj)
 
+    clusters_all = [m for m in clusters_raw.values() if len(m) >= 2]
+    clusters_all.sort(key=lambda m: (-len(m), paths[min(m)]))
     clusters = []
-    for members in sorted(clusters_raw.values(), key=lambda m: (-len(m), paths[min(m)])):
-        if len(members) < 2:
-            continue
+    for members in clusters_all[:cap]:
         member_paths = sorted(paths[v] for v in members)
         central = max(members, key=lambda v: pr.get(v, 0.0))
-        clusters.append({
+        entry = {
             "label": _common_dir(member_paths),
             "size": len(members),
             "central_file": paths[central],
-            "members": member_paths[: max(1, int(limit))],
-        })
-    clusters = clusters[: max(1, int(limit))]
+            "members": member_paths[:cap],
+        }
+        if len(member_paths) > cap:
+            entry["truncated"] = len(member_paths) - cap
+        clusters.append(entry)
 
-    hubs = sorted(nodes, key=lambda v: pr.get(v, 0.0), reverse=True)[: max(1, int(limit))]
-    sinks = sorted(nodes, key=lambda v: rpr.get(v, 0.0), reverse=True)[: max(1, int(limit))]
+    hubs = sorted(nodes, key=lambda v: pr.get(v, 0.0), reverse=True)[:cap]
+    sinks = sorted(nodes, key=lambda v: rpr.get(v, 0.0), reverse=True)[:cap]
     return {
         "ok": True,
         "edge_coverage": coverage,
@@ -237,12 +257,30 @@ def architecture(conn, *, depth: int = 2, limit: int = 20) -> dict:
             "cycles are exact; layers/communities are approximate and degrade "
             "as unresolved imports rise"
         ),
-        "cycles": cycles[: max(1, int(limit))],
+        "summary": {
+            "graph_files": len(nodes),
+            "cycles": len(cycles_full),
+            "layers": len(layers),
+            "clusters": len(clusters_all),
+            "note": (
+                f"showing top {cap} of each list; layer file samples for the "
+                f"first {n_detail} layer(s) — raise limit/depth for more"
+            ),
+        },
+        "cycles": cycles,
         "layers": layers,
         "clusters": clusters,
         "hubs": [{"path": paths[v], "pagerank": round(pr[v], 5)} for v in hubs],
         "sinks": [{"path": paths[v], "reverse_pagerank": round(rpr[v], 5)} for v in sinks],
     }
+
+
+def _sized_sample(items: list[str], cap: int) -> dict:
+    """A bounded view of a possibly-huge member list: size + capped sample."""
+    out = {"size": len(items), "files": items[:cap]}
+    if len(items) > cap:
+        out["truncated"] = len(items) - cap
+    return out
 
 
 def _longest_path_layers(nodes: list[int], adj: dict[int, set[int]]) -> dict[int, int]:

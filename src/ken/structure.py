@@ -257,8 +257,42 @@ def extract_wiring(source: bytes, language: str) -> list[WireSite]:
             out.extend(_wiring_from_env_call(node, source))
         elif node.type == "subscript":  # python os.environ['KEY']
             out.extend(_wiring_from_subscript(node, source))
+        elif node.type == "member_expression":  # JS/TS process.env.KEY
+            out.extend(_wiring_from_member_env(node, source))
+        elif node.type == "subscript_expression":  # JS/TS process.env['KEY']
+            out.extend(_wiring_from_subscript_env(node, source))
         stack.extend(node.children)
     return out
+
+
+# JS/TS environment objects: `process.env.X` (Node) and `import.meta.env.X` (Vite).
+_ENV_OBJECTS = ("process.env", "import.meta.env")
+
+
+def _is_env_object(text: str) -> bool:
+    return any(text == o or text.endswith("." + o) for o in _ENV_OBJECTS)
+
+
+def _wiring_from_member_env(node: Node, src: bytes) -> list[WireSite]:
+    """`process.env.INFINIZATION_SOCKET_DIR` -> an env WireSite (key=the property)."""
+    obj = node.child_by_field_name("object")
+    prop = node.child_by_field_name("property")
+    if obj is None or prop is None or not _is_env_object(_text(obj, src)):
+        return []
+    key = _text(prop, src).strip()
+    return [WireSite("env", key, _text(obj, src), node.start_point[0] + 1)] if key else []
+
+
+def _wiring_from_subscript_env(node: Node, src: bytes) -> list[WireSite]:
+    """`process.env['APP_HOST']` -> an env WireSite (key=the string index)."""
+    obj = node.child_by_field_name("object")
+    if obj is None or not _is_env_object(_text(obj, src)):
+        return []
+    idx = node.child_by_field_name("index")
+    if idx is None or idx.type != "string":
+        return []
+    key = _text(idx, src).strip().strip("'\"`").strip()
+    return [WireSite("env", key, _text(obj, src), node.start_point[0] + 1)] if key else []
 
 
 def _is_def(node_type: str) -> bool:

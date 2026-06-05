@@ -92,6 +92,25 @@ def test_wiring_extracts_route_and_env(project):
     assert route["handler_qualname"] == "get_user"
 
 
+def test_wiring_extracts_ts_process_env(project):
+    # process.env.X / process.env['X'] / import.meta.env.X are the JS/TS
+    # equivalents of os.environ — the detector must not be Python-only.
+    root, conn = project
+    _write_and_index(root, conn, {
+        "config.ts": (
+            "export const dir = process.env.INFINIZATION_SOCKET_DIR;\n"
+            "export const host = process.env['APP_HOST'];\n"
+            "export const mode = import.meta.env.MODE;\n"
+        ),
+    })
+    res = wiring(conn, trigger_kind="env", project_root=root)
+    assert res["ok"]
+    keys = {w["trigger"] for w in res["wiring"]}
+    assert "INFINIZATION_SOCKET_DIR" in keys
+    assert "APP_HOST" in keys
+    assert "MODE" in keys
+
+
 def test_wiring_filter_by_kind(project):
     root, conn = project
     _write_and_index(root, conn, {

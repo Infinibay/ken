@@ -117,6 +117,39 @@ def test_cochange_empty_without_history(project):
     assert res["partners"] == []
 
 
+def test_cochange_workspace_of_repos(project):
+    # The indexed root is NOT a repo — it contains sibling repos (backend/,
+    # service/), each with its own history. cochange must ingest the repo that
+    # holds the queried file and prefix paths with the repo dir.
+    root, conn = project
+    backend = root / "backend"
+    backend.mkdir()
+    _init_repo(backend)
+    for i in range(5):
+        _commit(backend, {"model.py": f"x={i}\n", "schema.sql": f"-- v{i}\n"}, f"c{i}")
+    # noise commit so the pair isn't in 100% of commits (keeps lift > 1)
+    _commit(backend, {"other.py": "z=1\n"}, "noise")
+    # a second, unrelated repo
+    service = root / "service"
+    service.mkdir()
+    _init_repo(service)
+    _commit(service, {"main.py": "1\n"}, "init")
+
+    _write_and_index(root, conn, {
+        "backend/model.py": "x=1\n",
+        "backend/schema.sql": "-- v\n",
+        "service/main.py": "1\n",
+    })
+
+    res = cochange(conn, "backend/model.py", min_support=3, min_confidence=0.4,
+                   project_root=root)
+    assert res["ok"]
+    partners = {p["path"]: p for p in res["partners"]}
+    # paths are prefixed with the repo dir so they match the indexed paths
+    assert "backend/schema.sql" in partners
+    assert partners["backend/schema.sql"]["hidden_coupling"] is True
+
+
 def test_ingest_commits_incremental(project):
     root, conn = project
     _init_repo(root)
@@ -141,10 +174,30 @@ def test_architecture_detects_cycle_and_coverage(project):
     res = architecture(conn)
     assert res["ok"]
     assert res["edge_coverage"]["resolved"] >= 2
-    # a <-> b is a real cycle.
-    assert any({"a.py", "b.py"} <= set(cyc) for cyc in res["cycles"])
+    # a <-> b is a real cycle (cycle entries are size + capped file sample).
+    assert any({"a.py", "b.py"} <= set(cyc["files"]) for cyc in res["cycles"])
     hub_paths = {h["path"] for h in res["hubs"]}
     assert "a.py" in hub_paths
+
+
+def test_architecture_output_is_bounded_by_limit(project):
+    root, conn = project
+    # A wide fan-in hub plus a long chain: many files across several layers.
+    files = {f"m{i}.py": "import hub\n" for i in range(40)}
+    files["hub.py"] = "import base\n"
+    files["base.py"] = "x = 1\n"
+    _write_and_index(root, conn, files)
+
+    res = architecture(conn, depth=1, limit=5)
+    # Every list is capped, and layers carry file samples only for `depth` layers.
+    assert len(res["hubs"]) <= 5
+    assert len(res["sinks"]) <= 5
+    assert all("size" in layer for layer in res["layers"])
+    detailed = [layer for layer in res["layers"] if "files" in layer]
+    assert len(detailed) <= 1  # depth=1
+    assert all(len(layer["files"]) <= 5 for layer in detailed)
+    # The summary still reports the true totals, not the truncated view.
+    assert res["summary"]["graph_files"] >= 41
 
 
 # --- blast_radius -----------------------------------------------------------

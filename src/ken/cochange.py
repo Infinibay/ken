@@ -39,49 +39,138 @@ _MAX_COMMITS = 20_000
 _MARK = "\x01"  # commit-header sentinel; \x01 never appears in paths
 
 
-def ingest_commits(conn, project_root: Path, *, max_commits: int = _MAX_COMMITS) -> dict:
+# Directories never worth descending into when discovering nested git repos.
+_REPO_SCAN_SKIP = {
+    "node_modules", ".ken", "dist", "build", "out", "target", "vendor",
+    ".venv", "venv", "__pycache__", ".next", ".nuxt", ".git", ".cache",
+}
+
+
+def ingest_commits(
+    conn,
+    project_root: Path,
+    *,
+    max_commits: int = _MAX_COMMITS,
+    only_path: str | None = None,
+) -> dict:
     """Parse new commits from `git log` into the co-change tables.
 
-    Incremental: resumes after ``meta['cochange_last_sha']`` so repeated
-    calls are cheap. Returns a small stats dict.
+    The indexed root may itself be a git repo **or** a directory that merely
+    *contains* repos (a common workspace layout: ``backend/``, ``frontend/x/``,
+    each its own repo). We therefore ingest every repo found under the root and
+    prefix each repo's changed-file paths with the repo's directory, so they
+    match the project-root-relative paths stored in ``ci_files``.
+
+    ``only_path`` restricts ingestion to the single repo that *contains* that
+    file — what ``cochange`` passes, so a query touches only the relevant repo
+    instead of scanning the whole workspace. Per-repo incremental state is
+    tracked in ``meta`` so repeated calls stay cheap.
     """
     root = project_root.resolve()
-    last_sha = get_meta(conn, "cochange_last_sha")
-    rng = f"{last_sha}..HEAD" if last_sha else "HEAD"
+    if only_path:
+        rel = _repo_for_path(root, only_path)
+        repos = [rel] if rel is not None else []
+    else:
+        repos = _discover_repos(root)
 
-    commits = _git_log(root, rng, max_commits=max_commits)
-    if not commits:
-        return {"ok": True, "ingested": 0, "last_sha": last_sha}
-
-    # `git log` is newest-first; insert oldest-first so the stored last SHA
-    # is always the newest ingested even if we hit the cap.
-    inserted = 0
-    with conn:
-        for commit in reversed(commits):
-            cur = conn.execute(
-                "INSERT OR IGNORE INTO cr_commits(sha, committed_at, author, subject, n_files) "
-                "VALUES (?, ?, ?, ?, ?)",
-                (
-                    commit["sha"],
-                    commit["ts"],
-                    commit["author"],
-                    commit["subject"],
-                    len(commit["files"]),
-                ),
-            )
-            if cur.rowcount == 0:
-                continue  # already ingested (e.g. overlapping range)
-            commit_id = int(cur.lastrowid)
-            if commit["files"]:
-                conn.executemany(
-                    "INSERT INTO cr_commit_files(commit_id, path) VALUES (?, ?)",
-                    [(commit_id, p) for p in commit["files"]],
+    total = 0
+    per_repo: dict[str, int] = {}
+    last_sha: str | None = None
+    for rel in repos:
+        repo_dir = root if rel == "" else root / rel
+        # Root repo keeps the legacy bare meta key + bare sha for back-compat;
+        # sub-repos namespace both so identical SHAs across repos never collide.
+        meta_key = "cochange_last_sha" if rel == "" else f"cochange_last_sha:{rel}"
+        prefix = "" if rel == "" else rel + "/"
+        repo_last = get_meta(conn, meta_key)
+        rng = f"{repo_last}..HEAD" if repo_last else "HEAD"
+        commits = _git_log(repo_dir, rng, max_commits=max_commits)
+        if not commits:
+            continue
+        inserted = 0
+        # `git log` is newest-first; insert oldest-first so the stored last SHA
+        # is always the newest ingested even if we hit the cap.
+        with conn:
+            for commit in reversed(commits):
+                files = [prefix + p for p in commit["files"]]
+                sha_key = commit["sha"] if rel == "" else f"{rel}{_MARK}{commit['sha']}"
+                cur = conn.execute(
+                    "INSERT OR IGNORE INTO cr_commits"
+                    "(sha, committed_at, author, subject, n_files) VALUES (?, ?, ?, ?, ?)",
+                    (sha_key, commit["ts"], commit["author"], commit["subject"], len(files)),
                 )
-            inserted += 1
-        newest = commits[0]["sha"]
-        set_meta(conn, "cochange_last_sha", newest)
+                if cur.rowcount == 0:
+                    continue  # already ingested (e.g. overlapping range)
+                commit_id = int(cur.lastrowid)
+                if files:
+                    conn.executemany(
+                        "INSERT INTO cr_commit_files(commit_id, path) VALUES (?, ?)",
+                        [(commit_id, p) for p in files],
+                    )
+                inserted += 1
+            set_meta(conn, meta_key, commits[0]["sha"])
+        if rel == "":
+            last_sha = commits[0]["sha"]
+        total += inserted
+        per_repo[rel or "."] = inserted
 
-    return {"ok": True, "ingested": inserted, "last_sha": newest}
+    return {"ok": True, "ingested": total, "repos": len(per_repo),
+            "per_repo": per_repo, "last_sha": last_sha}
+
+
+def _discover_repos(root: Path, *, max_depth: int = 3) -> list[str]:
+    """Project-root-relative dirs that are git repos ("" = the root itself).
+
+    Walks a few levels down, pruning build/vendor noise, and does not descend
+    into a repo once found (a workspace of sibling repos is the target shape).
+    """
+    repos: list[str] = []
+
+    def walk(d: Path, depth: int) -> None:
+        if _has_git(d):
+            repos.append("" if d == root else d.relative_to(root).as_posix())
+            return  # a repo's own subtree is one unit; don't recurse in
+        if depth >= max_depth:
+            return
+        try:
+            children = sorted(p for p in d.iterdir() if p.is_dir())
+        except OSError:
+            return
+        for child in children:
+            if child.name in _REPO_SCAN_SKIP or child.name.startswith("."):
+                continue
+            walk(child, depth + 1)
+
+    walk(root, 0)
+    return repos
+
+
+def _repo_for_path(root: Path, rel_path: str) -> str | None:
+    """The git repo (project-root-relative dir, "" = root) containing *rel_path*.
+
+    Walks up from the file's directory to the root, returning the first
+    ancestor holding a ``.git`` entry. None if the path sits in no repo.
+    """
+    norm = _normalize(rel_path)
+    d = (root / norm).resolve().parent
+    try:
+        d.relative_to(root)
+    except ValueError:
+        return None
+    while True:
+        if _has_git(d):
+            return "" if d == root else d.relative_to(root).as_posix()
+        if d == root:
+            return None
+        d = d.parent
+
+
+def _has_git(d: Path) -> bool:
+    """Whether *d* holds a ``.git`` entry, tolerant of unreadable dirs."""
+    try:
+        return (d / ".git").exists()
+    except OSError:
+        return False
 
 
 def cochange(
@@ -103,7 +192,9 @@ def cochange(
     target = _normalize(path)
     if auto_ingest and project_root is not None:
         try:
-            ingest_commits(conn, project_root)
+            # Ingest only the repo that contains the queried file — in a
+            # workspace of many repos, scanning all of them per query is waste.
+            ingest_commits(conn, project_root, only_path=target)
         except Exception:  # pragma: no cover - ingest is best-effort
             pass
 
