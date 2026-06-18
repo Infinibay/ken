@@ -45,8 +45,12 @@ def test_force_codex_replaces_invalid_hooks_json(tmp_path):
 def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path):
     calls = []
 
-    def fake_install(path, *, verbose, force_claude, force_codex, embed, embed_limit):
-        calls.append((path, verbose, force_claude, force_codex, embed, embed_limit))
+    def fake_install(
+        path, *, verbose, force_claude, force_codex, embed, embed_limit, no_wire
+    ):
+        calls.append(
+            (path, verbose, force_claude, force_codex, embed, embed_limit, no_wire)
+        )
 
     monkeypatch.setattr("ken.install.install", fake_install)
 
@@ -59,12 +63,13 @@ def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path):
             "--embed",
             "--embed-limit",
             "7",
+            "--no-wire",
             str(tmp_path),
         ]
     )
 
     assert rc == 0
-    assert calls == [(tmp_path, False, True, True, True, 7)]
+    assert calls == [(tmp_path, False, True, True, True, 7, True)]
 
 
 def test_install_cli_rejects_embed_limit_without_embed(tmp_path):

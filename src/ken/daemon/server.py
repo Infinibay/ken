@@ -9,6 +9,11 @@ Endpoints:
     POST /tools/pre       {session_id,tool,input} → { ok }
     POST /tools/post      {session_id,tool,output,success} → { ok }
     POST /turn-end        {session_id}      → { ok }
+    POST /rank            {query,verbose,max_chars} → { ok, context_block, ... }
+    POST /explain         {query}           → { ok, channels, boosts, ... }
+    POST /file/symbols    {path}            → { ok, symbols, ... }   (stateless read)
+    POST /symbol/detail   {path,qualname}   → { ok, symbol, snippet } (stateless read)
+    POST /references      {query,limit}     → { ok, matches, ... }   (stateless read)
     POST /shutdown                          → { ok }   (used by tests)
 
 Auth: every request must carry ``Authorization: Bearer <token>`` matching
@@ -351,6 +356,12 @@ class _Handler(BaseHTTPRequestHandler):
                 self._respond(200, _handle_rank(st, payload))
             elif self.path == "/explain":
                 self._respond(200, _handle_explain(st, payload))
+            elif self.path == "/file/symbols":
+                self._respond(200, _handle_file_symbols(st, payload))
+            elif self.path == "/symbol/detail":
+                self._respond(200, _handle_symbol_detail(st, payload))
+            elif self.path == "/references":
+                self._respond(200, _handle_references(st, payload))
             elif self.path == "/turn-end":
                 _handle_turn_end(st, payload)
                 self._respond(200, {"ok": True})
@@ -564,6 +575,65 @@ def _handle_rank(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
         "findings": len(result.findings),
         **stats,
     }
+
+
+def _handle_file_symbols(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
+    """Indexed symbol outline for one file. Backs an external `list_symbols`.
+
+    Stateless read — no session_id required. Served from the warm daemon
+    connection so external hosts (e.g. the desktop app) avoid a cold
+    `ken`-process spawn per lookup.
+    """
+    from ken.search import file_symbols
+
+    path = str(payload["path"])
+    include_docstrings = bool(payload.get("include_docstrings", True))
+    with st.lock:
+        st._touch()
+        return file_symbols(
+            st.conn,
+            path,
+            include_docstrings=include_docstrings,
+            project_root=st.project_root,
+        )
+
+
+def _handle_symbol_detail(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
+    """One symbol's metadata + source snippet. Backs an external `get_symbol_code`."""
+    from ken.search import symbol_detail
+
+    path = str(payload["path"])
+    qualname = str(payload["qualname"])
+    include_snippet = bool(payload.get("include_snippet", True))
+    with st.lock:
+        st._touch()
+        return symbol_detail(
+            st.conn,
+            path,
+            qualname,
+            include_snippet=include_snippet,
+            project_root=st.project_root,
+        )
+
+
+def _handle_references(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
+    """Literal (or BM25) worktree search for a name. Backs `find_references`."""
+    from ken.grep import grep
+
+    query = str(payload["query"])
+    language = payload.get("language") or None
+    mode = str(payload.get("mode", "literal"))
+    limit = _optional_positive_int(payload.get("limit")) or 50
+    with st.lock:
+        st._touch()
+        return grep(
+            st.conn,
+            query,
+            mode=mode,
+            language=language,
+            limit=limit,
+            project_root=st.project_root,
+        )
 
 
 def _context_stats(block: str) -> dict[str, int]:

@@ -90,8 +90,16 @@ def install(
     force_codex: bool = False,
     embed: bool = False,
     embed_limit: int | None = None,
+    no_wire: bool = False,
 ) -> InstallResult:
-    """Install ken into *project_path*.  Prints progress to stdout."""
+    """Install ken into *project_path*.  Prints progress to stdout.
+
+    ``no_wire=True`` indexes the project and provisions ``.ken/`` (meta,
+    DB, schema) but skips wiring any assistant hooks / MCP config. Use it
+    when an external host (e.g. the Infinidev desktop app) drives ken's
+    daemon directly and should not touch ``.claude/`` / ``.codex/`` /
+    ``.mcp.json``.
+    """
     if embed_limit is not None and embed_limit < 0:
         raise SystemExit("error: --embed-limit must be >= 0")
     root = project_path.resolve()
@@ -132,11 +140,16 @@ def install(
         # Step 3: .gitignore — add `.ken/` if there's a gitignore at project root.
         _ensure_gitignore(root, verbose=verbose)
 
-        install_claude, install_codex = _detect_agent_wiring(
-            root,
-            force_claude=force_claude,
-            force_codex=force_codex,
-        )
+        if no_wire:
+            install_claude, install_codex = False, False
+            if verbose:
+                print("[hooks] --no-wire: skipping Claude/Codex hook + MCP wiring")
+        else:
+            install_claude, install_codex = _detect_agent_wiring(
+                root,
+                force_claude=force_claude,
+                force_codex=force_codex,
+            )
 
         # Step 4: Claude Code hooks + MCP registration.
         if install_claude:

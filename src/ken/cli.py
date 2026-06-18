@@ -71,6 +71,12 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="with --embed, eagerly embed at most N prioritized files; index the rest structurally",
     )
+    p_install.add_argument(
+        "--no-wire",
+        action="store_true",
+        help="index only; skip wiring Claude/Codex hooks and MCP config "
+        "(for external hosts that drive the daemon directly)",
+    )
 
     p_reinstall = sub.add_parser(
         "reinstall",
@@ -232,6 +238,7 @@ def main(argv: list[str] | None = None) -> int:
             force_codex=args.codex,
             embed=args.embed,
             embed_limit=args.embed_limit,
+            no_wire=args.no_wire,
         )
         return 0
 
