@@ -44,29 +44,79 @@ def remember(
     except Exception:  # pragma: no cover
         emb = None
     now_ms = int(time.time() * 1000)
-    conn.execute(
-        """
-        INSERT INTO cr_findings(topic, content, tags, embedding, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?)
-        ON CONFLICT(topic) DO UPDATE SET
-            content = excluded.content,
-            tags = excluded.tags,
-            embedding = excluded.embedding,
-            updated_at = excluded.updated_at
-        """,
-        (topic, content, tags_json, emb, now_ms, now_ms),
-    )
+
+    from ken.findings_graph import apply_remember, ensure_finding_graph, graph_enabled
+
+    # Ensure tables + any pending backfill BEFORE opening the write txn, so
+    # ensure's own BEGIN can't nest inside ours. Best-effort: a graph failure
+    # here must never cost the user their finding.
+    enabled = False
+    try:
+        ensure_finding_graph(conn)
+        enabled = graph_enabled(conn)
+    except Exception:  # pragma: no cover - defensive
+        enabled = False
+    try:
+        conn.execute("BEGIN IMMEDIATE")
+        conn.execute(
+            """
+            INSERT INTO cr_findings(topic, content, tags, embedding, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON CONFLICT(topic) DO UPDATE SET
+                content = excluded.content,
+                tags = excluded.tags,
+                embedding = excluded.embedding,
+                updated_at = excluded.updated_at
+            """,
+            (topic, content, tags_json, emb, now_ms, now_ms),
+        )
+        if enabled:
+            # last_insert_rowid() is wrong on the DO UPDATE path — look the id up.
+            row = conn.execute("SELECT id FROM cr_findings WHERE topic = ?", (topic,)).fetchone()
+            apply_remember(conn, int(row["id"]), f"{topic}\n{content}")
+        conn.execute("COMMIT")
+    except Exception as exc:  # pragma: no cover - defensive
+        _safe_rollback(conn)
+        return {"ok": False, "error": f"remember failed: {exc}"}
     return {"ok": True, "topic": topic}
 
 
 def forget(conn: sqlite3.Connection, topic: str) -> dict:
-    """Delete a saved finding by exact topic."""
+    """Delete a saved finding by exact topic.
+
+    The FK cascade removes the finding's graph refs + edges; we then recompute
+    the remaining edges so IDF-weighted couplings stay consistent.
+    """
     topic = topic.strip()
     if not topic:
         return {"ok": False, "error": "topic must be non-empty"}
-    cur = conn.execute("DELETE FROM cr_findings WHERE topic = ?", (topic,))
-    deleted = int(cur.rowcount if cur.rowcount is not None else 0)
+
+    from ken.findings_graph import apply_forget, ensure_finding_graph, graph_enabled
+
+    enabled = False
+    try:
+        ensure_finding_graph(conn)
+        enabled = graph_enabled(conn)
+    except Exception:  # pragma: no cover - defensive
+        enabled = False
+    try:
+        conn.execute("BEGIN IMMEDIATE")
+        cur = conn.execute("DELETE FROM cr_findings WHERE topic = ?", (topic,))
+        deleted = int(cur.rowcount if cur.rowcount is not None else 0)
+        if enabled and deleted:
+            apply_forget(conn)
+        conn.execute("COMMIT")
+    except Exception as exc:  # pragma: no cover - defensive
+        _safe_rollback(conn)
+        return {"ok": False, "error": f"forget failed: {exc}"}
     return {"ok": deleted > 0, "topic": topic, "deleted": deleted}
+
+
+def _safe_rollback(conn: sqlite3.Connection) -> None:
+    try:
+        conn.execute("ROLLBACK")
+    except Exception:  # pragma: no cover - nothing to roll back
+        pass
 
 
 def list_findings(

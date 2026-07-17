@@ -267,6 +267,43 @@ def ken_recall(query: str, limit: int = 5, min_score: float = 0.25) -> list[dict
 
 
 @mcp.tool()
+def ken_related_findings(
+    topic: str,
+    limit: int = 8,
+    min_weight: float = 0.3,
+) -> dict:
+    """Saved findings related to *topic* in the findings knowledge graph.
+
+    Links are deterministic and evidence-cited: two findings connect when they
+    reference the same file/symbol (``shared_file`` / ``shared_symbol`` — exact),
+    share meaningful tags (``shared_tag``), or are close in embedding space
+    (``semantic`` — approximate). *topic* resolves by exact match, else the top
+    ``ken_recall`` hit. Neighbors are ranked evidence-backed-first, then by
+    weight; each carries its per-edge evidence. Returns empty rather than guessing.
+    """
+    with _conn() as conn:
+        from ken.findings_graph import related_findings
+
+        return related_findings(conn, topic, limit=limit, min_weight=min_weight)
+
+
+@mcp.tool()
+def ken_file_findings(path: str, expand: bool = False, limit: int = 15) -> dict:
+    """Durable findings that reference *path* — "what do we already know here?".
+
+    Uses the finding→code bridge: each saved finding's prose is resolved to
+    indexed ``ci_files`` paths, so this surfaces accumulated knowledge about a
+    file before you edit it. With ``expand=True``, also returns findings one hop
+    away in the graph. Resolution is index-based, so it lags a just-deleted file
+    until the next reindex.
+    """
+    with _conn() as conn:
+        from ken.findings_graph import file_findings
+
+        return file_findings(conn, path, expand=expand, limit=limit, project_root=_PROJECT_ROOT)
+
+
+@mcp.tool()
 def ken_cochange(
     path: str,
     min_confidence: float = 0.4,

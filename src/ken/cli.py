@@ -199,6 +199,32 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_recall.add_argument("--json", action="store_true", help="print raw JSON response")
 
+    p_related = sub.add_parser(
+        "related-findings", help="findings related to a topic in the findings graph"
+    )
+    p_related.add_argument("topic", help="finding topic (exact, else nearest by recall)")
+    p_related.add_argument("--path", default=".", help="project path (default: cwd)")
+    p_related.add_argument("-n", "--limit", type=int, default=8)
+    p_related.add_argument("--min-weight", type=float, default=0.3, help="minimum edge weight")
+    p_related.add_argument("--json", action="store_true", help="print raw JSON response")
+
+    p_file_findings = sub.add_parser(
+        "file-findings", help="saved findings that reference a file"
+    )
+    p_file_findings.add_argument("file", help="project-relative file path")
+    p_file_findings.add_argument("--path", default=".", help="project path (default: cwd)")
+    p_file_findings.add_argument("-n", "--limit", type=int, default=15)
+    p_file_findings.add_argument(
+        "--expand", action="store_true", help="also include graph neighbors"
+    )
+    p_file_findings.add_argument("--json", action="store_true", help="print raw JSON response")
+
+    p_fgraph = sub.add_parser("findings-graph", help="findings graph maintenance")
+    fgraph_sub = p_fgraph.add_subparsers(dest="fgraph_cmd", required=True)
+    p_fgraph_rebuild = fgraph_sub.add_parser("rebuild", help="drop and recompute the findings graph")
+    p_fgraph_rebuild.add_argument("--path", default=".", help="project path (default: cwd)")
+    p_fgraph_rebuild.add_argument("--json", action="store_true", help="print raw JSON response")
+
     p_serve = sub.add_parser("serve", help="run the ken daemon")
     p_serve.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
     p_serve.add_argument(
@@ -321,6 +347,27 @@ def main(argv: list[str] | None = None) -> int:
             tag=args.tag,
             as_json=args.json,
         )
+
+    if args.cmd == "related-findings":
+        return _related_findings_cli(
+            Path(args.path),
+            args.topic,
+            limit=args.limit,
+            min_weight=args.min_weight,
+            as_json=args.json,
+        )
+
+    if args.cmd == "file-findings":
+        return _file_findings_cli(
+            Path(args.path),
+            args.file,
+            limit=args.limit,
+            expand=args.expand,
+            as_json=args.json,
+        )
+
+    if args.cmd == "findings-graph":
+        return _findings_graph_cli(Path(args.path), args.fgraph_cmd, as_json=args.json)
 
     if args.cmd == "recall":
         return _recall_cli(
@@ -634,6 +681,98 @@ def _recall_cli(
             print(rendered)
         else:
             print(f"no relevant findings (min_score={min_score:.3f})")
+    return 0
+
+
+def _related_findings_cli(
+    project_path: Path,
+    topic: str,
+    *,
+    limit: int,
+    min_weight: float,
+    as_json: bool,
+) -> int:
+    from ken.db import connect
+    from ken.findings_graph import related_findings
+
+    root, db_path = _resolve_project_db(project_path)
+    if db_path is None:
+        print(f"error: no .ken project at {root}", file=sys.stderr)
+        return 1
+    with connect(db_path) as conn:
+        result = related_findings(conn, topic, limit=limit, min_weight=min_weight)
+    if as_json:
+        print(json.dumps(result, indent=2))
+        return 0
+    neighbors = result.get("neighbors", [])
+    if not neighbors:
+        print(result.get("note", "no related findings"))
+        return 0
+    for n in neighbors:
+        links = ", ".join(f"{e['type']} {e['weight']:.2f}" for e in n["edges"])
+        print(f"{n['best_weight']:.2f}  {n['topic']}  [{links}]")
+    return 0
+
+
+def _file_findings_cli(
+    project_path: Path,
+    file_path: str,
+    *,
+    limit: int,
+    expand: bool,
+    as_json: bool,
+) -> int:
+    from ken.db import connect
+    from ken.findings_graph import file_findings
+
+    root, db_path = _resolve_project_db(project_path)
+    if db_path is None:
+        print(f"error: no .ken project at {root}", file=sys.stderr)
+        return 1
+    with connect(db_path) as conn:
+        result = file_findings(conn, file_path, expand=expand, limit=limit, project_root=root)
+    if as_json:
+        print(json.dumps(result, indent=2))
+        return 0
+    findings = result.get("findings", [])
+    if not findings:
+        print(result.get("note", "no findings reference this file"))
+        return 0
+    for f in findings:
+        print(f"{f['topic']}\n    {f['content']}")
+    for r in result.get("related", []):
+        print(f"~ {r['topic']} ({r['weight']:.2f})")
+    return 0
+
+
+def _findings_graph_cli(project_path: Path, subcmd: str, *, as_json: bool) -> int:
+    from ken.db import connect
+    from ken.findings_graph import ensure_finding_graph, rebuild_finding_graph
+
+    root, db_path = _resolve_project_db(project_path)
+    if db_path is None:
+        print(f"error: no .ken project at {root}", file=sys.stderr)
+        return 1
+    with connect(db_path) as conn:
+        try:
+            ensure_finding_graph(conn)
+            conn.execute("BEGIN IMMEDIATE")
+            result = rebuild_finding_graph(conn)
+            conn.execute("COMMIT")
+        except Exception as exc:
+            try:
+                conn.execute("ROLLBACK")
+            except Exception:
+                pass
+            print(f"error: rebuild failed: {exc}", file=sys.stderr)
+            return 1
+        edges = conn.execute("SELECT COUNT(*) AS n FROM cr_finding_edges").fetchone()["n"]
+        refs = conn.execute("SELECT COUNT(*) AS n FROM cr_finding_refs").fetchone()["n"]
+    result = {**result, "edges": int(edges), "refs": int(refs)}
+    if as_json:
+        print(json.dumps(result, indent=2))
+    else:
+        print(f"findings graph rebuilt: {result['refs']} refs, {result['edges']} edges")
     return 0
 
 

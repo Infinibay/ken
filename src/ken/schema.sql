@@ -161,6 +161,51 @@ CREATE INDEX IF NOT EXISTS idx_cr_findings_topic ON cr_findings(topic);
 CREATE UNIQUE INDEX IF NOT EXISTS uniq_cr_findings_topic ON cr_findings(topic);
 
 -- ----------------------------------------------------------------------------
+-- Findings graph: a deterministic relationship graph over cr_findings.
+--
+--   cr_finding_refs  — finding → code bridge. Extracted from each finding's
+--     prose (paths + identifiers) and resolved against ci_files / ci_symbols.
+--     Grouped on the DURABLE text key (ref_key), never the churny symbol id.
+--     file_id / symbol_id are an ADVISORY cache of the id resolved at build
+--     time — no reader trusts them; they null out (ON DELETE SET NULL) when the
+--     referenced node is reindexed.
+--   cr_finding_edges — finding ↔ finding typed, evidence-carrying edges
+--     (semantic | shared_file | shared_symbol | shared_tag). Undirected types
+--     are stored canonically (src < dst); `directed` is reserved for later
+--     supersedes/contradicts edges. Kept fresh by a full recompute on every
+--     remember()/forget() (findings number in the tens–hundreds).
+--
+-- Both are self-created by findings_graph.ensure_finding_graph() as well, since
+-- the CLI/MCP write paths call db.connect() without applying this schema.
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS cr_finding_refs (
+    finding_id  INTEGER NOT NULL REFERENCES cr_findings(id) ON DELETE CASCADE,
+    ref_kind    TEXT    NOT NULL,                 -- 'file' | 'symbol'
+    ref_key     TEXT    NOT NULL,                 -- DURABLE: path, or qualname\x1fpath
+    file_id     INTEGER REFERENCES ci_files(id)   ON DELETE SET NULL,   -- advisory cache
+    symbol_id   INTEGER REFERENCES ci_symbols(id) ON DELETE SET NULL,   -- advisory cache
+    method      TEXT    NOT NULL,                 -- path | traceback | ident | snake
+    resolved    INTEGER NOT NULL DEFAULT 0,       -- 1 if it matched an indexed node at build time
+    updated_at  INTEGER NOT NULL,
+    PRIMARY KEY (finding_id, ref_kind, ref_key)
+);
+CREATE INDEX IF NOT EXISTS idx_cr_finding_refs_key ON cr_finding_refs(ref_kind, ref_key);
+CREATE INDEX IF NOT EXISTS idx_cr_finding_refs_file ON cr_finding_refs(file_id) WHERE file_id IS NOT NULL;
+
+CREATE TABLE IF NOT EXISTS cr_finding_edges (
+    src         INTEGER NOT NULL REFERENCES cr_findings(id) ON DELETE CASCADE,
+    dst         INTEGER NOT NULL REFERENCES cr_findings(id) ON DELETE CASCADE,
+    edge_type   TEXT    NOT NULL,                 -- semantic | shared_file | shared_symbol | shared_tag
+    directed    INTEGER NOT NULL DEFAULT 0,       -- reserved for directed supersedes/contradicts edges
+    weight      REAL    NOT NULL,                 -- native per-type strength, clamped [0,1]
+    evidence    TEXT    NOT NULL DEFAULT '{}',    -- JSON: {"cosine":0.71} | {"keys":[...]} (nodes capped <=8)
+    updated_at  INTEGER NOT NULL,
+    PRIMARY KEY (src, dst, edge_type),
+    CHECK (src <> dst AND weight >= 0 AND weight <= 1 AND (directed = 1 OR src < dst))
+);
+CREATE INDEX IF NOT EXISTS idx_cr_finding_edges_dst ON cr_finding_edges(dst);
+
+-- ----------------------------------------------------------------------------
 -- Commit history: each commit is a market-basket transaction of changed files.
 -- Mined by ken_cochange for logical coupling imports can't see. Ingested
 -- incrementally from `git log` (last SHA tracked in meta['cochange_last_sha']).
