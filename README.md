@@ -112,49 +112,55 @@ ken works through hooks automatically, but assistants behave better when your pr
 ## Code Search
 
 Use ken as the first attempt for codebase questions. Prefer ken MCP tools before
-broad text search or reading many files:
+broad text search (`rg`) or reading many files — they return structured,
+line-cited results and feed ken's task memory. Match the question you are trying
+to answer to the tool:
 
-- Start with `ken_rank` for the current task, or pass a query when the question
-  needs a focused search.
-- Use `ken_search_files` to find files by intent, feature, behavior, or concept.
-- Use `ken_search_symbols` to find functions, classes, methods, APIs, and other
-  named code objects.
-- Use `ken_file_outline`, `ken_file_symbols`, and `ken_file_snippets` to inspect
-  surfaced files precisely before opening larger chunks of code.
-- Use `ken_file_neighbors`, `ken_module_graph`, and `ken_find_tests` to follow
-  imports, related modules, and source/test pairs.
-- Use `ken_changed_context` when working from an existing diff or local edits.
-- Use `ken_project_overview` for a compact map of an unfamiliar project area.
-- Use `ken_grep` for exact-literal or BM25-ranked text search (preserves
-  identifiers like `MY_ENV_VAR` and `os.path`) instead of falling back to `rg`.
-- Use `ken_recall` and `ken_findings` for saved project knowledge, and
-  `ken_remember` when a durable finding should help future sessions.
-- Use `ken_explain_rank` when rankings look surprising or an expected file is
-  missing.
-- Use `ken_dismiss` when ken surfaces a file that is clearly not relevant, so
-  future similar tasks get better results.
+**Finding where something is**
+- "Which file implements this feature / behavior / concept?" → `ken_search_files`
+- "Where is the function / class / method that does X?" → `ken_search_symbols`
+- "Find this exact string or identifier (`MY_ENV_VAR`, `os.path`)" → `ken_grep`
+  (instead of falling back to `rg`)
+- "Which files do tasks *like this one* usually touch?" → `ken_intent_history`
 
-To understand *how something works* — answered by local algorithms, not an LLM,
-so the output is fast, deterministic, and evidence-cited:
+**Inspecting a file or symbol before opening large chunks**
+- "What symbols does this file define?" → `ken_file_symbols`
+- "What is this file about — structure, imports, importers?" → `ken_file_outline`
+- "What exactly is this symbol (metadata + its source)?" → `ken_symbol_detail`
+- "Show just the source for these symbols / this line range" → `ken_file_snippets`
+- "What files are related to this one?" → `ken_file_neighbors`
+- "What tests cover this file?" → `ken_find_tests`
+- "How do imports flow around this file?" → `ken_module_graph`
+- "Give me a compact map of an unfamiliar project area" → `ken_project_overview`
+- "What am I changing right now and what does it touch?" → `ken_changed_context`
 
-- Use `ken_architecture` for subsystems, layers, dependency cycles, and
-  load-bearing hub files (graph algorithms over the import graph, with honest
-  edge-coverage).
-- Use `ken_callgraph` to find who calls a symbol and what it calls
-  (precision-tiered T1/T2; Python).
-- Use `ken_type_hierarchy` for subclasses, ancestors, and method overrides
-  (Python).
-- Use `ken_wiring` to map routes / CLI commands / env vars to their handler
-  symbols (Python).
-- Use `ken_profile` to learn what a file or package is *for* and what
-  distinguishes it from its siblings (distinctive-term statistics).
-- Use `ken_cochange` to see what historically changes together with a file —
-  including hidden coupling imports can't show (schema↔migration, code↔config).
-- Use `ken_blast_radius` before an edit to estimate what it might affect, with
-  per-channel evidence (imports, tests, co-change).
-- Use `ken_clones` to find copy-pasted / near-duplicate code.
-- Use `ken_intent_history` to see which files requests *like the current one*
-  have historically touched.
+**Understanding how something works / what an edit affects** — answered by local
+algorithms, not an LLM, so the output is fast, deterministic, and evidence-cited:
+- "Who calls this function, and what does it call?" → `ken_callgraph`
+- "What breaks / what is affected if I edit this?" → `ken_blast_radius`
+- "What changes *together* with this file (hidden coupling imports can't see:
+  schema↔migration, code↔config)?" → `ken_cochange`
+- "What are the subsystems, layers, dependency cycles, and hub files?" →
+  `ken_architecture`
+- "How is this feature wired — route / CLI command / env var → handler?" →
+  `ken_wiring`
+- "What are the subclasses / ancestors / method overrides of this class?" →
+  `ken_type_hierarchy`
+- "What is this file or package *for*, and what makes it distinct?" → `ken_profile`
+- "Is there duplicated / copy-pasted code?" → `ken_clones`
+
+**Reusing what we already know (durable, cross-session memory)**
+- "What did we learn before about X?" → `ken_recall`
+- "What do we already know about this file before I edit it?" → `ken_file_findings`
+- "What other findings relate to this one?" → `ken_related_findings`
+- "List saved project knowledge" → `ken_findings`
+- "Remember this so future sessions don't re-derive it" → `ken_remember`
+- "This finding is stale or wrong — drop it" → `ken_forget`
+
+**The ranking itself** (a `<context-rank>` block is auto-injected each prompt)
+- "Re-render the ranked context at more/less detail" → `ken_rank`
+- "Why did (or didn't) this file show up in the ranking?" → `ken_explain_rank`
+- "This surfaced file wasn't relevant — learn from it" → `ken_dismiss`
 
 After ken narrows the search space, read the relevant files directly. Fall back
 to `rg` only when ken is insufficient.
