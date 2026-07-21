@@ -160,7 +160,7 @@ After ken narrows the search space, read the relevant files directly. Fall back
 to `rg` only when ken is insufficient.
 ```
 
-The shell commands (`ken rank`, `ken search-files`, `ken search-symbols`, and `ken explain`) expose the same ideas for humans or agents without MCP. For assistants with MCP available, the MCP tools are the preferred path because they return structured results and feed ken's local task memory.
+The shell commands (`ken rank`, `ken search-files`, `ken search-symbols`, and `ken explain`) expose the same ideas for humans or agents without MCP, and `ken tools <name>` runs any MCP tool directly (see [Run MCP tools from the shell](#run-mcp-tools-from-the-shell)). For assistants with MCP available, the MCP tools are the preferred path because they return structured results and feed ken's local task memory.
 
 ## Use ken directly
 
@@ -181,6 +181,20 @@ You can save and recall project-specific findings:
 ken remember "codex wiring" "Use ken install --codex . to repair invalid hooks."
 ken recall "codex hook repair"
 ```
+
+## Run MCP tools from the shell
+
+Every tool the ken MCP server exposes is also runnable directly with `ken tools`, so you can use the structured code-intelligence tools (call graph, blast radius, co-change, wiring, clones, …) without an assistant in the loop. The list, descriptions, and parameters are read live from the same MCP surface, so `ken tools` never drifts from what the agent sees.
+
+```sh
+ken tools                                   # list every tool with a one-line summary
+ken tools grep --help                       # show one tool's parameters
+ken tools grep "MY_ENV_VAR" --mode bm25     # required params are positional, options are --flags
+ken tools blast_radius src/ken/cli.py
+ken tools file_symbols src/ken/search.py --no-include-docstrings
+```
+
+The tool name may be given with or without the `ken_` prefix (`grep` or `ken_grep`). Results print as JSON (`--compact` for a single line). Point at another checkout with `ken tools --path /repo <name> ...` (the flag comes before the tool name).
 
 ## Codex hook setup
 

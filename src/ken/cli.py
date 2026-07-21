@@ -14,6 +14,7 @@ Subcommand layout:
     ken forget TOPIC                    delete a saved finding
     ken findings                        list saved findings
     ken recall QUERY                    search saved findings
+    ken tools  [NAME] [ARGS...]         run an MCP tool directly (--list, --help)
     ken serve  [PATH]                   start the daemon
     ken hook session-start              hooks invoked by coding agents
     ken hook session-end
@@ -245,6 +246,34 @@ def main(argv: list[str] | None = None) -> int:
     p_mcp = sub.add_parser("mcp", help="run as MCP stdio server")
     p_mcp.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
 
+    p_tools = sub.add_parser(
+        "tools",
+        help="invoke a ken MCP tool directly from the CLI",
+        description=(
+            "Run any tool the ken MCP server exposes, without an agent.\n\n"
+            "  ken tools                     list available tools\n"
+            "  ken tools <name> --help       show a tool's parameters\n"
+            "  ken tools <name> [ARGS...]    run the tool and print JSON\n\n"
+            "The <name> may be given with or without the 'ken_' prefix "
+            "(e.g. 'grep' or 'ken_grep'). Required parameters are positional; "
+            "optional ones are --flags mirroring the tool's schema."
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    p_tools.add_argument("--path", default=".", help="project path (default: cwd)")
+    p_tools.add_argument("--list", action="store_true", help="list available tools and exit")
+    p_tools.add_argument(
+        "--compact", action="store_true", help="print result as single-line JSON"
+    )
+    p_tools.add_argument(
+        "tool", nargs="?", help="tool name (with or without the ken_ prefix)"
+    )
+    p_tools.add_argument(
+        "tool_args",
+        nargs=argparse.REMAINDER,
+        help="arguments for the tool; run `ken tools <name> --help` to see them",
+    )
+
     p_uninstall = sub.add_parser("uninstall", help="remove ken hooks from a project")
     p_uninstall.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
     p_uninstall.add_argument("--keep-db", action="store_true", help="don't delete .ken/ken.db")
@@ -392,6 +421,15 @@ def main(argv: list[str] | None = None) -> int:
         from ken.mcp.server import run as run_mcp
 
         return run_mcp(Path(args.path))
+
+    if args.cmd == "tools":
+        return _tools_cli(
+            Path(args.path),
+            args.tool,
+            args.tool_args,
+            list_only=args.list,
+            compact=args.compact,
+        )
 
     if args.cmd == "uninstall":
         from ken.install_uninstall import uninstall
@@ -942,6 +980,162 @@ def _load_bench_cases(dataset_path: Path) -> list[dict[str, Any]]:
                 )
             cases.append({"prompt": prompt.strip(), "expected_files": expected})
     return cases
+
+
+def _tools_cli(
+    project_path: Path,
+    tool_name: str | None,
+    tool_argv: list[str],
+    *,
+    list_only: bool,
+    compact: bool,
+) -> int:
+    """Dispatch `ken tools ...` — a thin CLI over the MCP tool registry.
+
+    The tool list, descriptions, and per-parameter schemas are read live
+    from the same ``FastMCP`` object ``ken mcp`` serves, so this stays in
+    sync with the MCP surface automatically — there is no second list of
+    tools to maintain.
+    """
+    from ken.mcp import server as mcp_server
+
+    registry = {t.name: t for t in mcp_server.mcp._tool_manager.list_tools()}
+
+    if list_only or not tool_name:
+        _print_tools_list(registry)
+        return 0
+
+    tool = registry.get(tool_name) or registry.get(f"ken_{tool_name}")
+    if tool is None:
+        import difflib
+
+        print(f"error: unknown tool {tool_name!r}", file=sys.stderr)
+        candidates = list(registry) + [
+            n[len("ken_") :] for n in registry if n.startswith("ken_")
+        ]
+        suggestions = difflib.get_close_matches(tool_name, candidates, n=3, cutoff=0.5)
+        if suggestions:
+            print(f"did you mean: {', '.join(suggestions)}", file=sys.stderr)
+        else:
+            print("run `ken tools` to list available tools", file=sys.stderr)
+        return 2
+
+    tool_parser = _build_tool_parser(tool)
+    ns = tool_parser.parse_args(tool_argv)
+    props = tool.parameters.get("properties", {})
+    kwargs = {name: getattr(ns, name) for name in props if hasattr(ns, name)}
+
+    from ken import _paths
+
+    root = _paths.find_project_root(project_path.resolve()) or project_path.resolve()
+    if not _paths.meta_path(root).is_file():
+        print(f"error: no .ken project at {root}", file=sys.stderr)
+        return 1
+    mcp_server._PROJECT_ROOT = root
+
+    try:
+        result = tool.fn(**kwargs)
+        if tool.is_async:
+            import asyncio
+
+            result = asyncio.run(result)
+    except Exception as exc:  # surface tool errors as a clean CLI failure
+        print(f"error: {tool.name} failed: {exc}", file=sys.stderr)
+        return 1
+
+    if compact:
+        print(json.dumps(result, default=str))
+    else:
+        print(json.dumps(result, indent=2, default=str))
+    return 0
+
+
+def _print_tools_list(registry: dict[str, Any]) -> None:
+    width = max((len(n) for n in registry), default=0)
+    for name in sorted(registry):
+        summary = _first_doc_line(registry[name].description)
+        print(f"  {name:<{width}}  {summary}")
+    print("\nRun `ken tools <name> --help` for a tool's parameters.")
+
+
+def _first_doc_line(text: str | None) -> str:
+    for line in (text or "").splitlines():
+        stripped = line.strip()
+        if stripped:
+            return stripped
+    return ""
+
+
+def _tool_schema_core(prop: dict[str, Any]) -> dict[str, Any]:
+    """Collapse an ``anyOf: [T, null]`` (Optional[T]) schema to just ``T``."""
+    if "anyOf" in prop:
+        for variant in prop["anyOf"]:
+            if variant.get("type") != "null":
+                return variant
+    return prop
+
+
+def _tool_py_type(json_type: str | None):
+    return {"integer": int, "number": float, "string": str}.get(json_type, str)
+
+
+def _build_tool_parser(tool: Any) -> argparse.ArgumentParser:
+    """Build an argparse parser for one tool from its JSON schema.
+
+    Required parameters become positionals (in schema order); optional
+    ones become ``--flags`` whose defaults mirror the function signature.
+    This gives every tool a real ``--help`` for free.
+    """
+    props: dict[str, Any] = tool.parameters.get("properties", {})
+    required = set(tool.parameters.get("required", []))
+    parser = argparse.ArgumentParser(
+        prog=f"ken tools {tool.name}",
+        description=(tool.description or "").strip() or None,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    for name, prop in props.items():
+        core = _tool_schema_core(prop)
+        json_type = core.get("type")
+        default = prop.get("default")
+        is_required = name in required
+        flag = "--" + name.replace("_", "-")
+
+        if json_type == "boolean":
+            parser.add_argument(
+                flag,
+                dest=name,
+                action=argparse.BooleanOptionalAction,
+                default=default,
+                help=f"boolean (default: {default})",
+            )
+        elif json_type == "array":
+            item_type = _tool_py_type(core.get("items", {}).get("type"))
+            if is_required:
+                parser.add_argument(name, nargs="+", type=item_type, help="list (required)")
+            else:
+                parser.add_argument(
+                    flag,
+                    dest=name,
+                    nargs="*",
+                    type=item_type,
+                    default=default,
+                    help="space-separated list",
+                )
+        else:
+            py_type = _tool_py_type(json_type)
+            if is_required:
+                parser.add_argument(
+                    name, type=py_type, help=f"{json_type or 'string'} (required)"
+                )
+            else:
+                parser.add_argument(
+                    flag,
+                    dest=name,
+                    type=py_type,
+                    default=default,
+                    help=f"{json_type or 'string'} (default: {default!r})",
+                )
+    return parser
 
 
 def _resolve_project_db(project_path: Path) -> tuple[Path, Path | None]:
