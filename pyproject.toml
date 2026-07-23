@@ -1,6 +1,6 @@
 [project]
-name = "ken"
-version = "0.2.3"
+name = "ken-rank"
+version = "0.2.4"
 description = "Per-project context-rank index for Claude Code, served from a local daemon."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -40,6 +40,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ken"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/ken", "README.md", "LICENSE", "pyproject.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

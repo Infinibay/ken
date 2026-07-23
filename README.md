@@ -20,13 +20,17 @@ All of these signals stay local in `.ken/ken.db`. They are not sent to a any ser
 
 ## Install the CLI
 
-From this checkout, run:
+ken is published on PyPI as [`ken-rank`](https://pypi.org/project/ken-rank/). The
+distribution name is `ken-rank`, but it installs the `ken` command. Install it
+with `pipx` (recommended, isolates the tool) or `uv`:
 
 ```sh
-./install.sh
+pipx install ken-rank
+# or
+uv tool install ken-rank
+# or
+pip install ken-rank
 ```
-
-The installer uses `uv` to install the `ken` command into your user-local tool directory. If `uv` is not present, the script bootstraps it with Astral's official installer unless you pass `--no-bootstrap-uv`.
 
 Verify the install:
 
@@ -34,7 +38,18 @@ Verify the install:
 ken --version
 ```
 
-You can also install directly with `uv`:
+### From a checkout
+
+To install from a local clone (for development or an unreleased build):
+
+```sh
+./install.sh
+```
+
+The installer uses `uv` to install the `ken` command into your user-local tool
+directory. If `uv` is not present, the script bootstraps it with Astral's
+official installer unless you pass `--no-bootstrap-uv`. You can also install the
+checkout directly with `uv`:
 
 ```sh
 uv tool install --editable . --force --reinstall --refresh
