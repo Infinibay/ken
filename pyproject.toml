@@ -1,6 +1,6 @@
 [project]
 name = "ken-rank"
-version = "0.6.0"
+version = "0.7.0"
 description = "Per-project context-rank index for Claude Code, served from a local daemon."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -37,15 +37,33 @@ dependencies = [
 # targets a specific CUDA major; if it does not match the host's CUDA
 # runtime, ken logs a warning and stays on CPU rather than failing. Pin
 # onnxruntime-gpu yourself if you need a specific CUDA line.
-gpu = ["fastembed-gpu>=0.5"]
+#
+# Not installable on macOS: onnxruntime-gpu publishes Linux and Windows wheels
+# only, so without the marker `pip install 'ken-rank[gpu]'` fails outright on a
+# Mac. There is nothing to offer instead — ONNX Runtime has no MPS provider, so
+# the fastembed backend stays on the CPU there (where its small models are
+# already fast). Apple Silicon GPU acceleration lives in the `torch` extra.
+gpu = ["fastembed-gpu>=0.5; sys_platform != 'darwin'"]
 
 # The torch backend: `pip install ken-rank[torch]` adds sentence-transformers
 # (which pulls torch) so ken can run stronger models fastembed does not ship —
 # e.g. Qwen/Qwen3-Embedding-0.6B (top of ken's retrieval benchmark) or
 # BAAI/bge-m3. Heavier install; entirely opt-in. Switch a project onto one
 # with `ken reembed --model <name>` after installing this extra. Also
-# GPU-aware (uses CUDA automatically when torch sees a device).
-torch = ["sentence-transformers>=3.0"]
+# GPU-aware: CUDA, or Apple Silicon's MPS, whichever torch sees.
+#
+# The two version floors are not cosmetic. sentence-transformers only requires
+# transformers>=4.34, but the Qwen3 architecture landed in 4.51 — below it the
+# model dies with `KeyError: 'qwen3'`, naming neither the cause nor the fix. And
+# torch below 2.9 could return silently wrong embeddings on MPS (pytorch#163597,
+# fixed in 2.9.0), so Apple Silicon gets a floor that costs Linux users nothing;
+# it is scoped to arm64 because PyPI has no torch 2.9 for Intel Macs, where MPS
+# does not exist anyway.
+torch = [
+    "sentence-transformers>=3.0",
+    "transformers>=4.51",
+    "torch>=2.9; sys_platform == 'darwin' and platform_machine == 'arm64'",
+]
 
 [project.scripts]
 ken = "ken.cli:main"

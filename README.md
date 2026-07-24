@@ -145,15 +145,24 @@ This only affects projects created afterwards; switch an existing one with `ken 
 
 ### GPU acceleration
 
-The embedder auto-detects a GPU (CUDA or ROCm) and uses it, falling back to CPU when none is usable — no configuration. Install the GPU runtime with the extra:
+The embedder auto-detects a GPU and uses it, falling back to CPU when none is usable — no configuration. What counts as a GPU depends on the backend:
 
-```sh
-pip install 'ken-rank[gpu]'   # fastembed-gpu / onnxruntime-gpu (CUDA/ROCm)
-```
+| Backend | Accelerators | How to get it |
+| --- | --- | --- |
+| fastembed / ONNX (default) | CUDA, ROCm — Linux/Windows only | `pip install 'ken-rank[gpu]'` |
+| torch / sentence-transformers | CUDA, **Apple Silicon (MPS)** | `pip install 'ken-rank[torch]'` |
 
-Override detection with `KEN_EMBED_DEVICE=auto|cpu|gpu` (and `KEN_EMBED_DEVICE_ID=0`).
+Override detection with `KEN_EMBED_DEVICE=auto|cpu|gpu|cuda|mps` (and `KEN_EMBED_DEVICE_ID=0` to pick a CUDA index). `auto` and `gpu` prefer CUDA, then MPS, then CPU; naming one accelerator restricts the choice to that one, so `cuda` on a Mac lands on the CPU rather than quietly substituting the other GPU.
 
-**Is the GPU worth it?** For most people, not much — and that's fine. The device only affects how fast a *query* is embedded; the rest of a rank (loading the stored vectors, the cosine sweep, the lexical/import channels) is CPU work either way. With the default fastembed model, embedding a query is already ~30–40 ms on CPU, so the GPU barely moves the needle for inline ranking. Even with the heavy `Qwen/Qwen3-Embedding-0.6B` on a large repo, a full rank was ~1.1 s of which the query embed is ~250 ms on CPU vs ~50 ms on GPU — the GPU saves ~200 ms of a second-plus that's dominated by device-independent work. So CPU-only is perfectly usable, including with Qwen3.
+**On Apple Silicon**, only the torch backend reaches the GPU — ONNX Runtime has no MPS provider, and `[gpu]` is not installable on macOS at all (onnxruntime-gpu ships no Mac wheels), so the default models stay on the CPU where they are already fast. `[torch]` alone is enough: the stock PyPI `torch` wheel for macOS arm64 carries MPS.
+
+MPS is used more defensively than CUDA, because it fails in ways CUDA doesn't:
+
+- **It can lie quietly.** A batch can come back as `NaN`, or as rows the GPU never filled in — which survive normalisation as all-zero vectors that are perfectly finite and score 0.0 against every query forever. ken checks that each batch is finite *and* unit-norm; if it isn't, or the GPU raises, it re-encodes on the CPU and stays there for the rest of the process. One reload, versus unusable vectors in `ken.db` that nobody notices until retrieval has quietly degraded.
+- **It won't tell you it's out of memory.** torch's MPS allocator ceiling is set from a fraction of RAM and lands *above* the RAM that exists, so instead of an out-of-memory error macOS just swaps. ken caps it (`KEN_MPS_MEMORY_FRACTION`, default `0.7`) so an oversized batch raises and hits the fallback above.
+- **torch 2.9+ is required** to use the GPU (macOS 14+). Below that, a PyTorch bug could return embeddings that are finite, unit-norm and *wrong* — the one failure no runtime check can catch — so ken refuses MPS on older torch and says so in the log rather than trusting an index it can't verify. The `[torch]` extra pins this for you on Apple Silicon.
+
+**Is the GPU worth it?** For most people, not much — and that's fine. The device only affects how fast a *query* is embedded; the rest of a rank (loading the stored vectors, the cosine sweep, the lexical/import channels) is CPU work either way. With the default fastembed model, embedding a query is already ~30–40 ms on CPU, so the GPU barely moves the needle for inline ranking. Even with the heavy `Qwen/Qwen3-Embedding-0.6B` on a large repo, a full rank was ~1.1 s of which the query embed is ~250 ms on CPU vs ~50 ms on GPU (measured on CUDA — Apple Silicon is unmeasured) — the GPU saves ~200 ms of a second-plus that's dominated by device-independent work. So CPU-only is perfectly usable, including with Qwen3.
 
 Where the GPU genuinely pays off: **bulk work** — a full `ken reembed` or the first index of a big repo re-encodes thousands of texts at once, and there the GPU is several times faster. And if you simply want to shave every last millisecond off inline ranking, turn it on. Otherwise, don't sweat it.
 
@@ -182,7 +191,7 @@ That is roughly **+40% Recall@5 and +87% MRR** over the old default, and it more
 
 - **Heavier install.** The `[torch]` extra pulls PyTorch + sentence-transformers — hundreds of MB, versus the small ONNX-only default. The model itself is ~1.2 GB.
 - **Bigger index.** It is 1024-dimensional; stored vectors are ~2.7× the size of the 384-dim default, so `ken.db` grows accordingly.
-- **Slower on CPU.** It shines on a GPU (add `[gpu]` is for the fastembed path; the torch backend uses CUDA automatically when torch sees a device). On CPU the per-prompt embedding is noticeably slower than the fastembed default, which matters because the daemon embeds inline on every prompt.
+- **Slower on CPU.** It shines on a GPU — the torch backend picks up CUDA or Apple Silicon's MPS on its own (the `[gpu]` extra is for the fastembed path, not this one). On CPU the per-prompt embedding is noticeably slower than the fastembed default, which matters because the daemon embeds inline on every prompt. On a Mac, `[torch]` alone is enough: the stock PyPI `torch` wheel for macOS arm64 ships MPS support, no extra index or extra to install.
 
 So it is worth it when you have a GPU (or don't mind the CPU latency) and want the best retrieval; otherwise the lightweight multilingual default is the better trade-off. The fastembed default always stays the no-torch path.
 
