@@ -8,6 +8,7 @@ qualnames; the merge step in ``ranker.merge`` reconciles them.
 from __future__ import annotations
 
 import math
+import os
 import re
 import sqlite3
 import time
@@ -241,6 +242,54 @@ def similar_past_sessions(
     return out
 
 
+# ── Popularity discount (lift / PMI, Phase 3) ────────────────────────
+#
+# Predictive and co-occurrence evidence both suffer from popularity bias:
+# a file touched in nearly every session (``cli.py``, ``db.py``) accrues
+# evidence for *any* prompt. We discount each file's accumulated evidence
+# by its global base rate — the numerator (similar-session evidence) over
+# a denominator (how universal the file is) is exactly a lift/PMI signal.
+# Gated behind KEN_RANKER_LIFT so it can be measured in isolation.
+
+LIFT_BETA = 4.0          # discount strength: ubiquitous file → ~1/(1+β)
+LIFT_MIN_SESSIONS = 5    # below this we have no base-rate estimate → neutral
+
+
+def lift_enabled() -> bool:
+    return os.environ.get("KEN_RANKER_LIFT", "").strip().lower() in {
+        "1", "true", "on", "yes",
+    }
+
+
+def file_base_rates(conn: sqlite3.Connection) -> tuple[int, dict[str, int]]:
+    """Return ``(n_sessions, {path: document_frequency})`` over snapshots.
+
+    ``document_frequency`` = number of distinct sessions in which the file
+    had a positive productivity score.
+    """
+    n_row = conn.execute(
+        "SELECT COUNT(DISTINCT session_id) AS n FROM cr_session_scores"
+    ).fetchone()
+    n = int(n_row["n"]) if n_row and n_row["n"] is not None else 0
+    df: dict[str, int] = {}
+    if n:
+        for r in conn.execute(
+            "SELECT target_path, COUNT(DISTINCT session_id) AS df "
+            "FROM cr_session_scores "
+            "WHERE score > 0 AND target_path IS NOT NULL GROUP BY target_path"
+        ):
+            df[str(r["target_path"])] = int(r["df"])
+    return n, df
+
+
+def base_rate_discount(n: int, df: dict[str, int], path: str) -> float:
+    """Multiplicative discount in (0, 1]; 1.0 for rare, →1/(1+β) for ubiquitous."""
+    if n < LIFT_MIN_SESSIONS:
+        return 1.0
+    base = (df.get(path, 0) + 1.0) / (n + 2.0)  # Laplace-smoothed P(f | all)
+    return 1.0 / (1.0 + LIFT_BETA * base)
+
+
 # ── Channel 2: Predictive ────────────────────────────────────────────
 
 PREDICTIVE_DECAY_DAYS = 14.0
@@ -293,11 +342,21 @@ def predictive_scores(
             mult = PATTERN_MULTIPLIERS.get(sr["pattern"], 1.0)
             accum[sr["target_path"]] += contribution * float(sr["score"]) * mult
 
+    use_lift = lift_enabled()
+    if use_lift:
+        n_sessions, df = file_base_rates(conn)
+
     out: list[RankedItem] = []
     for path, val in accum.items():
+        reason = "predictive"
+        if use_lift:
+            discount = base_rate_discount(n_sessions, df, path)
+            val *= discount
+            if discount < 0.99:
+                reason = f"predictive×lift{discount:.2f}"
         score = min(PREDICTIVE_CAP, val * PREDICTIVE_SCALE)
         if score > 0:
-            out.append(RankedItem(target=path, target_type="file", score=score, reason="predictive"))
+            out.append(RankedItem(target=path, target_type="file", score=score, reason=reason))
     return out
 
 
@@ -487,6 +546,38 @@ def _append_symbols_at_line(
         )
 
 
+# ── Adaptive per-query thresholds (Phase 2) ──────────────────────────
+#
+# Absolute cosine floors (0.40/0.42/0.45) assume a stable similarity
+# distribution. A different embedder (multilingual) or a cross-language
+# prompt shifts the whole distribution, so a fixed floor either floods or
+# starves. The adaptive threshold is relative to *this query's* similarity
+# distribution: keep items above μ+kσ, clamped so it only ever LOWERS the
+# fixed floor for weak-signal queries (never raises it — strong in-domain
+# queries keep current behaviour). The effective threshold is also used as
+# the score-mapping anchor, so surfaced items score sensibly on the
+# lowered scale. Gated behind KEN_RANKER_ADAPTIVE.
+
+ADAPTIVE_FLOOR = 0.22    # absolute safety net once thresholds go relative
+ADAPTIVE_K = 1.5         # keep items ≥ μ + K·σ of the query distribution
+
+
+def adaptive_enabled() -> bool:
+    return os.environ.get("KEN_RANKER_ADAPTIVE", "").strip().lower() in {
+        "1", "true", "on", "yes",
+    }
+
+
+def _adaptive_threshold(sims: "np.ndarray", fixed_min: float) -> float:
+    if not adaptive_enabled() or sims.size == 0:
+        return fixed_min
+    mu = float(sims.mean())
+    sd = float(sims.std())
+    relative = mu + ADAPTIVE_K * sd
+    # Only lower the fixed floor (weak-signal queries); never raise it.
+    return min(fixed_min, max(ADAPTIVE_FLOOR, relative))
+
+
 # ── Channel 3: Fuzzy symbol / file ───────────────────────────────────
 
 FUZZY_FILE_MIN_SIM = 0.40
@@ -547,20 +638,21 @@ def doc_intent_scores(
     mat = np.asarray([blob_to_vec(r["embedding"]) for r in rows], dtype=np.float32)
     norms = np.linalg.norm(mat, axis=1) + 1e-12
     sims = (mat @ q) / norms
+    thr = _adaptive_threshold(sims, DOC_INTENT_MIN_SIM)
     file_scores: dict[str, RankedItem] = {}
     symbol_scores: dict[str, RankedItem] = {}
     for row, sim in zip(rows, sims):
         sim_raw = float(sim)
-        if sim_raw < DOC_INTENT_MIN_SIM:
+        if sim_raw < thr:
             continue
         target_path = str(row["file_path"])
         weight = float(row["weight"])
         source_kind = str(row["source_kind"])
         if row["qualname"] is None:
             score = (
-                (sim_raw - DOC_INTENT_MIN_SIM)
+                (sim_raw - thr)
                 * DOC_INTENT_FILE_SCALE
-                / (1.0 - DOC_INTENT_MIN_SIM)
+                / (1.0 - thr)
                 * weight
             )
             _keep_best(
@@ -576,9 +668,9 @@ def doc_intent_scores(
         else:
             target = f"{row['qualname']} ({target_path}:{row['line_start']})"
             score = (
-                (sim_raw - DOC_INTENT_MIN_SIM)
+                (sim_raw - thr)
                 * DOC_INTENT_SYMBOL_SCALE
-                / (1.0 - DOC_INTENT_MIN_SIM)
+                / (1.0 - thr)
                 * weight
             )
             _keep_best(
@@ -993,6 +1085,7 @@ def _fuzzy_files(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
     norms = np.linalg.norm(mat, axis=1) + 1e-12
     sims = (mat @ q) / norms
     now_ns = int(time.time() * 1e9)
+    thr = _adaptive_threshold(sims, FUZZY_FILE_MIN_SIM)
     out: list[RankedItem] = []
     for path, sim, mtime_ns in zip(paths, sims, mtimes):
         sim_raw = float(sim)
@@ -1000,9 +1093,9 @@ def _fuzzy_files(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
         # Clamp to 1.0 — overshoot would push the linear-mapped score
         # past FUZZY_FILE_SCALE and break the "max ≈ scale" invariant.
         s = min(1.0, sim_raw + bump)
-        if s < FUZZY_FILE_MIN_SIM:
+        if s < thr:
             continue
-        score = (s - FUZZY_FILE_MIN_SIM) * FUZZY_FILE_SCALE / (1.0 - FUZZY_FILE_MIN_SIM)
+        score = (s - thr) * FUZZY_FILE_SCALE / (1.0 - thr)
         reason = f"fuzzy:{sim_raw:.2f}"
         if bump > 0:
             reason += f"+recent{bump:.2f}"
@@ -1028,17 +1121,18 @@ def _fuzzy_symbols(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
     norms = np.linalg.norm(mat, axis=1) + 1e-12
     sims = (mat @ q) / norms
     now_ns = int(time.time() * 1e9)
+    thr = _adaptive_threshold(sims, FUZZY_SYMBOL_MIN_SIM)
 
     out: list[RankedItem] = []
     for r, sim in zip(rows, sims):
         sim_raw = float(sim)
         bump = _recency_bump(int(r["file_mtime"]), now_ns)
         s = min(1.0, sim_raw + bump)
-        if s < FUZZY_SYMBOL_MIN_SIM:
+        if s < thr:
             continue
         # Score similarly to files but a bit tighter and bonused: a hit
         # at sim 0.6 lands at ~3 (vs the file's ~2.7).
-        score = (s - FUZZY_SYMBOL_MIN_SIM) * FUZZY_SYMBOL_SCALE / (1.0 - FUZZY_SYMBOL_MIN_SIM) + FUZZY_SYMBOL_BONUS
+        score = (s - thr) * FUZZY_SYMBOL_SCALE / (1.0 - thr) + FUZZY_SYMBOL_BONUS
         target = f"{r['qualname']} ({r['file_path']}:{r['line_start']})"
         reason = f"fuzzy:{sim_raw:.2f}"
         if bump > 0:

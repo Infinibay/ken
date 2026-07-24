@@ -109,7 +109,9 @@ def rank(
     include_reactive: bool = True,
 ) -> RankResult:
     """Run all channels + boosts and return a confidence-gated result."""
-    from ken.ranker import boosts, channels, merge
+    from ken.ranker import boosts, channels, fusion, merge
+
+    mode = fusion.fusion_mode()
 
     # One cosine sweep over recent prompts, shared between predictive
     # (positive evidence) and the dismissal penalty (negative).
@@ -135,7 +137,7 @@ def rank(
     symbols = merge.merge_symbols(
         [*explicit_symbols, *fuzzy_symbols, *doc_symbols, *lexical_symbols]
     )
-    files = merge.merge_files(
+    channel_file_lists = [
         explicit_files,
         reactive,
         predictive,
@@ -143,13 +145,28 @@ def rank(
         doc_files,
         literal_files,
         lexical_files,
-    )
+    ]
+    if mode == "logodds":
+        files = fusion.fuse_files(channel_file_lists)
+    else:
+        files = merge.merge_files(*channel_file_lists)
 
     boosts.apply_symbol_file_affinity(conn, files, symbols)
     boosts.apply_freshness(conn, files)
-    boosts.apply_cooc(conn, files)
-    boosts.apply_test_affinity(conn, files)
-    boosts.apply_import_affinity(conn, files)
+    from ken.ranker import ppr as ppr_mod
+
+    ppr_mode = ppr_mod.ppr_mode()
+    if ppr_mode == "replace":
+        # PPR over the unified graph subsumes cooc/test/import propagation.
+        ppr_mod.apply_ppr(conn, files)
+    else:
+        boosts.apply_cooc(conn, files)
+        boosts.apply_test_affinity(conn, files)
+        boosts.apply_import_affinity(conn, files)
+        if ppr_mode == "add":
+            # Keep the precise name/edge-exact boosts; add PPR only for the
+            # multi-hop + git co-change structure they don't capture.
+            ppr_mod.apply_ppr(conn, files)
     boosts.apply_dismissal_penalty(conn, files, similar)
     boosts.apply_implementation_intent(files, prompt)
     boosts.apply_language_intent(files, symbols, prompt)
@@ -165,7 +182,8 @@ def rank(
         symbols=symbols[:top_symbols],
         findings=findings[:top_findings],
     )
-    if result.top_score < MIN_CONFIDENCE:
+    gate = fusion.LOGODDS_GATE if mode == "logodds" else MIN_CONFIDENCE
+    if result.top_score < gate:
         return RankResult()  # confidence gate
     return result
 

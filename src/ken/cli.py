@@ -10,6 +10,7 @@ Subcommand layout:
     ken search-files QUERY              semantic file search
     ken search-symbols QUERY            semantic symbol search
     ken bench DATASET.jsonl             evaluate ranker recall on labeled prompts
+    ken reembed [--model NAME]         re-encode all embeddings (e.g. new model)
     ken remember TOPIC CONTENT          save a reusable finding
     ken forget TOPIC                    delete a saved finding
     ken findings                        list saved findings
@@ -164,6 +165,22 @@ def main(argv: list[str] | None = None) -> int:
         help="include missed expected files and top ranked reasons per case",
     )
     p_bench.add_argument("--json", action="store_true", help="print machine-readable metrics")
+
+    p_reembed = sub.add_parser(
+        "reembed", help="re-encode all embeddings with the current embedding model"
+    )
+    p_reembed.add_argument("--path", default=".", help="project path (default: cwd)")
+    p_reembed.add_argument(
+        "--model",
+        default=None,
+        help="embedding model to switch to (sets KEN_EMBED_MODEL for this run)",
+    )
+    p_reembed.add_argument(
+        "--check",
+        action="store_true",
+        help="only verify the stored embeddings match the live model (probe vector)",
+    )
+    p_reembed.add_argument("--json", action="store_true", help="print machine-readable result")
 
     p_remember = sub.add_parser("remember", help="save a reusable finding")
     p_remember.add_argument("topic", help="short lookup key")
@@ -341,6 +358,14 @@ def main(argv: list[str] | None = None) -> int:
             " ".join(args.query),
             args.limit,
             kind="symbols",
+            as_json=args.json,
+        )
+
+    if args.cmd == "reembed":
+        return _reembed_cli(
+            Path(args.path),
+            model=args.model,
+            check_only=args.check,
             as_json=args.json,
         )
 
@@ -811,6 +836,63 @@ def _findings_graph_cli(project_path: Path, subcmd: str, *, as_json: bool) -> in
         print(json.dumps(result, indent=2))
     else:
         print(f"findings graph rebuilt: {result['refs']} refs, {result['edges']} edges")
+    return 0
+
+
+def _reembed_cli(
+    project_path: Path,
+    *,
+    model: str | None,
+    as_json: bool,
+    check_only: bool = False,
+) -> int:
+    """Re-encode every stored embedding, optionally switching model."""
+    import os
+
+    from ken.db import connect
+    from ken.reembed import reembed, stored_embedding_info, validate_embeddings
+
+    root, db_path = _resolve_project_db(project_path)
+    if db_path is None:
+        print(f"error: no .ken project at {root}", file=sys.stderr)
+        return 1
+    if model:
+        os.environ["KEN_EMBED_MODEL"] = model
+
+    if check_only:
+        with connect(db_path) as conn:
+            report = validate_embeddings(conn)
+        if as_json:
+            print(json.dumps(report, indent=2))
+        elif report.get("ok"):
+            print(
+                f"ok: embeddings match live model '{report['live_model']}' "
+                f"(dim={report.get('live_dim')}, probe cosine={report.get('probe_cosine')})"
+            )
+        else:
+            print(f"stale: {report.get('reason')}", file=sys.stderr)
+        return 0 if report.get("ok") else 1
+
+    with connect(db_path) as conn:
+        prev_model, prev_dim = stored_embedding_info(conn)
+        if not as_json:
+            print(f"previous: model={prev_model or 'unknown'} dim={prev_dim or 'unknown'}")
+        try:
+            result = reembed(conn, progress=None if as_json else print)
+        except Exception as exc:  # pragma: no cover - surfaced to the user
+            print(f"error: re-embedding failed: {exc}", file=sys.stderr)
+            return 1
+
+    if as_json:
+        print(json.dumps({"ok": True, "previous_model": prev_model, **result}, indent=2))
+    else:
+        total = sum(v for k, v in result.items() if isinstance(v, int))
+        print(
+            f"re-encoded {total} embeddings with {result['model']} "
+            f"(dim={result['dim']})"
+        )
+        if prev_dim and result["dim"] and prev_dim != result["dim"]:
+            print(f"note: dimension changed {prev_dim} -> {result['dim']}")
     return 0
 
 

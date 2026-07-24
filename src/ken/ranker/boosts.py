@@ -192,6 +192,16 @@ def apply_cooc(conn: sqlite3.Connection, files: list[RankedItem]) -> None:
         (*session_ids, *anchor_paths, COOC_MIN_SESSIONS),
     ).fetchall()
 
+    from ken.ranker.channels import (
+        base_rate_discount,
+        file_base_rates,
+        lift_enabled,
+    )
+
+    use_lift = lift_enabled()
+    if use_lift:
+        n_sessions, df = file_base_rates(conn)
+
     by_path = {it.target: it for it in files}
     avg_anchor = sum(a.score for a in anchors) / len(anchors)
     for r in rows:
@@ -202,6 +212,8 @@ def apply_cooc(conn: sqlite3.Connection, files: list[RankedItem]) -> None:
             * COOC_PROPAGATION
             * min(sess_count / COOC_SATURATE_SESSIONS, 1.0)
         )
+        if use_lift:
+            contribution *= base_rate_discount(n_sessions, df, path)
         if contribution < COOC_MIN_PROPAGATED:
             continue
         if path in by_path:
