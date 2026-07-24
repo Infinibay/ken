@@ -329,19 +329,40 @@ def test_search_symbols_puts_an_exact_name_match_first(monkeypatch, tmp_path):
     assert hits[1]["match"] == "tokens"
 
 
+def test_identifier_query_rejects_prose():
+    from ken.search import _identifier_query
+
+    assert _identifier_query("blast_radius") == "blast_radius"
+    assert _identifier_query("Meta.load") == "Meta.load"
+    assert _identifier_query("  spaced  ") == "spaced"
+    assert _identifier_query("edit affect") is None
+    assert _identifier_query("which files does an edit affect") is None
+    assert _identifier_query("") is None
+    assert _identifier_query("has-a-dash") is None
+
+
 def test_search_symbols_leaves_prose_queries_on_pure_similarity(monkeypatch, tmp_path):
+    # The fixture is built so that dropping the prose gate CHANGES the answer:
+    # the query's tokens are a subset of the weak symbol's name, so without the
+    # gate the literal channel would fire on it and reciprocal rank fusion
+    # would promote it over the semantically better match.
     root = _project(tmp_path)
     monkeypatch.setattr("ken.search.get_embedder", lambda: _UnitQueryEmbedder())
     with connect(_paths.db_path(root)) as conn:
         parser_id = conn.execute(
             "SELECT id FROM ci_files WHERE path = 'src/parser.py'"
         ).fetchone()["id"]
-        _add_symbol(conn, parser_id, "blast_radius", [0.80, 0.60])
-        _add_symbol(conn, parser_id, "test_blast_radius_reverse", [0.90, 0.436])
+        _add_symbol(conn, parser_id, "resolve_import", [0.95, 0.312])
+        _add_symbol(conn, parser_id, "does_an_edit_affect_downstream_files", [0.30, 0.954])
 
-        hits = search_symbols(conn, "which files does an edit affect", limit=3,
-                              project_root=root)
+        hits = search_symbols(conn, "edit affect", limit=5, project_root=root)
 
+    ranked = [h["qualname"] for h in hits]
+    # Semantic order holds: the weak-but-literally-matching symbol stays below
+    # the stronger one. Remove the prose gate and this inverts.
+    assert ranked.index("resolve_import") < ranked.index(
+        "does_an_edit_affect_downstream_files"
+    )
     scores = [h["score"] for h in hits]
     assert scores == sorted(scores, reverse=True)
     assert all("match" not in h for h in hits)
