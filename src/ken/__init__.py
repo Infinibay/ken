@@ -6,4 +6,6 @@ index to surface compact, ranked context before an agent spends tokens
 rediscovering the codebase.
 """
 
-__version__ = "0.6.0"
+# The single source of truth for the version. pyproject.toml declares
+# `dynamic = ["version"]` and points hatchling here, so a release is one edit.
+__version__ = "0.7.1"

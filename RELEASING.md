@@ -25,7 +25,12 @@ they are no longer needed.
 
 ## Cutting a release
 
-1. Bump the version in `pyproject.toml` (`version = "X.Y.Z"`).
+1. Bump the version in **`src/ken/__init__.py`** (`__version__ = "X.Y.Z"`) — the
+   only place it lives. `pyproject.toml` declares `dynamic = ["version"]` and
+   hatchling reads it from there, so the published metadata and what
+   `ken --version` prints are the same string by construction. (They were not
+   always: 0.5.0 and 0.7.0 both shipped reporting the previous release, because
+   the version used to be written in two files.)
 2. Commit and push to `main`.
 3. Tag and push the tag:
 
