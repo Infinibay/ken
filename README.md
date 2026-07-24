@@ -188,64 +188,40 @@ So it is worth it when you have a GPU (or don't mind the CPU latency) and want t
 
 ## Tell the assistant to use ken
 
-ken works through hooks automatically, but assistants behave better when your project instructions explicitly tell them how to use the ken MCP tools. Add the same guidance to the agent instruction file for the tool you use: `AGENTS.md` for Codex, `CLAUDE.md` for Claude Code, or both.
+ken works through hooks automatically, but assistants behave better when your project instructions tell them *when* to reach for ken and, just as importantly, to write back what they learn. The MCP server already describes all 30 tools to the assistant, so the block below deliberately carries only what a tool description cannot: where to start, when to stop, and what to record. Add it to the agent instruction file for the tool you use: `AGENTS.md` for Codex, `CLAUDE.md` for Claude Code, or both.
 
 ```md
-## Code Search
+## Code intelligence: ken
 
-Use ken as the first attempt for codebase questions. Prefer ken MCP tools before
-broad text search (`rg`) or reading many files — they return structured,
-line-cited results and feed ken's task memory. Match the question you are trying
-to answer to the tool:
+**When a prompt arrives with a `<context-rank>` block**, that is ken's ranked guess
+for this request: `Files:` best first, `Symbols:`, and `Notes:` — finding *topics*
+from past sessions, so `ken_recall` one to read its body. If it names what you need,
+open that file and skip searching. If a listed file was irrelevant, `ken_dismiss(path,
+reason)` — the ranker's only negative signal, and only useful while you can still see
+it. Thin or missing? `ken_rank(verbose=2)`, or `ken_intent_history("<task>")` for the
+files past tasks like this one actually touched.
 
-**Finding where something is**
-- "Which file implements this feature / behavior / concept?" → `ken_search_files`
-- "Where is the function / class / method that does X?" → `ken_search_symbols`
-- "Find this exact string or identifier (`MY_ENV_VAR`, `os.path`)" → `ken_grep`
-  (instead of falling back to `rg`)
-- "Which files do tasks *like this one* usually touch?" → `ken_intent_history`
+**Before the first search**, don't reach for `rg`, `find`, or open files you are
+guessing at. One ken call, matched to the question:
+- exact string or identifier (`MY_ENV_VAR`, `os.path`) → `ken_grep`, not `rg`
+- which file implements X → `ken_search_files`
+- where is the function/class that does X → `ken_search_symbols`
+- how a route / CLI command / env var reaches its handler → `ken_wiring`
 
-**Inspecting a file or symbol before opening large chunks**
-- "What symbols does this file define?" → `ken_file_symbols`
-- "What is this file about — structure, imports, importers?" → `ken_file_outline`
-- "What exactly is this symbol (metadata + its source)?" → `ken_symbol_detail`
-- "Show just the source for these symbols / this line range" → `ken_file_snippets`
-- "What files are related to this one?" → `ken_file_neighbors`
-- "What tests cover this file?" → `ken_find_tests`
-- "How do imports flow around this file?" → `ken_module_graph`
-- "Give me a compact map of an unfamiliar project area" → `ken_project_overview`
-- "What am I changing right now and what does it touch?" → `ken_changed_context`
+Then read what ken named: it narrows the search space, it doesn't replace reading
+code. Two ken calls is normal, five means you should have opened the file already;
+trivial or in-context questions need none. Use `rg` when ken comes back empty — it
+searches indexed files, so something created moments ago may be missing.
 
-**Understanding how something works / what an edit affects** — answered by local
-algorithms, not an LLM, so the output is fast, deterministic, and evidence-cited:
-- "Who calls this function, and what does it call?" → `ken_callgraph`
-- "What breaks / what is affected if I edit this?" → `ken_blast_radius`
-- "What changes *together* with this file (hidden coupling imports can't see:
-  schema↔migration, code↔config)?" → `ken_cochange`
-- "What are the subsystems, layers, dependency cycles, and hub files?" →
-  `ken_architecture`
-- "How is this feature wired — route / CLI command / env var → handler?" →
-  `ken_wiring`
-- "What are the subclasses / ancestors / method overrides of this class?" →
-  `ken_type_hierarchy`
-- "What is this file or package *for*, and what makes it distinct?" → `ken_profile`
-- "Is there duplicated / copy-pasted code?" → `ken_clones`
+**Before editing an unfamiliar file**, `ken_file_findings(path)` — what past sessions
+learned here. If the change isn't local: `ken_blast_radius` (what it breaks),
+`ken_cochange` (what changes with it that imports don't show), `ken_find_tests`.
 
-**Reusing what we already know (durable, cross-session memory)**
-- "What did we learn before about X?" → `ken_recall`
-- "What do we already know about this file before I edit it?" → `ken_file_findings`
-- "What other findings relate to this one?" → `ken_related_findings`
-- "List saved project knowledge" → `ken_findings`
-- "Remember this so future sessions don't re-derive it" → `ken_remember`
-- "This finding is stale or wrong — drop it" → `ken_forget`
-
-**The ranking itself** (a `<context-rank>` block is auto-injected each prompt)
-- "Re-render the ranked context at more/less detail" → `ken_rank`
-- "Why did (or didn't) this file show up in the ranking?" → `ken_explain_rank`
-- "This surfaced file wasn't relevant — learn from it" → `ken_dismiss`
-
-After ken narrows the search space, read the relevant files directly. Fall back
-to `rg` only when ken is insufficient.
+**Before finishing, write back — the step agents skip, and the reason ken stops
+improving.** Learned something non-obvious that cost real effort (a root cause, a
+constraint, where a subsystem actually lives)? `ken_remember(topic, content)`, so the
+next session starts where this one ended. Durable facts, not a session log; same
+topic overwrites.
 ```
 
 The shell commands (`ken rank`, `ken search-files`, `ken search-symbols`, and `ken explain`) expose the same ideas for humans or agents without MCP, and `ken tools <name>` runs any MCP tool directly (see [Run MCP tools from the shell](#run-mcp-tools-from-the-shell)). For assistants with MCP available, the MCP tools are the preferred path because they return structured results and feed ken's local task memory.
