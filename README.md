@@ -133,6 +133,16 @@ ken reembed --model sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
 
 Any [fastembed](https://github.com/qdrant/fastembed) model works out of the box.
 
+To choose the default for **future** projects (leaving existing ones untouched), set a user-level default:
+
+```sh
+ken default-model                     # show the current default for new projects
+ken default-model BAAI/bge-m3         # every project installed from now on uses this
+ken default-model --clear             # back to ken's built-in default
+```
+
+This only affects projects created afterwards; switch an existing one with `ken reembed --model <name>`.
+
 ### GPU acceleration
 
 The embedder auto-detects a GPU (CUDA or ROCm) and uses it, falling back to CPU when none is usable — no configuration. Install the GPU runtime with the extra:

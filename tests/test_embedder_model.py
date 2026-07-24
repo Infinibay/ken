@@ -115,6 +115,51 @@ def test_env_override_silences_upgrade(conn, monkeypatch):
     assert pending_upgrade(conn) is None
 
 
+# ── user-level default model (ken default-model) ─────────────────────
+
+def test_user_default_get_set_clear():
+    from ken.embedder import (
+        get_user_default_model,
+        recommended_model,
+        set_user_default_model,
+    )
+
+    assert get_user_default_model() is None            # isolated by conftest
+    assert recommended_model() == RECOMMENDED_MODEL
+    set_user_default_model("Qwen/Qwen3-Embedding-0.6B")
+    assert get_user_default_model() == "Qwen/Qwen3-Embedding-0.6B"
+    assert recommended_model() == "Qwen/Qwen3-Embedding-0.6B"
+    set_user_default_model(None)                       # clear
+    assert get_user_default_model() is None
+    assert recommended_model() == RECOMMENDED_MODEL
+
+
+def test_fresh_db_uses_user_default(conn):
+    from ken.embedder import set_user_default_model
+
+    set_user_default_model("BAAI/bge-m3")
+    assert resolve_model(conn) == "BAAI/bge-m3"         # fresh DB → user default
+
+
+def test_configure_records_user_default_for_fresh_db(conn):
+    from ken.db import get_meta
+    from ken.embedder import set_user_default_model
+
+    set_user_default_model("BAAI/bge-m3")
+    assert configure_for_project(conn) == "BAAI/bge-m3"
+    assert get_meta(conn, "embed_model") == "BAAI/bge-m3"  # pinned
+
+
+def test_user_default_does_not_change_legacy_db(conn):
+    # Setting a new default for future projects must not touch an existing one.
+    from ken.embedder import set_user_default_model
+
+    _add_embedded_file(conn)
+    set_user_default_model("BAAI/bge-m3")
+    assert resolve_model(conn) == LEGACY_MODEL          # existing DB unchanged
+    assert pending_upgrade(conn) == (LEGACY_MODEL, "BAAI/bge-m3")  # nudged to new default
+
+
 # ── backend routing ──────────────────────────────────────────────────
 
 def test_fastembed_model_detected():

@@ -28,10 +28,12 @@ Embedders are **lazy**: the model is only loaded on the first ``embed_*`` call.
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import sqlite3
 import threading
+from pathlib import Path
 from typing import Protocol
 
 import numpy as np
@@ -48,14 +50,60 @@ EMBEDDING_DIM = 384
 # multilingual model (50+ languages) that is a true fastembed drop-in:
 # same 384 dims as the legacy default (the DB does not grow) and faster.
 LEGACY_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+# The built-in recommendation. A user can override it for *new* projects with
+# `ken default-model <name>` (stored in the user config); see recommended_model().
 RECOMMENDED_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-
-# Bare fallback when there is no project context and no override. Kept at the
-# recommended model so anything genuinely fresh gets the better default.
-DEFAULT_MODEL = RECOMMENDED_MODEL
 
 META_EMBED_MODEL = "embed_model"
 META_UPGRADE_SEEN = "embed_upgrade_seen_at"
+
+
+# ── User-level config: default model for NEW projects ────────────────
+
+
+def _config_path() -> Path:
+    """Location of the user config. Honors KEN_CONFIG_DIR (tests / custom),
+    then XDG_CONFIG_HOME, else ~/.config/ken/."""
+    base = os.environ.get("KEN_CONFIG_DIR")
+    if base:
+        return Path(base) / "config.json"
+    xdg = os.environ.get("XDG_CONFIG_HOME")
+    root = Path(xdg) if xdg else Path.home() / ".config"
+    return root / "ken" / "config.json"
+
+
+def _read_config() -> dict:
+    try:
+        data = json.loads(_config_path().read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def get_user_default_model() -> str | None:
+    """The model the user pinned for new projects, or None if unset."""
+    m = _read_config().get("default_model")
+    return m if isinstance(m, str) and m.strip() else None
+
+
+def set_user_default_model(model: str | None) -> Path:
+    """Set (or, with model=None, clear) the default model for new projects.
+    Returns the config path written."""
+    path = _config_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    data = _read_config()
+    if model:
+        data["default_model"] = model
+    else:
+        data.pop("default_model", None)
+    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    return path
+
+
+def recommended_model() -> str:
+    """The default model a fresh project should use: the user's configured
+    default if set, else the built-in RECOMMENDED_MODEL."""
+    return get_user_default_model() or RECOMMENDED_MODEL
 
 
 class Embedder(Protocol):
@@ -137,7 +185,7 @@ def resolve_model(conn: sqlite3.Connection) -> str:
     stored = get_meta(conn, META_EMBED_MODEL)
     if stored:
         return stored
-    return LEGACY_MODEL if _has_embeddings(conn) else RECOMMENDED_MODEL
+    return LEGACY_MODEL if _has_embeddings(conn) else recommended_model()
 
 
 def record_model(conn: sqlite3.Connection, model: str) -> None:
@@ -159,7 +207,7 @@ def pending_upgrade(conn: sqlite3.Connection) -> tuple[str, str] | None:
     if os.environ.get("KEN_EMBED_MODEL"):
         return None
     if resolve_model(conn) == LEGACY_MODEL:
-        return (LEGACY_MODEL, RECOMMENDED_MODEL)
+        return (LEGACY_MODEL, recommended_model())
     return None
 
 
@@ -205,7 +253,7 @@ def _resolve_active_model() -> str:
                     conn.close()
     except Exception:  # pragma: no cover - discovery is best-effort
         pass
-    return DEFAULT_MODEL
+    return recommended_model()
 
 
 def get_embedder() -> Embedder:

@@ -11,6 +11,8 @@ Subcommand layout:
     ken search-symbols QUERY            semantic symbol search
     ken bench DATASET.jsonl             evaluate ranker recall on labeled prompts
     ken reembed [--model NAME]         re-encode all embeddings (e.g. new model)
+    ken default-model [NAME]            show/set the embedding model for new projects
+    ken models                          list available embedding models
     ken remember TOPIC CONTENT          save a reusable finding
     ken forget TOPIC                    delete a saved finding
     ken findings                        list saved findings
@@ -181,6 +183,21 @@ def main(argv: list[str] | None = None) -> int:
         help="only verify the stored embeddings match the live model (probe vector)",
     )
     p_reembed.add_argument("--json", action="store_true", help="print machine-readable result")
+
+    p_default_model = sub.add_parser(
+        "default-model",
+        help="show or set the embedding model used for NEW projects",
+    )
+    p_default_model.add_argument(
+        "model", nargs="?", default=None,
+        help="model to set as the default for new projects (omit to show current)",
+    )
+    p_default_model.add_argument(
+        "--clear", action="store_true", help="reset to ken's built-in default",
+    )
+
+    p_models = sub.add_parser("models", help="list available embedding models")
+    p_models.add_argument("--json", action="store_true", help="print machine-readable list")
 
     p_remember = sub.add_parser("remember", help="save a reusable finding")
     p_remember.add_argument("topic", help="short lookup key")
@@ -368,6 +385,12 @@ def main(argv: list[str] | None = None) -> int:
             check_only=args.check,
             as_json=args.json,
         )
+
+    if args.cmd == "default-model":
+        return _default_model_cli(model=args.model, clear=args.clear)
+
+    if args.cmd == "models":
+        return _models_cli(as_json=args.json)
 
     if args.cmd == "bench":
         return _bench_cli(
@@ -893,6 +916,118 @@ def _reembed_cli(
         )
         if prev_dim and result["dim"] and prev_dim != result["dim"]:
             print(f"note: dimension changed {prev_dim} -> {result['dim']}")
+    return 0
+
+
+def _default_model_cli(*, model: str | None, clear: bool) -> int:
+    """Show or set the embedding model used for NEW projects (user-level).
+
+    Existing projects are pinned to their own model and are never changed by
+    this — switch one deliberately with ``ken reembed --model <name>``.
+    """
+    from ken.embedder import (
+        RECOMMENDED_MODEL,
+        _config_path,
+        get_user_default_model,
+        recommended_model,
+        set_user_default_model,
+    )
+
+    if clear:
+        path = set_user_default_model(None)
+        print("cleared; new projects will use ken's built-in default:")
+        print(f"  {RECOMMENDED_MODEL}")
+        print(f"(config: {path})")
+        return 0
+
+    if model:
+        path = set_user_default_model(model)
+        print(f"default model for new projects set to:\n  {model}")
+        print(f"(config: {path})")
+        print(
+            "existing projects are unaffected — switch one with: "
+            "ken reembed --model <name>"
+        )
+        return 0
+
+    if get_user_default_model():
+        print(f"default model for new projects: {recommended_model()}")
+        print(f"  source: your config ({_config_path()})")
+    else:
+        print(f"default model for new projects: {recommended_model()}")
+        print("  source: ken built-in default (no override set)")
+        print("  set one with:  ken default-model <model>")
+    return 0
+
+
+# Curated torch-backend models (not in fastembed) worth surfacing — the
+# benchmark's top performers. The torch backend can load any sentence-
+# transformers model, so this is a hint list, not an exhaustive one.
+_TORCH_MODELS = (
+    ("Qwen/Qwen3-Embedding-0.6B", 1024, 1200, "multilingual · best quality in ken's benchmark"),
+    ("BAAI/bge-m3", 1024, 4400, "multilingual"),
+)
+
+
+def _models_cli(*, as_json: bool) -> int:
+    """List embedding models: the fastembed catalog (drop-in) plus a few
+    curated torch-backend models."""
+    from ken.embedder import LEGACY_MODEL, recommended_model
+
+    try:
+        from fastembed import TextEmbedding
+
+        supported = TextEmbedding.list_supported_models()
+    except Exception as exc:  # pragma: no cover - fastembed always present
+        print(f"error: could not load the fastembed model list: {exc}", file=sys.stderr)
+        return 1
+
+    default = recommended_model()
+    rows = []
+    for m in supported:
+        name = m.get("model")
+        desc = str(m.get("description") or "")
+        rows.append({
+            "model": name,
+            "dim": m.get("dim"),
+            "mb": round((m.get("size_in_GB") or 0) * 1024),
+            "multilingual": "multilingual" in desc.lower()
+            or "multilingual" in str(name).lower(),
+            "backend": "fastembed",
+        })
+    rows.sort(key=lambda r: (r["dim"] or 0, r["mb"] or 0, str(r["model"])))
+
+    if as_json:
+        torch_rows = [
+            {"model": n, "dim": d, "mb": mb, "multilingual": True, "backend": "torch"}
+            for (n, d, mb, _desc) in _TORCH_MODELS
+        ]
+        print(json.dumps(
+            {"default": default, "legacy": LEGACY_MODEL, "models": rows + torch_rows},
+            indent=2,
+        ))
+        return 0
+
+    print("fastembed models — drop-in, no extra deps (ken reembed --model <name>):\n")
+    print(f"  {'dim':>4} {'MB':>6}  model")
+    for r in rows:
+        tags = []
+        if r["model"] == default:
+            tags.append("← default")
+        elif r["model"] == LEGACY_MODEL:
+            tags.append("(old default)")
+        if r["multilingual"]:
+            tags.append("[multilingual]")
+        suffix = "   " + " ".join(tags) if tags else ""
+        print(f"  {str(r['dim']):>4} {r['mb']:>6}  {r['model']}{suffix}")
+
+    print("\ntorch backend — opt-in, `pip install ken-rank[torch]` (any sentence-transformers model):\n")
+    print(f"  {'dim':>4} {'MB':>6}  model")
+    for name, dim, mb, desc in _TORCH_MODELS:
+        print(f"  {dim:>4} {mb:>6}  {name}   [{desc}]")
+
+    print("\nSet the default for NEW projects:  ken default-model <model>")
+    print("Switch THIS project:               ken reembed --model <model>")
     return 0
 
 
