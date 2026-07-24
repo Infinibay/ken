@@ -21,7 +21,7 @@ from pathlib import Path
 
 import numpy as np
 
-from ken.embedder import blob_to_vec, get_embedder
+from ken.embedder import get_embedder, rank_against
 
 
 def intent_history(
@@ -45,10 +45,11 @@ def intent_history(
                 "note": "no embedded prompt history yet"}
 
     q = get_embedder().embed_query(query)
-    q = q / (np.linalg.norm(q) + 1e-12)
-    mat = np.asarray([blob_to_vec(r["embedding"]) for r in rows], dtype=np.float32)
-    norms = np.linalg.norm(mat, axis=1) + 1e-12
-    sims = (mat @ q) / norms
+    sims, kept = rank_against(q, [r["embedding"] for r in rows], strict=False)
+    rows = [rows[i] for i in kept]
+    if not rows:
+        return {"ok": True, "query": query, "files": [],
+                "note": "stored prompt vectors predate the current embedding model"}
 
     order = np.argsort(-sims)[: max(1, int(k_prompts))]
     matched = [(rows[i], float(sims[i])) for i in order if sims[i] > 0.2]

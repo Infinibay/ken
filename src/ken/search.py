@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
-import subprocess
-from collections import Counter, deque
+import re
 import sqlite3
+import subprocess
+from collections import Counter, defaultdict, deque
 from pathlib import Path
 
 import numpy as np
 
-from ken.embedder import blob_to_vec, get_embedder
+from ken.embedder import cosine_against, get_embedder, stack_embeddings
 
 
 def search_files(
@@ -19,16 +20,25 @@ def search_files(
     *,
     project_root: Path | None = None,
 ) -> list[dict]:
-    """Return indexed files nearest to *query* by embedding cosine similarity."""
+    """Return indexed files matching *query*.
+
+    Ordered by embedding cosine similarity, fused with a literal path/stem
+    match when the query is a bare identifier. ``score`` is always the cosine.
+    """
     q = _query_vec(query)
     rows = conn.execute(
         "SELECT id, path, language, embedding FROM ci_files WHERE embedding IS NOT NULL"
     ).fetchall()
     rows = _filter_live_rows(rows, "path", project_root)
-    ranked = _rank_rows(q, rows, limit)
+    ranked = _fuse_literal(
+        _score_rows(q, rows),
+        _identifier_query(query),
+        lambda r: (Path(r["path"]).stem, Path(r["path"]).name, r["path"]),
+        limit,
+    )
 
     out: list[dict] = []
-    for score, row in ranked:
+    for score, row, tier in ranked:
         outline_rows = conn.execute(
             "SELECT kind, name, line_start FROM ci_symbols "
             "WHERE file_id = ? ORDER BY line_start LIMIT 8",
@@ -39,6 +49,7 @@ def search_files(
                 "path": row["path"],
                 "language": row["language"] or "text",
                 "score": round(float(score), 3),
+                **({"match": _MATCH_LABEL[tier]} if tier else {}),
                 "symbols": [
                     {"kind": r["kind"], "name": r["name"], "line": int(r["line_start"])}
                     for r in outline_rows
@@ -55,7 +66,11 @@ def search_symbols(
     *,
     project_root: Path | None = None,
 ) -> list[dict]:
-    """Return indexed symbols nearest to *query* by embedding cosine similarity."""
+    """Return indexed symbols matching *query*.
+
+    Ordered by embedding cosine similarity, fused with a literal name match
+    when the query is a bare identifier. ``score`` is always the cosine.
+    """
     q = _query_vec(query)
     rows = conn.execute(
         """
@@ -66,6 +81,12 @@ def search_symbols(
         """
     ).fetchall()
     rows = _filter_live_rows(rows, "file_path", project_root)
+    ranked = _fuse_literal(
+        _score_rows(q, rows),
+        _identifier_query(query),
+        lambda r: (r["name"], r["qualname"]),
+        limit,
+    )
     return [
         {
             "qualname": r["qualname"],
@@ -75,8 +96,9 @@ def search_symbols(
             "line_end": int(r["line_end"]),
             "docstring": r["docstring"],
             "score": round(float(score), 3),
+            **({"match": _MATCH_LABEL[tier]} if tier else {}),
         }
-        for score, r in _rank_rows(q, rows, limit)
+        for score, r, tier in ranked
     ]
 
 
@@ -258,28 +280,30 @@ def module_graph(
     max_nodes = max(1, int(limit))
     seen: set[int] = {int(root_row["id"])}
     q: deque[tuple[int, int]] = deque([(int(root_row["id"]), 0)])
-    edges: set[tuple[str, str, str, int]] = set()
+    edges: set[tuple[int, int, int]] = set()
+    hit_cap = False
 
-    while q and len(seen) <= max_nodes:
+    while q:
         file_id, dist = q.popleft()
         if dist >= max_depth:
             continue
-        for edge in _graph_edges(conn, file_id):
-            edges.add(edge)
-            for candidate in (edge[1], edge[2]):
-                row = _file_row(conn, candidate)
-                if row is None:
+        for src, dst, line in _graph_edge_ids(conn, file_id):
+            edges.add((src, dst, line))
+            for candidate in (src, dst):
+                if candidate in seen:
                     continue
-                cand_id = int(row["id"])
-                if cand_id not in seen and len(seen) < max_nodes:
-                    seen.add(cand_id)
-                    q.append((cand_id, dist + 1))
+                if len(seen) >= max_nodes:
+                    hit_cap = True
+                    continue
+                seen.add(candidate)
+                q.append((candidate, dist + 1))
 
     rows = conn.execute(
         "SELECT id, path, language, symbol_count FROM ci_files WHERE id IN (%s)"
         % ",".join("?" for _ in seen),
         tuple(seen),
     ).fetchall()
+    path_by_id = {int(r["id"]): r["path"] for r in rows}
     nodes = [
         {
             "path": r["path"],
@@ -288,16 +312,33 @@ def module_graph(
         }
         for r in sorted(rows, key=lambda item: item["path"])
     ]
-    return {
+    # Only edges whose *both* endpoints made it into `nodes`. The node cap can
+    # stop the frontier mid-expansion, and emitting an edge whose endpoint was
+    # never added leaves the caller with a graph pointing at files it was not
+    # given — malformed for anything that renders or traverses it.
+    kept = sorted(
+        (path_by_id[s], path_by_id[d], line)
+        for s, d, line in edges
+        if s in path_by_id and d in path_by_id
+    )
+    out = {
         "ok": True,
         "root": root_row["path"],
         "depth": max_depth,
         "nodes": nodes,
         "edges": [
-            {"kind": kind, "from": src, "to": dst, "line": line}
-            for kind, src, dst, line in sorted(edges)
+            {"kind": "import", "from": src, "to": dst, "line": line}
+            for src, dst, line in kept
         ],
     }
+    omitted = len(edges) - len(kept)
+    if hit_cap or omitted:
+        out["truncated"] = {
+            "node_limit": max_nodes,
+            "edges_omitted": omitted,
+            "note": "raise `limit` to see the rest of the neighbourhood",
+        }
+    return out
 
 
 def find_tests(
@@ -542,52 +583,151 @@ def _importers_for_file(conn: sqlite3.Connection, file_id: int) -> list[dict]:
     ]
 
 
+# Evidence weights. A file named by the ecosystem's test convention is the
+# strongest signal available — it is what the test's author chose to say about
+# what they were testing. Importing the target corroborates, but on its own it
+# is weak: every test of a widely-imported module (db, config, cli) imports it.
+_TEST_CONVENTION = 3.0
+_TEST_NAME_TOKENS = 2.0
+_TEST_IMPORTS = 1.0
+
+# Tokens carried by the test-file convention itself, never by the subject.
+_TEST_STOP_TOKENS = frozenset({"test", "tests", "spec", "specs", "it", "should"})
+
+# Stems that name a file's *role*, not its subject. `src/a/__init__.py` and
+# `tests/b/__init__.py` share a name and nothing else, so the weak token
+# channel must not link them. The convention channel is unaffected:
+# `test_utils.py` is still the test for `utils.py`.
+_STRUCTURAL_STEMS = frozenset({
+    "__init__", "__main__", "index", "main", "mod", "app", "lib", "setup",
+    "types", "utils", "helpers", "common", "base", "core", "conftest",
+})
+
+_CAMEL_BOUNDARY = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
+_NON_WORD = re.compile(r"[^a-z0-9]+")
+
+
+def _name_tokens(text: str) -> set[str]:
+    """Lowercase word tokens of a file name, splitting camelCase too."""
+    spaced = _CAMEL_BOUNDARY.sub(" ", text)
+    return {t for t in _NON_WORD.split(spaced.lower()) if t}
+
+
+def _test_basename(path: str) -> str:
+    """File name minus its final extension (``cli.test.ts`` -> ``cli.test``).
+
+    Case is preserved: ``_name_tokens`` splits on camelCase, so lowercasing
+    here would collapse ``UserServiceIntegrationTest`` into one token and
+    silently disable token matching for every Java/C#/Kotlin test.
+    """
+    name = Path(path).name
+    suffix = Path(name).suffix
+    return name[: -len(suffix)] if suffix else name
+
+
+def _conventional_test_names(stem: str) -> set[str]:
+    """Test-file base names that conventionally belong to a source *stem*.
+
+    Covers the layouts ken indexes: ``test_x`` / ``x_test`` (python, go, rust),
+    ``x.test`` / ``x.spec`` (js, ts), ``XTest`` / ``XTests`` (java, c#), and
+    ``x_spec`` (ruby).
+    """
+    s = stem.lower()
+    return {
+        f"test_{s}", f"{s}_test", f"{s}_spec",
+        f"{s}.test", f"{s}.spec",
+        f"{s}test", f"{s}tests", f"{s}spec",
+    }
+
+
 def _find_tests_for_row(conn: sqlite3.Connection, row: sqlite3.Row, *, limit: int) -> list[dict]:
-    target_path = row["path"]
-    target = Path(target_path)
-    stem = target.stem
-    candidates: dict[str, dict] = {}
+    """Likely tests for a file, strongest evidence first.
+
+    Every channel contributes to the same candidate rather than the first one
+    winning, and the result is ranked — otherwise the one file actually named
+    after the target sits wherever insertion order happened to put it, behind
+    every test that merely imports it.
+    """
+    stem = Path(row["path"]).stem
+    conventional = _conventional_test_names(stem)
+    stem_tokens = (
+        set() if stem.lower() in _STRUCTURAL_STEMS
+        else _name_tokens(stem) - _TEST_STOP_TOKENS
+    )
+
+    scores: dict[str, float] = defaultdict(float)
+    reasons: dict[str, list[str]] = defaultdict(list)
 
     for importer in _importers_for_file(conn, int(row["id"])):
         if _looks_like_test(importer["path"]):
-            candidates[importer["path"]] = {"path": importer["path"], "reason": "imports target"}
+            scores[importer["path"]] += _TEST_IMPORTS
+            reasons[importer["path"]].append("imports target")
 
+    # Narrow in SQL first: a repo's test files are a small slice of the index,
+    # and this runs once per changed file in `changed_context`.
     rows = conn.execute(
-        "SELECT path, language FROM ci_files ORDER BY path"
+        "SELECT path FROM ci_files WHERE path LIKE '%test%' OR path LIKE '%spec%' "
+        "ORDER BY path"
     ).fetchall()
     for candidate in rows:
         path = candidate["path"]
         if not _looks_like_test(path):
             continue
-        name = Path(path).stem.lower()
-        lowered = path.lower()
-        target_stem = stem.lower()
-        if (
-            target_stem in name
-            or name in {f"test_{target_stem}", f"{target_stem}_test"}
-            or f"/test_{target_stem}" in lowered
-            or f"/{target_stem}_test" in lowered
-        ):
-            candidates.setdefault(path, {"path": path, "reason": "name match"})
+        base = _test_basename(path)
+        if base.lower() in conventional:
+            scores[path] += _TEST_CONVENTION
+            reasons[path].append("named for target")
+        elif stem_tokens and stem_tokens <= (_name_tokens(base) - _TEST_STOP_TOKENS):
+            # Token containment, not substring: `cli` must not match
+            # `test_client`, and `index_queue` must still match
+            # `test_index_queue`.
+            scores[path] += _TEST_NAME_TOKENS
+            reasons[path].append("name match")
 
-    return list(candidates.values())[:limit]
+    ranked = sorted(scores, key=lambda p: (-scores[p], p))
+    return [
+        {"path": p, "reason": "; ".join(reasons[p]), "score": round(scores[p], 1)}
+        for p in ranked[:limit]
+    ]
+
+
+# Suffixes marking a test file in the snake/dot-separated ecosystems. The
+# separator is part of the token, so matching them lowercased is safe.
+# Directory-level `test/`, `tests/`, `spec/` and a `test_` prefix are separate.
+_TEST_SUFFIXES = (
+    "_test.py", "_test.go", "_test.rs", "_test.ts", "_test.js", "_test.dart",
+    "_spec.rb", "_spec.js", "_spec.ts",
+    ".test.ts", ".test.tsx", ".test.js", ".test.jsx", ".test.mjs",
+    ".spec.ts", ".spec.tsx", ".spec.js", ".spec.jsx", ".spec.mjs",
+)
+
+# Java / C# / Kotlin instead mark tests with a capitalised suffix on the type
+# name (`UserServiceTest.java`), which must be matched **case-sensitively**: a
+# lowercased `endswith("test.java")` also swallows `Latest.java`, `Contest.cs`,
+# `protest.cs` and `Greatest.kt`, none of which are tests.
+_CAMEL_TEST_EXTS = (".java", ".cs", ".kt", ".kts")
+_CAMEL_TEST_NAME = re.compile(r"(?:Test|Tests|Spec|Specs)$")
+
+_TEST_DIRS = frozenset({"test", "tests", "spec", "__tests__"})
 
 
 def _looks_like_test(path: str) -> bool:
-    parts = [part.lower() for part in Path(path).parts]
-    name = Path(path).name.lower()
-    return (
-        "test" in parts
-        or "tests" in parts
-        or name.startswith("test_")
-        or name.endswith("_test.py")
-        or name.endswith(".test.ts")
-        or name.endswith(".test.tsx")
-        or name.endswith(".test.js")
-        or name.endswith(".spec.ts")
-        or name.endswith(".spec.tsx")
-        or name.endswith(".spec.js")
-    )
+    """Whether *path* is a test file, by any convention ken indexes.
+
+    Every branch keeps "test" or "spec" somewhere in the path, which is what
+    makes the SQL prefilter in ``_find_tests_for_row`` a provable superset.
+    """
+    p = Path(path)
+    if _TEST_DIRS & {part.lower() for part in p.parts}:
+        return True
+    raw = p.name
+    lowered = raw.lower()
+    if lowered.startswith("test_") or lowered.endswith(_TEST_SUFFIXES):
+        return True
+    suffix = p.suffix
+    if suffix.lower() in _CAMEL_TEST_EXTS:
+        return _CAMEL_TEST_NAME.search(raw[: -len(suffix)]) is not None
+    return False
 
 
 def _unique_paths(paths: list[str]) -> list[str]:
@@ -600,19 +740,22 @@ def _unique_paths(paths: list[str]) -> list[str]:
     return out
 
 
-def _graph_edges(conn: sqlite3.Connection, file_id: int) -> list[tuple[str, str, str, int]]:
+def _graph_edge_ids(conn: sqlite3.Connection, file_id: int) -> list[tuple[int, int, int]]:
+    """Resolved import edges touching *file_id*, as ``(from_id, to_id, line)``.
+
+    Ids rather than paths: the caller resolves every path in one query at the
+    end instead of looking each endpoint up per edge.
+    """
     rows = conn.execute(
         """
-        SELECT src.path AS src, dst.path AS dst, i.line
+        SELECT i.from_file_id AS src, i.to_file_id AS dst, i.line
         FROM ci_imports i
-        JOIN ci_files src ON src.id = i.from_file_id
-        JOIN ci_files dst ON dst.id = i.to_file_id
-        WHERE i.from_file_id = ? OR i.to_file_id = ?
-        ORDER BY src.path, dst.path, i.line
+        WHERE i.to_file_id IS NOT NULL AND (i.from_file_id = ? OR i.to_file_id = ?)
+        ORDER BY src, dst, i.line
         """,
         (file_id, file_id),
     ).fetchall()
-    return [("import", r["src"], r["dst"], int(r["line"])) for r in rows]
+    return [(int(r["src"]), int(r["dst"]), int(r["line"])) for r in rows]
 
 
 def _read_line_range(project_root: Path, rel_path: str, start: int, end: int) -> str:
@@ -668,15 +811,127 @@ def _filter_live_rows(
     return [row for row in rows if (root / row[path_key]).exists()]
 
 
+def _score_rows(q: np.ndarray, rows: list[sqlite3.Row]) -> list[tuple[float, sqlite3.Row]]:
+    """Every row scored by cosine, best first (no truncation)."""
+    if not rows:
+        return []
+    # Drop rows written by a previous embedding model instead of letting numpy
+    # fail on a ragged stack; a fully stale index raises EmbeddingSpaceMismatch,
+    # which names `ken reembed` as the fix.
+    mat, kept = stack_embeddings([r["embedding"] for r in rows], dim=int(q.shape[0]))
+    if not kept:
+        return []
+    sims = cosine_against(q, mat)
+    pairs = [(float(s), rows[i]) for s, i in zip(sims.tolist(), kept)]
+    return sorted(pairs, key=lambda x: x[0], reverse=True)
+
+
 def _rank_rows(
     q: np.ndarray, rows: list[sqlite3.Row], limit: int
 ) -> list[tuple[float, sqlite3.Row]]:
-    if not rows:
-        return []
-    mat = np.asarray([blob_to_vec(r["embedding"]) for r in rows], dtype=np.float32)
-    norms = np.linalg.norm(mat, axis=1) + 1e-12
-    sims = (mat @ q) / norms
-    return sorted(zip(sims.tolist(), rows), key=lambda x: x[0], reverse=True)[: max(1, limit)]
+    return _score_rows(q, rows)[: max(1, limit)]
+
+
+# ── Literal-name channel ─────────────────────────────────────────────
+#
+# A dense vector of a bare identifier is a weak signal: "blast_radius" embeds
+# about as close to `test_blast_radius_reverse_reachability` as to the function
+# itself, and the test wins on length alone. When the query *is* an identifier
+# we therefore also rank by literal name match and fuse the two rankings.
+#
+# Fusion is reciprocal rank, not a weighted sum of scores: cosine magnitudes
+# differ per embedding model, so anything added to them has to be retuned per
+# model. Ranks do not.
+
+_RRF_K = 60  # standard reciprocal-rank-fusion damping
+_IDENTIFIER_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_.]*")
+
+_MATCH_EXACT = 3
+_MATCH_QUALIFIED = 2
+_MATCH_TOKENS = 1
+
+
+def _identifier_query(query: str) -> str | None:
+    """The query as a bare identifier, or None if it reads as prose.
+
+    A single word that happens to name nothing is harmless: the literal channel
+    comes back empty and the fusion degenerates to the plain semantic order.
+    """
+    q = query.strip()
+    if not q or len(q.split()) != 1:
+        return None
+    return q if _IDENTIFIER_RE.fullmatch(q) else None
+
+
+def _literal_tier(ident: str, names: tuple[str, ...]) -> int:
+    """How literally *ident* matches any of a row's names (0 = not at all)."""
+    lowered = ident.lower()
+    ident_tokens = _name_tokens(ident)
+    best = 0
+    for name in names:
+        if not name:
+            continue
+        low = name.lower()
+        if low == lowered:
+            return _MATCH_EXACT
+        if low.endswith("." + lowered):
+            best = max(best, _MATCH_QUALIFIED)
+        elif ident_tokens and ident_tokens <= _name_tokens(name):
+            best = max(best, _MATCH_TOKENS)
+    return best
+
+
+def _fuse_literal(
+    scored: list[tuple[float, sqlite3.Row]],
+    ident: str | None,
+    names_of,
+    limit: int,
+) -> list[tuple[float, sqlite3.Row, int]]:
+    """Combine the semantic order with a literal-name order.
+
+    Two regimes, because the two kinds of evidence are not interchangeable:
+
+    * An **exact** name match is categorically decisive — if you typed
+      ``blast_radius`` and a symbol is called exactly that, no cosine margin
+      outranks it. Those are promoted, ordered among themselves by similarity.
+    * **Partial** matches (a qualified name, shared tokens) genuinely trade off
+      against semantic closeness, so they go through reciprocal rank fusion.
+      Plain RRF cannot express the first case: swapping two items between the
+      two lists leaves their fused scores exactly equal.
+
+    Returns ``(cosine, row, match_tier)``; the cosine keeps its own meaning and
+    is reported as-is, while the *ordering* reflects both channels.
+    """
+    if ident is None:
+        return [(s, r, 0) for s, r in scored[: max(1, limit)]]
+    tiers = [_literal_tier(ident, names_of(r)) for _, r in scored]
+    if not any(tiers):
+        return [(s, r, 0) for s, r in scored[: max(1, limit)]]
+
+    # `scored` is in semantic order, so an index doubles as its dense rank.
+    exact = [i for i, tier in enumerate(tiers) if tier == _MATCH_EXACT]
+    exact_set = set(exact)
+
+    fused: dict[int, float] = {
+        i: 1.0 / (_RRF_K + i + 1) for i in range(len(scored)) if i not in exact_set
+    }
+    partial = sorted(
+        (i for i, tier in enumerate(tiers) if 0 < tier < _MATCH_EXACT),
+        key=lambda i: (-tiers[i], i),
+    )
+    for rank, i in enumerate(partial):
+        fused[i] += 1.0 / (_RRF_K + rank + 1)
+
+    rest = sorted(fused, key=lambda i: (-fused[i], i))
+    order = (exact + rest)[: max(1, limit)]
+    return [(scored[i][0], scored[i][1], tiers[i]) for i in order]
+
+
+_MATCH_LABEL = {
+    _MATCH_EXACT: "exact",
+    _MATCH_QUALIFIED: "qualified",
+    _MATCH_TOKENS: "tokens",
+}
 
 
 def format_file_hits(hits: list[dict]) -> str:

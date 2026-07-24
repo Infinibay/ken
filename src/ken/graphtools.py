@@ -120,14 +120,24 @@ def _tarjan_scc(nodes: list[int], adj: dict[int, set[int]]) -> list[list[int]]:
 
 
 def _pagerank(nodes: list[int], adj: dict[int, set[int]], *, damping: float = 0.85,
-              iters: int = 40) -> dict[int, float]:
+              iters: int = 40, tol: float = 1e-9) -> tuple[dict[int, float], bool]:
+    """Power-iteration PageRank. Returns ``(rank, converged)``.
+
+    Iterating a fixed number of times says nothing about whether the ranking
+    settled: small graphs converge in ~20 sweeps, but a large sparse monorepo
+    may still be moving at 40. We stop as soon as the L1 change per sweep falls
+    under *tol* and report whether that actually happened, so ``architecture``
+    can tell the caller when hub/sink order is still provisional.
+    """
     n = len(nodes)
     if n == 0:
-        return {}
+        return {}, True
     rank = {v: 1.0 / n for v in nodes}
     out_deg = {v: len(adj.get(v, ())) for v in nodes}
     nodeset = set(nodes)
     for _ in range(iters):
+        # Dangling nodes (no out-edges) would leak rank mass out of the graph;
+        # redistribute theirs uniformly so the vector stays a distribution.
         dangling = sum(rank[v] for v in nodes if out_deg[v] == 0)
         nxt = {v: (1.0 - damping) / n + damping * dangling / n for v in nodes}
         for v in nodes:
@@ -137,8 +147,38 @@ def _pagerank(nodes: list[int], adj: dict[int, set[int]], *, damping: float = 0.
             for w in adj[v]:
                 if w in nodeset:
                     nxt[w] += share
+        delta = sum(abs(nxt[v] - rank[v]) for v in nodes)
         rank = nxt
-    return rank
+        if delta < tol:
+            return rank, True
+    return rank, False
+
+
+def _modularity(groups: list[list[int]], adj: dict[int, set[int]]) -> float:
+    """Newman modularity Q of a partition on the undirected import projection.
+
+    Label propagation returns *a* partition unconditionally, even on a graph
+    with no community structure at all. Q says whether that partition beats a
+    degree-preserving random graph: ≳0.3 is real structure, ~0 is noise the
+    caller should not read subsystems into.
+    """
+    undirected: dict[int, set[int]] = defaultdict(set)
+    for a, tos in adj.items():
+        for b in tos:
+            undirected[a].add(b)
+            undirected[b].add(a)
+    m = sum(len(neigh) for neigh in undirected.values()) / 2.0
+    if m <= 0:
+        return 0.0
+    q = 0.0
+    for members in groups:
+        member_set = set(members)
+        internal = sum(
+            1 for v in members for w in undirected.get(v, ()) if w in member_set
+        ) / 2.0
+        degree = sum(len(undirected.get(v, ())) for v in members)
+        q += internal / m - (degree / (2.0 * m)) ** 2
+    return q
 
 
 def _communities(nodes: list[int], adj: dict[int, set[int]], *, iters: int = 20) -> dict[int, int]:
@@ -225,12 +265,13 @@ def architecture(conn, *, depth: int = 2, limit: int = 20) -> dict:
     clusters_raw: dict[int, list[int]] = defaultdict(list)
     for v in nodes:
         clusters_raw[label[v]].append(v)
-    pr = _pagerank(nodes, adj)
+    pr, pr_converged = _pagerank(nodes, adj)
     rev_adj: dict[int, set[int]] = defaultdict(set)
     for a, tos in adj.items():
         for b in tos:
             rev_adj[b].add(a)
-    rpr = _pagerank(nodes, rev_adj)
+    rpr, rpr_converged = _pagerank(nodes, rev_adj)
+    modularity = _modularity(list(clusters_raw.values()), adj)
 
     clusters_all = [m for m in clusters_raw.values() if len(m) >= 2]
     clusters_all.sort(key=lambda m: (-len(m), paths[min(m)]))
@@ -257,6 +298,16 @@ def architecture(conn, *, depth: int = 2, limit: int = 20) -> dict:
             "cycles are exact; layers/communities are approximate and degrade "
             "as unresolved imports rise"
         ),
+        "quality": {
+            # Newman Q of the label-propagation partition: ≳0.3 means the
+            # clusters reflect real structure, ~0 means the graph has none and
+            # the grouping is an artefact of the algorithm always returning one.
+            "clusters_modularity": round(modularity, 3),
+            "clusters_meaningful": modularity >= 0.3,
+            # False when power iteration was still moving at the cap — hub /
+            # sink *order* is then provisional, though the sets rarely change.
+            "pagerank_converged": bool(pr_converged and rpr_converged),
+        },
         "summary": {
             "graph_files": len(nodes),
             "cycles": len(cycles_full),

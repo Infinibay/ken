@@ -28,6 +28,9 @@ class _FakeEmbedder:
     def embed_passages(self, texts):
         return [self._vec(t) for t in texts]
 
+    def embed_queries(self, texts):
+        return [self._vec(t) for t in texts]
+
     def embed_query(self, text):
         return self._vec(text)
 
@@ -105,6 +108,93 @@ def test_cochange_finds_hidden_coupling(project):
     assert partners["migration.sql"]["hidden_coupling"] is True
     assert partners["migration.sql"]["support"] >= 3
     assert "unrelated.py" not in partners
+
+
+def test_cochange_drops_pairs_that_are_not_significant(project):
+    # 20 commits: target in 10, partner in 10, 6 shared. Lift is 1.2 (> 1) and
+    # confidence 0.6 (> min), so only the Dunning G² gate can reject it —
+    # G² ≈ 0.8, far below χ²(1) at p=0.05.
+    root, conn = project
+    _init_repo(root)
+    n = 0
+    for _ in range(6):
+        n += 1
+        _commit(root, {"target.py": f"a={n}\n", "partner.py": f"b={n}\n"}, f"both {n}")
+    for _ in range(4):
+        n += 1
+        _commit(root, {"target.py": f"a={n}\n"}, f"target {n}")
+    for _ in range(4):
+        n += 1
+        _commit(root, {"partner.py": f"b={n}\n"}, f"partner {n}")
+    for _ in range(6):
+        n += 1
+        _commit(root, {"other.py": f"c={n}\n"}, f"other {n}")
+    _write_and_index(root, conn, {
+        "target.py": "a=1\n", "partner.py": "b=1\n", "other.py": "c=1\n",
+    })
+
+    res = cochange(conn, "target.py", min_support=3, min_confidence=0.4, project_root=root)
+    assert [p["path"] for p in res["partners"]] == []
+
+    # Without the significance gate the pair clears every other filter — which
+    # is exactly the false positive the gate exists to remove.
+    lax = cochange(conn, "target.py", min_support=3, min_confidence=0.4,
+                   min_llr=0.0, project_root=root, auto_ingest=False)
+    partner = next(p for p in lax["partners"] if p["path"] == "partner.py")
+    assert partner["lift"] > 1.0
+    assert partner["llr"] < 3.841
+
+
+def test_cochange_scopes_statistics_to_the_targets_repo(project):
+    # Lift is n_ab·N / (n_a·n_b) — linear in N. A sibling repo's commits can
+    # never contain the target, so counting them scales every lift.
+    root, conn = project
+    backend = root / "backend"
+    backend.mkdir()
+    _init_repo(backend)
+    for i in range(5):
+        _commit(backend, {"model.py": f"x={i}\n", "schema.sql": f"-- v{i}\n"}, f"c{i}")
+    _commit(backend, {"other.py": "z=1\n"}, "noise")
+
+    service = root / "service"
+    service.mkdir()
+    _init_repo(service)
+    for i in range(30):
+        _commit(service, {f"m{i}.py": f"{i}\n"}, f"s{i}")
+
+    _write_and_index(root, conn, {
+        "backend/model.py": "x=1\n", "backend/schema.sql": "-- v\n",
+    })
+    ingest_commits(conn, root)  # full workspace ingest: both repos land in cr_commits
+    all_commits = conn.execute("SELECT COUNT(*) AS n FROM cr_commits").fetchone()["n"]
+    assert all_commits == 36
+
+    res = cochange(conn, "backend/model.py", min_support=3, min_confidence=0.4,
+                   project_root=root, auto_ingest=False)
+    assert res["scope"] == "backend"
+    assert res["total_commits"] == 6  # not 36
+    partner = next(p for p in res["partners"] if p["path"] == "backend/schema.sql")
+    # 5 shared of 6 backend commits: 5·6/(5·5) = 1.2, not 5·36/(5·5) = 7.2.
+    assert partner["lift"] == 1.2
+
+
+def test_cochange_reports_confidence_lower_bound(project):
+    # A 5-of-5 history is not as certain as its point estimate of 1.0 claims;
+    # the Wilson bound and the strength it discounts must say so.
+    root, conn = project
+    _init_repo(root)
+    for i in range(5):
+        _commit(root, {"model.py": f"x={i}\n", "migration.sql": f"-- v{i}\n"}, f"c{i}")
+    _commit(root, {"unrelated.py": "y=1\n"}, "noise")
+    _write_and_index(root, conn, {
+        "model.py": "x=1\n", "migration.sql": "-- v\n", "unrelated.py": "y=1\n",
+    })
+
+    res = cochange(conn, "model.py", min_support=3, min_confidence=0.4, project_root=root)
+    partner = next(p for p in res["partners"] if p["path"] == "migration.sql")
+    assert partner["confidence"] == 1.0
+    assert 0.0 < partner["confidence_low"] < 1.0
+    assert partner["strength"] < partner["confidence"]
 
 
 def test_cochange_empty_without_history(project):
@@ -200,6 +290,52 @@ def test_architecture_output_is_bounded_by_limit(project):
     assert res["summary"]["graph_files"] >= 41
 
 
+def test_architecture_reports_cluster_quality(project):
+    # Two disjoint import cliques: a partition into them is genuine structure,
+    # so Newman Q must land well clear of the 0.3 "meaningful" line.
+    root, conn = project
+    files = {}
+    for group in ("x", "y"):
+        for i in range(4):
+            peers = "\n".join(f"import {group}{j}" for j in range(4) if j != i)
+            files[f"{group}{i}.py"] = peers + "\n"
+    _write_and_index(root, conn, files)
+
+    res = architecture(conn)
+    quality = res["quality"]
+    assert quality["clusters_modularity"] >= 0.3
+    assert quality["clusters_meaningful"] is True
+    assert quality["pagerank_converged"] is True
+
+
+def test_modularity_is_near_zero_without_community_structure():
+    # A star has no communities to find; label propagation still returns a
+    # partition, and Q is what tells the caller not to believe it.
+    from ken.graphtools import _modularity
+
+    adj = {0: {i for i in range(1, 12)}}
+    everything_together = _modularity([[i for i in range(12)]], adj)
+    assert everything_together == 0.0
+    each_alone = _modularity([[i] for i in range(12)], adj)
+    assert each_alone < 0.05
+
+
+def test_pagerank_reports_when_it_has_not_converged():
+    from ken.graphtools import _pagerank
+
+    # A chain ending in a dangling node needs many sweeps to settle — unlike a
+    # symmetric graph, where the uniform start is already stationary.
+    nodes = [0, 1, 2, 3, 4]
+    adj = {0: {1}, 1: {2}, 2: {3}, 3: {4}}
+    _, converged = _pagerank(nodes, adj, iters=3)
+    assert converged is False
+    settled, converged = _pagerank(nodes, adj, iters=500)
+    assert converged is True
+    # Rank flows downstream, and the whole vector stays a distribution.
+    assert settled[4] > settled[0]
+    assert sum(settled.values()) == pytest.approx(1.0, abs=1e-9)
+
+
 # --- blast_radius -----------------------------------------------------------
 
 
@@ -256,6 +392,88 @@ def test_clones_detects_copy_paste(project):
     assert any(
         {p["a"]["file"], p["b"]["file"]} == {"a.py", "b.py"} for p in pairs
     ), pairs
+
+
+def test_clones_signature_arithmetic_never_overflows():
+    # (a*x + b) mod p must agree with exact Python integers. 61-bit constants
+    # silently wrap in int64 and stop being a permutation at all.
+    from ken.clones import _A, _B, _PRIME, _signature
+
+    shingles = {3, 17, _PRIME - 1, 1_073_741_823, 2_147_483_646}
+    got = _signature(shingles).tolist()
+    want = [
+        min((int(a) * x + int(b)) % _PRIME for x in shingles)
+        for a, b in zip(_A.tolist(), _B.tolist())
+    ]
+    assert got == want
+
+
+def test_clones_shingles_are_process_independent():
+    # Python's hash() is salted per process, which would give a different
+    # signature — and different LSH buckets — on every run.
+    import subprocess
+    import sys
+
+    snippet = (
+        "from ken.clones import _shingles;"
+        "print(sorted(_shingles('def f(a, b):\\n    return a + b * a - b / a\\n')))"
+    )
+    runs = {
+        subprocess.run(
+            [sys.executable, "-c", snippet],
+            capture_output=True, text=True, check=True,
+            env={"PYTHONHASHSEED": seed, "PATH": "/usr/bin:/bin"},
+        ).stdout
+        for seed in ("1", "2")
+    }
+    assert len(runs) == 1, runs
+
+
+def test_clones_lsh_banding_keeps_recall_at_the_requested_threshold():
+    from ken.clones import _TARGET_RECALL, _lsh_params
+
+    for threshold in (0.4, 0.5, 0.6, 0.75, 0.9):
+        bands, rows = _lsh_params(threshold)
+        recall = 1.0 - (1.0 - threshold**rows) ** bands
+        assert recall >= _TARGET_RECALL, (threshold, bands, rows, recall)
+
+
+def test_clones_similarity_is_exact_not_estimated(project):
+    # The reported number must be the true Jaccard of the shingle sets, not
+    # the 64-permutation MinHash estimate (stderr ~0.054 around 0.75).
+    from ken.clones import _read_lines, _shingles
+
+    root, conn = project
+    body = "\n".join(f"    total = total + value_{i} * weight_{i}" for i in range(10))
+    _write_and_index(root, conn, {
+        "a.py": f"def compute_alpha(value, weight):\n    total = 0\n{body}\n    return total\n",
+        "b.py": f"def compute_beta(value, weight):\n    total = 1\n{body}\n    return total\n",
+    })
+    res = clones(conn, project_root=root, min_similarity=0.5)
+    pair = next(p for p in res["clones"] if {p["a"]["file"], p["b"]["file"]} == {"a.py", "b.py"})
+
+    sets = {}
+    for rel in ("a.py", "b.py"):
+        r = conn.execute(
+            "SELECT s.line_start, s.line_end FROM ci_symbols s JOIN ci_files f ON f.id = s.file_id "
+            "WHERE f.path = ?", (rel,),
+        ).fetchone()
+        sets[rel] = _shingles(_read_lines(root, rel, int(r["line_start"]), int(r["line_end"])))
+    a, b = sets["a.py"], sets["b.py"]
+    assert pair["similarity"] == round(len(a & b) / len(a | b), 3)
+    assert pair["containment"] == round(len(a & b) / min(len(a), len(b)), 3)
+
+
+def test_clones_normalizes_dotted_paths_without_stripping_characters(project):
+    # lstrip("./") strips *characters*: ".hidden/mod.py" became "hidden/mod.py".
+    root, conn = project
+    body = "\n".join(f"    total = total + value_{i} * weight_{i}" for i in range(8))
+    fn = f"def compute(value, weight):\n    total = 0\n{body}\n    return total\n"
+    _write_and_index(root, conn, {".hidden/mod.py": fn, "copy.py": fn})
+    res = clones(conn, ".hidden/mod.py", project_root=root)
+    assert res["ok"], res
+    assert res["path"] == ".hidden/mod.py"
+    assert [c["file"] for c in res["clones"]] == ["copy.py"]
 
 
 # --- grep -------------------------------------------------------------------

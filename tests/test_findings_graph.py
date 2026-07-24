@@ -31,6 +31,9 @@ class _FakeEmbedder:
     def embed_passages(self, texts):
         return [self._vec(t) for t in texts]
 
+    def embed_queries(self, texts):
+        return self.embed_passages(texts)
+
     def embed_query(self, text):
         return self._vec(text)
 

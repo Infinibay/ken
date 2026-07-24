@@ -85,6 +85,11 @@ def ken_search_files(query: str, limit: int = 8) -> list[dict]:
     file's language + base name + top symbol names — same shape the
     ranker's fuzzy channel uses). Returns the top *limit* hits with
     their score and a short symbol outline.
+
+    When *query* is a bare identifier (``cochange``, ``reembed``) the semantic
+    order is fused with a literal path match, and files matching it exactly are
+    listed first with ``match: "exact"``. ``score`` stays the cosine either
+    way, so with a literal match present the list is not in score order.
     """
     with _conn() as conn:
         return search_files(conn, query, limit=limit, project_root=_PROJECT_ROOT)
@@ -98,6 +103,15 @@ def ken_search_symbols(query: str, limit: int = 10) -> list[dict]:
     Cosine similarity against per-symbol embeddings (built from
     ``"{kind} {name} — {docstring_first_line}"``). Returns the top
     *limit* hits with their location and one-line doc.
+
+    When *query* is a bare identifier the semantic order is fused with a
+    literal name match: symbols named exactly that come first
+    (``match: "exact"``), then partial matches (``"qualified"`` for a method of
+    a class, ``"tokens"`` for a shared-word name) traded off against
+    similarity. Without this a query like ``blast_radius`` returns
+    ``test_blast_radius_reverse_reachability`` above the function itself.
+    ``score`` remains the cosine, so the list is not in score order when a
+    literal match is present. Prose queries are pure similarity, unchanged.
     """
     with _conn() as conn:
         return search_symbols(conn, query, limit=limit, project_root=_PROJECT_ROOT)
@@ -170,14 +184,27 @@ def ken_symbol_detail(path: str, qualname: str, include_snippet: bool = False) -
 
 @mcp.tool()
 def ken_module_graph(path: str, depth: int = 1, limit: int = 100) -> dict:
-    """Return a bounded local import graph around one indexed file."""
+    """Return a bounded local import graph around one indexed file.
+
+    ``limit`` caps *nodes*. Every returned edge has both endpoints in ``nodes``,
+    so the graph is always well-formed; when the cap cut the neighbourhood
+    short, a ``truncated`` block reports how many edges that dropped.
+    """
     with _conn() as conn:
         return module_graph(conn, path, depth=depth, limit=limit, project_root=_PROJECT_ROOT)
 
 
 @mcp.tool()
 def ken_find_tests(path: str, limit: int = 20) -> dict:
-    """Return likely test files for an indexed source file."""
+    """Return likely test files for an indexed source file, best evidence first.
+
+    Each candidate accumulates every channel that fired, and ``score`` ranks
+    them: being named by the ecosystem's convention (``test_x``, ``x_test``,
+    ``x.spec.ts``, ``XTest.java``) counts far more than merely importing the
+    target — for a widely-imported module like ``db.py`` almost every test does
+    that. Name matching is on whole tokens, so ``cli.py`` does not pull in
+    ``test_client.py``.
+    """
     with _conn() as conn:
         return find_tests(conn, path, limit=limit, project_root=_PROJECT_ROOT)
 
@@ -308,6 +335,7 @@ def ken_cochange(
     path: str,
     min_confidence: float = 0.4,
     min_support: int = 3,
+    min_llr: float = 3.841,
     limit: int = 15,
 ) -> dict:
     """Files historically changed together with *path* — including hidden coupling.
@@ -318,6 +346,18 @@ def ken_cochange(
     migration, code <-> config, parallel implementations. Partners with no
     import edge are flagged ``hidden_coupling`` and sorted first. Returns an
     empty list rather than guessing when evidence is below threshold.
+
+    Statistics are computed within the target file's own repo (``scope``), so a
+    workspace of sibling repos does not inflate lift. Per partner:
+
+    * ``confidence`` — P(partner changes | target changes), recency-weighted.
+    * ``confidence_low`` — Wilson 95% lower bound on that probability from the
+      raw counts. Read this, not ``confidence``, when support is small.
+    * ``lift`` — how many times more often than chance they co-change.
+    * ``llr`` — Dunning G², a χ²(1) significance score. Pairs below *min_llr*
+      (default 3.841 = p<0.05) are dropped as indistinguishable from chance,
+      however high their lift. Pass ``min_llr=0`` to see them anyway.
+    * ``strength`` — the ranking key: confidence discounted by evidence thinness.
     """
     assert _PROJECT_ROOT is not None
     with _conn() as conn:
@@ -326,6 +366,7 @@ def ken_cochange(
             path,
             min_confidence=min_confidence,
             min_support=min_support,
+            min_llr=min_llr,
             limit=limit,
             project_root=_PROJECT_ROOT,
         )
@@ -394,6 +435,13 @@ def ken_clones(
     Without a path, returns the strongest duplicate pairs project-wide. Purely
     lexical set-similarity — no embeddings, no LLM. Anti-boilerplate floor
     keeps tiny identical stubs from flooding results.
+
+    MinHash + LSH only *retrieve* candidates; the reported ``similarity`` is
+    the exact Jaccard of the token-shingle sets, so it can be compared against
+    *min_similarity* directly. ``containment`` is the share of the smaller
+    symbol found in the larger one — near 1.0 with a lower similarity means one
+    body was pasted verbatim into something bigger. Banding adapts to
+    *min_similarity*, so lowering it genuinely widens the search.
     """
     assert _PROJECT_ROOT is not None
     with _conn() as conn:

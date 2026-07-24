@@ -11,9 +11,9 @@ sees a device, and falls back to CPU otherwise. ``KEN_EMBED_DEVICE``
 (``auto`` | ``cpu`` | ``gpu``) and ``KEN_EMBED_DEVICE_ID`` override.
 
 Some models need an asymmetric query/passage prompt (Qwen3 takes a task
-instruction on the query; e5 wants ``query:`` / ``passage:``). We apply the
-right one per model so each is used the way it was trained — mirroring how the
-benchmark scored them.
+instruction on the query; e5 wants ``query:`` / ``passage:``). The table lives
+in :mod:`ken.embedder` so both backends apply the same policy; this one just
+consults it.
 """
 
 from __future__ import annotations
@@ -40,28 +40,6 @@ _BATCH = int(os.environ.get("KEN_EMBED_BATCH", "16"))
 
 # Reduce CUDA fragmentation on long reembeds (set before torch is imported).
 os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
-
-# model-name prefix → (query_prompt, passage_prompt). Longest match wins.
-_PROMPTS: tuple[tuple[str, str, str], ...] = (
-    (
-        "Qwen/Qwen3-Embedding",
-        "Instruct: Given a developer's question, retrieve the code file that "
-        "answers it\nQuery: ",
-        "",
-    ),
-    ("intfloat/multilingual-e5", "query: ", "passage: "),
-    ("intfloat/e5", "query: ", "passage: "),
-)
-
-
-def _prompts_for(model: str) -> tuple[str, str]:
-    best = ("", "")
-    best_len = -1
-    for prefix, qp, pp in _PROMPTS:
-        if model.startswith(prefix) and len(prefix) > best_len:
-            best, best_len = (qp, pp), len(prefix)
-    return best
-
 
 def _resolve_device() -> str:
     pref = os.environ.get("KEN_EMBED_DEVICE", "auto").strip().lower()
@@ -91,7 +69,9 @@ class SentenceTransformerEmbedder:
         self._model: SentenceTransformer | None = None
         self._dim = 0
         self.device = "unknown"
-        self._q_prompt, self._p_prompt = _prompts_for(model_name)
+        from ken.embedder import prompts_for
+
+        self._q_prompt, self._p_prompt = prompts_for(model_name)
 
     @property
     def dim(self) -> int:
@@ -170,6 +150,11 @@ class SentenceTransformerEmbedder:
         if not texts:
             return []
         return self._encode(texts, self._p_prompt)
+
+    def embed_queries(self, texts: list[str]) -> list[np.ndarray]:
+        if not texts:
+            return []
+        return self._encode(texts, self._q_prompt)
 
     def embed_query(self, text: str) -> np.ndarray:
         return self._encode([text], self._q_prompt)[0]

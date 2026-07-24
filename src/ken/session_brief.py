@@ -84,6 +84,47 @@ def _upgrade_notice(conn: sqlite3.Connection, now_ms: int) -> list[str]:
     ]
 
 
+def _reembed_notice(conn: sqlite3.Connection, now_ms: int) -> list[str]:
+    """Lines telling the agent this index predates the query/passage split.
+
+    Only asymmetric models are affected, and the indexer cannot heal it on its
+    own — an unchanged file keeps its stored vector — so the user has to be
+    told. Throttled like the model-upgrade notice.
+    """
+    try:
+        from ken.embedder import META_REEMBED_SEEN, pending_reembed
+
+        reason = pending_reembed(conn)
+    except Exception:  # pragma: no cover - never let the brief fail on this
+        return []
+    if reason is None:
+        return []
+
+    from ken.db import get_meta, set_meta
+
+    seen = get_meta(conn, META_REEMBED_SEEN)
+    if seen is not None:
+        try:
+            if now_ms - int(seen) < _UPGRADE_THROTTLE_MS:
+                return []
+        except ValueError:
+            pass
+    try:
+        set_meta(conn, META_REEMBED_SEEN, str(now_ms))
+    except Exception:  # pragma: no cover - read-only conn shouldn't happen here
+        pass
+
+    return [
+        "",
+        "🔔 ken: this project's embeddings need re-encoding.",
+        f"   {reason}.",
+        "   Stored files/symbols/findings are in the query space instead of the "
+        "document space, which weakens every semantic lookup.",
+        "   Fix (no reindex, no worktree needed):  ken reembed",
+        "   Tell the user to run it, and why.",
+    ]
+
+
 def build_session_brief(
     conn: sqlite3.Connection,
     *,
@@ -102,14 +143,16 @@ def build_session_brief(
     anchor = _latest_prompt(conn)
     findings = list_findings(conn, limit=_MAX_FINDINGS)
     upgrade = _upgrade_notice(conn, now_ms)
+    reembed = _reembed_notice(conn, now_ms)
 
-    if anchor is None and not findings and not upgrade:
+    if anchor is None and not findings and not upgrade and not reembed:
         return ""
 
     lines: list[str] = [
         "Reanudando en este proyecto — contexto de ken (no hace falta recall):",
     ]
     lines.extend(upgrade)
+    lines.extend(reembed)
 
     if anchor is not None:
         age = _humanize_age(now_ms - anchor["created_at"])

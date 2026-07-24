@@ -20,7 +20,7 @@ from typing import Any
 
 import numpy as np
 
-from ken.embedder import blob_to_vec
+from ken.embedder import rank_against
 from ken.ranker import FindingItem, RankedItem
 
 # ── Channel 1: Reactive ──────────────────────────────────────────────
@@ -229,12 +229,11 @@ def similar_past_sessions(
     if not rows:
         return []
     q = prompt_embedding.astype(np.float32, copy=False)
-    q = q / (np.linalg.norm(q) + 1e-12)
+    sims, kept = rank_against(q, [r["embedding"] for r in rows], strict=False)
+    rows = [rows[i] for i in kept]
     now_ms = _now_ms(conn)
     out: list[SimilarPrompt] = []
-    for r in rows:
-        v = blob_to_vec(r["embedding"])
-        sim = float(np.dot(q, v / (np.linalg.norm(v) + 1e-12)))
+    for r, sim in zip(rows, sims.tolist()):
         if sim < threshold:
             continue
         days_ago = max(0.0, (now_ms - int(r["created_at"])) / (1000 * 60 * 60 * 24))
@@ -635,9 +634,8 @@ def doc_intent_scores(
     if not rows:
         return [], []
 
-    mat = np.asarray([blob_to_vec(r["embedding"]) for r in rows], dtype=np.float32)
-    norms = np.linalg.norm(mat, axis=1) + 1e-12
-    sims = (mat @ q) / norms
+    sims, kept = rank_against(q, [r["embedding"] for r in rows], strict=False)
+    rows = [rows[i] for i in kept]
     thr = _adaptive_threshold(sims, DOC_INTENT_MIN_SIM)
     file_scores: dict[str, RankedItem] = {}
     symbol_scores: dict[str, RankedItem] = {}
@@ -1077,13 +1075,10 @@ def _fuzzy_files(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
     ).fetchall()
     if not rows:
         return []
+    sims, kept = rank_against(q, [r["embedding"] for r in rows], strict=False)
+    rows = [rows[i] for i in kept]
     paths = [r["path"] for r in rows]
     mtimes = [int(r["mtime"]) for r in rows]
-    mat = np.asarray(
-        [blob_to_vec(r["embedding"]) for r in rows], dtype=np.float32
-    )
-    norms = np.linalg.norm(mat, axis=1) + 1e-12
-    sims = (mat @ q) / norms
     now_ns = int(time.time() * 1e9)
     thr = _adaptive_threshold(sims, FUZZY_FILE_MIN_SIM)
     out: list[RankedItem] = []
@@ -1115,11 +1110,8 @@ def _fuzzy_symbols(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
     ).fetchall()
     if not rows:
         return []
-    mat = np.asarray(
-        [blob_to_vec(r["embedding"]) for r in rows], dtype=np.float32
-    )
-    norms = np.linalg.norm(mat, axis=1) + 1e-12
-    sims = (mat @ q) / norms
+    sims, kept = rank_against(q, [r["embedding"] for r in rows], strict=False)
+    rows = [rows[i] for i in kept]
     now_ns = int(time.time() * 1e9)
     thr = _adaptive_threshold(sims, FUZZY_SYMBOL_MIN_SIM)
 
@@ -1157,10 +1149,8 @@ def finding_scores(
     if not rows:
         return []
     q = prompt_embedding.astype(np.float32, copy=False)
-    q = q / (np.linalg.norm(q) + 1e-12)
-    mat = np.asarray([blob_to_vec(r["embedding"]) for r in rows], dtype=np.float32)
-    norms = np.linalg.norm(mat, axis=1) + 1e-12
-    sims = (mat @ q) / norms
+    sims, kept = rank_against(q, [r["embedding"] for r in rows], strict=False)
+    rows = [rows[i] for i in kept]
     out: list[FindingItem] = []
     for row, sim in zip(rows, sims):
         sim_raw = float(sim)

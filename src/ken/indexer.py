@@ -118,8 +118,12 @@ def index_files(
 
                 stem = Path(rel_posix).stem
                 top_terms = intent_texts[:1]
+                # A file embedding is a *document*, so it must go through
+                # embed_passages. Asymmetric models (e5, Qwen3) prepend a
+                # question instruction on the query side; encoding a stored
+                # vector with it puts the index in the wrong space.
                 file_blob = vec_to_blob(
-                    embedder.embed_query(embed_file_text(None, stem, top_terms))
+                    embedder.embed_passages([embed_file_text(None, stem, top_terms)])[0]
                 )
                 if intent_texts:
                     intent_vecs = embedder.embed_passages(
@@ -216,12 +220,13 @@ def index_files(
             stem = Path(rel_posix).stem
             top_names = [s.name for s in parsed.symbols[:8]]
             file_text = embed_file_text(language, stem, top_names)
-            file_blob = vec_to_blob(embedder.embed_query(file_text))
+            # Documents, not queries — see the note on the no-parse path above.
+            file_blob = vec_to_blob(embedder.embed_passages([file_text])[0])
             if parsed.docstring:
                 intent_file_blob = vec_to_blob(
-                    embedder.embed_query(
-                        embed_intent_text("module_docstring", parsed.docstring)
-                    )
+                    embedder.embed_passages(
+                        [embed_intent_text("module_docstring", parsed.docstring)]
+                    )[0]
                 )
 
         with conn:  # implicit BEGIN/COMMIT around the whole file write

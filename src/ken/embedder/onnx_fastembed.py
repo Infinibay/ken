@@ -115,6 +115,12 @@ class OnnxEmbedder:
         self._model: TextEmbedding | None = None
         self._dim = DEFAULT_DIM  # confirmed against the model after first call
         self.device = "unknown"  # resolved on first model build
+        # fastembed ships several asymmetric models (the e5 family). Its own
+        # `query_embed`/`passage_embed` are aliases of `embed` for everything
+        # but Jina v3, so the prefixes have to be applied here or not at all.
+        from ken.embedder import prompts_for
+
+        self._q_prompt, self._p_prompt = prompts_for(self.model_name)
 
     @property
     def dim(self) -> int:
@@ -159,16 +165,22 @@ class OnnxEmbedder:
                 self.device = "cpu"
         return self._model
 
-    def embed_passages(self, texts: list[str]) -> list[np.ndarray]:
+    def _encode(self, texts: list[str], prompt: str) -> list[np.ndarray]:
         if not texts:
             return []
         model = self._ensure_model()
+        prefixed = [prompt + t for t in texts] if prompt else texts
         with self._lock:
             # fastembed.embed returns a generator → realise into a list
             # so we hold the lock for the whole batch (tokeniser /
             # session aren't safe to share across threads).
-            out = [np.asarray(v, dtype=np.float32) for v in model.embed(texts)]
-        return out
+            return [np.asarray(v, dtype=np.float32) for v in model.embed(prefixed)]
+
+    def embed_passages(self, texts: list[str]) -> list[np.ndarray]:
+        return self._encode(texts, self._p_prompt)
+
+    def embed_queries(self, texts: list[str]) -> list[np.ndarray]:
+        return self._encode(texts, self._q_prompt)
 
     def embed_query(self, text: str) -> np.ndarray:
-        return self.embed_passages([text])[0]
+        return self._encode([text], self._q_prompt)[0]

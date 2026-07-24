@@ -38,7 +38,7 @@ import json
 import re
 import sqlite3
 import time
-from collections import defaultdict
+from collections import Counter, defaultdict
 from itertools import combinations
 
 import numpy as np
@@ -418,8 +418,18 @@ def _semantic_edges(conn: sqlite3.Connection, now_ms: int) -> list[tuple]:
         set_meta(conn, _META_NOTE, f"semantic skipped: N={len(rows)}>cap")
         return []
     set_meta(conn, _META_NOTE, "")
+    # Pairwise similarity needs one common dimensionality. A DB can hold two
+    # generations of vectors (an interrupted `ken reembed`); keep the majority
+    # dimension rather than letting numpy build a ragged array and raise.
+    vecs = [blob_to_vec(r["embedding"]) for r in rows]
+    dims = Counter(int(v.shape[0]) for v in vecs)
+    main_dim = dims.most_common(1)[0][0]
+    keep = [i for i, v in enumerate(vecs) if int(v.shape[0]) == main_dim]
+    if len(keep) < 2:
+        return []
+    rows = [rows[i] for i in keep]
     ids = [int(r["id"]) for r in rows]
-    mat = np.asarray([blob_to_vec(r["embedding"]) for r in rows], dtype=np.float32)
+    mat = np.asarray([vecs[i] for i in keep], dtype=np.float32)
     unit = mat / (np.linalg.norm(mat, axis=1, keepdims=True) + 1e-12)
     sims = unit @ unit.T
     out: list[tuple] = []

@@ -28,10 +28,26 @@ from ken.search import (
 
 
 class FakeEmbedder:
-    def embed_query(self, text: str) -> np.ndarray:
+    """Implements the full Embedder protocol.
+
+    Stored documents go through ``embed_passages`` and queries through
+    ``embed_query``; a double that only offers one of them would let a
+    query/passage mix-up pass unnoticed.
+    """
+
+    def _vec(self, text: str) -> np.ndarray:
         if "symbol" in text or "parser" in text:
             return np.array([1.0, 0.0], dtype=np.float32)
         return np.array([0.0, 1.0], dtype=np.float32)
+
+    def embed_passages(self, texts: list[str]) -> list[np.ndarray]:
+        return [self._vec(t) for t in texts]
+
+    def embed_queries(self, texts: list[str]) -> list[np.ndarray]:
+        return [self._vec(t) for t in texts]
+
+    def embed_query(self, text: str) -> np.ndarray:
+        return self._vec(text)
 
 
 def _project(tmp_path: Path) -> Path:
@@ -264,7 +280,181 @@ def test_find_tests_returns_likely_test_files(tmp_path):
     with connect(_paths.db_path(root)) as conn:
         out = find_tests(conn, "src/parser.py", project_root=root)
 
-    assert out["tests"][0] == {"path": "tests/test_parser.py", "reason": "imports target"}
+    top = out["tests"][0]
+    assert top["path"] == "tests/test_parser.py"
+    # Both channels fire and both are kept — neither overwrites the other.
+    assert top["reason"] == "imports target; named for target"
+    assert top["score"] == 4.0  # imports (1.0) + named by convention (3.0)
+
+
+class _UnitQueryEmbedder:
+    """Query vector is always [1, 0], so a row's cosine is its first component."""
+
+    def embed_passages(self, texts):
+        return [np.array([1.0, 0.0], dtype=np.float32) for _ in texts]
+
+    def embed_queries(self, texts):
+        return [np.array([1.0, 0.0], dtype=np.float32) for _ in texts]
+
+    def embed_query(self, text):
+        return np.array([1.0, 0.0], dtype=np.float32)
+
+
+def _add_symbol(conn, file_id, name, vec):
+    conn.execute(
+        "INSERT INTO ci_symbols(file_id, kind, name, qualname, line_start, line_end, "
+        "docstring, embedding) VALUES (?, 'function', ?, ?, 1, 2, '', ?)",
+        (file_id, name, name, vec_to_blob(np.array(vec, dtype=np.float32))),
+    )
+
+
+def test_search_symbols_puts_an_exact_name_match_first(monkeypatch, tmp_path):
+    # A bare identifier embeds about as close to a long test name as to the
+    # symbol itself, and the longer name often wins on cosine alone.
+    root = _project(tmp_path)
+    monkeypatch.setattr("ken.search.get_embedder", lambda: _UnitQueryEmbedder())
+    with connect(_paths.db_path(root)) as conn:
+        parser_id = conn.execute(
+            "SELECT id FROM ci_files WHERE path = 'src/parser.py'"
+        ).fetchone()["id"]
+        _add_symbol(conn, parser_id, "blast_radius", [0.80, 0.60])
+        _add_symbol(conn, parser_id, "test_blast_radius_reverse", [0.90, 0.436])
+
+        hits = search_symbols(conn, "blast_radius", limit=3, project_root=root)
+
+    assert hits[0]["qualname"] == "blast_radius"
+    assert hits[0]["match"] == "exact"
+    # Ordering is by fused evidence, not by cosine — the runner-up scores higher.
+    assert hits[1]["score"] > hits[0]["score"]
+    assert hits[1]["match"] == "tokens"
+
+
+def test_search_symbols_leaves_prose_queries_on_pure_similarity(monkeypatch, tmp_path):
+    root = _project(tmp_path)
+    monkeypatch.setattr("ken.search.get_embedder", lambda: _UnitQueryEmbedder())
+    with connect(_paths.db_path(root)) as conn:
+        parser_id = conn.execute(
+            "SELECT id FROM ci_files WHERE path = 'src/parser.py'"
+        ).fetchone()["id"]
+        _add_symbol(conn, parser_id, "blast_radius", [0.80, 0.60])
+        _add_symbol(conn, parser_id, "test_blast_radius_reverse", [0.90, 0.436])
+
+        hits = search_symbols(conn, "which files does an edit affect", limit=3,
+                              project_root=root)
+
+    scores = [h["score"] for h in hits]
+    assert scores == sorted(scores, reverse=True)
+    assert all("match" not in h for h in hits)
+
+
+def test_find_tests_ranks_the_conventionally_named_test_first(tmp_path):
+    # A widely-imported module is imported by nearly every test; without
+    # ranking, the one test actually named after it lands wherever insertion
+    # order put it.
+    root = _project(tmp_path)
+    with connect(_paths.db_path(root)) as conn:
+        now_ms = int(time.time() * 1000)
+        for path in ("tests/test_helpers.py", "tests/test_parser.py", "tests/test_widgets.py"):
+            existing = conn.execute(
+                "SELECT id FROM ci_files WHERE path = ?", (path,)
+            ).fetchone()
+            if existing is None:
+                conn.execute(
+                    "INSERT INTO ci_files(path, language, content_hash, mtime, indexed_at) "
+                    "VALUES (?, 'python', ?, ?, ?)",
+                    (path, b"\x00" * 32, now_ms, now_ms),
+                )
+            test_id = conn.execute(
+                "SELECT id FROM ci_files WHERE path = ?", (path,)
+            ).fetchone()["id"]
+            parser_id = conn.execute(
+                "SELECT id FROM ci_files WHERE path = 'src/parser.py'"
+            ).fetchone()["id"]
+            conn.execute(
+                "INSERT INTO ci_imports(from_file_id, to_module, to_file_id, line) "
+                "VALUES (?, 'src.parser', ?, 1)",
+                (test_id, parser_id),
+            )
+        out = find_tests(conn, "src/parser.py", project_root=root)
+
+    ranked = [t["path"] for t in out["tests"]]
+    assert ranked[0] == "tests/test_parser.py"
+    assert set(ranked) >= {"tests/test_helpers.py", "tests/test_widgets.py"}
+    # Scores are strictly ordered, and the winner carries both channels.
+    assert out["tests"][0]["score"] > out["tests"][1]["score"]
+
+
+def test_find_tests_matches_name_tokens_not_substrings(tmp_path):
+    # "cli" is a substring of "client" — the old substring rule made every
+    # test_client.py a candidate test for cli.py.
+    root = _project(tmp_path)
+    with connect(_paths.db_path(root)) as conn:
+        now_ms = int(time.time() * 1000)
+        for path in ("src/cli.py", "tests/test_client.py", "tests/test_cli.py"):
+            conn.execute(
+                "INSERT INTO ci_files(path, language, content_hash, mtime, indexed_at) "
+                "VALUES (?, 'python', ?, ?, ?)",
+                (path, b"\x00" * 32, now_ms, now_ms),
+            )
+        out = find_tests(conn, "src/cli.py", project_root=root)
+
+    assert [t["path"] for t in out["tests"]] == ["tests/test_cli.py"]
+
+
+def test_find_tests_ignores_structural_stems(tmp_path):
+    # Every package has an __init__.py; sharing that name says nothing about
+    # sharing a subject.
+    root = _project(tmp_path)
+    with connect(_paths.db_path(root)) as conn:
+        now_ms = int(time.time() * 1000)
+        for path in ("src/pkg/__init__.py", "tests/other/__init__.py"):
+            conn.execute(
+                "INSERT INTO ci_files(path, language, content_hash, mtime, indexed_at) "
+                "VALUES (?, 'python', ?, ?, ?)",
+                (path, b"\x00" * 32, now_ms, now_ms),
+            )
+        out = find_tests(conn, "src/pkg/__init__.py", project_root=root)
+
+    assert out["tests"] == []
+
+
+def test_module_graph_never_returns_edges_to_files_it_omitted(tmp_path):
+    # The node cap stops the frontier mid-expansion; edges discovered past it
+    # would otherwise point at files absent from `nodes`.
+    root = _project(tmp_path)
+    with connect(_paths.db_path(root)) as conn:
+        now_ms = int(time.time() * 1000)
+        ids = {}
+        for i in range(12):
+            path = f"src/m{i}.py"
+            ids[path] = conn.execute(
+                "INSERT INTO ci_files(path, language, content_hash, mtime, indexed_at) "
+                "VALUES (?, 'python', ?, ?, ?)",
+                (path, b"\x00" * 32, now_ms, now_ms),
+            ).lastrowid
+        root_id = conn.execute(
+            "SELECT id FROM ci_files WHERE path = 'src/parser.py'"
+        ).fetchone()["id"]
+        conn.execute(
+            "INSERT INTO ci_imports(from_file_id, to_module, to_file_id, line) "
+            "VALUES (?, 'src.m0', ?, 1)",
+            (root_id, ids["src/m0.py"]),
+        )
+        for i in range(11):
+            conn.execute(
+                "INSERT INTO ci_imports(from_file_id, to_module, to_file_id, line) "
+                f"VALUES (?, 'src.m{i + 1}', ?, 1)",
+                (ids[f"src/m{i}.py"], ids[f"src/m{i + 1}.py"]),
+            )
+        graph = module_graph(conn, "src/parser.py", depth=5, limit=4, project_root=root)
+
+    node_paths = {n["path"] for n in graph["nodes"]}
+    assert len(node_paths) <= 4
+    for edge in graph["edges"]:
+        assert edge["from"] in node_paths, edge
+        assert edge["to"] in node_paths, edge
+    # And the caller is told the view was cut short rather than guessing.
+    assert graph["truncated"]["edges_omitted"] > 0
 
 
 def test_file_snippets_returns_requested_symbol_source(tmp_path):
@@ -522,3 +712,60 @@ def test_recall_cli_reports_no_relevant_findings(monkeypatch, capsys, tmp_path):
 
     assert rc == 0
     assert "no relevant findings (min_score=0.250)" in capsys.readouterr().out
+
+
+def test_looks_like_test_requires_a_camelcase_boundary():
+    # `endswith("test.java")` on a lowercased name also swallows Latest.java,
+    # Contest.cs, protest.cs and Greatest.kt — none of which are tests.
+    from ken.search import _looks_like_test
+
+    for path in ("src/Latest.java", "src/Contest.cs", "src/protest.cs",
+                 "src/latest.kt", "src/Greatest.kt", "src/manifest.java"):
+        assert _looks_like_test(path) is False, path
+    for path in ("src/UserServiceTest.java", "src/FooTests.cs", "src/BarSpec.kt",
+                 "pkg/thing_test.go", "lib/a_spec.rb", "ui/x.test.ts",
+                 "tests/t.py", "__tests__/a.js", "spec/b.rb"):
+        assert _looks_like_test(path) is True, path
+
+
+def test_test_basename_preserves_case_for_camelcase_tokens():
+    # Lowercasing here would collapse the name into one token and silently
+    # disable token matching for every Java/C#/Kotlin test.
+    from ken.search import _name_tokens, _test_basename
+
+    base = _test_basename("src/UserServiceIntegrationTest.java")
+    assert _name_tokens(base) == {"user", "service", "integration", "test"}
+
+
+def test_sql_prefilter_is_a_superset_of_looks_like_test():
+    # _find_tests_for_row narrows in SQL before calling _looks_like_test; if a
+    # real test file fails the LIKE it is invisible no matter what.
+    from ken.search import _looks_like_test
+
+    paths = [
+        "src/UserServiceTest.java", "src/FooTests.cs", "src/BarSpec.kt",
+        "pkg/thing_test.go", "lib/a_spec.rb", "ui/x.test.ts", "ui/y.spec.tsx",
+        "tests/t.py", "__tests__/a.js", "spec/b.rb", "a/test_c.py",
+        "m/n_test.rs", "d/e_test.dart", "f/g.test.mjs",
+    ]
+    for path in paths:
+        assert _looks_like_test(path), path
+        lowered = path.lower()
+        assert "test" in lowered or "spec" in lowered, path
+
+
+def test_find_tests_finds_camelcase_java_tests(tmp_path):
+    root = _project(tmp_path)
+    with connect(_paths.db_path(root)) as conn:
+        now_ms = int(time.time() * 1000)
+        for path in ("src/UserService.java", "src/UserServiceTest.java",
+                     "src/Latest.java"):
+            conn.execute(
+                "INSERT INTO ci_files(path, language, content_hash, mtime, indexed_at) "
+                "VALUES (?, 'java', ?, ?, ?)",
+                (path, b"\x00" * 32, now_ms, now_ms),
+            )
+        out = find_tests(conn, "src/UserService.java", project_root=root)
+
+    assert [t["path"] for t in out["tests"]] == ["src/UserServiceTest.java"]
+    assert out["tests"][0]["reason"] == "named for target"

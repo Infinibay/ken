@@ -29,6 +29,7 @@ from ken.embedder import (
     embed_intent_text,
     embed_symbol_text,
     get_embedder,
+    record_doc_space,
     vec_to_blob,
 )
 
@@ -158,8 +159,23 @@ def reembed(
     dim: int | None = None
 
     def encode(texts: list[str]):
+        """Encode stored *documents* (files, symbols, intents, findings)."""
         nonlocal dim
         vecs = emb.embed_passages(texts)
+        if vecs and dim is None:
+            dim = int(len(vecs[0]))
+        return vecs
+
+    def encode_queries(texts: list[str]):
+        """Encode stored *queries*, batched.
+
+        ``cr_contexts`` holds user prompts, which the ranker compares against a
+        freshly embedded prompt — both sides are queries. Re-encoding them as
+        passages would move them out of the space the live ranker searches in
+        whenever the model is asymmetric (e5, Qwen3).
+        """
+        nonlocal dim
+        vecs = emb.embed_queries(texts)
         if vecs and dim is None:
             dim = int(len(vecs[0]))
         return vecs
@@ -214,7 +230,7 @@ def reembed(
     ).fetchall()
     for i in range(0, len(ctx_rows), _BATCH):
         chunk = ctx_rows[i : i + _BATCH]
-        vecs = encode([str(r["content"]) for r in chunk])
+        vecs = encode_queries([str(r["content"]) for r in chunk])
         pending.extend((vec_to_blob(v), r["id"]) for r, v in zip(chunk, vecs))
         _flush(conn, "UPDATE cr_contexts SET embedding=? WHERE id=?", pending)
     counts["prompts"] = len(ctx_rows)
@@ -234,6 +250,9 @@ def reembed(
 
     probe_vec = emb.embed_query(PROBE_TEXT)
     _store_probe(conn, probe_vec)
+    # Every vector in the DB now uses the current document/query split, so this
+    # project stops being a reembed candidate.
+    record_doc_space(conn)
     set_meta(conn, META_MODEL, model_name)
     if dim is not None:
         set_meta(conn, META_DIM, str(dim))

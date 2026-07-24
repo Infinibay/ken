@@ -56,6 +56,54 @@ RECOMMENDED_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
 
 META_EMBED_MODEL = "embed_model"
 META_UPGRADE_SEEN = "embed_upgrade_seen_at"
+META_DOC_SPACE = "embed_doc_space"
+META_REEMBED_SEEN = "embed_reembed_seen_at"
+
+# ── Query / passage prompts ──────────────────────────────────────────
+#
+# Some models are *asymmetric*: they were trained with a task instruction on
+# the query side and either nothing or a different marker on the document side.
+# Encoding a stored document with the query prompt (or vice versa) files it in
+# the wrong region of the space, so the policy lives here — one table both
+# backends consult — rather than in whichever backend happened to need it.
+#
+# fastembed does NOT do this for us: its ``query_embed``/``passage_embed`` are
+# plain aliases of ``embed`` for every model except Jina v3.
+#
+# model-name prefix → (query_prompt, passage_prompt). Longest match wins.
+MODEL_PROMPTS: tuple[tuple[str, str, str], ...] = (
+    (
+        "Qwen/Qwen3-Embedding",
+        "Instruct: Given a developer's question, retrieve the code file that "
+        "answers it\nQuery: ",
+        "",
+    ),
+    ("intfloat/multilingual-e5", "query: ", "passage: "),
+    ("intfloat/e5", "query: ", "passage: "),
+)
+
+# The document-encoding generation. Bumped when the *meaning* of a stored
+# vector changes for some model, so a project encoded under an older scheme can
+# be detected and offered a `ken reembed`:
+#   1 — pre-0.6: documents were encoded with the query prompt, and the ONNX
+#       backend applied no prompt at all.
+#   2 — documents use the passage prompt on both backends.
+DOC_SPACE_VERSION = 2
+
+
+def prompts_for(model: str) -> tuple[str, str]:
+    """``(query_prompt, passage_prompt)`` for *model* — ``("", "")`` if symmetric."""
+    best = ("", "")
+    best_len = -1
+    for prefix, query_prompt, passage_prompt in MODEL_PROMPTS:
+        if model.startswith(prefix) and len(prefix) > best_len:
+            best, best_len = (query_prompt, passage_prompt), len(prefix)
+    return best
+
+
+def is_asymmetric(model: str) -> bool:
+    """Whether *model* encodes queries and documents differently."""
+    return prompts_for(model) != ("", "")
 
 
 # ── User-level config: default model for NEW projects ────────────────
@@ -107,12 +155,19 @@ def recommended_model() -> str:
 
 
 class Embedder(Protocol):
-    """Minimal embedder contract."""
+    """Minimal embedder contract.
+
+    ``embed_passages`` is for text that will be **stored** and searched;
+    ``embed_query`` / ``embed_queries`` for text used to **search**. On an
+    asymmetric model the two are encoded differently, so the choice is part of
+    the contract, not an optimisation.
+    """
 
     @property
     def dim(self) -> int: ...
     def embed_passages(self, texts: list[str]) -> list[np.ndarray]: ...
     def embed_query(self, text: str) -> np.ndarray: ...
+    def embed_queries(self, texts: list[str]) -> list[np.ndarray]: ...
 
 
 _lock = threading.Lock()
@@ -194,6 +249,56 @@ def record_model(conn: sqlite3.Connection, model: str) -> None:
     from ken.db import set_meta
 
     set_meta(conn, META_EMBED_MODEL, model)
+
+
+def doc_space_version(conn: sqlite3.Connection) -> int:
+    """The document-encoding generation this project's vectors were written in.
+
+    A DB with no marker predates the marker; if it holds vectors at all they
+    are generation 1, and a brand-new DB is already current.
+    """
+    from ken.db import get_meta
+
+    raw = get_meta(conn, META_DOC_SPACE)
+    if raw is not None:
+        try:
+            return int(raw)
+        except ValueError:
+            pass
+    return 1 if _has_embeddings(conn) else DOC_SPACE_VERSION
+
+
+def record_doc_space(conn: sqlite3.Connection) -> None:
+    """Pin this project's vectors to the current document-encoding generation."""
+    from ken.db import set_meta
+
+    set_meta(conn, META_DOC_SPACE, str(DOC_SPACE_VERSION))
+
+
+def pending_reembed(conn: sqlite3.Connection) -> str | None:
+    """Why this project needs a ``ken reembed``, or ``None``.
+
+    Fires when the stored vectors predate the current document encoding *and*
+    the active model is asymmetric — only then do the two encodings actually
+    differ. On the symmetric default models the old and new bytes are
+    identical, so there is nothing to migrate and nothing to say.
+
+    This matters because the indexer cannot repair it on its own: an unchanged
+    file keeps its stored vector (same hash, same parser version), so editing
+    one file would leave the index split across two encodings rather than
+    converging on the new one.
+    """
+    model = resolve_model(conn)
+    if not is_asymmetric(model):
+        return None
+    if doc_space_version(conn) >= DOC_SPACE_VERSION:
+        return None
+    if not _has_embeddings(conn):
+        return None
+    return (
+        f"{model} encodes questions and documents differently, and this index "
+        "was built before ken applied that distinction to stored vectors"
+    )
 
 
 def pending_upgrade(conn: sqlite3.Connection) -> tuple[str, str] | None:
@@ -285,6 +390,7 @@ def configure_for_project(conn: sqlite3.Connection) -> str:
     configure_embedder(model)
     if get_meta(conn, META_EMBED_MODEL) is None and not _has_embeddings(conn):
         record_model(conn, model)  # pin the recommended model for this fresh DB
+        record_doc_space(conn)  # ...and its document encoding, so it is never nudged
     return model
 
 
@@ -333,3 +439,74 @@ def vec_to_blob(vec: np.ndarray) -> bytes:
 def blob_to_vec(blob: bytes | memoryview) -> np.ndarray:
     """Deserialise; returns a read-only view backed by the supplied bytes."""
     return np.frombuffer(bytes(blob), dtype=np.float32)
+
+
+class EmbeddingSpaceMismatch(RuntimeError):
+    """Stored vectors were written by a different model than the live one."""
+
+
+def stack_embeddings(
+    blobs, *, dim: int, strict: bool = True
+) -> tuple[np.ndarray, list[int]]:
+    """Stack stored embedding blobs into an ``(n, dim)`` matrix.
+
+    Returns ``(matrix, kept)`` where *kept* holds the positions of the blobs
+    that survived. Rows of a different dimensionality are dropped: they were
+    written by another model, so a similarity against them is meaningless.
+    Without this, a DB holding two generations of vectors makes numpy build a
+    ragged array and raise far from the actual cause.
+
+    When *nothing* matches, the whole index belongs to another model. With
+    ``strict`` (the default) that raises :class:`EmbeddingSpaceMismatch`, which
+    names ``ken reembed`` — right for a tool the user invoked directly and is
+    waiting on. Background scorers (the ranker's channels, intent history) pass
+    ``strict=False`` and get an empty result instead: they run inside hooks,
+    where a raised error costs the user their context injection, and the
+    session brief is what tells them to reembed.
+    """
+    kept: list[int] = []
+    vecs: list[np.ndarray] = []
+    stored_dims: set[int] = set()
+    for i, blob in enumerate(blobs):
+        if blob is None:
+            continue
+        vec = blob_to_vec(blob)
+        stored_dims.add(int(vec.shape[0]))
+        if vec.shape[0] != dim:
+            continue
+        kept.append(i)
+        vecs.append(vec)
+    if not kept:
+        if stored_dims and strict:
+            raise EmbeddingSpaceMismatch(
+                f"stored embeddings are {sorted(stored_dims)}-dimensional but the "
+                f"live embedder produces {dim} — the index was built with a "
+                "different model; run `ken reembed`"
+            )
+        return np.zeros((0, dim), dtype=np.float32), []
+    return np.asarray(vecs, dtype=np.float32), kept
+
+
+def rank_against(query: np.ndarray, blobs, *, strict: bool = True):
+    """Cosine of *query* against stored blobs, plus the indices that survived.
+
+    The convenience form of ``stack_embeddings`` + ``cosine_against`` for the
+    common shape: callers keep ``rows`` aligned with the scores by reindexing
+    through the returned ``kept`` list.
+    """
+    mat, kept = stack_embeddings(blobs, dim=int(query.shape[0]), strict=strict)
+    return cosine_against(query, mat), kept
+
+
+def cosine_against(query: np.ndarray, matrix: np.ndarray) -> np.ndarray:
+    """Cosine similarity of a query vector against each row of *matrix*.
+
+    Both sides are normalised here rather than assumed: backends return unit
+    vectors today, but a DB can outlive that guarantee, and an unnormalised row
+    would otherwise score by magnitude instead of by direction.
+    """
+    if matrix.size == 0:
+        return np.zeros((matrix.shape[0],), dtype=np.float32)
+    q = query / (np.linalg.norm(query) + 1e-12)
+    norms = np.linalg.norm(matrix, axis=1) + 1e-12
+    return (matrix @ q) / norms

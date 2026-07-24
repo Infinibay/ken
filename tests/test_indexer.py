@@ -21,6 +21,9 @@ class _FakeEmbedder:
     def embed_passages(self, texts: list[str]) -> list[np.ndarray]:
         return [self._vec(t) for t in texts]
 
+    def embed_queries(self, texts: list[str]) -> list[np.ndarray]:
+        return self.embed_passages(texts)
+
     def embed_query(self, text: str) -> np.ndarray:
         return self._vec(text)
 

@@ -40,6 +40,9 @@ class FakeEmbedder:
             out.append(base)
         return out
 
+    def embed_queries(self, texts: list[str]) -> list[np.ndarray]:
+        return self.embed_passages(texts)
+
     def embed_query(self, text: str) -> np.ndarray:
         return self.embed_passages([text])[0]
 

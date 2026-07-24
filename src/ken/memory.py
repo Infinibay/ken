@@ -7,9 +7,7 @@ import sqlite3
 import time
 from datetime import datetime, timezone
 
-import numpy as np
-
-from ken.embedder import blob_to_vec, get_embedder, vec_to_blob
+from ken.embedder import cosine_against, get_embedder, stack_embeddings, vec_to_blob
 
 DEFAULT_RECALL_MIN_SCORE = 0.25
 FINDING_KINDS = {"finding", "persistent_rule", "experimental_finding", "hypothesis"}
@@ -40,7 +38,11 @@ def remember(
     tags_json = json.dumps(clean_tags)
     embed_text = f"{topic}\n\n{content[:1024]}"
     try:
-        emb = vec_to_blob(get_embedder().embed_query(embed_text))
+        # A stored finding is a *document*; ``recall`` supplies the query side.
+        # Asymmetric models (e5, Qwen3) encode the two differently, so using
+        # embed_query here would file every finding in the query space and
+        # then search it with another query vector.
+        emb = vec_to_blob(get_embedder().embed_passages([embed_text])[0])
     except Exception:  # pragma: no cover
         emb = None
     now_ms = int(time.time() * 1000)
@@ -154,21 +156,27 @@ def recall(
 ) -> list[dict]:
     """Search saved findings by embedding cosine similarity."""
     q = get_embedder().embed_query(query)
-    q = q / (np.linalg.norm(q) + 1e-12)
     rows = conn.execute(
         "SELECT topic, content, tags, embedding, created_at, updated_at "
         "FROM cr_findings WHERE embedding IS NOT NULL"
     ).fetchall()
     if not rows:
         return []
-    mat = np.asarray([blob_to_vec(r["embedding"]) for r in rows], dtype=np.float32)
-    norms = np.linalg.norm(mat, axis=1) + 1e-12
-    sims = (mat @ q) / norms
+    # Findings written by an earlier model are skipped rather than compared
+    # across vector spaces; an entirely stale table raises with the fix named.
+    mat, kept = stack_embeddings([r["embedding"] for r in rows], dim=int(q.shape[0]))
+    if not kept:
+        return []
+    sims = cosine_against(q, mat)
     min_score = 0.0 if min_score is None else max(0.0, float(min_score))
     ranked = [
         (score, row)
-        for score, row in sorted(zip(sims.tolist(), rows), key=lambda x: x[0], reverse=True)
-        if float(score) >= min_score
+        for score, row in sorted(
+            ((float(s), rows[i]) for s, i in zip(sims.tolist(), kept)),
+            key=lambda x: x[0],
+            reverse=True,
+        )
+        if score >= min_score
     ][: max(1, limit)]
     return [
         {
