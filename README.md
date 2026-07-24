@@ -135,13 +135,17 @@ Any [fastembed](https://github.com/qdrant/fastembed) model works out of the box.
 
 ### GPU acceleration
 
-The embedder auto-detects a GPU and uses it, falling back to CPU when none is usable — no configuration. GPU helps bulk work (a full `ken reembed`, indexing a new project); the inline per-prompt embedding the daemon does is already sub-100 ms on CPU. Install the GPU runtime with the extra:
+The embedder auto-detects a GPU (CUDA or ROCm) and uses it, falling back to CPU when none is usable — no configuration. Install the GPU runtime with the extra:
 
 ```sh
 pip install 'ken-rank[gpu]'   # fastembed-gpu / onnxruntime-gpu (CUDA/ROCm)
 ```
 
 Override detection with `KEN_EMBED_DEVICE=auto|cpu|gpu` (and `KEN_EMBED_DEVICE_ID=0`).
+
+**Is the GPU worth it?** For most people, not much — and that's fine. The device only affects how fast a *query* is embedded; the rest of a rank (loading the stored vectors, the cosine sweep, the lexical/import channels) is CPU work either way. With the default fastembed model, embedding a query is already ~30–40 ms on CPU, so the GPU barely moves the needle for inline ranking. Even with the heavy `Qwen/Qwen3-Embedding-0.6B` on a large repo, a full rank was ~1.1 s of which the query embed is ~250 ms on CPU vs ~50 ms on GPU — the GPU saves ~200 ms of a second-plus that's dominated by device-independent work. So CPU-only is perfectly usable, including with Qwen3.
+
+Where the GPU genuinely pays off: **bulk work** — a full `ken reembed` or the first index of a big repo re-encodes thousands of texts at once, and there the GPU is several times faster. And if you simply want to shave every last millisecond off inline ranking, turn it on. Otherwise, don't sweat it.
 
 ### Stronger models (torch backend)
 
