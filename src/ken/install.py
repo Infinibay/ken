@@ -134,8 +134,14 @@ def install(
         init_schema(conn)
         set_meta(conn, "project_id", meta["project_id"])
         set_meta(conn, "ken_version", _ken_version())
+        # Pin the project's embedding model (records the recommended default
+        # for a fresh DB; keeps an existing DB's model on re-install).
+        from ken.embedder import configure_for_project
+
+        active_model = configure_for_project(conn)
         if verbose:
             print(f"[db] {'created' if fresh_db else 'opened'} {db_p.relative_to(root)}")
+            print(f"[embed] model: {active_model}")
 
         # Step 3: .gitignore — add `.ken/` if there's a gitignore at project root.
         _ensure_gitignore(root, verbose=verbose)

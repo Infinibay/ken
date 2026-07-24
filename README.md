@@ -119,6 +119,59 @@ From a ken checkout, `install.sh` can install the CLI and then run `ken install`
 ./install.sh --project /path/to/my-project --codex --embed
 ```
 
+## Embedding models & GPU
+
+New projects use a **multilingual** default (`paraphrase-multilingual-MiniLM-L12-v2`, 384-dim), so prompts written in any language retrieve code named in English. It is a drop-in for the older English-only default: same dimensions, same footprint, faster.
+
+A project's model is **pinned to its index**. Upgrading ken never re-encodes an existing project behind your back — cosine similarity across two models is meaningless, so switching always requires a deliberate re-encode. When a project is still on the old English-only model, the session-start brief points it out and tells you how to move:
+
+```sh
+# Re-encode every stored embedding with a new model (no re-index; uses the
+# source text ken already keeps). Records the model so it stays pinned.
+ken reembed --model sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+```
+
+Any [fastembed](https://github.com/qdrant/fastembed) model works out of the box.
+
+### GPU acceleration
+
+The embedder auto-detects a GPU and uses it, falling back to CPU when none is usable — no configuration. GPU helps bulk work (a full `ken reembed`, indexing a new project); the inline per-prompt embedding the daemon does is already sub-100 ms on CPU. Install the GPU runtime with the extra:
+
+```sh
+pip install 'ken-rank[gpu]'   # fastembed-gpu / onnxruntime-gpu (CUDA/ROCm)
+```
+
+Override detection with `KEN_EMBED_DEVICE=auto|cpu|gpu` (and `KEN_EMBED_DEVICE_ID=0`).
+
+### Stronger models (torch backend)
+
+Some of the best open-source embedding models are not shipped by fastembed. The optional `torch` extra adds a [sentence-transformers](https://www.sbert.net/) backend so you can use them — most notably **`Qwen/Qwen3-Embedding-0.6B`**, the top scorer in ken's own retrieval benchmark, and `BAAI/bge-m3`:
+
+```sh
+pip install 'ken-rank[torch]'
+ken reembed --model Qwen/Qwen3-Embedding-0.6B
+```
+
+ken selects the backend automatically from the model name — just point `ken reembed --model` at it.
+
+**How good is Qwen3?** On ken's benchmark (100 labeled prompt→file queries over a real project with Spanish prompts and English code), Qwen3-0.6B was clearly the strongest model tested:
+
+| Model | Recall@5 | MRR | Spanish Recall@5 |
+| --- | --- | --- | --- |
+| Qwen3-Embedding-0.6B (`[torch]`) | **0.77** | **0.68** | **0.75** |
+| multilingual-MiniLM (default) | 0.59 | 0.47 | 0.59 |
+| all-MiniLM (old English-only default) | 0.54 | 0.36 | 0.33 |
+
+That is roughly **+40% Recall@5 and +87% MRR** over the old default, and it more than doubles retrieval quality on non-English prompts.
+
+**The costs.** Qwen3 is not free to run:
+
+- **Heavier install.** The `[torch]` extra pulls PyTorch + sentence-transformers — hundreds of MB, versus the small ONNX-only default. The model itself is ~1.2 GB.
+- **Bigger index.** It is 1024-dimensional; stored vectors are ~2.7× the size of the 384-dim default, so `ken.db` grows accordingly.
+- **Slower on CPU.** It shines on a GPU (add `[gpu]` is for the fastembed path; the torch backend uses CUDA automatically when torch sees a device). On CPU the per-prompt embedding is noticeably slower than the fastembed default, which matters because the daemon embeds inline on every prompt.
+
+So it is worth it when you have a GPU (or don't mind the CPU latency) and want the best retrieval; otherwise the lightweight multilingual default is the better trade-off. The fastembed default always stays the no-torch path.
+
 ## Tell the assistant to use ken
 
 ken works through hooks automatically, but assistants behave better when your project instructions explicitly tell them how to use the ken MCP tools. Add the same guidance to the agent instruction file for the tool you use: `AGENTS.md` for Codex, `CLAUDE.md` for Claude Code, or both.

@@ -38,6 +38,51 @@ _FINDING_MAX = 140
 _MAX_FILES = 5
 _MAX_FINDINGS = 3
 
+# Re-surface the "a better embedding model is available" nudge at most this
+# often, so it reminds without nagging every session.
+_UPGRADE_THROTTLE_MS = 7 * 24 * 60 * 60 * 1000
+
+
+def _upgrade_notice(conn: sqlite3.Connection, now_ms: int) -> list[str]:
+    """Lines telling the agent a better (multilingual) embedding model is
+    available, or ``[]``. Fires only when the project is on the old
+    English-only default, and at most once per week (throttled via ``meta``).
+    """
+    try:
+        from ken.embedder import META_UPGRADE_SEEN, pending_upgrade
+
+        pend = pending_upgrade(conn)
+    except Exception:  # pragma: no cover - never let the brief fail on this
+        return []
+    if pend is None:
+        return []
+    _current, recommended = pend
+
+    from ken.db import get_meta, set_meta
+
+    seen = get_meta(conn, META_UPGRADE_SEEN)
+    if seen is not None:
+        try:
+            if now_ms - int(seen) < _UPGRADE_THROTTLE_MS:
+                return []
+        except ValueError:
+            pass
+    try:
+        set_meta(conn, META_UPGRADE_SEEN, str(now_ms))
+    except Exception:  # pragma: no cover - read-only conn shouldn't happen here
+        pass
+
+    short = recommended.rsplit("/", 1)[-1]
+    return [
+        "",
+        "🔔 ken: a better embedding model is available for this project.",
+        "   This index uses the old English-only model; the recommended one is "
+        f"multilingual ({short}) — same size, faster.",
+        f"   Upgrade without reindexing:  ken reembed --model {recommended}",
+        "   Tell the user they can migrate with that command, and why "
+        "(better retrieval, multilingual support).",
+    ]
+
 
 def build_session_brief(
     conn: sqlite3.Connection,
@@ -56,13 +101,15 @@ def build_session_brief(
     now_ms = int(time.time() * 1000) if now_ms is None else now_ms
     anchor = _latest_prompt(conn)
     findings = list_findings(conn, limit=_MAX_FINDINGS)
+    upgrade = _upgrade_notice(conn, now_ms)
 
-    if anchor is None and not findings:
+    if anchor is None and not findings and not upgrade:
         return ""
 
     lines: list[str] = [
         "Reanudando en este proyecto — contexto de ken (no hace falta recall):",
     ]
+    lines.extend(upgrade)
 
     if anchor is not None:
         age = _humanize_age(now_ms - anchor["created_at"])

@@ -81,6 +81,13 @@ class DaemonState:
         self.lock = threading.Lock()
         self.conn: sqlite3.Connection = connect(_paths.db_path(project_root))
         init_schema(self.conn)
+        # Pin the embedder to THIS project's model before anything embeds.
+        # Guarantees a global default bump never re-encodes queries for an
+        # existing project with the wrong model; records the model for a
+        # fresh DB so it resolves deterministically thereafter.
+        from ken.embedder import configure_for_project
+
+        self.embed_model = configure_for_project(self.conn)
         # agent_id (Claude session uuid) -> {"pk": int, "iter": int, "started_at": int}
         self.sessions: dict[str, dict[str, Any]] = {}
         self.last_activity = time.monotonic()
