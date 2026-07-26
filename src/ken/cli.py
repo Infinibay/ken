@@ -1026,6 +1026,19 @@ def _models_cli(*, as_json: bool) -> int:
     for name, dim, mb, desc in _TORCH_MODELS:
         print(f"  {dim:>4} {mb:>6}  {name}   [{desc}]")
 
+    # The static table is its own category: no network to run, no extra
+    # dependency, and it is only usable when its artifact is on the machine —
+    # so listing it unconditionally would advertise something a user may not be
+    # able to select.
+    from ken.embedder import STATIC_MODEL
+    from ken.embedder.static_head import artifact_available
+
+    if artifact_available(STATIC_MODEL):
+        tag = "   ← default" if default == STATIC_MODEL else ""
+        print("\nstatic table — a lookup and a sum, no model to run:\n")
+        print(f"  {'dim':>4} {'MB':>6}  model")
+        print(f"  {1024:>4} {14:>6}  {STATIC_MODEL}{tag}")
+
     print("\nSet the default for NEW projects:  ken default-model <model>")
     print("Switch THIS project:               ken reembed --model <model>")
     return 0

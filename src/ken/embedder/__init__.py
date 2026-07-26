@@ -54,6 +54,14 @@ LEGACY_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 # `ken default-model <name>` (stored in the user config); see recommended_model().
 RECOMMENDED_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
+# The fitted static table (see ``ken.embedder.static_head``). Preferred over
+# RECOMMENDED_MODEL for new projects whenever its artifact is present, because
+# on ken's own labelled task it measures recall@10 0.627 against that model's
+# 0.303 while encoding orders of magnitude faster and adding no dependency.
+# It is not unconditional only because the table is a file that has to get onto
+# the machine somehow; see ``recommended_model``.
+STATIC_MODEL = "ken/static-qwen3-r256-v1"
+
 META_EMBED_MODEL = "embed_model"
 META_UPGRADE_SEEN = "embed_upgrade_seen_at"
 META_DOC_SPACE = "embed_doc_space"
@@ -149,9 +157,28 @@ def set_user_default_model(model: str | None) -> Path:
 
 
 def recommended_model() -> str:
-    """The default model a fresh project should use: the user's configured
-    default if set, else the built-in RECOMMENDED_MODEL."""
-    return get_user_default_model() or RECOMMENDED_MODEL
+    """The default model a fresh project should use.
+
+    Priority: the user's configured default, then the static table if its
+    artifact is actually present, then the fastembed default.
+
+    The middle step is conditional on purpose. ``STATIC_MODEL`` is the best
+    default ken has by a distance — on ken's own labelled retrieval task it
+    scores recall@10 0.627 against 0.303 for the fastembed default, and it
+    encodes ~2 400x faster than the strongest transformer — but it is a *fitted
+    table*, not a model anyone can download yet. Naming it unconditionally would
+    make a fresh install fail on a missing file. So it is the default wherever
+    it exists and invisible where it does not, which is exactly the behaviour a
+    download would give once there is somewhere to download it from.
+    """
+    configured = get_user_default_model()
+    if configured:
+        return configured
+    from ken.embedder.static_head import artifact_available
+
+    if artifact_available(STATIC_MODEL):
+        return STATIC_MODEL
+    return RECOMMENDED_MODEL
 
 
 class Embedder(Protocol):
@@ -190,7 +217,20 @@ def _is_fastembed_model(model: str) -> bool:
         return True
 
 
+#: Prefix identifying a fitted static token table (``ken.embedder.static_head``).
+STATIC_PREFIX = "ken/static-"
+
+
+def is_static_model(model: str) -> bool:
+    """Whether *model* is a static table rather than a network to run."""
+    return model.startswith(STATIC_PREFIX)
+
+
 def _build_backend(model: str) -> Embedder:
+    if is_static_model(model):
+        from ken.embedder.static_head import StaticHeadEmbedder
+
+        return StaticHeadEmbedder(model)
     if _is_fastembed_model(model):
         from ken.embedder.onnx_fastembed import OnnxEmbedder
 
