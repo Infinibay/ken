@@ -241,6 +241,13 @@ class _FakeST:
                 # Finite, and what an unfilled GPU buffer survives
                 # normalisation as — F.normalize clamps the divisor.
                 return np.zeros((n, 4), dtype=np.float32)
+            if self._mode == "bf16":
+                # A *healthy* accelerator, in the precision one actually runs
+                # in. sentence-transformers loads a checkpoint in its native
+                # dtype, so Qwen3-Embedding is bfloat16 on CUDA, and a bf16
+                # unit vector's norm lands a few parts in a thousand off. These
+                # numbers are the ones measured on an RTX A5000.
+                return np.repeat(_UNIT * 1.003458, n, axis=0).astype(np.float32)
             if self._mode == "raise":
                 raise RuntimeError(
                     "The operator 'aten::_foo' is not currently implemented "
@@ -287,6 +294,36 @@ def test_mps_returning_all_zeros_demotes_to_cpu(monkeypatch):
     assert emb.device == "cpu"
     assert built == ["mps", "cpu"]
     assert np.linalg.norm(vecs[0]) == pytest.approx(1.0)
+
+
+def test_bfloat16_precision_does_not_demote(monkeypatch):
+    """A healthy GPU running the checkpoint's own bfloat16 must be kept.
+
+    This is the regression that mattered most in practice: sentence-transformers
+    loads Qwen3-Embedding in bf16 on CUDA, whose ~8-bit mantissa leaves a
+    normalised vector's norm off by ~3.5e-3 (measured on an RTX A5000). Against
+    the old 1e-3 tolerance that fired on the very first batch, so *every* ken
+    user with a GPU was silently demoted to the CPU with correct vectors in hand.
+    """
+    emb, built = _embedder_on(monkeypatch, "cuda", "bf16")
+    vecs = emb.embed_passages(["hola mundo"])
+
+    assert emb.device == "cuda", "a healthy bf16 GPU must not be demoted"
+    assert built == ["cuda"], "no CPU rebuild should have happened"
+    # …and what it hands back is exactly unit regardless of the device's dtype.
+    assert np.linalg.norm(vecs[0]) == pytest.approx(1.0, abs=1e-6)
+
+
+def test_returned_vectors_are_exactly_unit_on_cpu(monkeypatch):
+    """The float32 re-normalise applies everywhere, so the bytes written to the
+    index do not depend on which device built them."""
+    emb, _ = _embedder_on(monkeypatch, "cpu", "healthy")
+    vecs = emb.embed_passages(["uno", "dos"])
+
+    assert len(vecs) == 2
+    for v in vecs:
+        assert np.linalg.norm(v) == pytest.approx(1.0, abs=1e-6)
+        assert v.dtype == np.float32
 
 
 def test_mps_raising_demotes_to_cpu(monkeypatch):

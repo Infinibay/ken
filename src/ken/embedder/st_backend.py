@@ -68,6 +68,22 @@ if sys.platform == "darwin":
 # GPU there rather than trusting an index it cannot check.
 _MPS_MIN_TORCH = (2, 9)
 
+# How far a returned vector's norm may sit from 1.0 before the batch is treated
+# as garbage. This is not a precision target, it is a *garbage* threshold, and
+# the difference matters: sentence-transformers loads a checkpoint in its native
+# dtype on an accelerator, so Qwen3-Embedding runs in **bfloat16** on CUDA, and
+# bf16's ~8-bit mantissa leaves a normalised vector's norm off by up to ~4e-3.
+# Measured on an RTX A5000: norms spanning 0.998433–1.003458, i.e. 3.5e-3. The
+# previous 1e-3 was therefore not a correctness check on any GPU — it was a
+# guarantee of demotion on the first batch, and every ken user with a GPU
+# silently ran on the CPU with only a warning line to show for it.
+#
+# 5% still catches everything this guard exists for. The all-zero row it was
+# written to detect has norm 0.0, off by a full 1.0; NaN and Inf are caught
+# before the norm is taken at all. What sits between 4e-3 and 5e-2 is nothing a
+# working kernel produces in any precision anyone runs.
+_NORM_TOL = 0.05
+
 
 def _torch_version(torch) -> tuple[int, int] | None:
     """``(major, minor)`` from ``torch.__version__``, or None if unparseable.
@@ -260,6 +276,11 @@ class SentenceTransformerEmbedder:
         requested, every row owes us a unit vector — checking that catches both
         classes at once, for one norm over a small batch.
 
+        "Unit" is held to ``_NORM_TOL``, which is loose on purpose: on an
+        accelerator the model runs in the checkpoint's own dtype, and bf16
+        cannot represent a unit norm to better than a few parts in a thousand.
+        A tight tolerance here does not buy correctness, it just refuses the GPU.
+
         What it cannot catch is finite, unit-norm, *wrong-direction* output.
         Nothing short of re-encoding on the CPU would, and that means a second
         copy of the weights resident — a worse risk on a shared-memory Mac than
@@ -269,7 +290,7 @@ class SentenceTransformerEmbedder:
         if not np.isfinite(arr).all():
             return False
         norms = np.linalg.norm(np.atleast_2d(arr), axis=1)
-        return bool(np.abs(norms - 1.0).max() < 1e-3)
+        return bool(np.abs(norms - 1.0).max() < _NORM_TOL)
 
     def _encode_guarded(self, payload: list[str]) -> np.ndarray:
         """Encode *payload*, demoting a broken accelerator instead of trusting it.
@@ -322,7 +343,15 @@ class SentenceTransformerEmbedder:
         with self._lock:
             arr = self._encode_guarded(payload)
             self._free_device_cache()
-        return [np.asarray(v, dtype=np.float32) for v in arr]
+        # Re-normalise in float32 before the vector leaves. The model already
+        # normalised, but it did so in whatever precision it runs in, and on a
+        # GPU that is bf16 — accurate to a few parts in a thousand, not to
+        # float32. Doing it here costs one pass over a small batch and makes the
+        # bytes in ``ken.db`` canonical: identical text encodes to the same unit
+        # vector whether the index was built on a laptop CPU or a GPU box.
+        out = np.atleast_2d(np.asarray(arr, dtype=np.float32))
+        norms = np.linalg.norm(out, axis=1, keepdims=True)
+        return list(out / np.maximum(norms, 1e-12))
 
     def _free_device_cache(self) -> None:
         # Release cached blocks between batches so a long reembed doesn't
