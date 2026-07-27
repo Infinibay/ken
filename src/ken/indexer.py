@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 import sqlite3
 import time
@@ -40,10 +41,20 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from ken.nametokens import (
+    KIND_FILE,
+    KIND_SYMBOL,
+    NAME_TOKEN_VERSION,
+    file_tokens,
+    project_stopwords,
+    symbol_tokens,
+)
 from ken.parsers import detect_language
 
 if TYPE_CHECKING:  # pragma: no cover
     from ken.embedder import Embedder
+
+logger = logging.getLogger("ken.indexer")
 
 PARSER_VERSION = 4
 
@@ -138,11 +149,17 @@ class _Pending:
     language: str | None
     content_hash: bytes
     mtime_ns: int
+    stopwords: set[str] = field(default_factory=set)  # project-name tokens
     order: int = 0                        # position in the chunk, for progress
     parsed: object | None = None          # ParsedFile, for the parsed branch
     intent_texts: list[str] | None = None  # plain-text branch only
     texts: list[str] = field(default_factory=list)
     slots: list[tuple] = field(default_factory=list)
+    #: Vectors as arrays, for the vector store.
+    vecs: dict[tuple, "np.ndarray"] = field(default_factory=dict)
+    #: The same vectors serialised, for the legacy inline column. Only filled
+    #: when there is no store to write to, so the common path never pays for
+    #: both representations.
     blobs: dict[tuple, bytes] = field(default_factory=dict)
 
 
@@ -165,17 +182,38 @@ def index_files(
     stats = IndexStats()
     t0 = time.monotonic()
     todo = list(rels)
+    # Derived from the project directory name alone, so it is the same value at
+    # index time and at query time — which is what makes it safe to bake into
+    # the stored postings instead of recomputing it on every rank.
+    stopwords = project_stopwords(project_root)
+    # An index that predates the posting list (or was built by a different
+    # tokeniser) needs a full sweep, because every file will hash as unchanged
+    # and the incremental path will never run. A brand-new database does not:
+    # its postings are written as the rows are.
+    from ken.db import get_meta
+
+    needs_token_rebuild = (
+        get_meta(conn, "name_token_version") != str(NAME_TOKEN_VERSION)
+        and conn.execute("SELECT 1 FROM ci_files LIMIT 1").fetchone() is not None
+    )
     pool = _open_pool(_worker_count(len(todo)))
+    stores = _open_stores(conn, project_root, embedder)
     try:
         for start in range(0, len(todo), _EMBED_CHUNK_FILES):
             chunk = todo[start : start + _EMBED_CHUNK_FILES]
             events: list[tuple[int, str, str]] = []
             pending = _prepare_chunk(
                 conn, project_root, chunk, max_file_bytes, embedder, stats,
-                events, pool,
+                events, pool, stopwords,
             )
-            _embed_pending(pending, embedder)
-            _write_pending(conn, pending, stats, events)
+            _embed_pending(pending, embedder, stores)
+            _write_pending(conn, pending, stats, events, stores)
+            if stores is not None:
+                # Once per chunk rather than once per file: 128 files' worth of
+                # vectors per fsync instead of 65 907 of them on a kernel-sized
+                # install.
+                for store in stores.by_space.values():
+                    store.flush()
             if on_progress:
                 # Sorted by position in the chunk, so the log reads in the same
                 # order the files were walked. Skips are decided before the
@@ -185,10 +223,86 @@ def index_files(
     finally:
         if pool is not None:
             pool.shutdown(wait=False, cancel_futures=True)
+        if stores is not None:
+            stores.close()
 
     stats.elapsed_s = time.monotonic() - t0
     _resolve_internal_imports(conn, project_root)
+    if needs_token_rebuild:
+        rebuild_name_tokens(conn, project_root)
+    else:
+        # Stamp last: the ranker reads this to decide whether the posting list
+        # can be trusted, and a half-written index must not claim it can.
+        from ken.db import set_meta
+
+        set_meta(conn, "name_token_version", str(NAME_TOKEN_VERSION))
     return stats
+
+
+def rebuild_name_tokens(conn: sqlite3.Connection, project_root: Path) -> int:
+    """Rebuild `ci_name_tokens` from the rows already in the index.
+
+    Needed because the incremental path cannot cover the upgrade case: on an
+    existing index every file hashes as unchanged, so no write path runs and no
+    posting is ever emitted — yet the stamp would go on and the ranker would
+    trust an empty posting list. That failure is silent, which is the worst kind,
+    so the upgrade gets its own explicit sweep.
+
+    Reads names out of SQLite only: no file I/O, no parsing, no embedding. On a
+    771 563-symbol index this is the ~11 s that used to be paid on *every* query,
+    paid once.
+    """
+    from ken.db import set_meta
+
+    stopwords = project_stopwords(project_root)
+    with conn:
+        conn.execute("DELETE FROM ci_name_tokens")
+        # Staging table first, then one ordered INSERT..SELECT. `ci_name_tokens`
+        # is WITHOUT ROWID, so its primary key *is* its storage: inserting 3.4M
+        # postings in token order means random B-tree pages, and on a 4 GB
+        # database that is a disk read per row. Measured: still unfinished after
+        # ten minutes at 17% CPU, pure I/O wait. Feeding them pre-sorted turns
+        # every insert into an append at the right edge of the tree, and letting
+        # SQLite do the sort keeps peak memory flat instead of holding 3.4M
+        # Python tuples.
+        conn.execute(
+            "CREATE TEMP TABLE IF NOT EXISTS _tok_stage "
+            "(token TEXT, kind INTEGER, row_id INTEGER)"
+        )
+        conn.execute("DELETE FROM _tok_stage")
+
+        rows = conn.execute("SELECT id, path FROM ci_files").fetchall()
+        conn.executemany(
+            "INSERT INTO _tok_stage(token, kind, row_id) VALUES (?, ?, ?)",
+            (
+                (token, KIND_FILE, int(r["id"]))
+                for r in rows
+                for token in file_tokens(r["path"], extra_stopwords=stopwords)
+            ),
+        )
+        written = len(rows)
+
+        srows = conn.execute("SELECT id, kind, qualname, name FROM ci_symbols").fetchall()
+        conn.executemany(
+            "INSERT INTO _tok_stage(token, kind, row_id) VALUES (?, ?, ?)",
+            (
+                (token, KIND_SYMBOL, int(r["id"]))
+                for r in srows
+                for token in symbol_tokens(
+                    str(r["kind"] or ""), r["qualname"], str(r["name"]),
+                    extra_stopwords=stopwords,
+                )
+            ),
+        )
+        written += len(srows)
+
+        conn.execute(
+            "INSERT OR IGNORE INTO ci_name_tokens(token, kind, row_id) "
+            "SELECT token, kind, row_id FROM _tok_stage ORDER BY kind, token, row_id"
+        )
+        conn.execute("DROP TABLE _tok_stage")
+        set_meta(conn, "name_token_version", str(NAME_TOKEN_VERSION))
+    return written
 
 
 def _open_pool(workers: int):
@@ -234,6 +348,7 @@ def _prepare_chunk(
     stats: IndexStats,
     events: list[tuple[int, str, str]],
     pool=None,
+    stopwords: set[str] | None = None,
 ) -> list[_Pending]:
     """Read, hash and parse every file in *chunk*; collect the texts to embed.
 
@@ -294,6 +409,7 @@ def _prepare_chunk(
                 language=None,
                 content_hash=content_hash,
                 mtime_ns=st.st_mtime_ns,
+                stopwords=stopwords or set(),
                 order=order,
                 intent_texts=intent_texts,
             )
@@ -337,6 +453,7 @@ def _prepare_chunk(
                 language=language,
                 content_hash=content_hash,
                 mtime_ns=st.st_mtime_ns,
+                stopwords=stopwords or set(),
                 order=order,
             )
         )
@@ -370,7 +487,9 @@ def _prepare_chunk(
     return pending
 
 
-def _embed_pending(pending: list[_Pending], embedder: "Embedder | None") -> None:
+def _embed_pending(
+    pending: list[_Pending], embedder: "Embedder | None", stores: "_Stores | None" = None
+) -> None:
     """One embedder call for the whole chunk, then hand the vectors back out.
 
     This is the entire point of chunking. Splitting the batch by file would
@@ -388,7 +507,10 @@ def _embed_pending(pending: list[_Pending], embedder: "Embedder | None") -> None
     pos = 0
     for item in pending:
         for slot in item.slots:
-            item.blobs[slot] = vec_to_blob(vecs[pos])
+            if stores is not None:
+                item.vecs[slot] = vecs[pos]
+            else:
+                item.blobs[slot] = vec_to_blob(vecs[pos])
             pos += 1
         item.texts = []
 
@@ -398,24 +520,95 @@ def _write_pending(
     pending: list[_Pending],
     stats: IndexStats,
     events: list[tuple[int, str, str]],
+    stores: "_Stores | None" = None,
 ) -> None:
     """One transaction per file, as before — chunking changed when vectors are
     computed, not how durably a file lands."""
     for item in pending:
         if item.language is None:
-            _write_plain(conn, item)
+            _write_plain(conn, item, stores)
             stats.skipped_no_lang += 1
             events.append((item.order, item.rel, "indexed:noparse"))
         else:
-            _write_parsed(conn, item)
+            _write_parsed(conn, item, stores)
             stats.parsed += 1
             stats.symbols += len(item.parsed.symbols)
             stats.imports += len(item.parsed.imports)
             events.append((item.order, item.rel, "indexed"))
 
 
-def _write_plain(conn: sqlite3.Connection, item: _Pending) -> None:
-    with conn:
+class _Stores:
+    """The three vector spaces, opened once per `index_files` call.
+
+    Held together so the write helpers take one argument instead of three, and
+    so a failure to open any of them degrades the whole call to the legacy
+    inline-BLOB path rather than leaving a half-converted index.
+    """
+
+    def __init__(self, conn: sqlite3.Connection, project_root: Path, dim: int,
+                 model: str | None):
+        from ken.vectors import SPACES, VectorStore
+
+        self.by_space = {
+            space: VectorStore(project_root, space, dim=dim, model=model)
+            for space in SPACES
+        }
+
+    def __getitem__(self, space: str):
+        return self.by_space[space]
+
+    def close(self) -> None:
+        for store in self.by_space.values():
+            store.close()
+
+
+def _open_stores(
+    conn: sqlite3.Connection, project_root: Path, embedder: "Embedder | None"
+) -> "_Stores | None":
+    """Open the vector spaces, or return None to keep writing inline BLOBs.
+
+    Returning None rather than raising is the same contract the parser pool
+    follows: an environment that cannot host the store should index a little
+    slower, not fail. The dual-read path in the ranker is what makes that safe.
+    """
+    if embedder is None:
+        return None
+    try:
+        from ken.embedder import active_model
+
+        return _Stores(conn, project_root, int(embedder.dim), active_model())
+    except Exception:
+        logger.warning("vector store unavailable; writing inline embeddings", exc_info=True)
+        return None
+
+
+def _take_slots(
+    conn: sqlite3.Connection, space: str, count: int
+) -> list[int]:
+    from ken.vectors import allocate
+
+    return allocate(conn, space, count)
+
+
+def _reuse_or_allocate_file_slot(conn: sqlite3.Connection, file_id: int) -> int:
+    """A file row is UPSERTed, never deleted, so its slot survives a re-index.
+
+    Reusing it keeps an edited file from consuming a fresh slot on every save —
+    the churn that would otherwise make the store grow without bound while the
+    live row count stayed flat.
+    """
+    row = conn.execute("SELECT vec_slot FROM ci_files WHERE id = ?", (file_id,)).fetchone()
+    if row is not None and row["vec_slot"] is not None:
+        return int(row["vec_slot"])
+    return _take_slots(conn, "ci_files", 1)[0]
+
+
+def _write_plain(
+    conn: sqlite3.Connection, item: _Pending, stores: "_Stores | None" = None
+) -> None:
+    from ken.vectors import immediate
+
+    with immediate(conn):
         file_id = _upsert_file_row(
             conn,
             item.rel,
@@ -423,25 +616,40 @@ def _write_plain(conn: sqlite3.Connection, item: _Pending) -> None:
             content_hash=item.content_hash,
             mtime_ns=item.mtime_ns,
             symbol_count=0,
-            embedding=item.blobs.get(("file",)),
+            embedding=None if stores else item.blobs.get(("file",)),
         )
+        _write_file_tokens(conn, file_id, item.rel, item.stopwords)
+        # These fire the slot-freeing triggers, so allocation below can reuse
+        # what this file gave back instead of growing the store on every edit.
         conn.execute("DELETE FROM ci_symbols WHERE file_id = ?", (file_id,))
         conn.execute("DELETE FROM ci_imports WHERE from_file_id = ?", (file_id,))
         conn.execute("DELETE FROM ci_intent_sources WHERE file_id = ?", (file_id,))
-        for i, intent_text in enumerate(item.intent_texts or ()):
+        _store_file_vector(conn, stores, file_id, item)
+
+        intents = list(enumerate(item.intent_texts or ()))
+        intent_slots = _store_vectors(
+            conn, stores, "ci_intent_sources",
+            [item.vecs.get(("plain_intent", i)) for i, _ in intents],
+        )
+        for pos, (i, intent_text) in enumerate(intents):
             _insert_file_intent_source(
                 conn,
                 file_id,
                 source_kind="plain_text",
                 text=intent_text,
-                embedding=item.blobs.get(("plain_intent", i)),
+                embedding=None if stores else item.blobs.get(("plain_intent", i)),
                 weight=0.55,
+                vec_slot=intent_slots[pos],
             )
 
 
-def _write_parsed(conn: sqlite3.Connection, item: _Pending) -> None:
+def _write_parsed(
+    conn: sqlite3.Connection, item: _Pending, stores: "_Stores | None" = None
+) -> None:
+    from ken.vectors import immediate
+
     parsed = item.parsed
-    with conn:  # implicit BEGIN/COMMIT around the whole file write
+    with immediate(conn):
         file_id = _upsert_file_row(
             conn,
             item.rel,
@@ -449,26 +657,47 @@ def _write_parsed(conn: sqlite3.Connection, item: _Pending) -> None:
             content_hash=item.content_hash,
             mtime_ns=item.mtime_ns,
             symbol_count=len(parsed.symbols),
-            embedding=item.blobs.get(("file",)),
+            embedding=None if stores else item.blobs.get(("file",)),
         )
+        _write_file_tokens(conn, file_id, item.rel, item.stopwords)
         # Wipe and re-insert symbols/imports for this file. Cheap:
         # CASCADE drops references too, and the file's symbols are
-        # bounded.
+        # bounded. The deletes also return this file's vector slots to the free
+        # list via trigger, which is what keeps a re-indexed file reusing its own
+        # slots rather than consuming fresh ones on every save.
         conn.execute("DELETE FROM ci_symbols WHERE file_id = ?", (file_id,))
         conn.execute("DELETE FROM ci_imports WHERE from_file_id = ?", (file_id,))
         conn.execute("DELETE FROM ci_intent_sources WHERE file_id = ?", (file_id,))
+        _store_file_vector(conn, stores, file_id, item)
+
+        # Every vector this file contributes to a space is allocated and written
+        # in one go: one allocation query and one write call per space per file,
+        # instead of per row.
+        symbol_slots = _store_vectors(
+            conn, stores, "ci_symbols",
+            [item.vecs.get(("symbol", i)) for i in range(len(parsed.symbols))],
+        )
+        intent_vecs: list = []
+        if parsed.docstring:
+            intent_vecs.append(item.vecs.get(("module_doc",)))
+        doc_positions = [i for i, s in enumerate(parsed.symbols) if s.docstring]
+        intent_vecs.extend(item.vecs.get(("symbol_doc", i)) for i in doc_positions)
+        intent_slots = _store_vectors(conn, stores, "ci_intent_sources", intent_vecs)
+        intent_iter = iter(intent_slots)
+
         if parsed.docstring:
             _insert_file_intent_source(
                 conn,
                 file_id,
                 source_kind="module_docstring",
                 text=parsed.docstring,
-                embedding=item.blobs.get(("module_doc",)),
+                embedding=None if stores else item.blobs.get(("module_doc",)),
+                vec_slot=next(intent_iter),
             )
         for i, s in enumerate(parsed.symbols):
             cur = conn.execute(
-                "INSERT INTO ci_symbols(file_id, kind, name, qualname, line_start, line_end, docstring, embedding) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO ci_symbols(file_id, kind, name, qualname, line_start, line_end, docstring, embedding, vec_slot) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     file_id,
                     s.kind,
@@ -477,17 +706,22 @@ def _write_parsed(conn: sqlite3.Connection, item: _Pending) -> None:
                     s.line_start,
                     s.line_end,
                     s.docstring,
-                    item.blobs.get(("symbol", i)),
+                    None if stores else item.blobs.get(("symbol", i)),
+                    symbol_slots[i],
                 ),
+            )
+            _write_symbol_tokens(
+                conn, int(cur.lastrowid), s.kind, s.qualname, s.name, item.stopwords
             )
             if s.docstring:
                 _insert_symbol_intent_source(
                     conn,
                     file_id,
                     int(cur.lastrowid),
+                    vec_slot=next(intent_iter),
                     source_kind="symbol_docstring",
                     text=s.docstring,
-                    embedding=item.blobs.get(("symbol_doc", i)),
+                    embedding=None if stores else item.blobs.get(("symbol_doc", i)),
                 )
         if parsed.imports:
             conn.executemany(
@@ -496,6 +730,82 @@ def _write_parsed(conn: sqlite3.Connection, item: _Pending) -> None:
             )
 
 
+def _store_vectors(
+    conn: sqlite3.Connection,
+    stores: "_Stores | None",
+    space: str,
+    vecs: list,
+) -> list[int | None]:
+    """Allocate and write one space's worth of vectors for a single file.
+
+    Returns a slot per input position, ``None`` where there was no vector — so
+    callers can pass the list straight into their INSERTs without tracking a
+    second index. Positions with no vector consume no slot.
+    """
+    if stores is None or not vecs:
+        return [None] * len(vecs)
+    present = [i for i, v in enumerate(vecs) if v is not None]
+    if not present:
+        return [None] * len(vecs)
+    slots = _take_slots(conn, space, len(present))
+    import numpy as np
+
+    stores[space].write(slots, np.stack([vecs[i] for i in present]))
+    out: list[int | None] = [None] * len(vecs)
+    for slot, i in zip(slots, present):
+        out[i] = slot
+    return out
+
+
+def _store_file_vector(
+    conn: sqlite3.Connection, stores: "_Stores | None", file_id: int, item: _Pending
+) -> None:
+    """The file's own vector, which reuses the row's existing slot if it has one."""
+    if stores is None:
+        return
+    vec = item.vecs.get(("file",))
+    if vec is None:
+        return
+    slot = _reuse_or_allocate_file_slot(conn, file_id)
+    stores["ci_files"].write([slot], vec)
+    conn.execute("UPDATE ci_files SET vec_slot = ? WHERE id = ?", (slot, file_id))
+
+
+def _write_file_tokens(
+    conn: sqlite3.Connection, file_id: int, rel: str, stopwords: set[str]
+) -> None:
+    """Refresh a file's name-token postings.
+
+    The delete is explicit here because a file row is UPSERTed, not deleted — the
+    `trg_ci_files_drop_tokens` trigger only fires when the row actually goes
+    away. Symbols need no such call: they are deleted and re-inserted on every
+    content change, so the trigger sweeps their postings for free.
+    """
+    conn.execute(
+        "DELETE FROM ci_name_tokens WHERE kind = ? AND row_id = ?", (KIND_FILE, file_id)
+    )
+    tokens = file_tokens(rel, extra_stopwords=stopwords)
+    if tokens:
+        conn.executemany(
+            "INSERT OR IGNORE INTO ci_name_tokens(token, kind, row_id) VALUES (?, ?, ?)",
+            [(t, KIND_FILE, file_id) for t in tokens],
+        )
+
+
+def _write_symbol_tokens(
+    conn: sqlite3.Connection,
+    symbol_id: int,
+    kind: str,
+    qualname: str | None,
+    name: str,
+    stopwords: set[str],
+) -> None:
+    tokens = symbol_tokens(kind, qualname, name, extra_stopwords=stopwords)
+    if tokens:
+        conn.executemany(
+            "INSERT OR IGNORE INTO ci_name_tokens(token, kind, row_id) VALUES (?, ?, ?)",
+            [(t, KIND_SYMBOL, symbol_id) for t in tokens],
+        )
 
 
 def delete_file(conn: sqlite3.Connection, rel: str) -> bool:
@@ -546,7 +856,12 @@ def _is_unchanged(
     forcing the user to wait for fastembed during the install.
     """
     row = conn.execute(
-        "SELECT content_hash, parser_version, embedding IS NOT NULL AS has_emb "
+        # A vector now counts whether it sits inline or in the mapped store.
+        # Checking only the column would make every file look un-embedded on a
+        # converted index, and the daemon's warm pass would re-encode the entire
+        # repository on every startup, forever.
+        "SELECT content_hash, parser_version, "
+        "       (embedding IS NOT NULL OR vec_slot IS NOT NULL) AS has_emb "
         "FROM ci_files WHERE path = ?",
         (rel,),
     ).fetchone()
@@ -595,11 +910,12 @@ def _insert_file_intent_source(
     text: str,
     embedding: bytes | None,
     weight: float = 1.0,
+    vec_slot: int | None = None,
 ) -> None:
     conn.execute(
-        "INSERT INTO ci_intent_sources(file_id, source_kind, text, embedding, weight, updated_at) "
-        "VALUES (?, ?, ?, ?, ?, ?)",
-        (file_id, source_kind, text, embedding, weight, int(time.time() * 1000)),
+        "INSERT INTO ci_intent_sources(file_id, source_kind, text, embedding, vec_slot, weight, updated_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (file_id, source_kind, text, embedding, vec_slot, weight, int(time.time() * 1000)),
     )
 
 
@@ -611,11 +927,12 @@ def _insert_symbol_intent_source(
     source_kind: str,
     text: str,
     embedding: bytes | None,
+    vec_slot: int | None = None,
 ) -> None:
     conn.execute(
-        "INSERT INTO ci_intent_sources(file_id, symbol_id, source_kind, text, embedding, weight, updated_at) "
-        "VALUES (?, ?, ?, ?, ?, 1.0, ?)",
-        (file_id, symbol_id, source_kind, text, embedding, int(time.time() * 1000)),
+        "INSERT INTO ci_intent_sources(file_id, symbol_id, source_kind, text, embedding, vec_slot, weight, updated_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, 1.0, ?)",
+        (file_id, symbol_id, source_kind, text, embedding, vec_slot, int(time.time() * 1000)),
     )
 
 

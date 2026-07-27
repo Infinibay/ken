@@ -144,6 +144,66 @@ def _flush(conn: sqlite3.Connection, sql: str, rows: list[tuple]) -> None:
         rows.clear()
 
 
+#: Set while a re-encode is running, cleared when it finishes.
+#:
+#: A reembed cannot be one transaction: on a kernel-sized index it runs for
+#: minutes, and holding SQLite's write lock that long would make every hook in
+#: the daemon fail on `busy_timeout` rather than merely wait. So it stays
+#: batched — and instead of pretending that is atomic, it says so. An index
+#: whose marker survives was interrupted partway and is a mix of two encodings;
+#: `ken status` reports it and re-running finishes the job. That converts a
+#: silent inconsistency into a visible, recoverable one, which is the property
+#: that was actually missing.
+META_IN_PROGRESS = "reembed_in_progress"
+
+
+def interrupted_reembed(conn: sqlite3.Connection) -> str | None:
+    """Timestamp of an unfinished re-encode, or None."""
+    from ken.db import get_meta
+
+    return get_meta(conn, META_IN_PROGRESS)
+
+
+def _reembed_vectors(
+    conn: sqlite3.Connection,
+    store,
+    table: str,
+    space: str,
+    ids: list[int],
+    vecs: list,
+) -> None:
+    """Write a batch of re-encoded vectors, reusing each row's existing slot.
+
+    Rows that have no slot yet — a legacy index whose vectors are still inline —
+    get one here, which makes `ken reembed` a migration path as well as a
+    re-encode.
+    """
+    from ken.vectors import allocate, immediate
+
+    if not ids:
+        return
+    with immediate(conn):
+        placeholders = ",".join("?" * len(ids))
+        existing = {
+            int(r["id"]): r["vec_slot"]
+            for r in conn.execute(
+                f"SELECT id, vec_slot FROM {table} WHERE id IN ({placeholders})", ids
+            )
+        }
+        needed = [i for i in ids if existing.get(i) is None]
+        fresh = iter(allocate(conn, space, len(needed)) if needed else ())
+        slots = [
+            int(existing[i]) if existing.get(i) is not None else next(fresh) for i in ids
+        ]
+        import numpy as np
+
+        store.write(slots, np.stack(vecs))
+        conn.executemany(
+            f"UPDATE {table} SET embedding = NULL, vec_slot = ? WHERE id = ?",
+            list(zip(slots, ids)),
+        )
+
+
 def reembed(
     conn: sqlite3.Connection,
     *,
@@ -157,6 +217,9 @@ def reembed(
 
     counts = {"files": 0, "symbols": 0, "intent": 0, "prompts": 0, "findings": 0}
     dim: int | None = None
+
+    stores = _open_reembed_stores(conn, emb, model_name, say)
+    set_meta(conn, META_IN_PROGRESS, str(int(time.time() * 1000)))
 
     def encode(texts: list[str]):
         """Encode stored *documents* (files, symbols, intents, findings)."""
@@ -181,15 +244,24 @@ def reembed(
         return vecs
 
     # ── symbols ──────────────────────────────────────────────────────
+    # `vec_slot IS NOT NULL` catches rows whose vector already moved to the
+    # store; without it a second reembed would find nothing to do.
     sym_rows = conn.execute(
-        "SELECT id, kind, name, docstring FROM ci_symbols WHERE embedding IS NOT NULL"
+        "SELECT id, kind, name, docstring FROM ci_symbols "
+        "WHERE embedding IS NOT NULL OR vec_slot IS NOT NULL"
     ).fetchall()
     pending: list[tuple] = []
     for i in range(0, len(sym_rows), _BATCH):
         chunk = sym_rows[i : i + _BATCH]
         vecs = encode([embed_symbol_text(r["kind"], r["name"], r["docstring"]) for r in chunk])
-        pending.extend((vec_to_blob(v), r["id"]) for r, v in zip(chunk, vecs))
-        _flush(conn, "UPDATE ci_symbols SET embedding=? WHERE id=?", pending)
+        if stores is not None:
+            _reembed_vectors(
+                conn, stores["ci_symbols"], "ci_symbols", "ci_symbols",
+                [int(r["id"]) for r in chunk], vecs,
+            )
+        else:
+            pending.extend((vec_to_blob(v), r["id"]) for r, v in zip(chunk, vecs))
+            _flush(conn, "UPDATE ci_symbols SET embedding=? WHERE id=?", pending)
     counts["symbols"] = len(sym_rows)
     say(f"symbols: {counts['symbols']}")
 
@@ -207,20 +279,33 @@ def reembed(
         ids.append(f["id"])
     for i in range(0, len(texts), _BATCH):
         vecs = encode(texts[i : i + _BATCH])
-        pending.extend((vec_to_blob(v), fid) for fid, v in zip(ids[i : i + _BATCH], vecs))
-        _flush(conn, "UPDATE ci_files SET embedding=? WHERE id=?", pending)
+        batch_ids = [int(x) for x in ids[i : i + _BATCH]]
+        if stores is not None:
+            _reembed_vectors(
+                conn, stores["ci_files"], "ci_files", "ci_files", batch_ids, vecs
+            )
+        else:
+            pending.extend((vec_to_blob(v), fid) for fid, v in zip(batch_ids, vecs))
+            _flush(conn, "UPDATE ci_files SET embedding=? WHERE id=?", pending)
     counts["files"] = len(ids)
     say(f"files: {counts['files']}")
 
     # ── intent sources ───────────────────────────────────────────────
     int_rows = conn.execute(
-        "SELECT id, source_kind, text FROM ci_intent_sources WHERE embedding IS NOT NULL"
+        "SELECT id, source_kind, text FROM ci_intent_sources "
+        "WHERE embedding IS NOT NULL OR vec_slot IS NOT NULL"
     ).fetchall()
     for i in range(0, len(int_rows), _BATCH):
         chunk = int_rows[i : i + _BATCH]
         vecs = encode([embed_intent_text(r["source_kind"], r["text"]) for r in chunk])
-        pending.extend((vec_to_blob(v), r["id"]) for r, v in zip(chunk, vecs))
-        _flush(conn, "UPDATE ci_intent_sources SET embedding=? WHERE id=?", pending)
+        if stores is not None:
+            _reembed_vectors(
+                conn, stores["ci_intent_sources"], "ci_intent_sources",
+                "ci_intent_sources", [int(r["id"]) for r in chunk], vecs,
+            )
+        else:
+            pending.extend((vec_to_blob(v), r["id"]) for r, v in zip(chunk, vecs))
+            _flush(conn, "UPDATE ci_intent_sources SET embedding=? WHERE id=?", pending)
     counts["intent"] = len(int_rows)
     say(f"intent: {counts['intent']}")
 
@@ -248,6 +333,10 @@ def reembed(
     counts["findings"] = len(find_rows)
     say(f"findings: {counts['findings']}")
 
+    if stores is not None:
+        for store in stores.values():
+            store.close()
+
     probe_vec = emb.embed_query(PROBE_TEXT)
     _store_probe(conn, probe_vec)
     # Every vector in the DB now uses the current document/query split, so this
@@ -257,6 +346,50 @@ def reembed(
     if dim is not None:
         set_meta(conn, META_DIM, str(dim))
     set_meta(conn, META_AT, str(int(time.time() * 1000)))
+    conn.execute("DELETE FROM meta WHERE key = ?", (META_IN_PROGRESS,))
     counts["model"] = model_name
     counts["dim"] = dim
     return counts
+
+
+def _open_reembed_stores(conn, emb, model_name: str, say) -> dict | None:
+    """Open (or rebuild) the vector spaces this re-encode will write into.
+
+    A model swap that changes dimensionality invalidates every stored vector and
+    the files that hold them: the manifest pins a width, and a 1024-wide segment
+    cannot be reinterpreted as 384-wide. So a dimension change wipes the store
+    and starts over, resetting the slot bookkeeping with it — which is safe
+    precisely because reembed is the operation that regenerates every vector
+    anyway. Same-dimension re-encodes rewrite in place and keep their slots.
+    """
+    from ken.vectors import SPACES, VectorStore, VectorStoreError, project_root_for
+
+    root = project_root_for(conn)
+    if root is None:
+        return None
+    dim = int(getattr(emb, "dim", 0) or 0)
+    if dim <= 0:
+        return None
+    try:
+        return {s: VectorStore(root, s, dim=dim, model=model_name) for s in SPACES}
+    except VectorStoreError:
+        say("vector store has a different width; rebuilding it from scratch")
+        _reset_vector_store(conn, root)
+        try:
+            return {s: VectorStore(root, s, dim=dim, model=model_name) for s in SPACES}
+        except (VectorStoreError, OSError):
+            return None
+    except OSError:
+        return None
+
+
+def _reset_vector_store(conn, root) -> None:
+    import shutil
+
+    from ken.vectors import ALLOC_TABLE, FREE_TABLE, SPACES, vectors_dir
+
+    shutil.rmtree(vectors_dir(root), ignore_errors=True)
+    for space in SPACES:
+        conn.execute(f"DELETE FROM {ALLOC_TABLE} WHERE space = ?", (space,))
+        conn.execute(f"DELETE FROM {FREE_TABLE} WHERE space = ?", (space,))
+        conn.execute(f"UPDATE {space} SET vec_slot = NULL")

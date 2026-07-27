@@ -21,6 +21,15 @@ from typing import Any
 import numpy as np
 
 from ken.embedder import rank_against
+from ken.nametokens import (
+    _STOPWORDS,
+    KIND_FILE,
+    KIND_SYMBOL,
+    NAME_TOKEN_VERSION,
+    name_tokens,
+    project_stopwords,
+)
+from ken import vectors
 from ken.ranker import FindingItem, RankedItem
 
 # ── Channel 1: Reactive ──────────────────────────────────────────────
@@ -614,33 +623,53 @@ def fuzzy_scores(
     return file_items, symbol_items
 
 
+_DOC_INTENT_COLS = (
+    "SELECT i.vec_slot, i.source_kind, i.text, i.embedding, i.weight, "
+    "       f.path AS file_path, s.qualname, s.line_start "
+    "FROM ci_intent_sources i "
+    "JOIN ci_files f ON f.id = i.file_id "
+    "LEFT JOIN ci_symbols s ON s.id = i.symbol_id"
+)
+
+
 def doc_intent_scores(
     conn: sqlite3.Connection, prompt_embedding: np.ndarray
 ) -> tuple[list[RankedItem], list[RankedItem]]:
     """Score files/symbols by explicit purpose text such as docstrings."""
     q = prompt_embedding.astype(np.float32, copy=False)
     q = q / (np.linalg.norm(q) + 1e-12)
-    rows = conn.execute(
-        """
-        SELECT i.source_kind, i.text, i.embedding, i.weight,
-               f.path AS file_path,
-               s.qualname, s.line_start
-        FROM ci_intent_sources i
-        JOIN ci_files f ON f.id = i.file_id
-        LEFT JOIN ci_symbols s ON s.id = i.symbol_id
-        WHERE i.embedding IS NOT NULL
-        """
-    ).fetchall()
-    if not rows:
-        return [], []
 
-    sims, kept = rank_against(q, [r["embedding"] for r in rows], strict=False)
-    rows = [rows[i] for i in kept]
-    thr = _adaptive_threshold(sims, DOC_INTENT_MIN_SIM)
+    hit = vectors.live_scores(conn, "ci_intent_sources", q)
+    if hit is not None:
+        slots, sims_all = hit
+        thr = _adaptive_threshold(sims_all, DOC_INTENT_MIN_SIM)
+        top_slots, top_sims = _top_slots(sims_all, slots, thr)
+        if top_slots.size == 0:
+            return [], []
+        by_slot = _rows_by_slot(
+            conn, f"{_DOC_INTENT_COLS} WHERE i.vec_slot IN ({{placeholders}})", top_slots
+        )
+        pairs = [
+            (by_slot[int(s)], float(sim))
+            for s, sim in zip(top_slots, top_sims)
+            if int(s) in by_slot
+        ]
+    else:
+        rows = conn.execute(
+            f"{_DOC_INTENT_COLS} WHERE i.embedding IS NOT NULL"
+        ).fetchall()
+        if not rows:
+            return [], []
+        sims, kept = rank_against(
+            q, [r["embedding"] for r in rows], strict=False
+        )
+        rows = [rows[i] for i in kept]
+        thr = _adaptive_threshold(sims, DOC_INTENT_MIN_SIM)
+        pairs = list(zip(rows, (float(s) for s in sims)))
+
     file_scores: dict[str, RankedItem] = {}
     symbol_scores: dict[str, RankedItem] = {}
-    for row, sim in zip(rows, sims):
-        sim_raw = float(sim)
+    for row, sim_raw in pairs:
         if sim_raw < thr:
             continue
         target_path = str(row["file_path"])
@@ -827,37 +856,17 @@ LEXICAL_GENERIC_EXACT_SYMBOLS = frozenset(
 )
 CONTEXTUAL_LEXICAL_RECENT_PROMPTS = 3
 CONTEXTUAL_LEXICAL_BONUS = 0.6
-_WORD_RE = re.compile(r"[A-Za-z][A-Za-z0-9_]{2,}")
 _CONTINUATION_RE = re.compile(
     r"\b(continue|continuing|keep going|carry on|resume|sigue|seguir|continua|"
     r"continuar|contin[uú]a|segu[ií]|seguimos)\b",
     re.IGNORECASE,
 )
-_STOPWORDS = frozenset(
-    "the and for with from into this that what where when why how fix bug error "
-    "traceback file line test tests code src function class method module "
-    "este esta esto ese esa eso con para que por los las una uno momento ahora "
-    "sigue seguir continua continuar continuemos seguimos path foco extra cual "
-    "quien donde cuando como clase codigo código fichero archivo funcion función".split()
-)
-_TOKEN_ALIASES = {
-    "class": {"class"},
-    "code": {"code"},
-    "file": {"file"},
-    "scheduler": {"sched"},
-    "scheduling": {"sched"},
-    "parsear": {"parse", "parser", "parsers", "parsed"},
-    "parsea": {"parse", "parser", "parsers", "parsed"},
-    "parseo": {"parse", "parser", "parsers", "parsed"},
-    "parse": {"parser", "parsers", "parsed"},
-    "parser": {"parse", "parsers", "parsed"},
-    "parsing": {"parse", "parser", "parsers", "parsed"},
-    "archivo": {"file", "source"},
-    "fichero": {"file", "source"},
-    "codigo": {"code", "source"},
-    "código": {"code", "source"},
-    "clase": {"class"},
-}
+
+# The tokeniser itself lives in ken.nametokens, shared with the indexer that
+# builds `ci_name_tokens`. If the two could drift, the posting list would answer
+# a different question than the one asked and nothing would fail loudly.
+_name_tokens = name_tokens
+_project_stopwords = project_stopwords
 
 
 def lexical_scores(
@@ -952,6 +961,50 @@ def _recent_session_prompt_tokens(
     return tokens
 
 
+def _postings_usable(conn: sqlite3.Connection) -> bool:
+    """Is `ci_name_tokens` present, current, and built by this tokeniser?
+
+    An index built before the postings existed — or by a ken whose stopwords or
+    aliases have since changed — would answer a subtly different question than
+    the one asked, and would do it silently. When the stamp does not match, the
+    channel falls back to tokenising on the fly: slow, but the same answer.
+    """
+    from ken.db import get_meta
+
+    try:
+        stamp = get_meta(conn, "name_token_version")
+    except sqlite3.Error:
+        return False
+    return stamp is not None and stamp == str(NAME_TOKEN_VERSION)
+
+
+def _token_overlaps(
+    conn: sqlite3.Connection, kind: int, query_tokens: set[str]
+) -> dict[int, set[str]]:
+    """row_id -> which query tokens it carries, straight out of the posting list.
+
+    Only rows that match at least one token come back, which is the whole point:
+    the old code tokenised all 771 563 symbols to discover that a few thousand
+    were relevant.
+    """
+    tokens = sorted(query_tokens)
+    if not tokens:
+        return {}
+    out: dict[int, set[str]] = {}
+    # SQLITE_MAX_VARIABLE_NUMBER is 999 on older builds; prompts never approach
+    # that, but chunking costs nothing and removes the cliff.
+    for i in range(0, len(tokens), 500):
+        chunk = tokens[i : i + 500]
+        placeholders = ",".join("?" * len(chunk))
+        for row_id, token in conn.execute(
+            f"SELECT row_id, token FROM ci_name_tokens "
+            f"WHERE kind = ? AND token IN ({placeholders})",
+            (kind, *chunk),
+        ):
+            out.setdefault(int(row_id), set()).add(str(token))
+    return out
+
+
 def _lexical_files(
     conn: sqlite3.Connection,
     query_tokens: set[str],
@@ -960,12 +1013,32 @@ def _lexical_files(
     score_bonus: float = 0.0,
     extra_stopwords: set[str] | None = None,
 ) -> list[RankedItem]:
-    rows = conn.execute("SELECT path FROM ci_files").fetchall()
+    if _postings_usable(conn):
+        hits = _token_overlaps(conn, KIND_FILE, query_tokens)
+        if not hits:
+            return []
+        ids = sorted(hits)
+        paths: dict[int, str] = {}
+        for i in range(0, len(ids), 500):
+            chunk = ids[i : i + 500]
+            placeholders = ",".join("?" * len(chunk))
+            for row_id, path in conn.execute(
+                f"SELECT id, path FROM ci_files WHERE id IN ({placeholders})", chunk
+            ):
+                paths[int(row_id)] = str(path)
+        candidates = [
+            (paths[row_id], overlap) for row_id, overlap in hits.items() if row_id in paths
+        ]
+    else:
+        rows = conn.execute("SELECT path FROM ci_files").fetchall()
+        candidates = []
+        for row in rows:
+            path = row["path"]
+            tokens = _name_tokens(path, extra_stopwords=extra_stopwords)
+            candidates.append((path, query_tokens & tokens))
+
     out: list[RankedItem] = []
-    for row in rows:
-        path = row["path"]
-        tokens = _name_tokens(path, extra_stopwords=extra_stopwords)
-        overlap = query_tokens & tokens
+    for path, overlap in candidates:
         if len(overlap) < LEXICAL_FILE_MIN_OVERLAP:
             continue
         score = min(LEXICAL_FILE_SCALE + score_bonus, 0.6 + 0.4 * len(overlap) + score_bonus)
@@ -988,21 +1061,38 @@ def _lexical_symbols(
     score_bonus: float = 0.0,
     extra_stopwords: set[str] | None = None,
 ) -> list[RankedItem]:
-    rows = conn.execute(
-        """
-        SELECT s.kind, s.qualname, s.name, s.line_start, f.path AS file_path
-        FROM ci_symbols s
-        JOIN ci_files f ON f.id = s.file_id
-        """
-    ).fetchall()
+    _SYMBOL_COLS = (
+        "SELECT s.id, s.kind, s.qualname, s.name, s.line_start, f.path AS file_path "
+        "FROM ci_symbols s JOIN ci_files f ON f.id = s.file_id"
+    )
+    if _postings_usable(conn):
+        hits = _token_overlaps(conn, KIND_SYMBOL, query_tokens)
+        if not hits:
+            return []
+        ids = sorted(hits)
+        rows = []
+        for i in range(0, len(ids), 500):
+            chunk = ids[i : i + 500]
+            placeholders = ",".join("?" * len(chunk))
+            rows.extend(
+                conn.execute(
+                    f"{_SYMBOL_COLS} WHERE s.id IN ({placeholders})", chunk
+                ).fetchall()
+            )
+        candidates = [(row, hits[int(row["id"])]) for row in rows]
+    else:
+        rows = conn.execute(_SYMBOL_COLS).fetchall()
+        candidates = []
+        for row in rows:
+            tokens = _name_tokens(
+                f"{str(row['kind'] or '')} {row['qualname']} {row['name']}",
+                extra_stopwords=extra_stopwords,
+            )
+            candidates.append((row, query_tokens & tokens))
+
     out: list[RankedItem] = []
-    for row in rows:
+    for row, overlap in candidates:
         kind = str(row["kind"] or "")
-        tokens = _name_tokens(
-            f"{kind} {row['qualname']} {row['name']}",
-            extra_stopwords=extra_stopwords,
-        )
-        overlap = query_tokens & tokens
         if len(overlap) < LEXICAL_SYMBOL_MIN_OVERLAP:
             continue
         exact_name = str(row["name"]).strip("_").lower()
@@ -1035,33 +1125,6 @@ def _lexical_symbols(
     return out
 
 
-def _name_tokens(text: str, *, extra_stopwords: set[str] | None = None) -> set[str]:
-    parts: set[str] = set()
-    for raw in _WORD_RE.findall(text.replace("-", "_").replace(".", "_").replace("/", "_")):
-        for piece in raw.split("_"):
-            parts.update(_split_camel(piece))
-    raw_tokens = {p.lower() for p in parts if len(p) >= 3}
-    stopwords = _STOPWORDS if not extra_stopwords else _STOPWORDS | extra_stopwords
-    tokens = {p for p in raw_tokens if p not in stopwords}
-    for token in raw_tokens:
-        tokens.update(_TOKEN_ALIASES.get(token, set()))
-    return tokens
-
-
-def _project_stopwords(project_root: Path | None) -> set[str]:
-    if project_root is None:
-        return set()
-    tokens = _name_tokens(project_root.name)
-    # One-token project/package names often appear in every path
-    # (e.g. src/ken/...), so lexical matching should not treat them as
-    # task intent unless another channel corroborates them.
-    return {token for token in tokens if len(token) >= 3}
-
-
-def _split_camel(text: str) -> list[str]:
-    return re.findall(r"[A-Z]?[a-z]+|[A-Z]+(?=[A-Z]|$)|\d+", text)
-
-
 def _recency_bump(mtime_ns: int, now_ns: int) -> float:
     days_old = max(0.0, (now_ns - mtime_ns) / 1e9 / 86_400)
     if days_old >= FUZZY_RECENCY_DAYS:
@@ -1069,7 +1132,73 @@ def _recency_bump(mtime_ns: int, now_ns: int) -> float:
     return FUZZY_RECENCY_BUMP * (1.0 - days_old / FUZZY_RECENCY_DAYS)
 
 
+#: How many above-threshold rows a fuzzy channel resolves back to full rows.
+#:
+#: Scoring is free — one matvec over the mapped matrix — but turning a slot into
+#: a path and an mtime is a SQL round trip, and a broad prompt on a large repo
+#: can clear the threshold tens of thousands of times. `rank()` keeps 8 files and
+#: 5 symbols, and the boosts that run afterwards add at most ~2 to a score, so
+#: nothing outside the top few hundred can reach the output. The cap is set two
+#: orders of magnitude above that, and is the one place where this refactor is an
+#: approximation rather than an identity — hence configurable, and named.
+FUZZY_RESOLVE_CAP = int(os.environ.get("KEN_FUZZY_RESOLVE_CAP", "2000"))
+
+
+def _top_slots(
+    sims: np.ndarray, slots: np.ndarray, thr: float, *, headroom: float = 0.0
+) -> tuple[np.ndarray, np.ndarray]:
+    """The candidate slots, capped, highest similarity first.
+
+    *headroom* is not a fudge factor. The fuzzy channels compare
+    ``similarity + recency_bump`` against the threshold, so a file whose raw
+    similarity sits just under it can still qualify once the bump is added — and
+    the bump needs the row's mtime, which is only known after resolving. Cutting
+    at ``thr`` here would silently drop every one of those: measured on the
+    kernel index, 251 qualifying files became 49, a strict subset. The cut has to
+    leave room for the largest bump that could still be applied, and the exact
+    filter stays where it always was, after the bump is known.
+    """
+    keep = np.flatnonzero(sims >= thr - headroom)
+    if keep.size > FUZZY_RESOLVE_CAP:
+        keep = keep[np.argpartition(sims[keep], -FUZZY_RESOLVE_CAP)[-FUZZY_RESOLVE_CAP:]]
+    return slots[keep], sims[keep]
+
+
+def _rows_by_slot(conn: sqlite3.Connection, sql: str, slots: np.ndarray) -> dict[int, Any]:
+    """Resolve slots to rows through `vec_slot`, chunked under the parameter cap."""
+    out: dict[int, Any] = {}
+    ids = [int(s) for s in slots]
+    for i in range(0, len(ids), 500):
+        chunk = ids[i : i + 500]
+        placeholders = ",".join("?" * len(chunk))
+        for row in conn.execute(sql.format(placeholders=placeholders), chunk):
+            out[int(row["vec_slot"])] = row
+    return out
+
+
 def _fuzzy_files(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
+    hit = vectors.live_scores(conn, "ci_files", q)
+    if hit is not None:
+        slots, sims = hit
+        thr = _adaptive_threshold(sims, FUZZY_FILE_MIN_SIM)
+        top_slots, top_sims = _top_slots(sims, slots, thr, headroom=FUZZY_RECENCY_BUMP)
+        if top_slots.size == 0:
+            return []
+        by_slot = _rows_by_slot(
+            conn,
+            "SELECT vec_slot, path, mtime FROM ci_files "
+            "WHERE vec_slot IN ({placeholders})",
+            top_slots,
+        )
+        # A slot with no row was freed since the scan; dropping it here is how
+        # deleted vectors leave the results without a liveness set.
+        pairs = [
+            (by_slot[int(s)], float(sim))
+            for s, sim in zip(top_slots, top_sims)
+            if int(s) in by_slot
+        ]
+        return _score_fuzzy_files(pairs, thr)
+
     rows = conn.execute(
         "SELECT path, embedding, mtime FROM ci_files WHERE embedding IS NOT NULL"
     ).fetchall()
@@ -1077,14 +1206,17 @@ def _fuzzy_files(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
         return []
     sims, kept = rank_against(q, [r["embedding"] for r in rows], strict=False)
     rows = [rows[i] for i in kept]
-    paths = [r["path"] for r in rows]
-    mtimes = [int(r["mtime"]) for r in rows]
-    now_ns = int(time.time() * 1e9)
     thr = _adaptive_threshold(sims, FUZZY_FILE_MIN_SIM)
+    return _score_fuzzy_files(list(zip(rows, (float(s) for s in sims))), thr)
+
+
+def _score_fuzzy_files(pairs: list, thr: float) -> list[RankedItem]:
+    """Shared by the mapped-store and inline-column paths, so the two cannot
+    drift apart on scoring — only on how they got the similarities."""
+    now_ns = int(time.time() * 1e9)
     out: list[RankedItem] = []
-    for path, sim, mtime_ns in zip(paths, sims, mtimes):
-        sim_raw = float(sim)
-        bump = _recency_bump(mtime_ns, now_ns)
+    for row, sim_raw in pairs:
+        bump = _recency_bump(int(row["mtime"]), now_ns)
         # Clamp to 1.0 — overshoot would push the linear-mapped score
         # past FUZZY_FILE_SCALE and break the "max ≈ scale" invariant.
         s = min(1.0, sim_raw + bump)
@@ -1094,15 +1226,41 @@ def _fuzzy_files(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
         reason = f"fuzzy:{sim_raw:.2f}"
         if bump > 0:
             reason += f"+recent{bump:.2f}"
-        out.append(RankedItem(target=path, target_type="file", score=score, reason=reason))
+        out.append(
+            RankedItem(target=row["path"], target_type="file", score=score, reason=reason)
+        )
     return out
 
 
+_FUZZY_SYMBOL_COLS = (
+    "SELECT s.vec_slot, s.qualname, s.name, s.line_start, f.path AS file_path, "
+    "       f.mtime AS file_mtime "
+    "FROM ci_symbols s JOIN ci_files f ON f.id = s.file_id"
+)
+
+
 def _fuzzy_symbols(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
+    hit = vectors.live_scores(conn, "ci_symbols", q)
+    if hit is not None:
+        slots, sims = hit
+        thr = _adaptive_threshold(sims, FUZZY_SYMBOL_MIN_SIM)
+        top_slots, top_sims = _top_slots(sims, slots, thr, headroom=FUZZY_RECENCY_BUMP)
+        if top_slots.size == 0:
+            return []
+        by_slot = _rows_by_slot(
+            conn, f"{_FUZZY_SYMBOL_COLS} WHERE s.vec_slot IN ({{placeholders}})", top_slots
+        )
+        pairs = [
+            (by_slot[int(s)], float(sim))
+            for s, sim in zip(top_slots, top_sims)
+            if int(s) in by_slot
+        ]
+        return _score_fuzzy_symbols(pairs, thr)
+
     rows = conn.execute(
         """
-        SELECT s.qualname, s.name, s.embedding, s.line_start, f.path AS file_path,
-               f.mtime AS file_mtime
+        SELECT s.qualname, s.name, s.embedding, s.line_start,
+               f.path AS file_path, f.mtime AS file_mtime
         FROM ci_symbols s
         JOIN ci_files f ON f.id = s.file_id
         WHERE s.embedding IS NOT NULL
@@ -1112,12 +1270,14 @@ def _fuzzy_symbols(conn: sqlite3.Connection, q: np.ndarray) -> list[RankedItem]:
         return []
     sims, kept = rank_against(q, [r["embedding"] for r in rows], strict=False)
     rows = [rows[i] for i in kept]
-    now_ns = int(time.time() * 1e9)
     thr = _adaptive_threshold(sims, FUZZY_SYMBOL_MIN_SIM)
+    return _score_fuzzy_symbols(list(zip(rows, (float(s) for s in sims))), thr)
 
+
+def _score_fuzzy_symbols(pairs: list, thr: float) -> list[RankedItem]:
+    now_ns = int(time.time() * 1e9)
     out: list[RankedItem] = []
-    for r, sim in zip(rows, sims):
-        sim_raw = float(sim)
+    for r, sim_raw in pairs:
         bump = _recency_bump(int(r["file_mtime"]), now_ns)
         s = min(1.0, sim_raw + bump)
         if s < thr:

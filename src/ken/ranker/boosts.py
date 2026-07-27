@@ -385,15 +385,15 @@ def apply_test_affinity(conn: sqlite3.Connection, files: list[RankedItem]) -> No
     if not anchors:
         return
     rows = conn.execute("SELECT path FROM ci_files").fetchall()
-    all_paths = [r["path"] for r in rows]
+    index = _PathIndex(r["path"] for r in rows)
     by_path = {it.target: it for it in files}
 
     for anchor in anchors:
         test_to_source = _is_test_path(anchor.target)
         related = (
-            _related_source_files(anchor.target, all_paths)
+            _related_source_files(anchor.target, index)
             if test_to_source
-            else _related_tests(anchor.target, all_paths)
+            else _related_tests(anchor.target, index)
         )
         if not related:
             continue
@@ -419,7 +419,30 @@ def apply_test_affinity(conn: sqlite3.Connection, files: list[RankedItem]) -> No
                 by_path[path] = item
 
 
-def _related_tests(source_path: str, all_paths: list[str]) -> list[str]:
+class _PathIndex:
+    """Basenames grouped once, so the matchers below stop re-scanning the repo.
+
+    Both matchers used to walk every indexed path per anchor. With up to five
+    anchors on a 100 977-file repo that was half a million string operations per
+    rank — 1.1 s, and 70% of the whole call once the fuzzy and lexical channels
+    stopped dominating it. All but one of the tests are exact basename matches,
+    which is a dict lookup; the remaining substring rule only ever applies to
+    test paths, so it scans those alone.
+    """
+
+    __slots__ = ("by_name", "test_names")
+
+    def __init__(self, paths) -> None:
+        self.by_name: dict[str, list[str]] = {}
+        self.test_names: list[tuple[str, str]] = []
+        for path in paths:
+            name = path.rsplit("/", 1)[-1]
+            self.by_name.setdefault(name, []).append(path)
+            if _is_test_path(path):
+                self.test_names.append((name.lower(), path))
+
+
+def _related_tests(source_path: str, index: _PathIndex) -> list[str]:
     stem = source_path.rsplit("/", 1)[-1].rsplit(".", 1)[0]
     if not stem or stem.startswith("test_"):
         return []
@@ -435,16 +458,16 @@ def _related_tests(source_path: str, all_paths: list[str]) -> list[str]:
         f"{stem}.spec.js",
     }
     out: list[str] = []
-    for path in all_paths:
-        name = path.rsplit("/", 1)[-1]
-        if name in candidates or (
-            _is_test_path(path) and stem.lower() in name.lower()
-        ):
+    for candidate in candidates:
+        out.extend(index.by_name.get(candidate, ()))
+    needle = stem.lower()
+    for name, path in index.test_names:
+        if needle in name:
             out.append(path)
     return sorted(set(out))
 
 
-def _related_source_files(test_path: str, all_paths: list[str]) -> list[str]:
+def _related_source_files(test_path: str, index: _PathIndex) -> list[str]:
     stem = _source_stem_from_test(test_path)
     if not stem:
         return []
@@ -460,12 +483,10 @@ def _related_source_files(test_path: str, all_paths: list[str]) -> list[str]:
         f"{stem}.java",
     }
     out: list[str] = []
-    for path in all_paths:
-        if _is_test_path(path):
-            continue
-        name = path.rsplit("/", 1)[-1]
-        if name in candidates:
-            out.append(path)
+    for candidate in candidates:
+        for path in index.by_name.get(candidate, ()):
+            if not _is_test_path(path):
+                out.append(path)
     return sorted(set(out))
 
 

@@ -265,7 +265,11 @@ def _build_backend(model: str) -> Embedder:
 def _has_embeddings(conn: sqlite3.Connection) -> bool:
     try:
         row = conn.execute(
-            "SELECT 1 FROM ci_files WHERE embedding IS NOT NULL LIMIT 1"
+            # Either storage counts: a converted index that answered "no" here
+            # would be treated as brand new and could be re-pinned to a
+            # different model than the one its vectors were written with.
+            "SELECT 1 FROM ci_files "
+            "WHERE embedding IS NOT NULL OR vec_slot IS NOT NULL LIMIT 1"
         ).fetchone()
         return row is not None
     except sqlite3.OperationalError:
@@ -408,6 +412,16 @@ def _resolve_active_model() -> str:
     except Exception:  # pragma: no cover - discovery is best-effort
         pass
     return recommended_model()
+
+
+def active_model() -> str:
+    """The model this process is embedding with, without forcing it to load.
+
+    The vector store records it in each space's manifest so `ken vectors verify`
+    can say *which* model a set of stored vectors belongs to, rather than only
+    that its dimension no longer matches.
+    """
+    return _resolve_active_model()
 
 
 def get_embedder() -> Embedder:

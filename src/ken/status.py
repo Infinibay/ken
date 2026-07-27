@@ -139,9 +139,9 @@ def _read_counts(db_p: Path) -> StatusCounts:
     try:
         return StatusCounts(
             files=_count(conn, "ci_files"),
-            files_embedded=_count(conn, "ci_files", "embedding IS NOT NULL"),
+            files_embedded=_count(conn, "ci_files", "embedding IS NOT NULL OR vec_slot IS NOT NULL"),
             symbols=_count(conn, "ci_symbols"),
-            symbols_embedded=_count(conn, "ci_symbols", "embedding IS NOT NULL"),
+            symbols_embedded=_count(conn, "ci_symbols", "embedding IS NOT NULL OR vec_slot IS NOT NULL"),
             sessions=_count(conn, "cr_sessions"),
             active_sessions=_count(conn, "cr_sessions", "ended_at IS NULL"),
             contexts=_count(conn, "cr_contexts"),
@@ -155,7 +155,7 @@ def _read_counts(db_p: Path) -> StatusCounts:
             findings_embedded=_count(conn, "cr_findings", "embedding IS NOT NULL"),
             intent_sources=_count(conn, "ci_intent_sources"),
             intent_sources_embedded=_count(
-                conn, "ci_intent_sources", "embedding IS NOT NULL"
+                conn, "ci_intent_sources", "embedding IS NOT NULL OR vec_slot IS NOT NULL"
             ),
         )
     finally:

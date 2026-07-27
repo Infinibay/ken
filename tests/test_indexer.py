@@ -9,6 +9,7 @@ import pytest
 
 from ken.db import connect, init_schema
 from ken.indexer import _hash, _is_unchanged, delete_file, delete_path, index_files
+from ken.vectors import VectorStore
 
 
 class _FakeEmbedder:
@@ -279,10 +280,14 @@ def test_index_files_with_embedder_populates_embedding(project):
     src = root / "mod.py"
     src.write_text("def x(): return 1\n")
     index_files(conn, root, [Path("mod.py")], embedder=_FakeEmbedder())
+    # Vectors live in .ken/vectors/ now, not in the row. What has to hold is
+    # that the row points at one and that the vector is really there.
     row = conn.execute(
-        "SELECT embedding IS NOT NULL AS has_emb FROM ci_files WHERE path = 'mod.py'"
+        "SELECT vec_slot FROM ci_files WHERE path = 'mod.py'"
     ).fetchone()
-    assert row["has_emb"] == 1
+    assert row["vec_slot"] is not None
+    store = VectorStore(root, "ci_files", dim=_FakeEmbedder().dim)
+    assert np.linalg.norm(store.read([int(row["vec_slot"])])[0]) == pytest.approx(1.0, abs=1e-6)
 
 
 def test_index_files_with_embedder_populates_plain_text_intent(project):
@@ -299,19 +304,19 @@ Install from a local checkout with uv tool install --editable.
     index_files(conn, root, [Path("README.md")], embedder=_FakeEmbedder())
 
     row = conn.execute(
-        "SELECT embedding IS NOT NULL AS has_emb FROM ci_files WHERE path = 'README.md'"
+        "SELECT vec_slot FROM ci_files WHERE path = 'README.md'"
     ).fetchone()
-    assert row["has_emb"] == 1
+    assert row["vec_slot"] is not None
     intent = conn.execute(
         """
-        SELECT source_kind, text, weight, embedding IS NOT NULL AS has_embedding
+        SELECT source_kind, text, weight, vec_slot
         FROM ci_intent_sources
         """
     ).fetchone()
     assert intent["source_kind"] == "plain_text"
     assert "local checkout" in intent["text"]
     assert intent["weight"] == pytest.approx(0.55)
-    assert intent["has_embedding"] == 1
+    assert intent["vec_slot"] is not None
 
 
 def test_index_files_persists_docstring_intent_sources(project):
@@ -329,7 +334,7 @@ def login():
 
     rows = conn.execute(
         """
-        SELECT source_kind, text, embedding IS NOT NULL AS has_embedding,
+        SELECT source_kind, text, vec_slot IS NOT NULL AS has_vector,
                symbol_id IS NOT NULL AS is_symbol
         FROM ci_intent_sources
         ORDER BY source_kind
@@ -337,7 +342,7 @@ def login():
     ).fetchall()
 
     assert [
-        (row["source_kind"], row["text"], row["has_embedding"], row["is_symbol"])
+        (row["source_kind"], row["text"], row["has_vector"], row["is_symbol"])
         for row in rows
     ] == [
         ("module_docstring", "Module role for auth sessions.", 1, 0),

@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS ci_files (
     content_hash    BLOB NOT NULL,                -- blake2b-256 of bytes
     parser_version  INTEGER NOT NULL DEFAULT 0,
     symbol_count    INTEGER NOT NULL DEFAULT 0,
-    embedding       BLOB,                         -- float32[384]
+    embedding       BLOB,                         -- legacy inline vector; NULL once migrated
+    vec_slot        INTEGER,                      -- row in .ken/vectors/ci_files.*.vec
     mtime           INTEGER NOT NULL,             -- ns since epoch
     indexed_at      INTEGER NOT NULL              -- ms since epoch
 );
@@ -40,7 +41,8 @@ CREATE TABLE IF NOT EXISTS ci_symbols (
     line_start  INTEGER NOT NULL,
     line_end    INTEGER NOT NULL,
     docstring   TEXT,                             -- first line if present
-    embedding   BLOB                              -- float32[384]
+    embedding   BLOB,                             -- legacy inline vector; NULL once migrated
+    vec_slot    INTEGER                           -- row in .ken/vectors/ci_symbols.*.vec
 );
 CREATE INDEX IF NOT EXISTS idx_ci_symbols_file ON ci_symbols(file_id);
 CREATE INDEX IF NOT EXISTS idx_ci_symbols_name ON ci_symbols(name);
@@ -77,7 +79,8 @@ CREATE TABLE IF NOT EXISTS ci_intent_sources (
     symbol_id       INTEGER REFERENCES ci_symbols(id) ON DELETE CASCADE,
     source_kind     TEXT NOT NULL,                -- module_docstring | symbol_docstring | …
     text            TEXT NOT NULL,
-    embedding       BLOB,                         -- float32[384]
+    embedding       BLOB,                         -- legacy inline vector; NULL once migrated
+    vec_slot        INTEGER,                      -- row in .ken/vectors/ci_intent_sources.*.vec
     weight          REAL NOT NULL DEFAULT 1.0,
     updated_at      INTEGER NOT NULL
 );
@@ -240,3 +243,60 @@ CREATE TABLE IF NOT EXISTS ci_fts_state (
     path          TEXT PRIMARY KEY,
     content_hash  BLOB NOT NULL
 );
+
+-- ----------------------------------------------------------------------------
+-- Vector store bookkeeping. The vectors themselves live in .ken/vectors/ as
+-- memory-mapped segment files (see ken/vectors.py); what stays here is the part
+-- that must be transactional.
+--
+-- Slot allocation is a SQLite row on purpose. ken has no application lock that
+-- spans its writers — the daemon's IndexQueue, `ken install` and `ken reembed`
+-- each hold their own connection — so allocation piggybacks on the write lock
+-- SQLite already arbitrates. Once a writer owns a slot it owns it alone, and the
+-- byte writes go to disjoint offsets needing no coordination at all.
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS ci_vec_alloc (
+    space      TEXT PRIMARY KEY,        -- 'ci_files' | 'ci_symbols' | 'ci_intent_sources'
+    next_slot  INTEGER NOT NULL         -- high-water mark; slots below may be free
+);
+CREATE TABLE IF NOT EXISTS ci_vec_free (
+    space  TEXT NOT NULL,
+    slot   INTEGER NOT NULL,
+    PRIMARY KEY (space, slot)
+);
+
+-- The slot-reclaiming triggers are created in db._migrate, not here: SQLite
+-- accepts a trigger referencing a column that does not exist yet and only fails
+-- when it fires, so on a database predating `vec_slot` this script would install
+-- three time bombs. _migrate runs them after the ALTER TABLE that adds it.
+
+-- ----------------------------------------------------------------------------
+-- Inverted index over name tokens. The lexical channel used to tokenise every
+-- symbol name in Python on every query — 771 563 camel-splits per rank, 11.3 s
+-- of the 22.6 s that channel cost. Its score depends only on how many query
+-- tokens a row matches, never on the row's full token set, so a posting list
+-- reproduces it exactly.
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS ci_name_tokens (
+    token   TEXT NOT NULL,
+    kind    INTEGER NOT NULL,           -- 0 = ci_files.id, 1 = ci_symbols.id
+    row_id  INTEGER NOT NULL,
+    PRIMARY KEY (kind, token, row_id)
+) WITHOUT ROWID;
+CREATE INDEX IF NOT EXISTS idx_ci_name_tokens_row ON ci_name_tokens(kind, row_id);
+
+-- row_id points into two different tables depending on `kind`, which no foreign
+-- key can express, so the postings are swept by trigger instead. This has to
+-- catch ON DELETE CASCADE the same way the slot triggers do: dropping a ci_files
+-- row takes its symbols with it without any Python running.
+CREATE TRIGGER IF NOT EXISTS trg_ci_files_drop_tokens
+AFTER DELETE ON ci_files
+BEGIN
+    DELETE FROM ci_name_tokens WHERE kind = 0 AND row_id = old.id;
+END;
+
+CREATE TRIGGER IF NOT EXISTS trg_ci_symbols_drop_tokens
+AFTER DELETE ON ci_symbols
+BEGIN
+    DELETE FROM ci_name_tokens WHERE kind = 1 AND row_id = old.id;
+END;

@@ -83,9 +83,15 @@ def test_reembed_reencodes_every_table(db, monkeypatch):
     assert result["symbols"] == 1
     assert result["prompts"] == 1
     assert result["dim"] == 4
-    # vectors are no longer the zero placeholders
-    row = db.execute("SELECT embedding FROM ci_files").fetchone()
-    assert np.any(np.frombuffer(row["embedding"], dtype=np.float32) != 0)
+    # vectors are no longer the zero placeholders — and they now live in the
+    # mapped store, with the row holding only a pointer to them
+    row = db.execute("SELECT embedding, vec_slot FROM ci_files").fetchone()
+    assert row["embedding"] is None
+    assert row["vec_slot"] is not None
+    from ken.vectors import VectorStore, project_root_for
+
+    store = VectorStore(project_root_for(db), "ci_files", dim=4)
+    assert np.any(store.read([int(row["vec_slot"])])[0] != 0)
 
 
 def test_reembed_records_model_and_dim(db, monkeypatch):

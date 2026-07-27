@@ -217,6 +217,11 @@ def install(
             stats.elapsed_s += rest_stats.elapsed_s
         else:
             stats = index_files(conn, root, rels, on_progress=progress, embedder=embedder)
+        # An index built before the vector store still has its vectors inline.
+        # Reads fall back to that, so nothing is broken — just slow — which is
+        # exactly why the conversion belongs here rather than behind a flag the
+        # user has to discover.
+        _migrate_vectors_if_needed(conn, root, verbose=verbose)
         if verbose:
             print()
             print(
@@ -277,6 +282,43 @@ def _project_uses_claude(root: Path) -> bool:
 
 def _project_uses_codex(root: Path) -> bool:
     return (root / ".codex").exists()
+
+
+def _migrate_vectors_if_needed(conn, root: Path, *, verbose: bool) -> None:
+    """Move any leftover inline vectors into the mapped store.
+
+    Best-effort by design: a failure here costs speed, never correctness, since
+    every read path still falls back to the `embedding` column for rows that
+    have no slot. Refusing to install because a sidecar could not be written
+    would be the wrong trade.
+    """
+    from ken.vectors import SPACES, migrate_inline_vectors
+
+    pending = 0
+    for table in SPACES.values():
+        try:
+            pending += conn.execute(
+                f"SELECT COUNT(*) FROM {table} "
+                f"WHERE embedding IS NOT NULL AND vec_slot IS NULL"
+            ).fetchone()[0]
+        except Exception:
+            return
+    if pending == 0:
+        return
+    if verbose:
+        print(f"[vectors] moving {pending:,} inline vectors into .ken/vectors/…")
+    try:
+        from ken.embedder import active_model, get_embedder
+
+        moved = migrate_inline_vectors(
+            conn, root, dim=int(get_embedder().dim), model=active_model()
+        )
+        if verbose:
+            total = sum(moved.values())
+            print(f"[vectors] moved {total:,}; `ken vectors compact` reclaims the freed pages")
+    except Exception as exc:  # pragma: no cover - degrades to the inline path
+        if verbose:
+            print(f"[vectors] skipped ({exc}); embeddings stay inline")
 
 
 def _ensure_gitignore(root: Path, *, verbose: bool) -> None:

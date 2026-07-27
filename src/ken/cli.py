@@ -184,6 +184,22 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_reembed.add_argument("--json", action="store_true", help="print machine-readable result")
 
+    p_vectors = sub.add_parser(
+        "vectors", help="inspect, migrate or compact the memory-mapped vector store"
+    )
+    p_vectors.add_argument(
+        "action",
+        nargs="?",
+        default="status",
+        choices=("status", "verify", "migrate", "compact"),
+        help=(
+            "status: sizes and coverage · verify: cross-check slots against rows · "
+            "migrate: move inline vectors into the store · compact: reclaim leaked slots"
+        ),
+    )
+    p_vectors.add_argument("--path", default=".", help="project path (default: cwd)")
+    p_vectors.add_argument("--json", action="store_true", help="print machine-readable result")
+
     p_default_model = sub.add_parser(
         "default-model",
         help="show or set the embedding model used for NEW projects",
@@ -385,6 +401,9 @@ def main(argv: list[str] | None = None) -> int:
             check_only=args.check,
             as_json=args.json,
         )
+
+    if args.cmd == "vectors":
+        return _vectors_cli(Path(args.path), args.action, as_json=args.json)
 
     if args.cmd == "default-model":
         return _default_model_cli(model=args.model, clear=args.clear)
@@ -859,6 +878,92 @@ def _findings_graph_cli(project_path: Path, subcmd: str, *, as_json: bool) -> in
         print(json.dumps(result, indent=2))
     else:
         print(f"findings graph rebuilt: {result['refs']} refs, {result['edges']} edges")
+    return 0
+
+
+def _vectors_cli(project_path: Path, action: str, *, as_json: bool) -> int:
+    """`ken vectors` — the maintenance surface for the memory-mapped store."""
+    from ken import _paths
+    from ken.db import connect, init_schema
+    from ken.embedder import active_model, configure_for_project, get_embedder
+    from ken.vectors import SPACES, VectorStore, VectorStoreError, compact
+    from ken.vectors import migrate_inline_vectors, vectors_dir
+
+    root = project_path.resolve()
+    db = _paths.db_path(root)
+    if not db.is_file():
+        print(f"error: no ken index at {root}", file=sys.stderr)
+        return 1
+    conn = connect(db)
+    init_schema(conn)
+    configure_for_project(conn)
+    try:
+        dim = int(get_embedder().dim)
+    except Exception as exc:
+        print(f"error: cannot load the embedder ({exc})", file=sys.stderr)
+        return 1
+
+    def say(msg: str) -> None:
+        if not as_json:
+            print(f"  {msg}")
+
+    result: dict[str, Any] = {"action": action, "path": str(root), "dim": dim}
+    try:
+        if action == "migrate":
+            if not as_json:
+                print(f"[vectors] moving inline vectors into {vectors_dir(root)}")
+            result["moved"] = migrate_inline_vectors(
+                conn, root, dim=dim, model=active_model(), progress=say
+            )
+            if not as_json:
+                print("[vectors] done — run `VACUUM` or `ken vectors compact` to reclaim disk")
+        elif action == "compact":
+            if not as_json:
+                print("[vectors] renumbering live vectors into a dense prefix")
+            result["compacted"] = compact(conn, root, dim=dim, progress=say)
+        else:
+            report: dict[str, Any] = {}
+            for space, table in SPACES.items():
+                inline = conn.execute(
+                    f"SELECT COUNT(*) FROM {table} WHERE embedding IS NOT NULL"
+                ).fetchone()[0]
+                try:
+                    store = VectorStore(root, space, dim=dim)
+                except VectorStoreError as exc:
+                    report[space] = {"error": str(exc), "inline": inline}
+                    continue
+                try:
+                    info = store.verify(conn) if action == "verify" else {}
+                    info["inline_pending"] = inline
+                    info["bytes"] = store.bytes_on_disk()
+                    report[space] = info
+                finally:
+                    store.close()
+            result["spaces"] = report
+    except VectorStoreError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    finally:
+        conn.close()
+
+    if as_json:
+        print(json.dumps(result, indent=2))
+        return 0
+    if action in ("status", "verify"):
+        for space, info in result["spaces"].items():
+            if "error" in info:
+                print(f"{space:<20} {info['error']}")
+                continue
+            size = info["bytes"] / 1e6
+            line = f"{space:<20} {size:>9,.1f} MB"
+            if action == "verify":
+                line += (
+                    f"  referenced={info['referenced']:,} free={info['free']:,} "
+                    f"leaked={info['leaked']:,} out_of_range={info['out_of_range']:,}"
+                )
+            if info["inline_pending"]:
+                line += f"  [{info['inline_pending']:,} still inline — run `ken vectors migrate`]"
+            print(line)
     return 0
 
 

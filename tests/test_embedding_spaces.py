@@ -72,6 +72,38 @@ def _is_passage(blob: bytes) -> bool:
     return float(np.frombuffer(bytes(blob), dtype=np.float32)[0]) == 1.0
 
 
+def _is_passage_vec(vec: np.ndarray) -> bool:
+    """Same marker, read from the vector store instead of a blob.
+
+    The store L2-normalises on write, so a passage's leading 1.0 becomes
+    1.0/‖v‖ — still strictly positive, while a query's leading 0.0 normalises
+    to exactly 0.0. The discriminator survives; only the constant does not.
+    """
+    return float(vec[0]) > 0.0
+
+
+def _project_root(conn):
+    from ken.vectors import project_root_for
+
+    return project_root_for(conn)
+
+
+def _stored_vectors(conn, root, space: str, table: str) -> dict:
+    """path/id -> stored vector, read back out of the mapped store."""
+    from ken.vectors import VectorStore
+
+    key = "path" if table == "ci_files" else "id"
+    rows = conn.execute(
+        f"SELECT {key} AS k, vec_slot FROM {table} WHERE vec_slot IS NOT NULL"
+    ).fetchall()
+    if not rows:
+        return {}
+    store = VectorStore(root, space, dim=_DIM)
+    slots = [int(r["vec_slot"]) for r in rows]
+    mat = store.read(slots)
+    return {r["k"]: mat[i] for i, r in enumerate(rows)}
+
+
 @pytest.fixture()
 def conn(tmp_path):
     (tmp_path / ".ken").mkdir()
@@ -94,19 +126,15 @@ def test_indexer_stores_documents_as_passages(conn, tmp_path):
     emb = AsymmetricEmbedder()
     index_files(conn, tmp_path, [Path("mod.py"), Path("notes.txt")], embedder=emb)
 
-    files = conn.execute(
-        "SELECT path, embedding FROM ci_files WHERE embedding IS NOT NULL"
-    ).fetchall()
-    assert {r["path"] for r in files} == {"mod.py", "notes.txt"}
-    for row in files:
-        assert _is_passage(row["embedding"]), f"{row['path']} was encoded as a query"
+    by_path = _stored_vectors(conn, tmp_path, "ci_files", "ci_files")
+    assert set(by_path) == {"mod.py", "notes.txt"}
+    for path, vec in by_path.items():
+        assert _is_passage_vec(vec), f"{path} was encoded as a query"
 
-    for table in ("ci_symbols", "ci_intent_sources"):
-        rows = conn.execute(
-            f"SELECT embedding FROM {table} WHERE embedding IS NOT NULL"
-        ).fetchall()
-        assert rows, table
-        assert all(_is_passage(r["embedding"]) for r in rows), table
+    for space in ("ci_symbols", "ci_intent_sources"):
+        stored = _stored_vectors(conn, tmp_path, space, space)
+        assert stored, space
+        assert all(_is_passage_vec(v) for v in stored.values()), space
 
     assert emb.query_texts == []
 
@@ -162,16 +190,22 @@ def test_reembed_keeps_prompts_in_query_space(conn, monkeypatch):
     prompt = conn.execute("SELECT embedding FROM cr_contexts").fetchone()["embedding"]
     assert not _is_passage(prompt)
 
-    for table in ("ci_files", "ci_symbols", "cr_findings"):
-        blob = conn.execute(f"SELECT embedding FROM {table}").fetchone()["embedding"]
-        assert _is_passage(blob), table
+    # cr_findings stays inline (tens of rows, never measured a cost); the two
+    # code tables moved to the mapped store.
+    blob = conn.execute("SELECT embedding FROM cr_findings").fetchone()["embedding"]
+    assert _is_passage(blob), "cr_findings"
+    root = _project_root(conn)
+    for space in ("ci_files", "ci_symbols"):
+        stored = _stored_vectors(conn, root, space, space)
+        assert stored, space
+        assert all(_is_passage_vec(v) for v in stored.values()), space
 
 
 def test_indexer_and_reembed_agree_on_the_file_vector_space(conn, tmp_path):
     """An incremental re-index after a reembed must not write another space."""
     (tmp_path / "mod.py").write_text("def parse(text):\n    return text\n", encoding="utf-8")
     index_files(conn, tmp_path, [Path("mod.py")], embedder=AsymmetricEmbedder())
-    indexed = conn.execute("SELECT embedding FROM ci_files").fetchone()["embedding"]
+    indexed = next(iter(_stored_vectors(conn, tmp_path, "ci_files", "ci_files").values()))
 
     import ken.reembed as reembed_mod
 
@@ -181,9 +215,9 @@ def test_indexer_and_reembed_agree_on_the_file_vector_space(conn, tmp_path):
         reembed(conn)
     finally:
         reembed_mod.get_embedder = original
-    reembedded = conn.execute("SELECT embedding FROM ci_files").fetchone()["embedding"]
+    reembedded = next(iter(_stored_vectors(conn, tmp_path, "ci_files", "ci_files").values()))
 
-    assert _is_passage(indexed) == _is_passage(reembedded)
+    assert _is_passage_vec(indexed) == _is_passage_vec(reembedded)
 
 
 # ── cross-model vector-space guards ──────────────────────────────────

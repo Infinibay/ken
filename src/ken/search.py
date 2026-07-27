@@ -26,12 +26,20 @@ def search_files(
     match when the query is a bare identifier. ``score`` is always the cosine.
     """
     q = _query_vec(query)
-    rows = conn.execute(
-        "SELECT id, path, language, embedding FROM ci_files WHERE embedding IS NOT NULL"
-    ).fetchall()
-    rows = _filter_live_rows(rows, "path", project_root)
+    scored = _scored_from_store(
+        conn, "ci_files", q,
+        "SELECT vec_slot, id, path, language FROM ci_files "
+        "WHERE vec_slot IN ({placeholders})",
+        "path", project_root,
+    )
+    if scored is None:
+        rows = conn.execute(
+            "SELECT id, path, language, embedding FROM ci_files WHERE embedding IS NOT NULL"
+        ).fetchall()
+        rows = _filter_live_rows(rows, "path", project_root)
+        scored = _score_rows(q, rows)
     ranked = _fuse_literal(
-        _score_rows(q, rows),
+        scored,
         _identifier_query(query),
         lambda r: (Path(r["path"]).stem, Path(r["path"]).name, r["path"]),
         limit,
@@ -72,17 +80,27 @@ def search_symbols(
     when the query is a bare identifier. ``score`` is always the cosine.
     """
     q = _query_vec(query)
-    rows = conn.execute(
-        """
-        SELECT s.kind, s.name, s.qualname, s.line_start, s.line_end,
-               s.docstring, s.embedding, f.path AS file_path
-        FROM ci_symbols s JOIN ci_files f ON f.id = s.file_id
-        WHERE s.embedding IS NOT NULL
-        """
-    ).fetchall()
-    rows = _filter_live_rows(rows, "file_path", project_root)
+    scored = _scored_from_store(
+        conn, "ci_symbols", q,
+        "SELECT s.vec_slot, s.kind, s.name, s.qualname, s.line_start, s.line_end, "
+        "       s.docstring, f.path AS file_path "
+        "FROM ci_symbols s JOIN ci_files f ON f.id = s.file_id "
+        "WHERE s.vec_slot IN ({placeholders})",
+        "file_path", project_root,
+    )
+    if scored is None:
+        rows = conn.execute(
+            """
+            SELECT s.kind, s.name, s.qualname, s.line_start, s.line_end,
+                   s.docstring, s.embedding, f.path AS file_path
+            FROM ci_symbols s JOIN ci_files f ON f.id = s.file_id
+            WHERE s.embedding IS NOT NULL
+            """
+        ).fetchall()
+        rows = _filter_live_rows(rows, "file_path", project_root)
+        scored = _score_rows(q, rows)
     ranked = _fuse_literal(
-        _score_rows(q, rows),
+        scored,
         _identifier_query(query),
         lambda r: (r["name"], r["qualname"]),
         limit,
@@ -809,6 +827,60 @@ def _filter_live_rows(
         return rows
     root = project_root.resolve()
     return [row for row in rows if (root / row[path_key]).exists()]
+
+
+#: These tools return a handful of results (`limit` defaults to 8 and 10), so
+#: unlike the ranker's threshold channels they are honest top-K consumers and can
+#: stop at a partition instead of sorting the whole corpus. The pool is kept far
+#: wider than `limit` because `_fuse_literal` reorders afterwards using a literal
+#: name match, and a result that ranks poorly on cosine can still win on that.
+_SEARCH_POOL = 512
+
+
+def _scored_from_store(
+    conn: sqlite3.Connection,
+    space: str,
+    q: np.ndarray,
+    resolve_sql: str,
+    path_key: str,
+    project_root: Path | None,
+) -> list[tuple[float, sqlite3.Row]] | None:
+    """Top-K by cosine, read from the mapped store. None means "no store".
+
+    Returning None rather than an empty list matters: these are user-invoked
+    tools, and "the store is not there" has to fall through to the inline column
+    instead of silently answering "nothing matched".
+    """
+    from ken import vectors
+
+    hit = vectors.live_scores(conn, space, q)
+    if hit is None:
+        return None
+    slots, sims = hit
+    if slots.size == 0:
+        return []
+    k = min(_SEARCH_POOL, sims.size)
+    top = np.argpartition(sims, -k)[-k:]
+    top = top[np.argsort(sims[top])[::-1]]
+
+    ids = [int(s) for s in slots[top]]
+    by_slot: dict[int, sqlite3.Row] = {}
+    for i in range(0, len(ids), 500):
+        chunk = ids[i : i + 500]
+        placeholders = ",".join("?" * len(chunk))
+        for row in conn.execute(resolve_sql.format(placeholders=placeholders), chunk):
+            by_slot[int(row["vec_slot"])] = row
+
+    out: list[tuple[float, sqlite3.Row]] = []
+    root = project_root.resolve() if project_root is not None else None
+    for idx in top:
+        row = by_slot.get(int(slots[idx]))
+        if row is None:
+            continue  # slot freed since the scan
+        if root is not None and not (root / row[path_key]).exists():
+            continue
+        out.append((float(sims[idx]), row))
+    return out
 
 
 def _score_rows(q: np.ndarray, rows: list[sqlite3.Row]) -> list[tuple[float, sqlite3.Row]]:
