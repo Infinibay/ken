@@ -8,8 +8,20 @@ The pipeline per file:
      (no symbols, but the file row is created so context-rank can score
      it via path / mtime even without parsing).
   4. Run the parser, persist file + symbols + imports atomically.
-  5. If an embedder was supplied, embed every symbol (one batch per
-     file) plus the file as a whole, store as float32 BLOB.
+  5. If an embedder was supplied, embed every symbol plus the file as a
+     whole, store as float32 BLOB.
+
+Files are processed in **chunks**, and step 5 happens once per chunk
+rather than once per file. Every embedder here has a fixed per-call cost
+— tokeniser setup, array allocation, for the model backends a padded
+forward pass — that dwarfs the marginal cost of one more text. Encoding
+file-by-file spent that cost on batches averaging six texts: profiled on
+a 751-file project it ran at 1 243 texts/s against the ~10 000 texts/s
+the same embedder reaches when handed a real batch, and embedding was
+60% of the whole install. Chunking is the only change; each file still
+gets its own transaction, and vectors are unaffected because every
+backend encodes each text independently (the static table has an
+explicit test for that, and the model backends mask their padding).
 
 Callers that don't pass an embedder (e.g. `ken install` on a slow
 laptop) get structural-only indexing; the daemon's IndexQueue passes
@@ -20,10 +32,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import sqlite3
 import time
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -48,6 +61,91 @@ class IndexStats:
     elapsed_s: float = 0.0
 
 
+# How many files are read and parsed before their texts are embedded together.
+# The only thing this trades is peak memory against per-call embedder overhead,
+# and the memory is small: file bytes are dropped as soon as the parser has run,
+# so a chunk holds parse results and a few thousand short strings. 128 files is
+# roughly 1 500 texts on a real project — far past the point where the fixed
+# per-call cost stops mattering, and far short of anything a laptop notices.
+_EMBED_CHUNK_FILES = 128
+
+# Parsing is the other half of an install and it is embarrassingly parallel, but
+# only across *processes*: py-tree-sitter holds the GIL for the duration of a
+# parse, so a thread pool measured 0.72-0.81x — slower than serial, purely from
+# contention. A process pool measured 5.1x on 637 files with the `spawn` start
+# method and 7.0x with `fork`.
+#
+# `spawn` is used anyway. `fork` in a process that has already loaded BLAS and
+# ONNX Runtime thread pools can deadlock in the child, and the 1.4x it would buy
+# is not worth a hang that only reproduces on someone else's machine. The cost
+# of `spawn` is one interpreter start per worker, which is why the pool is
+# created once per `index_files` call and only when there is enough work to pay
+# for it — the daemon re-indexing a single edited file stays serial.
+_PARALLEL_MIN_FILES = 64
+
+
+def _parse_job(job: tuple[str, str, bytes]):
+    """Parse one file in a worker process. Module-level so it can be pickled.
+
+    Returns ``None`` on any parser failure, which the caller reports exactly as
+    the serial path does — a worker must not be able to abort an install.
+    """
+    from ken.parsers import LANGUAGE_BY_EXT
+
+    language, rel_posix, data = job
+    fn = next((f for lang, f in LANGUAGE_BY_EXT.values() if lang == language), None)
+    if fn is None:  # pragma: no cover - the caller only sends known languages
+        return None
+    try:
+        return fn(data, rel_posix)
+    except Exception:
+        return None
+
+
+def _worker_count(n_files: int) -> int:
+    """How many parser processes to run, or 0 for serial.
+
+    ``KEN_INDEX_WORKERS`` overrides: ``0`` disables the pool entirely, which is
+    the escape hatch for a sandbox that forbids process creation or a host that
+    embeds ken from an unguarded ``__main__``.
+    """
+    override = os.environ.get("KEN_INDEX_WORKERS")
+    if override:
+        try:
+            return max(0, int(override))
+        except ValueError:
+            pass
+    if n_files < _PARALLEL_MIN_FILES:
+        return 0
+    cpus = os.cpu_count() or 1
+    if cpus < 2:
+        return 0
+    # Above eight the curve flattens (the pool spends its time on the pipe, not
+    # the parse) while every extra worker is another interpreter to start.
+    return min(8, cpus - 1, max(2, n_files // 32))
+
+
+@dataclass
+class _Pending:
+    """One file, read and parsed, waiting for its vectors and its write.
+
+    ``slots`` names where each embedded vector belongs, parallel to ``texts``,
+    so the flat batch handed to the embedder can be taken apart again without
+    anyone having to keep two orderings in their head.
+    """
+
+    rel: str
+    language: str | None
+    content_hash: bytes
+    mtime_ns: int
+    order: int = 0                        # position in the chunk, for progress
+    parsed: object | None = None          # ParsedFile, for the parsed branch
+    intent_texts: list[str] | None = None  # plain-text branch only
+    texts: list[str] = field(default_factory=list)
+    slots: list[tuple] = field(default_factory=list)
+    blobs: dict[tuple, bytes] = field(default_factory=dict)
+
+
 def index_files(
     conn: sqlite3.Connection,
     project_root: Path,
@@ -66,8 +164,99 @@ def index_files(
     """
     stats = IndexStats()
     t0 = time.monotonic()
+    todo = list(rels)
+    pool = _open_pool(_worker_count(len(todo)))
+    try:
+        for start in range(0, len(todo), _EMBED_CHUNK_FILES):
+            chunk = todo[start : start + _EMBED_CHUNK_FILES]
+            events: list[tuple[int, str, str]] = []
+            pending = _prepare_chunk(
+                conn, project_root, chunk, max_file_bytes, embedder, stats,
+                events, pool,
+            )
+            _embed_pending(pending, embedder)
+            _write_pending(conn, pending, stats, events)
+            if on_progress:
+                # Sorted by position in the chunk, so the log reads in the same
+                # order the files were walked. Skips are decided before the
+                # writes happen, so without this they would all print first.
+                for _order, rel_posix, status in sorted(events):
+                    on_progress(rel_posix, status)
+    finally:
+        if pool is not None:
+            pool.shutdown(wait=False, cancel_futures=True)
 
-    for rel in rels:
+    stats.elapsed_s = time.monotonic() - t0
+    _resolve_internal_imports(conn, project_root)
+    return stats
+
+
+def _open_pool(workers: int):
+    """A parser pool, or ``None`` if we are staying serial.
+
+    Returning ``None`` rather than raising on failure is deliberate: a sandbox
+    that forbids process creation should index a little slower, not fail.
+    """
+    if workers <= 0:
+        return None
+    try:
+        import multiprocessing
+        from concurrent.futures import ProcessPoolExecutor
+
+        return ProcessPoolExecutor(
+            max_workers=workers, mp_context=multiprocessing.get_context("spawn")
+        )
+    except Exception:  # pragma: no cover - depends on the host's sandbox
+        return None
+
+
+def _parse_all(jobs: list[tuple[str, str, bytes]], pool) -> list:
+    """Parse *jobs* through *pool*, falling back to serial if it breaks.
+
+    A pool that dies mid-run (OOM-killed worker, a host that kills children)
+    must not take the install with it, so the whole batch is simply redone in
+    this process. Redoing is safe because parsing has no side effects.
+    """
+    if pool is None or not jobs:
+        return [_parse_job(job) for job in jobs]
+    try:
+        return list(pool.map(_parse_job, jobs, chunksize=8))
+    except Exception:
+        return [_parse_job(job) for job in jobs]
+
+
+def _prepare_chunk(
+    conn: sqlite3.Connection,
+    project_root: Path,
+    chunk: list[Path],
+    max_file_bytes: int,
+    embedder: "Embedder | None",
+    stats: IndexStats,
+    events: list[tuple[int, str, str]],
+    pool=None,
+) -> list[_Pending]:
+    """Read, hash and parse every file in *chunk*; collect the texts to embed.
+
+    Nothing is written and nothing is embedded here. File bytes are dropped as
+    soon as the parser has consumed them, so what survives into the chunk is
+    parse results and short strings.
+
+    The cheap-and-serial part (stat, read, hash, the unchanged check) stays in
+    this process on purpose: it is under a tenth of a second for the whole
+    chunk, and doing it here is what lets an unchanged file be skipped *before*
+    its bytes are shipped to a worker. Only parsing crosses the process
+    boundary.
+    """
+    from ken.embedder import (
+        embed_file_text,
+        embed_intent_text,
+        embed_symbol_text,
+    )
+
+    pending: list[_Pending] = []
+    jobs: list[tuple[str, str, bytes]] = []
+    awaiting: list[_Pending] = []
+    for order, rel in enumerate(chunk):
         stats.visited += 1
         rel_posix = rel.as_posix()
         abs_path = project_root / rel
@@ -75,224 +264,238 @@ def index_files(
             st = abs_path.stat()
         except OSError:
             stats.skipped_io_error += 1
-            if on_progress:
-                on_progress(rel_posix, "skipped:io_error")
+            events.append((order, rel_posix, "skipped:io_error"))
             continue
         if st.st_size > max_file_bytes:
             stats.skipped_too_large += 1
-            if on_progress:
-                on_progress(rel_posix, "skipped:too_large")
+            events.append((order, rel_posix, "skipped:too_large"))
             continue
 
         lang_match = detect_language(rel)
         if lang_match is None:
-            # Track the file row anyway — context-rank can score files
-            # without symbols (path, mtime, edit history). For small
-            # project docs/config/scripts, also keep a restrained
-            # intent source so setup prompts can find README.md,
-            # install.sh, pyproject.toml, etc. without a language parser.
             try:
                 data = abs_path.read_bytes()
             except OSError:
                 stats.skipped_io_error += 1
-                if on_progress:
-                    on_progress(rel_posix, "skipped:io_error")
+                events.append((order, rel_posix, "skipped:io_error"))
                 continue
             content_hash = _hash(data)
             if _is_unchanged(
-                conn,
-                rel_posix,
-                content_hash,
-                need_embedding=embedder is not None,
+                conn, rel_posix, content_hash, need_embedding=embedder is not None
             ):
                 stats.unchanged += 1
-                if on_progress:
-                    on_progress(rel_posix, "unchanged")
+                events.append((order, rel_posix, "unchanged"))
                 continue
 
-            file_blob: bytes | None = None
             intent_texts = _plain_text_intents(rel_posix, data)
-            intent_blobs: list[bytes | None] = [None] * len(intent_texts)
+            del data
+            item = _Pending(
+                rel=rel_posix,
+                language=None,
+                content_hash=content_hash,
+                mtime_ns=st.st_mtime_ns,
+                order=order,
+                intent_texts=intent_texts,
+            )
             if embedder is not None:
-                from ken.embedder import embed_file_text, embed_intent_text, vec_to_blob
-
                 stem = Path(rel_posix).stem
-                top_terms = intent_texts[:1]
                 # A file embedding is a *document*, so it must go through
                 # embed_passages. Asymmetric models (e5, Qwen3) prepend a
                 # question instruction on the query side; encoding a stored
                 # vector with it puts the index in the wrong space.
-                file_blob = vec_to_blob(
-                    embedder.embed_passages([embed_file_text(None, stem, top_terms)])[0]
-                )
-                if intent_texts:
-                    intent_vecs = embedder.embed_passages(
-                        [embed_intent_text("plain_text", text) for text in intent_texts]
-                    )
-                    intent_blobs = [vec_to_blob(vec) for vec in intent_vecs]
-
-            with conn:
-                file_id = _upsert_file_row(
-                    conn,
-                    rel_posix,
-                    language=None,
-                    content_hash=content_hash,
-                    mtime_ns=st.st_mtime_ns,
-                    symbol_count=0,
-                    embedding=file_blob,
-                )
-                conn.execute("DELETE FROM ci_symbols WHERE file_id = ?", (file_id,))
-                conn.execute("DELETE FROM ci_imports WHERE from_file_id = ?", (file_id,))
-                conn.execute("DELETE FROM ci_intent_sources WHERE file_id = ?", (file_id,))
-                for intent_text, intent_blob in zip(intent_texts, intent_blobs):
-                    _insert_file_intent_source(
-                        conn,
-                        file_id,
-                        source_kind="plain_text",
-                        text=intent_text,
-                        embedding=intent_blob,
-                        weight=0.55,
-                    )
-            stats.skipped_no_lang += 1
-            if on_progress:
-                on_progress(rel_posix, "indexed:noparse")
+                item.texts.append(embed_file_text(None, stem, intent_texts[:1]))
+                item.slots.append(("file",))
+                for i, text in enumerate(intent_texts):
+                    item.texts.append(embed_intent_text("plain_text", text))
+                    item.slots.append(("plain_intent", i))
+            pending.append(item)
             continue
 
-        language, parser_fn = lang_match
-
+        language, _parser_fn = lang_match
         try:
             data = abs_path.read_bytes()
         except OSError:
             stats.skipped_io_error += 1
-            if on_progress:
-                on_progress(rel_posix, "skipped:io_error")
+            events.append((order, rel_posix, "skipped:io_error"))
             continue
 
         content_hash = _hash(data)
-        if _is_unchanged(conn, rel_posix, content_hash, need_embedding=embedder is not None):
+        if _is_unchanged(
+            conn, rel_posix, content_hash, need_embedding=embedder is not None
+        ):
             stats.unchanged += 1
-            if on_progress:
-                on_progress(rel_posix, "unchanged")
+            events.append((order, rel_posix, "unchanged"))
             continue
 
-        try:
-            parsed = parser_fn(data, rel_posix)
-        except Exception:  # pragma: no cover — tree-sitter never raises in practice
-            stats.skipped_io_error += 1
-            if on_progress:
-                on_progress(rel_posix, "skipped:parse_error")
-            continue
-
-        # Compute embeddings *outside* the transaction — fastembed can
-        # take tens of ms on a cold session, and we don't want to hold
-        # the SQLite write lock that long.
-        symbol_blobs: list[bytes | None] = [None] * len(parsed.symbols)
-        intent_file_blob: bytes | None = None
-        intent_symbol_blobs: list[bytes | None] = [None] * len(parsed.symbols)
-        file_blob: bytes | None = None
-        if embedder is not None:
-            from ken.embedder import (
-                embed_file_text,
-                embed_intent_text,
-                embed_symbol_text,
-                vec_to_blob,
-            )
-
-            if parsed.symbols:
-                texts = [
-                    embed_symbol_text(s.kind, s.name, s.docstring) for s in parsed.symbols
-                ]
-                vecs = embedder.embed_passages(texts)
-                symbol_blobs = [vec_to_blob(v) for v in vecs]
-                intent_texts = [
-                    embed_intent_text("symbol_docstring", s.docstring or "")
-                    if s.docstring
-                    else ""
-                    for s in parsed.symbols
-                ]
-                doc_indices = [i for i, text in enumerate(intent_texts) if text]
-                if doc_indices:
-                    intent_vecs = embedder.embed_passages(
-                        [intent_texts[i] for i in doc_indices]
-                    )
-                    for i, vec in zip(doc_indices, intent_vecs):
-                        intent_symbol_blobs[i] = vec_to_blob(vec)
-            stem = Path(rel_posix).stem
-            top_names = [s.name for s in parsed.symbols[:8]]
-            file_text = embed_file_text(language, stem, top_names)
-            # Documents, not queries — see the note on the no-parse path above.
-            file_blob = vec_to_blob(embedder.embed_passages([file_text])[0])
-            if parsed.docstring:
-                intent_file_blob = vec_to_blob(
-                    embedder.embed_passages(
-                        [embed_intent_text("module_docstring", parsed.docstring)]
-                    )[0]
-                )
-
-        with conn:  # implicit BEGIN/COMMIT around the whole file write
-            file_id = _upsert_file_row(
-                conn,
-                rel_posix,
+        # Queued rather than parsed: the whole chunk goes through the pool in
+        # one call below, so the workers stay busy instead of being handed one
+        # file at a time.
+        jobs.append((language, rel_posix, data))
+        awaiting.append(
+            _Pending(
+                rel=rel_posix,
                 language=language,
                 content_hash=content_hash,
                 mtime_ns=st.st_mtime_ns,
-                symbol_count=len(parsed.symbols),
-                embedding=file_blob,
+                order=order,
             )
-            # Wipe and re-insert symbols/imports for this file. Cheap:
-            # CASCADE drops references too, and the file's symbols are
-            # bounded.
-            conn.execute("DELETE FROM ci_symbols WHERE file_id = ?", (file_id,))
-            conn.execute("DELETE FROM ci_imports WHERE from_file_id = ?", (file_id,))
-            conn.execute("DELETE FROM ci_intent_sources WHERE file_id = ?", (file_id,))
+        )
+
+    for item, parsed in zip(awaiting, _parse_all(jobs, pool)):
+        if parsed is None:
+            stats.skipped_io_error += 1
+            events.append((item.order, item.rel, "skipped:parse_error"))
+            continue
+        item.parsed = parsed
+        if embedder is not None:
+            for i, s in enumerate(parsed.symbols):
+                item.texts.append(embed_symbol_text(s.kind, s.name, s.docstring))
+                item.slots.append(("symbol", i))
+                if s.docstring:
+                    item.texts.append(
+                        embed_intent_text("symbol_docstring", s.docstring)
+                    )
+                    item.slots.append(("symbol_doc", i))
+            stem = Path(item.rel).stem
+            top_names = [s.name for s in parsed.symbols[:8]]
+            # Documents, not queries — see the note on the no-parse path above.
+            item.texts.append(embed_file_text(item.language, stem, top_names))
+            item.slots.append(("file",))
             if parsed.docstring:
-                _insert_file_intent_source(
+                item.texts.append(
+                    embed_intent_text("module_docstring", parsed.docstring)
+                )
+                item.slots.append(("module_doc",))
+        pending.append(item)
+    return pending
+
+
+def _embed_pending(pending: list[_Pending], embedder: "Embedder | None") -> None:
+    """One embedder call for the whole chunk, then hand the vectors back out.
+
+    This is the entire point of chunking. Splitting the batch by file would
+    give identical vectors — every backend encodes each text independently —
+    at eight times the cost.
+    """
+    if embedder is None:
+        return
+    flat = [t for item in pending for t in item.texts]
+    if not flat:
+        return
+    from ken.embedder import vec_to_blob
+
+    vecs = embedder.embed_passages(flat)
+    pos = 0
+    for item in pending:
+        for slot in item.slots:
+            item.blobs[slot] = vec_to_blob(vecs[pos])
+            pos += 1
+        item.texts = []
+
+
+def _write_pending(
+    conn: sqlite3.Connection,
+    pending: list[_Pending],
+    stats: IndexStats,
+    events: list[tuple[int, str, str]],
+) -> None:
+    """One transaction per file, as before — chunking changed when vectors are
+    computed, not how durably a file lands."""
+    for item in pending:
+        if item.language is None:
+            _write_plain(conn, item)
+            stats.skipped_no_lang += 1
+            events.append((item.order, item.rel, "indexed:noparse"))
+        else:
+            _write_parsed(conn, item)
+            stats.parsed += 1
+            stats.symbols += len(item.parsed.symbols)
+            stats.imports += len(item.parsed.imports)
+            events.append((item.order, item.rel, "indexed"))
+
+
+def _write_plain(conn: sqlite3.Connection, item: _Pending) -> None:
+    with conn:
+        file_id = _upsert_file_row(
+            conn,
+            item.rel,
+            language=None,
+            content_hash=item.content_hash,
+            mtime_ns=item.mtime_ns,
+            symbol_count=0,
+            embedding=item.blobs.get(("file",)),
+        )
+        conn.execute("DELETE FROM ci_symbols WHERE file_id = ?", (file_id,))
+        conn.execute("DELETE FROM ci_imports WHERE from_file_id = ?", (file_id,))
+        conn.execute("DELETE FROM ci_intent_sources WHERE file_id = ?", (file_id,))
+        for i, intent_text in enumerate(item.intent_texts or ()):
+            _insert_file_intent_source(
+                conn,
+                file_id,
+                source_kind="plain_text",
+                text=intent_text,
+                embedding=item.blobs.get(("plain_intent", i)),
+                weight=0.55,
+            )
+
+
+def _write_parsed(conn: sqlite3.Connection, item: _Pending) -> None:
+    parsed = item.parsed
+    with conn:  # implicit BEGIN/COMMIT around the whole file write
+        file_id = _upsert_file_row(
+            conn,
+            item.rel,
+            language=item.language,
+            content_hash=item.content_hash,
+            mtime_ns=item.mtime_ns,
+            symbol_count=len(parsed.symbols),
+            embedding=item.blobs.get(("file",)),
+        )
+        # Wipe and re-insert symbols/imports for this file. Cheap:
+        # CASCADE drops references too, and the file's symbols are
+        # bounded.
+        conn.execute("DELETE FROM ci_symbols WHERE file_id = ?", (file_id,))
+        conn.execute("DELETE FROM ci_imports WHERE from_file_id = ?", (file_id,))
+        conn.execute("DELETE FROM ci_intent_sources WHERE file_id = ?", (file_id,))
+        if parsed.docstring:
+            _insert_file_intent_source(
+                conn,
+                file_id,
+                source_kind="module_docstring",
+                text=parsed.docstring,
+                embedding=item.blobs.get(("module_doc",)),
+            )
+        for i, s in enumerate(parsed.symbols):
+            cur = conn.execute(
+                "INSERT INTO ci_symbols(file_id, kind, name, qualname, line_start, line_end, docstring, embedding) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    file_id,
+                    s.kind,
+                    s.name,
+                    s.qualname,
+                    s.line_start,
+                    s.line_end,
+                    s.docstring,
+                    item.blobs.get(("symbol", i)),
+                ),
+            )
+            if s.docstring:
+                _insert_symbol_intent_source(
                     conn,
                     file_id,
-                    source_kind="module_docstring",
-                    text=parsed.docstring,
-                    embedding=intent_file_blob,
+                    int(cur.lastrowid),
+                    source_kind="symbol_docstring",
+                    text=s.docstring,
+                    embedding=item.blobs.get(("symbol_doc", i)),
                 )
-            if parsed.symbols:
-                for i, s in enumerate(parsed.symbols):
-                    cur = conn.execute(
-                        "INSERT INTO ci_symbols(file_id, kind, name, qualname, line_start, line_end, docstring, embedding) "
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                        (
-                            file_id,
-                            s.kind,
-                            s.name,
-                            s.qualname,
-                            s.line_start,
-                            s.line_end,
-                            s.docstring,
-                            symbol_blobs[i],
-                        ),
-                    )
-                    if s.docstring:
-                        _insert_symbol_intent_source(
-                            conn,
-                            file_id,
-                            int(cur.lastrowid),
-                            source_kind="symbol_docstring",
-                            text=s.docstring,
-                            embedding=intent_symbol_blobs[i],
-                        )
-            if parsed.imports:
-                conn.executemany(
-                    "INSERT INTO ci_imports(from_file_id, to_module, line) VALUES (?, ?, ?)",
-                    [(file_id, imp.module, imp.line) for imp in parsed.imports],
-                )
+        if parsed.imports:
+            conn.executemany(
+                "INSERT INTO ci_imports(from_file_id, to_module, line) VALUES (?, ?, ?)",
+                [(file_id, imp.module, imp.line) for imp in parsed.imports],
+            )
 
-        stats.parsed += 1
-        stats.symbols += len(parsed.symbols)
-        stats.imports += len(parsed.imports)
-        if on_progress:
-            on_progress(rel_posix, "indexed")
 
-    stats.elapsed_s = time.monotonic() - t0
-    _resolve_internal_imports(conn, project_root)
-    return stats
 
 
 def delete_file(conn: sqlite3.Connection, rel: str) -> bool:
@@ -459,6 +662,7 @@ def _resolve_internal_imports(
     go_by_dir = _files_by_dir(p for p in files if p.endswith(".go"))
     kotlin_files = [p for p in files if p.endswith((".kt", ".kts"))]
     php_psr4 = _php_psr4_maps(project_root, files)
+    py_suffixes = _python_suffix_index(files)
 
     updates: list[tuple[int, int]] = []
     resolutions: list[tuple[str, int]] = []
@@ -468,7 +672,9 @@ def _resolve_internal_imports(
         lang = row["lang"]
         import_id = int(row["id"])
         # 1. structural pass (relative JS/TS, dotted Python, generic path match)
-        target = _resolve_import_target(module, files, files_set=files_set, source_path=src)
+        target = _resolve_import_target(
+            module, files, files_set=files_set, source_path=src, py_suffixes=py_suffixes
+        )
         # 2. config-aware JS/TS aliases + workspace packages
         if target is None and lang in ("typescript", "javascript") and alias_resolver is not None:
             target = alias_resolver.resolve(module, src, _match_js_module)
@@ -841,12 +1047,33 @@ def _resolve_php_import(
     return matches[0] if len(matches) == 1 else None
 
 
+def _python_suffix_index(files: Iterable[str]) -> dict[str, list[str]]:
+    """``"/a/b.py" -> [paths ending in it]``, for the dotted-Python fallback.
+
+    Without it, that fallback is a scan of every indexed file for every
+    unresolved import — 751 files x 2 350 imports came to 1.18 million
+    ``str.endswith`` calls on one real project, half a second of the install.
+    Only ``.py`` paths are indexed because that is the only suffix the fallback
+    ever asks about, and only at ``/`` boundaries, which is what ``endswith``
+    was matching.
+    """
+    index: dict[str, list[str]] = {}
+    for path in files:
+        if not path.endswith(".py"):
+            continue
+        parts = path.split("/")
+        for i in range(1, len(parts)):
+            index.setdefault("/" + "/".join(parts[i:]), []).append(path)
+    return index
+
+
 def _resolve_import_target(
     module: str,
     files: list[str],
     *,
     files_set: set[str] | None = None,
     source_path: str | None = None,
+    py_suffixes: dict[str, list[str]] | None = None,
 ) -> str | None:
     mod = module.strip().strip("'\"")
     if not mod:
@@ -877,8 +1104,11 @@ def _resolve_import_target(
     }
     if "/" in mod:
         candidates.update({mod, f"{mod}.py", f"{mod}.ts", f"{mod}.js"})
-    matches = [path for path in files if path in candidates or path.endswith(f"/{slash}.py")]
-    unique = sorted(set(matches))
+    if py_suffixes is None:
+        py_suffixes = _python_suffix_index(files)
+    matches = set(candidates) & files_set
+    matches.update(py_suffixes.get(f"/{slash}.py", ()))
+    unique = sorted(matches)
     return unique[0] if len(unique) == 1 else None
 
 

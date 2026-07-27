@@ -483,3 +483,103 @@ def test_resolves_rust_super_glob_to_own_file(project):
     ).fetchone()
     assert row["target"] == "src/calc.rs"
     assert row["resolution"] == "internal"
+
+
+# ── chunked embedding + parallel parsing ─────────────────────────────
+
+
+def _index_and_dump(conn, root, rels, embedder):
+    index_files(conn, root, rels, embedder=embedder)
+    return {
+        (r["path"], r["kind"], r["name"]): r["embedding"]
+        for r in conn.execute(
+            "SELECT f.path, s.kind, s.name, s.embedding FROM ci_symbols s "
+            "JOIN ci_files f ON f.id = s.file_id"
+        )
+    } | {
+        (r["path"], "", ""): r["embedding"]
+        for r in conn.execute("SELECT path, embedding FROM ci_files")
+    }
+
+
+def test_chunk_size_does_not_change_a_vector(tmp_path):
+    """Texts are embedded a chunk of files at a time; which chunk a file lands
+    in must not reach the stored vector, or an index would depend on how many
+    files happened to be walked before it."""
+    rels = []
+    for i in range(5):
+        (tmp_path / f"m{i}.py").write_text(
+            f'"""Module {i}."""\n\n\ndef f{i}(a):\n    """Do {i}."""\n    return a\n'
+        )
+        rels.append(Path(f"m{i}.py"))
+
+    dumps = []
+    for chunk_size in (1, 2, 5, 128):
+        root = tmp_path / f"run{chunk_size}"
+        root.mkdir()
+        for rel in rels:
+            (root / rel).write_bytes((tmp_path / rel).read_bytes())
+        (root / ".ken").mkdir()
+        conn = connect(root / ".ken" / "ken.db")
+        init_schema(conn)
+        import ken.indexer as ix
+
+        old = ix._EMBED_CHUNK_FILES
+        ix._EMBED_CHUNK_FILES = chunk_size
+        try:
+            dumps.append(_index_and_dump(conn, root, rels, _FakeEmbedder()))
+        finally:
+            ix._EMBED_CHUNK_FILES = old
+            conn.close()
+
+    first = dumps[0]
+    assert len(first) == 10  # 5 files + 5 symbols
+    for other in dumps[1:]:
+        assert other == first
+
+
+def test_worker_count_gates_on_size_and_env(monkeypatch):
+    from ken.indexer import _PARALLEL_MIN_FILES, _worker_count
+
+    monkeypatch.delenv("KEN_INDEX_WORKERS", raising=False)
+    # A daemon re-indexing one edited file must not start a process pool.
+    assert _worker_count(1) == 0
+    assert _worker_count(_PARALLEL_MIN_FILES - 1) == 0
+    assert _worker_count(10_000) >= 2
+
+    monkeypatch.setenv("KEN_INDEX_WORKERS", "0")
+    assert _worker_count(10_000) == 0      # the escape hatch actually disables it
+    monkeypatch.setenv("KEN_INDEX_WORKERS", "3")
+    assert _worker_count(10_000) == 3
+    monkeypatch.setenv("KEN_INDEX_WORKERS", "not-a-number")
+    assert _worker_count(1) == 0           # garbage falls back to the gate
+
+
+def test_parse_falls_back_to_serial_when_the_pool_breaks(tmp_path):
+    """A worker dying must cost speed, not the install."""
+    from ken.indexer import _parse_all
+
+    jobs = [("python", "a.py", b"def f():\n    return 1\n")]
+
+    class _BrokenPool:
+        def map(self, *a, **k):
+            raise RuntimeError("worker died")
+
+    got = _parse_all(jobs, _BrokenPool())
+    assert [s.name for s in got[0].symbols] == ["f"]
+
+
+def test_progress_is_reported_in_walk_order(project):
+    """Skips are decided before the writes happen; the log must not reorder."""
+    root, conn = project
+    (root / "a.py").write_text("def a(): pass\n")
+    (root / "big.py").write_text("x = 1\n" * 10)
+    (root / "c.py").write_text("def c(): pass\n")
+    rels = [Path("a.py"), Path("big.py"), Path("c.py")]
+
+    seen: list[tuple[str, str]] = []
+    index_files(
+        conn, root, rels, max_file_bytes=20, on_progress=lambda r, s: seen.append((r, s))
+    )
+    assert [r for r, _ in seen] == ["a.py", "big.py", "c.py"]
+    assert seen[1][1] == "skipped:too_large"
