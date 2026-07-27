@@ -887,7 +887,7 @@ def _vectors_cli(project_path: Path, action: str, *, as_json: bool) -> int:
     from ken.db import connect, init_schema
     from ken.embedder import active_model, configure_for_project, get_embedder
     from ken.vectors import SPACES, VectorStore, VectorStoreError, compact
-    from ken.vectors import migrate_inline_vectors, vectors_dir
+    from ken.vectors import migrate_inline_vectors, reclaim_database, vectors_dir
 
     root = project_path.resolve()
     db = _paths.db_path(root)
@@ -912,11 +912,30 @@ def _vectors_cli(project_path: Path, action: str, *, as_json: bool) -> int:
         if action == "migrate":
             if not as_json:
                 print(f"[vectors] moving inline vectors into {vectors_dir(root)}")
-            result["moved"] = migrate_inline_vectors(
+            moved = migrate_inline_vectors(
                 conn, root, dim=dim, model=active_model(), progress=say
             )
-            if not as_json:
-                print("[vectors] done — run `VACUUM` or `ken vectors compact` to reclaim disk")
+            result["moved"] = moved
+            if sum(moved.values()):
+                # The migration only NULLs the column; without this the file
+                # keeps every freed page and the user sees no space back.
+                if not as_json:
+                    print("[vectors] reclaiming freed pages (VACUUM)…")
+                try:
+                    before, after = reclaim_database(conn)
+                    result["db_bytes_before"] = before
+                    result["db_bytes_after"] = after
+                    if not as_json and before:
+                        print(
+                            f"[vectors] ken.db {before / 1e6:,.1f} MB "
+                            f"-> {after / 1e6:,.1f} MB"
+                        )
+                except sqlite3.Error as exc:
+                    result["vacuum_error"] = str(exc)
+                    if not as_json:
+                        print(f"[vectors] VACUUM skipped ({exc}); vectors moved fine")
+            elif not as_json:
+                print("[vectors] nothing to move")
         elif action == "compact":
             if not as_json:
                 print("[vectors] renumbering live vectors into a dense prefix")

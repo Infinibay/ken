@@ -462,3 +462,98 @@ def test_verify_flags_a_slot_past_the_high_water_mark(project):
         "VALUES('a.py', x'00', 0, 0, 99)"
     )
     assert store.verify(conn)["out_of_range"] == 1
+
+
+# ---------------------------------------------------------------- migration
+
+
+def test_migration_moves_inline_vectors_and_reclaims_the_file(project):
+    """Setting `embedding` to NULL frees pages inside the file and shrinks
+    nothing; without the VACUUM a user sees no space back and reasonably
+    concludes the migration did not work."""
+    from ken.vectors import migrate_inline_vectors, reclaim_database
+
+    root, conn = project
+    dim = 128
+    rng = np.random.default_rng(3)
+    for i in range(400):
+        v = rng.normal(size=dim).astype(np.float32)
+        conn.execute(
+            "INSERT INTO ci_files(path, content_hash, mtime, indexed_at, embedding) "
+            "VALUES(?, x'00', 0, 0, ?)",
+            (f"f{i}.py", (v / np.linalg.norm(v)).tobytes()),
+        )
+
+    moved = migrate_inline_vectors(conn, root, dim=dim)
+    assert moved["ci_files"] == 400
+    assert conn.execute(
+        "SELECT COUNT(*) FROM ci_files WHERE embedding IS NOT NULL"
+    ).fetchone()[0] == 0
+    assert conn.execute(
+        "SELECT COUNT(*) FROM ci_files WHERE vec_slot IS NOT NULL"
+    ).fetchone()[0] == 400
+
+    before, after = reclaim_database(conn)
+    assert before > 0 and after < before
+
+    store = VectorStore(root, "ci_files", dim=dim)
+    assert store.verify(conn)["leaked"] == 0
+    assert store.verify(conn)["referenced"] == 400
+
+
+def test_migration_preserves_the_vectors_bit_for_bit(project):
+    """Only where they live changes."""
+    from ken.vectors import migrate_inline_vectors
+
+    root, conn = project
+    dim = 64
+    originals = {}
+    for i in range(20):
+        v = _unit(i, dim)
+        originals[f"f{i}.py"] = v
+        conn.execute(
+            "INSERT INTO ci_files(path, content_hash, mtime, indexed_at, embedding) "
+            "VALUES(?, x'00', 0, 0, ?)",
+            (f"f{i}.py", v.tobytes()),
+        )
+    migrate_inline_vectors(conn, root, dim=dim)
+
+    store = VectorStore(root, "ci_files", dim=dim)
+    for path, want in originals.items():
+        slot = conn.execute(
+            "SELECT vec_slot FROM ci_files WHERE path = ?", (path,)
+        ).fetchone()["vec_slot"]
+        assert np.allclose(store.read([int(slot)])[0], want, atol=1e-6), path
+
+
+def test_migration_leaves_foreign_dimension_rows_inline(project):
+    """A vector from another model must not be silently dropped — reembed is
+    what fixes those, and it needs to still find them."""
+    from ken.vectors import migrate_inline_vectors
+
+    root, conn = project
+    conn.execute(
+        "INSERT INTO ci_files(path, content_hash, mtime, indexed_at, embedding) "
+        "VALUES('old.py', x'00', 0, 0, ?)",
+        (_unit(1, 32).tobytes(),),
+    )
+    migrate_inline_vectors(conn, root, dim=64)
+    row = conn.execute("SELECT embedding, vec_slot FROM ci_files").fetchone()
+    assert row["embedding"] is not None
+    assert row["vec_slot"] is None
+
+
+def test_migration_is_idempotent(project):
+    from ken.vectors import migrate_inline_vectors
+
+    root, conn = project
+    conn.execute(
+        "INSERT INTO ci_files(path, content_hash, mtime, indexed_at, embedding) "
+        "VALUES('a.py', x'00', 0, 0, ?)",
+        (_unit(1, 64).tobytes(),),
+    )
+    first = migrate_inline_vectors(conn, root, dim=64)
+    second = migrate_inline_vectors(conn, root, dim=64)
+    assert first["ci_files"] == 1
+    assert second["ci_files"] == 0
+    assert high_water(conn, "ci_files") == 1

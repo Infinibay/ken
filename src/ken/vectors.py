@@ -718,6 +718,40 @@ def migrate_inline_vectors(
     return moved
 
 
+def reclaim_database(conn: sqlite3.Connection) -> tuple[int, int]:
+    """VACUUM the database and report the bytes before and after.
+
+    Moving vectors out sets the `embedding` column to NULL, which frees pages
+    *inside* the file and shrinks nothing: SQLite keeps them on its free list.
+    On a kernel-sized index that is the difference between a 4.10 GB file and a
+    214 MB one, so the migration is not really done until this runs.
+
+    Returns ``(0, 0)`` when the size cannot be read — an in-memory database has
+    no file to shrink, and neither does one whose path SQLite will not report.
+    """
+    path = None
+    for _seq, name, filename in conn.execute("PRAGMA database_list"):
+        if name == "main" and filename:
+            path = Path(filename)
+            break
+    if path is None or not path.is_file():
+        return (0, 0)
+    before = path.stat().st_size
+    # VACUUM rewrites the whole file and cannot run inside a transaction. It
+    # also needs scratch space of roughly the database's size; letting the
+    # OperationalError escape would turn a successful migration into a failed
+    # command, so callers treat this as advisory.
+    conn.execute("VACUUM")
+    # In WAL mode the rewritten pages live in the journal until a checkpoint,
+    # so the main file's size still reads as it was — reporting it here would
+    # tell the user nothing was reclaimed right after reclaiming it.
+    try:
+        conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+    except sqlite3.Error:
+        pass
+    return (before, path.stat().st_size)
+
+
 def compact(
     conn: sqlite3.Connection, project_root: Path, *, dim: int, progress=None
 ) -> dict[str, dict[str, int]]:

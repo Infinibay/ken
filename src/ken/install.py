@@ -313,9 +313,15 @@ def _migrate_vectors_if_needed(conn, root: Path, *, verbose: bool) -> None:
         moved = migrate_inline_vectors(
             conn, root, dim=int(get_embedder().dim), model=active_model()
         )
+        total = sum(moved.values())
         if verbose:
-            total = sum(moved.values())
-            print(f"[vectors] moved {total:,}; `ken vectors compact` reclaims the freed pages")
+            print(f"[vectors] moved {total:,}; reclaiming freed pages…")
+        if total:
+            from ken.vectors import reclaim_database
+
+            before, after = reclaim_database(conn)
+            if verbose and before:
+                print(f"[vectors] ken.db {before / 1e6:,.1f} MB -> {after / 1e6:,.1f} MB")
     except Exception as exc:  # pragma: no cover - degrades to the inline path
         if verbose:
             print(f"[vectors] skipped ({exc}); embeddings stay inline")
