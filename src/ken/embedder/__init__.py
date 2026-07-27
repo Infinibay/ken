@@ -55,12 +55,22 @@ LEGACY_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 RECOMMENDED_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
 # The fitted static table (see ``ken.embedder.static_head``). Preferred over
-# RECOMMENDED_MODEL for new projects whenever its artifact is present, because
-# on ken's own labelled task it measures recall@10 0.627 against that model's
-# 0.303 while encoding orders of magnitude faster and adding no dependency.
-# It is not unconditional only because the table is a file that has to get onto
-# the machine somehow; see ``recommended_model``.
-STATIC_MODEL = "ken/static-qwen3-r256-v1"
+# RECOMMENDED_MODEL for new projects whenever its artifact is present: it
+# encodes orders of magnitude faster, adds no dependency, and on 4 351 held-out
+# queries across fourteen languages it reaches recall@10 0.708 against the Qwen
+# teacher's 0.728 — 97% of a model that is fifty times its size. It is not
+# unconditional only because the table is a file that has to get onto the
+# machine somehow; see ``recommended_model``.
+#
+# The version is in the name because the table *is* the model, and the two
+# versions differ in what they were shown rather than in how they work. v1 was
+# fitted on ~13 000 texts from one workspace: it scored 0.627 on the in-domain
+# fixture set that selected it and 0.281 on held-out code, because 21% of the
+# tokens there had no row of their own and collapsed into 256 shared hash
+# buckets. v2 is fitted on 964 475 texts balanced across sixteen languages and
+# leaves 1.6% uncovered. A cached v1 is not upgraded in place; it is simply no
+# longer the name ken looks for.
+STATIC_MODEL = "ken/static-qwen3-r512-v2"
 
 META_EMBED_MODEL = "embed_model"
 META_UPGRADE_SEEN = "embed_upgrade_seen_at"
@@ -160,16 +170,15 @@ def recommended_model() -> str:
     """The default model a fresh project should use.
 
     Priority: the user's configured default, then the static table if its
-    artifact is actually present, then the fastembed default.
+    artifact is present, then the fastembed default.
 
-    The middle step is conditional on purpose. ``STATIC_MODEL`` is the best
-    default ken has by a distance — on ken's own labelled retrieval task it
-    scores recall@10 0.627 against 0.303 for the fastembed default, and it
-    encodes ~2 400x faster than the strongest transformer — but it is a *fitted
-    table*, not a model anyone can download yet. Naming it unconditionally would
-    make a fresh install fail on a missing file. So it is the default wherever
-    it exists and invisible where it does not, which is exactly the behaviour a
-    download would give once there is somewhere to download it from.
+    ``STATIC_MODEL`` is the best default ken has by a distance — 97% of a Qwen
+    teacher's recall on held-out code across fourteen languages, at roughly ten
+    thousand texts a second on one CPU thread and with no extra dependency — and
+    since it ships inside the wheel the middle step normally succeeds. The
+    condition is kept anyway: the table is a 23 MB data file, and an install
+    that stripped it (a repackager, a partial checkout, a vendored subset)
+    should quietly fall back rather than fail on a missing path.
     """
     configured = get_user_default_model()
     if configured:

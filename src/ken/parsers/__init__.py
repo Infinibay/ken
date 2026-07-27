@@ -19,6 +19,7 @@ from ken.parsers.css import parse_css_file
 from ken.parsers.dart import parse_dart_file
 from ken.parsers.go import parse_go_file
 from ken.parsers.graphql import parse_graphql_file
+from ken.parsers.html import parse_html_file
 from ken.parsers.java import parse_java_file
 from ken.parsers.javascript import parse_js_file
 from ken.parsers.kotlin import parse_kotlin_file
@@ -47,6 +48,13 @@ LANGUAGE_BY_EXT: dict[str, tuple[str, ParserFn]] = {
     ".cs": ("csharp", parse_csharp_file),
     ".csx": ("csharp", parse_csharp_file),
     ".css": ("css", parse_css_file),
+    ".html": ("html", parse_html_file),
+    ".htm": ("html", parse_html_file),
+    # Server-side template dialects are HTML with an extra brace syntax the
+    # grammar treats as text, so the tags, ids and script sources still come
+    # out — which is the part ken indexes.
+    ".vue": ("html", parse_html_file),
+    ".svelte": ("html", parse_html_file),
     ".py": ("python", parse_python_file),
     ".pyi": ("python", parse_python_file),
     ".rs": ("rust", parse_rust_file),

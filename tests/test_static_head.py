@@ -125,6 +125,61 @@ def test_unknown_words_and_empty_text_do_not_raise(tmp_path, monkeypatch):
     assert emb.embed_passages([]) == []
 
 
+def _int8_artifact(tmp_path, A):
+    """The same table, stored the way the shipped artifact stores it."""
+    scale = np.maximum(np.abs(A).max(axis=1), 1e-12) / 127.0
+    q = np.round(A / scale[:, None]).clip(-127, 127).astype(np.int8)
+    path = tmp_path / "head_i8.npz"
+    np.savez_compressed(
+        path,
+        lut=np.arange(5, dtype=np.int32),
+        A=q,
+        A_scale=scale.astype(np.float32),
+        B=np.eye(3, 3, dtype=np.float32),
+        tokenizer=np.frombuffer(_tokenizer_json().encode("utf-8"), dtype=np.uint8),
+        meta=np.frombuffer(
+            json.dumps({"name": "test/static", "dim": 3}).encode("utf-8"), dtype=np.uint8
+        ),
+    )
+    return path
+
+
+def test_an_int8_table_encodes_like_its_float_original(tmp_path, monkeypatch):
+    """Quantisation is a storage decision, so it must not be a semantic one.
+
+    The rows here are chosen so the per-row scales differ (one row is 100x the
+    others); a per-tensor scale would crush the small row to zero and this test
+    would catch it.
+    """
+    A = np.array(
+        [[1.0, 0, 0], [0, 0.01, 0], [0, 0, 100.0], [3.0, 4.0, 0], [0, 0, 2.0]],
+        dtype=np.float32,
+    )
+    monkeypatch.setenv("KEN_STATIC_HEAD", str(_artifact(tmp_path, A=A)))
+    exact = StaticHeadEmbedder("test/static").embed_passages(
+        ["alfa", "beta", "gamma delta", "zeta"]
+    )
+    monkeypatch.setenv("KEN_STATIC_HEAD", str(_int8_artifact(tmp_path, A)))
+    quantised = StaticHeadEmbedder("test/static").embed_passages(
+        ["alfa", "beta", "gamma delta", "zeta"]
+    )
+    for a, b in zip(exact, quantised):
+        assert float(np.dot(a, b)) == pytest.approx(1.0, abs=1e-4)
+
+
+def test_an_int8_table_without_its_scales_is_rejected(tmp_path, monkeypatch):
+    """Reading int8 rows as floats would silently produce a different function."""
+    path = _int8_artifact(tmp_path, np.eye(5, 3, dtype=np.float32) + 0.5)
+    with np.load(path) as npz:
+        kept = {k: npz[k] for k in npz.files if k != "A_scale"}
+    stripped = tmp_path / "no_scale.npz"
+    np.savez_compressed(stripped, **kept)
+    monkeypatch.setenv("KEN_STATIC_HEAD", str(stripped))
+    emb = StaticHeadEmbedder("test/static")
+    with pytest.raises(RuntimeError, match="A_scale"):
+        emb.embed_passages(["alfa"])
+
+
 def test_missing_artifact_names_the_fix(tmp_path, monkeypatch):
     monkeypatch.setenv("KEN_STATIC_HEAD", str(tmp_path / "absent.npz"))
     emb = StaticHeadEmbedder("test/static")

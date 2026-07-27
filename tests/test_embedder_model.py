@@ -13,6 +13,7 @@ from ken.embedder import (
     RECOMMENDED_MODEL,
     configure_for_project,
     pending_upgrade,
+    recommended_model,
     reset_embedder,
     resolve_model,
 )
@@ -47,7 +48,10 @@ def _add_embedded_file(conn, path="a.py"):
 # ── resolve_model ────────────────────────────────────────────────────
 
 def test_fresh_db_resolves_recommended(conn):
-    assert resolve_model(conn) == RECOMMENDED_MODEL
+    # ``recommended_model()``, not the constant: the constant is only the
+    # fallback for an install with no static table, and this asserts the
+    # mechanism (a fresh project gets whatever ken currently recommends).
+    assert resolve_model(conn) == recommended_model()
 
 
 def test_legacy_db_without_meta_infers_legacy(conn):
@@ -76,8 +80,8 @@ def test_configure_records_recommended_for_fresh_db(conn):
     from ken.db import get_meta
 
     model = configure_for_project(conn)
-    assert model == RECOMMENDED_MODEL
-    assert get_meta(conn, "embed_model") == RECOMMENDED_MODEL  # pinned
+    assert model == recommended_model()
+    assert get_meta(conn, "embed_model") == recommended_model()  # pinned
 
 
 def test_configure_does_not_touch_legacy_db(conn):
@@ -94,7 +98,7 @@ def test_configure_does_not_touch_legacy_db(conn):
 
 def test_pending_upgrade_only_for_legacy(conn):
     _add_embedded_file(conn)
-    assert pending_upgrade(conn) == (LEGACY_MODEL, RECOMMENDED_MODEL)
+    assert pending_upgrade(conn) == (LEGACY_MODEL, recommended_model())
 
 
 def test_no_upgrade_when_on_recommended(conn):
@@ -125,13 +129,13 @@ def test_user_default_get_set_clear():
     )
 
     assert get_user_default_model() is None            # isolated by conftest
-    assert recommended_model() == RECOMMENDED_MODEL
+    built_in = recommended_model()
     set_user_default_model("Qwen/Qwen3-Embedding-0.6B")
     assert get_user_default_model() == "Qwen/Qwen3-Embedding-0.6B"
     assert recommended_model() == "Qwen/Qwen3-Embedding-0.6B"
     set_user_default_model(None)                       # clear
     assert get_user_default_model() is None
-    assert recommended_model() == RECOMMENDED_MODEL
+    assert recommended_model() == built_in             # back to the built-in
 
 
 def test_fresh_db_uses_user_default(conn):
@@ -200,7 +204,7 @@ def test_session_brief_surfaces_upgrade_then_throttles(conn):
     now = 10_000_000
     first = build_session_brief(conn, now_ms=now)
     assert "ken reembed --model" in first
-    assert RECOMMENDED_MODEL in first
+    assert recommended_model() in first
 
     # within the throttle window → no repeat
     second = build_session_brief(conn, now_ms=now + 1000)

@@ -17,6 +17,7 @@ from ken.parsers.css import parse_css_file
 from ken.parsers.dart import parse_dart_file
 from ken.parsers.go import parse_go_file
 from ken.parsers.graphql import parse_graphql_file
+from ken.parsers.html import parse_html_file
 from ken.parsers.java import parse_java_file
 from ken.parsers.javascript import parse_js_file
 from ken.parsers.kotlin import parse_kotlin_file
@@ -111,6 +112,13 @@ def parse_csharp():
 def parse_css():
     def _p(src: str):
         return parse_css_file(src.encode("utf-8"), "inline.css")
+    return _p
+
+
+@pytest.fixture
+def parse_html():
+    def _p(src: str):
+        return parse_html_file(src.encode("utf-8"), "inline.html")
     return _p
 
 

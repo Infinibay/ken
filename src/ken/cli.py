@@ -1037,7 +1037,7 @@ def _models_cli(*, as_json: bool) -> int:
         tag = "   ← default" if default == STATIC_MODEL else ""
         print("\nstatic table — a lookup and a sum, no model to run:\n")
         print(f"  {'dim':>4} {'MB':>6}  model")
-        print(f"  {1024:>4} {14:>6}  {STATIC_MODEL}{tag}")
+        print(f"  {1024:>4} {23:>6}  {STATIC_MODEL}{tag}")
 
     print("\nSet the default for NEW projects:  ken default-model <model>")
     print("Switch THIS project:               ken reembed --model <model>")
