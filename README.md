@@ -97,7 +97,7 @@ For better first-run semantic ranking, especially on projects where initial cont
 ken install --embed .
 ```
 
-This is recommended when you can afford the extra install time. The cost depends on repository size. On very large projects, cap the eager pass while still structurally indexing the whole repo:
+This is recommended when you can afford the extra install time. The cost scales with the repository, and the ceiling is lower than you would expect: the **Linux kernel 7.1-rc2** — 101 084 files walked, 65 907 parsed, 771 563 symbols extracted — indexes in **219 s on a Ryzen 9 8945HS laptop**. On very large projects, cap the eager pass while still structurally indexing the whole repo:
 
 ```sh
 ken install --embed --embed-limit 5000 .
@@ -129,6 +129,8 @@ vec  = normalise( Σ table[ids] · projection )
 ```
 
 That is ~1000 arithmetic operations per token instead of the 880 million a transformer spends, so it encodes about **10 000 texts a second on one CPU thread** — three orders of magnitude faster than running a model — with no GPU, no ONNX, no torch, and nothing to download on first use. The table is 23 MB and the arithmetic is `numpy`.
+
+For scale: its teacher, `Qwen/Qwen3-Embedding-0.6B`, encoded 856 texts/s on the datacenter GPU it was fitted on. A Linux-kernel-sized index is upwards of 872 000 texts — about seventeen minutes of pure encoding there, on hardware most people do not have.
 
 It is fitted, not designed: a ridge regression against `Qwen/Qwen3-Embedding-0.6B` over 964 475 texts of the exact shapes ken stores, parsed with ken's own parsers from [the-stack-smol](https://huggingface.co/datasets/bigcode/the-stack-smol) and balanced across sixteen languages.
 
@@ -194,7 +196,7 @@ MPS is used more defensively than CUDA, because it fails in ways CUDA doesn't:
 - **It won't tell you it's out of memory.** torch's MPS allocator ceiling is set from a fraction of RAM and lands *above* the RAM that exists, so instead of an out-of-memory error macOS just swaps. ken caps it (`KEN_MPS_MEMORY_FRACTION`, default `0.7`) so an oversized batch raises and hits the fallback above.
 - **torch 2.9+ is required** to use the GPU (macOS 14+). Below that, a PyTorch bug could return embeddings that are finite, unit-norm and *wrong* — the one failure no runtime check can catch — so ken refuses MPS on older torch and says so in the log rather than trusting an index it can't verify. The `[torch]` extra pins this for you on Apple Silicon.
 
-**Is the GPU worth it?** For most people, not much — and that's fine. The device only affects how fast a *query* is embedded; the rest of a rank (loading the stored vectors, the cosine sweep, the lexical/import channels) is CPU work either way. With the default table a query embeds in well under a millisecond, and with a fastembed model in ~30–40 ms on CPU, so the GPU barely moves the needle for inline ranking. Even with the heavy `Qwen/Qwen3-Embedding-0.6B` on a large repo, a full rank was ~1.1 s of which the query embed is ~250 ms on CPU vs ~50 ms on GPU (measured on CUDA — Apple Silicon is unmeasured) — the GPU saves ~200 ms of a second-plus that's dominated by device-independent work. So CPU-only is perfectly usable, including with Qwen3.
+**Is the GPU worth it?** For most people, not much — and that's fine. The device only affects how fast a *query* is embedded; the rest of a rank (the cosine sweep over the mapped vectors, the lexical/import channels) is CPU work either way. With the default table a query embeds in well under a millisecond, and with a fastembed model in ~30–40 ms on CPU, so the GPU barely moves the needle for inline ranking. Even with the heavy `Qwen/Qwen3-Embedding-0.6B` on a large repo, a full rank was ~1.1 s of which the query embed is ~250 ms on CPU vs ~50 ms on GPU (measured on CUDA — Apple Silicon is unmeasured) — the GPU saves ~200 ms of a second-plus that's dominated by device-independent work. So CPU-only is perfectly usable, including with Qwen3.
 
 Where the GPU genuinely pays off: **bulk work** — a full `ken reembed` or the first index of a big repo re-encodes thousands of texts at once, and there the GPU is several times faster. And if you simply want to shave every last millisecond off inline ranking, turn it on. Otherwise, don't sweat it.
 
@@ -224,10 +226,54 @@ That is roughly **+40% Recall@5 and +87% MRR** over the old default, and it more
 **The costs.** Qwen3 is not free to run:
 
 - **Heavier install.** The `[torch]` extra pulls PyTorch + sentence-transformers — hundreds of MB, versus the small ONNX-only default. The model itself is ~1.2 GB.
-- **Bigger index.** It is 1024-dimensional; stored vectors are ~2.7× the size of the 384-dim default, so `ken.db` grows accordingly.
+- **Bigger index.** It is 1024-dimensional, so stored vectors are ~2.7× the size of the 384-dim default. Since 0.9.0 that lands in `.ken/vectors/` rather than in `ken.db`.
 - **Slower on CPU.** It shines on a GPU — the torch backend picks up CUDA or Apple Silicon's MPS on its own (the `[gpu]` extra is for the fastembed path, not this one). On CPU the per-prompt embedding is noticeably slower than the fastembed default, which matters because the daemon embeds inline on every prompt. On a Mac, `[torch]` alone is enough: the stock PyPI `torch` wheel for macOS arm64 ships MPS support, no extra index or extra to install.
 
 So it is worth it when you have a GPU (or don't mind the CPU latency) and want the best retrieval; otherwise the lightweight multilingual default is the better trade-off. The fastembed default always stays the no-torch path.
+
+## Where the vectors live
+
+Since 0.9.0 the vectors are **not** in `ken.db`. They live in `.ken/vectors/` as memory-mapped, fixed-size segment files, and each row in SQLite carries a `vec_slot` pointing at one. The relational half — paths, symbols, imports, sessions, findings — stays where it was.
+
+This is not cosmetic. On a Linux 7.1-rc2 index (101 083 files, 771 563 symbols), `ken rank` took **21.3 s**, of which the actual arithmetic was 0.138 s. The rest was deserialising 771 563 Python row objects and 2.9 GB of blobs to feed one matrix-vector product. Mapping them instead:
+
+| | before | after |
+| --- | --- | --- |
+| `ken rank`, end to end | 21.3 s | **1.82 s** |
+| fuzzy channel | 20.4 s | 0.374 s |
+| lexical channel | 22.6 s | 0.126 s |
+| `ken.db` | 4.10 GB | **214 MB** |
+
+Ranked output is unchanged: top-k overlap 1.000 across a 12-query set, with scores drifting 5.1e-03 on ~7 from float32 rounding.
+
+Worth saying plainly, because the obvious suspect was wrong: **SQLite was never the bottleneck.** Measured over the same 2.9 GB, it handed over the vector column at 906 MB/s against 1.5 GB/s for a raw flat file — within 1.7×. Swapping the database engine would have bought 3%.
+
+### Migrating an existing project
+
+An index built before 0.9.0 keeps working untouched — every read falls back to the inline column for rows without a slot, so it is correct, just slow. Convert it when convenient:
+
+```sh
+ken vectors migrate      # move the vectors out, then VACUUM the freed pages
+ken vectors verify       # expect 0 leaked / 0 out-of-range / 0 double-booked
+```
+
+Stop the daemon first (`ken serve --stop`): the migration takes SQLite's write lock in batches, and a running daemon can hit its 5 s busy timeout. It is idempotent and resumable — an interrupted run leaves a partly-converted index that still answers correctly, and re-running finishes it.
+
+`ken install --embed .` and `ken reembed` also migrate, so if you were going to run either anyway there is nothing extra to do.
+
+Timing: 2 m 21 s for the kernel's 872 000 vectors. A normal project is seconds.
+
+### The rest of `ken vectors`
+
+```sh
+ken vectors              # sizes and how many vectors are still inline
+ken vectors verify       # cross-check slots against rows
+ken vectors compact      # renumber live vectors densely, reclaim leaked slots
+```
+
+`compact` is for maintenance, not migration: it rebuilds the store into a dense prefix and drops the tail, reclaiming slots stranded by a crash between a vector's write and its commit. `verify` tells you whether there are any — usually zero.
+
+Segment files are preallocated and sparse, so a space holding a few thousand vectors reports 256 MB of apparent size against ~17 MB of real blocks; `ken vectors` reports the blocks.
 
 ## Tell the assistant to use ken
 
