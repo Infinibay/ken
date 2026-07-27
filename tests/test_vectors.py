@@ -557,3 +557,25 @@ def test_migration_is_idempotent(project):
     assert first["ci_files"] == 1
     assert second["ci_files"] == 0
     assert high_water(conn, "ci_files") == 1
+
+
+def test_manifest_permissions_match_the_segments(project):
+    """mkstemp creates at 0600 and os.replace keeps it, so the manifest used to
+    end up stricter than the segment files beside it. On a shared .ken/ that
+    reads as "no store" rather than "unreadable", and the caller falls back
+    without reporting anything."""
+    import os
+    import stat
+
+    root, _conn = project
+    store = VectorStore(root, "ci_files", dim=8)
+    store.write([0], _unit(1))
+
+    manifest = stat.S_IMODE(store.manifest_path.stat().st_mode)
+    segment = stat.S_IMODE(store._segment_path(0).stat().st_mode)
+    expected = 0o666 & ~vectors._process_umask()
+    assert manifest == expected, oct(manifest)
+    # Whatever the umask is, the manifest must never be readable by fewer
+    # people than the data it describes.
+    assert manifest & stat.S_IRGRP == segment & stat.S_IRGRP
+    assert manifest & stat.S_IROTH == segment & stat.S_IROTH

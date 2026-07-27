@@ -172,6 +172,13 @@ def vectors_dir(project_root: Path) -> Path:
     return _paths.ken_dir(project_root) / "vectors"
 
 
+def _process_umask() -> int:
+    """The current umask. Reading it requires setting it, so put it straight back."""
+    current = os.umask(0o022)
+    os.umask(current)
+    return current
+
+
 def _atomic_write(path: Path, text: str) -> None:
     """Replace *path* without ever exposing a half-written manifest.
 
@@ -186,6 +193,16 @@ def _atomic_write(path: Path, text: str) -> None:
             fh.write(text)
             fh.flush()
             os.fsync(fh.fileno())
+        # mkstemp creates at 0600 and os.replace keeps that mode, so the
+        # manifest would end up stricter than the segments beside it, which are
+        # created through open() and follow the umask. On a shared `.ken/` — CI,
+        # a container running as another uid — that reads the store as absent
+        # rather than as unreadable, and the caller falls back silently instead
+        # of reporting anything.
+        try:
+            os.chmod(tmp, 0o666 & ~_process_umask())
+        except OSError:
+            pass
         os.replace(tmp, path)
     except BaseException:
         Path(tmp).unlink(missing_ok=True)
