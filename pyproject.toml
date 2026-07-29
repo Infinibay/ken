@@ -28,10 +28,13 @@ dependencies = [
     "fastembed>=0.5",
     "numpy>=1.26",
     # MCP SDK — exposes ken's tools to Claude Code over stdio.
-    # Pinned to the 2.x line: 2.0 removed the high-level ``FastMCP``
-    # decorator surface (``mcp.server.fastmcp``) and our server now uses
-    # the low-level ``mcp.server.Server`` API directly.
-    "mcp>=2.0",
+    # Pinned to the 2.x line: 2.0 renamed ``FastMCP`` to ``MCPServer``
+    # and moved it to ``mcp.server``; 0.10.0 of ken-rank shipped with the
+    # older ``mcp>=1.0`` pin by accident, so older installs may have
+    # resolved mcp 1.x — and then the MCP server silently failed at
+    # import. ``<3`` keeps 3.x out until we verify it (the 3.x line is
+    # not yet on PyPI as of writing).
+    "mcp>=2.0,<3",
 ]
 
 [project.optional-dependencies]

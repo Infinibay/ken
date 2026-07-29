@@ -11,7 +11,6 @@ to spin up the stdio server to list tools.
 
 from __future__ import annotations
 
-import asyncio
 import inspect
 import logging
 import sqlite3
@@ -21,7 +20,36 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 
-from mcp.server import MCPServer
+try:
+    from mcp.server import MCPServer
+except ImportError as _exc:
+    from importlib.metadata import PackageNotFoundError, version as _pkg_version
+
+    try:
+        _installed = _pkg_version("mcp")
+    except PackageNotFoundError:
+        _installed = "not installed"
+
+    sys.stderr.write(
+        "ken mcp: this build of ken needs the `mcp` Python SDK >= 2.0, but the\n"
+        f"environment only has `{_installed}` installed (reason: {_exc}).\n"
+        "The MCP server cannot start with that version — `mcp.server.MCPServer`\n"
+        "only exists in mcp 2.x; mcp 1.x still ships the older `FastMCP` API.\n"
+        "\n"
+        "This typically happens when an older ken-rank (0.10.0, with a wrong\n"
+        "`mcp>=1.0` pin) was installed before the fix landed. Fix it with:\n"
+        "\n"
+        "    uv tool install --reinstall ken-rank\n"
+        "    # or, for pipx:\n"
+        "    pipx reinstall ken-rank\n"
+        "    # or, for plain pip:\n"
+        "    pip install --upgrade --force-reinstall ken-rank\n"
+        "\n"
+        "Then restart the assistant that hosts the MCP server (Claude Code,\n"
+        "Codex, OpenCode, …) so it respawns the `ken mcp` process.\n"
+    )
+    sys.stderr.flush()
+    raise SystemExit(1) from _exc
 
 from ken import _paths
 from ken.clones import clones
@@ -117,12 +145,24 @@ def _register(fn: Callable[..., Any]) -> Callable[..., Any]:
     those schemas sees the same surface either way.
     """
     sig = inspect.signature(fn)
+    # Resolve string annotations (``from __future__ import annotations``
+    # makes every annotation a forward-reference string at runtime; we
+    # need the real type object to map it to a JSON schema).
+    # ``inspect.get_annotations(..., eval_str=True)`` evaluates those
+    # strings against the function's own ``__globals__``, which is what
+    # the SDK does internally to build its own tool schema.
+    try:
+        hints = inspect.get_annotations(fn, eval_str=True)
+    except Exception:
+        # Fallback for unresolvable forward refs: leave the annotation as-is.
+        hints = {}
     properties: dict[str, Any] = {}
     required: list[str] = []
     for name, param in sig.parameters.items():
         if name == "self":
             continue
-        prop, has_default = _annotation_to_schema(param)
+        annotation = hints.get(name, param.annotation)
+        prop, has_default = _annotation_to_schema(param, annotation)
         if prop is None:
             continue
         if not has_default:
@@ -175,6 +215,7 @@ _PRIMITIVE_JSON_TYPE = {
 
 def _annotation_to_schema(
     param: inspect.Parameter,
+    annotation: Any | None = None,
 ) -> tuple[dict[str, Any] | None, bool]:
     """Return ``(schema_dict, has_default)`` for a single function parameter.
 
@@ -182,12 +223,18 @@ def _annotation_to_schema(
     schema sense — either it has a Python default or its annotation is
     ``Optional[X]`` / ``X | None``. Returns ``(None, True)`` for
     ``*args`` / ``**kwargs`` / ``self``, which are not part of the schema.
+
+    ``annotation`` overrides ``param.annotation`` when given — callers that
+    already resolved string forward references (e.g. from
+    ``inspect.get_annotations(eval_str=True)``) pass the resolved type here
+    so this helper doesn't have to know about module globals.
     """
     if param.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD):
         return None, True
 
     has_default = param.default is not inspect.Parameter.empty
-    annotation = param.annotation
+    if annotation is None:
+        annotation = param.annotation
 
     core, is_optional = _unwrap_optional(annotation)
     if is_optional:

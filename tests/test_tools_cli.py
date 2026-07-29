@@ -1,6 +1,6 @@
 """`ken tools` — the CLI passthrough over the MCP tool registry.
 
-The command builds its subcommands live from the same ``FastMCP`` object
+The command builds its subcommands live from the same ``MCPServer`` object
 ``ken mcp`` serves, so these tests drive it through ``main()`` (the real
 argparse path) rather than the tool functions directly.
 """

@@ -38,6 +38,7 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
+import sqlite3
 import subprocess
 import sys
 from pathlib import Path
@@ -1565,6 +1566,8 @@ def _tool_schema_core(prop: dict[str, Any]) -> dict[str, Any]:
 
 
 def _tool_py_type(json_type: str | None):
+    if json_type is None:
+        return str
     return {"integer": int, "number": float, "string": str}.get(json_type, str)
 
 
