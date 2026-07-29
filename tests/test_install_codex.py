@@ -10,7 +10,12 @@ from pathlib import Path
 import pytest
 
 from ken.indexer import IndexStats
-from ken.install import _detect_agent_wiring, _prioritize_embed_rels, _wire_codex, install
+from ken.install import (
+    _detect_agent_wiring,
+    _prioritize_embed_rels,
+    _wire_codex,
+    install,
+)
 from ken.cli import main
 
 
@@ -46,10 +51,27 @@ def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path):
     calls = []
 
     def fake_install(
-        path, *, verbose, force_claude, force_codex, embed, embed_limit, no_wire
+        path,
+        *,
+        verbose,
+        force_claude,
+        force_codex,
+        force_opencode,
+        embed,
+        embed_limit,
+        no_wire,
     ):
         calls.append(
-            (path, verbose, force_claude, force_codex, embed, embed_limit, no_wire)
+            (
+                path,
+                verbose,
+                force_claude,
+                force_codex,
+                force_opencode,
+                embed,
+                embed_limit,
+                no_wire,
+            )
         )
 
     monkeypatch.setattr("ken.install.install", fake_install)
@@ -60,6 +82,7 @@ def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path):
             "--quiet",
             "--claude",
             "--codex",
+            "--opencode",
             "--embed",
             "--embed-limit",
             "7",
@@ -69,7 +92,7 @@ def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path):
     )
 
     assert rc == 0
-    assert calls == [(tmp_path, False, True, True, True, 7, True)]
+    assert calls == [(tmp_path, False, True, True, True, True, 7, True)]
 
 
 def test_install_cli_rejects_embed_limit_without_embed(tmp_path):
@@ -83,6 +106,7 @@ def test_detect_agent_wiring_defaults_fresh_project_to_claude(tmp_path):
     assert _detect_agent_wiring(tmp_path, force_claude=False, force_codex=False) == (
         True,
         False,
+        False,
     )
 
 
@@ -92,6 +116,7 @@ def test_detect_agent_wiring_uses_existing_codex_only(tmp_path):
     assert _detect_agent_wiring(tmp_path, force_claude=False, force_codex=False) == (
         False,
         True,
+        False,
     )
 
 
@@ -102,6 +127,7 @@ def test_detect_agent_wiring_uses_both_when_both_configs_exist(tmp_path):
     assert _detect_agent_wiring(tmp_path, force_claude=False, force_codex=False) == (
         True,
         True,
+        False,
     )
 
 
@@ -110,6 +136,7 @@ def test_detect_agent_wiring_explicit_flags_override_detection(tmp_path):
 
     assert _detect_agent_wiring(tmp_path, force_claude=True, force_codex=False) == (
         True,
+        False,
         False,
     )
 
@@ -131,14 +158,20 @@ def test_prioritize_embed_rels_prefers_source_over_docs_and_tests():
 
 def test_install_embed_limit_splits_eager_and_structural_index(monkeypatch, tmp_path):
     (tmp_path / "src").mkdir()
-    (tmp_path / "src" / "core.py").write_text("def core():\n    return 1\n", encoding="utf-8")
+    (tmp_path / "src" / "core.py").write_text(
+        "def core():\n    return 1\n", encoding="utf-8"
+    )
     (tmp_path / "tests").mkdir()
-    (tmp_path / "tests" / "test_core.py").write_text("def test_core():\n    pass\n", encoding="utf-8")
+    (tmp_path / "tests" / "test_core.py").write_text(
+        "def test_core():\n    pass\n", encoding="utf-8"
+    )
     (tmp_path / "README.md").write_text("docs\n", encoding="utf-8")
 
     monkeypatch.setattr("ken.install._wire_claude_hooks", lambda root, *, verbose: None)
     monkeypatch.setattr("ken.install._wire_mcp", lambda root, *, verbose: None)
-    monkeypatch.setattr("ken.install._wire_codex", lambda root, *, verbose, force=False: None)
+    monkeypatch.setattr(
+        "ken.install._wire_codex", lambda root, *, verbose, force=False: None
+    )
 
     class FakeEmbedder:
         pass

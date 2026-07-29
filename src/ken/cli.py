@@ -52,8 +52,12 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     p_install = sub.add_parser("install", help="install ken into a project")
-    p_install.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
-    p_install.add_argument("-q", "--quiet", action="store_true", help="suppress per-file index output")
+    p_install.add_argument(
+        "path", nargs="?", default=".", help="project path (default: cwd)"
+    )
+    p_install.add_argument(
+        "-q", "--quiet", action="store_true", help="suppress per-file index output"
+    )
     p_install.add_argument(
         "--claude",
         action="store_true",
@@ -63,6 +67,11 @@ def main(argv: list[str] | None = None) -> int:
         "--codex",
         action="store_true",
         help="force project-local Codex hooks and MCP config installation",
+    )
+    p_install.add_argument(
+        "--opencode",
+        action="store_true",
+        help="register ken as an MCP server in the project's opencode.json (or opencode.jsonc)",
     )
     p_install.add_argument(
         "--embed",
@@ -78,7 +87,7 @@ def main(argv: list[str] | None = None) -> int:
     p_install.add_argument(
         "--no-wire",
         action="store_true",
-        help="index only; skip wiring Claude/Codex hooks and MCP config "
+        help="index only; skip wiring Claude/Codex/OpenCode hooks and MCP config "
         "(for external hosts that drive the daemon directly)",
     )
 
@@ -86,8 +95,12 @@ def main(argv: list[str] | None = None) -> int:
         "reinstall",
         help="reinstall ken from this checkout and re-apply project wiring",
     )
-    p_reinstall.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
-    p_reinstall.add_argument("-q", "--quiet", action="store_true", help="suppress install output")
+    p_reinstall.add_argument(
+        "path", nargs="?", default=".", help="project path (default: cwd)"
+    )
+    p_reinstall.add_argument(
+        "-q", "--quiet", action="store_true", help="suppress install output"
+    )
     p_reinstall.add_argument(
         "--no-project",
         action="store_true",
@@ -104,6 +117,11 @@ def main(argv: list[str] | None = None) -> int:
         help="pass --codex to the project install step",
     )
     p_reinstall.add_argument(
+        "--opencode",
+        action="store_true",
+        help="pass --opencode to the project install step",
+    )
+    p_reinstall.add_argument(
         "--embed",
         action="store_true",
         help="pass --embed to the project install step",
@@ -116,39 +134,63 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     p_status = sub.add_parser("status", help="show ken project status")
-    p_status.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
-    p_status.add_argument("--json", action="store_true", help="print machine-readable status")
+    p_status.add_argument(
+        "path", nargs="?", default=".", help="project path (default: cwd)"
+    )
+    p_status.add_argument(
+        "--json", action="store_true", help="print machine-readable status"
+    )
 
     p_rank = sub.add_parser("rank", help="print ranked context for a query")
     p_rank.add_argument("query", nargs="*", help="query text (default: latest prompt)")
     p_rank.add_argument("--path", default=".", help="project path (default: cwd)")
     p_rank.add_argument("-v", "--verbose", type=int, choices=(0, 1, 2), default=1)
     p_rank.add_argument("--max-chars", type=int, help="cap rendered context size")
-    p_rank.add_argument("--stats", action="store_true", help="print context size stats to stderr")
+    p_rank.add_argument(
+        "--stats", action="store_true", help="print context size stats to stderr"
+    )
     p_rank.add_argument("--json", action="store_true", help="print raw JSON response")
 
     p_explain = sub.add_parser("explain", help="explain rank scoring for a query")
-    p_explain.add_argument("query", nargs="*", help="query text (default: latest prompt)")
+    p_explain.add_argument(
+        "query", nargs="*", help="query text (default: latest prompt)"
+    )
     p_explain.add_argument("--path", default=".", help="project path (default: cwd)")
-    p_explain.add_argument("--json", action="store_true", help="print raw JSON response")
+    p_explain.add_argument(
+        "--json", action="store_true", help="print raw JSON response"
+    )
 
-    p_search_files = sub.add_parser("search-files", help="semantic search over indexed files")
+    p_search_files = sub.add_parser(
+        "search-files", help="semantic search over indexed files"
+    )
     p_search_files.add_argument("query", nargs="+", help="query text")
-    p_search_files.add_argument("--path", default=".", help="project path (default: cwd)")
+    p_search_files.add_argument(
+        "--path", default=".", help="project path (default: cwd)"
+    )
     p_search_files.add_argument("-n", "--limit", type=int, default=8)
-    p_search_files.add_argument("--json", action="store_true", help="print raw JSON response")
+    p_search_files.add_argument(
+        "--json", action="store_true", help="print raw JSON response"
+    )
 
-    p_search_symbols = sub.add_parser("search-symbols", help="semantic search over indexed symbols")
+    p_search_symbols = sub.add_parser(
+        "search-symbols", help="semantic search over indexed symbols"
+    )
     p_search_symbols.add_argument("query", nargs="+", help="query text")
-    p_search_symbols.add_argument("--path", default=".", help="project path (default: cwd)")
+    p_search_symbols.add_argument(
+        "--path", default=".", help="project path (default: cwd)"
+    )
     p_search_symbols.add_argument("-n", "--limit", type=int, default=10)
-    p_search_symbols.add_argument("--json", action="store_true", help="print raw JSON response")
+    p_search_symbols.add_argument(
+        "--json", action="store_true", help="print raw JSON response"
+    )
 
     p_bench = sub.add_parser("bench", help="evaluate ranker recall on a JSONL dataset")
     p_bench.add_argument("dataset", help="JSONL rows with prompt + expected_files")
     p_bench.add_argument("--path", default=".", help="project path (default: cwd)")
     p_bench.add_argument("--top", type=int, default=8, help="ranked files to evaluate")
-    p_bench.add_argument("--max-chars", type=int, default=0, help="optional render budget")
+    p_bench.add_argument(
+        "--max-chars", type=int, default=0, help="optional render budget"
+    )
     p_bench.add_argument(
         "--fail-under-case-recall",
         type=float,
@@ -166,7 +208,9 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="include missed expected files and top ranked reasons per case",
     )
-    p_bench.add_argument("--json", action="store_true", help="print machine-readable metrics")
+    p_bench.add_argument(
+        "--json", action="store_true", help="print machine-readable metrics"
+    )
 
     p_reembed = sub.add_parser(
         "reembed", help="re-encode all embeddings with the current embedding model"
@@ -182,7 +226,9 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="only verify the stored embeddings match the live model (probe vector)",
     )
-    p_reembed.add_argument("--json", action="store_true", help="print machine-readable result")
+    p_reembed.add_argument(
+        "--json", action="store_true", help="print machine-readable result"
+    )
 
     p_vectors = sub.add_parser(
         "vectors", help="inspect, migrate or compact the memory-mapped vector store"
@@ -198,34 +244,46 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     p_vectors.add_argument("--path", default=".", help="project path (default: cwd)")
-    p_vectors.add_argument("--json", action="store_true", help="print machine-readable result")
+    p_vectors.add_argument(
+        "--json", action="store_true", help="print machine-readable result"
+    )
 
     p_default_model = sub.add_parser(
         "default-model",
         help="show or set the embedding model used for NEW projects",
     )
     p_default_model.add_argument(
-        "model", nargs="?", default=None,
+        "model",
+        nargs="?",
+        default=None,
         help="model to set as the default for new projects (omit to show current)",
     )
     p_default_model.add_argument(
-        "--clear", action="store_true", help="reset to ken's built-in default",
+        "--clear",
+        action="store_true",
+        help="reset to ken's built-in default",
     )
 
     p_models = sub.add_parser("models", help="list available embedding models")
-    p_models.add_argument("--json", action="store_true", help="print machine-readable list")
+    p_models.add_argument(
+        "--json", action="store_true", help="print machine-readable list"
+    )
 
     p_remember = sub.add_parser("remember", help="save a reusable finding")
     p_remember.add_argument("topic", help="short lookup key")
     p_remember.add_argument("content", help="finding content")
     p_remember.add_argument("--path", default=".", help="project path (default: cwd)")
-    p_remember.add_argument("--tag", action="append", default=[], help="tag for the finding")
+    p_remember.add_argument(
+        "--tag", action="append", default=[], help="tag for the finding"
+    )
     p_remember.add_argument(
         "--kind",
         choices=("finding", "persistent_rule", "experimental_finding", "hypothesis"),
         help="explicit finding kind (stored as a reserved kind:<value> tag)",
     )
-    p_remember.add_argument("--json", action="store_true", help="print raw JSON response")
+    p_remember.add_argument(
+        "--json", action="store_true", help="print raw JSON response"
+    )
 
     p_forget = sub.add_parser("forget", help="delete a saved finding by exact topic")
     p_forget.add_argument("topic", help="exact finding topic to delete")
@@ -236,7 +294,9 @@ def main(argv: list[str] | None = None) -> int:
     p_findings.add_argument("--path", default=".", help="project path (default: cwd)")
     p_findings.add_argument("-n", "--limit", type=int, default=20)
     p_findings.add_argument("--tag", help="filter by exact tag")
-    p_findings.add_argument("--json", action="store_true", help="print raw JSON response")
+    p_findings.add_argument(
+        "--json", action="store_true", help="print raw JSON response"
+    )
 
     p_recall = sub.add_parser("recall", help="semantic search over saved findings")
     p_recall.add_argument("query", nargs="+", help="query text")
@@ -253,31 +313,49 @@ def main(argv: list[str] | None = None) -> int:
     p_related = sub.add_parser(
         "related-findings", help="findings related to a topic in the findings graph"
     )
-    p_related.add_argument("topic", help="finding topic (exact, else nearest by recall)")
+    p_related.add_argument(
+        "topic", help="finding topic (exact, else nearest by recall)"
+    )
     p_related.add_argument("--path", default=".", help="project path (default: cwd)")
     p_related.add_argument("-n", "--limit", type=int, default=8)
-    p_related.add_argument("--min-weight", type=float, default=0.3, help="minimum edge weight")
-    p_related.add_argument("--json", action="store_true", help="print raw JSON response")
+    p_related.add_argument(
+        "--min-weight", type=float, default=0.3, help="minimum edge weight"
+    )
+    p_related.add_argument(
+        "--json", action="store_true", help="print raw JSON response"
+    )
 
     p_file_findings = sub.add_parser(
         "file-findings", help="saved findings that reference a file"
     )
     p_file_findings.add_argument("file", help="project-relative file path")
-    p_file_findings.add_argument("--path", default=".", help="project path (default: cwd)")
+    p_file_findings.add_argument(
+        "--path", default=".", help="project path (default: cwd)"
+    )
     p_file_findings.add_argument("-n", "--limit", type=int, default=15)
     p_file_findings.add_argument(
         "--expand", action="store_true", help="also include graph neighbors"
     )
-    p_file_findings.add_argument("--json", action="store_true", help="print raw JSON response")
+    p_file_findings.add_argument(
+        "--json", action="store_true", help="print raw JSON response"
+    )
 
     p_fgraph = sub.add_parser("findings-graph", help="findings graph maintenance")
     fgraph_sub = p_fgraph.add_subparsers(dest="fgraph_cmd", required=True)
-    p_fgraph_rebuild = fgraph_sub.add_parser("rebuild", help="drop and recompute the findings graph")
-    p_fgraph_rebuild.add_argument("--path", default=".", help="project path (default: cwd)")
-    p_fgraph_rebuild.add_argument("--json", action="store_true", help="print raw JSON response")
+    p_fgraph_rebuild = fgraph_sub.add_parser(
+        "rebuild", help="drop and recompute the findings graph"
+    )
+    p_fgraph_rebuild.add_argument(
+        "--path", default=".", help="project path (default: cwd)"
+    )
+    p_fgraph_rebuild.add_argument(
+        "--json", action="store_true", help="print raw JSON response"
+    )
 
     p_serve = sub.add_parser("serve", help="run the ken daemon")
-    p_serve.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
+    p_serve.add_argument(
+        "path", nargs="?", default=".", help="project path (default: cwd)"
+    )
     p_serve.add_argument(
         "--background",
         action="store_true",
@@ -294,7 +372,9 @@ def main(argv: list[str] | None = None) -> int:
     p_tool.add_argument("--phase", choices=("pre", "post"), required=True)
 
     p_mcp = sub.add_parser("mcp", help="run as MCP stdio server")
-    p_mcp.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
+    p_mcp.add_argument(
+        "path", nargs="?", default=".", help="project path (default: cwd)"
+    )
 
     p_tools = sub.add_parser(
         "tools",
@@ -311,7 +391,9 @@ def main(argv: list[str] | None = None) -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     p_tools.add_argument("--path", default=".", help="project path (default: cwd)")
-    p_tools.add_argument("--list", action="store_true", help="list available tools and exit")
+    p_tools.add_argument(
+        "--list", action="store_true", help="list available tools and exit"
+    )
     p_tools.add_argument(
         "--compact", action="store_true", help="print result as single-line JSON"
     )
@@ -325,12 +407,20 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     p_uninstall = sub.add_parser("uninstall", help="remove ken hooks from a project")
-    p_uninstall.add_argument("path", nargs="?", default=".", help="project path (default: cwd)")
-    p_uninstall.add_argument("--keep-db", action="store_true", help="don't delete .ken/ken.db")
+    p_uninstall.add_argument(
+        "path", nargs="?", default=".", help="project path (default: cwd)"
+    )
+    p_uninstall.add_argument(
+        "--keep-db", action="store_true", help="don't delete .ken/ken.db"
+    )
 
     args = parser.parse_args(argv)
 
-    if args.cmd in {"install", "reinstall"} and args.embed_limit is not None and not args.embed:
+    if (
+        args.cmd in {"install", "reinstall"}
+        and args.embed_limit is not None
+        and not args.embed
+    ):
         parser.error("--embed-limit requires --embed")
 
     if args.cmd == "install":
@@ -341,6 +431,7 @@ def main(argv: list[str] | None = None) -> int:
             verbose=not args.quiet,
             force_claude=args.claude,
             force_codex=args.codex,
+            force_opencode=args.opencode,
             embed=args.embed,
             embed_limit=args.embed_limit,
             no_wire=args.no_wire,
@@ -354,6 +445,7 @@ def main(argv: list[str] | None = None) -> int:
             project=not args.no_project,
             force_claude=args.claude,
             force_codex=args.codex,
+            force_opencode=args.opencode,
             embed=args.embed,
             embed_limit=args.embed_limit,
         )
@@ -514,6 +606,7 @@ def _reinstall_cli(
     project: bool,
     force_claude: bool,
     force_codex: bool,
+    force_opencode: bool,
     embed: bool,
     embed_limit: int | None,
 ) -> int:
@@ -544,7 +637,10 @@ def _reinstall_cli(
     try:
         subprocess.run(reinstall_cmd, check=True, stdout=stdout, stderr=stderr)
     except subprocess.CalledProcessError as exc:
-        print(f"error: CLI reinstall failed with exit code {exc.returncode}", file=sys.stderr)
+        print(
+            f"error: CLI reinstall failed with exit code {exc.returncode}",
+            file=sys.stderr,
+        )
         return int(exc.returncode or 1)
 
     if not project:
@@ -561,6 +657,8 @@ def _reinstall_cli(
         install_cmd.append("--claude")
     if force_codex:
         install_cmd.append("--codex")
+    if force_opencode:
+        install_cmd.append("--opencode")
     if embed:
         install_cmd.append("--embed")
     if embed_limit is not None:
@@ -568,7 +666,10 @@ def _reinstall_cli(
     try:
         subprocess.run(install_cmd, check=True, stdout=stdout, stderr=stderr)
     except subprocess.CalledProcessError as exc:
-        print(f"error: project install failed with exit code {exc.returncode}", file=sys.stderr)
+        print(
+            f"error: project install failed with exit code {exc.returncode}",
+            file=sys.stderr,
+        )
         return int(exc.returncode or 1)
     return 0
 
@@ -616,7 +717,9 @@ def _rank_cli(
 def _explain_cli(project_path: Path, query: str, *, as_json: bool) -> int:
     from ken.daemon import client as daemon_client
 
-    resp = daemon_client.post(project_path.resolve(), "/explain", {"query": query.strip()})
+    resp = daemon_client.post(
+        project_path.resolve(), "/explain", {"query": query.strip()}
+    )
     return _print_daemon_response(resp, None, as_json=as_json)
 
 
@@ -648,7 +751,9 @@ def _print_daemon_response(
 def _format_rank_stats(resp: dict[str, Any]) -> str:
     block = str(resp.get("context_block") or "")
     chars = int(resp.get("context_chars") or len(block))
-    est_tokens = int(resp.get("context_est_tokens") or ((chars + 3) // 4 if chars else 0))
+    est_tokens = int(
+        resp.get("context_est_tokens") or ((chars + 3) // 4 if chars else 0)
+    )
     return (
         f"context: {chars} chars, "
         f"~{est_tokens} tokens; "
@@ -835,7 +940,9 @@ def _file_findings_cli(
         print(f"error: no .ken project at {root}", file=sys.stderr)
         return 1
     with connect(db_path) as conn:
-        result = file_findings(conn, file_path, expand=expand, limit=limit, project_root=root)
+        result = file_findings(
+            conn, file_path, expand=expand, limit=limit, project_root=root
+        )
     if as_json:
         print(json.dumps(result, indent=2))
         return 0
@@ -871,7 +978,9 @@ def _findings_graph_cli(project_path: Path, subcmd: str, *, as_json: bool) -> in
                 pass
             print(f"error: rebuild failed: {exc}", file=sys.stderr)
             return 1
-        edges = conn.execute("SELECT COUNT(*) AS n FROM cr_finding_edges").fetchone()["n"]
+        edges = conn.execute("SELECT COUNT(*) AS n FROM cr_finding_edges").fetchone()[
+            "n"
+        ]
         refs = conn.execute("SELECT COUNT(*) AS n FROM cr_finding_refs").fetchone()["n"]
     result = {**result, "edges": int(edges), "refs": int(refs)}
     if as_json:
@@ -1023,7 +1132,9 @@ def _reembed_cli(
     with connect(db_path) as conn:
         prev_model, prev_dim = stored_embedding_info(conn)
         if not as_json:
-            print(f"previous: model={prev_model or 'unknown'} dim={prev_dim or 'unknown'}")
+            print(
+                f"previous: model={prev_model or 'unknown'} dim={prev_dim or 'unknown'}"
+            )
         try:
             result = reembed(conn, progress=None if as_json else print)
         except Exception as exc:  # pragma: no cover - surfaced to the user
@@ -1031,7 +1142,9 @@ def _reembed_cli(
             return 1
 
     if as_json:
-        print(json.dumps({"ok": True, "previous_model": prev_model, **result}, indent=2))
+        print(
+            json.dumps({"ok": True, "previous_model": prev_model, **result}, indent=2)
+        )
     else:
         total = sum(v for k, v in result.items() if isinstance(v, int))
         print(
@@ -1088,7 +1201,12 @@ def _default_model_cli(*, model: str | None, clear: bool) -> int:
 # benchmark's top performers. The torch backend can load any sentence-
 # transformers model, so this is a hint list, not an exhaustive one.
 _TORCH_MODELS = (
-    ("Qwen/Qwen3-Embedding-0.6B", 1024, 1200, "multilingual · best quality in ken's benchmark"),
+    (
+        "Qwen/Qwen3-Embedding-0.6B",
+        1024,
+        1200,
+        "multilingual · best quality in ken's benchmark",
+    ),
     ("BAAI/bge-m3", 1024, 4400, "multilingual"),
 )
 
@@ -1111,14 +1229,16 @@ def _models_cli(*, as_json: bool) -> int:
     for m in supported:
         name = m.get("model")
         desc = str(m.get("description") or "")
-        rows.append({
-            "model": name,
-            "dim": m.get("dim"),
-            "mb": round((m.get("size_in_GB") or 0) * 1024),
-            "multilingual": "multilingual" in desc.lower()
-            or "multilingual" in str(name).lower(),
-            "backend": "fastembed",
-        })
+        rows.append(
+            {
+                "model": name,
+                "dim": m.get("dim"),
+                "mb": round((m.get("size_in_GB") or 0) * 1024),
+                "multilingual": "multilingual" in desc.lower()
+                or "multilingual" in str(name).lower(),
+                "backend": "fastembed",
+            }
+        )
     rows.sort(key=lambda r: (r["dim"] or 0, r["mb"] or 0, str(r["model"])))
 
     if as_json:
@@ -1126,10 +1246,16 @@ def _models_cli(*, as_json: bool) -> int:
             {"model": n, "dim": d, "mb": mb, "multilingual": True, "backend": "torch"}
             for (n, d, mb, _desc) in _TORCH_MODELS
         ]
-        print(json.dumps(
-            {"default": default, "legacy": LEGACY_MODEL, "models": rows + torch_rows},
-            indent=2,
-        ))
+        print(
+            json.dumps(
+                {
+                    "default": default,
+                    "legacy": LEGACY_MODEL,
+                    "models": rows + torch_rows,
+                },
+                indent=2,
+            )
+        )
         return 0
 
     print("fastembed models — drop-in, no extra deps (ken reembed --model <name>):\n")
@@ -1145,7 +1271,9 @@ def _models_cli(*, as_json: bool) -> int:
         suffix = "   " + " ".join(tags) if tags else ""
         print(f"  {str(r['dim']):>4} {r['mb']:>6}  {r['model']}{suffix}")
 
-    print("\ntorch backend — opt-in, `pip install ken-rank[torch]` (any sentence-transformers model):\n")
+    print(
+        "\ntorch backend — opt-in, `pip install ken-rank[torch]` (any sentence-transformers model):\n"
+    )
     print(f"  {'dim':>4} {'MB':>6}  model")
     for name, dim, mb, desc in _TORCH_MODELS:
         print(f"  {dim:>4} {mb:>6}  {name}   [{desc}]")
@@ -1191,7 +1319,10 @@ def _bench_cli(
     try:
         cases = _load_bench_cases(dataset_path)
     except OSError as exc:
-        print(f"error: cannot read benchmark dataset {dataset_path}: {exc}", file=sys.stderr)
+        print(
+            f"error: cannot read benchmark dataset {dataset_path}: {exc}",
+            file=sys.stderr,
+        )
         return 1
     if not cases:
         print(f"error: no valid benchmark cases in {dataset_path}", file=sys.stderr)
@@ -1321,11 +1452,15 @@ def _load_bench_cases(dataset_path: Path) -> list[dict[str, Any]]:
             try:
                 row = json.loads(raw)
             except json.JSONDecodeError as exc:
-                raise SystemExit(f"invalid JSON on {dataset_path}:{line_no}: {exc}") from exc
+                raise SystemExit(
+                    f"invalid JSON on {dataset_path}:{line_no}: {exc}"
+                ) from exc
             prompt = row.get("prompt")
             expected = row.get("expected_files")
             if not isinstance(prompt, str) or not prompt.strip():
-                raise SystemExit(f"{dataset_path}:{line_no}: prompt must be a non-empty string")
+                raise SystemExit(
+                    f"{dataset_path}:{line_no}: prompt must be a non-empty string"
+                )
             if not isinstance(expected, list) or not all(
                 isinstance(p, str) and p for p in expected
             ):
@@ -1465,7 +1600,9 @@ def _build_tool_parser(tool: Any) -> argparse.ArgumentParser:
         elif json_type == "array":
             item_type = _tool_py_type(core.get("items", {}).get("type"))
             if is_required:
-                parser.add_argument(name, nargs="+", type=item_type, help="list (required)")
+                parser.add_argument(
+                    name, nargs="+", type=item_type, help="list (required)"
+                )
             else:
                 parser.add_argument(
                     flag,

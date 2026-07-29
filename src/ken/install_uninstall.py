@@ -20,7 +20,48 @@ from ken.codex_hooks_template import (
     write_codex_hooks,
 )
 from ken.hooks_template import remove_ken_hooks, write_settings
-from ken.install import CLAUDE_SETTINGS, CODEX_CONFIG_FILE, CODEX_HOOKS_FILE, MCP_SETTINGS
+from ken.install import (
+    CLAUDE_SETTINGS,
+    CODEX_CONFIG_FILE,
+    CODEX_HOOKS_FILE,
+    MCP_SETTINGS,
+)
+from ken.opencode_template import (
+    read_opencode_jsonc,
+    remove_ken_mcp_entry,
+    write_opencode_json,
+)
+
+
+def _uninstall_opencode(root: Path) -> None:
+    """Strip the ``mcp.ken`` entry from the project's opencode config.
+
+    Same deal as the Claude/Codex paths: read, strip our key, write
+    back if anything remains, delete the file if it is now empty. We
+    also handle JSONC inputs (a user may have written comments above
+    the block — we strip them, just as the install path would have).
+    """
+    for name in ("opencode.json", "opencode.jsonc"):
+        config_p = root / name
+        if not config_p.is_file():
+            continue
+        try:
+            existing = read_opencode_jsonc(config_p)
+        except json.JSONDecodeError as exc:
+            print(f"[opencode] {name} is not valid JSON ({exc}); leaving alone")
+            continue
+        if not isinstance(existing, dict):
+            continue
+        cleaned = remove_ken_mcp_entry(existing)
+        if cleaned == existing:
+            print(f"[opencode] {name} had no ken entry — left alone")
+            continue
+        if cleaned:
+            write_opencode_json(config_p, cleaned)
+            print(f"[opencode] removed ken entry from {name}")
+        else:
+            config_p.unlink()
+            print(f"[opencode] {name} now empty — deleted")
 
 
 def uninstall(project_path: Path, *, keep_db: bool) -> int:
@@ -49,10 +90,15 @@ def uninstall(project_path: Path, *, keep_db: bool) -> int:
             mcp_existing = json.loads(mcp_p.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
             mcp_existing = {}
-        if isinstance(mcp_existing.get("mcpServers"), dict) and "ken" in mcp_existing["mcpServers"]:
+        if (
+            isinstance(mcp_existing.get("mcpServers"), dict)
+            and "ken" in mcp_existing["mcpServers"]
+        ):
             del mcp_existing["mcpServers"]["ken"]
             if mcp_existing["mcpServers"]:
-                mcp_p.write_text(json.dumps(mcp_existing, indent=2) + "\n", encoding="utf-8")
+                mcp_p.write_text(
+                    json.dumps(mcp_existing, indent=2) + "\n", encoding="utf-8"
+                )
                 print(f"[mcp] removed ken entry from {MCP_SETTINGS}")
             else:
                 mcp_p.unlink()
@@ -83,6 +129,8 @@ def uninstall(project_path: Path, *, keep_db: bool) -> int:
             else:
                 codex_cfg_p.unlink()
                 print(f"[codex] {CODEX_CONFIG_FILE} now empty — deleted")
+
+    _uninstall_opencode(root)
 
     if keep_db:
         print(f"[db] keeping .ken/ ({_paths.db_path(root)})")

@@ -83,11 +83,31 @@ Use `--codex` when you specifically want Codex CLI wiring:
 ken install --codex .
 ```
 
-You can pass both when a project uses both assistants:
+Use `--opencode` when you specifically want [OpenCode](https://opencode.ai)
+wiring — it registers ken as a local MCP server in the project's
+`opencode.json` (or `opencode.jsonc`):
+
+```sh
+ken install --opencode .
+```
+
+You can pass several when a project uses several assistants:
 
 ```sh
 ken install --claude --codex .
+ken install --claude --opencode .
+ken install --codex --opencode .
+ken install --claude --codex --opencode .
 ```
+
+OpenCode has no lifecycle-hook equivalent to Claude Code's
+`SessionStart` or Codex's `Stop` — its plugin system is JS/TS-based and
+runs on Bun/Node. So the OpenCode wiring is narrower than the other
+two: just the MCP registration. The 30 ken tools (`ken_search_files`,
+`ken_rank`, `ken_wiring`, …) are available to OpenCode through MCP
+exactly the way they are to Claude Code, and the daemon-side hook
+logic (session memory, predictive ranking, finding recall) keeps
+working because it lives in the daemon, not in the host agent.
 
 ### Eagerly build embeddings
 
@@ -277,7 +297,7 @@ Segment files are preallocated and sparse, so a space holding a few thousand vec
 
 ## Tell the assistant to use ken
 
-ken works through hooks automatically, but assistants behave better when your project instructions tell them *when* to reach for ken and, just as importantly, to write back what they learn. The MCP server already describes all 30 tools to the assistant, so the block below deliberately carries only what a tool description cannot: where to start, when to stop, and what to record. Add it to the agent instruction file for the tool you use: `AGENTS.md` for Codex, `CLAUDE.md` for Claude Code, or both.
+ken works through hooks automatically, but assistants behave better when your project instructions tell them *when* to reach for ken and, just as importantly, to write back what they learn. The MCP server already describes all 30 tools to the assistant, so the block below deliberately carries only what a tool description cannot: where to start, when to stop, and what to record. Add it to the agent instruction file for the tool you use: `AGENTS.md` for Codex, `CLAUDE.md` for Claude Code, or both. OpenCode reads the same `AGENTS.md` from the project root.
 
 ```md
 ## Code intelligence: ken
@@ -359,6 +379,12 @@ You can mark the project as trusted manually in `~/.codex/config.toml`:
 [projects."/abs/path/to/my-project"]
 trust_level = "trusted"
 ```
+
+## OpenCode setup
+
+After `ken install --opencode .`, OpenCode picks up the `ken` MCP server automatically the next time it starts in the project — no extra step on your side. OpenCode reads `opencode.json` / `opencode.jsonc` straight from the project root and merges `ken`'s block with whatever you already have (model, providers, commands, sibling MCP servers, all preserved). Run `opencode mcp list` to confirm the server is registered.
+
+If you wired multiple assistants into the same project, the OpenCode MCP entry lives alongside the Claude and Codex hooks with no interaction between them.
 
 ## Uninstall
 

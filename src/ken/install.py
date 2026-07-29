@@ -11,13 +11,16 @@ Steps:
   6. Register ken in `.mcp.json` for Claude installs.
   7. Merge Codex hooks and MCP config into `.codex/` when Codex is
      requested/detected.
-  8. Run the initial code index, verbose by default. Embeddings are
+  8. Register the ken MCP server in ``opencode.json`` / ``opencode.jsonc``
+     when OpenCode is requested/detected.
+  9. Run the initial code index, verbose by default. Embeddings are
      optional via ``ken install --embed`` because full-repo embedding can
      be expensive on very large codebases.
 
-``ken install --claude`` and ``ken install --codex`` force wiring for
+``ken install --claude`` / ``--codex`` / ``--opencode`` force wiring for
 their respective agents. Without explicit flags, install detects existing
-`.claude/` / `.codex/` project config; fresh projects default to Claude.
+`.claude/` / `.codex/` / `opencode.json` project config; fresh projects
+default to Claude.
 
 Idempotent. Re-running on an installed project re-applies the schema
 (noop), re-merges hooks (dedup), and runs an incremental re-index
@@ -45,6 +48,10 @@ CLAUDE_SETTINGS = ".claude/settings.json"
 MCP_SETTINGS = ".mcp.json"
 CODEX_HOOKS_FILE = ".codex/hooks.json"
 CODEX_CONFIG_FILE = ".codex/config.toml"
+# OpenCode looks for an opencode.json / opencode.jsonc at the project
+# root. We try both — whichever exists is the one we'll merge into.
+# If both exist we leave them alone (the user has chosen a convention).
+OPENCODE_CONFIG_FILES = ("opencode.json", "opencode.jsonc")
 EMBED_PRIORITY_SUFFIXES = {
     ".py",
     ".rs",
@@ -88,6 +95,7 @@ def install(
     verbose: bool = True,
     force_claude: bool = False,
     force_codex: bool = False,
+    force_opencode: bool = False,
     embed: bool = False,
     embed_limit: int | None = None,
     no_wire: bool = False,
@@ -140,21 +148,26 @@ def install(
 
         active_model = configure_for_project(conn)
         if verbose:
-            print(f"[db] {'created' if fresh_db else 'opened'} {db_p.relative_to(root)}")
+            print(
+                f"[db] {'created' if fresh_db else 'opened'} {db_p.relative_to(root)}"
+            )
             print(f"[embed] model: {active_model}")
 
         # Step 3: .gitignore — add `.ken/` if there's a gitignore at project root.
         _ensure_gitignore(root, verbose=verbose)
 
         if no_wire:
-            install_claude, install_codex = False, False
+            install_claude, install_codex, install_opencode = False, False, False
             if verbose:
-                print("[hooks] --no-wire: skipping Claude/Codex hook + MCP wiring")
+                print(
+                    "[hooks] --no-wire: skipping Claude/Codex/OpenCode hook + MCP wiring"
+                )
         else:
-            install_claude, install_codex = _detect_agent_wiring(
+            install_claude, install_codex, install_opencode = _detect_agent_wiring(
                 root,
                 force_claude=force_claude,
                 force_codex=force_codex,
+                force_opencode=force_opencode,
             )
 
         # Step 4: Claude Code hooks + MCP registration.
@@ -162,13 +175,23 @@ def install(
             _wire_claude_hooks(root, verbose=verbose)
             _wire_mcp(root, verbose=verbose)
         elif verbose:
-            print("[hooks] Claude config not detected — skipping .claude/.mcp.json wiring")
+            print(
+                "[hooks] Claude config not detected — skipping .claude/.mcp.json wiring"
+            )
 
         # Step 4b: Codex CLI hooks + MCP.
         if install_codex:
             _wire_codex(root, verbose=verbose, force=force_codex)
         elif verbose:
             print("[codex] Codex config not detected — skipping .codex wiring")
+
+        # Step 4c: OpenCode MCP registration.
+        if install_opencode:
+            _wire_opencode(root, verbose=verbose)
+        elif verbose:
+            print(
+                "[opencode] OpenCode config not detected — skipping opencode.json wiring"
+            )
 
         # Step 5: initial index.
         if verbose:
@@ -193,7 +216,7 @@ def install(
             if status == "indexed":
                 print(f"  + {rel}")
             elif status.startswith("skipped:"):
-                print(f"  ! {rel}  ({status[len('skipped:'):]})")
+                print(f"  ! {rel}  ({status[len('skipped:') :]})")
 
         if embedder is not None and embed_limit is not None and embed_limit < len(rels):
             embed_rels = _prioritize_embed_rels(rels)[:embed_limit]
@@ -204,8 +227,12 @@ def install(
                     f"[index] embedding limited to {len(embed_rels)} prioritized files; "
                     f"{len(rest)} files indexed structurally"
                 )
-            stats = index_files(conn, root, embed_rels, on_progress=progress, embedder=embedder)
-            rest_stats = index_files(conn, root, rest, on_progress=progress, embedder=None)
+            stats = index_files(
+                conn, root, embed_rels, on_progress=progress, embedder=embedder
+            )
+            rest_stats = index_files(
+                conn, root, rest, on_progress=progress, embedder=None
+            )
             stats.visited += rest_stats.visited
             stats.parsed += rest_stats.parsed
             stats.unchanged += rest_stats.unchanged
@@ -216,7 +243,9 @@ def install(
             stats.imports += rest_stats.imports
             stats.elapsed_s += rest_stats.elapsed_s
         else:
-            stats = index_files(conn, root, rels, on_progress=progress, embedder=embedder)
+            stats = index_files(
+                conn, root, rels, on_progress=progress, embedder=embedder
+            )
         # An index built before the vector store still has its vectors inline.
         # Reads fall back to that, so nothing is broken — just slow — which is
         # exactly why the conversion belongs here rather than behind a flag the
@@ -241,8 +270,10 @@ def install(
             print(f"  next: cd {root} && claude")
         if install_codex:
             print(f"        (Codex users: open {root} with `codex` and approve")
-            print(f"         project trust, OR add `[projects.\"{root}\"]`")
-            print(f"         `trust_level = \"trusted\"` to ~/.codex/config.toml)")
+            print(f'         project trust, OR add `[projects."{root}"]`')
+            print(f'         `trust_level = "trusted"` to ~/.codex/config.toml)')
+        if install_opencode:
+            print(f"  next: cd {root} && opencode")
 
     return InstallResult(
         project_root=root,
@@ -259,21 +290,23 @@ def _detect_agent_wiring(
     *,
     force_claude: bool,
     force_codex: bool,
-) -> tuple[bool, bool]:
-    """Return ``(install_claude, install_codex)`` for project wiring.
+    force_opencode: bool = False,
+) -> tuple[bool, bool, bool]:
+    """Return ``(install_claude, install_codex, install_opencode)``.
 
     Fresh projects keep the original Claude-first default. Once a
     project has agent-local config, re-installs follow those signals so
     `ken reinstall .` does not create config for an agent the project
     does not use.
     """
-    if force_claude or force_codex:
-        return force_claude, force_codex
+    if force_claude or force_codex or force_opencode:
+        return force_claude, force_codex, force_opencode
     uses_claude = _project_uses_claude(root)
     uses_codex = _project_uses_codex(root)
-    if not uses_claude and not uses_codex:
+    uses_opencode = _project_uses_opencode(root)
+    if not uses_claude and not uses_codex and not uses_opencode:
         uses_claude = True
-    return uses_claude, uses_codex
+    return uses_claude, uses_codex, uses_opencode
 
 
 def _project_uses_claude(root: Path) -> bool:
@@ -282,6 +315,21 @@ def _project_uses_claude(root: Path) -> bool:
 
 def _project_uses_codex(root: Path) -> bool:
     return (root / ".codex").exists()
+
+
+def _project_uses_opencode(root: Path) -> bool:
+    """True when the project has any OpenCode marker on disk.
+
+    Either an ``opencode.json`` / ``opencode.jsonc`` at the root, or a
+    populated ``.opencode/`` directory (plugins, agents, commands, …).
+    Any of these means the user has installed OpenCode against this
+    project and we should register the ken MCP server.
+    """
+    for name in OPENCODE_CONFIG_FILES:
+        if (root / name).is_file():
+            return True
+    opencode_dir = root / ".opencode"
+    return opencode_dir.is_dir() and any(opencode_dir.iterdir())
 
 
 def _migrate_vectors_if_needed(conn, root: Path, *, verbose: bool) -> None:
@@ -321,7 +369,9 @@ def _migrate_vectors_if_needed(conn, root: Path, *, verbose: bool) -> None:
 
             before, after = reclaim_database(conn)
             if verbose and before:
-                print(f"[vectors] ken.db {before / 1e6:,.1f} MB -> {after / 1e6:,.1f} MB")
+                print(
+                    f"[vectors] ken.db {before / 1e6:,.1f} MB -> {after / 1e6:,.1f} MB"
+                )
     except Exception as exc:  # pragma: no cover - degrades to the inline path
         if verbose:
             print(f"[vectors] skipped ({exc}); embeddings stay inline")
@@ -332,7 +382,9 @@ def _ensure_gitignore(root: Path, *, verbose: bool) -> None:
     line = ".ken/"
     if not gi.is_file():
         if verbose:
-            print(f"[gitignore] no .gitignore at project root — skipping (you may want to add `{line}`)")
+            print(
+                f"[gitignore] no .gitignore at project root — skipping (you may want to add `{line}`)"
+            )
         return
     existing = gi.read_text(encoding="utf-8", errors="replace").splitlines()
     if any(s.strip() == line.rstrip("/") or s.strip() == line for s in existing):
@@ -379,7 +431,10 @@ def _wire_claude_hooks(root: Path, *, verbose: bool) -> None:
         try:
             existing = json.loads(settings_p.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
-            print(f"[hooks] {settings_p} is not valid JSON ({exc}); aborting", file=sys.stderr)
+            print(
+                f"[hooks] {settings_p} is not valid JSON ({exc}); aborting",
+                file=sys.stderr,
+            )
             raise SystemExit(2)
     merged, touched = merge_settings(existing)
     write_settings(settings_p, merged)
@@ -469,9 +524,7 @@ def _wire_mcp(root: Path, *, verbose: bool) -> None:
         try:
             existing = json.loads(mcp_p.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
-            print(
-                f"[mcp] {mcp_p} is not valid JSON ({exc}); aborting", file=sys.stderr
-            )
+            print(f"[mcp] {mcp_p} is not valid JSON ({exc}); aborting", file=sys.stderr)
             raise SystemExit(2)
     servers = existing.setdefault("mcpServers", {})
     desired = {"command": "ken", "args": ["mcp"]}
@@ -483,6 +536,88 @@ def _wire_mcp(root: Path, *, verbose: bool) -> None:
     mcp_p.write_text(json.dumps(existing, indent=2) + "\n", encoding="utf-8")
     if verbose:
         print(f"[mcp] registered `ken` MCP server in {MCP_SETTINGS}")
+
+
+def _wire_opencode(root: Path, *, verbose: bool) -> None:
+    """Register ``ken`` as a local MCP server in the project's OpenCode config.
+
+    OpenCode reads ``opencode.json`` / ``opencode.jsonc`` from the
+    project root (JSONC is allowed). We merge only the ``mcp.ken`` block
+    into the existing file so user-authored ``model``, ``provider``,
+    custom commands, plugins, etc. stay intact.
+
+    The hook lifecycle ken uses for Claude/Codex has no OpenCode
+    equivalent — OpenCode's plugin system is JS/TS-based and would
+    require node to run. The MCP path is the documented, fully supported
+    way to expose structured tools to OpenCode.
+    """
+    from ken.opencode_template import (
+        merge_opencode_config,
+        read_opencode_jsonc,
+        write_opencode_json,
+    )
+
+    config_p, ambiguous = _resolve_opencode_config_path(root)
+    if ambiguous:
+        # Two configs coexisting is the user's problem to resolve, not
+        # ours to clobber. _resolve_opencode_config_path already printed
+        # a warning to stderr — just stop here.
+        return
+    if config_p is None:
+        # No existing opencode.json(c); create the canonical .json one.
+        # The user is opting into OpenCode by running `--opencode`, so we
+        # don't need to ask before laying down a starter config.
+        config_p = root / OPENCODE_CONFIG_FILES[0]
+        merged, touched = merge_opencode_config(None)
+        write_opencode_json(config_p, merged)
+        if verbose:
+            print(f"[opencode] registered `ken` MCP server in {config_p.name}")
+        return
+
+    existing = read_opencode_jsonc(config_p)
+    if existing is None:
+        # read_opencode_jsonc returns None only when the file vanished
+        # between the existence check and the read — extremely rare, but
+        # we fall back to the no-config path rather than crashing.
+        merged, _ = merge_opencode_config(None)
+        write_opencode_json(config_p, merged)
+        if verbose:
+            print(f"[opencode] registered `ken` MCP server in {config_p.name}")
+        return
+
+    merged, touched = merge_opencode_config(existing)
+    if not touched:
+        if verbose:
+            print(f"[opencode] {config_p.name} already registers ken — leaving alone")
+        return
+    write_opencode_json(config_p, merged)
+    if verbose:
+        print(f"[opencode] registered `ken` MCP server in {config_p.name}")
+
+
+def _resolve_opencode_config_path(root: Path) -> tuple[Path | None, bool]:
+    """Pick the existing ``opencode.json``/``opencode.jsonc`` if any.
+
+    Returns ``(config_path, ambiguous)``:
+
+    * ``(path, False)`` — exactly one variant exists; merge into it.
+    * ``(None, True)`` — both variants exist; don't clobber either,
+      the caller should print the warning already printed here and
+      leave the project untouched.
+    * ``(None, False)`` — no config exists yet; the caller may create
+      the canonical ``opencode.json``.
+    """
+    found = [root / name for name in OPENCODE_CONFIG_FILES if (root / name).is_file()]
+    if len(found) == 1:
+        return found[0], False
+    if len(found) > 1:
+        print(
+            f"[opencode] both opencode.json and opencode.jsonc exist at {root}; "
+            f"leaving them alone to avoid clobbering either",
+            file=sys.stderr,
+        )
+        return None, True
+    return None, False
 
 
 def _ken_version() -> str:
