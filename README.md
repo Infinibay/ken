@@ -55,6 +55,27 @@ checkout directly with `uv`:
 uv tool install --editable . --force --reinstall --refresh
 ```
 
+### Troubleshooting MCP startup
+
+If the host assistant (Claude Code, Codex, OpenCode, …) lists the `ken`
+MCP server as `failed` or `disconnected` while the project itself looks
+fine, the most common cause is a stale install of ken-rank 0.10.0 from
+PyPI — that release shipped with the wrong `mcp>=1.0` pin, and depending
+on what `mcp` was already on the system, the SDK version that got
+resolved could be incompatible with the MCP server. `ken mcp` exits with
+a clear remediation message in that case; if you see one, reinstall:
+
+```sh
+uv tool install --reinstall ken-rank
+# or
+pipx reinstall ken-rank
+# or
+pip install --upgrade --force-reinstall ken-rank
+```
+
+Then restart the assistant so it respawns the `ken mcp` process. 0.11.0
+and later pin `mcp>=2.0,<3` and refuse to start against older SDKs.
+
 ## Install ken in a project
 
 Run this once from the project you want ken to index:

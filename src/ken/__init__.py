@@ -8,4 +8,4 @@ rediscovering the codebase.
 
 # The single source of truth for the version. pyproject.toml declares
 # `dynamic = ["version"]` and points hatchling here, so a release is one edit.
-__version__ = "0.10.2"
+__version__ = "0.11.0"
