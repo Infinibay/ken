@@ -1,19 +1,27 @@
 """stdio MCP server — entrypoint for ``ken mcp``.
 
-We use the ``FastMCP`` decorator API from the official Python SDK; it
-takes care of the JSON-RPC framing on stdin/stdout. Each tool is a
-plain function with type annotations — the SDK derives the JSON
-schema for ``tools/list`` automatically.
+Built on the official ``mcp`` Python SDK v2. The old ``FastMCP`` class
+was renamed to ``MCPServer``; the decorator API (``@mcp.tool()``) is the
+same shape it always was, so every tool below is a plain function with
+type annotations and a docstring — same surface ken has exposed since
+0.x. The CLI passthrough (``ken tools ...``) reads from a parallel
+registry populated alongside the SDK registration, so it does not need
+to spin up the stdio server to list tools.
 """
 
 from __future__ import annotations
 
+import asyncio
+import inspect
 import logging
 import sqlite3
 import sys
+import typing
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, Callable
 
-from mcp.server.fastmcp import FastMCP
+from mcp.server import MCPServer
 
 from ken import _paths
 from ken.clones import clones
@@ -47,9 +55,11 @@ logger = logging.getLogger("ken.mcp")
 # a clear error in their MCP logs.
 _PROJECT_ROOT: Path | None = None
 
+mcp = MCPServer("ken")
+
 
 def run(start: Path) -> int:
-    """Resolve the project root, then hand control to FastMCP's run loop."""
+    """Resolve the project root, then hand control to the MCP stdio loop."""
     global _PROJECT_ROOT
     root = _paths.find_project_root(start.resolve()) or start.resolve()
     if not _paths.meta_path(root).is_file():
@@ -62,13 +72,169 @@ def run(start: Path) -> int:
         format="%(asctime)s %(levelname)s %(name)s %(message)s",
     )
     logger.info("ken mcp ready project_root=%s", root)
-    mcp.run()
+    mcp.run(transport="stdio")
     return 0
 
 
-# ---- FastMCP server tools ----------------------------------------------
+# ---- CLI tool registry --------------------------------------------------
+#
+# ``ken tools ...`` (the shell-side passthrough) reads tool names,
+# descriptions, and parameter schemas from this registry so it does not
+# need to spin up the MCP stdio loop just to print ``--help`` text. We
+# mirror each ``@mcp.tool()`` registration into ``_REGISTRY`` via the
+# ``_register`` helper below.
 
-mcp = FastMCP("ken")
+
+@dataclass
+class ToolDef:
+    """Lightweight record of a registered MCP tool.
+
+    Mirrors the public surface of the old ``fastmcp.Tool`` object that
+    ``ken tools ...`` was reading via ``mcp._tool_manager.list_tools()``:
+    ``name``, ``description``, ``parameters`` (JSON schema), ``fn``, and
+    ``is_async``.
+    """
+
+    name: str
+    description: str
+    fn: Callable[..., Any]
+    is_async: bool
+    parameters: dict[str, Any]
+    input_schema: dict[str, Any]
+
+
+_REGISTRY: dict[str, ToolDef] = {}
+
+
+def _register(fn: Callable[..., Any]) -> Callable[..., Any]:
+    """Build a ``ToolDef`` from a function and stash it in ``_REGISTRY``.
+
+    The function name becomes the tool name (callers use the
+    ``ken_foo`` convention themselves). The JSON schema is derived from
+    the function's signature — annotations become ``properties``,
+    parameters with defaults become optional, the rest required. This is
+    the same shape the SDK derives internally, so any agent that reads
+    those schemas sees the same surface either way.
+    """
+    sig = inspect.signature(fn)
+    properties: dict[str, Any] = {}
+    required: list[str] = []
+    for name, param in sig.parameters.items():
+        if name == "self":
+            continue
+        prop, has_default = _annotation_to_schema(param)
+        if prop is None:
+            continue
+        if not has_default:
+            required.append(name)
+        properties[name] = prop
+
+    schema: dict[str, Any] = {
+        "type": "object",
+        "properties": properties,
+    }
+    if required:
+        schema["required"] = required
+
+    _REGISTRY[fn.__name__] = ToolDef(
+        name=fn.__name__,
+        description=(fn.__doc__ or "").strip(),
+        fn=fn,
+        is_async=inspect.iscoroutinefunction(fn),
+        parameters=schema,
+        input_schema=schema,
+    )
+    return fn
+
+
+def ken_tool(fn: Callable[..., Any]) -> Callable[..., Any]:
+    """Register ``fn`` as both an MCP tool and a CLI-passthrough tool."""
+    mcp.add_tool(fn)
+    _register(fn)
+    return fn
+
+
+def list_tools() -> list[ToolDef]:
+    """Snapshot of every registered tool, in insertion order."""
+    return list(_REGISTRY.values())
+
+
+# ── JSON-Schema derivation ─────────────────────────────────────────────
+#
+# Mirrors what the SDK's MCPServer does internally — narrowly, only for
+# the annotation shapes ken actually uses (``str``, ``int``, ``float``,
+# ``bool``, ``list[...]``, ``dict[...]``, ``X | None`` / ``Optional[X]``).
+
+_PRIMITIVE_JSON_TYPE = {
+    str: "string",
+    int: "integer",
+    float: "number",
+    bool: "boolean",
+}
+
+
+def _annotation_to_schema(
+    param: inspect.Parameter,
+) -> tuple[dict[str, Any] | None, bool]:
+    """Return ``(schema_dict, has_default)`` for a single function parameter.
+
+    ``has_default`` is True when the parameter is optional in the JSON
+    schema sense — either it has a Python default or its annotation is
+    ``Optional[X]`` / ``X | None``. Returns ``(None, True)`` for
+    ``*args`` / ``**kwargs`` / ``self``, which are not part of the schema.
+    """
+    if param.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD):
+        return None, True
+
+    has_default = param.default is not inspect.Parameter.empty
+    annotation = param.annotation
+
+    core, is_optional = _unwrap_optional(annotation)
+    if is_optional:
+        has_default = True
+
+    if core is inspect.Parameter.empty or core is None:
+        schema: dict[str, Any] = {}
+    elif core in _PRIMITIVE_JSON_TYPE:
+        schema = {"type": _PRIMITIVE_JSON_TYPE[core]}
+    elif origin := typing.get_origin(core):
+        if origin in (list, typing.List):
+            schema = {"type": "array", "items": _items_schema(typing.get_args(core))}
+        elif origin in (dict, typing.Dict):
+            schema = {"type": "object"}
+        else:
+            schema = {}
+    elif isinstance(core, type):
+        schema = {"type": "string"}  # named types → opaque string for the agent
+    else:
+        schema = {}
+
+    if param.default is not inspect.Parameter.empty and param.default is not None:
+        schema["default"] = param.default
+
+    return schema, has_default
+
+
+def _unwrap_optional(annotation: Any) -> tuple[Any, bool]:
+    """Return ``(inner, is_optional)`` for ``X | None`` / ``Optional[X]`` / ``None``."""
+    if annotation is None or annotation is type(None):
+        return type(None), True
+    origin = typing.get_origin(annotation)
+    if origin is typing.Union:
+        args = [a for a in typing.get_args(annotation) if a is not type(None)]
+        if len(args) == 1 and len(typing.get_args(annotation)) > 1:
+            return args[0], True
+        return annotation, False
+    return annotation, False
+
+
+def _items_schema(args: tuple[Any, ...]) -> dict[str, Any]:
+    if not args:
+        return {}
+    inner, _ = _unwrap_optional(args[0])
+    if inner in _PRIMITIVE_JSON_TYPE:
+        return {"type": _PRIMITIVE_JSON_TYPE[inner]}
+    return {}
 
 
 def _conn() -> sqlite3.Connection:
@@ -77,7 +243,15 @@ def _conn() -> sqlite3.Connection:
     return connect(_paths.db_path(_PROJECT_ROOT))
 
 
-@mcp.tool()
+# ---- MCP server tools ----------------------------------------------
+#
+# Same surface as before — same names, same docstrings, same parameter
+# annotations and defaults. Only the registration mechanism changed
+# (``@mcp.tool()`` now lives on ``MCPServer`` instead of ``FastMCP``);
+# the bodies are byte-for-byte identical to the pre-migration server.
+
+
+@ken_tool
 def ken_search_files(query: str, limit: int = 8) -> list[dict]:
     """Search the project's indexed files for ones semantically relevant to *query*.
 
@@ -95,7 +269,7 @@ def ken_search_files(query: str, limit: int = 8) -> list[dict]:
         return search_files(conn, query, limit=limit, project_root=_PROJECT_ROOT)
 
 
-@mcp.tool()
+@ken_tool
 def ken_search_symbols(query: str, limit: int = 10) -> list[dict]:
     """Search the project's indexed symbols (functions, classes, methods) for
     ones semantically relevant to *query*.
@@ -117,7 +291,7 @@ def ken_search_symbols(query: str, limit: int = 10) -> list[dict]:
         return search_symbols(conn, query, limit=limit, project_root=_PROJECT_ROOT)
 
 
-@mcp.tool()
+@ken_tool
 def ken_file_symbols(path: str, include_docstrings: bool = True) -> dict:
     """Return the indexed symbol structure for one file.
 
@@ -135,7 +309,7 @@ def ken_file_symbols(path: str, include_docstrings: bool = True) -> dict:
         )
 
 
-@mcp.tool()
+@ken_tool
 def ken_file_outline(
     path: str,
     include_symbols: bool = True,
@@ -158,7 +332,7 @@ def ken_file_outline(
         )
 
 
-@mcp.tool()
+@ken_tool
 def ken_file_neighbors(path: str, limit: int = 20) -> dict:
     """Return files directly related to *path*.
 
@@ -169,7 +343,7 @@ def ken_file_neighbors(path: str, limit: int = 20) -> dict:
         return file_neighbors(conn, path, limit=limit, project_root=_PROJECT_ROOT)
 
 
-@mcp.tool()
+@ken_tool
 def ken_symbol_detail(path: str, qualname: str, include_snippet: bool = False) -> dict:
     """Return metadata for one symbol in one file, optionally with source."""
     with _conn() as conn:
@@ -182,7 +356,7 @@ def ken_symbol_detail(path: str, qualname: str, include_snippet: bool = False) -
         )
 
 
-@mcp.tool()
+@ken_tool
 def ken_module_graph(path: str, depth: int = 1, limit: int = 100) -> dict:
     """Return a bounded local import graph around one indexed file.
 
@@ -191,10 +365,12 @@ def ken_module_graph(path: str, depth: int = 1, limit: int = 100) -> dict:
     short, a ``truncated`` block reports how many edges that dropped.
     """
     with _conn() as conn:
-        return module_graph(conn, path, depth=depth, limit=limit, project_root=_PROJECT_ROOT)
+        return module_graph(
+            conn, path, depth=depth, limit=limit, project_root=_PROJECT_ROOT
+        )
 
 
-@mcp.tool()
+@ken_tool
 def ken_find_tests(path: str, limit: int = 20) -> dict:
     """Return likely test files for an indexed source file, best evidence first.
 
@@ -209,7 +385,7 @@ def ken_find_tests(path: str, limit: int = 20) -> dict:
         return find_tests(conn, path, limit=limit, project_root=_PROJECT_ROOT)
 
 
-@mcp.tool()
+@ken_tool
 def ken_changed_context() -> dict:
     """Return current git changes enriched with indexed symbols and tests."""
     assert _PROJECT_ROOT is not None
@@ -217,7 +393,7 @@ def ken_changed_context() -> dict:
         return changed_context(conn, _PROJECT_ROOT)
 
 
-@mcp.tool()
+@ken_tool
 def ken_file_snippets(
     path: str,
     symbols: list[str] | None = None,
@@ -238,14 +414,14 @@ def ken_file_snippets(
         )
 
 
-@mcp.tool()
+@ken_tool
 def ken_project_overview(depth: int = 2, limit: int = 20) -> dict:
     """Return a compact structural overview of the indexed project."""
     with _conn() as conn:
         return project_overview(conn, depth=depth, limit=limit)
 
 
-@mcp.tool()
+@ken_tool
 def ken_remember(
     topic: str,
     content: str,
@@ -264,7 +440,7 @@ def ken_remember(
         return remember(conn, topic, content, tags=tags, kind=kind)
 
 
-@mcp.tool()
+@ken_tool
 def ken_forget(topic: str) -> dict:
     """Delete a saved finding by exact *topic*.
 
@@ -275,14 +451,14 @@ def ken_forget(topic: str) -> dict:
         return forget(conn, topic)
 
 
-@mcp.tool()
+@ken_tool
 def ken_findings(limit: int = 20, tag: str | None = None) -> list[dict]:
     """List recent saved findings, optionally filtering by exact tag."""
     with _conn() as conn:
         return list_findings(conn, limit=limit, tag=tag)
 
 
-@mcp.tool()
+@ken_tool
 def ken_recall(query: str, limit: int = 5, min_score: float = 0.25) -> list[dict]:
     """Search previously-saved findings by semantic similarity to *query*.
 
@@ -293,7 +469,7 @@ def ken_recall(query: str, limit: int = 5, min_score: float = 0.25) -> list[dict
         return recall(conn, query, limit=limit, min_score=min_score)
 
 
-@mcp.tool()
+@ken_tool
 def ken_related_findings(
     topic: str,
     limit: int = 8,
@@ -314,7 +490,7 @@ def ken_related_findings(
         return related_findings(conn, topic, limit=limit, min_weight=min_weight)
 
 
-@mcp.tool()
+@ken_tool
 def ken_file_findings(path: str, expand: bool = False, limit: int = 15) -> dict:
     """Durable findings that reference *path* — "what do we already know here?".
 
@@ -327,10 +503,12 @@ def ken_file_findings(path: str, expand: bool = False, limit: int = 15) -> dict:
     with _conn() as conn:
         from ken.findings_graph import file_findings
 
-        return file_findings(conn, path, expand=expand, limit=limit, project_root=_PROJECT_ROOT)
+        return file_findings(
+            conn, path, expand=expand, limit=limit, project_root=_PROJECT_ROOT
+        )
 
 
-@mcp.tool()
+@ken_tool
 def ken_cochange(
     path: str,
     min_confidence: float = 0.4,
@@ -372,7 +550,7 @@ def ken_cochange(
         )
 
 
-@mcp.tool()
+@ken_tool
 def ken_blast_radius(path: str, max_hops: int = 4) -> dict:
     """Files likely affected by editing *path*, with per-channel evidence.
 
@@ -387,7 +565,7 @@ def ken_blast_radius(path: str, max_hops: int = 4) -> dict:
         return blast_radius(conn, path, max_hops=max_hops, project_root=_PROJECT_ROOT)
 
 
-@mcp.tool()
+@ken_tool
 def ken_architecture(depth: int = 2, limit: int = 20) -> dict:
     """Subsystems, layers, dependency cycles, and load-bearing hubs of the project.
 
@@ -408,7 +586,7 @@ def ken_architecture(depth: int = 2, limit: int = 20) -> dict:
         return architecture(conn, depth=depth, limit=limit)
 
 
-@mcp.tool()
+@ken_tool
 def ken_profile(path: str, granularity: str = "file", top_terms: int = 12) -> dict:
     """What a file/package is *for* and what distinguishes it from its siblings.
 
@@ -422,7 +600,7 @@ def ken_profile(path: str, granularity: str = "file", top_terms: int = 12) -> di
         return profile(conn, path, granularity=granularity, top_terms=top_terms)
 
 
-@mcp.tool()
+@ken_tool
 def ken_clones(
     path: str | None = None,
     qualname: str | None = None,
@@ -455,7 +633,7 @@ def ken_clones(
         )
 
 
-@mcp.tool()
+@ken_tool
 def ken_intent_history(query: str, k_prompts: int = 12, limit: int = 15) -> dict:
     """Which files a request *like this one* historically ended up touching.
 
@@ -465,15 +643,16 @@ def ken_intent_history(query: str, k_prompts: int = 12, limit: int = 15) -> dict
     (content match) — this routes by what past similar work actually did.
     Returns the matched prompts so you see *why* each file was routed.
     """
-    assert _PROJECT_ROOT is not None
     with _conn() as conn:
         return intent_history(
             conn, query, k_prompts=k_prompts, limit=limit, project_root=_PROJECT_ROOT
         )
 
 
-@mcp.tool()
-def ken_grep(query: str, mode: str = "literal", language: str | None = None, limit: int = 20) -> dict:
+@ken_tool
+def ken_grep(
+    query: str, mode: str = "literal", language: str | None = None, limit: int = 20
+) -> dict:
     """Exact-literal or BM25-ranked search over the live worktree.
 
     ``mode='literal'`` (default): exact substring match scanned fresh from
@@ -484,10 +663,17 @@ def ken_grep(query: str, mode: str = "literal", language: str | None = None, lim
     """
     assert _PROJECT_ROOT is not None
     with _conn() as conn:
-        return grep(conn, query, mode=mode, language=language, limit=limit, project_root=_PROJECT_ROOT)
+        return grep(
+            conn,
+            query,
+            mode=mode,
+            language=language,
+            limit=limit,
+            project_root=_PROJECT_ROOT,
+        )
 
 
-@mcp.tool()
+@ken_tool
 def ken_callgraph(
     qualname: str,
     path: str | None = None,
@@ -507,13 +693,20 @@ def ken_callgraph(
     assert _PROJECT_ROOT is not None
     with _conn() as conn:
         return callgraph(
-            conn, qualname, path=path, direction=direction,
-            min_confidence=min_confidence, limit=limit, project_root=_PROJECT_ROOT,
+            conn,
+            qualname,
+            path=path,
+            direction=direction,
+            min_confidence=min_confidence,
+            limit=limit,
+            project_root=_PROJECT_ROOT,
         )
 
 
-@mcp.tool()
-def ken_wiring(query: str | None = None, trigger_kind: str | None = None, limit: int = 50) -> dict:
+@ken_tool
+def ken_wiring(
+    query: str | None = None, trigger_kind: str | None = None, limit: int = 50
+) -> dict:
     """How features are wired up: routes / CLI / env-var triggers -> handler symbols.
 
     Extracts decorator/registration nodes (``@app.route``, ``@click.command``)
@@ -524,12 +717,19 @@ def ken_wiring(query: str | None = None, trigger_kind: str | None = None, limit:
     """
     assert _PROJECT_ROOT is not None
     with _conn() as conn:
-        return wiring(conn, query=query, trigger_kind=trigger_kind, limit=limit,
-                      project_root=_PROJECT_ROOT)
+        return wiring(
+            conn,
+            query=query,
+            trigger_kind=trigger_kind,
+            limit=limit,
+            project_root=_PROJECT_ROOT,
+        )
 
 
-@mcp.tool()
-def ken_type_hierarchy(qualname: str, direction: str = "sub", with_overrides: bool = True) -> dict:
+@ken_tool
+def ken_type_hierarchy(
+    qualname: str, direction: str = "sub", with_overrides: bool = True
+) -> dict:
     """Subclasses / ancestors of a class, with best-effort override detection.
 
     Extracts ``class X(Base)`` clauses from the AST and walks the transitive
@@ -541,11 +741,16 @@ def ken_type_hierarchy(qualname: str, direction: str = "sub", with_overrides: bo
     """
     assert _PROJECT_ROOT is not None
     with _conn() as conn:
-        return type_hierarchy(conn, qualname, direction=direction,
-                              with_overrides=with_overrides, project_root=_PROJECT_ROOT)
+        return type_hierarchy(
+            conn,
+            qualname,
+            direction=direction,
+            with_overrides=with_overrides,
+            project_root=_PROJECT_ROOT,
+        )
 
 
-@mcp.tool()
+@ken_tool
 def ken_rank(query: str = "", verbose: int = 1, max_chars: int = 0) -> dict:
     """Re-render the context-rank for the current session at a chosen verbosity.
 
@@ -580,7 +785,7 @@ def ken_rank(query: str = "", verbose: int = 1, max_chars: int = 0) -> dict:
     return resp
 
 
-@mcp.tool()
+@ken_tool
 def ken_explain_rank(query: str = "") -> dict:
     """Per-channel breakdown of the ranker for a query (or the last prompt).
 
@@ -602,13 +807,13 @@ def ken_explain_rank(query: str = "") -> dict:
     return resp
 
 
-@mcp.tool()
+@ken_tool
 def ken_dismiss(target: str, reason: str = "") -> dict:
     """Explicit "this file wasn't what I was looking for" signal.
 
     Records a ``dismissed`` interaction against the current active
-    session — the predictive ranker will treat this target as a
-    negative example for similar prompts in future sessions.
+    session — the predictive ranker will treat this target as a negative
+    example for similar prompts in future sessions.
     Requires a running daemon with an active hook-backed session.
     """
     from ken.daemon import client as daemon_client

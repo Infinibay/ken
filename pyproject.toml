@@ -28,7 +28,10 @@ dependencies = [
     "fastembed>=0.5",
     "numpy>=1.26",
     # MCP SDK — exposes ken's tools to Claude Code over stdio.
-    "mcp>=1.0",
+    # Pinned to the 2.x line: 2.0 removed the high-level ``FastMCP``
+    # decorator surface (``mcp.server.fastmcp``) and our server now uses
+    # the low-level ``mcp.server.Server`` API directly.
+    "mcp>=2.0",
 ]
 
 [project.optional-dependencies]

@@ -1488,7 +1488,7 @@ def _tools_cli(
     """
     from ken.mcp import server as mcp_server
 
-    registry = {t.name: t for t in mcp_server.mcp._tool_manager.list_tools()}
+    registry = {t.name: t for t in mcp_server.list_tools()}
 
     if list_only or not tool_name:
         _print_tools_list(registry)
