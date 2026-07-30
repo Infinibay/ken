@@ -233,9 +233,172 @@ def _ref_text(topic: str, content: str) -> str:
 
 
 def recompute_finding_refs(conn: sqlite3.Connection, finding_id: int, text: str) -> None:
-    """Replace one finding's refs (delete + re-extract). The local, per-node part."""
-    conn.execute("DELETE FROM cr_finding_refs WHERE finding_id = ?", (finding_id,))
+    """Replace one finding's *extracted* refs (delete + re-extract).
+
+    Anchors are spared. An extracted ref is a guess re-derived from the prose
+    every time the finding is rewritten; an anchor is something the author
+    declared, and re-reading the text can never recover it.
+    """
+    conn.execute(
+        "DELETE FROM cr_finding_refs WHERE finding_id = ? AND method != ?",
+        (finding_id, ANCHOR_METHOD),
+    )
     _insert_refs(conn, finding_id, text, int(time.time() * 1000))
+
+
+# ── Anchors ──────────────────────────────────────────────────────────
+#
+# An anchor is a ref the author declared rather than one extracted from
+# prose: "this memory is about that file / that symbol / that command /
+# that error message". It rides on ``cr_finding_refs`` because that table
+# already models exactly this — one finding, many keyed references,
+# resolved against the code index where a resolution exists.
+#
+# ``file`` and ``symbol`` anchors resolve to ``ci_files`` / ``ci_symbols``
+# so they survive the same rebuild path as extracted refs. ``tool`` and
+# ``error`` name things outside the index and stay unresolved by design:
+# a command prefix and an error substring have nothing to point at.
+
+ANCHOR_METHOD = "anchor"
+ANCHOR_KINDS: tuple[str, ...] = ("file", "symbol", "tool", "error")
+
+
+def set_finding_anchors(
+    conn: sqlite3.Connection,
+    finding_id: int,
+    anchors: dict[str, str],
+    now_ms: int | None = None,
+) -> int:
+    """Replace a finding's declared anchors. Returns how many were stored.
+
+    ``anchors`` maps a kind in :data:`ANCHOR_KINDS` to its key. Passing an
+    empty value for a kind clears it, which is how a caller detaches an
+    anchor without rewriting the finding.
+    """
+    now_ms = int(time.time() * 1000) if now_ms is None else now_ms
+    conn.execute(
+        "DELETE FROM cr_finding_refs WHERE finding_id = ? AND method = ?",
+        (finding_id, ANCHOR_METHOD),
+    )
+    rows = []
+    for kind in ANCHOR_KINDS:
+        key = (anchors.get(kind) or "").strip()
+        if not key:
+            continue
+        file_id, symbol_id, resolved = _resolve_anchor(conn, kind, key)
+        rows.append((finding_id, kind, key, file_id, symbol_id,
+                     ANCHOR_METHOD, resolved, now_ms))
+    if rows:
+        conn.executemany(
+            "INSERT OR REPLACE INTO cr_finding_refs"
+            "(finding_id, ref_kind, ref_key, file_id, symbol_id, method, resolved, updated_at)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            rows,
+        )
+    return len(rows)
+
+
+def _resolve_anchor(
+    conn: sqlite3.Connection, kind: str, key: str,
+) -> tuple[int | None, int | None, int]:
+    """Best-effort resolution of an anchor key to an indexed node."""
+    try:
+        if kind == "file":
+            row = conn.execute(
+                "SELECT id FROM ci_files WHERE path = ? OR path LIKE ? LIMIT 2",
+                (key, f"%/{key.lstrip('/')}"),
+            ).fetchall()
+            if len(row) == 1:
+                return int(row[0]["id"]), None, 1
+        elif kind == "symbol":
+            row = conn.execute(
+                "SELECT id FROM ci_symbols WHERE qualname = ? LIMIT 2", (key,),
+            ).fetchall()
+            if len(row) == 1:
+                return None, int(row[0]["id"]), 1
+    except sqlite3.Error:  # index not built yet — the anchor still stands
+        pass
+    return None, None, 0
+
+
+def find_by_anchor(
+    conn: sqlite3.Connection,
+    anchors: dict[str, str],
+    *,
+    limit: int = 3,
+) -> list[dict]:
+    """Findings that fire for any of *anchors* (OR across kinds).
+
+    A ``file`` anchor matches on the stored key, on a basename tail, and on
+    the resolved ``file_id``, so a memory saved with a workspace-relative
+    path still fires when the agent opens the same file by absolute path.
+    An ``error`` anchor is a substring of the message: the stored key has to
+    appear inside what the caller passes, not the other way round.
+    """
+    clauses: list[str] = []
+    params: list = []
+    for kind in ANCHOR_KINDS:
+        key = (anchors.get(kind) or "").strip()
+        if not key:
+            continue
+        if kind == "file":
+            base = key.replace("\\", "/").rstrip("/").rsplit("/", 1)[-1]
+            clauses.append(
+                "(r.ref_kind = 'file' AND (r.ref_key = ? OR ? LIKE '%/' || r.ref_key"
+                " OR r.ref_key LIKE '%/' || ?))"
+            )
+            params += [key, key, base]
+        elif kind == "error":
+            # The stored key is the needle; the caller supplies the haystack.
+            clauses.append("(r.ref_kind = 'error' AND ? LIKE '%' || r.ref_key || '%')")
+            params.append(key)
+        else:
+            clauses.append("(r.ref_kind = ? AND r.ref_key = ?)")
+            params += [kind, key]
+    if not clauses:
+        return []
+
+    sql = (
+        "SELECT f.id, f.topic, f.content, f.tags, f.updated_at,"
+        "       r.ref_kind, r.ref_key"
+        "  FROM cr_finding_refs r"
+        "  JOIN cr_findings f ON f.id = r.finding_id"
+        f" WHERE r.method = ? AND ({' OR '.join(clauses)})"
+        " ORDER BY f.updated_at DESC"
+        " LIMIT ?"
+    )
+    try:
+        rows = conn.execute(sql, [ANCHOR_METHOD, *params, max(1, limit)]).fetchall()
+    except sqlite3.Error:
+        return []
+
+    seen: set[int] = set()
+    out: list[dict] = []
+    for r in rows:
+        if r["id"] in seen:
+            continue
+        seen.add(r["id"])
+        out.append({
+            "topic": r["topic"],
+            "content": r["content"],
+            "tags": json.loads(r["tags"] or "[]"),
+            "anchor": {"kind": r["ref_kind"], "key": r["ref_key"]},
+            "updated_at": r["updated_at"],
+        })
+    return out
+
+
+def anchors_for(conn: sqlite3.Connection, finding_id: int) -> dict[str, str]:
+    """The declared anchors of one finding, as ``{kind: key}``."""
+    try:
+        rows = conn.execute(
+            "SELECT ref_kind, ref_key FROM cr_finding_refs"
+            " WHERE finding_id = ? AND method = ?",
+            (finding_id, ANCHOR_METHOD),
+        ).fetchall()
+    except sqlite3.Error:
+        return {}
+    return {r["ref_kind"]: r["ref_key"] for r in rows}
 
 
 def _insert_refs(conn: sqlite3.Connection, finding_id: int, text: str, now_ms: int) -> None:

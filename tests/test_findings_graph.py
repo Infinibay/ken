@@ -415,3 +415,117 @@ def test_dirty_marker_triggers_repair_after_graph_failure(conn, monkeypatch):
     remember(conn, "heal", "src/auth.py beta")
     assert any(r["resolved"] == 1 for r in _refs(conn, "hurt"))  # repaired
     assert get_meta(conn, "findings_graph_version") == str(FINDINGS_GRAPH_VERSION)
+
+
+# ── Anchors ──────────────────────────────────────────────────────────
+#
+# An anchor is a ref the author *declared* rather than one extracted from
+# prose, which is what lets a caller surface a memory at the moment the
+# thing it is about happens — opening a file, running a command, reading an
+# error — instead of hoping someone thinks to search for it.
+
+
+def _anchor_refs(conn, topic: str):
+    return conn.execute(
+        "SELECT r.ref_kind, r.ref_key, r.resolved FROM cr_finding_refs r "
+        "JOIN cr_findings f ON f.id = r.finding_id "
+        "WHERE f.topic = ? AND r.method = 'anchor' ORDER BY r.ref_kind",
+        (topic,),
+    ).fetchall()
+
+
+def test_anchors_are_stored_for_every_kind(conn):
+    remember(conn, "t", "body", anchors={
+        "file": "src/a.py", "symbol": "A.run",
+        "tool": "pytest", "error": "database is locked",
+    })
+    stored = {(r["ref_kind"], r["ref_key"]) for r in _anchor_refs(conn, "t")}
+    assert stored == {
+        ("file", "src/a.py"), ("symbol", "A.run"),
+        ("tool", "pytest"), ("error", "database is locked"),
+    }
+
+
+def test_a_file_anchor_resolves_to_the_indexed_file(conn):
+    """Resolution is what lets an anchor survive a path spelled differently."""
+    _add_file(conn, "src/a.py")
+    remember(conn, "t", "body", anchors={"file": "src/a.py"})
+    row = _anchor_refs(conn, "t")[0]
+    assert row["resolved"] == 1
+
+
+def test_a_tool_anchor_stays_unresolved_by_design(conn):
+    """A command prefix names nothing in the code index."""
+    remember(conn, "t", "body", anchors={"tool": "pytest"})
+    assert _anchor_refs(conn, "t")[0]["resolved"] == 0
+
+
+def test_several_anchors_fire_independently(conn):
+    from ken.memory import recall_by_anchor
+
+    remember(conn, "t", "body", anchors={"file": "src/a.py", "tool": "pytest"})
+    assert [f["topic"] for f in recall_by_anchor(conn, {"file": "src/a.py"})] == ["t"]
+    assert [f["topic"] for f in recall_by_anchor(conn, {"tool": "pytest"})] == ["t"]
+
+
+def test_an_error_anchor_matches_as_a_substring(conn):
+    """The stored key is the needle; the runtime supplies the haystack —
+    an error message carries attempt counts and paths the author cannot
+    predict, so an equality match would never fire."""
+    from ken.memory import recall_by_anchor
+
+    remember(conn, "t", "body", anchors={"error": "database is locked"})
+    hits = recall_by_anchor(
+        conn, {"error": "OperationalError: database is locked (attempt 3)"},
+    )
+    assert [f["topic"] for f in hits] == ["t"]
+
+
+def test_a_file_anchor_matches_a_longer_path(conn):
+    """Saved workspace-relative, looked up absolute — the common case once a
+    tool result reports the path it actually opened."""
+    from ken.memory import recall_by_anchor
+
+    remember(conn, "t", "body", anchors={"file": "src/a.py"})
+    hits = recall_by_anchor(conn, {"file": "/home/u/proj/src/a.py"})
+    assert [f["topic"] for f in hits] == ["t"]
+
+
+def test_rewriting_a_finding_does_not_drop_its_anchors(conn):
+    """``recompute_finding_refs`` deletes and re-extracts refs from the prose.
+    An anchor cannot be recovered that way, so it has to be spared."""
+    remember(conn, "t", "body", anchors={"tool": "pytest"})
+    remember(conn, "t", "a completely different body")
+    assert [r["ref_key"] for r in _anchor_refs(conn, "t")] == ["pytest"]
+
+
+def test_passing_an_empty_anchor_clears_it(conn):
+    remember(conn, "t", "body", anchors={"tool": "pytest", "file": "src/a.py"})
+    remember(conn, "t", "body", anchors={"tool": "", "file": "src/a.py"})
+    assert [r["ref_kind"] for r in _anchor_refs(conn, "t")] == ["file"]
+
+
+def test_extracted_refs_and_anchors_coexist(conn):
+    """The prose still bridges to code; the anchor is an addition, not a
+    replacement."""
+    _add_file(conn, "src/b.py")
+    remember(conn, "t", "see src/b.py for context", anchors={"tool": "pytest"})
+    kinds = {(r["ref_kind"], r["ref_key"]) for r in _refs(conn, "t")}
+    assert ("file", "src/b.py") in kinds
+    assert ("tool", "pytest") in kinds
+
+
+def test_an_unanchored_lookup_returns_nothing(conn):
+    from ken.memory import recall_by_anchor
+
+    remember(conn, "t", "body", anchors={"tool": "pytest"})
+    assert recall_by_anchor(conn, {}) == []
+    assert recall_by_anchor(conn, {"tool": "npm"}) == []
+
+
+def test_forgetting_removes_the_anchors_too(conn):
+    from ken.memory import recall_by_anchor
+
+    remember(conn, "t", "body", anchors={"tool": "pytest"})
+    forget(conn, "t")
+    assert recall_by_anchor(conn, {"tool": "pytest"}) == []

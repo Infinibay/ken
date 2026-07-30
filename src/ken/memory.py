@@ -19,8 +19,16 @@ def remember(
     content: str,
     tags: list[str] | None = None,
     kind: str | None = None,
+    anchors: dict[str, str] | None = None,
 ) -> dict:
-    """Store or update a reusable finding."""
+    """Store or update a reusable finding.
+
+    *anchors* declares what the memory is about — ``{"file": "src/a.py"}``,
+    ``{"tool": "pytest"}``, and so on (see ``findings_graph.ANCHOR_KINDS``).
+    An anchored finding can be looked up by the thing that provoked it
+    instead of by a query, which is what lets a caller surface it at the
+    moment it becomes relevant rather than hoping someone searches for it.
+    """
     topic = topic.strip()
     content = content.strip()
     if not topic or not content:
@@ -72,15 +80,54 @@ def remember(
             """,
             (topic, content, tags_json, emb, now_ms, now_ms),
         )
+        # last_insert_rowid() is wrong on the DO UPDATE path — look the id up.
+        row = conn.execute("SELECT id FROM cr_findings WHERE topic = ?", (topic,)).fetchone()
         if enabled:
-            # last_insert_rowid() is wrong on the DO UPDATE path — look the id up.
-            row = conn.execute("SELECT id FROM cr_findings WHERE topic = ?", (topic,)).fetchone()
             apply_remember(conn, int(row["id"]), f"{topic}\n{content}")
+        if anchors:
+            # After apply_remember: recompute_finding_refs spares anchors, but
+            # writing them second keeps the order independent of that promise.
+            # Isolated because the refs table belongs to the graph subsystem,
+            # and the rule there is that a graph failure never costs the user
+            # their finding — losing an anchor is recoverable, losing the
+            # content is not.
+            try:
+                from ken.findings_graph import set_finding_anchors
+
+                stored_anchors = set_finding_anchors(
+                    conn, int(row["id"]), anchors, now_ms,
+                )
+            except Exception:  # pragma: no cover - defensive
+                stored_anchors = 0
         conn.execute("COMMIT")
     except Exception as exc:  # pragma: no cover - defensive
         _safe_rollback(conn)
         return {"ok": False, "error": f"remember failed: {exc}"}
-    return {"ok": True, "topic": topic}
+    out = {"ok": True, "topic": topic}
+    if anchors:
+        out["anchors"] = stored_anchors
+    return out
+
+
+def recall_by_anchor(
+    conn: sqlite3.Connection,
+    anchors: dict[str, str],
+    *,
+    limit: int = 3,
+) -> list[dict]:
+    """Findings anchored to any of *anchors*.
+
+    The lookup a caller runs when something just happened — a file was
+    opened, a command ran, an error came back — rather than when someone
+    thought to search. Never raises: an unbuilt graph returns nothing.
+    """
+    from ken.findings_graph import ensure_finding_graph, find_by_anchor
+
+    try:
+        ensure_finding_graph(conn)
+    except Exception:  # pragma: no cover - defensive
+        return []
+    return find_by_anchor(conn, anchors, limit=limit)
 
 
 def forget(conn: sqlite3.Connection, topic: str) -> dict:

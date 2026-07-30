@@ -494,6 +494,7 @@ def _impl_ken_remember(
     content: str,
     tags: list[str] | None = None,
     kind: str | None = None,
+    anchors: dict[str, str] | None = None,
 ) -> dict:
     """Write a finding for future sessions to recall.
 
@@ -501,10 +502,13 @@ def _impl_ken_remember(
     the existing row). *content* is the body — usually a few sentences
     capturing a fact you don't want to re-derive next time. *kind* can
     explicitly classify the note as finding, persistent_rule,
-    experimental_finding, or hypothesis.
+    experimental_finding, or hypothesis. *anchors* declares what the note
+    is about so it can be recalled by that instead of by a query.
     """
+    live = {k: v for k, v in (anchors or {}).items() if (v or "").strip()}
     with _conn() as conn:
-        return remember(conn, topic, content, tags=tags, kind=kind)
+        return remember(conn, topic, content, tags=tags, kind=kind,
+                        anchors=live or None)
 
 
 def _impl_ken_forget(topic: str) -> dict:
@@ -1140,15 +1144,35 @@ def ken_recall(
     tag: str = "",
     limit: int = 5,
     min_score: float = 0.0,
+    anchor_file: str = "",
+    anchor_symbol: str = "",
+    anchor_tool: str = "",
+    anchor_error: str = "",
 ) -> Any:
     """Recall what earlier sessions in this project already worked out.
 
     Check here before re-deriving something: findings persist across
     sessions and across harnesses. The arguments are ways in, most specific
-    first — *topic* walks the findings graph from a known finding, *path*
-    returns what is known about a file, *query* searches by meaning, *tag*
-    filters exactly. With none of them, returns the most recent findings.
+    first — the ``anchor_*`` set returns memories declared to fire on a
+    file, symbol, tool or error message, *topic* walks the findings graph
+    from a known finding, *path* returns everything known about a file,
+    *query* searches by meaning, *tag* filters exactly. With none of them,
+    returns the most recent findings.
+
+    The ``anchor_*`` arguments answer "what should I know before doing
+    this?" and combine with OR — pass every anchor the action has and get
+    back whatever fires on any of them. ``anchor_error`` matches as a
+    substring of the message you pass.
     """
+    anchors = {
+        "file": anchor_file, "symbol": anchor_symbol,
+        "tool": anchor_tool, "error": anchor_error,
+    }
+    if any(v.strip() for v in anchors.values()):
+        from ken.memory import recall_by_anchor
+
+        with _conn() as conn:
+            return recall_by_anchor(conn, anchors, limit=limit)
     if topic:
         return _impl_ken_related_findings(topic, limit=limit)
     if path:
@@ -1165,6 +1189,10 @@ def ken_remember(
     action: Literal["save", "forget", "dismiss"] = "save",
     tags: list[str] | None = None,
     reason: str = "",
+    anchor_file: str = "",
+    anchor_symbol: str = "",
+    anchor_tool: str = "",
+    anchor_error: str = "",
 ) -> Any:
     """Persist a finding so the next session starts knowing it. *action*
     is save (default), forget (delete by topic), or dismiss (mark a path
@@ -1177,11 +1205,23 @@ def ken_remember(
     *action* is ``save`` (default), ``forget`` to delete a finding by topic,
     or ``dismiss`` to tell the ranker that *topic* — read as a path — is not
     relevant to the current work.
+
+    The ``anchor_*`` arguments declare what the memory is *about*, so it can
+    be found by the thing that provokes it rather than by someone thinking
+    to search: ``anchor_file`` and ``anchor_symbol`` name code,
+    ``anchor_tool`` a command or tool name, ``anchor_error`` a substring of
+    an error message. Several may be set; the memory fires on any of them.
     """
     if action == "save":
         if not content.strip():
             return {"ok": False, "error": "content is required when saving a finding"}
-        return _impl_ken_remember(topic, content, tags=tags)
+        return _impl_ken_remember(
+            topic, content, tags=tags,
+            anchors={
+                "file": anchor_file, "symbol": anchor_symbol,
+                "tool": anchor_tool, "error": anchor_error,
+            },
+        )
     if action == "forget":
         return _impl_ken_forget(topic)
     if action == "dismiss":
