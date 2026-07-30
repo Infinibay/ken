@@ -124,8 +124,9 @@ ken install --claude --codex --opencode .
 OpenCode has no lifecycle-hook equivalent to Claude Code's
 `SessionStart` or Codex's `Stop` — its plugin system is JS/TS-based and
 runs on Bun/Node. So the OpenCode wiring is narrower than the other
-two: just the MCP registration. The 30 ken tools (`ken_search_files`,
-`ken_rank`, `ken_wiring`, …) are available to OpenCode through MCP
+two: just the MCP registration. The six ken tools (`ken_find`,
+`ken_read`, `ken_related`, `ken_rank`, `ken_recall`, `ken_remember`)
+are available to OpenCode through MCP
 exactly the way they are to Claude Code, and the daemon-side hook
 logic (session memory, predictive ranking, finding recall) keeps
 working because it lives in the daemon, not in the host agent.
@@ -318,34 +319,37 @@ Segment files are preallocated and sparse, so a space holding a few thousand vec
 
 ## Tell the assistant to use ken
 
-ken works through hooks automatically, but assistants behave better when your project instructions tell them *when* to reach for ken and, just as importantly, to write back what they learn. The MCP server already describes all 30 tools to the assistant, so the block below deliberately carries only what a tool description cannot: where to start, when to stop, and what to record. Add it to the agent instruction file for the tool you use: `AGENTS.md` for Codex, `CLAUDE.md` for Claude Code, or both. OpenCode reads the same `AGENTS.md` from the project root.
+ken works through hooks automatically, but assistants behave better when your project instructions tell them *when* to reach for ken and, just as importantly, to write back what they learn. The MCP server already describes all six tools to the assistant, so the block below deliberately carries only what a tool description cannot: where to start, when to stop, and what to record. Add it to the agent instruction file for the tool you use: `AGENTS.md` for Codex, `CLAUDE.md` for Claude Code, or both. OpenCode reads the same `AGENTS.md` from the project root.
 
 ```md
 ## Code intelligence: ken
 
 **When a prompt arrives with a `<context-rank>` block**, that is ken's ranked guess
 for this request: `Files:` best first, `Symbols:`, and `Notes:` — finding *topics*
-from past sessions, so `ken_recall` one to read its body. If it names what you need,
-open that file and skip searching. If a listed file was irrelevant, `ken_dismiss(path,
-reason)` — the ranker's only negative signal, and only useful while you can still see
-it. Thin or missing? `ken_rank(verbose=2)`, or `ken_intent_history("<task>")` for the
-files past tasks like this one actually touched.
+from past sessions, so `ken_recall(topic="<one>")` to read its body. If it names what
+you need, open that file and skip searching. If a listed file was irrelevant,
+`ken_remember(path, action="dismiss", reason=...)` — the ranker's only negative
+signal, and only useful while you can still see it. Thin or missing?
+`ken_rank(verbose=2)`, or `ken_find(task, scope="intent")` for the files past tasks
+like this one actually touched.
 
 **Before the first search**, don't reach for `rg`, `find`, or open files you are
-guessing at. One ken call, matched to the question:
-- exact string or identifier (`MY_ENV_VAR`, `os.path`) → `ken_grep`, not `rg`
-- which file implements X → `ken_search_files`
-- where is the function/class that does X → `ken_search_symbols`
-- how a route / CLI command / env var reaches its handler → `ken_wiring`
+guessing at. One `ken_find` call, scope matched to the question:
+- exact string or identifier (`MY_ENV_VAR`, `os.path`) → `scope="text", literal=true`
+- which file implements X → `scope="files"`
+- where is the function/class that does X → `scope="symbols"`
+- how a route / CLI command / env var reaches its handler → `scope="wiring"`
 
-Then read what ken named: it narrows the search space, it doesn't replace reading
-code. Two ken calls is normal, five means you should have opened the file already;
-trivial or in-context questions need none. Use `rg` when ken comes back empty — it
-searches indexed files, so something created moments ago may be missing.
+Then read what ken named — `ken_read(path)` for the outline, `include=["source"]` plus
+a *qualname* for one symbol's body. ken narrows the search space, it doesn't replace
+reading code. Two ken calls is normal, five means you should have opened the file
+already; trivial or in-context questions need none. Use `rg` when ken comes back
+empty — it searches indexed files, so something created moments ago may be missing.
 
-**Before editing an unfamiliar file**, `ken_file_findings(path)` — what past sessions
-learned here. If the change isn't local: `ken_blast_radius` (what it breaks),
-`ken_cochange` (what changes with it that imports don't show), `ken_find_tests`.
+**Before editing an unfamiliar file**, `ken_recall(path=...)` — what past sessions
+learned here. If the change isn't local, `ken_related(path, relation=...)`:
+`blast_radius` (what it breaks), `cochange` (what changes with it that imports don't
+show), and `ken_find(path, scope="tests")` for its tests.
 
 **Before finishing, write back — the step agents skip, and the reason ken stops
 improving.** Learned something non-obvious that cost real effort (a root cause, a
@@ -381,14 +385,14 @@ ken recall "codex hook repair"
 Every tool the ken MCP server exposes is also runnable directly with `ken tools`, so you can use the structured code-intelligence tools (call graph, blast radius, co-change, wiring, clones, …) without an assistant in the loop. The list, descriptions, and parameters are read live from the same MCP surface, so `ken tools` never drifts from what the agent sees.
 
 ```sh
-ken tools                                   # list every tool with a one-line summary
-ken tools grep --help                       # show one tool's parameters
-ken tools grep "MY_ENV_VAR" --mode bm25     # required params are positional, options are --flags
-ken tools blast_radius src/ken/cli.py
-ken tools file_symbols src/ken/search.py --no-include-docstrings
+ken tools                                       # list every tool with a one-line summary
+ken tools find --help                           # show one tool's parameters
+ken tools find "MY_ENV_VAR" --scope text --literal   # required params are positional, options are --flags
+ken tools related src/ken/cli.py blast_radius
+ken tools read src/ken/search.py --include symbols imports
 ```
 
-The tool name may be given with or without the `ken_` prefix (`grep` or `ken_grep`). Results print as JSON (`--compact` for a single line). Point at another checkout with `ken tools --path /repo <name> ...` (the flag comes before the tool name).
+The tool name may be given with or without the `ken_` prefix (`find` or `ken_find`). Required parameters are positional in schema order — `ken_related` takes `target` then `relation`. Results print as JSON; `--compact` prints a single line and `--path /repo` points at another checkout, and both flags come *before* the tool name.
 
 ## Codex hook setup
 

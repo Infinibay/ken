@@ -930,18 +930,60 @@ def _record_tool_post(st: DaemonState, payload: dict[str, Any]) -> None:
             st.invalidate_last_interaction(agent_id, target)
 
 
+# Verb stems for harnesses that name tools in snake_case rather than with
+# Claude Code's capitalised nouns. Matched on the *first* underscore-separated
+# word only, so ``read_file`` and ``search_symbols`` classify while
+# ``add_note`` — which has no file target — does not accidentally count as an
+# edit. Longest-lived risk here is a false positive, so an unrecognised verb
+# stays neutral rather than guessing.
+_READ_STEMS = frozenset({
+    "read", "grep", "glob", "search", "list", "find", "view", "get",
+    "cat", "show", "inspect", "analyze", "analyse", "iter", "project",
+})
+_EDIT_STEMS = frozenset({
+    "edit", "write", "create", "replace", "add", "insert", "remove",
+    "delete", "rename", "move", "patch", "apply", "update",
+})
+
+
 def _classify_tool(tool: str, tool_input: Any) -> tuple[str, str | None]:
+    """Map a harness's tool name onto a ranking event.
+
+    Three naming conventions reach this function: Claude Code's capitalised
+    nouns (``Read``, ``MultiEdit``), Codex's dotted functions
+    (``functions.apply_patch``), and the snake_case verbs most other hosts
+    use (``read_file``, ``edit_symbol``). Only the first two were recognised,
+    so every other harness's calls landed as ``neutral`` — which carries
+    weight **0.0** in ``EVENT_WEIGHTS``, i.e. the reactive channel saw the
+    agent work and scored none of it.
+    """
     name = _canonical_tool_name(tool)
     if name in {"read", "glob", "grep"}:
-        target = _extract_target(tool_input)
-        return "read", target
+        return "read", _extract_target(tool_input)
     if name in {"edit", "write", "multiedit", "apply_patch"}:
-        target = _extract_target(tool_input)
-        return "edit", target
+        return "edit", _extract_target(tool_input)
     if name in {"bash", "exec_command"}:
         target = _extract_target(tool_input)
         return ("read", target) if target else ("neutral", None)
-    return "neutral", _extract_target(tool_input)
+
+    # snake_case fallback. An edit or a read is only meaningful with a
+    # target, so a verb match without one stays neutral — which is what
+    # keeps ``add_note`` from counting as an edit.
+    #
+    # Edits match on the leading word only, reads on any word. The asymmetry
+    # is deliberate: an edit is weighted twice a read, so a false positive
+    # there distorts the ranking more, while a missed read merely
+    # under-counts attention the agent really paid. That is what lets
+    # ``code_search`` and ``get_symbol_code`` classify without opening the
+    # door to guessing.
+    target = _extract_target(tool_input)
+    if target:
+        words = name.split("_")
+        if words[0] in _EDIT_STEMS:
+            return "edit", target
+        if any(word in _READ_STEMS for word in words):
+            return "read", target
+    return "neutral", target
 
 
 def _canonical_tool_name(tool: str) -> str:

@@ -663,7 +663,7 @@ dev = [
 requires-dist = [
     { name = "fastembed", specifier = ">=0.5" },
     { name = "fastembed-gpu", marker = "sys_platform != 'darwin' and extra == 'gpu'", specifier = ">=0.5" },
-    { name = "mcp", specifier = ">=2.0" },
+    { name = "mcp", specifier = ">=2.0,<3" },
     { name = "numpy", specifier = ">=1.26" },
     { name = "pathspec", specifier = ">=0.12" },
     { name = "sentence-transformers", marker = "extra == 'torch'", specifier = ">=3.0" },

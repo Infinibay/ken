@@ -15,10 +15,11 @@ import inspect
 import logging
 import sqlite3
 import sys
+import types
 import typing
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Literal
 
 try:
     from mcp.server import MCPServer
@@ -246,7 +247,9 @@ def _annotation_to_schema(
     elif core in _PRIMITIVE_JSON_TYPE:
         schema = {"type": _PRIMITIVE_JSON_TYPE[core]}
     elif origin := typing.get_origin(core):
-        if origin in (list, typing.List):
+        if origin is typing.Literal:
+            schema = _literal_schema(core)
+        elif origin in (list, typing.List):
             schema = {"type": "array", "items": _items_schema(typing.get_args(core))}
         elif origin in (dict, typing.Dict):
             schema = {"type": "object"}
@@ -268,12 +271,36 @@ def _unwrap_optional(annotation: Any) -> tuple[Any, bool]:
     if annotation is None or annotation is type(None):
         return type(None), True
     origin = typing.get_origin(annotation)
-    if origin is typing.Union:
+    # Both spellings of a union reach here. ``Optional[X]`` reports
+    # ``typing.Union``; PEP 604's ``X | None`` reports ``types.UnionType``,
+    # a genuinely different object until Python 3.14 unifies them. Matching
+    # only the first silently degrades every ``X | None`` parameter to an
+    # empty schema.
+    if origin is typing.Union or origin is types.UnionType:
         args = [a for a in typing.get_args(annotation) if a is not type(None)]
         if len(args) == 1 and len(typing.get_args(annotation)) > 1:
             return args[0], True
         return annotation, False
     return annotation, False
+
+
+def _literal_schema(core: Any) -> dict[str, Any]:
+    """``Literal[...]`` → a JSON ``enum``, typed when the values agree.
+
+    A closed set of values is the difference between a menu and free-form
+    generation. Without the ``enum``, an agent has to guess what a mode
+    argument accepts from prose that a host's description compression may
+    already have trimmed — which is strictly worse than having been handed
+    separate named tools.
+    """
+    values = list(typing.get_args(core))
+    schema: dict[str, Any] = {"enum": values}
+    kinds = {type(v) for v in values}
+    if len(kinds) == 1:
+        only = kinds.pop()
+        if only in _PRIMITIVE_JSON_TYPE:
+            schema["type"] = _PRIMITIVE_JSON_TYPE[only]
+    return schema
 
 
 def _items_schema(args: tuple[Any, ...]) -> dict[str, Any]:
@@ -282,6 +309,10 @@ def _items_schema(args: tuple[Any, ...]) -> dict[str, Any]:
     inner, _ = _unwrap_optional(args[0])
     if inner in _PRIMITIVE_JSON_TYPE:
         return {"type": _PRIMITIVE_JSON_TYPE[inner]}
+    if typing.get_origin(inner) is typing.Literal:
+        # ``list[Literal[...]]`` — the element enum is the only place that
+        # says which values the list may hold.
+        return _literal_schema(inner)
     return {}
 
 
@@ -299,8 +330,7 @@ def _conn() -> sqlite3.Connection:
 # the bodies are byte-for-byte identical to the pre-migration server.
 
 
-@ken_tool
-def ken_search_files(query: str, limit: int = 8) -> list[dict]:
+def _impl_ken_search_files(query: str, limit: int = 8) -> list[dict]:
     """Search the project's indexed files for ones semantically relevant to *query*.
 
     Cosine similarity against per-file embeddings (built from each
@@ -317,8 +347,7 @@ def ken_search_files(query: str, limit: int = 8) -> list[dict]:
         return search_files(conn, query, limit=limit, project_root=_PROJECT_ROOT)
 
 
-@ken_tool
-def ken_search_symbols(query: str, limit: int = 10) -> list[dict]:
+def _impl_ken_search_symbols(query: str, limit: int = 10) -> list[dict]:
     """Search the project's indexed symbols (functions, classes, methods) for
     ones semantically relevant to *query*.
 
@@ -339,8 +368,7 @@ def ken_search_symbols(query: str, limit: int = 10) -> list[dict]:
         return search_symbols(conn, query, limit=limit, project_root=_PROJECT_ROOT)
 
 
-@ken_tool
-def ken_file_symbols(path: str, include_docstrings: bool = True) -> dict:
+def _impl_ken_file_symbols(path: str, include_docstrings: bool = True) -> dict:
     """Return the indexed symbol structure for one file.
 
     *path* is the project-relative file path stored in Ken's index, such
@@ -357,8 +385,7 @@ def ken_file_symbols(path: str, include_docstrings: bool = True) -> dict:
         )
 
 
-@ken_tool
-def ken_file_outline(
+def _impl_ken_file_outline(
     path: str,
     include_symbols: bool = True,
     include_imports: bool = True,
@@ -380,8 +407,7 @@ def ken_file_outline(
         )
 
 
-@ken_tool
-def ken_file_neighbors(path: str, limit: int = 20) -> dict:
+def _impl_ken_file_neighbors(path: str, limit: int = 20) -> dict:
     """Return files directly related to *path*.
 
     Uses resolved internal imports, reverse imports, and test-file
@@ -391,8 +417,7 @@ def ken_file_neighbors(path: str, limit: int = 20) -> dict:
         return file_neighbors(conn, path, limit=limit, project_root=_PROJECT_ROOT)
 
 
-@ken_tool
-def ken_symbol_detail(path: str, qualname: str, include_snippet: bool = False) -> dict:
+def _impl_ken_symbol_detail(path: str, qualname: str, include_snippet: bool = False) -> dict:
     """Return metadata for one symbol in one file, optionally with source."""
     with _conn() as conn:
         return symbol_detail(
@@ -404,8 +429,7 @@ def ken_symbol_detail(path: str, qualname: str, include_snippet: bool = False) -
         )
 
 
-@ken_tool
-def ken_module_graph(path: str, depth: int = 1, limit: int = 100) -> dict:
+def _impl_ken_module_graph(path: str, depth: int = 1, limit: int = 100) -> dict:
     """Return a bounded local import graph around one indexed file.
 
     ``limit`` caps *nodes*. Every returned edge has both endpoints in ``nodes``,
@@ -418,8 +442,7 @@ def ken_module_graph(path: str, depth: int = 1, limit: int = 100) -> dict:
         )
 
 
-@ken_tool
-def ken_find_tests(path: str, limit: int = 20) -> dict:
+def _impl_ken_find_tests(path: str, limit: int = 20) -> dict:
     """Return likely test files for an indexed source file, best evidence first.
 
     Each candidate accumulates every channel that fired, and ``score`` ranks
@@ -433,16 +456,14 @@ def ken_find_tests(path: str, limit: int = 20) -> dict:
         return find_tests(conn, path, limit=limit, project_root=_PROJECT_ROOT)
 
 
-@ken_tool
-def ken_changed_context() -> dict:
+def _impl_ken_changed_context() -> dict:
     """Return current git changes enriched with indexed symbols and tests."""
     assert _PROJECT_ROOT is not None
     with _conn() as conn:
         return changed_context(conn, _PROJECT_ROOT)
 
 
-@ken_tool
-def ken_file_snippets(
+def _impl_ken_file_snippets(
     path: str,
     symbols: list[str] | None = None,
     start_line: int | None = None,
@@ -462,15 +483,13 @@ def ken_file_snippets(
         )
 
 
-@ken_tool
-def ken_project_overview(depth: int = 2, limit: int = 20) -> dict:
+def _impl_ken_project_overview(depth: int = 2, limit: int = 20) -> dict:
     """Return a compact structural overview of the indexed project."""
     with _conn() as conn:
         return project_overview(conn, depth=depth, limit=limit)
 
 
-@ken_tool
-def ken_remember(
+def _impl_ken_remember(
     topic: str,
     content: str,
     tags: list[str] | None = None,
@@ -488,8 +507,7 @@ def ken_remember(
         return remember(conn, topic, content, tags=tags, kind=kind)
 
 
-@ken_tool
-def ken_forget(topic: str) -> dict:
+def _impl_ken_forget(topic: str) -> dict:
     """Delete a saved finding by exact *topic*.
 
     Use ``ken_findings`` or ``ken_recall`` first if you need to discover
@@ -499,15 +517,13 @@ def ken_forget(topic: str) -> dict:
         return forget(conn, topic)
 
 
-@ken_tool
-def ken_findings(limit: int = 20, tag: str | None = None) -> list[dict]:
+def _impl_ken_findings(limit: int = 20, tag: str | None = None) -> list[dict]:
     """List recent saved findings, optionally filtering by exact tag."""
     with _conn() as conn:
         return list_findings(conn, limit=limit, tag=tag)
 
 
-@ken_tool
-def ken_recall(query: str, limit: int = 5, min_score: float = 0.25) -> list[dict]:
+def _impl_ken_recall(query: str, limit: int = 5, min_score: float = 0.25) -> list[dict]:
     """Search previously-saved findings by semantic similarity to *query*.
 
     Results below *min_score* are omitted. Set ``min_score=0`` to inspect
@@ -517,8 +533,7 @@ def ken_recall(query: str, limit: int = 5, min_score: float = 0.25) -> list[dict
         return recall(conn, query, limit=limit, min_score=min_score)
 
 
-@ken_tool
-def ken_related_findings(
+def _impl_ken_related_findings(
     topic: str,
     limit: int = 8,
     min_weight: float = 0.3,
@@ -538,8 +553,7 @@ def ken_related_findings(
         return related_findings(conn, topic, limit=limit, min_weight=min_weight)
 
 
-@ken_tool
-def ken_file_findings(path: str, expand: bool = False, limit: int = 15) -> dict:
+def _impl_ken_file_findings(path: str, expand: bool = False, limit: int = 15) -> dict:
     """Durable findings that reference *path* — "what do we already know here?".
 
     Uses the finding→code bridge: each saved finding's prose is resolved to
@@ -556,8 +570,7 @@ def ken_file_findings(path: str, expand: bool = False, limit: int = 15) -> dict:
         )
 
 
-@ken_tool
-def ken_cochange(
+def _impl_ken_cochange(
     path: str,
     min_confidence: float = 0.4,
     min_support: int = 3,
@@ -598,8 +611,7 @@ def ken_cochange(
         )
 
 
-@ken_tool
-def ken_blast_radius(path: str, max_hops: int = 4) -> dict:
+def _impl_ken_blast_radius(path: str, max_hops: int = 4) -> dict:
     """Files likely affected by editing *path*, with per-channel evidence.
 
     Reverse import reachability (transitive importers + hop distance) unioned
@@ -613,8 +625,7 @@ def ken_blast_radius(path: str, max_hops: int = 4) -> dict:
         return blast_radius(conn, path, max_hops=max_hops, project_root=_PROJECT_ROOT)
 
 
-@ken_tool
-def ken_architecture(depth: int = 2, limit: int = 20) -> dict:
+def _impl_ken_architecture(depth: int = 2, limit: int = 20) -> dict:
     """Subsystems, layers, dependency cycles, and load-bearing hubs of the project.
 
     Graph algorithms over the resolved import graph: Tarjan SCC (import
@@ -634,8 +645,7 @@ def ken_architecture(depth: int = 2, limit: int = 20) -> dict:
         return architecture(conn, depth=depth, limit=limit)
 
 
-@ken_tool
-def ken_profile(path: str, granularity: str = "file", top_terms: int = 12) -> dict:
+def _impl_ken_profile(path: str, granularity: str = "file", top_terms: int = 12) -> dict:
     """What a file/package is *for* and what distinguishes it from its siblings.
 
     Weighted log-odds-ratio with an informative Dirichlet prior (Monroe et
@@ -648,8 +658,7 @@ def ken_profile(path: str, granularity: str = "file", top_terms: int = 12) -> di
         return profile(conn, path, granularity=granularity, top_terms=top_terms)
 
 
-@ken_tool
-def ken_clones(
+def _impl_ken_clones(
     path: str | None = None,
     qualname: str | None = None,
     min_similarity: float = 0.75,
@@ -681,8 +690,7 @@ def ken_clones(
         )
 
 
-@ken_tool
-def ken_intent_history(query: str, k_prompts: int = 12, limit: int = 15) -> dict:
+def _impl_ken_intent_history(query: str, k_prompts: int = 12, limit: int = 15) -> dict:
     """Which files a request *like this one* historically ended up touching.
 
     Relevance-by-outcome: finds the nearest historical ``user_prompt`` turns by
@@ -697,8 +705,7 @@ def ken_intent_history(query: str, k_prompts: int = 12, limit: int = 15) -> dict
         )
 
 
-@ken_tool
-def ken_grep(
+def _impl_ken_grep(
     query: str, mode: str = "literal", language: str | None = None, limit: int = 20
 ) -> dict:
     """Exact-literal or BM25-ranked search over the live worktree.
@@ -721,8 +728,7 @@ def ken_grep(
         )
 
 
-@ken_tool
-def ken_callgraph(
+def _impl_ken_callgraph(
     qualname: str,
     path: str | None = None,
     direction: str = "both",
@@ -751,8 +757,7 @@ def ken_callgraph(
         )
 
 
-@ken_tool
-def ken_wiring(
+def _impl_ken_wiring(
     query: str | None = None, trigger_kind: str | None = None, limit: int = 50
 ) -> dict:
     """How features are wired up: routes / CLI / env-var triggers -> handler symbols.
@@ -774,8 +779,7 @@ def ken_wiring(
         )
 
 
-@ken_tool
-def ken_type_hierarchy(
+def _impl_ken_type_hierarchy(
     qualname: str, direction: str = "sub", with_overrides: bool = True
 ) -> dict:
     """Subclasses / ancestors of a class, with best-effort override detection.
@@ -798,8 +802,7 @@ def ken_type_hierarchy(
         )
 
 
-@ken_tool
-def ken_rank(query: str = "", verbose: int = 1, max_chars: int = 0) -> dict:
+def _impl_ken_rank(query: str = "", verbose: int = 1, max_chars: int = 0) -> dict:
     """Re-render the context-rank for the current session at a chosen verbosity.
 
     The default ``<context-rank>`` block injected before each user
@@ -833,8 +836,7 @@ def ken_rank(query: str = "", verbose: int = 1, max_chars: int = 0) -> dict:
     return resp
 
 
-@ken_tool
-def ken_explain_rank(query: str = "") -> dict:
+def _impl_ken_explain_rank(query: str = "") -> dict:
     """Per-channel breakdown of the ranker for a query (or the last prompt).
 
     Returns each channel's raw output (traceback/explicit / reactive /
@@ -855,8 +857,7 @@ def ken_explain_rank(query: str = "") -> dict:
     return resp
 
 
-@ken_tool
-def ken_dismiss(target: str, reason: str = "") -> dict:
+def _impl_ken_dismiss(target: str, reason: str = "") -> dict:
     """Explicit "this file wasn't what I was looking for" signal.
 
     Records a ``dismissed`` interaction against the current active
@@ -884,3 +885,309 @@ def ken_dismiss(target: str, reason: str = "") -> dict:
     if resp is None:
         return {"ok": False, "error": "daemon unreachable"}
     return resp
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# The public surface: six tools over the thirty implementations above.
+#
+# Thirty tools is a menu no one can read. Anthropic's test for a toolset is
+# whether *a human engineer* could say unambiguously which one to reach for,
+# and ``ken_file_symbols`` / ``ken_file_outline`` / ``ken_symbol_detail`` /
+# ``ken_file_snippets`` fail it — four names for "tell me about this file",
+# separated only by which fields come back.
+#
+# The split is deliberate and it is not "merge everything":
+#
+#   * PROJECTIONS — the same data in different shapes — collapse into a
+#     selection argument. That is ``ken_read``.
+#   * ALGORITHMS — where ken decides what matters, using channel fusion,
+#     personalised PageRank, per-turn decay, co-change LLR, MinHash — stay
+#     NAMED, as closed enums. Their whole value is that the caller does not
+#     need to know how they work, so the model picks *which* algorithm and
+#     never *how to rank*.
+#
+# Ranking is therefore never something the model expresses. There is no
+# ``order_by`` anywhere in this surface, by design.
+#
+# ``ken_remember`` is separate from ``ken_recall`` for a reason that outlives
+# taste: hosts gate read-only agent tiers on a tool's read-only-ness, so
+# folding writes into the retrieval tool behind an ``action=`` argument would
+# hand a write capability to every read-only tier that has it.
+
+
+@ken_tool
+def ken_find(
+    query: str,
+    scope: Literal["files", "symbols", "text", "tests", "wiring", "intent"] = "files",
+    limit: int = 10,
+    literal: bool = False,
+    language: str = "",
+) -> Any:
+    """Find things by describing them, over one of six scopes: files,
+    symbols, text, tests, wiring, intent. Ranked by ken, not by you.
+
+    *scope* picks what is searched:
+
+    * ``files``   — semantic match over per-file embeddings.
+    * ``symbols`` — semantic match over per-symbol embeddings; a bare
+      identifier also fuses in an exact-name match.
+    * ``text``    — the live worktree. BM25-ranked by default, or exact
+      substring when *literal* is true. Never stale: read from disk.
+    * ``tests``   — the tests that cover *query* read as a path.
+    * ``wiring``  — routes, CLI commands and env-var triggers that reach a
+      handler.
+    * ``intent``  — which files requests *like this one* historically ended
+      up touching. Answers "where does work like this usually land?".
+
+    *language* filters ``text`` results (e.g. "python").
+    """
+    if scope == "files":
+        return _impl_ken_search_files(query, limit=limit)
+    if scope == "symbols":
+        return _impl_ken_search_symbols(query, limit=limit)
+    if scope == "text":
+        return _impl_ken_grep(
+            query,
+            mode="literal" if literal else "bm25",
+            language=language,
+            limit=limit,
+        )
+    if scope == "tests":
+        return _impl_ken_find_tests(query, limit=limit)
+    if scope == "wiring":
+        return _impl_ken_wiring(query=query, limit=limit)
+    if scope == "intent":
+        return _impl_ken_intent_history(query, limit=limit)
+    return {
+        "ok": False,
+        "error": f"unknown scope {scope!r}",
+        "scopes": ["files", "symbols", "text", "tests", "wiring", "intent"],
+    }
+
+
+@ken_tool
+def ken_read(
+    path: str,
+    include: list[Literal["symbols", "imports", "docstrings", "source", "profile"]] | None = None,
+    qualname: str = "",
+    start_line: int = 0,
+    end_line: int = 0,
+    max_chars: int = 0,
+) -> dict:
+    """Read an indexed file's structure, and optionally its source. Pick
+    fields with *include*: symbols, imports, docstrings, source, profile.
+
+    *include* selects what comes back — any of ``symbols``, ``imports``,
+    ``docstrings``, ``source``, ``profile``. Defaults to ``["symbols"]``.
+
+    ``source`` needs somewhere to read from: pass *qualname* for one symbol,
+    or *start_line*/*end_line* for a range. ``profile`` answers what the file
+    is *for* and how it differs from its siblings, which is the question you
+    have before you know which symbol you want.
+    """
+    include = list(include or ["symbols"])
+    want = set(include)
+    unknown = want - {"symbols", "imports", "docstrings", "source", "profile"}
+    if unknown:
+        return {
+            "ok": False,
+            "error": f"unknown include values: {sorted(unknown)}",
+            "include": ["symbols", "imports", "docstrings", "source", "profile"],
+        }
+
+    result: dict[str, Any] = {"ok": True, "path": path}
+    docstrings = "docstrings" in want
+
+    if qualname and want & {"symbols", "docstrings"}:
+        result["symbol"] = _impl_ken_symbol_detail(
+            path, qualname, include_snippet="source" in want,
+        )
+    elif want & {"symbols", "imports"}:
+        result["outline"] = _impl_ken_file_outline(
+            path,
+            include_symbols="symbols" in want,
+            include_imports="imports" in want,
+            include_docstrings=docstrings,
+        )
+    elif docstrings:
+        result["symbols"] = _impl_ken_file_symbols(path, include_docstrings=True)
+
+    if "source" in want and "symbol" not in result:
+        result["source"] = _impl_ken_file_snippets(
+            path,
+            symbols=[qualname] if qualname else None,
+            start_line=start_line,
+            end_line=end_line,
+            max_chars=max_chars,
+        )
+    if "profile" in want:
+        result["profile"] = _impl_ken_profile(path)
+    return result
+
+
+@ken_tool
+def ken_related(
+    target: str,
+    relation: Literal[
+        "neighbors", "imports", "callers", "callees", "subtypes",
+        "supertypes", "cochange", "blast_radius", "clones",
+    ],
+    limit: int = 10,
+    depth: int = 1,
+    min_confidence: float = 0.0,
+) -> Any:
+    """What else is connected to *target*, by a named relationship:
+    neighbors, imports, callers, callees, subtypes, supertypes, cochange,
+    blast_radius, clones. Each is a distinct algorithm, not a filter.
+
+    *target* is a file path, or a symbol qualname for the call and type
+    relations. Each *relation* is a distinct algorithm, not a filter:
+
+    * ``neighbors``    — files ken ranks as directly related.
+    * ``imports``      — the local import graph around a file, *depth* hops.
+    * ``callers`` / ``callees`` — the call graph for a symbol.
+    * ``subtypes`` / ``supertypes`` — the type hierarchy, with overrides.
+    * ``cochange``     — files historically committed together, scored by
+      log-likelihood ratio. Surfaces coupling that imports do not show.
+    * ``blast_radius`` — what a change here is likely to break. *depth* is
+      the hop limit.
+    * ``clones``       — near-duplicate code, by MinHash over token shingles.
+    """
+    if relation == "neighbors":
+        return _impl_ken_file_neighbors(target, limit=limit)
+    if relation == "imports":
+        return _impl_ken_module_graph(target, depth=depth, limit=limit)
+    if relation in ("callers", "callees"):
+        return _impl_ken_callgraph(
+            target, direction=relation, min_confidence=min_confidence, limit=limit,
+        )
+    if relation in ("subtypes", "supertypes"):
+        return _impl_ken_type_hierarchy(
+            target,
+            direction="down" if relation == "subtypes" else "up",
+            with_overrides=True,
+        )
+    if relation == "cochange":
+        return _impl_ken_cochange(target, min_confidence=min_confidence, limit=limit)
+    if relation == "blast_radius":
+        return _impl_ken_blast_radius(target, max_hops=max(1, depth))
+    if relation == "clones":
+        return _impl_ken_clones(path=target, limit=limit)
+    return {
+        "ok": False,
+        "error": f"unknown relation {relation!r}",
+        "relations": [
+            "neighbors", "imports", "callers", "callees", "subtypes",
+            "supertypes", "cochange", "blast_radius", "clones",
+        ],
+    }
+
+
+@ken_tool
+def ken_rank(
+    scope: Literal["session", "changes", "project", "architecture"] = "session",
+    query: str = "",
+    verbose: int = 1,
+    explain: bool = False,
+    max_chars: int = 0,
+) -> Any:
+    """What matters right now — ken's own answer, not a search. Scopes:
+    session (the work in progress), changes (the git diff), project
+    (orientation), architecture (subsystems and cycles).
+
+    This is the ranker: several channels fused into one ordering, including
+    what this session has touched and how recently, what sessions like it
+    historically went on to touch, and what was named outright. None of that
+    is expressible as a query, which is why this tool exists.
+
+    *scope* picks the question:
+
+    * ``session``      — what matters for the work in progress. Leave *query*
+      empty to rank against the current session; pass one to rank against a
+      different intent instead.
+    * ``changes``      — the current git diff, enriched with the symbols and
+      tests it touches.
+    * ``project``      — languages, layout and the directories that carry the
+      weight. For orienting in an unfamiliar repository.
+    * ``architecture`` — subsystems, layers, dependency cycles and hubs.
+
+    *verbose* goes 0 (list only), 1 (outlines), 2 (fullest). *explain* returns
+    the per-channel breakdown instead of the ranking, which is how you find
+    out *why* something ranked where it did.
+    """
+    if scope == "session":
+        if explain:
+            return _impl_ken_explain_rank(query=query)
+        return _impl_ken_rank(query=query, verbose=verbose, max_chars=max_chars)
+    if scope == "changes":
+        return _impl_ken_changed_context()
+    if scope == "project":
+        return _impl_ken_project_overview(limit=max(1, verbose) * 10)
+    if scope == "architecture":
+        return _impl_ken_architecture(limit=max(1, verbose) * 10)
+    return {
+        "ok": False,
+        "error": f"unknown scope {scope!r}",
+        "scopes": ["session", "changes", "project", "architecture"],
+    }
+
+
+@ken_tool
+def ken_recall(
+    query: str = "",
+    path: str = "",
+    topic: str = "",
+    tag: str = "",
+    limit: int = 5,
+    min_score: float = 0.0,
+) -> Any:
+    """Recall what earlier sessions in this project already worked out.
+
+    Check here before re-deriving something: findings persist across
+    sessions and across harnesses. The arguments are ways in, most specific
+    first — *topic* walks the findings graph from a known finding, *path*
+    returns what is known about a file, *query* searches by meaning, *tag*
+    filters exactly. With none of them, returns the most recent findings.
+    """
+    if topic:
+        return _impl_ken_related_findings(topic, limit=limit)
+    if path:
+        return _impl_ken_file_findings(path, limit=limit)
+    if query:
+        return _impl_ken_recall(query, limit=limit, min_score=min_score)
+    return _impl_ken_findings(limit=limit, tag=tag or None)
+
+
+@ken_tool
+def ken_remember(
+    topic: str,
+    content: str = "",
+    action: Literal["save", "forget", "dismiss"] = "save",
+    tags: list[str] | None = None,
+    reason: str = "",
+) -> Any:
+    """Persist a finding so the next session starts knowing it. *action*
+    is save (default), forget (delete by topic), or dismiss (mark a path
+    irrelevant to the current ranking).
+
+    Worth saving: non-obvious facts you had to dig for — why something is
+    the way it is, a constraint that is not visible in the code, a trap. Not
+    worth saving: what the code already says plainly.
+
+    *action* is ``save`` (default), ``forget`` to delete a finding by topic,
+    or ``dismiss`` to tell the ranker that *topic* — read as a path — is not
+    relevant to the current work.
+    """
+    if action == "save":
+        if not content.strip():
+            return {"ok": False, "error": "content is required when saving a finding"}
+        return _impl_ken_remember(topic, content, tags=tags)
+    if action == "forget":
+        return _impl_ken_forget(topic)
+    if action == "dismiss":
+        return _impl_ken_dismiss(topic, reason=reason)
+    return {
+        "ok": False,
+        "error": f"unknown action {action!r}",
+        "actions": ["save", "forget", "dismiss"],
+    }

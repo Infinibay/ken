@@ -46,8 +46,11 @@ def test_tools_list_prints_every_tool(capsys, tmp_path):
 
     assert rc == 0
     out = capsys.readouterr().out
-    # A representative spread of the registered surface.
-    for name in ("ken_grep", "ken_file_symbols", "ken_blast_radius", "ken_cochange"):
+    # The whole surface: six tools, not thirty. Projections collapsed into
+    # `ken_read`; the algorithms stayed named, as closed enums on
+    # `ken_find`, `ken_related` and `ken_rank`.
+    for name in ("ken_find", "ken_read", "ken_related",
+                 "ken_rank", "ken_recall", "ken_remember"):
         assert name in out
 
 
@@ -55,32 +58,32 @@ def test_tools_no_name_lists_tools(capsys, tmp_path):
     rc = main(["tools", "--path", str(tmp_path)])
 
     assert rc == 0
-    assert "ken_file_symbols" in capsys.readouterr().out
+    assert "ken_read" in capsys.readouterr().out
 
 
 def test_tools_runs_tool_and_prints_json(capsys, tmp_path):
     root = _project(tmp_path)
 
-    rc = main(["tools", "--path", str(root), "file_symbols", "src/parser.py"])
+    rc = main(["tools", "--path", str(root), "read", "src/parser.py"])
 
     assert rc == 0
     payload = json.loads(capsys.readouterr().out)
     assert payload["ok"] is True
-    assert payload["symbols"][0]["qualname"] == "parse_symbol"
-    assert payload["symbols"][0]["docstring"] == "Parse symbols."
+    symbols = payload["outline"]["symbols"]
+    assert symbols[0]["qualname"] == "parse_symbol"
 
 
 def test_tools_accepts_ken_prefix_and_compact(capsys, tmp_path):
     root = _project(tmp_path)
 
     rc = main(
-        ["tools", "--path", str(root), "--compact", "ken_file_symbols", "src/parser.py"]
+        ["tools", "--path", str(root), "--compact", "ken_read", "src/parser.py"]
     )
 
     assert rc == 0
     out = capsys.readouterr().out
     assert out.count("\n") == 1  # single-line JSON
-    assert json.loads(out)["symbols"][0]["name"] == "parse_symbol"
+    assert json.loads(out)["outline"]["symbols"][0]["name"] == "parse_symbol"
 
 
 def test_tools_boolean_flag_toggles_schema_default(capsys, tmp_path):
@@ -88,32 +91,28 @@ def test_tools_boolean_flag_toggles_schema_default(capsys, tmp_path):
 
     rc = main(
         [
-            "tools",
-            "--path",
-            str(root),
-            "file_symbols",
-            "src/parser.py",
-            "--no-include-docstrings",
+            "tools", "--path", str(root),
+            "find", "parse_symbol", "--scope", "text", "--literal",
         ]
     )
 
     assert rc == 0
     payload = json.loads(capsys.readouterr().out)
-    assert "docstring" not in payload["symbols"][0]
+    assert payload["mode"] == "literal"
 
 
 def test_tools_unknown_name_reports_and_suggests(capsys, tmp_path):
-    rc = main(["tools", "--path", str(tmp_path), "file_symbol"])
+    rc = main(["tools", "--path", str(tmp_path), "relate"])
 
     assert rc == 2
     err = capsys.readouterr().err
-    assert "unknown tool 'file_symbol'" in err
-    assert "file_symbols" in err  # difflib suggestion
+    assert "unknown tool 'relate'" in err
+    assert "related" in err  # difflib suggestion
 
 
 def test_tools_reports_missing_project(capsys, tmp_path):
     # No .ken/meta — the tool never runs.
-    rc = main(["tools", "--path", str(tmp_path), "file_symbols", "src/parser.py"])
+    rc = main(["tools", "--path", str(tmp_path), "read", "src/parser.py"])
 
     assert rc == 1
     assert "no .ken project" in capsys.readouterr().err

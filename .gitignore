@@ -32,3 +32,8 @@ target/
 # Mined eval labels — contain real prompt text (possible secrets); never commit.
 mined.jsonl
 examples/bench/eval/mined.jsonl
+
+# Local install artifacts — `ken install` writes these into whatever project
+# it targets, including this one. They are per-checkout state, not source.
+.codex/
+opencode.json

@@ -386,7 +386,7 @@ def main(argv: list[str] | None = None) -> int:
             "  ken tools <name> --help       show a tool's parameters\n"
             "  ken tools <name> [ARGS...]    run the tool and print JSON\n\n"
             "The <name> may be given with or without the 'ken_' prefix "
-            "(e.g. 'grep' or 'ken_grep'). Required parameters are positional; "
+            "(e.g. 'find' or 'ken_find'). Required parameters are positional; "
             "optional ones are --flags mirroring the tool's schema."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
