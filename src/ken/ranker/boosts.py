@@ -14,8 +14,13 @@ IMPLEMENTATION_INTENT_RE = re.compile(
     re.IGNORECASE,
 )
 TEST_INTENT_RE = re.compile(r"\b(test|tests|testing|failing|failure|pytest|spec)\b", re.IGNORECASE)
+DOCUMENTATION_INTENT_RE = re.compile(
+    r"\b(install|installation|setup|configure|configuration|usage|getting started)\b",
+    re.IGNORECASE,
+)
 IMPLEMENTATION_TEST_DEMOTE = 0.45
 IMPLEMENTATION_SOURCE_BONUS = 0.3
+DOCUMENTATION_BONUS = 0.3
 LANGUAGE_INTENTS = {
     "c": {"c"},
     "go": {"go", "golang"},
@@ -44,6 +49,16 @@ def apply_implementation_intent(files: list[RankedItem], prompt: str) -> None:
         else:
             item.score += IMPLEMENTATION_SOURCE_BONUS
             item.reason = _append_reason(item.reason, f"impl-intent+{IMPLEMENTATION_SOURCE_BONUS:.1f}")
+
+
+def apply_documentation_intent(files: list[RankedItem], prompt: str) -> None:
+    """Prefer existing documentation candidates for setup and usage questions."""
+    if DOCUMENTATION_INTENT_RE.search(prompt) is None:
+        return
+    for item in files:
+        if item.target.lower().endswith((".md", ".rst")):
+            item.score += DOCUMENTATION_BONUS
+            item.reason = _append_reason(item.reason, f"docs-intent+{DOCUMENTATION_BONUS:.1f}")
 
 
 def apply_language_intent(
@@ -550,7 +565,12 @@ def apply_import_affinity(conn: sqlite3.Connection, files: list[RankedItem]) -> 
         return
     by_path = {it.target: it for it in files}
     anchor_score = {it.target: it.score for it in anchors}
-    degrees = _import_degrees(conn)
+    neighbor_paths = {
+        str(row[column])
+        for row in rows
+        for column in ("source_path", "target_path")
+    }
+    degrees = _import_degrees(conn, neighbor_paths)
     for row in rows:
         src = row["source_path"]
         dst = row["target_path"]
@@ -590,14 +610,22 @@ def _apply_import_neighbor(
         by_path[path] = item
 
 
-def _import_degrees(conn: sqlite3.Connection) -> dict[str, int]:
+def _import_degrees(
+    conn: sqlite3.Connection, paths: set[str]
+) -> dict[str, int]:
+    if not paths:
+        return {}
+    placeholders = ",".join("?" * len(paths))
+    ordered_paths = sorted(paths)
     rows = conn.execute(
-        """
+        f"""
         SELECT f.path AS path, COUNT(i.id) AS degree
         FROM ci_files f
         LEFT JOIN ci_imports i ON i.from_file_id = f.id OR i.to_file_id = f.id
+        WHERE f.path IN ({placeholders})
         GROUP BY f.id, f.path
-        """
+        """,
+        ordered_paths,
     ).fetchall()
     return {str(r["path"]): int(r["degree"]) for r in rows}
 

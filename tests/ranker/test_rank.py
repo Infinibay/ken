@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import numpy as np
 import pytest
 
 from ken.ranker import MIN_CONFIDENCE, RankedItem, RankResult, _drop_missing_paths, rank
@@ -41,6 +42,29 @@ def test_rank_sorts_descending_with_alpha_tiebreak(conn, make_session, make_inte
     paths = [it.target for it in result.files]
     # Equal scores → ascending alpha after reverse-sort. Apple wins.
     assert paths == sorted(paths)
+
+
+def test_rank_applies_documentation_intent(
+    conn, make_session, make_file, make_interaction
+):
+    """Setup prompts boost documentation before the final result is sorted."""
+    session_id = make_session("alpha")
+    for path in ("aaa.py", "README.md"):
+        make_file(path)
+        make_interaction(session_id, event="read", target=path, iteration=1)
+        make_interaction(session_id, event="edit", target=path, iteration=1)
+
+    result = rank(
+        conn,
+        agent_id="alpha",
+        current_iteration=1,
+        prompt="setup instructions",
+        prompt_embedding=np.zeros(384, dtype=np.float32),
+    )
+
+    assert [item.target for item in result.files[:2]] == ["README.md", "aaa.py"]
+    assert "docs-intent+0.3" in result.files[0].reason
+    assert "docs-intent" not in result.files[1].reason
 
 
 def test_rank_caps_top_files(conn, make_session, make_interaction, fake_emb):

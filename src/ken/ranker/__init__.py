@@ -169,6 +169,7 @@ def rank(
             ppr_mod.apply_ppr(conn, files)
     boosts.apply_dismissal_penalty(conn, files, similar)
     boosts.apply_implementation_intent(files, prompt)
+    boosts.apply_documentation_intent(files, prompt)
     boosts.apply_language_intent(files, symbols, prompt)
     if project_root is not None:
         files, symbols = _drop_missing_paths(project_root, files, symbols)

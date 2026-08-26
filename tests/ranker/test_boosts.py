@@ -16,6 +16,7 @@ from ken.ranker.boosts import (
     FRESH_MAX_MULT,
     apply_cooc,
     apply_dismissal_penalty,
+    apply_documentation_intent,
     apply_freshness,
     apply_implementation_intent,
     apply_import_affinity,
@@ -47,6 +48,28 @@ def test_implementation_intent_demotes_tests_when_prompt_asks_source_location():
     assert by_path["src/memory.py"].score == pytest.approx(1.3)
     assert "impl-intent" in by_path["tests/test_memory.py"].reason
     assert "impl-intent" in by_path["src/memory.py"].reason
+
+
+def test_documentation_intent_boosts_docs_for_installation_prompt():
+    files = [
+        _file("README.md", 0.7, "doc-intent"),
+        _file("src/ken/install.py", 2.0, "lexical"),
+    ]
+
+    apply_documentation_intent(files, "install ken from a local checkout")
+
+    assert files[0].score == pytest.approx(1.0)
+    assert "docs-intent+0.3" in files[0].reason
+    assert files[1].score == 2.0
+
+
+def test_documentation_intent_ignores_unrelated_prompt():
+    files = [_file("README.md", 0.7, "doc-intent")]
+
+    apply_documentation_intent(files, "explain rank fusion")
+
+    assert files[0].score == 0.7
+    assert files[0].reason == "doc-intent"
 
 
 def test_implementation_intent_keeps_tests_when_prompt_mentions_tests():
@@ -509,3 +532,30 @@ def test_import_affinity_dampens_high_degree_hub_neighbor(conn, make_file):
     hub = next(it for it in files if it.target == "src/hub.py")
     assert hub.score < 4.0 * 0.25
     assert "hub×" in hub.reason
+
+
+def test_import_affinity_observes_new_edges_between_calls(conn, make_file):
+    app_id = make_file("src/app.py")
+    hub_id = make_file("src/hub.py")
+    conn.execute(
+        "INSERT INTO ci_imports(from_file_id, to_module, to_file_id, line) VALUES (?, 'src.hub', ?, 1)",
+        (app_id, hub_id),
+    )
+
+    before = [_file("src/app.py", 4.0, "fuzzy")]
+    apply_import_affinity(conn, before)
+    score_before = next(it.score for it in before if it.target == "src/hub.py")
+
+    for i in range(12):
+        leaf_id = make_file(f"src/new_leaf_{i}.py")
+        conn.execute(
+            "INSERT INTO ci_imports(from_file_id, to_module, to_file_id, line) VALUES (?, 'src.hub', ?, 1)",
+            (leaf_id, hub_id),
+        )
+
+    after = [_file("src/app.py", 4.0, "fuzzy")]
+    apply_import_affinity(conn, after)
+    hub_after = next(it for it in after if it.target == "src/hub.py")
+
+    assert hub_after.score < score_before
+    assert "hub×" in hub_after.reason

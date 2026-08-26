@@ -23,6 +23,26 @@ approval gate before each publish.
 Once Trusted Publishing works, delete any remaining API tokens on PyPI —
 they are no longer needed.
 
+## Validate a release candidate
+
+From a clean checkout, sync the locked development environment and run the same
+checks as the standalone `CI` workflow:
+
+```sh
+uv sync --locked --dev
+uv run pytest
+uv run mypy
+```
+
+The mypy check uses the incremental baseline declared in `pyproject.toml`:
+modules with existing annotation debt have explicit temporary overrides, while
+the rest of `src/ken` must remain clean. Do not describe this as complete strict
+typing until those overrides have been removed.
+
+Also keep the required runtime dependency `mcp>=2.0,<3` in
+`[project].dependencies`, not in an optional extra. The MCP startup regression
+tests protect that packaging contract and the MCP 2.x API requirement.
+
 ## Cutting a release
 
 1. Bump the version in **`src/ken/__init__.py`** (`__version__ = "X.Y.Z"`) — the
@@ -40,7 +60,9 @@ they are no longer needed.
    ```
 
 4. The `Publish to PyPI` workflow builds the sdist + wheel and publishes them.
-   Watch it under the repo's **Actions** tab.
+   Watch it under the repo's **Actions** tab. Publication is intentionally
+   separate from the `CI` workflow, so confirm the candidate passed the checks
+   above before tagging.
 
 That's it — pushing a `v*` tag is the only trigger. A version already on PyPI
 cannot be re-uploaded, so always bump before tagging.

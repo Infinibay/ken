@@ -70,6 +70,30 @@ def test_rank_with_query_works_without_active_session(state):
     assert "src/a.py" in out["context_block"]
 
 
+def test_prompt_embedding_is_computed_once_and_reused(state, monkeypatch):
+    _index_file(state)
+    state.session_start("codex-session")
+
+    class CountingEmbedder(FakeEmbedder):
+        def __init__(self) -> None:
+            self.calls = 0
+
+        def embed_query(self, text: str) -> np.ndarray:
+            self.calls += 1
+            return super().embed_query(text)
+
+    embedder = CountingEmbedder()
+    monkeypatch.setattr("ken.embedder.get_embedder", lambda: embedder)
+
+    _handle_prompt(state, "codex-session", "please inspect src/a.py")
+
+    stored = state.conn.execute(
+        "SELECT embedding FROM cr_contexts WHERE kind = 'user_prompt' ORDER BY id DESC LIMIT 1"
+    ).fetchone()
+    assert embedder.calls == 1
+    assert stored["embedding"] == vec_to_blob(FakeEmbedder().embed_query("unused"))
+
+
 def test_prompt_injection_uses_context_budget(state, monkeypatch):
     _index_file(state)
     state.session_start("codex-session")

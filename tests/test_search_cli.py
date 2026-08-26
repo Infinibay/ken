@@ -128,6 +128,28 @@ def test_search_files_orders_by_similarity(monkeypatch, tmp_path):
     assert hits[0]["symbols"][0]["name"] == "parse_symbol"
 
 
+def test_search_files_fetches_all_outlines_in_one_query(monkeypatch, tmp_path):
+    root = _project(tmp_path)
+    monkeypatch.setattr("ken.search.get_embedder", lambda: FakeEmbedder())
+
+    with connect(_paths.db_path(root)) as conn:
+        statements: list[str] = []
+        conn.set_trace_callback(statements.append)
+        hits = search_files(conn, "parser", limit=2)
+        conn.set_trace_callback(None)
+
+    outline_queries = [
+        statement for statement in statements
+        if "FROM ci_symbols" in statement
+    ]
+    assert len(outline_queries) == 1
+    assert [hit["path"] for hit in hits] == ["src/parser.py", "src/status.py"]
+    assert hits[0]["symbols"] == [
+        {"kind": "function", "name": "parse_symbol", "line": 3}
+    ]
+    assert hits[1]["symbols"] == []
+
+
 def test_search_files_filters_missing_paths_when_project_root_is_known(monkeypatch, tmp_path):
     root = _project(tmp_path)
     (root / "src/parser.py").unlink()

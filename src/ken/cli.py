@@ -36,18 +36,29 @@ context collection.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import math
 import shutil
 import sqlite3
 import subprocess
 import sys
+import time
 from pathlib import Path
 from typing import Any
 
 from ken import __version__
 
 
-def main(argv: list[str] | None = None) -> int:
+def _positive_int(value: str) -> int:
+    parsed = int(value)
+    if parsed <= 0:
+        raise argparse.ArgumentTypeError("must be a positive integer")
+    return parsed
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    """Build the public ``ken`` command-line parser."""
     parser = argparse.ArgumentParser(prog="ken")
     parser.add_argument("--version", action="version", version=f"ken {__version__}")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -188,7 +199,9 @@ def main(argv: list[str] | None = None) -> int:
     p_bench = sub.add_parser("bench", help="evaluate ranker recall on a JSONL dataset")
     p_bench.add_argument("dataset", help="JSONL rows with prompt + expected_files")
     p_bench.add_argument("--path", default=".", help="project path (default: cwd)")
-    p_bench.add_argument("--top", type=int, default=8, help="ranked files to evaluate")
+    p_bench.add_argument(
+        "--top", type=_positive_int, default=8, help="ranked files to evaluate"
+    )
     p_bench.add_argument(
         "--max-chars", type=int, default=0, help="optional render budget"
     )
@@ -415,8 +428,18 @@ def main(argv: list[str] | None = None) -> int:
         "--keep-db", action="store_true", help="don't delete .ken/ken.db"
     )
 
-    args = parser.parse_args(argv)
+    return parser
 
+
+def main(argv: list[str] | None = None) -> int:
+    """Parse command-line arguments and dispatch the selected command."""
+    parser = _build_parser()
+    args = parser.parse_args(argv)
+    return _dispatch(args, parser)
+
+
+def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    """Dispatch an already-parsed command and return its process exit code."""
     if (
         args.cmd in {"install", "reinstall"}
         and args.embed_limit is not None
@@ -1329,61 +1352,127 @@ def _bench_cli(
         print(f"error: no valid benchmark cases in {dataset_path}", file=sys.stderr)
         return 1
 
+    with connect(db_path) as conn:
+        indexed_files = [
+            (str(row["path"]), bytes(row["content_hash"]))
+            for row in conn.execute("SELECT path, content_hash FROM ci_files")
+        ]
+    mismatched_indexed_paths: list[str] = []
+    resolved_root = root.resolve()
+    for path, indexed_hash in indexed_files:
+        source_path = (resolved_root / path).resolve()
+        if not source_path.is_relative_to(resolved_root):
+            mismatched_indexed_paths.append(path)
+            continue
+        try:
+            with source_path.open("rb") as source:
+                current_hash = hashlib.file_digest(
+                    source,
+                    lambda: hashlib.blake2b(digest_size=32),
+                ).digest()
+        except OSError:
+            mismatched_indexed_paths.append(path)
+            continue
+        if current_hash != indexed_hash:
+            mismatched_indexed_paths.append(path)
+    if not indexed_files or mismatched_indexed_paths:
+        print(
+            "error: indexed files do not belong to the benchmark project root; "
+            "check that --path matches the copied index",
+            file=sys.stderr,
+        )
+        return 1
+
     embedder = get_embedder()
     rows: list[dict[str, Any]] = []
     hit_cases = 0
     total_expected = 0
     found_expected = 0
     total_chars = 0
+    total_est_tokens = 0
+    total_reciprocal_rank = 0.0
+    total_ndcg = 0.0
+    total_timing_ms = {"embed": 0.0, "rank": 0.0, "render": 0.0, "e2e": 0.0}
     with connect(db_path) as conn:
         for idx, case in enumerate(cases, start=1):
             prompt = str(case["prompt"])
             expected = set(case["expected_files"])
+            judgments = case["judgments"]
+            e2e_started = time.perf_counter()
+            phase_started = time.perf_counter()
+            prompt_embedding = embedder.embed_query(prompt)
+            embed_ms = (time.perf_counter() - phase_started) * 1000
+            phase_started = time.perf_counter()
             result = rank(
                 conn,
                 agent_id="__ken_bench__",
                 current_iteration=0,
                 prompt=prompt,
-                prompt_embedding=embedder.embed_query(prompt),
-                top_files=max(1, top),
+                prompt_embedding=prompt_embedding,
+                top_files=top,
                 project_root=root,
             )
+            rank_ms = (time.perf_counter() - phase_started) * 1000
             ranked = [it.target for it in result.files[:top]]
             ranked_details = [
                 {
                     "path": it.target,
-                    "score": round(float(it.score), 3),
+                    "score": float(it.score),
                     "reason": it.reason,
                 }
                 for it in result.files[:top]
             ]
             hits = sorted(expected & set(ranked))
             misses = sorted(expected - set(ranked))
+            reciprocal_rank = next(
+                (1.0 / position for position, path in enumerate(ranked, start=1) if path in expected),
+                0.0,
+            )
+            ndcg = _ndcg_at_k(ranked, judgments, top)
+            phase_started = time.perf_counter()
             block = render_block(
                 conn,
                 result,
                 verbose=0,
                 max_chars=max_chars if max_chars > 0 else None,
             )
+            render_ms = (time.perf_counter() - phase_started) * 1000
+            e2e_ms = (time.perf_counter() - e2e_started) * 1000
+            timings_ms = {
+                "embed": embed_ms,
+                "rank": rank_ms,
+                "render": render_ms,
+                "e2e": e2e_ms,
+            }
             chars = len(block)
+            est_tokens = (chars + 3) // 4 if chars else 0
             row = {
                 "case": idx,
                 "prompt": prompt,
                 "expected_files": sorted(expected),
+                "judgments": judgments,
                 "ranked_files": ranked,
+                "ranked_details": ranked_details,
                 "hits": hits,
                 "hit": bool(hits),
+                "reciprocal_rank": reciprocal_rank,
+                "ndcg": ndcg,
                 "context_chars": chars,
-                "context_est_tokens": (chars + 3) // 4 if chars else 0,
+                "context_est_tokens": est_tokens,
+                "timings_ms": timings_ms,
             }
             if explain_misses:
                 row["misses"] = misses
-                row["ranked_details"] = ranked_details
             rows.append(row)
             hit_cases += 1 if hits else 0
             total_expected += len(expected)
             found_expected += len(hits)
             total_chars += chars
+            total_est_tokens += est_tokens
+            total_reciprocal_rank += reciprocal_rank
+            total_ndcg += ndcg
+            for phase, elapsed_ms in timings_ms.items():
+                total_timing_ms[phase] += elapsed_ms
 
     metrics = {
         "ok": True,
@@ -1393,8 +1482,14 @@ def _bench_cli(
         "expected_file_recall": round(found_expected / total_expected, 4)
         if total_expected
         else 0.0,
+        "mrr": total_reciprocal_rank / len(rows),
+        "ndcg": total_ndcg / len(rows),
         "avg_context_chars": round(total_chars / len(rows), 1),
-        "avg_context_est_tokens": round(((total_chars + 3) // 4) / len(rows), 1),
+        "avg_context_est_tokens": round(total_est_tokens / len(rows), 1),
+        "avg_timings_ms": {
+            phase: elapsed_ms / len(rows)
+            for phase, elapsed_ms in total_timing_ms.items()
+        },
         "results": rows,
     }
     failed: list[str] = []
@@ -1423,13 +1518,20 @@ def _bench_cli(
             f"cases={metrics['cases']} top={top} "
             f"case_recall={metrics['case_recall']:.2%} "
             f"expected_file_recall={metrics['expected_file_recall']:.2%} "
-            f"avg_context≈{metrics['avg_context_est_tokens']} tokens"
+            f"mrr={metrics['mrr']:.4f} ndcg={metrics['ndcg']:.4f} "
+            f"avg_context≈{metrics['avg_context_est_tokens']} tokens "
+            f"avg_embed={metrics['avg_timings_ms']['embed']:.2f}ms "
+            f"avg_rank={metrics['avg_timings_ms']['rank']:.2f}ms "
+            f"avg_render={metrics['avg_timings_ms']['render']:.2f}ms "
+            f"avg_e2e={metrics['avg_timings_ms']['e2e']:.2f}ms"
         )
         for row in rows:
             status = "hit" if row["hit"] else "miss"
             print(
                 f"{row['case']}. {status}: {row['prompt']} "
-                f"expected={row['expected_files']} hits={row['hits']}"
+                f"expected={row['expected_files']} hits={row['hits']} "
+                f"rr={row['reciprocal_rank']:.4f} ndcg={row['ndcg']:.4f} "
+                f"e2e={row['timings_ms']['e2e']:.2f}ms"
             )
             if explain_misses and row.get("misses"):
                 print(f"   misses={row['misses']}")
@@ -1441,6 +1543,21 @@ def _bench_cli(
         for failure in failed:
             print(f"FAIL: {failure}", file=sys.stderr)
     return 1 if failed else 0
+
+
+def _ndcg_at_k(ranked: list[str], judgments: dict[str, float], k: int) -> float:
+    """Return nDCG@k for graded file judgments, or zero for an empty gold."""
+    gains = [judgments.get(path, 0.0) for path in ranked[:k]]
+    dcg = sum(
+        (2.0**relevance - 1.0) / math.log2(position + 1)
+        for position, relevance in enumerate(gains, start=1)
+    )
+    ideal = sorted(judgments.values(), reverse=True)[:k]
+    idcg = sum(
+        (2.0**relevance - 1.0) / math.log2(position + 1)
+        for position, relevance in enumerate(ideal, start=1)
+    )
+    return dcg / idcg if idcg else 0.0
 
 
 def _load_bench_cases(dataset_path: Path) -> list[dict[str, Any]]:
@@ -1456,19 +1573,58 @@ def _load_bench_cases(dataset_path: Path) -> list[dict[str, Any]]:
                 raise SystemExit(
                     f"invalid JSON on {dataset_path}:{line_no}: {exc}"
                 ) from exc
+            if not isinstance(row, dict):
+                raise SystemExit(
+                    f"{dataset_path}:{line_no}: benchmark case must be a JSON object"
+                )
             prompt = row.get("prompt")
             expected = row.get("expected_files")
             if not isinstance(prompt, str) or not prompt.strip():
                 raise SystemExit(
                     f"{dataset_path}:{line_no}: prompt must be a non-empty string"
                 )
-            if not isinstance(expected, list) or not all(
+            if not isinstance(expected, list) or not expected or not all(
                 isinstance(p, str) and p for p in expected
             ):
                 raise SystemExit(
                     f"{dataset_path}:{line_no}: expected_files must be a non-empty string list"
                 )
-            cases.append({"prompt": prompt.strip(), "expected_files": expected})
+            if len(set(expected)) != len(expected):
+                raise SystemExit(
+                    f"{dataset_path}:{line_no}: expected_files must not contain duplicates"
+                )
+            raw_judgments = row.get("judgments")
+            if raw_judgments is None:
+                judgments = {path: 1.0 for path in expected}
+            elif not isinstance(raw_judgments, dict) or not all(
+                isinstance(path, str)
+                and path
+                and isinstance(relevance, (int, float))
+                and not isinstance(relevance, bool)
+                and 0 <= relevance <= 3
+                and math.isfinite(relevance)
+                for path, relevance in raw_judgments.items()
+            ):
+                raise SystemExit(
+                    f"{dataset_path}:{line_no}: judgments must map file paths to grades 0..3"
+                )
+            else:
+                judgments = {
+                    path: float(relevance)
+                    for path, relevance in raw_judgments.items()
+                    if relevance > 0
+                }
+                if set(judgments) != set(expected):
+                    raise SystemExit(
+                        f"{dataset_path}:{line_no}: positive judgments must match expected_files"
+                    )
+            cases.append(
+                {
+                    "prompt": prompt.strip(),
+                    "expected_files": expected,
+                    "judgments": judgments,
+                }
+            )
     return cases
 
 

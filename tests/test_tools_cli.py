@@ -116,3 +116,14 @@ def test_tools_reports_missing_project(capsys, tmp_path):
 
     assert rc == 1
     assert "no .ken project" in capsys.readouterr().err
+
+
+def test_tools_rejects_path_outside_project(capsys, tmp_path):
+    root = tmp_path / "project"
+    root.mkdir()
+    _project(root)
+
+    rc = main(["tools", "--path", str(root), "read", "../outside.py"])
+
+    assert rc == 1
+    assert "path escapes project root" in capsys.readouterr().err

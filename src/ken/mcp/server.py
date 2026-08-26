@@ -322,6 +322,14 @@ def _conn() -> sqlite3.Connection:
     return connect(_paths.db_path(_PROJECT_ROOT))
 
 
+def _project_relative_path(path: str) -> str:
+    """Validate a tool path and return its canonical index representation."""
+    if _PROJECT_ROOT is None:
+        raise RuntimeError("MCP server not initialised — call run() first")
+    resolved = _paths.resolve_project_path(_PROJECT_ROOT, path)
+    return resolved.relative_to(_PROJECT_ROOT.resolve()).as_posix()
+
+
 # ---- MCP server tools ----------------------------------------------
 #
 # Same surface as before — same names, same docstrings, same parameter
@@ -957,7 +965,7 @@ def ken_find(
             limit=limit,
         )
     if scope == "tests":
-        return _impl_ken_find_tests(query, limit=limit)
+        return _impl_ken_find_tests(_project_relative_path(query), limit=limit)
     if scope == "wiring":
         return _impl_ken_wiring(query=query, limit=limit)
     if scope == "intent":
@@ -989,6 +997,7 @@ def ken_read(
     is *for* and how it differs from its siblings, which is the question you
     have before you know which symbol you want.
     """
+    path = _project_relative_path(path)
     include = list(include or ["symbols"])
     want = set(include)
     unknown = want - {"symbols", "imports", "docstrings", "source", "profile"}
@@ -1058,9 +1067,11 @@ def ken_related(
     * ``clones``       — near-duplicate code, by MinHash over token shingles.
     """
     if relation == "neighbors":
-        return _impl_ken_file_neighbors(target, limit=limit)
+        return _impl_ken_file_neighbors(_project_relative_path(target), limit=limit)
     if relation == "imports":
-        return _impl_ken_module_graph(target, depth=depth, limit=limit)
+        return _impl_ken_module_graph(
+            _project_relative_path(target), depth=depth, limit=limit
+        )
     if relation in ("callers", "callees"):
         return _impl_ken_callgraph(
             target, direction=relation, min_confidence=min_confidence, limit=limit,
@@ -1072,11 +1083,17 @@ def ken_related(
             with_overrides=True,
         )
     if relation == "cochange":
-        return _impl_ken_cochange(target, min_confidence=min_confidence, limit=limit)
+        return _impl_ken_cochange(
+            _project_relative_path(target),
+            min_confidence=min_confidence,
+            limit=limit,
+        )
     if relation == "blast_radius":
-        return _impl_ken_blast_radius(target, max_hops=max(1, depth))
+        return _impl_ken_blast_radius(
+            _project_relative_path(target), max_hops=max(1, depth)
+        )
     if relation == "clones":
-        return _impl_ken_clones(path=target, limit=limit)
+        return _impl_ken_clones(path=_project_relative_path(target), limit=limit)
     return {
         "ok": False,
         "error": f"unknown relation {relation!r}",

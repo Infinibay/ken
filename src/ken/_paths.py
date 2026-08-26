@@ -48,6 +48,24 @@ def log_path(project_root: Path) -> Path:
     return ken_dir(project_root) / LOG_FILENAME
 
 
+def resolve_project_path(project_root: Path, path: str | Path) -> Path:
+    """Resolve *path* and require it to remain inside *project_root*.
+
+    Relative paths are interpreted from the project root. Absolute paths are
+    accepted when they point inside it. Resolving both sides before the
+    containment check also rejects ``..`` traversal and escapes through
+    existing symbolic links.
+    """
+    root = project_root.expanduser().resolve()
+    supplied = Path(path).expanduser()
+    resolved = (supplied if supplied.is_absolute() else root / supplied).resolve()
+    try:
+        resolved.relative_to(root)
+    except ValueError as err:
+        raise ValueError(f"path escapes project root: {path}") from err
+    return resolved
+
+
 def find_project_root(start: Path | None = None) -> Path | None:
     """Walk up from *start* (default cwd) looking for `.ken/meta.json`.
 

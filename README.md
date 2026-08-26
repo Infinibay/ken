@@ -38,6 +38,10 @@ Verify the install:
 ken --version
 ```
 
+The MCP Python SDK is a required runtime dependency and is installed with
+`ken-rank`; there is no separate MCP extra to enable. Current releases require
+MCP 2.x (`mcp>=2.0,<3`) because the server uses the 2.x `MCPServer` API.
+
 ### From a checkout
 
 To install from a local clone (for development or an unreleased build):
@@ -54,6 +58,20 @@ checkout directly with `uv`:
 ```sh
 uv tool install --editable . --force --reinstall --refresh
 ```
+
+For development, create or refresh the locked environment and run the same
+quality checks as CI:
+
+```sh
+uv sync --locked --dev
+uv run pytest
+uv run mypy
+```
+
+The mypy gate is incremental: it checks all of `src/ken`, while modules with
+known historical annotation debt are listed explicitly in `pyproject.toml` as
+temporary per-module overrides. New modules and modules outside that list must
+remain clean.
 
 ### Troubleshooting MCP startup
 
@@ -403,6 +421,12 @@ ken tools read src/ken/search.py --include symbols imports
 ```
 
 The tool name may be given with or without the `ken_` prefix (`find` or `ken_find`). Required parameters are positional in schema order — `ken_related` takes `target` then `relation`. Results print as JSON; `--compact` prints a single line and `--path /repo` points at another checkout, and both flags come *before* the tool name.
+
+File-path arguments handled by these tools are confined to that selected
+project root. Relative paths are resolved from the root; absolute paths are
+accepted only when they remain inside it. Traversal such as `../outside.py` and
+symbolic links that resolve outside the project are rejected. This applies to
+the shared tool surface used by both MCP clients and `ken tools`.
 
 ## Codex hook setup
 

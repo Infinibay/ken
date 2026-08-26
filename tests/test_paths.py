@@ -67,3 +67,43 @@ def test_path_helpers_compose(tmp_path):
     assert _paths.port_path(root) == root / ".ken" / "daemon.port"
     assert _paths.pid_path(root) == root / ".ken" / "daemon.pid"
     assert _paths.log_path(root) == root / ".ken" / "daemon.log"
+
+
+@pytest.mark.parametrize("absolute", [False, True])
+def test_resolve_project_path_accepts_internal_path(tmp_path, absolute):
+    root = tmp_path / "project"
+    source = root / "src" / "module.py"
+    source.parent.mkdir(parents=True)
+    source.write_text("", encoding="utf-8")
+
+    supplied = source if absolute else Path("src/module.py")
+
+    assert _paths.resolve_project_path(root, supplied) == source.resolve()
+
+
+def test_resolve_project_path_rejects_parent_traversal(tmp_path):
+    root = tmp_path / "project"
+    root.mkdir()
+
+    with pytest.raises(ValueError, match=r"^path escapes project root: "):
+        _paths.resolve_project_path(root, "../outside.py")
+
+
+def test_resolve_project_path_rejects_absolute_external_path(tmp_path):
+    root = tmp_path / "project"
+    root.mkdir()
+    outside = tmp_path / "outside.py"
+
+    with pytest.raises(ValueError, match=r"^path escapes project root: "):
+        _paths.resolve_project_path(root, outside)
+
+
+def test_resolve_project_path_rejects_symlink_escape(tmp_path):
+    root = tmp_path / "project"
+    root.mkdir()
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (root / "linked").symlink_to(outside, target_is_directory=True)
+
+    with pytest.raises(ValueError, match=r"^path escapes project root: "):
+        _paths.resolve_project_path(root, "linked/secret.py")

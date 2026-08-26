@@ -16,10 +16,30 @@ from __future__ import annotations
 
 import builtins
 import importlib
+from pathlib import Path
 import sys
+import tomllib
 from unittest.mock import patch
 
 import pytest
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_mcp_2_is_a_required_runtime_dependency():
+    """Packaging must always install the MCP SDK version used by the server."""
+
+    with (PROJECT_ROOT / "pyproject.toml").open("rb") as config_file:
+        project = tomllib.load(config_file)["project"]
+
+    assert "mcp>=2.0,<3" in project["dependencies"]
+    optional_dependencies = project.get("optional-dependencies", {})
+    assert not any(
+        dependency.partition(";")[0].strip().lower().startswith("mcp")
+        for dependencies in optional_dependencies.values()
+        for dependency in dependencies
+    )
 
 
 def test_mcp_server_exits_with_remediation_when_mcpserver_missing(capsys):

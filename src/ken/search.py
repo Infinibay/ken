@@ -45,13 +45,23 @@ def search_files(
         limit,
     )
 
+    file_ids = [int(row["id"]) for _, row, _ in ranked]
+    outlines: dict[int, list[sqlite3.Row]] = defaultdict(list)
+    if file_ids:
+        select_outline = (
+            "SELECT file_id, kind, name, line_start FROM ("
+            "SELECT file_id, kind, name, line_start FROM ci_symbols "
+            "WHERE file_id = ? ORDER BY line_start LIMIT 8)"
+        )
+        outline_rows = conn.execute(
+            " UNION ALL ".join(select_outline for _ in file_ids),
+            file_ids,
+        ).fetchall()
+        for outline_row in outline_rows:
+            outlines[int(outline_row["file_id"])].append(outline_row)
+
     out: list[dict] = []
     for score, row, tier in ranked:
-        outline_rows = conn.execute(
-            "SELECT kind, name, line_start FROM ci_symbols "
-            "WHERE file_id = ? ORDER BY line_start LIMIT 8",
-            (int(row["id"]),),
-        ).fetchall()
         out.append(
             {
                 "path": row["path"],
@@ -60,7 +70,7 @@ def search_files(
                 **({"match": _MATCH_LABEL[tier]} if tier else {}),
                 "symbols": [
                     {"kind": r["kind"], "name": r["name"], "line": int(r["line_start"])}
-                    for r in outline_rows
+                    for r in outlines[int(row["id"])]
                 ],
             }
         )

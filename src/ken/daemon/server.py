@@ -185,6 +185,7 @@ class DaemonState:
         content: str,
         *,
         embed: bool = False,
+        embedding: Any | None = None,
     ) -> int:
         """Insert a cr_contexts row, optionally with the content embedding.
 
@@ -206,7 +207,9 @@ class DaemonState:
         """
         session_pk, iteration = self.next_iteration(agent_id)
         emb_blob: bytes | None = None
-        if embed and content.strip():
+        if embedding is not None:
+            emb_blob = vec_to_blob(embedding)
+        elif embed and content.strip():
             try:
                 vec = get_embedder().embed_query(content)
                 emb_blob = vec_to_blob(vec)
@@ -458,14 +461,16 @@ def _handle_prompt(st: DaemonState, agent_id: str, content: str) -> str:
     from ken.ranker import rank
     from ken.ranker.output import render_block
 
-    st.record_context(agent_id, "user_prompt", content, embed=True)
     if not content.strip():
+        st.record_context(agent_id, "user_prompt", content)
         return ""
     try:
         prompt_vec = get_embedder().embed_query(content)
     except Exception:  # pragma: no cover
         logger.exception("prompt embedding failed during rank")
+        st.record_context(agent_id, "user_prompt", content)
         return ""
+    st.record_context(agent_id, "user_prompt", content, embedding=prompt_vec)
 
     with st.lock:
         sess = st.sessions.get(agent_id)
