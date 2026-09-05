@@ -1,81 +1,63 @@
-"""Persist per-target productivity scores at session end.
+"""Persist the strongest productive turn for every file in a session.
 
-The reactive channel computes "what's hot in this session" from
-``cr_interactions`` on every prompt. At session-end we lift that into
-``cr_session_scores`` so future sessions can use it as historical
-evidence for the predictive channel and the cooccurrence boost.
-
-We store the **raw** productivity volume (not multiplied by the
-pattern weight) along with the pattern label, so the consumer
-(``predictive_scores``) is the single place that applies the
-multiplier. Otherwise the multiplier would compound across sessions —
-a hot-pattern file would inflate exponentially as it cooccurs.
-
-Once written to ``cr_session_scores`` the row is read-only — re-running
-an old session can't rewrite history (we DELETE-then-INSERT to keep
-the snapshot idempotent).
+Uses the existing raw-score + pattern format: old databases need no migration
+or rebuild, and older readers can consume new snapshots. Reactive recency is
+only for live ranking; it must not erase early work from durable memory.
 """
 
 from __future__ import annotations
 
 import sqlite3
 import time
+from collections import defaultdict
 
-from ken.ranker.channels import PATTERN_MULTIPLIERS, reactive_scores
+from ken.ranker.channels import PATTERN_MULTIPLIERS, historical_file_scores
 
 
 def snapshot_session_scores(conn: sqlite3.Connection, agent_id: str, current_iteration: int) -> int:
-    """Compute reactive scores and persist them as cr_session_scores.
+    """Atomically replace a session snapshot, retaining work from every turn.
 
-    Returns the number of rows written. Idempotent at the row level —
-    we DELETE existing rows for the session before inserting so a
-    second snapshot replaces the first.
+    NULL anchors in legacy history form one group. Multiple turns touching the
+    same file contribute their strongest observation, rather than inflating it
+    with session length. current_iteration is retained for caller compatibility.
+    Callers sharing a connection across threads must hold their connection lock.
     """
     row = conn.execute(
-        "SELECT id FROM cr_sessions WHERE agent_id = ?",
+        "SELECT id FROM cr_sessions WHERE agent_id = ? ORDER BY id DESC LIMIT 1",
         (agent_id,),
     ).fetchone()
     if row is None:
         return 0
     session_pk = int(row["id"])
-
-    items = reactive_scores(conn, agent_id, current_iteration)
-    if not items:
-        # Still drop any prior rows — a session that ended up empty
-        # shouldn't leave stale scores behind.
-        with conn:
-            conn.execute("DELETE FROM cr_session_scores WHERE session_id = ?", (session_pk,))
-        return 0
+    turns: dict[int | None, list[sqlite3.Row]] = defaultdict(list)
+    for event in conn.execute(
+        "SELECT context_id, target_path, event_type, weight FROM cr_interactions "
+        "WHERE session_id = ? AND target_kind = 'file' AND target_path IS NOT NULL",
+        (session_pk,),
+    ):
+        turns[event["context_id"]].append(event)
+    best: dict[str, tuple[float, str]] = {}
+    for events in turns.values():
+        for path, (raw, pattern) in historical_file_scores(events).items():
+            prev_raw, prev_pattern = best.get(path, (0.0, "neutral"))
+            if raw * PATTERN_MULTIPLIERS[pattern] > prev_raw * PATTERN_MULTIPLIERS[prev_pattern]:
+                best[path] = (raw, pattern)
 
     now_ms = int(time.time() * 1000)
-    rows = []
-    for it in items:
-        pattern = _pattern_from_reason(it.reason)
-        mult = PATTERN_MULTIPLIERS.get(pattern, 1.0) or 1.0
-        # `it.score` from reactive is `raw * mult`. Strip the multiplier
-        # so cr_session_scores stores raw productivity volume, with the
-        # pattern label kept alongside for the consumer to reapply.
-        raw = it.score / mult
-        rows.append((session_pk, "file", it.target, raw, pattern, now_ms))
-    with conn:
+    # SAVEPOINT works with both autocommit daemon connections and callers
+    # already inside a transaction. with conn alone is not atomic in autocommit.
+    conn.execute("SAVEPOINT ken_session_snapshot")
+    try:
         conn.execute("DELETE FROM cr_session_scores WHERE session_id = ?", (session_pk,))
         conn.executemany(
-            """
-            INSERT INTO cr_session_scores
-                (session_id, target_kind, target_id, target_path, score, pattern, created_at)
-            VALUES (?, ?, NULL, ?, ?, ?, ?)
-            """,
-            rows,
+            "INSERT INTO cr_session_scores "
+            "(session_id, target_kind, target_id, target_path, score, pattern, created_at) "
+            "VALUES (?, 'file', NULL, ?, ?, ?, ?)",
+            [(session_pk, path, raw, pattern, now_ms) for path, (raw, pattern) in best.items()],
         )
-    return len(items)
-
-
-def _pattern_from_reason(reason: str) -> str:
-    """Extract the pattern label from a reactive reason string.
-
-    Reasons follow ``"reactive:<pattern>"``; default to neutral if a
-    caller passed something else.
-    """
-    if reason.startswith("reactive:"):
-        return reason.split(":", 1)[1]
-    return "neutral"
+    except BaseException:
+        conn.execute("ROLLBACK TO ken_session_snapshot")
+        raise
+    finally:
+        conn.execute("RELEASE ken_session_snapshot")
+    return len(best)

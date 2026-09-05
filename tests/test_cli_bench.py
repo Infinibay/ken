@@ -79,6 +79,28 @@ def test_bench_cli_reports_recall(monkeypatch, capsys, tmp_path):
     assert "e2e=" in out.splitlines()[1]
 
 
+@pytest.mark.parametrize("budget,expected_visible", [(0, ["a.py", "b.py", "c.py"]), (1, [])])
+def test_bench_measures_exposure_after_caps_and_budget(
+    monkeypatch, capsys, tmp_path, budget, expected_visible
+):
+    from ken.ranker import RankResult, RankedItem
+
+    root = _project(tmp_path)
+    dataset = tmp_path / "bench.jsonl"
+    dataset.write_text(json.dumps({"prompt": "parser", "expected_files": ["src/parser.py"]}) + "\n")
+    monkeypatch.setattr("ken.embedder.get_embedder", lambda: FakeEmbedder())
+    result = RankResult(files=[RankedItem(p, "file", 5.0) for p in ["a.py", "b.py", "c.py", "src/parser.py"]])
+    monkeypatch.setattr("ken.ranker.rank", lambda *args, **kwargs: result)
+    assert main(["bench", "--path", str(root), "--max-chars", str(budget), "--json", str(dataset)]) == 0
+    data = json.loads(capsys.readouterr().out)
+    assert data["expected_file_recall"] == 1.0
+    assert data["mrr"] == 0.25
+    assert data["visible_expected_file_recall"] == 0.0
+    assert data["visible_case_recall"] == 0.0
+    assert data["visible_mrr"] == 0.0
+    assert data["results"][0]["visible_files"] == expected_visible
+
+
 def test_bench_cli_preserves_empty_rankings_as_zero_metrics(
     monkeypatch, capsys, tmp_path
 ):

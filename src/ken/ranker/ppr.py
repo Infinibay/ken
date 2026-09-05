@@ -25,11 +25,16 @@ from __future__ import annotations
 
 import os
 import sqlite3
+from collections import defaultdict
+from collections.abc import Callable
+from dataclasses import dataclass
 
 import numpy as np
 
 from ken.ranker import RankedItem
-from ken.ranker.boosts import _append_reason, _related_source_files, _related_tests, _is_test_path
+from ken.ranker.boosts import (
+    _PathIndex, _append_reason, _related_source_files, _related_tests, _is_test_path,
+)
 
 def _envf(name: str, default: float) -> float:
     raw = os.environ.get(name)
@@ -45,7 +50,7 @@ def _envf(name: str, default: float) -> float:
 # displace good hits on a sparse graph (measured); gentle settings are a
 # clean Pareto win once co-change is ingested.
 ALPHA = _envf("KEN_PPR_ALPHA", 0.8)          # restart prob (higher → nearer anchors)
-ITERS = 3               # power iterations; the graph is tiny
+ITERS = 3               # bounded propagation depth
 PPR_MAX = _envf("KEN_PPR_MAX", 0.6)          # max contribution to a surfaced neighbour
 PPR_MIN_FRAC = _envf("KEN_PPR_MINFRAC", 0.4)   # keep neighbours with p ≥ frac·max
 PPR_MAX_NEIGHBORS = int(_envf("KEN_PPR_MAXN", 3))
@@ -80,18 +85,36 @@ def _table_exists(conn: sqlite3.Connection, name: str) -> bool:
     return row is not None
 
 
+@dataclass
+class _SparseGraph:
+    """Directed edge arrays; storage and each walk cost O(files + edges)."""
+
+    source: np.ndarray
+    target: np.ndarray
+    weight: np.ndarray
+    degree: np.ndarray
+
+    def walk(self, mass: np.ndarray) -> np.ndarray:
+        # Only edge sources are indexed, so dangling nodes never divide by zero.
+        return np.bincount(
+            self.target,
+            weights=self.weight * mass[self.source] / self.degree[self.source],
+            minlength=len(self.degree),
+        )
+
+
 def _build_adjacency(
     conn: sqlite3.Connection, paths: list[str], idx: dict[str, int]
-) -> np.ndarray:
+) -> _SparseGraph:
     n = len(paths)
-    a = np.zeros((n, n), dtype=np.float64)
+    edges: dict[tuple[int, int], float] = defaultdict(float)
 
     def link(u: str, v: str, w: float) -> None:
         i, j = idx.get(u), idx.get(v)
         if i is None or j is None or i == j:
             return
-        a[i, j] += w
-        a[j, i] += w
+        edges[i, j] += w
+        edges[j, i] += w
 
     # imports
     for r in conn.execute(
@@ -105,11 +128,12 @@ def _build_adjacency(
         link(str(r["s"]), str(r["d"]), W_IMPORT)
 
     # test ↔ source (filename heuristic)
+    path_index = _PathIndex(paths)
     for path in paths:
         related = (
-            _related_source_files(path, paths)
+            _related_source_files(path, path_index)
             if _is_test_path(path)
-            else _related_tests(path, paths)
+            else _related_tests(path, path_index)
         )
         for other in related:
             link(path, other, W_TEST)
@@ -133,13 +157,18 @@ def _build_adjacency(
             W_COCHANGE,
             _COCHANGE_MAX_COMMIT,
         )
-    return a
+    source = np.fromiter((u for u, _ in edges), dtype=np.intp, count=len(edges))
+    target = np.fromiter((v for _, v in edges), dtype=np.intp, count=len(edges))
+    weight = np.fromiter(edges.values(), dtype=np.float64, count=len(edges))
+    degree = np.bincount(source, weights=weight, minlength=n)
+    return _SparseGraph(source, target, weight, degree)
 
 
-def _basket_edges(conn, query: str, link, weight: float, max_size: int) -> None:
+def _basket_edges(
+    conn: sqlite3.Connection, query: str, link: Callable[[str, str, float], None],
+    weight: float, max_size: int,
+) -> None:
     """Add clique edges among items sharing a group (session/commit)."""
-    from collections import defaultdict
-
     baskets: dict[int, list[str]] = defaultdict(list)
     for r in conn.execute(query):
         baskets[int(r["grp"])].append(str(r["path"]))
@@ -163,19 +192,14 @@ def apply_ppr(conn: sqlite3.Connection, files: list[RankedItem]) -> None:
     ppr_max = _envf("KEN_PPR_MAX", PPR_MAX)
     ppr_min_frac = _envf("KEN_PPR_MINFRAC", PPR_MIN_FRAC)
     max_neighbors = int(_envf("KEN_PPR_MAXN", PPR_MAX_NEIGHBORS))
-    rows = conn.execute("SELECT path FROM ci_files").fetchall()
+    rows = conn.execute("SELECT path FROM ci_files ORDER BY path").fetchall()
     paths = [str(r["path"]) for r in rows]
     if len(paths) < 2:
         return
     idx = {p: i for i, p in enumerate(paths)}
-    a = _build_adjacency(conn, paths, idx)
-    deg = a.sum(axis=0)
-    if not deg.any():
+    graph = _build_adjacency(conn, paths, idx)
+    if not graph.weight.size:
         return
-    # Column-stochastic transition matrix (random walk); dangling columns
-    # left at zero — their mass simply doesn't propagate.
-    with np.errstate(divide="ignore", invalid="ignore"):
-        m = np.where(deg > 0, a / deg, 0.0)
 
     n = len(paths)
     seed = np.zeros(n, dtype=np.float64)
@@ -191,7 +215,7 @@ def apply_ppr(conn: sqlite3.Connection, files: list[RankedItem]) -> None:
 
     p = seed.copy()
     for _ in range(ITERS):
-        p = alpha * seed + (1.0 - alpha) * (m @ p)
+        p = alpha * seed + (1.0 - alpha) * graph.walk(p)
 
     # Contributions to NON-anchor files only (anchors already ranked).
     anchor_idx = {i for i, s in enumerate(seed) if s > 0}

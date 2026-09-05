@@ -200,6 +200,32 @@ def _classify_pattern(events: Iterable[str], *, edited_elsewhere: bool) -> str:
     return "neutral"
 
 
+def historical_file_scores(rows: Iterable[Any]) -> dict[str, tuple[float, str]]:
+    """Raw productivity and pattern for one turn, without reactive decay.
+
+    Repeated reads remain capped; a durable observation must not disappear
+    merely because more tool calls followed it. Consumers apply the pattern
+    multiplier exactly once, including when reading old session snapshots.
+    """
+    raw: dict[str, float] = defaultdict(float)
+    events: dict[str, list[str]] = defaultdict(list)
+    edited: set[str] = set()
+    for row in rows:
+        path, event = str(row["target_path"]), str(row["event_type"])
+        raw[path] += EVENT_WEIGHTS.get(event, 0.0) * float(row["weight"])
+        events[path].append(event)
+        if event in {"edit", "edited", "write"}:
+            edited.add(path)
+    out = {}
+    for path, value in raw.items():
+        pattern = _classify_pattern(events[path], edited_elsewhere=bool(edited - {path}))
+        if pattern == "read_repeated":
+            value = min(value, READ_REPEATED_RAW_CAP)
+        if value > 0:
+            out[path] = (value, pattern)
+    return out
+
+
 # ── Similar-prompt search (shared by predictive + dismissal boost) ───
 #
 # Computing cosine similarity over recent user prompts is expensive
@@ -225,15 +251,19 @@ def similar_past_sessions(
     *,
     top: int = PREDICTIVE_TOP_PROMPTS,
     threshold: float = SIMILAR_MIN_SIM,
+    exclude_agent_id: str | None = None,
 ) -> list[SimilarPrompt]:
     rows = conn.execute(
         """
         SELECT session_id, embedding, created_at
         FROM cr_contexts
         WHERE kind = 'user_prompt' AND embedding IS NOT NULL
-        ORDER BY created_at DESC LIMIT ?
+          AND session_id NOT IN (
+              SELECT id FROM cr_sessions WHERE agent_id = ?
+          )
+        ORDER BY created_at DESC, id DESC LIMIT ?
         """,
-        (top,),
+        (exclude_agent_id, top),
     ).fetchall()
     if not rows:
         return []
@@ -310,45 +340,38 @@ PREDICTIVE_CAP = 6.0
 def predictive_scores(
     conn: sqlite3.Connection, similar: list[SimilarPrompt]
 ) -> list[RankedItem]:
-    """Score files by what past similar-prompt sessions ended up using.
+    """Score existing session snapshots once per matching session and file.
 
-    *similar* is the precomputed list from :func:`similar_past_sessions`
-    so we don't redo the cosine sweep here. Session scores are pulled
-    in a single grouped fetch; we then iterate per-similar-prompt to
-    accumulate ``sim² × decay × stored_raw_score × pattern_mult``.
-
-    Important: ``cr_session_scores.score`` now stores the *raw*
-    productivity volume from the snapshot (no pattern multiplier
-    applied). The multiplier is applied here at consumption — that way
-    persisted history doesn't double-count when a hot-pattern session
-    feeds future ranks.
+    A session contributes at most its strongest matching observation per file.
+    Repeating a prompt therefore cannot multiply the same historical evidence.
+    The raw-score + pattern contract is unchanged for old and new snapshots.
     """
     if not similar:
         return []
-    sess_ids = list({sp.session_id for sp in similar})
+    sess_ids = sorted({sp.session_id for sp in similar})
     placeholders = ",".join("?" * len(sess_ids))
     score_rows = conn.execute(
-        f"""
-        SELECT session_id, target_path, score, pattern
-        FROM cr_session_scores
-        WHERE session_id IN ({placeholders})
-          AND target_kind = 'file' AND target_path IS NOT NULL
-        """,
-        sess_ids,
+        f"SELECT session_id, target_path, score, pattern FROM cr_session_scores "
+        f"WHERE session_id IN ({placeholders}) "
+        "AND target_kind = 'file' AND target_path IS NOT NULL", sess_ids,
     ).fetchall()
-    if not score_rows:
-        return []
-    by_session: dict[int, list[Any]] = defaultdict(list)
+    by_session: dict[int, dict[str, tuple[float, str]]] = defaultdict(dict)
     for sr in score_rows:
-        by_session[int(sr["session_id"])].append(sr)
+        by_session[int(sr["session_id"])][str(sr["target_path"])] = (
+            float(sr["score"]), str(sr["pattern"])
+        )
 
-    accum: dict[str, float] = defaultdict(float)
+    strongest: dict[tuple[int, str], float] = defaultdict(float)
     for sp in similar:
-        decay = math.exp(-sp.days_ago / PREDICTIVE_DECAY_DAYS)
-        contribution = sp.sim * sp.sim * decay  # sim² rewards confident matches
-        for sr in by_session.get(sp.session_id, ()):
-            mult = PATTERN_MULTIPLIERS.get(sr["pattern"], 1.0)
-            accum[sr["target_path"]] += contribution * float(sr["score"]) * mult
+        evidence = by_session.get(sp.session_id, {})
+        contribution = sp.sim * sp.sim * math.exp(-sp.days_ago / PREDICTIVE_DECAY_DAYS)
+        for path, (raw, pattern) in evidence.items():
+            value = contribution * raw * PATTERN_MULTIPLIERS.get(pattern, 1.0)
+            key = (sp.session_id, path)
+            strongest[key] = max(strongest[key], value)
+    accum: dict[str, float] = defaultdict(float)
+    for (_, path), value in strongest.items():
+        accum[path] += value
 
     use_lift = lift_enabled()
     if use_lift:

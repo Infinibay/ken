@@ -76,3 +76,36 @@ def test_predictive_cap_with_many_sessions(conn, make_session):
     assert len(items) == 1
     assert items[0].score == pytest.approx(PREDICTIVE_CAP)
     assert items[0].score <= PREDICTIVE_CAP + 1e-9
+
+
+def test_repeating_prompts_does_not_multiply_a_session(conn, make_session):
+    sess = make_session("past")
+    _insert_session_score(conn, sess, "src/a.py", 0.2, "neutral")
+    match = SimilarPrompt(sess, 0.8, 0.0)
+    single = predictive_scores(conn, [match])[0].score
+    assert predictive_scores(conn, [match] * 20)[0].score == pytest.approx(single)
+    # Keep the strongest match, independent of input order.
+    weaker = SimilarPrompt(sess, 0.5, 10.0)
+    assert predictive_scores(conn, [weaker, match])[0].score == pytest.approx(single)
+
+
+def test_distinct_sessions_still_corroborate(conn, make_session):
+    matches = []
+    for agent in ("first", "second"):
+        sess = make_session(agent)
+        _insert_session_score(conn, sess, "a.py", 0.2, "neutral")
+        matches.append(SimilarPrompt(sess, 0.8, 0.0))
+    one = predictive_scores(conn, matches[:1])[0].score
+    assert predictive_scores(conn, matches)[0].score == pytest.approx(2 * one)
+
+
+def test_current_session_does_not_fill_historical_search_window(
+    conn, make_session, make_prompt, fake_emb
+):
+    old = make_session("old")
+    make_prompt(old, "auth task", created_at=1)
+    current = make_session("current")
+    for i in range(60):
+        make_prompt(current, "auth task", created_at=i + 2)
+    matches = similar_past_sessions(conn, fake_emb("auth task"), exclude_agent_id="current")
+    assert [sp.session_id for sp in matches] == [old]

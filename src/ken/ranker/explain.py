@@ -4,10 +4,9 @@ The regular ``rank()`` collapses all channels into a single sorted list.
 That's right for prompt injection but useless for debugging "why didn't
 file X show up?" — the merge stage hides the original signal.
 
-``explain()`` re-runs each channel in isolation, snapshots the merged
-list before every boost, and returns a structured dict the
-``ken_explain_rank`` MCP tool surfaces verbatim. Cost is roughly 2× a
-normal rank — fine for a debug-only path.
+``explain()`` runs the production pipeline once with snapshot collection
+turned on. Its final results include the same fusion, boosts and confidence
+gate as rank(); intermediate candidates remain available when the gate closes.
 """
 
 from __future__ import annotations
@@ -32,106 +31,45 @@ def explain(
     project_root: Path | None = None,
     include_reactive: bool = True,
 ) -> dict[str, Any]:
-    from ken.ranker import _drop_missing_paths, boosts, channels, merge
+    from ken.ranker import _RankTrace, rank
 
-    similar = channels.similar_past_sessions(conn, prompt_embedding)
-
-    explicit_files, explicit_symbols = channels.explicit_mentions(conn, prompt)
-    reactive = (
-        channels.reactive_scores(conn, agent_id, current_iteration)
-        if include_reactive
-        else []
+    trace = _RankTrace()
+    result = rank(
+        conn, agent_id=agent_id, current_iteration=current_iteration,
+        prompt=prompt, prompt_embedding=prompt_embedding,
+        top_files=top, top_symbols=top, top_findings=top,
+        project_root=project_root, include_reactive=include_reactive, _trace=trace,
     )
-    predictive = channels.predictive_scores(conn, similar)
-    fuzzy_files, fuzzy_symbols = channels.fuzzy_scores(conn, prompt_embedding)
-    doc_files, doc_symbols = channels.doc_intent_scores(conn, prompt_embedding)
-    literal_files = channels.literal_content_scores(
-        conn, prompt, project_root=project_root
-    )
-    lexical_files, lexical_symbols = channels.lexical_scores(
-        conn, prompt, agent_id=agent_id, project_root=project_root
-    )
-    findings = channels.finding_scores(conn, prompt_embedding)
-
-    symbols = merge.merge_symbols(
-        [*explicit_symbols, *fuzzy_symbols, *doc_symbols, *lexical_symbols]
-    )
-    symbols.sort(reverse=True)
-
-    files = merge.merge_files(
-        explicit_files,
-        reactive,
-        predictive,
-        fuzzy_files,
-        doc_files,
-        literal_files,
-        lexical_files,
-    )
-    files.sort(reverse=True)
-    pre_boost = {it.target: it.score for it in files}
-
-    boosts.apply_symbol_file_affinity(conn, files, symbols)
-    post_symbol_file = {it.target: it.score for it in files}
-
-    boosts.apply_freshness(conn, files)
-    post_fresh = {it.target: it.score for it in files}
-
-    boosts.apply_cooc(conn, files)
-    post_cooc = {it.target: it.score for it in files}
-
-    boosts.apply_test_affinity(conn, files)
-    post_test_affinity = {it.target: it.score for it in files}
-
-    boosts.apply_import_affinity(conn, files)
-    post_import_affinity = {it.target: it.score for it in files}
-
-    boosts.apply_dismissal_penalty(conn, files, similar)
-    post_dismiss = {it.target: it.score for it in files}
-
-    boosts.apply_implementation_intent(files, prompt)
-    post_impl_intent = {it.target: it.score for it in files}
-    post_impl_symbols = {it.target: it.score for it in symbols}
-
-    boosts.apply_language_intent(files, symbols, prompt)
-    post_language_intent = {it.target: it.score for it in files}
-    post_language_symbols = {it.target: it.score for it in symbols}
-
-    if project_root is not None:
-        files, symbols = _drop_missing_paths(project_root, files, symbols)
-
-    files.sort(reverse=True)
-
+    changes = {}
+    before = trace.stages["merge"]
+    for name, stage in trace.stages.items():
+        if name in {"merge", "before_gate"}:
+            continue
+        changes[name] = _diff(
+            {it.target: it.score for it in before.files},
+            {it.target: it.score for it in stage.files},
+        )
+        if name == "language_intent":
+            changes["language_symbol_intent"] = _diff(
+                {it.target: it.score for it in before.symbols},
+                {it.target: it.score for it in stage.symbols},
+            )
+        before = stage
     return {
         "prompt": prompt,
         "channels": {
-            "explicit_files": _to_dicts(explicit_files, top),
-            "explicit_symbols": _to_dicts(explicit_symbols, top),
-            "reactive": _to_dicts(reactive, top),
-            "predictive": _to_dicts(predictive, top),
-            "fuzzy_files": _to_dicts(fuzzy_files, top),
-            "fuzzy_symbols": _to_dicts(fuzzy_symbols, top),
-            "doc_intent_files": _to_dicts(doc_files, top),
-            "doc_intent_symbols": _to_dicts(doc_symbols, top),
-            "literal_files": _to_dicts(literal_files, top),
-            "lexical_files": _to_dicts(lexical_files, top),
-            "lexical_symbols": _to_dicts(lexical_symbols, top),
-            "findings": _findings_dicts(findings, top),
+            **{name: _to_dicts(items, top) for name, items in trace.channels.items()},
+            "findings": _findings_dicts(trace.findings, top),
         },
-        "merge_before_boosts": _scores_dict(pre_boost, top),
-        "boosts": {
-            "symbol_file_affinity": _diff(pre_boost, post_symbol_file),
-            "freshness": _diff(post_symbol_file, post_fresh),
-            "cooc": _diff(post_fresh, post_cooc),
-            "test_affinity": _diff(post_cooc, post_test_affinity),
-            "import_affinity": _diff(post_test_affinity, post_import_affinity),
-            "dismissal": _diff(post_import_affinity, post_dismiss),
-            "implementation_intent": _diff(post_dismiss, post_impl_intent),
-            "language_intent": _diff(post_impl_intent, post_language_intent),
-            "language_symbol_intent": _diff(post_impl_symbols, post_language_symbols),
-        },
-        "final_files": _to_dicts(files, top),
-        "final_symbols": _to_dicts(symbols, top),
-        "final_findings": _findings_dicts(sorted(findings, reverse=True), top),
+        "merge_before_boosts": _scores_dict(
+            {it.target: it.score for it in trace.stages["merge"].files}, top
+        ),
+        "boosts": changes,
+        "confidence_gate": {"threshold": trace.gate, "suppressed": trace.suppressed},
+        "candidates_before_gate": _to_dicts(trace.stages["before_gate"].files, top),
+        "final_files": _to_dicts(result.files, top),
+        "final_symbols": _to_dicts(result.symbols, top),
+        "final_findings": _findings_dicts(result.findings, top),
     }
 
 

@@ -1334,7 +1334,7 @@ def _bench_cli(
     from ken.db import connect
     from ken.embedder import get_embedder
     from ken.ranker import rank
-    from ken.ranker.output import render_block
+    from ken.ranker.output import render_block, visible_file_paths
 
     root, db_path = _resolve_project_db(project_path)
     if db_path is None:
@@ -1386,6 +1386,9 @@ def _bench_cli(
     embedder = get_embedder()
     rows: list[dict[str, Any]] = []
     hit_cases = 0
+    visible_hit_cases = 0
+    visible_found_expected = 0
+    visible_reciprocal_rank = 0.0
     total_expected = 0
     found_expected = 0
     total_chars = 0
@@ -1444,6 +1447,14 @@ def _bench_cli(
                 "render": render_ms,
                 "e2e": e2e_ms,
             }
+            visible = visible_file_paths(block)
+            visible_hits = sorted(expected & set(visible))
+            visible_rr = next(
+                (1.0 / i for i, path in enumerate(visible, 1) if path in expected), 0.0
+            )
+            visible_hit_cases += bool(visible_hits)
+            visible_found_expected += len(visible_hits)
+            visible_reciprocal_rank += visible_rr
             chars = len(block)
             est_tokens = (chars + 3) // 4 if chars else 0
             row = {
@@ -1452,6 +1463,9 @@ def _bench_cli(
                 "expected_files": sorted(expected),
                 "judgments": judgments,
                 "ranked_files": ranked,
+                "visible_files": visible,
+                "visible_hits": visible_hits,
+                "visible_reciprocal_rank": visible_rr,
                 "ranked_details": ranked_details,
                 "hits": hits,
                 "hit": bool(hits),
@@ -1483,6 +1497,10 @@ def _bench_cli(
         if total_expected
         else 0.0,
         "mrr": total_reciprocal_rank / len(rows),
+        "visible_case_recall": round(visible_hit_cases / len(rows), 4),
+        "visible_expected_file_recall": round(visible_found_expected / total_expected, 4)
+        if total_expected else 0.0,
+        "visible_mrr": visible_reciprocal_rank / len(rows),
         "ndcg": total_ndcg / len(rows),
         "avg_context_chars": round(total_chars / len(rows), 1),
         "avg_context_est_tokens": round(total_est_tokens / len(rows), 1),
@@ -1519,6 +1537,7 @@ def _bench_cli(
             f"case_recall={metrics['case_recall']:.2%} "
             f"expected_file_recall={metrics['expected_file_recall']:.2%} "
             f"mrr={metrics['mrr']:.4f} ndcg={metrics['ndcg']:.4f} "
+            f"visible_file_recall={metrics['visible_expected_file_recall']:.2%} "
             f"avg_context≈{metrics['avg_context_est_tokens']} tokens "
             f"avg_embed={metrics['avg_timings_ms']['embed']:.2f}ms "
             f"avg_rank={metrics['avg_timings_ms']['rank']:.2f}ms "

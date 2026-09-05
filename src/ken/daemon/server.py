@@ -673,12 +673,11 @@ def _handle_session_end(st: DaemonState, agent_id: str) -> None:
     """
     from ken.ranker.snapshot import snapshot_session_scores
 
-    with st.lock:
-        sess = st.sessions.get(agent_id)
-        current_iter = sess["iter"] if sess else 0
-
     try:
-        n = snapshot_session_scores(st.conn, agent_id, current_iter)
+        with st.lock:
+            sess = st.sessions.get(agent_id)
+            current_iter = sess["iter"] if sess else 0
+            n = snapshot_session_scores(st.conn, agent_id, current_iter)
         if n:
             logger.info("snapshotted %d session scores for agent_id=%s", n, agent_id)
     except Exception:  # pragma: no cover

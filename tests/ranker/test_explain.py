@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from ken.embedder import vec_to_blob
 from ken.ranker.explain import _diff, explain
 
@@ -42,6 +44,8 @@ def test_explain_returns_all_channel_keys(conn, make_session, fake_emb):
         "implementation_intent",
         "language_intent",
         "language_symbol_intent",
+        "documentation_intent",
+        "ppr",
     }
     assert "final_files" in out
     assert "final_symbols" in out
@@ -242,3 +246,48 @@ def test_diff_handles_creation_and_removal():
     by_target = {d["target"]: d for d in diffs}
     assert by_target["a"]["after"] is None
     assert by_target["b"]["before"] is None
+
+
+@pytest.mark.parametrize("fusion", ["legacy", "logodds"])
+@pytest.mark.parametrize("ppr", ["off", "add", "replace"])
+def test_explain_matches_production_for_every_mode(
+    conn, make_file, fake_emb, monkeypatch, fusion, ppr
+):
+    from ken.ranker import rank
+
+    monkeypatch.setenv("KEN_RANKER_FUSION", fusion)
+    monkeypatch.setenv("KEN_RANKER_PPR", ppr)
+    make_file("src/setup.py", days_old=30)
+    make_file("tests/test_setup.py", days_old=30)
+    make_file("README.md", days_old=30)
+    kwargs = dict(agent_id="audit", current_iteration=0,
+                  prompt="installation src/setup.py README.md", prompt_embedding=fake_emb("unrelated"))
+    result = rank(conn, **kwargs, top_files=10, top_symbols=10, top_findings=10)
+    out = explain(conn, **kwargs, top=10)
+    assert out["final_files"] == [
+        dict(target=it.target, score=round(it.score, 3), reason=it.reason) for it in result.files
+    ]
+    assert out["boosts"]["documentation_intent"]
+
+
+def test_explain_reports_gate_and_keeps_rejected_evidence(
+    conn, make_session, make_interaction, fake_emb
+):
+    sess = make_session("alpha")
+    make_interaction(sess, event="read", target="a.py", weight=0.1)
+    out = explain(conn, agent_id="alpha", current_iteration=1,
+                  prompt="unrelated", prompt_embedding=fake_emb("unrelated"))
+    assert out["confidence_gate"]["suppressed"] is True
+    assert out["final_files"] == []
+    assert out["candidates_before_gate"][0]["target"] == "a.py"
+
+
+def test_channel_snapshots_are_not_mutated_by_symbol_boosts(conn, make_file, make_symbol, fake_emb):
+    fid = make_file("src/ken/parsers/python.py", days_old=30)
+    make_symbol(fid, name="parse_python", qualname="parse_python")
+    out = explain(conn, agent_id="audit", current_iteration=0,
+                  prompt="python parse_python", prompt_embedding=fake_emb("irrelevant"))
+    original = out["channels"]["explicit_symbols"][0]
+    final = next(it for it in out["final_symbols"] if it["target"] == original["target"])
+    assert final["score"] > original["score"]
+    assert "lang-intent" not in original["reason"]

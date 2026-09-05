@@ -83,6 +83,25 @@ def _render_terse(
     return "\n".join(lines)
 
 
+def visible_file_paths(block: str) -> list[str]:
+    """Files actually exposed in a terse block, after its character budget.
+
+    Benchmark retrieval and exposure separately. Inspect the final rendering
+    so changing caps or truncation cannot silently make the metrics optimistic.
+    Symbol locations and finding topics are separate kinds of exposure.
+    """
+    in_files = False
+    paths = []
+    for line in block.splitlines():
+        if line == "Files:":
+            in_files = True
+        elif in_files:
+            if not line.startswith("- "):
+                break
+            paths.append(line[2:])
+    return paths
+
+
 def _render_verbose(
     conn: sqlite3.Connection,
     result: RankResult,

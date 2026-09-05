@@ -34,8 +34,9 @@ Post-processing boosts:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
+import sqlite3
 
 import numpy as np
 
@@ -90,13 +91,30 @@ class RankResult:
         best = 0.0
         for item in (*self.files, *self.symbols):
             best = max(best, item.score)
-        for item in self.findings:
-            best = max(best, item.score)
+        for finding in self.findings:
+            best = max(best, finding.score)
         return best
 
 
+@dataclass
+class _RankTrace:
+    """Optional snapshots from the production pipeline, used by explain()."""
+
+    channels: dict[str, list[RankedItem]] = field(default_factory=dict)
+    findings: list[FindingItem] = field(default_factory=list)
+    stages: dict[str, RankResult] = field(default_factory=dict)
+    gate: float = MIN_CONFIDENCE
+    suppressed: bool = False
+
+    def capture(self, name: str, files: list[RankedItem], symbols: list[RankedItem]) -> None:
+        self.stages[name] = RankResult(
+            files=[replace(it) for it in files],
+            symbols=[replace(it) for it in symbols],
+        )
+
+
 def rank(
-    conn,
+    conn: sqlite3.Connection,
     *,
     agent_id: str,
     current_iteration: int,
@@ -107,6 +125,7 @@ def rank(
     top_findings: int = 3,
     project_root: Path | None = None,
     include_reactive: bool = True,
+    _trace: _RankTrace | None = None,
 ) -> RankResult:
     """Run all channels + boosts and return a confidence-gated result."""
     from ken.ranker import boosts, channels, fusion, merge
@@ -115,7 +134,9 @@ def rank(
 
     # One cosine sweep over recent prompts, shared between predictive
     # (positive evidence) and the dismissal penalty (negative).
-    similar = channels.similar_past_sessions(conn, prompt_embedding)
+    similar = channels.similar_past_sessions(
+        conn, prompt_embedding, exclude_agent_id=agent_id
+    )
 
     explicit_files, explicit_symbols = channels.explicit_mentions(conn, prompt)
     reactive = (
@@ -134,6 +155,24 @@ def rank(
     )
     findings = channels.finding_scores(conn, prompt_embedding)
 
+    if _trace is not None:
+        _trace.channels = {
+            name: [replace(it) for it in items]
+            for name, items in {
+                "explicit_files": explicit_files, "explicit_symbols": explicit_symbols,
+                "reactive": reactive, "predictive": predictive,
+                "fuzzy_files": fuzzy_files, "fuzzy_symbols": fuzzy_symbols,
+                "doc_intent_files": doc_files, "doc_intent_symbols": doc_symbols,
+                "literal_files": literal_files, "lexical_files": lexical_files,
+                "lexical_symbols": lexical_symbols,
+            }.items()
+        }
+        _trace.findings = [replace(it) for it in findings]
+
+    def capture(name: str) -> None:
+        if _trace is not None:
+            _trace.capture(name, files, symbols)
+
     symbols = merge.merge_symbols(
         [*explicit_symbols, *fuzzy_symbols, *doc_symbols, *lexical_symbols]
     )
@@ -150,27 +189,35 @@ def rank(
         files = fusion.fuse_files(channel_file_lists)
     else:
         files = merge.merge_files(*channel_file_lists)
+    capture("merge")
 
     boosts.apply_symbol_file_affinity(conn, files, symbols)
+    capture("symbol_file_affinity")
     boosts.apply_freshness(conn, files)
+    capture("freshness")
     from ken.ranker import ppr as ppr_mod
 
     ppr_mode = ppr_mod.ppr_mode()
-    if ppr_mode == "replace":
-        # PPR over the unified graph subsumes cooc/test/import propagation.
-        ppr_mod.apply_ppr(conn, files)
-    else:
+    if ppr_mode != "replace":
         boosts.apply_cooc(conn, files)
+    capture("cooc")
+    if ppr_mode != "replace":
         boosts.apply_test_affinity(conn, files)
+    capture("test_affinity")
+    if ppr_mode != "replace":
         boosts.apply_import_affinity(conn, files)
-        if ppr_mode == "add":
-            # Keep the precise name/edge-exact boosts; add PPR only for the
-            # multi-hop + git co-change structure they don't capture.
-            ppr_mod.apply_ppr(conn, files)
+    capture("import_affinity")
+    if ppr_mode in {"add", "replace"}:
+        ppr_mod.apply_ppr(conn, files)
+    capture("ppr")
     boosts.apply_dismissal_penalty(conn, files, similar)
+    capture("dismissal")
     boosts.apply_implementation_intent(files, prompt)
+    capture("implementation_intent")
     boosts.apply_documentation_intent(files, prompt)
+    capture("documentation_intent")
     boosts.apply_language_intent(files, symbols, prompt)
+    capture("language_intent")
     if project_root is not None:
         files, symbols = _drop_missing_paths(project_root, files, symbols)
 
@@ -184,6 +231,10 @@ def rank(
         findings=findings[:top_findings],
     )
     gate = fusion.LOGODDS_GATE if mode == "logodds" else MIN_CONFIDENCE
+    if _trace is not None:
+        _trace.gate = gate
+        _trace.suppressed = result.top_score < gate
+        capture("before_gate")
     if result.top_score < gate:
         return RankResult()  # confidence gate
     return result
