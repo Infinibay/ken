@@ -1,0 +1,104 @@
+id = "persistence.unit-of-work"
+name = "Unit of Work"
+description = "Registers entities in keyed change batches and coordinates at least two persistence actions over those batches on one store."
+collections = ["modern", "persistence"]
+tags = ["web", "persistence", "deferred-writes"]
+caveat = "Deferred-change structural signature using explicit collection and persistence API shapes. Does not prove a database driver, atomic transaction, rollback, order, alias stability, execution, or correspondence of runtime registered and consumed keys. A batch processor can share this signature."
+query = '''
+query unit_of_work {
+ match "persistence.unit-of-work#keyed-change-set"(unit:$unit,flush:$flush,store:$store);
+ emit $unit,$flush,$store;
+}
+'''
+
+[[variants]]
+id = "keyed-change-set"
+status = "ready"
+languages = ["python", "javascript", "typescript", "java", "csharp"]
+query = '''
+query unit_of_work {
+ require $insertion INSERTS_INTO $batch;
+ require $insertion INSERTED_INPUT $entity;
+ require $register HAS_CALL $insertion;
+ require $register HAS_PARAMETER $entity;
+ parameter(receiver: false) as $entity;
+ require $batch ASSIGNED_FROM $lookup;
+ require $lookup RECEIVER $changes;
+ call(name: [get, GetValueOrDefault]) as $lookup;
+ require $lookup ARGUMENT $lookup_arg;
+ require $lookup_arg ENTITY "ARGUMENT" [position: 0];
+ require $lookup_arg VALUE $loaded_key;
+ require $loaded_key LOADED_FROM $key;
+ require $register HAS_PARAMETER $key;
+ parameter(receiver: false) as $key;
+ different $key $entity;
+ require $unit HAS_FIELD $changes;
+ require $unit HAS_METHOD $register;
+ any {
+  require $register HAS_CALL $write;
+  require $write RECEIVER $changes;
+  call(name: [put, set]) as $write;
+  require $write ARGUMENT $key_arg;
+  require $key_arg ENTITY "ARGUMENT" [position: 0];
+  require $key_arg VALUE $written_key;
+  require $written_key LOADED_FROM $key;
+  require $write ARGUMENT $batch_arg;
+  require $batch_arg ENTITY "ARGUMENT" [position: 1];
+  require $batch_arg VALUE $written_batch;
+  require $written_batch LOADED_FROM $batch;
+ } or {
+  require $register HAS_OPERATION $write;
+  require $write WRITES_ELEMENT $changes;
+  require $write INDEX $key;
+  require $write STORES_VALUE $batch;
+ }
+ match "persistence.unit-of-work.keyed_flush"(unit:$unit, changes:$changes, flush:$flush, store:$store);
+ different $register $flush;
+ count distinct $action >= 2 {
+  match "persistence.unit-of-work.keyed_flush"(unit:$unit, changes:$changes, flush:$flush, store:$store, action:$action);
+ };
+ emit $unit, $flush, $store;
+}
+'''
+
+[[operations]]
+id = "keyed_flush"
+status = "ready"
+description = "Expose a coordinator's resolved worker, keyed batch iteration, item, store and persistence action."
+caveat = "Uses collection and persistence API shapes with possible assignment provenance, not transaction or runtime execution guarantees."
+query = '''
+query keyed_flush {
+ require $iteration ITERATION_SOURCE $batch;
+ require $iteration ITERATION_ORIGIN $lookup;
+ call(name: [get, GetValueOrDefault]) as $lookup;
+ require $lookup RECEIVER $changes;
+ require $unit HAS_FIELD $changes;
+ require $worker HAS_OPERATION $iteration;
+ require $unit HAS_METHOD $worker;
+ require $iteration ITERATION_BINDING $item [role: value];
+ require $iteration ITERATION_PASSES_VALUE $effect [position: 0];
+ require $worker HAS_CALL $effect;
+ require $effect SYNTAX_NODE $call_node;
+ require $call_node ENCLOSING_LOOP $iteration;
+ require $effect RECEIVER $store;
+ require $unit HAS_FIELD $store;
+ different $changes $store;
+ call(name: [insert, update, modify, delete, save, Insert, Update, Modify, Delete, Save]) as $effect;
+ require $effect CALLEE_NAME $action;
+ require $effect ARGUMENT $item_arg;
+ require $item_arg ENTITY "ARGUMENT" [position: 0];
+ require $item_arg VALUE $loaded_item;
+ require $loaded_item LOADED_FROM $item;
+ require $delegate TARGET $worker;
+ require $flush HAS_CALL $delegate;
+ require $unit HAS_METHOD $flush;
+ different $flush $worker;
+ emit $unit, $changes, $flush, $worker, $iteration, $item, $store, $action, $effect;
+}
+'''
+
+[[variants]]
+id = "transactional-change-set"
+status = "design"
+missing_capability = "transaction-boundaries-and-effects"
+description = "Correlate deferred changes with one resolved transaction, commit, rollback, exception handling and ownership, including async variants."

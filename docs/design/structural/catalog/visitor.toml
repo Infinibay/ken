@@ -1,0 +1,51 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.visitor"
+name = "Visitor"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/visitor.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.element]
+kinds = ["type_decl"]
+required = true
+
+[exports.accept]
+kinds = ["callable"]
+required = true
+
+[exports.visitor]
+kinds = ["type_decl", "contract"]
+required = true
+
+[[variants]]
+id = "overloaded-dispatch"
+status = "design"
+languages = ["java", "csharp", "cpp"]
+requires = ["overload_resolution", "self_value_flow"]
+graph_requirements = ["Accept despacha en visitor con elemento actual; overload corresponde a tipo de elemento."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "named-dispatch"
+status = "design"
+languages = ["python", "javascript", "typescript", "go", "rust"]
+requires = ["contract_resolution", "self_value_flow"]
+graph_requirements = ["Operaciones distintas del visitor corresponden a distintos elementos que pasan su identidad."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "generic-visitor"
+status = "design"
+languages = ["cpp", "rust"]
+requires = ["generic_substitution", "self_value_flow"]
+graph_requirements = ["Visitor genérico separado recorre familia de elementos; match sin visitor separado no satisface esta variante."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

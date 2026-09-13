@@ -1,0 +1,75 @@
+id = "architecture.read-through-cache"
+name = "Read-Through Cache"
+description = "An object creates cache storage and exposes hit-return / miss-load-fill-return retrieval."
+collections = ["architecture", "modern"]
+tags = ["web", "cache", "persistence"]
+caveat = "API-shape and local-construction evidence, not runtime ownership or cache/store identity. Does not prove TTL, eviction, invalidation, purity, alias stability, concurrency safety or atomic contains/get."
+query = '''
+query read_through_cache {
+ match "architecture.read-through-cache.read_fill"(read:$read,cache:$cache,key:$key,lookup:$lookup,load:$load,write:$write);
+ require $unit HAS_METHOD $read;
+ require $unit HAS_FIELD $cache;
+ require $cache ASSIGNED_FROM $construction;
+ require $construction ALLOCATES_TYPE $storage_type;
+ require $unit HAS_METHOD $initialize;
+ require $initialize HAS_CALL $construction;
+ emit $unit,$read,$cache,$key,$lookup,$load,$write;
+}
+'''
+
+[[operations]]
+id = "read_fill"
+status = "ready"
+description = "Presence-test hit returns lookup; a false CFG path loads, stores and returns the loaded origin with stable explicit bindings."
+query = '''
+query read_fill {
+ require $read CFG_STATUS "structured";
+ require $read RETURN_FLOW_STATUS "supported";
+ require $read BINDING_WRITE_STATUS "supported";
+ require $read HAS_OPERATION $branch;
+ require $branch TRUTH_TEST $presence [when: true];
+ call(name: [contains, containsKey, has, Contains, ContainsKey], explicit_arguments:1) as $presence { has_argument(pos:0, kind:positional) as $presence_arg; }
+ require $presence RECEIVER $cache;
+ require $presence_arg VALUE $presence_key;
+ require $presence_key LOADED_FROM $key;
+ require $read UNREASSIGNED_BINDING $cache;
+ require $read UNREASSIGNED_BINDING $key;
+ require $branch BRANCH_TRUE $hit_body;
+ require $branch CFG_NEXT $hit_entry [kind: true];
+ require $branch CFG_NEXT $miss_entry [kind: false];
+ require $read HAS_OPERATION $hit_return;
+ require $hit_return RETURN_ORIGIN $lookup;
+ path $hit_return SYNTAX_PARENT{1,8} $hit_body as $hit_scope;
+ path $hit_entry CFG_NEXT{0,16} $hit_return as $hit_flow;
+ call(name: [get, Get], explicit_arguments:1) as $lookup { has_argument(pos:0, kind:positional) as $lookup_arg; }
+ require $lookup RECEIVER $cache;
+ require $lookup_arg VALUE $lookup_key;
+ require $lookup_key LOADED_FROM $key;
+ require $read HAS_OPERATION $assignment;
+ require $assignment UNIQUE_BINDING_WRITE $loaded;
+ require $assignment ASSIGNMENT_VALUE $load;
+ call() as $load { has_argument(pos:0, kind:positional) as $load_arg; }
+ require $load RECEIVER $source;
+ different $source $cache;
+ different $lookup $load;
+ require $load_arg VALUE $load_key;
+ require $load_key LOADED_FROM $key;
+ path $assignment SYNTAX_PARENT{0,3} $load_statement as $load_scope;
+ path $miss_entry CFG_NEXT{0,16} $load_statement as $miss_flow;
+ require $read HAS_CALL $write;
+ call(name: [set, put, Set], explicit_arguments:2) as $write { has_argument(pos:0, kind:positional) as $write_key_arg; has_argument(pos:1, kind:positional) as $write_value_arg; }
+ require $write RECEIVER $cache;
+ require $write_key_arg VALUE $write_key;
+ require $write_key LOADED_FROM $key;
+ require $write_value_arg VALUE $write_value;
+ require $write_value LOADED_FROM $loaded;
+ require $write SYNTAX_NODE $write_syntax;
+ path $write_syntax SYNTAX_PARENT{0,3} $write_statement as $write_scope;
+ path $load_statement CFG_NEXT{1,16} $write_statement as $fill_flow;
+ require $read HAS_OPERATION $miss_return;
+ require $miss_return RETURN_ORIGIN $load;
+ path $write_statement CFG_NEXT{1,16} $miss_return as $return_flow;
+ different $hit_return $miss_return;
+ emit $read,$cache,$key,$presence,$lookup,$load,$source,$write,$hit_return,$miss_return;
+}
+'''

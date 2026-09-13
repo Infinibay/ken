@@ -1,0 +1,154 @@
+schema = "ken-rule/1"
+id = "singleton"
+name = "Singleton"
+category = "creational"
+description = "A guarded lazy construction or restricted eager construction exposes shared class storage."
+caveat = "Lazy requires direct null-miss flow, one explicit write and direct shared-slot returns. Eager requires supported private instance constructor declarations and one resolved allocation site. Neither proves immutable storage, thread safety or global uniqueness."
+legacy_query = "require $unit HAS_FIELD $storage static=true\nrequire $storage INITIALIZED_AS NULL\nrequire $unit HAS_METHOD $accessor\nrequire $storage GUARDS_WRITE $accessor\nrequire $accessor RETURNS_STORAGE $storage\nrequire $storage ASSIGNED_FROM $construction\nrequire $construction ALLOCATES_TYPE $unit\n"
+query = '''
+query singleton {
+ any { match "singleton#lazy-guarded"(unit: $unit); }
+ or { match "singleton#eager-shared"(unit: $unit); }
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "eager-shared"
+status = "ready"
+languages = ["java", "csharp", "typescript"]
+requires = ["class_storage", "control_flow", "return_operand"]
+graph_requirements = ["Class field initialization constructs its own type; a static zero-argument accessor begins by returning that same storage."]
+fixtures_status = "source-regression-matrix"
+query_claim = "Class-initialized shared storage, direct accessor, all explicit instance constructor declarations private and one resolved allocation site in the analysed graph. Does not prove global uniqueness, immutable storage or runtime enforcement of TypeScript access."
+query = '''
+query eager_shared {
+ match "singleton.shared_instance"(unit:$unit);
+ require $unit CONSTRUCTOR_INVENTORY supported [other:0];
+ require $unit HAS_METHOD $constructor;
+ callable(instance_constructor:true,visibility:private) as $constructor;
+ require $unit RESOLVED_ALLOCATION_COUNT _ [count:1];
+ emit $unit;
+}
+'''
+
+[[variants]]
+id = "module-shared"
+status = "design"
+languages = ["python", "javascript", "typescript", "cpp", "go", "rust"]
+requires = ["module_storage", "return_flow"]
+graph_requirements = ["Accessor/export exposes module or local-static shared initialized storage; state loader/process scope explicitly."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "lazy-guarded"
+status = "ready"
+languages = ["python", "java", "javascript", "typescript", "csharp"]
+requires = ["control_flow", "storage_identity"]
+graph_requirements = ["Guard controla escritura inicial y accessor devuelve el mismo slot; no afirmar sincronización."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query_claim = "Direct null-miss initialization flow with a single explicit write and direct returns of the shared slot. Does not prove private construction, thread safety, stable heap contents or global uniqueness."
+query = '''
+query lazy_guarded {
+ match "singleton.lazy_instance"(unit:$unit);
+ emit $unit;
+}
+'''
+
+[[variants]]
+id = "once-primitive"
+status = "design"
+languages = ["java", "csharp", "cpp", "go", "rust"]
+requires = ["api_identity", "once_models"]
+graph_requirements = ["Resolver primitiva once y flujo del valor retenido; conservar alcance e hipótesis del modelo."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[operations]]
+id = "shared_instance"
+status = "ready"
+description = "Expose class storage initialized with its own type and a direct static accessor."
+caveat = "Declaration and direct-return syntax only. Resets, public construction and shared-default intent remain possible; no lifetime, heap, thread-safety or global uniqueness proof."
+query = '''
+query shared_instance {
+ require $unit HAS_FIELD $storage;
+ variable(static:true) as $storage;
+ require $write ASSIGNMENT_TARGET $storage;
+ require $unit HAS_OPERATION $write;
+ operation(native_kind:[variable_declarator,public_field_definition,field_definition]) as $write;
+ require $write ASSIGNMENT_VALUE $creation;
+ require $creation ALLOCATES_TYPE $unit;
+ require $unit HAS_CALL $creation;
+ require $unit HAS_METHOD $accessor;
+ callable(static:true,arity:0) as $accessor;
+ require $accessor CFG_STATUS structured;
+ require $accessor CFG_ENTRY $return;
+ operation(kind:return) as $return;
+ require $return RETURN_OPERAND $storage;
+ require $accessor CFG_EXIT $exit;
+ require $return CFG_NEXT $exit [kind:return];
+ emit $unit,$storage,$accessor,$creation;
+}
+'''
+
+[[operations]]
+id = "lazy_instance"
+status = "ready"
+description = "Expose direct null-miss initialization and return of shared class storage."
+caveat = "Supported statement CFG and explicit write inventory only. No private-construction, overload purity, heap stability, locking, reentrancy or global uniqueness proof. More complex initialization protocols require other variants."
+query = '''
+query lazy_instance {
+ require $unit HAS_FIELD $storage;
+ variable(static:true) as $storage;
+ require $storage FIELD_INITIAL_STATUS supported;
+ require $storage FIELD_INITIAL_VALUE NULL;
+ require $unit HAS_METHOD $accessor;
+ callable(static:true) as $accessor;
+ require $accessor CFG_STATUS structured;
+ require $accessor BINDING_WRITE_STATUS supported;
+ require $accessor BINDING_WRITE_COUNT $storage [count:1];
+ require $accessor CFG_ENTRY $branch;
+ any {
+  require $branch NULL_TEST $storage [when:true];
+  require $branch CFG_NEXT $miss_entry [kind:true];
+  require $branch CFG_NEXT $hit_return [kind:false];
+ } or {
+  require $branch NULL_TEST $storage [when:false];
+  require $branch CFG_NEXT $miss_entry [kind:false];
+  require $branch CFG_NEXT $hit_return [kind:true];
+ }
+ require $hit_return RETURN_OPERAND $storage;
+ require $accessor CFG_EXIT $exit;
+ require $hit_return CFG_NEXT $exit [kind:return];
+ require $accessor HAS_OPERATION $write;
+ require $write ASSIGNMENT_TARGET $storage;
+ require $write ASSIGNMENT_VALUE $creation;
+ require $creation ALLOCATES_TYPE $unit;
+ require $accessor HAS_CALL $creation;
+ any { require $write SYNTAX_PARENT $miss_entry; }
+ or { where $write == $miss_entry; }
+ require $miss_entry CFG_NEXT $miss_return [kind:next];
+ require $miss_return RETURN_OPERAND $storage;
+ require $miss_return CFG_NEXT $exit [kind:return];
+ emit $unit,$storage,$accessor,$creation;
+}
+'''
+
+[[operations]]
+id = "observed_lazy_use"
+status = "ready"
+description = "An invocation resolves to the accessor of a modeled lazy shared instance."
+caveat = "Retains lazy_instance exclusions; Python classmethod targets, concurrency, uniqueness and accessor purity are not proven."
+query = '''
+query observed_lazy_use {
+      match "singleton.lazy_instance"(unit:$unit, storage:$storage, accessor:$accessor, creation:$creation);
+      require $call TARGET $accessor;
+      emit $unit, $storage, $accessor, $creation, $call;
+    }
+'''

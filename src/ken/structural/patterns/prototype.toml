@@ -1,0 +1,102 @@
+schema = "ken-rule/1"
+id = "prototype"
+name = "Prototype"
+category = "creational"
+description = "A method creates its own type while reading instance state."
+caveat = "Copy-like construction is a candidate; deep-copy semantics are not proven."
+legacy_query = "require $unit HAS_METHOD $clone\nrequire $clone RETURNS_NEW_SELF $unit\nrequire $unit HAS_FIELD $state\nrequire $clone READS $state\n"
+query = '''
+query prototype {
+ any { match "prototype#explicit-copy"(unit: $unit); }
+ or { match "prototype#derived-clone"(unit: $unit); }
+ or { match "prototype#field-copy"(unit: $unit); }
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "field-copy"
+status = "ready"
+languages = ["python", "javascript", "typescript", "java", "csharp"]
+query_claim = "A returned fresh allocation of the same nominal type retains at least one explicit same-named field copy from the receiver. Branch alternatives retain allocation/write correlation. Escapes and opaque uses are excluded conservatively. Does not prove complete/deep copy, feasible conditions, setter behavior or runtime type identity."
+query = '''
+query field_copy {
+ require $unit HAS_METHOD $clone;
+ require $clone HAS_OPERATION $return;
+ require $return RETURN_FIELD_STATE $state;
+ require $state FIELD_STATE_ORIGIN $construction;
+ require $construction ALLOCATES_TYPE $unit;
+ require $state FIELD_STATE_WRITE $write;
+ require $write ASSIGNMENT_TARGET $target;
+ require $write ASSIGNMENT_VALUE $source;
+ require $unit HAS_FIELD $source;
+ variable(static: false) as $source;
+ where $target.name == $source.name;
+ emit $unit;
+}
+'''
+
+[[variants]]
+id = "derived-clone"
+status = "ready"
+languages = ["rust"]
+fixtures_status = "source-regression-matrix"
+query_claim = "Explicit Clone spelling in derive and clone invocation on that nominal type without a resolved explicit method target. Macro expansion, custom derive imports, deep-copy behavior and arbitrary trait-method resolution are not proven."
+query = '''
+query derived_clone {
+ match "prototype.derived_copy"(unit:$unit);
+ emit $unit;
+}
+'''
+
+[[variants]]
+id = "explicit-copy"
+status = "ready"
+languages = ["python", "javascript", "typescript", "java", "csharp"]
+query_claim = "Same-type construction receives an instance field and is returned. Supported return-flow scopes preserve origins through local aliases and overwrites; other scopes retain syntax projection. Does not distinguish every copy from a successor or prove deep/complete copy."
+requires = ["allocation_identity", "field_value_flow"]
+graph_requirements = ["Un valor nuevo recibe estado de la instancia fuente; el resultado no es un alias del receptor."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query prototype {
+
+ require $unit HAS_METHOD $clone;
+ require $clone RETURNS_VALUE $result;
+ require $construction RESULT $result;
+ require $result INSTANCE_OF $unit;
+ require $unit HAS_FIELD $state;
+ require $construction ARGUMENT $argument;
+ require $argument VALUE $input;
+ require $input LOADED_FROM $state;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "language-copy"
+status = "design"
+languages = ["python", "java", "csharp", "cpp", "rust"]
+requires = ["copy_protocol_models"]
+graph_requirements = ["Resolver protocolo, constructor de copia o derive; registrar profundidad y aliases desconocidos."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[operations]]
+id = "derived_copy"
+status = "ready"
+description = "Expose a nominal Rust type, receiver and unresolved clone call under the existing derive(Clone) syntax model."
+caveat = "Does not prove macro expansion, imported derive identity, deep copy or arbitrary trait method dispatch."
+query = '''
+query derived_copy {
+ type_decl(language: rust) as $unit;
+ require $unit DERIVE_NAME "Clone";
+ require $receiver TYPE $unit;
+ require $copy RECEIVER $receiver;
+ call(name: "clone", resolution: unresolved) as $copy;
+ emit $unit, $receiver, $copy;
+}
+'''

@@ -1,0 +1,81 @@
+{
+  "method": "Evaluación manual de finales answer.extracted.md contra rubric.private.json; citas nucleares cotejadas con snapshot _paths.py:51-85, mcp/server.py:325-330/1000-1035, daemon/client.py:83-158 y serve.py:13-17; checks externos ejecutados por separado. No evaluación exhaustiva de todas las afirmaciones accesorias.",
+  "cells": {
+    "A--codex-no-ken": {
+      "criteria_scores": [
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 10,
+      "maximum": 10,
+      "external_check": {
+        "exit_code": 0,
+        "elapsed_seconds": 0.045,
+        "cwd": "/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/ken-explore-86g5ix4p",
+        "scope": "Only delivered reproducible check; not full suite or transport integration"
+      },
+      "limitations": "Comprobación de helper; no transporte MCP real.",
+      "rationale": "Cadena pública, resolve/relative_to, enlaces e inexistencia correctos; comprobación reproducida exit0."
+    },
+    "A--codex-ken": {
+      "criteria_scores": [
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 10,
+      "maximum": 10,
+      "external_check": {
+        "exit_code": 0,
+        "elapsed_seconds": 0.058,
+        "cwd": "/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/ken-explore-ko315rd1",
+        "scope": "Only delivered reproducible check; not full suite or transport integration"
+      },
+      "limitations": "Funciones extraídas AST y SQLite memoria; no transporte MCP real.",
+      "rationale": "Cadena pública, resolve/relative_to, enlaces e inexistencia correctos; comprobación reproducida exit0."
+    },
+    "B--codex-ken": {
+      "criteria_scores": [
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 10,
+      "maximum": 10,
+      "external_check": {
+        "exit_code": 0,
+        "elapsed_seconds": 0.109,
+        "cwd": "/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/ken-explore-o2bs3jd3",
+        "scope": "Only delivered reproducible check; not full suite or transport integration"
+      },
+      "limitations": "HTTP/proceso simulados; no daemon real.",
+      "rationale": "Discovery/override, entradas y error, reutilización POST, timeout distinto de OSError y spawn/log/health descritos con citas; comprobación reproducida exit0."
+    },
+    "B--codex-no-ken": {
+      "criteria_scores": [
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 10,
+      "maximum": 10,
+      "external_check": {
+        "exit_code": 0,
+        "elapsed_seconds": 0.135,
+        "cwd": "/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/ken-explore-8posxwwb",
+        "scope": "Only delivered reproducible check; not full suite or transport integration"
+      },
+      "limitations": "HTTP/proceso simulados; no daemon real.",
+      "rationale": "Discovery/override, entradas y error, reutilización POST, timeout distinto de OSError y spawn/log/health descritos con citas; comprobación reproducida exit0."
+    }
+  }
+}

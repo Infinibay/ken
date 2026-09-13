@@ -428,6 +428,8 @@ def _build_parser() -> argparse.ArgumentParser:
         "--keep-db", action="store_true", help="don't delete .ken/ken.db"
     )
 
+    from ken.structural.cli import add_parser
+    add_parser(sub)
     return parser
 
 
@@ -446,6 +448,13 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
         and not args.embed
     ):
         parser.error("--embed-limit requires --embed")
+
+    if args.cmd == "structural":
+        from ken.structural.cli import dispatch
+        try:
+            return dispatch(args)
+        except (ValueError, OSError) as exc:
+            parser.error(str(exc))
 
     if args.cmd == "install":
         from ken.install import install
@@ -1767,6 +1776,12 @@ def _build_tool_parser(tool: Any) -> argparse.ArgumentParser:
         is_required = name in required
         flag = "--" + name.replace("_", "-")
 
+        # ken_find's query became optional for saved-rule searches. Preserve
+        # the existing positional CLI while allowing query-free MCP calls.
+        if tool.name == "ken_find" and name == "query" and not is_required:
+            parser.add_argument(name, nargs="?", default=argparse.SUPPRESS)
+            parser.add_argument(flag, dest=name, default=default)
+            continue
         if json_type == "boolean":
             parser.add_argument(
                 flag,

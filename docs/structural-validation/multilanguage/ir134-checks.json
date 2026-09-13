@@ -1,0 +1,39 @@
+{
+  "ir_version": "1.34.0",
+  "tests": {
+    "command": ".venv/bin/python -m pytest -o addopts='' -q",
+    "passed": 3834,
+    "seconds": 152.16,
+    "new": 131,
+    "output": "3834 passed in 152.16s (0:02:32)"
+  },
+  "mypy": {
+    "command": ".venv/bin/mypy src/ken",
+    "files": 98,
+    "output": "Success: no issues found in 98 source files"
+  },
+  "wheel": {
+    "build": "UV_CACHE_DIR=/tmp/ken-uv-cache uv build --wheel --out-dir /tmp/ken-ir134-wheel --offline",
+    "sha256": "a5ebaa0759f4b260b9b1a7789564837f04abdc5701b694f4e46579daae2730f4",
+    "all_structural_modules_and_toml_match_manifest": true,
+    "outside_checkout_modern_rules": 9,
+    "outside_checkout_checks": 10
+  },
+  "documentation": {
+    "operational_guide_pytest_cases": 19,
+    "design_source_languages": [
+      "python",
+      "javascript",
+      "typescript",
+      "java",
+      "csharp"
+    ],
+    "design_queries_per_language": 2,
+    "local_links_checked_in_updated_files": 8
+  },
+  "corpus_regression": "ir134-corpus-regression.json",
+  "controlled_matrix_before": "cache-aside-flow-before.json",
+  "controlled_matrix_after": "cache-aside-flow-after.json",
+  "performance": "cache-aside-flow-performance.json",
+  "scope": "Assertions verified against final source manifests. No global precision/recall or completion claim for the broader pattern coverage goal."
+}

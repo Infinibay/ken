@@ -1,0 +1,116 @@
+schema = "ken-rule/1"
+id = "memento"
+name = "Memento"
+category = "behavioral"
+description = "An originator creates a snapshot and restores state from that type."
+caveat = "Structural evidence requires review of intent and runtime behavior."
+legacy_query = "require $unit HAS_FIELD $state\nrequire $unit HAS_METHOD $save\nrequire $save READS $state\nrequire $save RETURNS_NEW $snapshot\nrequire $unit HAS_METHOD $restore\nrequire $restore HAS_PARAMETER $memento\nrequire $memento TYPE $snapshot\nrequire $restore WRITES $state\ndifferent $save $restore\n"
+query = '''
+query memento {
+ any { match "memento#snapshot-object"(unit: $unit); }
+ or { match "memento#accessor-snapshot"(unit: $unit); }
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "accessor-snapshot"
+status = "ready"
+languages = ["python", "javascript", "typescript", "java", "csharp"]
+query_claim = "State supplied to a unique explicit constructor reaches a snapshot field read by a simple getter, whose result is assigned to the original field during restore. Nominal contracts or an observed caller passing the snapshot correlate the receiver. Linear field models exclude explicit overwrites and parameter rebinding, not hidden effects, deep-copy semantics, runtime dispatch closure or global snapshot immutability."
+query = '''
+query accessor_snapshot {
+ require $unit HAS_FIELD $state;
+ require $unit HAS_METHOD $save;
+ require $save RETURNS_VALUE $created;
+ require $construction RESULT $created;
+ require $created INSTANCE_OF $snapshot;
+ require $construction CONSTRUCTOR_TARGET $constructor;
+ require $construction CALL_BINDING $binding [mode: direct];
+ require $binding BINDING_TARGET $constructor;
+ require $binding BINDING_VALUE $state;
+ require $binding BINDING_PARAMETER $input;
+ require $constructor HAS_OPERATION $initialization;
+ require $initialization FINAL_FIELD_INPUT $input;
+ require $initialization ASSIGNMENT_TARGET $saved;
+ require $snapshot HAS_FIELD $saved;
+ require $snapshot HAS_METHOD $getter;
+ callable(arity: 0, static: false) as $getter;
+ require $getter RETURNS_FIELD $saved;
+ require $unit HAS_METHOD $restore;
+ different $save $restore;
+ require $restore HAS_PARAMETER $memento;
+ require $restore HAS_CALL $read;
+ require $read CALL_RECEIVER_INPUT $memento;
+ any {
+  require $memento TYPE $contract;
+  path $snapshot SUBTYPE_OF{0,8} $contract as $contract_path;
+  any { require $read TARGET $getter; }
+  or { require $read TARGET $slot; require $getter OVERRIDES $slot; }
+ } or {
+  parameter(type_state: unknown) as $memento;
+  require $usage CALL_BINDING $supplied [mode: direct];
+  require $supplied BINDING_PARAMETER $memento;
+  require $supplied BINDING_VALUE $provided;
+  any { require $provided ALLOCATES_TYPE $snapshot; }
+  or { require $provided TYPE $snapshot; }
+  call(resolution: unresolved) as $read;
+  where $read.name == $getter.name;
+ }
+ require $restore HAS_OPERATION $write;
+ require $write ASSIGNMENT_TARGET $state;
+ require $write FINAL_FIELD_VALUE $read;
+ emit $unit;
+}
+'''
+
+[[variants]]
+id = "snapshot-object"
+status = "ready"
+query_claim = "A direct explicit constructor binding feeds a snapshot field, and a final linear restore write reads the same named member on a parameter of that snapshot type. Hidden effects, dynamic member dispatch, parameter rebinding during restore and historical isolation are not proved."
+languages = ["python", "java", "typescript"]
+requires = ["field_value_flow", "storage_escape"]
+graph_requirements = ["Save transfiere estado a snapshot retenido; restore transfiere el mismo estado representado al originador."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query memento {
+
+ require $unit HAS_FIELD $state;
+ require $unit HAS_METHOD $save;
+ require $save RETURNS_VALUE $created;
+ require $construction RESULT $created;
+ require $created INSTANCE_OF $snapshot;
+ require $construction CONSTRUCTOR_TARGET $constructor;
+ require $construction CALL_BINDING $binding [mode: direct];
+ require $binding BINDING_TARGET $constructor;
+ require $binding BINDING_VALUE $state;
+ require $binding BINDING_PARAMETER $input;
+ require $constructor HAS_OPERATION $initialization;
+ require $initialization FINAL_FIELD_INPUT $input;
+ require $initialization ASSIGNMENT_TARGET $saved;
+ require $snapshot HAS_FIELD $saved;
+ require $unit HAS_METHOD $restore;
+ require $restore HAS_PARAMETER $memento;
+ require $memento TYPE $snapshot;
+ require $restore HAS_OPERATION $write;
+ require $write ASSIGNMENT_TARGET $state;
+ require $write FINAL_FIELD_VALUE $member;
+ require $member MEMBER_OF $memento;
+ where $member.name == $saved.name;
+ different $save $restore;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "serialized-snapshot"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["serialization_models", "value_flow"]
+graph_requirements = ["Codificación/decodificación preserva correspondencia de estado; una cadena opaca sin modelo queda parcial."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

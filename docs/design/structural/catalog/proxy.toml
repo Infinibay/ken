@@ -1,0 +1,47 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.proxy"
+name = "Proxy"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/proxy.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.proxy]
+kinds = ["type_decl"]
+required = true
+
+[exports.operation]
+kinds = ["callable"]
+required = true
+
+[[variants]]
+id = "guarded-access"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["control_flow", "api_effects", "contract_resolution"]
+graph_requirements = ["Política puede impedir acceso al subject del mismo contrato; rechazo puede ser excepción o resultado."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "lazy-subject"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["guarded_allocation", "receiver_identity"]
+graph_requirements = ["Carga diferida de subject y delegación posterior usan el mismo almacenamiento."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "remote-subject"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["rpc_models", "contract_resolution"]
+graph_requirements = ["Contrato local representa operación remota y mapea argumentos/resultados; modelo RPC identificado."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

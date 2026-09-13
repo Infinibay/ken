@@ -1,0 +1,42 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.memento"
+name = "Memento"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/memento.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.originator]
+kinds = ["type_decl"]
+required = true
+
+[exports.save]
+kinds = ["callable"]
+required = true
+
+[exports.restore]
+kinds = ["callable"]
+required = true
+
+[[variants]]
+id = "snapshot-object"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["field_value_flow", "storage_escape"]
+graph_requirements = ["Save transfiere estado a snapshot retenido; restore transfiere el mismo estado representado al originador."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "serialized-snapshot"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["serialization_models", "value_flow"]
+graph_requirements = ["Codificación/decodificación preserva correspondencia de estado; una cadena opaca sin modelo queda parcial."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

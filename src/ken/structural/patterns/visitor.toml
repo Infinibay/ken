@@ -1,0 +1,62 @@
+schema = "ken-rule/1"
+id = "visitor"
+name = "Visitor"
+category = "behavioral"
+description = "An element passes itself to a visitor operation."
+caveat = "Self-passing and typed visiting are evidence; exhaustive double dispatch is not proven."
+legacy_query = "require $unit HAS_METHOD $accept\nrequire $accept HAS_PARAMETER $visitor receiver=false\nrequire $accept PASSES_SELF_TO $visitor\nrequire $visitor TYPE $visitor_type\nrequire $visitor_type HAS_METHOD $visit\nrequire $visit HAS_PARAMETER $element\nrequire $element TYPE $unit\n"
+query = '''
+query visitor {
+ match "visitor#named-dispatch"(unit: $unit);
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "overloaded-dispatch"
+status = "design"
+languages = ["java", "csharp", "cpp"]
+requires = ["overload_resolution", "self_value_flow"]
+graph_requirements = ["Accept despacha en visitor con elemento actual; overload corresponde a tipo de elemento."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "named-dispatch"
+status = "ready"
+languages = ["python", "java", "typescript", "cpp"]
+requires = ["contract_resolution", "self_value_flow"]
+graph_requirements = ["Operaciones distintas del visitor corresponden a distintos elementos que pasan su identidad."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query visitor {
+
+ require $unit HAS_METHOD $accept;
+ require $accept HAS_PARAMETER $visitor;
+ parameter(receiver: false) as $visitor;
+ require $unit INSTANCE_RECEIVER $self;
+ require $visitor TYPE $visitor_type;
+ require $accept HAS_CALL $dispatch;
+ require $dispatch RECEIVER $visitor;
+ require $dispatch ARGUMENT $self_argument;
+ require $self_argument VALUE $self;
+ require $dispatch TARGET $visit;
+ require $visitor_type HAS_METHOD $visit;
+ require $visit HAS_PARAMETER $element;
+ require $element TYPE $unit;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "generic-visitor"
+status = "design"
+languages = ["cpp", "rust"]
+requires = ["generic_substitution", "self_value_flow"]
+graph_requirements = ["Visitor genérico separado recorre familia de elementos; match sin visitor separado no satisface esta variante."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

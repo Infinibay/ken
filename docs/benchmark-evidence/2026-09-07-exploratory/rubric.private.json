@@ -1,0 +1,19 @@
+{
+  "scoring": "Cada criterio 0 ausente/incorrecto, 1 parcial, 2 correcto con evidencia; total 10 por tarea. Verificar citas y checks por separado. No pasar este archivo a agentes.",
+  "criteria": {
+    "A": [
+      "Identifica entrada real y cadena hasta resolve_project_path; citas verificables",
+      "expanduser/resolve para raíz y destino, relativas bajo raíz, absolutas permitidas solo dentro",
+      "relative_to rechaza escapes con ValueError tras resolver enlaces simbólicos",
+      "No exige existencia por defecto; distingue validación de consumidores",
+      "Comprobación reproducible con casos relativos, absolutos, symlink y destino inexistente"
+    ],
+    "B": [
+      "Discovery asciende desde inicio resuelto y comprueba .ken/meta.json; considera KEN_PROJECT_ROOT válido",
+      "Identifica llamada MCP/CLI a discovery y error si no preparado, con citas",
+      "DaemonClient reutiliza puerto y POST al servidor existente",
+      "Timeout retorna None sin spawn; URLError/OSError elimina puerto y activa spawn/retry",
+      "Describe sys.executable -m ken serve --background, log y polling health hasta 5s; comprobación reproducible"
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "command": [
+    "infinidev",
+    "--no-tui",
+    "--provider",
+    "openai_subscription",
+    "--model",
+    "gpt-6-astra",
+    "-p",
+    "Extend resolve_project_path in src/ken/_paths.py with keyword-only must_exist: bool = False. Keep existing behavior when false. When true require resolved in-project target to exist, otherwise raise FileNotFoundError. Reject escapes with ValueError before checking existence. Add focused tests for existing files/directories, missing paths with default and true, and missing escaping paths with true. Work only inside this repository. Run focused tests. Do not commit. Finish with a brief summary."
+  ],
+  "cwd": "/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/ken-bench-6afp03vg",
+  "exit_code": -15,
+  "elapsed_seconds": 90.02,
+  "timeout": true,
+  "timeout_seconds": 90
+}

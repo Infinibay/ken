@@ -1,0 +1,38 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.decorator"
+name = "Decorator"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/decorator.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.decorator]
+kinds = ["type_decl", "callable"]
+required = true
+
+[exports.wrapped]
+kinds = ["storage", "value"]
+required = true
+
+[[variants]]
+id = "object-wrapper"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["contract_resolution", "effect_flow"]
+graph_requirements = ["Wrapper y envuelto cumplen contrato; delegación correlacionada y comportamiento añadido observable."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "callable-wrapper"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["closure_capture", "argument_result_flow"]
+graph_requirements = ["Closure conserva callable envuelta; adapta efecto o resultado preservando contrato relevante."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

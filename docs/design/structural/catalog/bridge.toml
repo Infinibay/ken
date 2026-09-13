@@ -1,0 +1,38 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.bridge"
+name = "Bridge"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/bridge.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.abstraction]
+kinds = ["type_decl"]
+required = true
+
+[exports.implementation]
+kinds = ["type_decl", "contract"]
+required = true
+
+[[variants]]
+id = "runtime-composition"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["contract_resolution", "receiver_identity"]
+graph_requirements = ["Dos dimensiones de variantes; una abstracción delega en implementación suministrada."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "generic-composition"
+status = "design"
+languages = ["typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["generic_substitution", "contract_resolution"]
+graph_requirements = ["Parámetro de tipo de implementación independiente de variantes de abstracción; no exigir virtual dispatch."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

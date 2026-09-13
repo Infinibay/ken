@@ -1,0 +1,41 @@
+diff --git a/src/ken/_paths.py b/src/ken/_paths.py
+index 532fd3a..fb769c1 100644
+--- a/src/ken/_paths.py
++++ b/src/ken/_paths.py
+@@ -40,6 +40,10 @@ def pid_path(project_root: Path) -> Path:
+     return ken_dir(project_root) / PID_FILENAME
+ 
+ 
++def socket_path(project_root: Path) -> Path:
++    return ken_dir(project_root) / SOCKET_FILENAME
++
++
+ def port_path(project_root: Path) -> Path:
+     return ken_dir(project_root) / PORT_FILENAME
+ 
+diff --git a/tests/test_paths.py b/tests/test_paths.py
+index 692e042..e3f87af 100644
+--- a/tests/test_paths.py
++++ b/tests/test_paths.py
+@@ -69,6 +69,21 @@ def test_path_helpers_compose(tmp_path):
+     assert _paths.log_path(root) == root / ".ken" / "daemon.log"
+ 
+ 
++@pytest.mark.parametrize("absolute", [False, True])
++def test_socket_path_composes_without_creating_files(tmp_path, monkeypatch, absolute):
++    monkeypatch.chdir(tmp_path)
++    root = tmp_path / "project" if absolute else Path("project")
++
++    result = _paths.socket_path(root)
++
++    assert isinstance(result, Path)
++    assert result == root / ".ken" / "daemon.sock"
++    assert result.is_absolute() == absolute
++    assert not root.exists()
++    assert not result.parent.exists()
++    assert not result.exists()
++
++
+ @pytest.mark.parametrize("absolute", [False, True])
+ def test_resolve_project_path_accepts_internal_path(tmp_path, absolute):
+     root = tmp_path / "project"

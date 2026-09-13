@@ -1,0 +1,38 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.flyweight"
+name = "Flyweight"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/flyweight.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.pool]
+kinds = ["storage"]
+required = true
+
+[exports.factory]
+kinds = ["callable"]
+required = true
+
+[[variants]]
+id = "explicit-interning"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["map_key_flow", "allocation_flow"]
+graph_requirements = ["Lookup/miss/inserción/retorno comparten clave y pool; usuario suministra contexto extrínseco."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "entry-api"
+status = "design"
+languages = ["java", "csharp", "cpp", "rust"]
+requires = ["map_api_models", "callback_flow"]
+graph_requirements = ["Modelo entry/get-or-add preserva identidad de clave y objeto retenido; no afirmar factory exactly-once."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

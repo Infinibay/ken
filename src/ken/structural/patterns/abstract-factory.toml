@@ -1,0 +1,61 @@
+schema = "ken-rule/1"
+id = "abstract-factory"
+name = "Abstract Factory"
+category = "creational"
+description = "A factory subtype exposes multiple product creation methods."
+caveat = "Structural evidence requires review of intent and runtime behavior."
+legacy_query = "require $unit SUBTYPE_OF $factory\ncount >=2 $unit HAS_METHOD $method distinct=$method where $method RETURNS_NEW _\n"
+query = '''
+query abstract_factory {
+ match "abstract-factory#nominal-families"(unit: $unit);
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "nominal-families"
+status = "ready"
+languages = ["python", "java", "typescript", "cpp"]
+requires = ["nominal_contracts", "return_flow"]
+graph_requirements = ["Correlacionar slots de creación entre familias; distinguir al menos dos contratos de producto; conservar el producto correspondiente a cada slot."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query abstract_factory {
+
+ require $unit SUBTYPE_OF $contract;
+ require $unit HAS_METHOD $first;
+ require $unit HAS_METHOD $second;
+ require $first OVERRIDES $slot1;
+ require $second OVERRIDES $slot2;
+ require $first RETURNS_NEW $product1;
+ require $second RETURNS_NEW $product2;
+ require $product1 SUBTYPE_OF $family1;
+ require $product2 SUBTYPE_OF $family2;
+ different $family1 $family2;
+ different $first $second;
+ different $product1 $product2;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "structural-families"
+status = "design"
+languages = ["javascript", "typescript", "go"]
+requires = ["structural_contracts", "return_flow"]
+graph_requirements = ["Relacionar objetos/structs con el mismo conjunto de operaciones de creación sin exigir herencia."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "associated-products"
+status = "design"
+languages = ["rust"]
+requires = ["trait_resolution", "generic_substitution", "return_flow"]
+graph_requirements = ["Sustituir tipos asociados por familia y relacionarlos con los productos devueltos."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

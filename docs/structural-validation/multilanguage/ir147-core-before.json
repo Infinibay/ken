@@ -1,0 +1,1215 @@
+{
+  "source_version": "1.46.0",
+  "method": "69 own structural fixtures (23 GoF x 3 languages), 10 export+verify samples after 2 warmups, prepared source graphs; does not measure query precision or end-to-end scan performance",
+  "results": [
+    {
+      "pattern": "abstract-factory",
+      "language": "python",
+      "source_sha256": "1c72e20c92a3a4fe3e9e0c0430f63ffcbc1e3c5ae93702dcddad6df30af44200",
+      "functions": 4,
+      "partial_functions": 0,
+      "opcodes": {
+        "call": 2,
+        "return": 2
+      },
+      "native": {},
+      "export_verify_median_ms": 0.0746455
+    },
+    {
+      "pattern": "builder",
+      "language": "python",
+      "source_sha256": "9b567121af728049a7e45c640a2fe3a1f65d3f44c75779ed52509b2c319a8891",
+      "functions": 3,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 5,
+        "field.addr": 3,
+        "memory.store": 2,
+        "memory.load": 1,
+        "call": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.10275000000000001
+    },
+    {
+      "pattern": "factory-method",
+      "language": "python",
+      "source_sha256": "485b20ed5e0c2258185a2b6916dc9d15ebb6218214c7c9e961d1103aebe11c29",
+      "functions": 2,
+      "partial_functions": 0,
+      "opcodes": {
+        "call": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.036875
+    },
+    {
+      "pattern": "prototype",
+      "language": "python",
+      "source_sha256": "957991105b88f3bdc17f57d16a80a304c66c08abb9c41724dae2010e39887d0b",
+      "functions": 2,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 3,
+        "field.addr": 2,
+        "memory.store": 1,
+        "memory.load": 1,
+        "call": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.0670625
+    },
+    {
+      "pattern": "singleton",
+      "language": "python",
+      "source_sha256": "5770a2032fb0ee4ab8b0501dccfbff8a0f857c0e5295d498d9e1a0e8a2881e84",
+      "functions": 1,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 3,
+        "field.addr": 3,
+        "memory.load": 2,
+        "const": 1,
+        "compare": 1,
+        "if": 1,
+        "return": 1,
+        "call": 1,
+        "memory.store": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.0720415
+    },
+    {
+      "pattern": "adapter",
+      "language": "python",
+      "source_sha256": "35a210f830f6f2b5b4b08691c5daee51d9e4218004873c473540004d2899de6c",
+      "functions": 4,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 3,
+        "field.addr": 2,
+        "memory.store": 1,
+        "memory.load": 1,
+        "call": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.1139585
+    },
+    {
+      "pattern": "bridge",
+      "language": "python",
+      "source_sha256": "3448b04ffdefdf51d5dff71b1c8b6c7b4b78793b5b8d31e93c225c00261afaa8",
+      "functions": 3,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 3,
+        "field.addr": 2,
+        "memory.store": 1,
+        "memory.load": 1,
+        "call": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.09547900000000001
+    },
+    {
+      "pattern": "composite",
+      "language": "python",
+      "source_sha256": "342f5a75e1c82344ea2176c1bdc138618723d5c239debe109cab521df141e9ee",
+      "functions": 3,
+      "partial_functions": 2,
+      "opcodes": {
+        "native": 2,
+        "slot.load": 1,
+        "field.addr": 1,
+        "memory.store": 1
+      },
+      "native": {
+        "list": 1,
+        "for_statement": 1
+      },
+      "export_verify_median_ms": 0.0674795
+    },
+    {
+      "pattern": "decorator",
+      "language": "python",
+      "source_sha256": "9ca459f250482c2a9cc6eb0866755a1b460dcdf8f1a09b922e60a8bb73da75aa",
+      "functions": 3,
+      "partial_functions": 1,
+      "opcodes": {
+        "slot.load": 3,
+        "field.addr": 2,
+        "memory.store": 1,
+        "native": 1,
+        "call": 2,
+        "memory.load": 1,
+        "return": 1
+      },
+      "native": {
+        "string": 1
+      },
+      "export_verify_median_ms": 0.11791599999999999
+    },
+    {
+      "pattern": "facade",
+      "language": "python",
+      "source_sha256": "cd840cd35bc7453de070e2048de1ddc847f20883c748f73e89c51d91557d4595",
+      "functions": 4,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 6,
+        "field.addr": 4,
+        "memory.store": 2,
+        "memory.load": 2,
+        "call": 2
+      },
+      "native": {},
+      "export_verify_median_ms": 0.151146
+    },
+    {
+      "pattern": "flyweight",
+      "language": "python",
+      "source_sha256": "cdf0e2d0413687adf16f728105102fda5fd96822b3eb5f957e170100be0f3c76",
+      "functions": 3,
+      "partial_functions": 1,
+      "opcodes": {
+        "slot.load": 10,
+        "field.addr": 5,
+        "memory.store": 3,
+        "native": 1,
+        "memory.load": 4,
+        "compare": 1,
+        "if": 1,
+        "index.addr": 2,
+        "return": 1,
+        "call": 1
+      },
+      "native": {
+        "dictionary": 1
+      },
+      "export_verify_median_ms": 0.200458
+    },
+    {
+      "pattern": "proxy",
+      "language": "python",
+      "source_sha256": "b5873b3718e34dc09efda7abb8ba58e5749d3dced44c417218756355e562a272",
+      "functions": 3,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 4,
+        "field.addr": 2,
+        "memory.store": 1,
+        "if": 1,
+        "memory.load": 1,
+        "call": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.103
+    },
+    {
+      "pattern": "chain-of-responsibility",
+      "language": "python",
+      "source_sha256": "8d1693f9eb205589b604bf4504d897d0c21f489460f68107c9bb94e274d39aec",
+      "functions": 3,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 4,
+        "field.addr": 2,
+        "memory.store": 1,
+        "if": 1,
+        "memory.load": 1,
+        "call": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.103021
+    },
+    {
+      "pattern": "command",
+      "language": "python",
+      "source_sha256": "1a30508de7c04db421223aee0588cc23d8239b45ff1ab3e8ba4b1b225447eaf5",
+      "functions": 4,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 4,
+        "call": 2,
+        "field.addr": 2,
+        "memory.store": 1,
+        "memory.load": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.1251875
+    },
+    {
+      "pattern": "interpreter",
+      "language": "python",
+      "source_sha256": "7ba18e569468ec5063c51886247ca2fb31e35bd863cbbe63084b6c02ddc33254",
+      "functions": 3,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 4,
+        "field.addr": 2,
+        "memory.store": 1,
+        "memory.load": 1,
+        "call": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.1032295
+    },
+    {
+      "pattern": "iterator",
+      "language": "python",
+      "source_sha256": "fca0c35182d7d99ea2ee601a4af93b5515bada96b6e860258d3cbe077fe07dd9",
+      "functions": 2,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 4,
+        "return": 2,
+        "field.addr": 3,
+        "memory.load": 2,
+        "const": 1,
+        "binary": 1,
+        "memory.store": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.07635349999999999
+    },
+    {
+      "pattern": "mediator",
+      "language": "python",
+      "source_sha256": "199d80dd8e874c33bb5823f22fe782f6b3db9d0e248353b8539bf411861bac28",
+      "functions": 6,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 8,
+        "field.addr": 4,
+        "memory.store": 2,
+        "memory.load": 2,
+        "call": 4
+      },
+      "native": {},
+      "export_verify_median_ms": 0.2097085
+    },
+    {
+      "pattern": "memento",
+      "language": "python",
+      "source_sha256": "b1c2aaff786d041a5dab6dcd9e70a140dfd86a3e9a28d5cbf9d57428dc920036",
+      "functions": 4,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 7,
+        "field.addr": 5,
+        "memory.store": 3,
+        "memory.load": 2,
+        "call": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.1621455
+    },
+    {
+      "pattern": "observer",
+      "language": "python",
+      "source_sha256": "aa9e88afb8b2639c909e9ec852b46b227e38f95d6e83089558344e68e863e196",
+      "functions": 3,
+      "partial_functions": 2,
+      "opcodes": {
+        "native": 2,
+        "slot.load": 3,
+        "field.addr": 2,
+        "memory.store": 1,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {
+        "list": 1,
+        "for_statement": 1
+      },
+      "export_verify_median_ms": 0.11395849999999999
+    },
+    {
+      "pattern": "state",
+      "language": "python",
+      "source_sha256": "25e44d5f2e378c1b9c83cba417ef578c33b5ee5753f802ad6d726762e5521c62",
+      "functions": 5,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 4,
+        "field.addr": 3,
+        "memory.store": 2,
+        "call": 2,
+        "memory.load": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.13716699999999998
+    },
+    {
+      "pattern": "strategy",
+      "language": "python",
+      "source_sha256": "53848300b2463b9d7bc81e28c8699d0c0f55d980d77d2dcf8bdf5af6c0bef3c5",
+      "functions": 5,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 3,
+        "field.addr": 2,
+        "memory.store": 1,
+        "memory.load": 1,
+        "call": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.1150835
+    },
+    {
+      "pattern": "template-method",
+      "language": "python",
+      "source_sha256": "ddf9884fa912a83cb21fd3abeefd1fb11f0886a48105ac2aba90e801ce1b7d0c",
+      "functions": 3,
+      "partial_functions": 1,
+      "opcodes": {
+        "slot.load": 1,
+        "call": 2,
+        "native": 1
+      },
+      "native": {
+        "string": 1
+      },
+      "export_verify_median_ms": 0.0625835
+    },
+    {
+      "pattern": "visitor",
+      "language": "python",
+      "source_sha256": "b42015462b9242bbf5ae22c1621e1233081ba3f57653230802b8e5b391345db2",
+      "functions": 2,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 3,
+        "call": 2
+      },
+      "native": {},
+      "export_verify_median_ms": 0.0715625
+    },
+    {
+      "pattern": "abstract-factory",
+      "language": "java",
+      "source_sha256": "67b304f49870c83b9702b7a2e81f408d9c45f5477ab546f94eba97973fbb7db6",
+      "functions": 4,
+      "partial_functions": 2,
+      "opcodes": {
+        "construct": 2,
+        "return": 2
+      },
+      "native": {},
+      "export_verify_median_ms": 0.0465415
+    },
+    {
+      "pattern": "builder",
+      "language": "java",
+      "source_sha256": "c9e816d97d2c0faa0845edad4d790737816dff370c3930590b6c9356aac4fa84",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "native": 1,
+        "return": 3,
+        "slot.load": 4,
+        "field.addr": 2,
+        "memory.load": 1,
+        "construct": 1,
+        "memory.store": 1
+      },
+      "native": {
+        "constructor_body": 1
+      },
+      "export_verify_median_ms": 0.1060835
+    },
+    {
+      "pattern": "factory-method",
+      "language": "java",
+      "source_sha256": "6f821db2e636099e5fdf47eca4d06c5db7a32165aa96cd1663284c8c94fe6e6d",
+      "functions": 2,
+      "partial_functions": 1,
+      "opcodes": {
+        "construct": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.023479
+    },
+    {
+      "pattern": "prototype",
+      "language": "java",
+      "source_sha256": "5416fe0a808f203a011e42e977d0cba75a6310642886bad7a643e9b42c43e36b",
+      "functions": 2,
+      "partial_functions": 2,
+      "opcodes": {
+        "native": 1,
+        "return": 2,
+        "slot.load": 1,
+        "field.addr": 1,
+        "memory.load": 1,
+        "construct": 1
+      },
+      "native": {
+        "constructor_body": 1
+      },
+      "export_verify_median_ms": 0.065125
+    },
+    {
+      "pattern": "singleton",
+      "language": "java",
+      "source_sha256": "33925cfd0455aa6a91726f92dbe614d402d1d34f719df8107273f8a2df583b64",
+      "functions": 1,
+      "partial_functions": 1,
+      "opcodes": {
+        "slot.load": 3,
+        "field.addr": 3,
+        "memory.load": 2,
+        "const": 1,
+        "compare": 1,
+        "if": 1,
+        "return": 1,
+        "construct": 1,
+        "memory.store": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.07564599999999999
+    },
+    {
+      "pattern": "adapter",
+      "language": "java",
+      "source_sha256": "de5583fbc3c2c4790f47e1fdfb053d595b90bcff0bc03245a43af47254c71cea",
+      "functions": 4,
+      "partial_functions": 3,
+      "opcodes": {
+        "const": 1,
+        "return": 3,
+        "native": 1,
+        "slot.load": 1,
+        "field.addr": 1,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {
+        "constructor_body": 1
+      },
+      "export_verify_median_ms": 0.078646
+    },
+    {
+      "pattern": "bridge",
+      "language": "java",
+      "source_sha256": "fa08be0737045d6bf755576288ff8e1cabfdfae1285ca3d812ceb31fe79d5c42",
+      "functions": 6,
+      "partial_functions": 4,
+      "opcodes": {
+        "native": 2,
+        "return": 5,
+        "slot.load": 1,
+        "field.addr": 1,
+        "memory.load": 1,
+        "call": 1,
+        "const": 2
+      },
+      "native": {
+        "constructor_body": 2
+      },
+      "export_verify_median_ms": 0.1301665
+    },
+    {
+      "pattern": "composite",
+      "language": "java",
+      "source_sha256": "42db73307b06d451dad230d2bc27f3951091fd5e3fac7b2ceffa62e7d2f4908a",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "native": 2,
+        "return": 1
+      },
+      "native": {
+        "constructor_body": 1,
+        "enhanced_for_statement": 1
+      },
+      "export_verify_median_ms": 0.0578335
+    },
+    {
+      "pattern": "decorator",
+      "language": "java",
+      "source_sha256": "8d138619cc623635670117f5ad12fda4fbb472e7da83208236f1e3aa9a053967",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "native": 2,
+        "return": 2,
+        "slot.load": 2,
+        "field.addr": 2,
+        "memory.load": 2,
+        "call": 2
+      },
+      "native": {
+        "constructor_body": 1,
+        "string_literal": 1
+      },
+      "export_verify_median_ms": 0.095688
+    },
+    {
+      "pattern": "facade",
+      "language": "java",
+      "source_sha256": "0e9167b21752558261ad2c808f5c704490aecb0b5ab300ff1cec364b2675c908",
+      "functions": 4,
+      "partial_functions": 2,
+      "opcodes": {
+        "native": 1,
+        "return": 1,
+        "slot.load": 2,
+        "field.addr": 2,
+        "memory.load": 2,
+        "call": 2
+      },
+      "native": {
+        "constructor_body": 1
+      },
+      "export_verify_median_ms": 0.1068955
+    },
+    {
+      "pattern": "flyweight",
+      "language": "java",
+      "source_sha256": "c2d0a1841891f069d2a0559d3d61137b1066877ac4e54bde6332eed8c707a7fc",
+      "functions": 2,
+      "partial_functions": 2,
+      "opcodes": {
+        "native": 1,
+        "return": 2,
+        "slot.load": 7,
+        "field.addr": 3,
+        "memory.load": 5,
+        "index.addr": 3,
+        "const": 1,
+        "compare": 1,
+        "if": 1,
+        "construct": 1,
+        "memory.store": 1
+      },
+      "native": {
+        "constructor_body": 1
+      },
+      "export_verify_median_ms": 0.148021
+    },
+    {
+      "pattern": "proxy",
+      "language": "java",
+      "source_sha256": "af65537a53f13e1000e879d941c0fe09e400bb55ad43078a7f101d4bf0777c9c",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "native": 1,
+        "return": 3,
+        "slot.load": 3,
+        "if": 1,
+        "const": 1,
+        "field.addr": 1,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {
+        "constructor_body": 1
+      },
+      "export_verify_median_ms": 0.1070625
+    },
+    {
+      "pattern": "chain-of-responsibility",
+      "language": "java",
+      "source_sha256": "cfdac87446964dd1e4722b55aca17fd1a651ada8f091a2aa71b1e9b754bb6acc",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "native": 1,
+        "return": 1,
+        "slot.load": 3,
+        "if": 1,
+        "field.addr": 1,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {
+        "constructor_body": 1
+      },
+      "export_verify_median_ms": 0.102438
+    },
+    {
+      "pattern": "command",
+      "language": "java",
+      "source_sha256": "8e1da4a17492ea44502df571c6853cd4b9c8a04a0e52a711b57efe3844c2ae9f",
+      "functions": 4,
+      "partial_functions": 2,
+      "opcodes": {
+        "slot.load": 2,
+        "call": 2,
+        "native": 1,
+        "return": 1,
+        "field.addr": 1,
+        "memory.load": 1
+      },
+      "native": {
+        "constructor_body": 1
+      },
+      "export_verify_median_ms": 0.090292
+    },
+    {
+      "pattern": "interpreter",
+      "language": "java",
+      "source_sha256": "108cff42553e7edc10ca43126c02769f4daa73d5797364d35f9d050d6ad1c960",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "native": 1,
+        "return": 2,
+        "slot.load": 2,
+        "field.addr": 1,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {
+        "constructor_body": 1
+      },
+      "export_verify_median_ms": 0.0862495
+    },
+    {
+      "pattern": "iterator",
+      "language": "java",
+      "source_sha256": "42f90d1034e529b25142e1e88a42aa71776430cbfa94c476a2549d8bf040e39d",
+      "functions": 2,
+      "partial_functions": 2,
+      "opcodes": {
+        "slot.load": 4,
+        "field.addr": 4,
+        "memory.load": 3,
+        "const": 2,
+        "compare": 1,
+        "return": 2,
+        "binary": 1,
+        "memory.store": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.1275625
+    },
+    {
+      "pattern": "mediator",
+      "language": "java",
+      "source_sha256": "00ad9d15be4e3e8518d70c44afdb9e5ff8664b9d12b0b5fcc0833f3a6ccee994",
+      "functions": 6,
+      "partial_functions": 2,
+      "opcodes": {
+        "slot.load": 4,
+        "call": 4,
+        "native": 1,
+        "return": 1,
+        "field.addr": 2,
+        "memory.load": 2
+      },
+      "native": {
+        "constructor_body": 1
+      },
+      "export_verify_median_ms": 0.1536665
+    },
+    {
+      "pattern": "memento",
+      "language": "java",
+      "source_sha256": "fd9830817a2640cb3cf87308e28661c6dd2121886bddf8672c67fe1c7bebeb52",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "native": 1,
+        "return": 2,
+        "slot.load": 3,
+        "field.addr": 3,
+        "memory.load": 2,
+        "memory.store": 1,
+        "construct": 1
+      },
+      "native": {
+        "constructor_body": 1
+      },
+      "export_verify_median_ms": 0.105875
+    },
+    {
+      "pattern": "observer",
+      "language": "java",
+      "source_sha256": "cc97fbbb60aa3820b0f2955d483fa377b2bf5bf902a2cbd469643ab876478a78",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "native": 1,
+        "slot.load": 2,
+        "field.addr": 1,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {
+        "enhanced_for_statement": 1
+      },
+      "export_verify_median_ms": 0.0746455
+    },
+    {
+      "pattern": "state",
+      "language": "java",
+      "source_sha256": "c9b0911c2ec2dba45fdf82a276fd2a145d9bd5c30d73a86f690bdc49dd6679be",
+      "functions": 5,
+      "partial_functions": 4,
+      "opcodes": {
+        "native": 1,
+        "return": 1,
+        "slot.load": 2,
+        "field.addr": 2,
+        "construct": 1,
+        "memory.store": 1,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {
+        "constructor_body": 1
+      },
+      "export_verify_median_ms": 0.10135350000000001
+    },
+    {
+      "pattern": "strategy",
+      "language": "java",
+      "source_sha256": "1c4ef2132d13fbba6d79606edb2a6b15b848af9f3ba5c123c210b8e13ce37a1c",
+      "functions": 5,
+      "partial_functions": 3,
+      "opcodes": {
+        "const": 2,
+        "return": 4,
+        "native": 1,
+        "slot.load": 1,
+        "field.addr": 1,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {
+        "constructor_body": 1
+      },
+      "export_verify_median_ms": 0.12145800000000001
+    },
+    {
+      "pattern": "template-method",
+      "language": "java",
+      "source_sha256": "9f5d69c78173119babf28b308d3997452c8227effa40d312122c9632a7b29250",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "slot.load": 2,
+        "call": 2,
+        "field.addr": 1,
+        "memory.load": 1,
+        "native": 1
+      },
+      "native": {
+        "string_literal": 1
+      },
+      "export_verify_median_ms": 0.067958
+    },
+    {
+      "pattern": "visitor",
+      "language": "java",
+      "source_sha256": "b0e9d8f75b544bb27ff39e3d22af82bfdf25c733d10179f60fc913a2169bd6a8",
+      "functions": 2,
+      "partial_functions": 1,
+      "opcodes": {
+        "slot.load": 4,
+        "call": 2,
+        "field.addr": 1,
+        "memory.load": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.111042
+    },
+    {
+      "pattern": "abstract-factory",
+      "language": "typescript",
+      "source_sha256": "da32cad7e07c19b70b5e05bdc1156d935d8bab3fe73199da35ef3f3aeb937caa",
+      "functions": 4,
+      "partial_functions": 2,
+      "opcodes": {
+        "construct": 2,
+        "return": 2
+      },
+      "native": {},
+      "export_verify_median_ms": 0.0485
+    },
+    {
+      "pattern": "builder",
+      "language": "typescript",
+      "source_sha256": "d782d133c51138fd416bb346cca2a6a8ffedaa6440df4fcaab10796e1233609b",
+      "functions": 3,
+      "partial_functions": 2,
+      "opcodes": {
+        "slot.load": 4,
+        "field.addr": 2,
+        "memory.load": 1,
+        "construct": 1,
+        "return": 2,
+        "memory.store": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.0998335
+    },
+    {
+      "pattern": "factory-method",
+      "language": "typescript",
+      "source_sha256": "e945ad01f31a37ba7e1b730de1fe022153079a6866224a2f5f3a289e6a252f97",
+      "functions": 2,
+      "partial_functions": 1,
+      "opcodes": {
+        "construct": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.024146
+    },
+    {
+      "pattern": "prototype",
+      "language": "typescript",
+      "source_sha256": "2e01f1b8074eb82d1928b6a903a4a87be001149f627c62e5167f064420db6bd2",
+      "functions": 2,
+      "partial_functions": 2,
+      "opcodes": {
+        "slot.load": 3,
+        "field.addr": 2,
+        "memory.store": 1,
+        "memory.load": 1,
+        "construct": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.0782915
+    },
+    {
+      "pattern": "singleton",
+      "language": "typescript",
+      "source_sha256": "833ddd4098c8c7235230de9438cacf2c1c11cccdc472c00e3d7788448048b71b",
+      "functions": 1,
+      "partial_functions": 1,
+      "opcodes": {
+        "slot.load": 3,
+        "field.addr": 3,
+        "memory.load": 2,
+        "const": 1,
+        "compare": 1,
+        "if": 1,
+        "return": 1,
+        "construct": 1,
+        "memory.store": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.07452149999999999
+    },
+    {
+      "pattern": "adapter",
+      "language": "typescript",
+      "source_sha256": "815a6502650788d9771dac19f25653f48472c8cd4c23dab7d42d16af1f8bc7b7",
+      "functions": 4,
+      "partial_functions": 3,
+      "opcodes": {
+        "const": 1,
+        "return": 2,
+        "slot.load": 3,
+        "field.addr": 2,
+        "memory.store": 1,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.10306299999999999
+    },
+    {
+      "pattern": "bridge",
+      "language": "typescript",
+      "source_sha256": "4502e183ca44e1084efe410d50b479e5ca3f77f75079971e7ddaff9cf3676633",
+      "functions": 5,
+      "partial_functions": 3,
+      "opcodes": {
+        "slot.load": 3,
+        "field.addr": 2,
+        "memory.store": 1,
+        "memory.load": 1,
+        "call": 1,
+        "return": 3,
+        "const": 2
+      },
+      "native": {},
+      "export_verify_median_ms": 0.1133335
+    },
+    {
+      "pattern": "composite",
+      "language": "typescript",
+      "source_sha256": "16076d093a2c30fcedd8017874178bdbcadee13ebbe073dbcacfdcb733e316c1",
+      "functions": 2,
+      "partial_functions": 2,
+      "opcodes": {
+        "native": 1
+      },
+      "native": {
+        "for_in_statement": 1
+      },
+      "export_verify_median_ms": 0.026521
+    },
+    {
+      "pattern": "decorator",
+      "language": "typescript",
+      "source_sha256": "52821d22350b109507feb16dbf8f13ea6c443b41530da13136e83eb5108e678a",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "slot.load": 4,
+        "field.addr": 2,
+        "memory.store": 1,
+        "native": 1,
+        "call": 2,
+        "memory.load": 1,
+        "return": 1
+      },
+      "native": {
+        "string": 1
+      },
+      "export_verify_median_ms": 0.1069585
+    },
+    {
+      "pattern": "facade",
+      "language": "typescript",
+      "source_sha256": "e0880e7912cf3f3f58976cd38919e822d2f6a951dcf7fc8292c3c75a3e646971",
+      "functions": 4,
+      "partial_functions": 2,
+      "opcodes": {
+        "slot.load": 6,
+        "field.addr": 4,
+        "memory.store": 2,
+        "memory.load": 2,
+        "call": 2
+      },
+      "native": {},
+      "export_verify_median_ms": 0.13447900000000002
+    },
+    {
+      "pattern": "flyweight",
+      "language": "typescript",
+      "source_sha256": "8ea84819e7233b407ee5981ed953218644ecb684d8b52b31a5cc32f8f071bcec",
+      "functions": 2,
+      "partial_functions": 1,
+      "opcodes": {
+        "slot.load": 7,
+        "field.addr": 3,
+        "memory.load": 5,
+        "index.addr": 3,
+        "unary": 1,
+        "if": 1,
+        "return": 1,
+        "construct": 1,
+        "memory.store": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.15675050000000001
+    },
+    {
+      "pattern": "proxy",
+      "language": "typescript",
+      "source_sha256": "9018ea44f2660b63371e62aa4cd4959fef8d2897c4ba038c92d640e9f71f656d",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "slot.load": 5,
+        "field.addr": 2,
+        "memory.store": 1,
+        "if": 1,
+        "const": 1,
+        "return": 2,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.129854
+    },
+    {
+      "pattern": "chain-of-responsibility",
+      "language": "typescript",
+      "source_sha256": "3146d5e13194fbf5600c5e37aa2d0ce7430b0a72748204ea080707f8e63eb243",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "slot.load": 5,
+        "field.addr": 2,
+        "memory.store": 1,
+        "if": 1,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.1134585
+    },
+    {
+      "pattern": "command",
+      "language": "typescript",
+      "source_sha256": "7d64de1d0f3075b5f6733eb976be0f128a51cc01e0f5bec2fa901d4e40fbb523",
+      "functions": 4,
+      "partial_functions": 2,
+      "opcodes": {
+        "slot.load": 4,
+        "call": 2,
+        "field.addr": 2,
+        "memory.store": 1,
+        "memory.load": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.1196875
+    },
+    {
+      "pattern": "interpreter",
+      "language": "typescript",
+      "source_sha256": "e37ceaa3028456897e888c6f714e6918c8c897125bb731b7f9790138ddcf2995",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "slot.load": 4,
+        "field.addr": 2,
+        "memory.store": 1,
+        "memory.load": 1,
+        "call": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.104917
+    },
+    {
+      "pattern": "iterator",
+      "language": "typescript",
+      "source_sha256": "9caa0337159df68964eb28a3f8246e39638186b83925cd246053ccb7426d2734",
+      "functions": 1,
+      "partial_functions": 0,
+      "opcodes": {
+        "slot.load": 1,
+        "yield.delegate": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.0314375
+    },
+    {
+      "pattern": "mediator",
+      "language": "typescript",
+      "source_sha256": "9962b693a4c75db3d0060ddd965b9fbce6a2e1dbbc7cb58f4c4ac1d1fcd280ab",
+      "functions": 6,
+      "partial_functions": 2,
+      "opcodes": {
+        "slot.load": 8,
+        "call": 4,
+        "field.addr": 4,
+        "memory.store": 2,
+        "memory.load": 2
+      },
+      "native": {},
+      "export_verify_median_ms": 0.198646
+    },
+    {
+      "pattern": "memento",
+      "language": "typescript",
+      "source_sha256": "d5431a9f94bc1c7c2f4f0f2d49b735291a933da3ffa2507fd999c35cd372ccf2",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "slot.load": 5,
+        "field.addr": 4,
+        "memory.store": 2,
+        "memory.load": 2,
+        "construct": 1,
+        "return": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.1195205
+    },
+    {
+      "pattern": "observer",
+      "language": "typescript",
+      "source_sha256": "fae9a642d57f97e3d4e88a9c5b6e723d0a1b7d3b6cfaff988877c0018bfa975e",
+      "functions": 2,
+      "partial_functions": 2,
+      "opcodes": {
+        "native": 1,
+        "slot.load": 2,
+        "field.addr": 1,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {
+        "for_in_statement": 1
+      },
+      "export_verify_median_ms": 0.0827915
+    },
+    {
+      "pattern": "state",
+      "language": "typescript",
+      "source_sha256": "35b319d6e454bdf1e4078a8a78559821a5769b599e3467c4af5cecf743a0548c",
+      "functions": 5,
+      "partial_functions": 4,
+      "opcodes": {
+        "slot.load": 4,
+        "field.addr": 3,
+        "construct": 1,
+        "memory.store": 2,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.1228955
+    },
+    {
+      "pattern": "strategy",
+      "language": "typescript",
+      "source_sha256": "350a90f54992aec558a1a350c521c716010fcac4ea61855011a7cf6c3d874f1c",
+      "functions": 5,
+      "partial_functions": 3,
+      "opcodes": {
+        "const": 2,
+        "return": 3,
+        "slot.load": 3,
+        "field.addr": 2,
+        "memory.store": 1,
+        "memory.load": 1,
+        "call": 1
+      },
+      "native": {},
+      "export_verify_median_ms": 0.1084585
+    },
+    {
+      "pattern": "template-method",
+      "language": "typescript",
+      "source_sha256": "53aedbdf3f3d7dfbf92342303cc237a6fd631cf1e6231b52af053050f26e217f",
+      "functions": 3,
+      "partial_functions": 3,
+      "opcodes": {
+        "slot.load": 2,
+        "call": 2,
+        "native": 1
+      },
+      "native": {
+        "string": 1
+      },
+      "export_verify_median_ms": 0.057396
+    },
+    {
+      "pattern": "visitor",
+      "language": "typescript",
+      "source_sha256": "016eaa1a83ce4b04bb0b94bea797dd39011a0b9ef95ef3b10fb1ce7347c2be55",
+      "functions": 2,
+      "partial_functions": 1,
+      "opcodes": {
+        "slot.load": 4,
+        "call": 2
+      },
+      "native": {},
+      "export_verify_median_ms": 0.0772085
+    }
+  ]
+}

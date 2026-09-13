@@ -1,0 +1,38 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.mediator"
+name = "Mediator"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/mediator.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.mediator]
+kinds = ["type_decl", "callable"]
+required = true
+
+[exports.coordinate]
+kinds = ["callable"]
+required = true
+
+[[variants]]
+id = "direct-colleagues"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["call_graph", "event_value_flow"]
+graph_requirements = ["Varios colegas notifican al centro y eventos gobiernan acciones del centro hacia colegas."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "message-coordination"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["message_api_models", "callback_flow"]
+graph_requirements = ["Mensajes/callbacks sustituyen referencias bidireccionales; correlacionar canal/evento y destinos."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

@@ -1,0 +1,107 @@
+schema = "ken-rule/1"
+id = "bridge"
+name = "Bridge"
+category = "structural"
+description = "An abstraction hierarchy holds a separate implementation hierarchy."
+caveat = "Structural evidence requires review of intent and runtime behavior."
+legacy_query = "require $unit SUBTYPE_OF $abstraction\nrequire $abstraction HAS_FIELD $field\nrequire $field TYPE $implementation\ncount >=2 $concrete SUBTYPE_OF $implementation distinct=$concrete\ndifferent $abstraction $implementation\n"
+query = '''
+query bridge {
+ any { match "bridge#runtime-composition"(unit: $unit); }
+ or { match "bridge#refined-composition"(unit: $unit); }
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "runtime-composition"
+status = "ready"
+languages = ["python", "java", "typescript"]
+requires = ["contract_resolution", "receiver_identity"]
+graph_requirements = ["Dos dimensiones de variantes; una abstracción delega en implementación suministrada."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query bridge {
+
+ require $unit SUBTYPE_OF $abstraction;
+ require $abstraction HAS_FIELD $field;
+ require $field TYPE $implementation;
+ any {
+  where $unit.language != "cpp";
+ } or {
+  where $unit.language == "cpp";
+  require $abstraction NOMINAL_ROOT $abstraction_root;
+  require $implementation NOMINAL_ROOT $implementation_root;
+  different $abstraction_root $implementation_root;
+ }
+ require $abstraction HAS_METHOD $operation;
+ require $operation DELEGATES_TO $field;
+ require $first SUBTYPE_OF $implementation;
+ require $second SUBTYPE_OF $implementation;
+ different $first $second;
+ different $abstraction $implementation;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "generic-composition"
+status = "design"
+languages = ["typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["generic_substitution", "contract_resolution"]
+graph_requirements = ["Parámetro de tipo de implementación independiente de variantes de abstracción; no exigir virtual dispatch."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "refined-composition"
+status = "ready"
+languages = ["python", "typescript", "java", "csharp"]
+requires = ["override_resolution", "receiver_identity", "contract_resolution"]
+graph_requirements = ["A refined abstraction overrides a base slot and delegates through a locally typed field or an inherited instance slot to a distinct implementation contract with two nominal variants."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+query_claim = "Two nominal variation dimensions with a delegated implementation field. Does not prove constructor injection, current field value, feasible combinations, independent evolution or runtime contracts. Inherited instance slots retain the Python/JS/TS single-inheritance model and its exclusions; Lombok and other generators are not expanded."
+query = '''
+query refined_bridge {
+ require $unit SUBTYPE_OF $abstraction;
+ require $unit HAS_METHOD $operation;
+ require $operation OVERRIDES $slot;
+ require $abstraction HAS_METHOD $slot;
+ require $operation DELEGATES_TO $access;
+ require $unit HAS_FIELD $access;
+ path $access INSTANCE_SLOT{0,1} $field as $member_slot;
+ require $field TYPE $implementation;
+ variable(static:false) as $field;
+ require $abstraction NOMINAL_ROOT $abstraction_root;
+ require $implementation NOMINAL_ROOT $implementation_root;
+ different $abstraction_root $implementation_root;
+ require $first SUBTYPE_OF $implementation;
+ require $second SUBTYPE_OF $implementation;
+ different $first $second;
+ different $abstraction $implementation;
+ different $unit $implementation;
+ require $peer SUBTYPE_OF $abstraction;
+ different $unit $peer;
+ emit $unit,$peer,$abstraction,$operation,$slot,$access,$field,$implementation,$first,$second;
+}
+'''
+
+[[operations]]
+id = "returned_primitive"
+status = "ready"
+description = "A refined abstraction returns the origin of an invocation on its implementation field."
+caveat = "Requires supported return-origin analysis; does not prove injection, hidden effects or runtime receiver identity."
+query = '''
+query bridge_returned_primitive {
+ match "bridge#refined-composition"(unit:$unit,operation:$operation,access:$access);
+ require $operation HAS_OPERATION $return;
+ require $return RETURN_ORIGIN $call;
+ require $call RECEIVER $access;
+ emit $unit,$operation,$call;
+}
+'''

@@ -1,0 +1,58 @@
+{
+  "case": "18 layers, two nodes per layer, all-to-all adjacent layers; fixed start/depth",
+  "vertices": 37,
+  "edges": 70,
+  "before": [
+    {
+      "states": 524288,
+      "rows_examined": 524286,
+      "elapsed_ms": 885.729,
+      "dependencies": [],
+      "complete": true,
+      "matches": 2
+    },
+    {
+      "states": 524288,
+      "rows_examined": 524286,
+      "elapsed_ms": 843.948,
+      "dependencies": [],
+      "complete": true,
+      "matches": 2
+    },
+    {
+      "states": 524288,
+      "rows_examined": 524286,
+      "elapsed_ms": 879.723,
+      "dependencies": [],
+      "complete": true,
+      "matches": 2
+    }
+  ],
+  "after": [
+    {
+      "states": 38,
+      "rows_examined": 70,
+      "elapsed_ms": 0.09,
+      "dependencies": [],
+      "complete": true,
+      "matches": 2
+    },
+    {
+      "states": 38,
+      "rows_examined": 70,
+      "elapsed_ms": 0.06,
+      "dependencies": [],
+      "complete": true,
+      "matches": 2
+    },
+    {
+      "states": 38,
+      "rows_examined": 70,
+      "elapsed_ms": 0.062,
+      "dependencies": [],
+      "complete": true,
+      "matches": 2
+    }
+  ],
+  "note": "Synthetic convergent graph, not end-to-end repository performance; same first witnesses tested against exhaustive enumeration."
+}

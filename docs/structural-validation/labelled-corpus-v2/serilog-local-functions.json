@@ -1,0 +1,1538 @@
+{
+  "repo": "serilog",
+  "commit": "49b5339ce85385dc52d4d8e8f2b8308becf23506",
+  "scope": "src/",
+  "exclude_globs": [],
+  "excluded_components": [
+    ".venv",
+    "__pycache__",
+    "benchmarks",
+    "internal",
+    "node_modules",
+    "target",
+    "testdata",
+    "tests",
+    "tools",
+    "zaptest"
+  ],
+  "files": [
+    {
+      "path": "src/Serilog/Capturing/DepthLimiter.cs",
+      "sha256": "08f48cc4ae93b3f41301cafb95c2f8e1f0c131448d9664459af08cc629209300",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Capturing/MessageTemplateProcessor.cs",
+      "sha256": "a0db31b15c5d901efd6307dd418e4ed38186a7746e85865af2699c5a1352622d",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Capturing/PropertyBinder.cs",
+      "sha256": "e16f512ad2a4fc1375e24a3f2b7830e3bbc4ba419c1e1e8fbaac9882433492d7",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Capturing/PropertyValueConverter.cs",
+      "sha256": "231053e6bc7e8a6c271b75c95fa74eefa7a68659b02252e1f1319146a572a14e",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Capturing/TrimConfiguration.cs",
+      "sha256": "2825d5fb35ef622acb4a7f54f8de3f157b45db1e90704e8c3ce0455c958ce514",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Configuration/BatchingOptions.cs",
+      "sha256": "57d0be01a0f5a4d9b6207147c0562e2b7a8f8952e3ae952d55887afd1b1ec3f2",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Configuration/ILoggerSettings.cs",
+      "sha256": "cf6e83345a5d24e9cdc0ea8a4a9503d2858ce80f429a8067874f12dd5200f908",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Configuration/LoggerAuditSinkConfiguration.cs",
+      "sha256": "bcc1453085a01854f8481a0edb47ed39914ce75c0ee455c1bb450e830b5d2d2b",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Configuration/LoggerDestructuringConfiguration.cs",
+      "sha256": "e8b607bc247a7722cb4e4e7ee1f696e4de29fb1cbb062fbc96ac61572ca98c63",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Configuration/LoggerEnrichmentConfiguration.cs",
+      "sha256": "2770b586d6d9a7878e05f46c5b0443c2820339347fd5730ead79eb7778436691",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Configuration/LoggerFilterConfiguration.cs",
+      "sha256": "b9883c4b6e077dd229e6f48681b39a56e8425e2ddb12d81684c8a60bacc7baf2",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Configuration/LoggerMinimumLevelConfiguration.cs",
+      "sha256": "8e13a1886cb39d140cd333d60ce431194f6ffd94a276d0da246bb856c2b33437",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Configuration/LoggerSettingsConfiguration.cs",
+      "sha256": "51c5fe1c4dc534a2d9930a1be1baec58054e3187d138737f51b7a5c083c43753",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Configuration/LoggerSinkConfiguration.cs",
+      "sha256": "abe31b3aac6053562603d103d5c8c6556fca1ac8ad85d0f8f891af6f8b71df3a",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Context/EnricherStack.cs",
+      "sha256": "cfcd64ece0d72941d40c1e63047daef5a1d8fc3818be05b45918f1bcf16deb19",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Context/LogContext.cs",
+      "sha256": "9f9c69ab51d60c0d6ad415b16c9db78301946d2aaec65c01e73bcd30bdcb2057",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Context/LogContextEnricher.cs",
+      "sha256": "312fe998e0da7f126d5beccb6532de15095bc92d0670781d27e6ea1684a2dad9",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Constants.cs",
+      "sha256": "522df0d54b7e3ad03f9a84d926da7a3b192fbd370420a7caec32570579c470d6",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/CustomDefaultMethodImplementationAttribute.cs",
+      "sha256": "1fe957f4ab221ce41d5930d1d41937657b7dd8863871052157f38dc84b8a2be9",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Enrichers/ConditionalEnricher.cs",
+      "sha256": "c04efc4f33182d51636fefcccdecda202355310134db483bd44150491c1544c8",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Enrichers/EmptyEnricher.cs",
+      "sha256": "78e872f69c07be01a2a516a6b21fe9833e74bb88c838d0b75f3a70014aa94b7e",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Enrichers/FixedPropertyEnricher.cs",
+      "sha256": "b400c5fc1e0043322076df8efb3d957a318e0135d5e671bbef926baa1a73afe8",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Enrichers/PropertyEnricher.cs",
+      "sha256": "63ab01f3b66c08b206a01b85188fa46f4699dbb1bbd8e09f45305b9f31fb4f24",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Enrichers/SafeAggregateEnricher.cs",
+      "sha256": "a52f8bbd4999de39ac9462070eec7f9f90d865b1114b7655261bb56187963c09",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Filters/DelegateFilter.cs",
+      "sha256": "1799c4cf81f143d92dca588a987549a53f37d0f587cb1497a735613945846f9e",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/IBatchedLogEventSink.cs",
+      "sha256": "0fb47e7f3f4dc3b413023c8ba7be370c95307ba1d742b7c3d74e879244c1f9a9",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/IDestructuringPolicy.cs",
+      "sha256": "3c3411b138fc807eae119cf8a6428baf6e90ae53d7253eb3cd54b493860820dc",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/ILogEventEnricher.cs",
+      "sha256": "bc58122e3deeb529f1eb1bf0e56c05c515dd66f2ddf806bb97024b4da625ca53",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/ILogEventFilter.cs",
+      "sha256": "b39f24706b423295435605bbcd5e12b07a0404832ca9ecf811dbc263721d6284",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/ILogEventPropertyFactory.cs",
+      "sha256": "98d63c142b987ddbd61ba41ca7f95a54c90dbe6fb9074ab26bf68391ffbb079d",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/ILogEventPropertyValueFactory.cs",
+      "sha256": "68a206537f1dfa663948187e8a6d91ad9a3a4f0d86f2e77241478239a2d45501",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/ILogEventSink.cs",
+      "sha256": "80170b19f7927efc2b9daea113078b689250921d55aa0b6ad15147d8a941f552",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/ILoggingFailureListener.cs",
+      "sha256": "886e31322eb580afeaeca66a27461e8d0a1cb7d1a8ba578a2e513985e85847cb",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/IMessageTemplateParser.cs",
+      "sha256": "e521405250aeb86cea2cba41bc54e4d6ea2d93a252df2cb46c409ba3da586ce0",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/IScalarConversionPolicy.cs",
+      "sha256": "33ac9d82c05c5e9b126f0401df2aad20d9385a4a99a58c071f44b704634ef848",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/ISetLoggingFailureListener.cs",
+      "sha256": "1d23783ba62b3b66169363dbb20a0d42fa9f11fd32873fb671c165981c678796",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/LevelOverrideMap.cs",
+      "sha256": "d2ed779903a2af4043438f906d466a9fb12258532ca3d76ebc71aa3e52b337a4",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Logger.cs",
+      "sha256": "7db3778684ea1d53ef80737e7553ecd62861ea334404586f9c46fd2388056eff",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/LoggingFailureKind.cs",
+      "sha256": "f580bc820539b65cf333ae8e7bca134ab79f93ba3baa6c118ade58e8229a76fe",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/LoggingLevelSwitch.cs",
+      "sha256": "4359c91e584077f1dd228640197911783f66638112d473d7844c050c2f3857cd",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/LoggingLevelSwitchChangedEventArgs.cs",
+      "sha256": "dfa5c9ddba0faea3805fdf61551ec5b3612fd449037bd3dfa6e75f0265570508",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/MessageTemplateFormatMethodAttribute.cs",
+      "sha256": "425d3af44d378520f32b62267a0298d8fa2dd26adbd39be1d2058cbd3bbf9383",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Pipeline/ByReferenceStringComparer.cs",
+      "sha256": "a9745a188711ed313abb58ade8e91774fc15a788a9278cbaf6e90f505ef2162e",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Pipeline/MessageTemplateCache.cs",
+      "sha256": "0061af25ab53db19469a71b0f02b2f4e5dde0662703fee629bce5e12eedc0177",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Pipeline/SilentLogger.cs",
+      "sha256": "39ad788a650d58768cb121b1ef9fd5f5420a103dfcf3627501b0db2c7447d1cc",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/PropertiesInlineArray.cs",
+      "sha256": "ac0692ca4cf6399ef4b96b35dd10ee503f9a155fdee3e533a3a2c88e526bf471",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Sinks/AggregateSink.cs",
+      "sha256": "f0ffa705b619e32ef4c62b1163a9387ba50a71498ab8dec9559ccb8c13bc0139",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Sinks/Batching/BatchingSink.cs",
+      "sha256": "d1f0624379574ebb97bc7f35171845b0c624d1ef88193459274019eafafbd69f",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Sinks/Batching/FailureAwareBatchScheduler.cs",
+      "sha256": "398b484169f028b59f89a5b47957e4d6fcaab8b82f5bba238c49af0c9a56e8b3",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Sinks/ConditionalSink.cs",
+      "sha256": "d517c7ab9a900fb927e0d4e7b874b922c4f4c2c159daec9a85aaf18767618dc0",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Sinks/DisposingAggregateSink.cs",
+      "sha256": "dfe8fd5a19ffcbe132de31019125258d8425951e7984e137009345fb236e606c",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Sinks/Fallback/DelegatingLoggingFailureListener.cs",
+      "sha256": "51862922294edbb83c22027f5900b7fc4e148c8fb06b8bcb095035a9a143d064",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Sinks/Fallback/FailureListenerSink.cs",
+      "sha256": "1351ef94e33092f6b064a41a96f730f792bf89425c4fa6415c30f3516a8c03ab",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Sinks/FilteringSink.cs",
+      "sha256": "9c37a9e5fa85a97ffc03d6e369c173d6561dce8182a17143b8a2c34f68bff64e",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Sinks/OptionalInterfaceForwardingSink.cs",
+      "sha256": "260605a73bc98ffd6b14655f043384832d33294d360c627a6e1dccc453e77d94",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Sinks/RestrictedSink.cs",
+      "sha256": "ebc49eea71623e3d5ec71be45721a95031d47ae4a4e25fad538851a7e3c89a91",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Sinks/SafeAggregateSink.cs",
+      "sha256": "7a050a2ef64cf02f482b3e21198ed881137a0ce8756db6bb4459b31f77eba1df",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Core/Sinks/SecondaryLoggerSink.cs",
+      "sha256": "d452ce699c94db91bff2467594730242374ec2de2ef7a845c8b5725c128ee4ad",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Data/LogEventPropertyValueRewriter.cs",
+      "sha256": "3f812294a9ea061dbaf29b079d2bafe665b05c23e0c9e9f337e4385c6e1caf5f",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Data/LogEventPropertyValueVisitor.cs",
+      "sha256": "5a9335fb207203c685c88dcd143ea0b0c89d75cc913ffed5b9e8d7f2abd0f672",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Debugging/LoggingFailedException.cs",
+      "sha256": "3d28f76d04ba602333fe44a23c3203a6061c20bc10c77a3f9dbaecfd2249d6fa",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Debugging/SelfLog.cs",
+      "sha256": "a3c20846762a899584cfaa095cc34416b41a1d98303ff7f1868b67a353cc74e3",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Debugging/SelfMetrics.cs",
+      "sha256": "a4b7e238724f323b1f3916724b02ee8e24c73b2ab5ef2eda0a44748070f8d1c7",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Events/DictionaryValue.cs",
+      "sha256": "1c95dff73b65e0fc65c87ee459dda254f570136bd325baff5baabdcf7c96101e",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Events/EventProperty.cs",
+      "sha256": "a4431ee1bbff21e9ea9c37de6d2d916456db0eb220bc348dfe4866447f1cf8ed",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Events/LevelAlias.cs",
+      "sha256": "e501f163141c0b1e81f4f222fe77ee5789344a0c7bd065219183a24e3d346bab",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Events/LogEvent.cs",
+      "sha256": "9d9eabb587b54adc30d74052552c43940410a0942b53c5988b548131999e6f5a",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Events/LogEventLevel.cs",
+      "sha256": "090536e527c514d4073e1f286895891d1c1ee1aebfdd216f907d89696ccd2a3f",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Events/LogEventProperty.cs",
+      "sha256": "ac398230b91da5c0bac90aedd7ec51503546a321783b2c62c195a8c26a1365fc",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Events/LogEventPropertyValue.cs",
+      "sha256": "89bb678af64f5561c4c3f319abc784648bb90f6d6c77065d57b5328bb3d7c0ad",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Events/MessageTemplate.cs",
+      "sha256": "5904291364112f709999288921442a123e0169d9546140eb9ec373d18c282a25",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Events/ScalarValue.cs",
+      "sha256": "d797704241cbcdcea0ecb408372434da43296ce482ef63fe112f5138c8d3af34",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Events/SequenceValue.cs",
+      "sha256": "54368129aaf0eb66717c0b969a94dfbcdee7d6ec5a461148ff720e6f3d5102a1",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Events/StructureValue.cs",
+      "sha256": "48b83b90b416d262dddf609f6d2a68b28118271c4e9702e7c4018acbeb86e534",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Filters/Matching.cs",
+      "sha256": "c5f272ad1232621d15735e41ab51ef8f8a423b050c1f1f6c1a8e89230e2d52a7",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Formatting/Display/LevelOutputFormat.cs",
+      "sha256": "35673a854f6970ef0ae0db46d3659af02fc78b153b62f1ebc34af68242d5d677",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Formatting/Display/MessageTemplateTextFormatter.cs",
+      "sha256": "02b31879361828745a4644e6e2c91b78483c7cf9797fe54ec3d2a7668c44c0b8",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Formatting/Display/OutputProperties.cs",
+      "sha256": "5e115766a68d55401299c18a81bea4546c9b1343dbb91b1bd389be0d8935be00",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Formatting/Display/PropertiesOutputFormat.cs",
+      "sha256": "db59faa9a7cfd049292caf57d03c974760f25d945599b0778cf943662aa65823",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Formatting/ITextFormatter.cs",
+      "sha256": "4aaf740b378449df535593759f56d5797a5a907a0a1a71c2600e19634e13750a",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Formatting/Json/JsonFormatter.cs",
+      "sha256": "15b83734a67e2d1ac63e8b8b2fa6e459ebc43c277430c3630ff05003ccaa7cac",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Formatting/Json/JsonValueFormatter.cs",
+      "sha256": "149f8cf48cc2bd8d13eca16db874cf90b66a84ed03c98eed2f59f657dd59f0b9",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/GlobalUsings.cs",
+      "sha256": "f792c4872843c58dcba326e76afdcb84d1c29024fee96212bbc6461e48386ead",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Guard.cs",
+      "sha256": "7cbaf2e185c487f94f062fde7db4aedca045dabdc1520faf6066b8d53d101425",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/ILogger.cs",
+      "sha256": "6ca13ef5b677f9db20b08ab195bc049f280082829062f914ef57b9dc7b209285",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Log.cs",
+      "sha256": "7f4d0ebe8b8f044c5ba3b3a9f87ce2191bdcbf644f54f1b1ce883e2b857dfe6d",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/LoggerConfiguration.cs",
+      "sha256": "210e72e186605b616668f2203f18832a0b3906c73aaedc8279b4c4b3f8782662",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/LoggerExtensions.cs",
+      "sha256": "9d0a817aeb962180332061785addca5c7ced46427da03476194fd6251db0918e",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Parsing/Alignment.cs",
+      "sha256": "837d611e87b5c776217f4d86a72684991bb74c87d4570b02ed796a4ba8ed16a2",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Parsing/AlignmentDirection.cs",
+      "sha256": "25129bcb09b9d897205a423e8f4be981fa37cadc307eb90472a865d436aed0a1",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Parsing/Destructuring.cs",
+      "sha256": "a109836ae9ca8e9db6364d0abeb555e982d53a4e38af3ced3e17061739c79b98",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Parsing/MessageTemplateParser.cs",
+      "sha256": "652bbb9320482d451cc461e0895a93e4d6f04ff1625dfe65824858ad8c7f81fd",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Parsing/MessageTemplateToken.cs",
+      "sha256": "c2f97566dce1543fb7fcf87651adf28d636aa4ea42b4019c25a843a3890b0e7f",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Parsing/PropertyToken.cs",
+      "sha256": "f6b6aab338d6d8c597806fbbd2ef71be43480f1d508e4399effe7fa968f26088",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Parsing/TextToken.cs",
+      "sha256": "7f8e309ec3935b0be37a52d14b1aecb593332bf2437ed582371711af990e4cda",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Policies/ByteArrayScalarConversionPolicy.cs",
+      "sha256": "e2efb894a8308e2b496a323c07291f1992391af81c024a0a078cdc2e2628184b",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Policies/ByteMemoryScalarConversionPolicy.cs",
+      "sha256": "e41d80df846add41561d4a27860215eafae25187bcf991c45fbe3cf0420ae577",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Policies/DelegateDestructuringPolicy.cs",
+      "sha256": "2042eb61f5421557ec830cfdb5496f7d4702f648d00f89d52a8af11a33e4fa37",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Policies/EnumScalarConversionPolicy.cs",
+      "sha256": "ba32e795281bd1587e3670c02cdd7629239264f4dfb313c19fa12481ceb07011",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Policies/PrimitiveScalarConversionPolicy.cs",
+      "sha256": "ed0bbb71d0721622ec9bab59c2f5829840f8460d97dfefe21f58247b8dca9e7f",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Policies/ProjectedDestructuringPolicy.cs",
+      "sha256": "72fdc3f27da17418b2f9f75bd60652b5862d6be97a91c5c4ec59dd967cd3014b",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Policies/ReflectionTypesScalarDestructuringPolicy.cs",
+      "sha256": "12194e0f379cf63045bc16bb8d86a8a46f3518dd28602a166ff57a1bb36b762d",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Policies/SimpleScalarConversionPolicy.cs",
+      "sha256": "f446105e577e13bff28d307473991511fc4f73cd6fa8a94c66b4bc133c8ddac3",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Properties/AssemblyInfo.cs",
+      "sha256": "877795a79b797c504abb31bbd5a153fdbb157b4d9f8ee8d2fc5ae07382b1f061",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Rendering/Casing.cs",
+      "sha256": "16619e1bdf05c8b0483450fa7c99a9922145688e9124166f6641297a4290241a",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Rendering/MessageTemplateRenderer.cs",
+      "sha256": "01c9773bde02c6cd7ae60b0f7d075cea06779ab609d34fa4e00f2225a35c8758",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Rendering/Padding.cs",
+      "sha256": "dc787206e290eecb01cce469da40857c8616c08b3c9731d772c1e8fa77ef4b98",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Rendering/ReusableStringWriter.cs",
+      "sha256": "45990d9b41e5c4a2470775a7a5f3c7ecf907bedd715a2a8ea1a1587d07baf48d",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Settings/KeyValuePairs/CallableConfigurationMethodFinder.cs",
+      "sha256": "b4861827ef20897030d64d754666168d766002f0d44223bd12711a33105ccf89",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Settings/KeyValuePairs/KeyValuePairSettings.cs",
+      "sha256": "d1dd2067053193624525943b12e60e2ca4285a8783b536bf7c5a813669114cd7",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Settings/KeyValuePairs/SettingValueConversions.cs",
+      "sha256": "92f0196b4b4c88488e6193d9c31c11ec4f69cda0e955bf6ff67c9097a2c0770b",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Settings/KeyValuePairs/SurrogateConfigurationMethods.cs",
+      "sha256": "263612fe14e11e0b0cdcdc4fea23637e98f067630a3c02f1357e4f739f597dab",
+      "language": "csharp"
+    },
+    {
+      "path": "src/Serilog/Util/TimeProvider.cs",
+      "sha256": "f4bc61462efb35c32c11fa7701a95e6c940bc8f5be8af0ea42cd41ed0f5c5a26",
+      "language": "csharp"
+    }
+  ],
+  "diagnostics": [
+    "src/Serilog/Capturing/MessageTemplateProcessor.cs:33: ERROR",
+    "parse errors: semantic absence is unknown",
+    "src/Serilog/Capturing/PropertyBinder.cs:1: ERROR",
+    "src/Serilog/Capturing/PropertyBinder.cs:41: ERROR",
+    "src/Serilog/Capturing/PropertyBinder.cs:61: ERROR",
+    "src/Serilog/Capturing/PropertyBinder.cs:98: ERROR",
+    "parse errors: semantic absence is unknown",
+    "src/Serilog/Capturing/PropertyValueConverter.cs:30: ERROR",
+    "src/Serilog/Capturing/PropertyValueConverter.cs:68: ERROR",
+    "parse errors: semantic absence is unknown",
+    "src/Serilog/Core/IBatchedLogEventSink.cs:38: ERROR",
+    "src/Serilog/Core/IBatchedLogEventSink.cs:38: ERROR",
+    "src/Serilog/Core/IBatchedLogEventSink.cs:40: ERROR",
+    "src/Serilog/Core/IBatchedLogEventSink.cs:44: ERROR",
+    "parse errors: semantic absence is unknown",
+    "src/Serilog/Core/LevelOverrideMap.cs:63: ERROR",
+    "src/Serilog/Core/LevelOverrideMap.cs:65: ERROR",
+    "parse errors: semantic absence is unknown",
+    "src/Serilog/Core/Logger.cs:27: ERROR",
+    "src/Serilog/Core/Logger.cs:29: ERROR",
+    "src/Serilog/Core/Logger.cs:60: ERROR",
+    "src/Serilog/Core/Logger.cs:95: ERROR",
+    "src/Serilog/Core/Logger.cs:97: ERROR",
+    "src/Serilog/Core/Logger.cs:156: ERROR",
+    "src/Serilog/Core/Logger.cs:158: ERROR",
+    "parse errors: semantic absence is unknown",
+    "src/Serilog/Core/Sinks/Batching/BatchingSink.cs:25: ERROR",
+    "src/Serilog/Core/Sinks/Batching/BatchingSink.cs:27: ERROR",
+    "parse errors: semantic absence is unknown",
+    "src/Serilog/Core/Sinks/ConditionalSink.cs:18: ERROR",
+    "src/Serilog/Core/Sinks/ConditionalSink.cs:20: ERROR",
+    "parse errors: semantic absence is unknown",
+    "src/Serilog/Core/Sinks/DisposingAggregateSink.cs:18: ERROR",
+    "src/Serilog/Core/Sinks/DisposingAggregateSink.cs:20: ERROR",
+    "parse errors: semantic absence is unknown",
+    "src/Serilog/Core/Sinks/OptionalInterfaceForwardingSink.cs:18: ERROR",
+    "src/Serilog/Core/Sinks/OptionalInterfaceForwardingSink.cs:20: ERROR",
+    "src/Serilog/Core/Sinks/OptionalInterfaceForwardingSink.cs:77: ERROR",
+    "src/Serilog/Core/Sinks/OptionalInterfaceForwardingSink.cs:77: ERROR",
+    "src/Serilog/Core/Sinks/OptionalInterfaceForwardingSink.cs:87: ERROR",
+    "src/Serilog/Core/Sinks/OptionalInterfaceForwardingSink.cs:87: ERROR",
+    "parse errors: semantic absence is unknown",
+    "src/Serilog/Core/Sinks/SecondaryLoggerSink.cs:25: ERROR",
+    "src/Serilog/Core/Sinks/SecondaryLoggerSink.cs:27: ERROR",
+    "parse errors: semantic absence is unknown",
+    "src/Serilog/Filters/Matching.cs:45: ERROR",
+    "src/Serilog/Filters/Matching.cs:47: ERROR",
+    "parse errors: semantic absence is unknown",
+    "src/Serilog/ILogger.cs:1: ERROR",
+    "src/Serilog/ILogger.cs:53: ERROR",
+    "src/Serilog/ILogger.cs:53: ERROR",
+    "src/Serilog/ILogger.cs:54: ERROR",
+    "src/Serilog/ILogger.cs:54: ERROR",
+    "src/Serilog/ILogger.cs:56: ERROR",
+    "src/Serilog/ILogger.cs:58: ERROR",
+    "src/Serilog/ILogger.cs:68: ERROR",
+    "src/Serilog/ILogger.cs:69: ERROR",
+    "src/Serilog/ILogger.cs:72: ERROR",
+    "src/Serilog/ILogger.cs:73: ERROR",
+    "src/Serilog/ILogger.cs:75: ERROR",
+    "src/Serilog/ILogger.cs:91: ERROR",
+    "src/Serilog/ILogger.cs:91: ERROR",
+    "src/Serilog/ILogger.cs:92: ERROR",
+    "src/Serilog/ILogger.cs:92: ERROR",
+    "src/Serilog/ILogger.cs:94: ERROR",
+    "src/Serilog/ILogger.cs:96: ERROR",
+    "src/Serilog/ILogger.cs:105: ERROR",
+    "src/Serilog/ILogger.cs:105: ERROR",
+    "src/Serilog/ILogger.cs:108: ERROR",
+    "src/Serilog/ILogger.cs:119: ERROR",
+    "src/Serilog/ILogger.cs:120: ERROR",
+    "src/Serilog/ILogger.cs:120: ERROR",
+    "src/Serilog/ILogger.cs:126: ERROR",
+    "src/Serilog/ILogger.cs:141: ERROR",
+    "src/Serilog/ILogger.cs:145: ERROR",
+    "src/Serilog/ILogger.cs:151: ERROR",
+    "src/Serilog/ILogger.cs:163: ERROR",
+    "src/Serilog/ILogger.cs:165: ERROR",
+    "src/Serilog/ILogger.cs:165: ERROR",
+    "src/Serilog/ILogger.cs:171: ERROR",
+    "src/Serilog/ILogger.cs:184: ERROR",
+    "src/Serilog/ILogger.cs:186: ERROR",
+    "src/Serilog/ILogger.cs:186: ERROR",
+    "src/Serilog/ILogger.cs:192: ERROR",
+    "src/Serilog/ILogger.cs:206: ERROR",
+    "src/Serilog/ILogger.cs:208: ERROR",
+    "src/Serilog/ILogger.cs:208: ERROR",
+    "src/Serilog/ILogger.cs:214: ERROR",
+    "src/Serilog/ILogger.cs:226: ERROR",
+    "src/Serilog/ILogger.cs:226: ERROR",
+    "src/Serilog/ILogger.cs:227: ERROR",
+    "src/Serilog/ILogger.cs:237: ERROR",
+    "src/Serilog/ILogger.cs:239: ERROR",
+    "src/Serilog/ILogger.cs:241: ERROR",
+    "src/Serilog/ILogger.cs:241: ERROR",
+    "src/Serilog/ILogger.cs:247: ERROR",
+    "src/Serilog/ILogger.cs:260: ERROR",
+    "src/Serilog/ILogger.cs:262: ERROR",
+    "src/Serilog/ILogger.cs:262: ERROR",
+    "src/Serilog/ILogger.cs:268: ERROR",
+    "src/Serilog/ILogger.cs:282: ERROR",
+    "src/Serilog/ILogger.cs:284: ERROR",
+    "src/Serilog/ILogger.cs:284: ERROR",
+    "src/Serilog/ILogger.cs:290: ERROR",
+    "src/Serilog/ILogger.cs:305: ERROR",
+    "src/Serilog/ILogger.cs:307: ERROR",
+    "src/Serilog/ILogger.cs:307: ERROR",
+    "src/Serilog/ILogger.cs:313: ERROR",
+    "src/Serilog/ILogger.cs:329: ERROR",
+    "src/Serilog/ILogger.cs:330: ERROR",
+    "src/Serilog/ILogger.cs:330: ERROR",
+    "src/Serilog/ILogger.cs:331: ERROR",
+    "src/Serilog/ILogger.cs:336: ERROR",
+    "src/Serilog/ILogger.cs:339: ERROR",
+    "src/Serilog/ILogger.cs:339: ERROR",
+    "src/Serilog/ILogger.cs:345: ERROR",
+    "src/Serilog/ILogger.cs:347: ERROR",
+    "src/Serilog/ILogger.cs:360: ERROR",
+    "src/Serilog/ILogger.cs:363: ERROR",
+    "src/Serilog/ILogger.cs:375: ERROR",
+    "src/Serilog/ILogger.cs:375: ERROR",
+    "src/Serilog/ILogger.cs:376: ERROR",
+    "src/Serilog/ILogger.cs:390: ERROR",
+    "src/Serilog/ILogger.cs:390: ERROR",
+    "src/Serilog/ILogger.cs:391: ERROR",
+    "src/Serilog/ILogger.cs:406: ERROR",
+    "src/Serilog/ILogger.cs:406: ERROR",
+    "src/Serilog/ILogger.cs:407: ERROR",
+    "src/Serilog/ILogger.cs:423: ERROR",
+    "src/Serilog/ILogger.cs:423: ERROR",
+    "src/Serilog/ILogger.cs:424: ERROR",
+    "src/Serilog/ILogger.cs:436: ERROR",
+    "src/Serilog/ILogger.cs:439: ERROR",
+    "src/Serilog/ILogger.cs:451: ERROR",
+    "src/Serilog/ILogger.cs:454: ERROR",
+    "src/Serilog/ILogger.cs:469: ERROR",
+    "src/Serilog/ILogger.cs:469: ERROR",
+    "src/Serilog/ILogger.cs:470: ERROR",
+    "src/Serilog/ILogger.cs:486: ERROR",
+    "src/Serilog/ILogger.cs:486: ERROR",
+    "src/Serilog/ILogger.cs:487: ERROR",
+    "src/Serilog/ILogger.cs:504: ERROR",
+    "src/Serilog/ILogger.cs:504: ERROR",
+    "src/Serilog/ILogger.cs:505: ERROR",
+    "src/Serilog/ILogger.cs:520: ERROR",
+    "src/Serilog/ILogger.cs:520: ERROR",
+    "src/Serilog/ILogger.cs:521: ERROR",
+    "src/Serilog/ILogger.cs:534: ERROR",
+    "src/Serilog/ILogger.cs:534: ERROR",
+    "src/Serilog/ILogger.cs:535: ERROR",
+    "src/Serilog/ILogger.cs:549: ERROR",
+    "src/Serilog/ILogger.cs:549: ERROR",
+    "src/Serilog/ILogger.cs:550: ERROR",
+    "src/Serilog/ILogger.cs:565: ERROR",
+    "src/Serilog/ILogger.cs:565: ERROR",
+    "src/Serilog/ILogger.cs:566: ERROR",
+    "src/Serilog/ILogger.cs:582: ERROR",
+    "src/Serilog/ILogger.cs:582: ERROR",
+    "src/Serilog/ILogger.cs:583: ERROR",
+    "src/Serilog/ILogger.cs:595: ERROR",
+    "src/Serilog/ILogger.cs:598: ERROR",
+    "src/Serilog/ILogger.cs:610: ERROR",
+    "src/Serilog/ILogger.cs:613: ERROR",
+    "src/Serilog/ILogger.cs:628: ERROR",
+    "src/Serilog/ILogger.cs:628: ERROR",
+    "src/Serilog/ILogger.cs:629: ERROR",
+    "src/Serilog/ILogger.cs:645: ERROR",
+    "src/Serilog/ILogger.cs:645: ERROR",
+    "src/Serilog/ILogger.cs:646: ERROR",
+    "src/Serilog/ILogger.cs:663: ERROR",
+    "src/Serilog/ILogger.cs:663: ERROR",
+    "src/Serilog/ILogger.cs:664: ERROR",
+    "src/Serilog/ILogger.cs:679: ERROR",
+    "src/Serilog/ILogger.cs:679: ERROR",
+    "src/Serilog/ILogger.cs:680: ERROR",
+    "src/Serilog/ILogger.cs:693: ERROR",
+    "src/Serilog/ILogger.cs:693: ERROR",
+    "src/Serilog/ILogger.cs:694: ERROR",
+    "src/Serilog/ILogger.cs:708: ERROR",
+    "src/Serilog/ILogger.cs:708: ERROR",
+    "src/Serilog/ILogger.cs:709: ERROR",
+    "src/Serilog/ILogger.cs:724: ERROR",
+    "src/Serilog/ILogger.cs:724: ERROR",
+    "src/Serilog/ILogger.cs:725: ERROR",
+    "src/Serilog/ILogger.cs:741: ERROR",
+    "src/Serilog/ILogger.cs:741: ERROR",
+    "src/Serilog/ILogger.cs:742: ERROR",
+    "src/Serilog/ILogger.cs:754: ERROR",
+    "src/Serilog/ILogger.cs:757: ERROR",
+    "src/Serilog/ILogger.cs:769: ERROR",
+    "src/Serilog/ILogger.cs:772: ERROR",
+    "src/Serilog/ILogger.cs:787: ERROR",
+    "src/Serilog/ILogger.cs:787: ERROR",
+    "src/Serilog/ILogger.cs:788: ERROR",
+    "src/Serilog/ILogger.cs:804: ERROR",
+    "src/Serilog/ILogger.cs:804: ERROR",
+    "src/Serilog/ILogger.cs:805: ERROR",
+    "src/Serilog/ILogger.cs:822: ERROR",
+    "src/Serilog/ILogger.cs:822: ERROR",
+    "src/Serilog/ILogger.cs:823: ERROR",
+    "src/Serilog/ILogger.cs:838: ERROR",
+    "src/Serilog/ILogger.cs:838: ERROR",
+    "src/Serilog/ILogger.cs:839: ERROR",
+    "src/Serilog/ILogger.cs:852: ERROR",
+    "src/Serilog/ILogger.cs:852: ERROR",
+    "src/Serilog/ILogger.cs:853: ERROR",
+    "src/Serilog/ILogger.cs:867: ERROR",
+    "src/Serilog/ILogger.cs:867: ERROR",
+    "src/Serilog/ILogger.cs:868: ERROR",
+    "src/Serilog/ILogger.cs:883: ERROR",
+    "src/Serilog/ILogger.cs:883: ERROR",
+    "src/Serilog/ILogger.cs:884: ERROR",
+    "src/Serilog/ILogger.cs:900: ERROR",
+    "src/Serilog/ILogger.cs:900: ERROR",
+    "src/Serilog/ILogger.cs:901: ERROR",
+    "src/Serilog/ILogger.cs:913: ERROR",
+    "src/Serilog/ILogger.cs:916: ERROR",
+    "src/Serilog/ILogger.cs:928: ERROR",
+    "src/Serilog/ILogger.cs:931: ERROR",
+    "src/Serilog/ILogger.cs:946: ERROR",
+    "src/Serilog/ILogger.cs:946: ERROR",
+    "src/Serilog/ILogger.cs:947: ERROR",
+    "src/Serilog/ILogger.cs:963: ERROR",
+    "src/Serilog/ILogger.cs:963: ERROR",
+    "src/Serilog/ILogger.cs:964: ERROR",
+    "src/Serilog/ILogger.cs:981: ERROR",
+    "src/Serilog/ILogger.cs:981: ERROR",
+    "src/Serilog/ILogger.cs:982: ERROR",
+    "src/Serilog/ILogger.cs:997: ERROR",
+    "src/Serilog/ILogger.cs:997: ERROR",
+    "src/Serilog/ILogger.cs:998: ERROR",
+    "src/Serilog/ILogger.cs:1011: ERROR",
+    "src/Serilog/ILogger.cs:1011: ERROR",
+    "src/Serilog/ILogger.cs:1012: ERROR",
+    "src/Serilog/ILogger.cs:1026: ERROR",
+    "src/Serilog/ILogger.cs:1026: ERROR",
+    "src/Serilog/ILogger.cs:1027: ERROR",
+    "src/Serilog/ILogger.cs:1042: ERROR",
+    "src/Serilog/ILogger.cs:1042: ERROR",
+    "src/Serilog/ILogger.cs:1043: ERROR",
+    "src/Serilog/ILogger.cs:1059: ERROR",
+    "src/Serilog/ILogger.cs:1059: ERROR",
+    "src/Serilog/ILogger.cs:1060: ERROR",
+    "src/Serilog/ILogger.cs:1072: ERROR",
+    "src/Serilog/ILogger.cs:1075: ERROR",
+    "src/Serilog/ILogger.cs:1087: ERROR",
+    "src/Serilog/ILogger.cs:1090: ERROR",
+    "src/Serilog/ILogger.cs:1105: ERROR",
+    "src/Serilog/ILogger.cs:1105: ERROR",
+    "src/Serilog/ILogger.cs:1106: ERROR",
+    "src/Serilog/ILogger.cs:1122: ERROR",
+    "src/Serilog/ILogger.cs:1122: ERROR",
+    "src/Serilog/ILogger.cs:1123: ERROR",
+    "src/Serilog/ILogger.cs:1140: ERROR",
+    "src/Serilog/ILogger.cs:1140: ERROR",
+    "src/Serilog/ILogger.cs:1141: ERROR",
+    "src/Serilog/ILogger.cs:1156: ERROR",
+    "src/Serilog/ILogger.cs:1156: ERROR",
+    "src/Serilog/ILogger.cs:1157: ERROR",
+    "src/Serilog/ILogger.cs:1170: ERROR",
+    "src/Serilog/ILogger.cs:1170: ERROR",
+    "src/Serilog/ILogger.cs:1171: ERROR",
+    "src/Serilog/ILogger.cs:1185: ERROR",
+    "src/Serilog/ILogger.cs:1185: ERROR",
+    "src/Serilog/ILogger.cs:1186: ERROR",
+    "src/Serilog/ILogger.cs:1201: ERROR",
+    "src/Serilog/ILogger.cs:1201: ERROR",
+    "src/Serilog/ILogger.cs:1202: ERROR",
+    "src/Serilog/ILogger.cs:1218: ERROR",
+    "src/Serilog/ILogger.cs:1218: ERROR",
+    "src/Serilog/ILogger.cs:1219: ERROR",
+    "src/Serilog/ILogger.cs:1231: ERROR",
+    "src/Serilog/ILogger.cs:1234: ERROR",
+    "src/Serilog/ILogger.cs:1246: ERROR",
+    "src/Serilog/ILogger.cs:1249: ERROR",
+    "src/Serilog/ILogger.cs:1264: ERROR",
+    "src/Serilog/ILogger.cs:1264: ERROR",
+    "src/Serilog/ILogger.cs:1265: ERROR",
+    "src/Serilog/ILogger.cs:1281: ERROR",
+    "src/Serilog/ILogger.cs:1281: ERROR",
+    "src/Serilog/ILogger.cs:1282: ERROR",
+    "src/Serilog/ILogger.cs:1299: ERROR",
+    "src/Serilog/ILogger.cs:1299: ERROR",
+    "src/Serilog/ILogger.cs:1300: ERROR",
+    "src/Serilog/ILogger.cs:1315: ERROR",
+    "src/Serilog/ILogger.cs:1315: ERROR",
+    "src/Serilog/ILogger.cs:1316: ERROR",
+    "src/Serilog/ILogger.cs:1347: ERROR",
+    "src/Serilog/ILogger.cs:1347: ERROR",
+    "src/Serilog/ILogger.cs:1347: ERROR",
+    "src/Serilog/ILogger.cs:1348: ERROR",
+    "src/Serilog/ILogger.cs:1367: ERROR",
+    "src/Serilog/ILogger.cs:1367: ERROR",
+    "src/Serilog/ILogger.cs:1368: ERROR",
+    "parse errors: semantic absence is unknown",
+    "src/Serilog/LoggerConfiguration.cs:179: ERROR",
+    "src/Serilog/LoggerConfiguration.cs:179: ERROR",
+    "src/Serilog/LoggerConfiguration.cs:220: ERROR",
+    "src/Serilog/LoggerConfiguration.cs:222: ERROR",
+    "parse errors: semantic absence is unknown"
+  ],
+  "analysis_ms": 1324.1,
+  "entities": 7997,
+  "facts": 143390,
+  "rules": {
+    "abstract-factory": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.097,
+          "dependencies": [
+            "abstract-factory#nominal-families"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "adapter": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.068,
+          "dependencies": [
+            "adapter#object-adapter"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "bridge": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 4,
+          "rows_examined": 1,
+          "elapsed_ms": 0.062,
+          "dependencies": [
+            "bridge#runtime-composition"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "builder": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 271,
+          "rows_examined": 135,
+          "elapsed_ms": 0.534,
+          "dependencies": [
+            "builder#director",
+            "builder#mutable-product"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "chain-of-responsibility": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.067,
+          "dependencies": [
+            "chain-of-responsibility#linked-handlers"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "command": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 106,
+          "rows_examined": 52,
+          "elapsed_ms": 0.169,
+          "dependencies": [
+            "command#command-object"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "composite": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.045,
+          "dependencies": [
+            "composite#recursive-contract"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "decorator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.056,
+          "dependencies": [
+            "decorator#object-wrapper"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "facade": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 88,
+          "rows_examined": 43,
+          "elapsed_ms": 0.134,
+          "dependencies": [
+            "facade#object-surface"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "factory-method": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.05,
+          "dependencies": [
+            "factory-method#virtual-slot"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "flyweight": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 6,
+          "rows_examined": 2,
+          "elapsed_ms": 0.078,
+          "dependencies": [
+            "flyweight#explicit-interning"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "interpreter": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.072,
+          "dependencies": [
+            "interpreter#expression-objects"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "iterator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 4618,
+          "rows_examined": 3450,
+          "elapsed_ms": 5.358,
+          "dependencies": [
+            "iterator#delegated-cursor",
+            "iterator#delegated-generator",
+            "iterator#explicit-cursor",
+            "iterator#generator",
+            "iterator#paired-cursor"
+          ]
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$iterator": {
+              "name": "MapToDictionaryElements",
+              "path": "src/Serilog/Capturing/PropertyValueConverter.cs",
+              "line": 189,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "MapToSequenceElements",
+              "path": "src/Serilog/Capturing/PropertyValueConverter.cs",
+              "line": 238,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "Tokenize",
+              "path": "src/Serilog/Parsing/MessageTemplateParser.cs",
+              "line": 48,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "mediator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 112,
+          "rows_examined": 55,
+          "elapsed_ms": 0.236,
+          "dependencies": [
+            "mediator#direct-colleagues"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "memento": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 70,
+          "rows_examined": 34,
+          "elapsed_ms": 0.208,
+          "dependencies": [
+            "memento#snapshot-object"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "observer": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 26,
+          "rows_examined": 12,
+          "elapsed_ms": 0.096,
+          "dependencies": [
+            "observer#listener-registry"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "prototype": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 218,
+          "rows_examined": 110,
+          "elapsed_ms": 0.315,
+          "dependencies": [
+            "prototype#explicit-copy"
+          ]
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$unit": {
+              "name": "Logger",
+              "path": "src/Serilog/Core/Logger.cs",
+              "line": 26,
+              "kind": "CLASS"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "proxy": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.071,
+          "dependencies": [
+            "proxy#guarded-access"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "singleton": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 30,
+          "rows_examined": 14,
+          "elapsed_ms": 0.106,
+          "dependencies": [
+            "singleton#lazy-guarded"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "state": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 4,
+          "rows_examined": 1,
+          "elapsed_ms": 0.084,
+          "dependencies": [
+            "state#state-object"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "strategy": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 4,
+          "rows_examined": 1,
+          "elapsed_ms": 0.062,
+          "dependencies": [
+            "strategy#strategy-object"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "template-method": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.042,
+          "dependencies": [
+            "template-method#virtual-skeleton"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "visitor": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 26,
+          "rows_examined": 12,
+          "elapsed_ms": 0.1,
+          "dependencies": [
+            "visitor#named-dispatch"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "gof.iterator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 4619,
+          "rows_examined": 3450,
+          "elapsed_ms": 5.35,
+          "dependencies": [
+            "gof.iterator",
+            "iterator#delegated-cursor",
+            "iterator#delegated-generator",
+            "iterator#explicit-cursor",
+            "iterator#generator",
+            "iterator#paired-cursor"
+          ]
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$iterator": {
+              "name": "MapToDictionaryElements",
+              "path": "src/Serilog/Capturing/PropertyValueConverter.cs",
+              "line": 189,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "MapToSequenceElements",
+              "path": "src/Serilog/Capturing/PropertyValueConverter.cs",
+              "line": 238,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "Tokenize",
+              "path": "src/Serilog/Parsing/MessageTemplateParser.cs",
+              "line": 48,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "gof.builder": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 272,
+          "rows_examined": 135,
+          "elapsed_ms": 0.568,
+          "dependencies": [
+            "builder#director",
+            "builder#mutable-product",
+            "gof.builder"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "iterator#generator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 1429,
+          "rows_examined": 1202,
+          "elapsed_ms": 1.774,
+          "dependencies": [
+            "iterator#generator"
+          ]
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$iterator": {
+              "name": "MapToDictionaryElements",
+              "path": "src/Serilog/Capturing/PropertyValueConverter.cs",
+              "line": 189,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "MapToSequenceElements",
+              "path": "src/Serilog/Capturing/PropertyValueConverter.cs",
+              "line": 238,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "Tokenize",
+              "path": "src/Serilog/Parsing/MessageTemplateParser.cs",
+              "line": 48,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "iterator#delegated-generator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 1429,
+          "rows_examined": 1202,
+          "elapsed_ms": 1.477,
+          "dependencies": [
+            "iterator#delegated-generator"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "syntax.generators": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 759,
+          "rows_examined": 758,
+          "elapsed_ms": 0.78,
+          "dependencies": []
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$iterator": {
+              "name": "MapToDictionaryElements",
+              "path": "src/Serilog/Capturing/PropertyValueConverter.cs",
+              "line": 189,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "MapToSequenceElements",
+              "path": "src/Serilog/Capturing/PropertyValueConverter.cs",
+              "line": 238,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "Tokenize",
+              "path": "src/Serilog/Parsing/MessageTemplateParser.cs",
+              "line": 48,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    }
+  },
+  "engine": {
+    "ir_version": "1.3.1",
+    "source_sha256": {
+      "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+      "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+      "catalog.py": "481bd96fa5f63b452fc00e8eb184915da3271941db433c9281fe35da16d94ed9",
+      "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+      "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+      "frontend.py": "beb0b61e352130dc36794e6f1226ae7fa59e9c1466e056ca95680fa1fd992672",
+      "kenql.py": "ecf8e6107437ff731601fc46e6fa912933b4645d7a5db02fc8e6483f1fdaa294",
+      "model.py": "c6c80afd81eec06b480eb0c41f0ddbd9feefee86ff1a0c9ef22ba03f80ac8eb8",
+      "modern_patterns/dependency-injection.toml": "c7c5295207795d24fe7f854fe284ca544819addf8f0022705cf648e213b2ce1c",
+      "patterns/abstract-factory.toml": "f7dcc43c213062cc082f2f535b80310dbe9bfac02c03063cfb587c0ee72cd2b2",
+      "patterns/adapter.toml": "14f98bb572a7a115e2d534e45c8231cb2919afeb04dd9921858af412606ae65e",
+      "patterns/bridge.toml": "0eba499d3bb2d9d65247adaf1a225ca94a895a6f99d50bfea91157836b1c227a",
+      "patterns/builder.toml": "9cda9a8b9b6f24d33eb5ee8499e4dff895129aedbf0b0f69fc5ffceb205ccc3a",
+      "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+      "patterns/command.toml": "bc448c747efa5d42c12af52d3257c5f33e1281631ac38a4ca09c8950345571b0",
+      "patterns/composite.toml": "ac8020a30dbecdfe459a052db8f8104f88831f60fa05b127e02c9840de2e474c",
+      "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+      "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+      "patterns/factory-method.toml": "57222bf27ee3680d8dd297ea301d37f30817c0e05089eaaf2484f11751f50120",
+      "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+      "patterns/interpreter.toml": "22d75c5e51e14a666baa88f85750b9f3d848cb48f35fb1436790c03e0cd1251a",
+      "patterns/iterator.toml": "394b2581bfbf192ed864f45afc6a51201d07a3527389f28ba507be0c557c049b",
+      "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+      "patterns/memento.toml": "37001a919ac72ad4be1302392355725f817ac8da2e83cbefa47fe8bf816796c3",
+      "patterns/observer.toml": "d36c30906b7666d46f290c577731de89d88338b4d9cc730e6c67acdbfd53c8f8",
+      "patterns/prototype.toml": "1d28a70cf7e10e7af87f14a72b44573871363296ee19e74ae9920ec83de53895",
+      "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+      "patterns/singleton.toml": "01d83cc97ac6e68fbdcd179d9e97a2f02ee8e857735563c776aedd3023d4a390",
+      "patterns/state.toml": "be0e605d806b8314d83dc3dbed258b44dff17bd5daee23e15a87c2ac1281b1e7",
+      "patterns/strategy.toml": "6b436207357fc02e444ea2b2340aea73c125973372e6949a7f187511295adbcd",
+      "patterns/template-method.toml": "2555374cac05e3b8ca1d7cc32e5d9fe8c20ad5cad970f87c31ac4d995f7dd178",
+      "patterns/visitor.toml": "42be1ea4e8740c824e5b5febcaafcbc9b6d86d49f4476155141f1498751e2bcf",
+      "query.py": "2b0f98664753b6d4c03205420a910f43c772b92daee960ff6fe09c53d40c2730",
+      "rules.py": "5407576435035d3b6ce91b304894da9c86c3f58211763289b1eb4d45fb178972",
+      "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+      "semantic.py": "3e0c475904e96bb4c63f6766b5265dfef421562c9d827df3095d97d67e6cb0ca",
+      "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df"
+    }
+  },
+  "budget": {
+    "max_matches": 1000,
+    "max_rows": 500000,
+    "max_states": 100000,
+    "timeout_ms": 5000
+  },
+  "python_generator_oracle": {
+    "expected": [],
+    "detected": [],
+    "missing": [],
+    "unexpected": [],
+    "parse_errors": []
+  }
+}

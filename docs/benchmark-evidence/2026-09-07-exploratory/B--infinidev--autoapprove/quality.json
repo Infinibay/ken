@@ -1,0 +1,26 @@
+{
+  "task": "B",
+  "condition": "infinidev autoapprove",
+  "evaluation": "Manual sobre final entregada, rúbrica privada común 0/1/2",
+  "scores": [
+    2,
+    2,
+    2,
+    2,
+    2
+  ],
+  "total": 10,
+  "reasons": [
+    "Discovery y override correctos, citas _paths.py:69-85 cotejadas en snapshot",
+    "Entrada MCP y error sin marcador correctos; mcp/server.py:91-106 cotejado",
+    "Reutilización POST sobre puerto descrita correctamente; client.py:83-102",
+    "Timeout conserva puerto sin spawn; URL/OSError limpia y reintenta, coincide snapshot",
+    "Spawn mismo intérprete, log y polling descritos; script entregado ejecutado externamente con seis PASS"
+  ],
+  "external_check": "external-check.metadata.json; exit 0",
+  "limits": [
+    "HTTP y spawn simulados; no integración real ni pytest",
+    "Cotejo focalizado de citas nucleares; 10/10 no garantiza todas afirmaciones accesorias",
+    "Una respuesta por tarea/condición; evaluación no ciega"
+  ]
+}

@@ -1,0 +1,103 @@
+diff --git a/src/ken/_paths.py b/src/ken/_paths.py
+index 532fd3a..da58f39 100644
+--- a/src/ken/_paths.py
++++ b/src/ken/_paths.py
+@@ -48,13 +48,16 @@ def log_path(project_root: Path) -> Path:
+     return ken_dir(project_root) / LOG_FILENAME
+ 
+ 
+-def resolve_project_path(project_root: Path, path: str | Path) -> Path:
++def resolve_project_path(
++    project_root: Path, path: str | Path, *, must_exist: bool = False
++) -> Path:
+     """Resolve *path* and require it to remain inside *project_root*.
+ 
+     Relative paths are interpreted from the project root. Absolute paths are
+     accepted when they point inside it. Resolving both sides before the
+     containment check also rejects ``..`` traversal and escapes through
+-    existing symbolic links.
++    existing symbolic links. If *must_exist* is true, missing in-project
++    targets raise FileNotFoundError after the containment check.
+     """
+     root = project_root.expanduser().resolve()
+     supplied = Path(path).expanduser()
+@@ -63,6 +66,8 @@ def resolve_project_path(project_root: Path, path: str | Path) -> Path:
+         resolved.relative_to(root)
+     except ValueError as err:
+         raise ValueError(f"path escapes project root: {path}") from err
++    if must_exist and not resolved.exists():
++        raise FileNotFoundError(f"path does not exist: {resolved}")
+     return resolved
+ 
+ 
+diff --git a/tests/test_paths.py b/tests/test_paths.py
+index 692e042..c7fe834 100644
+--- a/tests/test_paths.py
++++ b/tests/test_paths.py
+@@ -81,24 +81,55 @@ def test_resolve_project_path_accepts_internal_path(tmp_path, absolute):
+     assert _paths.resolve_project_path(root, supplied) == source.resolve()
+ 
+ 
+-def test_resolve_project_path_rejects_parent_traversal(tmp_path):
++@pytest.mark.parametrize("absolute", [False, True])
++@pytest.mark.parametrize("directory", [False, True])
++def test_resolve_project_path_requires_existing_target(tmp_path, absolute, directory):
++    root = tmp_path / "project"
++    target = root / "target"
++    root.mkdir()
++    if directory:
++        target.mkdir()
++    else:
++        target.write_text("", encoding="utf-8")
++    supplied = target if absolute else Path("target")
++
++    assert _paths.resolve_project_path(root, supplied, must_exist=True) == target.resolve()
++
++
++@pytest.mark.parametrize("absolute", [False, True])
++def test_resolve_project_path_missing_target(tmp_path, absolute):
++    root = tmp_path / "project"
++    root.mkdir()
++    target = root / "missing" / "module.py"
++    supplied = target if absolute else Path("missing/module.py")
++
++    assert _paths.resolve_project_path(root, supplied) == target.resolve()
++    assert _paths.resolve_project_path(root, supplied, must_exist=False) == target.resolve()
++    with pytest.raises(FileNotFoundError):
++        _paths.resolve_project_path(root, supplied, must_exist=True)
++
++
++@pytest.mark.parametrize("must_exist", [False, True])
++def test_resolve_project_path_rejects_parent_traversal(tmp_path, must_exist):
+     root = tmp_path / "project"
+     root.mkdir()
+ 
+     with pytest.raises(ValueError, match=r"^path escapes project root: "):
+-        _paths.resolve_project_path(root, "../outside.py")
++        _paths.resolve_project_path(root, "../outside.py", must_exist=must_exist)
+ 
+ 
+-def test_resolve_project_path_rejects_absolute_external_path(tmp_path):
++@pytest.mark.parametrize("must_exist", [False, True])
++def test_resolve_project_path_rejects_absolute_external_path(tmp_path, must_exist):
+     root = tmp_path / "project"
+     root.mkdir()
+     outside = tmp_path / "outside.py"
+ 
+     with pytest.raises(ValueError, match=r"^path escapes project root: "):
+-        _paths.resolve_project_path(root, outside)
++        _paths.resolve_project_path(root, outside, must_exist=must_exist)
+ 
+ 
+-def test_resolve_project_path_rejects_symlink_escape(tmp_path):
++@pytest.mark.parametrize("must_exist", [False, True])
++def test_resolve_project_path_rejects_symlink_escape(tmp_path, must_exist):
+     root = tmp_path / "project"
+     root.mkdir()
+     outside = tmp_path / "outside"
+@@ -106,4 +137,4 @@ def test_resolve_project_path_rejects_symlink_escape(tmp_path):
+     (root / "linked").symlink_to(outside, target_is_directory=True)
+ 
+     with pytest.raises(ValueError, match=r"^path escapes project root: "):
+-        _paths.resolve_project_path(root, "linked/secret.py")
++        _paths.resolve_project_path(root, "linked/secret.py", must_exist=must_exist)

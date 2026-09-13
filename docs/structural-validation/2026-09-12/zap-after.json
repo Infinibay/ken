@@ -1,0 +1,2549 @@
+{
+  "repo": "zap",
+  "commit": "bb1a55dd13257cf7cbd06b4146674c67ca614dea",
+  "files": [
+    "array.go",
+    "buffer/buffer.go",
+    "buffer/pool.go",
+    "config.go",
+    "doc.go",
+    "encoder.go",
+    "error.go",
+    "exp/zapfield/zapfield.go",
+    "exp/zapslog/doc.go",
+    "exp/zapslog/handler.go",
+    "exp/zapslog/options.go",
+    "field.go",
+    "flag.go",
+    "global.go",
+    "http_handler.go",
+    "level.go",
+    "logger.go",
+    "options.go",
+    "sink.go",
+    "sugar.go",
+    "time.go",
+    "writer.go",
+    "zapcore/buffered_write_syncer.go",
+    "zapcore/clock.go",
+    "zapcore/console_encoder.go",
+    "zapcore/core.go",
+    "zapcore/doc.go",
+    "zapcore/encoder.go",
+    "zapcore/entry.go",
+    "zapcore/error.go",
+    "zapcore/field.go",
+    "zapcore/hook.go",
+    "zapcore/increase_level.go",
+    "zapcore/json_encoder.go",
+    "zapcore/lazy_with.go",
+    "zapcore/level.go",
+    "zapcore/level_strings.go",
+    "zapcore/marshaler.go",
+    "zapcore/memory_encoder.go",
+    "zapcore/reflected_encoder.go",
+    "zapcore/sampler.go",
+    "zapcore/tee.go",
+    "zapcore/write_syncer.go",
+    "zapgrpc/zapgrpc.go",
+    "zapio/writer.go"
+  ],
+  "language": "go",
+  "diagnostics": [],
+  "analysis_ms": 2847.93,
+  "entities": 5088,
+  "facts": 94484,
+  "rules": {
+    "abstract-factory": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.034
+        }
+      },
+      "matches": []
+    },
+    "adapter": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.011
+        }
+      },
+      "matches": []
+    },
+    "bridge": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.008
+        }
+      },
+      "matches": []
+    },
+    "builder": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 408,
+          "states": 410,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 1.402
+        }
+      },
+      "matches": [
+        {
+          "id": "builder",
+          "bindings": {
+            "$unit": "logger.go::module/CLASS:Logger"
+          },
+          "status": "structural_match",
+          "variant": "fluent",
+          "path": "logger.go",
+          "line": 41,
+          "unknown": [],
+          "evidence": [
+            "logger.go:154",
+            "logger.go:156",
+            "logger.go:158",
+            "logger.go:160",
+            "logger.go:162",
+            "logger.go:180",
+            "logger.go:182",
+            "logger.go:184",
+            "logger.go:185",
+            "logger.go:41"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "Logger",
+              "path": "logger.go",
+              "line": 41,
+              "kind": "CLASS"
+            }
+          }
+        },
+        {
+          "id": "builder",
+          "bindings": {
+            "$unit": "zapcore/entry.go::module/CLASS:CheckedEntry"
+          },
+          "status": "structural_match",
+          "variant": "fluent",
+          "path": "zapcore/entry.go",
+          "line": 218,
+          "unknown": [],
+          "evidence": [
+            "zapcore/entry.go:218",
+            "zapcore/entry.go:298",
+            "zapcore/entry.go:300",
+            "zapcore/entry.go:301",
+            "zapcore/entry.go:303",
+            "zapcore/entry.go:304",
+            "zapcore/entry.go:319",
+            "zapcore/entry.go:321",
+            "zapcore/entry.go:322",
+            "zapcore/entry.go:324",
+            "zapcore/entry.go:325",
+            "zapcore/entry.go:331",
+            "zapcore/entry.go:333",
+            "zapcore/entry.go:334",
+            "zapcore/entry.go:336",
+            "zapcore/entry.go:337"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "CheckedEntry",
+              "path": "zapcore/entry.go",
+              "line": 218,
+              "kind": "CLASS"
+            }
+          }
+        }
+      ]
+    },
+    "chain-of-responsibility": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.01
+        }
+      },
+      "matches": []
+    },
+    "command": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 692,
+          "states": 644,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 1.827
+        }
+      },
+      "matches": [
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "buffer/buffer.go::module/CLASS:Buffer",
+            "$receiver": "buffer/buffer.go::module/CLASS:Buffer/STORAGE:pool",
+            "$execute": "buffer/buffer.go::module/CLASS:Buffer/CALLABLE:Free@4337"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "buffer/buffer.go",
+          "line": 35,
+          "unknown": [],
+          "evidence": [
+            "buffer/buffer.go:144",
+            "buffer/buffer.go:145",
+            "buffer/buffer.go:37"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "Buffer",
+              "path": "buffer/buffer.go",
+              "line": 35,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "pool",
+              "path": "buffer/buffer.go",
+              "line": 37,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Free",
+              "path": "buffer/buffer.go",
+              "line": 144,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "buffer/pool.go::module/CLASS:Pool",
+            "$receiver": "buffer/pool.go::module/CLASS:Pool/STORAGE:p",
+            "$execute": "buffer/pool.go::module/CLASS:Pool/CALLABLE:Get@1518"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "buffer/pool.go",
+          "line": 28,
+          "unknown": [],
+          "evidence": [
+            "buffer/pool.go:29",
+            "buffer/pool.go:44",
+            "buffer/pool.go:45"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "Pool",
+              "path": "buffer/pool.go",
+              "line": 28,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "p",
+              "path": "buffer/pool.go",
+              "line": 29,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Get",
+              "path": "buffer/pool.go",
+              "line": 44,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "level.go::module/CLASS:AtomicLevel",
+            "$receiver": "level.go::module/CLASS:AtomicLevel/STORAGE:l",
+            "$execute": "level.go::module/CLASS:AtomicLevel/CALLABLE:Level@4202"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "level.go",
+          "line": 71,
+          "unknown": [],
+          "evidence": [
+            "level.go:117",
+            "level.go:118",
+            "level.go:72"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "AtomicLevel",
+              "path": "level.go",
+              "line": 71,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "l",
+              "path": "level.go",
+              "line": 72,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Level",
+              "path": "level.go",
+              "line": 117,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "logger.go::module/CLASS:Logger",
+            "$receiver": "logger.go::module/CLASS:Logger/STORAGE:core",
+            "$execute": "logger.go::module/CLASS:Logger/CALLABLE:Sync@10488"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "logger.go",
+          "line": 41,
+          "unknown": [],
+          "evidence": [
+            "logger.go:302",
+            "logger.go:303",
+            "logger.go:42"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "Logger",
+              "path": "logger.go",
+              "line": 41,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "core",
+              "path": "logger.go",
+              "line": 42,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Sync",
+              "path": "logger.go",
+              "line": 302,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "sugar.go::module/CLASS:SugaredLogger",
+            "$receiver": "sugar.go::module/CLASS:SugaredLogger/STORAGE:base",
+            "$execute": "sugar.go::module/CLASS:SugaredLogger/CALLABLE:Desugar@2522"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "sugar.go",
+          "line": 55,
+          "unknown": [],
+          "evidence": [
+            "sugar.go:56",
+            "sugar.go:63",
+            "sugar.go:64"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "SugaredLogger",
+              "path": "sugar.go",
+              "line": 55,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "base",
+              "path": "sugar.go",
+              "line": 56,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Desugar",
+              "path": "sugar.go",
+              "line": 63,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "sugar.go::module/CLASS:SugaredLogger",
+            "$receiver": "sugar.go::module/CLASS:SugaredLogger/STORAGE:base",
+            "$execute": "sugar.go::module/CLASS:SugaredLogger/CALLABLE:Sync@12594"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "sugar.go",
+          "line": 55,
+          "unknown": [],
+          "evidence": [
+            "sugar.go:341",
+            "sugar.go:342",
+            "sugar.go:56"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "SugaredLogger",
+              "path": "sugar.go",
+              "line": 55,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "base",
+              "path": "sugar.go",
+              "line": 56,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Sync",
+              "path": "sugar.go",
+              "line": 341,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer",
+            "$receiver": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer/STORAGE:mu",
+            "$execute": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer/CALLABLE:Stop@5662"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/buffered_write_syncer.go",
+          "line": 77,
+          "unknown": [],
+          "evidence": [
+            "zapcore/buffered_write_syncer.go:103",
+            "zapcore/buffered_write_syncer.go:190",
+            "zapcore/buffered_write_syncer.go:193"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "BufferedWriteSyncer",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 77,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "mu",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 103,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Stop",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 190,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer",
+            "$receiver": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer/STORAGE:ticker",
+            "$execute": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer/CALLABLE:Stop@5662"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/buffered_write_syncer.go",
+          "line": 77,
+          "unknown": [],
+          "evidence": [
+            "zapcore/buffered_write_syncer.go:107",
+            "zapcore/buffered_write_syncer.go:190",
+            "zapcore/buffered_write_syncer.go:205"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "BufferedWriteSyncer",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 77,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "ticker",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 107,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Stop",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 190,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer",
+            "$receiver": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer/STORAGE:WS",
+            "$execute": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer/CALLABLE:Sync@4968"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/buffered_write_syncer.go",
+          "line": 77,
+          "unknown": [],
+          "evidence": [
+            "zapcore/buffered_write_syncer.go:158",
+            "zapcore/buffered_write_syncer.go:167",
+            "zapcore/buffered_write_syncer.go:82"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "BufferedWriteSyncer",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 77,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "WS",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 82,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Sync",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 158,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer",
+            "$receiver": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer/STORAGE:mu",
+            "$execute": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer/CALLABLE:Sync@4968"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/buffered_write_syncer.go",
+          "line": 77,
+          "unknown": [],
+          "evidence": [
+            "zapcore/buffered_write_syncer.go:103",
+            "zapcore/buffered_write_syncer.go:158",
+            "zapcore/buffered_write_syncer.go:159"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "BufferedWriteSyncer",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 77,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "mu",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 103,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Sync",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 158,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer",
+            "$receiver": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer/STORAGE:writer",
+            "$execute": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer/CALLABLE:Sync@4968"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/buffered_write_syncer.go",
+          "line": 77,
+          "unknown": [],
+          "evidence": [
+            "zapcore/buffered_write_syncer.go:106",
+            "zapcore/buffered_write_syncer.go:158",
+            "zapcore/buffered_write_syncer.go:164"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "BufferedWriteSyncer",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 77,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "writer",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 106,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Sync",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 158,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer",
+            "$receiver": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer/STORAGE:Clock",
+            "$execute": "zapcore/buffered_write_syncer.go::module/CLASS:BufferedWriteSyncer/CALLABLE:initialize@3736"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/buffered_write_syncer.go",
+          "line": 77,
+          "unknown": [],
+          "evidence": [
+            "zapcore/buffered_write_syncer.go:100",
+            "zapcore/buffered_write_syncer.go:112",
+            "zapcore/buffered_write_syncer.go:127"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "BufferedWriteSyncer",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 77,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "Clock",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 100,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "initialize",
+              "path": "zapcore/buffered_write_syncer.go",
+              "line": 112,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/console_encoder.go::module/CLASS:consoleEncoder",
+            "$receiver": "zapcore/console_encoder.go::module/CLASS:consoleEncoder/STORAGE:jsonEncoder",
+            "$execute": "zapcore/console_encoder.go::module/CLASS:consoleEncoder/CALLABLE:Clone@2281"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/console_encoder.go",
+          "line": 46,
+          "unknown": [],
+          "evidence": [
+            "zapcore/console_encoder.go:66",
+            "zapcore/console_encoder.go:67"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "consoleEncoder",
+              "path": "zapcore/console_encoder.go",
+              "line": 46,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "jsonEncoder",
+              "path": "zapcore/console_encoder.go",
+              "line": 67,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Clone",
+              "path": "zapcore/console_encoder.go",
+              "line": 66,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/core.go::module/CLASS:ioCore",
+            "$receiver": "zapcore/core.go::module/CLASS:ioCore/STORAGE:out",
+            "$execute": "zapcore/core.go::module/CLASS:ioCore/CALLABLE:Sync@3619"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/core.go",
+          "line": 66,
+          "unknown": [],
+          "evidence": [
+            "zapcore/core.go:112",
+            "zapcore/core.go:113",
+            "zapcore/core.go:69"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "ioCore",
+              "path": "zapcore/core.go",
+              "line": 66,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "out",
+              "path": "zapcore/core.go",
+              "line": 69,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Sync",
+              "path": "zapcore/core.go",
+              "line": 112,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/core.go::module/CLASS:ioCore",
+            "$receiver": "zapcore/core.go::module/CLASS:ioCore/STORAGE:enc",
+            "$execute": "zapcore/core.go::module/CLASS:ioCore/CALLABLE:clone@3675"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/core.go",
+          "line": 66,
+          "unknown": [],
+          "evidence": [
+            "zapcore/core.go:116",
+            "zapcore/core.go:119",
+            "zapcore/core.go:68"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "ioCore",
+              "path": "zapcore/core.go",
+              "line": 66,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "enc",
+              "path": "zapcore/core.go",
+              "line": 68,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "clone",
+              "path": "zapcore/core.go",
+              "line": 116,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/increase_level.go::module/CLASS:levelFilterCore",
+            "$receiver": "zapcore/increase_level.go::module/CLASS:levelFilterCore/STORAGE:core",
+            "$execute": "zapcore/increase_level.go::module/CLASS:levelFilterCore/CALLABLE:Sync@2449"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/increase_level.go",
+          "line": 25,
+          "unknown": [],
+          "evidence": [
+            "zapcore/increase_level.go:26",
+            "zapcore/increase_level.go:73",
+            "zapcore/increase_level.go:74"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "levelFilterCore",
+              "path": "zapcore/increase_level.go",
+              "line": 25,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "core",
+              "path": "zapcore/increase_level.go",
+              "line": 26,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Sync",
+              "path": "zapcore/increase_level.go",
+              "line": 73,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/json_encoder.go::module/CLASS:jsonEncoder",
+            "$receiver": "zapcore/json_encoder.go::module/CLASS:jsonEncoder/STORAGE:buf",
+            "$execute": "zapcore/json_encoder.go::module/CLASS:jsonEncoder/CALLABLE:Clone@10493"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/json_encoder.go",
+          "line": 54,
+          "unknown": [],
+          "evidence": [
+            "zapcore/json_encoder.go:346",
+            "zapcore/json_encoder.go:348",
+            "zapcore/json_encoder.go:56"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "jsonEncoder",
+              "path": "zapcore/json_encoder.go",
+              "line": 54,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "buf",
+              "path": "zapcore/json_encoder.go",
+              "line": 56,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Clone",
+              "path": "zapcore/json_encoder.go",
+              "line": 346,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/json_encoder.go::module/CLASS:jsonEncoder",
+            "$receiver": "zapcore/json_encoder.go::module/CLASS:jsonEncoder/STORAGE:buf",
+            "$execute": "zapcore/json_encoder.go::module/CLASS:jsonEncoder/CALLABLE:addElementSeparator@13266"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/json_encoder.go",
+          "line": 54,
+          "unknown": [],
+          "evidence": [
+            "zapcore/json_encoder.go:455",
+            "zapcore/json_encoder.go:456",
+            "zapcore/json_encoder.go:56"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "jsonEncoder",
+              "path": "zapcore/json_encoder.go",
+              "line": 54,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "buf",
+              "path": "zapcore/json_encoder.go",
+              "line": 56,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "addElementSeparator",
+              "path": "zapcore/json_encoder.go",
+              "line": 455,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/json_encoder.go::module/CLASS:jsonEncoder",
+            "$receiver": "zapcore/json_encoder.go::module/CLASS:jsonEncoder/STORAGE:buf",
+            "$execute": "zapcore/json_encoder.go::module/CLASS:jsonEncoder/CALLABLE:closeOpenNamespaces@12899"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/json_encoder.go",
+          "line": 54,
+          "unknown": [],
+          "evidence": [
+            "zapcore/json_encoder.go:437",
+            "zapcore/json_encoder.go:439",
+            "zapcore/json_encoder.go:56"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "jsonEncoder",
+              "path": "zapcore/json_encoder.go",
+              "line": 54,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "buf",
+              "path": "zapcore/json_encoder.go",
+              "line": 56,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "closeOpenNamespaces",
+              "path": "zapcore/json_encoder.go",
+              "line": 437,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/json_encoder.go::module/CLASS:jsonEncoder",
+            "$receiver": "zapcore/json_encoder.go::module/CLASS:jsonEncoder/STORAGE:reflectBuf",
+            "$execute": "zapcore/json_encoder.go::module/CLASS:jsonEncoder/CALLABLE:resetReflectBuf@4274"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/json_encoder.go",
+          "line": 54,
+          "unknown": [],
+          "evidence": [
+            "zapcore/json_encoder.go:154",
+            "zapcore/json_encoder.go:159",
+            "zapcore/json_encoder.go:61"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "jsonEncoder",
+              "path": "zapcore/json_encoder.go",
+              "line": 54,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "reflectBuf",
+              "path": "zapcore/json_encoder.go",
+              "line": 61,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "resetReflectBuf",
+              "path": "zapcore/json_encoder.go",
+              "line": 154,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/json_encoder.go::module/CLASS:jsonEncoder",
+            "$receiver": "zapcore/json_encoder.go::module/CLASS:jsonEncoder/STORAGE:buf",
+            "$execute": "zapcore/json_encoder.go::module/CLASS:jsonEncoder/CALLABLE:truncate@12842"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/json_encoder.go",
+          "line": 54,
+          "unknown": [],
+          "evidence": [
+            "zapcore/json_encoder.go:433",
+            "zapcore/json_encoder.go:434",
+            "zapcore/json_encoder.go:56"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "jsonEncoder",
+              "path": "zapcore/json_encoder.go",
+              "line": 54,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "buf",
+              "path": "zapcore/json_encoder.go",
+              "line": 56,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "truncate",
+              "path": "zapcore/json_encoder.go",
+              "line": 433,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/lazy_with.go::module/CLASS:lazyWithCore",
+            "$receiver": "zapcore/lazy_with.go::module/CLASS:lazyWithCore/STORAGE:core",
+            "$execute": "zapcore/lazy_with.go::module/CLASS:lazyWithCore/CALLABLE:Sync@2393"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/lazy_with.go",
+          "line": 25,
+          "unknown": [],
+          "evidence": [
+            "zapcore/lazy_with.go:26",
+            "zapcore/lazy_with.go:74",
+            "zapcore/lazy_with.go:76"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "lazyWithCore",
+              "path": "zapcore/lazy_with.go",
+              "line": 25,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "core",
+              "path": "zapcore/lazy_with.go",
+              "line": 26,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Sync",
+              "path": "zapcore/lazy_with.go",
+              "line": 74,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/lazy_with.go::module/CLASS:lazyWithCore",
+            "$receiver": "zapcore/lazy_with.go::module/CLASS:lazyWithCore/STORAGE:originalCore",
+            "$execute": "zapcore/lazy_with.go::module/CLASS:lazyWithCore/CALLABLE:initOnce@1597"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/lazy_with.go",
+          "line": 25,
+          "unknown": [],
+          "evidence": [
+            "zapcore/lazy_with.go:27",
+            "zapcore/lazy_with.go:42",
+            "zapcore/lazy_with.go:44"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "lazyWithCore",
+              "path": "zapcore/lazy_with.go",
+              "line": 25,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "originalCore",
+              "path": "zapcore/lazy_with.go",
+              "line": 27,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "initOnce",
+              "path": "zapcore/lazy_with.go",
+              "line": 42,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "zapcore/write_syncer.go::module/CLASS:lockedWriteSyncer",
+            "$receiver": "zapcore/write_syncer.go::module/CLASS:lockedWriteSyncer/STORAGE:ws",
+            "$execute": "zapcore/write_syncer.go::module/CLASS:lockedWriteSyncer/CALLABLE:Sync@2254"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/write_syncer.go",
+          "line": 49,
+          "unknown": [],
+          "evidence": [
+            "zapcore/write_syncer.go:51",
+            "zapcore/write_syncer.go:71",
+            "zapcore/write_syncer.go:73"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "lockedWriteSyncer",
+              "path": "zapcore/write_syncer.go",
+              "line": 49,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "ws",
+              "path": "zapcore/write_syncer.go",
+              "line": 51,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "Sync",
+              "path": "zapcore/write_syncer.go",
+              "line": 71,
+              "kind": "CALLABLE"
+            }
+          }
+        }
+      ]
+    },
+    "composite": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.016
+        }
+      },
+      "matches": []
+    },
+    "decorator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.009
+        }
+      },
+      "matches": []
+    },
+    "facade": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 14820,
+          "states": 8429,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 24.985
+        }
+      },
+      "matches": [
+        {
+          "id": "facade",
+          "bindings": {
+            "$unit": "zapcore/entry.go::module/CLASS:CheckedEntry"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/entry.go",
+          "line": 218,
+          "unknown": [],
+          "evidence": [
+            "zapcore/entry.go:218",
+            "zapcore/entry.go:246",
+            "zapcore/entry.go:290",
+            "zapcore/entry.go:312",
+            "zapcore/entry.go:313"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "CheckedEntry",
+              "path": "zapcore/entry.go",
+              "line": 218,
+              "kind": "CLASS"
+            }
+          }
+        },
+        {
+          "id": "facade",
+          "bindings": {
+            "$unit": "zapcore/write_syncer.go::module/CLASS:lockedWriteSyncer"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/write_syncer.go",
+          "line": 49,
+          "unknown": [],
+          "evidence": [
+            "zapcore/write_syncer.go:49",
+            "zapcore/write_syncer.go:64",
+            "zapcore/write_syncer.go:65",
+            "zapcore/write_syncer.go:66",
+            "zapcore/write_syncer.go:67",
+            "zapcore/write_syncer.go:71",
+            "zapcore/write_syncer.go:72",
+            "zapcore/write_syncer.go:73",
+            "zapcore/write_syncer.go:74"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "lockedWriteSyncer",
+              "path": "zapcore/write_syncer.go",
+              "line": 49,
+              "kind": "CLASS"
+            }
+          }
+        }
+      ]
+    },
+    "factory-method": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.025
+        }
+      },
+      "matches": []
+    },
+    "flyweight": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.023
+        }
+      },
+      "matches": []
+    },
+    "interpreter": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.011
+        }
+      },
+      "matches": []
+    },
+    "iterator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 680,
+          "states": 83,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.957
+        }
+      },
+      "matches": []
+    },
+    "mediator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 488,
+          "states": 489,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 1.04
+        }
+      },
+      "matches": []
+    },
+    "memento": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 12,
+          "states": 13,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.088
+        }
+      },
+      "matches": []
+    },
+    "observer": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.007
+        }
+      },
+      "matches": []
+    },
+    "prototype": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 4,
+          "states": 5,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.032
+        }
+      },
+      "matches": [
+        {
+          "id": "prototype",
+          "bindings": {
+            "$clone": "zapcore/console_encoder.go::module/CLASS:consoleEncoder/CALLABLE:Clone@2281",
+            "$unit": "zapcore/console_encoder.go::module/CLASS:consoleEncoder",
+            "$state": "zapcore/console_encoder.go::module/CLASS:consoleEncoder/STORAGE:jsonEncoder"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "zapcore/console_encoder.go",
+          "line": 46,
+          "unknown": [],
+          "evidence": [
+            "zapcore/console_encoder.go:66",
+            "zapcore/console_encoder.go:67"
+          ],
+          "roles": {
+            "$clone": {
+              "name": "Clone",
+              "path": "zapcore/console_encoder.go",
+              "line": 66,
+              "kind": "CALLABLE"
+            },
+            "$unit": {
+              "name": "consoleEncoder",
+              "path": "zapcore/console_encoder.go",
+              "line": 46,
+              "kind": "CLASS"
+            },
+            "$state": {
+              "name": "jsonEncoder",
+              "path": "zapcore/console_encoder.go",
+              "line": 67,
+              "kind": "STORAGE"
+            }
+          }
+        }
+      ]
+    },
+    "proxy": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.008
+        }
+      },
+      "matches": []
+    },
+    "singleton": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 11,
+          "states": 12,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.076
+        }
+      },
+      "matches": []
+    },
+    "state": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.012
+        }
+      },
+      "matches": []
+    },
+    "strategy": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 122,
+          "states": 121,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.422
+        }
+      },
+      "matches": []
+    },
+    "template-method": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.008
+        }
+      },
+      "matches": []
+    },
+    "visitor": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 9,
+          "states": 10,
+          "path_edges": 0,
+          "relations": {
+            "IS": 5043,
+            "DECLARES": 1402,
+            "OWNED_BY": 563,
+            "HAS_PARAMETER": 738,
+            "HAS_IMPORT": 203,
+            "HAS_TYPE_PARAMETER": 29,
+            "IMPORT_SYNTAX": 40,
+            "READS": 3707,
+            "RETURNS": 539,
+            "HAS_CALL": 1403,
+            "CALLEE_NAME": 1403,
+            "ARGUMENT": 1533,
+            "ASSIGNED_FROM": 537,
+            "FLOWS_TO": 1313,
+            "WRITES": 537,
+            "GUARDS_WRITE": 55,
+            "RECEIVER": 829,
+            "DELEGATES_TO": 829,
+            "CONDITIONAL_DELEGATION": 244,
+            "LOOKS_UP": 103,
+            "TYPE_NAME": 863,
+            "HAS_METHOD": 300,
+            "IN_TYPE": 300,
+            "HAS_FIELD": 158,
+            "PASSES_SELF_TO": 9,
+            "INITIALIZED_AS": 11,
+            "HAS_MATCH": 25,
+            "RETURNS_SELF": 7,
+            "SPAWNS_CONTEXT": 1,
+            "TYPE": 101,
+            "ALLOCATES_TYPE": 55,
+            "CREATES": 55,
+            "MAY_TYPE": 41,
+            "TARGET": 296,
+            "CALLS": 296,
+            "DELEGATES_TYPE": 205,
+            "RETURNS_CALL": 249,
+            "RETURNS_STORAGE": 61,
+            "RETURNS_NEW": 10,
+            "RETURNS_NEW_SELF": 1,
+            "BINDS_TO": 418,
+            "MAY_BIND_TO": 38,
+            "ENTITY": 5088,
+            "OPERATION": 32423,
+            "HAS_OPERATION": 32423
+          },
+          "elapsed_ms": 0.067
+        }
+      },
+      "matches": []
+    },
+    "gof.iterator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 1155,
+          "rows_examined": 1140,
+          "elapsed_ms": 1.358,
+          "dependencies": [
+            "gof.iterator",
+            "iterator#delegated-generator",
+            "iterator#explicit-cursor",
+            "iterator#generator"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "gof.builder": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 30430,
+          "rows_examined": 11284,
+          "elapsed_ms": 25.999,
+          "dependencies": [
+            "builder#director",
+            "builder#mutable-product",
+            "gof.builder"
+          ]
+        }
+      },
+      "matches": []
+    }
+  }
+}

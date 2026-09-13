@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path\nfrom ken._paths import socket_path\nfor r in (Path('/tmp/benchmark-nonexistent'),Path('relative')): assert socket_path(r)==r/'.ken'/'daemon.sock'"
+  ],
+  "cwd": "/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/ken-bench-swlj86oc",
+  "exit_code": 0,
+  "elapsed_seconds": 0.04,
+  "timeout": false,
+  "timeout_seconds": 15
+}

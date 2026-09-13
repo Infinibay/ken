@@ -1,0 +1,60 @@
+schema = "ken-rule/1"
+id = "factory-method"
+name = "Factory Method"
+category = "creational"
+description = "An overriding method chooses a concrete product."
+caveat = "Structural evidence requires review of intent and runtime behavior."
+legacy_query = "require $unit HAS_METHOD $factory\nrequire $factory OVERRIDES $base_factory\nrequire $factory RETURNS_NEW $product\n"
+query = '''
+query factory_method {
+ match "factory-method#virtual-slot"(creator: $creator, factory: $factory, product: $product, unit: $unit);
+ emit $creator, $factory, $product, $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "virtual-slot"
+status = "ready"
+languages = ["python", "java", "typescript", "cpp"]
+requires = ["override_resolution", "return_flow"]
+graph_requirements = ["El algoritmo usa el slot que reemplaza el creator concreto y el producto retornado satisface su contrato."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query factory_method {
+
+ require $unit HAS_METHOD $factory;
+ require $factory OVERRIDES $base_factory;
+ require $factory RETURNS_NEW $product;
+ emit $unit, creator=$unit, $factory, $product;
+}
+'''
+[[variants]]
+id = "contract-slot"
+status = "design"
+languages = ["go", "rust"]
+requires = ["contract_resolution", "call_targets"]
+graph_requirements = ["El algoritmo invoca una operación de creación suministrada por contrato; marcar variante sin herencia de clase."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[operations]]
+id = "client_flow"
+status = "ready"
+description = "An overriding factory slot produces the argument consumed by a client call."
+caveat = "Requires a direct argument/result link; local argument reaching definitions and runtime dispatch remain limited."
+query = '''
+query factory_client {
+ match "factory-method"(factory:$factory, product:$product);
+ require $factory OVERRIDES $slot;
+ require $creation TARGET $slot;
+ require $creation RESULT $value;
+ require $consumer ARGUMENT $argument;
+ require $argument VALUE $value;
+ emit $factory, $creation, $consumer;
+}
+'''

@@ -1,0 +1,9 @@
+Verificación parcial, sin cambios de producto ni commits. La herramienta rechazó la ejecución de matriz y pytest con `discovery_suppressed`; no dispongo de resultados experimentales ni afirmo que las pruebas hayan pasado.
+
+Fuente verificada: `src/ken/_paths.py:51-66` expande usuario, resuelve raíz y ruta, une las relativas a la raíz y verifica `resolved.relative_to(root)`, lanzando `ValueError("path escapes project root: …")` ante escape. Las absolutas internas se aceptan. Al resolver previamente, sigue enlaces simbólicos. No exige existencia (`resolve()` sin `strict=True`): inexistentes internos y enlaces rotos hacia dentro pasan pertenencia; externos se rechazan aunque no existan.
+
+Recorrido: `src/ken/mcp/server.py:1000` (`ken_read`) → `_project_relative_path` (`:325-330`) → validador. Para source: `:1028-1035` → `_impl_ken_file_snippets` (`:474-491`) → `src/ken/search.py:408`. Allí `:421-424` devuelve `file not indexed` si falta entrada. Si está indexado pero falta el archivo, `:474` llama a `_read_line_range` (`:789-794`), que devuelve cadena vacía ante `OSError`. Este helper no revalida confinamiento: la conclusión corresponde al recorrido MCP validado, no a todos los llamadores directos ni a carreras entre comprobación y apertura.
+
+Pruebas existentes: `tests/test_paths.py:72-109`, cinco casos para relativas/absolutas internas, traversal, absoluta externa y symlink externo. No ejecutadas por rechazo del controlador. Tampoco se pudo comprobar disponibilidad de dependencias de search/MCP.
+
+Git inicial mostró archivos staged A preexistentes, ninguna modificación no staged y `.infinidev/` untracked. No creé fixtures ni modifiqué archivos; la comprobación Git final fue rechazada junto con el comando de ejecución. Se requiere que el orquestador ejecute la comprobación reproducible en su contexto; esta entrega no satisface el criterio de salida auténtica de la matriz.

@@ -1,0 +1,115 @@
+schema = "ken-rule/1"
+id = "state"
+name = "State"
+category = "behavioral"
+description = "A context delegates through a contract and stores a concrete replacement."
+caveat = "State and Strategy share structure; transition intent requires review."
+legacy_query = "require $unit HAS_FIELD $state\nrequire $state TYPE $contract\nrequire $unit HAS_METHOD $request\nrequire $request DELEGATES_TO $state\nrequire $unit HAS_METHOD $transition\nrequire $transition WRITES $state\nrequire $state ASSIGNED_FROM $construction\nrequire $construction ALLOCATES_TYPE $concrete\nrequire $concrete SUBTYPE_OF $contract\n"
+query = '''
+query state {
+ any { match "state#state-object"(unit: $unit); }
+ or { match "state#context-transition"(unit: $unit); }
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "state-object"
+status = "ready"
+languages = ["python", "java", "typescript"]
+requires = ["receiver_identity", "transition_flow"]
+graph_requirements = ["Transición reemplaza el mismo slot que gobierna dispatch futuro; diferenciar evidencia de intención."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query state {
+
+ require $unit HAS_FIELD $state;
+ require $state TYPE $contract;
+ require $unit HAS_METHOD $request;
+ require $request DELEGATES_TO $state;
+ require $unit HAS_METHOD $transition;
+ callable(constructor: false) as $transition;
+ require $transition WRITES $state;
+ require $state ASSIGNED_FROM $construction;
+ require $transition HAS_CALL $construction;
+ require $construction ALLOCATES_TYPE $concrete;
+ require $concrete SUBTYPE_OF $contract;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "state-enum"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["match_flow", "storage_def_use"]
+graph_requirements = ["Valor de estado gobierna ramas y una transición lo cambia; no introducir objetos State ficticios."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "context-transition"
+status = "ready"
+languages = ["python", "javascript", "typescript", "java", "csharp"]
+query_claim = "An installed state retains its context constructor input. A dispatched action calls that context's setter with a newly constructed distinct state of the same nominal contract. Occurrence bindings and linear setter/constructor transfers correlate the structural path; no guarantee of runtime reachability, global receiver stability or exclusive State intent."
+query = '''
+query context_transition {
+ require $unit HAS_FIELD $state;
+ require $unit INSTANCE_RECEIVER $self;
+ require $unit HAS_METHOD $setup;
+ callable(constructor: true) as $setup;
+ require $setup HAS_CALL $initial;
+ require $state ASSIGNED_FROM $initial;
+ require $initial ALLOCATES_TYPE $concrete;
+ require $initial CONSTRUCTOR_TARGET $constructor;
+ require $initial CALL_BINDING $binding [mode: direct];
+ require $binding BINDING_TARGET $constructor;
+ require $binding BINDING_VALUE $self;
+ require $binding BINDING_PARAMETER $context_input;
+ require $backref CONSTRUCTOR_FIELD_INPUT $context_input;
+ require $concrete HAS_FIELD $backref;
+ require $unit HAS_METHOD $request;
+ callable(constructor: false) as $request;
+ require $request HAS_CALL $dispatch;
+ require $dispatch RECEIVER $state;
+ any { require $dispatch TARGET $slot; }
+ or { require $dispatch DECLARED_TARGET $slot; }
+ require $concrete HAS_METHOD $action;
+ any { require $dispatch TARGET $action; }
+ or { require $action OVERRIDES $slot; }
+ require $unit HAS_METHOD $setter;
+ callable(constructor: false) as $setter;
+ require $setter HAS_PARAMETER $replacement;
+ require $setter HAS_OPERATION $write;
+ require $write ASSIGNMENT_TARGET $state;
+ require $write FINAL_FIELD_INPUT $replacement;
+ require $action HAS_CALL $transition;
+ require $transition RECEIVER $backref;
+ any {
+  require $transition TARGET $setter;
+  require $transition CALL_BINDING $supplied [mode: direct];
+  require $supplied BINDING_TARGET $setter;
+  require $supplied BINDING_PARAMETER $replacement;
+  require $supplied BINDING_VALUE $creation;
+ } or {
+  variable(type_state: unknown) as $backref;
+  call(resolution: unresolved) as $transition;
+  callable(arity: 1) as $setter;
+  where $transition.name == $setter.name;
+  require $setter HAS_PARAMETER $replacement [position: 0, kind: positional];
+  require $transition ARGUMENT $argument;
+  require $argument ENTITY ARGUMENT [position: 0, kind: positional];
+  require $argument VALUE $result;
+  require $creation RESULT $result;
+ }
+ require $creation ALLOCATES_TYPE $next;
+ different $concrete $next;
+ path $concrete SUBTYPE_OF{1,8} $contract as $current_contract;
+ path $next SUBTYPE_OF{1,8} $contract as $next_contract;
+ emit $unit;
+}
+'''

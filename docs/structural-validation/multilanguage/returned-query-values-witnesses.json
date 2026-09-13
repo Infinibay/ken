@@ -1,0 +1,745 @@
+{
+  "engine_sha256": {
+    "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+    "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+    "catalog.py": "39cb65a22c3c0c1b96ae41cd2343b8227d93ba1f62763bd95efdfe568683d638",
+    "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+    "collection_snapshots.py": "8ba78a0010eafa7a85c4ab519944171570235a0c108ed52d5f830ed79684203b",
+    "control_flow.py": "d77c41e7e89a743720f28c04afa36a6d9251abae2df5ef3844df7c1b07d0a33b",
+    "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+    "frontend.py": "2dd9e61ea28cc3466d6b204c589bd5b339de39fc555cb5a74f5491b2a869c79a",
+    "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+    "kenql.py": "f0e78d2291d1f60de5ef4673d8e01cc9b948962b78314ae40dc7e975ba7fb2e5",
+    "member_access.py": "9781486284abe3599396740599f7305f2069c555e024b2ff9b10fb1cd5e6fe50",
+    "model.py": "7f80560d0fabe7c2850cb89f3fdd9a89dc865d092801d979f773116a446bc3d9",
+    "modern_patterns/adapted-continuation-wrapper.toml": "cfae68be5c98788c03b0c663a7fb5d94b03164b57e2c2b413228e4c14528c50d",
+    "modern_patterns/cache-aside.toml": "862de442a6383e43760f6f64562c8c2f2967d6994e021ee721c2f7cfd6d595ea",
+    "modern_patterns/continuation-wrapper.toml": "0092ade2a426815819334a1999ea4c2a65e54f452ceaf7a6de08dd77dd855ff2",
+    "modern_patterns/dependency-injection.toml": "c7c5295207795d24fe7f854fe284ca544819addf8f0022705cf648e213b2ce1c",
+    "modern_patterns/dispatch-table.toml": "a2197cedfd9f2f8bdb35c02ba8a398e1805f31b6bec42f8547aaefa4f86c3566",
+    "modern_patterns/exception-retry.toml": "eeab3c3ae90b1a7a3f1778db573d80113e4d6e0cc50fbd2ff6ec1cb1da6af77c",
+    "modern_patterns/unit-of-work.toml": "82920e8a2f861c7658a80c729ad0b375d466fb8d1a6122d5ab783a039e64b949",
+    "patterns/abstract-factory.toml": "f7dcc43c213062cc082f2f535b80310dbe9bfac02c03063cfb587c0ee72cd2b2",
+    "patterns/adapter.toml": "14f98bb572a7a115e2d534e45c8231cb2919afeb04dd9921858af412606ae65e",
+    "patterns/bridge.toml": "0eba499d3bb2d9d65247adaf1a225ca94a895a6f99d50bfea91157836b1c227a",
+    "patterns/builder.toml": "f517e2ca2fa66032a4912b5bcdc75c180f961913be010cb46e7d9f8b6a751130",
+    "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+    "patterns/command.toml": "444c44b3e136783555c79294829658f31c1b179261642224a64fbe7dcf353e60",
+    "patterns/composite.toml": "fffb2da5916eb05e4da83de63e21549ad06481938087b9344f291c22f3516a02",
+    "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+    "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+    "patterns/factory-method.toml": "57222bf27ee3680d8dd297ea301d37f30817c0e05089eaaf2484f11751f50120",
+    "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+    "patterns/interpreter.toml": "22d75c5e51e14a666baa88f85750b9f3d848cb48f35fb1436790c03e0cd1251a",
+    "patterns/iterator.toml": "404233895ac5526625c039f7875db8ecb68aba57ba087c67723f871b797d04ef",
+    "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+    "patterns/memento.toml": "37001a919ac72ad4be1302392355725f817ac8da2e83cbefa47fe8bf816796c3",
+    "patterns/observer.toml": "ca3ad665f19488efc51b57d103667395ae895f4f56b4fb0447e463d23d3599d5",
+    "patterns/prototype.toml": "c0a3600f6f89cd83bb8177aea3199e09cbfb3b646d9c6bb9fed2cb0f9a94b432",
+    "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+    "patterns/singleton.toml": "01d83cc97ac6e68fbdcd179d9e97a2f02ee8e857735563c776aedd3023d4a390",
+    "patterns/state.toml": "be0e605d806b8314d83dc3dbed258b44dff17bd5daee23e15a87c2ac1281b1e7",
+    "patterns/strategy.toml": "3bae309d05f0a1a360114082c6a30f65a68ed0eaa5615fa741a8bec2d586951c",
+    "patterns/template-method.toml": "2555374cac05e3b8ca1d7cc32e5d9fe8c20ad5cad970f87c31ac4d995f7dd178",
+    "patterns/visitor.toml": "42be1ea4e8740c824e5b5febcaafcbc9b6d86d49f4476155141f1498751e2bcf",
+    "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+    "return_flow.py": "67da3d1dcc7071dda86fbec744c81a2faeff7fd85bee746598d1157d16b0389b",
+    "rules.py": "a3fd498e5154c1f45a524de6fe470bc176bc8600b3a70332727640e956e0cfb3",
+    "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+    "semantic.py": "53e206db12f9a52aa3697883bd3fbb2931e31a4fe5a8bdf0e818248a61094299",
+    "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df",
+    "syntax_graph.py": "ad63fe8b926d73bf853f09ec209e3208a1341e8eb2c4fe7799e73cafa3a4d6b6",
+    "type_refs.py": "fda02d5ed262d43536c0ab11acafeedcc4eb118ed9f03c48c9a5f8d9ce0700a1"
+  },
+  "requests_files": [
+    {
+      "path": "src/requests/__init__.py",
+      "sha256": "80534322a1a3167d8775829ee220a6acf4fe455f3f778c4b8e94bcf7fadfa0b5",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/__version__.py",
+      "sha256": "abba90670b0370a3dc40d97c2dea46a35d4bec941ff10d7c3cf3098ef04a17f9",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/_internal_utils.py",
+      "sha256": "4c7d8d132c9898fc7d715e473f3ac74785ddc4ab96d2c9240f87835dc6d981ff",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/_types.py",
+      "sha256": "84dec9789a8e839807242448a9aa86acd12c440211921e32f43afcbc422a629c",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/adapters.py",
+      "sha256": "cc9b1b02694fee0353481fbad84fe3ddbedec4441dba54df7914c63f2aa85937",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/api.py",
+      "sha256": "4d15480ac046f089209798e8650476ef4a28ebe6f81b400758f8ef42ec6b5509",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/auth.py",
+      "sha256": "fdc8bb34a8a5a088b169ca13277d107b0bc94ee63ed5e89dd4f5569d9b2bb04c",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/certs.py",
+      "sha256": "fd9c6b83359cef90ff6c4eeeab8dcc2388da382ebca7d00a499b3c0b434a87e4",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/compat.py",
+      "sha256": "4a51c5ab07b015c298d6ea69d71502979cd3ed6b935d88e4433ce5341dacf584",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/cookies.py",
+      "sha256": "05d12b965c76f229803e17aef1c9969d712e4f4d0f6a06c05e0a47212fd5b417",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/exceptions.py",
+      "sha256": "c5e18f3352454968e337bb3056f0867df2f37c0a0d2c1a77dc05e7e0b3c0411b",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/help.py",
+      "sha256": "e5845e93980b2e25be418fb7fe0b8e6e999fef8f84afc5a43f4546efdc24691f",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/hooks.py",
+      "sha256": "ebd8a02475d31a0e473a8f553e9501ff43645b9563885ad52844e7a63f0d76ab",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/models.py",
+      "sha256": "a3351c3c12a86bf5ed211533875350bc4791e9327a685f8c19ba54343e471e26",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/packages.py",
+      "sha256": "fe0d2067af355320252874631fa91a9db6a8c71d9e01beaacdc5e2383c932287",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/sessions.py",
+      "sha256": "3d2089736ced93b2b405624a943f866d22652b17df06a85eb010f86272fc3e7d",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/status_codes.py",
+      "sha256": "1950f47c89cf18019787e07d8ce48f66d6b38e622f7d94d70a90247fee6c040e",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/structures.py",
+      "sha256": "ba9460c39078f25e6f1d2a24ac941ac6f8d2ee97197fa8c8d0c262d8a1e67a02",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/utils.py",
+      "sha256": "b879cb3f671cf1c28e8ff9b2b02151bcdb8974b4820a514cfdd1f5a038443cd2",
+      "language": "python"
+    }
+  ],
+  "requests_commit": "dae7ef63b4df6eded86637f251fc4e3a06c3b479",
+  "timing": {
+    "query_view": {
+      "samples": 5,
+      "median_ms": 229.894,
+      "p95_nearest_rank_ms": 291.298
+    },
+    "prototype_engine_on_prebuilt_index": {
+      "samples": 30,
+      "median_ms": 1.053,
+      "p95_nearest_rank_ms": 1.137
+    },
+    "note": "Repeated local samples, same in-memory linked graph; excludes parsing, linking, disk cache and CLI overhead. p95 describes the sample only."
+  },
+  "cases": [
+    {
+      "scope": "creational/prototype/molecular_simulation/typescript/",
+      "files": [
+        {
+          "path": "creational/prototype/molecular_simulation/typescript/main.ts",
+          "sha256": "9a5a5b230167c8808549459759e436ea2a643bcb5bdfec7ddcf5b9a58feecf57"
+        },
+        {
+          "path": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts",
+          "sha256": "3e0143bf20db9b95b0ce7bcefe01c9d8127668e987d8c607a970e465a2cd687f"
+        }
+      ],
+      "result": {
+        "matches": [
+          {
+            "bindings": {
+              "$unit": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation"
+            },
+            "status": "structural_match",
+            "unknown": [],
+            "evidence": [
+              {
+                "alternatives": [
+                  {
+                    "evidence": [
+                      {
+                        "query": "prototype#explicit-copy",
+                        "proof": "",
+                        "evidence": [
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/result",
+                            "relation": "INSTANCE_OF",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:66"
+                            ]
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496",
+                            "relation": "RETURNS_VALUE",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/result",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:73"
+                            ]
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation",
+                            "relation": "HAS_METHOD",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:62"
+                            ]
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726",
+                            "relation": "RESULT",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/result",
+                            "source": []
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726",
+                            "relation": "ARGUMENT",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/argument/0",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:66"
+                            ]
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/argument/0",
+                            "relation": "VALUE",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/argument/0/loaded-value",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:66"
+                            ]
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/argument/0/loaded-value",
+                            "relation": "LOADED_FROM",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/STORAGE:moleculeName",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:66"
+                            ]
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation",
+                            "relation": "HAS_FIELD",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/STORAGE:moleculeName",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:8"
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "unknown": []
+                  },
+                  {
+                    "evidence": [
+                      {
+                        "query": "prototype#explicit-copy",
+                        "proof": "",
+                        "evidence": [
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/result",
+                            "relation": "INSTANCE_OF",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:66"
+                            ]
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496",
+                            "relation": "RETURNS_VALUE",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/result",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:73"
+                            ]
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation",
+                            "relation": "HAS_METHOD",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:62"
+                            ]
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726",
+                            "relation": "RESULT",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/result",
+                            "source": []
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726",
+                            "relation": "ARGUMENT",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/argument/1",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:66"
+                            ]
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/argument/1",
+                            "relation": "VALUE",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/argument/1/loaded-value",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:66"
+                            ]
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726/argument/1/loaded-value",
+                            "relation": "LOADED_FROM",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/STORAGE:parameters",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:66"
+                            ]
+                          },
+                          {
+                            "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation",
+                            "relation": "HAS_FIELD",
+                            "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/STORAGE:parameters",
+                            "source": [
+                              "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:9"
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "unknown": []
+                  }
+                ],
+                "truncated": false
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0,
+            "id": "prototype#explicit-copy",
+            "rule": {
+              "id": "prototype#explicit-copy",
+              "query": "query selected { match \"prototype#explicit-copy\"(unit: $unit); emit $unit; }",
+              "name": "prototype#explicit-copy",
+              "description": "",
+              "tags": [],
+              "collections": [],
+              "severity": null,
+              "recommendation": "",
+              "caveat": "",
+              "variants": [],
+              "source": "",
+              "operations": []
+            },
+            "path": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts",
+            "line": 7,
+            "locations": [
+              {
+                "path": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts",
+                "line": 7
+              }
+            ]
+          },
+          {
+            "bindings": {
+              "$unit": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation"
+            },
+            "status": "structural_match",
+            "unknown": [],
+            "evidence": [
+              {
+                "query": "prototype#field-copy",
+                "proof": "",
+                "evidence": [
+                  {
+                    "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::op:3078:3091:return_statement",
+                    "relation": "RETURN_FIELD_STATE",
+                    "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::op:3078:3091:return_statement/field-state/d5e0781d5458384f3d37a2b3",
+                    "source": [
+                      "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:69"
+                    ]
+                  },
+                  {
+                    "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496",
+                    "relation": "HAS_OPERATION",
+                    "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::op:3078:3091:return_statement",
+                    "source": []
+                  },
+                  {
+                    "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation",
+                    "relation": "HAS_METHOD",
+                    "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496",
+                    "source": [
+                      "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:62"
+                    ]
+                  },
+                  {
+                    "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::op:3078:3091:return_statement/field-state/d5e0781d5458384f3d37a2b3",
+                    "relation": "FIELD_STATE_ORIGIN",
+                    "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726",
+                    "source": [
+                      "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:69"
+                    ]
+                  },
+                  {
+                    "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/CALL:2667@2667:2726",
+                    "relation": "ALLOCATES_TYPE",
+                    "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation",
+                    "source": [
+                      "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:66"
+                    ]
+                  },
+                  {
+                    "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::op:3078:3091:return_statement/field-state/d5e0781d5458384f3d37a2b3",
+                    "relation": "FIELD_STATE_WRITE",
+                    "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::op:2836:2886:assignment_expression",
+                    "source": [
+                      "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:69"
+                    ]
+                  },
+                  {
+                    "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::op:2836:2886:assignment_expression",
+                    "relation": "ASSIGNMENT_TARGET",
+                    "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/CALLABLE:clone@2496/STORAGE:clone/MEMBER:_precomputedStates",
+                    "source": [
+                      "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:69"
+                    ]
+                  },
+                  {
+                    "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::op:2836:2886:assignment_expression",
+                    "relation": "ASSIGNMENT_VALUE",
+                    "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/STORAGE:_precomputedStates",
+                    "source": [
+                      "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:69"
+                    ]
+                  },
+                  {
+                    "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation",
+                    "relation": "HAS_FIELD",
+                    "object": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/STORAGE:_precomputedStates",
+                    "source": [
+                      "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:10"
+                    ]
+                  },
+                  {
+                    "subject": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts::module/CLASS:MolecularSimulation/STORAGE:_precomputedStates",
+                    "relation": "ENTITY",
+                    "object": "STORAGE",
+                    "source": [
+                      "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts:10"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0,
+            "id": "prototype#field-copy",
+            "rule": {
+              "id": "prototype#field-copy",
+              "query": "query selected { match \"prototype#field-copy\"(unit: $unit); emit $unit; }",
+              "name": "prototype#field-copy",
+              "description": "",
+              "tags": [],
+              "collections": [],
+              "severity": null,
+              "recommendation": "",
+              "caveat": "",
+              "variants": [],
+              "source": "",
+              "operations": []
+            },
+            "path": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts",
+            "line": 7,
+            "locations": [
+              {
+                "path": "creational/prototype/molecular_simulation/typescript/molecular_simulation.ts",
+                "line": 7
+              }
+            ]
+          }
+        ],
+        "outcomes": {
+          "prototype#explicit-copy": {
+            "complete": true,
+            "unknown": [],
+            "stats": {
+              "states": 26,
+              "rows_examined": 13,
+              "elapsed_ms": 0.14,
+              "dependencies": [
+                "prototype#explicit-copy"
+              ]
+            }
+          },
+          "prototype#field-copy": {
+            "complete": true,
+            "unknown": [],
+            "stats": {
+              "states": 38,
+              "rows_examined": 18,
+              "elapsed_ms": 0.144,
+              "dependencies": [
+                "prototype#field-copy"
+              ]
+            }
+          }
+        },
+        "complete": true
+      },
+      "review": "Reviewed copy with two valid variant proofs, same class already detected in IR1.26."
+    },
+    {
+      "scope": "behavioral/memento/document_editor/typescript/",
+      "files": [
+        {
+          "path": "behavioral/memento/document_editor/typescript/document.ts",
+          "sha256": "c02d6177e3a946c3cc90971c1182702b75b98c78600aee30ebabf4092334364f"
+        },
+        {
+          "path": "behavioral/memento/document_editor/typescript/history.ts",
+          "sha256": "cc1e80a3458a18fb50081cad10780c3cde5f71ef357652c747ccd634263f12fa"
+        },
+        {
+          "path": "behavioral/memento/document_editor/typescript/main.ts",
+          "sha256": "9506be87070774f9470edb10064bcdeae64fa8272c0431e5364de9a40365f0b7"
+        },
+        {
+          "path": "behavioral/memento/document_editor/typescript/memento.ts",
+          "sha256": "232a6f6f9ca1cef456fd8faebe5836ab0ffd07c2894fb173ec2b76a9b453ca46"
+        }
+      ],
+      "result": {
+        "matches": [
+          {
+            "bindings": {
+              "$builder": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document",
+              "$finish": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:save@995",
+              "$product": "behavioral/memento/document_editor/typescript/memento.ts::module/CLASS:ConcreteMemento"
+            },
+            "status": "structural_match",
+            "unknown": [],
+            "evidence": [
+              {
+                "query": "builder#mutable-product",
+                "proof": "",
+                "evidence": [
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:save@995/CALL:1045@1045:1078/result",
+                    "relation": "INSTANCE_OF",
+                    "object": "behavioral/memento/document_editor/typescript/memento.ts::module/CLASS:ConcreteMemento",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:33"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:save@995",
+                    "relation": "RETURNS_VALUE",
+                    "object": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:save@995/CALL:1045@1045:1078/result",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:35"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document",
+                    "relation": "HAS_METHOD",
+                    "object": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:save@995",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:32"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document",
+                    "relation": "ENTITY",
+                    "object": "CLASS",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:5"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:save@995",
+                    "relation": "ENTITY",
+                    "object": "CALLABLE",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:32"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document",
+                    "relation": "HAS_FIELD",
+                    "object": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/STORAGE:content",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:6"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:save@995/CALL:1045@1045:1078",
+                    "relation": "RESULT",
+                    "object": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:save@995/CALL:1045@1045:1078/result",
+                    "source": []
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:save@995/CALL:1045@1045:1078",
+                    "relation": "ARGUMENT",
+                    "object": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:save@995/CALL:1045@1045:1078/argument/0",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:33"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:save@995/CALL:1045@1045:1078/argument/0",
+                    "relation": "VALUE",
+                    "object": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:save@995/CALL:1045@1045:1078/argument/0/loaded-value",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:33"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:save@995/CALL:1045@1045:1078/argument/0/loaded-value",
+                    "relation": "LOADED_FROM",
+                    "object": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/STORAGE:content",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:33"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:setContent@696",
+                    "relation": "WRITES",
+                    "object": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/STORAGE:content",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:22"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document",
+                    "relation": "HAS_METHOD",
+                    "object": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:setContent@696",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:21"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:setContent@696",
+                    "relation": "ENTITY",
+                    "object": "CALLABLE",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:21"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:setContent@696",
+                    "relation": "HAS_PARAMETER",
+                    "object": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:setContent@696/PARAMETER:content@714",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:21"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:setContent@696/PARAMETER:content@714",
+                    "relation": "ENTITY",
+                    "object": "PARAMETER",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:21"
+                    ]
+                  },
+                  {
+                    "subject": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/STORAGE:content",
+                    "relation": "ASSIGNED_FROM",
+                    "object": "behavioral/memento/document_editor/typescript/document.ts::module/CLASS:Document/CALLABLE:setContent@696/PARAMETER:content@714",
+                    "source": [
+                      "behavioral/memento/document_editor/typescript/document.ts:22"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0,
+            "id": "builder#mutable-product",
+            "rule": {
+              "id": "builder#mutable-product",
+              "query": "query selected { match \"builder#mutable-product\"(builder: $builder, finish: $finish, product: $product); emit $builder, $finish, $product; }",
+              "name": "builder#mutable-product",
+              "description": "",
+              "tags": [],
+              "collections": [],
+              "severity": null,
+              "recommendation": "",
+              "caveat": "",
+              "variants": [],
+              "source": "",
+              "operations": []
+            },
+            "path": "behavioral/memento/document_editor/typescript/document.ts",
+            "line": 5,
+            "locations": [
+              {
+                "path": "behavioral/memento/document_editor/typescript/document.ts",
+                "line": 5
+              },
+              {
+                "path": "behavioral/memento/document_editor/typescript/document.ts",
+                "line": 32
+              },
+              {
+                "path": "behavioral/memento/document_editor/typescript/memento.ts",
+                "line": 13
+              }
+            ]
+          }
+        ],
+        "outcomes": {
+          "builder#mutable-product": {
+            "complete": true,
+            "unknown": [],
+            "stats": {
+              "states": 53,
+              "rows_examined": 26,
+              "elapsed_ms": 0.252,
+              "dependencies": [
+                "builder#mutable-product"
+              ]
+            }
+          },
+          "memento#snapshot-object": {
+            "complete": true,
+            "unknown": [],
+            "stats": {
+              "states": 26,
+              "rows_examined": 12,
+              "elapsed_ms": 0.152,
+              "dependencies": [
+                "memento#snapshot-object"
+              ]
+            }
+          }
+        },
+        "complete": true
+      },
+      "review": "Reviewed Builder false positive: editable Document saves a Memento. Memento accessor/contract form remains missed."
+    }
+  ],
+  "across_languages_commit": "efd075de92e42099e8ae24fc274dc0e7b86ba2f9"
+}

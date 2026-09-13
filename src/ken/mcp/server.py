@@ -929,14 +929,21 @@ def _impl_ken_dismiss(target: str, reason: str = "") -> dict:
 
 @ken_tool
 def ken_find(
-    query: str,
-    scope: Literal["files", "symbols", "text", "tests", "wiring", "intent"] = "files",
+    query: str = "",
+    scope: Literal["files", "symbols", "text", "tests", "wiring", "intent", "structure", "patterns", "bugs"] = "files",
     limit: int = 10,
     literal: bool = False,
     language: str = "",
+    path: str = ".",
+    cache_mb: float | None = None,
+    timeout_ms: int = 2000,
+    rules: list[str] | None = None,
+    collections: list[str] | None = None,
+    tags: list[str] | None = None,
+    rule_files: list[str] | None = None,
+    evidence_mode: Literal["strict", "possible"] = "strict",
 ) -> Any:
-    """Find things by describing them, over one of six scopes: files,
-    symbols, text, tests, wiring, intent. Ranked by ken, not by you.
+    """Find code by meaning, text, structure, design patterns, or bug signatures.
 
     *scope* picks what is searched:
 
@@ -951,8 +958,33 @@ def ken_find(
     * ``intent``  — which files requests *like this one* historically ended
       up touching. Answers "where does work like this usually land?".
 
+    * ``structure`` — unified graph search: inline *query* or saved *rules*,
+      *collections*, *tags*. Load shared libraries with *rule_files*.
+    * ``patterns`` — comma-separated GoF catalogue ids, or empty for all 23.
+    * ``bugs`` — source-level bug signatures (query filters rule ids).
+
+    Structural scopes read live files under *path*. Cache defaults to 500 MB;
+    set *cache_mb=0* to disable. Results include evidence, uncertainty and budgets.
+
     *language* filters ``text`` results (e.g. "python").
     """
+    if scope != "structure" and any((rules, collections, tags, rule_files)):
+        raise ValueError("saved rule selectors require scope=structure")
+    if scope in {"structure", "patterns", "bugs"}:
+        from ken.structural import service
+        from ken.structural.query import QueryBudget
+        assert _PROJECT_ROOT is not None
+        budget = QueryBudget(max_matches=limit, timeout_ms=timeout_ms)
+        if scope == "structure":
+            return service.search(_PROJECT_ROOT, query, path=path, cache_mb=cache_mb, budget=budget,
+                                  rule_ids=rules, collections=collections, tags=tags, rule_files=rule_files, evidence_mode=evidence_mode)
+        if scope == "patterns":
+            names = [name.strip() for name in query.split(",") if name.strip()]
+            return service.patterns(_PROJECT_ROOT, names, path=path, cache_mb=cache_mb, budget=budget)
+        result = service.bugs(_PROJECT_ROOT, path=path, cache_mb=cache_mb, budget=budget)
+        if query:
+            result["findings"] = [f for f in result["findings"] if query in f["id"]]
+        return result
     if scope == "files":
         return _impl_ken_search_files(query, limit=limit)
     if scope == "symbols":
@@ -973,7 +1005,7 @@ def ken_find(
     return {
         "ok": False,
         "error": f"unknown scope {scope!r}",
-        "scopes": ["files", "symbols", "text", "tests", "wiring", "intent"],
+        "scopes": ["files", "symbols", "text", "tests", "wiring", "intent", "structure", "patterns", "bugs"],
     }
 
 

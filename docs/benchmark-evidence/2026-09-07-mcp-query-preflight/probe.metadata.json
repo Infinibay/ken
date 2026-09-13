@@ -1,0 +1,30 @@
+{
+  "command": [
+    "codex",
+    "exec",
+    "--ignore-user-config",
+    "--ignore-rules",
+    "--ephemeral",
+    "--skip-git-repo-check",
+    "--sandbox",
+    "read-only",
+    "--model",
+    "gpt-6-astra",
+    "--json",
+    "-C",
+    "/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/ken-mcp-preflight-y6_6_aj5",
+    "-c",
+    "mcp_servers.ken.command=\"ken\"",
+    "-c",
+    "mcp_servers.ken.args=[\"mcp\", \"/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/ken-mcp-preflight-y6_6_aj5\"]",
+    "-c",
+    "mcp_servers.ken.enabled_tools=[\"ken_find\"]",
+    "-c",
+    "mcp_servers.ken.default_tools_approval_mode=\"approve\"",
+    "Call the Ken MCP ken_find tool exactly once with query=\"resolving project-relative paths\" and scope=\"files\". The installed schema requires query, not task. Do not use other tools or edit files. Report whether that tool returned results."
+  ],
+  "cwd": "/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/ken-mcp-preflight-y6_6_aj5",
+  "exit_code": 0,
+  "elapsed_seconds": 15.852,
+  "timeout": false
+}

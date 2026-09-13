@@ -1,0 +1,83 @@
+schema = "ken-rule/1"
+id = "template-method"
+name = "Template Method"
+category = "behavioral"
+description = "A base algorithm calls a step overridden by a subtype."
+caveat = "Structural evidence requires review of intent and runtime behavior."
+legacy_query = "require $unit HAS_METHOD $template\nrequire $template CALLS $step\nrequire $unit HAS_METHOD $step\nrequire $override OVERRIDES $step\ndifferent $template $step\n"
+query = '''
+query template_method {
+ match "template-method#virtual-skeleton"(unit: $unit);
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "virtual-skeleton"
+status = "ready"
+languages = ["python", "java", "typescript", "cpp"]
+requires = ["override_resolution", "control_flow"]
+graph_requirements = ["Algoritmo fija secuencia y llama hook reemplazado; distinguir llamadas del mismo cuerpo."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query template_method {
+
+ require $unit HAS_METHOD $template;
+ require $template CALLS $step;
+ require $unit HAS_METHOD $step;
+ require $override OVERRIDES $step;
+ different $template $step;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "trait-default"
+status = "design"
+languages = ["rust"]
+requires = ["trait_defaults", "call_targets"]
+graph_requirements = ["Método default llama slot de trait implementado por tipo concreto."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "composed-skeleton"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["callable_contracts", "control_flow"]
+graph_requirements = ["Esqueleto recibe hooks y conserva secuencia; variante por composición, no override ficticio."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[operations]]
+id = "dependent_steps"
+status = "ready"
+description = "Two distinct extension slots are invoked on the same modeled instance, passing the first result to the second."
+caveat = "Direct argument/result flow only; does not prove dynamic dispatch, global ordering or local alias flow."
+query = '''
+query template_dependent_steps {
+ match "template-method"(unit:$unit);
+ require $unit INSTANCE_RECEIVER $self;
+ require $unit HAS_METHOD $template;
+ require $unit HAS_METHOD $first_slot;
+ require $unit HAS_METHOD $second_slot;
+ require $override OVERRIDES $first_slot;
+ require $template HAS_CALL $first;
+ require $template HAS_CALL $second;
+ require $first TARGET $first_slot;
+ require $second TARGET $second_slot;
+ require $first RECEIVER $self;
+ require $second RECEIVER $self;
+ require $first RESULT $value;
+ require $second ARGUMENT $argument;
+ require $argument VALUE $value;
+ different $first_slot $second_slot;
+ different $template $first_slot;
+ different $template $second_slot;
+ emit $unit,$template,$first,$second;
+}
+'''

@@ -1,0 +1,38 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.facade"
+name = "Facade"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/facade.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.facade]
+kinds = ["type_decl", "module"]
+required = true
+
+[exports.entry]
+kinds = ["callable"]
+required = true
+
+[[variants]]
+id = "object-surface"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["call_graph", "module_visibility"]
+graph_requirements = ["Superficie de objeto coordina subsistemas y es usada como frontera por clientes."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "module-surface"
+status = "design"
+languages = ["python", "javascript", "typescript", "go", "rust"]
+requires = ["exports", "call_graph"]
+graph_requirements = ["Funciones exportadas coordinan subsistemas; no requerir una clase Facade."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

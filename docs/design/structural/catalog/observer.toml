@@ -1,0 +1,47 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.observer"
+name = "Observer"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/observer.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.subject]
+kinds = ["type_decl", "module"]
+required = true
+
+[exports.notify]
+kinds = ["callable"]
+required = true
+
+[[variants]]
+id = "listener-registry"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["collection_mutation", "callback_flow"]
+graph_requirements = ["Registro agrega listener al mismo conjunto que notifica evento; correlacionar listener y payload."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "language-event"
+status = "design"
+languages = ["csharp"]
+requires = ["event_lowering"]
+graph_requirements = ["Event add/remove/invoke se modelan como registro y notificación con identidad del evento."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "event-bus"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["event_api_models", "topic_flow"]
+graph_requirements = ["Subscribe y publish comparten bus/topic resueltos; preservar restricciones y delivery desconocido."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

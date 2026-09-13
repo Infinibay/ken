@@ -1,0 +1,551 @@
+{
+  "ir_version": "1.35.0",
+  "counts": {
+    "TP": 6,
+    "TN": 22,
+    "FP": 0,
+    "FN": 9
+  },
+  "cases": [
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend *field",
+        "positive"
+      ],
+      "rule": "adapter",
+      "sha256": "67c6d5ad001ef2fc593aaaee8e9d3c0acb5a1732a77f54bf67eefc1a43e0323c",
+      "expected": true,
+      "found": false,
+      "label": "FN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend *field",
+        "renamed"
+      ],
+      "rule": "adapter",
+      "sha256": "a67817d0cdbf204ef7b28ebb1c1f75d144d8bb77ba38a4abf2ea0fadfa9e7fb1",
+      "expected": true,
+      "found": false,
+      "label": "FN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend *field",
+        "unused"
+      ],
+      "rule": "adapter",
+      "sha256": "9c6c3e796cbcf49074773c1fa928a511d94b5f5d8c4562fe3afb01acfab0af69",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend *field",
+        "same-name"
+      ],
+      "rule": "adapter",
+      "sha256": "e9334656d0ed4f6819b52716d08973d2fde1465782b6f0acb1ca15b000e124ea",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend *field",
+        "unknown-type"
+      ],
+      "rule": "adapter",
+      "sha256": "48238b994a5621796af408f23448e23b553513ce1db23929a2cac485b9af761b",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "const Backend *field",
+        "positive"
+      ],
+      "rule": "adapter",
+      "sha256": "f03276e487eac5d1cf901e26faa6076603325391db4c2dc4c38cc8d3b1e117fd",
+      "expected": true,
+      "found": false,
+      "label": "FN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "const Backend *field",
+        "renamed"
+      ],
+      "rule": "adapter",
+      "sha256": "9c4932c130901174d060765c33dc4fa97cadb7f66f7713901cc35261dfdc235f",
+      "expected": true,
+      "found": false,
+      "label": "FN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "const Backend *field",
+        "unused"
+      ],
+      "rule": "adapter",
+      "sha256": "05b610c30af5c2307e90f4d62c927ca0b4bc26c568d0d994d7bdc31e79577c5e",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "const Backend *field",
+        "same-name"
+      ],
+      "rule": "adapter",
+      "sha256": "72c5120851de92b7586ab554b5e988b0fd3715f068db30c895954173310ce5a8",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "const Backend *field",
+        "unknown-type"
+      ],
+      "rule": "adapter",
+      "sha256": "304ceee737379729df25cb0db4a6437953fb208794836d8f09419f2a0285f370",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend &field",
+        "positive"
+      ],
+      "rule": "adapter",
+      "sha256": "da2943cbbc657810c08b97661e414fdc15dd3bb10372e8399b05a95ea2b0d129",
+      "expected": true,
+      "found": false,
+      "label": "FN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend &field",
+        "renamed"
+      ],
+      "rule": "adapter",
+      "sha256": "8fbab77e4c42c1a09504fe0cecd34f57e94a6950db516989b8fc0e5515588772",
+      "expected": true,
+      "found": false,
+      "label": "FN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend &field",
+        "unused"
+      ],
+      "rule": "adapter",
+      "sha256": "bb9554724406d32501ecf8fbb5950b638f9b9f4e6fe010d1a1ded8e6a40521a2",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend &field",
+        "same-name"
+      ],
+      "rule": "adapter",
+      "sha256": "7b786b833d764ab87a28da4914e2596c611f8f0d5bfc617b741d759d3d9674eb",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend &field",
+        "unknown-type"
+      ],
+      "rule": "adapter",
+      "sha256": "5756e0b7d8a177b26b5cc200b46dca0373fe43ff3983c8de249ba6fa4a9d8169",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend * const field",
+        "positive"
+      ],
+      "rule": "adapter",
+      "sha256": "879c35eb8ed0250ba9adc1f5c3811bd833d85efab3d0a9565fb28bb19130a872",
+      "expected": true,
+      "found": false,
+      "label": "FN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend * const field",
+        "renamed"
+      ],
+      "rule": "adapter",
+      "sha256": "f40620c9bce1e7bb6ee06c86d819743bda3a3413255caef9be101d4cd2a244c5",
+      "expected": true,
+      "found": false,
+      "label": "FN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend * const field",
+        "unused"
+      ],
+      "rule": "adapter",
+      "sha256": "8ab2f349e85ce559ec219c8154bb3e12c17be464ae636b355fd1f63679a4ce9f",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend * const field",
+        "same-name"
+      ],
+      "rule": "adapter",
+      "sha256": "08d7e4169335687400ad495f2cc478a21a71de8c896715b2305c28f7e6555ffb",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_adapter_field_contract",
+      "args": [
+        "Backend * const field",
+        "unknown-type"
+      ],
+      "rule": "adapter",
+      "sha256": "eb055db1fdb3bb1d56147204540cd4f60f4240e7ab7d2a4fa090b8bbf8e1aa74",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract *field",
+        "positive"
+      ],
+      "rule": "strategy",
+      "sha256": "2cdd003044ba3e5ba58919d40e4243c33ced3c02f2b4194151513e222e8f261e",
+      "expected": true,
+      "found": true,
+      "label": "TP",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract *field",
+        "renamed"
+      ],
+      "rule": "strategy",
+      "sha256": "6000132531102bc8be4ac95d0e91056abab29b1c8fbec9119e67a58b5cb68c18",
+      "expected": true,
+      "found": true,
+      "label": "TP",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract *field",
+        "unused"
+      ],
+      "rule": "strategy",
+      "sha256": "ba00a60e39c96c549457c9a760e422dad74e01ed441e42e67dd72acde04b2490",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract *field",
+        "not-injected"
+      ],
+      "rule": "strategy",
+      "sha256": "152329709b5e675bad0f3f8adedf67404fdce2d05aeeb6e4e7e162461ca94595",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract *field",
+        "one-implementation"
+      ],
+      "rule": "strategy",
+      "sha256": "b1b711f997b41f3f2faaedc968a98540d79c27dca3cbebec3a7c3e5fb58ddd97",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract*field",
+        "positive"
+      ],
+      "rule": "strategy",
+      "sha256": "4715b94ba3b9b3d8ea643c869ce68c26ffea8f0f243af0aa442275cae52e766b",
+      "expected": true,
+      "found": true,
+      "label": "TP",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract*field",
+        "renamed"
+      ],
+      "rule": "strategy",
+      "sha256": "be7cecb21297755001b512172558c08c86cb74abebb63ec496957bdd7470b5ae",
+      "expected": true,
+      "found": true,
+      "label": "TP",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract*field",
+        "unused"
+      ],
+      "rule": "strategy",
+      "sha256": "d7d42569eab77d3578cb4b2e8cd1056ed6610bef288b0b86b1a2f367d7af4671",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract*field",
+        "not-injected"
+      ],
+      "rule": "strategy",
+      "sha256": "265fdaa6153535654d590459e9345d5a6e511b63ae21f937a5714a577e3c4417",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract*field",
+        "one-implementation"
+      ],
+      "rule": "strategy",
+      "sha256": "9b2c23a4a7048004e1ae6ce07db819be447cb74b2c214949b341f870388b41df",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract * volatile field",
+        "positive"
+      ],
+      "rule": "strategy",
+      "sha256": "f1026c071222e033d899eb139ec222266628b7303eb50a1d52551833e26553e4",
+      "expected": true,
+      "found": true,
+      "label": "TP",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract * volatile field",
+        "renamed"
+      ],
+      "rule": "strategy",
+      "sha256": "c50ad4aaad0af9dbca139c6883c0de7f2d85c4fe9b53cdc16f434914276b602a",
+      "expected": true,
+      "found": true,
+      "label": "TP",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract * volatile field",
+        "unused"
+      ],
+      "rule": "strategy",
+      "sha256": "a7caf55cca00b77d32614b7c4727f00e9d7d09ce7577c8018b4a6a3fc704b31e",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract * volatile field",
+        "not-injected"
+      ],
+      "rule": "strategy",
+      "sha256": "5cde9acc27d4be7166dd40a647475c0b16c43f753d55879751dd5b8c64593ea4",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_strategy_retains_field_and_parameter_binding",
+      "args": [
+        "Contract * volatile field",
+        "one-implementation"
+      ],
+      "rule": "strategy",
+      "sha256": "78a982da2e0d4445db299f4b55b7877452e5026d096bc3e5939cbd514cc82af1",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    },
+    {
+      "generator": "test_runtime_bridge_requires_distinct_nominal_families",
+      "args": [
+        false
+      ],
+      "rule": "bridge",
+      "sha256": "62828d7e78972bae06f834e8911996187bb37101fbe14e27868020b0e81ba324",
+      "expected": true,
+      "found": false,
+      "label": "FN",
+      "complete": true
+    },
+    {
+      "generator": "test_runtime_bridge_requires_distinct_nominal_families",
+      "args": [
+        true
+      ],
+      "rule": "bridge",
+      "sha256": "97eba6d2b2264d6742c0f9dbc00c417fcca2b539139fdf77e2618220a8eb6fc7",
+      "expected": false,
+      "found": false,
+      "label": "TN",
+      "complete": true
+    }
+  ],
+  "note": "37 controlled C++ source-shape fixtures. Reuses the test generators by capturing source passed to their matches helper, then lowers that source with this engine. Does not execute target C++ or estimate population precision/recall.",
+  "engine_sha256": {
+    "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+    "binding_writes.py": "248c81c19c54b70240ab312a4f0401b272bdc0644197417ea5434827607fa7f3",
+    "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+    "call_bindings.py": "e22e85204749f85185813ab2b6ae835f6a9566092c451fb674d41629e884bc7b",
+    "catalog.py": "39cb65a22c3c0c1b96ae41cd2343b8227d93ba1f62763bd95efdfe568683d638",
+    "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+    "collection_lifecycle.py": "a35f48339a074eb62b1e5e1b73024c4ea3d133628675b710a0cf048f5910d549",
+    "collection_snapshots.py": "8ba78a0010eafa7a85c4ab519944171570235a0c108ed52d5f830ed79684203b",
+    "control_flow.py": "d77c41e7e89a743720f28c04afa36a6d9251abae2df5ef3844df7c1b07d0a33b",
+    "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+    "field_transfers.py": "e0074a3ed77bf1ca2b9f072bb708b434b163f7186815914fbc82e3e6ccec5e16",
+    "frontend.py": "f16d3a9a0ff148a873fbf9fcfd9091e78278e424a56be84a530b468dd5a6c63f",
+    "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+    "kenql.py": "874b049c6e8d112f785453681cddbb2f46cad384f638212cae06e49597ad5c35",
+    "member_access.py": "9781486284abe3599396740599f7305f2069c555e024b2ff9b10fb1cd5e6fe50",
+    "member_transfers.py": "1a168fbc389e81628d74d9089fa4ce278bab7fcbe07cdf6d901c3af9cef6cbbb",
+    "model.py": "5a24bc74ef7e70d12f7537e06cca4d0451c39bbc4ba4bd5a94d5ad4c3d72f235",
+    "modern_patterns/adapted-continuation-wrapper.toml": "cfae68be5c98788c03b0c663a7fb5d94b03164b57e2c2b413228e4c14528c50d",
+    "modern_patterns/batch-work-queue.toml": "6e1b3a69aae411a736c749814959aac73df1e30c29c84ef7e6b2e02a1c058a31",
+    "modern_patterns/cache-aside.toml": "c7915bc8855deecd60881f3f4db072714f670ed3f55bdbd6f47a495549a12328",
+    "modern_patterns/continuation-wrapper.toml": "0092ade2a426815819334a1999ea4c2a65e54f452ceaf7a6de08dd77dd855ff2",
+    "modern_patterns/dependency-injection.toml": "c7c5295207795d24fe7f854fe284ca544819addf8f0022705cf648e213b2ce1c",
+    "modern_patterns/dispatch-table.toml": "a2197cedfd9f2f8bdb35c02ba8a398e1805f31b6bec42f8547aaefa4f86c3566",
+    "modern_patterns/exception-retry.toml": "eeab3c3ae90b1a7a3f1778db573d80113e4d6e0cc50fbd2ff6ec1cb1da6af77c",
+    "modern_patterns/read-through-cache.toml": "68d8df7db96d7a3270875b46bc837879f036a06a15b0e8c8f46877fc34eb6159",
+    "modern_patterns/unit-of-work.toml": "82920e8a2f861c7658a80c729ad0b375d466fb8d1a6122d5ab783a039e64b949",
+    "nominal_roots.py": "78912bb14c2b5b5f7d62109c9c3b5bc4453f922365ab7bc056bdd1d0a3370e14",
+    "patterns/abstract-factory.toml": "f7dcc43c213062cc082f2f535b80310dbe9bfac02c03063cfb587c0ee72cd2b2",
+    "patterns/adapter.toml": "14f98bb572a7a115e2d534e45c8231cb2919afeb04dd9921858af412606ae65e",
+    "patterns/bridge.toml": "2e1c9be8e27d7ebaf6720cd8f494b31eadd41e047ff722fc80ca415e618159b8",
+    "patterns/builder.toml": "bb46c4713cd0b4c6b42a7a5cc4df16206d42b73be20948d9328c7fed1b6897d8",
+    "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+    "patterns/command.toml": "732b239180a25d1d01502f5b181b0c82d9267876f8cb5b376ceb2e20416db402",
+    "patterns/composite.toml": "fffb2da5916eb05e4da83de63e21549ad06481938087b9344f291c22f3516a02",
+    "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+    "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+    "patterns/factory-method.toml": "57222bf27ee3680d8dd297ea301d37f30817c0e05089eaaf2484f11751f50120",
+    "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+    "patterns/interpreter.toml": "22d75c5e51e14a666baa88f85750b9f3d848cb48f35fb1436790c03e0cd1251a",
+    "patterns/iterator.toml": "404233895ac5526625c039f7875db8ecb68aba57ba087c67723f871b797d04ef",
+    "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+    "patterns/memento.toml": "fa56773105fe4f84ae7f8557eb086757831600533b5c38777cc330a0f480caf3",
+    "patterns/observer.toml": "ca3ad665f19488efc51b57d103667395ae895f4f56b4fb0447e463d23d3599d5",
+    "patterns/prototype.toml": "2de68c873a910bd564889fce9644339d5169640803531d9bf54ae1d3bcb69923",
+    "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+    "patterns/singleton.toml": "01d83cc97ac6e68fbdcd179d9e97a2f02ee8e857735563c776aedd3023d4a390",
+    "patterns/state.toml": "24a6b2742a179205032c27e48d21082e65407eecd62dd3a827b317246a015a74",
+    "patterns/strategy.toml": "3bae309d05f0a1a360114082c6a30f65a68ed0eaa5615fa741a8bec2d586951c",
+    "patterns/template-method.toml": "2555374cac05e3b8ca1d7cc32e5d9fe8c20ad5cad970f87c31ac4d995f7dd178",
+    "patterns/visitor.toml": "42be1ea4e8740c824e5b5febcaafcbc9b6d86d49f4476155141f1498751e2bcf",
+    "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+    "return_flow.py": "67da3d1dcc7071dda86fbec744c81a2faeff7fd85bee746598d1157d16b0389b",
+    "rules.py": "a3fd498e5154c1f45a524de6fe470bc176bc8600b3a70332727640e956e0cfb3",
+    "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+    "semantic.py": "763dbea6da28c7f160f1d08f7e8c8d6826843632ece8c6977ec160f7f24c570f",
+    "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df",
+    "syntax_graph.py": "ad63fe8b926d73bf853f09ec209e3208a1341e8eb2c4fe7799e73cafa3a4d6b6",
+    "type_refs.py": "fda02d5ed262d43536c0ab11acafeedcc4eb118ed9f03c48c9a5f8d9ce0700a1"
+  }
+}

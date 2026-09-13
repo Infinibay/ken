@@ -1,0 +1,85 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.builder"
+name = "Builder"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/builder.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.builder]
+kinds = ["type_decl"]
+required = true
+
+[exports.product]
+kinds = ["type_decl"]
+required = true
+
+[exports.finish]
+kinds = ["callable"]
+required = true
+
+[[variants]]
+id = "mutable-product"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["storage_identity", "local_value_flow"]
+graph_requirements = ["Un paso escribe estado; finalización lee ese estado; el valor construido con él es el retornado."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+query_draft = '''
+query mutable_builder {
+  type_decl() as $builder;
+  require $builder HAS_METHOD $step;
+  require $builder HAS_METHOD $finish;
+  different $step $finish;
+  require $builder HAS_FIELD $state;
+  require $step WRITES $state;
+  require $finish READS $state;
+  require $finish HAS_OPERATION $construction;
+  operation(kind: construct) as $construction;
+  require $construction RESULT $created;
+  require $finish RETURNS_VALUE $created;
+  require $created INSTANCE_OF $product;
+  require $construction ARGUMENT $argument;
+  require $argument VALUE $input;
+  operation(kind: load) as $read;
+  require $finish HAS_OPERATION $read;
+  require $read READS $state;
+  require $read RESULT $loaded;
+  path $loaded VALUE_FLOW{0,6} $input as $flow;
+  emit $builder, $finish, $product;
+}
+'''
+
+[[variants]]
+id = "immutable-product"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["value_flow", "copy_models"]
+graph_requirements = ["El paso devuelve un builder sucesor; su estado modificado llega a la finalización y al producto."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "consuming-typestate"
+status = "design"
+languages = ["rust", "cpp", "typescript"]
+requires = ["generic_substitution", "ownership_flow"]
+graph_requirements = ["El paso cambia parámetros de estado o mueve el builder; la finalización recibe un estado admitido."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "director"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["callsite_context", "receiver_identity"]
+graph_requirements = ["El director llama pasos de la misma construcción y obtiene su producto; no mezclar instancias diferentes."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

@@ -1,0 +1,7430 @@
+{
+  "repo": {
+    "name": "cpp-patterns",
+    "url": "https://github.com/JakubVojvoda/design-patterns-cpp",
+    "commit": "4fae40666a970dc4c7901df54964d6ebcd80ba5c",
+    "tracked_files": 50,
+    "extensions": {
+      ".txt": 1,
+      "": 1,
+      ".md": 24,
+      ".cpp": 24
+    },
+    "license_files": [
+      "LICENSE"
+    ],
+    "cases": 24,
+    "selected_files": 24,
+    "status": "scanned subset",
+    "expected_found": 1,
+    "errors": 0
+  },
+  "results": [
+    {
+      "scope": "abstract-factory/AbstractFactory.cpp",
+      "expected": "abstract-factory",
+      "files": [
+        {
+          "path": "abstract-factory/AbstractFactory.cpp",
+          "sha256": "fc74f2b7027c7c65167e2667f16e9f25ec8ab7807a5e2e62e54f6f0ec4f36537"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 55,
+      "facts": 1283,
+      "elapsed_ms": 21.76,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.074,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.043,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.188,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.038,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.04,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.061,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 50,
+            "rows_examined": 36,
+            "elapsed_ms": 0.269,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.044,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.06,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.097,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.079,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.102,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.088,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.033,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "adapter/ClassAdapter.cpp",
+      "expected": "adapter",
+      "files": [
+        {
+          "path": "adapter/ClassAdapter.cpp",
+          "sha256": "29aa59730bd2b39fe1c745f3386191ee5dd4aa13b64c1b66e85983fb9ce5f8a2"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 15,
+      "facts": 358,
+      "elapsed_ms": 15.61,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.065,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.043,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.148,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.048,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.037,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.039,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.046,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.105,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 24,
+            "rows_examined": 10,
+            "elapsed_ms": 0.238,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.043,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.057,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.095,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.077,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.086,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.032,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "adapter/ObjectAdapter.cpp",
+      "expected": "adapter",
+      "files": [
+        {
+          "path": "adapter/ObjectAdapter.cpp",
+          "sha256": "1fa00d4918b12ba77080c9dd6cfc72189e84e39e73530f01a3e907949b7af225"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 19,
+      "facts": 436,
+      "elapsed_ms": 16.33,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.095,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.146,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.039,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.048,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.061,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 26,
+            "rows_examined": 12,
+            "elapsed_ms": 0.296,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.044,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.059,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.1,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.079,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.091,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.034,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "bridge/Bridge.cpp",
+      "expected": "bridge",
+      "files": [
+        {
+          "path": "bridge/Bridge.cpp",
+          "sha256": "d1a8b07d801c7345e02924ca0fbcf040a123574d08c1aafce2967ce857ea5b6e"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 34,
+      "facts": 818,
+      "elapsed_ms": 18.64,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.081,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.059,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.186,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.064,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.06,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.044,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.071,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.059,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.063,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.071,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 34,
+            "rows_examined": 20,
+            "elapsed_ms": 0.358,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.07,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.121,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 1,
+            "elapsed_ms": 0.106,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.057,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.069,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.068,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.139,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.073,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.089,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "builder/Builder.cpp",
+      "expected": "builder",
+      "files": [
+        {
+          "path": "builder/Builder.cpp",
+          "sha256": "cbe73933a2d9ca6cf4b075323e65bde71a93ceaf0df29ea91d81edfe72d42a80"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 86,
+      "facts": 1769,
+      "elapsed_ms": 27.35,
+      "expected_found": false,
+      "matches": [
+        {
+          "rule": "strategy",
+          "variant": "default",
+          "status": "structural_match",
+          "roles": {
+            "$unit": {
+              "name": "Director",
+              "path": "builder/Builder.cpp",
+              "line": 113
+            }
+          }
+        }
+      ],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.075,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.057,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 10,
+            "rows_examined": 4,
+            "elapsed_ms": 0.065,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 9,
+            "rows_examined": 2,
+            "elapsed_ms": 0.172,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.057,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.06,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.04,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 68,
+            "rows_examined": 33,
+            "elapsed_ms": 0.163,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.06,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.067,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 106,
+            "rows_examined": 68,
+            "elapsed_ms": 0.369,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 6,
+            "rows_examined": 2,
+            "elapsed_ms": 0.076,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.105,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 9,
+            "rows_examined": 2,
+            "elapsed_ms": 0.093,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 6,
+            "rows_examined": 2,
+            "elapsed_ms": 0.064,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 232,
+            "rows_examined": 107,
+            "elapsed_ms": 0.638,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.081,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.069,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "chain-of-responsibility/ChainOfResponsibility.cpp",
+      "expected": "chain-of-responsibility",
+      "files": [
+        {
+          "path": "chain-of-responsibility/ChainOfResponsibility.cpp",
+          "sha256": "26d0625ac18a31640b84bc10f070efb32d07e88b75aa09e9094ff4e2a516042c"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 32,
+      "facts": 814,
+      "elapsed_ms": 19.61,
+      "expected_found": false,
+      "matches": [
+        {
+          "rule": "strategy",
+          "variant": "default",
+          "status": "structural_match",
+          "roles": {
+            "$unit": {
+              "name": "Handler",
+              "path": "chain-of-responsibility/ChainOfResponsibility.cpp",
+              "line": 17
+            }
+          }
+        }
+      ],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.075,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.067,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 42,
+            "rows_examined": 18,
+            "elapsed_ms": 0.098,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.162,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.065,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 14,
+            "rows_examined": 6,
+            "elapsed_ms": 0.093,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.042,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.1,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 16,
+            "rows_examined": 7,
+            "elapsed_ms": 0.075,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.061,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.076,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 48,
+            "rows_examined": 28,
+            "elapsed_ms": 0.314,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 16,
+            "rows_examined": 7,
+            "elapsed_ms": 0.076,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.066,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.106,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.085,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.061,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 51,
+            "rows_examined": 22,
+            "elapsed_ms": 0.234,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 18,
+            "rows_examined": 8,
+            "elapsed_ms": 0.061,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.058,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "command/Command.cpp",
+      "expected": "command",
+      "files": [
+        {
+          "path": "command/Command.cpp",
+          "sha256": "6772f212af6e320921b85bef8bb085597e4ee6f477e3c06eda0378ef85ba9524"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 32,
+      "facts": 709,
+      "elapsed_ms": 17.32,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.069,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.084,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 1,
+            "elapsed_ms": 0.165,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.057,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.04,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 18,
+            "rows_examined": 8,
+            "elapsed_ms": 0.074,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.059,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.063,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 46,
+            "rows_examined": 26,
+            "elapsed_ms": 0.308,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.046,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.074,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.161,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 1,
+            "elapsed_ms": 0.093,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.061,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 38,
+            "rows_examined": 16,
+            "elapsed_ms": 0.159,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.035,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "composite/Composite.cpp",
+      "expected": "composite",
+      "files": [
+        {
+          "path": "composite/Composite.cpp",
+          "sha256": "840a7db420528e5b28b60098cc2202a3d7a9fb9705da6daf7f7396f9f036936f"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 53,
+      "facts": 1291,
+      "elapsed_ms": 21.24,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.085,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 10,
+            "rows_examined": 4,
+            "elapsed_ms": 0.086,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 6,
+            "rows_examined": 2,
+            "elapsed_ms": 0.06,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.165,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.057,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.057,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.044,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 10,
+            "rows_examined": 4,
+            "elapsed_ms": 0.07,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 6,
+            "rows_examined": 2,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.06,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 10,
+            "rows_examined": 4,
+            "elapsed_ms": 0.144,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 56,
+            "rows_examined": 35,
+            "elapsed_ms": 0.315,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.069,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.108,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 1,
+            "elapsed_ms": 0.091,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.097,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.035,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "decorator/Decorator.cpp",
+      "expected": "decorator",
+      "files": [
+        {
+          "path": "decorator/Decorator.cpp",
+          "sha256": "707e853261df96c1cadc3d8c50389763405efbcfe90dd4a3b7a7b02a66a6301a"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 36,
+      "facts": 931,
+      "elapsed_ms": 18.51,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.069,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.064,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.149,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.087,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.042,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.057,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.073,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 36,
+            "rows_examined": 22,
+            "elapsed_ms": 0.26,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.045,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.062,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.103,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 1,
+            "elapsed_ms": 0.091,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.106,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.094,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.033,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "facade/Facade.cpp",
+      "expected": "facade",
+      "files": [
+        {
+          "path": "facade/Facade.cpp",
+          "sha256": "42c07b1643d8775120453bbbdbd8f1905a94d5ea22aaa84ba304c882bab66119"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 31,
+      "facts": 665,
+      "elapsed_ms": 17.43,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.069,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.046,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.149,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.038,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.048,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 8,
+            "rows_examined": 3,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.094,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.06,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.063,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 28,
+            "rows_examined": 14,
+            "elapsed_ms": 0.248,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.043,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.059,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.099,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.081,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.087,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.032,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "factory-method/FactoryMethod.cpp",
+      "expected": "factory-method",
+      "files": [
+        {
+          "path": "factory-method/FactoryMethod.cpp",
+          "sha256": "51654da9e388a183a732027429f983c88a75da6b38e10987d405ba1bc3591434"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 40,
+      "facts": 972,
+      "elapsed_ms": 19.74,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.106,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.063,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.214,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.148,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.077,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.091,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.06,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.045,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.061,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.069,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 36,
+            "rows_examined": 22,
+            "elapsed_ms": 0.281,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.07,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.104,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.089,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.058,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.106,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.057,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.092,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.038,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "flyweight/Flyweight.cpp",
+      "expected": "flyweight",
+      "files": [
+        {
+          "path": "flyweight/Flyweight.cpp",
+          "sha256": "5c7067c8dc330ae943be72650c2e920dc81a8bca5f9dffb5f1da3c7b96338c2e"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 50,
+      "facts": 1183,
+      "elapsed_ms": 23.26,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.071,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 6,
+            "rows_examined": 2,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.154,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.039,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 6,
+            "rows_examined": 2,
+            "elapsed_ms": 0.419,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.058,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.065,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 41,
+            "rows_examined": 24,
+            "elapsed_ms": 0.282,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.045,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.064,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.106,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 9,
+            "rows_examined": 2,
+            "elapsed_ms": 0.098,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.093,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.033,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 2.933,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "interpreter/Interpreter.cpp",
+      "expected": "interpreter",
+      "files": [
+        {
+          "path": "interpreter/Interpreter.cpp",
+          "sha256": "03370f911e49427a90fd05075a02c1a5a79df47dda948d3922e1599613757133"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 70,
+      "facts": 1418,
+      "elapsed_ms": 22.55,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.075,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 12,
+            "rows_examined": 5,
+            "elapsed_ms": 0.081,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 6,
+            "rows_examined": 2,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.152,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.039,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 12,
+            "rows_examined": 5,
+            "elapsed_ms": 0.07,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 10,
+            "rows_examined": 4,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.058,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 12,
+            "rows_examined": 5,
+            "elapsed_ms": 0.089,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 36,
+            "rows_examined": 22,
+            "elapsed_ms": 0.311,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.063,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.102,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 11,
+            "rows_examined": 3,
+            "elapsed_ms": 0.093,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.09,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.034,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "iterator/Iterator.cpp",
+      "expected": "iterator",
+      "files": [
+        {
+          "path": "iterator/Iterator.cpp",
+          "sha256": "a8c6cf7f72a2bd8f1398c092e547268170e563c7bac8f3af900c8154ddc80675"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 55,
+      "facts": 1322,
+      "elapsed_ms": 21.74,
+      "expected_found": true,
+      "matches": [
+        {
+          "rule": "iterator",
+          "variant": "default",
+          "status": "structural_match",
+          "roles": {
+            "$iterator": {
+              "name": "ConcreteIterator",
+              "path": "iterator/Iterator.cpp",
+              "line": 93
+            }
+          }
+        }
+      ],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.079,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.091,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 6,
+            "rows_examined": 2,
+            "elapsed_ms": 0.062,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 13,
+            "rows_examined": 4,
+            "elapsed_ms": 0.187,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.057,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.063,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.041,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 10,
+            "rows_examined": 4,
+            "elapsed_ms": 0.058,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.061,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.067,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 230,
+            "rows_examined": 136,
+            "elapsed_ms": 0.766,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.074,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 8,
+            "rows_examined": 3,
+            "elapsed_ms": 0.092,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.112,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 11,
+            "rows_examined": 3,
+            "elapsed_ms": 0.101,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 6,
+            "rows_examined": 2,
+            "elapsed_ms": 0.067,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 48,
+            "rows_examined": 20,
+            "elapsed_ms": 0.169,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.038,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.058,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "mediator/Mediator.cpp",
+      "expected": "mediator",
+      "files": [
+        {
+          "path": "mediator/Mediator.cpp",
+          "sha256": "abb7f60db14bc72bb60afed26bfc227ce7eebcd27a0cedfb8e04b680c9247cec"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 77,
+      "facts": 1919,
+      "elapsed_ms": 26.1,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.115,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.068,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 10,
+            "rows_examined": 4,
+            "elapsed_ms": 0.073,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.168,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.059,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.043,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 8,
+            "rows_examined": 3,
+            "elapsed_ms": 0.081,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.064,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.074,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 54,
+            "rows_examined": 34,
+            "elapsed_ms": 0.411,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.069,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.111,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 9,
+            "rows_examined": 2,
+            "elapsed_ms": 0.099,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.097,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.038,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.058,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "memento/Memento.cpp",
+      "expected": "memento",
+      "files": [
+        {
+          "path": "memento/Memento.cpp",
+          "sha256": "c9f745b91d109f78c97f76595621ec52f7e338347270a8bb4b05885ca83213d3"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 69,
+      "facts": 1628,
+      "elapsed_ms": 24.13,
+      "expected_found": false,
+      "matches": [
+        {
+          "rule": "builder",
+          "variant": "default",
+          "status": "structural_match",
+          "roles": {
+            "$builder": {
+              "name": "Originator",
+              "path": "memento/Memento.cpp",
+              "line": 48
+            },
+            "$finish": {
+              "name": "createMemento",
+              "path": "memento/Memento.cpp",
+              "line": 69
+            },
+            "$product": {
+              "name": "Memento",
+              "path": "memento/Memento.cpp",
+              "line": 19
+            }
+          }
+        }
+      ],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.074,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.058,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 82,
+            "rows_examined": 39,
+            "elapsed_ms": 0.335,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.061,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.04,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 10,
+            "rows_examined": 4,
+            "elapsed_ms": 0.101,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.06,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.065,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 98,
+            "rows_examined": 56,
+            "elapsed_ms": 0.366,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.046,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 26,
+            "rows_examined": 12,
+            "elapsed_ms": 0.185,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.172,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 14,
+            "rows_examined": 5,
+            "elapsed_ms": 0.124,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.068,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.062,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.079,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 56,
+            "rows_examined": 23,
+            "elapsed_ms": 0.294,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.043,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.085,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "observer/Observer.cpp",
+      "expected": "observer",
+      "files": [
+        {
+          "path": "observer/Observer.cpp",
+          "sha256": "349180e4bb88992a85e782aee4aead32dd295f572dcf7ee6eaea6103de94e2b3"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 62,
+      "facts": 1612,
+      "elapsed_ms": 23.0,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.069,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 8,
+            "rows_examined": 3,
+            "elapsed_ms": 0.061,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 1,
+            "elapsed_ms": 0.164,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.04,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 8,
+            "rows_examined": 3,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.048,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.06,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.111,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 65,
+            "rows_examined": 40,
+            "elapsed_ms": 0.33,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.048,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.073,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.104,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 1,
+            "elapsed_ms": 0.091,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.063,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 31,
+            "rows_examined": 12,
+            "elapsed_ms": 0.141,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.036,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "prototype/Prototype.cpp",
+      "expected": "prototype",
+      "files": [
+        {
+          "path": "prototype/Prototype.cpp",
+          "sha256": "1de01cf29e75ed788d108ea8c5ce4e196ed23ff5b6455abed396e546a66ac82f"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 44,
+      "facts": 1119,
+      "elapsed_ms": 22.12,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.07,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 6,
+            "rows_examined": 2,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.154,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.039,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 6,
+            "rows_examined": 2,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.102,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.068,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 44,
+            "rows_examined": 26,
+            "elapsed_ms": 0.287,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.046,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.063,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.105,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.083,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 6,
+            "rows_examined": 2,
+            "elapsed_ms": 0.065,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.094,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.036,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "proxy/Proxy.cpp",
+      "expected": "proxy",
+      "files": [
+        {
+          "path": "proxy/Proxy.cpp",
+          "sha256": "e79e0a0d73c288ae2f994b207e636fc0faff68db8cf010ea465f71f4f84d6850"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 20,
+      "facts": 465,
+      "elapsed_ms": 17.53,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.093,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.063,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.066,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.181,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.107,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.073,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.046,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 16,
+            "rows_examined": 7,
+            "elapsed_ms": 0.129,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.059,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.065,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 34,
+            "rows_examined": 16,
+            "elapsed_ms": 0.284,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.061,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.101,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.081,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 6,
+            "rows_examined": 2,
+            "elapsed_ms": 0.068,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.088,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.033,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "singleton/Singleton.cpp",
+      "expected": "singleton",
+      "files": [
+        {
+          "path": "singleton/Singleton.cpp",
+          "sha256": "74fc8f9c31e92537853f35c3886977327c19f7498493fb28bdaf19e08da27d13"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 18,
+      "facts": 495,
+      "elapsed_ms": 15.96,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.07,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.048,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.161,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.058,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.041,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.063,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 42,
+            "rows_examined": 22,
+            "elapsed_ms": 0.356,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.048,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.064,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.102,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.083,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 9,
+            "rows_examined": 2,
+            "elapsed_ms": 0.102,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.035,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "state/State.cpp",
+      "expected": "state",
+      "files": [
+        {
+          "path": "state/State.cpp",
+          "sha256": "0e552e9268d948e99e55fc8849b5204996374287fbcaa9c4c935c6fedc287486"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 32,
+      "facts": 786,
+      "elapsed_ms": 17.23,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.065,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 1,
+            "elapsed_ms": 0.195,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.057,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.04,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.056,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.061,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 48,
+            "rows_examined": 28,
+            "elapsed_ms": 0.304,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.045,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.071,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.104,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 1,
+            "elapsed_ms": 0.089,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.102,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.062,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 11,
+            "rows_examined": 3,
+            "elapsed_ms": 0.11,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.034,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "strategy/Strategy.cpp",
+      "expected": "strategy",
+      "files": [
+        {
+          "path": "strategy/Strategy.cpp",
+          "sha256": "f1e7083281becc2074b8fdaa2505ebfaeda3f4aa341e964a6ac6582f6d54649c"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 27,
+      "facts": 696,
+      "elapsed_ms": 17.52,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.065,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.145,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.458,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.041,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 4,
+            "rows_examined": 1,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.062,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 36,
+            "rows_examined": 22,
+            "elapsed_ms": 0.252,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.045,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.06,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.099,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.08,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.107,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.092,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.034,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "template-method/TemplateMethod.cpp",
+      "expected": "template-method",
+      "files": [
+        {
+          "path": "template-method/TemplateMethod.cpp",
+          "sha256": "6aa45570711c4ec556cd997e5dafc55f0542ace3ae805ea5ef18fd15c6fe7631"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 16,
+      "facts": 433,
+      "elapsed_ms": 15.65,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.067,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.054,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.043,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.147,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.05,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.039,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.039,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.427,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.064,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 26,
+            "rows_examined": 12,
+            "elapsed_ms": 0.236,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.044,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.058,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.095,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.077,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.048,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.047,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.162,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.058,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "visitor/Visitor.cpp",
+      "expected": "visitor",
+      "files": [
+        {
+          "path": "visitor/Visitor.cpp",
+          "sha256": "50e6755cc60121baf9d2706b3391debc2daf83a611e2705b480534eda94683e1"
+        }
+      ],
+      "languages": [
+        "cpp"
+      ],
+      "diagnostics": [],
+      "entities": 41,
+      "facts": 1098,
+      "elapsed_ms": 19.3,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.065,
+            "dependencies": [
+              "abstract-factory#nominal-families"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "adapter#object-adapter"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.044,
+            "dependencies": [
+              "bridge#runtime-composition"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.142,
+            "dependencies": [
+              "builder#director",
+              "builder#mutable-product"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "chain-of-responsibility#linked-handlers"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.048,
+            "dependencies": [
+              "command#command-object"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.038,
+            "dependencies": [
+              "composite#recursive-contract"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.048,
+            "dependencies": [
+              "decorator#object-wrapper"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.076,
+            "dependencies": [
+              "facade#object-surface"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.049,
+            "dependencies": [
+              "factory-method#virtual-slot"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.055,
+            "dependencies": [
+              "flyweight#explicit-interning"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.06,
+            "dependencies": [
+              "interpreter#expression-objects"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 40,
+            "rows_examined": 26,
+            "elapsed_ms": 0.262,
+            "dependencies": [
+              "iterator#delegated-cursor",
+              "iterator#delegated-generator",
+              "iterator#explicit-cursor",
+              "iterator#external-cursor",
+              "iterator#generator",
+              "iterator#paired-cursor"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.044,
+            "dependencies": [
+              "mediator#direct-colleagues"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.063,
+            "dependencies": [
+              "memento#snapshot-object"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.105,
+            "dependencies": [
+              "observer#listener-registry",
+              "observer#map-key-registry"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.085,
+            "dependencies": [
+              "prototype#derived-clone",
+              "prototype#explicit-copy"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.051,
+            "dependencies": [
+              "proxy#guarded-access"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.052,
+            "dependencies": [
+              "singleton#lazy-guarded"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.053,
+            "dependencies": [
+              "state#state-object"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.09,
+            "dependencies": [
+              "strategy#strategy-callable",
+              "strategy#strategy-object"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.033,
+            "dependencies": [
+              "template-method#virtual-skeleton"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 2,
+            "rows_examined": 0,
+            "elapsed_ms": 0.104,
+            "dependencies": [
+              "visitor#named-dispatch"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

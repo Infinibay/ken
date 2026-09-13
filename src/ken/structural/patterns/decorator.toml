@@ -1,0 +1,52 @@
+schema = "ken-rule/1"
+id = "decorator"
+name = "Decorator"
+category = "structural"
+description = "A wrapper delegates through the same contract it implements."
+caveat = "Same-contract delegation also occurs in Proxy; added responsibilities require review."
+legacy_query = "require $unit SUBTYPE_OF $contract\nrequire $unit HAS_FIELD $wrapped\nrequire $wrapped TYPE $contract\nrequire $unit HAS_METHOD $method\nrequire $method DELEGATES_TO $wrapped\n"
+query = '''
+query decorator {
+ match "decorator#object-wrapper"(unit: $unit);
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "object-wrapper"
+status = "ready"
+languages = ["python", "java", "typescript"]
+requires = ["contract_resolution", "effect_flow"]
+graph_requirements = ["Wrapper y envuelto cumplen contrato; delegación correlacionada y comportamiento añadido observable."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query decorator {
+
+ require $unit SUBTYPE_OF $contract;
+ require $unit HAS_FIELD $wrapped;
+ require $wrapped TYPE $contract;
+ require $unit HAS_METHOD $method;
+ require $method OVERRIDES $slot;
+ require $method HAS_CALL $forward;
+ require $forward RECEIVER $wrapped;
+ require $method HAS_CALL $extra;
+ different $extra $forward;
+ callable() as $method;
+ call() as $forward;
+ where $method.name == $forward.name;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "callable-wrapper"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["closure_capture", "argument_result_flow"]
+graph_requirements = ["Closure conserva callable envuelta; adapta efecto o resultado preservando contrato relevante."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

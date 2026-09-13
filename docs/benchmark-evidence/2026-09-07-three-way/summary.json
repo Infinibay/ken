@@ -1,0 +1,108 @@
+[
+  {
+    "condition_task": "must-exist--codex-ken",
+    "exit_code": -15,
+    "elapsed_seconds": 90.032,
+    "timeout": true,
+    "completed_items_by_type": {
+      "agent_message": 2,
+      "command_execution": 8,
+      "mcp_tool_call": 1,
+      "file_change": 1
+    },
+    "usage": null,
+    "mcp_errors": [
+      {
+        "message": "MCP tool call requires approval, but approval policy is never"
+      }
+    ],
+    "tool_items_started": 9,
+    "verify_original_exit": 1,
+    "verify_corrected_exit": 0
+  },
+  {
+    "condition_task": "must-exist--codex-no-ken",
+    "exit_code": -15,
+    "elapsed_seconds": 90.026,
+    "timeout": true,
+    "completed_items_by_type": {
+      "agent_message": 3,
+      "command_execution": 7,
+      "file_change": 1
+    },
+    "usage": null,
+    "mcp_errors": [],
+    "tool_items_started": 7,
+    "verify_original_exit": 1,
+    "verify_corrected_exit": 0
+  },
+  {
+    "condition_task": "must-exist--infinidev",
+    "exit_code": -15,
+    "elapsed_seconds": 90.02,
+    "timeout": true,
+    "running_lines_observed": 13,
+    "usage": null,
+    "verify_original_exit": 1,
+    "verify_corrected_exit": 0
+  },
+  {
+    "condition_task": "socket--codex-ken",
+    "exit_code": 0,
+    "elapsed_seconds": 86.402,
+    "timeout": false,
+    "completed_items_by_type": {
+      "agent_message": 4,
+      "mcp_tool_call": 1,
+      "command_execution": 9,
+      "file_change": 1
+    },
+    "usage": {
+      "input_tokens": 209911,
+      "cached_input_tokens": 185216,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 1327,
+      "reasoning_output_tokens": 159
+    },
+    "mcp_errors": [
+      {
+        "message": "MCP tool call requires approval, but approval policy is never"
+      }
+    ],
+    "tool_items_started": 10,
+    "verify_original_exit": 0,
+    "verify_corrected_exit": null
+  },
+  {
+    "condition_task": "socket--codex-no-ken",
+    "exit_code": 0,
+    "elapsed_seconds": 87.693,
+    "timeout": false,
+    "completed_items_by_type": {
+      "agent_message": 3,
+      "command_execution": 8,
+      "file_change": 1
+    },
+    "usage": {
+      "input_tokens": 216103,
+      "cached_input_tokens": 188160,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 1161,
+      "reasoning_output_tokens": 125
+    },
+    "mcp_errors": [],
+    "tool_items_started": 8,
+    "verify_original_exit": 0,
+    "verify_corrected_exit": null
+  },
+  {
+    "condition_task": "socket--infinidev",
+    "exit_code": -15,
+    "elapsed_seconds": 90.026,
+    "timeout": true,
+    "running_lines_observed": 15,
+    "usage": null,
+    "verify_original_exit": 0,
+    "verify_corrected_exit": null
+  }
+]

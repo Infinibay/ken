@@ -1,0 +1,148 @@
+[
+  {
+    "repo": "flask",
+    "scope": "standard",
+    "rule": "architecture.dependency-injection",
+    "commit": "d73fa1cdcbd8b1465c151db8924ba58b1dd14e35",
+    "added": [
+      {
+        "roles": {
+          "$unit": {
+            "name": "ScriptInfo",
+            "path": "src/flask/cli.py",
+            "line": 293,
+            "kind": "CLASS"
+          },
+          "$dependency": {
+            "name": "create_app",
+            "path": "src/flask/cli.py",
+            "line": 316,
+            "kind": "STORAGE"
+          },
+          "$inject": {
+            "name": "__init__",
+            "path": "src/flask/cli.py",
+            "line": 305,
+            "kind": "CALLABLE"
+          },
+          "$operation": {
+            "name": "load_app",
+            "path": "src/flask/cli.py",
+            "line": 333,
+            "kind": "CALLABLE"
+          }
+        },
+        "variant": "default",
+        "status": "structural_match"
+      },
+      {
+        "roles": {
+          "$unit": {
+            "name": "ConfigAttribute",
+            "path": "src/flask/config.py",
+            "line": 20,
+            "kind": "CLASS"
+          },
+          "$dependency": {
+            "name": "get_converter",
+            "path": "src/flask/config.py",
+            "line": 27,
+            "kind": "STORAGE"
+          },
+          "$inject": {
+            "name": "__init__",
+            "path": "src/flask/config.py",
+            "line": 23,
+            "kind": "CALLABLE"
+          },
+          "$operation": {
+            "name": "__get__",
+            "path": "src/flask/config.py",
+            "line": 35,
+            "kind": "CALLABLE"
+          }
+        },
+        "variant": "default",
+        "status": "structural_match"
+      }
+    ],
+    "removed": [],
+    "review": {
+      "classification": "TP-structural-callable-injection",
+      "reason": "A client-provided function is stored in a field and called from another method. No claim of DI container, lifetime or unique pattern intent."
+    }
+  },
+  {
+    "repo": "rxjs",
+    "scope": "modern-extra",
+    "rule": "architecture.dependency-injection",
+    "commit": "54796b38a57e6309f9861e174737479bb3f63f61",
+    "added": [
+      {
+        "roles": {
+          "$unit": {
+            "name": "ColdObservable",
+            "path": "packages/rxjs/src/cold-observable.ts",
+            "line": 97,
+            "kind": "CLASS"
+          },
+          "$dependency": {
+            "name": "#init",
+            "path": "packages/rxjs/src/cold-observable.ts",
+            "line": 102,
+            "kind": "STORAGE"
+          },
+          "$inject": {
+            "name": "constructor",
+            "path": "packages/rxjs/src/cold-observable.ts",
+            "line": 100,
+            "kind": "CALLABLE"
+          },
+          "$operation": {
+            "name": "subscribe",
+            "path": "packages/rxjs/src/cold-observable.ts",
+            "line": 105,
+            "kind": "CALLABLE"
+          }
+        },
+        "variant": "default",
+        "status": "structural_match"
+      },
+      {
+        "roles": {
+          "$unit": {
+            "name": "Connection",
+            "path": "packages/rxjs/src/connectable.ts",
+            "line": 27,
+            "kind": "CLASS"
+          },
+          "$dependency": {
+            "name": "disconnect",
+            "path": "packages/rxjs/src/connectable.ts",
+            "line": 34,
+            "kind": "STORAGE"
+          },
+          "$inject": {
+            "name": "constructor",
+            "path": "packages/rxjs/src/connectable.ts",
+            "line": 34,
+            "kind": "CALLABLE"
+          },
+          "$operation": {
+            "name": "unsubscribe",
+            "path": "packages/rxjs/src/connectable.ts",
+            "line": 36,
+            "kind": "CALLABLE"
+          }
+        },
+        "variant": "default",
+        "status": "structural_match"
+      }
+    ],
+    "removed": [],
+    "review": {
+      "classification": "TP-structural-callable-injection",
+      "reason": "A client-provided function is stored in a field and called from another method. No claim of DI container, lifetime or unique pattern intent."
+    }
+  }
+]

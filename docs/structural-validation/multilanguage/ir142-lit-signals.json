@@ -1,0 +1,379 @@
+{
+  "repo": "lit",
+  "commit": "73a69f2e6eea02b37b389d13ec1b210520c0ca8f",
+  "scope": "packages/labs/signals/src/",
+  "exclude_globs": [
+    "*/test/*",
+    "*/tests/*"
+  ],
+  "excluded_components": [
+    ".venv",
+    "__pycache__",
+    "benchmarks",
+    "internal",
+    "node_modules",
+    "target",
+    "testdata",
+    "tests",
+    "tools",
+    "zaptest"
+  ],
+  "files": [
+    {
+      "path": "packages/labs/signals/src/index.ts",
+      "sha256": "6cc82a383b6416bab6478e6e32c70819504432fff9bfe165bb6d4c7084d796bd",
+      "language": "typescript"
+    },
+    {
+      "path": "packages/labs/signals/src/lib/html-tag.ts",
+      "sha256": "bfddca1a6089735b5f836aae6c7bde2b0e6d934bd9a561991eda30ad4fc59eff",
+      "language": "typescript"
+    },
+    {
+      "path": "packages/labs/signals/src/lib/signal-watcher.ts",
+      "sha256": "3b8fc9d9807731e84d63a6dc9c23ca77eba01569702d46c2a1af1489bb69afe4",
+      "language": "typescript"
+    },
+    {
+      "path": "packages/labs/signals/src/lib/watch.ts",
+      "sha256": "e28c4ac00e48e08bf65479956ac7047bce0579a5e8307bb64956e2dc17880d3b",
+      "language": "typescript"
+    }
+  ],
+  "diagnostics": [],
+  "analysis_ms": 98.34,
+  "entities": 351,
+  "facts": 9017,
+  "rules": {
+    "architecture.adapted-continuation-wrapper": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 399,
+          "rows_examined": 186,
+          "elapsed_ms": 0.827,
+          "dependencies": []
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$factory": {
+              "name": "render",
+              "path": "packages/labs/signals/src/lib/watch.ts",
+              "line": 60,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@1816",
+              "path": "packages/labs/signals/src/lib/watch.ts",
+              "line": 62,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "signal",
+              "path": "packages/labs/signals/src/lib/watch.ts",
+              "line": 60,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "1794",
+              "path": "packages/labs/signals/src/lib/watch.ts",
+              "line": 62,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "1822",
+              "path": "packages/labs/signals/src/lib/watch.ts",
+              "line": 62,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "architecture.batch-work-queue": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 4,
+          "rows_examined": 1,
+          "elapsed_ms": 0.161,
+          "dependencies": [
+            "architecture.batch-work-queue.drain"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "architecture.cache-aside": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 5,
+          "rows_examined": 0,
+          "elapsed_ms": 0.657,
+          "dependencies": [
+            "architecture.cache-aside#java-optional",
+            "architecture.cache-aside#null-miss"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "architecture.continuation-wrapper": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 155,
+          "rows_examined": 78,
+          "elapsed_ms": 0.306,
+          "dependencies": []
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@486",
+              "path": "packages/labs/signals/src/lib/html-tag.ts",
+              "line": 21,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@535",
+              "path": "packages/labs/signals/src/lib/html-tag.ts",
+              "line": 22,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "coreTag",
+              "path": "packages/labs/signals/src/lib/html-tag.ts",
+              "line": 21,
+              "kind": "PARAMETER"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "architecture.dependency-injection": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 70,
+          "rows_examined": 31,
+          "elapsed_ms": 0.344,
+          "dependencies": [
+            "architecture.dependency-injection#callable-input",
+            "architecture.dependency-injection#object-assignment",
+            "strategy.supplied_policy"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "architecture.dispatch-table": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 5,
+          "rows_examined": 0,
+          "elapsed_ms": 0.355,
+          "dependencies": [
+            "architecture.dispatch-table#adapted",
+            "architecture.dispatch-table#direct"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "resilience.exception-retry": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 1,
+          "rows_examined": 0,
+          "elapsed_ms": 0.181,
+          "dependencies": []
+        }
+      },
+      "matches": []
+    },
+    "architecture.read-through-cache": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 30,
+          "rows_examined": 14,
+          "elapsed_ms": 0.506,
+          "dependencies": [
+            "architecture.read-through-cache.read_fill"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "architecture.subclass-factory": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 19,
+          "rows_examined": 8,
+          "elapsed_ms": 0.139,
+          "dependencies": [
+            "architecture.subclass-factory#returned-subclass"
+          ]
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$factory": {
+              "name": "SignalWatcher",
+              "path": "packages/labs/signals/src/lib/signal-watcher.ts",
+              "line": 82,
+              "kind": "CALLABLE"
+            },
+            "$derived": {
+              "name": "SignalWatcher",
+              "path": "packages/labs/signals/src/lib/signal-watcher.ts",
+              "line": 91,
+              "kind": "CLASS"
+            },
+            "$base": {
+              "name": "Base",
+              "path": "packages/labs/signals/src/lib/signal-watcher.ts",
+              "line": 82,
+              "kind": "PARAMETER"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "persistence.unit-of-work": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 14,
+          "rows_examined": 6,
+          "elapsed_ms": 0.407,
+          "dependencies": [
+            "persistence.unit-of-work#keyed-change-set"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "syntax.generators": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 48,
+          "rows_examined": 47,
+          "elapsed_ms": 0.085,
+          "dependencies": []
+        }
+      },
+      "matches": []
+    }
+  },
+  "engine": {
+    "ir_version": "1.42.0",
+    "source_sha256": {
+      "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+      "binding_writes.py": "248c81c19c54b70240ab312a4f0401b272bdc0644197417ea5434827607fa7f3",
+      "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+      "call_bindings.py": "e22e85204749f85185813ab2b6ae835f6a9566092c451fb674d41629e884bc7b",
+      "catalog.py": "39cb65a22c3c0c1b96ae41cd2343b8227d93ba1f62763bd95efdfe568683d638",
+      "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+      "collection_lifecycle.py": "a35f48339a074eb62b1e5e1b73024c4ea3d133628675b710a0cf048f5910d549",
+      "collection_snapshots.py": "8ba78a0010eafa7a85c4ab519944171570235a0c108ed52d5f830ed79684203b",
+      "control_flow.py": "b7f4542dfc53514013c420828e8a13d71b634a951d72ed301fa1306a0021a756",
+      "cpp_initializers.py": "e3d9bb3e9a27b78151f7f71288e7ebb27d4b95347ef0529ba91206a4dab916b7",
+      "cpp_methods.py": "eeb094c9ac77fdf7d76981e14b4b384c1cc805c648f8a774624f8ef806eea321",
+      "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+      "field_transfers.py": "c327f6bd070445c583818ace80797bd891b100bd9ed4596c1ae6a6fad1b3f61f",
+      "frontend.py": "76436dc4c0cad93853995e062ccdd4bf2d5f9495051767dd8428af7cda1c4e38",
+      "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+      "kenql.py": "c6400ac969decb59e0ac7d0eb0a588d9521b78ce92224a4093fa8f3676fddad0",
+      "member_access.py": "9781486284abe3599396740599f7305f2069c555e024b2ff9b10fb1cd5e6fe50",
+      "member_transfers.py": "cc2474d0ac9f0f539cde50ead12b6af08b2254614e523af9c2677d795ed8fb10",
+      "model.py": "54dc8056dc9daf93066823d2aa68e18f314c6d79ecd83885329a9d5a5b1bafc5",
+      "modern_patterns/adapted-continuation-wrapper.toml": "cfae68be5c98788c03b0c663a7fb5d94b03164b57e2c2b413228e4c14528c50d",
+      "modern_patterns/batch-work-queue.toml": "6e1b3a69aae411a736c749814959aac73df1e30c29c84ef7e6b2e02a1c058a31",
+      "modern_patterns/cache-aside.toml": "c7915bc8855deecd60881f3f4db072714f670ed3f55bdbd6f47a495549a12328",
+      "modern_patterns/continuation-wrapper.toml": "0092ade2a426815819334a1999ea4c2a65e54f452ceaf7a6de08dd77dd855ff2",
+      "modern_patterns/dependency-injection.toml": "d1ba8b738b297988381e3b798bbf417d19d63157d185230ffe6e53ec80854468",
+      "modern_patterns/dispatch-table.toml": "a2197cedfd9f2f8bdb35c02ba8a398e1805f31b6bec42f8547aaefa4f86c3566",
+      "modern_patterns/exception-retry.toml": "eeab3c3ae90b1a7a3f1778db573d80113e4d6e0cc50fbd2ff6ec1cb1da6af77c",
+      "modern_patterns/read-through-cache.toml": "68d8df7db96d7a3270875b46bc837879f036a06a15b0e8c8f46877fc34eb6159",
+      "modern_patterns/subclass-factory.toml": "ec69fa0a23372a403036e3c5d6775ce6d0d3045c4792d9fad9602335462f5141",
+      "modern_patterns/unit-of-work.toml": "82920e8a2f861c7658a80c729ad0b375d466fb8d1a6122d5ab783a039e64b949",
+      "nominal_roots.py": "9f41249a1346ab4543d497cdc71b8568d5c0b899fd6ba99cfb7b272d9fc1dfb3",
+      "patterns/abstract-factory.toml": "d075ab8290e8304c4c25806087b2d9f5c22c2f5ebf34e37ab957843220f06d4d",
+      "patterns/adapter.toml": "f68db1dcb07858065cc9a80bb80da5b0ba7e026681e08c6dc9ca4945d1e8f842",
+      "patterns/bridge.toml": "566e693f3decef8bd27d2f10fff841e8f1f768b9bbc2e4a7dfbb4e522c76bf4b",
+      "patterns/builder.toml": "bb46c4713cd0b4c6b42a7a5cc4df16206d42b73be20948d9328c7fed1b6897d8",
+      "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+      "patterns/command.toml": "1dd4624f93ee499ca31ded97e573455356b443e8b6259bb39022f420a815de75",
+      "patterns/composite.toml": "fffb2da5916eb05e4da83de63e21549ad06481938087b9344f291c22f3516a02",
+      "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+      "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+      "patterns/factory-method.toml": "cf2d5b3d342478cc22d40a5a2211002622b4b75be09ca25b0cafd3fccd98fbd4",
+      "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+      "patterns/interpreter.toml": "a2a674ce0dfa775cc287df32bdca056bd4be1196ada97ec170821852817e787c",
+      "patterns/iterator.toml": "404233895ac5526625c039f7875db8ecb68aba57ba087c67723f871b797d04ef",
+      "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+      "patterns/memento.toml": "fa56773105fe4f84ae7f8557eb086757831600533b5c38777cc330a0f480caf3",
+      "patterns/observer.toml": "ca3ad665f19488efc51b57d103667395ae895f4f56b4fb0447e463d23d3599d5",
+      "patterns/prototype.toml": "2de68c873a910bd564889fce9644339d5169640803531d9bf54ae1d3bcb69923",
+      "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+      "patterns/singleton.toml": "67e02f172122fbef60c9480f09bcf1842562baca29ded5556853befcdab48955",
+      "patterns/state.toml": "24a6b2742a179205032c27e48d21082e65407eecd62dd3a827b317246a015a74",
+      "patterns/strategy.toml": "c71942d6ea29895d487c6ed25cd4c08c3aef54116bfbf8b59996d8b0e34865f2",
+      "patterns/template-method.toml": "391fd8cf3a0a2fceff9ebfc1994b82d737d3dc9a7bbe181e3886b9e144133e3d",
+      "patterns/visitor.toml": "7d47620aad4831dfcc601818ea92c5f9781658d1d85356d6b0d44e9c7a88d3e7",
+      "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+      "return_flow.py": "67da3d1dcc7071dda86fbec744c81a2faeff7fd85bee746598d1157d16b0389b",
+      "rules.py": "a3fd498e5154c1f45a524de6fe470bc176bc8600b3a70332727640e956e0cfb3",
+      "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+      "semantic.py": "6beeb3c2bbdb66a06f296152d6b08b930b3bb2d55f67b87653ee0c8b2f9ed6fe",
+      "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df",
+      "syntax_graph.py": "ad63fe8b926d73bf853f09ec209e3208a1341e8eb2c4fe7799e73cafa3a4d6b6",
+      "type_refs.py": "31c0aac9132cdae3ad0a4ea009a92ce57d8a5434a999dbf0597592d347010b17"
+    }
+  },
+  "budget": {
+    "max_matches": 1000,
+    "max_rows": 500000,
+    "max_states": 100000,
+    "timeout_ms": 5000
+  },
+  "collections": [
+    "modern"
+  ],
+  "python_generator_oracle": {
+    "expected": [],
+    "detected": [],
+    "missing": [],
+    "unexpected": [],
+    "parse_errors": []
+  }
+}

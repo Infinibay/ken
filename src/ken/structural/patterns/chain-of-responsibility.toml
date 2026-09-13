@@ -1,0 +1,56 @@
+schema = "ken-rule/1"
+id = "chain-of-responsibility"
+name = "Chain of Responsibility"
+category = "behavioral"
+description = "A handler conditionally forwards to another handler."
+caveat = "The same shape can be a Proxy; request handling and chain topology require review. The selected forwarding call must occur inside a lexical branch arm; early exits, request/result preservation and exclusive handling are not proven."
+legacy_query = "require $unit SUBTYPE_OF $handler\nrequire $unit HAS_FIELD $next\nrequire $next TYPE $handler\nrequire $unit HAS_METHOD $handle\nrequire $handle CONDITIONAL_DELEGATION $next\n"
+query = '''
+query chain_of_responsibility {
+ match "chain-of-responsibility#linked-handlers"(unit: $unit);
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "linked-handlers"
+status = "ready"
+languages = ["python", "java", "typescript"]
+requires = ["request_value_flow", "conditional_calls"]
+graph_requirements = ["Handler procesa o reenvía misma request a siguiente del contrato; ensamblado de cadena aporta evidencia."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query chain_of_responsibility {
+
+ require $unit SUBTYPE_OF $contract;
+ require $unit HAS_FIELD $next;
+ require $next TYPE $contract;
+ require $unit HAS_METHOD $handle;
+ require $handle OVERRIDES $slot;
+ require $handle CONDITIONAL_DELEGATION $next;
+ require $handle HAS_CALL $forward;
+ require $forward RECEIVER $next;
+ require $forward SYNTAX_NODE $forward_syntax;
+ path $forward_syntax SYNTAX_PARENT{0,32} $arm as $decision_scope;
+ operation(role: [consequence, alternative]) as $arm;
+ require $arm SYNTAX_PARENT $decision;
+ operation(kind: branch) as $decision;
+ call() as $forward;
+ callable() as $handle;
+ where $handle.name == $forward.name;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "middleware-closures"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["closure_capture", "control_flow"]
+graph_requirements = ["Handler captura next; rama puede terminar o continuar request; distinguir pipeline incondicional."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

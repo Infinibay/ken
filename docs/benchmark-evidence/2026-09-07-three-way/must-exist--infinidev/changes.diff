@@ -1,0 +1,32 @@
+diff --git a/src/ken/_paths.py b/src/ken/_paths.py
+index 532fd3a..d1b4614 100644
+--- a/src/ken/_paths.py
++++ b/src/ken/_paths.py
+@@ -48,13 +48,16 @@ def log_path(project_root: Path) -> Path:
+     return ken_dir(project_root) / LOG_FILENAME
+ 
+ 
+-def resolve_project_path(project_root: Path, path: str | Path) -> Path:
++def resolve_project_path(
++    project_root: Path, path: str | Path, *, must_exist: bool = False
++) -> Path:
+     """Resolve *path* and require it to remain inside *project_root*.
+ 
+     Relative paths are interpreted from the project root. Absolute paths are
+     accepted when they point inside it. Resolving both sides before the
+     containment check also rejects ``..`` traversal and escapes through
+-    existing symbolic links.
++    existing symbolic links. If *must_exist* is true, an in-project target
++    must exist or FileNotFoundError is raised, after the containment check.
+     """
+     root = project_root.expanduser().resolve()
+     supplied = Path(path).expanduser()
+@@ -63,6 +66,8 @@ def resolve_project_path(project_root: Path, path: str | Path) -> Path:
+         resolved.relative_to(root)
+     except ValueError as err:
+         raise ValueError(f"path escapes project root: {path}") from err
++    if must_exist and not resolved.exists():
++        raise FileNotFoundError(f"path does not exist: {resolved}")
+     return resolved
+ 
+ 

@@ -1,0 +1,48 @@
+schema = "ken-rule/1"
+id = "facade"
+name = "Facade"
+category = "structural"
+description = "One surface coordinates multiple subsystem types."
+caveat = "Coordination alone cannot establish which API is the intended subsystem boundary."
+legacy_query = "require $unit IS CLASS\ncount >=2 $method DELEGATES_TYPE $service distinct=$service where $unit HAS_METHOD $method\n"
+query = '''
+query facade {
+ match "facade#object-surface"(unit: $unit);
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "object-surface"
+status = "ready"
+languages = ["python", "java", "typescript"]
+requires = ["call_graph", "module_visibility"]
+graph_requirements = ["Superficie de objeto coordina subsistemas y es usada como frontera por clientes."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query facade {
+
+ require $unit HAS_FIELD $field1;
+ require $unit HAS_FIELD $field2;
+ require $field1 TYPE $service1;
+ require $field2 TYPE $service2;
+ require $unit HAS_METHOD $operation;
+ require $operation DELEGATES_TO $field1;
+ require $operation DELEGATES_TO $field2;
+ different $service1 $service2;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "module-surface"
+status = "design"
+languages = ["python", "javascript", "typescript", "go", "rust"]
+requires = ["exports", "call_graph"]
+graph_requirements = ["Funciones exportadas coordinan subsistemas; no requerir una clase Facade."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

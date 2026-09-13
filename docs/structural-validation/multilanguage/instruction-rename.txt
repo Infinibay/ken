@@ -1,0 +1,22 @@
+ken-instructions/1 source=1.46.0
+func "rename" [python, lowered] {
+  slot @p0 "records" : unknown
+  slot @p1 "key" : unknown
+  slot @p2 "new_name" : unknown
+  slot @p3 "item" : unknown
+  entry {
+    %0 : unknown = slot.load @p0 effects=["read.binding"]
+    %1 : unknown = slot.load @p1 effects=["read.binding"]
+    %2 : address = index.addr %0, %1
+    %3 : unknown = memory.load %2 {"dispatch": "native"} effects=["read.memory", "unknown"]
+    slot.store @p3, %3 effects=["write.binding"]
+    %4 : unknown = slot.load @p2 effects=["read.binding"]
+    %5 : unknown = slot.load @p3 effects=["read.binding"]
+    %6 : address = field.addr %5 {"field": "name"}
+    memory.store %6, %4 effects=["write.memory", "unknown"]
+    %7 : int = const  {"native_kind": "integer", "spelling": "1"}
+    %8 : unknown = call callee="log", argument:0=%7 effects=["invoke", "unknown"]
+    %9 : unknown = slot.load @p3 effects=["read.binding"]
+    return %9
+  }
+}

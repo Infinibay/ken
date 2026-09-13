@@ -1,0 +1,47 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.composite"
+name = "Composite"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/composite.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.composite]
+kinds = ["type_decl"]
+required = true
+
+[exports.operation]
+kinds = ["callable"]
+required = true
+
+[[variants]]
+id = "recursive-contract"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["collection_elements", "contract_resolution", "call_targets"]
+graph_requirements = ["Hoja y compuesto cumplen contrato; colección contiene componentes; operación uniforme consume resultados hijos."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "algebraic-tree"
+status = "design"
+languages = ["typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["sum_types", "match_flow", "recursion"]
+graph_requirements = ["Variante compuesta de sum type contiene hijos recursivos; evaluación uniforme incluye hojas."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "higher-order-traversal"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["collection_api_models", "closure_capture"]
+graph_requirements = ["Reduce/map llama la operación del componente; flujo de retorno de callback se agrega al resultado."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

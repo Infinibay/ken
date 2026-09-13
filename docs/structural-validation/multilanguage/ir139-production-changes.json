@@ -1,0 +1,24 @@
+[
+  {
+    "repo": "commons-io",
+    "rule": "strategy",
+    "removed": [
+      {
+        "roles": {
+          "$unit": {
+            "name": "NotFileFilter",
+            "path": "src/main/java/org/apache/commons/io/filefilter/NotFileFilter.java",
+            "line": 36,
+            "kind": "CLASS"
+          }
+        },
+        "variant": "default",
+        "status": "structural_match"
+      }
+    ],
+    "review": {
+      "classification": "unresolved-contract-overloads",
+      "reason": "NotFileFilter wraps and negates filter.accept; overloads prevent a unique nominal slot. Its prior Strategy role is questionable, but loss is a resolution limitation, not demonstrated intent discrimination."
+    }
+  }
+]

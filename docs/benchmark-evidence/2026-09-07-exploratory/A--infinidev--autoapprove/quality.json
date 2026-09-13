@@ -1,0 +1,21 @@
+{
+  "method": "Evaluación manual exclusivamente de la respuesta final runtime chat_message; no se conceden puntos por entregables prometidos ni investigación interna no entregada. Rúbrica común rubric.private.json.",
+  "criteria_scores": [
+    1,
+    0,
+    1,
+    1,
+    0
+  ],
+  "total": 3,
+  "maximum": 10,
+  "rationale": [
+    "Menciona MCP pero no entrada/cadena ni citas.",
+    "No explica expanduser, anclaje de relativas ni absolutas permitidas.",
+    "Menciona resolve/relative_to y symlinks, pero no explica rechazo ValueError.",
+    "Menciona inexistentes y archivo indexado borrado; omite regla de no exigir existencia.",
+    "Afirma entregar script, pero mensaje final no contiene script ni comando reproducible."
+  ],
+  "external_check": null,
+  "limitations": "No existe script entregado en respuesta final para ejecutar externamente. Exit de CLI 0 no significa objetivo cumplido; engine_runs blocked. Discovery_suppressed no es denegación manual de permisos."
+}

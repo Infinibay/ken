@@ -1,0 +1,50 @@
+schema = "ken-rule/1"
+id = "mediator"
+name = "Mediator"
+category = "behavioral"
+description = "A central object is called by and delegates to multiple colleagues."
+caveat = "Structural evidence requires review of intent and runtime behavior."
+legacy_query = "require $unit HAS_METHOD $coordinate\ncount >=2 $caller CALLS $coordinate distinct=$caller\ncount >=2 $coordinate DELEGATES_TYPE $colleague distinct=$colleague\n"
+query = '''
+query mediator {
+ match "mediator#direct-colleagues"(unit: $unit);
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "direct-colleagues"
+status = "ready"
+languages = ["python", "java", "typescript"]
+requires = ["call_graph", "event_value_flow"]
+graph_requirements = ["Varios colegas notifican al centro y eventos gobiernan acciones del centro hacia colegas."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query mediator {
+
+ require $unit HAS_METHOD $coordinate;
+ require $coordinate DELEGATES_TYPE $first;
+ require $coordinate DELEGATES_TYPE $second;
+ require $first HAS_METHOD $caller1;
+ require $second HAS_METHOD $caller2;
+ require $caller1 CALLS $coordinate;
+ require $caller2 CALLS $coordinate;
+ different $first $second;
+ different $unit $first;
+ different $unit $second;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "message-coordination"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["message_api_models", "callback_flow"]
+graph_requirements = ["Mensajes/callbacks sustituyen referencias bidireccionales; correlacionar canal/evento y destinos."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

@@ -1,0 +1,208 @@
+{
+  "observer": [
+    {
+      "$unit": {
+        "name": "FileAlterationMonitor",
+        "path": "src/main/java/org/apache/commons/io/monitor/FileAlterationMonitor.java",
+        "line": 38
+      },
+      "$subscribe": {
+        "name": "addObserver",
+        "path": "src/main/java/org/apache/commons/io/monitor/FileAlterationMonitor.java",
+        "line": 104
+      },
+      "$notify": {
+        "name": "start",
+        "path": "src/main/java/org/apache/commons/io/monitor/FileAlterationMonitor.java",
+        "line": 181
+      }
+    },
+    {
+      "$unit": {
+        "name": "FileAlterationMonitor",
+        "path": "src/main/java/org/apache/commons/io/monitor/FileAlterationMonitor.java",
+        "line": 38
+      },
+      "$subscribe": {
+        "name": "addObserver",
+        "path": "src/main/java/org/apache/commons/io/monitor/FileAlterationMonitor.java",
+        "line": 104
+      },
+      "$notify": {
+        "name": "stop",
+        "path": "src/main/java/org/apache/commons/io/monitor/FileAlterationMonitor.java",
+        "line": 214
+      }
+    }
+  ],
+  "strategy": [
+    {
+      "$unit": {
+        "name": "AbstractPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 33
+      },
+      "$algorithm": {
+        "name": "reset",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 91
+      },
+      "$contract": {
+        "name": "Counter",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 184
+      }
+    },
+    {
+      "$unit": {
+        "name": "AbstractPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 33
+      },
+      "$algorithm": {
+        "name": "toString",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 98
+      },
+      "$contract": {
+        "name": "Counter",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 184
+      }
+    }
+  ],
+  "bridge": [
+    {
+      "$unit": {
+        "name": "BigIntegerPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 170
+      },
+      "$abstraction": {
+        "name": "AbstractPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 33
+      },
+      "$operation": {
+        "name": "reset",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 91
+      },
+      "$implementation": {
+        "name": "Counter",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 184
+      }
+    },
+    {
+      "$unit": {
+        "name": "LongPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 292
+      },
+      "$abstraction": {
+        "name": "AbstractPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 33
+      },
+      "$operation": {
+        "name": "reset",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 91
+      },
+      "$implementation": {
+        "name": "Counter",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 184
+      }
+    },
+    {
+      "$unit": {
+        "name": "NoopPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 351
+      },
+      "$abstraction": {
+        "name": "AbstractPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 33
+      },
+      "$operation": {
+        "name": "reset",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 91
+      },
+      "$implementation": {
+        "name": "Counter",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 184
+      }
+    },
+    {
+      "$unit": {
+        "name": "BigIntegerPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 170
+      },
+      "$abstraction": {
+        "name": "AbstractPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 33
+      },
+      "$operation": {
+        "name": "toString",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 98
+      },
+      "$implementation": {
+        "name": "Counter",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 184
+      }
+    },
+    {
+      "$unit": {
+        "name": "LongPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 292
+      },
+      "$abstraction": {
+        "name": "AbstractPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 33
+      },
+      "$operation": {
+        "name": "toString",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 98
+      },
+      "$implementation": {
+        "name": "Counter",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 184
+      }
+    },
+    {
+      "$unit": {
+        "name": "NoopPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 351
+      },
+      "$abstraction": {
+        "name": "AbstractPathCounters",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 33
+      },
+      "$operation": {
+        "name": "toString",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 98
+      },
+      "$implementation": {
+        "name": "Counter",
+        "path": "src/main/java/org/apache/commons/io/file/Counters.java",
+        "line": 184
+      }
+    }
+  ]
+}

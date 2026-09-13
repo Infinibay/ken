@@ -1,0 +1,2840 @@
+{
+  "ir_version": "1.44.0",
+  "engine_sha256": {
+    "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+    "binding_writes.py": "248c81c19c54b70240ab312a4f0401b272bdc0644197417ea5434827607fa7f3",
+    "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+    "call_bindings.py": "e22e85204749f85185813ab2b6ae835f6a9566092c451fb674d41629e884bc7b",
+    "catalog.py": "39cb65a22c3c0c1b96ae41cd2343b8227d93ba1f62763bd95efdfe568683d638",
+    "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+    "collection_lifecycle.py": "a35f48339a074eb62b1e5e1b73024c4ea3d133628675b710a0cf048f5910d549",
+    "collection_snapshots.py": "8ba78a0010eafa7a85c4ab519944171570235a0c108ed52d5f830ed79684203b",
+    "construction.py": "41787dcd62dae7719b048258f29999e73c8b6e36e75d7ed67816ad68d22f20e1",
+    "control_flow.py": "b7f4542dfc53514013c420828e8a13d71b634a951d72ed301fa1306a0021a756",
+    "cpp_initializers.py": "e3d9bb3e9a27b78151f7f71288e7ebb27d4b95347ef0529ba91206a4dab916b7",
+    "cpp_methods.py": "eeb094c9ac77fdf7d76981e14b4b384c1cc805c648f8a774624f8ef806eea321",
+    "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+    "field_transfers.py": "c327f6bd070445c583818ace80797bd891b100bd9ed4596c1ae6a6fad1b3f61f",
+    "frontend.py": "a7de6ebb504774a99b5abefd70b3adae63730ca68585bc362533c42e4aaa5e79",
+    "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+    "kenql.py": "2a1d43ca6e55f36b7ada131a27d82dd45f3671187a814e51582e6266eee6f922",
+    "member_access.py": "9781486284abe3599396740599f7305f2069c555e024b2ff9b10fb1cd5e6fe50",
+    "member_transfers.py": "cc2474d0ac9f0f539cde50ead12b6af08b2254614e523af9c2677d795ed8fb10",
+    "model.py": "a142e471c3f886f7ead36df16b9bef152a08bfe0a9e88f1db266381d5e87949d",
+    "modern_patterns/adapted-continuation-wrapper.toml": "cfae68be5c98788c03b0c663a7fb5d94b03164b57e2c2b413228e4c14528c50d",
+    "modern_patterns/batch-work-queue.toml": "6e1b3a69aae411a736c749814959aac73df1e30c29c84ef7e6b2e02a1c058a31",
+    "modern_patterns/cache-aside.toml": "c7915bc8855deecd60881f3f4db072714f670ed3f55bdbd6f47a495549a12328",
+    "modern_patterns/continuation-wrapper.toml": "0092ade2a426815819334a1999ea4c2a65e54f452ceaf7a6de08dd77dd855ff2",
+    "modern_patterns/dependency-injection.toml": "d1ba8b738b297988381e3b798bbf417d19d63157d185230ffe6e53ec80854468",
+    "modern_patterns/dispatch-table.toml": "a2197cedfd9f2f8bdb35c02ba8a398e1805f31b6bec42f8547aaefa4f86c3566",
+    "modern_patterns/exception-retry.toml": "eeab3c3ae90b1a7a3f1778db573d80113e4d6e0cc50fbd2ff6ec1cb1da6af77c",
+    "modern_patterns/read-through-cache.toml": "68d8df7db96d7a3270875b46bc837879f036a06a15b0e8c8f46877fc34eb6159",
+    "modern_patterns/subclass-factory.toml": "ec69fa0a23372a403036e3c5d6775ce6d0d3045c4792d9fad9602335462f5141",
+    "modern_patterns/unit-of-work.toml": "82920e8a2f861c7658a80c729ad0b375d466fb8d1a6122d5ab783a039e64b949",
+    "nominal_roots.py": "9f41249a1346ab4543d497cdc71b8568d5c0b899fd6ba99cfb7b272d9fc1dfb3",
+    "patterns/abstract-factory.toml": "d075ab8290e8304c4c25806087b2d9f5c22c2f5ebf34e37ab957843220f06d4d",
+    "patterns/adapter.toml": "f68db1dcb07858065cc9a80bb80da5b0ba7e026681e08c6dc9ca4945d1e8f842",
+    "patterns/bridge.toml": "566e693f3decef8bd27d2f10fff841e8f1f768b9bbc2e4a7dfbb4e522c76bf4b",
+    "patterns/builder.toml": "bb46c4713cd0b4c6b42a7a5cc4df16206d42b73be20948d9328c7fed1b6897d8",
+    "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+    "patterns/command.toml": "1dd4624f93ee499ca31ded97e573455356b443e8b6259bb39022f420a815de75",
+    "patterns/composite.toml": "fffb2da5916eb05e4da83de63e21549ad06481938087b9344f291c22f3516a02",
+    "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+    "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+    "patterns/factory-method.toml": "cf2d5b3d342478cc22d40a5a2211002622b4b75be09ca25b0cafd3fccd98fbd4",
+    "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+    "patterns/interpreter.toml": "a2a674ce0dfa775cc287df32bdca056bd4be1196ada97ec170821852817e787c",
+    "patterns/iterator.toml": "404233895ac5526625c039f7875db8ecb68aba57ba087c67723f871b797d04ef",
+    "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+    "patterns/memento.toml": "fa56773105fe4f84ae7f8557eb086757831600533b5c38777cc330a0f480caf3",
+    "patterns/observer.toml": "ca3ad665f19488efc51b57d103667395ae895f4f56b4fb0447e463d23d3599d5",
+    "patterns/prototype.toml": "2de68c873a910bd564889fce9644339d5169640803531d9bf54ae1d3bcb69923",
+    "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+    "patterns/singleton.toml": "ddad6d36c3363c102de1c4c6d068d58af25223d2a8f3d3698948aca77f859d41",
+    "patterns/state.toml": "24a6b2742a179205032c27e48d21082e65407eecd62dd3a827b317246a015a74",
+    "patterns/strategy.toml": "c71942d6ea29895d487c6ed25cd4c08c3aef54116bfbf8b59996d8b0e34865f2",
+    "patterns/template-method.toml": "391fd8cf3a0a2fceff9ebfc1994b82d737d3dc9a7bbe181e3886b9e144133e3d",
+    "patterns/visitor.toml": "7d47620aad4831dfcc601818ea92c5f9781658d1d85356d6b0d44e9c7a88d3e7",
+    "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+    "return_flow.py": "67da3d1dcc7071dda86fbec744c81a2faeff7fd85bee746598d1157d16b0389b",
+    "rules.py": "a3fd498e5154c1f45a524de6fe470bc176bc8600b3a70332727640e956e0cfb3",
+    "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+    "semantic.py": "48eea195fbfbb9c01d0e1ff73a374ad32fccfa01308b0a8835ebcf809b61c79f",
+    "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df",
+    "syntax_graph.py": "ad63fe8b926d73bf853f09ec209e3208a1341e8eb2c4fe7799e73cafa3a4d6b6",
+    "type_refs.py": "31c0aac9132cdae3ad0a4ea009a92ce57d8a5434a999dbf0597592d347010b17"
+  },
+  "repo": {
+    "name": "across-languages",
+    "url": "https://github.com/Eng-Elias/design-patterns-across-languages",
+    "commit": "efd075de92e42099e8ae24fc274dc0e7b86ba2f9",
+    "tracked_files": 411,
+    "extensions": {
+      "": 2,
+      ".md": 25,
+      ".mod": 23,
+      ".go": 82,
+      ".py": 104,
+      ".ts": 81,
+      ".js": 24,
+      ".json": 69,
+      ".png": 1
+    },
+    "license_files": [
+      "LICENSE"
+    ],
+    "cases": 69,
+    "selected_files": 174,
+    "status": "scanned subset",
+    "expected_found": 26,
+    "errors": 0
+  },
+  "scope": "creational/singleton/configuration_manager/typescript/",
+  "files": [
+    {
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "sha256": "93792811482d234ed944e766c4e153f8e70e28fe86ad274a358c3b2416180882"
+    },
+    {
+      "path": "creational/singleton/configuration_manager/typescript/main.ts",
+      "sha256": "10c17898831d4a09e364ca783f68a4241f0dc7cbe2d78165fd510bd0be537e60"
+    }
+  ],
+  "outcome": {
+    "matches": [
+      {
+        "bindings": {
+          "$unit": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+          "$storage": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+          "$accessor": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+          "$creation": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625/CALL:765@765:791"
+        },
+        "status": "structural_match",
+        "unknown": [],
+        "evidence": [
+          {
+            "query": "singleton.lazy_instance",
+            "proof": "",
+            "evidence": [
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:238:297:public_field_definition",
+                "relation": "ASSIGNMENT_VALUE",
+                "object": "NULL",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:8"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+                "relation": "HAS_OPERATION",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:238:297:public_field_definition",
+                "source": []
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:238:297:public_field_definition",
+                "relation": "ASSIGNMENT_TARGET",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:8"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+                "relation": "HAS_FIELD",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:8"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+                "relation": "ENTITY",
+                "object": "STORAGE",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:8"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:238:297:public_field_definition",
+                "relation": "OPERATION",
+                "object": "ASSIGN",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:8"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+                "relation": "BINDING_WRITE_COUNT",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:21"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+                "relation": "HAS_METHOD",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:21"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:21"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+                "relation": "CFG_STATUS",
+                "object": "structured",
+                "source": []
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+                "relation": "BINDING_WRITE_STATUS",
+                "object": "supported",
+                "source": []
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+                "relation": "CFG_ENTRY",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:681:798:if_statement",
+                "source": []
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:681:798:if_statement",
+                "relation": "NULL_TEST",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:22"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:681:798:if_statement",
+                "relation": "CFG_NEXT",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:792:expression_statement",
+                "source": []
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:681:798:if_statement",
+                "relation": "CFG_NEXT",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:803:840:return_statement",
+                "source": []
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:803:840:return_statement",
+                "relation": "RETURN_OPERAND",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:25"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+                "relation": "CFG_EXIT",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625::cfg-exit",
+                "source": []
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:803:840:return_statement",
+                "relation": "CFG_NEXT",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625::cfg-exit",
+                "source": []
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625/CALL:765@765:791",
+                "relation": "ALLOCATES_TYPE",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:23"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:791:assignment_expression",
+                "relation": "ASSIGNMENT_VALUE",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625/CALL:765@765:791",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:23"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+                "relation": "HAS_OPERATION",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:791:assignment_expression",
+                "source": []
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:791:assignment_expression",
+                "relation": "ASSIGNMENT_TARGET",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:23"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+                "relation": "HAS_CALL",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625/CALL:765@765:791",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:23"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:791:assignment_expression",
+                "relation": "SYNTAX_PARENT",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:792:expression_statement",
+                "source": []
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:792:expression_statement",
+                "relation": "CFG_NEXT",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:803:840:return_statement",
+                "source": []
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:803:840:return_statement",
+                "relation": "RETURN_OPERAND",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+                "source": [
+                  "creational/singleton/configuration_manager/typescript/configuration_manager.ts:25"
+                ]
+              },
+              {
+                "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:803:840:return_statement",
+                "relation": "CFG_NEXT",
+                "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625::cfg-exit",
+                "source": []
+              }
+            ]
+          }
+        ],
+        "variant": "default",
+        "evidence_score": 1.0,
+        "id": "singleton.lazy_instance",
+        "rule": {
+          "id": "singleton.lazy_instance",
+          "query": "query selected { match \"singleton.lazy_instance\"(unit: $unit, storage: $storage, accessor: $accessor, creation: $creation); emit $unit, $storage, $accessor, $creation; }",
+          "name": "singleton.lazy_instance",
+          "description": "",
+          "tags": [],
+          "collections": [],
+          "severity": null,
+          "recommendation": "",
+          "caveat": "",
+          "variants": [],
+          "source": "",
+          "operations": []
+        },
+        "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+        "line": 7,
+        "locations": [
+          {
+            "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+            "line": 7
+          },
+          {
+            "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+            "line": 8
+          },
+          {
+            "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+            "line": 21
+          },
+          {
+            "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+            "line": 23
+          }
+        ]
+      }
+    ],
+    "outcomes": {
+      "singleton.lazy_instance": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 62,
+          "rows_examined": 30,
+          "elapsed_ms": 0.45,
+          "dependencies": [
+            "singleton.lazy_instance"
+          ]
+        }
+      }
+    },
+    "complete": true
+  },
+  "entities": {
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager": {
+      "name": "ConfigurationManager",
+      "kind": "CLASS",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 7,
+      "attrs": {
+        "native_kind": "class_declaration",
+        "language": "typescript",
+        "start_byte": 207,
+        "end_byte": 2050,
+        "type": "unknown"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:constructor@449": {
+      "name": "constructor",
+      "kind": "CALLABLE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 13,
+      "attrs": {
+        "static": false,
+        "constructor": true,
+        "async_": false,
+        "decorators": [],
+        "context_manager": false,
+        "native_kind": "method_definition",
+        "language": "typescript",
+        "start_byte": 449,
+        "end_byte": 499,
+        "visibility": "private",
+        "visibility_basis": "explicit-modifier",
+        "visibility_status": "supported",
+        "instance_constructor": true,
+        "return_type": "unknown",
+        "native_return_type": "",
+        "generator": false,
+        "type": "unknown"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625": {
+      "name": "getInstance",
+      "kind": "CALLABLE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 21,
+      "attrs": {
+        "static": true,
+        "constructor": false,
+        "async_": false,
+        "decorators": [],
+        "context_manager": false,
+        "native_kind": "method_definition",
+        "language": "typescript",
+        "start_byte": 625,
+        "end_byte": 844,
+        "visibility": "public",
+        "visibility_basis": "explicit-modifier",
+        "visibility_status": "supported",
+        "instance_constructor": false,
+        "return_type": "ConfigurationManager",
+        "native_return_type": "ConfigurationManager",
+        "generator": false,
+        "type": "unknown"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983": {
+      "name": "loadConfig",
+      "kind": "CALLABLE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 32,
+      "attrs": {
+        "static": false,
+        "constructor": false,
+        "async_": false,
+        "decorators": [],
+        "context_manager": false,
+        "native_kind": "method_definition",
+        "language": "typescript",
+        "start_byte": 983,
+        "end_byte": 1350,
+        "visibility": "private",
+        "visibility_basis": "explicit-modifier",
+        "visibility_status": "supported",
+        "instance_constructor": false,
+        "return_type": "void",
+        "native_return_type": "void",
+        "generator": false,
+        "type": "unknown"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525": {
+      "name": "getSetting",
+      "kind": "CALLABLE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 51,
+      "attrs": {
+        "static": false,
+        "constructor": false,
+        "async_": false,
+        "decorators": [],
+        "context_manager": false,
+        "native_kind": "method_definition",
+        "language": "typescript",
+        "start_byte": 1525,
+        "end_byte": 1599,
+        "visibility": "public",
+        "visibility_basis": "explicit-modifier",
+        "visibility_status": "supported",
+        "instance_constructor": false,
+        "return_type": "unknown",
+        "native_return_type": "any",
+        "generator": false,
+        "type": "unknown"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525/PARAMETER:key@1543": {
+      "name": "key",
+      "kind": "PARAMETER",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 51,
+      "attrs": {
+        "kind_": "positional",
+        "position": 0,
+        "receiver": false,
+        "native_kind": "required_parameter",
+        "language": "typescript",
+        "start_byte": 1543,
+        "end_byte": 1554,
+        "native_type": "string",
+        "type": "str",
+        "pos": 0,
+        "parameter_kind": "positional"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:setSetting@1729": {
+      "name": "setSetting",
+      "kind": "CALLABLE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 60,
+      "attrs": {
+        "static": false,
+        "constructor": false,
+        "async_": false,
+        "decorators": [],
+        "context_manager": false,
+        "native_kind": "method_definition",
+        "language": "typescript",
+        "start_byte": 1729,
+        "end_byte": 1817,
+        "visibility": "public",
+        "visibility_basis": "explicit-modifier",
+        "visibility_status": "supported",
+        "instance_constructor": false,
+        "return_type": "void",
+        "native_return_type": "void",
+        "generator": false,
+        "type": "unknown"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:setSetting@1729/PARAMETER:value@1760": {
+      "name": "value",
+      "kind": "PARAMETER",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 60,
+      "attrs": {
+        "kind_": "positional",
+        "position": 1,
+        "receiver": false,
+        "native_kind": "required_parameter",
+        "language": "typescript",
+        "start_byte": 1760,
+        "end_byte": 1770,
+        "native_type": "any",
+        "type": "unknown",
+        "pos": 1,
+        "parameter_kind": "positional"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getAllSettings@1884": {
+      "name": "getAllSettings",
+      "kind": "CALLABLE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 67,
+      "attrs": {
+        "static": false,
+        "constructor": false,
+        "async_": false,
+        "decorators": [],
+        "context_manager": false,
+        "native_kind": "method_definition",
+        "language": "typescript",
+        "start_byte": 1884,
+        "end_byte": 2048,
+        "visibility": "public",
+        "visibility_basis": "explicit-modifier",
+        "visibility_status": "supported",
+        "instance_constructor": false,
+        "return_type": "{ [key: string]: any }",
+        "native_return_type": "{ [key: string]: any }",
+        "generator": false,
+        "type": "unknown"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance": {
+      "name": "instance",
+      "kind": "STORAGE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 8,
+      "attrs": {
+        "static": true,
+        "native_kind": "property_identifier",
+        "language": "typescript",
+        "start_byte": 253,
+        "end_byte": 261,
+        "declared": true,
+        "native_type": "ConfigurationManager | null",
+        "type": "ConfigurationManager | null"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:configData": {
+      "name": "configData",
+      "kind": "STORAGE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 9,
+      "attrs": {
+        "static": false,
+        "native_kind": "property_identifier",
+        "language": "typescript",
+        "start_byte": 309,
+        "end_byte": 319,
+        "declared": true,
+        "native_type": "{ [key: string]: any }",
+        "type": "{ [key: string]: any }"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/COLLECTION:346": {
+      "name": "346",
+      "kind": "COLLECTION",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 9,
+      "attrs": {
+        "collection_kind": "record",
+        "native_kind": "object",
+        "language": "typescript",
+        "start_byte": 346,
+        "end_byte": 348,
+        "type": "unknown"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:isLoaded": {
+      "name": "isLoaded",
+      "kind": "STORAGE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 10,
+      "attrs": {
+        "static": false,
+        "native_kind": "property_identifier",
+        "language": "typescript",
+        "start_byte": 360,
+        "end_byte": 368,
+        "declared": true,
+        "native_type": "boolean",
+        "type": "bool"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/VALUE:380": {
+      "name": "380",
+      "kind": "VALUE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 10,
+      "attrs": {
+        "native_kind": "false",
+        "type": "bool",
+        "language": "typescript",
+        "start_byte": 380,
+        "end_byte": 385
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:constructor@449/CALL:477@477:494": {
+      "name": "477",
+      "kind": "CALL",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 14,
+      "attrs": {
+        "native_kind": "call_expression",
+        "language": "typescript",
+        "start_byte": 477,
+        "end_byte": 494,
+        "name": "loadConfig",
+        "owner": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:constructor@449",
+        "construction": false,
+        "type": "unknown",
+        "resolution": "resolved",
+        "explicit_arguments": 0
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625/CALL:765@765:791": {
+      "name": "765",
+      "kind": "CALL",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 23,
+      "attrs": {
+        "native_kind": "new_expression",
+        "language": "typescript",
+        "start_byte": 765,
+        "end_byte": 791,
+        "name": "ConfigurationManager",
+        "owner": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+        "construction": true,
+        "type": "unknown",
+        "resolution": "unresolved",
+        "explicit_arguments": 0
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983/CALL:1044@1044:1083": {
+      "name": "1044",
+      "kind": "CALL",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 34,
+      "attrs": {
+        "native_kind": "call_expression",
+        "language": "typescript",
+        "start_byte": 1044,
+        "end_byte": 1083,
+        "name": "log",
+        "owner": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983",
+        "construction": false,
+        "type": "unknown",
+        "resolution": "unresolved",
+        "explicit_arguments": 1
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983/STORAGE:console": {
+      "name": "console",
+      "kind": "STORAGE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 34,
+      "attrs": {
+        "static": false,
+        "native_kind": "identifier",
+        "language": "typescript",
+        "start_byte": 1044,
+        "end_byte": 1051,
+        "type": "unknown"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983/COLLECTION:1140": {
+      "name": "1140",
+      "kind": "COLLECTION",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 36,
+      "attrs": {
+        "collection_kind": "record",
+        "native_kind": "object",
+        "language": "typescript",
+        "start_byte": 1140,
+        "end_byte": 1267,
+        "type": "unknown"
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983/VALUE:1291": {
+      "name": "1291",
+      "kind": "VALUE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 41,
+      "attrs": {
+        "native_kind": "true",
+        "type": "bool",
+        "language": "typescript",
+        "start_byte": 1291,
+        "end_byte": 1295
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983/CALL:1303@1303:1339": {
+      "name": "1303",
+      "kind": "CALL",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 42,
+      "attrs": {
+        "native_kind": "call_expression",
+        "language": "typescript",
+        "start_byte": 1303,
+        "end_byte": 1339,
+        "name": "log",
+        "owner": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983",
+        "construction": false,
+        "type": "unknown",
+        "resolution": "unresolved",
+        "explicit_arguments": 1
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525/VALUE:1574": {
+      "name": "1574",
+      "kind": "VALUE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 52,
+      "attrs": {
+        "native_kind": "subscript_expression",
+        "type": "unknown",
+        "language": "typescript",
+        "start_byte": 1574,
+        "end_byte": 1594
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:setSetting@1729/VALUE:1784": {
+      "name": "1784",
+      "kind": "VALUE",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 61,
+      "attrs": {
+        "native_kind": "subscript_expression",
+        "type": "unknown",
+        "language": "typescript",
+        "start_byte": 1784,
+        "end_byte": 1804,
+        "declared": true
+      }
+    },
+    "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getAllSettings@1884/COLLECTION:2021": {
+      "name": "2021",
+      "kind": "COLLECTION",
+      "path": "creational/singleton/configuration_manager/typescript/configuration_manager.ts",
+      "line": 69,
+      "attrs": {
+        "collection_kind": "record",
+        "native_kind": "object",
+        "language": "typescript",
+        "start_byte": 2021,
+        "end_byte": 2043,
+        "type": "unknown"
+      }
+    }
+  },
+  "facts": [
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+      "relation": "HAS_METHOD",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:constructor@449",
+      "attrs": {
+        "name": "constructor",
+        "static": false
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:13"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+      "relation": "HAS_METHOD",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+      "attrs": {
+        "name": "getInstance",
+        "static": true
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:21"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+      "relation": "HAS_METHOD",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983",
+      "attrs": {
+        "name": "loadConfig",
+        "static": false
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:32"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+      "relation": "HAS_METHOD",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525",
+      "attrs": {
+        "name": "getSetting",
+        "static": false
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:51"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+      "relation": "HAS_METHOD",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:setSetting@1729",
+      "attrs": {
+        "name": "setSetting",
+        "static": false
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:60"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+      "relation": "HAS_METHOD",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getAllSettings@1884",
+      "attrs": {
+        "name": "getAllSettings",
+        "static": false
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:67"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+      "relation": "HAS_FIELD",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+      "attrs": {
+        "name": "instance",
+        "static": true
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:8"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:238:297:public_field_definition",
+      "relation": "ASSIGNMENT_TARGET",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:8"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:238:297:public_field_definition",
+      "relation": "ASSIGNMENT_VALUE",
+      "object": "NULL",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:8"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+      "relation": "HAS_FIELD",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:configData",
+      "attrs": {
+        "name": "configData",
+        "static": false
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:9"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:301:348:public_field_definition",
+      "relation": "ASSIGNMENT_TARGET",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:configData",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:9"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:301:348:public_field_definition",
+      "relation": "ASSIGNMENT_VALUE",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/COLLECTION:346",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:9"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+      "relation": "HAS_FIELD",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:isLoaded",
+      "attrs": {
+        "name": "isLoaded",
+        "static": false
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:10"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:352:385:public_field_definition",
+      "relation": "ASSIGNMENT_TARGET",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:isLoaded",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:10"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:352:385:public_field_definition",
+      "relation": "ASSIGNMENT_VALUE",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/VALUE:380",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:10"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:681:798:if_statement",
+      "relation": "NULL_TEST",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+      "attrs": {
+        "when": "true",
+        "operator": "===",
+        "negated": false
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:22"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:791:assignment_expression",
+      "relation": "ASSIGNMENT_TARGET",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:23"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:791:assignment_expression",
+      "relation": "ASSIGNMENT_VALUE",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625/CALL:765@765:791",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:23"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:803:840:return_statement",
+      "relation": "RETURN_OPERAND",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:25"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1122:1267:assignment_expression",
+      "relation": "ASSIGNMENT_TARGET",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:configData",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:36"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1122:1267:assignment_expression",
+      "relation": "ASSIGNMENT_VALUE",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983/COLLECTION:1140",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:36"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1275:1295:assignment_expression",
+      "relation": "ASSIGNMENT_TARGET",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:isLoaded",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:41"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1275:1295:assignment_expression",
+      "relation": "ASSIGNMENT_VALUE",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983/VALUE:1291",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:41"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1567:1595:return_statement",
+      "relation": "RETURN_OPERAND",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525/VALUE:1574",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:52"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1812:assignment_expression",
+      "relation": "ASSIGNMENT_TARGET",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:setSetting@1729/VALUE:1784",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:61"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1812:assignment_expression",
+      "relation": "ASSIGNMENT_VALUE",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:setSetting@1729/PARAMETER:value@1760",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:61"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2014:2044:return_statement",
+      "relation": "RETURN_OPERAND",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getAllSettings@1884/COLLECTION:2021",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:69"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625/CALL:765@765:791",
+      "relation": "ALLOCATES_TYPE",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager",
+      "attrs": {},
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:23"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+      "relation": "RETURN_FLOW_STATUS",
+      "object": "unsupported",
+      "attrs": {
+        "analysis": "structured-locals/3",
+        "reason": "nonlocal-or-nested-write"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525",
+      "relation": "RETURN_FLOW_STATUS",
+      "object": "supported",
+      "attrs": {
+        "analysis": "structured-locals/3",
+        "scope": "explicit-returns-local-binding-origins"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getAllSettings@1884",
+      "relation": "RETURN_FLOW_STATUS",
+      "object": "supported",
+      "attrs": {
+        "analysis": "structured-locals/3",
+        "scope": "explicit-returns-local-binding-origins"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:constructor@449",
+      "relation": "CFG_ENTRY",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:477:495:expression_statement",
+      "attrs": {
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:constructor@449",
+      "relation": "CFG_EXIT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:constructor@449::cfg-exit",
+      "attrs": {
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:477:495:expression_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:constructor@449::cfg-exit",
+      "attrs": {
+        "kind": "next",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:constructor@449",
+      "relation": "CFG_STATUS",
+      "object": "structured",
+      "attrs": {
+        "level": "statement",
+        "excluded": "expression-evaluation,exceptions,suspension",
+        "reasons": [],
+        "analysis": "structured-cfg/1"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+      "relation": "CFG_ENTRY",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:681:798:if_statement",
+      "attrs": {
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+      "relation": "CFG_EXIT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625::cfg-exit",
+      "attrs": {
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:681:798:if_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:792:expression_statement",
+      "attrs": {
+        "kind": "true",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:681:798:if_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:803:840:return_statement",
+      "attrs": {
+        "kind": "false",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:792:expression_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:803:840:return_statement",
+      "attrs": {
+        "kind": "next",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:803:840:return_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625::cfg-exit",
+      "attrs": {
+        "kind": "return",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+      "relation": "CFG_STATUS",
+      "object": "structured",
+      "attrs": {
+        "level": "statement",
+        "excluded": "expression-evaluation,exceptions,suspension",
+        "reasons": [],
+        "analysis": "structured-cfg/1"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983",
+      "relation": "CFG_ENTRY",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1016:1346:if_statement",
+      "attrs": {
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983",
+      "relation": "CFG_EXIT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983::cfg-exit",
+      "attrs": {
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1016:1346:if_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983::cfg-exit",
+      "attrs": {
+        "kind": "false",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1016:1346:if_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1044:1084:expression_statement",
+      "attrs": {
+        "kind": "true",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1044:1084:expression_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1122:1268:expression_statement",
+      "attrs": {
+        "kind": "next",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1122:1268:expression_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1275:1296:expression_statement",
+      "attrs": {
+        "kind": "next",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1275:1296:expression_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1303:1340:expression_statement",
+      "attrs": {
+        "kind": "next",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1303:1340:expression_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983::cfg-exit",
+      "attrs": {
+        "kind": "next",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983",
+      "relation": "CFG_STATUS",
+      "object": "structured",
+      "attrs": {
+        "level": "statement",
+        "excluded": "expression-evaluation,exceptions,suspension",
+        "reasons": [],
+        "analysis": "structured-cfg/1"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525",
+      "relation": "CFG_ENTRY",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1567:1595:return_statement",
+      "attrs": {
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525",
+      "relation": "CFG_EXIT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525::cfg-exit",
+      "attrs": {
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1567:1595:return_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525::cfg-exit",
+      "attrs": {
+        "kind": "return",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525",
+      "relation": "CFG_STATUS",
+      "object": "structured",
+      "attrs": {
+        "level": "statement",
+        "excluded": "expression-evaluation,exceptions,suspension",
+        "reasons": [],
+        "analysis": "structured-cfg/1"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:setSetting@1729",
+      "relation": "CFG_ENTRY",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1813:expression_statement",
+      "attrs": {
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:setSetting@1729",
+      "relation": "CFG_EXIT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:setSetting@1729::cfg-exit",
+      "attrs": {
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1813:expression_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:setSetting@1729::cfg-exit",
+      "attrs": {
+        "kind": "next",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:setSetting@1729",
+      "relation": "CFG_STATUS",
+      "object": "structured",
+      "attrs": {
+        "level": "statement",
+        "excluded": "expression-evaluation,exceptions,suspension",
+        "reasons": [],
+        "analysis": "structured-cfg/1"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getAllSettings@1884",
+      "relation": "CFG_ENTRY",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2014:2044:return_statement",
+      "attrs": {
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getAllSettings@1884",
+      "relation": "CFG_EXIT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getAllSettings@1884::cfg-exit",
+      "attrs": {
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2014:2044:return_statement",
+      "relation": "CFG_NEXT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getAllSettings@1884::cfg-exit",
+      "attrs": {
+        "kind": "return",
+        "basis": "structured-syntax"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getAllSettings@1884",
+      "relation": "CFG_STATUS",
+      "object": "structured",
+      "attrs": {
+        "level": "statement",
+        "excluded": "expression-evaluation,exceptions,suspension",
+        "reasons": [],
+        "analysis": "structured-cfg/1"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:213:233:type_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:207:2050:class_declaration",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:234:2050:class_body",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:207:2050:class_declaration",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:238:297:public_field_definition",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:234:2050:class_body",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:238:245:accessibility_modifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:238:297:public_field_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:253:261:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:238:297:public_field_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:261:290:type_annotation",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:238:297:public_field_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:263:290:union_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:261:290:type_annotation",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:263:283:type_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:263:290:union_type",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:286:290:literal_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:263:290:union_type",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:286:290:null",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:286:290:literal_type",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:293:297:null",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:238:297:public_field_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:301:348:public_field_definition",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:234:2050:class_body",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:301:308:accessibility_modifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:301:348:public_field_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:309:319:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:301:348:public_field_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:319:343:type_annotation",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:301:348:public_field_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:321:343:object_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:319:343:type_annotation",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:323:341:index_signature",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:321:343:object_type",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:324:327:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:323:341:index_signature",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:329:335:predefined_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:323:341:index_signature",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:336:341:type_annotation",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:323:341:index_signature",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:338:341:predefined_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:336:341:type_annotation",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:346:348:object",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:301:348:public_field_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:352:385:public_field_definition",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:234:2050:class_body",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:352:359:accessibility_modifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:352:385:public_field_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:360:368:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:352:385:public_field_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:368:377:type_annotation",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:352:385:public_field_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:370:377:predefined_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:368:377:type_annotation",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:380:385:false",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:352:385:public_field_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:390:446:comment",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:234:2050:class_body",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:449:456:accessibility_modifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:449:499:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:457:468:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:449:499:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:468:470:formal_parameters",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:449:499:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:471:499:statement_block",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:449:499:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:477:495:expression_statement",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:471:499:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:477:494:call_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:477:495:expression_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:477:492:member_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:477:494:call_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:477:481:this",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:477:492:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:482:492:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:477:492:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:492:494:arguments",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:477:494:call_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:503:622:comment",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:234:2050:class_body",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:625:631:accessibility_modifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:625:844:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:639:650:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:625:844:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:650:652:formal_parameters",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:625:844:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:652:674:type_annotation",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:625:844:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:654:674:type_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:652:674:type_annotation",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:675:844:statement_block",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:625:844:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:681:798:if_statement",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:675:844:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:684:724:parenthesized_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:681:798:if_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:685:723:binary_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:684:724:parenthesized_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:685:714:member_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:685:723:binary_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:685:705:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:685:714:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:706:714:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:685:714:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:719:723:null",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:685:723:binary_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:725:798:statement_block",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:681:798:if_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:792:expression_statement",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:725:798:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:791:assignment_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:792:expression_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:762:member_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:791:assignment_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:753:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:762:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:754:762:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:762:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:765:791:new_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:733:791:assignment_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:769:789:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:765:791:new_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:789:791:arguments",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:765:791:new_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:803:840:return_statement",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:675:844:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:810:839:member_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:803:840:return_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:810:830:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:810:839:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:831:839:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:810:839:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:848:980:comment",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:234:2050:class_body",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:983:990:accessibility_modifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:983:1350:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:991:1001:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:983:1350:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1001:1003:formal_parameters",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:983:1350:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1003:1009:type_annotation",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:983:1350:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1005:1009:predefined_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1003:1009:type_annotation",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1010:1350:statement_block",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:983:1350:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1016:1346:if_statement",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1010:1350:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1019:1035:parenthesized_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1016:1346:if_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1020:1034:unary_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1019:1035:parenthesized_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1021:1034:member_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1020:1034:unary_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1021:1025:this",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1021:1034:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1026:1034:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1021:1034:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1036:1346:statement_block",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1016:1346:if_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1044:1084:expression_statement",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1036:1346:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1044:1083:call_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1044:1084:expression_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1044:1055:member_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1044:1083:call_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1044:1051:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1044:1055:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1052:1055:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1044:1055:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1055:1083:arguments",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1044:1083:call_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1056:1082:string",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1055:1083:arguments",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1057:1081:string_fragment",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1056:1082:string",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1091:1115:comment",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1036:1346:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1122:1268:expression_statement",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1036:1346:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1122:1267:assignment_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1122:1268:expression_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1122:1137:member_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1122:1267:assignment_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1122:1126:this",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1122:1137:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1127:1137:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1122:1137:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1140:1267:object",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1122:1267:assignment_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1150:1180:pair",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1140:1267:object",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1150:1156:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1150:1180:pair",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1158:1180:string",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1150:1180:pair",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1159:1179:string_fragment",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1158:1180:string",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1190:1229:pair",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1140:1267:object",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1190:1199:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1190:1229:pair",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1201:1229:string",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1190:1229:pair",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1202:1228:string_fragment",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1201:1229:string",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1239:1258:pair",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1140:1267:object",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1239:1251:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1239:1258:pair",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1253:1258:false",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1239:1258:pair",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1275:1296:expression_statement",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1036:1346:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1275:1295:assignment_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1275:1296:expression_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1275:1288:member_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1275:1295:assignment_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1275:1279:this",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1275:1288:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1280:1288:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1275:1288:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1291:1295:true",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1275:1295:assignment_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1303:1340:expression_statement",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1036:1346:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1303:1339:call_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1303:1340:expression_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1303:1314:member_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1303:1339:call_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1303:1310:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1303:1314:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1311:1314:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1303:1314:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1314:1339:arguments",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1303:1339:call_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1315:1338:string",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1314:1339:arguments",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1316:1337:string_fragment",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1315:1338:string",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1354:1522:comment",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:234:2050:class_body",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1525:1531:accessibility_modifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1525:1599:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1532:1542:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1525:1599:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1542:1555:formal_parameters",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1525:1599:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1543:1554:required_parameter",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1542:1555:formal_parameters",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1543:1546:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1543:1554:required_parameter",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1546:1554:type_annotation",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1543:1554:required_parameter",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1548:1554:predefined_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1546:1554:type_annotation",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1555:1560:type_annotation",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1525:1599:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1557:1560:predefined_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1555:1560:type_annotation",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1561:1599:statement_block",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1525:1599:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1567:1595:return_statement",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1561:1599:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1574:1594:subscript_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1567:1595:return_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1574:1589:member_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1574:1594:subscript_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1574:1578:this",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1574:1589:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1579:1589:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1574:1589:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1590:1593:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1574:1594:subscript_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1603:1726:comment",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:234:2050:class_body",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1729:1735:accessibility_modifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1729:1817:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1736:1746:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1729:1817:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1746:1771:formal_parameters",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1729:1817:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1747:1758:required_parameter",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1746:1771:formal_parameters",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1747:1750:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1747:1758:required_parameter",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1750:1758:type_annotation",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1747:1758:required_parameter",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1752:1758:predefined_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1750:1758:type_annotation",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1760:1770:required_parameter",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1746:1771:formal_parameters",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1760:1765:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1760:1770:required_parameter",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1765:1770:type_annotation",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1760:1770:required_parameter",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1767:1770:predefined_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1765:1770:type_annotation",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1771:1777:type_annotation",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1729:1817:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1773:1777:predefined_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1771:1777:type_annotation",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1778:1817:statement_block",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1729:1817:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1813:expression_statement",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1778:1817:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1812:assignment_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1813:expression_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1804:subscript_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1812:assignment_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1799:member_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1804:subscript_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1788:this",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1799:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1789:1799:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1799:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1800:1803:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1804:subscript_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1807:1812:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1784:1812:assignment_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1821:1881:comment",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:234:2050:class_body",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1884:1890:accessibility_modifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1884:2048:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1891:1905:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1884:2048:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1905:1907:formal_parameters",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1884:2048:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1907:1931:type_annotation",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1884:2048:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1909:1931:object_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1907:1931:type_annotation",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1911:1929:index_signature",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1909:1931:object_type",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1912:1915:identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1911:1929:index_signature",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1917:1923:predefined_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1911:1929:index_signature",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1924:1929:type_annotation",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1911:1929:index_signature",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1926:1929:predefined_type",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1924:1929:type_annotation",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1932:2048:statement_block",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1884:2048:method_definition",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1938:2009:comment",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1932:2048:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2014:2044:return_statement",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:1932:2048:statement_block",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2021:2043:object",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2014:2044:return_statement",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2023:2041:spread_element",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2021:2043:object",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2026:2041:member_expression",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2023:2041:spread_element",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2026:2030:this",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2026:2041:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2031:2041:property_identifier",
+      "relation": "SYNTAX_PARENT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::op:2026:2041:member_expression",
+      "attrs": {},
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:constructor@449",
+      "relation": "BINDING_WRITE_STATUS",
+      "object": "supported",
+      "attrs": {
+        "analysis": "binding-writes/1",
+        "reason": ""
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+      "relation": "BINDING_WRITE_STATUS",
+      "object": "supported",
+      "attrs": {
+        "analysis": "binding-writes/1",
+        "reason": ""
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getInstance@625",
+      "relation": "BINDING_WRITE_COUNT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:instance",
+      "attrs": {
+        "count": 1,
+        "basis": "explicit-writes",
+        "analysis": "binding-writes/1"
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:21"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983",
+      "relation": "BINDING_WRITE_STATUS",
+      "object": "supported",
+      "attrs": {
+        "analysis": "binding-writes/1",
+        "reason": ""
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983",
+      "relation": "BINDING_WRITE_COUNT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:configData",
+      "attrs": {
+        "count": 1,
+        "basis": "explicit-writes",
+        "analysis": "binding-writes/1"
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:32"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983",
+      "relation": "BINDING_WRITE_COUNT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:isLoaded",
+      "attrs": {
+        "count": 1,
+        "basis": "explicit-writes",
+        "analysis": "binding-writes/1"
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:32"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983",
+      "relation": "BINDING_WRITE_COUNT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:loadConfig@983/STORAGE:console",
+      "attrs": {
+        "count": 0,
+        "basis": "explicit-writes",
+        "analysis": "binding-writes/1"
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:32"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525",
+      "relation": "BINDING_WRITE_STATUS",
+      "object": "supported",
+      "attrs": {
+        "analysis": "binding-writes/1",
+        "reason": ""
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525",
+      "relation": "BINDING_WRITE_COUNT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525/PARAMETER:key@1543",
+      "attrs": {
+        "count": 0,
+        "basis": "explicit-writes",
+        "analysis": "binding-writes/1"
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:51"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getSetting@1525",
+      "relation": "BINDING_WRITE_COUNT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:configData",
+      "attrs": {
+        "count": 0,
+        "basis": "explicit-writes",
+        "analysis": "binding-writes/1"
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:51"
+      ]
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:setSetting@1729",
+      "relation": "BINDING_WRITE_STATUS",
+      "object": "unsupported",
+      "attrs": {
+        "analysis": "binding-writes/1",
+        "reason": "unmodeled-target"
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getAllSettings@1884",
+      "relation": "BINDING_WRITE_STATUS",
+      "object": "supported",
+      "attrs": {
+        "analysis": "binding-writes/1",
+        "reason": ""
+      },
+      "evidence": []
+    },
+    {
+      "subject": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/CALLABLE:getAllSettings@1884",
+      "relation": "BINDING_WRITE_COUNT",
+      "object": "creational/singleton/configuration_manager/typescript/configuration_manager.ts::module/CLASS:ConfigurationManager/STORAGE:configData",
+      "attrs": {
+        "count": 0,
+        "basis": "explicit-writes",
+        "analysis": "binding-writes/1"
+      },
+      "evidence": [
+        "creational/singleton/configuration_manager/typescript/configuration_manager.ts:67"
+      ]
+    }
+  ]
+}

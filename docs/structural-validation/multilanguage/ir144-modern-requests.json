@@ -1,0 +1,619 @@
+{
+  "repo": "requests",
+  "commit": "dae7ef63b4df6eded86637f251fc4e3a06c3b479",
+  "scope": "src/requests/",
+  "exclude_globs": [],
+  "excluded_components": [
+    ".venv",
+    "__pycache__",
+    "benchmarks",
+    "internal",
+    "node_modules",
+    "target",
+    "testdata",
+    "tests",
+    "tools",
+    "zaptest"
+  ],
+  "files": [
+    {
+      "path": "src/requests/__init__.py",
+      "sha256": "80534322a1a3167d8775829ee220a6acf4fe455f3f778c4b8e94bcf7fadfa0b5",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/__version__.py",
+      "sha256": "abba90670b0370a3dc40d97c2dea46a35d4bec941ff10d7c3cf3098ef04a17f9",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/_internal_utils.py",
+      "sha256": "4c7d8d132c9898fc7d715e473f3ac74785ddc4ab96d2c9240f87835dc6d981ff",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/_types.py",
+      "sha256": "84dec9789a8e839807242448a9aa86acd12c440211921e32f43afcbc422a629c",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/adapters.py",
+      "sha256": "cc9b1b02694fee0353481fbad84fe3ddbedec4441dba54df7914c63f2aa85937",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/api.py",
+      "sha256": "4d15480ac046f089209798e8650476ef4a28ebe6f81b400758f8ef42ec6b5509",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/auth.py",
+      "sha256": "fdc8bb34a8a5a088b169ca13277d107b0bc94ee63ed5e89dd4f5569d9b2bb04c",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/certs.py",
+      "sha256": "fd9c6b83359cef90ff6c4eeeab8dcc2388da382ebca7d00a499b3c0b434a87e4",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/compat.py",
+      "sha256": "4a51c5ab07b015c298d6ea69d71502979cd3ed6b935d88e4433ce5341dacf584",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/cookies.py",
+      "sha256": "05d12b965c76f229803e17aef1c9969d712e4f4d0f6a06c05e0a47212fd5b417",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/exceptions.py",
+      "sha256": "c5e18f3352454968e337bb3056f0867df2f37c0a0d2c1a77dc05e7e0b3c0411b",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/help.py",
+      "sha256": "e5845e93980b2e25be418fb7fe0b8e6e999fef8f84afc5a43f4546efdc24691f",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/hooks.py",
+      "sha256": "ebd8a02475d31a0e473a8f553e9501ff43645b9563885ad52844e7a63f0d76ab",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/models.py",
+      "sha256": "a3351c3c12a86bf5ed211533875350bc4791e9327a685f8c19ba54343e471e26",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/packages.py",
+      "sha256": "fe0d2067af355320252874631fa91a9db6a8c71d9e01beaacdc5e2383c932287",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/sessions.py",
+      "sha256": "3d2089736ced93b2b405624a943f866d22652b17df06a85eb010f86272fc3e7d",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/status_codes.py",
+      "sha256": "1950f47c89cf18019787e07d8ce48f66d6b38e622f7d94d70a90247fee6c040e",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/structures.py",
+      "sha256": "ba9460c39078f25e6f1d2a24ac941ac6f8d2ee97197fa8c8d0c262d8a1e67a02",
+      "language": "python"
+    },
+    {
+      "path": "src/requests/utils.py",
+      "sha256": "b879cb3f671cf1c28e8ff9b2b02151bcdb8974b4820a514cfdd1f5a038443cd2",
+      "language": "python"
+    }
+  ],
+  "diagnostics": [],
+  "analysis_ms": 1581.02,
+  "entities": 4649,
+  "facts": 132740,
+  "rules": {
+    "architecture.adapted-continuation-wrapper": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 4353,
+          "rows_examined": 1978,
+          "elapsed_ms": 6.2,
+          "dependencies": []
+        }
+      },
+      "matches": []
+    },
+    "architecture.batch-work-queue": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 4,
+          "elapsed_ms": 0.239,
+          "dependencies": [
+            "architecture.batch-work-queue.drain"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "architecture.cache-aside": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 84,
+          "rows_examined": 55,
+          "elapsed_ms": 1.009,
+          "dependencies": [
+            "architecture.cache-aside#java-optional",
+            "architecture.cache-aside#null-miss"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "architecture.continuation-wrapper": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 741,
+          "rows_examined": 486,
+          "elapsed_ms": 0.885,
+          "dependencies": []
+        }
+      },
+      "matches": []
+    },
+    "architecture.dependency-injection": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2340,
+          "rows_examined": 1015,
+          "elapsed_ms": 2.716,
+          "dependencies": [
+            "architecture.dependency-injection#callable-input",
+            "architecture.dependency-injection#object-assignment",
+            "strategy.supplied_policy"
+          ]
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$unit": {
+              "name": "MockResponse",
+              "path": "src/requests/cookies.py",
+              "line": 114,
+              "kind": "CLASS"
+            },
+            "$dependency": {
+              "name": "_headers",
+              "path": "src/requests/cookies.py",
+              "line": 126,
+              "kind": "STORAGE"
+            },
+            "$inject": {
+              "name": "__init__",
+              "path": "src/requests/cookies.py",
+              "line": 121,
+              "kind": "CALLABLE"
+            },
+            "$operation": {
+              "name": "getheaders",
+              "path": "src/requests/cookies.py",
+              "line": 131,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "architecture.dispatch-table": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 726,
+          "rows_examined": 357,
+          "elapsed_ms": 1.331,
+          "dependencies": [
+            "architecture.dispatch-table#adapted",
+            "architecture.dispatch-table#direct"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "resilience.exception-retry": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 11,
+          "rows_examined": 5,
+          "elapsed_ms": 0.242,
+          "dependencies": []
+        }
+      },
+      "matches": []
+    },
+    "architecture.read-through-cache": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 1256,
+          "rows_examined": 628,
+          "elapsed_ms": 2.38,
+          "dependencies": [
+            "architecture.read-through-cache.read_fill"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "architecture.subclass-factory": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 76,
+          "rows_examined": 37,
+          "elapsed_ms": 0.207,
+          "dependencies": [
+            "architecture.subclass-factory#returned-subclass"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "persistence.unit-of-work": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 6,
+          "rows_examined": 2,
+          "elapsed_ms": 0.488,
+          "dependencies": [
+            "persistence.unit-of-work#keyed-change-set"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "syntax.generators": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 269,
+          "rows_examined": 268,
+          "elapsed_ms": 0.377,
+          "dependencies": []
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$iterator": {
+              "name": "iteritems",
+              "path": "src/requests/cookies.py",
+              "line": 284,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "iterkeys",
+              "path": "src/requests/cookies.py",
+              "line": 250,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "itervalues",
+              "path": "src/requests/cookies.py",
+              "line": 267,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "generate",
+              "path": "src/requests/models.py",
+              "line": 935,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "iter_lines",
+              "path": "src/requests/models.py",
+              "line": 994,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "resolve_redirects",
+              "path": "src/requests/sessions.py",
+              "line": 186,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "atomic_open",
+              "path": "src/requests/utils.py",
+              "line": 329,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "iter_slices",
+              "path": "src/requests/utils.py",
+              "line": 621,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "set_environ",
+              "path": "src/requests/utils.py",
+              "line": 788,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$iterator": {
+              "name": "stream_decode_response_unicode",
+              "path": "src/requests/utils.py",
+              "line": 594,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    }
+  },
+  "engine": {
+    "ir_version": "1.44.0",
+    "source_sha256": {
+      "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+      "binding_writes.py": "248c81c19c54b70240ab312a4f0401b272bdc0644197417ea5434827607fa7f3",
+      "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+      "call_bindings.py": "e22e85204749f85185813ab2b6ae835f6a9566092c451fb674d41629e884bc7b",
+      "catalog.py": "39cb65a22c3c0c1b96ae41cd2343b8227d93ba1f62763bd95efdfe568683d638",
+      "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+      "collection_lifecycle.py": "a35f48339a074eb62b1e5e1b73024c4ea3d133628675b710a0cf048f5910d549",
+      "collection_snapshots.py": "8ba78a0010eafa7a85c4ab519944171570235a0c108ed52d5f830ed79684203b",
+      "construction.py": "41787dcd62dae7719b048258f29999e73c8b6e36e75d7ed67816ad68d22f20e1",
+      "control_flow.py": "b7f4542dfc53514013c420828e8a13d71b634a951d72ed301fa1306a0021a756",
+      "cpp_initializers.py": "e3d9bb3e9a27b78151f7f71288e7ebb27d4b95347ef0529ba91206a4dab916b7",
+      "cpp_methods.py": "eeb094c9ac77fdf7d76981e14b4b384c1cc805c648f8a774624f8ef806eea321",
+      "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+      "field_transfers.py": "c327f6bd070445c583818ace80797bd891b100bd9ed4596c1ae6a6fad1b3f61f",
+      "frontend.py": "a7de6ebb504774a99b5abefd70b3adae63730ca68585bc362533c42e4aaa5e79",
+      "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+      "kenql.py": "2a1d43ca6e55f36b7ada131a27d82dd45f3671187a814e51582e6266eee6f922",
+      "member_access.py": "9781486284abe3599396740599f7305f2069c555e024b2ff9b10fb1cd5e6fe50",
+      "member_transfers.py": "cc2474d0ac9f0f539cde50ead12b6af08b2254614e523af9c2677d795ed8fb10",
+      "model.py": "a142e471c3f886f7ead36df16b9bef152a08bfe0a9e88f1db266381d5e87949d",
+      "modern_patterns/adapted-continuation-wrapper.toml": "cfae68be5c98788c03b0c663a7fb5d94b03164b57e2c2b413228e4c14528c50d",
+      "modern_patterns/batch-work-queue.toml": "6e1b3a69aae411a736c749814959aac73df1e30c29c84ef7e6b2e02a1c058a31",
+      "modern_patterns/cache-aside.toml": "c7915bc8855deecd60881f3f4db072714f670ed3f55bdbd6f47a495549a12328",
+      "modern_patterns/continuation-wrapper.toml": "0092ade2a426815819334a1999ea4c2a65e54f452ceaf7a6de08dd77dd855ff2",
+      "modern_patterns/dependency-injection.toml": "d1ba8b738b297988381e3b798bbf417d19d63157d185230ffe6e53ec80854468",
+      "modern_patterns/dispatch-table.toml": "a2197cedfd9f2f8bdb35c02ba8a398e1805f31b6bec42f8547aaefa4f86c3566",
+      "modern_patterns/exception-retry.toml": "eeab3c3ae90b1a7a3f1778db573d80113e4d6e0cc50fbd2ff6ec1cb1da6af77c",
+      "modern_patterns/read-through-cache.toml": "68d8df7db96d7a3270875b46bc837879f036a06a15b0e8c8f46877fc34eb6159",
+      "modern_patterns/subclass-factory.toml": "ec69fa0a23372a403036e3c5d6775ce6d0d3045c4792d9fad9602335462f5141",
+      "modern_patterns/unit-of-work.toml": "82920e8a2f861c7658a80c729ad0b375d466fb8d1a6122d5ab783a039e64b949",
+      "nominal_roots.py": "9f41249a1346ab4543d497cdc71b8568d5c0b899fd6ba99cfb7b272d9fc1dfb3",
+      "patterns/abstract-factory.toml": "d075ab8290e8304c4c25806087b2d9f5c22c2f5ebf34e37ab957843220f06d4d",
+      "patterns/adapter.toml": "f68db1dcb07858065cc9a80bb80da5b0ba7e026681e08c6dc9ca4945d1e8f842",
+      "patterns/bridge.toml": "566e693f3decef8bd27d2f10fff841e8f1f768b9bbc2e4a7dfbb4e522c76bf4b",
+      "patterns/builder.toml": "bb46c4713cd0b4c6b42a7a5cc4df16206d42b73be20948d9328c7fed1b6897d8",
+      "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+      "patterns/command.toml": "1dd4624f93ee499ca31ded97e573455356b443e8b6259bb39022f420a815de75",
+      "patterns/composite.toml": "fffb2da5916eb05e4da83de63e21549ad06481938087b9344f291c22f3516a02",
+      "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+      "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+      "patterns/factory-method.toml": "cf2d5b3d342478cc22d40a5a2211002622b4b75be09ca25b0cafd3fccd98fbd4",
+      "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+      "patterns/interpreter.toml": "a2a674ce0dfa775cc287df32bdca056bd4be1196ada97ec170821852817e787c",
+      "patterns/iterator.toml": "404233895ac5526625c039f7875db8ecb68aba57ba087c67723f871b797d04ef",
+      "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+      "patterns/memento.toml": "fa56773105fe4f84ae7f8557eb086757831600533b5c38777cc330a0f480caf3",
+      "patterns/observer.toml": "ca3ad665f19488efc51b57d103667395ae895f4f56b4fb0447e463d23d3599d5",
+      "patterns/prototype.toml": "2de68c873a910bd564889fce9644339d5169640803531d9bf54ae1d3bcb69923",
+      "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+      "patterns/singleton.toml": "ddad6d36c3363c102de1c4c6d068d58af25223d2a8f3d3698948aca77f859d41",
+      "patterns/state.toml": "24a6b2742a179205032c27e48d21082e65407eecd62dd3a827b317246a015a74",
+      "patterns/strategy.toml": "c71942d6ea29895d487c6ed25cd4c08c3aef54116bfbf8b59996d8b0e34865f2",
+      "patterns/template-method.toml": "391fd8cf3a0a2fceff9ebfc1994b82d737d3dc9a7bbe181e3886b9e144133e3d",
+      "patterns/visitor.toml": "7d47620aad4831dfcc601818ea92c5f9781658d1d85356d6b0d44e9c7a88d3e7",
+      "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+      "return_flow.py": "67da3d1dcc7071dda86fbec744c81a2faeff7fd85bee746598d1157d16b0389b",
+      "rules.py": "a3fd498e5154c1f45a524de6fe470bc176bc8600b3a70332727640e956e0cfb3",
+      "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+      "semantic.py": "48eea195fbfbb9c01d0e1ff73a374ad32fccfa01308b0a8835ebcf809b61c79f",
+      "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df",
+      "syntax_graph.py": "ad63fe8b926d73bf853f09ec209e3208a1341e8eb2c4fe7799e73cafa3a4d6b6",
+      "type_refs.py": "31c0aac9132cdae3ad0a4ea009a92ce57d8a5434a999dbf0597592d347010b17"
+    }
+  },
+  "budget": {
+    "max_matches": 1000,
+    "max_rows": 500000,
+    "max_states": 100000,
+    "timeout_ms": 5000
+  },
+  "collections": [
+    "modern"
+  ],
+  "python_generator_oracle": {
+    "expected": [
+      [
+        "src/requests/cookies.py",
+        "iteritems",
+        284
+      ],
+      [
+        "src/requests/cookies.py",
+        "iterkeys",
+        250
+      ],
+      [
+        "src/requests/cookies.py",
+        "itervalues",
+        267
+      ],
+      [
+        "src/requests/models.py",
+        "generate",
+        935
+      ],
+      [
+        "src/requests/models.py",
+        "iter_lines",
+        994
+      ],
+      [
+        "src/requests/sessions.py",
+        "resolve_redirects",
+        186
+      ],
+      [
+        "src/requests/utils.py",
+        "atomic_open",
+        329
+      ],
+      [
+        "src/requests/utils.py",
+        "iter_slices",
+        621
+      ],
+      [
+        "src/requests/utils.py",
+        "set_environ",
+        788
+      ],
+      [
+        "src/requests/utils.py",
+        "stream_decode_response_unicode",
+        594
+      ]
+    ],
+    "detected": [
+      [
+        "src/requests/cookies.py",
+        "iteritems",
+        284
+      ],
+      [
+        "src/requests/cookies.py",
+        "iterkeys",
+        250
+      ],
+      [
+        "src/requests/cookies.py",
+        "itervalues",
+        267
+      ],
+      [
+        "src/requests/models.py",
+        "generate",
+        935
+      ],
+      [
+        "src/requests/models.py",
+        "iter_lines",
+        994
+      ],
+      [
+        "src/requests/sessions.py",
+        "resolve_redirects",
+        186
+      ],
+      [
+        "src/requests/utils.py",
+        "atomic_open",
+        329
+      ],
+      [
+        "src/requests/utils.py",
+        "iter_slices",
+        621
+      ],
+      [
+        "src/requests/utils.py",
+        "set_environ",
+        788
+      ],
+      [
+        "src/requests/utils.py",
+        "stream_decode_response_unicode",
+        594
+      ]
+    ],
+    "missing": [],
+    "unexpected": [],
+    "parse_errors": []
+  }
+}

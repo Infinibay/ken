@@ -1,0 +1,34 @@
+diff --git a/src/ken/_paths.py b/src/ken/_paths.py
+index 532fd3a..fb769c1 100644
+--- a/src/ken/_paths.py
++++ b/src/ken/_paths.py
+@@ -40,6 +40,10 @@ def pid_path(project_root: Path) -> Path:
+     return ken_dir(project_root) / PID_FILENAME
+ 
+ 
++def socket_path(project_root: Path) -> Path:
++    return ken_dir(project_root) / SOCKET_FILENAME
++
++
+ def port_path(project_root: Path) -> Path:
+     return ken_dir(project_root) / PORT_FILENAME
+ 
+diff --git a/tests/test_paths.py b/tests/test_paths.py
+index 692e042..220edb4 100644
+--- a/tests/test_paths.py
++++ b/tests/test_paths.py
+@@ -69,6 +69,14 @@ def test_path_helpers_compose(tmp_path):
+     assert _paths.log_path(root) == root / ".ken" / "daemon.log"
+ 
+ 
++@pytest.mark.parametrize("root", [Path("/project"), Path("project")], ids=["absolute", "relative"])
++def test_socket_path_composes(root):
++    result = _paths.socket_path(root)
++
++    assert result == root / ".ken" / "daemon.sock"
++    assert result.is_absolute() == root.is_absolute()
++
++
+ @pytest.mark.parametrize("absolute", [False, True])
+ def test_resolve_project_path_accepts_internal_path(tmp_path, absolute):
+     root = tmp_path / "project"

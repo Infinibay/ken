@@ -1,0 +1,94 @@
+[
+  {
+    "repo": "commons-io",
+    "rule": "singleton",
+    "commit": "f720b24227eb6972d4281d330ddb64c1416f81a4",
+    "added": [
+      {
+        "roles": {
+          "$unit": {
+            "name": "FileSystemProviders",
+            "path": "src/main/java/org/apache/commons/io/file/spi/FileSystemProviders.java",
+            "line": 34,
+            "kind": "CLASS"
+          }
+        },
+        "variant": "default",
+        "status": "structural_match"
+      }
+    ],
+    "removed": [],
+    "review": "TP-structural-shared-instance: FileSystemProviders has private constructor, class initialized INSTALLED and direct installed() accessor."
+  },
+  {
+    "repo": "rxjs",
+    "rule": "architecture.dependency-injection",
+    "commit": "54796b38a57e6309f9861e174737479bb3f63f61",
+    "kind": "source-location-correction",
+    "added": [
+      {
+        "roles": {
+          "$unit": {
+            "name": "ColdObservable",
+            "path": "packages/rxjs/src/cold-observable.ts",
+            "line": 97,
+            "kind": "CLASS"
+          },
+          "$dependency": {
+            "name": "#init",
+            "path": "packages/rxjs/src/cold-observable.ts",
+            "line": 98,
+            "kind": "STORAGE"
+          },
+          "$inject": {
+            "name": "constructor",
+            "path": "packages/rxjs/src/cold-observable.ts",
+            "line": 100,
+            "kind": "CALLABLE"
+          },
+          "$operation": {
+            "name": "subscribe",
+            "path": "packages/rxjs/src/cold-observable.ts",
+            "line": 105,
+            "kind": "CALLABLE"
+          }
+        },
+        "variant": "default",
+        "status": "structural_match"
+      }
+    ],
+    "removed": [
+      {
+        "roles": {
+          "$unit": {
+            "name": "ColdObservable",
+            "path": "packages/rxjs/src/cold-observable.ts",
+            "line": 97,
+            "kind": "CLASS"
+          },
+          "$dependency": {
+            "name": "#init",
+            "path": "packages/rxjs/src/cold-observable.ts",
+            "line": 102,
+            "kind": "STORAGE"
+          },
+          "$inject": {
+            "name": "constructor",
+            "path": "packages/rxjs/src/cold-observable.ts",
+            "line": 100,
+            "kind": "CALLABLE"
+          },
+          "$operation": {
+            "name": "subscribe",
+            "path": "packages/rxjs/src/cold-observable.ts",
+            "line": 105,
+            "kind": "CALLABLE"
+          }
+        },
+        "variant": "default",
+        "status": "structural_match"
+      }
+    ],
+    "review": "Same injected #init dependency; its location moves from first constructor assignment line102 to actual private field declaration line98. No changed pattern presence."
+  }
+]

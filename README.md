@@ -457,3 +457,30 @@ ken uninstall --keep-db .
 ## License
 
 ken is released under the MIT License. See [LICENSE](LICENSE).
+
+## Structural code analysis
+
+Ken can query a tree-sitter IR graph, scan 23 GoF pattern signatures, summarize
+patterns by directory, and check a catalogue of source-level bug signatures:
+
+```sh
+ken structural patterns --path .
+ken structural bugs --path .
+ken structural search --path . --query-file search.kenq
+ken structural catalog
+```
+
+Queries support typed selectors, regex, named roles, graph paths, cardinalities,
+variants and evidence-based ranking. Results distinguish structural matches,
+missing semantic evidence and exhausted query budgets. The content-addressed
+cache defaults to 500 MB; use `--cache-mb 0` to disable it. MCP clients use
+`ken_find` with `scope="structure"`, `"patterns"` or `"bugs"`.
+
+See [the current query guide](docs/structural-queries.md) for syntax, examples,
+language coverage, precision limits, cache configuration and tests. All 23 GoF
+concepts have canonical queries tested against Python, Java and TypeScript source;
+[the coverage matrix](docs/gof-coverage.md) distinguishes executable variants from
+planned ones. Matches remain structural candidates, not proof of design intent.
+
+Structural searches support [KenQL and named queries](docs/structural-queries.md),
+with [declarative pattern files](src/ken/structural/patterns).

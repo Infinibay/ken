@@ -1,0 +1,60 @@
+schema = "ken-rule/1"
+id = "flyweight"
+name = "Flyweight"
+category = "structural"
+description = "A pool creates, stores and returns objects through indexed lookup."
+caveat = "Indexed insertion and direct return share a pool/key binding, and insertion retains the constructed object. Miss polarity, temporal key stability, immutability and intrinsic/extrinsic state need review."
+legacy_query = "require $unit HAS_FIELD $pool\nrequire $unit HAS_METHOD $factory\nrequire $factory LOOKS_UP $pool\nrequire $factory CREATES $product\nrequire $factory WRITES_ELEMENT $pool\nrequire $factory RETURNS_LOOKUP $pool\n"
+query = '''
+query flyweight {
+ match "flyweight#explicit-interning"(unit: $unit);
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "explicit-interning"
+status = "ready"
+query_claim = "An indexed write stores the construction supplied with the key parameter, and a direct indexed return uses that same pool and key binding. Does not prove current key values under reassignment, miss-only creation, lifetime identity, intrinsic-state stability or extrinsic use."
+languages = ["python", "java", "typescript"]
+requires = ["map_key_flow", "allocation_flow"]
+graph_requirements = ["Lookup/miss/inserción/retorno comparten clave y pool; usuario suministra contexto extrínseco."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query flyweight {
+
+ require $unit HAS_FIELD $pool;
+ require $unit HAS_METHOD $factory;
+ require $factory LOOKS_UP $pool;
+ require $factory WRITES_ELEMENT $pool;
+ require $factory RETURNS_LOOKUP $pool;
+ require $factory HAS_PARAMETER $key;
+ parameter(receiver: false) as $key;
+ require $factory HAS_CALL $construction;
+ require $construction ALLOCATES_TYPE $product;
+ require $construction ARGUMENT $argument;
+ require $argument VALUE $input;
+ require $input LOADED_FROM $key;
+ require $factory HAS_OPERATION $write;
+ require $write WRITES_ELEMENT $pool;
+ require $write INDEX $key;
+ require $write STORES_VALUE $construction;
+ require $factory RETURNS $returned;
+ require $returned CONTAINER $pool;
+ require $returned INDEX $key;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "entry-api"
+status = "design"
+languages = ["java", "csharp", "cpp", "rust"]
+requires = ["map_api_models", "callback_flow"]
+graph_requirements = ["Modelo entry/get-or-add preserva identidad de clave y objeto retenido; no afirmar factory exactly-once."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

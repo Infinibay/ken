@@ -1,0 +1,55 @@
+schema = "ken-rule/1"
+id = "interpreter"
+name = "Interpreter"
+category = "behavioral"
+description = "An expression recursively forwards an evaluation context."
+caveat = "Recursive evaluation also occurs outside interpreters; grammar intent requires review."
+legacy_query = "require $unit SUBTYPE_OF $expression\nrequire $unit HAS_FIELD $child\nrequire $child TYPE $expression\nrequire $unit HAS_METHOD $interpret\nrequire $interpret HAS_PARAMETER $context receiver=false\nrequire $interpret HAS_CALL $call\nrequire $call RECEIVER $child\nrequire $call ARGUMENT $context\n"
+query = '''
+query interpreter {
+ match "interpreter#expression-objects"(unit: $unit);
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "expression-objects"
+status = "ready"
+languages = ["python", "java", "typescript", "cpp"]
+requires = ["recursive_contract", "context_value_flow"]
+graph_requirements = ["Nodos no terminales evalúan hijos con contexto correlacionado y combinan resultados; terminales producen valores."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query interpreter {
+
+ require $unit SUBTYPE_OF $expression;
+ require $unit HAS_FIELD $child;
+ require $child TYPE $expression;
+ require $unit HAS_METHOD $interpret;
+ require $interpret OVERRIDES $slot;
+ require $interpret HAS_PARAMETER $context;
+ parameter(receiver: false) as $context;
+ require $interpret HAS_CALL $call;
+ require $call RECEIVER $child;
+ require $call ARGUMENT $arg;
+ require $arg VALUE $input;
+ require $input LOADED_FROM $context;
+ callable() as $interpret;
+ call() as $call;
+ where $interpret.name == $call.name;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "expression-sum"
+status = "design"
+languages = ["typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["sum_types", "match_flow", "recursion"]
+graph_requirements = ["Ramas de expresión algebraica evalúan hijos/contexto; no exigir subtipado nominal."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

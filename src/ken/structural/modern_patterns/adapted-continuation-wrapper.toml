@@ -1,0 +1,32 @@
+id = "architecture.adapted-continuation-wrapper"
+name = "Adapted Continuation Wrapper"
+description = "A factory returns an adapter call receiving a nested handler that delegates to a supplied continuation."
+collections = ["architecture", "modern"]
+tags = ["composition", "closure", "web", "middleware"]
+caveat = "Structural candidate for adapted middleware. Does not prove the adapter retains or invokes the handler, HTTP registration, API identity, argument forwarding, call order or freedom from reassignment. Object continuation methods are not restricted by name."
+query = '''
+query adapted_continuation_wrapper {
+ callable() as $factory;
+ require $factory HAS_PARAMETER $continuation;
+ parameter(receiver: false) as $continuation;
+ require $factory RETURNS $adapter;
+ call() as $adapter;
+ require $adapter ARGUMENT $argument;
+ any {
+   require $argument VALUE $handler;
+ } or {
+   require $argument VALUE $loaded;
+   require $loaded LOADED_FROM $stored;
+   require $stored ASSIGNED_FROM $handler;
+ }
+ callable() as $handler;
+ require $handler OWNED_BY $factory;
+ require $handler HAS_CALL $invocation;
+ any {
+   require $invocation CALLEE_VALUE $continuation;
+ } or {
+   require $invocation RECEIVER $continuation;
+ }
+ emit $factory, $handler, $continuation, $adapter, $invocation;
+}
+'''

@@ -1,0 +1,1666 @@
+{
+  "repo": "chi",
+  "commit": "b1c9ab47626cc46b34393ad4d35779c4363c4e1e",
+  "scope": "middleware/",
+  "exclude_globs": [],
+  "excluded_components": [
+    ".venv",
+    "__pycache__",
+    "benchmarks",
+    "internal",
+    "node_modules",
+    "target",
+    "testdata",
+    "tests",
+    "tools",
+    "zaptest"
+  ],
+  "files": [
+    {
+      "path": "middleware/basic_auth.go",
+      "sha256": "d1cfa0a32e9871cfba478590d1c1010297df20e53bbf83f34b09a4ec76e8b278",
+      "language": "go"
+    },
+    {
+      "path": "middleware/clean_path.go",
+      "sha256": "00cf47dd47cf4b6a1fa29dd3d5cdff4f7de8adbea410801128afe8aeaed35f0d",
+      "language": "go"
+    },
+    {
+      "path": "middleware/client_ip.go",
+      "sha256": "fc4eef97991796067607038437bd3b23e04337ba9b07ed3c4147d8b49ecf5e9e",
+      "language": "go"
+    },
+    {
+      "path": "middleware/compress.go",
+      "sha256": "1a54e1cd05a913dd26bc00faab499cddc58a00646a92af5051961100d1532698",
+      "language": "go"
+    },
+    {
+      "path": "middleware/content_charset.go",
+      "sha256": "0e618e324ac9ef288b924323b42e6ae3d3d865f1acc6fa72c9c4ca827f124aeb",
+      "language": "go"
+    },
+    {
+      "path": "middleware/content_encoding.go",
+      "sha256": "a1b35d124400a423d385eca9d066593c790e867db165af75e25b31b649d37fd8",
+      "language": "go"
+    },
+    {
+      "path": "middleware/content_type.go",
+      "sha256": "5cedd359e3390edc613557681dda3cbc60faa2e4efb2a8974464876377b3a797",
+      "language": "go"
+    },
+    {
+      "path": "middleware/get_head.go",
+      "sha256": "76af2014d2080f597a0205f51265badcad7af64d09652a79ed1a214074f5c582",
+      "language": "go"
+    },
+    {
+      "path": "middleware/heartbeat.go",
+      "sha256": "fc242f8c645cfc7640a36bccccb490cad9136ed07a751b0998f554412c29bca4",
+      "language": "go"
+    },
+    {
+      "path": "middleware/logger.go",
+      "sha256": "40e7b7b01eb0363aad9930d3764880e3cf6f1f8aed6ad3fd918866ec34602729",
+      "language": "go"
+    },
+    {
+      "path": "middleware/maybe.go",
+      "sha256": "d600d7ea5b3184ea8ea952a145b1fca21e458b94601eae4a6cb215b3a04a3dee",
+      "language": "go"
+    },
+    {
+      "path": "middleware/middleware.go",
+      "sha256": "8789f84814d815185cb5a7bc6c247969b67d0ff9b8045ee1c95f4c9ad59ff4b1",
+      "language": "go"
+    },
+    {
+      "path": "middleware/nocache.go",
+      "sha256": "389eb1e308194561aea139b8d56d49f46b9fb30d84f8da146f5deaea66c5f5cc",
+      "language": "go"
+    },
+    {
+      "path": "middleware/page_route.go",
+      "sha256": "03f3b50c4a55c345b52ce8f4b6d5da4b977647dd66e2e59b5f3635bda93e779c",
+      "language": "go"
+    },
+    {
+      "path": "middleware/path_rewrite.go",
+      "sha256": "0f3c01a40e320494a093d804376f3be8519b86285b5e24e8937bcee2c13c9279",
+      "language": "go"
+    },
+    {
+      "path": "middleware/profiler.go",
+      "sha256": "5b21bca97731b2df9aff87767ea1325b77a401c823fa6cdcf52ad38616d48faa",
+      "language": "go"
+    },
+    {
+      "path": "middleware/realip.go",
+      "sha256": "2f837f2213de7074c5c6915dad70f85c4588077291a8563d1cbad6698a757220",
+      "language": "go"
+    },
+    {
+      "path": "middleware/recoverer.go",
+      "sha256": "efc38c7b32bfb29ebbe16b199832d1eff13179a34a025c07b53c733c11a2154c",
+      "language": "go"
+    },
+    {
+      "path": "middleware/request_id.go",
+      "sha256": "31b21034dd5cd6393fa9abc9ce1207acc78fea1e162d866edf6bb2a7badd288b",
+      "language": "go"
+    },
+    {
+      "path": "middleware/request_size.go",
+      "sha256": "81a98f72a81442a01a4353be9833fda6803f585bf768cebde5a34ebc1c44c390",
+      "language": "go"
+    },
+    {
+      "path": "middleware/route_headers.go",
+      "sha256": "cfd320f1a996ac95e29e25ab8a2ffa9606577996d6e001fb3835ede2795a3f69",
+      "language": "go"
+    },
+    {
+      "path": "middleware/strip.go",
+      "sha256": "d5a0929e147b8b2a58ee78f0166a67f0949255b698bd5d26983a62643fc8fe10",
+      "language": "go"
+    },
+    {
+      "path": "middleware/sunset.go",
+      "sha256": "16d99c4da576c4b7c024a12da139421d5659290250bed8f3d3ff6e0ed5d93b0e",
+      "language": "go"
+    },
+    {
+      "path": "middleware/supress_notfound.go",
+      "sha256": "b3c6cb935d27aaddef0dcb5d165447babf5e9bb42cf28b4ee4e5f4693810888f",
+      "language": "go"
+    },
+    {
+      "path": "middleware/terminal.go",
+      "sha256": "6e663b6ab8e26417198021c226b5aa5bce92648c5bb172d329389c16bef8ca20",
+      "language": "go"
+    },
+    {
+      "path": "middleware/throttle.go",
+      "sha256": "05569797a14131ba177a71fccccd509363ca2016fa4c45a31cff033ae44301e4",
+      "language": "go"
+    },
+    {
+      "path": "middleware/timeout.go",
+      "sha256": "3e83d007ec300b4ea605d97a336351e562ecd84b32c2b26206791d11ce7501c0",
+      "language": "go"
+    },
+    {
+      "path": "middleware/url_format.go",
+      "sha256": "a1ea4ec9039b5a704f8aea7754a9b00d8026b72d18ba98208cd04b182e1b5800",
+      "language": "go"
+    },
+    {
+      "path": "middleware/value.go",
+      "sha256": "288b19d77e375d2b2f65dbd901f958f3fb7c93c26de0691e70817dd343c9a679",
+      "language": "go"
+    },
+    {
+      "path": "middleware/wrap_writer.go",
+      "sha256": "826193b441af948d6050b820d7cb0f710d6cc7c0c58449f93d88a970528e1ff2",
+      "language": "go"
+    }
+  ],
+  "diagnostics": [],
+  "analysis_ms": 260.09,
+  "entities": 2316,
+  "facts": 38069,
+  "rules": {
+    "architecture.adapted-continuation-wrapper": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2627,
+          "rows_examined": 1165,
+          "elapsed_ms": 4.035,
+          "dependencies": []
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@260",
+              "path": "middleware/basic_auth.go",
+              "line": 11,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@325",
+              "path": "middleware/basic_auth.go",
+              "line": 12,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/basic_auth.go",
+              "line": 11,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "308",
+              "path": "middleware/basic_auth.go",
+              "line": 12,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "642",
+              "path": "middleware/basic_auth.go",
+              "line": 25,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "CleanPath",
+              "path": "middleware/clean_path.go",
+              "line": 12,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@339",
+              "path": "middleware/clean_path.go",
+              "line": 13,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/clean_path.go",
+              "line": 12,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "322",
+              "path": "middleware/clean_path.go",
+              "line": 13,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "631",
+              "path": "middleware/clean_path.go",
+              "line": 26,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@1599",
+              "path": "middleware/client_ip.go",
+              "line": 44,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@1661",
+              "path": "middleware/client_ip.go",
+              "line": 45,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "h",
+              "path": "middleware/client_ip.go",
+              "line": 44,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "1644",
+              "path": "middleware/client_ip.go",
+              "line": 45,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "1920",
+              "path": "middleware/client_ip.go",
+              "line": 52,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "ClientIPFromRemoteAddr",
+              "path": "middleware/client_ip.go",
+              "line": 188,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@7415",
+              "path": "middleware/client_ip.go",
+              "line": 189,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "h",
+              "path": "middleware/client_ip.go",
+              "line": 188,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "7398",
+              "path": "middleware/client_ip.go",
+              "line": 189,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "7752",
+              "path": "middleware/client_ip.go",
+              "line": 197,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@3793",
+              "path": "middleware/client_ip.go",
+              "line": 98,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@3855",
+              "path": "middleware/client_ip.go",
+              "line": 99,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "h",
+              "path": "middleware/client_ip.go",
+              "line": 98,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "3838",
+              "path": "middleware/client_ip.go",
+              "line": 99,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "4332",
+              "path": "middleware/client_ip.go",
+              "line": 115,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@6157",
+              "path": "middleware/client_ip.go",
+              "line": 154,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@6219",
+              "path": "middleware/client_ip.go",
+              "line": 155,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "h",
+              "path": "middleware/client_ip.go",
+              "line": 154,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "6202",
+              "path": "middleware/client_ip.go",
+              "line": 155,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "6616",
+              "path": "middleware/client_ip.go",
+              "line": 171,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "Handler",
+              "path": "middleware/compress.go",
+              "line": 207,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@6986",
+              "path": "middleware/compress.go",
+              "line": 208,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/compress.go",
+              "line": 207,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "6969",
+              "path": "middleware/compress.go",
+              "line": 208,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "7482",
+              "path": "middleware/compress.go",
+              "line": 226,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@501",
+              "path": "middleware/content_charset.go",
+              "line": 17,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@566",
+              "path": "middleware/content_charset.go",
+              "line": 18,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/content_charset.go",
+              "line": 17,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "549",
+              "path": "middleware/content_charset.go",
+              "line": 18,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "646",
+              "path": "middleware/content_charset.go",
+              "line": 20,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@501",
+              "path": "middleware/content_charset.go",
+              "line": 17,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@566",
+              "path": "middleware/content_charset.go",
+              "line": 18,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/content_charset.go",
+              "line": 17,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "549",
+              "path": "middleware/content_charset.go",
+              "line": 18,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "823",
+              "path": "middleware/content_charset.go",
+              "line": 29,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@486",
+              "path": "middleware/content_encoding.go",
+              "line": 15,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@533",
+              "path": "middleware/content_encoding.go",
+              "line": 16,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/content_encoding.go",
+              "line": 15,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "1061",
+              "path": "middleware/content_encoding.go",
+              "line": 32,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "1027",
+              "path": "middleware/content_encoding.go",
+              "line": 30,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@486",
+              "path": "middleware/content_encoding.go",
+              "line": 15,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@533",
+              "path": "middleware/content_encoding.go",
+              "line": 16,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/content_encoding.go",
+              "line": 15,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "1061",
+              "path": "middleware/content_encoding.go",
+              "line": 32,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "728",
+              "path": "middleware/content_encoding.go",
+              "line": 20,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@788",
+              "path": "middleware/content_type.go",
+              "line": 26,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@853",
+              "path": "middleware/content_type.go",
+              "line": 27,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/content_type.go",
+              "line": 26,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "836",
+              "path": "middleware/content_type.go",
+              "line": 27,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "1167",
+              "path": "middleware/content_type.go",
+              "line": 38,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@788",
+              "path": "middleware/content_type.go",
+              "line": 26,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@853",
+              "path": "middleware/content_type.go",
+              "line": 27,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/content_type.go",
+              "line": 26,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "836",
+              "path": "middleware/content_type.go",
+              "line": 27,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "974",
+              "path": "middleware/content_type.go",
+              "line": 30,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@204",
+              "path": "middleware/content_type.go",
+              "line": 10,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@269",
+              "path": "middleware/content_type.go",
+              "line": 11,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/content_type.go",
+              "line": 10,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "252",
+              "path": "middleware/content_type.go",
+              "line": 11,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "349",
+              "path": "middleware/content_type.go",
+              "line": 13,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "GetHead",
+              "path": "middleware/get_head.go",
+              "line": 10,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@217",
+              "path": "middleware/get_head.go",
+              "line": 11,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/get_head.go",
+              "line": 10,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "200",
+              "path": "middleware/get_head.go",
+              "line": 11,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "906",
+              "path": "middleware/get_head.go",
+              "line": 32,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "GetHead",
+              "path": "middleware/get_head.go",
+              "line": 10,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@217",
+              "path": "middleware/get_head.go",
+              "line": 11,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/get_head.go",
+              "line": 10,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "200",
+              "path": "middleware/get_head.go",
+              "line": 11,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "950",
+              "path": "middleware/get_head.go",
+              "line": 37,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@378",
+              "path": "middleware/heartbeat.go",
+              "line": 13,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@422",
+              "path": "middleware/heartbeat.go",
+              "line": 14,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "h",
+              "path": "middleware/heartbeat.go",
+              "line": 13,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "719",
+              "path": "middleware/heartbeat.go",
+              "line": 23,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "688",
+              "path": "middleware/heartbeat.go",
+              "line": 21,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@1478",
+              "path": "middleware/logger.go",
+              "line": 45,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@1525",
+              "path": "middleware/logger.go",
+              "line": 46,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/logger.go",
+              "line": 45,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "1837",
+              "path": "middleware/logger.go",
+              "line": 57,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "1781",
+              "path": "middleware/logger.go",
+              "line": 55,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@424",
+              "path": "middleware/maybe.go",
+              "line": 9,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@489",
+              "path": "middleware/maybe.go",
+              "line": 10,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/maybe.go",
+              "line": 9,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "472",
+              "path": "middleware/maybe.go",
+              "line": 10,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "600",
+              "path": "middleware/maybe.go",
+              "line": 14,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "NoCache",
+              "path": "middleware/nocache.go",
+              "line": 40,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@1086",
+              "path": "middleware/nocache.go",
+              "line": 41,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "h",
+              "path": "middleware/nocache.go",
+              "line": 40,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "1407",
+              "path": "middleware/nocache.go",
+              "line": 58,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "1377",
+              "path": "middleware/nocache.go",
+              "line": 55,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@264",
+              "path": "middleware/page_route.go",
+              "line": 11,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@329",
+              "path": "middleware/page_route.go",
+              "line": 12,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/page_route.go",
+              "line": 11,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "312",
+              "path": "middleware/page_route.go",
+              "line": 12,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "488",
+              "path": "middleware/page_route.go",
+              "line": 17,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@219",
+              "path": "middleware/path_rewrite.go",
+              "line": 10,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@284",
+              "path": "middleware/path_rewrite.go",
+              "line": 11,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/path_rewrite.go",
+              "line": 10,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "267",
+              "path": "middleware/path_rewrite.go",
+              "line": 11,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "391",
+              "path": "middleware/path_rewrite.go",
+              "line": 13,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "RealIP",
+              "path": "middleware/realip.go",
+              "line": 28,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@1052",
+              "path": "middleware/realip.go",
+              "line": 29,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "h",
+              "path": "middleware/realip.go",
+              "line": 28,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "1192",
+              "path": "middleware/realip.go",
+              "line": 36,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "1162",
+              "path": "middleware/realip.go",
+              "line": 33,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "Recoverer",
+              "path": "middleware/recoverer.go",
+              "line": 22,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@586",
+              "path": "middleware/recoverer.go",
+              "line": 23,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/recoverer.go",
+              "line": 22,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "1165",
+              "path": "middleware/recoverer.go",
+              "line": 48,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "1132",
+              "path": "middleware/recoverer.go",
+              "line": 45,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "RequestID",
+              "path": "middleware/request_id.go",
+              "line": 67,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@2179",
+              "path": "middleware/request_id.go",
+              "line": 68,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/request_id.go",
+              "line": 67,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "2502",
+              "path": "middleware/request_id.go",
+              "line": 78,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "2453",
+              "path": "middleware/request_id.go",
+              "line": 76,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@243",
+              "path": "middleware/request_size.go",
+              "line": 10,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@287",
+              "path": "middleware/request_size.go",
+              "line": 11,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "h",
+              "path": "middleware/request_size.go",
+              "line": 10,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "418",
+              "path": "middleware/request_size.go",
+              "line": 15,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "387",
+              "path": "middleware/request_size.go",
+              "line": 13,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "Handler",
+              "path": "middleware/route_headers.go",
+              "line": 77,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@2716",
+              "path": "middleware/route_headers.go",
+              "line": 78,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/route_headers.go",
+              "line": 77,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "2699",
+              "path": "middleware/route_headers.go",
+              "line": 78,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "2814",
+              "path": "middleware/route_headers.go",
+              "line": 81,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "Handler",
+              "path": "middleware/route_headers.go",
+              "line": 77,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@2716",
+              "path": "middleware/route_headers.go",
+              "line": 78,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/route_headers.go",
+              "line": 77,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "2699",
+              "path": "middleware/route_headers.go",
+              "line": 78,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "3335",
+              "path": "middleware/route_headers.go",
+              "line": 103,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "RedirectSlashes",
+              "path": "middleware/strip.go",
+              "line": 41,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@1133",
+              "path": "middleware/strip.go",
+              "line": 42,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/strip.go",
+              "line": 41,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "1872",
+              "path": "middleware/strip.go",
+              "line": 68,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "1840",
+              "path": "middleware/strip.go",
+              "line": 66,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "StripSlashes",
+              "path": "middleware/strip.go",
+              "line": 14,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@354",
+              "path": "middleware/strip.go",
+              "line": 15,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/strip.go",
+              "line": 14,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "774",
+              "path": "middleware/strip.go",
+              "line": 33,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "742",
+              "path": "middleware/strip.go",
+              "line": 31,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@317",
+              "path": "middleware/sunset.go",
+              "line": 12,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@382",
+              "path": "middleware/sunset.go",
+              "line": 13,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/sunset.go",
+              "line": 12,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "365",
+              "path": "middleware/sunset.go",
+              "line": 13,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "669",
+              "path": "middleware/sunset.go",
+              "line": 22,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@531",
+              "path": "middleware/supress_notfound.go",
+              "line": 16,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@596",
+              "path": "middleware/supress_notfound.go",
+              "line": 17,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/supress_notfound.go",
+              "line": 16,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "579",
+              "path": "middleware/supress_notfound.go",
+              "line": 17,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "821",
+              "path": "middleware/supress_notfound.go",
+              "line": 24,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@2277",
+              "path": "middleware/throttle.go",
+              "line": 74,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@2324",
+              "path": "middleware/throttle.go",
+              "line": 75,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/throttle.go",
+              "line": 74,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "3507",
+              "path": "middleware/throttle.go",
+              "line": 129,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "2780",
+              "path": "middleware/throttle.go",
+              "line": 96,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@2277",
+              "path": "middleware/throttle.go",
+              "line": 74,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@2324",
+              "path": "middleware/throttle.go",
+              "line": 75,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/throttle.go",
+              "line": 74,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "3507",
+              "path": "middleware/throttle.go",
+              "line": 129,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "3329",
+              "path": "middleware/throttle.go",
+              "line": 118,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@841",
+              "path": "middleware/timeout.go",
+              "line": 33,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@888",
+              "path": "middleware/timeout.go",
+              "line": 34,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/timeout.go",
+              "line": 33,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "1196",
+              "path": "middleware/timeout.go",
+              "line": 46,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "1162",
+              "path": "middleware/timeout.go",
+              "line": 44,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "URLFormat",
+              "path": "middleware/url_format.go",
+              "line": 46,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@1211",
+              "path": "middleware/url_format.go",
+              "line": 47,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/url_format.go",
+              "line": 46,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "1791",
+              "path": "middleware/url_format.go",
+              "line": 76,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "1759",
+              "path": "middleware/url_format.go",
+              "line": 74,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$factory": {
+              "name": "anonymous@208",
+              "path": "middleware/value.go",
+              "line": 10,
+              "kind": "CALLABLE"
+            },
+            "$handler": {
+              "name": "anonymous@255",
+              "path": "middleware/value.go",
+              "line": 11,
+              "kind": "CALLABLE"
+            },
+            "$continuation": {
+              "name": "next",
+              "path": "middleware/value.go",
+              "line": 10,
+              "kind": "PARAMETER"
+            },
+            "$adapter": {
+              "name": "402",
+              "path": "middleware/value.go",
+              "line": 15,
+              "kind": "CALL"
+            },
+            "$invocation": {
+              "name": "368",
+              "path": "middleware/value.go",
+              "line": 13,
+              "kind": "CALL"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "architecture.continuation-wrapper": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 955,
+          "rows_examined": 538,
+          "elapsed_ms": 1.487,
+          "dependencies": []
+        }
+      },
+      "matches": []
+    },
+    "architecture.dependency-injection": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 226,
+          "rows_examined": 108,
+          "elapsed_ms": 0.402,
+          "dependencies": []
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$unit": {
+              "name": "basicWriter",
+              "path": "middleware/wrap_writer.go",
+              "line": 73,
+              "kind": "CLASS"
+            },
+            "$dependency": {
+              "name": "tee",
+              "path": "middleware/wrap_writer.go",
+              "line": 75,
+              "kind": "STORAGE"
+            },
+            "$inject": {
+              "name": "Tee",
+              "path": "middleware/wrap_writer.go",
+              "line": 130,
+              "kind": "CALLABLE"
+            },
+            "$operation": {
+              "name": "Write",
+              "path": "middleware/wrap_writer.go",
+              "line": 96,
+              "kind": "CALLABLE"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "architecture.dispatch-table": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 63,
+          "rows_examined": 31,
+          "elapsed_ms": 0.333,
+          "dependencies": []
+        }
+      },
+      "matches": []
+    },
+    "syntax.generators": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 174,
+          "rows_examined": 173,
+          "elapsed_ms": 0.224,
+          "dependencies": []
+        }
+      },
+      "matches": []
+    }
+  },
+  "engine": {
+    "ir_version": "1.12.0",
+    "source_sha256": {
+      "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+      "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+      "catalog.py": "481bd96fa5f63b452fc00e8eb184915da3271941db433c9281fe35da16d94ed9",
+      "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+      "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+      "frontend.py": "a078a91fd0c5904e6efc7fda3191ebc66e7211e442cc99239e68423efcd2add9",
+      "kenql.py": "aad108ecfdcfa28cdc7375d83ff88ddadbfb20fac498905c85579178e60f909d",
+      "model.py": "52a4d6088e32c834fc27284c82cc9a2f6b0373d0d4e8bd2aa988a0ea92931046",
+      "modern_patterns/adapted-continuation-wrapper.toml": "cfae68be5c98788c03b0c663a7fb5d94b03164b57e2c2b413228e4c14528c50d",
+      "modern_patterns/continuation-wrapper.toml": "0092ade2a426815819334a1999ea4c2a65e54f452ceaf7a6de08dd77dd855ff2",
+      "modern_patterns/dependency-injection.toml": "c7c5295207795d24fe7f854fe284ca544819addf8f0022705cf648e213b2ce1c",
+      "modern_patterns/dispatch-table.toml": "20818662094a5780cf17044551400c434fd7e29734242d5e1664cf9aea7f91e2",
+      "patterns/abstract-factory.toml": "f7dcc43c213062cc082f2f535b80310dbe9bfac02c03063cfb587c0ee72cd2b2",
+      "patterns/adapter.toml": "14f98bb572a7a115e2d534e45c8231cb2919afeb04dd9921858af412606ae65e",
+      "patterns/bridge.toml": "0eba499d3bb2d9d65247adaf1a225ca94a895a6f99d50bfea91157836b1c227a",
+      "patterns/builder.toml": "f517e2ca2fa66032a4912b5bcdc75c180f961913be010cb46e7d9f8b6a751130",
+      "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+      "patterns/command.toml": "bc448c747efa5d42c12af52d3257c5f33e1281631ac38a4ca09c8950345571b0",
+      "patterns/composite.toml": "ac8020a30dbecdfe459a052db8f8104f88831f60fa05b127e02c9840de2e474c",
+      "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+      "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+      "patterns/factory-method.toml": "57222bf27ee3680d8dd297ea301d37f30817c0e05089eaaf2484f11751f50120",
+      "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+      "patterns/interpreter.toml": "22d75c5e51e14a666baa88f85750b9f3d848cb48f35fb1436790c03e0cd1251a",
+      "patterns/iterator.toml": "4765c6e7c437d0d80ec8688ad1fb6da74ffd4d3464dac4c6feee32e53d83a888",
+      "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+      "patterns/memento.toml": "37001a919ac72ad4be1302392355725f817ac8da2e83cbefa47fe8bf816796c3",
+      "patterns/observer.toml": "ae4c274d7d36b4f7e0e0416ab3457fe13469619855720672ccfb12fc82af2d07",
+      "patterns/prototype.toml": "f52da9ea3e345b5533e9e4a176160b4c2394dbd70f787e57ee91b70841fcf237",
+      "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+      "patterns/singleton.toml": "01d83cc97ac6e68fbdcd179d9e97a2f02ee8e857735563c776aedd3023d4a390",
+      "patterns/state.toml": "be0e605d806b8314d83dc3dbed258b44dff17bd5daee23e15a87c2ac1281b1e7",
+      "patterns/strategy.toml": "3bae309d05f0a1a360114082c6a30f65a68ed0eaa5615fa741a8bec2d586951c",
+      "patterns/template-method.toml": "2555374cac05e3b8ca1d7cc32e5d9fe8c20ad5cad970f87c31ac4d995f7dd178",
+      "patterns/visitor.toml": "42be1ea4e8740c824e5b5febcaafcbc9b6d86d49f4476155141f1498751e2bcf",
+      "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+      "rules.py": "5407576435035d3b6ce91b304894da9c86c3f58211763289b1eb4d45fb178972",
+      "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+      "semantic.py": "45533bf1bccdb34ea971e92ec46076017986e06d35cd9684e0c60c3389d11451",
+      "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df"
+    }
+  },
+  "budget": {
+    "max_matches": 1000,
+    "max_rows": 500000,
+    "max_states": 100000,
+    "timeout_ms": 5000
+  },
+  "collections": [
+    "modern"
+  ],
+  "python_generator_oracle": {
+    "expected": [],
+    "detected": [],
+    "missing": [],
+    "unexpected": [],
+    "parse_errors": []
+  }
+}

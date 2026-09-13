@@ -1,0 +1,38 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.state"
+name = "State"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/state.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.context]
+kinds = ["type_decl"]
+required = true
+
+[exports.state]
+kinds = ["storage"]
+required = true
+
+[[variants]]
+id = "state-object"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["receiver_identity", "transition_flow"]
+graph_requirements = ["Transición reemplaza el mismo slot que gobierna dispatch futuro; diferenciar evidencia de intención."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "state-enum"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["match_flow", "storage_def_use"]
+graph_requirements = ["Valor de estado gobierna ramas y una transición lo cambia; no introducir objetos State ficticios."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

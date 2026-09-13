@@ -1,0 +1,192 @@
+{
+  "baseline": "labelled-corpus-v2",
+  "current": "labelled-corpus-v3",
+  "gained": [
+    {
+      "repo": "across-languages",
+      "scope": "behavioral/iterator/data_stream_processor/typescript/",
+      "expected": "iterator"
+    },
+    {
+      "repo": "across-languages",
+      "scope": "behavioral/observer/event_monitoring/go/",
+      "expected": "observer"
+    },
+    {
+      "repo": "cpp-patterns",
+      "scope": "iterator/Iterator.cpp",
+      "expected": "iterator"
+    },
+    {
+      "repo": "go-patterns",
+      "scope": "behavioral/observer/main.go",
+      "expected": "observer"
+    },
+    {
+      "repo": "pandovski",
+      "scope": "Behavioral/Iterator/java/",
+      "expected": "iterator"
+    },
+    {
+      "repo": "python-patterns",
+      "scope": "patterns/behavioral/strategy.py",
+      "expected": "strategy"
+    }
+  ],
+  "lost": [],
+  "new_other_matches": [
+    {
+      "repo": "cpp-patterns",
+      "scope": "builder/Builder.cpp",
+      "expected": "builder",
+      "rule": "strategy",
+      "variant": "default",
+      "status": "structural_match",
+      "roles": {
+        "$unit": {
+          "name": "Director",
+          "path": "builder/Builder.cpp",
+          "line": 113
+        }
+      }
+    },
+    {
+      "repo": "cpp-patterns",
+      "scope": "chain-of-responsibility/ChainOfResponsibility.cpp",
+      "expected": "chain-of-responsibility",
+      "rule": "strategy",
+      "variant": "default",
+      "status": "structural_match",
+      "roles": {
+        "$unit": {
+          "name": "Handler",
+          "path": "chain-of-responsibility/ChainOfResponsibility.cpp",
+          "line": 17
+        }
+      }
+    },
+    {
+      "repo": "cpp-patterns",
+      "scope": "memento/Memento.cpp",
+      "expected": "memento",
+      "rule": "builder",
+      "variant": "default",
+      "status": "structural_match",
+      "roles": {
+        "$builder": {
+          "name": "Originator",
+          "path": "memento/Memento.cpp",
+          "line": 48
+        },
+        "$finish": {
+          "name": "createMemento",
+          "path": "memento/Memento.cpp",
+          "line": 69
+        },
+        "$product": {
+          "name": "Memento",
+          "path": "memento/Memento.cpp",
+          "line": 19
+        }
+      }
+    },
+    {
+      "repo": "python-patterns",
+      "scope": "patterns/creational/abstract_factory.py",
+      "expected": "abstract-factory",
+      "rule": "strategy",
+      "variant": "default",
+      "status": "structural_match",
+      "roles": {
+        "$unit": {
+          "name": "PetShop",
+          "path": "patterns/creational/abstract_factory.py",
+          "line": 63
+        }
+      }
+    }
+  ],
+  "repos": [
+    {
+      "repo": "across-languages",
+      "cases": 69,
+      "before": 17,
+      "after": 19,
+      "diagnostics": 0,
+      "incomplete": 0,
+      "errors": 0
+    },
+    {
+      "repo": "cpp-patterns",
+      "cases": 24,
+      "before": 0,
+      "after": 1,
+      "diagnostics": 0,
+      "incomplete": 0,
+      "errors": 0
+    },
+    {
+      "repo": "go-patterns",
+      "cases": 2,
+      "before": 0,
+      "after": 1,
+      "diagnostics": 0,
+      "incomplete": 0,
+      "errors": 0
+    },
+    {
+      "repo": "guru-rust",
+      "cases": 31,
+      "before": 1,
+      "after": 1,
+      "diagnostics": 0,
+      "incomplete": 0,
+      "errors": 0
+    },
+    {
+      "repo": "java-patterns",
+      "cases": 23,
+      "before": 1,
+      "after": 1,
+      "diagnostics": 0,
+      "incomplete": 0,
+      "errors": 0
+    },
+    {
+      "repo": "pandovski",
+      "cases": 110,
+      "before": 14,
+      "after": 15,
+      "diagnostics": 5,
+      "incomplete": 0,
+      "errors": 0
+    },
+    {
+      "repo": "php-patterns",
+      "cases": 0,
+      "before": 0,
+      "after": 0,
+      "diagnostics": 0,
+      "incomplete": 0,
+      "errors": 0
+    },
+    {
+      "repo": "python-patterns",
+      "cases": 22,
+      "before": 5,
+      "after": 6,
+      "diagnostics": 0,
+      "incomplete": 0,
+      "errors": 0
+    },
+    {
+      "repo": "swift-patterns",
+      "cases": 0,
+      "before": 0,
+      "after": 0,
+      "diagnostics": 0,
+      "incomplete": 0,
+      "errors": 0
+    }
+  ]
+}

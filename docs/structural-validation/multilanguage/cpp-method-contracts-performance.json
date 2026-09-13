@@ -1,0 +1,224 @@
+{
+  "before": {
+    "ir_version": "1.36.0",
+    "rows": [
+      {
+        "path": "abstract-factory/AbstractFactory.cpp",
+        "pattern": "abstract-factory",
+        "source_sha256": "fc74f2b7027c7c65167e2667f16e9f25ec8ab7807a5e2e62e54f6f0ec4f36537",
+        "matches": 0,
+        "engine": {
+          "samples": 30,
+          "median_ms": 0.038,
+          "p95_nearest_rank_ms": 0.045
+        },
+        "parse_link": {
+          "samples": 10,
+          "median_ms": 9.407,
+          "p95_nearest_rank_ms": 12.819
+        },
+        "view": {
+          "samples": 10,
+          "median_ms": 1.133,
+          "p95_nearest_rank_ms": 1.239
+        }
+      },
+      {
+        "path": "adapter/ObjectAdapter.cpp",
+        "pattern": "adapter",
+        "source_sha256": "1fa00d4918b12ba77080c9dd6cfc72189e84e39e73530f01a3e907949b7af225",
+        "matches": 0,
+        "engine": {
+          "samples": 30,
+          "median_ms": 0.038,
+          "p95_nearest_rank_ms": 0.041
+        },
+        "parse_link": {
+          "samples": 10,
+          "median_ms": 3.393,
+          "p95_nearest_rank_ms": 3.559
+        },
+        "view": {
+          "samples": 10,
+          "median_ms": 0.389,
+          "p95_nearest_rank_ms": 0.399
+        }
+      },
+      {
+        "path": "factory-method/FactoryMethod.cpp",
+        "pattern": "factory-method",
+        "source_sha256": "51654da9e388a183a732027429f983c88a75da6b38e10987d405ba1bc3591434",
+        "matches": 0,
+        "engine": {
+          "samples": 30,
+          "median_ms": 0.018,
+          "p95_nearest_rank_ms": 0.024
+        },
+        "parse_link": {
+          "samples": 10,
+          "median_ms": 7.166,
+          "p95_nearest_rank_ms": 7.374
+        },
+        "view": {
+          "samples": 10,
+          "median_ms": 0.85,
+          "p95_nearest_rank_ms": 2.892
+        }
+      },
+      {
+        "path": "interpreter/Interpreter.cpp",
+        "pattern": "interpreter",
+        "source_sha256": "03370f911e49427a90fd05075a02c1a5a79df47dda948d3922e1599613757133",
+        "matches": 0,
+        "engine": {
+          "samples": 30,
+          "median_ms": 0.132,
+          "p95_nearest_rank_ms": 0.181
+        },
+        "parse_link": {
+          "samples": 10,
+          "median_ms": 10.416,
+          "p95_nearest_rank_ms": 12.921
+        },
+        "view": {
+          "samples": 10,
+          "median_ms": 1.262,
+          "p95_nearest_rank_ms": 1.275
+        }
+      },
+      {
+        "path": "template-method/TemplateMethod.cpp",
+        "pattern": "template-method",
+        "source_sha256": "6aa45570711c4ec556cd997e5dafc55f0542ace3ae805ea5ef18fd15c6fe7631",
+        "matches": 0,
+        "engine": {
+          "samples": 30,
+          "median_ms": 0.019,
+          "p95_nearest_rank_ms": 0.022
+        },
+        "parse_link": {
+          "samples": 10,
+          "median_ms": 3.103,
+          "p95_nearest_rank_ms": 3.14
+        },
+        "view": {
+          "samples": 10,
+          "median_ms": 0.386,
+          "p95_nearest_rank_ms": 0.566
+        }
+      }
+    ],
+    "scope": "Five single-file corpus examples. Engine30samples after warmup on prebuilt index/registry; parse/link and view10samples separate. No CLI or persistent cache. Host observations only."
+  },
+  "after": {
+    "ir_version": "1.37.0",
+    "rows": [
+      {
+        "path": "abstract-factory/AbstractFactory.cpp",
+        "pattern": "abstract-factory",
+        "source_sha256": "fc74f2b7027c7c65167e2667f16e9f25ec8ab7807a5e2e62e54f6f0ec4f36537",
+        "matches": 2,
+        "engine": {
+          "samples": 30,
+          "median_ms": 0.17,
+          "p95_nearest_rank_ms": 0.221
+        },
+        "parse_link": {
+          "samples": 10,
+          "median_ms": 10.247,
+          "p95_nearest_rank_ms": 13.808
+        },
+        "view": {
+          "samples": 10,
+          "median_ms": 1.133,
+          "p95_nearest_rank_ms": 1.293
+        }
+      },
+      {
+        "path": "adapter/ObjectAdapter.cpp",
+        "pattern": "adapter",
+        "source_sha256": "1fa00d4918b12ba77080c9dd6cfc72189e84e39e73530f01a3e907949b7af225",
+        "matches": 1,
+        "engine": {
+          "samples": 30,
+          "median_ms": 0.08,
+          "p95_nearest_rank_ms": 0.154
+        },
+        "parse_link": {
+          "samples": 10,
+          "median_ms": 3.578,
+          "p95_nearest_rank_ms": 6.544
+        },
+        "view": {
+          "samples": 10,
+          "median_ms": 0.395,
+          "p95_nearest_rank_ms": 0.404
+        }
+      },
+      {
+        "path": "factory-method/FactoryMethod.cpp",
+        "pattern": "factory-method",
+        "source_sha256": "51654da9e388a183a732027429f983c88a75da6b38e10987d405ba1bc3591434",
+        "matches": 2,
+        "engine": {
+          "samples": 30,
+          "median_ms": 0.036,
+          "p95_nearest_rank_ms": 0.083
+        },
+        "parse_link": {
+          "samples": 10,
+          "median_ms": 7.764,
+          "p95_nearest_rank_ms": 10.332
+        },
+        "view": {
+          "samples": 10,
+          "median_ms": 0.878,
+          "p95_nearest_rank_ms": 2.945
+        }
+      },
+      {
+        "path": "interpreter/Interpreter.cpp",
+        "pattern": "interpreter",
+        "source_sha256": "03370f911e49427a90fd05075a02c1a5a79df47dda948d3922e1599613757133",
+        "matches": 1,
+        "engine": {
+          "samples": 30,
+          "median_ms": 0.171,
+          "p95_nearest_rank_ms": 0.235
+        },
+        "parse_link": {
+          "samples": 10,
+          "median_ms": 11.092,
+          "p95_nearest_rank_ms": 13.691
+        },
+        "view": {
+          "samples": 10,
+          "median_ms": 1.283,
+          "p95_nearest_rank_ms": 1.427
+        }
+      },
+      {
+        "path": "template-method/TemplateMethod.cpp",
+        "pattern": "template-method",
+        "source_sha256": "6aa45570711c4ec556cd997e5dafc55f0542ace3ae805ea5ef18fd15c6fe7631",
+        "matches": 1,
+        "engine": {
+          "samples": 30,
+          "median_ms": 0.042,
+          "p95_nearest_rank_ms": 0.094
+        },
+        "parse_link": {
+          "samples": 10,
+          "median_ms": 3.637,
+          "p95_nearest_rank_ms": 5.783
+        },
+        "view": {
+          "samples": 10,
+          "median_ms": 0.403,
+          "p95_nearest_rank_ms": 0.41
+        }
+      }
+    ],
+    "scope": "Five single-file corpus examples. Engine30samples after warmup on prebuilt index/registry; parse/link and view10samples separate. No CLI or persistent cache. Host observations only."
+  }
+}

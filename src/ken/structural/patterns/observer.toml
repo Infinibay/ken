@@ -1,0 +1,118 @@
+schema = "ken-rule/1"
+id = "observer"
+name = "Observer"
+category = "behavioral"
+description = "A subject broadcasts a call to a collection of listeners."
+caveat = "Broadcast iteration is Observer-like; subscription lifecycle and event semantics require review."
+legacy_query = "require $unit HAS_FIELD $listeners\nrequire $unit HAS_METHOD $notify\nrequire $notify ITERATES_CALLS $listeners\n"
+query = '''
+query observer {
+ any { match "observer#listener-registry"(unit: $unit); }
+ or { match "observer#map-key-registry"(unit: $unit); }
+ or { match "observer#snapshot-registry"(unit: $unit); }
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "listener-registry"
+status = "ready"
+languages = ["python", "java", "typescript"]
+requires = ["collection_mutation", "callback_flow"]
+graph_requirements = ["Registro agrega listener al mismo conjunto que notifica evento; correlacionar listener y payload."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query observer {
+
+ require $insertion INSERTS_INTO $listeners;
+ require $insertion INSERTED_VALUE $listener;
+ require $subscribe HAS_CALL $insertion;
+ require $subscribe HAS_PARAMETER $listener;
+ parameter(receiver: false) as $listener;
+ require $unit HAS_FIELD $listeners;
+ require $unit HAS_METHOD $subscribe;
+ require $unit HAS_METHOD $notify;
+ require $notify ITERATES_CALLS $listeners;
+ different $subscribe $notify;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "map-key-registry"
+status = "ready"
+languages = ["go"]
+fixtures_status = "source-regression-matrix"
+query_claim = "A supplied listener is used as a map key and another method invokes keys of the same map. Lifecycle and event semantics still require review."
+query = '''
+query map_key_registry {
+ type_decl(language: go) as $unit;
+ require $unit HAS_FIELD $listeners;
+ variable(native_type: /^map\[/) as $listeners;
+ require $unit HAS_METHOD $subscribe;
+ require $subscribe HAS_PARAMETER $listener;
+ parameter(receiver: false) as $listener;
+ require $subscribe HAS_OPERATION $write;
+ require $write WRITES_ELEMENT $listeners;
+ require $write INDEX $listener;
+ require $unit HAS_METHOD $notify;
+ different $subscribe $notify;
+ require $notify ITERATES_KEYS_CALLS $listeners;
+ emit $unit;
+}
+'''
+
+[[variants]]
+id = "snapshot-registry"
+status = "ready"
+languages = ["python", "javascript", "typescript"]
+fixtures_status = "source-regression-matrix"
+query_claim = "A method, or a callback it passes to a call, registers a supplied listener in the field copied for notification. Standard builtin copy models are assumed; callback execution and event lifecycle are not proven."
+query = '''
+query snapshot_registry {
+ require $iteration ITERATION_SNAPSHOT $copy;
+ require $copy COLLECTION_SNAPSHOT_OF $listeners;
+ require $iteration ITERATION_INVOKES_VALUE $invocation;
+ require $notify HAS_CALL $invocation;
+ require $unit HAS_METHOD $notify;
+ require $unit HAS_FIELD $listeners;
+ require $insertion INSERTS_INTO $listeners;
+ require $insertion INSERTED_VALUE $listener;
+ require $subscribe HAS_CALL $insertion;
+ require $subscribe HAS_PARAMETER $listener;
+ parameter(receiver: false) as $listener;
+ any { require $unit HAS_METHOD $subscribe; }
+ or {
+   require $subscribe OWNED_BY $registration;
+   require $unit HAS_METHOD $registration;
+   require $registration HAS_CALL $setup;
+   require $setup ARGUMENT $callback;
+   require $callback VALUE $subscribe;
+   different $registration $notify;
+ }
+ different $subscribe $notify;
+ emit $unit;
+}
+'''
+
+[[variants]]
+id = "language-event"
+status = "design"
+languages = ["csharp"]
+requires = ["event_lowering"]
+graph_requirements = ["Event add/remove/invoke se modelan como registro y notificación con identidad del evento."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "event-bus"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["event_api_models", "topic_flow"]
+graph_requirements = ["Subscribe y publish comparten bus/topic resueltos; preservar restricciones y delivery desconocido."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

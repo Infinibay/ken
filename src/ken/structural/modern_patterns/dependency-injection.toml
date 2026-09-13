@@ -1,0 +1,64 @@
+id = "architecture.dependency-injection"
+name = "Dependency Injection"
+description = "An object receives a collaborator or callable in a field and uses it from a distinct method."
+collections = ["architecture", "modern"]
+tags = ["composition", "dependency-injection", "web"]
+caveat = "Structural supply/use evidence, not a composition root, container, lifetime or runtime identity guarantee. Object assignment retains its historical-write model; callable input requires a last supported source binding write or constructor input. Neither proves descriptor storage behavior or temporal order between methods."
+query = '''
+query injected_collaborator {
+ any { match "architecture.dependency-injection#object-assignment"(unit:$unit,dependency:$dependency,inject:$inject,operation:$operation); }
+ or { match "architecture.dependency-injection#callable-input"(unit:$unit,dependency:$dependency,inject:$inject,operation:$operation); }
+emit $unit,$dependency,$inject,$operation;
+}
+'''
+
+[[variants]]
+id = "retained-object"
+status = "ready"
+languages = ["python", "javascript", "typescript", "java", "csharp"]
+query_claim = "Opt-in precision contract: the supplied object is the final supported source input to the delegated field, or a supported constructor input. Conditional configuration may be unsupported; descriptor behavior and field identity between methods remain unproven. The broad parent intentionally retains its historical supply/use contract."
+query = '''
+query retained_object {
+ match "strategy.supplied_policy"(unit:$unit,configure:$inject,policy:$dependency);
+ require $unit HAS_METHOD $operation;
+ different $inject $operation;
+ require $operation DELEGATES_TO $dependency;
+ emit $unit,$dependency,$inject,$operation;
+}
+'''
+
+[[variants]]
+id = "object-assignment"
+status = "ready"
+languages = ["python", "javascript", "typescript", "java", "csharp"]
+query_claim = "A supplied parameter is assigned to a field used for delegation by another method; source history does not establish final storage or all-path retention."
+query = '''
+query assigned_object {
+ require $unit HAS_FIELD $dependency;
+ require $unit HAS_METHOD $inject;
+ require $inject HAS_PARAMETER $supplied;
+ parameter(receiver: false) as $supplied;
+ require $inject WRITES $dependency;
+ require $dependency ASSIGNED_FROM $supplied;
+ require $unit HAS_METHOD $operation;
+ different $inject $operation;
+ require $operation DELEGATES_TO $dependency;
+ emit $unit, $dependency, $inject, $operation;
+}
+'''
+
+[[variants]]
+id = "callable-input"
+status = "ready"
+languages = ["python", "javascript", "typescript", "go", "csharp", "cpp", "rust"]
+query_claim = "A supplied callable has a last supported source write or constructor input and is invoked through that field from a distinct method; descriptor behavior, heap stability and call order are not proved."
+query = '''
+query callable_input {
+ match "strategy.supplied_policy"(unit:$unit,configure:$inject,policy:$dependency);
+ require $unit HAS_METHOD $operation;
+ different $inject $operation;
+ require $operation HAS_CALL $call;
+ require $call CALLEE_VALUE $dependency;
+ emit $unit,$dependency,$inject,$operation;
+}
+'''

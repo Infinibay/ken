@@ -1,0 +1,706 @@
+{
+  "engine_sha256": {
+    "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+    "binding_writes.py": "248c81c19c54b70240ab312a4f0401b272bdc0644197417ea5434827607fa7f3",
+    "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+    "call_bindings.py": "e22e85204749f85185813ab2b6ae835f6a9566092c451fb674d41629e884bc7b",
+    "catalog.py": "39cb65a22c3c0c1b96ae41cd2343b8227d93ba1f62763bd95efdfe568683d638",
+    "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+    "collection_lifecycle.py": "a35f48339a074eb62b1e5e1b73024c4ea3d133628675b710a0cf048f5910d549",
+    "collection_snapshots.py": "8ba78a0010eafa7a85c4ab519944171570235a0c108ed52d5f830ed79684203b",
+    "control_flow.py": "d77c41e7e89a743720f28c04afa36a6d9251abae2df5ef3844df7c1b07d0a33b",
+    "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+    "field_transfers.py": "e0074a3ed77bf1ca2b9f072bb708b434b163f7186815914fbc82e3e6ccec5e16",
+    "frontend.py": "e0d87e0ce4c712dda47588e005e7ab705cc2b77f7b8652597ecdf232cda1a0a0",
+    "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+    "kenql.py": "ef74627171d003af05a59cedebd3d567ecff2c65e1c066bebba2d58a33a6d272",
+    "member_access.py": "9781486284abe3599396740599f7305f2069c555e024b2ff9b10fb1cd5e6fe50",
+    "member_transfers.py": "1a168fbc389e81628d74d9089fa4ce278bab7fcbe07cdf6d901c3af9cef6cbbb",
+    "model.py": "981018da566a537518b63882fac6adc1bbf36a54ce8f197919d7673901b7c1d9",
+    "modern_patterns/adapted-continuation-wrapper.toml": "cfae68be5c98788c03b0c663a7fb5d94b03164b57e2c2b413228e4c14528c50d",
+    "modern_patterns/batch-work-queue.toml": "6e1b3a69aae411a736c749814959aac73df1e30c29c84ef7e6b2e02a1c058a31",
+    "modern_patterns/cache-aside.toml": "c7915bc8855deecd60881f3f4db072714f670ed3f55bdbd6f47a495549a12328",
+    "modern_patterns/continuation-wrapper.toml": "0092ade2a426815819334a1999ea4c2a65e54f452ceaf7a6de08dd77dd855ff2",
+    "modern_patterns/dependency-injection.toml": "c7c5295207795d24fe7f854fe284ca544819addf8f0022705cf648e213b2ce1c",
+    "modern_patterns/dispatch-table.toml": "a2197cedfd9f2f8bdb35c02ba8a398e1805f31b6bec42f8547aaefa4f86c3566",
+    "modern_patterns/exception-retry.toml": "eeab3c3ae90b1a7a3f1778db573d80113e4d6e0cc50fbd2ff6ec1cb1da6af77c",
+    "modern_patterns/read-through-cache.toml": "68d8df7db96d7a3270875b46bc837879f036a06a15b0e8c8f46877fc34eb6159",
+    "modern_patterns/unit-of-work.toml": "82920e8a2f861c7658a80c729ad0b375d466fb8d1a6122d5ab783a039e64b949",
+    "patterns/abstract-factory.toml": "f7dcc43c213062cc082f2f535b80310dbe9bfac02c03063cfb587c0ee72cd2b2",
+    "patterns/adapter.toml": "14f98bb572a7a115e2d534e45c8231cb2919afeb04dd9921858af412606ae65e",
+    "patterns/bridge.toml": "0eba499d3bb2d9d65247adaf1a225ca94a895a6f99d50bfea91157836b1c227a",
+    "patterns/builder.toml": "bb46c4713cd0b4c6b42a7a5cc4df16206d42b73be20948d9328c7fed1b6897d8",
+    "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+    "patterns/command.toml": "732b239180a25d1d01502f5b181b0c82d9267876f8cb5b376ceb2e20416db402",
+    "patterns/composite.toml": "fffb2da5916eb05e4da83de63e21549ad06481938087b9344f291c22f3516a02",
+    "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+    "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+    "patterns/factory-method.toml": "57222bf27ee3680d8dd297ea301d37f30817c0e05089eaaf2484f11751f50120",
+    "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+    "patterns/interpreter.toml": "22d75c5e51e14a666baa88f85750b9f3d848cb48f35fb1436790c03e0cd1251a",
+    "patterns/iterator.toml": "404233895ac5526625c039f7875db8ecb68aba57ba087c67723f871b797d04ef",
+    "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+    "patterns/memento.toml": "fa56773105fe4f84ae7f8557eb086757831600533b5c38777cc330a0f480caf3",
+    "patterns/observer.toml": "ca3ad665f19488efc51b57d103667395ae895f4f56b4fb0447e463d23d3599d5",
+    "patterns/prototype.toml": "2de68c873a910bd564889fce9644339d5169640803531d9bf54ae1d3bcb69923",
+    "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+    "patterns/singleton.toml": "01d83cc97ac6e68fbdcd179d9e97a2f02ee8e857735563c776aedd3023d4a390",
+    "patterns/state.toml": "24a6b2742a179205032c27e48d21082e65407eecd62dd3a827b317246a015a74",
+    "patterns/strategy.toml": "3bae309d05f0a1a360114082c6a30f65a68ed0eaa5615fa741a8bec2d586951c",
+    "patterns/template-method.toml": "2555374cac05e3b8ca1d7cc32e5d9fe8c20ad5cad970f87c31ac4d995f7dd178",
+    "patterns/visitor.toml": "42be1ea4e8740c824e5b5febcaafcbc9b6d86d49f4476155141f1498751e2bcf",
+    "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+    "return_flow.py": "67da3d1dcc7071dda86fbec744c81a2faeff7fd85bee746598d1157d16b0389b",
+    "rules.py": "a3fd498e5154c1f45a524de6fe470bc176bc8600b3a70332727640e956e0cfb3",
+    "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+    "semantic.py": "70706341f7ace5c2f2eae8f3854e61d55d543a45b54bfc1fd290c12516a48e80",
+    "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df",
+    "syntax_graph.py": "ad63fe8b926d73bf853f09ec209e3208a1341e8eb2c4fe7799e73cafa3a4d6b6",
+    "type_refs.py": "fda02d5ed262d43536c0ab11acafeedcc4eb118ed9f03c48c9a5f8d9ce0700a1"
+  },
+  "source": "def fetch(cache, source, key):\n    value = cache.get(key)\n    if value is None:\n        value = source.load(key)\n        cache.set(key, value)\n    return value",
+  "query": "query null_miss {\n require $unit CFG_STATUS \"structured\";\n require $unit RETURN_FLOW_STATUS \"supported\";\n require $unit BINDING_WRITE_STATUS \"supported\";\n call(name: [get, Get]) as $lookup { has_argument(pos:0, kind:positional) as $lookup_key; }\n require $unit HAS_CALL $lookup;\n require $lookup RECEIVER $cache;\n require $lookup_key VALUE $key_read;\n require $key_read LOADED_FROM $key;\n require $unit UNREASSIGNED_BINDING $cache;\n require $unit UNREASSIGNED_BINDING $key;\n require $unit HAS_OPERATION $lookup_assignment;\n require $lookup_assignment ASSIGNMENT_VALUE $lookup;\n require $lookup_assignment ASSIGNMENT_TARGET $cached;\n require $unit BINDING_WRITE_COUNT $cached [count:2];\n require $unit HAS_OPERATION $branch;\n require $branch NULL_TEST $cached [when:true];\n require $branch BRANCH_TRUE $miss;\n require $branch CFG_NEXT $miss_entry [kind:true];\n require $branch CFG_NEXT $hit_entry [kind:false];\n path $lookup_assignment SYNTAX_PARENT{0,3} $lookup_statement as $lookup_scope;\n path $lookup_statement CFG_NEXT{1,16} $branch as $test_flow;\n require $unit HAS_OPERATION $load_assignment;\n require $load_assignment ASSIGNMENT_TARGET $cached;\n require $load_assignment ASSIGNMENT_VALUE $load;\n different $lookup_assignment $load_assignment;\n call() as $load { has_argument(pos:0, kind:positional) as $load_key; }\n require $load_key VALUE $load_key_read;\n require $load_key_read LOADED_FROM $key;\n require $load SYNTAX_NODE $load_syntax;\n path $load_syntax SYNTAX_PARENT{1,6} $miss as $load_path;\n path $load_assignment SYNTAX_PARENT{0,3} $load_statement as $load_scope;\n path $miss_entry CFG_NEXT{0,16} $load_statement as $load_flow;\n call(name: [put, set, Set]) as $write {\n  has_argument(pos:0, kind:positional) as $write_key;\n  has_argument(pos:1, kind:positional) as $write_value;\n }\n require $unit HAS_CALL $write;\n require $write RECEIVER $cache;\n require $write_key VALUE $write_key_read;\n require $write_key_read LOADED_FROM $key;\n require $write_value VALUE $write_value_read;\n require $write_value_read LOADED_FROM $cached;\n require $write SYNTAX_NODE $write_syntax;\n path $write_syntax SYNTAX_PARENT{1,6} $miss as $write_path;\n path $write_syntax SYNTAX_PARENT{0,3} $write_statement as $write_scope;\n path $load_statement CFG_NEXT{1,16} $write_statement as $fill_flow;\n path $hit_entry CFG_NEXT{0,16} $hit_return as $hit_flow;\n require $unit HAS_OPERATION $hit_return;\n any { require $hit_return RETURN_ORIGIN $lookup [modality:must]; }\n or { require $hit_return RETURN_ORIGIN $lookup [modality:may]; }\n path $write_statement CFG_NEXT{1,16} $miss_return as $return_flow;\n require $unit HAS_OPERATION $miss_return;\n any { require $miss_return RETURN_ORIGIN $load [modality:must]; }\n or { require $miss_return RETURN_ORIGIN $load [modality:may]; }\n different $lookup $load;\n emit $unit,$cache,$key,$lookup,$load,$write,$cached,$lookup_assignment,$load_assignment,$hit_return,$miss_return;\n}\n",
+  "roles": {
+    "$unit": {
+      "id": "design-example::module/CALLABLE:fetch@0",
+      "name": "fetch",
+      "path": "design-example",
+      "line": 1
+    },
+    "$cache": {
+      "id": "design-example::module/CALLABLE:fetch@0/PARAMETER:cache@10",
+      "name": "cache",
+      "path": "design-example",
+      "line": 1
+    },
+    "$key": {
+      "id": "design-example::module/CALLABLE:fetch@0/PARAMETER:key@25",
+      "name": "key",
+      "path": "design-example",
+      "line": 1
+    },
+    "$lookup": {
+      "id": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57",
+      "name": "43",
+      "path": "design-example",
+      "line": 2
+    },
+    "$load": {
+      "id": "design-example::module/CALLABLE:fetch@0/CALL:96@96:112",
+      "name": "96",
+      "path": "design-example",
+      "line": 4
+    },
+    "$write": {
+      "id": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142",
+      "name": "121",
+      "path": "design-example",
+      "line": 5
+    },
+    "$cached": {
+      "id": "design-example::module/CALLABLE:fetch@0/STORAGE:value",
+      "name": "value",
+      "path": "design-example",
+      "line": 2
+    },
+    "$lookup_assignment": {
+      "id": "design-example::op:35:57:assignment",
+      "native_kind": "assignment",
+      "line": 2
+    },
+    "$load_assignment": {
+      "id": "design-example::op:88:112:assignment",
+      "native_kind": "assignment",
+      "line": 4
+    },
+    "$hit_return": {
+      "id": "design-example::op:147:159:return_statement",
+      "native_kind": "return_statement",
+      "line": 6
+    },
+    "$miss_return": {
+      "id": "design-example::op:147:159:return_statement",
+      "native_kind": "return_statement",
+      "line": 6
+    }
+  },
+  "facts": [
+    {
+      "subject": "design-example::op:147:159:return_statement",
+      "relation": "RETURN_ORIGIN",
+      "object": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57",
+      "attrs": {
+        "basis": "flow",
+        "analysis": "structured-locals/3",
+        "modality": "may"
+      },
+      "evidence": [
+        "design-example:6"
+      ]
+    },
+    {
+      "subject": "design-example::op:147:159:return_statement",
+      "relation": "RETURN_ORIGIN",
+      "object": "design-example::module/CALLABLE:fetch@0/CALL:96@96:112",
+      "attrs": {
+        "basis": "flow",
+        "analysis": "structured-locals/3",
+        "modality": "may"
+      },
+      "evidence": [
+        "design-example:6"
+      ]
+    },
+    {
+      "subject": "design-example::module/CALLABLE:fetch@0",
+      "relation": "BINDING_WRITE_COUNT",
+      "object": "design-example::module/CALLABLE:fetch@0/STORAGE:value",
+      "attrs": {
+        "count": 2,
+        "basis": "explicit-writes",
+        "analysis": "binding-writes/1"
+      },
+      "evidence": [
+        "design-example:1"
+      ]
+    },
+    {
+      "subject": "design-example::module/CALLABLE:fetch@0",
+      "relation": "BINDING_WRITE_COUNT",
+      "object": "design-example::module/CALLABLE:fetch@0/PARAMETER:key@25",
+      "attrs": {
+        "count": 0,
+        "basis": "explicit-writes",
+        "analysis": "binding-writes/1"
+      },
+      "evidence": [
+        "design-example:1"
+      ]
+    },
+    {
+      "subject": "design-example::module/CALLABLE:fetch@0",
+      "relation": "BINDING_WRITE_COUNT",
+      "object": "design-example::module/CALLABLE:fetch@0/PARAMETER:source@17",
+      "attrs": {
+        "count": 0,
+        "basis": "explicit-writes",
+        "analysis": "binding-writes/1"
+      },
+      "evidence": [
+        "design-example:1"
+      ]
+    },
+    {
+      "subject": "design-example::module/CALLABLE:fetch@0",
+      "relation": "BINDING_WRITE_COUNT",
+      "object": "design-example::module/CALLABLE:fetch@0/PARAMETER:cache@10",
+      "attrs": {
+        "count": 0,
+        "basis": "explicit-writes",
+        "analysis": "binding-writes/1"
+      },
+      "evidence": [
+        "design-example:1"
+      ]
+    }
+  ],
+  "result": {
+    "matches": [
+      {
+        "bindings": {
+          "$unit": "design-example::module/CALLABLE:fetch@0",
+          "$cache": "design-example::module/CALLABLE:fetch@0/PARAMETER:cache@10",
+          "$key": "design-example::module/CALLABLE:fetch@0/PARAMETER:key@25",
+          "$lookup": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57",
+          "$load": "design-example::module/CALLABLE:fetch@0/CALL:96@96:112",
+          "$write": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142",
+          "$cached": "design-example::module/CALLABLE:fetch@0/STORAGE:value",
+          "$lookup_assignment": "design-example::op:35:57:assignment",
+          "$load_assignment": "design-example::op:88:112:assignment",
+          "$hit_return": "design-example::op:147:159:return_statement",
+          "$miss_return": "design-example::op:147:159:return_statement"
+        },
+        "status": "structural_match",
+        "unknown": [],
+        "evidence": [
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0",
+            "relation": "CFG_STATUS",
+            "object": "structured",
+            "source": []
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0",
+            "relation": "RETURN_FLOW_STATUS",
+            "object": "supported",
+            "source": []
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0",
+            "relation": "BINDING_WRITE_STATUS",
+            "object": "supported",
+            "source": []
+          },
+          {
+            "subject": "design-example::op:62:142:if_statement",
+            "relation": "NULL_TEST",
+            "object": "design-example::module/CALLABLE:fetch@0/STORAGE:value",
+            "source": [
+              "design-example:3"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0",
+            "relation": "BINDING_WRITE_COUNT",
+            "object": "design-example::module/CALLABLE:fetch@0/STORAGE:value",
+            "source": [
+              "design-example:1"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0",
+            "relation": "HAS_OPERATION",
+            "object": "design-example::op:62:142:if_statement",
+            "source": []
+          },
+          {
+            "subject": "design-example::op:62:142:if_statement",
+            "relation": "BRANCH_TRUE",
+            "object": "design-example::op:88:142:block",
+            "source": [
+              "design-example:3"
+            ]
+          },
+          {
+            "subject": "design-example::op:35:57:assignment",
+            "relation": "ASSIGNMENT_VALUE",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57",
+            "source": [
+              "design-example:2"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57",
+            "relation": "ENTITY",
+            "object": "CALL",
+            "source": [
+              "design-example:2"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57",
+            "relation": "ARGUMENT",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57/argument/0",
+            "source": [
+              "design-example:2"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57/argument/0",
+            "relation": "ENTITY",
+            "object": "ARGUMENT",
+            "source": [
+              "design-example:2"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0",
+            "relation": "HAS_CALL",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57",
+            "source": [
+              "design-example:2"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57",
+            "relation": "RECEIVER",
+            "object": "design-example::module/CALLABLE:fetch@0/PARAMETER:cache@10",
+            "source": [
+              "design-example:2"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57/argument/0",
+            "relation": "VALUE",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57/argument/0/loaded-value",
+            "source": [
+              "design-example:2"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57/argument/0/loaded-value",
+            "relation": "LOADED_FROM",
+            "object": "design-example::module/CALLABLE:fetch@0/PARAMETER:key@25",
+            "source": [
+              "design-example:2"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0",
+            "relation": "UNREASSIGNED_BINDING",
+            "object": "design-example::module/CALLABLE:fetch@0/PARAMETER:cache@10",
+            "source": [
+              "design-example:1"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0",
+            "relation": "UNREASSIGNED_BINDING",
+            "object": "design-example::module/CALLABLE:fetch@0/PARAMETER:key@25",
+            "source": [
+              "design-example:1"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0",
+            "relation": "HAS_OPERATION",
+            "object": "design-example::op:35:57:assignment",
+            "source": []
+          },
+          {
+            "subject": "design-example::op:35:57:assignment",
+            "relation": "ASSIGNMENT_TARGET",
+            "object": "design-example::module/CALLABLE:fetch@0/STORAGE:value",
+            "source": [
+              "design-example:2"
+            ]
+          },
+          {
+            "subject": "design-example::op:62:142:if_statement",
+            "relation": "CFG_NEXT",
+            "object": "design-example::op:88:112:expression_statement",
+            "source": []
+          },
+          {
+            "subject": "design-example::op:62:142:if_statement",
+            "relation": "CFG_NEXT",
+            "object": "design-example::op:147:159:return_statement",
+            "source": []
+          },
+          {
+            "path": "SYNTAX_PARENT",
+            "nodes": [
+              "design-example::op:35:57:assignment",
+              "design-example::op:35:57:expression_statement"
+            ]
+          },
+          {
+            "path": "CFG_NEXT",
+            "nodes": [
+              "design-example::op:35:57:expression_statement",
+              "design-example::op:62:142:if_statement"
+            ]
+          },
+          {
+            "subject": "design-example::op:88:112:assignment",
+            "relation": "ASSIGNMENT_TARGET",
+            "object": "design-example::module/CALLABLE:fetch@0/STORAGE:value",
+            "source": [
+              "design-example:4"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0",
+            "relation": "HAS_OPERATION",
+            "object": "design-example::op:88:112:assignment",
+            "source": []
+          },
+          {
+            "subject": "design-example::op:88:112:assignment",
+            "relation": "ASSIGNMENT_VALUE",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:96@96:112",
+            "source": [
+              "design-example:4"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:96@96:112",
+            "relation": "ENTITY",
+            "object": "CALL",
+            "source": [
+              "design-example:4"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:96@96:112",
+            "relation": "ARGUMENT",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:96@96:112/argument/0",
+            "source": [
+              "design-example:4"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:96@96:112/argument/0",
+            "relation": "ENTITY",
+            "object": "ARGUMENT",
+            "source": [
+              "design-example:4"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:96@96:112/argument/0",
+            "relation": "VALUE",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:96@96:112/argument/0/loaded-value",
+            "source": [
+              "design-example:4"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:96@96:112/argument/0/loaded-value",
+            "relation": "LOADED_FROM",
+            "object": "design-example::module/CALLABLE:fetch@0/PARAMETER:key@25",
+            "source": [
+              "design-example:4"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:96@96:112",
+            "relation": "SYNTAX_NODE",
+            "object": "design-example::op:96:112:call",
+            "source": [
+              "design-example:4"
+            ]
+          },
+          {
+            "path": "SYNTAX_PARENT",
+            "nodes": [
+              "design-example::op:96:112:call",
+              "design-example::op:88:112:assignment",
+              "design-example::op:88:112:expression_statement",
+              "design-example::op:88:142:block"
+            ]
+          },
+          {
+            "path": "SYNTAX_PARENT",
+            "nodes": [
+              "design-example::op:88:112:assignment",
+              "design-example::op:88:112:expression_statement"
+            ]
+          },
+          {
+            "path": "CFG_NEXT",
+            "nodes": [
+              "design-example::op:88:112:expression_statement"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142/argument/1/loaded-value",
+            "relation": "LOADED_FROM",
+            "object": "design-example::module/CALLABLE:fetch@0/STORAGE:value",
+            "source": [
+              "design-example:5"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142/argument/1",
+            "relation": "VALUE",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142/argument/1/loaded-value",
+            "source": [
+              "design-example:5"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142",
+            "relation": "ARGUMENT",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142/argument/1",
+            "source": [
+              "design-example:5"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142",
+            "relation": "ENTITY",
+            "object": "CALL",
+            "source": [
+              "design-example:5"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142/argument/1",
+            "relation": "ENTITY",
+            "object": "ARGUMENT",
+            "source": [
+              "design-example:5"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0",
+            "relation": "HAS_CALL",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142",
+            "source": [
+              "design-example:5"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142",
+            "relation": "RECEIVER",
+            "object": "design-example::module/CALLABLE:fetch@0/PARAMETER:cache@10",
+            "source": [
+              "design-example:5"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142",
+            "relation": "SYNTAX_NODE",
+            "object": "design-example::op:121:142:call",
+            "source": [
+              "design-example:5"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142",
+            "relation": "ARGUMENT",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142/argument/0",
+            "source": [
+              "design-example:5"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142/argument/0",
+            "relation": "ENTITY",
+            "object": "ARGUMENT",
+            "source": [
+              "design-example:5"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142/argument/0",
+            "relation": "VALUE",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142/argument/0/loaded-value",
+            "source": [
+              "design-example:5"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0/CALL:121@121:142/argument/0/loaded-value",
+            "relation": "LOADED_FROM",
+            "object": "design-example::module/CALLABLE:fetch@0/PARAMETER:key@25",
+            "source": [
+              "design-example:5"
+            ]
+          },
+          {
+            "path": "SYNTAX_PARENT",
+            "nodes": [
+              "design-example::op:121:142:call",
+              "design-example::op:121:142:expression_statement",
+              "design-example::op:88:142:block"
+            ]
+          },
+          {
+            "path": "SYNTAX_PARENT",
+            "nodes": [
+              "design-example::op:121:142:call",
+              "design-example::op:121:142:expression_statement"
+            ]
+          },
+          {
+            "path": "CFG_NEXT",
+            "nodes": [
+              "design-example::op:88:112:expression_statement",
+              "design-example::op:121:142:expression_statement"
+            ]
+          },
+          {
+            "path": "CFG_NEXT",
+            "nodes": [
+              "design-example::op:147:159:return_statement"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0",
+            "relation": "HAS_OPERATION",
+            "object": "design-example::op:147:159:return_statement",
+            "source": []
+          },
+          {
+            "subject": "design-example::op:147:159:return_statement",
+            "relation": "RETURN_ORIGIN",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:43@43:57",
+            "source": [
+              "design-example:6"
+            ]
+          },
+          {
+            "path": "CFG_NEXT",
+            "nodes": [
+              "design-example::op:121:142:expression_statement",
+              "design-example::op:147:159:return_statement"
+            ]
+          },
+          {
+            "subject": "design-example::module/CALLABLE:fetch@0",
+            "relation": "HAS_OPERATION",
+            "object": "design-example::op:147:159:return_statement",
+            "source": []
+          },
+          {
+            "subject": "design-example::op:147:159:return_statement",
+            "relation": "RETURN_ORIGIN",
+            "object": "design-example::module/CALLABLE:fetch@0/CALL:96@96:112",
+            "source": [
+              "design-example:6"
+            ]
+          }
+        ],
+        "variant": "default",
+        "evidence_score": 1.0,
+        "id": "null-miss-witness",
+        "rule": {
+          "id": "null-miss-witness",
+          "query": "query null_miss {\n require $unit CFG_STATUS \"structured\";\n require $unit RETURN_FLOW_STATUS \"supported\";\n require $unit BINDING_WRITE_STATUS \"supported\";\n call(name: [get, Get]) as $lookup { has_argument(pos:0, kind:positional) as $lookup_key; }\n require $unit HAS_CALL $lookup;\n require $lookup RECEIVER $cache;\n require $lookup_key VALUE $key_read;\n require $key_read LOADED_FROM $key;\n require $unit UNREASSIGNED_BINDING $cache;\n require $unit UNREASSIGNED_BINDING $key;\n require $unit HAS_OPERATION $lookup_assignment;\n require $lookup_assignment ASSIGNMENT_VALUE $lookup;\n require $lookup_assignment ASSIGNMENT_TARGET $cached;\n require $unit BINDING_WRITE_COUNT $cached [count:2];\n require $unit HAS_OPERATION $branch;\n require $branch NULL_TEST $cached [when:true];\n require $branch BRANCH_TRUE $miss;\n require $branch CFG_NEXT $miss_entry [kind:true];\n require $branch CFG_NEXT $hit_entry [kind:false];\n path $lookup_assignment SYNTAX_PARENT{0,3} $lookup_statement as $lookup_scope;\n path $lookup_statement CFG_NEXT{1,16} $branch as $test_flow;\n require $unit HAS_OPERATION $load_assignment;\n require $load_assignment ASSIGNMENT_TARGET $cached;\n require $load_assignment ASSIGNMENT_VALUE $load;\n different $lookup_assignment $load_assignment;\n call() as $load { has_argument(pos:0, kind:positional) as $load_key; }\n require $load_key VALUE $load_key_read;\n require $load_key_read LOADED_FROM $key;\n require $load SYNTAX_NODE $load_syntax;\n path $load_syntax SYNTAX_PARENT{1,6} $miss as $load_path;\n path $load_assignment SYNTAX_PARENT{0,3} $load_statement as $load_scope;\n path $miss_entry CFG_NEXT{0,16} $load_statement as $load_flow;\n call(name: [put, set, Set]) as $write {\n  has_argument(pos:0, kind:positional) as $write_key;\n  has_argument(pos:1, kind:positional) as $write_value;\n }\n require $unit HAS_CALL $write;\n require $write RECEIVER $cache;\n require $write_key VALUE $write_key_read;\n require $write_key_read LOADED_FROM $key;\n require $write_value VALUE $write_value_read;\n require $write_value_read LOADED_FROM $cached;\n require $write SYNTAX_NODE $write_syntax;\n path $write_syntax SYNTAX_PARENT{1,6} $miss as $write_path;\n path $write_syntax SYNTAX_PARENT{0,3} $write_statement as $write_scope;\n path $load_statement CFG_NEXT{1,16} $write_statement as $fill_flow;\n path $hit_entry CFG_NEXT{0,16} $hit_return as $hit_flow;\n require $unit HAS_OPERATION $hit_return;\n any { require $hit_return RETURN_ORIGIN $lookup [modality:must]; }\n or { require $hit_return RETURN_ORIGIN $lookup [modality:may]; }\n path $write_statement CFG_NEXT{1,16} $miss_return as $return_flow;\n require $unit HAS_OPERATION $miss_return;\n any { require $miss_return RETURN_ORIGIN $load [modality:must]; }\n or { require $miss_return RETURN_ORIGIN $load [modality:may]; }\n different $lookup $load;\n emit $unit,$cache,$key,$lookup,$load,$write,$cached,$lookup_assignment,$load_assignment,$hit_return,$miss_return;\n}\n",
+          "name": "",
+          "description": "",
+          "tags": [],
+          "collections": [],
+          "severity": null,
+          "recommendation": "",
+          "caveat": "",
+          "variants": [],
+          "source": "",
+          "operations": []
+        },
+        "path": "design-example",
+        "line": 1,
+        "locations": [
+          {
+            "path": "design-example",
+            "line": 1
+          },
+          {
+            "path": "design-example",
+            "line": 2
+          },
+          {
+            "path": "design-example",
+            "line": 4
+          },
+          {
+            "path": "design-example",
+            "line": 5
+          }
+        ]
+      }
+    ],
+    "outcomes": {
+      "null-miss-witness": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 208,
+          "rows_examined": 111,
+          "elapsed_ms": 1.326,
+          "dependencies": []
+        }
+      }
+    },
+    "complete": true
+  },
+  "documented_languages_checked": [
+    "python",
+    "javascript",
+    "typescript",
+    "java",
+    "csharp"
+  ]
+}

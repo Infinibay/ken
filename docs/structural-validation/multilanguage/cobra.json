@@ -1,0 +1,605 @@
+{
+  "repo": "cobra",
+  "commit": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+  "scope": "",
+  "exclude_globs": [],
+  "excluded_components": [
+    ".venv",
+    "__pycache__",
+    "benchmarks",
+    "internal",
+    "node_modules",
+    "target",
+    "testdata",
+    "tests",
+    "tools",
+    "zaptest"
+  ],
+  "files": [
+    {
+      "path": "active_help.go",
+      "sha256": "92bde33086d33e413b9ac945ddb38f7487f9ce91067453a7ce97fd62fa59cdc5",
+      "language": "go"
+    },
+    {
+      "path": "args.go",
+      "sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "language": "go"
+    },
+    {
+      "path": "bash_completions.go",
+      "sha256": "7370190d5344eec0325b2fd2dd7a0f39ca2acc5881f818adb5124b16ee7ac507",
+      "language": "go"
+    },
+    {
+      "path": "bash_completionsV2.go",
+      "sha256": "906f68743cdae6ddb3228ca42e4b56d2a51371d7f135f67e4476342abffc6215",
+      "language": "go"
+    },
+    {
+      "path": "cobra.go",
+      "sha256": "aae7502e789e42469bcb2fc110af87fd02451d3b509c5b0bed782ada17338c5f",
+      "language": "go"
+    },
+    {
+      "path": "command.go",
+      "sha256": "f79613721ad04c9b438dfb30fe0ac3deca85c487658b0aa04a1ae6e4395bfd90",
+      "language": "go"
+    },
+    {
+      "path": "command_notwin.go",
+      "sha256": "505a8334864917e8439b3012e8e47d880643793bf5741bc048884a85037a8ac2",
+      "language": "go"
+    },
+    {
+      "path": "command_win.go",
+      "sha256": "a9f85ba76b54df4b2589546562b325c7b1225388d5b177214d4b193516556390",
+      "language": "go"
+    },
+    {
+      "path": "completions.go",
+      "sha256": "b28a4f6c509acde7367323e835cfb4f4939fe656dd3214320d76f53e91743c89",
+      "language": "go"
+    },
+    {
+      "path": "doc/man_docs.go",
+      "sha256": "7f72248e811ea9842d85030280e600e545fcdd419a010aefa3d395c9c2428709",
+      "language": "go"
+    },
+    {
+      "path": "doc/md_docs.go",
+      "sha256": "b6f51d89c0d9963df27b489066fd1617a58f805ec3ff7e0d3036088a13927daf",
+      "language": "go"
+    },
+    {
+      "path": "doc/rest_docs.go",
+      "sha256": "4ffa45d039448b87c77cbec3ab5c827cb2a77038e8cf6f8ec75046b9d7d4dd26",
+      "language": "go"
+    },
+    {
+      "path": "doc/util.go",
+      "sha256": "472bf86d75b3d9d73ba036391d7ad91a10bd76604d5333eebec659efbd3a9b6f",
+      "language": "go"
+    },
+    {
+      "path": "doc/yaml_docs.go",
+      "sha256": "44ff045c89a827987fc328e57697c4d89f5afa08e003fee3542fc88cacce85f9",
+      "language": "go"
+    },
+    {
+      "path": "fish_completions.go",
+      "sha256": "637e46a5a81a45a5e9d509aa8a834e023e9a13dccf30ac815957f8ce7ec74fe0",
+      "language": "go"
+    },
+    {
+      "path": "flag_groups.go",
+      "sha256": "3b0572e1fc2fc6e8ef62319b4294cdda86259fb0b1afebc18b03fa643e431251",
+      "language": "go"
+    },
+    {
+      "path": "powershell_completions.go",
+      "sha256": "6357a6d1adc9e798f21731cded574fc3e6e95240c92ee471541d61478b63351a",
+      "language": "go"
+    },
+    {
+      "path": "shell_completions.go",
+      "sha256": "38244d5514d8de4c7bd1e03890992a9ee73885af53aab4294d8bed2d76f8938d",
+      "language": "go"
+    },
+    {
+      "path": "zsh_completions.go",
+      "sha256": "a80998389020b259308582d539cb3ae0979f83b55e8ffa68b20c46b015feae24",
+      "language": "go"
+    }
+  ],
+  "diagnostics": [],
+  "analysis_ms": 592.99,
+  "entities": 4602,
+  "facts": 79545,
+  "rules": {
+    "abstract-factory": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.121,
+          "dependencies": [
+            "abstract-factory#nominal-families"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "adapter": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.078,
+          "dependencies": [
+            "adapter#object-adapter"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "bridge": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.057,
+          "dependencies": [
+            "bridge#runtime-composition"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "builder": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 21,
+          "rows_examined": 8,
+          "elapsed_ms": 0.203,
+          "dependencies": [
+            "builder#director",
+            "builder#mutable-product"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "chain-of-responsibility": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.066,
+          "dependencies": [
+            "chain-of-responsibility#linked-handlers"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "command": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 213,
+          "rows_examined": 107,
+          "elapsed_ms": 0.419,
+          "dependencies": [
+            "command#command-object"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "composite": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.053,
+          "dependencies": [
+            "composite#recursive-contract"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "decorator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.06,
+          "dependencies": [
+            "decorator#object-wrapper"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "facade": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 256,
+          "rows_examined": 127,
+          "elapsed_ms": 0.302,
+          "dependencies": [
+            "facade#object-surface"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "factory-method": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.054,
+          "dependencies": [
+            "factory-method#virtual-slot"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "flyweight": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.065,
+          "dependencies": [
+            "flyweight#explicit-interning"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "interpreter": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.072,
+          "dependencies": [
+            "interpreter#expression-objects"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "iterator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 1360,
+          "rows_examined": 1040,
+          "elapsed_ms": 1.748,
+          "dependencies": [
+            "iterator#delegated-cursor",
+            "iterator#delegated-generator",
+            "iterator#explicit-cursor",
+            "iterator#generator",
+            "iterator#paired-cursor"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "mediator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 24044,
+          "rows_examined": 12021,
+          "elapsed_ms": 25.855,
+          "dependencies": [
+            "mediator#direct-colleagues"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "memento": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 18,
+          "rows_examined": 8,
+          "elapsed_ms": 0.18,
+          "dependencies": [
+            "memento#snapshot-object"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "observer": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.07,
+          "dependencies": [
+            "observer#listener-registry"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "prototype": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 18,
+          "rows_examined": 8,
+          "elapsed_ms": 0.081,
+          "dependencies": [
+            "prototype#explicit-copy"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "proxy": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.065,
+          "dependencies": [
+            "proxy#guarded-access"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "singleton": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 24,
+          "rows_examined": 11,
+          "elapsed_ms": 0.101,
+          "dependencies": [
+            "singleton#lazy-guarded"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "state": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.061,
+          "dependencies": [
+            "state#state-object"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "strategy": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.05,
+          "dependencies": [
+            "strategy#strategy-object"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "template-method": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.037,
+          "dependencies": [
+            "template-method#virtual-skeleton"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "visitor": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 24,
+          "rows_examined": 11,
+          "elapsed_ms": 0.093,
+          "dependencies": [
+            "visitor#named-dispatch"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "gof.iterator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 1361,
+          "rows_examined": 1040,
+          "elapsed_ms": 1.719,
+          "dependencies": [
+            "gof.iterator",
+            "iterator#delegated-cursor",
+            "iterator#delegated-generator",
+            "iterator#explicit-cursor",
+            "iterator#generator",
+            "iterator#paired-cursor"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "gof.builder": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 22,
+          "rows_examined": 8,
+          "elapsed_ms": 0.17,
+          "dependencies": [
+            "builder#director",
+            "builder#mutable-product",
+            "gof.builder"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "iterator#generator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 272,
+          "rows_examined": 270,
+          "elapsed_ms": 0.307,
+          "dependencies": [
+            "iterator#generator"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "iterator#delegated-generator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 272,
+          "rows_examined": 270,
+          "elapsed_ms": 0.392,
+          "dependencies": [
+            "iterator#delegated-generator"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "syntax.generators": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 271,
+          "rows_examined": 270,
+          "elapsed_ms": 0.329,
+          "dependencies": []
+        }
+      },
+      "matches": []
+    }
+  },
+  "engine": {
+    "ir_version": "1.3.0",
+    "source_sha256": {
+      "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+      "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+      "catalog.py": "481bd96fa5f63b452fc00e8eb184915da3271941db433c9281fe35da16d94ed9",
+      "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+      "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+      "frontend.py": "fd8de0aa8f0a6d36b08f42d92022ab7f9f91f3f2531f13e6064c841b2aad7d48",
+      "kenql.py": "ecf8e6107437ff731601fc46e6fa912933b4645d7a5db02fc8e6483f1fdaa294",
+      "model.py": "817575887ec2b55b5dba08455f7a1a5b6b130d41aa755cda683de3cd87919614",
+      "patterns/abstract-factory.toml": "f7dcc43c213062cc082f2f535b80310dbe9bfac02c03063cfb587c0ee72cd2b2",
+      "patterns/adapter.toml": "14f98bb572a7a115e2d534e45c8231cb2919afeb04dd9921858af412606ae65e",
+      "patterns/bridge.toml": "0eba499d3bb2d9d65247adaf1a225ca94a895a6f99d50bfea91157836b1c227a",
+      "patterns/builder.toml": "9cda9a8b9b6f24d33eb5ee8499e4dff895129aedbf0b0f69fc5ffceb205ccc3a",
+      "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+      "patterns/command.toml": "bc448c747efa5d42c12af52d3257c5f33e1281631ac38a4ca09c8950345571b0",
+      "patterns/composite.toml": "ac8020a30dbecdfe459a052db8f8104f88831f60fa05b127e02c9840de2e474c",
+      "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+      "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+      "patterns/factory-method.toml": "57222bf27ee3680d8dd297ea301d37f30817c0e05089eaaf2484f11751f50120",
+      "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+      "patterns/interpreter.toml": "22d75c5e51e14a666baa88f85750b9f3d848cb48f35fb1436790c03e0cd1251a",
+      "patterns/iterator.toml": "394b2581bfbf192ed864f45afc6a51201d07a3527389f28ba507be0c557c049b",
+      "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+      "patterns/memento.toml": "37001a919ac72ad4be1302392355725f817ac8da2e83cbefa47fe8bf816796c3",
+      "patterns/observer.toml": "d36c30906b7666d46f290c577731de89d88338b4d9cc730e6c67acdbfd53c8f8",
+      "patterns/prototype.toml": "1d28a70cf7e10e7af87f14a72b44573871363296ee19e74ae9920ec83de53895",
+      "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+      "patterns/singleton.toml": "01d83cc97ac6e68fbdcd179d9e97a2f02ee8e857735563c776aedd3023d4a390",
+      "patterns/state.toml": "be0e605d806b8314d83dc3dbed258b44dff17bd5daee23e15a87c2ac1281b1e7",
+      "patterns/strategy.toml": "6b436207357fc02e444ea2b2340aea73c125973372e6949a7f187511295adbcd",
+      "patterns/template-method.toml": "2555374cac05e3b8ca1d7cc32e5d9fe8c20ad5cad970f87c31ac4d995f7dd178",
+      "patterns/visitor.toml": "42be1ea4e8740c824e5b5febcaafcbc9b6d86d49f4476155141f1498751e2bcf",
+      "query.py": "2b0f98664753b6d4c03205420a910f43c772b92daee960ff6fe09c53d40c2730",
+      "rules.py": "bd599d97f138dbb4c6e5897e25acd3f4db6ec2a038043da67b96375568f1fd81",
+      "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+      "semantic.py": "3e0c475904e96bb4c63f6766b5265dfef421562c9d827df3095d97d67e6cb0ca",
+      "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df"
+    }
+  },
+  "budget": {
+    "max_matches": 1000,
+    "max_rows": 500000,
+    "max_states": 100000,
+    "timeout_ms": 5000
+  },
+  "python_generator_oracle": {
+    "expected": [],
+    "detected": [],
+    "missing": [],
+    "unexpected": [],
+    "parse_errors": []
+  }
+}

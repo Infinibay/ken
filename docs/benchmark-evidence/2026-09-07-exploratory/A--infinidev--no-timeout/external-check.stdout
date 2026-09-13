@@ -1,0 +1,14 @@
+relative internal: ACCEPT exists=True
+absolute internal: ACCEPT exists=True
+absolute external: REJECT ValueError
+parent escape: REJECT ValueError
+parent internal: ACCEPT exists=True
+sibling prefix: REJECT ValueError
+symlink internal: ACCEPT exists=True
+symlink external: REJECT ValueError
+broken symlink internal: ACCEPT exists=False
+broken symlink external: REJECT ValueError
+missing internal: ACCEPT exists=False
+missing external: REJECT ValueError
+Assertions passed: 12 cases
+Fixture removed

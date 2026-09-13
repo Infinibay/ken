@@ -1,0 +1,70 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.iterator"
+name = "Iterator"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/iterator.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.iterator]
+kinds = ["type_decl", "callable"]
+required = true
+
+[[variants]]
+id = "generator"
+status = "design"
+languages = ["python", "javascript", "typescript", "csharp"]
+requires = ["generator_lowering"]
+graph_requirements = ["Callable suspende produciendo elementos; la evidencia prueba forma generadora, no recorrido correcto."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+query_draft = '''
+query generator_shape {
+  callable(generator: true) as $iterator;
+  operation(kind: yield) as $suspend;
+  require $iterator HAS_OPERATION $suspend;
+  emit $iterator;
+}
+'''
+query_claim = "Presencia de forma generadora; no prueba progreso ni agotamiento."
+
+[[variants]]
+id = "delegated-generator"
+status = "design"
+languages = ["python", "javascript", "typescript"]
+requires = ["generator_delegation"]
+graph_requirements = ["Delegación de iteración enlaza iterable delegado y suspensión; conservar protocolo nativo."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "explicit-cursor"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "rust"]
+requires = ["iteration_protocol", "storage_flow"]
+graph_requirements = ["Contrato de iteración, progreso y fin; protocolo resuelto, no solo métodos homónimos."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "callback-iterator"
+status = "design"
+languages = ["go"]
+requires = ["range_function_protocol", "callback_control_flow"]
+graph_requirements = ["Callback recibe elemento y su booleano gobierna continuar; requiere versión de lenguaje aplicable."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "async-iterator"
+status = "design"
+languages = ["python", "javascript", "typescript", "csharp"]
+requires = ["async_iteration_protocol", "generator_lowering"]
+graph_requirements = ["Producción/avance y consumo se rigen por protocolo async; await no se transforma en thread."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

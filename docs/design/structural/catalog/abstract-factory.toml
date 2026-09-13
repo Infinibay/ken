@@ -1,0 +1,47 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.abstract-factory"
+name = "Abstract Factory"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/abstract-factory.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.factory]
+kinds = ["type_decl"]
+required = true
+
+[exports.product]
+kinds = ["type_decl"]
+required = true
+
+[[variants]]
+id = "nominal-families"
+status = "design"
+languages = ["python", "java", "csharp", "cpp"]
+requires = ["nominal_contracts", "return_flow"]
+graph_requirements = ["Correlacionar slots de creación entre familias; distinguir al menos dos contratos de producto; conservar el producto correspondiente a cada slot."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "structural-families"
+status = "design"
+languages = ["javascript", "typescript", "go"]
+requires = ["structural_contracts", "return_flow"]
+graph_requirements = ["Relacionar objetos/structs con el mismo conjunto de operaciones de creación sin exigir herencia."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "associated-products"
+status = "design"
+languages = ["rust"]
+requires = ["trait_resolution", "generic_substitution", "return_flow"]
+graph_requirements = ["Sustituir tipos asociados por familia y relacionarlos con los productos devueltos."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

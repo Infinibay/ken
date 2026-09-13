@@ -1,0 +1,15 @@
+PASS relative: read
+PASS absolute internal: read
+PASS internal ..: read
+PASS parent escape: reject
+PASS absolute sibling prefix: reject
+PASS internal symlink: read
+PASS external symlink: reject
+PASS external symlink missing leaf: reject
+PASS missing internal: unindexed
+PASS missing absolute internal: unindexed
+PASS missing external: reject
+PASS broken internal symlink: unindexed
+PASS broken external symlink: reject
+PASS deleted indexed file: empty
+14 cases passed; temporary fixtures removed.

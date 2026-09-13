@@ -12,7 +12,10 @@ permissions:
 jobs:
   quality:
     name: Tests and static typing (Python 3.12)
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
@@ -32,3 +35,8 @@ jobs:
 
       - name: Check static types
         run: uv run mypy
+
+      - name: Build and verify installed wheel
+        run: |
+          uv build
+          uv run python tests/structural/install_smoke.py dist/*.whl

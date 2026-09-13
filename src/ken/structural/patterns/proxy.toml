@@ -1,0 +1,65 @@
+schema = "ken-rule/1"
+id = "proxy"
+name = "Proxy"
+category = "structural"
+description = "A same-contract wrapper conditionally forwards operations."
+caveat = "Conditional same-contract delegation overlaps with guarded decorators."
+legacy_query = "require $unit SUBTYPE_OF $contract\nrequire $unit HAS_FIELD $subject\nrequire $subject TYPE $contract\nrequire $unit HAS_METHOD $method\nrequire $method CONDITIONAL_DELEGATION $subject\n"
+query = '''
+query proxy {
+ match "proxy#guarded-access"(unit: $unit);
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "guarded-access"
+status = "ready"
+languages = ["python", "java", "typescript"]
+requires = ["control_flow", "api_effects", "contract_resolution"]
+graph_requirements = ["Política puede impedir acceso al subject del mismo contrato; rechazo puede ser excepción o resultado."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query proxy {
+
+ require $unit SUBTYPE_OF $contract;
+ require $unit HAS_FIELD $subject;
+ require $subject TYPE $contract;
+ require $unit HAS_METHOD $method;
+ require $method OVERRIDES $slot;
+ require $method CONDITIONAL_DELEGATION $subject;
+ require $method HAS_CALL $forward;
+ require $forward RECEIVER $subject;
+ require $forward SYNTAX_NODE $forward_syntax;
+ path $forward_syntax SYNTAX_PARENT{0,32} $arm as $guard_scope;
+ operation(role: [consequence, alternative]) as $arm;
+ require $arm SYNTAX_PARENT $guard;
+ operation(kind: branch) as $guard;
+ call() as $forward;
+ callable() as $method;
+ where $method.name == $forward.name;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "lazy-subject"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["guarded_allocation", "receiver_identity"]
+graph_requirements = ["Carga diferida de subject y delegación posterior usan el mismo almacenamiento."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "remote-subject"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["rpc_models", "contract_resolution"]
+graph_requirements = ["Contrato local representa operación remota y mapea argumentos/resultados; modelo RPC identificado."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

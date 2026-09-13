@@ -1,0 +1,1438 @@
+{
+  "commit": "54796b38a57e6309f9861e174737479bb3f63f61",
+  "ir_version": "1.22.0",
+  "source_sha256": {
+    "packages/rxjs/src/subject.ts": "669324bba5297760d54412d67016e2fb6d74c6c2b6847f8ba96e8721ba7883e6",
+    "packages/rxjs/src/async-subject.ts": "10397e2aafd6305c7260f5f181b5a86b49d3d422fbec468b39b40f3455692372",
+    "packages/rxjs/src/per-subscription-subject-base.ts": "1585784f423a25798fd6f06d1901bdc91b8bba18e53bc7e13c5420428cae38a1"
+  },
+  "engine_sha256": {
+    "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+    "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+    "catalog.py": "39cb65a22c3c0c1b96ae41cd2343b8227d93ba1f62763bd95efdfe568683d638",
+    "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+    "collection_snapshots.py": "99938dde53b05dca27e2c02cee85a6b562045688c99f28158c8fcd4d7a011d9a",
+    "control_flow.py": "d77c41e7e89a743720f28c04afa36a6d9251abae2df5ef3844df7c1b07d0a33b",
+    "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+    "frontend.py": "6f1d82b997dc89b75e1ffca89051f030029eb9f0825db22ad6c4929d07c563ae",
+    "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+    "kenql.py": "2eb59511604056c97315b26230629519b5a076c38ac2af9d59fe3f9c2dcace87",
+    "model.py": "4ff8f377f321bf34610cac76def24b7de84b95f3a5839fb817f166bb789bc1ed",
+    "modern_patterns/adapted-continuation-wrapper.toml": "cfae68be5c98788c03b0c663a7fb5d94b03164b57e2c2b413228e4c14528c50d",
+    "modern_patterns/cache-aside.toml": "862de442a6383e43760f6f64562c8c2f2967d6994e021ee721c2f7cfd6d595ea",
+    "modern_patterns/continuation-wrapper.toml": "0092ade2a426815819334a1999ea4c2a65e54f452ceaf7a6de08dd77dd855ff2",
+    "modern_patterns/dependency-injection.toml": "c7c5295207795d24fe7f854fe284ca544819addf8f0022705cf648e213b2ce1c",
+    "modern_patterns/dispatch-table.toml": "20818662094a5780cf17044551400c434fd7e29734242d5e1664cf9aea7f91e2",
+    "modern_patterns/exception-retry.toml": "eeab3c3ae90b1a7a3f1778db573d80113e4d6e0cc50fbd2ff6ec1cb1da6af77c",
+    "patterns/abstract-factory.toml": "f7dcc43c213062cc082f2f535b80310dbe9bfac02c03063cfb587c0ee72cd2b2",
+    "patterns/adapter.toml": "14f98bb572a7a115e2d534e45c8231cb2919afeb04dd9921858af412606ae65e",
+    "patterns/bridge.toml": "0eba499d3bb2d9d65247adaf1a225ca94a895a6f99d50bfea91157836b1c227a",
+    "patterns/builder.toml": "f517e2ca2fa66032a4912b5bcdc75c180f961913be010cb46e7d9f8b6a751130",
+    "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+    "patterns/command.toml": "afc39d83f4f245fd923fd5778a4f9d3c768beb7485f32137b21ba21a8d0c3bf5",
+    "patterns/composite.toml": "fffb2da5916eb05e4da83de63e21549ad06481938087b9344f291c22f3516a02",
+    "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+    "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+    "patterns/factory-method.toml": "57222bf27ee3680d8dd297ea301d37f30817c0e05089eaaf2484f11751f50120",
+    "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+    "patterns/interpreter.toml": "22d75c5e51e14a666baa88f85750b9f3d848cb48f35fb1436790c03e0cd1251a",
+    "patterns/iterator.toml": "404233895ac5526625c039f7875db8ecb68aba57ba087c67723f871b797d04ef",
+    "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+    "patterns/memento.toml": "37001a919ac72ad4be1302392355725f817ac8da2e83cbefa47fe8bf816796c3",
+    "patterns/observer.toml": "ca3ad665f19488efc51b57d103667395ae895f4f56b4fb0447e463d23d3599d5",
+    "patterns/prototype.toml": "f52da9ea3e345b5533e9e4a176160b4c2394dbd70f787e57ee91b70841fcf237",
+    "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+    "patterns/singleton.toml": "01d83cc97ac6e68fbdcd179d9e97a2f02ee8e857735563c776aedd3023d4a390",
+    "patterns/state.toml": "be0e605d806b8314d83dc3dbed258b44dff17bd5daee23e15a87c2ac1281b1e7",
+    "patterns/strategy.toml": "3bae309d05f0a1a360114082c6a30f65a68ed0eaa5615fa741a8bec2d586951c",
+    "patterns/template-method.toml": "2555374cac05e3b8ca1d7cc32e5d9fe8c20ad5cad970f87c31ac4d995f7dd178",
+    "patterns/visitor.toml": "42be1ea4e8740c824e5b5febcaafcbc9b6d86d49f4476155141f1498751e2bcf",
+    "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+    "return_flow.py": "637efbee0b70c93994fc497c120973a001500aeb41849be751c3ae77c8631de3",
+    "rules.py": "a3fd498e5154c1f45a524de6fe470bc176bc8600b3a70332727640e956e0cfb3",
+    "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+    "semantic.py": "240a52fc330c4ef518be45a3fd6aa4cd4794cb8a4ff653f1fe7c46693665ccb0",
+    "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df",
+    "syntax_graph.py": "70f3fe7dfb3826d107a4b2924094fcd6402c22bfb574b57dca8ebc9b4bb1a535",
+    "type_refs.py": "fda02d5ed262d43536c0ab11acafeedcc4eb118ed9f03c48c9a5f8d9ce0700a1"
+  },
+  "query": "query snapshot_registry {\n require $iteration ITERATION_SNAPSHOT $copy;\n require $copy COLLECTION_SNAPSHOT_OF $listeners;\n require $iteration ITERATION_INVOKES_VALUE $invocation;\n require $notify HAS_CALL $invocation;\n require $unit HAS_METHOD $notify;\n require $unit HAS_FIELD $listeners;\n require $insertion INSERTS_INTO $listeners;\n require $insertion INSERTED_VALUE $listener;\n require $subscribe HAS_CALL $insertion;\n require $subscribe HAS_PARAMETER $listener;\n parameter(receiver: false) as $listener;\n any { require $unit HAS_METHOD $subscribe; }\n or {\n   require $subscribe OWNED_BY $registration;\n   require $unit HAS_METHOD $registration;\n   require $registration HAS_CALL $setup;\n   require $setup ARGUMENT $callback;\n   require $callback VALUE $subscribe;\n   different $registration $notify;\n }\n different $subscribe $notify;\n emit $unit, $listeners, $insertion, $subscribe, $notify, $iteration, $copy, $invocation;\n}\n",
+  "complete": true,
+  "diagnostics": [],
+  "witnesses": [
+    {
+      "roles": {
+        "$unit": {
+          "name": "Subject",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 10
+        },
+        "$listeners": {
+          "name": "#internalSubscribers",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 33
+        },
+        "$insertion": {
+          "name": "add",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 33
+        },
+        "$subscribe": {
+          "name": "anonymous@567",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 22
+        },
+        "$notify": {
+          "name": "complete",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 60
+        },
+        "$iteration": {
+          "kind": "LOOP",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 65
+        },
+        "$copy": {
+          "name": "from",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 63
+        },
+        "$invocation": {
+          "name": "complete",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 66
+        }
+      },
+      "evidence": [
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/CALL:783@783:824",
+          "relation": "INSERTS_INTO",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/STORAGE:#internalSubscribers",
+          "source": [
+            "packages/rxjs/src/subject.ts:33"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject",
+          "relation": "HAS_FIELD",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/STORAGE:#internalSubscribers",
+          "source": [
+            "packages/rxjs/src/subject.ts:33"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/CALL:783@783:824",
+          "relation": "INSERTED_VALUE",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/PARAMETER:subscriber@568",
+          "source": [
+            "packages/rxjs/src/subject.ts:33"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/CALL:783@783:824",
+          "source": [
+            "packages/rxjs/src/subject.ts:33"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567",
+          "relation": "HAS_PARAMETER",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/PARAMETER:subscriber@568",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/PARAMETER:subscriber@568",
+          "relation": "ENTITY",
+          "object": "PARAMETER",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:complete@1412/CALL:1504@1504:1541",
+          "relation": "COLLECTION_SNAPSHOT_OF",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/STORAGE:#internalSubscribers",
+          "source": [
+            "packages/rxjs/src/subject.ts:63"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::op:1590:1668:for_in_statement",
+          "relation": "ITERATION_SNAPSHOT",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:complete@1412/CALL:1504@1504:1541",
+          "source": [
+            "packages/rxjs/src/subject.ts:65"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::op:1590:1668:for_in_statement",
+          "relation": "ITERATION_INVOKES_VALUE",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:complete@1412/CALL:1638@1638:1659",
+          "source": [
+            "packages/rxjs/src/subject.ts:66"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:complete@1412",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:complete@1412/CALL:1638@1638:1659",
+          "source": [
+            "packages/rxjs/src/subject.ts:66"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:complete@1412",
+          "source": [
+            "packages/rxjs/src/subject.ts:60"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567",
+          "relation": "OWNED_BY",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541",
+          "source": [
+            "packages/rxjs/src/subject.ts:21"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALL:561@561:933",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALL:561@561:933",
+          "relation": "ARGUMENT",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALL:561@561:933/argument/0",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALL:561@561:933/argument/0",
+          "relation": "VALUE",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        }
+      ]
+    },
+    {
+      "roles": {
+        "$unit": {
+          "name": "Subject",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 10
+        },
+        "$listeners": {
+          "name": "#internalSubscribers",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 33
+        },
+        "$insertion": {
+          "name": "add",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 33
+        },
+        "$subscribe": {
+          "name": "anonymous@567",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 22
+        },
+        "$notify": {
+          "name": "error",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 48
+        },
+        "$iteration": {
+          "kind": "LOOP",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 54
+        },
+        "$copy": {
+          "name": "from",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 52
+        },
+        "$invocation": {
+          "name": "error",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 55
+        }
+      },
+      "evidence": [
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/CALL:783@783:824",
+          "relation": "INSERTS_INTO",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/STORAGE:#internalSubscribers",
+          "source": [
+            "packages/rxjs/src/subject.ts:33"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject",
+          "relation": "HAS_FIELD",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/STORAGE:#internalSubscribers",
+          "source": [
+            "packages/rxjs/src/subject.ts:33"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/CALL:783@783:824",
+          "relation": "INSERTED_VALUE",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/PARAMETER:subscriber@568",
+          "source": [
+            "packages/rxjs/src/subject.ts:33"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/CALL:783@783:824",
+          "source": [
+            "packages/rxjs/src/subject.ts:33"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567",
+          "relation": "HAS_PARAMETER",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/PARAMETER:subscriber@568",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/PARAMETER:subscriber@568",
+          "relation": "ENTITY",
+          "object": "PARAMETER",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:error@1107/CALL:1232@1232:1269",
+          "relation": "COLLECTION_SNAPSHOT_OF",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/STORAGE:#internalSubscribers",
+          "source": [
+            "packages/rxjs/src/subject.ts:52"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::op:1318:1398:for_in_statement",
+          "relation": "ITERATION_SNAPSHOT",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:error@1107/CALL:1232@1232:1269",
+          "source": [
+            "packages/rxjs/src/subject.ts:54"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::op:1318:1398:for_in_statement",
+          "relation": "ITERATION_INVOKES_VALUE",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:error@1107/CALL:1366@1366:1389",
+          "source": [
+            "packages/rxjs/src/subject.ts:55"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:error@1107",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:error@1107/CALL:1366@1366:1389",
+          "source": [
+            "packages/rxjs/src/subject.ts:55"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:error@1107",
+          "source": [
+            "packages/rxjs/src/subject.ts:48"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567",
+          "relation": "OWNED_BY",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541",
+          "source": [
+            "packages/rxjs/src/subject.ts:21"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALL:561@561:933",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALL:561@561:933",
+          "relation": "ARGUMENT",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALL:561@561:933/argument/0",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALL:561@561:933/argument/0",
+          "relation": "VALUE",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        }
+      ]
+    },
+    {
+      "roles": {
+        "$unit": {
+          "name": "Subject",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 10
+        },
+        "$listeners": {
+          "name": "#internalSubscribers",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 33
+        },
+        "$insertion": {
+          "name": "add",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 33
+        },
+        "$subscribe": {
+          "name": "anonymous@567",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 22
+        },
+        "$notify": {
+          "name": "next",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 40
+        },
+        "$iteration": {
+          "kind": "LOOP",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 42
+        },
+        "$copy": {
+          "name": "from",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 42
+        },
+        "$invocation": {
+          "name": "next",
+          "path": "packages/rxjs/src/subject.ts",
+          "line": 43
+        }
+      },
+      "evidence": [
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/CALL:783@783:824",
+          "relation": "INSERTS_INTO",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/STORAGE:#internalSubscribers",
+          "source": [
+            "packages/rxjs/src/subject.ts:33"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject",
+          "relation": "HAS_FIELD",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/STORAGE:#internalSubscribers",
+          "source": [
+            "packages/rxjs/src/subject.ts:33"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/CALL:783@783:824",
+          "relation": "INSERTED_VALUE",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/PARAMETER:subscriber@568",
+          "source": [
+            "packages/rxjs/src/subject.ts:33"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/CALL:783@783:824",
+          "source": [
+            "packages/rxjs/src/subject.ts:33"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567",
+          "relation": "HAS_PARAMETER",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/PARAMETER:subscriber@568",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/PARAMETER:subscriber@568",
+          "relation": "ENTITY",
+          "object": "PARAMETER",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:next@942/CALL:1013@1013:1050",
+          "relation": "COLLECTION_SNAPSHOT_OF",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/STORAGE:#internalSubscribers",
+          "source": [
+            "packages/rxjs/src/subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::op:988:1093:for_in_statement",
+          "relation": "ITERATION_SNAPSHOT",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:next@942/CALL:1013@1013:1050",
+          "source": [
+            "packages/rxjs/src/subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::op:988:1093:for_in_statement",
+          "relation": "ITERATION_INVOKES_VALUE",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:next@942/CALL:1062@1062:1084",
+          "source": [
+            "packages/rxjs/src/subject.ts:43"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:next@942",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:next@942/CALL:1062@1062:1084",
+          "source": [
+            "packages/rxjs/src/subject.ts:43"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:next@942",
+          "source": [
+            "packages/rxjs/src/subject.ts:40"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567",
+          "relation": "OWNED_BY",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541",
+          "source": [
+            "packages/rxjs/src/subject.ts:21"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALL:561@561:933",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALL:561@561:933",
+          "relation": "ARGUMENT",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALL:561@561:933/argument/0",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALL:561@561:933/argument/0",
+          "relation": "VALUE",
+          "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567",
+          "source": [
+            "packages/rxjs/src/subject.ts:22"
+          ]
+        }
+      ]
+    },
+    {
+      "roles": {
+        "$unit": {
+          "name": "AsyncSubject",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 6
+        },
+        "$listeners": {
+          "name": "#subscribers",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 42
+        },
+        "$insertion": {
+          "name": "add",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 42
+        },
+        "$subscribe": {
+          "name": "#addSubscriber",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 29
+        },
+        "$notify": {
+          "name": "complete",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 67
+        },
+        "$iteration": {
+          "kind": "LOOP",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 77
+        },
+        "$copy": {
+          "name": "from",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 75
+        },
+        "$invocation": {
+          "name": "next",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 79
+        }
+      },
+      "evidence": [
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/CALL:1018@1018:1051",
+          "relation": "INSERTS_INTO",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/STORAGE:#subscribers",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject",
+          "relation": "HAS_FIELD",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/STORAGE:#subscribers",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/CALL:1018@1018:1051",
+          "relation": "INSERTED_VALUE",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/PARAMETER:subscriber@740",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/CALL:1018@1018:1051",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725",
+          "relation": "HAS_PARAMETER",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/PARAMETER:subscriber@740",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:29"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/PARAMETER:subscriber@740",
+          "relation": "ENTITY",
+          "object": "PARAMETER",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:29"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:complete@1544/CALL:1818@1818:1847",
+          "relation": "COLLECTION_SNAPSHOT_OF",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/STORAGE:#subscribers",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:75"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::op:1884:2037:for_in_statement",
+          "relation": "ITERATION_SNAPSHOT",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:complete@1544/CALL:1818@1818:1847",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:77"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::op:1884:2037:for_in_statement",
+          "relation": "ITERATION_INVOKES_VALUE",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:complete@1544/CALL:1960@1960:1993",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:79"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:complete@1544",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:complete@1544/CALL:1960@1960:1993",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:79"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:complete@1544",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:67"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:29"
+          ]
+        }
+      ]
+    },
+    {
+      "roles": {
+        "$unit": {
+          "name": "AsyncSubject",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 6
+        },
+        "$listeners": {
+          "name": "#subscribers",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 42
+        },
+        "$insertion": {
+          "name": "add",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 42
+        },
+        "$subscribe": {
+          "name": "#addSubscriber",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 29
+        },
+        "$notify": {
+          "name": "complete",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 67
+        },
+        "$iteration": {
+          "kind": "LOOP",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 77
+        },
+        "$copy": {
+          "name": "from",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 75
+        },
+        "$invocation": {
+          "name": "complete",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 81
+        }
+      },
+      "evidence": [
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/CALL:1018@1018:1051",
+          "relation": "INSERTS_INTO",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/STORAGE:#subscribers",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject",
+          "relation": "HAS_FIELD",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/STORAGE:#subscribers",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/CALL:1018@1018:1051",
+          "relation": "INSERTED_VALUE",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/PARAMETER:subscriber@740",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/CALL:1018@1018:1051",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725",
+          "relation": "HAS_PARAMETER",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/PARAMETER:subscriber@740",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:29"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/PARAMETER:subscriber@740",
+          "relation": "ENTITY",
+          "object": "PARAMETER",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:29"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:complete@1544/CALL:1818@1818:1847",
+          "relation": "COLLECTION_SNAPSHOT_OF",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/STORAGE:#subscribers",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:75"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::op:1884:2037:for_in_statement",
+          "relation": "ITERATION_SNAPSHOT",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:complete@1544/CALL:1818@1818:1847",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:77"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::op:1884:2037:for_in_statement",
+          "relation": "ITERATION_INVOKES_VALUE",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:complete@1544/CALL:2009@2009:2030",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:81"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:complete@1544",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:complete@1544/CALL:2009@2009:2030",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:81"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:complete@1544",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:67"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:29"
+          ]
+        }
+      ]
+    },
+    {
+      "roles": {
+        "$unit": {
+          "name": "AsyncSubject",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 6
+        },
+        "$listeners": {
+          "name": "#subscribers",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 42
+        },
+        "$insertion": {
+          "name": "add",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 42
+        },
+        "$subscribe": {
+          "name": "#addSubscriber",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 29
+        },
+        "$notify": {
+          "name": "error",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 53
+        },
+        "$iteration": {
+          "kind": "LOOP",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 62
+        },
+        "$copy": {
+          "name": "from",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 60
+        },
+        "$invocation": {
+          "name": "error",
+          "path": "packages/rxjs/src/async-subject.ts",
+          "line": 63
+        }
+      },
+      "evidence": [
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/CALL:1018@1018:1051",
+          "relation": "INSERTS_INTO",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/STORAGE:#subscribers",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject",
+          "relation": "HAS_FIELD",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/STORAGE:#subscribers",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/CALL:1018@1018:1051",
+          "relation": "INSERTED_VALUE",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/PARAMETER:subscriber@740",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/CALL:1018@1018:1051",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:42"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725",
+          "relation": "HAS_PARAMETER",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/PARAMETER:subscriber@740",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:29"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725/PARAMETER:subscriber@740",
+          "relation": "ENTITY",
+          "object": "PARAMETER",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:29"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:error@1247/CALL:1394@1394:1423",
+          "relation": "COLLECTION_SNAPSHOT_OF",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/STORAGE:#subscribers",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:60"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::op:1460:1536:for_in_statement",
+          "relation": "ITERATION_SNAPSHOT",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:error@1247/CALL:1394@1394:1423",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:62"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::op:1460:1536:for_in_statement",
+          "relation": "ITERATION_INVOKES_VALUE",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:error@1247/CALL:1506@1506:1529",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:63"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:error@1247",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:error@1247/CALL:1506@1506:1529",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:63"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:error@1247",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:53"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/async-subject.ts::module/CLASS:AsyncSubject/CALLABLE:#addSubscriber@725",
+          "source": [
+            "packages/rxjs/src/async-subject.ts:29"
+          ]
+        }
+      ]
+    },
+    {
+      "roles": {
+        "$unit": {
+          "name": "PerSubscriptionSubjectBase",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 30
+        },
+        "$listeners": {
+          "name": "#observers",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 105
+        },
+        "$insertion": {
+          "name": "add",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 105
+        },
+        "$subscribe": {
+          "name": "addSubscriber",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 104
+        },
+        "$notify": {
+          "name": "complete",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 153
+        },
+        "$iteration": {
+          "kind": "LOOP",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 158
+        },
+        "$copy": {
+          "name": "from",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 156
+        },
+        "$invocation": {
+          "name": "complete",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 159
+        }
+      },
+      "evidence": [
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/CALL:4507@4507:4538",
+          "relation": "INSERTS_INTO",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/STORAGE:#observers",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:105"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase",
+          "relation": "HAS_FIELD",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/STORAGE:#observers",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:105"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/CALL:4507@4507:4538",
+          "relation": "INSERTED_VALUE",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/PARAMETER:subscriber@4466",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:105"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/CALL:4507@4507:4538",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:105"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442",
+          "relation": "HAS_PARAMETER",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/PARAMETER:subscriber@4466",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:104"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/PARAMETER:subscriber@4466",
+          "relation": "ENTITY",
+          "object": "PARAMETER",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:104"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:complete@5892/CALL:5988@5988:6015",
+          "relation": "COLLECTION_SNAPSHOT_OF",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/STORAGE:#observers",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:156"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::op:6054:6126:for_in_statement",
+          "relation": "ITERATION_SNAPSHOT",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:complete@5892/CALL:5988@5988:6015",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:158"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::op:6054:6126:for_in_statement",
+          "relation": "ITERATION_INVOKES_VALUE",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:complete@5892/CALL:6098@6098:6117",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:159"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:complete@5892",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:complete@5892/CALL:6098@6098:6117",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:159"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:complete@5892",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:153"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:104"
+          ]
+        }
+      ]
+    },
+    {
+      "roles": {
+        "$unit": {
+          "name": "PerSubscriptionSubjectBase",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 30
+        },
+        "$listeners": {
+          "name": "#observers",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 105
+        },
+        "$insertion": {
+          "name": "add",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 105
+        },
+        "$subscribe": {
+          "name": "addSubscriber",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 104
+        },
+        "$notify": {
+          "name": "error",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 134
+        },
+        "$iteration": {
+          "kind": "LOOP",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 140
+        },
+        "$copy": {
+          "name": "from",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 138
+        },
+        "$invocation": {
+          "name": "error",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 141
+        }
+      },
+      "evidence": [
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/CALL:4507@4507:4538",
+          "relation": "INSERTS_INTO",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/STORAGE:#observers",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:105"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase",
+          "relation": "HAS_FIELD",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/STORAGE:#observers",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:105"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/CALL:4507@4507:4538",
+          "relation": "INSERTED_VALUE",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/PARAMETER:subscriber@4466",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:105"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/CALL:4507@4507:4538",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:105"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442",
+          "relation": "HAS_PARAMETER",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/PARAMETER:subscriber@4466",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:104"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/PARAMETER:subscriber@4466",
+          "relation": "ENTITY",
+          "object": "PARAMETER",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:104"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:error@5340/CALL:5469@5469:5496",
+          "relation": "COLLECTION_SNAPSHOT_OF",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/STORAGE:#observers",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:138"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::op:5535:5609:for_in_statement",
+          "relation": "ITERATION_SNAPSHOT",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:error@5340/CALL:5469@5469:5496",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:140"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::op:5535:5609:for_in_statement",
+          "relation": "ITERATION_INVOKES_VALUE",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:error@5340/CALL:5579@5579:5600",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:141"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:error@5340",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:error@5340/CALL:5579@5579:5600",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:141"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:error@5340",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:134"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:104"
+          ]
+        }
+      ]
+    },
+    {
+      "roles": {
+        "$unit": {
+          "name": "PerSubscriptionSubjectBase",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 30
+        },
+        "$listeners": {
+          "name": "#observers",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 105
+        },
+        "$insertion": {
+          "name": "add",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 105
+        },
+        "$subscribe": {
+          "name": "addSubscriber",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 104
+        },
+        "$notify": {
+          "name": "next",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 118
+        },
+        "$iteration": {
+          "kind": "LOOP",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 121
+        },
+        "$copy": {
+          "name": "from",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 120
+        },
+        "$invocation": {
+          "name": "next",
+          "path": "packages/rxjs/src/per-subscription-subject-base.ts",
+          "line": 122
+        }
+      },
+      "evidence": [
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/CALL:4507@4507:4538",
+          "relation": "INSERTS_INTO",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/STORAGE:#observers",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:105"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase",
+          "relation": "HAS_FIELD",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/STORAGE:#observers",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:105"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/CALL:4507@4507:4538",
+          "relation": "INSERTED_VALUE",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/PARAMETER:subscriber@4466",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:105"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/CALL:4507@4507:4538",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:105"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442",
+          "relation": "HAS_PARAMETER",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/PARAMETER:subscriber@4466",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:104"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442/PARAMETER:subscriber@4466",
+          "relation": "ENTITY",
+          "object": "PARAMETER",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:104"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:next@4879/CALL:4950@4950:4977",
+          "relation": "COLLECTION_SNAPSHOT_OF",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/STORAGE:#observers",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:120"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::op:4985:5065:for_in_statement",
+          "relation": "ITERATION_SNAPSHOT",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:next@4879/CALL:4950@4950:4977",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:121"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::op:4985:5065:for_in_statement",
+          "relation": "ITERATION_INVOKES_VALUE",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:next@4879/CALL:5029@5029:5056",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:122"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:next@4879",
+          "relation": "HAS_CALL",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:next@4879/CALL:5029@5029:5056",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:122"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:next@4879",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:118"
+          ]
+        },
+        {
+          "subject": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase",
+          "relation": "HAS_METHOD",
+          "object": "packages/rxjs/src/per-subscription-subject-base.ts::module/CLASS:PerSubscriptionSubjectBase/CALLABLE:addSubscriber@4442",
+          "source": [
+            "packages/rxjs/src/per-subscription-subject-base.ts:104"
+          ]
+        }
+      ]
+    }
+  ]
+}

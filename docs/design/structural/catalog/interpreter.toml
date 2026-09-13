@@ -1,0 +1,38 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.interpreter"
+name = "Interpreter"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/interpreter.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.expression]
+kinds = ["type_decl"]
+required = true
+
+[exports.evaluate]
+kinds = ["callable"]
+required = true
+
+[[variants]]
+id = "expression-objects"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["recursive_contract", "context_value_flow"]
+graph_requirements = ["Nodos no terminales evalúan hijos con contexto correlacionado y combinan resultados; terminales producen valores."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "expression-sum"
+status = "design"
+languages = ["typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["sum_types", "match_flow", "recursion"]
+graph_requirements = ["Ramas de expresión algebraica evalúan hijos/contexto; no exigir subtipado nominal."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

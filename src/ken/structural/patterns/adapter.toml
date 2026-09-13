@@ -1,0 +1,61 @@
+schema = "ken-rule/1"
+id = "adapter"
+name = "Adapter"
+category = "structural"
+description = "An implementation delegates to a different contract."
+caveat = "Structural evidence requires review of intent and runtime behavior."
+legacy_query = "require $unit SUBTYPE_OF $target\nrequire $unit HAS_FIELD $field\nrequire $field TYPE $adaptee\nrequire $unit HAS_METHOD $method\nrequire $method DELEGATES_TO $field\ndifferent $target $adaptee\n"
+query = '''
+query adapter {
+ match "adapter#object-adapter"(unit: $unit);
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "object-adapter"
+status = "ready"
+languages = ["python", "java", "typescript", "cpp"]
+requires = ["contract_resolution", "argument_result_flow"]
+graph_requirements = ["Contrato objetivo cumplido; argumentos/resultados se adaptan al adaptee correlacionado."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query adapter {
+
+ require $unit SUBTYPE_OF $contract;
+ require $unit HAS_FIELD $field;
+ require $field TYPE $adaptee;
+ require $unit HAS_METHOD $method;
+ require $method OVERRIDES $slot;
+ require $contract HAS_METHOD $slot;
+ require $method HAS_CALL $forward;
+ require $forward RECEIVER $field;
+ call() as $forward;
+ callable() as $method;
+ different $contract $adaptee;
+ where $method.name != $forward.name;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "functional-adapter"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["closure_capture", "callable_contracts"]
+graph_requirements = ["Callable envuelve otra y adapta su contrato de entrada/salida sin requerir clase."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "class-adapter"
+status = "design"
+languages = ["python", "cpp"]
+requires = ["multiple_inheritance", "override_resolution"]
+graph_requirements = ["Herencia del adaptee y cumplimiento del contrato objetivo; resolver método efectivamente invocado."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

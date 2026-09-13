@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/Users/andres/.local/share/uv/tools/infinidev/bin/python3",
+    "-c",
+    "import json; from infinidev.config.settings import settings; keys=['EXECUTE_COMMANDS_PERMISSION', 'FILE_OPERATIONS_PERMISSION', 'TOOL_EFFECTS_PERMISSION', 'MCP_PERMISSION']; print(json.dumps({k:getattr(settings,k) for k in keys})); assert all(getattr(settings,k)=='auto_approve' for k in keys)"
+  ],
+  "cwd": "/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/ken-explore-9cymzwwy",
+  "exit_code": 0,
+  "elapsed_seconds": 0.115,
+  "timeout": false,
+  "timeout_seconds": null
+}

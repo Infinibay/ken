@@ -1,0 +1,370 @@
+{
+  "meta": null,
+  "ttl_ms": 0,
+  "cache_scope": "private",
+  "next_cursor": null,
+  "tools": [
+    {
+      "name": "ken_find",
+      "title": null,
+      "description": "Find things by describing them, over one of six scopes: files,\n    symbols, text, tests, wiring, intent. Ranked by ken, not by you.\n\n    *scope* picks what is searched:\n\n    * ``files``   — semantic match over per-file embeddings.\n    * ``symbols`` — semantic match over per-symbol embeddings; a bare\n      identifier also fuses in an exact-name match.\n    * ``text``    — the live worktree. BM25-ranked by default, or exact\n      substring when *literal* is true. Never stale: read from disk.\n    * ``tests``   — the tests that cover *query* read as a path.\n    * ``wiring``  — routes, CLI commands and env-var triggers that reach a\n      handler.\n    * ``intent``  — which files requests *like this one* historically ended\n      up touching. Answers \"where does work like this usually land?\".\n\n    *language* filters ``text`` results (e.g. \"python\").\n    ",
+      "input_schema": {
+        "properties": {
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "scope": {
+            "default": "files",
+            "enum": [
+              "files",
+              "symbols",
+              "text",
+              "tests",
+              "wiring",
+              "intent"
+            ],
+            "title": "Scope",
+            "type": "string"
+          },
+          "limit": {
+            "default": 10,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "literal": {
+            "default": false,
+            "title": "Literal",
+            "type": "boolean"
+          },
+          "language": {
+            "default": "",
+            "title": "Language",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object",
+        "title": "ken_findArguments"
+      },
+      "execution": null,
+      "output_schema": null,
+      "icons": null,
+      "annotations": null,
+      "meta": null
+    },
+    {
+      "name": "ken_read",
+      "title": null,
+      "description": "Read an indexed file's structure, and optionally its source. Pick\n    fields with *include*: symbols, imports, docstrings, source, profile.\n\n    *include* selects what comes back — any of ``symbols``, ``imports``,\n    ``docstrings``, ``source``, ``profile``. Defaults to ``[\"symbols\"]``.\n\n    ``source`` needs somewhere to read from: pass *qualname* for one symbol,\n    or *start_line*/*end_line* for a range. ``profile`` answers what the file\n    is *for* and how it differs from its siblings, which is the question you\n    have before you know which symbol you want.\n    ",
+      "input_schema": {
+        "properties": {
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "include": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "symbols",
+                    "imports",
+                    "docstrings",
+                    "source",
+                    "profile"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Include"
+          },
+          "qualname": {
+            "default": "",
+            "title": "Qualname",
+            "type": "string"
+          },
+          "start_line": {
+            "default": 0,
+            "title": "Start Line",
+            "type": "integer"
+          },
+          "end_line": {
+            "default": 0,
+            "title": "End Line",
+            "type": "integer"
+          },
+          "max_chars": {
+            "default": 0,
+            "title": "Max Chars",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object",
+        "title": "ken_readArguments"
+      },
+      "execution": null,
+      "output_schema": null,
+      "icons": null,
+      "annotations": null,
+      "meta": null
+    },
+    {
+      "name": "ken_related",
+      "title": null,
+      "description": "What else is connected to *target*, by a named relationship:\n    neighbors, imports, callers, callees, subtypes, supertypes, cochange,\n    blast_radius, clones. Each is a distinct algorithm, not a filter.\n\n    *target* is a file path, or a symbol qualname for the call and type\n    relations. Each *relation* is a distinct algorithm, not a filter:\n\n    * ``neighbors``    — files ken ranks as directly related.\n    * ``imports``      — the local import graph around a file, *depth* hops.\n    * ``callers`` / ``callees`` — the call graph for a symbol.\n    * ``subtypes`` / ``supertypes`` — the type hierarchy, with overrides.\n    * ``cochange``     — files historically committed together, scored by\n      log-likelihood ratio. Surfaces coupling that imports do not show.\n    * ``blast_radius`` — what a change here is likely to break. *depth* is\n      the hop limit.\n    * ``clones``       — near-duplicate code, by MinHash over token shingles.\n    ",
+      "input_schema": {
+        "properties": {
+          "target": {
+            "title": "Target",
+            "type": "string"
+          },
+          "relation": {
+            "enum": [
+              "neighbors",
+              "imports",
+              "callers",
+              "callees",
+              "subtypes",
+              "supertypes",
+              "cochange",
+              "blast_radius",
+              "clones"
+            ],
+            "title": "Relation",
+            "type": "string"
+          },
+          "limit": {
+            "default": 10,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "depth": {
+            "default": 1,
+            "title": "Depth",
+            "type": "integer"
+          },
+          "min_confidence": {
+            "default": 0.0,
+            "title": "Min Confidence",
+            "type": "number"
+          }
+        },
+        "required": [
+          "target",
+          "relation"
+        ],
+        "type": "object",
+        "title": "ken_relatedArguments"
+      },
+      "execution": null,
+      "output_schema": null,
+      "icons": null,
+      "annotations": null,
+      "meta": null
+    },
+    {
+      "name": "ken_rank",
+      "title": null,
+      "description": "What matters right now — ken's own answer, not a search. Scopes:\n    session (the work in progress), changes (the git diff), project\n    (orientation), architecture (subsystems and cycles).\n\n    This is the ranker: several channels fused into one ordering, including\n    what this session has touched and how recently, what sessions like it\n    historically went on to touch, and what was named outright. None of that\n    is expressible as a query, which is why this tool exists.\n\n    *scope* picks the question:\n\n    * ``session``      — what matters for the work in progress. Leave *query*\n      empty to rank against the current session; pass one to rank against a\n      different intent instead.\n    * ``changes``      — the current git diff, enriched with the symbols and\n      tests it touches.\n    * ``project``      — languages, layout and the directories that carry the\n      weight. For orienting in an unfamiliar repository.\n    * ``architecture`` — subsystems, layers, dependency cycles and hubs.\n\n    *verbose* goes 0 (list only), 1 (outlines), 2 (fullest). *explain* returns\n    the per-channel breakdown instead of the ranking, which is how you find\n    out *why* something ranked where it did.\n    ",
+      "input_schema": {
+        "properties": {
+          "scope": {
+            "default": "session",
+            "enum": [
+              "session",
+              "changes",
+              "project",
+              "architecture"
+            ],
+            "title": "Scope",
+            "type": "string"
+          },
+          "query": {
+            "default": "",
+            "title": "Query",
+            "type": "string"
+          },
+          "verbose": {
+            "default": 1,
+            "title": "Verbose",
+            "type": "integer"
+          },
+          "explain": {
+            "default": false,
+            "title": "Explain",
+            "type": "boolean"
+          },
+          "max_chars": {
+            "default": 0,
+            "title": "Max Chars",
+            "type": "integer"
+          }
+        },
+        "type": "object",
+        "title": "ken_rankArguments"
+      },
+      "execution": null,
+      "output_schema": null,
+      "icons": null,
+      "annotations": null,
+      "meta": null
+    },
+    {
+      "name": "ken_recall",
+      "title": null,
+      "description": "Recall what earlier sessions in this project already worked out.\n\n    Check here before re-deriving something: findings persist across\n    sessions and across harnesses. The arguments are ways in, most specific\n    first — the ``anchor_*`` set returns memories declared to fire on a\n    file, symbol, tool or error message, *topic* walks the findings graph\n    from a known finding, *path* returns everything known about a file,\n    *query* searches by meaning, *tag* filters exactly. With none of them,\n    returns the most recent findings.\n\n    The ``anchor_*`` arguments answer \"what should I know before doing\n    this?\" and combine with OR — pass every anchor the action has and get\n    back whatever fires on any of them. ``anchor_error`` matches as a\n    substring of the message you pass.\n    ",
+      "input_schema": {
+        "properties": {
+          "query": {
+            "default": "",
+            "title": "Query",
+            "type": "string"
+          },
+          "path": {
+            "default": "",
+            "title": "Path",
+            "type": "string"
+          },
+          "topic": {
+            "default": "",
+            "title": "Topic",
+            "type": "string"
+          },
+          "tag": {
+            "default": "",
+            "title": "Tag",
+            "type": "string"
+          },
+          "limit": {
+            "default": 5,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "min_score": {
+            "default": 0.0,
+            "title": "Min Score",
+            "type": "number"
+          },
+          "anchor_file": {
+            "default": "",
+            "title": "Anchor File",
+            "type": "string"
+          },
+          "anchor_symbol": {
+            "default": "",
+            "title": "Anchor Symbol",
+            "type": "string"
+          },
+          "anchor_tool": {
+            "default": "",
+            "title": "Anchor Tool",
+            "type": "string"
+          },
+          "anchor_error": {
+            "default": "",
+            "title": "Anchor Error",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "title": "ken_recallArguments"
+      },
+      "execution": null,
+      "output_schema": null,
+      "icons": null,
+      "annotations": null,
+      "meta": null
+    },
+    {
+      "name": "ken_remember",
+      "title": null,
+      "description": "Persist a finding so the next session starts knowing it. *action*\n    is save (default), forget (delete by topic), or dismiss (mark a path\n    irrelevant to the current ranking).\n\n    Worth saving: non-obvious facts you had to dig for — why something is\n    the way it is, a constraint that is not visible in the code, a trap. Not\n    worth saving: what the code already says plainly.\n\n    *action* is ``save`` (default), ``forget`` to delete a finding by topic,\n    or ``dismiss`` to tell the ranker that *topic* — read as a path — is not\n    relevant to the current work.\n\n    The ``anchor_*`` arguments declare what the memory is *about*, so it can\n    be found by the thing that provokes it rather than by someone thinking\n    to search: ``anchor_file`` and ``anchor_symbol`` name code,\n    ``anchor_tool`` a command or tool name, ``anchor_error`` a substring of\n    an error message. Several may be set; the memory fires on any of them.\n    ",
+      "input_schema": {
+        "properties": {
+          "topic": {
+            "title": "Topic",
+            "type": "string"
+          },
+          "content": {
+            "default": "",
+            "title": "Content",
+            "type": "string"
+          },
+          "action": {
+            "default": "save",
+            "enum": [
+              "save",
+              "forget",
+              "dismiss"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tags"
+          },
+          "reason": {
+            "default": "",
+            "title": "Reason",
+            "type": "string"
+          },
+          "anchor_file": {
+            "default": "",
+            "title": "Anchor File",
+            "type": "string"
+          },
+          "anchor_symbol": {
+            "default": "",
+            "title": "Anchor Symbol",
+            "type": "string"
+          },
+          "anchor_tool": {
+            "default": "",
+            "title": "Anchor Tool",
+            "type": "string"
+          },
+          "anchor_error": {
+            "default": "",
+            "title": "Anchor Error",
+            "type": "string"
+          }
+        },
+        "required": [
+          "topic"
+        ],
+        "type": "object",
+        "title": "ken_rememberArguments"
+      },
+      "execution": null,
+      "output_schema": null,
+      "icons": null,
+      "annotations": null,
+      "meta": null
+    }
+  ],
+  "result_type": "complete"
+}

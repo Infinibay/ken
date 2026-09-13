@@ -1,0 +1,38 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.command"
+name = "Command"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/command.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.command]
+kinds = ["type_decl", "callable"]
+required = true
+
+[exports.invoker]
+kinds = ["callable"]
+required = true
+
+[[variants]]
+id = "command-object"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["storage_escape", "deferred_invocation"]
+graph_requirements = ["Objeto retiene acción/datos; invocador separado lo almacena o transmite antes de ejecutar."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "command-closure"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["closure_capture", "callable_value_flow"]
+graph_requirements = ["Closure captura acción/datos y fluye a invocador diferido; respetar FnOnce y move cuando corresponda."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

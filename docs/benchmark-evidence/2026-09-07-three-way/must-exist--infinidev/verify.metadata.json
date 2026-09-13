@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "import pathlib,tempfile,inspect\nfrom ken._paths import resolve_project_path as f\nassert inspect.signature(f).parameters['must_exist'].kind==inspect.Parameter.KEYWORD_ONLY\nwith tempfile.TemporaryDirectory() as d:\n r=pathlib.Path(d);(r/'f').touch();(r/'dir').mkdir()\n for x in ('f','dir'): assert f(r,x,must_exist=True)==r/x\n assert f(r,'missing')==r/'missing'\n try:f(r,'missing',must_exist=True)\n except FileNotFoundError:pass\n else:raise AssertionError('missing accepted')\n try:f(r,'../escape-nonexistent',must_exist=True)\n except ValueError:pass\n else:raise AssertionError('escape accepted')"
+  ],
+  "cwd": "/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/ken-bench-6afp03vg",
+  "exit_code": 1,
+  "elapsed_seconds": 0.076,
+  "timeout": false,
+  "timeout_seconds": 15
+}

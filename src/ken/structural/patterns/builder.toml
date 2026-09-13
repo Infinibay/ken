@@ -1,0 +1,156 @@
+schema = "ken-rule/1"
+id = "builder"
+name = "Builder"
+category = "creational"
+description = "Stepwise construction, fluent setters or an external director."
+caveat = "Fluent setters are a Builder-like idiom; product validation and lifecycle are not proven."
+legacy_query = "require $unit IS CLASS\nvariant fluent\ncount >=2 $unit HAS_METHOD $method distinct=$method where $method RETURNS_SELF $unit and $method WRITES _\nend\nvariant director\nrequire $unit HAS_METHOD $build\nrequire $build RETURNS_NEW $product\nrequire $director DELEGATES_TYPE $unit\ncount >=2 $director CALLS $step distinct=$step where $unit HAS_METHOD $step and $step WRITES _\nend\n"
+query = '''
+query builder {
+ any { match "builder#mutable-product"(builder: $builder, finish: $finish, product: $product); } or { match "builder#director"(builder: $builder, finish: $finish, product: $product); }
+ or { match "builder#stored-product"(builder:$builder,finish:$finish,product:$product); }
+ emit $builder, $finish, $product;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[variants]]
+id = "mutable-product"
+status = "ready"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["storage_identity", "local_value_flow"]
+graph_requirements = ["Un paso no constructor recibe un parámetro y lo almacena en estado; finalización usa ese estado para construir el producto retornado."]
+query_claim = "Final direct unchanged parameter input in a supported linear step configures a field used to construct the returned product. No-argument presets, transformed inputs and unsupported control need other variants; hidden effects, lifecycle and snapshot intent are not proven."
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+query_draft = "query mutable_builder {\n  type_decl() as $builder;\n  require $builder HAS_METHOD $step;\n  require $builder HAS_METHOD $finish;\n  different $step $finish;\n  require $builder HAS_FIELD $state;\n  require $step WRITES $state;\n  require $finish READS $state;\n  require $finish HAS_OPERATION $construction;\n  operation(kind: construct) as $construction;\n  require $construction RESULT $created;\n  require $finish RETURNS_VALUE $created;\n  require $created INSTANCE_OF $product;\n  require $construction ARGUMENT $argument;\n  require $argument VALUE $input;\n  operation(kind: load) as $read;\n  require $finish HAS_OPERATION $read;\n  require $read READS $state;\n  require $read RESULT $loaded;\n  path $loaded VALUE_FLOW{0,6} $input as $flow;\n  emit $builder, $finish, $product;\n}\n"
+
+query = '''
+query mutable_product {
+ type_decl() as $builder;
+ require $builder HAS_METHOD $step;
+ callable(constructor: false) as $step;
+ require $builder HAS_METHOD $finish;
+ callable(static: false) as $finish;
+ require $builder HAS_FIELD $state;
+ require $step HAS_PARAMETER $configured;
+ parameter(receiver: false) as $configured;
+ require $step HAS_OPERATION $write;
+ require $write FINAL_MEMBER_INPUT $configured;
+ require $write ASSIGNMENT_TARGET $state;
+ require $finish RETURNS_VALUE $result;
+ require $construction RESULT $result;
+ require $result INSTANCE_OF $product;
+ require $construction ARGUMENT $argument;
+ require $argument VALUE $input;
+ require $input LOADED_FROM $state;
+ different $step $finish;
+ emit $builder, $finish, $product;
+}
+'''
+
+[[variants]]
+id = "immutable-product"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["value_flow", "copy_models"]
+graph_requirements = ["El paso devuelve un builder sucesor; su estado modificado llega a la finalización y al producto."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "consuming-typestate"
+status = "design"
+languages = ["rust", "cpp", "typescript"]
+requires = ["generic_substitution", "ownership_flow"]
+graph_requirements = ["El paso cambia parámetros de estado o mueve el builder; la finalización recibe un estado admitido."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "director"
+status = "ready"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["callsite_context", "receiver_identity"]
+graph_requirements = ["El director llama pasos de la misma construcción y obtiene su producto; no mezclar instancias diferentes."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+query = '''
+query directed_product {
+ type_decl() as $builder;
+ require $builder HAS_METHOD $finish;
+ require $finish RETURNS_NEW $product;
+ require $director RETURNS_CALL $finish_call;
+ require $finish_call TARGET $finish;
+ require $finish_call RECEIVER $receiver;
+ count distinct $step >= 2 {
+   require $director HAS_CALL $step_call;
+   require $step_call RECEIVER $receiver;
+   require $step_call TARGET $step;
+   callable(constructor: false) as $step;
+   require $builder HAS_METHOD $step;
+   require $builder HAS_FIELD $state;
+   require $step WRITES $state;
+ };
+ emit $builder, $finish, $product;
+}
+'''
+
+[[variants]]
+id = "stored-product"
+status = "ready"
+languages = ["python", "javascript", "typescript", "java", "csharp", "rust"]
+query_claim = "The builder initializes its own product field from a construction, a linear step writes an unchanged input into that product, and a distinct method returns the field or its modeled derived Rust clone. Initialization/lifetime/alias stability and generic specialization equality are not proven."
+query = '''
+query stored_product {
+ require $builder HAS_FIELD $stored;
+ require $stored TYPE $product;
+ different $builder $product;
+ require $builder HAS_METHOD $initialize;
+ require $creation ALLOCATES_TYPE $product;
+ any {
+  require $stored ASSIGNED_FROM $creation;
+  require $initialize HAS_CALL $creation;
+ } or {
+  require $container ALLOCATES_TYPE $builder;
+  require $initialize HAS_CALL $container;
+  require $container HAS_INITIALIZER $initializer;
+  require $initializer INITIALIZES_FIELD $stored;
+  require $initializer STORES_VALUE $creation;
+ }
+ require $builder HAS_METHOD $step;
+ callable(constructor: false, static: false) as $step;
+ require $step HAS_PARAMETER $input;
+ parameter(receiver: false) as $input;
+ require $step HAS_OPERATION $write;
+ require $write FINAL_MEMBER_INPUT $input;
+ require $write ASSIGNMENT_TARGET $member;
+ path $member MEMBER_OF{1,8} $stored as $member_path;
+ require $builder HAS_METHOD $finish;
+ callable(constructor: false, static: false) as $finish;
+ different $step $finish;
+ any {
+  require $finish RETURNS_VALUE $result;
+  require $result LOADED_FROM $stored;
+ } or {
+  match "prototype.derived_copy"(unit:$product,receiver:$stored,copy:$copy);
+  require $finish RETURNS_CALL $copy;
+ }
+ emit $builder, $finish, $product;
+}
+'''
+
+[[operations]]
+id = "directed_state"
+status = "ready"
+description = "A director and a mutable-product builder agree on builder, finalizer and product roles."
+caveat = "Correlates definition-level roles; does not prove receiver stability across rebindings, lifecycle or immutable successors."
+query = '''
+query directed_state {
+ match "builder#director"(builder:$builder,finish:$finish,product:$product);
+ match "builder#mutable-product"(builder:$builder,finish:$finish,product:$product);
+ emit $builder,$finish,$product;
+}
+'''

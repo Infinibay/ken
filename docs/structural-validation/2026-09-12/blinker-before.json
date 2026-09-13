@@ -1,0 +1,2051 @@
+{
+  "repo": "blinker",
+  "commit": "c3364059663df1ddce32799d6b1922af89a345f6",
+  "files": [
+    "src/blinker/__init__.py",
+    "src/blinker/_utilities.py",
+    "src/blinker/base.py"
+  ],
+  "language": "python",
+  "diagnostics": [],
+  "analysis_ms": 175.64,
+  "entities": 331,
+  "facts": 6603,
+  "rules": {
+    "abstract-factory": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 3,
+          "states": 4,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.042
+        }
+      },
+      "matches": []
+    },
+    "adapter": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 2,
+          "states": 3,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.018
+        }
+      },
+      "matches": []
+    },
+    "bridge": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 10,
+          "states": 11,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.033
+        }
+      },
+      "matches": []
+    },
+    "builder": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 226,
+          "states": 228,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.553
+        }
+      },
+      "matches": [
+        {
+          "id": "builder",
+          "bindings": {
+            "$build": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:receiver_connected@974",
+            "$product": "src/blinker/base.py::module/CLASS:Signal",
+            "$unit": "src/blinker/base.py::module/CLASS:Signal",
+            "$director": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:connected_to@6392"
+          },
+          "status": "structural_match",
+          "variant": "director",
+          "path": "src/blinker/base.py",
+          "line": 24,
+          "unknown": [],
+          "evidence": [
+            "src/blinker/base.py:107",
+            "src/blinker/base.py:108",
+            "src/blinker/base.py:111",
+            "src/blinker/base.py:115",
+            "src/blinker/base.py:123",
+            "src/blinker/base.py:184",
+            "src/blinker/base.py:189",
+            "src/blinker/base.py:24",
+            "src/blinker/base.py:364",
+            "src/blinker/base.py:375",
+            "src/blinker/base.py:377",
+            "src/blinker/base.py:379",
+            "src/blinker/base.py:42",
+            "src/blinker/base.py:50",
+            "src/blinker/base.py:91"
+          ],
+          "roles": {
+            "$build": {
+              "name": "receiver_connected",
+              "path": "src/blinker/base.py",
+              "line": 42,
+              "kind": "CALLABLE"
+            },
+            "$product": {
+              "name": "Signal",
+              "path": "src/blinker/base.py",
+              "line": 24,
+              "kind": "CLASS"
+            },
+            "$unit": {
+              "name": "Signal",
+              "path": "src/blinker/base.py",
+              "line": 24,
+              "kind": "CLASS"
+            },
+            "$director": {
+              "name": "connected_to",
+              "path": "src/blinker/base.py",
+              "line": 168,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "builder",
+          "bindings": {
+            "$build": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:receiver_disconnected@1360",
+            "$product": "src/blinker/base.py::module/CLASS:Signal",
+            "$unit": "src/blinker/base.py::module/CLASS:Signal",
+            "$director": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:connected_to@6392"
+          },
+          "status": "structural_match",
+          "variant": "director",
+          "path": "src/blinker/base.py",
+          "line": 24,
+          "unknown": [],
+          "evidence": [
+            "src/blinker/base.py:107",
+            "src/blinker/base.py:108",
+            "src/blinker/base.py:111",
+            "src/blinker/base.py:115",
+            "src/blinker/base.py:123",
+            "src/blinker/base.py:184",
+            "src/blinker/base.py:189",
+            "src/blinker/base.py:24",
+            "src/blinker/base.py:364",
+            "src/blinker/base.py:375",
+            "src/blinker/base.py:377",
+            "src/blinker/base.py:379",
+            "src/blinker/base.py:53",
+            "src/blinker/base.py:71",
+            "src/blinker/base.py:91"
+          ],
+          "roles": {
+            "$build": {
+              "name": "receiver_disconnected",
+              "path": "src/blinker/base.py",
+              "line": 53,
+              "kind": "CALLABLE"
+            },
+            "$product": {
+              "name": "Signal",
+              "path": "src/blinker/base.py",
+              "line": 24,
+              "kind": "CLASS"
+            },
+            "$unit": {
+              "name": "Signal",
+              "path": "src/blinker/base.py",
+              "line": 24,
+              "kind": "CLASS"
+            },
+            "$director": {
+              "name": "connected_to",
+              "path": "src/blinker/base.py",
+              "line": 168,
+              "kind": "CALLABLE"
+            }
+          }
+        }
+      ]
+    },
+    "chain-of-responsibility": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 2,
+          "states": 3,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.018
+        }
+      },
+      "matches": []
+    },
+    "command": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 47,
+          "states": 40,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.138
+        }
+      },
+      "matches": [
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "src/blinker/base.py::module/CLASS:Signal",
+            "$receiver": "src/blinker/base.py::module/CLASS:Signal/STORAGE:_by_receiver",
+            "$execute": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:_clear_state@17256"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "src/blinker/base.py",
+          "line": 24,
+          "unknown": [],
+          "evidence": [
+            "src/blinker/base.py:456",
+            "src/blinker/base.py:461",
+            "src/blinker/base.py:87"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "Signal",
+              "path": "src/blinker/base.py",
+              "line": 24,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "_by_receiver",
+              "path": "src/blinker/base.py",
+              "line": 87,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "_clear_state",
+              "path": "src/blinker/base.py",
+              "line": 456,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "src/blinker/base.py::module/CLASS:Signal",
+            "$receiver": "src/blinker/base.py::module/CLASS:Signal/STORAGE:_by_sender",
+            "$execute": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:_clear_state@17256"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "src/blinker/base.py",
+          "line": 24,
+          "unknown": [],
+          "evidence": [
+            "src/blinker/base.py:456",
+            "src/blinker/base.py:460",
+            "src/blinker/base.py:88"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "Signal",
+              "path": "src/blinker/base.py",
+              "line": 24,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "_by_sender",
+              "path": "src/blinker/base.py",
+              "line": 88,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "_clear_state",
+              "path": "src/blinker/base.py",
+              "line": 456,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "src/blinker/base.py::module/CLASS:Signal",
+            "$receiver": "src/blinker/base.py::module/CLASS:Signal/STORAGE:_weak_senders",
+            "$execute": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:_clear_state@17256"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "src/blinker/base.py",
+          "line": 24,
+          "unknown": [],
+          "evidence": [
+            "src/blinker/base.py:456",
+            "src/blinker/base.py:458",
+            "src/blinker/base.py:89"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "Signal",
+              "path": "src/blinker/base.py",
+              "line": 24,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "_weak_senders",
+              "path": "src/blinker/base.py",
+              "line": 89,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "_clear_state",
+              "path": "src/blinker/base.py",
+              "line": 456,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "command",
+          "bindings": {
+            "$unit": "src/blinker/base.py::module/CLASS:Signal",
+            "$receiver": "src/blinker/base.py::module/CLASS:Signal/STORAGE:receivers",
+            "$execute": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:_clear_state@17256"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "src/blinker/base.py",
+          "line": 24,
+          "unknown": [],
+          "evidence": [
+            "src/blinker/base.py:456",
+            "src/blinker/base.py:459",
+            "src/blinker/base.py:77"
+          ],
+          "roles": {
+            "$unit": {
+              "name": "Signal",
+              "path": "src/blinker/base.py",
+              "line": 24,
+              "kind": "CLASS"
+            },
+            "$receiver": {
+              "name": "receivers",
+              "path": "src/blinker/base.py",
+              "line": 77,
+              "kind": "STORAGE"
+            },
+            "$execute": {
+              "name": "_clear_state",
+              "path": "src/blinker/base.py",
+              "line": 456,
+              "kind": "CALLABLE"
+            }
+          }
+        }
+      ]
+    },
+    "composite": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.009
+        }
+      },
+      "matches": []
+    },
+    "decorator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 2,
+          "states": 3,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.015
+        }
+      },
+      "matches": []
+    },
+    "facade": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 105,
+          "states": 70,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.18
+        }
+      },
+      "matches": []
+    },
+    "factory-method": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 1,
+          "states": 2,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.011
+        }
+      },
+      "matches": []
+    },
+    "flyweight": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 2,
+          "states": 3,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.025
+        }
+      },
+      "matches": []
+    },
+    "interpreter": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 2,
+          "states": 3,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.02
+        }
+      },
+      "matches": []
+    },
+    "iterator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 72,
+          "states": 25,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.163
+        }
+      },
+      "matches": [
+        {
+          "id": "iterator",
+          "bindings": {
+            "$iter": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:connected_to@6392",
+            "$unit": "src/blinker/base.py::module/CLASS:Signal"
+          },
+          "status": "structural_match",
+          "variant": "generator",
+          "path": "src/blinker/base.py",
+          "line": 24,
+          "unknown": [],
+          "evidence": [
+            "src/blinker/base.py:168",
+            "src/blinker/base.py:187",
+            "src/blinker/base.py:24"
+          ],
+          "roles": {
+            "$iter": {
+              "name": "connected_to",
+              "path": "src/blinker/base.py",
+              "line": 168,
+              "kind": "CALLABLE"
+            },
+            "$unit": {
+              "name": "Signal",
+              "path": "src/blinker/base.py",
+              "line": 24,
+              "kind": "CLASS"
+            }
+          }
+        },
+        {
+          "id": "iterator",
+          "bindings": {
+            "$iter": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:muted@7356",
+            "$unit": "src/blinker/base.py::module/CLASS:Signal"
+          },
+          "status": "structural_match",
+          "variant": "generator",
+          "path": "src/blinker/base.py",
+          "line": 24,
+          "unknown": [],
+          "evidence": [
+            "src/blinker/base.py:192",
+            "src/blinker/base.py:200",
+            "src/blinker/base.py:24"
+          ],
+          "roles": {
+            "$iter": {
+              "name": "muted",
+              "path": "src/blinker/base.py",
+              "line": 192,
+              "kind": "CALLABLE"
+            },
+            "$unit": {
+              "name": "Signal",
+              "path": "src/blinker/base.py",
+              "line": 24,
+              "kind": "CLASS"
+            }
+          }
+        },
+        {
+          "id": "iterator",
+          "bindings": {
+            "$iter": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:receivers_for@12256",
+            "$unit": "src/blinker/base.py::module/CLASS:Signal"
+          },
+          "status": "structural_match",
+          "variant": "generator",
+          "path": "src/blinker/base.py",
+          "line": 24,
+          "unknown": [],
+          "evidence": [
+            "src/blinker/base.py:24",
+            "src/blinker/base.py:326",
+            "src/blinker/base.py:360"
+          ],
+          "roles": {
+            "$iter": {
+              "name": "receivers_for",
+              "path": "src/blinker/base.py",
+              "line": 326,
+              "kind": "CALLABLE"
+            },
+            "$unit": {
+              "name": "Signal",
+              "path": "src/blinker/base.py",
+              "line": 24,
+              "kind": "CLASS"
+            }
+          }
+        }
+      ]
+    },
+    "mediator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 41,
+          "states": 42,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.1
+        }
+      },
+      "matches": []
+    },
+    "memento": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 6,
+          "states": 7,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.042
+        }
+      },
+      "matches": []
+    },
+    "observer": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 1,
+          "states": 2,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.011
+        }
+      },
+      "matches": []
+    },
+    "prototype": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 6,
+          "states": 7,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.027
+        }
+      },
+      "matches": []
+    },
+    "proxy": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 2,
+          "states": 3,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.015
+        }
+      },
+      "matches": []
+    },
+    "singleton": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 0,
+          "states": 1,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.009
+        }
+      },
+      "matches": []
+    },
+    "state": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 3,
+          "states": 4,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.031
+        }
+      },
+      "matches": []
+    },
+    "strategy": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 9,
+          "states": 10,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.038
+        }
+      },
+      "matches": []
+    },
+    "template-method": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 1,
+          "states": 2,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.011
+        }
+      },
+      "matches": []
+    },
+    "visitor": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "rows_examined": 3,
+          "states": 4,
+          "path_edges": 0,
+          "relations": {
+            "HAS_IMPORT": 47,
+            "IMPORT_SYNTAX": 22,
+            "IS": 328,
+            "DECLARES": 94,
+            "ASSIGNED_FROM": 43,
+            "FLOWS_TO": 100,
+            "WRITES": 43,
+            "HAS_METHOD": 25,
+            "IN_TYPE": 25,
+            "OWNED_BY": 32,
+            "HAS_PARAMETER": 61,
+            "HAS_TYPE_PARAMETER": 14,
+            "HAS_CALL": 79,
+            "CALLEE_NAME": 79,
+            "RECEIVER": 42,
+            "DELEGATES_TO": 42,
+            "ARGUMENT": 95,
+            "HAS_FIELD": 14,
+            "LOOKS_UP": 52,
+            "READS": 479,
+            "RETURNS": 27,
+            "RETURNS_LOOKUP": 2,
+            "PASSES_SELF_TO": 3,
+            "WRITES_ELEMENT": 5,
+            "CONDITIONAL_DELEGATION": 18,
+            "TYPE_NAME": 47,
+            "DECORATED_BY": 4,
+            "HAS_YIELD": 4,
+            "HAS_AWAIT": 2,
+            "ITERATES_CALLS": 1,
+            "BASE_NAME": 3,
+            "HAS_HAZARD": 2,
+            "SUBTYPE_OF": 1,
+            "TYPE": 9,
+            "OVERRIDES": 1,
+            "ALLOCATES_TYPE": 5,
+            "CREATES": 5,
+            "MAY_TYPE": 2,
+            "TARGET": 19,
+            "CALLS": 19,
+            "DELEGATES_TYPE": 11,
+            "RETURNS_STORAGE": 4,
+            "RETURNS_CALL": 5,
+            "RETURNS_NEW": 2,
+            "RETURNS_NEW_SELF": 2,
+            "BINDS_TO": 29,
+            "ENTITY": 331,
+            "OPERATION": 2162,
+            "HAS_OPERATION": 2162
+          },
+          "elapsed_ms": 0.025
+        }
+      },
+      "matches": []
+    },
+    "gof.iterator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 13734,
+          "rows_examined": 13678,
+          "elapsed_ms": 11.062,
+          "dependencies": [
+            "gof.iterator",
+            "iterator#delegated-generator",
+            "iterator#explicit-cursor",
+            "iterator#generator"
+          ]
+        }
+      },
+      "matches": [
+        {
+          "id": "gof.iterator",
+          "bindings": {
+            "$iterator": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:connected_to@6392"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "src/blinker/base.py",
+          "line": 168,
+          "unknown": [],
+          "evidence": [
+            {
+              "query": "gof.iterator",
+              "proof": "",
+              "evidence": [
+                {
+                  "query": "iterator#generator",
+                  "proof": "",
+                  "evidence": [
+                    {
+                      "subject": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:connected_to@6392",
+                      "relation": "ENTITY",
+                      "object": "CALLABLE",
+                      "source": [
+                        "src/blinker/base.py:168"
+                      ]
+                    },
+                    {
+                      "subject": "src/blinker/base.py::op:7265:7275:yield",
+                      "relation": "OPERATION",
+                      "object": "YIELD",
+                      "source": [
+                        "src/blinker/base.py:187"
+                      ]
+                    },
+                    {
+                      "subject": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:connected_to@6392",
+                      "relation": "HAS_OPERATION",
+                      "object": "src/blinker/base.py::op:7265:7275:yield",
+                      "source": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "roles": {
+            "$iterator": {
+              "name": "connected_to",
+              "path": "src/blinker/base.py",
+              "line": 168,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "gof.iterator",
+          "bindings": {
+            "$iterator": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:muted@7356"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "src/blinker/base.py",
+          "line": 192,
+          "unknown": [],
+          "evidence": [
+            {
+              "query": "gof.iterator",
+              "proof": "",
+              "evidence": [
+                {
+                  "query": "iterator#generator",
+                  "proof": "",
+                  "evidence": [
+                    {
+                      "subject": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:muted@7356",
+                      "relation": "ENTITY",
+                      "object": "CALLABLE",
+                      "source": [
+                        "src/blinker/base.py:192"
+                      ]
+                    },
+                    {
+                      "subject": "src/blinker/base.py::op:7657:7667:yield",
+                      "relation": "OPERATION",
+                      "object": "YIELD",
+                      "source": [
+                        "src/blinker/base.py:200"
+                      ]
+                    },
+                    {
+                      "subject": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:muted@7356",
+                      "relation": "HAS_OPERATION",
+                      "object": "src/blinker/base.py::op:7657:7667:yield",
+                      "source": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "roles": {
+            "$iterator": {
+              "name": "muted",
+              "path": "src/blinker/base.py",
+              "line": 192,
+              "kind": "CALLABLE"
+            }
+          }
+        },
+        {
+          "id": "gof.iterator",
+          "bindings": {
+            "$iterator": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:receivers_for@12256"
+          },
+          "status": "structural_match",
+          "variant": "default",
+          "path": "src/blinker/base.py",
+          "line": 326,
+          "unknown": [],
+          "evidence": [
+            {
+              "query": "gof.iterator",
+              "proof": "",
+              "evidence": [
+                {
+                  "query": "iterator#generator",
+                  "proof": "",
+                  "evidence": [
+                    {
+                      "subject": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:receivers_for@12256",
+                      "relation": "ENTITY",
+                      "object": "CALLABLE",
+                      "source": [
+                        "src/blinker/base.py:326"
+                      ]
+                    },
+                    {
+                      "subject": "src/blinker/base.py::op:13382:13394:yield",
+                      "relation": "OPERATION",
+                      "object": "YIELD",
+                      "source": [
+                        "src/blinker/base.py:360"
+                      ]
+                    },
+                    {
+                      "subject": "src/blinker/base.py::module/CLASS:Signal/CALLABLE:receivers_for@12256",
+                      "relation": "HAS_OPERATION",
+                      "object": "src/blinker/base.py::op:13382:13394:yield",
+                      "source": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "roles": {
+            "$iterator": {
+              "name": "receivers_for",
+              "path": "src/blinker/base.py",
+              "line": 326,
+              "kind": "CALLABLE"
+            }
+          }
+        }
+      ]
+    },
+    "gof.builder": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 8728,
+          "rows_examined": 5234,
+          "elapsed_ms": 7.479,
+          "dependencies": [
+            "builder#director",
+            "builder#mutable-product",
+            "gof.builder"
+          ]
+        }
+      },
+      "matches": []
+    }
+  }
+}

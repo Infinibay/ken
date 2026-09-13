@@ -1,0 +1,47 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.strategy"
+name = "Strategy"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/strategy.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.consumer]
+kinds = ["callable"]
+required = true
+
+[exports.strategy]
+kinds = ["parameter", "storage", "type"]
+required = true
+
+[[variants]]
+id = "strategy-object"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["contract_resolution", "injected_value_flow"]
+graph_requirements = ["Consumidor invoca algoritmo recibido; intercambiabilidad por contrato y uso, no solo cantidad de clases."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "strategy-callable"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["callable_value_flow", "callback_models"]
+graph_requirements = ["Algoritmo funcional suministrado controla variación de operación del consumidor."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "static-policy"
+status = "design"
+languages = ["cpp", "rust"]
+requires = ["generic_substitution", "static_dispatch"]
+graph_requirements = ["Política por tipo determina algoritmo; preservar instanciación y no exigir objeto runtime."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

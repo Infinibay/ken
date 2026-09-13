@@ -1,0 +1,390 @@
+[
+  {
+    "path": "src/ken/_paths.py",
+    "language": "python",
+    "score": 0.686,
+    "symbols": [
+      {
+        "kind": "function",
+        "name": "ken_dir",
+        "line": 27
+      },
+      {
+        "kind": "function",
+        "name": "meta_path",
+        "line": 31
+      },
+      {
+        "kind": "function",
+        "name": "db_path",
+        "line": 35
+      },
+      {
+        "kind": "function",
+        "name": "pid_path",
+        "line": 39
+      },
+      {
+        "kind": "function",
+        "name": "port_path",
+        "line": 43
+      },
+      {
+        "kind": "function",
+        "name": "log_path",
+        "line": 47
+      },
+      {
+        "kind": "function",
+        "name": "resolve_project_path",
+        "line": 51
+      },
+      {
+        "kind": "function",
+        "name": "find_project_root",
+        "line": 69
+      }
+    ]
+  },
+  {
+    "path": "tests/test_paths.py",
+    "language": "python",
+    "score": 0.677,
+    "symbols": [
+      {
+        "kind": "function",
+        "name": "test_find_project_root_walks_up",
+        "line": 13
+      },
+      {
+        "kind": "function",
+        "name": "test_find_project_root_returns_none_when_missing",
+        "line": 24
+      },
+      {
+        "kind": "function",
+        "name": "test_find_project_root_respects_env_var",
+        "line": 41
+      },
+      {
+        "kind": "function",
+        "name": "test_env_var_with_invalid_path_returns_none",
+        "line": 54
+      },
+      {
+        "kind": "function",
+        "name": "test_path_helpers_compose",
+        "line": 62
+      },
+      {
+        "kind": "function",
+        "name": "test_resolve_project_path_accepts_internal_path",
+        "line": 73
+      },
+      {
+        "kind": "function",
+        "name": "test_resolve_project_path_rejects_parent_traversal",
+        "line": 84
+      },
+      {
+        "kind": "function",
+        "name": "test_resolve_project_path_rejects_absolute_external_path",
+        "line": 92
+      }
+    ]
+  },
+  {
+    "path": "src/ken/install.py",
+    "language": "python",
+    "score": 0.361,
+    "symbols": [
+      {
+        "kind": "class",
+        "name": "InstallResult",
+        "line": 83
+      },
+      {
+        "kind": "function",
+        "name": "install",
+        "line": 92
+      },
+      {
+        "kind": "function",
+        "name": "_detect_agent_wiring",
+        "line": 288
+      },
+      {
+        "kind": "function",
+        "name": "_project_uses_claude",
+        "line": 312
+      },
+      {
+        "kind": "function",
+        "name": "_project_uses_codex",
+        "line": 316
+      },
+      {
+        "kind": "function",
+        "name": "_project_uses_opencode",
+        "line": 320
+      },
+      {
+        "kind": "function",
+        "name": "_migrate_vectors_if_needed",
+        "line": 335
+      },
+      {
+        "kind": "function",
+        "name": "_ensure_gitignore",
+        "line": 380
+      }
+    ]
+  },
+  {
+    "path": "src/ken/jsresolve.py",
+    "language": "python",
+    "score": 0.315,
+    "symbols": [
+      {
+        "kind": "function",
+        "name": "_strip_jsonc",
+        "line": 30
+      },
+      {
+        "kind": "function",
+        "name": "_norm_join",
+        "line": 68
+      },
+      {
+        "kind": "function",
+        "name": "_load_jsonc",
+        "line": 82
+      },
+      {
+        "kind": "class",
+        "name": "AliasResolver",
+        "line": 93
+      },
+      {
+        "kind": "method",
+        "name": "__init__",
+        "line": 96
+      },
+      {
+        "kind": "method",
+        "name": "resolve",
+        "line": 102
+      },
+      {
+        "kind": "method",
+        "name": "is_internal_shape",
+        "line": 122
+      },
+      {
+        "kind": "method",
+        "name": "_match_alias",
+        "line": 142
+      }
+    ]
+  },
+  {
+    "path": "AGENTS.md",
+    "language": "text",
+    "score": 0.266,
+    "symbols": []
+  },
+  {
+    "path": "README.md",
+    "language": "text",
+    "score": 0.261,
+    "symbols": []
+  },
+  {
+    "path": "src/ken/search.py",
+    "language": "python",
+    "score": 0.259,
+    "symbols": [
+      {
+        "kind": "function",
+        "name": "search_files",
+        "line": 16
+      },
+      {
+        "kind": "function",
+        "name": "search_symbols",
+        "line": 80
+      },
+      {
+        "kind": "function",
+        "name": "file_symbols",
+        "line": 133
+      },
+      {
+        "kind": "function",
+        "name": "file_outline",
+        "line": 178
+      },
+      {
+        "kind": "function",
+        "name": "file_neighbors",
+        "line": 215
+      },
+      {
+        "kind": "function",
+        "name": "symbol_detail",
+        "line": 247
+      },
+      {
+        "kind": "function",
+        "name": "module_graph",
+        "line": 293
+      },
+      {
+        "kind": "function",
+        "name": "find_tests",
+        "line": 372
+      }
+    ]
+  },
+  {
+    "path": "tests/test_gitignore_filter.py",
+    "language": "python",
+    "score": 0.258,
+    "symbols": [
+      {
+        "kind": "function",
+        "name": "_touch",
+        "line": 10
+      },
+      {
+        "kind": "function",
+        "name": "test_iter_files_respects_root_gitignore",
+        "line": 15
+      },
+      {
+        "kind": "function",
+        "name": "test_iter_files_skips_always_ignore",
+        "line": 28
+      },
+      {
+        "kind": "function",
+        "name": "test_iter_files_works_without_gitignore",
+        "line": 43
+      },
+      {
+        "kind": "function",
+        "name": "test_iter_files_yields_only_files_not_directories",
+        "line": 51
+      },
+      {
+        "kind": "function",
+        "name": "test_iter_files_skips_pyc_via_glob_pattern",
+        "line": 60
+      },
+      {
+        "kind": "function",
+        "name": "test_iter_files_respects_nested_gitignore",
+        "line": 68
+      },
+      {
+        "kind": "function",
+        "name": "test_iter_files_nested_gitignore_scope_does_not_escape",
+        "line": 82
+      }
+    ]
+  },
+  {
+    "path": "tests/test_cli_bench.py",
+    "language": "python",
+    "score": 0.256,
+    "symbols": [
+      {
+        "kind": "class",
+        "name": "FakeEmbedder",
+        "line": 20
+      },
+      {
+        "kind": "method",
+        "name": "embed_query",
+        "line": 21
+      },
+      {
+        "kind": "function",
+        "name": "_project",
+        "line": 27
+      },
+      {
+        "kind": "function",
+        "name": "test_bench_cli_reports_recall",
+        "line": 56
+      },
+      {
+        "kind": "function",
+        "name": "test_bench_measures_exposure_after_caps_and_budget",
+        "line": 83
+      },
+      {
+        "kind": "function",
+        "name": "test_bench_cli_preserves_empty_rankings_as_zero_metrics",
+        "line": 104
+      },
+      {
+        "kind": "function",
+        "name": "test_bench_cli_rejects_index_for_incompatible_project_root",
+        "line": 131
+      },
+      {
+        "kind": "function",
+        "name": "test_bench_cli_rejects_indexed_path_outside_project_root",
+        "line": 155
+      }
+    ]
+  },
+  {
+    "path": "tests/test_doc_intent_integration.py",
+    "language": "python",
+    "score": 0.248,
+    "symbols": [
+      {
+        "kind": "class",
+        "name": "SemanticDocEmbedder",
+        "line": 16
+      },
+      {
+        "kind": "method",
+        "name": "dim",
+        "line": 20
+      },
+      {
+        "kind": "method",
+        "name": "embed_passages",
+        "line": 23
+      },
+      {
+        "kind": "method",
+        "name": "embed_queries",
+        "line": 26
+      },
+      {
+        "kind": "method",
+        "name": "embed_query",
+        "line": 29
+      },
+      {
+        "kind": "function",
+        "name": "_basis",
+        "line": 38
+      },
+      {
+        "kind": "function",
+        "name": "_project",
+        "line": 44
+      },
+      {
+        "kind": "function",
+        "name": "test_rank_finds_file_by_module_docstring_without_path_or_symbol",
+        "line": 51
+      }
+    ]
+  }
+]

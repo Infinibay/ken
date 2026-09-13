@@ -1,0 +1,60 @@
+{
+  "cases": [
+    {
+      "language": "python",
+      "source": "class Product: pass\ndef build():\n x = Product()\n x = None\n return x\n",
+      "expected_certain_returns_new": [],
+      "diagnostics": [],
+      "observed_returns_new": [
+        {
+          "callable": "build",
+          "type": "Product",
+          "attrs": {}
+        }
+      ]
+    },
+    {
+      "language": "java",
+      "source": "class Product {} class Demo { Product build(){ Product x = new Product(); x = null; return x; } }",
+      "expected_certain_returns_new": [],
+      "diagnostics": [],
+      "observed_returns_new": [
+        {
+          "callable": "build",
+          "type": "Product",
+          "attrs": {}
+        }
+      ]
+    },
+    {
+      "language": "typescript",
+      "source": "class Product {} function build(){ let x: Product | null = new Product(); x = null; return x; }",
+      "expected_certain_returns_new": [],
+      "diagnostics": [],
+      "observed_returns_new": [
+        {
+          "callable": "build",
+          "type": "Product",
+          "attrs": {}
+        }
+      ]
+    }
+  ],
+  "engine_sha256": {
+    "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+    "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+    "catalog.py": "481bd96fa5f63b452fc00e8eb184915da3271941db433c9281fe35da16d94ed9",
+    "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+    "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+    "frontend.py": "fb43d47c6b2c589950689b7093c3922ddf884fe2e3d4aa6fb120a7b05dec092f",
+    "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+    "kenql.py": "37506ea0e2ed4120fee2e7234ff5a30e2c16322f5c789fa5ae6eede9097702f5",
+    "model.py": "7ccc13b1461cf048fe01f42a724693b533e735325d13aed5678af9598d3137ad",
+    "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+    "rules.py": "5407576435035d3b6ce91b304894da9c86c3f58211763289b1eb4d45fb178972",
+    "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+    "semantic.py": "598a9ee2484ab81228fc281a52f98af23021ad51a25828649123f24df0ae8894",
+    "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df",
+    "syntax_graph.py": "70f3fe7dfb3826d107a4b2924094fcd6402c22bfb574b57dca8ebc9b4bb1a535"
+  }
+}

@@ -1,0 +1,122 @@
+id = "architecture.cache-aside"
+name = "Cache-Aside"
+description = "Correlates lookup, miss-triggered loading, write-back and return through an explicit null test or a Java Optional supplier/consumer chain."
+collections = ["architecture", "modern"]
+tags = ["web", "cache", "persistence"]
+caveat = "API-shape candidate: get/Get and put/set/Set names do not resolve a cache contract or persistent store. Java Optional requires an unshadowed explicit import; other classpath resolution is not modeled. Null comparison may be overloaded. Null-miss uses explicit write counts, stable key/cache bindings, bounded CFG paths and possible return origins; Java Optional retains its earlier flow-insensitive assignment evidence. Neither proves hidden effects, alias stability, freshness, invalidation, TTL, single-flight or thread safety. Serialized, awaited, indexed and sentinel-based variants remain unsupported."
+query = '''
+query cache_aside {
+ any {
+  match "architecture.cache-aside#null-miss"(unit:$unit, cache:$cache, key:$key, lookup:$lookup, load:$load, write:$write);
+ } or {
+  match "architecture.cache-aside#java-optional"(unit:$unit, cache:$cache, key:$key, lookup:$lookup, load:$load, write:$write);
+ }
+emit $unit, $cache, $key, $lookup, $load, $write;
+}
+'''
+
+[[variants]]
+id = "java-optional"
+status = "ready"
+query = '''
+query java_optional {
+ require $unit RETURNS $finish;
+ require $finish OPTIONAL_FALLBACK NULL;
+ require $finish RECEIVER $choice;
+ require $choice OPTIONAL_OR $supplier;
+ require $choice RECEIVER $optional;
+ require $optional OPTIONAL_VALUE $lookup;
+ call(name: [get, Get]) as $lookup { has_argument(pos: 0) as $lookup_arg; }
+ require $lookup RECEIVER $cache;
+ require $lookup_arg VALUE $lookup_key;
+ require $lookup_key LOADED_FROM $key;
+ require $supplier OWNED_BY $unit;
+ require $supplier RETURNS $loaded_optional;
+ require $loaded_optional ASSIGNED_FROM $boxed;
+ require $boxed OPTIONAL_VALUE $load;
+ call() as $load { has_argument(pos: 0) as $load_arg; }
+ require $load_arg VALUE $load_key;
+ require $load_key LOADED_FROM $key;
+ require $supplier HAS_CALL $present;
+ require $present RECEIVER $loaded_optional;
+ require $present OPTIONAL_PRESENT $consumer;
+ require $consumer OWNED_BY $supplier;
+ require $consumer HAS_PARAMETER $account;
+ require $consumer HAS_CALL $write;
+ call(name: [set, put, Set]) as $write {
+  has_argument(pos: 0) as $write_arg;
+  has_argument(pos: 1) as $value_arg;
+ }
+ require $write RECEIVER $cache;
+ require $write_arg VALUE $write_key;
+ require $write_key LOADED_FROM $key;
+ require $value_arg VALUE $value;
+ require $value LOADED_FROM $account;
+ emit $unit, $cache, $key, $lookup, $load, $write;
+}
+'''
+
+[[variants]]
+id = "null-miss"
+status = "ready"
+query_claim = "Lookup and load are the only two explicit writes to the tested binding. A hit path returns the lookup origin; a miss path loads before write-back and returns the load origin. Possible origins at joins are admitted explicitly; this is not a must-on-all-paths or runtime API guarantee."
+query = '''
+query null_miss {
+ require $unit CFG_STATUS "structured";
+ require $unit RETURN_FLOW_STATUS "supported";
+ require $unit BINDING_WRITE_STATUS "supported";
+ call(name: [get, Get]) as $lookup { has_argument(pos:0, kind:positional) as $lookup_key; }
+ require $unit HAS_CALL $lookup;
+ require $lookup RECEIVER $cache;
+ require $lookup_key VALUE $key_read;
+ require $key_read LOADED_FROM $key;
+ require $unit UNREASSIGNED_BINDING $cache;
+ require $unit UNREASSIGNED_BINDING $key;
+ require $unit HAS_OPERATION $lookup_assignment;
+ require $lookup_assignment ASSIGNMENT_VALUE $lookup;
+ require $lookup_assignment ASSIGNMENT_TARGET $cached;
+ require $unit BINDING_WRITE_COUNT $cached [count:2];
+ require $unit HAS_OPERATION $branch;
+ require $branch NULL_TEST $cached [when:true];
+ require $branch BRANCH_TRUE $miss;
+ require $branch CFG_NEXT $miss_entry [kind:true];
+ require $branch CFG_NEXT $hit_entry [kind:false];
+ path $lookup_assignment SYNTAX_PARENT{0,3} $lookup_statement as $lookup_scope;
+ path $lookup_statement CFG_NEXT{1,16} $branch as $test_flow;
+ require $unit HAS_OPERATION $load_assignment;
+ require $load_assignment ASSIGNMENT_TARGET $cached;
+ require $load_assignment ASSIGNMENT_VALUE $load;
+ different $lookup_assignment $load_assignment;
+ call() as $load { has_argument(pos:0, kind:positional) as $load_key; }
+ require $load_key VALUE $load_key_read;
+ require $load_key_read LOADED_FROM $key;
+ require $load SYNTAX_NODE $load_syntax;
+ path $load_syntax SYNTAX_PARENT{1,6} $miss as $load_path;
+ path $load_assignment SYNTAX_PARENT{0,3} $load_statement as $load_scope;
+ path $miss_entry CFG_NEXT{0,16} $load_statement as $load_flow;
+ call(name: [put, set, Set]) as $write {
+  has_argument(pos:0, kind:positional) as $write_key;
+  has_argument(pos:1, kind:positional) as $write_value;
+ }
+ require $unit HAS_CALL $write;
+ require $write RECEIVER $cache;
+ require $write_key VALUE $write_key_read;
+ require $write_key_read LOADED_FROM $key;
+ require $write_value VALUE $write_value_read;
+ require $write_value_read LOADED_FROM $cached;
+ require $write SYNTAX_NODE $write_syntax;
+ path $write_syntax SYNTAX_PARENT{1,6} $miss as $write_path;
+ path $write_syntax SYNTAX_PARENT{0,3} $write_statement as $write_scope;
+ path $load_statement CFG_NEXT{1,16} $write_statement as $fill_flow;
+ path $hit_entry CFG_NEXT{0,16} $hit_return as $hit_flow;
+ require $unit HAS_OPERATION $hit_return;
+ any { require $hit_return RETURN_ORIGIN $lookup [modality:must]; }
+ or { require $hit_return RETURN_ORIGIN $lookup [modality:may]; }
+ path $write_statement CFG_NEXT{1,16} $miss_return as $return_flow;
+ require $unit HAS_OPERATION $miss_return;
+ any { require $miss_return RETURN_ORIGIN $load [modality:must]; }
+ or { require $miss_return RETURN_ORIGIN $load [modality:may]; }
+ different $lookup $load;
+ emit $unit,$cache,$key,$lookup,$load,$write;
+}
+'''

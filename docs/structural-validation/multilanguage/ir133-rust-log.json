@@ -1,0 +1,794 @@
+{
+  "repo": "rust-log",
+  "commit": "8034743dd9d7f7583bd9a670271483d176130911",
+  "scope": "src/",
+  "exclude_globs": [],
+  "excluded_components": [
+    ".venv",
+    "__pycache__",
+    "benchmarks",
+    "internal",
+    "node_modules",
+    "target",
+    "testdata",
+    "tests",
+    "tools",
+    "zaptest"
+  ],
+  "files": [
+    {
+      "path": "src/__private_api.rs",
+      "sha256": "04032f3a3c18103d8e361e21bb9e6933cb9f8231c88cec8b88424b563b5b27ac",
+      "language": "rust"
+    },
+    {
+      "path": "src/kv/error.rs",
+      "sha256": "6dae12424164c33b93915f5e70bd6d99d616c969c8bfb543806721dd9b423981",
+      "language": "rust"
+    },
+    {
+      "path": "src/kv/key.rs",
+      "sha256": "db3b3ba027a65849d995c96828e92dca7aabbd2fc0bda529eea61fe3bdaa7ce3",
+      "language": "rust"
+    },
+    {
+      "path": "src/kv/mod.rs",
+      "sha256": "a62c4dbfbcf28fc755c3662ea4a1e79268edc15311d5ca97b7f0325cc2dfb43f",
+      "language": "rust"
+    },
+    {
+      "path": "src/kv/source.rs",
+      "sha256": "0f7c3a89c8998fe3805ae35f3e87778bca30a444da9f67964e674028f7864625",
+      "language": "rust"
+    },
+    {
+      "path": "src/kv/value.rs",
+      "sha256": "aa2a1cfaa33ead7a29fbe3ed06aa3b061013de471e3abde3f1389cd7b78b9622",
+      "language": "rust"
+    },
+    {
+      "path": "src/lib.rs",
+      "sha256": "f6633a72e77e5039ef767189116986ba12a57e43304b40eebb466959e03b9a92",
+      "language": "rust"
+    },
+    {
+      "path": "src/macros.rs",
+      "sha256": "6917080cd9c4a2ca8128024f562a2bfdbbcd43616e41ef125289a30c6a9a4be2",
+      "language": "rust"
+    },
+    {
+      "path": "src/serde.rs",
+      "sha256": "ead8df70c3ca3fafeed062f7a42d9b6f87bc7826055d71d8c4b77a0a25b57634",
+      "language": "rust"
+    }
+  ],
+  "diagnostics": [],
+  "analysis_ms": 1560.27,
+  "entities": 2712,
+  "facts": 98858,
+  "rules": {
+    "abstract-factory": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 326,
+          "rows_examined": 188,
+          "elapsed_ms": 0.516,
+          "dependencies": [
+            "abstract-factory#nominal-families"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "adapter": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 18,
+          "rows_examined": 8,
+          "elapsed_ms": 0.124,
+          "dependencies": [
+            "adapter#object-adapter"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "bridge": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 4,
+          "elapsed_ms": 0.073,
+          "dependencies": [
+            "bridge#runtime-composition"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "builder": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 1166,
+          "rows_examined": 470,
+          "elapsed_ms": 2.282,
+          "dependencies": [
+            "builder#director",
+            "builder#mutable-product",
+            "builder#stored-product",
+            "prototype.derived_copy"
+          ]
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$builder": {
+              "name": "MetadataBuilder",
+              "path": "src/lib.rs",
+              "line": 1235,
+              "kind": "CLASS"
+            },
+            "$finish": {
+              "name": "build",
+              "path": "src/lib.rs",
+              "line": 1272,
+              "kind": "CALLABLE"
+            },
+            "$product": {
+              "name": "Metadata",
+              "path": "src/lib.rs",
+              "line": 1193,
+              "kind": "CLASS"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$builder": {
+              "name": "RecordBuilder",
+              "path": "src/lib.rs",
+              "line": 1038,
+              "kind": "CLASS"
+            },
+            "$finish": {
+              "name": "build",
+              "path": "src/lib.rs",
+              "line": 1143,
+              "kind": "CALLABLE"
+            },
+            "$product": {
+              "name": "Record",
+              "path": "src/lib.rs",
+              "line": 877,
+              "kind": "CLASS"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "chain-of-responsibility": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 4,
+          "elapsed_ms": 0.12,
+          "dependencies": [
+            "chain-of-responsibility#linked-handlers"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "command": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 274,
+          "rows_examined": 114,
+          "elapsed_ms": 0.834,
+          "dependencies": [
+            "architecture.batch-work-queue.drain",
+            "command#command-object",
+            "command#queued-object",
+            "command#retained-object",
+            "command#stored-closure"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "composite": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 5,
+          "rows_examined": 0,
+          "elapsed_ms": 0.109,
+          "dependencies": [
+            "composite#recursive-contract",
+            "composite#recursive-nominal"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "decorator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 4,
+          "elapsed_ms": 0.082,
+          "dependencies": [
+            "decorator#object-wrapper"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "facade": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 58,
+          "rows_examined": 28,
+          "elapsed_ms": 0.125,
+          "dependencies": [
+            "facade#object-surface"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "factory-method": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 28,
+          "rows_examined": 14,
+          "elapsed_ms": 0.101,
+          "dependencies": [
+            "factory-method#virtual-slot"
+          ]
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$creator": {
+              "name": "Key",
+              "path": "src/kv/key.rs",
+              "line": 38,
+              "kind": "CLASS"
+            },
+            "$factory": {
+              "name": "to_key",
+              "path": "src/kv/key.rs",
+              "line": 23,
+              "kind": "CALLABLE"
+            },
+            "$product": {
+              "name": "Key",
+              "path": "src/kv/key.rs",
+              "line": 38,
+              "kind": "CLASS"
+            },
+            "$unit": {
+              "name": "Key",
+              "path": "src/kv/key.rs",
+              "line": 38,
+              "kind": "CLASS"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$creator": {
+              "name": "Value",
+              "path": "src/kv/value.rs",
+              "line": 119,
+              "kind": "CLASS"
+            },
+            "$factory": {
+              "name": "to_value",
+              "path": "src/kv/value.rs",
+              "line": 26,
+              "kind": "CALLABLE"
+            },
+            "$product": {
+              "name": "Value",
+              "path": "src/kv/value.rs",
+              "line": 119,
+              "kind": "CLASS"
+            },
+            "$unit": {
+              "name": "Value",
+              "path": "src/kv/value.rs",
+              "line": 119,
+              "kind": "CLASS"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "flyweight": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.084,
+          "dependencies": [
+            "flyweight#explicit-interning"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "interpreter": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 4,
+          "elapsed_ms": 0.106,
+          "dependencies": [
+            "interpreter#expression-objects"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "iterator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 1146,
+          "rows_examined": 975,
+          "elapsed_ms": 1.712,
+          "dependencies": [
+            "iterator#delegated-cursor",
+            "iterator#delegated-generator",
+            "iterator#explicit-cursor",
+            "iterator#external-cursor",
+            "iterator#generator",
+            "iterator#paired-cursor"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "mediator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 80,
+          "rows_examined": 39,
+          "elapsed_ms": 0.173,
+          "dependencies": [
+            "mediator#direct-colleagues"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "memento": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 47,
+          "rows_examined": 21,
+          "elapsed_ms": 0.349,
+          "dependencies": [
+            "memento#accessor-snapshot",
+            "memento#snapshot-object"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "observer": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 7,
+          "rows_examined": 0,
+          "elapsed_ms": 0.23,
+          "dependencies": [
+            "observer#listener-registry",
+            "observer#map-key-registry",
+            "observer#snapshot-registry"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "prototype": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 197,
+          "rows_examined": 97,
+          "elapsed_ms": 0.435,
+          "dependencies": [
+            "prototype#derived-clone",
+            "prototype#explicit-copy",
+            "prototype#field-copy",
+            "prototype.derived_copy"
+          ]
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$unit": {
+              "name": "KeyValues",
+              "path": "src/lib.rs",
+              "line": 893,
+              "kind": "CLASS"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$unit": {
+              "name": "Metadata",
+              "path": "src/lib.rs",
+              "line": 1193,
+              "kind": "CLASS"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$unit": {
+              "name": "Record",
+              "path": "src/lib.rs",
+              "line": 877,
+              "kind": "CLASS"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "proxy": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 4,
+          "elapsed_ms": 0.092,
+          "dependencies": [
+            "proxy#guarded-access"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "singleton": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.074,
+          "dependencies": [
+            "singleton#lazy-guarded"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "state": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 13,
+          "rows_examined": 4,
+          "elapsed_ms": 0.313,
+          "dependencies": [
+            "state#context-transition",
+            "state#state-object"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "strategy": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 63,
+          "rows_examined": 29,
+          "elapsed_ms": 0.271,
+          "dependencies": [
+            "strategy#strategy-callable",
+            "strategy#strategy-object"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "template-method": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 14,
+          "rows_examined": 6,
+          "elapsed_ms": 0.063,
+          "dependencies": [
+            "template-method#virtual-skeleton"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "visitor": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 0.074,
+          "dependencies": [
+            "visitor#named-dispatch"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "gof.iterator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 1146,
+          "rows_examined": 975,
+          "elapsed_ms": 1.911,
+          "dependencies": [
+            "gof.iterator",
+            "iterator#delegated-cursor",
+            "iterator#delegated-generator",
+            "iterator#explicit-cursor",
+            "iterator#external-cursor",
+            "iterator#generator",
+            "iterator#paired-cursor"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "gof.builder": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 1167,
+          "rows_examined": 470,
+          "elapsed_ms": 2.137,
+          "dependencies": [
+            "builder#director",
+            "builder#mutable-product",
+            "builder#stored-product",
+            "gof.builder",
+            "prototype.derived_copy"
+          ]
+        }
+      },
+      "matches": [
+        {
+          "roles": {
+            "$builder": {
+              "name": "MetadataBuilder",
+              "path": "src/lib.rs",
+              "line": 1235,
+              "kind": "CLASS"
+            },
+            "$finish": {
+              "name": "build",
+              "path": "src/lib.rs",
+              "line": 1272,
+              "kind": "CALLABLE"
+            },
+            "$product": {
+              "name": "Metadata",
+              "path": "src/lib.rs",
+              "line": 1193,
+              "kind": "CLASS"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        },
+        {
+          "roles": {
+            "$builder": {
+              "name": "RecordBuilder",
+              "path": "src/lib.rs",
+              "line": 1038,
+              "kind": "CLASS"
+            },
+            "$finish": {
+              "name": "build",
+              "path": "src/lib.rs",
+              "line": 1143,
+              "kind": "CALLABLE"
+            },
+            "$product": {
+              "name": "Record",
+              "path": "src/lib.rs",
+              "line": 877,
+              "kind": "CLASS"
+            }
+          },
+          "variant": "default",
+          "status": "structural_match"
+        }
+      ]
+    },
+    "iterator#generator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 392,
+          "rows_examined": 390,
+          "elapsed_ms": 0.5,
+          "dependencies": [
+            "iterator#generator"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "iterator#delegated-generator": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 392,
+          "rows_examined": 390,
+          "elapsed_ms": 0.433,
+          "dependencies": [
+            "iterator#delegated-generator"
+          ]
+        }
+      },
+      "matches": []
+    },
+    "syntax.generators": {
+      "outcome": {
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 391,
+          "rows_examined": 390,
+          "elapsed_ms": 0.424,
+          "dependencies": []
+        }
+      },
+      "matches": []
+    }
+  },
+  "engine": {
+    "ir_version": "1.33.0",
+    "source_sha256": {
+      "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+      "binding_writes.py": "5e92f7ce059c31db07c324dfcf2faf83a39d0b58d2098852432dcdc496ae4e41",
+      "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+      "call_bindings.py": "e22e85204749f85185813ab2b6ae835f6a9566092c451fb674d41629e884bc7b",
+      "catalog.py": "39cb65a22c3c0c1b96ae41cd2343b8227d93ba1f62763bd95efdfe568683d638",
+      "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+      "collection_lifecycle.py": "a35f48339a074eb62b1e5e1b73024c4ea3d133628675b710a0cf048f5910d549",
+      "collection_snapshots.py": "8ba78a0010eafa7a85c4ab519944171570235a0c108ed52d5f830ed79684203b",
+      "control_flow.py": "d77c41e7e89a743720f28c04afa36a6d9251abae2df5ef3844df7c1b07d0a33b",
+      "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+      "field_transfers.py": "e0074a3ed77bf1ca2b9f072bb708b434b163f7186815914fbc82e3e6ccec5e16",
+      "frontend.py": "e0d87e0ce4c712dda47588e005e7ab705cc2b77f7b8652597ecdf232cda1a0a0",
+      "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+      "kenql.py": "4d9f314c79f43402e6e2ee73978e1fcd414042fde3e3efca06107af4364c9b8a",
+      "member_access.py": "9781486284abe3599396740599f7305f2069c555e024b2ff9b10fb1cd5e6fe50",
+      "member_transfers.py": "1a168fbc389e81628d74d9089fa4ce278bab7fcbe07cdf6d901c3af9cef6cbbb",
+      "model.py": "49b246786bf1531dc0d7640cae350363a670390e3ce715e25c2e446ec590c021",
+      "modern_patterns/adapted-continuation-wrapper.toml": "cfae68be5c98788c03b0c663a7fb5d94b03164b57e2c2b413228e4c14528c50d",
+      "modern_patterns/batch-work-queue.toml": "6e1b3a69aae411a736c749814959aac73df1e30c29c84ef7e6b2e02a1c058a31",
+      "modern_patterns/cache-aside.toml": "862de442a6383e43760f6f64562c8c2f2967d6994e021ee721c2f7cfd6d595ea",
+      "modern_patterns/continuation-wrapper.toml": "0092ade2a426815819334a1999ea4c2a65e54f452ceaf7a6de08dd77dd855ff2",
+      "modern_patterns/dependency-injection.toml": "c7c5295207795d24fe7f854fe284ca544819addf8f0022705cf648e213b2ce1c",
+      "modern_patterns/dispatch-table.toml": "a2197cedfd9f2f8bdb35c02ba8a398e1805f31b6bec42f8547aaefa4f86c3566",
+      "modern_patterns/exception-retry.toml": "eeab3c3ae90b1a7a3f1778db573d80113e4d6e0cc50fbd2ff6ec1cb1da6af77c",
+      "modern_patterns/read-through-cache.toml": "68d8df7db96d7a3270875b46bc837879f036a06a15b0e8c8f46877fc34eb6159",
+      "modern_patterns/unit-of-work.toml": "82920e8a2f861c7658a80c729ad0b375d466fb8d1a6122d5ab783a039e64b949",
+      "patterns/abstract-factory.toml": "f7dcc43c213062cc082f2f535b80310dbe9bfac02c03063cfb587c0ee72cd2b2",
+      "patterns/adapter.toml": "14f98bb572a7a115e2d534e45c8231cb2919afeb04dd9921858af412606ae65e",
+      "patterns/bridge.toml": "0eba499d3bb2d9d65247adaf1a225ca94a895a6f99d50bfea91157836b1c227a",
+      "patterns/builder.toml": "bb46c4713cd0b4c6b42a7a5cc4df16206d42b73be20948d9328c7fed1b6897d8",
+      "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+      "patterns/command.toml": "732b239180a25d1d01502f5b181b0c82d9267876f8cb5b376ceb2e20416db402",
+      "patterns/composite.toml": "fffb2da5916eb05e4da83de63e21549ad06481938087b9344f291c22f3516a02",
+      "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+      "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+      "patterns/factory-method.toml": "57222bf27ee3680d8dd297ea301d37f30817c0e05089eaaf2484f11751f50120",
+      "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+      "patterns/interpreter.toml": "22d75c5e51e14a666baa88f85750b9f3d848cb48f35fb1436790c03e0cd1251a",
+      "patterns/iterator.toml": "404233895ac5526625c039f7875db8ecb68aba57ba087c67723f871b797d04ef",
+      "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+      "patterns/memento.toml": "fa56773105fe4f84ae7f8557eb086757831600533b5c38777cc330a0f480caf3",
+      "patterns/observer.toml": "ca3ad665f19488efc51b57d103667395ae895f4f56b4fb0447e463d23d3599d5",
+      "patterns/prototype.toml": "2de68c873a910bd564889fce9644339d5169640803531d9bf54ae1d3bcb69923",
+      "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+      "patterns/singleton.toml": "01d83cc97ac6e68fbdcd179d9e97a2f02ee8e857735563c776aedd3023d4a390",
+      "patterns/state.toml": "24a6b2742a179205032c27e48d21082e65407eecd62dd3a827b317246a015a74",
+      "patterns/strategy.toml": "3bae309d05f0a1a360114082c6a30f65a68ed0eaa5615fa741a8bec2d586951c",
+      "patterns/template-method.toml": "2555374cac05e3b8ca1d7cc32e5d9fe8c20ad5cad970f87c31ac4d995f7dd178",
+      "patterns/visitor.toml": "42be1ea4e8740c824e5b5febcaafcbc9b6d86d49f4476155141f1498751e2bcf",
+      "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+      "return_flow.py": "67da3d1dcc7071dda86fbec744c81a2faeff7fd85bee746598d1157d16b0389b",
+      "rules.py": "a3fd498e5154c1f45a524de6fe470bc176bc8600b3a70332727640e956e0cfb3",
+      "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+      "semantic.py": "70706341f7ace5c2f2eae8f3854e61d55d543a45b54bfc1fd290c12516a48e80",
+      "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df",
+      "syntax_graph.py": "ad63fe8b926d73bf853f09ec209e3208a1341e8eb2c4fe7799e73cafa3a4d6b6",
+      "type_refs.py": "fda02d5ed262d43536c0ab11acafeedcc4eb118ed9f03c48c9a5f8d9ce0700a1"
+    }
+  },
+  "budget": {
+    "max_matches": 1000,
+    "max_rows": 500000,
+    "max_states": 100000,
+    "timeout_ms": 5000
+  },
+  "collections": [
+    "gof"
+  ],
+  "python_generator_oracle": {
+    "expected": [],
+    "detected": [],
+    "missing": [],
+    "unexpected": [],
+    "parse_errors": []
+  }
+}

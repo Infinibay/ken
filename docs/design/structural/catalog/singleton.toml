@@ -1,0 +1,47 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.singleton"
+name = "Singleton"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/singleton.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.instance]
+kinds = ["storage"]
+required = true
+
+[exports.accessor]
+kinds = ["callable", "module"]
+required = true
+
+[[variants]]
+id = "eager-shared"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["module_storage", "return_flow"]
+graph_requirements = ["Accessor/export expone almacenamiento compartido inicializado; declarar ámbito de módulo/loader/proceso."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "lazy-guarded"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["control_flow", "storage_identity"]
+graph_requirements = ["Guard controla escritura inicial y accessor devuelve el mismo slot; no afirmar sincronización."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "once-primitive"
+status = "design"
+languages = ["java", "csharp", "cpp", "go", "rust"]
+requires = ["api_identity", "once_models"]
+graph_requirements = ["Resolver primitiva once y flujo del valor retenido; conservar alcance e hipótesis del modelo."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

@@ -1,0 +1,88 @@
+id = "architecture.dispatch-table"
+name = "Dispatch Table"
+description = "Registers supplied callables by key and invokes an indexed entry of the same stored table."
+collections = ["architecture", "modern"]
+tags = ["dispatch", "registry", "web"]
+caveat = "Structural dispatch registry, not proof of HTTP routing or event delivery. Does not prove that a runtime key was registered, handler lifetime, authorization or thread safety. Indexed getter/setter overloads may change runtime behavior."
+query = '''
+query dispatch_table {
+ any { match "architecture.dispatch-table#direct"(unit:$unit, register:$register, dispatch:$dispatch, table:$table); }
+ or { match "architecture.dispatch-table#adapted"(unit:$unit, register:$register, dispatch:$dispatch, table:$table); }
+ emit $unit, $register, $dispatch, $table;
+}
+'''
+
+[[variants]]
+id = "direct"
+status = "ready"
+query = '''
+query dispatch_table {
+ require $unit HAS_FIELD $table;
+ require $unit HAS_METHOD $register;
+ require $register HAS_PARAMETER $key;
+ require $register HAS_PARAMETER $handler;
+ require $register HAS_OPERATION $write;
+ require $write WRITES_ELEMENT $table;
+ require $write INDEX $key;
+ require $write STORES_VALUE $handler;
+ require $unit HAS_METHOD $dispatch;
+ require $dispatch HAS_PARAMETER $requested;
+ require $dispatch HAS_CALL $call;
+ require $call CALLEE_VALUE $entry;
+ require $entry CONTAINER $table;
+ require $entry INDEX $requested;
+ parameter(receiver: false) as $key;
+ parameter(receiver: false) as $handler;
+ different $key $handler;
+ different $register $dispatch;
+ parameter(receiver: false) as $requested;
+ emit $unit, $register, $dispatch, $table;
+}
+'''
+
+[[variants]]
+id = "adapted"
+status = "ready"
+languages = ["python", "javascript", "typescript"]
+query_claim = "Inherited instance-slot registration and an input-derived lookup passed through a resolved adapter, whose result is invoked. Adapter return syntax relates its input to its output; runtime preservation, getter purity and effective dispatch overrides are not proven."
+query = '''
+query adapted_dispatch {
+ require $write WRITES_ELEMENT $registration_table;
+ require $registration_table INSTANCE_SLOT $table;
+ require $write INDEX $key;
+ require $write STORES_VALUE $handler;
+ require $register HAS_OPERATION $write;
+ require $register HAS_PARAMETER $key;
+ require $register HAS_PARAMETER $handler;
+ parameter(receiver: false) as $key;
+ parameter(receiver: false) as $handler;
+ different $key $handler;
+ require $unit EFFECTIVE_METHOD $register;
+ require $unit HAS_METHOD $dispatch;
+ different $register $dispatch;
+ require $dispatch HAS_CALL $invocation;
+ require $invocation INVOKES_RESULT_OF $adapter;
+ require $adapter ARGUMENT $argument;
+ require $argument VALUE $entry;
+ require $entry CONTAINER $dispatch_table;
+ require $dispatch_table INSTANCE_SLOT $table;
+ require $entry INDEX $lookup_key;
+ require $dispatch HAS_PARAMETER $requested;
+ parameter(receiver: false) as $requested;
+ any { where $lookup_key == $requested; }
+ or { require $lookup_key ACCESS_INPUT $requested; }
+ require $adapter TARGET $normalizer;
+ require $normalizer HAS_PARAMETER $input;
+ require $argument ENTITY "ARGUMENT" [position: 0];
+ parameter(pos: 0, receiver: false) as $input;
+ require $normalizer HAS_OPERATION $return;
+ any { require $return RETURN_ORIGIN $input; }
+ or {
+  require $return RETURN_ORIGIN $wrapped;
+  require $wrapped ARGUMENT $forwarded;
+  require $forwarded VALUE $loaded;
+  require $loaded LOADED_FROM $input;
+ }
+ emit $unit, $register, $dispatch, $table;
+}
+'''

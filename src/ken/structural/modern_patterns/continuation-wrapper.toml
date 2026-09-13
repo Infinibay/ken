@@ -1,0 +1,19 @@
+id = "architecture.continuation-wrapper"
+name = "Continuation Wrapper"
+description = "A factory returns a nested callable that invokes the continuation received by the factory."
+collections = ["architecture", "modern"]
+tags = ["composition", "closure", "web"]
+caveat = "A structural building block of middleware and functional decorators, not proof of registration with a web framework. Does not establish argument forwarding, order, exactly-once invocation or freedom from reassignment."
+query = '''
+query continuation_wrapper {
+ callable() as $factory;
+ require $factory HAS_PARAMETER $continuation;
+ parameter(receiver: false) as $continuation;
+ require $factory RETURNS $handler;
+ callable() as $handler;
+ require $handler OWNED_BY $factory;
+ require $handler HAS_CALL $call;
+ require $call CALLEE_VALUE $continuation;
+ emit $factory, $handler, $continuation;
+}
+'''

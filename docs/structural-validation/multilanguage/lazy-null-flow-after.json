@@ -1,0 +1,958 @@
+{
+  "ir_version": "1.44.0",
+  "source_generator": "tests/structural/test_lazy_null_flow.py:source",
+  "source_generator_sha256": "d505793cb3d45b4f916ca80fc6eecbb61d07fce097914d0b99c01a5d4df29243",
+  "counts": {
+    "TP": 45,
+    "TN": 65,
+    "FP": 0,
+    "FN": 0
+  },
+  "cases": [
+    {
+      "language": "python",
+      "case": "comments",
+      "source_sha256": "20772877d4134baaa851daf78b4bba5f3b650c92caca2e7bb0702f10f121f91d",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "python",
+      "case": "double-negative",
+      "source_sha256": "f2a3207d704ba49c966629b16f2fb44b7478ae8c35d83e136cfafdaa75f5ee1c",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "python",
+      "case": "duplicate-write",
+      "source_sha256": "15aa6ee82a4838fb9eeac5dedc824430ce951d5d31740c18edbd097d913c4cf8",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "python",
+      "case": "early-return",
+      "source_sha256": "33cec293556bb5d5d56fa47b1c89572df51468ae2c6b377f551ca4d127a85113",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "python",
+      "case": "else-separated",
+      "source_sha256": "42521f3379f94f115ac11e5b26c7fd2dfed62f12acce2191786b2df797798542",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "python",
+      "case": "force-or",
+      "source_sha256": "c9dd4bbdbced64fa8059fbad1b0415dc325832a10add51376a4811170156a928",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "python",
+      "case": "fresh-return",
+      "source_sha256": "b804bbef0f04d67878b330d11189ad5161100a58e001b3e115de5a7526cb4add",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "python",
+      "case": "historical-null",
+      "source_sha256": "2e1a0dffcd900b0cc1ee00dd25e9f5ded61ddaeb03e897c0629ab648e7d0fc3c",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "python",
+      "case": "hit-other-return",
+      "source_sha256": "04831e3448d0d128d5f17f7edea14eaaaeeaef2f2d993bcd8a6e059be0d18aea",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "python",
+      "case": "miss-other-return",
+      "source_sha256": "1ae5ec399d4abd852f7fa5ce4dc55dce7d10250862b2785a7fc89364533abcec",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "python",
+      "case": "negated-equality",
+      "source_sha256": "7b295eab0e8d521956c22cae16d04daa2211845dd2c63b0232caa6f4deb181a2",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "python",
+      "case": "negated-inequality",
+      "source_sha256": "89c6bf0cf9205c92924efb580fc0368d3cdf013ea41745c9981d9d7b86d75031",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "python",
+      "case": "negative-else",
+      "source_sha256": "1abf15ed15d3f29d3e301db5cc36308fc237dfd3ecb80e98464e710a484ae44f",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "python",
+      "case": "null-left",
+      "source_sha256": "5b1ea3a01417827072b0266041bf4f1a2b102c652edba0f1676cfb0c349a4466",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "python",
+      "case": "other-guard",
+      "source_sha256": "742374dcd6e42279f9e8c1c8b33578bc2f76031e1fd48a761392c08a38faba5f",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "python",
+      "case": "positive",
+      "source_sha256": "999eef00cb6ce82a4347f3b8b1adff6642709ef21cba32296f14668a3a10e93e",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "python",
+      "case": "renamed",
+      "source_sha256": "0cb6777d466962b9a05af6da01d8302e356f99d12abc3733de07233c663a6afe",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "python",
+      "case": "reset-after",
+      "source_sha256": "bba3b61c44090995530eb0574aa13ce46d9630300401babec7a12444cd7b962c",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "python",
+      "case": "reset-before",
+      "source_sha256": "969d78b4b8057ad9c8cae4d2efbc0a967c8d2e3e49cc45e2bbd91521cec8e8b2",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "python",
+      "case": "write-before",
+      "source_sha256": "ee3dfe18c2a9da2fdee3aca21259b8ba1b60e3f834609f282b90eb3cd258c76f",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "python",
+      "case": "write-outside",
+      "source_sha256": "199135412579b9dcec05f4d38fa89ad36f56f1a878de66752953b298a955acfe",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "python",
+      "case": "wrong-polarity",
+      "source_sha256": "e1b51a465a9a9dffc30dc04bac787ae366c71cd1d11bb9869f07c23376617f45",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "java",
+      "case": "comments",
+      "source_sha256": "636f0c1082c00efe3128c3e444b165d3ed0670ace77a5d56addb550c25b0140c",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "java",
+      "case": "double-negative",
+      "source_sha256": "f64ebe7a8d20d75571dbf7ee28b22122d043734b81424e31436cc0c713c32d0f",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "java",
+      "case": "duplicate-write",
+      "source_sha256": "81cd1b22b9ec46015c37ca9c6faa0c0f3215dfa77a956c6cef19cdb06c337c49",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "java",
+      "case": "early-return",
+      "source_sha256": "f4dcbeedb387ab27e62abca19736b26b2ebf1667de3bad36917d5e4b69dee3aa",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "java",
+      "case": "else-separated",
+      "source_sha256": "1fe8041b7646fa258846d83a1a3e9c477eb09654ef29c193604acbf538f3de97",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "java",
+      "case": "force-or",
+      "source_sha256": "a4a49f4fa2ddff97df590bd1f02ce8c5deb8045442d569db11e8cbbe18dac498",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "java",
+      "case": "fresh-return",
+      "source_sha256": "ea01117c2abcdad4558554f3a70d4297ab328f10e9237443dd1c9d9a7ab3630a",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "java",
+      "case": "historical-null",
+      "source_sha256": "fcdf2b7aa239b612b2bc985f6dcda2ebfec3e027dfcd67d89c6cc39b45b3f45c",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "java",
+      "case": "hit-other-return",
+      "source_sha256": "9af2168255d197e2948b8e36c0c6573e0889cc34c64981e6f78b9e9e3896b247",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "java",
+      "case": "miss-other-return",
+      "source_sha256": "80308efebc08409ad189a447937074e4c5d794d4393e36153d4cbce6f7fb2e13",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "java",
+      "case": "negated-equality",
+      "source_sha256": "7bf63e2bf6739dc373642653265f645f6d9e51edb67578f5dfd2c1104e16f0ce",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "java",
+      "case": "negated-inequality",
+      "source_sha256": "572d0aaeb2362f732267750625dac44a2d60205fb6ac88d0148b90ba61affb3e",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "java",
+      "case": "negative-else",
+      "source_sha256": "2d7f3e882e3ed77e21bddd3c0a26572086e7258cbcd3aac6fdcaeec19603d76f",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "java",
+      "case": "null-left",
+      "source_sha256": "94357bfc1688fde563a76ccb13f6f2d0d72ca5830a47cd5ae99197ded524c365",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "java",
+      "case": "other-guard",
+      "source_sha256": "0093391213e27c128233bcaba8b00d879bd8211780f6f58005abd78c56dbd114",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "java",
+      "case": "positive",
+      "source_sha256": "4e86602fae5d7e96362a099efa9fa86f187f75a56bfd8f974c998f2916bf1365",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "java",
+      "case": "renamed",
+      "source_sha256": "7b51d08016718ef8450eefd05e3373cc875df019990c76c221f7e837e8c0fbfe",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "java",
+      "case": "reset-after",
+      "source_sha256": "1b4d1925dcfa2fe7333bae08c5f7a28c879ad2a2ad2b94bf4a738ccd7e7c22dc",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "java",
+      "case": "reset-before",
+      "source_sha256": "f4490f856d08311fff0cd333d688775c897aded477abed9fbe87a2ba15a5e791",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "java",
+      "case": "write-before",
+      "source_sha256": "cdf0fad756bca9c41ad0b823935a179cc64d669cc5071adde3499c4743384d95",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "java",
+      "case": "write-outside",
+      "source_sha256": "6b41aa6188ef4b063166440ef584db444964c57db7949dcbb1d1168f00d0a314",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "java",
+      "case": "wrong-polarity",
+      "source_sha256": "0b4393361cb58fd8bbfad979097515f980bca9925fbf4867af5b4f8563611b60",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "javascript",
+      "case": "comments",
+      "source_sha256": "338306c7a35c31809eb6b0c7a4ed8c58f9d4e9721e681758624406f1415b90a9",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "javascript",
+      "case": "double-negative",
+      "source_sha256": "70ba14f931b5f0c7e52e41425d46e01cea5354eb6e4acda07fa0583e1682cc3b",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "javascript",
+      "case": "duplicate-write",
+      "source_sha256": "db4fc0c726e072b06644fb4674dafaba15a3cdfede6ebfdb8cf082278dba7e55",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "javascript",
+      "case": "early-return",
+      "source_sha256": "d7d8db27f8ef35a5581379ec4a867248f4ecdedf28f4e5674031c81aeb386b73",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "javascript",
+      "case": "else-separated",
+      "source_sha256": "7683f82be631dcf0aef8d4ffba2ee242d76f709aa2d634a59a5db8f5ff2189c1",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "javascript",
+      "case": "force-or",
+      "source_sha256": "f41e220c55be25d2041f47c4dc7415f66bbf9d8abcf3bec79d95815affe09da7",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "javascript",
+      "case": "fresh-return",
+      "source_sha256": "7510a4c07a09b6781f513e1ec9712fccf05895477adc0e3baad28e9c907c1523",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "javascript",
+      "case": "historical-null",
+      "source_sha256": "3930d3699562b7c422529c40ddc84a557eadbcdbb12908872391e68ea2a2ce4d",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "javascript",
+      "case": "hit-other-return",
+      "source_sha256": "e837f9ea220741bd03cef6192126ee20d2feabee08a9f42e1f367d0feb4feb13",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "javascript",
+      "case": "miss-other-return",
+      "source_sha256": "ab97a3019e0c4b26c66941610f9bc0fbecef224effba56713e08191952f676bf",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "javascript",
+      "case": "negated-equality",
+      "source_sha256": "990a59b02bd07e0d7a73e80e06c59c7acb642016043da14fbc706294c59d232a",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "javascript",
+      "case": "negated-inequality",
+      "source_sha256": "31cf3041bb6eb5783addbdf776ec74f248fb654e9d463e7cd5c1cbafcee2a6e3",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "javascript",
+      "case": "negative-else",
+      "source_sha256": "c5e5b809b8d810f73aef82eb23d239396bda0dbd74e58f87a2d31cae92c530a3",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "javascript",
+      "case": "null-left",
+      "source_sha256": "2338c7b0c842eaf1dc98d5755fd95059a79522f06c9dff96caef587356df8a4f",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "javascript",
+      "case": "other-guard",
+      "source_sha256": "cbf9be788280bd66903c03057634cd14095e4d0308913c8f6cbf1d13c2faee54",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "javascript",
+      "case": "positive",
+      "source_sha256": "4ea85b3fc537b85d924878da42b13dd174e622bb1ae2ca18611578a6e4a99d96",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "javascript",
+      "case": "renamed",
+      "source_sha256": "c0e4187b76d886887988f0a5a1b0f43711a64d5332a5ba582d1895a38f8e2ef3",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "javascript",
+      "case": "reset-after",
+      "source_sha256": "120f646b96ca254afac8ba4b6ebea28ffc2f9b7a91b1446f2929a04be2c5027d",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "javascript",
+      "case": "reset-before",
+      "source_sha256": "2802a2b72cb84db898e776814468b049c6482170ee13bec6823c4f5ff86d26a3",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "javascript",
+      "case": "write-before",
+      "source_sha256": "4d814d55f6758de9ce370159155b4c64a7ce02b86dc73e60fd1b830c7c9dd900",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "javascript",
+      "case": "write-outside",
+      "source_sha256": "6750d5ebbb30ca85adad0f5728e8be097dabe4504278af0ce73a8dfcd43f25ed",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "javascript",
+      "case": "wrong-polarity",
+      "source_sha256": "878aa6f0131aef4e328431404cfa4fd9b1afc43984c2eb26ccbf78ff5656deb8",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "typescript",
+      "case": "comments",
+      "source_sha256": "338306c7a35c31809eb6b0c7a4ed8c58f9d4e9721e681758624406f1415b90a9",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "typescript",
+      "case": "double-negative",
+      "source_sha256": "70ba14f931b5f0c7e52e41425d46e01cea5354eb6e4acda07fa0583e1682cc3b",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "typescript",
+      "case": "duplicate-write",
+      "source_sha256": "db4fc0c726e072b06644fb4674dafaba15a3cdfede6ebfdb8cf082278dba7e55",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "typescript",
+      "case": "early-return",
+      "source_sha256": "d7d8db27f8ef35a5581379ec4a867248f4ecdedf28f4e5674031c81aeb386b73",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "typescript",
+      "case": "else-separated",
+      "source_sha256": "7683f82be631dcf0aef8d4ffba2ee242d76f709aa2d634a59a5db8f5ff2189c1",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "typescript",
+      "case": "force-or",
+      "source_sha256": "f41e220c55be25d2041f47c4dc7415f66bbf9d8abcf3bec79d95815affe09da7",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "typescript",
+      "case": "fresh-return",
+      "source_sha256": "7510a4c07a09b6781f513e1ec9712fccf05895477adc0e3baad28e9c907c1523",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "typescript",
+      "case": "historical-null",
+      "source_sha256": "3930d3699562b7c422529c40ddc84a557eadbcdbb12908872391e68ea2a2ce4d",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "typescript",
+      "case": "hit-other-return",
+      "source_sha256": "e837f9ea220741bd03cef6192126ee20d2feabee08a9f42e1f367d0feb4feb13",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "typescript",
+      "case": "miss-other-return",
+      "source_sha256": "ab97a3019e0c4b26c66941610f9bc0fbecef224effba56713e08191952f676bf",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "typescript",
+      "case": "negated-equality",
+      "source_sha256": "990a59b02bd07e0d7a73e80e06c59c7acb642016043da14fbc706294c59d232a",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "typescript",
+      "case": "negated-inequality",
+      "source_sha256": "31cf3041bb6eb5783addbdf776ec74f248fb654e9d463e7cd5c1cbafcee2a6e3",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "typescript",
+      "case": "negative-else",
+      "source_sha256": "c5e5b809b8d810f73aef82eb23d239396bda0dbd74e58f87a2d31cae92c530a3",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "typescript",
+      "case": "null-left",
+      "source_sha256": "2338c7b0c842eaf1dc98d5755fd95059a79522f06c9dff96caef587356df8a4f",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "typescript",
+      "case": "other-guard",
+      "source_sha256": "cbf9be788280bd66903c03057634cd14095e4d0308913c8f6cbf1d13c2faee54",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "typescript",
+      "case": "positive",
+      "source_sha256": "4ea85b3fc537b85d924878da42b13dd174e622bb1ae2ca18611578a6e4a99d96",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "typescript",
+      "case": "renamed",
+      "source_sha256": "c0e4187b76d886887988f0a5a1b0f43711a64d5332a5ba582d1895a38f8e2ef3",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "typescript",
+      "case": "reset-after",
+      "source_sha256": "120f646b96ca254afac8ba4b6ebea28ffc2f9b7a91b1446f2929a04be2c5027d",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "typescript",
+      "case": "reset-before",
+      "source_sha256": "2802a2b72cb84db898e776814468b049c6482170ee13bec6823c4f5ff86d26a3",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "typescript",
+      "case": "write-before",
+      "source_sha256": "4d814d55f6758de9ce370159155b4c64a7ce02b86dc73e60fd1b830c7c9dd900",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "typescript",
+      "case": "write-outside",
+      "source_sha256": "6750d5ebbb30ca85adad0f5728e8be097dabe4504278af0ce73a8dfcd43f25ed",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "typescript",
+      "case": "wrong-polarity",
+      "source_sha256": "878aa6f0131aef4e328431404cfa4fd9b1afc43984c2eb26ccbf78ff5656deb8",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "csharp",
+      "case": "comments",
+      "source_sha256": "636f0c1082c00efe3128c3e444b165d3ed0670ace77a5d56addb550c25b0140c",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "csharp",
+      "case": "double-negative",
+      "source_sha256": "f64ebe7a8d20d75571dbf7ee28b22122d043734b81424e31436cc0c713c32d0f",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "csharp",
+      "case": "duplicate-write",
+      "source_sha256": "81cd1b22b9ec46015c37ca9c6faa0c0f3215dfa77a956c6cef19cdb06c337c49",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "csharp",
+      "case": "early-return",
+      "source_sha256": "f4dcbeedb387ab27e62abca19736b26b2ebf1667de3bad36917d5e4b69dee3aa",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "csharp",
+      "case": "else-separated",
+      "source_sha256": "1fe8041b7646fa258846d83a1a3e9c477eb09654ef29c193604acbf538f3de97",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "csharp",
+      "case": "force-or",
+      "source_sha256": "a4a49f4fa2ddff97df590bd1f02ce8c5deb8045442d569db11e8cbbe18dac498",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "csharp",
+      "case": "fresh-return",
+      "source_sha256": "ea01117c2abcdad4558554f3a70d4297ab328f10e9237443dd1c9d9a7ab3630a",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "csharp",
+      "case": "historical-null",
+      "source_sha256": "fcdf2b7aa239b612b2bc985f6dcda2ebfec3e027dfcd67d89c6cc39b45b3f45c",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "csharp",
+      "case": "hit-other-return",
+      "source_sha256": "9af2168255d197e2948b8e36c0c6573e0889cc34c64981e6f78b9e9e3896b247",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "csharp",
+      "case": "miss-other-return",
+      "source_sha256": "80308efebc08409ad189a447937074e4c5d794d4393e36153d4cbce6f7fb2e13",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "csharp",
+      "case": "negated-equality",
+      "source_sha256": "7bf63e2bf6739dc373642653265f645f6d9e51edb67578f5dfd2c1104e16f0ce",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "csharp",
+      "case": "negated-inequality",
+      "source_sha256": "572d0aaeb2362f732267750625dac44a2d60205fb6ac88d0148b90ba61affb3e",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "csharp",
+      "case": "negative-else",
+      "source_sha256": "2d7f3e882e3ed77e21bddd3c0a26572086e7258cbcd3aac6fdcaeec19603d76f",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "csharp",
+      "case": "null-left",
+      "source_sha256": "94357bfc1688fde563a76ccb13f6f2d0d72ca5830a47cd5ae99197ded524c365",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "csharp",
+      "case": "other-guard",
+      "source_sha256": "0093391213e27c128233bcaba8b00d879bd8211780f6f58005abd78c56dbd114",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "csharp",
+      "case": "positive",
+      "source_sha256": "4e86602fae5d7e96362a099efa9fa86f187f75a56bfd8f974c998f2916bf1365",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "csharp",
+      "case": "renamed",
+      "source_sha256": "7b51d08016718ef8450eefd05e3373cc875df019990c76c221f7e837e8c0fbfe",
+      "expected": true,
+      "detected": true,
+      "classification": "TP"
+    },
+    {
+      "language": "csharp",
+      "case": "reset-after",
+      "source_sha256": "1b4d1925dcfa2fe7333bae08c5f7a28c879ad2a2ad2b94bf4a738ccd7e7c22dc",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "csharp",
+      "case": "reset-before",
+      "source_sha256": "f4490f856d08311fff0cd333d688775c897aded477abed9fbe87a2ba15a5e791",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "csharp",
+      "case": "write-before",
+      "source_sha256": "cdf0fad756bca9c41ad0b823935a179cc64d669cc5071adde3499c4743384d95",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "csharp",
+      "case": "write-outside",
+      "source_sha256": "6b41aa6188ef4b063166440ef584db444964c57db7949dcbb1d1168f00d0a314",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    },
+    {
+      "language": "csharp",
+      "case": "wrong-polarity",
+      "source_sha256": "0b4393361cb58fd8bbfad979097515f980bca9925fbf4867af5b4f8563611b60",
+      "expected": false,
+      "detected": false,
+      "classification": "TN"
+    }
+  ],
+  "note": "Same-source direct null-miss initialization oracle in five languages; not global Singleton intent/uniqueness. More complex valid flows are separately tested coverage gaps.",
+  "engine_sha256": {
+    "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+    "binding_writes.py": "248c81c19c54b70240ab312a4f0401b272bdc0644197417ea5434827607fa7f3",
+    "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+    "call_bindings.py": "e22e85204749f85185813ab2b6ae835f6a9566092c451fb674d41629e884bc7b",
+    "catalog.py": "39cb65a22c3c0c1b96ae41cd2343b8227d93ba1f62763bd95efdfe568683d638",
+    "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+    "collection_lifecycle.py": "a35f48339a074eb62b1e5e1b73024c4ea3d133628675b710a0cf048f5910d549",
+    "collection_snapshots.py": "8ba78a0010eafa7a85c4ab519944171570235a0c108ed52d5f830ed79684203b",
+    "construction.py": "41787dcd62dae7719b048258f29999e73c8b6e36e75d7ed67816ad68d22f20e1",
+    "control_flow.py": "b7f4542dfc53514013c420828e8a13d71b634a951d72ed301fa1306a0021a756",
+    "cpp_initializers.py": "e3d9bb3e9a27b78151f7f71288e7ebb27d4b95347ef0529ba91206a4dab916b7",
+    "cpp_methods.py": "eeb094c9ac77fdf7d76981e14b4b384c1cc805c648f8a774624f8ef806eea321",
+    "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+    "field_transfers.py": "c327f6bd070445c583818ace80797bd891b100bd9ed4596c1ae6a6fad1b3f61f",
+    "frontend.py": "a7de6ebb504774a99b5abefd70b3adae63730ca68585bc362533c42e4aaa5e79",
+    "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+    "kenql.py": "2a1d43ca6e55f36b7ada131a27d82dd45f3671187a814e51582e6266eee6f922",
+    "member_access.py": "9781486284abe3599396740599f7305f2069c555e024b2ff9b10fb1cd5e6fe50",
+    "member_transfers.py": "cc2474d0ac9f0f539cde50ead12b6af08b2254614e523af9c2677d795ed8fb10",
+    "model.py": "a142e471c3f886f7ead36df16b9bef152a08bfe0a9e88f1db266381d5e87949d",
+    "modern_patterns/adapted-continuation-wrapper.toml": "cfae68be5c98788c03b0c663a7fb5d94b03164b57e2c2b413228e4c14528c50d",
+    "modern_patterns/batch-work-queue.toml": "6e1b3a69aae411a736c749814959aac73df1e30c29c84ef7e6b2e02a1c058a31",
+    "modern_patterns/cache-aside.toml": "c7915bc8855deecd60881f3f4db072714f670ed3f55bdbd6f47a495549a12328",
+    "modern_patterns/continuation-wrapper.toml": "0092ade2a426815819334a1999ea4c2a65e54f452ceaf7a6de08dd77dd855ff2",
+    "modern_patterns/dependency-injection.toml": "d1ba8b738b297988381e3b798bbf417d19d63157d185230ffe6e53ec80854468",
+    "modern_patterns/dispatch-table.toml": "a2197cedfd9f2f8bdb35c02ba8a398e1805f31b6bec42f8547aaefa4f86c3566",
+    "modern_patterns/exception-retry.toml": "eeab3c3ae90b1a7a3f1778db573d80113e4d6e0cc50fbd2ff6ec1cb1da6af77c",
+    "modern_patterns/read-through-cache.toml": "68d8df7db96d7a3270875b46bc837879f036a06a15b0e8c8f46877fc34eb6159",
+    "modern_patterns/subclass-factory.toml": "ec69fa0a23372a403036e3c5d6775ce6d0d3045c4792d9fad9602335462f5141",
+    "modern_patterns/unit-of-work.toml": "82920e8a2f861c7658a80c729ad0b375d466fb8d1a6122d5ab783a039e64b949",
+    "nominal_roots.py": "9f41249a1346ab4543d497cdc71b8568d5c0b899fd6ba99cfb7b272d9fc1dfb3",
+    "patterns/abstract-factory.toml": "d075ab8290e8304c4c25806087b2d9f5c22c2f5ebf34e37ab957843220f06d4d",
+    "patterns/adapter.toml": "f68db1dcb07858065cc9a80bb80da5b0ba7e026681e08c6dc9ca4945d1e8f842",
+    "patterns/bridge.toml": "566e693f3decef8bd27d2f10fff841e8f1f768b9bbc2e4a7dfbb4e522c76bf4b",
+    "patterns/builder.toml": "bb46c4713cd0b4c6b42a7a5cc4df16206d42b73be20948d9328c7fed1b6897d8",
+    "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+    "patterns/command.toml": "1dd4624f93ee499ca31ded97e573455356b443e8b6259bb39022f420a815de75",
+    "patterns/composite.toml": "fffb2da5916eb05e4da83de63e21549ad06481938087b9344f291c22f3516a02",
+    "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+    "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+    "patterns/factory-method.toml": "cf2d5b3d342478cc22d40a5a2211002622b4b75be09ca25b0cafd3fccd98fbd4",
+    "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+    "patterns/interpreter.toml": "a2a674ce0dfa775cc287df32bdca056bd4be1196ada97ec170821852817e787c",
+    "patterns/iterator.toml": "404233895ac5526625c039f7875db8ecb68aba57ba087c67723f871b797d04ef",
+    "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+    "patterns/memento.toml": "fa56773105fe4f84ae7f8557eb086757831600533b5c38777cc330a0f480caf3",
+    "patterns/observer.toml": "ca3ad665f19488efc51b57d103667395ae895f4f56b4fb0447e463d23d3599d5",
+    "patterns/prototype.toml": "2de68c873a910bd564889fce9644339d5169640803531d9bf54ae1d3bcb69923",
+    "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+    "patterns/singleton.toml": "ddad6d36c3363c102de1c4c6d068d58af25223d2a8f3d3698948aca77f859d41",
+    "patterns/state.toml": "24a6b2742a179205032c27e48d21082e65407eecd62dd3a827b317246a015a74",
+    "patterns/strategy.toml": "c71942d6ea29895d487c6ed25cd4c08c3aef54116bfbf8b59996d8b0e34865f2",
+    "patterns/template-method.toml": "391fd8cf3a0a2fceff9ebfc1994b82d737d3dc9a7bbe181e3886b9e144133e3d",
+    "patterns/visitor.toml": "7d47620aad4831dfcc601818ea92c5f9781658d1d85356d6b0d44e9c7a88d3e7",
+    "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+    "return_flow.py": "67da3d1dcc7071dda86fbec744c81a2faeff7fd85bee746598d1157d16b0389b",
+    "rules.py": "a3fd498e5154c1f45a524de6fe470bc176bc8600b3a70332727640e956e0cfb3",
+    "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+    "semantic.py": "48eea195fbfbb9c01d0e1ff73a374ad32fccfa01308b0a8835ebcf809b61c79f",
+    "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df",
+    "syntax_graph.py": "ad63fe8b926d73bf853f09ec209e3208a1341e8eb2c4fe7799e73cafa3a4d6b6",
+    "type_refs.py": "31c0aac9132cdae3ad0a4ea009a92ce57d8a5434a999dbf0597592d347010b17"
+  }
+}

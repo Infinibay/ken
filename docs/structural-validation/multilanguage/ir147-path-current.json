@@ -1,0 +1,72 @@
+{
+  "python": "3.12.9",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "kenql_sha256": "3714fcb03b2eabce4510a2ffd117ea1eb9f961e37ac5b567d76435fe7f1a6d49",
+  "query": "query convergence { path \"root\" VALUE_FLOW{18,18} $end as $path; emit $end, $path; }",
+  "vertices": 37,
+  "edges": 70,
+  "samples": [
+    {
+      "states": 38,
+      "rows_examined": 70,
+      "elapsed_ms": 0.094,
+      "dependencies": []
+    },
+    {
+      "states": 38,
+      "rows_examined": 70,
+      "elapsed_ms": 0.063,
+      "dependencies": []
+    },
+    {
+      "states": 38,
+      "rows_examined": 70,
+      "elapsed_ms": 0.048,
+      "dependencies": []
+    },
+    {
+      "states": 38,
+      "rows_examined": 70,
+      "elapsed_ms": 0.046,
+      "dependencies": []
+    },
+    {
+      "states": 38,
+      "rows_examined": 70,
+      "elapsed_ms": 0.043,
+      "dependencies": []
+    },
+    {
+      "states": 38,
+      "rows_examined": 70,
+      "elapsed_ms": 0.047,
+      "dependencies": []
+    },
+    {
+      "states": 38,
+      "rows_examined": 70,
+      "elapsed_ms": 0.098,
+      "dependencies": []
+    },
+    {
+      "states": 38,
+      "rows_examined": 70,
+      "elapsed_ms": 0.043,
+      "dependencies": []
+    },
+    {
+      "states": 38,
+      "rows_examined": 70,
+      "elapsed_ms": 0.042,
+      "dependencies": []
+    },
+    {
+      "states": 38,
+      "rows_examined": 70,
+      "elapsed_ms": 0.041,
+      "dependencies": []
+    }
+  ],
+  "p50_ms": 0.0465,
+  "scope": "Prepared synthetic graph search only; excludes parsing, indexing and repository construction."
+}

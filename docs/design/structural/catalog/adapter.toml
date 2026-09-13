@@ -1,0 +1,47 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.adapter"
+name = "Adapter"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/adapter.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.adapter]
+kinds = ["type_decl", "callable"]
+required = true
+
+[exports.adaptee]
+kinds = ["type_decl", "callable"]
+required = true
+
+[[variants]]
+id = "object-adapter"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["contract_resolution", "argument_result_flow"]
+graph_requirements = ["Contrato objetivo cumplido; argumentos/resultados se adaptan al adaptee correlacionado."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "functional-adapter"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["closure_capture", "callable_contracts"]
+graph_requirements = ["Callable envuelve otra y adapta su contrato de entrada/salida sin requerir clase."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "class-adapter"
+status = "design"
+languages = ["python", "cpp"]
+requires = ["multiple_inheritance", "override_resolution"]
+graph_requirements = ["Herencia del adaptee y cumplimiento del contrato objetivo; resolver método efectivamente invocado."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

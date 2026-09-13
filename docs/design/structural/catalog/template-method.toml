@@ -1,0 +1,47 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.template-method"
+name = "Template Method"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/template-method.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.template]
+kinds = ["callable"]
+required = true
+
+[exports.step]
+kinds = ["callable"]
+required = true
+
+[[variants]]
+id = "virtual-skeleton"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp"]
+requires = ["override_resolution", "control_flow"]
+graph_requirements = ["Algoritmo fija secuencia y llama hook reemplazado; distinguir llamadas del mismo cuerpo."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "trait-default"
+status = "design"
+languages = ["rust"]
+requires = ["trait_defaults", "call_targets"]
+graph_requirements = ["Método default llama slot de trait implementado por tipo concreto."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "composed-skeleton"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["callable_contracts", "control_flow"]
+graph_requirements = ["Esqueleto recibe hooks y conserva secuencia; variante por composición, no override ficticio."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

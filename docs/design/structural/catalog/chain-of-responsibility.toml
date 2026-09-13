@@ -1,0 +1,38 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.chain-of-responsibility"
+name = "Chain of Responsibility"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/chain-of-responsibility.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.handler]
+kinds = ["type_decl", "callable"]
+required = true
+
+[exports.operation]
+kinds = ["callable"]
+required = true
+
+[[variants]]
+id = "linked-handlers"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["request_value_flow", "conditional_calls"]
+graph_requirements = ["Handler procesa o reenvía misma request a siguiente del contrato; ensamblado de cadena aporta evidencia."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "middleware-closures"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["closure_capture", "control_flow"]
+graph_requirements = ["Handler captura next; rama puede terminar o continuar request; distinguir pipeline incondicional."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

@@ -1,0 +1,23 @@
+[
+  {
+    "repo": "rxjs",
+    "rule": "singleton",
+    "commit": "54796b38a57e6309f9861e174737479bb3f63f61",
+    "added": [],
+    "removed": [
+      {
+        "roles": {
+          "$unit": {
+            "name": "Notification",
+            "path": "packages/rxjs/src/notification.ts",
+            "line": 26,
+            "kind": "CLASS"
+          }
+        },
+        "variant": "default",
+        "status": "structural_match"
+      }
+    ],
+    "review": "Corrected intent FP: Notification remains a shared-instance source, but its public constructors and three resolved allocation sites fail restricted eager. No prior valid Singleton example lost."
+  }
+]

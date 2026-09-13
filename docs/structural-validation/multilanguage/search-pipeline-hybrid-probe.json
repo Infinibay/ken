@@ -1,0 +1,4062 @@
+{
+  "schema": "ken-search-pipeline/1",
+  "ir_version": "1.47.0",
+  "python": "3.12.9 (main, Mar 17 2025, 21:36:21) [Clang 20.1.0 ]",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "started_utc": "2026-09-13T16:08:59.192536+00:00",
+  "engine_root": "/Users/andres/Projects/ken/src/ken/structural",
+  "parser_versions": "tree-sitter=0.25.2;tree-sitter-language-pack=1.8.1;tree-sitter-python=0.25.0;tree-sitter-javascript=0.25.0;tree-sitter-typescript=0.23.2;tree-sitter-java=0.23.5;tree-sitter-go=0.25.0;tree-sitter-rust=0.24.2",
+  "budget_per_query": {
+    "max_rows": 500000,
+    "max_states": 100000,
+    "max_matches": 1000,
+    "timeout_ms": 2000
+  },
+  "engine_sha256": {
+    "__init__.py": "66ccc7cf5bd6721a010f3f1e0b9ae6f60ee7e84a27dde859fa2700b15f3ce7a6",
+    "binding_writes.py": "248c81c19c54b70240ab312a4f0401b272bdc0644197417ea5434827607fa7f3",
+    "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+    "call_bindings.py": "e22e85204749f85185813ab2b6ae835f6a9566092c451fb674d41629e884bc7b",
+    "catalog.py": "39cb65a22c3c0c1b96ae41cd2343b8227d93ba1f62763bd95efdfe568683d638",
+    "cli.py": "7bc42211f42daed41bbf185f861171a7d78c29ba802a2e4924e915a7b05d8e28",
+    "collection_lifecycle.py": "a35f48339a074eb62b1e5e1b73024c4ea3d133628675b710a0cf048f5910d549",
+    "collection_snapshots.py": "8ba78a0010eafa7a85c4ab519944171570235a0c108ed52d5f830ed79684203b",
+    "construction.py": "41787dcd62dae7719b048258f29999e73c8b6e36e75d7ed67816ad68d22f20e1",
+    "control_flow.py": "b7f4542dfc53514013c420828e8a13d71b634a951d72ed301fa1306a0021a756",
+    "cpp_initializers.py": "e3d9bb3e9a27b78151f7f71288e7ebb27d4b95347ef0529ba91206a4dab916b7",
+    "cpp_methods.py": "eeb094c9ac77fdf7d76981e14b4b384c1cc805c648f8a774624f8ef806eea321",
+    "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+    "field_initialization.py": "38fba97c542256069b8b19e39b657b7bd0172003ceabf3969b8d087fc95fe152",
+    "field_transfers.py": "c327f6bd070445c583818ace80797bd891b100bd9ed4596c1ae6a6fad1b3f61f",
+    "frontend.py": "236e12839631f4ac9b50dfa8ba9a98992b0fa8d95cecf5e29ee5b3f1deb9d1ed",
+    "instruction_lowering.py": "692fe8824c450a4020a620c0f1c1d42080beec86bd0d62e97c73449e8b4b1d9a",
+    "instructions.py": "cbda9aeba2faac2a09651cb3b6a5580c7b798706ee5a07c0c51334a59614f7f0",
+    "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+    "kenql.py": "3714fcb03b2eabce4510a2ffd117ea1eb9f961e37ac5b567d76435fe7f1a6d49",
+    "member_access.py": "9781486284abe3599396740599f7305f2069c555e024b2ff9b10fb1cd5e6fe50",
+    "member_transfers.py": "cc2474d0ac9f0f539cde50ead12b6af08b2254614e523af9c2677d795ed8fb10",
+    "model.py": "c27bd06e97344f470c3594c1c131d7cebe9932ea6ac8500192d1b75dc638cfc9",
+    "modern_patterns/adapted-continuation-wrapper.toml": "cfae68be5c98788c03b0c663a7fb5d94b03164b57e2c2b413228e4c14528c50d",
+    "modern_patterns/batch-work-queue.toml": "6e1b3a69aae411a736c749814959aac73df1e30c29c84ef7e6b2e02a1c058a31",
+    "modern_patterns/cache-aside.toml": "c7915bc8855deecd60881f3f4db072714f670ed3f55bdbd6f47a495549a12328",
+    "modern_patterns/continuation-wrapper.toml": "0092ade2a426815819334a1999ea4c2a65e54f452ceaf7a6de08dd77dd855ff2",
+    "modern_patterns/dependency-injection.toml": "ca2e1337338d74be041237fdf745d66ecc23e796a51b4d4b12d6faabd43da512",
+    "modern_patterns/dispatch-table.toml": "a2197cedfd9f2f8bdb35c02ba8a398e1805f31b6bec42f8547aaefa4f86c3566",
+    "modern_patterns/exception-retry.toml": "3373bfc8187dafa493ab4b616e347e2cdfc4f29fd920579abe3340419fd8268d",
+    "modern_patterns/read-through-cache.toml": "68d8df7db96d7a3270875b46bc837879f036a06a15b0e8c8f46877fc34eb6159",
+    "modern_patterns/subclass-factory.toml": "ec69fa0a23372a403036e3c5d6775ce6d0d3045c4792d9fad9602335462f5141",
+    "modern_patterns/unit-of-work.toml": "82920e8a2f861c7658a80c729ad0b375d466fb8d1a6122d5ab783a039e64b949",
+    "nominal_roots.py": "9f41249a1346ab4543d497cdc71b8568d5c0b899fd6ba99cfb7b272d9fc1dfb3",
+    "normal_completion.py": "c4e9d79b4c15ad1e3e0482d2874f9e269051def62e9a1ef83924863048d9ec40",
+    "patterns/abstract-factory.toml": "d075ab8290e8304c4c25806087b2d9f5c22c2f5ebf34e37ab957843220f06d4d",
+    "patterns/adapter.toml": "bea20d36f4dc0de4b0bece10dde81a6771f489f69ef219879d0a0add77ecd1dd",
+    "patterns/bridge.toml": "c05952803b728f15bd7445bd4db78a70a1a8c136709e137dd90ae8b466d261c3",
+    "patterns/builder.toml": "c9629128c2a73d28e6f4474b9a3bc5eb064bd31cc8142dcb0e65fb1d84db1791",
+    "patterns/chain-of-responsibility.toml": "c810c6e3c860691388eb1ebcaf08bd281ec7212bfb677df7b93a199e4c47b7d0",
+    "patterns/command.toml": "1dd4624f93ee499ca31ded97e573455356b443e8b6259bb39022f420a815de75",
+    "patterns/composite.toml": "fffb2da5916eb05e4da83de63e21549ad06481938087b9344f291c22f3516a02",
+    "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+    "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+    "patterns/factory-method.toml": "6927846f03dd3d163b768f3ae21a9846646a287f8fe99b1791765cc9aed7d320",
+    "patterns/flyweight.toml": "a896523a583eb5d01f8a0b7b49facef956b5194e20587b4f6f984a1c2ffca9d8",
+    "patterns/interpreter.toml": "a2a674ce0dfa775cc287df32bdca056bd4be1196ada97ec170821852817e787c",
+    "patterns/iterator.toml": "27affa21dfcb87af832b6c6657121d5ce62ee221b7720317ea91470ca3b25f2c",
+    "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+    "patterns/memento.toml": "5aaab674dfb06575f2c71a035b8f5afefabb9fb57959749f4f48047aa117ed73",
+    "patterns/observer.toml": "ca3ad665f19488efc51b57d103667395ae895f4f56b4fb0447e463d23d3599d5",
+    "patterns/prototype.toml": "2de68c873a910bd564889fce9644339d5169640803531d9bf54ae1d3bcb69923",
+    "patterns/proxy.toml": "9c8d99d4d09d7d38cbfb99b9b6a5466bffa4dbaab29223b3a75270e7738dda30",
+    "patterns/singleton.toml": "494e171e04521de47b3185b053561ac66a91deeaf2f809914855c1a7c2b15dda",
+    "patterns/state.toml": "24a6b2742a179205032c27e48d21082e65407eecd62dd3a827b317246a015a74",
+    "patterns/strategy.toml": "1a731cce97d800895e67a30121d5606a5740d82475f165f1ba6e95bae062966c",
+    "patterns/template-method.toml": "a3b1a6534766b07a241a55d8bc4c51f9b97980a8a1109016d2115a3a84990617",
+    "patterns/visitor.toml": "e04b7faa918bf9a8fdf295858df9e0faa6bdadcf2b8e2ed74a780ee46f56458f",
+    "preservation.py": "a0d68532bfefb3470bd73fd4f4f7f270c243c02cb29f36798b4e039e4e05d119",
+    "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+    "return_flow.py": "67da3d1dcc7071dda86fbec744c81a2faeff7fd85bee746598d1157d16b0389b",
+    "rules.py": "4b04976137f84766341c31652920062a1501b39b020bb3323d8dd54390d68450",
+    "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+    "semantic.py": "2ae7b31cb0833080f512e2f47a57d0b87ae35b07a045e44ec5923498589d0de0",
+    "service.py": "e0c315208c24159c0139fa58bae53e169dbe3b61be6bbb3e98ef06fed13b3a5f",
+    "syntax_graph.py": "ad63fe8b926d73bf853f09ec209e3208a1341e8eb2c4fe7799e73cafa3a4d6b6",
+    "type_refs.py": "31c0aac9132cdae3ad0a4ea009a92ce57d8a5434a999dbf0597592d347010b17"
+  },
+  "runner_sha256": "2a2d0c9d99cc2e8b0964b36eb3ff686c0ebd85ab70cac1212631bf36bca8171e",
+  "method": {
+    "percentiles": "nearest rank; p95 is max for five samples",
+    "precision": "not evaluated",
+    "cold": "empty disposable SQLite IR cache; warm parser/interpreter and OS pages",
+    "timed_stages": "overlapping independent measurements, not additive",
+    "profile_and_memory": "separate untimed passes; Python allocation peak excludes prior graph allocations",
+    "diagnostics_enabled": true
+  },
+  "cases": [
+    {
+      "name": "flask-python",
+      "root": "/private/tmp/ken-real-repos/flask",
+      "commit": "d73fa1cdcbd8b1465c151db8924ba58b1dd14e35",
+      "prefix": "src/flask/",
+      "eligible_files": 24,
+      "selected_files": 24,
+      "scope_truncated": false,
+      "files": [
+        {
+          "path": "src/flask/__init__.py",
+          "language": "python",
+          "bytes": 2072,
+          "sha256": "2daebda4dc29fed5cb36c912a6115a234e9a4b5f9c33fd795e4bfeffd0cc9386"
+        },
+        {
+          "path": "src/flask/__main__.py",
+          "language": "python",
+          "bytes": 30,
+          "sha256": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279"
+        },
+        {
+          "path": "src/flask/app.py",
+          "language": "python",
+          "bytes": 65472,
+          "sha256": "975de70f74626460f7afd2f16e3a513cbc2fe65cbd961f95c2f92eec4f7ecff8"
+        },
+        {
+          "path": "src/flask/blueprints.py",
+          "language": "python",
+          "bytes": 4541,
+          "sha256": "a79404da5635f0622d6ddaff44a46967c0e8d7b8343ef4062206644940e15f69"
+        },
+        {
+          "path": "src/flask/cli.py",
+          "language": "python",
+          "bytes": 36836,
+          "sha256": "eaec68e1cd30b00d184c347d86dfbe21755901b19d415c41fc53b124de08126d"
+        },
+        {
+          "path": "src/flask/config.py",
+          "language": "python",
+          "bytes": 13219,
+          "sha256": "3e2a85d033da9ba1d6d051f8087d61a574c17b7d0d4b38cf10ec2bcf56fa92dd"
+        },
+        {
+          "path": "src/flask/ctx.py",
+          "language": "python",
+          "bytes": 18261,
+          "sha256": "e21952d044159438765eb27848b0fe4c75f83faee8645181a09a1eccb1d5cab7"
+        },
+        {
+          "path": "src/flask/debughelpers.py",
+          "language": "python",
+          "bytes": 6070,
+          "sha256": "75c8258dc3487e1d0857dc5d3c7ca471fac1a254282570fa57e56d71aada037e"
+        },
+        {
+          "path": "src/flask/globals.py",
+          "language": "python",
+          "bytes": 2414,
+          "sha256": "1abe9a4e0a96c8bb28c232e2b08993fffdfb9bb694be2230755e54a46a40ca4d"
+        },
+        {
+          "path": "src/flask/helpers.py",
+          "language": "python",
+          "bytes": 24628,
+          "sha256": "7590b89bcae6c437b621a315854d8401bc38b5439ec95c9be7cc4c909f9e9221"
+        },
+        {
+          "path": "src/flask/json/__init__.py",
+          "language": "python",
+          "bytes": 5583,
+          "sha256": "b402bd0b89b87250f932bf4b8e2bec7af7130a8ebdc3ff5a0bba3865e9984173"
+        },
+        {
+          "path": "src/flask/json/provider.py",
+          "language": "python",
+          "bytes": 7644,
+          "sha256": "cefdd0dfdde6bb6f73e7b853aa789de432e2af52a8c920c1c2af17228235b72c"
+        },
+        {
+          "path": "src/flask/json/tag.py",
+          "language": "python",
+          "bytes": 9281,
+          "sha256": "0e168dc2e20e85db7647be28382f58e19f19a6bc4562245be5d50fe5bcb220dc"
+        },
+        {
+          "path": "src/flask/logging.py",
+          "language": "python",
+          "bytes": 2377,
+          "sha256": "f2c33758c4ee6e2d5c05bd9cfe53e45a937427c74c02aae029160b2e2d5d0952"
+        },
+        {
+          "path": "src/flask/sansio/app.py",
+          "language": "python",
+          "bytes": 39495,
+          "sha256": "410e21f53b5da3f5b73918733160dccfc22c17b0b48fe101dea56bad001c03f3"
+        },
+        {
+          "path": "src/flask/sansio/blueprints.py",
+          "language": "python",
+          "bytes": 27017,
+          "sha256": "da960c5792daf2f1cef8c14113d9c95c8ce389a9689abb395fe867f4054d0ba1"
+        },
+        {
+          "path": "src/flask/sansio/scaffold.py",
+          "language": "python",
+          "bytes": 30633,
+          "sha256": "d6578d2b5f06d227482e4110f8b750d04c8d94c9525c8857f9183f727ee2858b"
+        },
+        {
+          "path": "src/flask/sessions.py",
+          "language": "python",
+          "bytes": 14969,
+          "sha256": "7b2c11aa6cad4e66275ff102efcf980462684dce570ff951a61406e4b6cdd5dd"
+        },
+        {
+          "path": "src/flask/signals.py",
+          "language": "python",
+          "bytes": 750,
+          "sha256": "57b94c530c3b0aa809d93854067d4f89ab59b506a73b2b7b399a6ed86648fb7e"
+        },
+        {
+          "path": "src/flask/templating.py",
+          "language": "python",
+          "bytes": 7336,
+          "sha256": "3ed7a044a96c911267e855b7359d9f159f06321f75fbe678a6656923d5e0989e"
+        },
+        {
+          "path": "src/flask/testing.py",
+          "language": "python",
+          "bytes": 10134,
+          "sha256": "629d481658aaec7076a55913eda38c270ec45d430b34b2f9d38b2eec2b0ad3da"
+        },
+        {
+          "path": "src/flask/typing.py",
+          "language": "python",
+          "bytes": 3114,
+          "sha256": "ac3b0f12bf2a89e10c6b8f04d142b6103f9f1495030b8ff2c559d9952e060a00"
+        },
+        {
+          "path": "src/flask/views.py",
+          "language": "python",
+          "bytes": 6971,
+          "sha256": "d0d5ceecd117533169c924cdbb01ea5bb0ee74b7b1c4b22855f73f0e4dea0ee7"
+        },
+        {
+          "path": "src/flask/wrappers.py",
+          "language": "python",
+          "bytes": 9406,
+          "sha256": "8d492fe2655e93622ae21c3177846faab20c6faf41bf43c49438162e6779391a"
+        }
+      ],
+      "source_bytes": 348253,
+      "rules": [
+        "abstract-factory",
+        "adapter",
+        "bridge",
+        "builder",
+        "chain-of-responsibility",
+        "command",
+        "composite",
+        "decorator",
+        "facade",
+        "factory-method",
+        "flyweight",
+        "interpreter",
+        "iterator",
+        "mediator",
+        "memento",
+        "observer",
+        "prototype",
+        "proxy",
+        "singleton",
+        "state",
+        "strategy",
+        "template-method",
+        "visitor",
+        "architecture.adapted-continuation-wrapper",
+        "architecture.batch-work-queue",
+        "architecture.cache-aside",
+        "architecture.continuation-wrapper",
+        "architecture.dependency-injection",
+        "architecture.dispatch-table",
+        "resilience.exception-retry",
+        "architecture.read-through-cache",
+        "architecture.subclass-factory",
+        "persistence.unit-of-work"
+      ],
+      "rule_count": 33,
+      "cache_budget_bytes": 500000000,
+      "sizes": {
+        "entities": 6064,
+        "operations": 32497,
+        "source_facts": 164120,
+        "query_facts": 173863,
+        "source_json_bytes": 52104238,
+        "query_json_bytes": 57199892,
+        "instructions_json_bytes": 5396751,
+        "instruction_functions": 400,
+        "instruction_status": {
+          "partial": 362,
+          "lowered": 38
+        },
+        "python_allocations_peak_build_projection_export_bytes": 165337890
+      },
+      "timings": {
+        "parse_lower": {
+          "samples_ms": [
+            495.951,
+            838.342,
+            439.878,
+            438.229,
+            448.093
+          ],
+          "p50_ms": 448.093,
+          "p95_ms": 838.342,
+          "min_ms": 438.229,
+          "max_ms": 838.342
+        },
+        "semantic_link": {
+          "samples_ms": [
+            694.876,
+            1042.756,
+            1081.35,
+            1114.124,
+            1161.896
+          ],
+          "p50_ms": 1081.35,
+          "p95_ms": 1161.896,
+          "min_ms": 694.876,
+          "max_ms": 1161.896
+        },
+        "source_index": {
+          "samples_ms": [
+            10.376,
+            17.366,
+            15.522,
+            15.278,
+            16.103
+          ],
+          "p50_ms": 15.522,
+          "p95_ms": 17.366,
+          "min_ms": 10.376,
+          "max_ms": 17.366
+        },
+        "query_projection_index": {
+          "samples_ms": [
+            348.827,
+            238.821,
+            764.508,
+            802.036,
+            822.574
+          ],
+          "p50_ms": 764.508,
+          "p95_ms": 822.574,
+          "min_ms": 238.821,
+          "max_ms": 822.574
+        },
+        "instruction_export": {
+          "samples_ms": [
+            75.985,
+            463.475,
+            85.986,
+            93.91,
+            90.759
+          ],
+          "p50_ms": 90.759,
+          "p95_ms": 463.475,
+          "min_ms": 75.985,
+          "max_ms": 463.475
+        },
+        "instruction_verify": {
+          "samples_ms": [
+            8.444,
+            9.322,
+            8.909,
+            9.701,
+            9.533
+          ],
+          "p50_ms": 9.322,
+          "p95_ms": 9.701,
+          "min_ms": 8.444,
+          "max_ms": 9.701
+        },
+        "prepared_engine_rules": {
+          "samples_ms": [
+            208.817,
+            107.325,
+            107.307,
+            108.055,
+            109.353
+          ],
+          "p50_ms": 108.055,
+          "p95_ms": 208.817,
+          "min_ms": 107.307,
+          "max_ms": 208.817
+        },
+        "public_execute_rules": {
+          "samples_ms": [
+            436.662,
+            802.232,
+            802.952,
+            827.777,
+            832.825
+          ],
+          "p50_ms": 802.952,
+          "p95_ms": 832.825,
+          "min_ms": 436.662,
+          "max_ms": 832.825
+        },
+        "cold_public_search": {
+          "samples_ms": [
+            3730.185,
+            4458.523,
+            5250.775,
+            5341.866,
+            5374.762
+          ],
+          "p50_ms": 5250.775,
+          "p95_ms": 5374.762,
+          "min_ms": 3730.185,
+          "max_ms": 5374.762
+        },
+        "warm_public_search": {
+          "samples_ms": [
+            1533.399,
+            2224.641,
+            2428.523,
+            2432.005,
+            2413.416
+          ],
+          "p50_ms": 2413.416,
+          "p95_ms": 2432.005,
+          "min_ms": 1533.399,
+          "max_ms": 2432.005
+        },
+        "warm_build_project_only": {
+          "samples_ms": [
+            1077.966,
+            1337.544,
+            1355.219,
+            1349.423,
+            1360.917
+          ],
+          "p50_ms": 1349.423,
+          "p95_ms": 1360.917,
+          "min_ms": 1077.966,
+          "max_ms": 1360.917
+        }
+      },
+      "runs": [
+        {
+          "fingerprints": {
+            "batch": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "cold": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "warm": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "prepared": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e"
+          },
+          "equivalent_matches": true,
+          "batch_complete": true,
+          "cold_complete": true,
+          "warm_complete": true,
+          "outcomes": {
+            "abstract-factory": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8,
+                "rows_examined": 3,
+                "elapsed_ms": 0.077,
+                "dependencies": [
+                  "abstract-factory#nominal-families"
+                ]
+              }
+            },
+            "adapter": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 936,
+                "rows_examined": 468,
+                "elapsed_ms": 1.274,
+                "dependencies": [
+                  "adapter#object-adapter"
+                ]
+              }
+            },
+            "bridge": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1274,
+                "rows_examined": 606,
+                "elapsed_ms": 1.486,
+                "dependencies": [
+                  "bridge#refined-composition",
+                  "bridge#runtime-composition"
+                ]
+              }
+            },
+            "builder": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 511,
+                "rows_examined": 241,
+                "elapsed_ms": 0.737,
+                "dependencies": [
+                  "builder#director",
+                  "builder#mutable-product",
+                  "builder#stored-product"
+                ]
+              }
+            },
+            "chain-of-responsibility": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.245,
+                "dependencies": [
+                  "chain-of-responsibility#linked-handlers"
+                ]
+              }
+            },
+            "command": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8624,
+                "rows_examined": 3085,
+                "elapsed_ms": 12.706,
+                "dependencies": [
+                  "architecture.batch-work-queue.drain",
+                  "command#command-object",
+                  "command#queued-object",
+                  "command#retained-contract",
+                  "command#retained-object",
+                  "command#stored-closure",
+                  "command.retained_dispatch"
+                ]
+              }
+            },
+            "composite": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 12,
+                "rows_examined": 4,
+                "elapsed_ms": 0.104,
+                "dependencies": [
+                  "composite#recursive-contract",
+                  "composite#recursive-nominal"
+                ]
+              }
+            },
+            "decorator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.247,
+                "dependencies": [
+                  "decorator#object-wrapper"
+                ]
+              }
+            },
+            "facade": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 468,
+                "rows_examined": 233,
+                "elapsed_ms": 0.55,
+                "dependencies": [
+                  "facade#object-surface"
+                ]
+              }
+            },
+            "factory-method": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8,
+                "rows_examined": 3,
+                "elapsed_ms": 0.025,
+                "dependencies": [
+                  "factory-method#virtual-slot"
+                ]
+              }
+            },
+            "flyweight": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 40,
+                "rows_examined": 19,
+                "elapsed_ms": 0.107,
+                "dependencies": [
+                  "flyweight#explicit-interning"
+                ]
+              }
+            },
+            "interpreter": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.258,
+                "dependencies": [
+                  "interpreter#expression-objects"
+                ]
+              }
+            },
+            "iterator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 6946,
+                "rows_examined": 4586,
+                "elapsed_ms": 7.536,
+                "dependencies": [
+                  "iterator#delegated-cursor",
+                  "iterator#delegated-generator",
+                  "iterator#explicit-cursor",
+                  "iterator#external-cursor",
+                  "iterator#generator",
+                  "iterator#paired-cursor"
+                ]
+              }
+            },
+            "mediator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 3048,
+                "rows_examined": 1543,
+                "elapsed_ms": 3.334,
+                "dependencies": [
+                  "mediator#direct-colleagues"
+                ]
+              }
+            },
+            "memento": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 45,
+                "rows_examined": 20,
+                "elapsed_ms": 0.314,
+                "dependencies": [
+                  "memento#accessor-snapshot",
+                  "memento#snapshot-object"
+                ]
+              }
+            },
+            "observer": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 276,
+                "rows_examined": 137,
+                "elapsed_ms": 0.556,
+                "dependencies": [
+                  "observer#listener-registry",
+                  "observer#map-key-registry",
+                  "observer#snapshot-registry"
+                ]
+              }
+            },
+            "prototype": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 81,
+                "rows_examined": 38,
+                "elapsed_ms": 0.175,
+                "dependencies": [
+                  "prototype#derived-clone",
+                  "prototype#explicit-copy",
+                  "prototype#field-copy",
+                  "prototype.derived_copy"
+                ]
+              }
+            },
+            "proxy": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.346,
+                "dependencies": [
+                  "proxy#guarded-access"
+                ]
+              }
+            },
+            "singleton": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 259,
+                "rows_examined": 132,
+                "elapsed_ms": 0.519,
+                "dependencies": [
+                  "singleton#eager-shared",
+                  "singleton#lazy-guarded",
+                  "singleton.lazy_instance",
+                  "singleton.shared_instance"
+                ]
+              }
+            },
+            "state": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 87,
+                "rows_examined": 41,
+                "elapsed_ms": 0.228,
+                "dependencies": [
+                  "state#context-transition",
+                  "state#state-object"
+                ]
+              }
+            },
+            "strategy": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 639,
+                "rows_examined": 284,
+                "elapsed_ms": 0.968,
+                "dependencies": [
+                  "strategy#strategy-callable",
+                  "strategy#strategy-object",
+                  "strategy.supplied_policy"
+                ]
+              }
+            },
+            "template-method": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 160,
+                "rows_examined": 79,
+                "elapsed_ms": 0.269,
+                "dependencies": [
+                  "template-method#virtual-skeleton"
+                ]
+              }
+            },
+            "visitor": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 900,
+                "rows_examined": 460,
+                "elapsed_ms": 1.41,
+                "dependencies": [
+                  "visitor#named-dispatch"
+                ]
+              }
+            },
+            "architecture.adapted-continuation-wrapper": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 10582,
+                "rows_examined": 4806,
+                "elapsed_ms": 14.816,
+                "dependencies": []
+              }
+            },
+            "architecture.batch-work-queue": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1629,
+                "rows_examined": 767,
+                "elapsed_ms": 1.867,
+                "dependencies": [
+                  "architecture.batch-work-queue.drain"
+                ]
+              }
+            },
+            "architecture.cache-aside": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 647,
+                "rows_examined": 382,
+                "elapsed_ms": 1.182,
+                "dependencies": [
+                  "architecture.cache-aside#java-optional",
+                  "architecture.cache-aside#null-miss"
+                ]
+              }
+            },
+            "architecture.continuation-wrapper": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 876,
+                "rows_examined": 438,
+                "elapsed_ms": 1.127,
+                "dependencies": []
+              }
+            },
+            "architecture.dependency-injection": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 3489,
+                "rows_examined": 1509,
+                "elapsed_ms": 3.524,
+                "dependencies": [
+                  "architecture.dependency-injection#callable-input",
+                  "architecture.dependency-injection#object-assignment",
+                  "strategy.supplied_policy"
+                ]
+              }
+            },
+            "architecture.dispatch-table": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1516,
+                "rows_examined": 673,
+                "elapsed_ms": 2.282,
+                "dependencies": [
+                  "architecture.dispatch-table#adapted",
+                  "architecture.dispatch-table#direct"
+                ]
+              }
+            },
+            "resilience.exception-retry": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 38689,
+                "rows_examined": 36196,
+                "elapsed_ms": 38.019,
+                "dependencies": [
+                  "resilience.exception-retry#explicit-continue",
+                  "resilience.exception-retry#handler-fallthrough"
+                ]
+              }
+            },
+            "architecture.read-through-cache": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 2842,
+                "rows_examined": 1420,
+                "elapsed_ms": 4.421,
+                "dependencies": [
+                  "architecture.read-through-cache.read_fill"
+                ]
+              }
+            },
+            "architecture.subclass-factory": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 32,
+                "rows_examined": 15,
+                "elapsed_ms": 0.07,
+                "dependencies": [
+                  "architecture.subclass-factory#returned-subclass"
+                ]
+              }
+            },
+            "persistence.unit-of-work": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 54,
+                "rows_examined": 26,
+                "elapsed_ms": 0.148,
+                "dependencies": [
+                  "persistence.unit-of-work#keyed-change-set"
+                ]
+              }
+            }
+          },
+          "matches_by_rule": {
+            "architecture.adapted-continuation-wrapper": 3,
+            "architecture.dependency-injection": 7,
+            "architecture.dispatch-table": 1,
+            "iterator": 4,
+            "observer": 1,
+            "resilience.exception-retry": 1,
+            "strategy": 2,
+            "template-method": 3,
+            "visitor": 1
+          },
+          "cold_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 0,
+              "misses": 25,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 3140.25
+          },
+          "warm_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 1,
+              "misses": 0,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 791.454
+          },
+          "warm_build_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 1,
+              "misses": 0,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 1077.567
+          }
+        },
+        {
+          "fingerprints": {
+            "batch": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "cold": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "warm": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "prepared": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e"
+          },
+          "equivalent_matches": true,
+          "batch_complete": true,
+          "cold_complete": true,
+          "warm_complete": true,
+          "outcomes": {
+            "abstract-factory": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8,
+                "rows_examined": 3,
+                "elapsed_ms": 0.088,
+                "dependencies": [
+                  "abstract-factory#nominal-families"
+                ]
+              }
+            },
+            "adapter": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 936,
+                "rows_examined": 468,
+                "elapsed_ms": 1.314,
+                "dependencies": [
+                  "adapter#object-adapter"
+                ]
+              }
+            },
+            "bridge": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1274,
+                "rows_examined": 606,
+                "elapsed_ms": 1.591,
+                "dependencies": [
+                  "bridge#refined-composition",
+                  "bridge#runtime-composition"
+                ]
+              }
+            },
+            "builder": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 511,
+                "rows_examined": 241,
+                "elapsed_ms": 0.719,
+                "dependencies": [
+                  "builder#director",
+                  "builder#mutable-product",
+                  "builder#stored-product"
+                ]
+              }
+            },
+            "chain-of-responsibility": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.241,
+                "dependencies": [
+                  "chain-of-responsibility#linked-handlers"
+                ]
+              }
+            },
+            "command": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8624,
+                "rows_examined": 3085,
+                "elapsed_ms": 13.848,
+                "dependencies": [
+                  "architecture.batch-work-queue.drain",
+                  "command#command-object",
+                  "command#queued-object",
+                  "command#retained-contract",
+                  "command#retained-object",
+                  "command#stored-closure",
+                  "command.retained_dispatch"
+                ]
+              }
+            },
+            "composite": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 12,
+                "rows_examined": 4,
+                "elapsed_ms": 0.079,
+                "dependencies": [
+                  "composite#recursive-contract",
+                  "composite#recursive-nominal"
+                ]
+              }
+            },
+            "decorator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.314,
+                "dependencies": [
+                  "decorator#object-wrapper"
+                ]
+              }
+            },
+            "facade": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 468,
+                "rows_examined": 233,
+                "elapsed_ms": 0.645,
+                "dependencies": [
+                  "facade#object-surface"
+                ]
+              }
+            },
+            "factory-method": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8,
+                "rows_examined": 3,
+                "elapsed_ms": 0.031,
+                "dependencies": [
+                  "factory-method#virtual-slot"
+                ]
+              }
+            },
+            "flyweight": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 40,
+                "rows_examined": 19,
+                "elapsed_ms": 0.116,
+                "dependencies": [
+                  "flyweight#explicit-interning"
+                ]
+              }
+            },
+            "interpreter": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.254,
+                "dependencies": [
+                  "interpreter#expression-objects"
+                ]
+              }
+            },
+            "iterator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 6946,
+                "rows_examined": 4586,
+                "elapsed_ms": 9.25,
+                "dependencies": [
+                  "iterator#delegated-cursor",
+                  "iterator#delegated-generator",
+                  "iterator#explicit-cursor",
+                  "iterator#external-cursor",
+                  "iterator#generator",
+                  "iterator#paired-cursor"
+                ]
+              }
+            },
+            "mediator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 3048,
+                "rows_examined": 1543,
+                "elapsed_ms": 3.43,
+                "dependencies": [
+                  "mediator#direct-colleagues"
+                ]
+              }
+            },
+            "memento": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 45,
+                "rows_examined": 20,
+                "elapsed_ms": 0.308,
+                "dependencies": [
+                  "memento#accessor-snapshot",
+                  "memento#snapshot-object"
+                ]
+              }
+            },
+            "observer": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 276,
+                "rows_examined": 137,
+                "elapsed_ms": 0.403,
+                "dependencies": [
+                  "observer#listener-registry",
+                  "observer#map-key-registry",
+                  "observer#snapshot-registry"
+                ]
+              }
+            },
+            "prototype": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 81,
+                "rows_examined": 38,
+                "elapsed_ms": 0.132,
+                "dependencies": [
+                  "prototype#derived-clone",
+                  "prototype#explicit-copy",
+                  "prototype#field-copy",
+                  "prototype.derived_copy"
+                ]
+              }
+            },
+            "proxy": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.268,
+                "dependencies": [
+                  "proxy#guarded-access"
+                ]
+              }
+            },
+            "singleton": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 259,
+                "rows_examined": 132,
+                "elapsed_ms": 0.438,
+                "dependencies": [
+                  "singleton#eager-shared",
+                  "singleton#lazy-guarded",
+                  "singleton.lazy_instance",
+                  "singleton.shared_instance"
+                ]
+              }
+            },
+            "state": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 87,
+                "rows_examined": 41,
+                "elapsed_ms": 0.203,
+                "dependencies": [
+                  "state#context-transition",
+                  "state#state-object"
+                ]
+              }
+            },
+            "strategy": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 639,
+                "rows_examined": 284,
+                "elapsed_ms": 0.93,
+                "dependencies": [
+                  "strategy#strategy-callable",
+                  "strategy#strategy-object",
+                  "strategy.supplied_policy"
+                ]
+              }
+            },
+            "template-method": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 160,
+                "rows_examined": 79,
+                "elapsed_ms": 0.271,
+                "dependencies": [
+                  "template-method#virtual-skeleton"
+                ]
+              }
+            },
+            "visitor": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 900,
+                "rows_examined": 460,
+                "elapsed_ms": 1.464,
+                "dependencies": [
+                  "visitor#named-dispatch"
+                ]
+              }
+            },
+            "architecture.adapted-continuation-wrapper": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 10582,
+                "rows_examined": 4806,
+                "elapsed_ms": 15.358,
+                "dependencies": []
+              }
+            },
+            "architecture.batch-work-queue": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1629,
+                "rows_examined": 767,
+                "elapsed_ms": 1.765,
+                "dependencies": [
+                  "architecture.batch-work-queue.drain"
+                ]
+              }
+            },
+            "architecture.cache-aside": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 647,
+                "rows_examined": 382,
+                "elapsed_ms": 1.373,
+                "dependencies": [
+                  "architecture.cache-aside#java-optional",
+                  "architecture.cache-aside#null-miss"
+                ]
+              }
+            },
+            "architecture.continuation-wrapper": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 876,
+                "rows_examined": 438,
+                "elapsed_ms": 1.433,
+                "dependencies": []
+              }
+            },
+            "architecture.dependency-injection": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 3489,
+                "rows_examined": 1509,
+                "elapsed_ms": 4.098,
+                "dependencies": [
+                  "architecture.dependency-injection#callable-input",
+                  "architecture.dependency-injection#object-assignment",
+                  "strategy.supplied_policy"
+                ]
+              }
+            },
+            "architecture.dispatch-table": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1516,
+                "rows_examined": 673,
+                "elapsed_ms": 1.966,
+                "dependencies": [
+                  "architecture.dispatch-table#adapted",
+                  "architecture.dispatch-table#direct"
+                ]
+              }
+            },
+            "resilience.exception-retry": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 38689,
+                "rows_examined": 36196,
+                "elapsed_ms": 39.918,
+                "dependencies": [
+                  "resilience.exception-retry#explicit-continue",
+                  "resilience.exception-retry#handler-fallthrough"
+                ]
+              }
+            },
+            "architecture.read-through-cache": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 2842,
+                "rows_examined": 1420,
+                "elapsed_ms": 450.305,
+                "dependencies": [
+                  "architecture.read-through-cache.read_fill"
+                ]
+              }
+            },
+            "architecture.subclass-factory": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 32,
+                "rows_examined": 15,
+                "elapsed_ms": 0.085,
+                "dependencies": [
+                  "architecture.subclass-factory#returned-subclass"
+                ]
+              }
+            },
+            "persistence.unit-of-work": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 54,
+                "rows_examined": 26,
+                "elapsed_ms": 0.149,
+                "dependencies": [
+                  "persistence.unit-of-work#keyed-change-set"
+                ]
+              }
+            }
+          },
+          "matches_by_rule": {
+            "architecture.adapted-continuation-wrapper": 3,
+            "architecture.dependency-injection": 7,
+            "architecture.dispatch-table": 1,
+            "iterator": 4,
+            "observer": 1,
+            "resilience.exception-retry": 1,
+            "strategy": 2,
+            "template-method": 3,
+            "visitor": 1
+          },
+          "cold_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 0,
+              "misses": 25,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 3554.693
+          },
+          "warm_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 1,
+              "misses": 0,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 1198.778
+          },
+          "warm_build_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 1,
+              "misses": 0,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 1337.131
+          }
+        },
+        {
+          "fingerprints": {
+            "batch": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "cold": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "warm": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "prepared": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e"
+          },
+          "equivalent_matches": true,
+          "batch_complete": true,
+          "cold_complete": true,
+          "warm_complete": true,
+          "outcomes": {
+            "abstract-factory": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8,
+                "rows_examined": 3,
+                "elapsed_ms": 0.117,
+                "dependencies": [
+                  "abstract-factory#nominal-families"
+                ]
+              }
+            },
+            "adapter": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 936,
+                "rows_examined": 468,
+                "elapsed_ms": 1.738,
+                "dependencies": [
+                  "adapter#object-adapter"
+                ]
+              }
+            },
+            "bridge": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1274,
+                "rows_examined": 606,
+                "elapsed_ms": 1.673,
+                "dependencies": [
+                  "bridge#refined-composition",
+                  "bridge#runtime-composition"
+                ]
+              }
+            },
+            "builder": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 511,
+                "rows_examined": 241,
+                "elapsed_ms": 0.836,
+                "dependencies": [
+                  "builder#director",
+                  "builder#mutable-product",
+                  "builder#stored-product"
+                ]
+              }
+            },
+            "chain-of-responsibility": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.255,
+                "dependencies": [
+                  "chain-of-responsibility#linked-handlers"
+                ]
+              }
+            },
+            "command": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8624,
+                "rows_examined": 3085,
+                "elapsed_ms": 13.548,
+                "dependencies": [
+                  "architecture.batch-work-queue.drain",
+                  "command#command-object",
+                  "command#queued-object",
+                  "command#retained-contract",
+                  "command#retained-object",
+                  "command#stored-closure",
+                  "command.retained_dispatch"
+                ]
+              }
+            },
+            "composite": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 12,
+                "rows_examined": 4,
+                "elapsed_ms": 0.081,
+                "dependencies": [
+                  "composite#recursive-contract",
+                  "composite#recursive-nominal"
+                ]
+              }
+            },
+            "decorator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.309,
+                "dependencies": [
+                  "decorator#object-wrapper"
+                ]
+              }
+            },
+            "facade": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 468,
+                "rows_examined": 233,
+                "elapsed_ms": 0.685,
+                "dependencies": [
+                  "facade#object-surface"
+                ]
+              }
+            },
+            "factory-method": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8,
+                "rows_examined": 3,
+                "elapsed_ms": 0.034,
+                "dependencies": [
+                  "factory-method#virtual-slot"
+                ]
+              }
+            },
+            "flyweight": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 40,
+                "rows_examined": 19,
+                "elapsed_ms": 0.146,
+                "dependencies": [
+                  "flyweight#explicit-interning"
+                ]
+              }
+            },
+            "interpreter": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.286,
+                "dependencies": [
+                  "interpreter#expression-objects"
+                ]
+              }
+            },
+            "iterator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 6946,
+                "rows_examined": 4586,
+                "elapsed_ms": 8.469,
+                "dependencies": [
+                  "iterator#delegated-cursor",
+                  "iterator#delegated-generator",
+                  "iterator#explicit-cursor",
+                  "iterator#external-cursor",
+                  "iterator#generator",
+                  "iterator#paired-cursor"
+                ]
+              }
+            },
+            "mediator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 3048,
+                "rows_examined": 1543,
+                "elapsed_ms": 3.327,
+                "dependencies": [
+                  "mediator#direct-colleagues"
+                ]
+              }
+            },
+            "memento": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 45,
+                "rows_examined": 20,
+                "elapsed_ms": 0.236,
+                "dependencies": [
+                  "memento#accessor-snapshot",
+                  "memento#snapshot-object"
+                ]
+              }
+            },
+            "observer": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 276,
+                "rows_examined": 137,
+                "elapsed_ms": 0.431,
+                "dependencies": [
+                  "observer#listener-registry",
+                  "observer#map-key-registry",
+                  "observer#snapshot-registry"
+                ]
+              }
+            },
+            "prototype": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 81,
+                "rows_examined": 38,
+                "elapsed_ms": 0.167,
+                "dependencies": [
+                  "prototype#derived-clone",
+                  "prototype#explicit-copy",
+                  "prototype#field-copy",
+                  "prototype.derived_copy"
+                ]
+              }
+            },
+            "proxy": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.286,
+                "dependencies": [
+                  "proxy#guarded-access"
+                ]
+              }
+            },
+            "singleton": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 259,
+                "rows_examined": 132,
+                "elapsed_ms": 0.441,
+                "dependencies": [
+                  "singleton#eager-shared",
+                  "singleton#lazy-guarded",
+                  "singleton.lazy_instance",
+                  "singleton.shared_instance"
+                ]
+              }
+            },
+            "state": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 87,
+                "rows_examined": 41,
+                "elapsed_ms": 0.2,
+                "dependencies": [
+                  "state#context-transition",
+                  "state#state-object"
+                ]
+              }
+            },
+            "strategy": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 639,
+                "rows_examined": 284,
+                "elapsed_ms": 0.86,
+                "dependencies": [
+                  "strategy#strategy-callable",
+                  "strategy#strategy-object",
+                  "strategy.supplied_policy"
+                ]
+              }
+            },
+            "template-method": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 160,
+                "rows_examined": 79,
+                "elapsed_ms": 0.206,
+                "dependencies": [
+                  "template-method#virtual-skeleton"
+                ]
+              }
+            },
+            "visitor": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 900,
+                "rows_examined": 460,
+                "elapsed_ms": 1.273,
+                "dependencies": [
+                  "visitor#named-dispatch"
+                ]
+              }
+            },
+            "architecture.adapted-continuation-wrapper": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 10582,
+                "rows_examined": 4806,
+                "elapsed_ms": 16.646,
+                "dependencies": []
+              }
+            },
+            "architecture.batch-work-queue": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1629,
+                "rows_examined": 767,
+                "elapsed_ms": 2.184,
+                "dependencies": [
+                  "architecture.batch-work-queue.drain"
+                ]
+              }
+            },
+            "architecture.cache-aside": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 647,
+                "rows_examined": 382,
+                "elapsed_ms": 1.104,
+                "dependencies": [
+                  "architecture.cache-aside#java-optional",
+                  "architecture.cache-aside#null-miss"
+                ]
+              }
+            },
+            "architecture.continuation-wrapper": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 876,
+                "rows_examined": 438,
+                "elapsed_ms": 1.118,
+                "dependencies": []
+              }
+            },
+            "architecture.dependency-injection": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 3489,
+                "rows_examined": 1509,
+                "elapsed_ms": 3.874,
+                "dependencies": [
+                  "architecture.dependency-injection#callable-input",
+                  "architecture.dependency-injection#object-assignment",
+                  "strategy.supplied_policy"
+                ]
+              }
+            },
+            "architecture.dispatch-table": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1516,
+                "rows_examined": 673,
+                "elapsed_ms": 2.041,
+                "dependencies": [
+                  "architecture.dispatch-table#adapted",
+                  "architecture.dispatch-table#direct"
+                ]
+              }
+            },
+            "resilience.exception-retry": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 38689,
+                "rows_examined": 36196,
+                "elapsed_ms": 40.201,
+                "dependencies": [
+                  "resilience.exception-retry#explicit-continue",
+                  "resilience.exception-retry#handler-fallthrough"
+                ]
+              }
+            },
+            "architecture.read-through-cache": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 2842,
+                "rows_examined": 1420,
+                "elapsed_ms": 3.859,
+                "dependencies": [
+                  "architecture.read-through-cache.read_fill"
+                ]
+              }
+            },
+            "architecture.subclass-factory": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 32,
+                "rows_examined": 15,
+                "elapsed_ms": 0.07,
+                "dependencies": [
+                  "architecture.subclass-factory#returned-subclass"
+                ]
+              }
+            },
+            "persistence.unit-of-work": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 54,
+                "rows_examined": 26,
+                "elapsed_ms": 0.176,
+                "dependencies": [
+                  "persistence.unit-of-work#keyed-change-set"
+                ]
+              }
+            }
+          },
+          "matches_by_rule": {
+            "architecture.adapted-continuation-wrapper": 3,
+            "architecture.dependency-injection": 7,
+            "architecture.dispatch-table": 1,
+            "iterator": 4,
+            "observer": 1,
+            "resilience.exception-retry": 1,
+            "strategy": 2,
+            "template-method": 3,
+            "visitor": 1
+          },
+          "cold_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 0,
+              "misses": 25,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 4198.027
+          },
+          "warm_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 1,
+              "misses": 0,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 1296.113
+          },
+          "warm_build_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 1,
+              "misses": 0,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 1354.798
+          }
+        },
+        {
+          "fingerprints": {
+            "batch": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "cold": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "warm": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "prepared": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e"
+          },
+          "equivalent_matches": true,
+          "batch_complete": true,
+          "cold_complete": true,
+          "warm_complete": true,
+          "outcomes": {
+            "abstract-factory": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8,
+                "rows_examined": 3,
+                "elapsed_ms": 0.118,
+                "dependencies": [
+                  "abstract-factory#nominal-families"
+                ]
+              }
+            },
+            "adapter": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 936,
+                "rows_examined": 468,
+                "elapsed_ms": 1.249,
+                "dependencies": [
+                  "adapter#object-adapter"
+                ]
+              }
+            },
+            "bridge": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1274,
+                "rows_examined": 606,
+                "elapsed_ms": 1.817,
+                "dependencies": [
+                  "bridge#refined-composition",
+                  "bridge#runtime-composition"
+                ]
+              }
+            },
+            "builder": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 511,
+                "rows_examined": 241,
+                "elapsed_ms": 0.954,
+                "dependencies": [
+                  "builder#director",
+                  "builder#mutable-product",
+                  "builder#stored-product"
+                ]
+              }
+            },
+            "chain-of-responsibility": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.284,
+                "dependencies": [
+                  "chain-of-responsibility#linked-handlers"
+                ]
+              }
+            },
+            "command": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8624,
+                "rows_examined": 3085,
+                "elapsed_ms": 14.266,
+                "dependencies": [
+                  "architecture.batch-work-queue.drain",
+                  "command#command-object",
+                  "command#queued-object",
+                  "command#retained-contract",
+                  "command#retained-object",
+                  "command#stored-closure",
+                  "command.retained_dispatch"
+                ]
+              }
+            },
+            "composite": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 12,
+                "rows_examined": 4,
+                "elapsed_ms": 0.058,
+                "dependencies": [
+                  "composite#recursive-contract",
+                  "composite#recursive-nominal"
+                ]
+              }
+            },
+            "decorator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.284,
+                "dependencies": [
+                  "decorator#object-wrapper"
+                ]
+              }
+            },
+            "facade": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 468,
+                "rows_examined": 233,
+                "elapsed_ms": 0.568,
+                "dependencies": [
+                  "facade#object-surface"
+                ]
+              }
+            },
+            "factory-method": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8,
+                "rows_examined": 3,
+                "elapsed_ms": 0.025,
+                "dependencies": [
+                  "factory-method#virtual-slot"
+                ]
+              }
+            },
+            "flyweight": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 40,
+                "rows_examined": 19,
+                "elapsed_ms": 0.099,
+                "dependencies": [
+                  "flyweight#explicit-interning"
+                ]
+              }
+            },
+            "interpreter": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.242,
+                "dependencies": [
+                  "interpreter#expression-objects"
+                ]
+              }
+            },
+            "iterator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 6946,
+                "rows_examined": 4586,
+                "elapsed_ms": 8.616,
+                "dependencies": [
+                  "iterator#delegated-cursor",
+                  "iterator#delegated-generator",
+                  "iterator#explicit-cursor",
+                  "iterator#external-cursor",
+                  "iterator#generator",
+                  "iterator#paired-cursor"
+                ]
+              }
+            },
+            "mediator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 3048,
+                "rows_examined": 1543,
+                "elapsed_ms": 3.154,
+                "dependencies": [
+                  "mediator#direct-colleagues"
+                ]
+              }
+            },
+            "memento": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 45,
+                "rows_examined": 20,
+                "elapsed_ms": 0.237,
+                "dependencies": [
+                  "memento#accessor-snapshot",
+                  "memento#snapshot-object"
+                ]
+              }
+            },
+            "observer": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 276,
+                "rows_examined": 137,
+                "elapsed_ms": 0.421,
+                "dependencies": [
+                  "observer#listener-registry",
+                  "observer#map-key-registry",
+                  "observer#snapshot-registry"
+                ]
+              }
+            },
+            "prototype": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 81,
+                "rows_examined": 38,
+                "elapsed_ms": 0.141,
+                "dependencies": [
+                  "prototype#derived-clone",
+                  "prototype#explicit-copy",
+                  "prototype#field-copy",
+                  "prototype.derived_copy"
+                ]
+              }
+            },
+            "proxy": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.41,
+                "dependencies": [
+                  "proxy#guarded-access"
+                ]
+              }
+            },
+            "singleton": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 259,
+                "rows_examined": 132,
+                "elapsed_ms": 0.425,
+                "dependencies": [
+                  "singleton#eager-shared",
+                  "singleton#lazy-guarded",
+                  "singleton.lazy_instance",
+                  "singleton.shared_instance"
+                ]
+              }
+            },
+            "state": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 87,
+                "rows_examined": 41,
+                "elapsed_ms": 0.2,
+                "dependencies": [
+                  "state#context-transition",
+                  "state#state-object"
+                ]
+              }
+            },
+            "strategy": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 639,
+                "rows_examined": 284,
+                "elapsed_ms": 0.809,
+                "dependencies": [
+                  "strategy#strategy-callable",
+                  "strategy#strategy-object",
+                  "strategy.supplied_policy"
+                ]
+              }
+            },
+            "template-method": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 160,
+                "rows_examined": 79,
+                "elapsed_ms": 0.204,
+                "dependencies": [
+                  "template-method#virtual-skeleton"
+                ]
+              }
+            },
+            "visitor": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 900,
+                "rows_examined": 460,
+                "elapsed_ms": 1.357,
+                "dependencies": [
+                  "visitor#named-dispatch"
+                ]
+              }
+            },
+            "architecture.adapted-continuation-wrapper": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 10582,
+                "rows_examined": 4806,
+                "elapsed_ms": 15.715,
+                "dependencies": []
+              }
+            },
+            "architecture.batch-work-queue": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1629,
+                "rows_examined": 767,
+                "elapsed_ms": 2.154,
+                "dependencies": [
+                  "architecture.batch-work-queue.drain"
+                ]
+              }
+            },
+            "architecture.cache-aside": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 647,
+                "rows_examined": 382,
+                "elapsed_ms": 1.38,
+                "dependencies": [
+                  "architecture.cache-aside#java-optional",
+                  "architecture.cache-aside#null-miss"
+                ]
+              }
+            },
+            "architecture.continuation-wrapper": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 876,
+                "rows_examined": 438,
+                "elapsed_ms": 1.405,
+                "dependencies": []
+              }
+            },
+            "architecture.dependency-injection": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 3489,
+                "rows_examined": 1509,
+                "elapsed_ms": 4.138,
+                "dependencies": [
+                  "architecture.dependency-injection#callable-input",
+                  "architecture.dependency-injection#object-assignment",
+                  "strategy.supplied_policy"
+                ]
+              }
+            },
+            "architecture.dispatch-table": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1516,
+                "rows_examined": 673,
+                "elapsed_ms": 2.16,
+                "dependencies": [
+                  "architecture.dispatch-table#adapted",
+                  "architecture.dispatch-table#direct"
+                ]
+              }
+            },
+            "resilience.exception-retry": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 38689,
+                "rows_examined": 36196,
+                "elapsed_ms": 40.546,
+                "dependencies": [
+                  "resilience.exception-retry#explicit-continue",
+                  "resilience.exception-retry#handler-fallthrough"
+                ]
+              }
+            },
+            "architecture.read-through-cache": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 2842,
+                "rows_examined": 1420,
+                "elapsed_ms": 4.368,
+                "dependencies": [
+                  "architecture.read-through-cache.read_fill"
+                ]
+              }
+            },
+            "architecture.subclass-factory": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 32,
+                "rows_examined": 15,
+                "elapsed_ms": 0.092,
+                "dependencies": [
+                  "architecture.subclass-factory#returned-subclass"
+                ]
+              }
+            },
+            "persistence.unit-of-work": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 54,
+                "rows_examined": 26,
+                "elapsed_ms": 0.17,
+                "dependencies": [
+                  "persistence.unit-of-work#keyed-change-set"
+                ]
+              }
+            }
+          },
+          "matches_by_rule": {
+            "architecture.adapted-continuation-wrapper": 3,
+            "architecture.dependency-injection": 7,
+            "architecture.dispatch-table": 1,
+            "iterator": 4,
+            "observer": 1,
+            "resilience.exception-retry": 1,
+            "strategy": 2,
+            "template-method": 3,
+            "visitor": 1
+          },
+          "cold_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 0,
+              "misses": 25,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 4270.37
+          },
+          "warm_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 1,
+              "misses": 0,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 1252.084
+          },
+          "warm_build_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 1,
+              "misses": 0,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 1348.968
+          }
+        },
+        {
+          "fingerprints": {
+            "batch": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "cold": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "warm": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e",
+            "prepared": "04599d4622bd12c872d6407230127e7d9911bdc609d175e80c779649b5c5b03e"
+          },
+          "equivalent_matches": true,
+          "batch_complete": true,
+          "cold_complete": true,
+          "warm_complete": true,
+          "outcomes": {
+            "abstract-factory": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8,
+                "rows_examined": 3,
+                "elapsed_ms": 0.122,
+                "dependencies": [
+                  "abstract-factory#nominal-families"
+                ]
+              }
+            },
+            "adapter": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 936,
+                "rows_examined": 468,
+                "elapsed_ms": 1.35,
+                "dependencies": [
+                  "adapter#object-adapter"
+                ]
+              }
+            },
+            "bridge": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1274,
+                "rows_examined": 606,
+                "elapsed_ms": 1.671,
+                "dependencies": [
+                  "bridge#refined-composition",
+                  "bridge#runtime-composition"
+                ]
+              }
+            },
+            "builder": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 511,
+                "rows_examined": 241,
+                "elapsed_ms": 0.887,
+                "dependencies": [
+                  "builder#director",
+                  "builder#mutable-product",
+                  "builder#stored-product"
+                ]
+              }
+            },
+            "chain-of-responsibility": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.27,
+                "dependencies": [
+                  "chain-of-responsibility#linked-handlers"
+                ]
+              }
+            },
+            "command": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8624,
+                "rows_examined": 3085,
+                "elapsed_ms": 13.481,
+                "dependencies": [
+                  "architecture.batch-work-queue.drain",
+                  "command#command-object",
+                  "command#queued-object",
+                  "command#retained-contract",
+                  "command#retained-object",
+                  "command#stored-closure",
+                  "command.retained_dispatch"
+                ]
+              }
+            },
+            "composite": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 12,
+                "rows_examined": 4,
+                "elapsed_ms": 0.071,
+                "dependencies": [
+                  "composite#recursive-contract",
+                  "composite#recursive-nominal"
+                ]
+              }
+            },
+            "decorator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.268,
+                "dependencies": [
+                  "decorator#object-wrapper"
+                ]
+              }
+            },
+            "facade": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 468,
+                "rows_examined": 233,
+                "elapsed_ms": 0.588,
+                "dependencies": [
+                  "facade#object-surface"
+                ]
+              }
+            },
+            "factory-method": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 8,
+                "rows_examined": 3,
+                "elapsed_ms": 0.028,
+                "dependencies": [
+                  "factory-method#virtual-slot"
+                ]
+              }
+            },
+            "flyweight": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 40,
+                "rows_examined": 19,
+                "elapsed_ms": 0.182,
+                "dependencies": [
+                  "flyweight#explicit-interning"
+                ]
+              }
+            },
+            "interpreter": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.393,
+                "dependencies": [
+                  "interpreter#expression-objects"
+                ]
+              }
+            },
+            "iterator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 6946,
+                "rows_examined": 4586,
+                "elapsed_ms": 8.868,
+                "dependencies": [
+                  "iterator#delegated-cursor",
+                  "iterator#delegated-generator",
+                  "iterator#explicit-cursor",
+                  "iterator#external-cursor",
+                  "iterator#generator",
+                  "iterator#paired-cursor"
+                ]
+              }
+            },
+            "mediator": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 3048,
+                "rows_examined": 1543,
+                "elapsed_ms": 3.609,
+                "dependencies": [
+                  "mediator#direct-colleagues"
+                ]
+              }
+            },
+            "memento": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 45,
+                "rows_examined": 20,
+                "elapsed_ms": 0.289,
+                "dependencies": [
+                  "memento#accessor-snapshot",
+                  "memento#snapshot-object"
+                ]
+              }
+            },
+            "observer": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 276,
+                "rows_examined": 137,
+                "elapsed_ms": 0.435,
+                "dependencies": [
+                  "observer#listener-registry",
+                  "observer#map-key-registry",
+                  "observer#snapshot-registry"
+                ]
+              }
+            },
+            "prototype": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 81,
+                "rows_examined": 38,
+                "elapsed_ms": 0.138,
+                "dependencies": [
+                  "prototype#derived-clone",
+                  "prototype#explicit-copy",
+                  "prototype#field-copy",
+                  "prototype.derived_copy"
+                ]
+              }
+            },
+            "proxy": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 225,
+                "rows_examined": 118,
+                "elapsed_ms": 0.274,
+                "dependencies": [
+                  "proxy#guarded-access"
+                ]
+              }
+            },
+            "singleton": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 259,
+                "rows_examined": 132,
+                "elapsed_ms": 0.428,
+                "dependencies": [
+                  "singleton#eager-shared",
+                  "singleton#lazy-guarded",
+                  "singleton.lazy_instance",
+                  "singleton.shared_instance"
+                ]
+              }
+            },
+            "state": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 87,
+                "rows_examined": 41,
+                "elapsed_ms": 0.197,
+                "dependencies": [
+                  "state#context-transition",
+                  "state#state-object"
+                ]
+              }
+            },
+            "strategy": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 639,
+                "rows_examined": 284,
+                "elapsed_ms": 0.831,
+                "dependencies": [
+                  "strategy#strategy-callable",
+                  "strategy#strategy-object",
+                  "strategy.supplied_policy"
+                ]
+              }
+            },
+            "template-method": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 160,
+                "rows_examined": 79,
+                "elapsed_ms": 0.202,
+                "dependencies": [
+                  "template-method#virtual-skeleton"
+                ]
+              }
+            },
+            "visitor": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 900,
+                "rows_examined": 460,
+                "elapsed_ms": 1.327,
+                "dependencies": [
+                  "visitor#named-dispatch"
+                ]
+              }
+            },
+            "architecture.adapted-continuation-wrapper": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 10582,
+                "rows_examined": 4806,
+                "elapsed_ms": 15.476,
+                "dependencies": []
+              }
+            },
+            "architecture.batch-work-queue": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1629,
+                "rows_examined": 767,
+                "elapsed_ms": 1.854,
+                "dependencies": [
+                  "architecture.batch-work-queue.drain"
+                ]
+              }
+            },
+            "architecture.cache-aside": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 647,
+                "rows_examined": 382,
+                "elapsed_ms": 1.129,
+                "dependencies": [
+                  "architecture.cache-aside#java-optional",
+                  "architecture.cache-aside#null-miss"
+                ]
+              }
+            },
+            "architecture.continuation-wrapper": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 876,
+                "rows_examined": 438,
+                "elapsed_ms": 1.119,
+                "dependencies": []
+              }
+            },
+            "architecture.dependency-injection": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 3489,
+                "rows_examined": 1509,
+                "elapsed_ms": 4.032,
+                "dependencies": [
+                  "architecture.dependency-injection#callable-input",
+                  "architecture.dependency-injection#object-assignment",
+                  "strategy.supplied_policy"
+                ]
+              }
+            },
+            "architecture.dispatch-table": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 1516,
+                "rows_examined": 673,
+                "elapsed_ms": 2.418,
+                "dependencies": [
+                  "architecture.dispatch-table#adapted",
+                  "architecture.dispatch-table#direct"
+                ]
+              }
+            },
+            "resilience.exception-retry": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 38689,
+                "rows_examined": 36196,
+                "elapsed_ms": 42.575,
+                "dependencies": [
+                  "resilience.exception-retry#explicit-continue",
+                  "resilience.exception-retry#handler-fallthrough"
+                ]
+              }
+            },
+            "architecture.read-through-cache": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 2842,
+                "rows_examined": 1420,
+                "elapsed_ms": 4.471,
+                "dependencies": [
+                  "architecture.read-through-cache.read_fill"
+                ]
+              }
+            },
+            "architecture.subclass-factory": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 32,
+                "rows_examined": 15,
+                "elapsed_ms": 0.09,
+                "dependencies": [
+                  "architecture.subclass-factory#returned-subclass"
+                ]
+              }
+            },
+            "persistence.unit-of-work": {
+              "complete": true,
+              "unknown": [],
+              "stats": {
+                "states": 54,
+                "rows_examined": 26,
+                "elapsed_ms": 0.158,
+                "dependencies": [
+                  "persistence.unit-of-work#keyed-change-set"
+                ]
+              }
+            }
+          },
+          "matches_by_rule": {
+            "architecture.adapted-continuation-wrapper": 3,
+            "architecture.dependency-injection": 7,
+            "architecture.dispatch-table": 1,
+            "iterator": 4,
+            "observer": 1,
+            "resilience.exception-retry": 1,
+            "strategy": 2,
+            "template-method": 3,
+            "visitor": 1
+          },
+          "cold_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 0,
+              "misses": 25,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 4303.998
+          },
+          "warm_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 1,
+              "misses": 0,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 1286.544
+          },
+          "warm_build_analysis": {
+            "resolution": {
+              "resolved_calls": 221,
+              "unresolved_calls": 1003
+            },
+            "files": [
+              "src/flask/__init__.py",
+              "src/flask/__main__.py",
+              "src/flask/app.py",
+              "src/flask/blueprints.py",
+              "src/flask/cli.py",
+              "src/flask/config.py",
+              "src/flask/ctx.py",
+              "src/flask/debughelpers.py",
+              "src/flask/globals.py",
+              "src/flask/helpers.py",
+              "src/flask/json/__init__.py",
+              "src/flask/json/provider.py",
+              "src/flask/json/tag.py",
+              "src/flask/logging.py",
+              "src/flask/sansio/app.py",
+              "src/flask/sansio/blueprints.py",
+              "src/flask/sansio/scaffold.py",
+              "src/flask/sessions.py",
+              "src/flask/signals.py",
+              "src/flask/templating.py",
+              "src/flask/testing.py",
+              "src/flask/typing.py",
+              "src/flask/views.py",
+              "src/flask/wrappers.py"
+            ],
+            "skipped": [],
+            "coverage_complete": true,
+            "diagnostics": [],
+            "cache": {
+              "hits": 1,
+              "misses": 0,
+              "evictions": 0,
+              "max_bytes": 500000000,
+              "bytes": 4362240,
+              "enabled": true,
+              "error": null
+            },
+            "elapsed_ms": 1360.518
+          }
+        }
+      ],
+      "profiles": {
+        "parse_link": [
+          {
+            "file": "/Users/andres/Projects/ken/examples/bench/validate_search_pipeline.py",
+            "line": 104,
+            "function": "graph_only",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 3.962,
+            "cumulative_ms": 2724.3
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/semantic.py",
+            "line": 26,
+            "function": "link_project",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 102.612,
+            "cumulative_ms": 1958.903
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/frontend.py",
+            "line": 1120,
+            "function": "lower_source",
+            "calls": 24,
+            "primitive_calls": 24,
+            "self_ms": 6.062,
+            "cumulative_ms": 761.435
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/frontend.py",
+            "line": 604,
+            "function": "lower",
+            "calls": 24,
+            "primitive_calls": 24,
+            "self_ms": 29.727,
+            "cumulative_ms": 666.918
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/return_flow.py",
+            "line": 12,
+            "function": "sequential_returns",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 503.6,
+            "cumulative_ms": 520.358
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/model.py",
+            "line": 86,
+            "function": "__init__",
+            "calls": 7,
+            "primitive_calls": 7,
+            "self_ms": 246.803,
+            "cumulative_ms": 409.114
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/frontend.py",
+            "line": 734,
+            "function": "semantics",
+            "calls": 32497,
+            "primitive_calls": 32497,
+            "self_ms": 71.271,
+            "cumulative_ms": 232.981
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/frontend.py",
+            "line": 634,
+            "function": "operation",
+            "calls": 32497,
+            "primitive_calls": 32497,
+            "self_ms": 138.848,
+            "cumulative_ms": 209.443
+          },
+          {
+            "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/copy.py",
+            "line": 118,
+            "function": "deepcopy",
+            "calls": 184428,
+            "primitive_calls": 24,
+            "self_ms": 94.922,
+            "cumulative_ms": 205.42
+          },
+          {
+            "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/copy.py",
+            "line": 217,
+            "function": "_deepcopy_dict",
+            "calls": 12152,
+            "primitive_calls": 24,
+            "self_ms": 32.12,
+            "cumulative_ms": 205.373
+          },
+          {
+            "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/copy.py",
+            "line": 247,
+            "function": "_reconstruct",
+            "calls": 6064,
+            "primitive_calls": 6064,
+            "self_ms": 8.163,
+            "cumulative_ms": 178.249
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/model.py",
+            "line": 57,
+            "function": "add",
+            "calls": 164120,
+            "primitive_calls": 164120,
+            "self_ms": 98.866,
+            "cumulative_ms": 142.012
+          },
+          {
+            "file": "~",
+            "line": 0,
+            "function": "<method 'append' of 'list' objects>",
+            "calls": 1828369,
+            "primitive_calls": 1828369,
+            "self_ms": 129.757,
+            "cumulative_ms": 129.757
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/frontend.py",
+            "line": 61,
+            "function": "descendants",
+            "calls": 170141,
+            "primitive_calls": 170141,
+            "self_ms": 83.819,
+            "cumulative_ms": 118.942
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/syntax_graph.py",
+            "line": 9,
+            "function": "syntax_contexts",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 59.621,
+            "cumulative_ms": 103.807
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/collection_snapshots.py",
+            "line": 12,
+            "function": "collection_snapshots",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 27.273,
+            "cumulative_ms": 102.665
+          },
+          {
+            "file": "~",
+            "line": 0,
+            "function": "<method 'get' of 'dict' objects>",
+            "calls": 945942,
+            "primitive_calls": 945942,
+            "self_ms": 100.445,
+            "cumulative_ms": 100.445
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/binding_writes.py",
+            "line": 6,
+            "function": "binding_writes",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 22.501,
+            "cumulative_ms": 99.26
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/type_refs.py",
+            "line": 143,
+            "function": "annotation_types",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 8.753,
+            "cumulative_ms": 95.044
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/member_transfers.py",
+            "line": 6,
+            "function": "member_transfers",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 14.608,
+            "cumulative_ms": 92.485
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/field_transfers.py",
+            "line": 10,
+            "function": "field_transfers",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 18.49,
+            "cumulative_ms": 90.711
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/call_bindings.py",
+            "line": 7,
+            "function": "call_bindings",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 14.639,
+            "cumulative_ms": 90.024
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/frontend.py",
+            "line": 80,
+            "function": "__init__",
+            "calls": 24,
+            "primitive_calls": 24,
+            "self_ms": 22.833,
+            "cumulative_ms": 88.442
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/member_access.py",
+            "line": 11,
+            "function": "member_access",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 20.496,
+            "cumulative_ms": 85.777
+          },
+          {
+            "file": "~",
+            "line": 0,
+            "function": "<method 'setdefault' of 'dict' objects>",
+            "calls": 1130277,
+            "primitive_calls": 1130277,
+            "self_ms": 85.739,
+            "cumulative_ms": 85.739
+          }
+        ],
+        "public_execute_rules": [
+          {
+            "file": "/Users/andres/Projects/ken/examples/bench/validate_search_pipeline.py",
+            "line": 135,
+            "function": "<lambda>",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 0.01,
+            "cumulative_ms": 1568.312
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/rules.py",
+            "line": 266,
+            "function": "execute_rules",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 0.493,
+            "cumulative_ms": 1568.302
+          },
+          {
+            "file": "/Users/andres/Projects/ken/examples/bench/validate_search_pipeline.py",
+            "line": 214,
+            "function": "eager_query_graph",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 0.151,
+            "cumulative_ms": 1178.669
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/kenql.py",
+            "line": 595,
+            "function": "query_graph",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 787.201,
+            "cumulative_ms": 984.651
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/kenql.py",
+            "line": 540,
+            "function": "execute",
+            "calls": 33,
+            "primitive_calls": 33,
+            "self_ms": 0.202,
+            "cumulative_ms": 348.686
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/kenql.py",
+            "line": 427,
+            "function": "run_nodes",
+            "calls": 3797,
+            "primitive_calls": 33,
+            "self_ms": 28.614,
+            "cumulative_ms": 346.183
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/kenql.py",
+            "line": 379,
+            "function": "facts",
+            "calls": 21025,
+            "primitive_calls": 21025,
+            "self_ms": 82.086,
+            "cumulative_ms": 264.592
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/model.py",
+            "line": 114,
+            "function": "_all_endpoints",
+            "calls": 2,
+            "primitive_calls": 2,
+            "self_ms": 117.63,
+            "cumulative_ms": 193.863
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/model.py",
+            "line": 136,
+            "function": "by_subject",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 0.003,
+            "cumulative_ms": 98.908
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/model.py",
+            "line": 141,
+            "function": "by_object",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 0.002,
+            "cumulative_ms": 94.959
+          },
+          {
+            "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/dataclasses.py",
+            "line": 1540,
+            "function": "replace",
+            "calls": 39794,
+            "primitive_calls": 39794,
+            "self_ms": 51.492,
+            "cumulative_ms": 81.383
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/model.py",
+            "line": 86,
+            "function": "__init__",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 39.422,
+            "cumulative_ms": 64.511
+          },
+          {
+            "file": "~",
+            "line": 0,
+            "function": "<method 'setdefault' of 'dict' objects>",
+            "calls": 522957,
+            "primitive_calls": 522957,
+            "self_ms": 62.436,
+            "cumulative_ms": 62.436
+          },
+          {
+            "file": "~",
+            "line": 0,
+            "function": "<method 'append' of 'list' objects>",
+            "calls": 731601,
+            "primitive_calls": 731601,
+            "self_ms": 55.809,
+            "cumulative_ms": 55.809
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/query.py",
+            "line": 178,
+            "function": "_bind",
+            "calls": 109769,
+            "primitive_calls": 109769,
+            "self_ms": 24.562,
+            "cumulative_ms": 54.002
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/query.py",
+            "line": 170,
+            "function": "_resolve",
+            "calls": 64192,
+            "primitive_calls": 64192,
+            "self_ms": 21.762,
+            "cumulative_ms": 48.995
+          },
+          {
+            "file": "~",
+            "line": 0,
+            "function": "<built-in method builtins.all>",
+            "calls": 54444,
+            "primitive_calls": 54444,
+            "self_ms": 8.621,
+            "cumulative_ms": 45.379
+          },
+          {
+            "file": "~",
+            "line": 0,
+            "function": "<method 'get' of 'dict' objects>",
+            "calls": 341645,
+            "primitive_calls": 341645,
+            "self_ms": 42.47,
+            "cumulative_ms": 42.47
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/kenql.py",
+            "line": 391,
+            "function": "<genexpr>",
+            "calls": 90461,
+            "primitive_calls": 90461,
+            "self_ms": 16.155,
+            "cumulative_ms": 39.941
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/model.py",
+            "line": 146,
+            "function": "rows",
+            "calls": 35151,
+            "primitive_calls": 35151,
+            "self_ms": 18.196,
+            "cumulative_ms": 37.779
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/query.py",
+            "line": 151,
+            "function": "_variable",
+            "calls": 138997,
+            "primitive_calls": 138997,
+            "self_ms": 19.957,
+            "cumulative_ms": 35.946
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/rules.py",
+            "line": 44,
+            "function": "_validate",
+            "calls": 74,
+            "primitive_calls": 74,
+            "self_ms": 0.655,
+            "cumulative_ms": 33.801
+          },
+          {
+            "file": "~",
+            "line": 0,
+            "function": "<built-in method builtins.min>",
+            "calls": 3592,
+            "primitive_calls": 3592,
+            "self_ms": 1.995,
+            "cumulative_ms": 32.368
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/rules.py",
+            "line": 18,
+            "function": "_parsed_query",
+            "calls": 389,
+            "primitive_calls": 389,
+            "self_ms": 0.348,
+            "cumulative_ms": 32.024
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/kenql.py",
+            "line": 253,
+            "function": "parse",
+            "calls": 104,
+            "primitive_calls": 104,
+            "self_ms": 0.364,
+            "cumulative_ms": 31.532
+          }
+        ],
+        "warm_public_search": [
+          {
+            "file": "/Users/andres/Projects/ken/examples/bench/validate_search_pipeline.py",
+            "line": 136,
+            "function": "<lambda>",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 12.094,
+            "cumulative_ms": 3144.659
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/service.py",
+            "line": 147,
+            "function": "search",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 0.797,
+            "cumulative_ms": 3132.565
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/rules.py",
+            "line": 266,
+            "function": "execute_rules",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 0.499,
+            "cumulative_ms": 1716.019
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/service.py",
+            "line": 67,
+            "function": "build_project",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 47.287,
+            "cumulative_ms": 1349.555
+          },
+          {
+            "file": "/Users/andres/Projects/ken/examples/bench/validate_search_pipeline.py",
+            "line": 214,
+            "function": "eager_query_graph",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 0.168,
+            "cumulative_ms": 1280.415
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/service.py",
+            "line": 54,
+            "function": "_cached_ir",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 0.013,
+            "cumulative_ms": 1279.59
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/model.py",
+            "line": 68,
+            "function": "from_dict",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 108.976,
+            "cumulative_ms": 946.581
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/model.py",
+            "line": 114,
+            "function": "_all_endpoints",
+            "calls": 2,
+            "primitive_calls": 2,
+            "self_ms": 832.223,
+            "cumulative_ms": 910.997
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/model.py",
+            "line": 141,
+            "function": "by_object",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 0.002,
+            "cumulative_ms": 796.917
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/kenql.py",
+            "line": 595,
+            "function": "query_graph",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 160.505,
+            "cumulative_ms": 369.245
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/kenql.py",
+            "line": 540,
+            "function": "execute",
+            "calls": 33,
+            "primitive_calls": 33,
+            "self_ms": 0.19,
+            "cumulative_ms": 358.381
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/kenql.py",
+            "line": 427,
+            "function": "run_nodes",
+            "calls": 3797,
+            "primitive_calls": 33,
+            "self_ms": 29.473,
+            "cumulative_ms": 355.908
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/cache.py",
+            "line": 54,
+            "function": "get",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 0.024,
+            "cumulative_ms": 332.996
+          },
+          {
+            "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/json/__init__.py",
+            "line": 299,
+            "function": "loads",
+            "calls": 1092,
+            "primitive_calls": 1092,
+            "self_ms": 0.501,
+            "cumulative_ms": 309.749
+          },
+          {
+            "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/json/decoder.py",
+            "line": 333,
+            "function": "decode",
+            "calls": 1092,
+            "primitive_calls": 1092,
+            "self_ms": 0.817,
+            "cumulative_ms": 305.365
+          },
+          {
+            "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/json/decoder.py",
+            "line": 344,
+            "function": "raw_decode",
+            "calls": 1092,
+            "primitive_calls": 1092,
+            "self_ms": 303.705,
+            "cumulative_ms": 303.705
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/kenql.py",
+            "line": 379,
+            "function": "facts",
+            "calls": 21025,
+            "primitive_calls": 21025,
+            "self_ms": 88.026,
+            "cumulative_ms": 272.684
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/model.py",
+            "line": 86,
+            "function": "__init__",
+            "calls": 3,
+            "primitive_calls": 3,
+            "self_ms": 86.53,
+            "cumulative_ms": 142.061
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/model.py",
+            "line": 136,
+            "function": "by_subject",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_ms": 0.002,
+            "cumulative_ms": 114.085
+          },
+          {
+            "file": "~",
+            "line": 0,
+            "function": "<method 'setdefault' of 'dict' objects>",
+            "calls": 687082,
+            "primitive_calls": 687082,
+            "self_ms": 83.082,
+            "cumulative_ms": 83.082
+          },
+          {
+            "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/dataclasses.py",
+            "line": 1540,
+            "function": "replace",
+            "calls": 39803,
+            "primitive_calls": 39803,
+            "self_ms": 55.002,
+            "cumulative_ms": 82.695
+          },
+          {
+            "file": "~",
+            "line": 0,
+            "function": "<method 'append' of 'list' objects>",
+            "calls": 902842,
+            "primitive_calls": 902842,
+            "self_ms": 68.575,
+            "cumulative_ms": 68.575
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/query.py",
+            "line": 178,
+            "function": "_bind",
+            "calls": 109769,
+            "primitive_calls": 109769,
+            "self_ms": 24.579,
+            "cumulative_ms": 53.425
+          },
+          {
+            "file": "/Users/andres/Projects/ken/src/ken/structural/query.py",
+            "line": 170,
+            "function": "_resolve",
+            "calls": 64192,
+            "primitive_calls": 64192,
+            "self_ms": 21.878,
+            "cumulative_ms": 49.78
+          },
+          {
+            "file": "~",
+            "line": 0,
+            "function": "<method 'get' of 'dict' objects>",
+            "calls": 343014,
+            "primitive_calls": 343014,
+            "self_ms": 47.786,
+            "cumulative_ms": 48.022
+          }
+        ]
+      }
+    }
+  ],
+  "mode": "root-pipeline-distribution",
+  "query_index_policy": "eager-endpoints-experiment",
+  "engine_unchanged_during_run": true,
+  "finished_utc": "2026-09-13T16:10:27.719101+00:00",
+  "process_maxrss": {
+    "value": 1153433600,
+    "unit": "bytes",
+    "scope": "cumulative whole benchmark process; not per case"
+  }
+}

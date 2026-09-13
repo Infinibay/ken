@@ -1,0 +1,29 @@
+[
+  {
+    "repo": "rxjs",
+    "rule": "singleton",
+    "new_rule": false,
+    "commit": "54796b38a57e6309f9861e174737479bb3f63f61",
+    "added": [
+      {
+        "roles": {
+          "$unit": {
+            "name": "Notification",
+            "path": "packages/rxjs/src/notification.ts",
+            "line": 26,
+            "kind": "CLASS"
+          }
+        },
+        "variant": "default",
+        "status": "structural_match"
+      }
+    ],
+    "removed": [],
+    "review": {
+      "classification": "TP for shared-instance operation; FP if interpreted as strict GoF Singleton",
+      "evidence": "Notification.completeNotification initializes a single cached COMPLETE value; createComplete returns it through erased TypeScript assertions. Public constructor plus createNext/createError create other Notification instances.",
+      "cause": "IR1.42 preserves the value beneath as assertions; singleton#eager-shared intentionally tests shared-instance structure without proving uniqueness.",
+      "possible_correction": "Separate the broad reusable singleton.shared_instance evidence from a stricter canonical Singleton variant, with constructor/accessibility and other-allocation controls across languages. Do not drop assertion value normalization."
+    }
+  }
+]

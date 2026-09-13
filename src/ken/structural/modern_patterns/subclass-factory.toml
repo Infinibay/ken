@@ -1,0 +1,36 @@
+id = "architecture.subclass-factory"
+name = "Subclass Factory"
+description = "A factory returns a locally defined class derived from its supplied base."
+collections = ["architecture", "modern"]
+tags = ["web", "mixin", "class-decorator", "dynamic-inheritance"]
+caveat = "A returned subclass construction site, not proof of runtime base identity, decorator application, type compatibility, argument forwarding, MRO or GoF Decorator intent. Requires supported return flow and an explicitly unreassigned base parameter, or a concise arrow whose body is the class expression itself."
+query = '''
+query subclass_factory {
+ match "architecture.subclass-factory#returned-subclass"(factory:$factory,derived:$derived,base:$base);
+ emit $factory,$derived,$base;
+}
+'''
+
+[[variants]]
+id = "returned-subclass"
+status = "ready"
+languages = ["python", "javascript", "typescript"]
+query_claim = "A returned local class derives from a simple parameter reference, via supported flow with no explicit parameter writes or via a direct concise-arrow body; no runtime substitution or heap identity guarantee."
+query = '''
+query returned_subclass {
+ require $derived BASE_VALUE $base;
+ parameter(receiver:false) as $base;
+ require $factory HAS_PARAMETER $base;
+ require $factory DECLARES $derived;
+ type_decl() as $derived;
+ any {
+  require $factory UNREASSIGNED_BINDING $base;
+  require $factory RETURN_FLOW_STATUS supported;
+  require $factory RETURNS_VALUE $derived;
+ } or {
+  callable(native_kind:arrow_function) as $factory;
+  require $factory BODY_VALUE $derived;
+ }
+ emit $factory,$derived,$base;
+}
+'''

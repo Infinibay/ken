@@ -1,0 +1,721 @@
+{
+  "ir_version": "1.37.0",
+  "counts": {
+    "TP": 18,
+    "TN": 33,
+    "FP": 0,
+    "FN": 0
+  },
+  "cases": [
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        "=0;",
+        "positive"
+      ],
+      "rule": "adapter",
+      "source_sha256": "a04e4703523f484c5a3b4b0fc99e7d214b812bc06e0b837a9cb183794ce086b6",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        "=0;",
+        "renamed"
+      ],
+      "rule": "adapter",
+      "source_sha256": "f870de80556da0ce755e0c536829bf2ba48e77d6f6a702cd08b131a7d598ffea",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        "=0;",
+        "nonvirtual"
+      ],
+      "rule": "adapter",
+      "source_sha256": "e402fc2278802b8e3148884142fe1d790c4c4cddc26aabbd6d0c45262a32b62c",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        "=0;",
+        "overload"
+      ],
+      "rule": "adapter",
+      "source_sha256": "94c91b320aa4b887bbc7c97f7ddb312edab464494fe8f985b8b284807df3eb11",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        "=0;",
+        "qualifier"
+      ],
+      "rule": "adapter",
+      "source_sha256": "10108190fe933d5d852fb340981300f25cee2c5c6cb8330efa3659890bd5f768",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        "=0;",
+        "no-behavior"
+      ],
+      "rule": "adapter",
+      "source_sha256": "4b33420a00df343c4cb2309ce522511d796c1096cb04b19513ba2e596bbbe7b8",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        ";",
+        "positive"
+      ],
+      "rule": "adapter",
+      "source_sha256": "07806f411918a0ab9b4b0611a469b6711c0085c763598518896183c18c3211a7",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        ";",
+        "renamed"
+      ],
+      "rule": "adapter",
+      "source_sha256": "56bf52babc3a41748b3089744d5ab15550236d3c8dbbb6003e22f3af7ec43161",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        ";",
+        "nonvirtual"
+      ],
+      "rule": "adapter",
+      "source_sha256": "e402fc2278802b8e3148884142fe1d790c4c4cddc26aabbd6d0c45262a32b62c",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        ";",
+        "overload"
+      ],
+      "rule": "adapter",
+      "source_sha256": "93c4b601d88d5487756c4da01d3df1035bab315bdbf1ca68addd98fdfe17222c",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        ";",
+        "qualifier"
+      ],
+      "rule": "adapter",
+      "source_sha256": "95b2ae41706313da303198d5754a4569046cef63001925a2ada8f8ece13302f1",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        ";",
+        "no-behavior"
+      ],
+      "rule": "adapter",
+      "source_sha256": "ecc2e0abc9eb5cba0a8292596263506df2883cfad015ac7b7a6bbac8c178dd41",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        "{}",
+        "positive"
+      ],
+      "rule": "adapter",
+      "source_sha256": "c5b21554fae74f2ae77a1bc9aad433a8efa1e34282ef4d312bca8120908d7b15",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        "{}",
+        "renamed"
+      ],
+      "rule": "adapter",
+      "source_sha256": "02430cf05a2da7855a2bac053f113c8eb2987d98a67240b8c1c04002401aed34",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        "{}",
+        "nonvirtual"
+      ],
+      "rule": "adapter",
+      "source_sha256": "b5c466100f81c479a571eba52b417e684527aaea4ff335a464229367dc4498af",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        "{}",
+        "overload"
+      ],
+      "rule": "adapter",
+      "source_sha256": "375c4a07ea229cfd8e852bb2fbd4b28574f5a5c1f80972d252b79fa0b6a88500",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        "{}",
+        "qualifier"
+      ],
+      "rule": "adapter",
+      "source_sha256": "f15190291ad06bf7acb65ff03e7bbe0db93d158d95f2a3ad99df0e318e908400",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "adapter",
+        "{}",
+        "no-behavior"
+      ],
+      "rule": "adapter",
+      "source_sha256": "dd501e35da3b7c19bfa07351f6ff1b3cadde169bb67ddfd79f720f85567d84de",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        "=0;",
+        "positive"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "87b05e2a53d499c187ee3d25bd5385a927c91c3240ac217d4ce0d8ed2ce65a71",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        "=0;",
+        "renamed"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "a59bd2581b480e237448783f718d1b9dee9c33dedea2ddc6811a94604a53705b",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        "=0;",
+        "nonvirtual"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "0d48713df865bdc9384eed514de0c127d477586fa642cf5e8eab157e35b7542b",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        "=0;",
+        "overload"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "ba25294095a82c59fcfba664e4c1d55704324654696b887b67fdb7ed205a611a",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        "=0;",
+        "qualifier"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "98cf9cc194e92c26736313435dd7be47316775814592808546db91c7826af784",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        "=0;",
+        "no-behavior"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "03a894251ab18a93f906042a2247c2e680b8c3373abd52e70b52c529caea8992",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        ";",
+        "positive"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "0cb2021d7b23d97e71fa728d0ce6466f471330ec07aa6a6097747385001d010e",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        ";",
+        "renamed"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "a069c7db82d6450cdbe1a081be6c2977c3d2907b5f1d76651da3665d81f7581d",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        ";",
+        "nonvirtual"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "0d48713df865bdc9384eed514de0c127d477586fa642cf5e8eab157e35b7542b",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        ";",
+        "overload"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "6463caf0e38a6e2d7d9a8a850453e8172fc34e705b3fdf3b29ab32ae2fe48f4b",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        ";",
+        "qualifier"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "c17d2e8c28d675cca2a12d1a141a73205696148ba2e8e4ab17fc3ddc881432d2",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        ";",
+        "no-behavior"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "88535d6e8a6297b6700b29b06a35f758101a404fb8d84516365c672972593c4f",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        "{}",
+        "positive"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "65526fedc86a6eceabdbd4d8e3aee2046031ee09468256a5067b33db4fdc0269",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        "{}",
+        "renamed"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "9e836d589ff3f55be3bc67f3d555bf15e536bd74e3c96eb507275501e3e525db",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        "{}",
+        "nonvirtual"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "14af3e867a2ece6b07dd7cbe440d262293b3f6634cdd714adeb1b3c59468cbd8",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        "{}",
+        "overload"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "e5387549e0ee602f2eddd4eb90573dbae747319b98194add38f21a923e7254cf",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        "{}",
+        "qualifier"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "125b784d498484987ae2f15ede3e89dfde0da9c7504371ae6cc6a9356b6f31a6",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_public_patterns_with_declaration_contracts",
+      "args": [
+        "factory-method",
+        "{}",
+        "no-behavior"
+      ],
+      "rule": "factory-method",
+      "source_sha256": "0e032dd340c49204d788362e17afbe3d981dacec3b2eb24f0d9b28254f526eaa",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "abstract-factory",
+        "positive"
+      ],
+      "rule": "abstract-factory",
+      "source_sha256": "6d170cd5bb7d6ae7f9bcf1c5f4e36f88d8d82a9bac0d12d9851893823d62b137",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "abstract-factory",
+        "renamed"
+      ],
+      "rule": "abstract-factory",
+      "source_sha256": "ef1542d8e0c7c4828b4d34d99d070af6cf6fb8d855df6a189d5554206f09ca66",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "abstract-factory",
+        "nonvirtual"
+      ],
+      "rule": "abstract-factory",
+      "source_sha256": "163bea0a5122d5fd02c1fefba93f4b81632e64afab5c28dce8968a3cddc2851e",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "abstract-factory",
+        "overload"
+      ],
+      "rule": "abstract-factory",
+      "source_sha256": "22498e82eedaa190ac92c05346f5b02664223dfdf7acf59a010e86b0f0846d7e",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "abstract-factory",
+        "no-behavior"
+      ],
+      "rule": "abstract-factory",
+      "source_sha256": "d665817f1b503b53dac3b88aaf55f4d48939aa914f6aa23287987d0d0ee0dbed",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "interpreter",
+        "positive"
+      ],
+      "rule": "interpreter",
+      "source_sha256": "14a65aaee2cebd864a1a7c1bc19b3effcfcae06d99fd38b7eb6e3fa4867e383b",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "interpreter",
+        "renamed"
+      ],
+      "rule": "interpreter",
+      "source_sha256": "2af6221dddeb41cd941ed6162e18e8ae8d75d88642d58e85c3bc48e941c534b9",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "interpreter",
+        "nonvirtual"
+      ],
+      "rule": "interpreter",
+      "source_sha256": "3cb1418543d37a6566ee55236ca4bf4bd4dddd4038471c840313a29a2a8d6117",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "interpreter",
+        "overload"
+      ],
+      "rule": "interpreter",
+      "source_sha256": "a6497f62ea527641ed41173bc27f60d0e2f5586727967182a6b698f3b11f8f28",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "interpreter",
+        "no-behavior"
+      ],
+      "rule": "interpreter",
+      "source_sha256": "051a2677c567f9638a155db6c2f1e351c34da68a40145e7327148e5361989a8a",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "template-method",
+        "positive"
+      ],
+      "rule": "template-method",
+      "source_sha256": "db88b276ac80f4575defc4b0b146ba515bf22ec9f247a11aefbd8440f9f320c4",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "template-method",
+        "renamed"
+      ],
+      "rule": "template-method",
+      "source_sha256": "e0cf164aa10182a79dcb325b334b14b6eeffe7704045f4fa4d7118583b3ce57e",
+      "expected": true,
+      "found": true,
+      "label": "TP"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "template-method",
+        "nonvirtual"
+      ],
+      "rule": "template-method",
+      "source_sha256": "421b66883344f817c287a5fc7d2216fc42f74ef954b9d5f2eccb27e7ee55dc29",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "template-method",
+        "overload"
+      ],
+      "rule": "template-method",
+      "source_sha256": "744750bb2bbff5692f762fed4361456eb49aa8b6497e0073c8081090595392fa",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    },
+    {
+      "generator": "test_additional_patterns_recovered_in_external_cpp_examples",
+      "args": [
+        "template-method",
+        "no-behavior"
+      ],
+      "rule": "template-method",
+      "source_sha256": "1a995bfa52527aa15b0640c897e8a1ea25fcca6f64ef9b6f0d39c120824a2672",
+      "expected": false,
+      "found": false,
+      "label": "TN"
+    }
+  ],
+  "scope": "51 controlled C++ source-shape cases; no target source execution; not a population estimate.",
+  "engine_sha256": {
+    "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+    "binding_writes.py": "248c81c19c54b70240ab312a4f0401b272bdc0644197417ea5434827607fa7f3",
+    "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+    "call_bindings.py": "e22e85204749f85185813ab2b6ae835f6a9566092c451fb674d41629e884bc7b",
+    "catalog.py": "39cb65a22c3c0c1b96ae41cd2343b8227d93ba1f62763bd95efdfe568683d638",
+    "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+    "collection_lifecycle.py": "a35f48339a074eb62b1e5e1b73024c4ea3d133628675b710a0cf048f5910d549",
+    "collection_snapshots.py": "8ba78a0010eafa7a85c4ab519944171570235a0c108ed52d5f830ed79684203b",
+    "control_flow.py": "d77c41e7e89a743720f28c04afa36a6d9251abae2df5ef3844df7c1b07d0a33b",
+    "cpp_methods.py": "eeb094c9ac77fdf7d76981e14b4b384c1cc805c648f8a774624f8ef806eea321",
+    "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+    "field_transfers.py": "e0074a3ed77bf1ca2b9f072bb708b434b163f7186815914fbc82e3e6ccec5e16",
+    "frontend.py": "94acdb7bd4c228c052fa77c6e759f3f2c84bd522c27858cd1d2c8c427dd51db8",
+    "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+    "kenql.py": "513244ba422f60624ff937c6e5715a6413526e4c9edc403414f36ecf82e04b48",
+    "member_access.py": "9781486284abe3599396740599f7305f2069c555e024b2ff9b10fb1cd5e6fe50",
+    "member_transfers.py": "1a168fbc389e81628d74d9089fa4ce278bab7fcbe07cdf6d901c3af9cef6cbbb",
+    "model.py": "eef8bd4054e88537f3495e1a17d839c1e6bef5edf3178722b7f6bac20de5129c",
+    "modern_patterns/adapted-continuation-wrapper.toml": "cfae68be5c98788c03b0c663a7fb5d94b03164b57e2c2b413228e4c14528c50d",
+    "modern_patterns/batch-work-queue.toml": "6e1b3a69aae411a736c749814959aac73df1e30c29c84ef7e6b2e02a1c058a31",
+    "modern_patterns/cache-aside.toml": "c7915bc8855deecd60881f3f4db072714f670ed3f55bdbd6f47a495549a12328",
+    "modern_patterns/continuation-wrapper.toml": "0092ade2a426815819334a1999ea4c2a65e54f452ceaf7a6de08dd77dd855ff2",
+    "modern_patterns/dependency-injection.toml": "c7c5295207795d24fe7f854fe284ca544819addf8f0022705cf648e213b2ce1c",
+    "modern_patterns/dispatch-table.toml": "a2197cedfd9f2f8bdb35c02ba8a398e1805f31b6bec42f8547aaefa4f86c3566",
+    "modern_patterns/exception-retry.toml": "eeab3c3ae90b1a7a3f1778db573d80113e4d6e0cc50fbd2ff6ec1cb1da6af77c",
+    "modern_patterns/read-through-cache.toml": "68d8df7db96d7a3270875b46bc837879f036a06a15b0e8c8f46877fc34eb6159",
+    "modern_patterns/unit-of-work.toml": "82920e8a2f861c7658a80c729ad0b375d466fb8d1a6122d5ab783a039e64b949",
+    "nominal_roots.py": "9f41249a1346ab4543d497cdc71b8568d5c0b899fd6ba99cfb7b272d9fc1dfb3",
+    "patterns/abstract-factory.toml": "d075ab8290e8304c4c25806087b2d9f5c22c2f5ebf34e37ab957843220f06d4d",
+    "patterns/adapter.toml": "f68db1dcb07858065cc9a80bb80da5b0ba7e026681e08c6dc9ca4945d1e8f842",
+    "patterns/bridge.toml": "566e693f3decef8bd27d2f10fff841e8f1f768b9bbc2e4a7dfbb4e522c76bf4b",
+    "patterns/builder.toml": "bb46c4713cd0b4c6b42a7a5cc4df16206d42b73be20948d9328c7fed1b6897d8",
+    "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+    "patterns/command.toml": "732b239180a25d1d01502f5b181b0c82d9267876f8cb5b376ceb2e20416db402",
+    "patterns/composite.toml": "fffb2da5916eb05e4da83de63e21549ad06481938087b9344f291c22f3516a02",
+    "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+    "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+    "patterns/factory-method.toml": "cf2d5b3d342478cc22d40a5a2211002622b4b75be09ca25b0cafd3fccd98fbd4",
+    "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+    "patterns/interpreter.toml": "a2a674ce0dfa775cc287df32bdca056bd4be1196ada97ec170821852817e787c",
+    "patterns/iterator.toml": "404233895ac5526625c039f7875db8ecb68aba57ba087c67723f871b797d04ef",
+    "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+    "patterns/memento.toml": "fa56773105fe4f84ae7f8557eb086757831600533b5c38777cc330a0f480caf3",
+    "patterns/observer.toml": "ca3ad665f19488efc51b57d103667395ae895f4f56b4fb0447e463d23d3599d5",
+    "patterns/prototype.toml": "2de68c873a910bd564889fce9644339d5169640803531d9bf54ae1d3bcb69923",
+    "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+    "patterns/singleton.toml": "01d83cc97ac6e68fbdcd179d9e97a2f02ee8e857735563c776aedd3023d4a390",
+    "patterns/state.toml": "24a6b2742a179205032c27e48d21082e65407eecd62dd3a827b317246a015a74",
+    "patterns/strategy.toml": "3bae309d05f0a1a360114082c6a30f65a68ed0eaa5615fa741a8bec2d586951c",
+    "patterns/template-method.toml": "391fd8cf3a0a2fceff9ebfc1994b82d737d3dc9a7bbe181e3886b9e144133e3d",
+    "patterns/visitor.toml": "7d47620aad4831dfcc601818ea92c5f9781658d1d85356d6b0d44e9c7a88d3e7",
+    "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+    "return_flow.py": "67da3d1dcc7071dda86fbec744c81a2faeff7fd85bee746598d1157d16b0389b",
+    "rules.py": "a3fd498e5154c1f45a524de6fe470bc176bc8600b3a70332727640e956e0cfb3",
+    "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+    "semantic.py": "92d178b87d0b2f53d75732a53a79fd11e34c7317458396f43baac295d7e71ced",
+    "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df",
+    "syntax_graph.py": "ad63fe8b926d73bf853f09ec209e3208a1341e8eb2c4fe7799e73cafa3a4d6b6",
+    "type_refs.py": "31c0aac9132cdae3ad0a4ea009a92ce57d8a5434a999dbf0597592d347010b17"
+  }
+}

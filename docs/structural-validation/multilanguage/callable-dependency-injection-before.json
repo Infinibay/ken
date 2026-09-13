@@ -1,0 +1,957 @@
+{
+  "ir_version": "1.39.0",
+  "rule": "architecture.dependency-injection",
+  "counts": {
+    "TP": 0,
+    "TN": 49,
+    "FP": 0,
+    "FN": 49
+  },
+  "cases": [
+    {
+      "language": "python",
+      "change": "positive",
+      "source_sha256": "114605a0d564ab9df259a6730296f747d867feeded504f0ffbb3fa46b23db20f",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "python",
+      "change": "renamed",
+      "source_sha256": "ebd207f35eeebf6c1630faa5f88121e68fc5fd767f7cc40660007a5de0bdd0f9",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "python",
+      "change": "parentheses",
+      "source_sha256": "016ff7bab486cb292f84187a07b902ec972d2c52338bcdd96c1ee2819b03ec1a",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "python",
+      "change": "prior-write",
+      "source_sha256": "56c3e06820b7adcc93806121baa9f415a2d713fe3854fe4f95f205724dcffdae",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "python",
+      "change": "overwrite",
+      "source_sha256": "4e1abd45e02b94ea545a72de2b597d84d252e70402a1cd5340a288543544d5bd",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "python",
+      "change": "input-before",
+      "source_sha256": "58d9e5f8dff6c93bf1affcc419c9159b2b33b200b6cba1d28076a79ca066913b",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "python",
+      "change": "input-after",
+      "source_sha256": "fba1acb27a7f2710b33cdd7f099af1f308d8a8e98fe2f2c305b716c0750a8a8f",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "python",
+      "change": "return-before",
+      "source_sha256": "a66f3eff8c1cb9c77f20133130ceac8ebea9b7b5d109672d5711ab2d96bbed3a",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "python",
+      "change": "dead-write",
+      "source_sha256": "ea9408f5d3e1efc408207d2867599f0e4d331efb8917ef10885607a9ab045cf1",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "python",
+      "change": "replacement",
+      "source_sha256": "47927c2fd8dd62fdbe8cdff8b67affea39b7fbfe7c22c3578fa820634879b093",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "python",
+      "change": "wrong-field",
+      "source_sha256": "f9430d2edf55cd359e5c5dcb26bcb0626768b83496993406de8d8234d82f9693",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "python",
+      "change": "no-call",
+      "source_sha256": "10eb692db81df471e28957e0a5e2e0e182fcd29af93cc4bd67819067eb85c00d",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "python",
+      "change": "no-input",
+      "source_sha256": "e70894de7bd4e8c090c9f1ce4d92d2349682d925c3a775753c400fc6285823a8",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "python",
+      "change": "zero-arguments",
+      "source_sha256": "4ad67d6eed2dc7b15037b9a8c44a9c852d6ff97759a35f870baf3da971d2743a",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "positive",
+      "source_sha256": "71c9c8bbba2cd37f2e4207892d888aff3b49c819a1ee7d5fd731b6831c2c921e",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "renamed",
+      "source_sha256": "3619bd12e16a5f3e7d03fe73bbb9c9e61bf822d5b5e2e47f35cd9954a7088188",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "parentheses",
+      "source_sha256": "b8fae8054366d9c2cc254706d3c6e4c649240ae8ef18a19266258c7bd0251d82",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "prior-write",
+      "source_sha256": "72848557167938347906c975d8c61b840df695456a11bd15577eb3b6e4e50af2",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "overwrite",
+      "source_sha256": "fc882544129e893a79272e1a47091172704624750d2be3c8429f45275e2b6426",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "input-before",
+      "source_sha256": "d7b34559780f579510bf57bb2b0069acc35837365a41ee08facb684fe23deccc",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "input-after",
+      "source_sha256": "6538d781ecbbad3fa73e5f64f396ecf2ad9a0735af932b3578d7c3e2a3f9e2d1",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "return-before",
+      "source_sha256": "7ef7094ffebb5c92506d6d8cbda2cea265c35beadba01f951d2ee299cf1a5f2f",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "dead-write",
+      "source_sha256": "94746dab0190956c5f79294c6608771bee4744851e6aa34b19c4d9b9c67a2eb2",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "replacement",
+      "source_sha256": "ef04c6117c37675a6c4cfbd054a3ba82ea674c7ef790ffcc89397c7857fb8c71",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "wrong-field",
+      "source_sha256": "dc3dbae5e14ec169d0f4596744ff464755bd563f5cf78fd9f015f54bea5b6d5e",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "no-call",
+      "source_sha256": "349f97d28a19a97eb7292ee99fa4a65007c99316a9fc7bacab46462fdba71735",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "no-input",
+      "source_sha256": "1bb57f308ed64dfa9b78e92fc2d1b5c4d43fe19da326ddb1f56de0d640e40eb4",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "javascript",
+      "change": "zero-arguments",
+      "source_sha256": "51d997444bc3c9337e939a48491b8574e2b5c5712b0689c09d41691a9fb9e9bc",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "positive",
+      "source_sha256": "f5f980b04ba6d916ac5c348a73b578c5f5e4cdbf55b1693a7f704916b7b8131b",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "renamed",
+      "source_sha256": "73f24ef43c6e2e2568d45f40c93c524e80a0385337719011234f912fb4bb6774",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "parentheses",
+      "source_sha256": "49e6d8a7231a23c2c3a4258729464250689643459f920d83beb8d5dd8fb7c9df",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "prior-write",
+      "source_sha256": "8876a42c45bdc91ea05c339a5d8fb9bd2e7b1d4063aad7950947c051b90430f6",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "overwrite",
+      "source_sha256": "322121b7233ecccc54b03804461979ea9cfeec479f72cda54aa0f86503e1bf85",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "input-before",
+      "source_sha256": "7e928f3c74293ac494e34d30ed037e7e3afdf423099941eb131548ec59aadf45",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "input-after",
+      "source_sha256": "4af1e9728ae71e9e9490ec8176b7aa0c14a6cbf6f17d8cfe42bbd791c247bf6d",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "return-before",
+      "source_sha256": "f33079f4e9450fa45723246cb34bc1ca0a07a8dc9f9a06f039eee93974f6a4b8",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "dead-write",
+      "source_sha256": "b21919ac5d25eece229f14500d94478f1d3837f7f80cef94899574a5fc98c01a",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "replacement",
+      "source_sha256": "3b846c75637c56d37e08b0360b175c32b1c8ea4221ea47e762af3cc7aff2cd23",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "wrong-field",
+      "source_sha256": "da7cac9497b32056f7d50b69b5adc1b1fc9e9487421f1a158fe2734049c9c7d8",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "no-call",
+      "source_sha256": "7f0a354ef29b772095f1f3c0be03c55dd4975ad4f567a7f256b5fabda6f1012f",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "no-input",
+      "source_sha256": "f81637c3ff2c5b813881f0811a86dc015f846aa7275d1f80d99e14b7a1af3a68",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "typescript",
+      "change": "zero-arguments",
+      "source_sha256": "37f6281bdb52f9bad7e5831d96e9d5ddfab6a050e2c59e4da9e0282e67afc038",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "positive",
+      "source_sha256": "7e0e5284c8f0e42f305f5a49e85b7a3f53e49fe79ad10b6684591bd8d973f282",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "renamed",
+      "source_sha256": "d68c27f76237dbbfebe313e7ea32c04665db90e13db65775952d025ad1b5eacd",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "parentheses",
+      "source_sha256": "d8660ce8bab5f8ee2a0c8636b0aab97fa8033c6197547a9d228e311598254e66",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "prior-write",
+      "source_sha256": "35af0d28e075a3415649ad56c504d1362b63c378c9953b777928e20ab4852c35",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "overwrite",
+      "source_sha256": "32b97458f8edd32eb51a6c7218d19c1e2248a120f8021fda575ffb60f53e333f",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "input-before",
+      "source_sha256": "27430545700d9bc6eb77edfcfb85cda637ec0c860d7455ef746daf699a69540e",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "input-after",
+      "source_sha256": "cb7dcb50da4ede1a2fe5714c7c0c3db79b8dbc826b7691d223b37c7eded14cdc",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "return-before",
+      "source_sha256": "ca10030f5392fb3f6c399cc36b31cd0b85b241dd410b3dfe365424b0bf36ca2c",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "dead-write",
+      "source_sha256": "f77f8299b75319038cb62a28a9b9816be0be91437e7426930359b58146c93a62",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "replacement",
+      "source_sha256": "59d96df81cb5603ae262cafcb4776cbce630f89d07da300ee210d2539355a35d",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "wrong-field",
+      "source_sha256": "ea3134d84d0212cd8219f0f6ad66cb47eb3c81612eb4c9ec551561c693c092e8",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "no-call",
+      "source_sha256": "499805bda540541f6c5042ec9196ba71d172302b55611ce5312e619796e4e1cd",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "no-input",
+      "source_sha256": "f11a066d97115d4f777d370993f544ca0f7b35f452ae057672b4c82701c3c639",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "go",
+      "change": "zero-arguments",
+      "source_sha256": "9776bbabcc9239783e984b73c7d9280a3e4363b460ae9f7753454962d116cc83",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "positive",
+      "source_sha256": "ebf7efd60a5bdc92f1b025b3e466cb5d0c8ca30f6557bfa2265ede0985878ba1",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "renamed",
+      "source_sha256": "943153a2118c6db68e60876ddbbb3350231a4f9ecac11102d47e39caf5da38f6",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "parentheses",
+      "source_sha256": "1d4b10f8e23a5f02b102f94b8918dfc43657fcd87e28afecdbec248bd36602cd",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "prior-write",
+      "source_sha256": "d62f64cf219f9c9aafcc7a24ad73bb1bfe37359effd6612fe5f3ae7f4c61881f",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "overwrite",
+      "source_sha256": "acecc37a0318cd06aa15dc8019eb1eaf799ee78a27f4edfecdce1e18c6c8e580",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "input-before",
+      "source_sha256": "42e9ffdd55d0192a38176d15e0716a1b7d7e8e2df962b6d1e7ac4337e3405bb3",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "input-after",
+      "source_sha256": "63e9f15843ee9ea0f4e77425aa3388abc378a20497b30d2b6a5327063d1dd124",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "return-before",
+      "source_sha256": "48f5e9ac9bba05727f489d3ec766000fe7d9248485a721b1a7ad426663344b1b",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "dead-write",
+      "source_sha256": "9d1b7963cc764c596ea898d273e1b7084449001d5a2d7ed3a1081706339131c2",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "replacement",
+      "source_sha256": "51815c6e2d5059326d1f236ce0d09aa53f18417021f524f84ffe7a4afbd59f85",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "wrong-field",
+      "source_sha256": "8fa33dce391fda92788fa93783f22c6e0e0621d8d161f3f28bdc14bc5b609cd7",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "no-call",
+      "source_sha256": "cab8aba6f20a7b1d92df8f75b771b301b4863d6b45e9e0a29656aa283cc4b089",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "no-input",
+      "source_sha256": "77ef0a0507d9cb48fa195fe586587d3c936a8a507b6a0526a109174b7c035004",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "csharp",
+      "change": "zero-arguments",
+      "source_sha256": "0bf595c6ad498a462a759ced30e301dbcaff7115973cba660e97ef92e5e8a553",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "positive",
+      "source_sha256": "64372e1aad6be52bac47e2672b0072b2e5d3d1d5180be4b1b8f02485676d1de9",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "renamed",
+      "source_sha256": "0dcc7e58905ac4ed54c8f5dae400d4671b3d5fbf315086b9b77428e8cd115b29",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "parentheses",
+      "source_sha256": "aa6042a0f8b4e402223c249fcc28c33ee953e9a6019381a2696289e0655ea91b",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "prior-write",
+      "source_sha256": "00ae2220fab51bd3c2ea0185fa28d46c2e8238219e9d4af1117e6620021e884b",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "overwrite",
+      "source_sha256": "ee4f856b37cc8b3982b8b714815edc3235e9b3644194bad7608062128cebac99",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "input-before",
+      "source_sha256": "2f3f8fc525da05786ed294beee9ecd96c0ca6115d14ad5bd4b4b2ca7b9561917",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "input-after",
+      "source_sha256": "e7544f391fa1b619de9ef9fdabffd3f930f8d790059279fef60a8f0f96b450d7",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "return-before",
+      "source_sha256": "2fabe0d557cbef0453bc46309d44651379ea1930aee673ad29a63360e66ad764",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "dead-write",
+      "source_sha256": "98e7c3cd002aee5de22c4a6863f80bcfeebcdfcba661fbf091eae74376f5a7e0",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "replacement",
+      "source_sha256": "03b674764ebdc70040a3bbc06aa6f3f3f45ccbff33a3fbfeba59f90d23c11e6f",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "wrong-field",
+      "source_sha256": "eb1425a3d3a3f8e8b5b140d3dad6401991f6ec97bba26e2434bdaa11babed239",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "no-call",
+      "source_sha256": "7005d70016b6e7365e8e60ca708620bac2ce564ad3b8d48d4c6ad92db19fe79a",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "no-input",
+      "source_sha256": "bc9a1409b47966f7e12f043f6e415fa0f60511d70cdb2a9ca8f8e05b35498734",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "cpp",
+      "change": "zero-arguments",
+      "source_sha256": "efc15e0d7bf61e4bd83bc9d7e8dce34e74b641d297d5d48216f49fd69396cb44",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "positive",
+      "source_sha256": "142fec07edcb3223cedaa39ac68f2abdbab27ae6046d6d1caf2f229e9c143957",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "renamed",
+      "source_sha256": "da03d0fc4d0dc80aefe5693f13181eb03970b9e8a88dfa9dc6fef18a42139c7b",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "parentheses",
+      "source_sha256": "e3f5aded4acccb6d4e4ca1ef1f84f9f4bcfd2c3e155148432dd93f0c970a9899",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "prior-write",
+      "source_sha256": "d5438bf686f44732ac7c1174a1a57237d2fff7cb042fcb7398c0780ebc67da59",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "overwrite",
+      "source_sha256": "250c0060d38d118ce7a679285a346ad078b531457946c81f0ded949d91bc6fce",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "input-before",
+      "source_sha256": "93b28a248d2da4786f308a0b5e0a5bc5d689f0f3269414defba7305e26b85e8b",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "input-after",
+      "source_sha256": "81eeff4509d1c828db0d4918c4b88107a1b47db4e114d7e65e22522f0f0c25e3",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "return-before",
+      "source_sha256": "b06b095d308a3c784789958931b607f12ede6180c6d5054e4de5f83224c72399",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "dead-write",
+      "source_sha256": "354af1f00d4754762616cc1dd023aebe3db25085feae85b1c96fb2adfa5e2ec8",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "replacement",
+      "source_sha256": "d940c9cb09711941be7721529a63233076ae705758fa33f8fc0d82d18772a25f",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "wrong-field",
+      "source_sha256": "1d3b753a11314bacafff5318869903daab18cd9e4868ce4640a23008888e1670",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "no-call",
+      "source_sha256": "85724327deb73e2c777709d1494bbf9eda4934c200cc1190d6850051ebe99745",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "no-input",
+      "source_sha256": "3043c9aba63c3098eb9df4de715c11dc0034f021979229209c975dbb8bdc3e8e",
+      "expected": false,
+      "found": false,
+      "classification": "TN",
+      "matches": []
+    },
+    {
+      "language": "rust",
+      "change": "zero-arguments",
+      "source_sha256": "e3169ed1b777a0930704c9a518a1a90cc676c014d497e8a779a7a3106dda9c9a",
+      "expected": true,
+      "found": false,
+      "classification": "FN",
+      "matches": []
+    }
+  ],
+  "note": "Controlled callable-supply source contrasts, not population accuracy or compiler/runtime validation. Unsupported configuration and the unchanged object variant are tested separately.",
+  "engine_sha256": {
+    "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+    "binding_writes.py": "248c81c19c54b70240ab312a4f0401b272bdc0644197417ea5434827607fa7f3",
+    "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+    "call_bindings.py": "e22e85204749f85185813ab2b6ae835f6a9566092c451fb674d41629e884bc7b",
+    "catalog.py": "39cb65a22c3c0c1b96ae41cd2343b8227d93ba1f62763bd95efdfe568683d638",
+    "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+    "collection_lifecycle.py": "a35f48339a074eb62b1e5e1b73024c4ea3d133628675b710a0cf048f5910d549",
+    "collection_snapshots.py": "8ba78a0010eafa7a85c4ab519944171570235a0c108ed52d5f830ed79684203b",
+    "control_flow.py": "d77c41e7e89a743720f28c04afa36a6d9251abae2df5ef3844df7c1b07d0a33b",
+    "cpp_initializers.py": "e3d9bb3e9a27b78151f7f71288e7ebb27d4b95347ef0529ba91206a4dab916b7",
+    "cpp_methods.py": "eeb094c9ac77fdf7d76981e14b4b384c1cc805c648f8a774624f8ef806eea321",
+    "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+    "field_transfers.py": "c327f6bd070445c583818ace80797bd891b100bd9ed4596c1ae6a6fad1b3f61f",
+    "frontend.py": "928ba0f79c868cd7d138810370c1dced7c18a1fdd8316d4186ac683fd9347932",
+    "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+    "kenql.py": "7463a1662d8dbe46c6fcb778ea99cdf5cef510e64b888272c451bf22c4365b9c",
+    "member_access.py": "9781486284abe3599396740599f7305f2069c555e024b2ff9b10fb1cd5e6fe50",
+    "member_transfers.py": "cc2474d0ac9f0f539cde50ead12b6af08b2254614e523af9c2677d795ed8fb10",
+    "model.py": "69ecfa23dad8f0aefd89cdc6b2783637dc1d511a87b7075282e51d8a6500ed18",
+    "modern_patterns/adapted-continuation-wrapper.toml": "cfae68be5c98788c03b0c663a7fb5d94b03164b57e2c2b413228e4c14528c50d",
+    "modern_patterns/batch-work-queue.toml": "6e1b3a69aae411a736c749814959aac73df1e30c29c84ef7e6b2e02a1c058a31",
+    "modern_patterns/cache-aside.toml": "c7915bc8855deecd60881f3f4db072714f670ed3f55bdbd6f47a495549a12328",
+    "modern_patterns/continuation-wrapper.toml": "0092ade2a426815819334a1999ea4c2a65e54f452ceaf7a6de08dd77dd855ff2",
+    "modern_patterns/dependency-injection.toml": "c7c5295207795d24fe7f854fe284ca544819addf8f0022705cf648e213b2ce1c",
+    "modern_patterns/dispatch-table.toml": "a2197cedfd9f2f8bdb35c02ba8a398e1805f31b6bec42f8547aaefa4f86c3566",
+    "modern_patterns/exception-retry.toml": "eeab3c3ae90b1a7a3f1778db573d80113e4d6e0cc50fbd2ff6ec1cb1da6af77c",
+    "modern_patterns/read-through-cache.toml": "68d8df7db96d7a3270875b46bc837879f036a06a15b0e8c8f46877fc34eb6159",
+    "modern_patterns/unit-of-work.toml": "82920e8a2f861c7658a80c729ad0b375d466fb8d1a6122d5ab783a039e64b949",
+    "nominal_roots.py": "9f41249a1346ab4543d497cdc71b8568d5c0b899fd6ba99cfb7b272d9fc1dfb3",
+    "patterns/abstract-factory.toml": "d075ab8290e8304c4c25806087b2d9f5c22c2f5ebf34e37ab957843220f06d4d",
+    "patterns/adapter.toml": "f68db1dcb07858065cc9a80bb80da5b0ba7e026681e08c6dc9ca4945d1e8f842",
+    "patterns/bridge.toml": "566e693f3decef8bd27d2f10fff841e8f1f768b9bbc2e4a7dfbb4e522c76bf4b",
+    "patterns/builder.toml": "bb46c4713cd0b4c6b42a7a5cc4df16206d42b73be20948d9328c7fed1b6897d8",
+    "patterns/chain-of-responsibility.toml": "6ff41339f9f398836b719e01fd23c035fc3b669b58298d09d91fdc6ed4d6eb94",
+    "patterns/command.toml": "1dd4624f93ee499ca31ded97e573455356b443e8b6259bb39022f420a815de75",
+    "patterns/composite.toml": "fffb2da5916eb05e4da83de63e21549ad06481938087b9344f291c22f3516a02",
+    "patterns/decorator.toml": "21826097538007e4aa72d9c7b096c0beeb2a510fe4a5c5712ae361d06dc42b6f",
+    "patterns/facade.toml": "ebe407738cbc0c19b115a505a1a9713c45716b9d121e60ec938e75cae39704e8",
+    "patterns/factory-method.toml": "cf2d5b3d342478cc22d40a5a2211002622b4b75be09ca25b0cafd3fccd98fbd4",
+    "patterns/flyweight.toml": "5f02415a17b935f744c41492665c0575c4b543f1ef2f843488c424db2b2d77a8",
+    "patterns/interpreter.toml": "a2a674ce0dfa775cc287df32bdca056bd4be1196ada97ec170821852817e787c",
+    "patterns/iterator.toml": "404233895ac5526625c039f7875db8ecb68aba57ba087c67723f871b797d04ef",
+    "patterns/mediator.toml": "126e7223c0ac76521edd737d7618c3626a8b93988187805e0f7d6ad5e2e3c783",
+    "patterns/memento.toml": "fa56773105fe4f84ae7f8557eb086757831600533b5c38777cc330a0f480caf3",
+    "patterns/observer.toml": "ca3ad665f19488efc51b57d103667395ae895f4f56b4fb0447e463d23d3599d5",
+    "patterns/prototype.toml": "2de68c873a910bd564889fce9644339d5169640803531d9bf54ae1d3bcb69923",
+    "patterns/proxy.toml": "7d2b9263a34b35deff11c5245d9eaa02d1e49745e4611d0eae759b7ccf83b11d",
+    "patterns/singleton.toml": "01d83cc97ac6e68fbdcd179d9e97a2f02ee8e857735563c776aedd3023d4a390",
+    "patterns/state.toml": "24a6b2742a179205032c27e48d21082e65407eecd62dd3a827b317246a015a74",
+    "patterns/strategy.toml": "c71942d6ea29895d487c6ed25cd4c08c3aef54116bfbf8b59996d8b0e34865f2",
+    "patterns/template-method.toml": "391fd8cf3a0a2fceff9ebfc1994b82d737d3dc9a7bbe181e3886b9e144133e3d",
+    "patterns/visitor.toml": "7d47620aad4831dfcc601818ea92c5f9781658d1d85356d6b0d44e9c7a88d3e7",
+    "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+    "return_flow.py": "67da3d1dcc7071dda86fbec744c81a2faeff7fd85bee746598d1157d16b0389b",
+    "rules.py": "a3fd498e5154c1f45a524de6fe470bc176bc8600b3a70332727640e956e0cfb3",
+    "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+    "semantic.py": "92d178b87d0b2f53d75732a53a79fd11e34c7317458396f43baac295d7e71ced",
+    "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df",
+    "syntax_graph.py": "ad63fe8b926d73bf853f09ec209e3208a1341e8eb2c4fe7799e73cafa3a4d6b6",
+    "type_refs.py": "31c0aac9132cdae3ad0a4ea009a92ce57d8a5434a999dbf0597592d347010b17"
+  }
+}

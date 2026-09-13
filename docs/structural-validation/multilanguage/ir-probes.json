@@ -1,0 +1,55 @@
+{
+  "csharp_local_functions": [
+    {
+      "kind": "local_function_statement",
+      "line": 189,
+      "recognized_callable": false
+    },
+    {
+      "kind": "local_function_statement",
+      "line": 238,
+      "recognized_callable": false
+    }
+  ],
+  "rust_builders": {
+    "RecordBuilder": {
+      "methods": []
+    },
+    "MetadataBuilder": {
+      "methods": []
+    }
+  },
+  "java_cross_file": {
+    "BASE_NAME": [
+      "ProxyInputStream"
+    ],
+    "SUBTYPE_OF": []
+  },
+  "rxjs_registration": [
+    {
+      "relation": "INSERTS_INTO",
+      "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/CALL:783@783",
+      "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/STORAGE:#internalSubscribers"
+    },
+    {
+      "relation": "INSERTED_VALUE",
+      "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/CALL:783@783",
+      "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:constructor@541/CALLABLE:anonymous@567@567/PARAMETER:subscriber@568"
+    },
+    {
+      "relation": "ITERATES_CALLS",
+      "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:next@942",
+      "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:next@942/CALL:1013@1013"
+    },
+    {
+      "relation": "ITERATES_CALLS",
+      "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:error@1107",
+      "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:error@1107/STORAGE:subscribers"
+    },
+    {
+      "relation": "ITERATES_CALLS",
+      "subject": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:complete@1412",
+      "object": "packages/rxjs/src/subject.ts::module/CLASS:Subject/CALLABLE:complete@1412/STORAGE:subscribers"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "cases": [
+    {
+      "language": "python",
+      "source": "class Product: pass\ndef build():\n x = Product()\n x = None\n return x\n",
+      "expected_certain_returns_new": [],
+      "diagnostics": [],
+      "observed_returns_new": []
+    },
+    {
+      "language": "java",
+      "source": "class Product {} class Demo { Product build(){ Product x = new Product(); x = null; return x; } }",
+      "expected_certain_returns_new": [],
+      "diagnostics": [],
+      "observed_returns_new": []
+    },
+    {
+      "language": "typescript",
+      "source": "class Product {} function build(){ let x: Product | null = new Product(); x = null; return x; }",
+      "expected_certain_returns_new": [],
+      "diagnostics": [],
+      "observed_returns_new": []
+    }
+  ],
+  "engine_sha256": {
+    "__init__.py": "ba40c6ae85c637c0799a807f80ec0d3e6a49668be621496691345ac68cdd5fc1",
+    "cache.py": "891f192e95d669e5a9ee40d7162155e0488a6ef94e1938ed8fde338f771bdd4d",
+    "catalog.py": "481bd96fa5f63b452fc00e8eb184915da3271941db433c9281fe35da16d94ed9",
+    "cli.py": "2b63eaa1f81cfd1b92103bd052a69b987a947bfed048fbe3beaf5beb7d33c979",
+    "effects.py": "23caa185167f37fbc97e8d85351229497a79926425966666944fd396c01d6565",
+    "frontend.py": "9f591191a8d9c3fd89e8fadfbebefc9ab53bc098366e852db0804092fe4b331b",
+    "java_optional.py": "f66ef70e24732e06389e369c9f3ef10faf1c8c553b4725bcaecbf0c523548a01",
+    "kenql.py": "f51cf04f4057d7ad5709e84c332424d438dc979cc30bb6b628f001154cfeb3cf",
+    "model.py": "8f7335bf957599189b7ad1d290956aa59f43614495ba77ffb27541fc74fda0f4",
+    "query.py": "5ade2d54be794499371fea8823e9bc16e318973232d8f2113efed570a4c38da5",
+    "return_flow.py": "f24c1ce45bc5589504ef8babfdb9c9b05e7021bf4fcdf98c9d9a341c6fdf0e01",
+    "rules.py": "5407576435035d3b6ce91b304894da9c86c3f58211763289b1eb4d45fb178972",
+    "selectors.py": "4fdb489b8912bfc67da5de4655a4e228e0c7b569b5fd1242d341df29b2b90fbb",
+    "semantic.py": "b05aa47a209edc475b45267beb6593351d1d1e1c7649f1e9f0e8989be4d200e5",
+    "service.py": "0d6a8652889eaaaafb9d97e2e2f909f554646f2658810c094923c79c9e6c88df",
+    "syntax_graph.py": "70f3fe7dfb3826d107a4b2924094fcd6402c22bfb574b57dca8ebc9b4bb1a535"
+  }
+}

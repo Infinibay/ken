@@ -1,0 +1,224 @@
+schema = "ken-rule/1"
+id = "command"
+name = "Command"
+category = "behavioral"
+description = "A parameterless operation encapsulates a receiver invocation."
+caveat = "A parameterless action with a separate typed invoker, or a stored captured closure. Discarded calls and stateful getters can share the signature; intent and invocation lifecycle remain unproven."
+legacy_query = "require $unit HAS_METHOD $execute\nrequire $unit HAS_FIELD $receiver\nrequire $execute DELEGATES_TO $receiver\ncount =0 $execute HAS_PARAMETER $argument receiver=false\n"
+query = '''
+query command {
+ any {
+  match "command#command-object"(unit: $unit);
+ } or {
+  match "command#stored-closure"(unit: $unit);
+ } or {
+  match "command#retained-object"(unit: $unit);
+ }
+ or { match "command#queued-object"(unit: $unit); }
+ or { match "command#retained-contract"(unit: $unit); }
+ emit $unit;
+}
+'''
+query_language = "kenql/1"
+claim = "structural-signature"
+
+[[operations]]
+id = "retained_dispatch"
+status = "ready"
+description = "An invoker retains an input with a nominal contract and dispatches a zero-argument slot from another method."
+caveat = "Requires a supported final field transfer or constructor input. Does not prove temporal call order, unchanged runtime fields, dispatch to a particular subtype or Command intent."
+query = '''
+query retained_dispatch {
+ require $invoker HAS_FIELD $storage;
+ require $invoker HAS_METHOD $setter;
+ require $setter HAS_PARAMETER $input;
+ parameter(receiver:false) as $input;
+ require $input TYPE $contract;
+ any {
+  require $setter HAS_OPERATION $write;
+  require $write FINAL_FIELD_INPUT $input;
+  require $write ASSIGNMENT_TARGET $storage;
+ } or {
+  callable(constructor:true) as $setter;
+  require $storage CONSTRUCTOR_FIELD_INPUT $input;
+ }
+ require $invoker HAS_METHOD $invoke;
+ different $setter $invoke;
+ require $invoke HAS_CALL $dispatch;
+ require $dispatch RECEIVER $storage;
+ call(explicit_arguments:0) as $dispatch;
+ require $dispatch TARGET $slot;
+ require $contract HAS_METHOD $slot;
+ callable(arity:0) as $slot;
+ emit $invoker,$setter,$input,$storage,$invoke,$dispatch,$contract,$slot;
+}
+'''
+
+[[variants]]
+id = "retained-contract"
+status = "ready"
+languages = ["python", "typescript", "java", "csharp", "cpp"]
+query_claim = "An invoker retains a nominal contract and later has a separate dispatch method. A corresponding concrete subtype retains a constructor receiver and discards the result of a receiver call in its zero-argument action. Existence of an override does not prove that runtime dispatch selects it; retention and intent are structural evidence."
+query = '''
+query retained_contract {
+ match "command.retained_dispatch"(invoker:$invoker,contract:$contract,slot:$slot);
+ require $unit HAS_METHOD $execute;
+ require $execute OVERRIDES $slot;
+ path $unit SUBTYPE_OF{1,8} $contract as $conformance;
+ callable(constructor:false,arity:0) as $execute;
+ require $unit HAS_FIELD $receiver;
+ require $receiver CONSTRUCTOR_FIELD_INPUT $receiver_input;
+ require $unit HAS_METHOD $constructor;
+ require $constructor HAS_PARAMETER $receiver_input;
+ require $execute HAS_CALL $work;
+ require $work RECEIVER $receiver;
+ require $execute HAS_OPERATION $statement;
+ require $statement DISCARDS_RESULT $work;
+ different $unit $invoker;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "command-object"
+status = "ready"
+languages = ["python", "java", "typescript"]
+requires = ["storage_escape", "deferred_invocation"]
+graph_requirements = ["Objeto retiene acción/datos; invocador separado lo almacena o transmite antes de ejecutar."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+
+
+query = '''
+query command {
+
+ require $unit HAS_METHOD $execute;
+ callable(constructor: false, arity: 0) as $execute;
+ require $unit HAS_FIELD $receiver;
+ require $receiver TYPE $receiver_type;
+ require $execute HAS_CALL $work;
+ require $work RECEIVER $receiver;
+ any {
+  require $execute HAS_OPERATION $statement;
+  require $statement DISCARDS_RESULT $work;
+ } or {
+  require $execute HAS_OPERATION $return;
+  require $return RETURN_ORIGIN $work;
+  require $work TARGET $action;
+  require $receiver_type HAS_METHOD $action;
+  require $receiver_type HAS_FIELD $state;
+  any { require $action WRITES $state; }
+  or { require $action WRITES_ELEMENT $state; }
+ }
+ require $invoker HAS_PARAMETER $command;
+ require $command TYPE $unit;
+ require $invoker HAS_CALL $dispatch;
+ require $dispatch RECEIVER $command;
+ require $dispatch TARGET $execute;
+ different $invoker $execute;
+ emit $unit;
+}
+'''
+[[variants]]
+id = "stored-closure"
+status = "ready"
+languages = ["python", "javascript", "typescript", "go", "csharp"]
+requires = ["closure_capture", "callable_value_flow", "stored_callback_invocation"]
+graph_requirements = ["A stored closure captures an outer callable binding and is invoked through that same field by another method."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+query_claim = "Deferred action shape, not proof of Command intent versus a captured Strategy, temporal ordering, exactly-once execution or unchanged instance fields."
+query = '''
+query stored_closure {
+ require $unit HAS_FIELD $action;
+ any {
+  require $action ASSIGNED_FROM $closure;
+ } or {
+  require $initialization INITIALIZES_FIELD $action;
+  require $initialization STORES_VALUE $closure;
+ }
+ callable() as $closure;
+ require $closure CAPTURES $bound;
+ require $closure HAS_CALL $work;
+ require $unit HAS_METHOD $invoke;
+ require $invoke HAS_CALL $dispatch;
+ require $dispatch CALLEE_VALUE $action;
+ different $closure $invoke;
+ emit $unit;
+}
+'''
+
+[[variants]]
+id = "retained-object"
+status = "ready"
+languages = ["python", "java", "typescript", "csharp"]
+query_claim = "An invoker retains a supplied command object and dispatches its parameterless receiver delegation from another method. Pure calculations may qualify. Stored query objects can share this shape; ordering, alias stability and intent remain unproven."
+query = '''
+query retained_command {
+ require $slot ASSIGNED_FROM $command;
+ require $setter HAS_PARAMETER $command;
+ parameter(receiver: false) as $command;
+ require $command TYPE $unit;
+ require $invoker HAS_FIELD $slot;
+ different $invoker $unit;
+ require $invoker HAS_METHOD $setter;
+ require $invoker HAS_METHOD $invoke;
+ different $setter $invoke;
+ require $invoke HAS_CALL $dispatch;
+ require $dispatch RECEIVER $slot;
+ require $dispatch TARGET $execute;
+ require $unit HAS_METHOD $execute;
+ callable(constructor: false, arity: 0) as $execute;
+ require $unit HAS_FIELD $receiver;
+ require $receiver TYPE $receiver_type;
+ require $execute HAS_CALL $work;
+ require $work RECEIVER $receiver;
+ emit $unit;
+}
+'''
+
+[[variants]]
+id = "command-closure"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["closure_capture", "callable_value_flow"]
+graph_requirements = ["Closure captura acción/datos y fluye a invocador diferido; respetar FnOnce y move cuando corresponda."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "queued-object"
+status = "ready"
+languages = ["python", "javascript", "typescript", "java", "csharp"]
+query_claim = "A batch invoker stores supplied commands, invokes a parameterless operation on each element, and lexically resets the same collection. A concrete operation corresponding to the registered contract delegates to a constructor-retained receiver. Untyped registration requires an observed caller supplying the concrete type. Does not prove runtime scheduling, exactly-once execution or exclusive Command intent."
+query = '''
+query queued_object {
+ match "architecture.batch-work-queue.drain"(unit:$invoker,input:$input,dispatch:$dispatch);
+ require $unit HAS_METHOD $execute;
+ callable(constructor: false, arity: 0) as $execute;
+ require $unit HAS_FIELD $receiver;
+ require $receiver CONSTRUCTOR_FIELD_INPUT $receiver_input;
+ require $unit HAS_METHOD $constructor;
+ require $constructor HAS_PARAMETER $receiver_input;
+ require $execute HAS_CALL $work;
+ require $work RECEIVER $receiver;
+ different $unit $invoker;
+ any {
+  require $input TYPE $contract;
+  path $unit SUBTYPE_OF{0,8} $contract as $contract_path;
+  require $contract HAS_METHOD $slot;
+  callable(arity: 0) as $slot;
+  where $dispatch.name == $slot.name;
+  any { require $execute OVERRIDES $slot; }
+  or { require $contract HAS_METHOD $execute; where $execute.name == $slot.name; }
+ } or {
+  parameter(type_state: unknown) as $input;
+  require $usage CALL_BINDING $binding [mode: direct];
+  require $binding BINDING_PARAMETER $input;
+  require $binding BINDING_VALUE $provided;
+  any { require $provided ALLOCATES_TYPE $unit; }
+  or { require $provided TYPE $unit; }
+  where $dispatch.name == $execute.name;
+ }
+ emit $unit;
+}
+'''

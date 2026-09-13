@@ -1,0 +1,38 @@
+# Borrador documental; no es una regla habilitada para el motor actual.
+schema = "ken-pattern-design/1"
+status = "design"
+id = "gof.prototype"
+name = "Prototype"
+collections = ["gof"]
+claim = "structural-signature"
+documentation = "../patterns/prototype.md"
+source_of_truth = "file"
+variant_combination = "union"
+deduplicate_by = ["pattern_id", "primary_role_binding"]
+review_note = "Las condiciones son planes semánticos; no sustituirlas por coincidencias de nombres. Falta convertirlas en consultas completas y fixtures antes de habilitar la variante."
+
+[exports.prototype]
+kinds = ["type_decl"]
+required = true
+
+[exports.copy]
+kinds = ["callable"]
+required = true
+
+[[variants]]
+id = "explicit-copy"
+status = "design"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["allocation_identity", "field_value_flow"]
+graph_requirements = ["Un valor nuevo recibe estado de la instancia fuente; el resultado no es un alias del receptor."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"
+
+[[variants]]
+id = "language-copy"
+status = "design"
+languages = ["python", "java", "csharp", "cpp", "rust"]
+requires = ["copy_protocol_models"]
+graph_requirements = ["Resolver protocolo, constructor de copia o derive; registrar profundidad y aliases desconocidos."]
+missing_capability = "unknown"
+fixtures_status = "documented-not-validated"

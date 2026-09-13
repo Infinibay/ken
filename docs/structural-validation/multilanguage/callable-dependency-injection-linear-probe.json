@@ -1,0 +1,742 @@
+[
+  {
+    "repo": "flask",
+    "before": [
+      {
+        "$unit": {
+          "name": "AppContext",
+          "path": "src/flask/ctx.py",
+          "line": 260
+        },
+        "$dependency": {
+          "name": "_request",
+          "path": "src/flask/ctx.py",
+          "line": 320
+        },
+        "$inject": {
+          "name": "__init__",
+          "path": "src/flask/ctx.py",
+          "line": 300
+        },
+        "$operation": {
+          "name": "pop",
+          "path": "src/flask/ctx.py",
+          "line": 446
+        }
+      },
+      {
+        "$unit": {
+          "name": "AppContext",
+          "path": "src/flask/ctx.py",
+          "line": 260
+        },
+        "$dependency": {
+          "name": "app",
+          "path": "src/flask/ctx.py",
+          "line": 307
+        },
+        "$inject": {
+          "name": "__init__",
+          "path": "src/flask/ctx.py",
+          "line": 300
+        },
+        "$operation": {
+          "name": "pop",
+          "path": "src/flask/ctx.py",
+          "line": 446
+        }
+      },
+      {
+        "$unit": {
+          "name": "BlueprintSetupState",
+          "path": "src/flask/sansio/blueprints.py",
+          "line": 34
+        },
+        "$dependency": {
+          "name": "app",
+          "path": "src/flask/sansio/blueprints.py",
+          "line": 49
+        },
+        "$inject": {
+          "name": "__init__",
+          "path": "src/flask/sansio/blueprints.py",
+          "line": 41
+        },
+        "$operation": {
+          "name": "add_url_rule",
+          "path": "src/flask/sansio/blueprints.py",
+          "line": 87
+        }
+      },
+      {
+        "$unit": {
+          "name": "DispatchingJinjaLoader",
+          "path": "src/flask/templating.py",
+          "line": 49
+        },
+        "$dependency": {
+          "name": "app",
+          "path": "src/flask/templating.py",
+          "line": 55
+        },
+        "$inject": {
+          "name": "__init__",
+          "path": "src/flask/templating.py",
+          "line": 54
+        },
+        "$operation": {
+          "name": "_iter_loaders",
+          "path": "src/flask/templating.py",
+          "line": 98
+        }
+      },
+      {
+        "$unit": {
+          "name": "DispatchingJinjaLoader",
+          "path": "src/flask/templating.py",
+          "line": 49
+        },
+        "$dependency": {
+          "name": "app",
+          "path": "src/flask/templating.py",
+          "line": 55
+        },
+        "$inject": {
+          "name": "__init__",
+          "path": "src/flask/templating.py",
+          "line": 54
+        },
+        "$operation": {
+          "name": "list_templates",
+          "path": "src/flask/templating.py",
+          "line": 108
+        }
+      }
+    ],
+    "after": [
+      {
+        "$unit": {
+          "name": "ScriptInfo",
+          "path": "src/flask/cli.py",
+          "line": 293
+        },
+        "$dependency": {
+          "name": "create_app",
+          "path": "src/flask/cli.py",
+          "line": 316
+        },
+        "$inject": {
+          "name": "__init__",
+          "path": "src/flask/cli.py",
+          "line": 305
+        },
+        "$operation": {
+          "name": "load_app",
+          "path": "src/flask/cli.py",
+          "line": 333
+        }
+      },
+      {
+        "$unit": {
+          "name": "ConfigAttribute",
+          "path": "src/flask/config.py",
+          "line": 20
+        },
+        "$dependency": {
+          "name": "get_converter",
+          "path": "src/flask/config.py",
+          "line": 27
+        },
+        "$inject": {
+          "name": "__init__",
+          "path": "src/flask/config.py",
+          "line": 23
+        },
+        "$operation": {
+          "name": "__get__",
+          "path": "src/flask/config.py",
+          "line": 35
+        }
+      },
+      {
+        "$unit": {
+          "name": "DispatchingJinjaLoader",
+          "path": "src/flask/templating.py",
+          "line": 49
+        },
+        "$dependency": {
+          "name": "app",
+          "path": "src/flask/templating.py",
+          "line": 55
+        },
+        "$inject": {
+          "name": "__init__",
+          "path": "src/flask/templating.py",
+          "line": 54
+        },
+        "$operation": {
+          "name": "_iter_loaders",
+          "path": "src/flask/templating.py",
+          "line": 98
+        }
+      },
+      {
+        "$unit": {
+          "name": "DispatchingJinjaLoader",
+          "path": "src/flask/templating.py",
+          "line": 49
+        },
+        "$dependency": {
+          "name": "app",
+          "path": "src/flask/templating.py",
+          "line": 55
+        },
+        "$inject": {
+          "name": "__init__",
+          "path": "src/flask/templating.py",
+          "line": 54
+        },
+        "$operation": {
+          "name": "list_templates",
+          "path": "src/flask/templating.py",
+          "line": 108
+        }
+      }
+    ]
+  },
+  {
+    "repo": "java-patterns",
+    "before": [
+      {
+        "$unit": {
+          "name": "AppManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 38
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 44
+        },
+        "$inject": {
+          "name": "AppManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 54
+        },
+        "$operation": {
+          "name": "initDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 64
+        }
+      },
+      {
+        "$unit": {
+          "name": "AppManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 38
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 44
+        },
+        "$inject": {
+          "name": "AppManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 54
+        },
+        "$operation": {
+          "name": "saveAside",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 131
+        }
+      },
+      {
+        "$unit": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 34
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 43
+        },
+        "$inject": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 50
+        },
+        "$operation": {
+          "name": "flushCache",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 159
+        }
+      },
+      {
+        "$unit": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 34
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 43
+        },
+        "$inject": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 50
+        },
+        "$operation": {
+          "name": "readThrough",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 74
+        }
+      },
+      {
+        "$unit": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 34
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 43
+        },
+        "$inject": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 50
+        },
+        "$operation": {
+          "name": "readThroughWithWriteBackPolicy",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 121
+        }
+      },
+      {
+        "$unit": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 34
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 43
+        },
+        "$inject": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 50
+        },
+        "$operation": {
+          "name": "writeAround",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 104
+        }
+      },
+      {
+        "$unit": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 34
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 43
+        },
+        "$inject": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 50
+        },
+        "$operation": {
+          "name": "writeBehind",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 142
+        }
+      },
+      {
+        "$unit": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 34
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 43
+        },
+        "$inject": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 50
+        },
+        "$operation": {
+          "name": "writeThrough",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 90
+        }
+      },
+      {
+        "$unit": {
+          "name": "MongoDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 44
+        },
+        "$dependency": {
+          "name": "db",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 50
+        },
+        "$inject": {
+          "name": "setDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 52
+        },
+        "$operation": {
+          "name": "readFromDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 77
+        }
+      },
+      {
+        "$unit": {
+          "name": "MongoDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 44
+        },
+        "$dependency": {
+          "name": "db",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 50
+        },
+        "$inject": {
+          "name": "setDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 52
+        },
+        "$operation": {
+          "name": "updateDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 116
+        }
+      },
+      {
+        "$unit": {
+          "name": "MongoDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 44
+        },
+        "$dependency": {
+          "name": "db",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 50
+        },
+        "$inject": {
+          "name": "setDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 52
+        },
+        "$operation": {
+          "name": "upsertDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 132
+        }
+      },
+      {
+        "$unit": {
+          "name": "MongoDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 44
+        },
+        "$dependency": {
+          "name": "db",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 50
+        },
+        "$inject": {
+          "name": "setDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 52
+        },
+        "$operation": {
+          "name": "writeToDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 100
+        }
+      }
+    ],
+    "after": [
+      {
+        "$unit": {
+          "name": "AppManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 38
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 44
+        },
+        "$inject": {
+          "name": "AppManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 54
+        },
+        "$operation": {
+          "name": "initDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 64
+        }
+      },
+      {
+        "$unit": {
+          "name": "AppManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 38
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 44
+        },
+        "$inject": {
+          "name": "AppManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 54
+        },
+        "$operation": {
+          "name": "saveAside",
+          "path": "caching/src/main/java/com/iluwatar/caching/AppManager.java",
+          "line": 131
+        }
+      },
+      {
+        "$unit": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 34
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 43
+        },
+        "$inject": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 50
+        },
+        "$operation": {
+          "name": "flushCache",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 159
+        }
+      },
+      {
+        "$unit": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 34
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 43
+        },
+        "$inject": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 50
+        },
+        "$operation": {
+          "name": "readThrough",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 74
+        }
+      },
+      {
+        "$unit": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 34
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 43
+        },
+        "$inject": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 50
+        },
+        "$operation": {
+          "name": "readThroughWithWriteBackPolicy",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 121
+        }
+      },
+      {
+        "$unit": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 34
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 43
+        },
+        "$inject": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 50
+        },
+        "$operation": {
+          "name": "writeAround",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 104
+        }
+      },
+      {
+        "$unit": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 34
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 43
+        },
+        "$inject": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 50
+        },
+        "$operation": {
+          "name": "writeBehind",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 142
+        }
+      },
+      {
+        "$unit": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 34
+        },
+        "$dependency": {
+          "name": "dbManager",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 43
+        },
+        "$inject": {
+          "name": "CacheStore",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 50
+        },
+        "$operation": {
+          "name": "writeThrough",
+          "path": "caching/src/main/java/com/iluwatar/caching/CacheStore.java",
+          "line": 90
+        }
+      },
+      {
+        "$unit": {
+          "name": "MongoDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 44
+        },
+        "$dependency": {
+          "name": "db",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 50
+        },
+        "$inject": {
+          "name": "setDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 52
+        },
+        "$operation": {
+          "name": "readFromDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 77
+        }
+      },
+      {
+        "$unit": {
+          "name": "MongoDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 44
+        },
+        "$dependency": {
+          "name": "db",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 50
+        },
+        "$inject": {
+          "name": "setDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 52
+        },
+        "$operation": {
+          "name": "updateDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 116
+        }
+      },
+      {
+        "$unit": {
+          "name": "MongoDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 44
+        },
+        "$dependency": {
+          "name": "db",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 50
+        },
+        "$inject": {
+          "name": "setDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 52
+        },
+        "$operation": {
+          "name": "upsertDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 132
+        }
+      },
+      {
+        "$unit": {
+          "name": "MongoDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 44
+        },
+        "$dependency": {
+          "name": "db",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 50
+        },
+        "$inject": {
+          "name": "setDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 52
+        },
+        "$operation": {
+          "name": "writeToDb",
+          "path": "caching/src/main/java/com/iluwatar/caching/database/MongoDb.java",
+          "line": 100
+        }
+      }
+    ]
+  }
+]
