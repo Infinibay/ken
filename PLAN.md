@@ -234,10 +234,19 @@ Pasos:
 - [ ] **P1.3 Argumentos/callee/receiver:** conectar cada carga evaluada con la
   ocurrencia correcta de argumento, receptor y expresión invocada. Conservar
   posiciones/nombres; expansiones sin modelo deben producir unknown explícito.
-- [ ] **P1.4 Ramas:** analizar estados por brazo y unir a la salida. No formar el
+- [x] **P1.4 Ramas:** analizar estados por brazo y unir a la salida. No formar el
   producto cartesiano de escrituras de un brazo y orígenes de otro. Si ambos
   caminos dan el mismo origen conocido, se puede conservar ese origen; si difieren
-  o uno queda desconocido, no inventar un único origen cierto.
+  o uno queda desconocido, no inventar un único origen cierto. _Entregado:
+  `aff9320` (gate `UNIQUE_BINDING_WRITE` en cuerpo) + `4b7a557`
+  (`ARGUMENT_ORIGIN` por sitio de consumo; `kenql.as_value` empuja `VALUE_FLOW`
+  a `must` solo cuando el productor del edge coincide con el productor único
+  vivo). Tests: `tests/structural/test_algorithm_facade_branches.py` cubre
+  mismo-productor (must), brazo único indefinido (may), brazo que sobrescribe
+  (may) × python/java/typescript; los estrictos existentes siguen verdes
+  (`test_algorithm_facade.py` linear, nested, discarded, overwritten, reversed)._
+  Quedan para P1.5 las regiones expresivas (`choose`, cortocircuito, orden de
+  argumentos soportado) que aún se modelan como secuencias.
 - [ ] **P1.5 Regiones expresivas:** respetar `choose`, cortocircuito, orden de
   argumentos soportado y retornos abruptos. No evaluar ambos brazos como secuencia.
 - [ ] **P1.6 Extensión:** Go, Rust y C++ con fixtures equivalentes y contratos de
