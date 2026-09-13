@@ -97,7 +97,6 @@ def test_possible_mode_can_discover_handoff_through_local(language):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Local call argument loads lack reaching-definition proof; VALUE_FLOW is may')
 def test_strict_handoff_through_unchanged_local_with_intermediate_work(language):
     assert detect(language, 'linear')
 

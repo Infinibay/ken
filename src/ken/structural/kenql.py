@@ -624,6 +624,7 @@ def query_graph(ir: IR) -> FactIndex:
     for fact in ir.facts:
         if fact.relation == 'ASSIGNED_FROM':
             stored.setdefault(fact.subject, []).append(fact.object)
+    unique_writes = {fact.object for fact in ir.facts if fact.relation == 'UNIQUE_BINDING_WRITE'}
 
     def as_value(source: str, occurrence: str, evidence: list[str]) -> str:
         if source in results:
@@ -638,9 +639,12 @@ def query_graph(ir: IR) -> FactIndex:
         graph.add(value_id, 'LOADED_FROM', source, *evidence[:1])
         for incoming in stored.get(source, []):
             if incoming in results:
-                # Without reaching-definition/path proofs, the stored value only
-                # MAY reach this load. Do not turn flow-insensitive linking into SSA.
-                graph.add(results[incoming], 'VALUE_FLOW', value_id, *evidence[:1], modality='may')
+                # UNIQUE_BINDING_WRITE proves this storage has exactly one write
+                # inside the supported callable, so the load has a unique reaching
+                # definition and the producer's result MUST reach it. Other writes
+                # (overwrites, branches, dynamic scopes) leave the linking may.
+                graph.add(results[incoming], 'VALUE_FLOW', value_id, *evidence[:1],
+                          modality='must' if source in unique_writes else 'may')
         return value_id
 
     for call, value_id in results.items():
