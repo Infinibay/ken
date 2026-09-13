@@ -3,10 +3,25 @@ from collections import defaultdict
 from .model import FactIndex, IR
 
 
+_BRANCH_NATIVE_KINDS = {'if_statement', 'elif_clause', 'else_clause'}
+
+
+def _inside_branch_arm(operations, op):
+    cur = operations.get(op.parent or '')
+    while cur is not None:
+        if cur.native_kind in _BRANCH_NATIVE_KINDS:
+            return True
+        if cur.kind == 'FUNCTION':
+            return False
+        cur = operations.get(cur.parent or '')
+    return False
+
+
 def binding_writes(graph: IR) -> None:
     if graph.diagnostics:
         return
     index=FactIndex(graph)
+    operations={op.id:op for op in graph.operations}
     by_owner=defaultdict(list)
     for op in graph.operations:
         by_owner[op.owner].append(op)
@@ -51,8 +66,14 @@ def binding_writes(graph: IR) -> None:
                       count=len(events),basis='explicit-writes',analysis='binding-writes/1')
             if len(events)==1:
                 op=events[0]
-                graph.add(op.id,'UNIQUE_BINDING_WRITE',target,f'{entity.path}:{op.line}',
-                          basis='explicit-writes',analysis='binding-writes/1')
+                # A unique write inside an if/elif arm does not prove the load
+                # always reaches that write: the sibling arm may leave the
+                # binding undefined or assign a different origin. Only emit
+                # the upgrade signal when the write is in the callable body
+                # proper, not inside a conditional arm.
+                if not _inside_branch_arm(operations, op):
+                    graph.add(op.id,'UNIQUE_BINDING_WRITE',target,f'{entity.path}:{op.line}',
+                              basis='explicit-writes',analysis='binding-writes/1')
         for binding in candidates[owner]-writes.keys():
             candidate_entity=graph.entities.get(binding)
             if candidate_entity is not None and (candidate_entity.kind in {'STORAGE','PARAMETER'} or binding in members):
