@@ -29,6 +29,11 @@ target/
 # ken — local index, daemon socket, logs
 .ken/
 
+# Local agent/tool working state (DB, settings.json). Excluded by the P0
+# freeze commit (cba4543) so the snapshot stays reproducible on a fresh
+# checkout; keep it ignored to avoid future noise.
+.infinidev/
+
 # Mined eval labels — contain real prompt text (possible secrets); never commit.
 mined.jsonl
 examples/bench/eval/mined.jsonl
