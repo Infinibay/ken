@@ -7,7 +7,8 @@ caveat = "Same-contract delegation also occurs in Proxy; added responsibilities 
 legacy_query = "require $unit SUBTYPE_OF $contract\nrequire $unit HAS_FIELD $wrapped\nrequire $wrapped TYPE $contract\nrequire $unit HAS_METHOD $method\nrequire $method DELEGATES_TO $wrapped\n"
 query = '''
 query decorator {
- match "decorator#object-wrapper"(unit: $unit);
+ any { match "decorator#object-wrapper"(unit: $unit); }
+ or { match "decorator#callable-wrapper"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -44,9 +45,32 @@ query decorator {
 '''
 [[variants]]
 id = "callable-wrapper"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
-requires = ["closure_capture", "argument_result_flow"]
+requires = ["closure_capture", "argument_result_flow", "callable_contracts"]
 graph_requirements = ["Closure conserva callable envuelta; adapta efecto o resultado preservando contrato relevante."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "La fabrica recibe un callable por parametro, devuelve un callable propio que lo captura, y ese wrapper invoca el capturado pasandole su propio argumento. La invocacion se acepta como llamada directa (CALLEE_VALUE) o como metodo sobre el callable (RECEIVER), que es la forma de una interfaz funcional en Java. No prueba que el comportamiento anadido sea alcanzable en ejecucion, ni la modificacion aritmetica del resultado sin segunda llamada, ni la transparencia del contrato de llamada."
+query = '''
+query decorator {
+ require $factory HAS_PARAMETER $inner;
+ parameter(receiver: false) as $inner;
+ require $factory RETURNS $wrapper;
+ different $factory $wrapper;
+ callable(constructor: false) as $wrapper;
+ require $wrapper CAPTURES $inner;
+ require $wrapper HAS_PARAMETER $value;
+ parameter(receiver: false) as $value;
+ require $wrapper HAS_CALL $delegation;
+ any {
+  require $delegation CALLEE_VALUE $inner;
+ } or {
+  require $delegation RECEIVER $inner;
+ }
+ require $delegation ARGUMENT $argument;
+ require $argument VALUE $input;
+ require $input LOADED_FROM $value;
+ emit unit=$wrapper, $factory, $inner, $wrapper;
+}
+'''

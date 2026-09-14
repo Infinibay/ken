@@ -42,28 +42,30 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **51 ready / 26 design** (siete variantes promovidas en este trabajo).
+Inventario: **52 ready / 25 design** (ocho variantes promovidas en este trabajo).
 
-Sin cambio de IR: **`adapter#class-adapter`** (python, cpp) se cerró **solo con
-query**. El grafo ya ligaba la clase con sus **dos** bases, la sobrescritura del
-slot objetivo y la llamada efectiva al método de la base adaptada, porque la
-resolución de llamadas atraviesa las bases. Detalles en
-[`adapter#class-adapter`](docs/structural-validation/gof-completion/adapter-class-adapter.md).
+IR 1.54 — **cierres como callables**: Rust declara un cierre como
+`closure_expression`, que no estaba en `FUNCTIONS`; el cuerpo se aplanaba en la
+función envolvente y se perdían `CAPTURES` y la identidad del wrapper devuelto.
+Con eso se cierra **`decorator#callable-wrapper`** en sus **ocho** lenguajes. La
+invocación del callable capturado se registra de dos formas —llamada directa
+(`CALLEE_VALUE`) o método sobre el callable (`RECEIVER`, la interfaz funcional de
+Java— y la query acepta ambas. Detalles en
+[`decorator#callable-wrapper`](docs/structural-validation/gof-completion/decorator-callable-wrapper.md).
 
-**Tres de las siete variantes cerradas no necesitaron capacidad nueva.** La regla
-que se desprende: escribir la query y correrla **antes** de asumir que falta
-análisis. Cuando sí falta, construirla en el IR en lugar de rodearla en la query.
+También se descubrió una restricción del catálogo que conviene tener presente:
+`rules.py` exige que **todas las variantes `ready` de una regla exporten al menos
+un rol común**, porque `gof.<id>` se construye con la intersección de exports. La
+variante nueva debió emitir `unit` además de sus roles propios.
 
-Siguiente tarea: `abstract-factory#structural-families` es el único caso medido
-donde la query directa **no** sirve — relacionar dos proveedores por su conjunto
-de operaciones produce el producto cartesiano que este plan prohíbe, y con 30
-tipos la medición da `budget:max_states`. Necesita una capacidad de IR que agrupe
-operaciones por firma compartida para que el join sea por identidad. Otros
-candidatos: `prototype#language-copy`, `iterator#callback-iterator` (Go),
-`singleton#module-shared`, y el **modelo de bus/topic** (P6) para
-`observer#event-bus` y `mediator#message-coordination`. En paralelo siguen abiertas
-**P1.5**, regiones expresivas/cortocircuitos (bloqueada; ver
-[registro](docs/structural-validation/gof-completion/P1.5-expressive-regions-blocked.md)),
+Siguiente tarea: el mismo recorrido de cierre sirve a **`command#command-closure`**,
+**`chain#middleware-closures`**, **`adapter#functional-adapter`**,
+**`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
+lo que cambia es qué se hace con el callable (almacenarlo, encadenarlo, transformar
+argumentos), no la captura. Sigue pendiente `abstract-factory#structural-families`,
+el único caso medido donde la query directa **no** sirve por `budget:max_states`.
+En paralelo siguen abiertas **P1.5**, regiones expresivas/cortocircuitos (bloqueada;
+ver [registro](docs/structural-validation/gof-completion/P1.5-expressive-regions-blocked.md)),
 y el alcance pendiente de P1.1 (closures, orden de declaración) y P1.3
 (callee/receptor). P3 todavía requiere conectar el núcleo de instrucciones al
 buscador.
@@ -659,7 +661,14 @@ Dependencias: **P1, P2, P4**. Ready iniciales: `object-wrapper`.
 
 #### Pendiente `decorator#callable-wrapper`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+  **IR 1.54:** los ocho lenguajes cubiertos. La única capacidad que faltaba era
+  que Rust bajara el cierre como callable: su nodo es `closure_expression`, que no
+  estaba en `FUNCTIONS` y hacía que el cuerpo se aplanara en la función
+  envolvente. La invocación del capturado se acepta como llamada directa
+  (`CALLEE_VALUE`) o como método sobre el callable (`RECEIVER`), que es la forma
+  de una interfaz funcional en Java. 13 tests. Detalles en
+  [`decorator#callable-wrapper`](docs/structural-validation/gof-completion/decorator-callable-wrapper.md).
 
 Relacionar callable capturado, invocación con argumentos compatibles y comportamiento añadido alcanzable. Permitir modificación aritmética del resultado sin exigir una segunda llamada. Positivo: wrapper que mide/loguea o transforma el valor y conserva el contrato de llamada pertinente.
 

@@ -92,8 +92,9 @@ def test_transparent_tracing_variant_rejects_discarded_result(language):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Callable-wrapper variant remains design-only in the GoF catalog')
 def test_functional_decorator_is_a_valid_variant(language):
+    # Resolved by decorator#callable-wrapper (IR 1.54): the callable-wrapper
+    # variant is implemented, so this is a normal regression, not a pending case.
     text = {
         'python': 'def traced(inner):\n def run(value):\n  print("trace")\n  return inner(value)\n return run\n',
         'java': 'interface Action {int run(int value);}class Factory {static Action traced(Action inner){return value->{System.out.println("trace");return inner.run(value);};}}',

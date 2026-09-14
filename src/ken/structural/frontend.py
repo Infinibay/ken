@@ -27,6 +27,9 @@ FUNCTIONS = {"abstract_method_signature", "function_definition", "function_decla
              "constructor_declaration", "function_item", "function_signature_item", "method_signature",
              # Go declares an interface's required operations as ``method_elem``.
              "method_elem",
+             # Rust closures are ``closure_expression``; a closure is a callable like
+             # the ``lambda`` and ``arrow_function`` forms of the other languages.
+             "closure_expression",
              "generator_function_declaration", "generator_function", "arrow_function", "lambda",
              "local_function_statement", "func_literal", "function_expression", "lambda_expression"}
 MEMBERS = {"attribute", "member_expression", "field_access", "member_access_expression",

@@ -486,10 +486,13 @@ una.
 | Fecha | Caso | Categoría original | Disposición | Evidencia |
 |---|---|---|---|---|
 | IR 1.52 | `test_algorithm_builder.py::test_immutable_configuration_reaches_finish_on_successor[python,java,typescript]` | CO (`Immutable successor-builder variant remains design-only`) | **Resuelto**: la variante `builder#immutable-product` está implementada; el marcador `xfail(strict=True)` se quitó y el caso es una regresión normal | [`builder#immutable-product`](builder-immutable-product.md) |
+| IR 1.54 | `test_algorithm_decorator.py::test_functional_decorator_is_a_valid_variant[python,java,typescript]` | CO (`Callable-wrapper variant remains design-only in the GoF catalog`) | **Resuelto**: la variante `decorator#callable-wrapper` está implementada en sus ocho lenguajes; el marcador se quitó y el caso es una regresión normal | [`decorator#callable-wrapper`](decorator-callable-wrapper.md) |
 
-Es el primer bloque de xfail resuelto del ejercicio: **146 → 143**. Los tres
+Dos bloques de xfail resueltos del ejercicio: **146 → 140**. Los tres
 casos pasaban a `XPASS(strict)` en cuanto la variante se publicó, que es la señal
-correcta: el marcador decía «variante todavía en diseño» y dejó de ser cierto.
+correcta: el marcador decía «variante todavía en diseño» y dejó de ser cierto. En
+ambos casos la resolución fue **quitar el marcador y conservar el test** como
+regresión normal, no borrarlo.
 
 ## Variantes design sin tests
 

@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.53.0.** This document describes available behavior
+> **Operational reference: IR 1.54.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,26 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Closures as callables (IR 1.54)
+
+A Rust closure is a `closure_expression`, which is now treated as a callable like
+`lambda`, `arrow_function`, `function_expression` and `func_literal` in the other
+languages. Before this the closure body was flattened into the enclosing function:
+there was no nested `CALLABLE`, so `CAPTURES` and the returned-wrapper identity
+were lost. After it, ``move |value| inner(value)`` yields a nested callable with
+`CAPTURES` to the captured parameter and `RETURNS` from the factory, in the same
+shape as the other seven languages.
+
+Invoking a captured callable has two recorded shapes and both mean the same thing:
+
+| Shape | Example | Fact |
+|---|---|---|
+| Direct call | ``inner(value)`` | `CALLEE_VALUE` to the parameter |
+| Method on the callable | ``inner.applyAsInt(value)`` (Java functional interface) | `RECEIVER` to the parameter |
+
+A query that needs "the captured callable is invoked" must accept both; neither is
+a synonym for the other.
 
 ## Nominal member resolution and structural satisfaction (IR 1.53)
 
@@ -159,7 +179,7 @@ usable afterwards. C++ is not admitted.
 
 ## Current capabilities
 
-This table describes IR 1.53.0, checked against the implementation on 2026-09-13.
+This table describes IR 1.54.0, checked against the implementation on 2026-09-13.
 Preserving syntax, deriving a relationship and proving runtime behavior are
 different levels of support.
 
