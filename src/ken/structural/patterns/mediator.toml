@@ -9,6 +9,7 @@ query = '''
 query mediator {
  any { match "mediator#direct-colleagues"(unit: $unit); }
  or { match "mediator#message-coordination"(unit: $unit); }
+ or { match "mediator#tag-dispatch"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -71,6 +72,48 @@ query mediator_message_coordination {
  require $second_call ARGUMENT $second_argument;
  require $second_argument VALUE $second_value;
  require $second_value LOADED_FROM $tag;
+ require $notifier_a PASSES_SELF_TO $holder_a;
+ require $notifier_a IN_TYPE $colleague_a;
+ require $notifier_a HAS_CALL $outgoing_a;
+ require $outgoing_a CALLEE_NAME $name_a;
+ require $notifier_b PASSES_SELF_TO $holder_b;
+ require $notifier_b IN_TYPE $colleague_b;
+ require $notifier_b HAS_CALL $outgoing_b;
+ require $outgoing_b CALLEE_NAME $name_b;
+ different $colleague_a $colleague_b;
+ different $notifier_a $notifier_b;
+ where $name_a == $operation.name;
+ where $name_b == $operation.name;
+ emit unit=$coordinator, $operation, $first_target, $second_target, $tag, $colleague_a, $colleague_b;
+}
+'''
+
+[[variants]]
+id = "tag-dispatch"
+status = "ready"
+languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
+requires = ["call_graph", "event_value_flow", "branch_dispatch"]
+graph_requirements = ["El centro despacha por una etiqueta que recibe por parametro: una rama del propio metodo compara ese parametro y cada rama delega en un campo distinto del centro, y dos tipos colegas se pasan a si mismos al centro y lo llaman por el mismo nombre de operacion."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "Un centro con un metodo que **despacha por etiqueta**: el metodo recibe la etiqueta como parametro, una rama del propio metodo la **compara** (``if tag == 1`` / ``switch``-like), y las dos ramas delegan condicionalmente en **dos campos distintos del mismo centro**. El centro esta ademas llamado por **dos tipos colegas** que se pasan a si mismos y lo invocan con el nombre de esa operacion. Es la forma canonica del ejemplo de RefactoringGuru (``notify(sender, event)`` ramificando sobre ``event``); el hermano ``message-coordination`` cubre la otra grafia, donde la etiqueta se **reenvia** como argumento de cada llamada. No prueba orden temporal, exclusividad de ramas ni que la etiqueta sea el unico criterio de despacho. La comparacion tiene que ser un operador; ``event.equals(\"A\")`` (Java) o un ``switch`` sobre un campo no publican el hecho todavia."
+query = '''
+query mediator_tag_dispatch {
+ require $coordinator IS CLASS;
+ require $coordinator HAS_METHOD $operation;
+ require $operation HAS_PARAMETER $tag;
+ parameter(receiver: false) as $tag;
+ require $operation CONDITIONAL_DELEGATION $first_target;
+ require $coordinator HAS_FIELD $first_target;
+ require $operation CONDITIONAL_DELEGATION $second_target;
+ require $coordinator HAS_FIELD $second_target;
+ different $first_target $second_target;
+ require $operation HAS_CALL $first_call;
+ require $first_call RECEIVER $first_target;
+ require $operation HAS_CALL $second_call;
+ require $second_call RECEIVER $second_target;
+ require $operation HAS_OPERATION $branch;
+ require $branch PARAMETER_TEST $tag;
  require $notifier_a PASSES_SELF_TO $holder_a;
  require $notifier_a IN_TYPE $colleague_a;
  require $notifier_a HAS_CALL $outgoing_a;

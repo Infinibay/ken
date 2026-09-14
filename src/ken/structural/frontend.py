@@ -1191,6 +1191,16 @@ class Lowerer:
                         tested_entity = self.ir.entities.get(tested_value)
                         if tested_entity is not None and tested_entity.kind in {'STORAGE', 'MEMBER'}:
                             self.ir.add(oid, 'TRUTH_TEST', tested_value, ev, basis='comparison-syntax')
+                        elif tested_entity is not None and tested_entity.kind == 'PARAMETER':
+                            # A comparison against a parameter is not a truth test --
+                            # ``TRUTH_TEST`` keeps meaning "this branch tests the value
+                            # it dispatches on", which is why comparing two values
+                            # publishes nothing. But a branch that compares a parameter
+                            # *does* dispatch on what the caller supplied: the canonical
+                            # Mediator is ``notify(sender, event)`` branching on
+                            # ``event``, and without this fact that shape is invisible
+                            # and the pattern read 0/8 on the canonical corpora.
+                            self.ir.add(oid, 'PARAMETER_TEST', tested_value, ev, basis='comparison-syntax')
                     for arm, name in [('BRANCH_TRUE', 'consequence'), ('BRANCH_FALSE', 'alternative')]:
                         body = field(node, name)
                         if body is not None:

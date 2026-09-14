@@ -65,12 +65,21 @@ def _cached_ir(cache: IRCache, key: str) -> IR | None:
 
 
 def build_project(root: Path, *, path: str = ".", cache_mb: float | None = None,
-                  max_files: int = 2000, max_file_bytes: int = 2_000_000) -> tuple[IR, dict[str, Any]]:
+                  max_files: int | None = None, max_file_bytes: int = 2_000_000) -> tuple[IR, dict[str, Any]]:
+    """Lower every supported file under ``path`` and link them into one graph.
+
+    ``max_files`` is an opt-in ceiling. It used to default to 2000 and skip the
+    rest of the tree without the caller asking: a 213-directory Java repository
+    reported 2000 analysed files and 42 silently missing ones, and its "findings"
+    were a partial answer presented as a whole one. Now the scan analyses
+    everything, and a caller that needs a ceiling passes one -- the skipped files
+    are always listed in ``analysis.skipped`` and ``coverage_complete`` goes false.
+    """
     root = root.resolve()
     target = resolve_project_path(root, path)
     if not target.exists():
         raise ValueError(f"path does not exist: {path}")
-    if max_files <= 0 or max_file_bytes <= 0:
+    if (max_files is not None and max_files <= 0) or max_file_bytes <= 0:
         raise ValueError("scan limits must be positive")
     started = time.monotonic()
     cache = IRCache(root / ".ken" / "structural-cache.sqlite", _configuration(root, cache_mb))
@@ -92,7 +101,7 @@ def build_project(root: Path, *, path: str = ".", cache_mb: float | None = None,
                 if relative.suffix.lower() in {".c", ".h", ".rb", ".kt", ".dart", ".php", ".swift", ".scala"}:
                     skipped.append({"path": relative.as_posix(), "reason": "no structural frontend"})
                 continue
-            if len(manifest) >= max_files:
+            if max_files is not None and len(manifest) >= max_files:
                 skipped.append({"path": relative.as_posix(), "reason": "max_files"})
                 continue
             if absolute.stat().st_size > max_file_bytes:
@@ -160,7 +169,8 @@ def directory_summary(findings: list[dict[str, Any]], files: list[str]) -> list[
 
 
 def search(root: Path, query: str = "", *, path: str = ".", cache_mb: float | None = None,
-           budget: QueryBudget | None = None, rule_ids: list[str] | None = None,
+           budget: QueryBudget | None = None, max_files: int | None = None,
+           max_file_bytes: int = 2_000_000, rule_ids: list[str] | None = None,
            collections: list[str] | None = None, tags: list[str] | None = None,
            rule_files: list[str] | None = None, evidence_mode: str = "strict") -> dict[str, Any]:
     from .rules import SavedRule, execute_rules, load_rules, select_rules
@@ -193,7 +203,8 @@ def search(root: Path, query: str = "", *, path: str = ".", cache_mb: float | No
         for rule in selected:
             if rule.query.lstrip().startswith("query "):
                 validator.validate(_parsed_query(rule.query, compiled))
-    graph, analysis = build_project(root, path=path, cache_mb=cache_mb)
+    graph, analysis = build_project(root, path=path, cache_mb=cache_mb, max_files=max_files,
+                                    max_file_bytes=max_file_bytes)
     result = execute_rules(graph, selected, budget, registry=registry, evidence_mode=evidence_mode, _parsed=compiled)
     summaries = directory_summary(result["matches"], analysis["files"])
     for summary in summaries:
@@ -207,14 +218,18 @@ def search(root: Path, query: str = "", *, path: str = ".", cache_mb: float | No
 
 
 def patterns(root: Path, names: list[str] | None = None, *, path: str = ".",
-             cache_mb: float | None = None, budget: QueryBudget | None = None) -> dict[str, Any]:
-    graph, analysis = build_project(root, path=path, cache_mb=cache_mb)
+             cache_mb: float | None = None, budget: QueryBudget | None = None,
+             max_files: int | None = None, max_file_bytes: int = 2_000_000) -> dict[str, Any]:
+    graph, analysis = build_project(root, path=path, cache_mb=cache_mb, max_files=max_files,
+                                    max_file_bytes=max_file_bytes)
     result = detect_patterns(FactIndex(graph), names, budget)
     return {"ok": True, **result, "directories": directory_summary(result["findings"], analysis["files"]),
             "analysis": analysis}
 
 
 def bugs(root: Path, *, path: str = ".", cache_mb: float | None = None,
-         budget: QueryBudget | None = None) -> dict[str, Any]:
-    graph, analysis = build_project(root, path=path, cache_mb=cache_mb)
+         budget: QueryBudget | None = None, max_files: int | None = None,
+         max_file_bytes: int = 2_000_000) -> dict[str, Any]:
+    graph, analysis = build_project(root, path=path, cache_mb=cache_mb, max_files=max_files,
+                                    max_file_bytes=max_file_bytes)
     return {"ok": True, **evaluate_bugs(graph, budget), "analysis": analysis}

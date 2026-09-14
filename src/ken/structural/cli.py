@@ -33,6 +33,14 @@ def add_parser(subparsers) -> None:
                        help="join states a rule may visit before it is reported incomplete; unlimited by default")
         p.add_argument("--max-rows", type=int, default=None,
                        help="rows a rule may examine before it is reported incomplete; unlimited by default")
+        if name in {"search", "patterns", "bugs", "ir"}:
+            # Opt-in ceiling. It used to default to 2000 and skip the rest of the
+            # tree without being asked, so a 213-directory repository reported a
+            # partial answer as a whole one.
+            p.add_argument("--max-files", type=int, default=None,
+                           help="analyse at most N files; unlimited by default, skipped files are reported")
+            p.add_argument("--max-file-bytes", type=int, default=2_000_000,
+                           help="skip files larger than this many bytes (default 2 MB)")
         if name in {"search", "patterns", "bugs"}:
             # The default surface is meant to be read: what was found, where,
             # with what confidence. --full returns the engine's verbatim result
@@ -89,18 +97,22 @@ def dispatch(args: argparse.Namespace) -> int:
     elif command == "search":
         query = args.query_file.read_text() if args.query_file else args.query
         result = service.search(root, query or "", path=args.scope, cache_mb=args.cache_mb, budget=budget,
+                                max_files=args.max_files, max_file_bytes=args.max_file_bytes,
                                 rule_ids=args.rule, collections=args.collection, tags=args.tag, rule_files=args.rules_file, evidence_mode=args.evidence_mode)
         result = report.present(result, kind="structure", detail="full" if args.full else "compact")
     elif command == "patterns":
-        result = service.patterns(root, args.pattern, path=args.scope, cache_mb=args.cache_mb, budget=budget)
+        result = service.patterns(root, args.pattern, path=args.scope, cache_mb=args.cache_mb, budget=budget,
+                                  max_files=args.max_files, max_file_bytes=args.max_file_bytes)
         result = report.present(result, kind="patterns", detail="full" if args.full else "compact")
     elif command == "bugs":
-        result = service.bugs(root, path=args.scope, cache_mb=args.cache_mb, budget=budget)
+        result = service.bugs(root, path=args.scope, cache_mb=args.cache_mb, budget=budget,
+                              max_files=args.max_files, max_file_bytes=args.max_file_bytes)
         result = report.present(result, kind="bugs", detail="full" if args.full else "compact")
     else:
         if args.format == 'text' and args.view != 'instructions':
             raise ValueError('--format text requires --view instructions')
-        graph, analysis = service.build_project(root, path=args.scope, cache_mb=args.cache_mb)
+        graph, analysis = service.build_project(root, path=args.scope, cache_mb=args.cache_mb,
+                                                max_files=args.max_files, max_file_bytes=args.max_file_bytes)
         if args.view == 'instructions':
             from .instruction_lowering import lower_instructions
             program = lower_instructions(graph)

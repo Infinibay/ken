@@ -187,3 +187,26 @@ def test_corrupt_serialized_ir_is_rebuilt(tmp_path):
     graph, analysis = build_project(tmp_path)
     assert any(e.name == "A" for e in graph.entities.values())
     assert analysis["cache"]["misses"] >= 1
+
+
+def test_the_scan_has_no_file_ceiling_unless_one_is_asked_for(tmp_path):
+    """A default ceiling silently reported a partial answer as a whole one.
+
+    The old default was 2000 files: iluwatar (213 directories) reported 2000
+    analysed files and 42 skipped ones nobody asked to skip. The ceiling is now
+    opt-in and always visible in ``analysis.skipped``.
+    """
+    from ken.structural import service
+
+    for index in range(5):
+        (tmp_path / f"f{index}.py").write_text(f"class C{index}:\n    def m(self): return {index}\n",
+                                                encoding="utf-8")
+    _, analysis = service.build_project(tmp_path, path=".", cache_mb=0)
+    assert len(analysis["files"]) == 5
+    assert analysis["skipped"] == []
+    assert analysis["coverage_complete"] is True
+
+    _, capped = service.build_project(tmp_path, path=".", cache_mb=0, max_files=2)
+    assert len(capped["files"]) == 2
+    assert {item["reason"] for item in capped["skipped"]} == {"max_files"}
+    assert capped["coverage_complete"] is False
