@@ -2,12 +2,13 @@ schema = "ken-rule/1"
 id = "flyweight"
 name = "Flyweight"
 category = "structural"
-description = "A pool creates, stores and returns objects through indexed lookup."
-caveat = "Indexed insertion and direct return share a pool/key binding, and insertion retains the constructed object. Miss polarity, temporal key stability, immutability and intrinsic/extrinsic state need review."
+description = "A pool creates, stores and returns objects through indexed lookup, or through the map's own entry API."
+caveat = "Indexed insertion and direct return share a pool/key binding, and insertion retains the constructed object. Miss polarity, temporal key stability, immutability and intrinsic/extrinsic state need review. The entry variant identifies the API by name, so it inherits the usual limits of name-based protocol identification."
 legacy_query = "require $unit HAS_FIELD $pool\nrequire $unit HAS_METHOD $factory\nrequire $factory LOOKS_UP $pool\nrequire $factory CREATES $product\nrequire $factory WRITES_ELEMENT $pool\nrequire $factory RETURNS_LOOKUP $pool\n"
 query = '''
 query flyweight {
- match "flyweight#explicit-interning"(unit: $unit);
+ any { match "flyweight#explicit-interning"(unit: $unit); }
+ or { match "flyweight#entry-api"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -52,9 +53,34 @@ query flyweight {
 '''
 [[variants]]
 id = "entry-api"
-status = "design"
+status = "ready"
 languages = ["java", "csharp", "cpp", "rust"]
 requires = ["map_api_models", "callback_flow"]
 graph_requirements = ["Modelo entry/get-or-add preserva identidad de clave y objeto retenido; no afirmar factory exactly-once."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-four-languages"
+query_claim = "Un metodo de una clase con un campo pool llama a un API de entrada reconocido por nombre (`computeIfAbsent`, `GetOrAdd`, `try_emplace`, `insert_or_assign`, `entry`) cuyo receptor es ESE campo y cuyo argumento en posicion 0 proviene del parametro clave del metodo; ademas el metodo devuelve el objeto retenido, sea la propia llamada, un miembro suyo (la forma encadenada de C++ sobre un `pair`) o el envoltorio `or_insert_with` cuyo receptor es la llamada de entrada (Rust). `no afirmar factory exactly-once`: la variante no cuenta invocaciones del factory ni prueba que la construccion ocurra una sola vez, solo que el API de entrada es el que retiene el objeto. La identificacion del API es por nombre, no por resolucion de biblioteca. No prueba identidad de clave bajo reasignacion, estabilidad temporal del pool ni estado intrinseco/extrinseco."
+query = '''
+query entry_api {
+ require $unit HAS_FIELD $pool;
+ require $unit HAS_METHOD $lookup;
+ callable(constructor: false) as $lookup;
+ require $lookup HAS_PARAMETER $key;
+ parameter(receiver: false) as $key;
+ require $lookup HAS_CALL $entry;
+ any { call(name: "computeIfAbsent") as $entry; }
+ or { call(name: "GetOrAdd") as $entry; }
+ or { call(name: "try_emplace") as $entry; }
+ or { call(name: "insert_or_assign") as $entry; }
+ or { call(name: "entry") as $entry; }
+ require $entry RECEIVER $pool;
+ require $entry ARGUMENT $argument;
+ require $argument ENTITY ARGUMENT [position: 0, kind: positional];
+ require $argument VALUE $value;
+ require $value LOADED_FROM $key;
+ require $lookup RETURNS $returned;
+ any { path $returned MEMBER_OF{0,2} $entry as $retained_path; }
+ or { require $returned RECEIVER $entry; }
+ emit unit=$unit, $pool, $lookup, $entry, $key;
+}
+'''

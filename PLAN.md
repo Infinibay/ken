@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **62 ready / 15 design** (dieciocho variantes promovidas en este trabajo).
+Inventario: **63 ready / 14 design** (diecinueve variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -162,6 +162,15 @@ forma de llamada por lenguaje con su nombre de callee esperado. Con la capacidad
 construida, **el residuo de `chain#middleware-closures` quedó cerrado** y su
 `xfail(strict=True)` retirado: 141 → 140 xfailed. Detalles en
 [`chain#middleware-closures`](docs/structural-validation/gof-completion/chain-middleware-closures.md).
+
+Sin cambio de IR: **`flyweight#entry-api`** se cerró **solo con query**, en sus cuatro
+lenguajes. `explicit-interning` cubría el pool escrito a mano; aquí el que retiene el
+objeto es el API de entrada del propio mapa, así que el papel de **receptor** del campo
+es la sustancia: la llamada tiene que hacerse sobre el campo, no sobre un local ni un
+parámetro. Las tres formas del objeto retenido se aceptan con dos ramas —`path
+$returned MEMBER_OF{0,2} $entry` cubre Java/C# (distancia 0) y la cadena de C++ sobre el
+`pair`, y `$returned RECEIVER $entry` cubre el `or_insert_with` de Rust. Detalles en
+[`flyweight#entry-api`](docs/structural-validation/gof-completion/flyweight-entry-api.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -842,7 +851,7 @@ Dependencias: **P1, P2, P4, P6**. Ready iniciales: `explicit-interning`.
 
 #### Pendiente `flyweight#entry-api`
 
-- [ ] Implementar en: `java`, `csharp`, `cpp`, `rust`.
+- [x] Implementar en: `java`, `csharp`, `cpp`, `rust`.
 
 Modelar identidad de mapa y clave en entry/compute-if-absent/equivalente. Seguir el inicializador hasta el valor retenido y retornado. Positivo: lookup que reutiliza el objeto existente y crea/almacena en la rama de ausencia, con API resuelta.
 

@@ -20,9 +20,18 @@ not sampled**. Two query forms depend on that and were previously unusable in st
 evidence mode:
 
 ```kenql
-count distinct $call = 1 { require $wrapped HAS_CALL $call; where … ; };
-not exists { require $wrapped HAS_CALL $call; … } within callable($wrapped);
+query documented_call_cardinality {
+ require $unit HAS_METHOD $build;
+ callable(constructor: false) as $build;
+ count distinct $call = 1 {
+  require $build HAS_CALL $call;
+ };
+ emit unit=$unit, $build;
+}
 ```
+
+The same capability backs `not exists { … } within callable($x)`, which answers "this
+callable makes no call of this shape" rather than "exactly one".
 
 Both are "closed-world" forms. `Engine.closed` (`kenql.py`) walks the block and
 requires a `complete:<subject>:<relation>` capability for every fact, resolving each

@@ -96,8 +96,14 @@ el estado intrínseco protegido. La query actual no evalúa todavía ese refinam
 | Flyweight sin pool explícito | Tablas preconstruidas/constantes | Compartición observada y contexto extrínseco sin exigir inserción lazy |
 
 Las APIs de entry no deben reducirse a “factory exactamente una vez”: la garantía
-real depende de la API resuelta y su contrato. La variante `entry-api` figura como
-`design`; estos tests no validan dichos protocolos. La matriz nueva ensaya Python,
+real depende de la API resuelta y su contrato. La variante `entry-api` pasó a `ready`
+**sin cambio de IR**: el API de entrada ya se reconoce por nombre (`computeIfAbsent`,
+`GetOrAdd`, `try_emplace`, `insert_or_assign`, `entry`), su receptor tiene que ser el
+campo pool —no un local ni un parámetro— y el objeto retenido lo devuelve el método,
+en las tres formas que midió la implementación (la propia llamada, una cadena
+`MEMBER_OF` sobre el `pair` de C++, o el envoltorio `or_insert_with` de Rust). Estas
+notas no validan las garantías de concurrencia de cada API, y el `query_claim` lo dice:
+no se afirma que el factory corra exactamente una vez. La matriz nueva ensaya Python,
 Java y TypeScript con índices explícitos.
 
 ## Pruebas y corrección acotada
