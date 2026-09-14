@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.58.0.** This document describes available behavior
+> **Operational reference: IR 1.59.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,30 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Suspending loops (IR 1.59)
+
+A loop that advances through the async protocol — Python `async for`, JavaScript and
+TypeScript `for await`, C# `await foreach` — carries `async: True` on the loop
+operation, so `operation(kind: loop, async: true)` selects it.
+
+Nothing else in the graph distinguishes it. The iteration facts are the same ones a
+synchronous loop over the same source produces:
+
+| Fact | `for (const item of produce())` | `for await (const item of produce())` |
+|---|---|---|
+| `LOOP` operation | yes | yes |
+| `ITERATION_SOURCE` | the call | the call |
+| `ITERATION_BODY` | the block | the block |
+| `TARGET` on the source | to `produce` | to `produce` |
+| loop `async` | absent | `True` |
+
+Before this the only trace was the unnamed token list on the operation, which no
+query can reach, so "this loop suspends to advance" was not expressible at all.
+
+The flag is set from the loop's own tokens, so it is a property of the loop rather
+than of the enclosing callable: the plain count loop inside an `async def` stays
+unflagged.
 
 ## Enum declarations and named-constant identity (IR 1.58)
 

@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **58 ready / 19 design** (catorce variantes promovidas en este trabajo).
+Inventario: **59 ready / 18 design** (quince variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -109,6 +109,15 @@ transición lo cambia». Java/C#/TS ya acertaban por nombre, pero solo porque el
 se modelaba como un campo inventado del contexto; Go y Python ya lo tenían bien. Con
 eso se cierra **`state#state-enum`** en sus ocho lenguajes. Detalles en
 [`state#state-enum`](docs/structural-validation/gof-completion/state-state-enum.md).
+
+IR 1.59 — **bucles que suspenden**: `async for` de Python, `for await` de JS/TS y
+`await foreach` de C# producían **los mismos hechos** que un bucle sincrónico sobre la
+misma fuente (`LOOP`, `ITERATION_SOURCE`, `ITERATION_BODY`, `TARGET`), y la única traza
+de asincronía era la lista de tokens de la operación, inalcanzable desde KenQL. Ahora
+el bucle lleva `async: True`, puesto desde sus **propios** tokens, así que el `for` de
+conteo dentro de un `async def` sigue sin marca. Con eso se cierra
+**`iterator#async-iterator`** en sus cuatro lenguajes. Detalles en
+[`iterator#async-iterator`](docs/structural-validation/gof-completion/iterator-async-iterator.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`chain#middleware-closures`**, **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -825,7 +834,7 @@ Modelar el protocolo range-function de Go: productor llama al callback con eleme
 
 #### Pendiente `iterator#async-iterator`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `csharp`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `csharp`.
 
 Resolver producción, avance y consumo del protocolo asíncrono, incluyendo suspensión y finalización reconocidas. Positivo: async generator y un iterador explícito donde el lenguaje los admita; incluir await de logging independiente. Representar cancelación/desconocidos sin afirmar cierre universal.
 

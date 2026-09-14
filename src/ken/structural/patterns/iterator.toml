@@ -2,13 +2,13 @@ schema = "ken-rule/1"
 id = "iterator"
 name = "Iterator"
 category = "behavioral"
-description = "A class supplies paired traversal protocol methods."
-caveat = "Protocol names are intentional API evidence; exhaustion and traversal correctness are not proven."
+description = "A class supplies paired traversal protocol methods, or a callable advances a source asynchronously."
+caveat = "Protocol names are intentional API evidence; exhaustion and traversal correctness are not proven. The async variant records that a loop suspends to advance, not that the awaited work ever completes."
 legacy_query = "require $unit IS CLASS\nvariant python\nrequire $unit HAS_METHOD $iter name=__iter__\nrequire $unit HAS_METHOD $next name=__next__\nend\nvariant has-next\nrequire $unit HAS_METHOD $next name=next|Next\nrequire $unit HAS_METHOD $has_next name=hasNext|HasNext|MoveNext\nend\nvariant generator\nrequire $unit HAS_METHOD $iter\nrequire $iter HAS_YIELD _\nend\n"
 query = '''
 query iterator {
  any { match "iterator#external-cursor"(iterator: $iterator); } or {
- any { match "iterator#generator"(iterator: $iterator); } or { match "iterator#delegated-generator"(iterator: $iterator); } or { match "iterator#explicit-cursor"(iterator: $iterator); } or { match "iterator#paired-cursor"(iterator: $iterator); } or { match "iterator#delegated-cursor"(iterator: $iterator); }
+ any { match "iterator#generator"(iterator: $iterator); } or { match "iterator#delegated-generator"(iterator: $iterator); } or { match "iterator#explicit-cursor"(iterator: $iterator); } or { match "iterator#paired-cursor"(iterator: $iterator); } or { match "iterator#delegated-cursor"(iterator: $iterator); } or { match "iterator#async-iterator"(iterator: $iterator); }
  }
  emit $iterator;
 }
@@ -130,12 +130,31 @@ fixtures_status = "documented-not-validated"
 
 [[variants]]
 id = "async-iterator"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "csharp"]
 requires = ["async_iteration_protocol", "generator_lowering"]
 graph_requirements = ["Producción/avance y consumo se rigen por protocolo async; await no se transforma en thread."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-four-languages"
+query_claim = "Un callable async recorre con un bucle que suspende (`async for`, `for await`, `await foreach`) la fuente producida por otro callable async que suspende al avanzar (`yield` mas `await`). El bucle asincrono se registra en el propio bucle: los hechos de iteracion son identicos a los de un bucle sincrono sobre la misma fuente. No prueba agotamiento, tipos de elemento, ni que lo awaitado termine; un generador async que nunca awaits queda excluido, porque entonces la produccion no esta gobernada por el protocolo async."
+query = '''
+query async_iterator {
+ require $consumer IS CALLABLE;
+ callable(async: true) as $consumer;
+ require $consumer HAS_OPERATION $loop;
+ operation(kind: loop, async: true) as $loop;
+ require $loop ITERATION_SOURCE $source;
+ require $source TARGET $producer;
+ require $producer IS CALLABLE;
+ callable(async: true) as $producer;
+ require $producer HAS_OPERATION $suspend;
+ operation(kind: yield) as $suspend;
+ require $producer HAS_OPERATION $awaited;
+ operation(kind: await) as $awaited;
+ different $consumer $producer;
+ emit iterator=$consumer, $producer, $loop, $source, $suspend, $awaited;
+}
+'''
 
 [[variants]]
 id = "paired-cursor"

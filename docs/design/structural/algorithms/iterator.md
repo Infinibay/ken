@@ -135,9 +135,13 @@ variante, el análisis no debe inventarlo a partir de variables locales.
 | Go | Range de colección o función iteradora | Binding índice frente a elemento; callback booleano controla continuación |
 | Rust | `Iterator::next -> Option<Item>` y adaptadores | `Some/None`, consumo/borrow, transformaciones lazily y contratos de adaptadores |
 
-El catálogo marca `callback-iterator` y `async-iterator` como variantes de diseño.
-Un async generator puede coincidir actualmente con la forma genérica de
-generador; ese match no certifica el protocolo asíncrono completo.
+El catálogo marca `callback-iterator` como variante de diseño. `async-iterator` pasó a
+`ready` en IR 1.59: el bucle que suspende (`async for`, `for await`, `await foreach`)
+se registra en el propio bucle, porque `ITERATION_SOURCE`, `ITERATION_BODY` y el tipo de
+bucle son idénticos a los de un bucle sincrónico sobre la misma fuente. Un async
+generator sigue coincidiendo con la forma genérica de generador —son dos hechos
+distintos— pero el match genérico ya no es lo único que hay: la variante asíncrona
+exige además que el productor suspenda al avanzar.
 
 ## Ruido y pruebas
 

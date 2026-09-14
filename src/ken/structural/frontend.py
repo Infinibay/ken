@@ -933,6 +933,12 @@ class Lowerer:
             attrs["text"] = self.text(node)
         # Operators and modifiers can be unnamed tree-sitter nodes.
         attrs["tokens"] = [self.text(c) for c in node.children if not c.is_named]
+        # An async loop advances through the async protocol (``async for``,
+        # ``for await``, ``await foreach``). The distinction is not recoverable
+        # from the iteration facts, which a plain loop over the same source also
+        # carries, so it has to be recorded on the loop itself.
+        if native in LOOPS and any(token in {"async", "await"} for token in attrs["tokens"]):
+            attrs["async"] = True
         operator_tokens = [t for t in attrs['tokens'] if t in {
             '+', '-', '*', '/', '//', '%', '**', '=', ':=', '+=', '-=', '*=', '/=', '//=', '%=', '**=',
             '<', '>', '<=', '>=', '==', '!=', '===', '!==', '<=>', '&&', '||', '!', 'and', 'or', 'not',
