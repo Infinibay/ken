@@ -16,6 +16,7 @@ query command {
  }
  or { match "command#queued-object"(unit: $unit); }
  or { match "command#retained-contract"(unit: $unit); }
+ or { match "command#command-closure"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -178,12 +179,50 @@ query retained_command {
 
 [[variants]]
 id = "command-closure"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
-requires = ["closure_capture", "callable_value_flow"]
-graph_requirements = ["Closure captura acción/datos y fluye a invocador diferido; respetar FnOnce y move cuando corresponda."]
+requires = ["closure_capture", "callable_value_flow", "stored_callback_invocation"]
+graph_requirements = ["Closure captura accion/datos y fluye a invocador diferido; respetar FnOnce y move cuando corresponda."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "Una fabrica encola un cierre que captura un payload, y otro metodo recorre esa misma cola invocando cada elemento con un contexto de ejecucion que recibe por parametro. El cierre tiene aridad al menos uno (no se impone aridad cero) y lee el payload capturado, de modo que los datos llegan a la accion. La identidad del cierre encolado se sigue a traves del alias local o del envoltorio de un solo argumento con el que cada lenguaje lo guarda. No prueba orden temporal, ejecucion exactamente una vez, ni FnOnce/move."
+query = '''
+query command_closure {
+ require $unit HAS_FIELD $queue;
+ require $unit HAS_METHOD $submit;
+ callable(constructor: false) as $submit;
+ callable(constructor: false) as $run;
+ different $run $submit;
+ require $unit HAS_METHOD $run;
+ callable(constructor: false) as $action;
+ require $submit HAS_CALL $insertion;
+ require $insertion INSERTS_INTO $queue;
+ any {
+  require $insertion INSERTED_VALUE $action;
+ } or {
+  require $insertion INSERTED_VALUE $inserted;
+  path $action FLOWS_TO{0,2} $inserted as $alias;
+ } or {
+  require $insertion INSERTED_VALUE $wrapper;
+  require $wrapper ARGUMENT $wrapper_argument;
+  require $wrapper_argument VALUE $wrapper_value;
+  require $wrapper_value LOADED_FROM $slot;
+  path $action FLOWS_TO{0,2} $slot as $wrapped;
+ }
+ require $action CAPTURES $payload;
+ require $action READS $payload;
+ require $action HAS_PARAMETER $context;
+ parameter(receiver: false) as $context;
+ require $run ITERATES_CALLS $queue;
+ require $run HAS_PARAMETER $execution;
+ parameter(receiver: false) as $execution;
+ require $run HAS_CALL $dispatch;
+ require $dispatch ARGUMENT $argument;
+ require $argument VALUE $input;
+ require $input LOADED_FROM $execution;
+ emit $unit, $queue, $submit, $run, $action;
+}
+'''
 
 [[variants]]
 id = "queued-object"

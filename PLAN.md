@@ -42,7 +42,13 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **53 ready / 24 design** (nueve variantes promovidas en este trabajo).
+Inventario: **54 ready / 23 design** (diez variantes promovidas en este trabajo).
+
+IR 1.55 — cierres encolados y dos capacidades de lenguaje: **`append` de Go** es
+una función libre, no un método, así que no producía `INSERTS_INTO`; el
+**`for-range` de C++** declara su binding en el campo `declarator`, no en `left`.
+Con eso se cierra **`command#command-closure`** en sus ocho lenguajes. Detalles en
+[`command#command-closure`](docs/structural-validation/gof-completion/command-command-closure.md).
 
 Sin cambio de IR: **`template-method#composed-skeleton`** se cerró **solo con
 query**. El grafo ya ligaba los tres hooks, su invocación y la cadena de valores
@@ -634,7 +640,14 @@ Dependencias: **P1, P2, P4**. Ready iniciales: `retained-contract`, `command-obj
 
 #### Pendiente `command#command-closure`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+  **IR 1.55:** los ocho lenguajes cubiertos. Tres capacidades generales nuevas:
+  `append` de Go como inserción de colección, el binding del `for-range` de C++
+  (campo `declarator` con `reference_declarator`) y el seguimiento del alias local
+  o del envoltorio de un argumento con el que cada lenguaje guarda el cierre. 14
+  tests; el negativo clave es la llamada inmediata sin encolar y el cierre de
+  aridad cero, que la ficha prohíbe imponer. Detalles en
+  [`command#command-closure`](docs/structural-validation/gof-completion/command-command-closure.md).
 
 Relacionar captura de acción/datos, transferencia o almacenamiento de la función y posterior invocación diferida. Comprobar que los datos capturados llegan a la acción. Positivo: cola de closures con payload y un contexto de ejecución adicional; FnOnce/move sólo donde se resuelva.
 

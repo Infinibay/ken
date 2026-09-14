@@ -74,6 +74,19 @@ def children(node: Node | None) -> list[Node]:
     return node.named_children if node is not None else []
 
 
+def loop_binding(loop: Node | None) -> Node | None:
+    """The variable a loop binds to each element.
+
+    Field spellings differ per grammar: Python/JS use ``left``, C++ range-for uses
+    ``declarator`` and wraps it in a (possibly reference) declarator.
+    """
+    node = field(loop, "left", "name", "pattern", "declarator")
+    while node is not None and node.type in {"reference_declarator", "pointer_declarator",
+                                             "init_declarator", "variable_declarator"}:
+        node = next(iter(node.named_children), None)
+    return node
+
+
 def descendants(node: Node):
     stack = [node]
     while stack:
@@ -1190,7 +1203,7 @@ class Lowerer:
                 if self.enclosing(node, LOOPS):
                     loop = self.enclosing(node, LOOPS)
                     iterable = field(loop, "right", "value", "iterable")
-                    loop_var = field(loop, "left", "name", "pattern")
+                    loop_var = loop_binding(loop)
                     if iterable and loop_var and self.value(loop_var, scope, cls) == receiver:
                         self.ir.add(scope, "ITERATES_CALLS", self.value(iterable, scope, cls), ev, name=name)
                         self.ir.add(cid, "ITERATED_CALL", self.value(iterable, scope, cls), ev)
@@ -1201,7 +1214,7 @@ class Lowerer:
             loop = self.enclosing(node, LOOPS)
             if loop is not None and function is not None and not receiver:
                 iterable = field(loop, "right", "value", "iterable")
-                loop_var = field(loop, "left", "name", "pattern")
+                loop_var = loop_binding(loop)
                 if iterable is not None and loop_var is not None and self.value(loop_var, scope, cls) == self.value(function, scope, cls):
                     self.ir.add(scope, "ITERATES_CALLS", self.value(iterable, scope, cls), ev, name="<callback>")
             arguments = field(node, "arguments")
@@ -1224,6 +1237,12 @@ class Lowerer:
                 if receiver and name in {"append", "add", "push", "push_back", "Add"} and position == 0:
                     self.ir.add(cid, "INSERTS_INTO", receiver, ev, model="collection-api-shape")
                     self.ir.add(cid, "INSERTED_VALUE", value, ev)
+                # Go's ``append(slice, element)`` is a free function, not a method,
+                # and is the language's canonical way to add to a slice.
+                if (not receiver and self.ir.language == "go" and name == "append"
+                        and position == 0 and len(children(arguments)) == 2):
+                    self.ir.add(cid, "INSERTS_INTO", value, ev, model="collection-api-shape")
+                    self.ir.add(cid, "INSERTED_VALUE", self.value(children(arguments)[1], scope, cls), ev)
                 if receiver and value == f"{cls}/THIS":
                     self.ir.add(scope, "PASSES_SELF_TO", receiver, ev, name=name)
         if kind in INDEXES:
