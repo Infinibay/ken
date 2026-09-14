@@ -7,7 +7,8 @@ caveat = "Structural evidence requires review of intent and runtime behavior."
 legacy_query = "require $unit SUBTYPE_OF $factory\ncount >=2 $unit HAS_METHOD $method distinct=$method where $method RETURNS_NEW _\n"
 query = '''
 query abstract_factory {
- match "abstract-factory#nominal-families"(unit: $unit);
+ any { match "abstract-factory#nominal-families"(unit: $unit); }
+ or { match "abstract-factory#associated-products"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -53,9 +54,41 @@ fixtures_status = "documented-not-validated"
 
 [[variants]]
 id = "associated-products"
-status = "design"
+status = "ready"
 languages = ["rust"]
-requires = ["trait_resolution", "generic_substitution", "return_flow"]
+requires = ["trait_resolution", "trait_impl_linkage", "return_flow"]
 graph_requirements = ["Sustituir tipos asociados por familia y relacionarlos con los productos devueltos."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-rust"
+query_claim = "Un trait declara al menos dos slots de creación; al menos dos tipos lo implementan; cada tipo sobrescribe los dos slots y devuelve tipos concretos distintos entre sí; y el producto del mismo slot difiere entre las dos familias. Las declaraciones 'type X = Y' NO se modelan: el contrato se expresa con los productos realmente devueltos, no con la sustitución del tipo asociado."
+query = '''
+query abstract_factory {
+ require $unit SUBTYPE_OF $contract;
+ require $other SUBTYPE_OF $contract;
+ different $unit $other;
+ require $contract HAS_METHOD $first_slot;
+ require $contract HAS_METHOD $second_slot;
+ different $first_slot $second_slot;
+ require $first_reader OVERRIDES $first_slot;
+ require $first_reader IN_TYPE $unit;
+ require $first_reader RETURNS $first_product;
+ require $first_product IS CLASS;
+ require $first_writer OVERRIDES $second_slot;
+ require $first_writer IN_TYPE $unit;
+ require $first_writer RETURNS $second_product;
+ require $second_product IS CLASS;
+ different $first_product $second_product;
+ require $second_reader OVERRIDES $first_slot;
+ require $second_reader IN_TYPE $other;
+ require $second_reader RETURNS $third_product;
+ require $third_product IS CLASS;
+ require $second_writer OVERRIDES $second_slot;
+ require $second_writer IN_TYPE $other;
+ require $second_writer RETURNS $fourth_product;
+ require $fourth_product IS CLASS;
+ different $third_product $fourth_product;
+ different $first_product $third_product;
+ different $second_product $fourth_product;
+ emit $unit, $contract;
+}
+'''

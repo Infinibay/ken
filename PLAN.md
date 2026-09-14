@@ -42,22 +42,25 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **47 ready / 30 design** (tres variantes promovidas en este trabajo).
+Inventario: **48 ready / 29 design** (cuatro variantes promovidas en este trabajo).
 
-Sin cambio de IR: **`template-method#trait-default`** (Rust) se cerró **solo con
-query y tests**. El IR ya ligaba impl→trait (`SUBTYPE_OF`) y hook→implementación
-(`OVERRIDES`), así que el trabajo pendiente era expresar el contrato, no
-construirlo. Es el primer caso del inventario donde la ficha
-(`documented-not-validated`, `missing_capability = "unknown"`) ocultaba una
-variante ya lista. Detalles en
-[`template-method#trait-default`](docs/structural-validation/gof-completion/template-method-trait-default.md).
+Sin cambio de IR: **`abstract-factory#associated-products`** (Rust) también se
+cerró **solo con query y tests**. El contrato se expresó sobre los **productos
+realmente devueltos** (`RETURNS`) en lugar de sobre la sustitución del tipo
+asociado, que no se modela y no hace falta para el algoritmo. Detalles en
+[`abstract-factory#associated-products`](docs/structural-validation/gof-completion/abstract-factory-associated-products.md).
+
+Dos de las cuatro variantes cerradas no necesitaron capacidad nueva. **Antes de
+asumir que una fila `design` requiere análisis nuevo, escribir su query y
+correrla.**
 
 Siguiente tarea: el cuello de botella compartido que sigue es el **modelo de bus /
 topic resuelto** (P6), que desbloquea `observer#event-bus` y
 `mediator#message-coordination`; después P1.6 para C++, que abre las 25 variantes
-que lo declaran. Antes de asumir que otra variante necesita capacidad nueva,
-**escribir su query y correrla**: puede estar ya soportada. En paralelo siguen
-abiertas **P1.5**, regiones expresivas/cortocircuitos (bloqueada; ver
+que lo declaran. Candidatos siguientes sin C++: `abstract-factory#structural-families`
+(JS/TS/Go), `factory-method#contract-slot` (Go/Rust), `iterator#callback-iterator`
+(Go) e `iterator#async-iterator` (Python/JS/TS/C#). En paralelo siguen abiertas
+**P1.5**, regiones expresivas/cortocircuitos (bloqueada; ver
 [registro](docs/structural-validation/gof-completion/P1.5-expressive-regions-blocked.md)),
 y el alcance pendiente de P1.1 (closures, orden de declaración) y P1.3
 (callee/receptor). P3 todavía requiere conectar el núcleo de instrucciones al
@@ -505,7 +508,13 @@ Relacionar dos proveedores con los mismos slots de creación aunque no hereden. 
 
 #### Pendiente `abstract-factory#associated-products`
 
-- [ ] Implementar en: `rust`.
+- [x] Implementar en: `rust`.
+  **Cerrada sin cambio de IR:** el contrato se expresa con los **productos
+  devueltos** (`RETURNS` + `IS CLASS`) y las dos familias (`SUBTYPE_OF`,
+  `OVERRIDES`, `IN_TYPE`), no con la sustitución del tipo asociado, que no se
+  modela. 8 tests (positivo con dos familias, renombrado y cinco negativos,
+  incluido un producto compartido entre familias). Detalles en
+  [`abstract-factory#associated-products`](docs/structural-validation/gof-completion/abstract-factory-associated-products.md).
 
 Resolver el trait de fábrica y sustituir sus tipos asociados por cada impl. Relacionar cada método con el producto concreto que devuelve y conservar esa sustitución al atravesar el cliente. Positivo: dos impl Rust con familias distintas y dos tipos asociados cada una.
 
