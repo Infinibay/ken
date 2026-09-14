@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **71 ready / 6 design** (veintisiete variantes promovidas en este trabajo).
+Inventario: **72 ready / 5 design** (veintiocho variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -287,6 +287,23 @@ elemento, no el tipo declarado de la colección; la forma de callback
 (`reduce`/`map`/`sum`) queda declarada como no resuelta, porque el parámetro de elemento
 del callback no se liga a la colección. Detalles en
 [`composite#higher-order-traversal`](docs/structural-validation/gof-completion/composite-higher-order-traversal.md).
+
+IR 1.69 — **firmas de miembro compartidas**: dos tipos nominales que declaran el mismo
+nombre de miembro con la misma aridad apuntan a **una** entidad `SIGNATURE`
+(`<callable> MATCHES_SIGNATURE signature:<nombre>/<aridad>`). Era el bloqueo medido de
+**`abstract-factory#structural-families`**: relacionar dos proveedores por su conjunto de
+slots obligaba a unir por `name`, que empareja cada método de un tipo con cada método del
+otro — `budget:max_states` con 30 tipos. La entidad se crea solo si **dos o más** tipos
+declaran el par `(nombre, aridad)`, así que un miembro de un solo tipo no es slot; los
+constructores quedan fuera porque todos los tipos tienen uno y agruparían tipos no
+relacionados. La aridad cuenta parámetros que no son el receptor y los **tipos** de
+parámetro no entran en la clave. Con eso se cierra **`abstract-factory#structural-families`**
+en sus tres lenguajes (`javascript`, `typescript`, `go`): dos tipos sin base común, los
+mismos slots, cada slot devolviendo una construcción distinta y el producto del mismo slot
+distinto entre familias. La forma de **objeto literal** de JS/TS
+(`const ocean = { createButton: () => ... }`) queda declarada como no resuelta: el IR
+modela el literal como una colección, no como un tipo con miembros. Detalles en
+[`abstract-factory#structural-families`](docs/structural-validation/gof-completion/abstract-factory-structural-families.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -741,7 +758,15 @@ Dependencias: **P1, P4, P5**. Ready iniciales: `nominal-families`.
 
 #### Pendiente `abstract-factory#structural-families`
 
-- [ ] Implementar en: `javascript`, `typescript`, `go`.
+- [x] Implementar en: `javascript`, `typescript`, `go`.
+  **IR 1.69:** `ready`. La capacidad que faltaba es la que la ficha pedía: agrupar
+  operaciones por firma compartida para que el join sea **por identidad**
+  (`MATCHES_SIGNATURE` sobre una entidad `SIGNATURE` por `(nombre, aridad)` declarado por
+  dos o más tipos). Sin ella la unión por `name` daba `budget:max_states` con 30 tipos.
+  25 tests (positivo y renombrado por lenguaje, cuatro negativos por lenguaje, la consulta
+  raíz y una comprobación de que el slot es una sola entidad). La forma de objeto literal
+  de JS/TS queda declarada como no resuelta. Detalles en
+  [`abstract-factory#structural-families`](docs/structural-validation/gof-completion/abstract-factory-structural-families.md).
 
 Relacionar dos proveedores con los mismos slots de creación aunque no hereden. Resolver cada slot, el producto realmente devuelto y su contrato. Mantener juntos los productos de una familia; no hacer un producto cartesiano de todas las creaciones del proyecto. Positivo: objetos JavaScript con funciones, interfaces TypeScript y method sets Go equivalentes.
 

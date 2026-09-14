@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.68.0.** This document describes available behavior
+> **Operational reference: IR 1.69.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,34 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Shared member signatures (IR 1.69)
+
+Two nominal types that declare the same member name with the same arity point at one
+``SIGNATURE`` entity:
+
+```
+<callable> --MATCHES_SIGNATURE--> signature:<name>/<arity>
+```
+
+A query that relates two providers by their creation-slot set cannot join on ``name``
+without pairing every method of one type with every method of the other, which is the
+recorded ``budget:max_states`` blocker for ``abstract-factory#structural-families`` on a
+corpus of 30 types. Grouping the slot under one entity turns that into a join by
+identity:
+
+```
+require $first_slot MATCHES_SIGNATURE $slot;
+require $second_slot MATCHES_SIGNATURE $slot;
+```
+
+A ``SIGNATURE`` entity is created only for a ``(name, arity)`` pair that **two or more**
+nominal types declare, so a member only one type has is not a slot. Constructors are
+excluded: every class has one, so they would group unrelated types, and a constructor is
+a declaration rather than a creation slot. Arity counts parameters that are not the
+receiver; parameter *types* are not part of the key, so ``f(int)`` and ``f(string)`` are
+the same slot. The entity is language-agnostic and shared across files, which is what
+lets a provider in one file pair with a provider in another.
 
 ## Rust compound assignment is an assignment (IR 1.68)
 

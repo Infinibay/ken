@@ -84,11 +84,11 @@ def instrument(source, language):
     return source.replace('const panel = provider.panel()', 'console.log(123); const panel = provider.panel()')
 
 
-def detect(source, language):
+def detect(source, language, rule='abstract-factory'):
     graph = link_project([lower_source(source, language, 'family.' + {'python': 'py', 'java': 'java', 'typescript': 'ts'}[language])])
     assert not graph.diagnostics, graph.diagnostics
     registry = builtin_rules()
-    result = execute_rules(graph, [named_rule('abstract-factory', registry)], registry=registry)
+    result = execute_rules(graph, [named_rule(rule, registry)], registry=registry)
     assert result['complete'], result['outcomes']
     return {graph.entities[m['bindings']['$unit']].name for m in result['matches']}
 
@@ -120,7 +120,18 @@ def test_missing_factory_obligation_rejects_only_affected_provider(language, mut
         # the declared category contract, preserving the surrounding syntax.
     else:
         source = source.replace('class Ocean(Provider)', 'class Ocean').replace('class Ocean extends Provider', 'class Ocean').replace('class Ocean implements Provider', 'class Ocean')
-    assert detect(source, language) == {'Land'}
+    # The nominal variant rejects the mutated provider whatever the mutation.
+    assert detect(source, language, 'abstract-factory#nominal-families') == {'Land'}
+    # The root rule is the union of every ready variant. ``no-second-product``
+    # removes a construction, so no variant reports Ocean. ``same-category`` and
+    # ``no-contract`` break the *nominal* obligation only: Ocean still declares
+    # the same two creation slots and returns two distinct products, which is
+    # what ``abstract-factory#structural-families`` (ready since IR 1.69) accepts
+    # with no shared base at all. Measured against the previous catalog, where
+    # that variant was still ``design``: this assertion failed there for those
+    # two mutations, because the union was then the nominal variant alone.
+    assert detect(source, language) == ({'Land'} if mutation == 'no-second-product'
+                                        else {'Land', 'Ocean'})
 
 
 @pytest.mark.parametrize('language', SOURCES)

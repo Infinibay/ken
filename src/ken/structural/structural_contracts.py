@@ -17,7 +17,7 @@ no fact, and Go links only an exact method-set coverage.
 import re
 from collections import defaultdict
 
-from .model import FactIndex, IR
+from .model import Entity, FactIndex, IR
 
 
 def structural_contracts(graph: IR) -> None:
@@ -103,3 +103,38 @@ def structural_contracts(graph: IR) -> None:
             graph.add(concrete, 'IMPLEMENTS', interface, evidence, basis='method-set')
             for name, contract in wanted.items():
                 graph.add(available[name], 'OVERRIDES', contract, evidence, basis='method-set')
+
+    # Shared member signatures. Two nominal types that declare the same member
+    # name with the same arity expose the same slot, whether or not they share a
+    # base: JavaScript objects, TypeScript interfaces and Go method sets are all
+    # structural, and a query that relates two providers by their slot set cannot
+    # join on ``name`` without pairing every method with every other method.
+    # Grouping the slot under one entity turns that into a join by identity.
+    # Constructors are excluded: every class has one, so they would group
+    # unrelated types, and they are a declaration rather than a creation slot.
+    members: dict[tuple[str, int], list[str]] = defaultdict(list)
+    owners: dict[tuple[str, int], set[str]] = defaultdict(set)
+    for owner, table in methods.items():
+        declaring_type = entities.get(owner)
+        if declaring_type is None or declaring_type.kind not in {'CLASS', 'INTERFACE'}:
+            continue
+        for name, member in table.items():
+            if not name or entities[member].attrs.get('constructor'):
+                continue
+            key = (name, arity[member])
+            members[key].append(member)
+            owners[key].add(owner)
+    for (name, count), declared_by in sorted(owners.items()):
+        if len(declared_by) < 2:
+            continue
+        signature = f'signature:{name}/{count}'
+        first = entities[members[(name, count)][0]]
+        evidence = f'{first.path}:{first.line}'
+        if signature not in entities:
+            entities[signature] = Entity(signature, 'SIGNATURE', name, first.path, first.line,
+                                         first.end_line, {'name': name, 'arity': count,
+                                                          'language': graph.language})
+            graph.add(signature, 'IS', 'SIGNATURE', evidence, basis='shared-member-signature')
+        for member in members[(name, count)]:
+            graph.add(member, 'MATCHES_SIGNATURE', signature, evidence,
+                      basis='shared-member-signature')

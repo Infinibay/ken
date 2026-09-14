@@ -9,6 +9,7 @@ query = '''
 query abstract_factory {
  any { match "abstract-factory#nominal-families"(unit: $unit); }
  or { match "abstract-factory#associated-products"(unit: $unit); }
+ or { match "abstract-factory#structural-families"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -45,12 +46,42 @@ query abstract_factory {
 '''
 [[variants]]
 id = "structural-families"
-status = "design"
+status = "ready"
 languages = ["javascript", "typescript", "go"]
 requires = ["structural_contracts", "return_flow"]
 graph_requirements = ["Relacionar objetos/structs con el mismo conjunto de operaciones de creación sin exigir herencia."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-three-languages"
+query_claim = "Dos tipos nominales sin base comun declaran los **mismos slots de creacion** (mismo nombre y aridad), cada slot devuelve una construccion de un tipo distinto, y el producto del mismo slot difiere entre las dos familias mientras los dos productos de una familia difieren entre si. Los slots se unen por **identidad** a traves de `MATCHES_SIGNATURE` (IR 1.69), no comparando nombres, que es lo que evita el producto cartesiano de todas las creaciones. NO resuelve la forma de objeto literal de JavaScript/TypeScript (`const ocean = { createButton: () => ... }`): el IR modela el literal como una coleccion, no como un tipo con miembros. Tampoco prueba que los productos implementen el mismo contrato ni la intencion de familia."
+query = '''
+query abstract_factory_structural_families {
+ require $first IS CLASS;
+ require $second IS CLASS;
+ different $first $second;
+ require $first HAS_METHOD $first_slot;
+ require $first_slot MATCHES_SIGNATURE $first_signature;
+ require $second HAS_METHOD $second_slot;
+ require $second_slot MATCHES_SIGNATURE $first_signature;
+ require $first HAS_METHOD $first_other;
+ require $first_other MATCHES_SIGNATURE $second_signature;
+ require $second HAS_METHOD $second_other;
+ require $second_other MATCHES_SIGNATURE $second_signature;
+ different $first_signature $second_signature;
+ require $first_slot RETURNS_NEW $first_product;
+ require $second_slot RETURNS_NEW $second_product;
+ require $first_other RETURNS_NEW $third_product;
+ require $second_other RETURNS_NEW $fourth_product;
+ require $first_product IS CLASS;
+ require $second_product IS CLASS;
+ require $third_product IS CLASS;
+ require $fourth_product IS CLASS;
+ different $first_product $second_product;
+ different $third_product $fourth_product;
+ different $first_product $third_product;
+ different $second_product $fourth_product;
+ emit unit=$first, $second, $first_slot, $second_slot, $first_product, $second_product, $third_product, $fourth_product;
+}
+'''
 
 [[variants]]
 id = "associated-products"
