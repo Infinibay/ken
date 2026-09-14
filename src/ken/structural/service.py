@@ -107,20 +107,35 @@ def build_project(root: Path, *, path: str = ".", cache_mb: float | None = None,
             manifest.append((relative.as_posix(), key, content))
         graph_key = cache.key("project", IR_VERSION, versions, *(key for _, key, _ in manifest))
         graph = _cached_ir(cache, graph_key)
+        failed: set[str] = set()
         if graph is None:
             units = []
             for relative_name, key, content in manifest:
                 unit = _cached_ir(cache, key)
                 if unit is None:
-                    unit = lower_source(content, LANGUAGES[Path(relative_name).suffix.lower()], relative_name)
+                    try:
+                        unit = lower_source(content, LANGUAGES[Path(relative_name).suffix.lower()], relative_name)
+                    except Exception as exc:
+                        # One file the frontend cannot lower (an unloadable grammar,
+                        # a construct that trips the lowerer) must not abort the
+                        # scan of every other file: it is reported as skipped, the
+                        # coverage flag goes false, and the caller decides.
+                        failed.add(relative_name)
+                        skipped.append({"path": relative_name,
+                                        "reason": f"frontend error: {type(exc).__name__}: {exc}"})
+                        continue
                     cache.put(key, unit.to_dict())
                 units.append(unit)
             graph = link_project(units)
-            cache.put(graph_key, graph.to_dict())
+            if not failed:
+                # A graph built without some of its files must not be cached under
+                # the key of the complete manifest, or the next run would read a
+                # partial result and report it as whole.
+                cache.put(graph_key, graph.to_dict())
         resolved = {f.subject for f in graph.facts if f.relation in {"TARGET", "ALLOCATES_TYPE"}}
         unresolved = {f.object for f in graph.facts if f.relation == "HAS_CALL"} - resolved
         return graph, {"resolution": {"resolved_calls": len(resolved), "unresolved_calls": len(unresolved)},
-                       "files": [path for path, _, _ in manifest], "skipped": skipped,
+                       "files": [path for path, _, _ in manifest if path not in failed], "skipped": skipped,
                        "coverage_complete": not skipped and not graph.diagnostics,
                        "diagnostics": graph.diagnostics, "cache": cache.stats(),
                        "elapsed_ms": round((time.monotonic() - started) * 1000, 3)}

@@ -83,6 +83,18 @@ ser un resumen legible (patron, variante, confianza, ruta, linea, simbolo) con
 `--full`/`full=True` para el resultado verbatim: 16.8 KB contra 2.74 MB en el corpus
 Java. Detalles en [`docs/structural-ir.md`](docs/structural-ir.md).
 
+Falencia encontrada al reinstalar: `tree-sitter-language-pack` descarga y extrae sus
+grammars en el primer uso, y `ken/parsers/__init__.py` importaba los diecinueve
+parsers de forma eager, asi que un host donde esa extraccion falla (sin red, o sin
+permiso para crear el directorio de cache) moria con un `DownloadError` en **todos**
+los lenguajes -- un escaneo de C# caia por la gramatica de Bash. Ahora cada import
+se aisla (`_load`) y el fallo se limita al lenguaje que lo necesita, con un error que
+lo nombra; ademas `build_project` aisla el fallo de *un archivo* como
+`skipped: frontend error: ...`, pone `coverage_complete: false`, no lo cuenta como
+analizado y no cachea el grafo parcial. La dependencia sigue declarada como
+`tree-sitter-language-pack>=1.8` (sin techo): el venv resolvio 1.8.1 y una
+instalacion nueva 1.19.1, y esa deriva es la que expuso el problema.
+
 Sin cambio de IR: **`proxy#remote-subject`** se cerro **solo con query**, con la segunda
 alternativa que la ficha permite: la **implementacion local visible** que serializa la
 llamada y devuelve su respuesta. La clase implementa el contrato local (`SUBTYPE_OF`, o

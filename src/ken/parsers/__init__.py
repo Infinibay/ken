@@ -8,31 +8,54 @@ to ``LANGUAGE_BY_EXT``.
 
 from __future__ import annotations
 
+import importlib
 from collections.abc import Callable
 from pathlib import Path
 
-from ken.parsers.bash import parse_bash_file
-from ken.parsers.c import parse_c_file
-from ken.parsers.cpp import parse_cpp_file
-from ken.parsers.csharp import parse_csharp_file
-from ken.parsers.css import parse_css_file
-from ken.parsers.dart import parse_dart_file
-from ken.parsers.go import parse_go_file
-from ken.parsers.graphql import parse_graphql_file
-from ken.parsers.html import parse_html_file
-from ken.parsers.java import parse_java_file
-from ken.parsers.javascript import parse_js_file
-from ken.parsers.kotlin import parse_kotlin_file
-from ken.parsers.php import parse_php_file
-from ken.parsers.powershell import parse_powershell_file
-from ken.parsers.python import parse_python_file
-from ken.parsers.ruby import parse_ruby_file
-from ken.parsers.rust import parse_rust_file
-from ken.parsers.sql import parse_sql_file
-from ken.parsers.typescript import parse_ts_file
 from ken.parsers.types import ParsedFile
 
 ParserFn = Callable[[bytes, str], ParsedFile]
+
+
+def _load(module: str, attribute: str) -> ParserFn:
+    """Import one language's parser, without letting it take the package down.
+
+    Every grammar is loaded at its module's import time, and some of them come
+    from ``tree-sitter-language-pack``, which downloads and extracts a shared
+    library on first use. A machine where that extraction fails (no network, a
+    cache directory the process may not create) used to fail *every* language,
+    because this package imported all nineteen parsers eagerly: a scan of a
+    C# repository died on the Bash grammar. The failure is now confined to the
+    language that needs it and names itself when called.
+    """
+    try:
+        return getattr(importlib.import_module(f"ken.parsers.{module}"), attribute)
+    except Exception as exc:  # pragma: no cover - depends on the host's grammar cache
+        def unavailable(content: bytes, hint: str, *, _module: str = module, _cause: Exception = exc) -> ParsedFile:
+            raise RuntimeError(f"the {_module} parser is unavailable: {_cause}") from _cause
+        unavailable.__name__ = attribute
+        return unavailable
+
+
+parse_bash_file = _load("bash", "parse_bash_file")
+parse_c_file = _load("c", "parse_c_file")
+parse_cpp_file = _load("cpp", "parse_cpp_file")
+parse_csharp_file = _load("csharp", "parse_csharp_file")
+parse_css_file = _load("css", "parse_css_file")
+parse_dart_file = _load("dart", "parse_dart_file")
+parse_go_file = _load("go", "parse_go_file")
+parse_graphql_file = _load("graphql", "parse_graphql_file")
+parse_html_file = _load("html", "parse_html_file")
+parse_java_file = _load("java", "parse_java_file")
+parse_js_file = _load("javascript", "parse_js_file")
+parse_kotlin_file = _load("kotlin", "parse_kotlin_file")
+parse_php_file = _load("php", "parse_php_file")
+parse_powershell_file = _load("powershell", "parse_powershell_file")
+parse_python_file = _load("python", "parse_python_file")
+parse_ruby_file = _load("ruby", "parse_ruby_file")
+parse_rust_file = _load("rust", "parse_rust_file")
+parse_sql_file = _load("sql", "parse_sql_file")
+parse_ts_file = _load("typescript", "parse_ts_file")
 
 # Extension → (language label, parser fn).
 LANGUAGE_BY_EXT: dict[str, tuple[str, ParserFn]] = {
