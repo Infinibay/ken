@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.54.0.** This document describes available behavior
+> **Operational reference: IR 1.56.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,23 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## C++ condition clauses (IR 1.56)
+
+C++ wraps an `if`/`while` condition in a `condition_clause`. It is a pure wrapper
+and is now unwrapped like `parenthesized_expression`, so a test written
+`if (subject == nullptr)` reaches `NULL_TEST` on the member instead of stopping at
+the clause.
+
+## Go `append` and C++ range-for bindings (IR 1.55)
+
+`append` is a free function rather than a method, so
+`d.pending = append(d.pending, action)` emitted no `INSERTS_INTO`. The two-argument
+free form is recognised now; it is the canonical way to add to a Go slice.
+
+A C++ range-for writes its binding through a `declarator` wrapping a
+`reference_declarator`, which the loop-binding lookup did not try. `for (auto
+&action : pending)` now yields its loop binding and `ITERATES_CALLS`.
 
 ## Closures as callables (IR 1.54)
 

@@ -7,7 +7,8 @@ caveat = "Conditional same-contract delegation overlaps with guarded decorators.
 legacy_query = "require $unit SUBTYPE_OF $contract\nrequire $unit HAS_FIELD $subject\nrequire $subject TYPE $contract\nrequire $unit HAS_METHOD $method\nrequire $method CONDITIONAL_DELEGATION $subject\n"
 query = '''
 query proxy {
- match "proxy#guarded-access"(unit: $unit);
+ any { match "proxy#guarded-access"(unit: $unit); }
+ or { match "proxy#lazy-subject"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -48,12 +49,26 @@ query proxy {
 '''
 [[variants]]
 id = "lazy-subject"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
 requires = ["guarded_allocation", "receiver_identity"]
-graph_requirements = ["Carga diferida de subject y delegación posterior usan el mismo almacenamiento."]
+graph_requirements = ["Carga diferida de subject y delegacion posterior usan el mismo almacenamiento."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "Un metodo escribe un campo bajo una guarda que referencia ese mismo campo, contiene una construccion de OTRO tipo, y delega sobre el mismo campo: carga diferida del subject y delegacion posterior sobre ese almacenamiento. No exige una forma concreta del test de ausencia (comparacion nula, `is_none()` o `== None`), solo que la escritura este guardada por el propio campo, ni prueba que la construccion sea alcanzable en ejecucion ni la identidad runtime del receptor."
+query = '''
+query proxy {
+ require $unit HAS_FIELD $subject;
+ require $unit HAS_METHOD $access;
+ callable(constructor: false) as $access;
+ require $subject GUARDS_WRITE $access;
+ require $access HAS_CALL $creation;
+ require $creation ALLOCATES_TYPE $created;
+ different $created $unit;
+ require $access DELEGATES_TO $subject;
+ emit $unit, $subject, $access, $creation, $created;
+}
+'''
 
 [[variants]]
 id = "remote-subject"

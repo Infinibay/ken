@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **55 ready / 22 design** (once variantes promovidas en este trabajo).
+Inventario: **56 ready / 21 design** (doce variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -78,6 +78,13 @@ También se descubrió una restricción del catálogo que conviene tener present
 `rules.py` exige que **todas las variantes `ready` de una regla exporten al menos
 un rol común**, porque `gof.<id>` se construye con la intersección de exports. La
 variante nueva debió emitir `unit` además de sus roles propios.
+
+IR 1.56 — **cláusulas de condición de C++**: un `if`/`while` envuelve su condición
+en `condition_clause`, un envoltorio puro que ahora se desenvuelve como
+`parenthesized_expression`. Sin eso, `if (subject == nullptr)` no llegaba a
+`NULL_TEST` sobre el miembro. Con eso se cierra **`proxy#lazy-subject`** en sus
+ocho lenguajes. Detalles en
+[`proxy#lazy-subject`](docs/structural-validation/gof-completion/proxy-lazy-subject.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`command#command-closure`**,
 **`chain#middleware-closures`**, **`adapter#functional-adapter`**,
@@ -881,7 +888,7 @@ Dependencias: **P1, P2, P4, P6**. Ready iniciales: `guarded-access`.
 
 #### Pendiente `proxy#lazy-subject`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
 
 Relacionar test de ausencia del subject, creación/carga, almacenamiento y delegación sobre ese mismo valor actual. Positivo: primer acceso inicializa; otro acceso reutiliza el subject, con logging entre guard y uso.
 

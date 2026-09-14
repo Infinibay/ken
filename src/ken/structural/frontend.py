@@ -43,7 +43,10 @@ LOOPS = {"for_statement", "for_in_statement", "enhanced_for_statement", "for_eac
          "foreach_statement", "for_expression", "for_range_loop", "while_statement", "while_expression", "loop_expression", "do_statement"}
 BRANCHES = {"if_statement", "if_expression", "conditional_expression", "ternary_expression"}
 WRAPPERS = {"expression_list", "parenthesized_expression", "type", "type_annotation", "argument",
-            "expression_statement", "reference_expression", "pointer_expression"}
+            "expression_statement", "reference_expression", "pointer_expression",
+            # C++ wraps an if/while condition in a ``condition_clause``; it is a
+            # pure wrapper, so unwrapping it exposes the tested expression.
+            "condition_clause"}
 OPERATOR_NODES = {"binary_expression", "binary_operator", "comparison_operator", "boolean_operator",
                   "unary_expression", "unary_operator", "not_operator", "update_expression",
                   "prefix_unary_expression", "postfix_unary_expression", "augmented_assignment",
