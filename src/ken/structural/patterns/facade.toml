@@ -42,7 +42,7 @@ query facade {
 id = "module-surface"
 status = "design"
 languages = ["python", "javascript", "typescript", "go", "rust"]
-requires = ["exports", "call_graph"]
+requires = ["exports", "call_graph", "argument_flow"]
 graph_requirements = ["Funciones exportadas coordinan subsistemas; no requerir una clase Facade."]
-missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+missing_capability = "P1.6: structured-locals no admite go ni rust (reason=language); la fila queda design hasta cubrir sus cinco lenguajes"
+fixtures_status = "source-regression-matrix-python-javascript-typescript"

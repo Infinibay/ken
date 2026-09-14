@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.49.0.** This document describes available behavior
+> **Operational reference: IR 1.50.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,27 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Module exports (IR 1.50)
+
+`EXPORT` links a module to a symbol it exposes: `module EXPORT <callable-or-type>`
+with `name` and `basis`. It is what lets a query require a public entry point
+without depending on a class or a field. Visibility uses each language's own
+rule, never a project convention:
+
+| Language | Rule | `basis` |
+|---|---|---|
+| JavaScript / TypeScript | enclosing `export function` / `export class` | `explicit-export` |
+| JavaScript / TypeScript | `export { a, b }`, `export default a` | `export-clause` |
+| Rust | `pub` modifier | `visibility-modifier` |
+| Go | leading upper-case letter | `public-name` |
+| Python | module-level name without a leading underscore | `public-name` |
+
+Only module-level declarations are considered. `__all__` is **not** interpreted:
+a module-level public name stays importable whether or not it is re-listed there.
+`EXPORT_SYNTAX` (JS/TS) remains the raw text of the export statement and is a
+separate, coarser fact. The module entity itself now carries `IS MODULE`; it is
+built outside `entity()`, so it previously had no kind fact.
 
 ## Block-scoped locals (IR 1.49)
 
@@ -67,7 +88,7 @@ heap preservation, short-circuit evaluation, or interprocedural effects.
 
 ## Current capabilities
 
-This table describes IR 1.49.0, checked against the implementation on 2026-09-13.
+This table describes IR 1.50.0, checked against the implementation on 2026-09-13.
 Preserving syntax, deriving a relationship and proving runtime behavior are
 different levels of support.
 

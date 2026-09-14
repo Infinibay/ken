@@ -95,6 +95,10 @@ class Lowerer:
         self.module = f"{path}::module"
         self.ir.entities[self.module] = Entity(self.module, "MODULE", path, path, 1,
                                               self.tree.root_node.end_point[0] + 1)
+        # The module entity is built here rather than through ``entity()``, so it
+        # needs its own kind fact: every other entity gets one, and a query must
+        # be able to state that a subject is a module.
+        self.ir.add(self.module, "IS", "MODULE", f"{path}:1", basis="module-root")
         self.node_entities: dict[int, str] = {}
         self.owner: dict[int, str] = {}
         self.class_owner: dict[int, str] = {}
@@ -118,6 +122,12 @@ class Lowerer:
                 if match:
                     prefix = match[1] or "contextlib"
                     self.context_decorators.update(prefix + "." + name for name in ("contextmanager", "asynccontextmanager"))
+        # ``export { a }`` / ``export default a`` expose a name declared elsewhere
+        # in the module, so collect them before walking declarations.
+        self.exported_names: set[str] = set()
+        for item in descendants(self.tree.root_node):
+            if item.type == "export_statement":
+                self.exported_names |= self.export_clause_names(item)
         # A local definition/assignment can shadow an imported decorator. Do
         # not apply a standard-library model to that spelling in such a file.
         shadowed = set()
@@ -308,6 +318,7 @@ class Lowerer:
                 enclosing_scope = scope
                 declared = self.entity(type_kind, name, scope, node, **({'expression': True} if expression else {}))
                 self.ir.add(scope, "DECLARES", declared, self.evidence(node), kind="type-expression" if expression else "type", name=name)
+                self.mark_export(scope, declared, name, node)
                 if expression:
                     if field(node, 'name') is not None:
                         self.names[(declared, name)] = declared
@@ -415,6 +426,7 @@ class Lowerer:
             self.node_entities[node.id] = function
             self.names[(scope, name)] = function
             self.ir.add(scope, "DECLARES", function, self.evidence(node), kind="callable", name=name, static=static)
+            self.mark_export(scope, function, name, node)
             if direct_method:
                 self.ir.add(cls, "HAS_METHOD", function, self.evidence(node), name=name, static=static)
                 self.methods.setdefault(cls, []).append(function)
@@ -650,6 +662,62 @@ class Lowerer:
         if scope in self.type_nodes:
             self.ir.add(scope, "HAS_FIELD", sid, self.evidence(node), name=name, static=static)
         return sid
+
+    def export_clause_names(self, node: Node) -> set[str]:
+        """Local names exposed by ``export { ... }`` or ``export default x``.
+
+        Those forms carry no marker on the declaration itself, so the names are
+        collected before declarations are walked.
+        """
+        text = " ".join(self.text(node).split())
+        names: set[str] = set()
+        group = re.fullmatch(r'export\s*\{([^}]*)\}\s*;?', text)
+        if group:
+            for item in group[1].split(','):
+                local = re.split(r'\s+as\s+', item.strip())[0].strip()
+                if re.fullmatch(r'[A-Za-z_$][\w$]*', local):
+                    names.add(local)
+        default = re.fullmatch(r'export\s+default\s+([A-Za-z_$][\w$]*)\s*;?', text)
+        if default:
+            names.add(default[1])
+        return names
+
+    def export_basis(self, name: str, node: Node) -> str | None:
+        """Why a module-level declaration is a public entry, or ``None``.
+
+        Visibility follows the language's own rule, never a project convention:
+        an explicit ``export`` (JS/TS), a ``pub`` modifier (Rust), or the
+        language's public-naming rule (upper-case in Go, no leading underscore
+        in Python). ``__all__`` is not interpreted: a module-level public name
+        stays importable whether or not it is re-listed there.
+        """
+        language = self.ir.language
+        if language in {'javascript', 'typescript'}:
+            if node.parent is not None and node.parent.type == 'export_statement':
+                return 'explicit-export'
+            return 'export-clause' if name in self.exported_names else None
+        if language == 'rust':
+            published = any(child.type == 'visibility_modifier' and self.text(child).strip().startswith('pub')
+                            for child in node.children)
+            return 'visibility-modifier' if published else None
+        if language == 'go':
+            return 'public-name' if name[:1].isupper() else None
+        if language == 'python':
+            return 'public-name' if name and not name.startswith('_') else None
+        return None
+
+    def mark_export(self, scope: str, entity: str, name: str, node: Node) -> None:
+        """Record ``module EXPORT symbol`` for a public module-level entry.
+
+        The relation links the module to the symbol it exposes, so a query can
+        require an entry point without depending on a class or a field.
+        """
+        if scope != self.module:
+            return
+        basis = self.export_basis(name, node)
+        if basis is None:
+            return
+        self.ir.add(scope, "EXPORT", entity, self.evidence(node), name=name, basis=basis)
 
     def go_indexed_call(self, node: Node, scope: str, cls: str) -> tuple[str, str] | None:
         if self.ir.language != "go" or node.type != "type_conversion_expression" or not cls:
