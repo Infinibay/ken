@@ -1,13 +1,8 @@
-"""Facade end-to-end with branches: per-arm ARGUMENT_ORIGIN must/may semantics.
+"""Facade flow distinguishes a call occurrence from its callee's identity.
 
-The matcher relies on `path $produced VALUE_FLOW{0,3} $input` succeeding in
-strict mode. With the per-call-site ARGUMENT_ORIGIN extension in
-`return_flow.sequential_returns`, the modality of that VALUE_FLOW edge now
-reflects the producer-set reached at the consumer call site:
-
-- both arms reach the same producer CALLEE → 'must', strict passes.
-- one arm has a different producer (literal/external) → 'may', strict rejects.
-- one arm leaves the binding undefined → 'may' (unknown-binding at call site).
+Two mutually exclusive calls to the same reader remain may origins; neither
+individual call result reaches the consumer on every path. A shared result
+assigned in both arms is instead a must origin (argument occurrence matrix).
 """
 import pytest
 
@@ -102,10 +97,9 @@ def detect(language, mode, evidence_mode='strict'):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-def test_same_producer_in_both_arms_is_must_in_strict(language):
-    assert detect(language, 'same-producer', evidence_mode='strict'), (
-        'both arms call reader.read(key); ARGUMENT_ORIGIN must collapse to must'
-    )
+def test_distinct_calls_to_same_producer_remain_may(language):
+    assert not detect(language, 'same-producer', evidence_mode='strict')
+    assert detect(language, 'same-producer', evidence_mode='possible')
 
 
 @pytest.mark.parametrize('language', LANGUAGES)

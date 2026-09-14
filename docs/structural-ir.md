@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.47.0.** This document describes available behavior
+> **Operational reference: IR 1.48.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -13,9 +13,36 @@ documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
 
+## Argument read-site provenance (IR 1.48)
+
+`ARGUMENT_ORIGIN` links the source CALL to its raw argument operand, with
+`position`, `origins` (source value/entity IDs), `unknown`, and `modality`.
+It describes the binding value at that call occurrence, not object immutability.
+A must origin requires exactly one known value ID across the reaching paths.
+Two calls to the same callee are **different values**, even with identical text.
+`ARGUMENT_REACHES` links that call to reaching write operations and carries
+`position` and `operand` so different argument slots remain distinguishable.
+Origin/definition correlation is retained in the `cases` attribute of the origin
+fact; these attributes are serializable evidence, not new KenQL syntax.
+
+The query projection uses these read-site origins to connect call RESULT values
+to an argument's loaded VALUE. Aliases retain their snapshot's origin; later
+writes to the original variable cannot change it. Coarse ASSIGNED_FROM edges
+remain may for possible-mode discovery. UNIQUE_BINDING_WRITE never upgrades an
+edge by itself: one syntactic write does not prove order or reachability.
+
+Supported calls are standalone, nested calls, and calls in assignment/return
+operands within the existing loop-free structured-local analysis in Python,
+JavaScript, TypeScript, Java and C#. Calls are sampled before the enclosing store
+or return. Call mapping uses owner and byte span, including file identity through
+the owner. Functions without an explicit return can also have argument evidence.
+Unmodeled expression regions, indirect writes and existing unsupported constructs
+remain conservative; this does not implement arbitrary callee/receiver resolution,
+heap preservation, short-circuit evaluation, or interprocedural effects.
+
 ## Current capabilities
 
-This table describes IR 1.47.0, checked against the implementation on 2026-09-13.
+This table describes IR 1.48.0, checked against the implementation on 2026-09-13.
 Preserving syntax, deriving a relationship and proving runtime behavior are
 different levels of support.
 

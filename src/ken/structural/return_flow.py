@@ -24,37 +24,22 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
     for f in graph.facts:
         if f.relation == 'ARGUMENT':
             arguments_by_call[f.subject].append((f.attrs.get('position', 0), f.object))
-    call_callee_name: dict[str, str] = {}
-    call_callee_value: dict[str, str] = {}
-    for f in graph.facts:
-        if f.relation == 'CALLEE_NAME':
-            call_callee_name[f.subject] = f.object
-        elif f.relation == 'CALLEE_VALUE':
-            call_callee_value[f.subject] = f.object
-    # ARGUMENT facts reference CALL entities (e.g. ``CALLABLE:m/CALL:316@316:340``)
-    # whose native operation lives in ``operations`` under a separate op id
-    # (e.g. ``op:316:340:call``). The entity id format is built in
-    # ``frontend.entity`` as ``{scope}/CALL:{start_byte}@{start_byte}:{end_byte}``
-    # (the @ separator follows the CALL name, which itself is the start byte —
-    # see frontend.py around the ``CALL`` branch). Build a positional map so the
-    # walk can reuse the existing region/event machinery instead of inventing a
-    # parallel walker.
-    entity_to_op: dict[str, Operation] = {}
-    for op in graph.operations:
-        if op.kind != 'CALL':
-            continue
-        suffix = f'/CALL:{op.start}@{op.start}:{op.end}'
-        for eid, entity in graph.entities.items():
-            if entity.kind != 'CALL':
-                continue
-            if eid.endswith(suffix):
-                entity_to_op[eid] = op
-                break
+    # Operation and entity IDs differ. Owner includes file/scope identity; byte
+    # offsets alone collide routinely across project units. Build this once.
+    call_ops = {(op.owner, op.start, op.end): op for op in graph.operations if op.kind == 'CALL'}
+    entity_to_op = {
+        eid: call_ops[span_key]
+        for eid, entity in graph.entities.items()
+        if entity.kind == 'CALL'
+        and (span_key := (entity.attrs.get('owner'), entity.attrs.get('start_byte'),
+                        entity.attrs.get('end_byte'))) in call_ops
+    }
+    op_to_entity = {op.id: eid for eid, op in entity_to_op.items()}
     arguments_by_op: dict[str, list[tuple[int, str]]] = defaultdict(list)
     for entity_id, args in arguments_by_call.items():
-        op = entity_to_op.get(entity_id)
-        if op is not None:
-            arguments_by_op[op.id].extend(args)
+        mapped_op = entity_to_op.get(entity_id)
+        if mapped_op is not None:
+            arguments_by_op[mapped_op.id].extend(args)
     assigned: dict[str, set[str]] = defaultdict(set)
     for fact in graph.facts:
         if fact.relation == 'ASSIGNED_FROM':
@@ -83,7 +68,7 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
         if entity.kind != 'CALLABLE':
             continue
         return_ops = [o for o in ops if o.id in operands]
-        if not return_ops:
+        if not return_ops and not any(o.id in arguments_by_op for o in ops):
             continue
         member_writes = {o.id: targets[o.id] for o in ops if o.id in targets
                          and members.get(targets[o.id]) in locals_by_owner[owner]}
@@ -173,7 +158,7 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
         Environment = dict[str | tuple[str, str], set[Case]]
         unknown: set[Case] = {(None, None)}
         pending: dict[str, set[Case]] = {o.id: set() for o in return_ops}
-        arg_pending: dict[str, dict[str, set[Case]]] = defaultdict(lambda: defaultdict(set))
+        arg_pending: dict[str, dict[tuple[int, str], set[Case]]] = defaultdict(lambda: defaultdict(set))
         field_returns: dict[tuple[str, str, str, str], int] = defaultdict(int)
         return_states: dict[str, int] = defaultdict(int)
         escaped: set[str] = set()
@@ -221,8 +206,33 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
             region = region_for(op)
             if region is not None:
                 events[region].append(op)
+        def call_region(op: Operation) -> str | None:
+            # Only eager, binding-effect-free expression wrappers are admitted.
+            # Conditional/short-circuit expressions need their own region walk.
+            current = op
+            while current.id not in regions:
+                parent = operations.get(current.parent or '')
+                if parent is None:
+                    return None
+                if parent.id in regions:
+                    return parent.id
+                if not (parent.id in targets or parent.id in operands or parent.kind == 'CALL'
+                        or parent.native_kind in containers | {
+                            'argument_list', 'arguments', 'argument', 'parenthesized_expression'}):
+                    return None
+                current = parent
+            return current.id
+
+        for op in ops:
+            if op.id in arguments_by_op:
+                region = call_region(op)
+                if region is not None:
+                    events[region].append(op)
         for sequence in events.values():
-            sequence.sort(key=lambda op: op.start)
+            # Finish nested calls before their containing assignment/return;
+            # branches instead enter their arms at the branch's start.
+            sequence.sort(key=lambda op: (op.start if op.id in arms else op.end,
+                                          0 if op.kind == 'CALL' else 1, -op.start))
         work = 0
 
         def snapshot(value: str, environment: Environment) -> set[Case]:
@@ -276,20 +286,6 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
                             return_states[op.id] += 1
                             cases = snapshot(operands[op.id], state)
                             pending[op.id].update(cases)
-                            # When the operand itself is a CALL (e.g. ``return
-                            # writer.write(value)``) snapshot the call's arguments
-                            # here: control flow would evaluate the call's
-                            # arguments immediately before consuming the result,
-                            # so the same state must drive both the return origin
-                            # and the call-site argument provenance. Without this,
-                            # the call op (visited after the return in event order)
-                            # would never have its arguments evaluated because the
-                            # walk terminates once the return clears ``states``.
-                            operand_entity = operands[op.id]
-                            call_op_for_operand = entity_to_op.get(operand_entity)
-                            if call_op_for_operand is not None:
-                                for _position, arg_storage in arguments_by_op.get(call_op_for_operand.id, ()):
-                                    arg_pending[call_op_for_operand.id][arg_storage].update(snapshot(arg_storage, state))
                             origins = {v for v, _ in cases if v in allocations and v not in escaped}
                             for slot, writes_at_slot in state.items():
                                 if isinstance(slot, tuple) and slot[0] in origins:
@@ -297,9 +293,10 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
                                         if write is not None:
                                             field_returns[(op.id, slot[0], slot[1], write)] += 1
                         elif op.id in arguments_by_op:
-                            for _position, arg_storage in arguments_by_op[op.id]:
+                            for position, arg_storage in arguments_by_op[op.id]:
                                 cases = snapshot(arg_storage, state)
-                                arg_pending[op.id][arg_storage].update(cases)
+                                arg_pending[op.id][(position, arg_storage)].update(cases)
+                            continuing.append(state)
                 states = continuing
                 if not states:
                     break
@@ -328,48 +325,23 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
                 if definition is not None:
                     graph.add(op.id, 'RETURN_REACHES', definition, f'{entity.path}:{op.line}',
                               basis='flow', analysis='structured-locals/3', modality='may' if len(definitions) > 1 else 'must')
-        # Translate call op ids back to entity ids so kenql.query_graph can
-        # consume the fact through the same subject it sees on ARGUMENT rows.
-        arg_pending_by_entity: dict[str, dict[str, set]] = defaultdict(lambda: defaultdict(set))
-        for op_id, by_storage in arg_pending.items():
-            for entity_id, mapped in entity_to_op.items():
-                if mapped.id == op_id:
-                    arg_pending_by_entity[entity_id].update(by_storage)
-                    break
-        for call_entity_id, by_storage in arg_pending_by_entity.items():
-            call_op = entity_to_op[call_entity_id]
-            for storage_id, cases in sorted(by_storage.items(), key=lambda kv: kv[0]):
+        for op_id, by_argument in arg_pending.items():
+            call_entity_id = op_to_entity[op_id]
+            call_op = operations[op_id]
+            for (position, storage_id), cases in sorted(by_argument.items()):
                 known_cases = {(v, d) for v, d in cases if v is not None}
-                # ``cases`` already carries the may/must distinction the walk
-                # produced: an unknown binding (None) in any arm collapses the
-                # modality to ``may`` because that arm contributes no producer
-                # information, even if every known arm agrees on the same one.
                 has_unknown = any(v is None for v, _ in cases)
-                if not known_cases and not has_unknown:
-                    continue
-                definitions = {d for v, d in known_cases if d is not None}
-                # Same-producer criterion: every reaching definition resolves to
-                # the same producer callable (CALLEE for a CALL value, otherwise
-                # the value itself for a literal/external source). Mixed known
-                # sources, or known+unknown, stay 'may'.
-                producer_keys: set[tuple[str, str]] = set()
-                for value, _def in known_cases:
-                    callee_value = call_callee_value.get(value)
-                    callee_name = call_callee_name.get(value)
-                    if callee_value is not None:
-                        producer_keys.add(('CALLEE_VALUE', callee_value))
-                    elif callee_name is not None:
-                        producer_keys.add(('CALLEE_NAME', callee_name))
-                    else:
-                        producer_keys.add(('VALUE', value))
-                producer_modality = 'must' if not has_unknown and len(producer_keys) == 1 else 'may'
+                origins = {v for v, _ in known_cases}
+                argument_definitions = {d for _, d in known_cases if d is not None}
                 graph.add(call_entity_id, 'ARGUMENT_ORIGIN', storage_id, f'{entity.path}:{call_op.line}',
-                          basis='flow', analysis='structured-locals/3', modality=producer_modality,
-                          producer_keys=sorted(producer_keys))
-                for definition in sorted(definitions):
+                          basis='flow', analysis='argument-origins/1', position=position,
+                          modality='must' if not has_unknown and len(origins) == 1 else 'may',
+                          origins=sorted(origins), unknown=has_unknown,
+                          cases=[list(case) for case in sorted(cases, key=lambda case: (case[0] or '', case[1] or ''))])
+                for definition in sorted(argument_definitions):
                     graph.add(call_entity_id, 'ARGUMENT_REACHES', definition, f'{entity.path}:{call_op.line}',
-                              basis='flow', analysis='structured-locals/3',
-                              modality='may' if has_unknown or len(definitions) > 1 else 'must')
+                              basis='flow', analysis='argument-origins/1', position=position, operand=storage_id,
+                              modality='may' if has_unknown or len(argument_definitions) > 1 else 'must')
         for (returned, origin, field, write), count in sorted(field_returns.items()):
             state_id = returned + '/field-state/' + sha256(repr((origin, field, write)).encode()).hexdigest()[:24]
             evidence = f'{entity.path}:{operations[write].line}'

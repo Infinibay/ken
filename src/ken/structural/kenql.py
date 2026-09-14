@@ -618,13 +618,6 @@ def query_graph(ir: IR) -> FactIndex:
                 graph.capabilities.add(f'complete:{entity.id}:HAS_PARAMETER')
     call_ids = {e.id for e in ir.entities.values() if e.kind == 'CALL'}
     results = {call: call + '/result' for call in call_ids}
-    call_callee_name: dict[str, str] = {}
-    call_callee_value: dict[str, str] = {}
-    for fact in ir.facts:
-        if fact.relation == 'CALLEE_NAME':
-            call_callee_name[fact.subject] = fact.object
-        elif fact.relation == 'CALLEE_VALUE':
-            call_callee_value[fact.subject] = fact.object
     stored: dict[str, list[str]] = {}
     supported_returns = {f.subject for f in ir.facts
                          if f.relation == 'RETURN_FLOW_STATUS' and f.object == 'supported'}
@@ -632,35 +625,15 @@ def query_graph(ir: IR) -> FactIndex:
     for fact in ir.facts:
         if fact.relation == 'ASSIGNED_FROM':
             stored.setdefault(fact.subject, []).append(fact.object)
-    unique_writes = {fact.object for fact in ir.facts if fact.relation == 'UNIQUE_BINDING_WRITE'}
-    # Per-call-site producer provenance. The keys of the inner set are
-    # (kind, value) tuples emitted by ``sequential_returns``: ``CALLEE_VALUE``
-    # when the storage is itself a CALL with a resolved callee, ``CALLEE_NAME``
-    # when only the syntactic callee name is known, ``VALUE`` for any other
-    # producer (literal, parameter, externally defined binding). Storing the
-    # actual keys lets the consumer check whether a specific ASSIGNED_FROM
-    # producer matches the unique live producer — without that, a storage
-    # whose final write is a literal would still certify earlier call
-    # producers as ``must``, masking overwrites.
-    argument_origin_keys: dict[tuple[str, str], frozenset[tuple[str, str]]] = {}
-    for fact in ir.facts:
-        if fact.relation == 'ARGUMENT_ORIGIN' and fact.attrs.get('modality') == 'must':
-            raw = fact.attrs.get('producer_keys')
-            if not raw:
-                continue
-            argument_origin_keys[(fact.subject, fact.object)] = frozenset(tuple(item) for item in raw)
-    def producer_key_for(value: str) -> tuple[str, str] | None:
-        callee_value = call_callee_value.get(value)
-        if callee_value is not None:
-            return ('CALLEE_VALUE', callee_value)
-        callee_name = call_callee_name.get(value)
-        if callee_name is not None:
-            return ('CALLEE_NAME', callee_name)
-        if value in call_ids:
-            return ('CALLEE_NAME', ir.entities[value].attrs.get('name', ''))
-        return ('VALUE', value)
+    # Per-argument occurrence facts retain exact source value IDs. Callee names
+    # cannot identify results: two calls to the same function may return anything.
+    argument_origins = {
+        (f.subject, f.object, f.attrs.get('position', 0)): f
+        for f in ir.facts if f.relation == 'ARGUMENT_ORIGIN'
+    }
 
-    def as_value(source: str, occurrence: str, evidence: list[str], consumer_call: str | None = None) -> str:
+    def as_value(source: str, occurrence: str, evidence: list[str], consumer_call: str | None = None,
+                 position: int = 0) -> str:
         if source in results:
             return results[source]
         entity = ir.entities.get(source)
@@ -671,25 +644,13 @@ def query_graph(ir: IR) -> FactIndex:
                                           {'origin': 'load', 'storage': source})
         graph.add(value_id, 'ENTITY', 'VALUE', *evidence[:1], type=entity.attrs.get('type', 'unknown'))
         graph.add(value_id, 'LOADED_FROM', source, *evidence[:1])
-        # Per-call-site ARGUMENT_ORIGIN wins over storage-level UNIQUE_BINDING_WRITE
-        # when both apply: the call-site check is finer-grained and accounts for
-        # branches (same-producer across arms = must) and overwrites (mixed sources
-        # = may). UNIQUE_BINDING_WRITE alone keeps the body-only linear case green.
-        # When the call site has a unique live producer, the upgrade only applies
-        # to that producer: a literal that overwrote a previous call write keeps
-        # the literal as the only ``must`` source, so prior VALUE_FLOW edges from
-        # the overwritten producer stay ``may``.
-        must_consumer_keys = argument_origin_keys.get((consumer_call, source)) if consumer_call is not None else None
-        for incoming in stored.get(source, []):
+        origin = argument_origins.get((consumer_call, source, position)) if consumer_call is not None else None
+        live = set(origin.attrs.get('origins', ())) if origin is not None else set()
+        for incoming in sorted(set(stored.get(source, ())) | live):
             if incoming not in results:
                 continue
-            incoming_key = producer_key_for(incoming)
-            if must_consumer_keys is not None and incoming_key is not None and incoming_key in must_consumer_keys:
-                is_must = True
-            elif must_consumer_keys is None and source in unique_writes:
-                is_must = True
-            else:
-                is_must = False
+            is_must = (origin is not None and origin.attrs.get('modality') == 'must'
+                       and incoming in live)
             graph.add(results[incoming], 'VALUE_FLOW', value_id, *evidence[:1],
                       modality='must' if is_must else 'may')
         return value_id
@@ -703,7 +664,7 @@ def query_graph(ir: IR) -> FactIndex:
         if f.relation=='ARGUMENT':
             aid=f'{f.subject}/argument/{f.attrs.get("position",0)}'
             graph.add(f.subject,'ARGUMENT',aid,*f.evidence[:1])
-            graph.add(aid,'VALUE',as_value(f.object,aid,f.evidence,consumer_call=f.subject),*f.evidence[:1])
+            graph.add(aid,'VALUE',as_value(f.object,aid,f.evidence,consumer_call=f.subject,position=f.attrs.get("position",0)),*f.evidence[:1])
             source_entity=ir.entities.get(f.object)
             source_attrs=source_entity.attrs if source_entity else {}
             argument_attrs={**f.attrs, 'type':source_attrs.get('type','unknown'), 'type_family':family(source_attrs.get('type','unknown')), 'type_state':'known' if source_attrs.get('native_type') or source_attrs.get('type','unknown')!='unknown' else 'unknown'}

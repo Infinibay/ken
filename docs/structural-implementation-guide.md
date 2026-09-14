@@ -1,6 +1,6 @@
 # Guía del IR y del buscador para implementar GoF
 
-Referencia práctica verificada contra **IR 1.47.0**, `kenql/1` y
+Referencia práctica verificada contra **IR 1.48.0**, `kenql/1` y
 `ken-instructions/1`, el 13 de septiembre de 2026. Este documento explica la
 implementación actual y dónde extenderla. El trabajo pendiente está en
 [PLAN.md](../PLAN.md). Las secciones que dicen **PROPUESTO** no son APIs disponibles.
@@ -111,7 +111,7 @@ Para una lectura de storage/parámetro, la proyección crea un valor de carga:
 esa lectura. La relación histórica `ASSIGNED_FROM` puede producir
 `VALUE_FLOW(modality=may)`; **no cambiarla a `must` para conseguir un match**.
 
-Ejemplo del problema pendiente:
+Ejemplo que IR 1.48 rechaza en modo estricto dentro del subconjunto soportado:
 
 ```python
 value = produce()
@@ -124,6 +124,15 @@ sus asignaciones históricas inventaría una coincidencia. También debe rechaza
 `consume(value)` antes de la asignación de `produce()`. Un alias guardado antes de
 la reasignación sí puede conservar el valor anterior; no prohibir todos los
 aliases para evitar resolver este caso.
+
+IR 1.48 añade `ARGUMENT_ORIGIN`: call fuente → operando, con posición,
+IDs exactos de orígenes, casos origen/escritura y modalidad. La proyección añade
+flujo must sólo para un único origen vivo demostrado. Dos llamadas al mismo
+método son valores distintos; `UNIQUE_BINDING_WRITE` no prueba el flujo.
+Se soportan llamadas standalone, RHS, anidadas y retornadas, incluso sin return
+explícito en el callable. Los aliases se leen con el estado de esa ocurrencia.
+Consultar [contrato actual](structural-ir.md#argument-read-site-provenance-ir-148)
+y [entrega P1](structural-validation/gof-completion/P1-argument-occurrences.md).
 
 Relaciones existentes que no deben confundirse:
 

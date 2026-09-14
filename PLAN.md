@@ -4,6 +4,21 @@ Fecha del inventario: **2026-09-13**. Base: **IR 1.47.0 / kenql/1 /
 ken-instructions/1**. Este archivo es una guía para el siguiente implementador;
 las casillas sin marcar son trabajo pendiente, no funcionalidades disponibles.
 
+
+## Avance posterior al inventario: IR 1.48
+
+P1.2/P1.3 y corrección de P1.4: la procedencia de argumentos usa **IDs de valores
+por ocurrencia**, no el nombre/destino de la función productora. Se agregaron
+llamadas independientes, RHS, llamadas anidadas y funciones sin retorno explícito,
+con aliases y posiciones de argumento en Python, JS/TS, Java y C#.
+Los detalles, pruebas y limitaciones están en
+[P1 — procedencia por ocurrencia](docs/structural-validation/gof-completion/P1-argument-occurrences.md).
+No se promovieron variantes GoF a ready en esta entrega.
+
+Siguiente tarea: **P1.5**, regiones expresivas/cortocircuitos y sus efectos sobre
+lecturas, junto con el alcance pendiente de P1.1/P1.3 (shadowing, callee/receptor).
+P3 todavía requiere conectar el núcleo de instrucciones al buscador.
+
 ## 0. Instrucciones para el modelo que continúe
 
 Implementar una tarea pequeña por vez. Leer primero las secciones 1–5 de este
@@ -12,9 +27,10 @@ Después leer sólo la fase activa y la ficha del patrón correspondiente. No es
 necesario cargar todos los documentos históricos para cada cambio.
 
 Antes de editar, seguir [AGENTS.md](AGENTS.md), inspeccionar el estado del worktree
-y conservar los cambios existentes. En esta base buena parte de `src/ken/structural`,
-sus tests y documentación todavía aparece como **untracked**: existe en disco y
-no debe borrarse ni reemplazarse por lo que muestre únicamente `git diff`.
+y conservar los cambios existentes. En el inventario inicial buena parte de
+`src/ken/structural`, tests y documentación era **untracked**; luego se incorporó
+al historial. Revisar el estado real al retomar: ningún archivo existente debe
+borrarse o reemplazarse sólo porque no aparezca en `git diff`.
 
 **Reglas de trabajo:**
 
@@ -212,11 +228,11 @@ con esas fases cuando una variante tenga sus dependencias disponibles.
 
 ### P1. Procedencia de valores en el punto de lectura
 
-**Primer trabajo de implementación recomendado.** El caso de entrada está en
-`tests/structural/test_algorithm_facade.py`: el resultado pasado directamente a
-otra llamada funciona; introducir una variable local impide probar el flujo en
-modo estricto. Usar `possible` también acepta valores sobrescritos o producidos
-después del consumo. Es un problema del análisis, no un motivo para relajar el modo.
+**Caso inicial ya corregido en el subconjunto soportado.**
+`tests/structural/test_algorithm_facade.py` conserva el recorrido directo y con
+variable local. IR 1.48 añade procedencia exacta por argumento, aliases, llamadas
+independientes y separación entre resultados de distintas llamadas al mismo
+callee. `possible` conserva evidencia histórica may; no implica orden ni identidad.
 
 Archivos de entrada: `instruction_lowering.py`, `instructions.py`, `return_flow.py`,
 `binding_writes.py`, `member_transfers.py`, `field_transfers.py`, `kenql.py`.
@@ -231,29 +247,36 @@ Pasos:
   estado abstracto. Una store reemplaza el estado, una load captura el estado en
   esa ocurrencia. Un alias local toma el valor actual y no se conecta con stores
   futuras al binding original. Empezar por Python, JS/TS, Java y C#.
+  **Parcial IR 1.48:** bindings locales soportados con snapshots por argumento;
+  quedan ámbitos/expresiones fuera del modelo y la conexión al núcleo P3.
 - [ ] **P1.3 Argumentos/callee/receiver:** conectar cada carga evaluada con la
   ocurrencia correcta de argumento, receptor y expresión invocada. Conservar
   posiciones/nombres; expansiones sin modelo deben producir unknown explícito.
+  **Parcial IR 1.48:** argumentos por posición, standalone/RHS/return/nested;
+  faltan snapshots de callee/receptor y expansiones con efectos.
 - [x] **P1.4 Ramas:** analizar estados por brazo y unir a la salida. No formar el
   producto cartesiano de escrituras de un brazo y orígenes de otro. Si ambos
   caminos dan el mismo origen conocido, se puede conservar ese origen; si difieren
-  o uno queda desconocido, no inventar un único origen cierto. _Entregado:
-  `aff9320` (gate `UNIQUE_BINDING_WRITE` en cuerpo) + `4b7a557`
-  (`ARGUMENT_ORIGIN` por sitio de consumo; `kenql.as_value` empuja `VALUE_FLOW`
-  a `must` solo cuando el productor del edge coincide con el productor único
-  vivo). Tests: `tests/structural/test_algorithm_facade_branches.py` cubre
-  mismo-productor (must), brazo único indefinido (may), brazo que sobrescribe
-  (may) × python/java/typescript; los estrictos existentes siguen verdes
-  (`test_algorithm_facade.py` linear, nested, discarded, overwritten, reversed)._
-  Quedan para P1.5 las regiones expresivas (`choose`, cortocircuito, orden de
-  argumentos soportado) que aún se modelan como secuencias.
+  o uno queda desconocido, no inventar un único origen cierto.
+  **Corregido en IR 1.48:** `aff9320` y `4b7a557` eran avances iniciales, pero
+  compartir callee no demuestra compartir valor. Dos llamadas en brazos distintos
+  son may; una misma llamada previa cuyo resultado se asigna en ambos brazos sí
+  conserva must. La expectativa anterior de Facade se corrigió con contraejemplos
+  de overwrite al mismo callee y pruebas positivas de origen realmente compartido.
+  P1.4 está validado sólo para las ramas del pase estructurado soportado; quedan
+  expresiones, bucles y otras regiones de P1.5/P2.
 - [ ] **P1.5 Regiones expresivas:** respetar `choose`, cortocircuito, orden de
   argumentos soportado y retornos abruptos. No evaluar ambos brazos como secuencia.
 - [ ] **P1.6 Extensión:** Go, Rust y C++ con fixtures equivalentes y contratos de
   asignación múltiples/move/referencia explícitos. No simular semántica Python.
 
-Diseño a fijar en documentación antes de codificar (**PROPUESTO**, nombres no
-existentes): un testigo de estado ligado a la lectura/argumento, con su origen,
+**Esquema elegido en IR 1.48:** `ARGUMENT_ORIGIN` conserva posición, orígenes,
+unknown y pares origen/escritura en `cases`; `ARGUMENT_REACHES` identifica posición
+y operando. No se agregaron nodos `ARGUMENT_STATE` ni cambió `ARGUMENT → VALUE`.
+Ver el contrato en la referencia IR. Para proyectar instrucciones/regiones en P3
+hay que decidir si convertir esos testigos en entidades consultables.
+
+Diseño de testigos explícitos para P3 (**PROPUESTO**, nombres no existentes): un testigo de estado ligado a la lectura/argumento, con su origen,
 las definiciones correspondientes, región/camino y modalidad. Por ejemplo,
 `ARGUMENT_STATE` → testigo, `STATE_ORIGIN` → valor, `STATE_DEFINITION` → escritura.
 Elegir y documentar un solo esquema después de revisar `RETURN_FIELD_STATE`.
@@ -820,8 +843,8 @@ Resolver sustituciones/dispatch genérico y una operación visitante separada ap
 
 ## 7. Matriz de pruebas obligatoria por entrega
 
-Estos son requisitos para la **futura implementación**. Esta entrega del plan no
-requiere ejecutar la suite completa ni modificar código.
+Aplicar estos requisitos a cada entrega de implementación. Distinguir siempre
+los checks pendientes escritos en este plan de la validación realmente ejecutada.
 
 Para cada pareja variante/lenguaje declarada, agregar fixtures de código fuente
 que atraviesen Tree-sitter, linking, proyección y la query del catálogo. Un grafo
@@ -1039,7 +1062,7 @@ coincidir con los tests.
 
 ## 10. Cierre y forma de retomar
 
-Para comenzar: **P0**, luego un caso de procedencia por ocurrencia de **P1**, seguido
+Ruta original (ver avance IR 1.48 al inicio antes de retomar): **P0**, luego un caso de procedencia por ocurrencia de **P1**, seguido
 de su recorrido hasta una consulta en **P3**. Usar Facade productor→consumidor como
 primer caso: resultado directo, variable intermedia, logging independiente y
 reasignación que invalida el flujo. Es una tarea acotada que expone la separación

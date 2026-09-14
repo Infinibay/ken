@@ -1,0 +1,32 @@
+{
+  "base_commit": "5d2486cdcbc263b4240d32f397606c62e39077bb",
+  "ir_version": "1.48.0",
+  "full_suite": {
+    "tests": 7492,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 146,
+    "passed": 7346
+  },
+  "command": ".venv/bin/python -m pytest -o addopts='' -q --junitxml=/tmp/ken-p1-final-tests.xml",
+  "elapsed_seconds": 268.16,
+  "mypy": {
+    "files": 107,
+    "errors": 0
+  },
+  "new_regression_matrix": {
+    "passed": 72,
+    "languages": [
+      "python",
+      "javascript",
+      "typescript",
+      "java",
+      "csharp"
+    ]
+  },
+  "source_sha256": {
+    "src/ken/structural/return_flow.py": "43f460ec5e7658b141d5cd425e3990e2903349db9ec246dd3cdfd2219c0e3fab",
+    "src/ken/structural/kenql.py": "4e059cba8aae42f714a78d66955a8d089afe691b3f71a75498cabca85cc87c1e",
+    "src/ken/structural/model.py": "08b90bb63c39ac86d9298d63a50a4bd4115614e2fc37d4117ddedc1a96334ff5"
+  }
+}
