@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.63.0.** This document describes available behavior
+> **Operational reference: IR 1.64.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,32 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Type parameters in every generic grammar (IR 1.64)
+
+Type-parameter binding was Rust-only until IR 1.62 added C++, and four of the six
+grammars that spell a type-parameter group still bound nothing. They do now:
+
+| Language | Group | Members |
+|---|---|---|
+| Rust | `type_parameters` field | `type_parameter` |
+| TypeScript, Java | `type_parameters` field | `type_parameter` |
+| Go | `type_parameters` field | `type_parameter_declaration` |
+| C++ | `template_declaration`'s `parameters` field | `type_parameter_declaration` |
+| C# | **unfielded** `type_parameter_list` child | `type_parameter` |
+
+C# is the odd one: it leaves the group as an ordinary child with no field name, so it
+is found by node type among the declaration's own children. Java's `type_parameter`
+carries no `name` field either, so the name falls back to the identifier child.
+
+Go needed a second fix, in the same commit and for the same reason. A generic receiver
+spells its type arguments — `func (a *Abstraction[I]) Operation()` — while the
+declaration is named without them, so the method resolved to no type at all and was
+owned by the **module** instead of by `Abstraction`. Trailing type arguments are
+stripped from the receiver before the lookup.
+
+Both are additive: no existing fact is reinterpreted, and a declaration with no group
+binds nothing.
 
 ## Parameters typed by a type parameter (IR 1.63)
 

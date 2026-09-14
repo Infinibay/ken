@@ -116,9 +116,13 @@ distinción evita endurecer indebidamente la definición general del patrón.
 | Go | Interfaces/structs embebidos | Composición y contratos implícitos, sin inventar jerarquías de clases |
 | Rust | Traits con `dyn` o parámetros genéricos | Borrow del backend, sustitución de tipos y dispatch estático/dinámico |
 
-La independencia conceptual no exige dispatch virtual. `generic-composition`
-sigue en diseño. Esta matriz valida solamente Python, Java y TypeScript, no
-certifica las otras formas de la tabla.
+La independencia conceptual no exige dispatch virtual. `generic-composition` pasó a
+`ready` en IR 1.64 para sus seis lenguajes, y **sin pedir subtipo, interfaz ni
+implementaciones**: la evidencia es que un tipo liga un parámetro de tipo, un campo suyo
+está tipado por él y un método delega en el campo, **y que al menos dos tipos ligan el
+mismo parámetro** — eso último es lo que lo separa de `strategy#static-policy`, que lee
+la misma forma. Esta matriz valida solamente Python, Java y TypeScript, no certifica las
+otras formas de la tabla.
 
 ## Resultados y gaps
 

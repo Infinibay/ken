@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **66 ready / 11 design** (veintidós variantes promovidas en este trabajo).
+Inventario: **67 ready / 10 design** (veintitrés variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -206,6 +206,22 @@ resolvió el lado de la declaración y ésta el lado del uso. Con eso se cierra
 nombra —un `match`/`switch` sin visitante separado no matchea— y la separación
 complementaria con `named-dispatch`. Detalles en
 [`visitor#generic-visitor`](docs/structural-validation/gof-completion/visitor-generic-visitor.md).
+
+IR 1.64 — **parámetros de tipo en las seis gramáticas**: hasta 1.62 solo Rust y C++ los
+ligaban, aunque los seis lenguajes los escriben. Cada gramática los escribe distinto
+—Rust/TS/Java en el campo `type_parameters`, Go igual pero con miembros
+`type_parameter_declaration`, C++ en el campo `parameters` del `template_declaration`, y
+**C# en un hijo `type_parameter_list` sin campo**, que hay que buscar por tipo de nodo—.
+Go necesitó además un arreglo propio: un receptor genérico escribe sus argumentos
+(`*Abstraction[I]`) mientras la declaración se llama sin ellos, así que el método quedaba
+**propiedad del módulo** en vez de su tipo. Con eso se cierra
+**`bridge#generic-composition`** en sus seis lenguajes: un tipo liga el parámetro, un
+campo suyo está tipado por él, un método delega en el campo **y al menos dos tipos ligan
+el mismo parámetro**, que es lo que lo separa de `strategy#static-policy` —una sola clase
+genérica matchea aquélla y no ésta—. El conteo se acota a tipos con `type_decl()`: el
+constructor y los métodos también ligan el parámetro, y contarlos hacía que una sola
+clase satisficiera el `>= 2`. Detalles en
+[`bridge#generic-composition`](docs/structural-validation/gof-completion/bridge-generic-composition.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -719,7 +735,7 @@ Dependencias: **P1, P4, P5**. Ready iniciales: `runtime-composition`, `refined-c
 
 #### Pendiente `bridge#generic-composition`
 
-- [ ] Implementar en: `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
 
 Representar por separado la jerarquía o dimensión de abstracción y el contrato de implementación. Sustituir el parámetro genérico y resolver la operación que la abstracción usa de esa implementación. Positivo: abstracción parametrizada por backend sin objeto polimórfico ni vtable obligatorios.
 

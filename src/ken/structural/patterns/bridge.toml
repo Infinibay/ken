@@ -2,13 +2,14 @@ schema = "ken-rule/1"
 id = "bridge"
 name = "Bridge"
 category = "structural"
-description = "An abstraction hierarchy holds a separate implementation hierarchy."
-caveat = "Structural evidence requires review of intent and runtime behavior."
+description = "An abstraction hierarchy holds a separate implementation hierarchy, at run time or through a type parameter."
+caveat = "Structural evidence requires review of intent and runtime behavior. The generic variant reads a field typed by a shared type parameter, so it proves the implementation is chosen at compile time and that the parameter is not tied to one abstraction; it does not require virtual dispatch, nor prove which instantiation a use site chose."
 legacy_query = "require $unit SUBTYPE_OF $abstraction\nrequire $abstraction HAS_FIELD $field\nrequire $field TYPE $implementation\ncount >=2 $concrete SUBTYPE_OF $implementation distinct=$concrete\ndifferent $abstraction $implementation\n"
 query = '''
 query bridge {
  any { match "bridge#runtime-composition"(unit: $unit); }
  or { match "bridge#refined-composition"(unit: $unit); }
+ or { match "bridge#generic-composition"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -50,12 +51,29 @@ query bridge {
 '''
 [[variants]]
 id = "generic-composition"
-status = "design"
+status = "ready"
 languages = ["typescript", "java", "csharp", "cpp", "go", "rust"]
 requires = ["generic_substitution", "contract_resolution"]
 graph_requirements = ["Parámetro de tipo de implementación independiente de variantes de abstracción; no exigir virtual dispatch."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-six-languages"
+query_claim = "Un tipo liga un parametro de tipo, un campo suyo esta tipado por ESE parametro y un metodo no constructor delega en el campo por receptor; ademas **al menos dos tipos** ligan el mismo nombre de parametro, que es lo que expresa que el parametro de implementacion no este atado a una sola abstraccion. No exige despacho virtual ni contrato: no se pide subtipo, ni interfaz, ni implementaciones multiples, que es lo que separa esta variante de `runtime-composition`, y la comparte con `strategy#static-policy` salvo por el conteo —una sola declaracion ligando el parametro matchea aquella y no esta—. El conteo es una cota inferior sobre TIPOS (`type_decl()`), no sobre toda entidad que ligue el parametro: el constructor y el metodo de una clase generica tambien lo ligan, y contarlos haria que una sola clase satisfaciera el `>= 2`. No prueba sustitucion de tipos ni que la instanciacion del sitio de uso sea la elegida."
+query = '''
+query generic_composition {
+ require $abstraction BINDS_TYPE_PARAMETER $implementation_parameter;
+ require $abstraction HAS_FIELD $implementation;
+ require $implementation TYPE_NAME $implementation_parameter;
+ require $abstraction HAS_METHOD $operation;
+ callable(constructor: false) as $operation;
+ require $operation HAS_CALL $call;
+ require $call RECEIVER $implementation;
+ count distinct $variant >= 2 {
+  require $variant BINDS_TYPE_PARAMETER $implementation_parameter;
+  type_decl() as $variant;
+ };
+ emit unit=$abstraction, $implementation, $implementation_parameter, $operation;
+}
+'''
 
 [[variants]]
 id = "refined-composition"

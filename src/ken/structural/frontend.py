@@ -31,6 +31,9 @@ TYPES = {"class", "abstract_class_declaration", "class_definition", "class_decla
 ENUM_TYPES = {"enum_specifier", "enum_item", "enum_declaration"}
 ENUM_CONSTANTS = {"enumerator", "enum_variant", "enum_constant", "enum_member_declaration",
                   "property_identifier"}
+# Grammars that spell type parameters as a declaration group. Python and JavaScript have
+# no such syntax, so their declarations skip the ancestor walk entirely.
+TYPE_PARAMETER_LANGUAGES = {"typescript", "java", "csharp", "cpp", "go", "rust"}
 FUNCTIONS = {"abstract_method_signature", "function_definition", "function_declaration", "method_definition", "method_declaration",
              "constructor_declaration", "function_item", "function_signature_item", "method_signature",
              # Go declares an interface's required operations as ``method_elem``.
@@ -288,14 +291,20 @@ class Lowerer:
         for _ in range(64):
             if current is None:
                 break
-            # Rust spells the group ``type_parameters``. C++ wraps the declaration in
-            # a ``template_declaration`` whose group is the ``parameters`` field and
-            # whose members are ``type_parameter_declaration`` nodes; only that node
-            # type is read from it, so a function's ordinary parameter list — which
-            # uses the same field name — is never mistaken for a type-parameter group.
-            groups = [field(current, 'type_parameters')]
+            # Rust, TypeScript, Java and Go spell the group ``type_parameters``; C#
+            # spells it ``type_parameter_list``; C++ wraps the declaration in a
+            # ``template_declaration`` whose group is the ``parameters`` field. Only
+            # the ``type_parameter_declaration`` node type is read from that last one,
+            # so a function's ordinary parameter list — which uses the same field name
+            # — is never mistaken for a type-parameter group.
+            groups = [field(current, 'type_parameters'), field(current, 'type_parameter_list')]
             if current.type == 'template_declaration':
                 groups.append(field(current, 'parameters'))
+            if all(group is None for group in groups):
+                # C# leaves ``type_parameter_list`` unfielded, so it has to be found by
+                # node type among the declaration's own children.
+                groups.append(next((child for child in current.named_children
+                                    if child.type == 'type_parameter_list'), None))
             for group in groups:
                 for parameter in children(group):
                     if parameter.type in {'type_parameter', 'const_parameter', 'type_parameter_declaration'}:
@@ -333,7 +342,7 @@ class Lowerer:
             # distinguishes the producer from invocation of its result.
             key += f":{node.end_byte}"
         if key not in self.ir.entities:
-            if self.ir.language in {'rust', 'cpp'} and kind in {'CLASS', 'INTERFACE', 'CALLABLE'}:
+            if self.ir.language in TYPE_PARAMETER_LANGUAGES and kind in {'CLASS', 'INTERFACE', 'CALLABLE'}:
                 parameters = self.bound_type_parameters(node)
                 attrs['type_parameters'] = parameters
                 # A declaration binds its parameters by name. The fact is what lets a
@@ -483,7 +492,10 @@ class Lowerer:
             receiver = field(node, "receiver")
             if receiver:
                 parameter = next(iter(receiver.named_children), None)
-                target = self.text(field(parameter, "type")).lstrip("*")
+                # A generic receiver spells its type arguments too (``*Abstraction[I]``),
+                # and the declaration is named without them. Keeping the arguments would
+                # leave the method owned by the module instead of by its type.
+                target = re.sub(r'\[[^\]]*\]\s*$', '', self.text(field(parameter, "type"))).lstrip("*").strip()
                 cls = self.names.get((self.module, target), "")
                 if cls:
                     scope = cls
@@ -538,7 +550,7 @@ class Lowerer:
             # A parameter whose declared type is one of its callable's own type
             # parameters stands for that parameter: ``Visitor &`` in C++ and ``&V`` in
             # Rust both name it through reference decoration.
-            bound_parameters = self.bound_type_parameters(node) if self.ir.language in {'rust', 'cpp'} else []
+            bound_parameters = self.bound_type_parameters(node) if self.ir.language in TYPE_PARAMETER_LANGUAGES else []
             for position, param in enumerate(parameter_nodes):
                 if param.type == "positional_separator":
                     positional_only = False
