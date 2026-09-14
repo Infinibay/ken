@@ -11,6 +11,7 @@ from typing import Any
 
 from ken._paths import resolve_project_path
 from .model import FactIndex, IR
+from .query import QueryOutcome
 from .query import QueryBudget, evaluate_pattern
 from .selectors import parse_query
 
@@ -263,7 +264,48 @@ def named_rule(rule_id: str, registry: list[SavedRule]) -> SavedRule:
     return SavedRule(rule_id, query, name=rule_id)
 
 
-def execute_rules(ir: IR | FactIndex, rules: list[SavedRule], budget: QueryBudget | None = None, registry: list[SavedRule] | None = None, evidence_mode: str = "strict", *, _parsed: dict[str, Any] | None = None) -> dict[str, Any]:
+# Bumped when the engine's own semantics change. The rule text is the version of
+# a query -- editing it, or promoting a variant from design to ready, changes the
+# fingerprint -- but a planner or evidence-mode change is invisible to the text,
+# so it gets its own number.
+QUERY_CACHE_VERSION = "1"
+
+
+def rule_fingerprint(rule: SavedRule, evidence_mode: str, *, queries: dict[str, Any] | None = None,
+                     root: Any = None, registry: list[SavedRule] | None = None) -> str:
+    """Everything that can change what a rule returns, as one string.
+
+    A rule's own text is not enough: a query that ``match``es a saved rule
+    inherits that rule's meaning, and editing the saved file changes the answer
+    without touching the caller. The reachable named queries are walked and their
+    text and exported roles folded in, so a cache entry can only be read when the
+    whole dependency closure is the same one.
+    """
+    parts = ["rule", QUERY_CACHE_VERSION, evidence_mode, rule.id, rule.query]
+    for variant in sorted(rule.variants or [], key=lambda item: str(item.get("id", ""))):
+        parts += [str(variant.get("id", "")), str(variant.get("status", "")),
+                  str(variant.get("query", ""))]
+    if queries and root is not None:
+        by_id = {saved.id: saved for saved in (registry or [])}
+        seen: set[str] = set()
+        stack = [name for name, _ in root.dependencies()]
+        while stack:
+            name = stack.pop()
+            if name in seen:
+                continue
+            seen.add(name)
+            parts.append(name)
+            saved = by_id.get(name)
+            if saved is not None:
+                parts.append(saved.query)
+            child = queries.get(name)
+            if child is not None:
+                parts.append(json.dumps(child.exports, sort_keys=True))
+                stack.extend(dependency for dependency, _ in child.dependencies())
+    return "\x00".join(parts)
+
+
+def execute_rules(ir: IR | FactIndex, rules: list[SavedRule], budget: QueryBudget | None = None, registry: list[SavedRule] | None = None, evidence_mode: str = "strict", *, _parsed: dict[str, Any] | None = None, cache: Any = None, graph_key: str = "") -> dict[str, Any]:
     # Validate the entire batch before evaluating any member.
     parsed = []
     compiled = {} if _parsed is None else _parsed
@@ -286,13 +328,34 @@ def execute_rules(ir: IR | FactIndex, rules: list[SavedRule], budget: QueryBudge
     matches = []
     outcomes = {}
     for rule, pattern in parsed:
+        # A stored outcome is keyed by the rule's text, the graph it ran on and
+        # the engine version, so a changed query or a changed file can only miss.
+        cache_key = ""
+        if cache is not None and graph_key:
+            compiled_query = _parsed_query(rule.query, compiled) if pattern is None else None
+            cache_key = cache.key(rule_fingerprint(rule, evidence_mode, queries=queries,
+                                                  root=compiled_query, registry=registry or rules), graph_key)
+            stored = cache.get(cache_key)
+            if stored is not None:
+                outcome = QueryOutcome(**stored)
+                outcomes[rule.id] = {"complete": outcome.complete, "unknown": outcome.unknown, "stats": outcome.stats}
+                for match in outcome.matches:
+                    locations = sorted({(index.ir.entities[v].path, index.ir.entities[v].line)
+                                        for v in match["bindings"].values() if v in index.ir.entities})
+                    unit = index.ir.entities.get(match["bindings"].get("$unit", ""))
+                    primary = (unit.path, unit.line) if unit else (locations[0] if locations else ("", 0))
+                    matches.append({**match, "id": rule.id, "rule": rule.to_dict(),
+                                    "path": primary[0], "line": primary[1], "symbol": unit.name if unit else "",
+                                    "locations": [{"path": p, "line": line} for p, line in locations]})
+                continue
         if pattern is None:
             from .kenql import Engine
-            from .query import QueryOutcome
             assert modern_index is not None
             outcome = QueryOutcome(**Engine(modern_index, queries, budget, evidence_mode).execute(_parsed_query(rule.query, compiled)))
         else:
             outcome = evaluate_pattern(index, pattern, budget)
+        if cache_key:
+            cache.put(cache_key, outcome.to_dict())
         outcomes[rule.id] = {"complete": outcome.complete, "unknown": outcome.unknown, "stats": outcome.stats}
         for match in outcome.matches:
             locations = sorted({(index.ir.entities[v].path, index.ir.entities[v].line)

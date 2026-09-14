@@ -2254,6 +2254,30 @@ Entities form an ID-keyed object; each fact has `subject`, `relation`, `object`,
 The proposed `Snapshot` envelope, separate schema/semantics versions and per-fact
 dependency records in the design document are not the current serialization.
 
+### Caching rule outcomes
+
+`<repo>/.ken/structural-cache.sqlite` holds three kinds of entry, all
+content-addressed and all evicted by the same LRU budget:
+
+* a unit's IR, keyed by `(IR version, parser versions, path, language, content)`
+  — so editing one file re-lowers one file;
+* the linked project graph, keyed by every unit key;
+* a whole rule's outcome, keyed by `(rule fingerprint, graph key)` where the
+  fingerprint is the engine cache version, the evidence mode, the rule's own text
+  and, for a catalogue rule, every variant's id, status and text.
+
+The rule text *is* the version of a query: editing a query, or promoting a variant
+from `design` to `ready`, changes the fingerprint and the previous entry is never
+read again. `QUERY_CACHE_VERSION` covers what a text cannot express — a change in
+the engine itself — and is bumped when evaluation semantics change. Editing a file
+changes the graph key, so nothing computed from the previous graph is reused.
+
+A second scan of an unchanged tree is therefore free, and a scan after an edit
+re-evaluates everything. That is deliberate: caching per *file* would require a
+rule's answer to be local to that file, and absence never is — "no class in the
+project implements X" depends on every other file. `analysis.query_cache` reports
+hits, misses and evictions. `--cache-mb 0` disables all three levels.
+
 `ken structural ir --scope src/example.py --view query` exposes the normalized
 KenQL view. In the source graph, `ARGUMENT` points directly to its operand and
 carries argument metadata. In the query view, it points to an argument occurrence;

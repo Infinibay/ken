@@ -21,6 +21,18 @@ from .query import QueryBudget, evaluate_pattern
 from .semantic import link_project
 
 
+def _query_cache(root: Path, cache_mb: float | None) -> Any:
+    """The same SQLite file, used for whole-rule outcomes.
+
+    One entry per (rule text, graph, engine version). It is a memo, not an
+    index: re-running an unchanged query over an unchanged graph is free, and any
+    change to either misses. Caching per *file* would need each rule's answer to
+    be local to that file, which absence never is -- "no class in the project
+    implements X" depends on every file.
+    """
+    return IRCache(root / ".ken" / "structural-cache.sqlite", _configuration(root, cache_mb))
+
+
 def _configuration(root: Path, override: float | None) -> float:
     config_path = root / ".ken" / "structural.json"
     value: Any = DEFAULT_CACHE_MB
@@ -147,6 +159,7 @@ def build_project(root: Path, *, path: str = ".", cache_mb: float | None = None,
                        "files": [path for path, _, _ in manifest if path not in failed], "skipped": skipped,
                        "coverage_complete": not skipped and not graph.diagnostics,
                        "diagnostics": graph.diagnostics, "cache": cache.stats(),
+                       "graph_key": graph_key,
                        "elapsed_ms": round((time.monotonic() - started) * 1000, 3)}
     finally:
         cache.close()
@@ -205,7 +218,13 @@ def search(root: Path, query: str = "", *, path: str = ".", cache_mb: float | No
                 validator.validate(_parsed_query(rule.query, compiled))
     graph, analysis = build_project(root, path=path, cache_mb=cache_mb, max_files=max_files,
                                     max_file_bytes=max_file_bytes)
-    result = execute_rules(graph, selected, budget, registry=registry, evidence_mode=evidence_mode, _parsed=compiled)
+    cache = _query_cache(root, cache_mb)
+    try:
+        result = execute_rules(graph, selected, budget, registry=registry, evidence_mode=evidence_mode,
+                               _parsed=compiled, cache=cache, graph_key=analysis["graph_key"])
+        analysis["query_cache"] = cache.stats()
+    finally:
+        cache.close()
     summaries = directory_summary(result["matches"], analysis["files"])
     for summary in summaries:
         summary["rules"] = summary.pop("patterns")
@@ -222,7 +241,12 @@ def patterns(root: Path, names: list[str] | None = None, *, path: str = ".",
              max_files: int | None = None, max_file_bytes: int = 2_000_000) -> dict[str, Any]:
     graph, analysis = build_project(root, path=path, cache_mb=cache_mb, max_files=max_files,
                                     max_file_bytes=max_file_bytes)
-    result = detect_patterns(FactIndex(graph), names, budget)
+    cache = _query_cache(root, cache_mb)
+    try:
+        result = detect_patterns(FactIndex(graph), names, budget, cache=cache, graph_key=analysis["graph_key"])
+        analysis["query_cache"] = cache.stats()
+    finally:
+        cache.close()
     return {"ok": True, **result, "directories": directory_summary(result["findings"], analysis["files"]),
             "analysis": analysis}
 
@@ -232,4 +256,10 @@ def bugs(root: Path, *, path: str = ".", cache_mb: float | None = None,
          max_file_bytes: int = 2_000_000) -> dict[str, Any]:
     graph, analysis = build_project(root, path=path, cache_mb=cache_mb, max_files=max_files,
                                     max_file_bytes=max_file_bytes)
-    return {"ok": True, **evaluate_bugs(graph, budget), "analysis": analysis}
+    cache = _query_cache(root, cache_mb)
+    try:
+        findings = evaluate_bugs(graph, budget, cache=cache, graph_key=analysis["graph_key"])
+        analysis["query_cache"] = cache.stats()
+    finally:
+        cache.close()
+    return {"ok": True, **findings, "analysis": analysis}

@@ -154,9 +154,10 @@ BUG_RULES = {
 }
 
 
-def evaluate_bugs(graph: IR, budget=None) -> dict:
+def evaluate_bugs(graph: IR, budget=None, cache=None, graph_key: str = "") -> dict:
     from .rules import builtin_rules, execute_rules, select_rules
-    result = execute_rules(graph, select_rules(builtin_rules(), collections=["bugs"]), budget)
+    result = execute_rules(graph, select_rules(builtin_rules(), collections=["bugs"]), budget,
+                           cache=cache, graph_key=graph_key)
     findings = [{**m, "message": m["rule"]["description"], "severity": m["rule"]["severity"]}
                 for m in result["matches"]]
     return {"findings": findings, "outcomes": result["outcomes"], "complete": result["complete"]}

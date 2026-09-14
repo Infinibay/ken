@@ -54,7 +54,8 @@ def catalog() -> list[dict[str, Any]]:
 
 
 def detect_patterns(ir: IR | FactIndex, names: list[str] | None = None,
-                    budget: QueryBudget | None = None, *, legacy: bool = False) -> dict[str, Any]:
+                    budget: QueryBudget | None = None, *, legacy: bool = False,
+                    cache: Any = None, graph_key: str = "") -> dict[str, Any]:
     from .rules import builtin_rules, execute_rules, select_rules
     registry = builtin_rules()
     if legacy:
@@ -62,7 +63,7 @@ def detect_patterns(ir: IR | FactIndex, names: list[str] | None = None,
         historical = {r.id: r.legacy_query for r in RULES}
         registry = [replace(r, query=historical.get(r.id) or r.query) for r in registry]
     selected = select_rules(registry, ids=names, collections=["gof"])
-    result = execute_rules(ir, selected, budget, registry=registry)
+    result = execute_rules(ir, selected, budget, registry=registry, cache=cache, graph_key=graph_key)
     metadata = {r.id: r for r in RULES}
     findings = [{**m, "category": metadata[m["id"]].category, "caveat": metadata[m["id"]].caveat}
                 for m in result["matches"]]
