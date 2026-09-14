@@ -133,8 +133,16 @@ def link_project(units: list[IR]) -> IR:
             if (entities[entity].attrs.get('language') == 'rust' and container is not None
                     and name in container.attrs.get('type_parameters', [])):
                 return None
-            if entities[entity].kind == "CALL" and not entities[entity].attrs.get("construction") and any(e.kind in {"STORAGE", "PARAMETER", "CALLABLE"} for e in bindings_by_scope.get((scope, name), [])):
-                return None
+            if entities[entity].kind == "CALL" and not entities[entity].attrs.get("construction"):
+                bindings = bindings_by_scope.get((scope, name), [])
+                shadowed = any(e.kind in {"STORAGE", "PARAMETER", "CALLABLE"} for e in bindings)
+                # A C++ constructor is a CALLABLE named exactly like its class, so
+                # ``B(...)`` must still resolve to CLASS:B even though the binding
+                # shadows the type name. No other language names a constructor after
+                # its own class.
+                constructor = any(e.kind == "CALLABLE" and e.attrs.get("constructor") for e in bindings)
+                if shadowed and not constructor:
+                    return None
             candidate = f"{scope}/CLASS:{name}"
             if candidate in entities:
                 return candidate

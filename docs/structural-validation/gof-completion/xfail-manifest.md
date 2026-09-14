@@ -477,7 +477,19 @@ Cada caso se clasifica según las cuatro categorías de [PLAN.md §7](../structu
 
 Datos extraídos en [xfail-classified.json](xfail-classified.json) (146 registros).
 
-## Próximos pasos concretos
+## Disposiciones aplicadas
+
+El manifiesto de arriba es el **snapshot de P0** (146 casos, base `8f68e74`).
+Estas son las resoluciones posteriores; el recuento vivo de xfail baja con cada
+una.
+
+| Fecha | Caso | Categoría original | Disposición | Evidencia |
+|---|---|---|---|---|
+| IR 1.52 | `test_algorithm_builder.py::test_immutable_configuration_reaches_finish_on_successor[python,java,typescript]` | CO (`Immutable successor-builder variant remains design-only`) | **Resuelto**: la variante `builder#immutable-product` está implementada; el marcador `xfail(strict=True)` se quitó y el caso es una regresión normal | [`builder#immutable-product`](builder-immutable-product.md) |
+
+Es el primer bloque de xfail resuelto del ejercicio: **146 → 143**. Los tres
+casos pasaban a `XPASS(strict)` en cuanto la variante se publicó, que es la señal
+correcta: el marcador decía «variante todavía en diseño» y dejó de ser cierto.
 
 ## Variantes design sin tests
 

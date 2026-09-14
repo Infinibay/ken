@@ -1,6 +1,6 @@
 # Guía del IR y del buscador para implementar GoF
 
-Referencia práctica verificada contra **IR 1.51.0**, `kenql/1` y
+Referencia práctica verificada contra **IR 1.52.0**, `kenql/1` y
 `ken-instructions/1`, el 13 de septiembre de 2026. Este documento explica la
 implementación actual y dónde extenderla. El trabajo pendiente está en
 [PLAN.md](../PLAN.md). Las secciones que dicen **PROPUESTO** no son APIs disponibles.

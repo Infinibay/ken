@@ -42,25 +42,28 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **48 ready / 29 design** (cuatro variantes promovidas en este trabajo).
+Inventario: **49 ready / 28 design** (cinco variantes promovidas en este trabajo).
 
-Sin cambio de IR: **`abstract-factory#associated-products`** (Rust) también se
-cerró **solo con query y tests**. El contrato se expresó sobre los **productos
-realmente devueltos** (`RETURNS`) en lugar de sobre la sustitución del tipo
-asociado, que no se modela y no hace falta para el algoritmo. Detalles en
-[`abstract-factory#associated-products`](docs/structural-validation/gof-completion/abstract-factory-associated-products.md).
+IR 1.52 — **C++ en el pase de locales** (cierra P1.6 para los tres lenguajes
+declarados: Go, Rust y C++), y con eso **`builder#immutable-product`** se cierra
+en sus **ocho** lenguajes. Además se resolvieron los **primeros xfail** del
+ejercicio: los 3 casos de `test_algorithm_builder.py` que esperaban esta variante
+daban `XPASS(strict)` y se convirtieron en regresión normal (**146 → 143**).
+Detalles en [P1.6 — C++](docs/structural-validation/gof-completion/cpp-p16.md) y
+[`builder#immutable-product`](docs/structural-validation/gof-completion/builder-immutable-product.md).
 
-Dos de las cuatro variantes cerradas no necesitaron capacidad nueva. **Antes de
-asumir que una fila `design` requiere análisis nuevo, escribir su query y
-correrla.**
+Dos de las cinco variantes cerradas no necesitaron capacidad nueva; las otras
+tres sí. **Antes de asumir que una fila `design` requiere análisis nuevo, escribir
+su query y correrla** — y si de verdad falta una capacidad, construirla en el IR
+en lugar de rodearla en la query.
 
 Siguiente tarea: el cuello de botella compartido que sigue es el **modelo de bus /
 topic resuelto** (P6), que desbloquea `observer#event-bus` y
-`mediator#message-coordination`; después P1.6 para C++, que abre las 25 variantes
-que lo declaran. Candidatos siguientes sin C++: `abstract-factory#structural-families`
-(JS/TS/Go), `factory-method#contract-slot` (Go/Rust), `iterator#callback-iterator`
-(Go) e `iterator#async-iterator` (Python/JS/TS/C#). En paralelo siguen abiertas
-**P1.5**, regiones expresivas/cortocircuitos (bloqueada; ver
+`mediator#message-coordination`. Con C++ admitido, las 25 variantes que lo
+declaran dejan de estar bloqueadas por lenguaje y queda su capacidad propia.
+Candidatos por dependencias: `prototype#language-copy`, `state#state-enum`,
+`decorator#callable-wrapper`, `singleton#module-shared`. En paralelo siguen
+abiertas **P1.5**, regiones expresivas/cortocircuitos (bloqueada; ver
 [registro](docs/structural-validation/gof-completion/P1.5-expressive-regions-blocked.md)),
 y el alcance pendiente de P1.1 (closures, orden de declaración) y P1.3
 (callee/receptor). P3 todavía requiere conectar el núcleo de instrucciones al
@@ -320,12 +323,18 @@ Pasos:
   argumentos soportado y retornos abruptos. No evaluar ambos brazos como secuencia.
 - [ ] **P1.6 Extensión:** Go, Rust y C++ con fixtures equivalentes y contratos de
   asignación múltiples/move/referencia explícitos. No simular semántica Python.
-  **Parcial IR 1.50:** Go y Rust admitidos en `structured-locals/3`. Los
+  **Parcial IR 1.50/1.51:** Go y Rust admitidos en `structured-locals/3`. Los
   contratos se midieron antes de habilitarlos: asignación múltiple (Go
   `a, b := f()`, Rust `let (a, b) = f()`), `deref`/`borrow` y `if let` salen
   `unsupported`, no hechos inventados; en Rust `let b = a` conserva la procedencia
-  del valor, que es lo que un move preserva. C++ sigue fuera. Detalles en
+  del valor, que es lo que un move preserva. Detalles en
   [P1.6 — Go y Rust](docs/structural-validation/gof-completion/go-rust-p16.md).
+  **Añadido IR 1.51:** **C++** admitido con el mismo criterio: referencias (`&`),
+  punteros, `move` y constructor de copia se rechazan. C++ es el lenguaje con más
+  presencia pendiente (25 de las variantes `design`). Detalles en
+  [P1.6 — C++](docs/structural-validation/gof-completion/cpp-p16.md).
+  Queda como límite declarado: templates/sustitución de tipos (P5) y herencia
+  múltiple sin MRO sintetizado.
 
 **Esquema elegido en IR 1.48:** `ARGUMENT_ORIGIN` conserva posición, orígenes,
 unknown y pares origen/escritura en `cases`; `ARGUMENT_REACHES` identifica posición
@@ -565,7 +574,16 @@ Dependencias: **P1, P2, P5, P6 para copias modeladas**. Ready iniciales: `mutabl
 
 #### Pendiente `builder#immutable-product`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+  **IR 1.52:** los ocho lenguajes cubiertos. Requirió resolver el constructor de
+  C++ en `semantic.resolve` (la guarda de sombreado descartaba todo constructor
+  de C++, que es un `CALLABLE` con el nombre de su clase). 27 tests: positivo por
+  lenguaje y dos negativos por lenguaje, incluido el que la ficha pide
+  explícitamente —fluent self del mismo tipo no es un sucesor inmutable—. Los
+  3 xfail de `test_algorithm_builder.py` que esperaban esta variante pasaron a
+  `XPASS(strict)` y se convirtieron en regresión normal: **146 → 143 xfail**.
+  Detalles en
+  [`builder#immutable-product`](docs/structural-validation/gof-completion/builder-immutable-product.md).
 
 Cada paso recibe un estado de construcción, crea un sucesor que conserva los campos pertinentes y modifica uno de ellos. Seguir el sucesor hasta finish y demostrar que el producto usa ese estado. Positivo: copia de builder con un campo cambiado; incluir encadenamiento y variables intermedias.
 

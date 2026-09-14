@@ -92,13 +92,15 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
         reason = ''
         if graph.diagnostics:
             reason = 'diagnostics'
-        # Go and Rust are admitted for the bodies measured in P1.6. Multiple
+        # Go, Rust and C++ are admitted for the bodies measured in P1.6. Multiple
         # assignment (Go ``a, b := f()``, Rust ``let (a, b) = f()``) targets an
-        # expression list or a pattern rather than a STORAGE, and reference writes
-        # are indirect; both are refused as non-local or indirect writes instead of
-        # being given Python semantics. Rust ``let b = a`` keeps the value's
-        # provenance, which is exactly what a move preserves.
-        elif entity.attrs.get('language') not in {'python', 'javascript', 'typescript', 'java', 'csharp', 'go', 'rust'}:
+        # expression list or a pattern rather than a STORAGE, and indirection is
+        # refused instead of guessed: C++ ``&`` aliases, pointer dereference,
+        # ``static_cast<T&&>`` moves and copy constructors all surface as non-local
+        # writes or unknown bindings, as do Go/Rust reference writes. Rust
+        # ``let b = a`` keeps the value's provenance, which is what a move preserves.
+        elif entity.attrs.get('language') not in {'python', 'javascript', 'typescript',
+                                                  'java', 'csharp', 'go', 'rust', 'cpp'}:
             reason = 'language'
         elif owner in nested or owner in dynamic:
             reason = 'nested-or-dynamic-execution'

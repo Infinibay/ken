@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.51.0.** This document describes available behavior
+> **Operational reference: IR 1.52.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,19 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## C++ constructor resolution (IR 1.52)
+
+In C++ a constructor is a `CALLABLE` named exactly like its class. The nominal
+resolver refuses to read a call as a construction when its name matches a local
+binding, so that a function shadowing a type name is not mistaken for a type;
+that guard was also discarding every C++ constructor, and with it `ALLOCATES_TYPE`
+and `RETURNS_NEW`.
+
+The guard now exempts a matching `CALLABLE` marked `constructor`. No other
+language names a constructor after its own class, so the change is confined to
+C++. It is what lets ``return Builder(name, this->size);`` register the successor
+as a new instance of `Builder`.
 
 ## C# events (IR 1.51)
 
@@ -122,7 +135,7 @@ usable afterwards. C++ is not admitted.
 
 ## Current capabilities
 
-This table describes IR 1.51.0, checked against the implementation on 2026-09-13.
+This table describes IR 1.52.0, checked against the implementation on 2026-09-13.
 Preserving syntax, deriving a relationship and proving runtime behavior are
 different levels of support.
 

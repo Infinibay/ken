@@ -9,6 +9,7 @@ query = '''
 query builder {
  any { match "builder#mutable-product"(builder: $builder, finish: $finish, product: $product); } or { match "builder#director"(builder: $builder, finish: $finish, product: $product); }
  or { match "builder#stored-product"(builder:$builder,finish:$finish,product:$product); }
+or { match "builder#immutable-product"(builder:$builder,finish:$finish,product:$product); }
  emit $builder, $finish, $product;
 }
 '''
@@ -52,12 +53,57 @@ query mutable_product {
 
 [[variants]]
 id = "immutable-product"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
-requires = ["value_flow", "copy_models"]
+requires = ["value_flow", "copy_models", "constructor_resolution"]
 graph_requirements = ["El paso devuelve un builder sucesor; su estado modificado llega a la finalización y al producto."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "Un paso no constructor recibe un valor nuevo, devuelve una construccion nueva de su propia clase, y el constructor del sucesor recibe ese valor nuevo junto con un campo del builder original; otra finalizacion construye un producto distinto que vuelve a consumir ese mismo campo. No prueba copia profunda, ni alias residual del estado compartido, ni el orden real de una cadena de pasos."
+query = '''
+query immutable_builder {
+ type_decl() as $builder;
+ require $builder HAS_FIELD $state;
+ require $builder HAS_METHOD $step;
+ callable(constructor: false) as $step;
+ require $step HAS_PARAMETER $input;
+ parameter(receiver: false) as $input;
+ require $step RETURNS_NEW $builder;
+ require $step HAS_CALL $copy;
+ any {
+  require $copy ARGUMENT $changed_argument;
+  require $changed_argument VALUE $changed_value;
+  require $changed_value LOADED_FROM $input;
+ } or {
+  require $copy HAS_INITIALIZER $changed_initializer;
+  require $changed_initializer STORES_VALUE $input;
+ }
+ any {
+  require $copy ARGUMENT $carried_argument;
+  require $carried_argument VALUE $carried_value;
+  require $carried_value LOADED_FROM $state;
+ } or {
+  require $copy HAS_INITIALIZER $carried_initializer;
+  require $carried_initializer STORES_VALUE $state;
+ }
+ different $input $state;
+ require $builder HAS_METHOD $finish;
+ callable(constructor: false) as $finish;
+ different $finish $step;
+ require $finish RETURNS_NEW $product;
+ different $product $builder;
+ require $finish HAS_CALL $final;
+ any {
+  require $final ARGUMENT $final_argument;
+  require $final_argument VALUE $final_value;
+  require $final_value LOADED_FROM $state;
+ } or {
+  require $final HAS_INITIALIZER $final_initializer;
+  require $final_initializer STORES_VALUE $state;
+ }
+ emit $builder, $finish, $product;
+}
+'''
 
 [[variants]]
 id = "consuming-typestate"

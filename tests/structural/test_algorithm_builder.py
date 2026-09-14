@@ -145,6 +145,7 @@ def test_director_rebinding_does_not_mix_build_lifetimes(language):
 
 
 @pytest.mark.parametrize('language', IMMUTABLE)
-@pytest.mark.xfail(strict=True, reason='Immutable successor-builder variant remains design-only')
 def test_immutable_configuration_reaches_finish_on_successor(language):
+    # Resolved by builder#immutable-product (IR 1.52): the successor-builder
+    # variant is implemented, so this is a normal regression, not a pending case.
     assert detect(IMMUTABLE[language], language, 'builder')
