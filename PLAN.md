@@ -42,13 +42,22 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **46 ready / 31 design** (dos variantes promovidas en este trabajo).
+Inventario: **47 ready / 30 design** (tres variantes promovidas en este trabajo).
+
+Sin cambio de IR: **`template-method#trait-default`** (Rust) se cerró **solo con
+query y tests**. El IR ya ligaba impl→trait (`SUBTYPE_OF`) y hook→implementación
+(`OVERRIDES`), así que el trabajo pendiente era expresar el contrato, no
+construirlo. Es el primer caso del inventario donde la ficha
+(`documented-not-validated`, `missing_capability = "unknown"`) ocultaba una
+variante ya lista. Detalles en
+[`template-method#trait-default`](docs/structural-validation/gof-completion/template-method-trait-default.md).
 
 Siguiente tarea: el cuello de botella compartido que sigue es el **modelo de bus /
 topic resuelto** (P6), que desbloquea `observer#event-bus` y
 `mediator#message-coordination`; después P1.6 para C++, que abre las 25 variantes
-que lo declaran. En paralelo siguen abiertas **P1.5**, regiones
-expresivas/cortocircuitos (bloqueada; ver
+que lo declaran. Antes de asumir que otra variante necesita capacidad nueva,
+**escribir su query y correrla**: puede estar ya soportada. En paralelo siguen
+abiertas **P1.5**, regiones expresivas/cortocircuitos (bloqueada; ver
 [registro](docs/structural-validation/gof-completion/P1.5-expressive-regions-blocked.md)),
 y el alcance pendiente de P1.1 (closures, orden de declaración) y P1.3
 (callee/receptor). P3 todavía requiere conectar el núcleo de instrucciones al
@@ -862,7 +871,12 @@ Dependencias: **P1, P2, P4, P5 para trait**. Ready iniciales: `virtual-skeleton`
 
 #### Pendiente `template-method#trait-default`
 
-- [ ] Implementar en: `rust`.
+- [x] Implementar en: `rust`.
+  **Cerrada sin cambio de IR:** el grafo ya daba `SUBTYPE_OF` (impl→trait),
+  `OVERRIDES` (hook→implementación) y `TARGET` (llamada del default al slot). 8
+  tests (positivo con dos tipos, renombrado y cinco negativos, incluido el hook
+  implementado por un solo tipo). Detalles en
+  [`template-method#trait-default`](docs/structural-validation/gof-completion/template-method-trait-default.md).
 
 Resolver algoritmo default del trait, slots que llama y sus implementaciones concretas. Mantener identidad de instancia/receptor. Positivo: default Rust con pasos fijos y hook implementado por dos tipos.
 
