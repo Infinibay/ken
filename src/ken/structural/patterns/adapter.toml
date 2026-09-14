@@ -7,7 +7,8 @@ caveat = "Structural evidence requires review of intent and runtime behavior."
 legacy_query = "require $unit SUBTYPE_OF $target\nrequire $unit HAS_FIELD $field\nrequire $field TYPE $adaptee\nrequire $unit HAS_METHOD $method\nrequire $method DELEGATES_TO $field\ndifferent $target $adaptee\n"
 query = '''
 query adapter {
- match "adapter#object-adapter"(unit: $unit);
+ any { match "adapter#object-adapter"(unit: $unit); }
+ or { match "adapter#class-adapter"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -53,9 +54,24 @@ fixtures_status = "documented-not-validated"
 
 [[variants]]
 id = "class-adapter"
-status = "design"
+status = "ready"
 languages = ["python", "cpp"]
 requires = ["multiple_inheritance", "override_resolution"]
 graph_requirements = ["Herencia del adaptee y cumplimiento del contrato objetivo; resolver método efectivamente invocado."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-python-cpp"
+query_claim = "La clase hereda de dos bases distintas, sobrescribe el slot que una de ellas declara, y dentro de esa sobrescritura invoca un metodo que la otra base declara: adaptacion por herencia, no por campo. La desigualdad de nombres no define el patron: la query no compara nombres. No prueba el MRO completo de Python ni el orden de bases de C++ mas alla de que ambas existan, ni que el slot se invoque en ejecucion. LIMITE: una adaptacion con el MISMO nombre de metodo en ambas bases exige calificacion explicita (Adaptee::request(), Adaptee.request(self)), que hoy no se resuelve; ese caso queda como falso negativo declarado."
+query = '''
+query adapter {
+ require $unit SUBTYPE_OF $target;
+ require $unit SUBTYPE_OF $adaptee;
+ different $target $adaptee;
+ require $target HAS_METHOD $slot;
+ require $unit HAS_METHOD $override;
+ require $override OVERRIDES $slot;
+ require $override HAS_CALL $call;
+ require $call TARGET $delegate;
+ require $adaptee HAS_METHOD $delegate;
+ emit $unit, $target, $adaptee, $slot, $override, $delegate;
+}
+'''

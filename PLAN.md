@@ -42,29 +42,27 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **50 ready / 27 design** (seis variantes promovidas en este trabajo).
+Inventario: **51 ready / 26 design** (siete variantes promovidas en este trabajo).
 
-IR 1.53 — resolución nominal de miembros y satisfacción estructural: con
-**`method_elem`** (la firma de método de Go, que faltaba en `FUNCTIONS`), **Go
-satisface interfaces** por method set emitido como `IMPLEMENTS` —nunca
-`SUBTYPE_OF`, como exige la ficha—, y `&dyn Trait`/`impl Trait` resuelven a su
-trait. Con eso se cierra **`factory-method#contract-slot`** (Go/Rust). Detalles en
-[`factory-method#contract-slot`](docs/structural-validation/gof-completion/factory-method-contract-slot.md).
+Sin cambio de IR: **`adapter#class-adapter`** (python, cpp) se cerró **solo con
+query**. El grafo ya ligaba la clase con sus **dos** bases, la sobrescritura del
+slot objetivo y la llamada efectiva al método de la base adaptada, porque la
+resolución de llamadas atraviesa las bases. Detalles en
+[`adapter#class-adapter`](docs/structural-validation/gof-completion/adapter-class-adapter.md).
 
-Una regresión valiosa: la primera versión del pase nominal emitía `TARGET` para
-todo miembro y rompió `test_declared_dispatch.py`, que documenta la separación
-`DECLARED_TARGET` / `MAY_TARGET` / `TARGET`. Se corrigió respetando ese diseño en
-lugar de relajar el test.
+**Tres de las siete variantes cerradas no necesitaron capacidad nueva.** La regla
+que se desprende: escribir la query y correrla **antes** de asumir que falta
+análisis. Cuando sí falta, construirla en el IR en lugar de rodearla en la query.
 
-Siguiente tarea: `IMPLEMENTS` estructural ya existe, así que el candidato inmediato
-es **`abstract-factory#structural-families`** (javascript, typescript, go), que
-pide relacionar structs con el mismo conjunto de operaciones de creación sin exigir
-herencia. Después, `iterator#callback-iterator` (Go) e `iterator#async-iterator`
-(python/js/ts/csharp), y el **modelo de bus/topic** (P6) para `observer#event-bus`
-y `mediator#message-coordination`. Candidatos con C++ ya admitido:
-`prototype#language-copy`, `state#state-enum`, `decorator#callable-wrapper`,
-`singleton#module-shared`. En paralelo siguen abiertas **P1.5**, regiones
-expresivas/cortocircuitos (bloqueada; ver
+Siguiente tarea: `abstract-factory#structural-families` es el único caso medido
+donde la query directa **no** sirve — relacionar dos proveedores por su conjunto
+de operaciones produce el producto cartesiano que este plan prohíbe, y con 30
+tipos la medición da `budget:max_states`. Necesita una capacidad de IR que agrupe
+operaciones por firma compartida para que el join sea por identidad. Otros
+candidatos: `prototype#language-copy`, `iterator#callback-iterator` (Go),
+`singleton#module-shared`, y el **modelo de bus/topic** (P6) para
+`observer#event-bus` y `mediator#message-coordination`. En paralelo siguen abiertas
+**P1.5**, regiones expresivas/cortocircuitos (bloqueada; ver
 [registro](docs/structural-validation/gof-completion/P1.5-expressive-regions-blocked.md)),
 y el alcance pendiente de P1.1 (closures, orden de declaración) y P1.3
 (callee/receptor). P3 todavía requiere conectar el núcleo de instrucciones al
@@ -545,7 +543,12 @@ Seguir la función capturada hasta la llamada efectiva. Probar que la transforma
 
 #### Pendiente `adapter#class-adapter`
 
-- [ ] Implementar en: `python`, `cpp`.
+- [x] Implementar en: `python`, `cpp`.
+  **Cerrada sin cambio de IR:** el grafo ya daba `SUBTYPE_OF` a **ambas** bases,
+  `OVERRIDES` del slot objetivo y `TARGET` al método heredado de la base adaptada
+  (la resolución de llamadas atraviesa las bases). 8 tests; el negativo clave es
+  el object adapter clásico, que tiene una sola base. Detalles en
+  [`adapter#class-adapter`](docs/structural-validation/gof-completion/adapter-class-adapter.md).
 
 Resolver herencia múltiple y el método efectivo de la base adaptada usado para satisfacer el slot destino. En Python respetar MRO; en C++ resolver bases y calificación de método. Positivo: clase que hereda del contrato destino y de la implementación adaptada.
 
