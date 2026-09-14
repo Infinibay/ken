@@ -42,7 +42,20 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **76 ready / 1 design** (treinta y dos variantes promovidas en este trabajo).
+Inventario: **77 ready / 0 design** (treinta y tres variantes promovidas en este trabajo:
+**el catalogo no tiene ninguna variante en `design`**).
+
+Sin cambio de IR: **`proxy#remote-subject`** se cerro **solo con query**, con la segunda
+alternativa que la ficha permite: la **implementacion local visible** que serializa la
+llamada y devuelve su respuesta. La clase implementa el contrato local (`SUBTYPE_OF`, o
+`IMPLEMENTS` en Go), guarda un cliente cuyo tipo **no** es ese contrato, su metodo delega
+en el cliente pasando el resultado de un codificador alimentado por su propio parametro,
+y devuelve el resultado de un decodificador distinto de la llamada de transporte. El tipo
+del cliente se alcanza por declaracion o —en JavaScript, que no declara tipos de campo—
+por la **construccion** con la que se inicializa el campo. NO prueba que el transporte sea
+realmente remoto ni que el codec serialice de verdad; la tabla de nombres de API RPC no se
+implementa. Detalles en
+[`proxy#remote-subject`](docs/structural-validation/gof-completion/proxy-remote-subject.md).
 
 Sin cambio de IR: **`interpreter#expression-sum`** se cerro **solo con query**. Comparte la
 forma etiquetada de `composite#algebraic-tree` y anade el **contexto**: las dos llamadas
@@ -1215,7 +1228,16 @@ Relacionar test de ausencia del subject, creación/carga, almacenamiento y deleg
 
 #### Pendiente `proxy#remote-subject`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+  **Cerrada sin cambio de IR:** el contrato sin tabla de nombres de API cierra en los ocho con
+  hechos existentes (la union `SUBTYPE_OF`/`IMPLEMENTS`, `TYPE` del campo del cliente,
+  `OVERRIDES`, `RECEIVER`, `RESULT` del codificador, `RETURNS_CALL` del decodificador). 65 tests
+  (positivo y renombrado por lenguaje, cuatro negativos —derivados del positivo con ediciones
+  explicitas por lenguaje y parseados—, la consulta raiz, los metadatos y la comprobacion de que
+  el tipo del cliente es lo que separa la variante de un decorador). Limitacion registrada: en el
+  fixture de C++ el payload es `int` porque la resolucion de `OVERRIDES` de C++ no resuelve
+  grafias de tipo cualificadas (`std::string`) en la firma virtual. Detalles en
+  [`proxy#remote-subject`](docs/structural-validation/gof-completion/proxy-remote-subject.md).
 
 Resolver representación local del contrato remoto, operación RPC y transformación de argumentos/resultado. Positivo: API RPC modelada o implementación local visible que serializa la llamada y devuelve su respuesta.
 

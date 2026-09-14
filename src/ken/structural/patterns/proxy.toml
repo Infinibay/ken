@@ -9,6 +9,7 @@ query = '''
 query proxy {
  any { match "proxy#guarded-access"(unit: $unit); }
  or { match "proxy#lazy-subject"(unit: $unit); }
+ or { match "proxy#remote-subject"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -72,9 +73,35 @@ query proxy {
 
 [[variants]]
 id = "remote-subject"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
 requires = ["rpc_models", "contract_resolution"]
 graph_requirements = ["Contrato local representa operación remota y mapea argumentos/resultados; modelo RPC identificado."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "La **implementacion local visible** que serializa la llamada y devuelve su respuesta: la clase implementa el contrato local (`SUBTYPE_OF`, o `IMPLEMENTS` en Go, que satisface la interfaz por method set), guarda un cliente cuyo tipo **no** es ese contrato, su metodo delega en el cliente pasando como argumento el resultado de un **codificador** alimentado por su propio parametro, y devuelve el resultado de un **decodificador** distinto de la llamada de transporte. El tipo del cliente se alcanza por declaracion (anotaciones o campos) o por la **construccion** con la que se inicializa el campo, que es lo que tiene JavaScript en vez de declaracion. NO prueba que el transporte sea realmente remoto, ni que el codec serialice de verdad, ni que el cliente no se reasigne, ni que la respuesta se consuma entera, ni que ningun camino de excepcion salte el decodificado. La otra alternativa de la ficha (una tabla de nombres de API RPC) no se implementa."
+query = '''
+query proxy_remote_subject {
+ require $unit HAS_FIELD $client;
+ require $client TYPE $client_type;
+ require $unit HAS_METHOD $method;
+ require $method OVERRIDES $slot;
+ any { require $unit SUBTYPE_OF $contract; }
+ or { require $unit IMPLEMENTS $contract; }
+ different $client_type $contract;
+ require $method HAS_CALL $transport;
+ require $transport RECEIVER $client;
+ require $method HAS_PARAMETER $request;
+ parameter(receiver: false) as $request;
+ require $transport ARGUMENT $argument;
+ require $argument VALUE $encoded;
+ require $encoder RESULT $encoded;
+ call() as $encoder;
+ require $encoder ARGUMENT $encoder_argument;
+ require $encoder_argument VALUE $encoder_input;
+ require $encoder_input LOADED_FROM $request;
+ require $method RETURNS_CALL $decoder;
+ different $transport $decoder;
+ emit unit=$unit, $contract, $client, $method, $transport, $encoder, $decoder, $request;
+}
+'''

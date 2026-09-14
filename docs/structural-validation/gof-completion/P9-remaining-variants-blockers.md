@@ -1,8 +1,8 @@
-# Bloqueo medido de la variante restante
+# Bloqueos medidos — registro histórico (ninguna variante pendiente)
 
-Estado: **registro de bloqueo**, no cierre. Queda **una** variante en
-`status = "design"`. Fecha: 2026-09-14. Base: IR 1.71.0, inventario 76 `ready` /
-1 `design`. Cada entrada trae la medición, el archivo y símbolo siguiente, y el
+Estado: **registro histórico**. **No queda ninguna variante en `design`**: las 33 se
+cerraron. Este archivo conserva las mediciones que costaron trabajo y las correcciones de
+notas equivocadas, para quien retome las capacidades que quedaron sin modelar. Fecha: 2026-09-14. Base: IR 1.71.0, inventario **77 `ready` / 0 `design`**. Cada entrada trae la medición, el archivo y símbolo siguiente, y el
 contraejemplo mínimo que la desbloquea.
 
 ## 0. Lo que este documento se equivocó, y por qué importa
@@ -173,7 +173,13 @@ argumento↔resultado. Es la variante con menos guía de diseño: la tabla de
 
 ## Orden sugerido
 
-Queda **una**: `proxy#remote-subject`. El contrato sin nombres ya cierra en python, java y
+**Ninguna.** `proxy#remote-subject` se cerró con el contrato sin nombres (ver
+[`proxy#remote-subject`](proxy-remote-subject.md)); lo que sigue abierto es la capacidad de
+**modelar los miembros de un objeto literal** de JavaScript, que ampliaría el contrato a la
+forma no construida y desbloquearía también el proveedor de objeto literal de
+`abstract-factory#structural-families`. El resto de lo medido aquí —la codificación de suma
+por casos, la tabla de nombres de API RPC— no bloquea ninguna variante ya. Nota histórica: el
+contrato sin nombres cerró en python, java y
 go; lo que falta es decidir el camino para JavaScript, y las dos opciones están medidas
 arriba (modelar los miembros de un objeto literal, o reforzar la serialización sin la
 cláusula de tipo declarado y comprobar que sigue rechazando el "HTTP helper sin contrato
