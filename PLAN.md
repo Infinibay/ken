@@ -42,11 +42,19 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **73 ready / 4 design** (veintinueve variantes promovidas en este trabajo).
-Las cuatro que quedan —`observer#event-bus`, `composite#algebraic-tree`,
-`interpreter#expression-sum` y `proxy#remote-subject`— necesitan una capacidad nueva cada
-una; la medición, el símbolo siguiente y el contraejemplo mínimo de cada una están en
-[bloqueos medidos](docs/structural-validation/gof-completion/P9-remaining-variants-blockers.md).
+Inventario: **74 ready / 3 design** (treinta variantes promovidas en este trabajo).
+Sin cambio de IR: **`observer#event-bus`** se cerró **solo con query**. El topic del alta
+y el de la publicación son **la misma entidad**, y la query acepta las dos formas de
+acceso al registro (índice y método) más el local intermedio de Java, todo con hechos
+existentes. El bloqueo que el registro había anotado para esta variante —"Java no tiene
+`operator[]` para `Map`"— era **falso**, y se descubrió midiendo la query en vez de
+razonar sobre el IR; la corrección quedó escrita en
+[bloqueos medidos](docs/structural-validation/gof-completion/P9-remaining-variants-blockers.md),
+junto con la de una supuesta colisión de ids de `CALL` que tampoco existe.
+
+Las tres que quedan —`composite#algebraic-tree`, `interpreter#expression-sum` y
+`proxy#remote-subject`— necesitan una capacidad nueva cada una; la medición, el símbolo
+siguiente y el contraejemplo mínimo están en ese mismo registro.
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -1114,7 +1122,16 @@ Identificar event de C#, registro/remoción de handlers e invocación del mismo 
 
 #### Pendiente `observer#event-bus`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+  **Cerrada sin cambio de IR:** el topic se une **por identidad** (el mismo `STORAGE` en
+  los dos lados) y la query acepta las dos formas de acceso al registro —índice
+  (`handlers[topic]`) y método (Python `dict.setdefault`/`get`, Java
+  `Map.computeIfAbsent`/`get`), más el local intermedio de Java— con hechos existentes.
+  El bloqueo que este archivo había registrado ("Java no tiene `operator[]`") era **falso**:
+  se descubrió midiendo la query. 74 tests (positivo y renombrado por lenguaje, cinco
+  negativos por lenguaje, la consulta raíz y la comprobación de que el topic es el campo
+  compartido). Detalles en
+  [`observer#event-bus`](docs/structural-validation/gof-completion/observer-event-bus.md).
 
 Relacionar registro de subscriber y publicación sobre el mismo bus/topic, con callback y payload. Positivo: bus local resuelto y modelo de API explícito; los nombres de topics pueden variar, la identidad no.
 

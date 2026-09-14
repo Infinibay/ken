@@ -11,6 +11,7 @@ query observer {
  or { match "observer#map-key-registry"(unit: $unit); }
  or { match "observer#snapshot-registry"(unit: $unit); }
  or { match "observer#language-event"(unit: $unit); }
+ or { match "observer#event-bus"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -123,9 +124,58 @@ query observer {
 
 [[variants]]
 id = "event-bus"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
 requires = ["event_api_models", "topic_flow"]
 graph_requirements = ["Subscribe y publish comparten bus/topic resueltos; preservar restricciones y delivery desconocido."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "Un bus con un registro y un **slot de topic** compartidos: el alta inserta el subscriber en el registro **bajo ese topic** y la publicacion recorre el registro **bajo el mismo topic** invocando el elemento con el payload. El topic se une **por identidad de entidad**, no comparando cadenas: es el mismo campo en los dos lados. El acceso al registro se acepta en sus dos formas, porque los lenguajes se reparten: sintaxis de indice (`handlers[topic]`: Go, JS/TS, C#, C++, Rust), donde el acceso lleva `CONTAINER`/`INDEX` y es lo que apunta `INSERTS_INTO`, o sintaxis de metodo (Python `dict.setdefault`/`get`, Java `Map.computeIfAbsent`/`get`), donde el acceso es una llamada con el registro de receptor y el topic como argumento 0; Java ademas liga el bucket a un local antes de iterar. NO prueba entrega exactamente una vez, ni orden, ni que el topic no se reasigne, ni que el subscriber se invoque de verdad en ejecucion; tampoco que el registro no se comparta con otros topics."
+query = '''
+query observer_event_bus {
+ require $unit IS CLASS;
+ require $unit HAS_FIELD $registry;
+ require $unit HAS_FIELD $topic;
+ require $unit HAS_METHOD $subscription;
+ require $unit HAS_METHOD $publication;
+ different $subscription $publication;
+ require $subscription HAS_PARAMETER $subscriber;
+ parameter(receiver: false) as $subscriber;
+ require $subscription HAS_CALL $insert;
+ require $insert INSERTED_VALUE $subscriber;
+ require $insert INSERTS_INTO $registration_bucket;
+ any {
+  require $registration_bucket CONTAINER $registry;
+  require $registration_bucket INDEX $topic;
+ } or {
+  require $registration_bucket RECEIVER $registry;
+  require $registration_bucket ARGUMENT $registration_argument;
+  require $registration_argument VALUE $registration_value;
+  require $registration_value LOADED_FROM $topic;
+ }
+ require $publication HAS_PARAMETER $payload;
+ parameter(receiver: false) as $payload;
+ require $publication ITERATES_CALLS $publication_bucket;
+ any {
+  require $publication_bucket CONTAINER $registry;
+  require $publication_bucket INDEX $topic;
+ } or {
+  require $publication_bucket RECEIVER $registry;
+  require $publication_bucket ARGUMENT $publication_argument;
+  require $publication_argument VALUE $publication_value;
+  require $publication_value LOADED_FROM $topic;
+ } or {
+  require $publication_bucket ASSIGNED_FROM $lookup;
+  require $lookup RECEIVER $registry;
+  require $lookup ARGUMENT $lookup_argument;
+  require $lookup_argument VALUE $lookup_value;
+  require $lookup_value LOADED_FROM $topic;
+ }
+ require $publication HAS_OPERATION $iteration;
+ require $iteration ITERATION_INVOKES_VALUE $invocation;
+ require $invocation ARGUMENT $invocation_argument;
+ require $invocation_argument VALUE $invocation_value;
+ require $invocation_value LOADED_FROM $payload;
+ emit unit=$unit, $subscription, $publication, $registry, $topic, $subscriber, $payload, $invocation;
+}
+'''
