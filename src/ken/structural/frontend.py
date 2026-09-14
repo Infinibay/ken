@@ -511,15 +511,26 @@ class Lowerer:
                 pname = self.text(pname_node).lstrip("*&.")
                 cpp_parameter_type = ''
                 cpp_parameter_name = None
+                cpp_reference_kind = ''
                 if self.ir.language == 'cpp':
                     cpp_parameter_name, cpp_parameter_type = parameter_info(self.source, param)
                     pname = self.text(cpp_parameter_name) if cpp_parameter_name is not None else f'anonymous@{param.start_byte}'
+                    # ``X(const X&)`` and ``X(X&&)`` differ only by the reference
+                    # kind, and C++ binds them to different protocols: one copies,
+                    # the other moves. The declarator spelling is the only place
+                    # that distinction exists.
+                    declarator = field(param, 'declarator')
+                    if declarator is not None and declarator.type == 'reference_declarator':
+                        tokens = [self.text(c) for c in declarator.children if not c.is_named]
+                        cpp_reference_kind = 'rvalue' if '&&' in tokens else 'lvalue'
                 variadic_keyword = spelling.startswith("**")
                 variadic = spelling.startswith("*") or "..." in spelling or any(d.type in {"rest_pattern", "list_splat_pattern"} for d in descendants(param))
                 parameter_kind = ("variadic_keyword" if variadic_keyword else "variadic_positional" if variadic
                                   else "keyword_only" if keyword_only else "positional_only" if positional_only else "positional")
                 is_receiver = direct_method and position == 0 and (pname in {"self", "cls"} or param.type == "self_parameter")
                 pid = self.entity("PARAMETER", pname, function, param, kind_=parameter_kind, position=position, receiver=is_receiver)
+                if cpp_reference_kind:
+                    self.ir.entities[pid].attrs["reference_kind"] = cpp_reference_kind
                 if self.ir.language != 'cpp' or cpp_parameter_name is not None:
                     self.names[(function, pname)] = pid
                 default_node = field(param, 'value', 'default_value')

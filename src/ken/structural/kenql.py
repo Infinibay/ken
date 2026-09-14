@@ -165,7 +165,7 @@ class Parser:
                 self.take(); alias = self.variable()
             else:
                 self.serial += 1; alias = f'$_local{self.serial}'
-            allowed = {'instance_constructor', 'visibility_basis', 'visibility_status', 'explicit_arguments', 'name', 'kind', 'native_kind', 'language', 'type', 'type_family', 'type_state', 'return_type', 'return_family', 'return_type_state', 'position', 'pos', 'receiver', 'parameter_kind', 'declared', 'static', 'async', 'generator', 'visibility', 'owner', 'delegated', 'method', 'mutable', 'storage_kind', 'path', 'path_glob', 'resolution', 'dispatch', 'keyword', 'spread_kind', 'native_type', 'native_return_type', 'constructor', 'context_manager', 'arity'}
+            allowed = {'instance_constructor', 'visibility_basis', 'visibility_status', 'explicit_arguments', 'name', 'kind', 'native_kind', 'language', 'type', 'type_family', 'type_state', 'return_type', 'return_family', 'return_type_state', 'position', 'pos', 'receiver', 'parameter_kind', 'declared', 'static', 'async', 'generator', 'visibility', 'owner', 'delegated', 'method', 'mutable', 'storage_kind', 'path', 'path_glob', 'resolution', 'dispatch', 'keyword', 'spread_kind', 'reference_kind', 'native_type', 'native_return_type', 'constructor', 'context_manager', 'arity'}
             invalid = {k for k, _, _ in attrs} - allowed
             if tag == 'operation':
                 invalid.discard('role')

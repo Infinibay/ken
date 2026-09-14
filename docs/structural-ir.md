@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.59.0.** This document describes available behavior
+> **Operational reference: IR 1.60.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,19 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## C++ parameter reference kind (IR 1.60)
+
+A C++ parameter bound through a `reference_declarator` records how it is bound:
+`reference_kind` is `lvalue` for `&` and `rvalue` for `&&`. Parameters taken by value
+carry no `reference_kind` at all, so the attribute distinguishes three bindings rather
+than two.
+
+It exists because `X(const X&)` and `X(X&&)` differ in nothing else. Both are
+constructors of `X`, both have arity 1, and the parameter's `TYPE` resolves to `X`
+either way — the declarator spelling is the only place the distinction lives. Copy
+and move are different protocols, so a rule asking for the copy constructor has to be
+able to say so.
 
 ## Suspending loops (IR 1.59)
 

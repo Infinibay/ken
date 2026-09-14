@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **60 ready / 17 design** (dieciséis variantes promovidas en este trabajo).
+Inventario: **61 ready / 16 design** (diecisiete variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -127,6 +127,16 @@ KenQL liga una ocurrencia de callsite (`<call>/argument/<pos>`), no el almacenam
 sin pasar por `VALUE` y `LOADED_FROM` la comparación con `ITERATION_BINDING` devuelve
 cero matches **sin fallar**, que es indistinguible de «el patrón no está». Detalles en
 [`iterator#callback-iterator`](docs/structural-validation/gof-completion/iterator-callback-iterator.md).
+
+IR 1.60 — **tipo de referencia del parámetro en C++**: `X(const X&)` y `X(X&&)` no
+diferían en nada observable —mismo nombre, misma aridad, y el `TYPE` del parámetro
+resolvía a `X` en ambos—, así que un constructor de movimiento matcheaba la rama de
+constructor de copia. La grafía del declarador es el único sitio donde vive la
+diferencia; ahora se registra como `reference_kind` (`lvalue`/`rvalue`, ausente por
+valor). Con eso, y exigiendo que el `clone` de Rust inicialice la construcción desde un
+campo del propio tipo (un `clone` que devuelve un valor fresco no copia), se cierra
+**`prototype#language-copy`** en sus cinco lenguajes. Detalles en
+[`prototype#language-copy`](docs/structural-validation/gof-completion/prototype-language-copy.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`chain#middleware-closures`**, **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -914,7 +924,7 @@ Dependencias: **P1, P2, P5/P6 según protocolo**. Ready iniciales: `field-copy`,
 
 #### Pendiente `prototype#language-copy`
 
-- [ ] Implementar en: `python`, `java`, `csharp`, `cpp`, `rust`.
+- [x] Implementar en: `python`, `java`, `csharp`, `cpp`, `rust`.
 
 Resolver protocolo de copia, constructor de copia o derive nativo. Relacionar fuente, campos realmente copiados y objeto retornado; registrar aliases/profundidad conocida. Positivo: copia idiomática propia de cada lenguaje, con una modificación independiente posterior cuando el contrato lo garantice.
 

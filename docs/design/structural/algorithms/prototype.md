@@ -111,6 +111,12 @@ La nueva matriz ensaya Python, Java y TypeScript con construcción explícita. L
 otras formas son requisitos y regresiones previas separadas, no cobertura nueva
 atribuible a este documento.
 
+Las tres formas que el catálogo agrupa en `prototype#language-copy` —protocolo
+(Python/Java/C#), constructor de copia (C++) y el método `clone` de Rust— pasaron a
+`ready` en IR 1.60. La profundidad sigue sin resolverse: una copia somera y una
+profunda son indistinguibles, y esa es la razón de que las tres compartan una sola
+variante en vez de una cada una.
+
 ## Ruido, negativos y evidencia
 
 [`test_algorithm_prototype.py`](../../../../tests/structural/test_algorithm_prototype.py)
