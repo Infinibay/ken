@@ -163,9 +163,11 @@ conserva el símbolo parámetro pero rompe el vínculo con el visitante elegido 
 el cliente. Se necesita una definición de entrada y el flujo hasta la llamada,
 permitiendo aliases seguros en vez de aceptar o rechazar por nombres.
 
-Finalmente, los contratos named-dispatch, overloaded-dispatch, stateful-visit y
-result-forwarding deberían ser operaciones consultables separadamente. La
-presencia de un return no define Visitor y el retorno de una constante no lo
-refuta cuando el objetivo era acumular efectos en el visitante. El lenguaje debe
-permitir pedir esa precisión adicional sin endurecer de forma incorrecta todas
-las variantes del catálogo.
+Finalmente, los contratos named-dispatch y overloaded-dispatch ya son variantes
+consultables por separado, y su separación es exacta: con una sola operación en el
+visitante la llamada **resuelve** (`TARGET`), así que matchea `named-dispatch`; con un
+conjunto de sobrecargas nada resuelve y matchea `overloaded-dispatch`. `stateful-visit`
+y `result-forwarding` siguen siendo aspiraciones. La presencia de un return no define
+Visitor y el retorno de una constante no lo refuta cuando el objetivo era acumular
+efectos en el visitante. El lenguaje debe permitir pedir esa precisión adicional sin
+endurecer de forma incorrecta todas las variantes del catálogo.

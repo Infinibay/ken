@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **63 ready / 14 design** (diecinueve variantes promovidas en este trabajo).
+Inventario: **64 ready / 13 design** (veinte variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -171,6 +171,15 @@ parámetro. Las tres formas del objeto retenido se aceptan con dos ramas —`pat
 $returned MEMBER_OF{0,2} $entry` cubre Java/C# (distancia 0) y la cadena de C++ sobre el
 `pair`, y `$returned RECEIVER $entry` cubre el `or_insert_with` de Rust. Detalles en
 [`flyweight#entry-api`](docs/structural-validation/gof-completion/flyweight-entry-api.md).
+
+Sin cambio de IR: **`visitor#overloaded-dispatch`** se cerró **solo con query**, en sus
+tres lenguajes. Es la gemela de `named-dispatch`, que exige un `TARGET` resuelto: con
+una sola operación en el visitante la llamada resuelve; con un conjunto de sobrecargas
+no resuelve nada, y lo que se exige es que el **conjunto exista**
+(`count distinct $overload >= 2` sobre `HAS_METHOD`, cota inferior que no necesita
+clausura). La separación se midió en las dos direcciones y es complementaria. Detalles
+en
+[`visitor#overloaded-dispatch`](docs/structural-validation/gof-completion/visitor-overloaded-dispatch.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -1076,7 +1085,7 @@ Dependencias: **P1, P2, P4, P5**. Ready iniciales: `named-dispatch`.
 
 #### Pendiente `visitor#overloaded-dispatch`
 
-- [ ] Implementar en: `java`, `csharp`, `cpp`.
+- [x] Implementar en: `java`, `csharp`, `cpp`.
 
 Resolver accept→overload visit seleccionado por el tipo del elemento actual. Relacionar visitor recibido, receptor efectivo y argumento self/this. Positivo: familia con dos elementos que llaman overloads diferentes sin sufijos en nombres.
 

@@ -217,4 +217,8 @@ def test_named_visitor_with_const_pointer_prototype_and_reference_input(named, c
     result=graph(source);rules=builtin_rules()
     outcome=execute_rules(result,[named_rule('visitor',rules)],registry=rules)
     assert outcome['complete']
-    assert bool(outcome['matches'])==(change in {'positive','renamed'})
+    # ``overloaded`` adds a second ``handle`` overload to the visitor. Until IR 1.61
+    # the root query covered only named-dispatch, which needs a resolved TARGET, so
+    # the overload set was rejected; visitor#overloaded-dispatch is now ready and
+    # admits it, which is precisely the case it exists for.
+    assert bool(outcome['matches'])==(change in {'positive','renamed','overloaded'})
