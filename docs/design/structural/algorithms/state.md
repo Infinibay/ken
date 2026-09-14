@@ -97,9 +97,13 @@ salida puede ser el bug que una query de uso quiere detectar.
 | Máquina de tablas | Muchos lenguajes | Clave estado/evento y resultado de lookup, no sólo existencia de mapa |
 | Async/event loop | Aplicaciones web y servicios | Orden de eventos, suspensión, reentrancia y transiciones pendientes |
 
-La variante `state-enum` del catálogo sigue siendo `design`. Esta revisión prueba
-Python, Java y TypeScript con backreference; la tabla no acredita cobertura de las
-otras representaciones ni equivalencia completa de máquinas de estados.
+La variante `state-enum` del catálogo pasó a `ready` en IR 1.58 para los ocho
+lenguajes declarados: el discriminante es un valor, la guarda que lo menciona
+gobierna la escritura (`GUARDS_WRITE`) y el mismo callable escribe al menos dos
+constantes distintas, contadas **por identidad de declaración** y no por posición de
+sintaxis. Esta revisión prueba Python, Java y TypeScript con backreference; la tabla
+no acredita cobertura de las otras representaciones ni equivalencia completa de
+máquinas de estados.
 
 ## Pruebas nuevas y límites comprobados
 

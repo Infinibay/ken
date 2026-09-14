@@ -2,13 +2,14 @@ schema = "ken-rule/1"
 id = "state"
 name = "State"
 category = "behavioral"
-description = "A context delegates through a contract and stores a concrete replacement."
-caveat = "State and Strategy share structure; transition intent requires review."
+description = "A context delegates through a contract and stores a concrete replacement, or a state value governs branches and a transition rewrites that same field."
+caveat = "State and Strategy share structure; transition intent requires review. The value variant counts distinct constant identities written under the guard, so it proves a rewrite happened, not that the state set is exhaustive or the machine total."
 legacy_query = "require $unit HAS_FIELD $state\nrequire $state TYPE $contract\nrequire $unit HAS_METHOD $request\nrequire $request DELEGATES_TO $state\nrequire $unit HAS_METHOD $transition\nrequire $transition WRITES $state\nrequire $state ASSIGNED_FROM $construction\nrequire $construction ALLOCATES_TYPE $concrete\nrequire $concrete SUBTYPE_OF $contract\n"
 query = '''
 query state {
  any { match "state#state-object"(unit: $unit); }
  or { match "state#context-transition"(unit: $unit); }
+ or { match "state#state-enum"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -44,12 +45,28 @@ query state {
 '''
 [[variants]]
 id = "state-enum"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
 requires = ["match_flow", "storage_def_use"]
 graph_requirements = ["Valor de estado gobierna ramas y una transición lo cambia; no introducir objetos State ficticios."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "Un campo del contexto se escribe dentro de una rama cuya condicion menciona ese mismo campo (GUARDS_WRITE) y el mismo callable escribe al menos dos valores distintos en el. `count distinct` cuenta identidades de constante, no posiciones de sintaxis: escribir el mismo estado en dos ramas no satisface la variante. No exige una clase State ni un objeto por estado, no prueba que el conjunto de estados sea exhaustivo, que la maquina sea total ni que la transicion sea alcanzable en ejecucion."
+query = '''
+query state_enum {
+ require $unit HAS_FIELD $state;
+ variable(static: false) as $state;
+ require $unit HAS_METHOD $transition;
+ callable(constructor: false) as $transition;
+ require $state GUARDS_WRITE $transition;
+ count distinct $next >= 2 {
+  require $transition HAS_OPERATION $write;
+  require $write ASSIGNMENT_TARGET $state;
+  require $write ASSIGNMENT_VALUE $next;
+ };
+ emit unit=$unit, $state, $transition;
+}
+'''
 
 [[variants]]
 id = "context-transition"

@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **57 ready / 20 design** (trece variantes promovidas en este trabajo).
+Inventario: **58 ready / 19 design** (catorce variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -96,6 +96,19 @@ C++ con la clase de almacenamiento `static` marca su slot `static: True`, que es
 único que separa un static local de un local por llamada de sintaxis idéntica. Con
 eso se cierra **`singleton#module-shared`** en sus seis lenguajes. Detalles en
 [`singleton#module-shared`](docs/structural-validation/gof-completion/singleton-module-shared.md).
+
+IR 1.58 — **declaraciones de enum e identidad de constantes**: un enum declara ahora
+un tipo nominal (`enum_specifier` de C++, `enum_item` de Rust, `enum_declaration` de
+Java/C#/TS, por la misma vía que una clase), y una referencia a una constante
+nombrada tiene **una** identidad por declaración en vez de una por ocurrencia. El
+motivo se midió: en C++ y Rust `State::Idle` se bajaba como un `VALUE` anónimo por
+offset, así que una máquina que escribe **el mismo** estado en dos ramas tenía dos
+entidades distintas y satisfacía un `count distinct >= 2` — un falso positivo de
+`state#state-enum`, que es la variante donde «el valor de estado gobierna ramas y una
+transición lo cambia». Java/C#/TS ya acertaban por nombre, pero solo porque el enum
+se modelaba como un campo inventado del contexto; Go y Python ya lo tenían bien. Con
+eso se cierra **`state#state-enum`** en sus ocho lenguajes. Detalles en
+[`state#state-enum`](docs/structural-validation/gof-completion/state-state-enum.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`chain#middleware-closures`**, **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -940,7 +953,7 @@ Dependencias: **P1, P2, P5**. Ready iniciales: `state-object`, `context-transiti
 
 #### Pendiente `state#state-enum`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
 
 Relacionar estado almacenado en un owner, lectura para dispatch y transición causada por un evento que afecta el dispatch futuro. Usar match/switch/if con tags sin crear clases State ficticias. Positivo: máquina con dos estados y dos eventos, guardias y logging.
 

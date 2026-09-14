@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.57.0.** This document describes available behavior
+> **Operational reference: IR 1.58.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,44 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Enum declarations and named-constant identity (IR 1.58)
+
+An enum declaration is a nominal type. `enum_specifier` (C++), `enum_item` (Rust)
+and `enum_declaration` (Java, C#, TypeScript) now lower through the same path as a
+class, so the declaration binds a name that a reference can resolve. A body-less
+C++ `enum_specifier` is an elaborated *reference* (`enum State` inside a
+declaration), not a definition, and declares nothing.
+
+The load-bearing part is **reference identity**. A reference to a named constant
+has one identity per declaration, not one per occurrence:
+
+| Language | Reference | Entity |
+|---|---|---|
+| C++ | `State::Idle` | `…/CLASS:State/MEMBER:Idle` |
+| Rust | `State::Idle` | `…/CLASS:State/MEMBER:Idle` |
+| Java | `State.IDLE` | `…/CLASS:State/MEMBER:IDLE` |
+| C# | `State.Idle` | `…/CLASS:State/MEMBER:Idle` |
+| TypeScript | `State.Idle` | `…/CLASS:State/MEMBER:Idle` |
+| Python | `State.IDLE` | `…/CLASS:State/MEMBER:IDLE` |
+| Go | `Idle` | `…/module/STORAGE:Idle` |
+| JavaScript | `State.IDLE` | `…/module/STORAGE:State/MEMBER:IDLE` |
+
+Python reaches this through `class_definition`, Go through a module-level `const`
+block, and JavaScript through an object literal of constants; those three already
+keyed by name. Before this version C++ and Rust lowered `State::Idle` as an
+anonymous `VALUE` keyed by byte offset, so two occurrences of **one** constant were
+two entities.
+
+That difference is observable, which is why it is a contract rather than an
+implementation detail: a check of the form "at least two distinct values are
+written here" is satisfied by writing the same constant twice as soon as identity
+is per occurrence. A query that needs to distinguish states must be able to say so,
+and it can only do that if the graph agrees on what a constant is.
+
+Qualified references are only resolved to a constant when the qualifier resolves to
+a declared type **and** that type's declaration lists the name. `Config::new` and
+module paths keep their previous treatment.
 
 ## File-scope declarations and function-local statics (IR 1.57)
 

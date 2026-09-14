@@ -22,7 +22,15 @@ LANGUAGES = {".py": "python", ".pyi": "python", ".js": "javascript", ".jsx": "ja
              ".java": "java", ".cs": "csharp", ".cpp": "cpp", ".hpp": "cpp", ".cc": "cpp",
              ".go": "go", ".rs": "rust"}
 TYPES = {"class", "abstract_class_declaration", "class_definition", "class_declaration", "interface_declaration", "class_specifier",
-         "struct_specifier", "struct_item", "trait_item", "type_spec", "record_declaration"}
+         "struct_specifier", "struct_item", "trait_item", "type_spec", "record_declaration",
+         "enum_specifier", "enum_item", "enum_declaration"}
+# Declarations whose body names a closed set of constants rather than fields.
+# Python reaches the same shape through ``class_definition`` and Go through a
+# module-level ``const`` block, so only these need the constants read off the
+# declaration itself.
+ENUM_TYPES = {"enum_specifier", "enum_item", "enum_declaration"}
+ENUM_CONSTANTS = {"enumerator", "enum_variant", "enum_constant", "enum_member_declaration",
+                  "property_identifier"}
 FUNCTIONS = {"abstract_method_signature", "function_definition", "function_declaration", "method_definition", "method_declaration",
              "constructor_declaration", "function_item", "function_signature_item", "method_signature",
              # Go declares an interface's required operations as ``method_elem``.
@@ -133,6 +141,7 @@ class Lowerer:
         self.methods: dict[str, list[str]] = {}
         self.names: dict[tuple[str, str], str] = {}
         self.block_locals: dict[tuple[str, int, str], str] = {}
+        self.enum_constants: dict[str, set[str]] = {}
         self.receivers: dict[str, str] = {}
         self.type_nodes: dict[str, Node] = {}
         self.call_nodes: dict[str, Node] = {}
@@ -334,8 +343,10 @@ class Lowerer:
         cpp_origin = prototype_origin(node) if self.ir.language == 'cpp' and cls and scope == cls else None
         if cpp_origin is not None:
             self.cpp_method_declarations.add(cpp_origin.id)
-        if kind in TYPES:
-            # Go type aliases are not silently promoted to classes.
+        if kind in TYPES and not (kind == "enum_specifier" and field(node, "body") is None):
+            # Go type aliases are not silently promoted to classes. A body-less
+            # C++ ``enum_specifier`` is an elaborated *reference* (``enum State``
+            # in a declaration), not a definition, so it declares no type.
             type_node = field(node, "type")
             if kind == "type_spec" and type_node is not None and type_node.type not in {"struct_type", "interface_type"}:
                 pass
@@ -356,6 +367,8 @@ class Lowerer:
                     self.names[(scope, name)] = declared
                 self.type_nodes[declared] = node
                 self.node_entities[node.id] = declared
+                if kind in ENUM_TYPES:
+                    self.enum_constants[declared] = self.enum_constant_names(node)
                 if self.ir.language == "rust":
                     attribute = node.prev_named_sibling
                     while attribute is not None and attribute.type in {"attribute_item", "line_comment", "block_comment"}:
@@ -627,6 +640,24 @@ class Lowerer:
             node = node.named_children[0]
         return node
 
+    def enum_constant_names(self, node: Node) -> set[str]:
+        """Names a nominal enum declaration introduces as constants.
+
+        The constant is a *declaration*, not a field: a reference to it has one
+        identity for the whole graph even though the spelling recurs. Only the
+        body's own children are read, so a TS ``property_identifier`` elsewhere
+        in the declaration is never mistaken for a constant.
+        """
+        names: set[str] = set()
+        for item in children(field(node, "body")):
+            if item.type not in ENUM_CONSTANTS:
+                continue
+            named = field(item, "name")
+            spelling = self.text(named) if named is not None else self.text(item)
+            if re.fullmatch(r"[A-Za-z_$][\w$]*", spelling):
+                names.add(spelling)
+        return names
+
     def declared_names(self, node: Node) -> list[Node]:
         """Every name the node declares, in declaration order.
 
@@ -703,6 +734,20 @@ class Lowerer:
             result = self.entity("MEMBER", member, base, node)
             self.ir.add(result, "MEMBER_OF", base, self.evidence(node))
             return result
+        if node.type in {"qualified_identifier", "scoped_identifier"}:
+            # C++/Rust spell a named constant ``Enum::Constant``. The entity is
+            # keyed by the declaring type and the constant, not by the offset, so
+            # every reference shares one identity. Without that a "distinct
+            # written values" check would be satisfied by writing the same state
+            # twice, which is the opposite of a transition.
+            qualifier_node = field(node, "scope", "path")
+            constant_node = field(node, "name")
+            if qualifier_node is not None and constant_node is not None:
+                qualifier = self.resolve_name(self.text(qualifier_node), scope)
+                if qualifier is not None and self.text(constant_node) in self.enum_constants.get(qualifier, ()):
+                    result = self.entity("MEMBER", self.text(constant_node), qualifier, node)
+                    self.ir.add(result, "MEMBER_OF", qualifier, self.evidence(node))
+                    return result
         if node.type in {"identifier", "field_identifier", "property_identifier", "private_property_identifier", "type_identifier", "self"}:
             # A declaration in a nearer lexical block wins over the callable-level
             # binding of the same spelling.

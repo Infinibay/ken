@@ -33,4 +33,8 @@ La variante `context-transition` añade acciones de estados que instalan un suce
 mediante el setter del contexto, con parámetros-propiedad TypeScript y contratos
 nominales. Hay tests positivos, renombrados y negativos cercanos en cinco lenguajes.
 La [especificación implementada](../state-context-transitions.md) describe las
-relaciones y los límites de identidad, orden e intención. `state-enum` sigue pendiente.
+relaciones y los límites de identidad, orden e intención. `state-enum` se incorporó
+en IR 1.58 como
+[`state#state-enum`](../../../structural-validation/gof-completion/state-state-enum.md):
+el estado como valor, sin objetos `State` ficticios, con las constantes de un enum
+teniendo una identidad por declaración.
