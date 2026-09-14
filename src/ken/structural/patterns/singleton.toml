@@ -10,6 +10,7 @@ query singleton {
  any { match "singleton#lazy-guarded"(unit: $unit); }
  or { match "singleton#eager-shared"(unit: $unit); }
  or { match "singleton#module-shared"(unit: $unit); }
+ or { match "singleton#once-primitive"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -87,12 +88,60 @@ query lazy_guarded {
 
 [[variants]]
 id = "once-primitive"
-status = "design"
+status = "ready"
 languages = ["java", "csharp", "cpp", "go", "rust"]
 requires = ["api_identity", "once_models"]
 graph_requirements = ["Resolver primitiva once y flujo del valor retenido; conservar alcance e hipótesis del modelo."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-five-languages"
+query_claim = "Una celda compartida de una API de inicializacion unica (`sync.Once`, `std::once_flag` + `call_once`, `OnceLock::get_or_init`, `Lazy<T>`, `AtomicReference::updateAndGet`) recibe un thunk que construye un tipo, y el accessor devuelve el valor retenido por esa misma celda: el slot compartido que el thunk publica (Go y C++, con el tipo declarado del slot comprobado), el resultado de la llamada a la celda (Rust y Java) o un miembro de la celda (C#). El slot o la celda deben ser de modulo o `static`. No prueba que el valor retenido no se reasigne despues del inicializador, ni la seguridad de hilos, ni que el tipo construido coincida con el argumento de tipo declarado de la celda en Rust, Java y C#."
+query = '''
+query singleton_once_primitive {
+ require $accessor IS CALLABLE;
+ any {
+  require $accessor HAS_CALL $call;
+  require $call ARGUMENT $argument;
+  require $argument VALUE $thunk;
+  require $thunk HAS_CALL $construction;
+  require $construction ALLOCATES_TYPE $type;
+  type_decl() as $type;
+  require $accessor RETURNS_STORAGE $slot;
+  require $thunk WRITES $slot;
+  require $slot TYPE $type;
+  any { require $call RECEIVER $cell; }
+  or {
+   require $call ARGUMENT $cell_argument;
+   require $cell_argument ENTITY ARGUMENT [position: 0];
+   require $cell_argument VALUE $cell_value;
+   require $cell_value LOADED_FROM $cell;
+  }
+  any { require $module DECLARES $slot; }
+  or { variable(static: true) as $slot; }
+ } or {
+  require $accessor HAS_CALL $call;
+  require $call ARGUMENT $argument;
+  require $argument VALUE $thunk;
+  require $thunk HAS_CALL $construction;
+  require $construction ALLOCATES_TYPE $type;
+  type_decl() as $type;
+  require $call RECEIVER $cell;
+  require $accessor RETURNS_CALL $call;
+ } or {
+  require $cell_creation ARGUMENT $argument;
+  require $argument VALUE $thunk;
+  require $thunk HAS_CALL $construction;
+  require $construction ALLOCATES_TYPE $type;
+  type_decl() as $type;
+  require $cell ASSIGNED_FROM $cell_creation;
+  require $accessor RETURNS $member;
+  require $member MEMBER_OF $cell;
+ }
+ require $module IS MODULE;
+ any { require $module DECLARES $cell; }
+ or { variable(static: true) as $cell; }
+ emit unit=$type, $accessor, $cell, $thunk, $construction, $type;
+}
+'''
 
 [[operations]]
 id = "shared_instance"

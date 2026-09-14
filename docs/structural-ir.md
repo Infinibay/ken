@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.66.0.** This document describes available behavior
+> **Operational reference: IR 1.67.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,29 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Go ``var`` inside a callable binds a new name (IR 1.67)
+
+A declaration inside a Go callable is a new binding, even when the file declares the
+same spelling. Two entities now exist where one did before:
+
+```
+package-level:   <module> --DECLARES--> <module>/STORAGE:guard
+function-local:  <module>/CALLABLE:current --DECLARES--> <module>/CALLABLE:current/STORAGE:guard
+```
+
+IR 1.57 lowered a file-scope Go ``var`` so that reads inside a callable could resolve
+it, and function-local ``var`` declarations rode along on the same lookup: the spelling
+resolved outward to the module slot, so the declaration never created a binding. Go is
+the one analysed language whose declaration node *is* the assignment (the name lives on
+a ``var_spec`` child), so it was never covered by the block-declaration handling that
+JS/TS ``let``, Java ``local_variable_declaration`` and C# ``variable_declaration`` use.
+
+The defect is silent in the direction that matters least and loud in the other: a
+function-local slot that shadows a file one merges its write set with the file slot, so
+a guard created fresh on every invocation is indistinguishable from a shared one. A
+``var`` inside a nested Go block keeps the block-scoped entity it already had through
+that path.
 
 ## Address-of denotes its slot (IR 1.66)
 

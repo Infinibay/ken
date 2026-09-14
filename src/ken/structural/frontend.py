@@ -1233,18 +1233,26 @@ class Lowerer:
                     if known is not None and self.ir.entities[known].kind != 'STORAGE':
                         del self.names[field_key]
                     self.storage(self.text(left), scope, left)
+                # Go spells the declared name on a ``var_spec``/``const_spec``
+                # child, so the declaration node itself is the assignment. A Go
+                # ``var`` inside a callable is a new binding even when the module
+                # declares the same spelling: merging the two would make a
+                # per-invocation slot share the write set of a file-scope one.
+                go_declaration = self.ir.language == 'go' and kind in {'var_declaration', 'const_declaration'}
                 if (left.type == 'identifier' and self.ir.entities[scope].kind == 'CALLABLE'
                         and (self.ir.language == 'python' and kind == 'assignment'
                              or self.ir.language in {'javascript', 'typescript', 'java', 'csharp'}
-                             and kind == 'variable_declarator')):
+                             and kind == 'variable_declarator'
+                             or go_declaration)):
                     # An explicit local declaration (or Python assignment) must
                     # not resolve to a same-spelled class field in the outer scope.
                     # Existing parameters retain their callable-local identity.
                     name = self.text(left)
                     wrapper = node.parent
                     block = self.block_scope(left)
-                    if (block is not None and not self.is_body_block(block) and wrapper is not None
-                            and wrapper.type in BLOCK_DECLARATIONS.get(self.ir.language, set())
+                    if (block is not None and not self.is_body_block(block)
+                            and (go_declaration or wrapper is not None
+                                 and wrapper.type in BLOCK_DECLARATIONS.get(self.ir.language, set()))
                             and (scope, name) in self.names):
                         # A block-scoped declaration shadowing an enclosing binding
                         # of this callable. Give it its own entity: sharing the

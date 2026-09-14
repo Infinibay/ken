@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **69 ready / 8 design** (veinticinco variantes promovidas en este trabajo).
+Inventario: **70 ready / 7 design** (veintiséis variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -250,6 +250,27 @@ dos lados anclados distinto —codificador al final porque en Rust es
 porque el ancla final del primero es lo que impide que `Serialize` matchee *Deserialize*.
 Detalles en
 [`memento#serialized-snapshot`](docs/structural-validation/gof-completion/memento-serialized-snapshot.md).
+
+IR 1.67 — **`var` local de Go liga un nombre nuevo**: una declaración dentro de un
+callable de Go es un binding nuevo aunque el fichero declare la misma grafía. Go es el
+único lenguaje analizado cuyo nodo de declaración **es** la asignación (el nombre vive en
+un `var_spec` hijo), así que nunca quedó cubierto por el manejo de declaraciones de bloque
+de `let` de JS/TS, `local_variable_declaration` de Java ni `variable_declaration` de C#.
+IR 1.57 bajó el `var` de ámbito de fichero para que las lecturas dentro de un callable lo
+resolvieran, y el `var` local se fue con él: la grafía resolvía **hacia fuera** al slot del
+módulo y la declaración no creaba binding. El defecto es silencioso en la dirección
+inocua y ruidoso en la otra — un slot local que ensombrece uno de fichero fusiona su
+conjunto de escrituras, así que una guarda creada nueva en cada invocación es
+indistinguible de la compartida. Con eso se cierra **`singleton#once-primitive`** en sus
+cinco lenguajes (`java`, `csharp`, `cpp`, `go`, `rust`), que necesitó **solo** ese arreglo:
+la query se escribe con hechos que ya existían. Cinco APIs estándar de "una sola vez"
+—`sync.Once.Do` (Go), `std::call_once` con `std::once_flag` como **primer argumento** por
+ser función libre (C++), `OnceLock::get_or_init` (Rust), `Lazy<T>` construido **a partir**
+del thunk (C#) y `AtomicReference::updateAndGet` (Java)— y tres transferencias distintas
+del valor retenido: el slot compartido que publica el thunk (Go y C++, con el tipo
+declarado del slot comprobado), el resultado de la llamada a la celda (Rust y Java) o un
+miembro de la celda (C#). Detalles en
+[`singleton#once-primitive`](docs/structural-validation/gof-completion/singleton-once-primitive.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -1079,7 +1100,16 @@ Identificar almacenamiento de módulo/static local y el valor inicializado que e
 
 #### Pendiente `singleton#once-primitive`
 
-- [ ] Implementar en: `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `java`, `csharp`, `cpp`, `go`, `rust`.
+  **IR 1.67:** `ready`. La única capacidad que faltaba era un defecto de atribución: un
+  `var` local de Go resolvía al slot del módulo en vez de ligar un nombre nuevo, así que
+  una guarda nueva por invocación se veía como la compartida. La query ya se escribía con
+  hechos existentes: celda compartida de una API de inicialización única, thunk que
+  construye el tipo y accessor que devuelve el valor retenido, en tres transferencias
+  (slot publicado por el thunk, resultado de la llamada a la celda, o miembro de la
+  celda). 40 tests (positivo y renombrado por lenguaje, cinco negativos en Go y C++,
+  tres en el resto, uno de frontera y la comprobación del fix de alcance). Detalles en
+  [`singleton#once-primitive`](docs/structural-validation/gof-completion/singleton-once-primitive.md).
 
 Resolver primitiva once, su guard y el almacenamiento inicializado. Probar que accesos posteriores usan ese valor bajo el mismo guard. Positivo: API estándar por lenguaje; conservar límites sobre fallos, reentrada y alcance por instanciación.
 
