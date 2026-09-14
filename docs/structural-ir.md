@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.69.0.** This document describes available behavior
+> **Operational reference: IR 1.70.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,27 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Rust ownership wrappers denote their payload (IR 1.70)
+
+A Rust slot annotated ``Box<Expr>``, ``Rc<Expr>`` or ``Arc<Expr>`` is typed by
+``Expr``:
+
+```
+left --TYPE--> Expr          (native_type stays "Box<Expr>")
+```
+
+``normalized_type`` already strips ``&``/``*``/``mut``, and ``TYPE_HEAD`` keeps the
+*head* of a generic annotation -- that is what resolves ``OnceLock<Service>`` to
+``OnceLock``. For a smart pointer the head is the wrapper (``Box``), which declares
+nothing, so the slot had no ``TYPE`` at all and a query asking "this field is of my
+own type" could not see the recursive operand. The unwrapped spelling therefore wins
+over the head **only** when the annotation was actually unwrapped, which leaves
+``Vec<Expr>`` on its existing element-type path and keeps the cell reading of
+``OnceLock<T>``.
+
+The unwrap is guarded on the entity's language: another language's own ``Box<T>`` is
+a user type and is untouched.
 
 ## Shared member signatures (IR 1.69)
 

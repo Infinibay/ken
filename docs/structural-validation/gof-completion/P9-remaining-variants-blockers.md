@@ -35,9 +35,27 @@ nombre, antes de diagnosticar un problema de identidad.
 **El contrato:** casos hoja y compuesto, payload de hijos recursivos y dispatch
 por tag/match; la evaluación de cada hijo relacionada con el resultado combinado.
 
-**Medición por lenguaje** (seis formas canónicas de tipo suma, `evaluate` que
-recurre sobre los operandos y `CALLS <operación> -> <operación>` dos veces en las
-seis):
+**Actualización (IR 1.70).** Se midió además la forma **etiquetada** —un tag de enum
+más un tipo con campos recursivos (`kind`, `value`, `left`, `right`) y un método que
+despacha sobre el tag y recurre por los dos campos— contra la query mínima de
+`algebraic-tree`. Resultado: **las seis cierran** (2 matches cada una, las dos
+permutaciones de los operandos) y hacía falta **un solo** arreglo de motor: en Rust el
+campo `left: Box<Expr>` no producía `TYPE`, porque `normalized_type` despoja `&`/`*`
+pero no conoce `Box`, y el `TYPE_HEAD` de la anotación genérica es `Box`, que no declara
+nada. IR 1.70 hace que la grafía desenvuelta gane al head **sólo** cuando se desenvolvió
+de verdad; con eso `TYPE left -> Expr` existe también en Rust.
+
+Lo que **sigue faltando** para cerrar la variante no es el esqueleto —ya está en las
+seis— sino la **evidencia de dispatch**: la ficha pide "dispatch por tag/match" y hoy no
+hay ningún hecho que ligue el test del branch con el campo del tag (`TRUTH_TEST` está en
+la lista de relaciones pero nada lo emite para estas formas; el `COMPARE` existe como
+operación, sin operandos ligados). Sin eso, la query que cierra en las seis sólo prueba
+"un tipo con dos campos de su propio tipo y un método que recurre por ambos", que es más
+débil que la ficha. El subconjunto honesto que sí se podría publicar es eso; publicarlo
+como `algebraic-tree` sería sobreafirmar, así que la variante sigue en `design`.
+
+**Medición de las formas de suma reales** (enum de Rust, unión discriminada de
+TypeScript, records de Java/C#, `std::variant` de C++):
 
 | Lenguaje | Forma medida | Casos | Payload recursivo | Qué falta |
 |---|---|---|---|---|

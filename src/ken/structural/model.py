@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
-IR_VERSION = "1.69.0"
+IR_VERSION = "1.70.0"
 
 
 @dataclass

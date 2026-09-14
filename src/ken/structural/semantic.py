@@ -23,6 +23,22 @@ def normalized_type(annotation: str) -> str:
     return PRIMITIVES.get(annotation, annotation or "unknown")
 
 
+# Rust spells ownership where the other languages spell a pointer: ``Box<Expr>``,
+# ``Rc<Expr>`` and ``Arc<Expr>`` all denote an ``Expr`` for the purposes of "this
+# field is typed by that type". ``normalized_type`` strips ``&``/``*`` but knows no
+# language, so a user type genuinely called ``Box<T>`` in another language must not
+# be unwrapped: the caller applies this only when the entity is Rust.
+RUST_SMART_POINTER = re.compile(r"^(?:Box|Rc|Arc)\s*<\s*(.+?)\s*>$")
+
+
+def rust_denoted_type(spelling: str) -> str:
+    """The type a Rust annotation denotes, unwrapping a smart pointer once."""
+    pointer = RUST_SMART_POINTER.fullmatch(spelling.strip())
+    if pointer is None:
+        return spelling
+    return re.sub(r"^(?:dyn|impl)\s+", "", pointer[1].strip())
+
+
 def link_project(units: list[IR]) -> IR:
     graph = IR("<project>", "mixed")
     graph.capabilities = set.intersection(*(u.capabilities for u in units)) if units else set()
@@ -196,9 +212,21 @@ def link_project(units: list[IR]) -> IR:
     nominal_heads = {f.subject: f.object for f in by_relation['TYPE_HEAD']}
     opaque_heads = {f.subject for f in by_relation['TYPE_HEAD_STATUS'] if f.object == 'unsupported'}
     for f in by_relation["TYPE_NAME"]:
-        if f.subject in entities:
-            entities[f.subject].attrs["type"] = normalized_type(f.object)
-        target = None if f.subject in opaque_heads else resolve(nominal_heads.get(f.subject, f.object), f.subject)
+        spelling = f.object
+        declared_entity = entities.get(f.subject)
+        unwrapped = False
+        if declared_entity is not None and declared_entity.attrs.get('language') == 'rust':
+            denoted = rust_denoted_type(spelling)
+            unwrapped = denoted != spelling
+            spelling = denoted
+        if declared_entity is not None:
+            declared_entity.attrs["type"] = normalized_type(spelling)
+        # ``TYPE_HEAD`` strips a generic argument, which is what resolves
+        # ``OnceLock<Service>`` to ``OnceLock``. For a smart pointer the head is the
+        # wrapper (``Box``) and the payload is the declaration, so the unwrapped
+        # spelling has to win over the head.
+        head = spelling if unwrapped else nominal_heads.get(f.subject, spelling)
+        target = None if f.subject in opaque_heads else resolve(head, f.subject)
         if target:
             known[f.subject].add(target)
             declared_types[f.subject] = target

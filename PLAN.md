@@ -43,6 +43,20 @@ de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
 Inventario: **74 ready / 3 design** (treinta variantes promovidas en este trabajo).
+
+IR 1.70 — **los envoltorios de propiedad de Rust denotan su payload**: un slot
+`Box<Expr>` (`Rc`, `Arc`) está tipado por `Expr`. `normalized_type` despoja `&`/`*`
+pero no conoce `Box`, y el `TYPE_HEAD` de una anotación genérica es el *head* —que es
+lo que resuelve `OnceLock<Service>` a `OnceLock`—, así que para un puntero inteligente
+el head es el envoltorio y el slot se quedaba **sin `TYPE`**: una query que pregunta
+"este campo es de mi propio tipo" no veía el operando recursivo. La grafía
+desenvuelta gana al head **sólo** si se desenvolvió, lo que deja `Vec<Expr>` en su
+camino de tipo de elemento y conserva la lectura de celda de `OnceLock<T>`; el
+desenvoltorio está guardado por lenguaje. Con eso el **esqueleto** de
+`composite#algebraic-tree` cierra en sus seis lenguajes en la forma etiquetada (tag +
+campos recursivos), pero la variante **sigue en `design`** porque falta la evidencia
+de dispatch por tag; la medición está en
+[bloqueos medidos](docs/structural-validation/gof-completion/P9-remaining-variants-blockers.md).
 Sin cambio de IR: **`observer#event-bus`** se cerró **solo con query**. El topic del alta
 y el de la publicación son **la misma entidad**, y la query acepta las dos formas de
 acceso al registro (índice y método) más el local intermedio de Java, todo con hechos
