@@ -1192,7 +1192,7 @@ class Lowerer:
             value = self.value(node, scope, cls)
             if value in self.ir.entities and self.ir.entities[value].kind == "STORAGE":
                 self.ir.add(scope, "READS", value, ev)
-        if kind in {"augmented_assignment", "augmented_assignment_expression"}:
+        if kind in {"augmented_assignment", "augmented_assignment_expression", "compound_assignment_expr"}:
             left, right = field(node, "left"), field(node, "right")
             if left is not None and right is not None:
                 assignment_id = f"{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{kind}"

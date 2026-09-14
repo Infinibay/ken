@@ -11,6 +11,8 @@ query composite {
   match "composite#recursive-contract"(unit: $unit);
  } or {
   match "composite#recursive-nominal"(unit: $unit);
+ } or {
+  match "composite#higher-order-traversal"(unit: $unit);
  }
  emit $unit;
 }
@@ -71,9 +73,30 @@ fixtures_status = "documented-not-validated"
 
 [[variants]]
 id = "higher-order-traversal"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
-requires = ["collection_api_models", "closure_capture"]
+requires = ["iteration_aggregation", "iteration_receivers"]
 graph_requirements = ["Reduce/map llama la operación del componente; flujo de retorno de callback se agrega al resultado."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "La operación del componente recorre su propia colección de hijos, invoca la operación **del mismo nombre** sobre el elemento iterado, y el resultado de esa llamada se acumula en el local que la operación devuelve. La recursión la da el nombre uniforme sobre el elemento, no el tipo declarado de la colección: la forma de callback (`reduce`/`map`/`sum`) NO se resuelve todavia porque el parámetro de elemento del callback no se liga a la colección. Tampoco prueba que el elemento no se reasigne dentro del bucle, ni que todos los hijos se visiten, ni pureza de la operación."
+query = '''
+query composite_higher_order_traversal {
+ require $unit IS CLASS;
+ require $unit HAS_METHOD $operation;
+ require $operation ITERATES_CALLS $iterable;
+ require $child_call ITERATED_CALL $iterable;
+ require $child_call RECEIVER $element;
+ require $operation HAS_CALL $child_call;
+ require $write ASSIGNMENT_TARGET $accumulator;
+ require $write ASSIGNMENT_VALUE $child_call;
+ require $operation RETURNS_STORAGE $accumulator;
+ any { require $unit HAS_FIELD $iterable; }
+ or {
+  require $iterable RECEIVER $field;
+  require $unit HAS_FIELD $field;
+ }
+ where $operation.name == $child_call.name;
+ emit unit=$unit, $operation, $iterable, $child_call, $accumulator, $write, $element;
+}
+'''

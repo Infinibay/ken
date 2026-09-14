@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.67.0.** This document describes available behavior
+> **Operational reference: IR 1.68.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,26 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Rust compound assignment is an assignment (IR 1.68)
+
+``total += child.count(ctx)`` now carries the two facts every other language's
+compound assignment already carried:
+
+```
+<op> --ASSIGNMENT_TARGET--> total
+<op> --ASSIGNMENT_VALUE-->  <the call producing the added value>
+```
+
+Rust spells it ``compound_assignment_expr``; the augmented-assignment branch that
+Python (``augmented_assignment``) and JS/TS (``augmented_assignment_expression``)
+already used did not include it, so the operation appeared in the graph with no
+target and no value. Java, C# and C++ reach the same branch through
+``assignment_expression`` and were unaffected.
+
+The consequence is the one that matters for accumulation: a query asking "the
+element's result feeds the total this callable returns" could not see the edge at
+all, and returned zero matches without failing.
 
 ## Go ``var`` inside a callable binds a new name (IR 1.67)
 

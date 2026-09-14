@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **70 ready / 7 design** (veintiséis variantes promovidas en este trabajo).
+Inventario: **71 ready / 6 design** (veintisiete variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -271,6 +271,22 @@ del valor retenido: el slot compartido que publica el thunk (Go y C++, con el ti
 declarado del slot comprobado), el resultado de la llamada a la celda (Rust y Java) o un
 miembro de la celda (C#). Detalles en
 [`singleton#once-primitive`](docs/structural-validation/gof-completion/singleton-once-primitive.md).
+
+IR 1.68 — **la asignación compuesta de Rust es una asignación**: `total += child.count(ctx)`
+se escribe `compound_assignment_expr` y la rama de asignación aumentada que ya usaban
+Python (`augmented_assignment`) y JS/TS (`augmented_assignment_expression`) no lo incluía,
+así que la operación quedaba en el grafo **sin destino y sin valor**; Java, C# y C++
+llegan por `assignment_expression` y no estaban afectados. La consecuencia es la que
+importa para acumular: una query que pregunta "el resultado del hijo alimenta el total que
+este callable devuelve" no veía la arista y devolvía cero matches **sin fallar**. Con eso
+se cierra **`composite#higher-order-traversal`** en sus ocho lenguajes, y la capacidad que
+faltaba era **solo** eso: la query se escribe con hechos que ya existían (la operación
+recorre su propia colección, la llamada del mismo nombre sobre el elemento iterado, y su
+resultado acumulado en el local devuelto). La recursión la da el nombre uniforme sobre el
+elemento, no el tipo declarado de la colección; la forma de callback
+(`reduce`/`map`/`sum`) queda declarada como no resuelta, porque el parámetro de elemento
+del callback no se liga a la colección. Detalles en
+[`composite#higher-order-traversal`](docs/structural-validation/gof-completion/composite-higher-order-traversal.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -872,7 +888,16 @@ Representar casos hoja y compuesto, payload de hijos recursivos y dispatch por t
 
 #### Pendiente `composite#higher-order-traversal`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+  **IR 1.68:** `ready`. La única capacidad que faltaba era que la asignación compuesta de
+  Rust (`compound_assignment_expr`) no producía destino ni valor, así que la arista
+  "resultado del hijo → acumulador devuelto" no existía. La query ya se escribía con
+  hechos existentes: la operación recorre su propia colección, la llamada del mismo nombre
+  sobre el elemento iterado, y su resultado acumulado en el local que la operación
+  devuelve. La recursión la da el nombre uniforme, no el tipo declarado de la colección.
+  76 tests (positivo y renombrado por lenguaje, cinco negativos por lenguaje, dos
+  fronteras declaradas y la consulta raíz). Detalles en
+  [`composite#higher-order-traversal`](docs/structural-validation/gof-completion/composite-higher-order-traversal.md).
 
 Resolver map/reduce/forEach u otra API modelada, el callback, su elemento y la operación del hijo. Si la variante promete agregación, conectar los resultados de hijos con el agregado. Positivo: fold con logging que no altera colección ni acumulador.
 
