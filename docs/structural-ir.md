@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.48.0.** This document describes available behavior
+> **Operational reference: IR 1.49.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,31 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Block-scoped locals (IR 1.49)
+
+A local declaration inside a lexical block is a **different binding** from a
+same-spelled declaration in an enclosing block. The frontend now allocates a
+separate `STORAGE` for the shadowing declaration, keyed by the declaring block:
+the entity id carries the block's start byte (`<owner>/STORAGE:name@<byte>`) and
+the `block_scope` attribute records the block. `Entity.name` keeps the source
+spelling, so consumers that compare by name are unaffected.
+
+Reads resolve to the innermost declaration: a name declared in a nearer block
+wins over the callable-level binding, and the inner binding no longer applies
+once the read leaves its block. Before this change both declarations collapsed
+into one `STORAGE`, so the branch walk merged their write sets and could report
+an origin that is not reachable at the read.
+
+This applies to block-scoped declarations only: JS/TS `let`/`const`
+(`lexical_declaration`), Java `local_variable_declaration` and C#
+`variable_declaration`. JS/TS `var` (`variable_declaration`) is function-scoped,
+so two `var` declarations of one name remain a single binding. Python has no
+block scope and is unchanged. A callable whose declaration order prevents the
+frontend from separating the bindings (a nested declaration processed before the
+outer one, when no callable-level binding exists yet) is reported by
+`structured-locals/3` as `unsupported` with `reason='shadowed-binding'` instead
+of publishing an invented union.
 
 ## Argument read-site provenance (IR 1.48)
 
@@ -42,7 +67,7 @@ heap preservation, short-circuit evaluation, or interprocedural effects.
 
 ## Current capabilities
 
-This table describes IR 1.48.0, checked against the implementation on 2026-09-13.
+This table describes IR 1.49.0, checked against the implementation on 2026-09-13.
 Preserving syntax, deriving a relationship and proving runtime behavior are
 different levels of support.
 

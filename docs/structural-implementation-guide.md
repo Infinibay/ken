@@ -1,6 +1,6 @@
 # Guía del IR y del buscador para implementar GoF
 
-Referencia práctica verificada contra **IR 1.48.0**, `kenql/1` y
+Referencia práctica verificada contra **IR 1.49.0**, `kenql/1` y
 `ken-instructions/1`, el 13 de septiembre de 2026. Este documento explica la
 implementación actual y dónde extenderla. El trabajo pendiente está en
 [PLAN.md](../PLAN.md). Las secciones que dicen **PROPUESTO** no son APIs disponibles.
@@ -133,6 +133,14 @@ Se soportan llamadas standalone, RHS, anidadas y retornadas, incluso sin return
 explícito en el callable. Los aliases se leen con el estado de esa ocurrencia.
 Consultar [contrato actual](structural-ir.md#argument-read-site-provenance-ir-148)
 y [entrega P1](structural-validation/gof-completion/P1-argument-occurrences.md).
+
+IR 1.49 resuelve **bindings por bloque léxico**: una declaración dentro de un
+bloque es una entidad `STORAGE` distinta de la del mismo nombre en un bloque
+envolvente (`<owner>/STORAGE:nombre@<byte>` con atributo `block_scope`), y las
+lecturas resuelven a la declaración más cercana. Aplica a `let`/`const` de JS/TS,
+`local_variable_declaration` de Java y `variable_declaration` de C#; `var` de
+JS/TS es function-scoped y no se separa. Consultar [contrato](structural-ir.md#block-scoped-locals-ir-149)
+y [entrega P1.1](structural-validation/gof-completion/P1.1-scope-shadowing.md).
 
 Relaciones existentes que no deben confundirse:
 

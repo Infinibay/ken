@@ -5,19 +5,31 @@ ken-instructions/1**. Este archivo es una guía para el siguiente implementador;
 las casillas sin marcar son trabajo pendiente, no funcionalidades disponibles.
 
 
-## Avance posterior al inventario: IR 1.48
+## Avance posterior al inventario: IR 1.48 / IR 1.49
 
-P1.2/P1.3 y corrección de P1.4: la procedencia de argumentos usa **IDs de valores
-por ocurrencia**, no el nombre/destino de la función productora. Se agregaron
-llamadas independientes, RHS, llamadas anidadas y funciones sin retorno explícito,
-con aliases y posiciones de argumento en Python, JS/TS, Java y C#.
-Los detalles, pruebas y limitaciones están en
+IR 1.48 — P1.2/P1.3 y corrección de P1.4: la procedencia de argumentos usa
+**IDs de valores por ocurrencia**, no el nombre/destino de la función productora.
+Se agregaron llamadas independientes, RHS, llamadas anidadas y funciones sin
+retorno explícito, con aliases y posiciones de argumento en Python, JS/TS, Java
+y C#. Los detalles, pruebas y limitaciones están en
 [P1 — procedencia por ocurrencia](docs/structural-validation/gof-completion/P1-argument-occurrences.md).
-No se promovieron variantes GoF a ready en esta entrega.
+
+IR 1.49 — P1.1 (shadowing): el frontend resuelve bindings **por bloque léxico**.
+Una declaración `let`/`const` (JS/TS), `local_variable_declaration` (Java) o
+`variable_declaration` (C#) dentro de un bloque es un `STORAGE` distinto del de
+su mismo nombre en un bloque envolvente, y las lecturas resuelven a la
+declaración más cercana. El pase conserva un rechazo `shadowed-binding` como red
+de seguridad. Detalles en
+[P1.1 — ámbitos y shadowing](docs/structural-validation/gof-completion/P1.1-scope-shadowing.md).
+
+No se promovieron variantes GoF a ready en ninguna de las dos entregas.
 
 Siguiente tarea: **P1.5**, regiones expresivas/cortocircuitos y sus efectos sobre
-lecturas, junto con el alcance pendiente de P1.1/P1.3 (shadowing, callee/receptor).
-P3 todavía requiere conectar el núcleo de instrucciones al buscador.
+lecturas (bloqueada; ver
+[registro](docs/structural-validation/gof-completion/P1.5-expressive-regions-blocked.md)),
+junto con el alcance pendiente de P1.1 (closures, orden de declaración) y P1.3
+(callee/receptor). P3 todavía requiere conectar el núcleo de instrucciones al
+buscador.
 
 ## 0. Instrucciones para el modelo que continúe
 
@@ -243,6 +255,10 @@ Pasos:
 
 - [ ] **P1.1 Ámbitos:** resolver places por declaración/ámbito, no sólo por spelling
   en el callable. Cubrir shadowing, parámetros, closures y declaración sin valor.
+  **Parcial IR 1.49:** shadowing block-scoped resuelto en JS/TS (`let`/`const`),
+  Java y C#: cada declaración en un bloque es un `STORAGE` distinto y las lecturas
+  resuelven a la declaración más cercana. Declaración sin valor ya era correcta.
+  Quedan closures (P4) y el orden invertido de declaración.
 - [ ] **P1.2 Bloque lineal:** recorrer instrucciones en orden; entorno place →
   estado abstracto. Una store reemplaza el estado, una load captura el estado en
   esa ocurrencia. Un alias local toma el valor actual y no se conecta con stores

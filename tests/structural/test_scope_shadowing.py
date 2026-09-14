@@ -1,14 +1,18 @@
 """P1.1 scope resolution: block-scoped shadowing must never be merged.
 
-The frontend keys a local by ``(owner, name)``. Two declarations with the same
-spelling in different lexical blocks of one callable therefore collapse into a
-single STORAGE, and the branch walk would merge their writes — reporting an
-origin that is not reachable at the read. The pass refuses with an explicit
-``shadowed-binding`` reason instead of inventing that union.
+Two declarations with the same spelling in different lexical blocks of one
+callable are two different bindings. The frontend now gives the shadowing
+declaration its own STORAGE (keyed by the declaring block) and resolves reads
+to the innermost declaration, so the branch walk can no longer merge the inner
+and the outer write sets.
+
+``return_flow`` keeps a ``shadowed-binding`` refusal as a fallback for the
+declaration orders the frontend cannot separate (a nested declaration seen
+before the outer one, when no callable-level binding exists yet).
 
 ``var`` (JS/TS ``variable_declaration``) is function-scoped: both declarations
-really are one binding, and the pre-existing behaviour is preserved. A plain
-assignment inside a branch is not a declaration and stays supported.
+really are one binding, and that behaviour is preserved. A plain assignment
+inside a branch is not a declaration and stays supported.
 """
 import pytest
 
@@ -67,8 +71,8 @@ def argument_origins(graph):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-def test_block_scoped_shadowing_in_an_arm_is_refused(language):
-    """The inner declaration is a different binding; its write must not merge."""
+def test_block_scoped_shadowing_resolves_to_the_innermost_declaration(language):
+    """The inner declaration is a different binding; the reads must not merge."""
     decl = declaration(language, 'let')
     graph = link_project([lower_source(source(language, [
         decl + 'value = produce(1);',
@@ -76,11 +80,50 @@ def test_block_scoped_shadowing_in_an_arm_is_refused(language):
         'return consume(value);',
     ]), language, 'shadow' + language)])
 
+    status, _ = run_status(graph)
+    assert status == 'supported'
+
+    bindings = [e.id for e in graph.entities.values()
+                if e.kind == 'STORAGE' and e.name == 'value' and 'CALLABLE:run' in e.id]
+    assert len(bindings) == 2
+    outer = [b for b in bindings if '@' not in b.rsplit('/', 1)[-1]]
+    inner = [b for b in bindings if '@' in b.rsplit('/', 1)[-1]]
+    assert len(outer) == 1
+    assert len(inner) == 1
+
+    reads = {f.object: f for f in argument_origins(graph) if f.object in bindings}
+    assert set(reads) == set(bindings)
+
+    # The inner binding holds the literal; the outer one the producer result.
+    assert reads[inner[0]].attrs['modality'] == 'must'
+    assert reads[outer[0]].attrs['modality'] == 'must'
+    assert len(reads[inner[0]].attrs['origins']) == 1
+    assert len(reads[outer[0]].attrs['origins']) == 1
+    inner_origin = graph.entities[reads[inner[0]].attrs['origins'][0]]
+    outer_origin = graph.entities[reads[outer[0]].attrs['origins'][0]]
+    assert inner_origin.kind == 'VALUE'
+    assert outer_origin.kind == 'CALL'
+    assert reads[inner[0]].attrs['origins'] != reads[outer[0]].attrs['origins']
+
+
+@pytest.mark.parametrize('language', ['javascript', 'typescript'])
+def test_nested_declaration_seen_first_falls_back_to_refusal(language):
+    """A nested declaration before the outer one cannot be separated yet.
+
+    The inner declaration is processed when no callable-level binding exists, so
+    the frontend allocates the plain ``STORAGE`` and the outer declaration later
+    reuses it. ``return_flow`` must refuse that collapsed binding instead of
+    merging the two write sets.
+    """
+    graph = link_project([lower_source(source(language, [
+        'if (flag) { let value = 0; consume(value); }',
+        'let value = produce(1);',
+        'return consume(value);',
+    ]), language, 'order' + language)])
+
     status, reason = run_status(graph)
     assert status == 'unsupported'
     assert reason == 'shadowed-binding'
-    # No read-site provenance is published for a callable whose binding model
-    # collapsed two declarations: the spurious possible origin is gone.
     assert argument_origins(graph) == []
 
 

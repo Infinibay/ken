@@ -44,6 +44,17 @@ OPERATOR_NODES = {"binary_expression", "binary_operator", "comparison_operator",
                   "prefix_unary_expression", "postfix_unary_expression", "augmented_assignment",
                   "augmented_assignment_expression"}
 
+# Lexical blocks that scope a local declaration. JS/TS ``var``
+# (``variable_declaration``) is function-scoped and is deliberately absent, so
+# two ``var`` declarations of one name remain a single binding.
+BLOCK_SCOPES = {"block", "statement_block", "compound_statement"}
+BLOCK_DECLARATIONS = {
+    "javascript": {"lexical_declaration"},
+    "typescript": {"lexical_declaration"},
+    "java": {"local_variable_declaration"},
+    "csharp": {"variable_declaration"},
+}
+
 
 def field(node: Node | None, *names: str) -> Node | None:
     if node is not None:
@@ -89,6 +100,7 @@ class Lowerer:
         self.class_owner: dict[int, str] = {}
         self.methods: dict[str, list[str]] = {}
         self.names: dict[tuple[str, str], str] = {}
+        self.block_locals: dict[tuple[str, int, str], str] = {}
         self.receivers: dict[str, str] = {}
         self.type_nodes: dict[str, Node] = {}
         self.call_nodes: dict[str, Node] = {}
@@ -505,6 +517,58 @@ class Lowerer:
             scope = scope.rsplit("/", 1)[0]
         return self.names.get((self.module, name))
 
+    def block_scope(self, node: Node) -> Node | None:
+        """Innermost lexical block enclosing ``node``, stopping at the callable."""
+        current = node.parent
+        while current is not None and current.type not in FUNCTIONS:
+            if current.type in BLOCK_SCOPES:
+                return current
+            current = current.parent
+        return None
+
+    def is_body_block(self, block: Node) -> bool:
+        """True for a callable body, which is not a nested lexical scope."""
+        return block.parent is not None and block.parent.type in FUNCTIONS
+
+    def block_local(self, name: str, scope: str, node: Node) -> str | None:
+        """Innermost block-scoped declaration of ``name`` visible at ``node``.
+
+        Walks outward from the read, so a name declared in a nearer block wins
+        over the callable-level binding and an inner block's binding stops
+        applying once the read leaves it.
+        """
+        current = node.parent
+        while current is not None and current.type not in FUNCTIONS:
+            if current.type in BLOCK_SCOPES:
+                known = self.block_locals.get((scope, current.id, name))
+                if known is not None:
+                    return known
+            current = current.parent
+        return None
+
+    def block_storage(self, name: str, scope: str, block: Node, node: Node) -> str:
+        """Declare a block-local binding that shadows an enclosing one.
+
+        :meth:`storage` is keyed by ``(scope, name)``, which cannot represent
+        two declarations of one spelling in different lexical blocks: they would
+        share a single write set. Allocating a separate entity keeps the
+        bindings apart so provenance never mixes the inner and the outer value.
+        """
+        key = (scope, block.id, name)
+        known = self.block_locals.get(key)
+        if known is not None:
+            return known
+        sid = f"{scope}/STORAGE:{name}@{block.start_byte}"
+        if sid not in self.ir.entities:
+            self.ir.entities[sid] = Entity(
+                sid, "STORAGE", name, self.ir.path, node.start_point[0] + 1, node.end_point[0] + 1,
+                {"static": False, "native_kind": node.type, "language": self.ir.language,
+                 "start_byte": node.start_byte, "end_byte": node.end_byte, "block_scope": block.id})
+            self.ir.add(sid, "IS", "STORAGE", self.evidence(node), static=False)
+        self.block_locals[key] = sid
+        self.ir.add(scope, "DECLARES", sid, self.evidence(node), kind="storage", name=name, static=False)
+        return sid
+
     def unwrap(self, node: Node) -> Node:
         while node.type in WRAPPERS and len(node.named_children) == 1:
             node = node.named_children[0]
@@ -556,6 +620,11 @@ class Lowerer:
             self.ir.add(result, "MEMBER_OF", base, self.evidence(node))
             return result
         if node.type in {"identifier", "field_identifier", "property_identifier", "private_property_identifier", "type_identifier", "self"}:
+            # A declaration in a nearer lexical block wins over the callable-level
+            # binding of the same spelling.
+            shadowing = self.block_local(spelling, scope, node)
+            if shadowing is not None:
+                return shadowing
             return self.resolve_name(spelling, scope) or self.storage(spelling, scope, node)
         if node.type in {"list", "list_expression", "array", "array_expression", "array_creation_expression", "dictionary", "object", "map_literal"}:
             collection_kind = ('map' if node.type in {'dictionary','map_literal'} else 'record' if node.type == 'object'
@@ -889,7 +958,18 @@ class Lowerer:
                     # An explicit local declaration (or Python assignment) must
                     # not resolve to a same-spelled class field in the outer scope.
                     # Existing parameters retain their callable-local identity.
-                    self.storage(self.text(left), scope, left)
+                    name = self.text(left)
+                    wrapper = node.parent
+                    block = self.block_scope(left)
+                    if (block is not None and not self.is_body_block(block) and wrapper is not None
+                            and wrapper.type in BLOCK_DECLARATIONS.get(self.ir.language, set())
+                            and (scope, name) in self.names):
+                        # A block-scoped declaration shadowing an enclosing binding
+                        # of this callable. Give it its own entity: sharing the
+                        # outer ``STORAGE`` would merge two different write sets.
+                        self.block_storage(name, scope, block, left)
+                    else:
+                        self.storage(name, scope, left)
                 target = self.value(left, scope, cls)
                 if target in self.ir.entities:
                     self.ir.entities[target].attrs["declared"] = True
