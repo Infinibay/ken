@@ -95,7 +95,55 @@ contra la forma de **clases con campos** en java/csharp/go/cpp (donde el payload
 recursivo sí es un campo) para fijar el contrato, y dejar Rust/TS como lo que la
 capacidad nueva desbloquea.
 
-## `proxy#remote-subject` (8 lenguajes) — falta el modelo de transporte
+## `proxy#remote-subject` (8 lenguajes) — el contrato sin nombres cierra en tres, JavaScript no tiene tipos de campo
+
+**Medición nueva (misma sesión).** Se probó un contrato **sin tabla de nombres de API**,
+que es la segunda alternativa que la ficha permite ("implementación local visible que
+serializa la llamada y devuelve su respuesta"):
+
+```
+any { $unit SUBTYPE_OF $contract } or { $unit IMPLEMENTS $contract }
+$unit HAS_FIELD $client;  $client TYPE $client_type;  different $client_type $contract
+$unit HAS_METHOD $method; $method OVERRIDES $slot
+$method HAS_CALL $transport;  $transport RECEIVER $client
+$transport ARGUMENT $argument;  $argument VALUE $encoded;  $encoder RESULT $encoded
+$method RETURNS_CALL $decoder;  different $transport $decoder
+```
+
+Cierra con **un match** en `python`, `java` y `go` **sin ningún cambio de motor**. Cada
+cláusula se ganó midiendo: la unión `SUBTYPE_OF`/`IMPLEMENTS` porque Go satisface la
+interfaz por method set; `$encoder RESULT $encoded` (no `$encoded VALUE $encoder`) porque
+en la vista de query el valor de una llamada es su entidad `result`; y
+`different $transport $decoder` porque sin ella la propia línea del decodificador se
+colaba como transporte (Java daba 2 matches).
+
+**Dónde se rompe: JavaScript.** El contrato necesita `$client TYPE $client_type` para
+probar que el cliente **no** es el contrato local, y JavaScript no declara tipos de
+campo: el `this.client = client` del constructor no produce `TYPE`. Sin esa cláusula la
+variante aceptaría cualquier decorador con códec, y con ella JavaScript no puede
+satisfacerla. Es el mismo muro que `abstract-factory#structural-families` encontró con
+los objetos literales: en JavaScript el IR no tiene por dónde distinguir "el cliente es
+otro contrato" sin una anotación.
+
+**Siguiente símbolo:** dos caminos, y conviene medir cuál es honesto antes de tocar nada.
+(a) Ligar el cliente a la **procedencia** de sus llamadas: el campo se asigna desde un
+parámetro del constructor y ese parámetro se usa en un call site con un tipo declarado en
+otro lenguaje no ayuda; en JavaScript haría falta modelar los **miembros de un objeto
+literal** (el mismo hueco que dejó `abstract-factory#structural-families`), que es una
+capacidad propia y más general. (b) Aceptar la forma sin la cláusula de tipo y reforzar
+la serialización (p. ej. exigir que el argumento del transporte recorra un códec y que el
+retorno recorra el decodificador **del mismo objeto**), declarando el límite; hay que
+medir si eso sigue rechazando "HTTP helper sin contrato de subject", que es el
+contraejemplo que la ficha nombra.
+
+**Lo medido antes, que sigue valiendo:** un proxy mínimo sobre `requests`
+(`requests.post(url, data=json.dumps(request))`) produce sólo una llamada de transporte
+anónima con un códec anidado; nada marca la llamada como remota, así que una tabla de
+nombres de API de transporte sería la otra vía, con ~40 entradas por lenguaje y el
+problema de que el nombre del cliente viaja en el **receptor** (`requests`), no en
+`CALLEE_NAME` (`post`), que es demasiado genérico por sí solo.
+
+## Detalle del bloqueo anterior
 
 **El contrato:** representación local del contrato remoto, operación RPC y
 transformación de argumentos/resultado.
@@ -125,8 +173,11 @@ argumento↔resultado. Es la variante con menos guía de diseño: la tabla de
 
 ## Orden sugerido
 
-Queda **una**: `proxy#remote-subject`, que necesita el modelo de transporte descrito
-arriba. La codificación de suma por casos (Rust enum, TypeScript discriminated union,
+Queda **una**: `proxy#remote-subject`. El contrato sin nombres ya cierra en python, java y
+go; lo que falta es decidir el camino para JavaScript, y las dos opciones están medidas
+arriba (modelar los miembros de un objeto literal, o reforzar la serialización sin la
+cláusula de tipo declarado y comprobar que sigue rechazando el "HTTP helper sin contrato
+de subject" que la ficha nombra). La codificación de suma por casos (Rust enum, TypeScript discriminated union,
 Java/C# records, `std::variant`) no bloquea ninguna variante ya: las dos que la
 necesitaban se cerraron con la forma etiquetada, y queda como medición para quien quiera
 ampliar el contrato a esa forma.
