@@ -1,8 +1,8 @@
-# Bloqueos medidos de las dos variantes restantes
+# Bloqueo medido de la variante restante
 
-Estado: **registro de bloqueo**, no cierre. Quedan dos variantes en
-`status = "design"`. Fecha: 2026-09-14. Base: IR 1.71.0, inventario 75 `ready` /
-2 `design`. Cada entrada trae la medición, el archivo y símbolo siguiente, y el
+Estado: **registro de bloqueo**, no cierre. Queda **una** variante en
+`status = "design"`. Fecha: 2026-09-14. Base: IR 1.71.0, inventario 76 `ready` /
+1 `design`. Cada entrada trae la medición, el archivo y símbolo siguiente, y el
 contraejemplo mínimo que la desbloquea.
 
 ## 0. Lo que este documento se equivocó, y por qué importa
@@ -30,17 +30,14 @@ entidad `CALL` es su byte de **inicio**, así que dos llamadas distintas se
 imprimen con el mismo número. Lección para los volcados: imprimir el **id**, no el
 nombre, antes de diagnosticar un problema de identidad.
 
-## 1. `interpreter#expression-sum` (6 lenguajes) — cerrable por la forma etiquetada
+## `interpreter#expression-sum` y `composite#algebraic-tree` — cerradas
 
-**`composite#algebraic-tree` ya se cerró** (IR 1.70/1.71) con la forma etiquetada:
-ver [`composite#algebraic-tree`](composite-algebraic-tree.md). Esta entrada queda para
-su hermana, que comparte lenguajes y forma y añade el **contexto** de evaluación y la
-**combinación** de los resultados de los dos operandos. La combinación es lo que
-`expression-objects` deja declarado como no probado; si no hay flujo de valores para
-probarla, se cierra con la parte que sí se pruebe y el límite escrito, como se hizo en
-`singleton#once-primitive`.
-
-## 1b. La codificación de suma por casos (contexto histórico)
+Las dos se cerraron con la forma **etiquetada**: ver
+[`composite#algebraic-tree`](composite-algebraic-tree.md) y
+[`interpreter#expression-sum`](interpreter-expression-sum.md). La codificacion de
+suma **por casos** sigue sin modelarse y esta medición se conserva como contexto
+histórico para quien la aborde.
+## La codificación de suma por casos (contexto histórico)
 
 **El contrato:** casos hoja y compuesto, payload de hijos recursivos y dispatch
 por tag/match; la evaluación de cada hijo relacionada con el resultado combinado.
@@ -98,7 +95,7 @@ contra la forma de **clases con campos** en java/csharp/go/cpp (donde el payload
 recursivo sí es un campo) para fijar el contrato, y dejar Rust/TS como lo que la
 capacidad nueva desbloquea.
 
-## 2. `proxy#remote-subject` (8 lenguajes) — falta el modelo de transporte
+## `proxy#remote-subject` (8 lenguajes) — falta el modelo de transporte
 
 **El contrato:** representación local del contrato remoto, operación RPC y
 transformación de argumentos/resultado.
@@ -128,7 +125,8 @@ argumento↔resultado. Es la variante con menos guía de diseño: la tabla de
 
 ## Orden sugerido
 
-1. Las **variantes de tipo suma** en Rust y TypeScript (más el vínculo
-   variante↔caso en C++), que desbloquean **dos** variantes de una vez. El resto
-   del contrato ya está medido: la recursión es visible en las seis formas.
-2. `proxy#remote-subject`, que necesita el modelo de transporte.
+Queda **una**: `proxy#remote-subject`, que necesita el modelo de transporte descrito
+arriba. La codificación de suma por casos (Rust enum, TypeScript discriminated union,
+Java/C# records, `std::variant`) no bloquea ninguna variante ya: las dos que la
+necesitaban se cerraron con la forma etiquetada, y queda como medición para quien quiera
+ampliar el contrato a esa forma.

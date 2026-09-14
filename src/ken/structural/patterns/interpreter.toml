@@ -7,7 +7,8 @@ caveat = "Recursive evaluation also occurs outside interpreters; grammar intent 
 legacy_query = "require $unit SUBTYPE_OF $expression\nrequire $unit HAS_FIELD $child\nrequire $child TYPE $expression\nrequire $unit HAS_METHOD $interpret\nrequire $interpret HAS_PARAMETER $context receiver=false\nrequire $interpret HAS_CALL $call\nrequire $call RECEIVER $child\nrequire $call ARGUMENT $context\n"
 query = '''
 query interpreter {
- match "interpreter#expression-objects"(unit: $unit);
+ any { match "interpreter#expression-objects"(unit: $unit); }
+ or { match "interpreter#expression-sum"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -47,9 +48,49 @@ query interpreter {
 '''
 [[variants]]
 id = "expression-sum"
-status = "design"
+status = "ready"
 languages = ["typescript", "java", "csharp", "cpp", "go", "rust"]
 requires = ["sum_types", "match_flow", "recursion"]
 graph_requirements = ["Ramas de expresión algebraica evalúan hijos/contexto; no exigir subtipado nominal."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-six-languages"
+query_claim = "Una expresion **etiquetada** sin subtipado: un tipo con dos campos tipados por si mismo, una rama de su operacion que **discrimina un campo del mismo tipo** (el tag), y las dos llamadas recursivas llevan un argumento cargado del **mismo parametro** (el contexto). La recursion la da el nombre uniforme, el dispatch `TRUTH_TEST` (IR 1.71) y el contexto la identidad del parametro. NO prueba que los dos resultados se **combinen** en vez de descartarse: eso exige flujo de valores de las dos llamadas al retorno, que el IR no tiene; es el mismo limite que `expression-objects` ya declara. Tampoco que el tag sea exhaustivo, ni que la rama hoja no recurra, ni la codificacion de suma **por casos** (variantes de enum, uniones discriminadas, records)."
+query = '''
+query interpreter_expression_sum {
+ require $unit IS CLASS;
+ require $unit HAS_METHOD $operation;
+ require $unit HAS_FIELD $first;
+ require $first TYPE $unit;
+ require $unit HAS_FIELD $second;
+ require $second TYPE $unit;
+ different $first $second;
+ require $operation HAS_CALL $first_call;
+ require $first_call RECEIVER $first;
+ require $operation HAS_CALL $second_call;
+ require $second_call RECEIVER $second;
+ where $operation.name == $first_call.name;
+ where $operation.name == $second_call.name;
+ require $operation HAS_OPERATION $branch;
+ operation(kind: branch) as $branch;
+ require $branch TRUTH_TEST $tested;
+ any {
+  require $unit HAS_FIELD $tested;
+ } or {
+  require $tested MEMBER_OF $this;
+  require $unit INSTANCE_RECEIVER $this;
+ } or {
+  require $tested MEMBER_OF $receiver;
+  require $operation HAS_PARAMETER $receiver;
+  parameter(receiver: true) as $receiver;
+ }
+ require $operation HAS_PARAMETER $context;
+ parameter(receiver: false) as $context;
+ require $first_call ARGUMENT $first_argument;
+ require $first_argument VALUE $first_value;
+ require $first_value LOADED_FROM $context;
+ require $second_call ARGUMENT $second_argument;
+ require $second_argument VALUE $second_value;
+ require $second_value LOADED_FROM $context;
+ emit unit=$unit, $operation, $first, $second, $branch, $tested, $context;
+}
+'''

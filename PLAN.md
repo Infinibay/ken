@@ -42,7 +42,16 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **75 ready / 2 design** (treinta y una variantes promovidas en este trabajo).
+Inventario: **76 ready / 1 design** (treinta y dos variantes promovidas en este trabajo).
+
+Sin cambio de IR: **`interpreter#expression-sum`** se cerro **solo con query**. Comparte la
+forma etiquetada de `composite#algebraic-tree` y anade el **contexto**: las dos llamadas
+recursivas llevan un argumento cargado del **mismo parametro**, que es la correlacion que
+pedia la ficha. Lo que NO se prueba es que los dos resultados se **combinen** en vez de
+descartarse (haría falta flujo de valores de las dos llamadas al retorno, que el IR no
+tiene; es el mismo límite que `expression-objects` ya declara), ni la codificación de suma
+por casos. Detalles en
+[`interpreter#expression-sum`](docs/structural-validation/gof-completion/interpreter-expression-sum.md).
 
 IR 1.71 — **una rama de comparación publica el valor que discrimina**: `if kind == Num`
 emite `TRUTH_TEST` sobre el slot probado (`kind`), que es lo que faltaba para que una
@@ -1072,7 +1081,13 @@ Dependencias: **P1, P2, P5**. Ready iniciales: `expression-objects`.
 
 #### Pendiente `interpreter#expression-sum`
 
-- [ ] Implementar en: `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+  **Cerrada sin cambio de IR:** la forma etiquetada ya cerraba en las seis (IR 1.70/1.71) y el
+  contexto se anade con hechos existentes (`HAS_PARAMETER` + `ARGUMENT`→`VALUE`→
+  `LOADED_FROM`), exigiendo el **mismo** parametro en las dos llamadas recursivas. 49 tests
+  (positivo y renombrado por lenguaje, cuatro negativos, la consulta raíz y la comprobacion
+  del contexto). La combinacion de los dos resultados queda declarada como no probada. Detalles
+  en [`interpreter#expression-sum`](docs/structural-validation/gof-completion/interpreter-expression-sum.md).
 
 Representar los casos de expresión, operandos recursivos y contexto de evaluación. Relacionar cada evaluación de hijo con el resultado combinado del operador. Positivo: enum/sum type de constantes y suma con evaluación recursiva de ambos operandos.
 
