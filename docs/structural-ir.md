@@ -54,6 +54,19 @@ javascript and typescript; ``base`` in csharp. Rust and C++ are left out on purp
 ``super::`` there is a module path and ``Base::m()`` names the base rather than the
 instance, so treating them as ``this`` would be wrong.
 
+IR 1.73 — **un mapa se lee y se escribe por API, no sólo por subíndice**:
+``map.get(k)`` y ``map.put(k, v)`` sobre un **campo** (o un storage de módulo)
+publican ``LOOKS_UP`` / ``RETURNS_LOOKUP`` / ``WRITES_ELEMENT`` desde el callable,
+y ``CONTAINER`` / ``INDEX`` / ``STORES_VALUE`` desde la entidad de la llamada, de
+modo que ``x = map.get(k)`` y ``x = map[k]`` describen el mismo hecho y una
+consulta no necesita una segunda grafía. Es lo que usa el ejemplo canónico de
+Java, C# y Go, y sin el modelo el catálogo veía una clase con un campo mapa, una
+lectura y una escritura que nada conectaba: **Flyweight leía 0/8** en los corpus
+de RefactoringGuru aunque la grafía con subíndice del mismo pool sí se detectaba.
+El contenedor tiene que ser un miembro -- un local o un parámetro no son un pool --
+y ``put``/``set``/``add`` sólo cuentan como escritura con dos argumentos o más, para
+que un *setter* de propiedad (``obj.set(x)``) no se lea como escritura indexada.
+
 ## Rust ownership wrappers denote their payload (IR 1.70)
 
 A Rust slot annotated ``Box<Expr>``, ``Rc<Expr>`` or ``Arc<Expr>`` is typed by

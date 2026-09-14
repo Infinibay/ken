@@ -18,7 +18,7 @@ claim = "structural-signature"
 [[variants]]
 id = "explicit-interning"
 status = "ready"
-query_claim = "An indexed write stores the construction supplied with the key parameter, and a direct indexed return uses that same pool and key binding. The index may be the key parameter itself or a local the method derives from it (``key = self.get_key(state)``), which is how the canonical Python, TypeScript and Java examples spell the pool. Does not prove the derivation is injective -- ``get_key`` may collapse distinct inputs -- nor current key values under reassignment, miss-only creation, lifetime identity, intrinsic-state stability or extrinsic use."
+query_claim = "An indexed write stores the construction supplied with the key parameter, and the return yields that same pool and key binding. Each step accepts both spellings of a pool: the index expression (``pool[k]``) and the dictionary API on the field (``pool.put(k, v)``, ``pool.get(k)``), which is how the canonical Java, C# and Go examples write it. The index may be the key parameter itself or a local the method derives from it (``key = self.get_key(state)``), and the returned object may be the pool element itself or a local the method read from the pool (``result = pool.get(name); ...; return result;``). Does not prove the derivation is injective -- ``get_key`` may collapse distinct inputs -- nor current key values under reassignment, miss-only creation, lifetime identity, intrinsic-state stability or extrinsic use."
 languages = ["python", "java", "typescript"]
 requires = ["map_key_flow", "allocation_flow"]
 graph_requirements = ["Lookup/miss/inserción/retorno comparten clave y pool; usuario suministra contexto extrínseco."]
@@ -33,7 +33,6 @@ query flyweight {
  require $unit HAS_METHOD $factory;
  require $factory LOOKS_UP $pool;
  require $factory WRITES_ELEMENT $pool;
- require $factory RETURNS_LOOKUP $pool;
  require $factory HAS_PARAMETER $key;
  parameter(receiver: false) as $key;
  require $factory HAS_CALL $construction;
@@ -41,9 +40,18 @@ query flyweight {
  require $construction ARGUMENT $argument;
  require $argument VALUE $input;
  require $input LOADED_FROM $key;
- require $factory HAS_OPERATION $write;
- require $write WRITES_ELEMENT $pool;
- require $write INDEX $index;
+ any {
+  require $factory HAS_OPERATION $write;
+  require $write WRITES_ELEMENT $pool;
+  require $write INDEX $index;
+  require $write STORES_VALUE $stored;
+ }
+ or {
+  require $factory HAS_CALL $write;
+  require $write WRITES_ELEMENT $pool;
+  require $write INDEX $index;
+  require $write STORES_VALUE $stored;
+ }
  any { where $index == $key; }
  or {
   require $index ASSIGNED_FROM $derived;
@@ -51,12 +59,19 @@ query flyweight {
   require $derived_argument VALUE $derived_value;
   require $derived_value LOADED_FROM $key;
  }
- require $write STORES_VALUE $stored;
  any { where $stored == $construction; }
  or { require $construction RESULT $stored; }
+ or { require $stored ASSIGNED_FROM $construction; }
  require $factory RETURNS $returned;
- require $returned CONTAINER $pool;
- require $returned INDEX $return_index;
+ any {
+  require $returned CONTAINER $pool;
+  require $returned INDEX $return_index;
+ }
+ or {
+  require $returned ASSIGNED_FROM $read;
+  require $read CONTAINER $pool;
+  require $read INDEX $return_index;
+ }
  any { where $return_index == $key; }
  or {
   require $return_index ASSIGNED_FROM $return_derived;

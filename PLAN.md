@@ -117,6 +117,18 @@ atributos con `=` aceptan alternativas (`name: "get|Get"`, `native_type:
 buscaba el literal y perdio 12 findings (`chain-of-responsibility`, `proxy`) en
 cuatro corpus. El bucket ahora es la union de las alternativas (+2/-0).
 
+IR 1.73 — **un mapa se lee y se escribe por API**: `map.get(k)` / `map.put(k, v)`
+sobre un campo publican `LOOKS_UP`/`WRITES_ELEMENT`/`CONTAINER`/`INDEX`/
+`STORES_VALUE`, y una lectura tambien es un acceso con `CONTAINER`/`INDEX`, para
+que `x = map.get(k)` y `x = map[k]` sean el mismo hecho. Es la grafia del ejemplo
+canonico de Java, C# y Go; sin el modelo el catalogo veia un campo mapa, una
+lectura y una escritura inconexas, y **Flyweight seguia en 0/8** aunque la
+grafia con subindice ya se detectaba. El contenedor debe ser un miembro y
+`put`/`set`/`add` exigen dos argumentos, para no leer un *setter* como escritura
+indexada. Con eso **flyweight pasa a 3/8** (python, typescript, java) y el diff
+contra los ocho corpus es **+1/-0**: ningun finding nuevo ni perdido en el resto
+de los patrones.
+
 Sin cambio de IR: **`proxy#remote-subject`** se cerro **solo con query**, con la segunda
 alternativa que la ficha permite: la **implementacion local visible** que serializa la
 llamada y devuelve su respuesta. La clase implementa el contrato local (`SUBTYPE_OF`, o

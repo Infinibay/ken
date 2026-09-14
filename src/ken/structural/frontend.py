@@ -56,6 +56,15 @@ CALLS = {"call", "call_expression", "method_invocation", "invocation_expression"
 ASSIGNMENTS = {"assignment", "assignment_expression", "assignment_statement", "short_var_declaration",
                "variable_declarator", "init_declarator", "let_declaration", "public_field_definition", "field_definition", "field_declaration",
                "var_declaration", "const_declaration", "static_item", "const_item"}
+# Dictionary access spelled as a method call. ``put``/``set``/``insert`` are only
+# treated as a write when the call supplies at least two arguments, so a property
+# setter (``obj.set(x)``) is not read as an indexed write.
+MAP_READS = {"get", "Get", "fetch", "Fetch", "lookup", "Lookup", "getOrDefault", "GetValueOrDefault"}
+MAP_WRITES = {"put", "Put", "set", "Set", "add", "Add", "insert", "Insert", "store", "Store",
+              "emplace", "Emplace", "try_emplace", "insert_or_assign", "AddOrUpdate", "GetOrAdd",
+              "setdefault", "setDefault"}
+# A return statement, whatever the grammar calls it.
+RETURN_TYPES = {"return_statement", "return_expression"}
 # Declarations that bind a name outside any callable. Go spells both name and
 # initializer on a ``var_spec``/``const_spec`` child rather than on the
 # declaration itself, so the declaration only carries an assignment once that
@@ -119,6 +128,16 @@ def descendants(node: Node):
         item = stack.pop()
         yield item
         stack.extend(reversed(item.named_children))
+
+
+def _member_storage(entity_id: str) -> bool:
+    """Is this entity a field or a module-level binding rather than a local?
+
+    Locals and parameters are owned by a callable, so their id carries the owning
+    ``/CALLABLE:`` segment; a field or a module-level storage does not. Used to
+    keep ``map.get(k)`` on a local from being read as a pool lookup.
+    """
+    return "/CALLABLE:" not in entity_id
 
 
 def parser_for(language: str, path: str) -> Parser:
@@ -979,6 +998,18 @@ class Lowerer:
         syntax_effects(self)
         return self.ir
 
+    def argument_value(self, argument: Node, scope: str, cls: str) -> str:
+        """The value an argument supplies, past the grammar's argument wrapper.
+
+        Only argument wrappers expose their expression via ``value``; a Python
+        subscript also has that field, but it is the container, not the expression
+        passed to the callee.
+        """
+        valnode = field(argument, "value", "expression") if argument.type in {"keyword_argument", "argument"} else None
+        if valnode is None and argument.type == "argument" and argument.named_children:
+            valnode = argument.named_children[-1]
+        return self.value(valnode or argument, scope, cls)
+
     def operation(self, node: Node) -> None:
         native = node.type
         owner = self.owner[node.id]
@@ -1494,6 +1525,35 @@ class Lowerer:
                     self.ir.add(cid, "INSERTED_VALUE", self.value(children(arguments)[1], scope, cls), ev)
                 if receiver and value == f"{cls}/THIS":
                     self.ir.add(scope, "PASSES_SELF_TO", receiver, ev, name=name)
+            # ``map.get(k)`` / ``map.put(k, v)`` are the non-subscript spelling of
+            # ``map[k]``, and the canonical Java, C# and Go examples of a pool use
+            # them. Without this model such a class shows a map field, a lookup and a
+            # write that nothing connects, so Flyweight read 0/8 on the RefactoringGuru
+            # corpora while the subscript spelling of the same pool was detected.
+            #
+            # The container has to be a member -- a field or a module-level storage --
+            # because ``get`` on a local or a parameter is not a pool, and that is also
+            # what keeps a property setter (one argument) out of ``MAP_WRITES``.
+            if receiver and _member_storage(receiver):
+                supplied = [self.argument_value(argument, scope, cls) for argument in children(arguments)]
+                if name in MAP_READS and 1 <= len(supplied) <= 2:
+                    self.ir.add(scope, "LOOKS_UP", receiver, ev, model="map-api-shape")
+                    self.ir.add(cid, "LOOKS_UP", receiver, ev, model="map-api-shape")
+                    # A read is an access like any subscript: it names the container
+                    # and the index it reads at, so ``x = map.get(k)`` and
+                    # ``x = map[k]`` describe the same fact and a query does not
+                    # need a second spelling of the same clause.
+                    self.ir.add(cid, "CONTAINER", receiver, ev, model="map-api-shape")
+                    self.ir.add(cid, "INDEX", supplied[0], ev, model="map-api-shape")
+                    if node.parent is not None and node.parent.type in RETURN_TYPES:
+                        self.ir.add(scope, "RETURNS_LOOKUP", receiver, ev, model="map-api-shape")
+                if name in MAP_WRITES and len(supplied) >= 2:
+                    self.ir.add(scope, "WRITES_ELEMENT", receiver, ev, model="map-api-shape")
+                    self.ir.add(cid, "WRITES_ELEMENT", receiver, ev, model="map-api-shape")
+                    self.ir.add(cid, "CONTAINER", receiver, ev, model="map-api-shape")
+                    self.ir.add(cid, "INDEX", supplied[0], ev, model="map-api-shape")
+                    self.ir.add(cid, "STORES_VALUE", supplied[1], ev, model="map-api-shape")
+
         if kind in INDEXES:
             base = field(node, "value", "object", "argument", "operand", "array") or next(iter(node.named_children), None)
             container = self.value(base, scope, cls)
