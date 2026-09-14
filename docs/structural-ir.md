@@ -2109,13 +2109,15 @@ ken structural ir --path . --scope src/factory.py --symbol Factory
 ken structural catalog
 ```
 
-Every rule runs under a budget (`--limit`, `--timeout-ms`, `--max-states`,
-`--max-rows`). A rule that exhausts it reports `complete: false` with the reason, is
-named in the top-level `incomplete` map, and the CLI also warns on stderr: measured on
-a 684-file Python package, the fixture-sized defaults left **12 of the 23** pattern
-roots unfinished, and their empty `findings` reads as "not present" unless the caller
-checks. Raise the budgets for real projects, and treat an incomplete rule as *not
-searched*, never as *not found*.
+There is no default budget: every rule runs to completion, so an empty
+`findings`/`matches` list means *searched and not found*, never *truncated*. Pass
+`--limit`, `--timeout-ms`, `--max-states`, or `--max-rows` to impose a ceiling on a
+host that needs one; a rule that exhausts it reports `complete: false` with the reason,
+is named in the top-level `incomplete` map, and the CLI also warns on stderr. Earlier
+releases shipped fixture-sized defaults (50k states, 2 s, 100 matches) and on a
+684-file Python package **12 of the 23** pattern roots finished under budget; that is
+why the ceilings are now opt-in. Treat an incomplete rule as *not searched*, never as
+*not found*.
 
 The existing MCP surface exposes these through `ken_find` with `scope="structure"`,
 `"patterns"`, or `"bugs"`. For structural searches, `query` is the query language

@@ -20,15 +20,19 @@ def add_parser(subparsers) -> None:
         p.add_argument("--path", default=".", help="project root")
         p.add_argument("--scope", default=".", help="file or directory within the project")
         p.add_argument("--cache-mb", type=float, default=None, help="cache cap in MB; 0 disables; default 500")
-        p.add_argument("--limit", type=int, default=100, help="maximum matches per rule")
-        p.add_argument("--timeout-ms", type=int, default=2000, help="query budget per rule")
-        # Real projects need more than the fixture-sized defaults: measured on a
-        # 684-file Python package, 12 of the 23 GoF roots exhaust 50k states and
-        # report nothing, which reads as "no matches" instead of "not searched".
-        p.add_argument("--max-states", type=int, default=50_000,
-                       help="join states a rule may visit before it is reported incomplete")
-        p.add_argument("--max-rows", type=int, default=200_000,
-                       help="rows a rule may examine before it is reported incomplete")
+        p.add_argument("--limit", type=int, default=None,
+                       help="maximum matches per rule; unlimited by default")
+        p.add_argument("--timeout-ms", type=int, default=None,
+                       help="query budget per rule in milliseconds; unlimited by default")
+        # Fixture-sized defaults used to make real projects read as "no matches"
+        # instead of "not searched": on a 684-file Python package 12 of the 23
+        # GoF roots exhausted 50k states and reported nothing. The ceilings stay
+        # available for hosts that must cap cost, but the default is no ceiling,
+        # so an empty result means the query was actually evaluated.
+        p.add_argument("--max-states", type=int, default=None,
+                       help="join states a rule may visit before it is reported incomplete; unlimited by default")
+        p.add_argument("--max-rows", type=int, default=None,
+                       help="rows a rule may examine before it is reported incomplete; unlimited by default")
         if name in {"search", "save-rule"}:
             group = p.add_mutually_exclusive_group(required=name == "save-rule")
             p.add_argument("--evidence-mode", choices=["strict", "possible"], default="strict")

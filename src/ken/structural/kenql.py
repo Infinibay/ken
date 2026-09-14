@@ -375,15 +375,15 @@ class Engine:
 
     def tick(self) -> None:
         self.states+=1
-        if self.states>self.budget.max_states: raise _Exhausted('max_states')
-        if (time.monotonic()-self.started)*1000>=self.budget.timeout_ms: raise _Exhausted('timeout_ms')
+        if self.budget.max_states is not None and self.states>self.budget.max_states: raise _Exhausted('max_states')
+        if self.budget.timeout_ms is not None and (time.monotonic()-self.started)*1000>=self.budget.timeout_ms: raise _Exhausted('timeout_ms')
 
     def facts(self, clause: Clause, row: Row) -> list[Row]:
         result = []
         for fact in self.index.rows(clause.relation, _resolve(clause.subject, row.bindings), _resolve(clause.object, row.bindings)):
             self.tick()
             self.rows += 1
-            if self.rows > self.budget.max_rows: raise _Exhausted('max_rows')
+            if self.budget.max_rows is not None and self.rows > self.budget.max_rows: raise _Exhausted('max_rows')
             if self.scope and clause.relation not in {'ENTITY', 'TYPE', 'INSTANCE_OF'}:
                 if fact.subject != self.scope:
                     owned = any(f.subject == self.scope and f.object == fact.subject for relation in ('HAS_OPERATION', 'HAS_PARAMETER', 'HAS_CALL', 'HAS_METHOD', 'DECLARES') for f in self.index.rows(relation, self.scope))
@@ -528,7 +528,7 @@ class Engine:
                                 if depth<hi:
                                     for f in self.index.rows(rel,target):
                                         self.rows+=1
-                                        if self.rows>self.budget.max_rows: raise _Exhausted('max_rows')
+                                        if self.budget.max_rows is not None and self.rows>self.budget.max_rows: raise _Exhausted('max_rows')
                                         uncertainty = path_unknown | ({'possible:'+rel} if f.attrs.get('modality')=='may' else set())
                                         state = (f.object, bool(uncertainty))
                                         if state not in next_states:
@@ -559,7 +559,7 @@ class Engine:
                 match['evidence'] = merged.evidence
                 seen[key] = merged, match
                 continue
-            if len(matches)>=self.budget.max_matches: complete=False; reasons.append('budget:max_matches');break
+            if self.budget.max_matches is not None and len(matches)>=self.budget.max_matches: complete=False; reasons.append('budget:max_matches');break
             matches.append({'bindings':binding,'status':'unknown' if row.unknown else 'structural_match',
                             'unknown':sorted(row.unknown),'evidence':row.evidence,'variant':'default', 'evidence_score':1.0})
             seen[key] = row, matches[-1]

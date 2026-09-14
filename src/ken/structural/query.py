@@ -122,14 +122,27 @@ def parse_pattern(source: str, *, validate_roles: bool = True) -> Pattern:
 
 @dataclass
 class QueryBudget:
-    max_rows: int = 200_000
-    max_states: int = 50_000
-    max_matches: int = 100
-    timeout_ms: int = 2000
+    """Resource ceilings for one query.
+
+    Every field is optional and ``None`` means "no ceiling": the query runs
+    until it is done. A query only reports ``complete: false`` for a limit the
+    caller actually set, so an unbudgeted search can never be mistaken for a
+    truncated one. Callers that want a bound — a cost ceiling on a huge
+    repository, a latency ceiling on a shared host — pass an explicit positive
+    value; ``0`` and negatives are rejected instead of silently meaning
+    "no limit".
+    """
+
+    max_rows: int | None = None
+    max_states: int | None = None
+    max_matches: int | None = None
+    timeout_ms: int | None = None
 
     def __post_init__(self) -> None:
-        if min(self.max_rows, self.max_states, self.max_matches, self.timeout_ms) <= 0:
-            raise ValueError("query budgets must be positive")
+        for name in ("max_rows", "max_states", "max_matches", "timeout_ms"):
+            value = getattr(self, name)
+            if value is not None and value <= 0:
+                raise ValueError(f"query budget {name} must be positive, or None for no limit")
 
 
 @dataclass
@@ -231,11 +244,11 @@ def evaluate_pattern(ir: IR | FactIndex, pattern: Pattern | str,
     matches: list[dict[str, Any]] = []
     seen: set[tuple[Any, ...]] = set()
 
-    def tick(key: str, maximum: int) -> None:
+    def tick(key: str, maximum: int | None) -> None:
         stats[key] += 1
-        if stats[key] > maximum:
+        if maximum is not None and stats[key] > maximum:
             raise _Exhausted(key)
-        if (time.monotonic() - started) * 1000 >= b.timeout_ms:
+        if b.timeout_ms is not None and (time.monotonic() - started) * 1000 >= b.timeout_ms:
             raise _Exhausted("timeout_ms")
 
     def candidates(c: Clause, bindings: dict[str, str]):
@@ -333,7 +346,7 @@ def evaluate_pattern(ir: IR | FactIndex, pattern: Pattern | str,
                 if key in seen:
                     continue
                 seen.add(key)
-                if len(matches) >= b.max_matches:
+                if b.max_matches is not None and len(matches) >= b.max_matches:
                     raise _Exhausted("max_matches")
                 matches.append({"pattern": p.name, "variant": variant,
                                 "bindings": bindings, "status": "unknown" if missing else "structural_match",

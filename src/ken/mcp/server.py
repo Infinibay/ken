@@ -931,12 +931,12 @@ def _impl_ken_dismiss(target: str, reason: str = "") -> dict:
 def ken_find(
     query: str = "",
     scope: Literal["files", "symbols", "text", "tests", "wiring", "intent", "structure", "patterns", "bugs"] = "files",
-    limit: int = 10,
+    limit: int | None = None,
     literal: bool = False,
     language: str = "",
     path: str = ".",
     cache_mb: float | None = None,
-    timeout_ms: int = 2000,
+    timeout_ms: int | None = None,
     rules: list[str] | None = None,
     collections: list[str] | None = None,
     tags: list[str] | None = None,
@@ -966,10 +966,16 @@ def ken_find(
     Structural scopes read live files under *path*. Cache defaults to 500 MB;
     set *cache_mb=0* to disable. Results include evidence, uncertainty and budgets.
 
+    Structural scopes are unlimited by default: every rule runs to completion,
+    so an empty ``findings``/``matches`` list means "searched and not found"
+    rather than "budget exhausted". Pass *limit* or *timeout_ms* to cap matches
+    or latency when a host needs a bound.
+
     *language* filters ``text`` results (e.g. "python").
     """
     if scope != "structure" and any((rules, collections, tags, rule_files)):
         raise ValueError("saved rule selectors require scope=structure")
+    ranked_limit = 10 if limit is None else limit
     if scope in {"structure", "patterns", "bugs"}:
         from ken.structural import service
         from ken.structural.query import QueryBudget
@@ -986,22 +992,22 @@ def ken_find(
             result["findings"] = [f for f in result["findings"] if query in f["id"]]
         return result
     if scope == "files":
-        return _impl_ken_search_files(query, limit=limit)
+        return _impl_ken_search_files(query, limit=ranked_limit)
     if scope == "symbols":
-        return _impl_ken_search_symbols(query, limit=limit)
+        return _impl_ken_search_symbols(query, limit=ranked_limit)
     if scope == "text":
         return _impl_ken_grep(
             query,
             mode="literal" if literal else "bm25",
             language=language,
-            limit=limit,
+            limit=ranked_limit,
         )
     if scope == "tests":
-        return _impl_ken_find_tests(_project_relative_path(query), limit=limit)
+        return _impl_ken_find_tests(_project_relative_path(query), limit=ranked_limit)
     if scope == "wiring":
-        return _impl_ken_wiring(query=query, limit=limit)
+        return _impl_ken_wiring(query=query, limit=ranked_limit)
     if scope == "intent":
-        return _impl_ken_intent_history(query, limit=limit)
+        return _impl_ken_intent_history(query, limit=ranked_limit)
     return {
         "ok": False,
         "error": f"unknown scope {scope!r}",
