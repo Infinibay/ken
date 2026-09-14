@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **59 ready / 18 design** (quince variantes promovidas en este trabajo).
+Inventario: **60 ready / 17 design** (dieciséis variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -118,6 +118,15 @@ el bucle lleva `async: True`, puesto desde sus **propios** tokens, así que el `
 conteo dentro de un `async def` sigue sin marca. Con eso se cierra
 **`iterator#async-iterator`** en sus cuatro lenguajes. Detalles en
 [`iterator#async-iterator`](docs/structural-validation/gof-completion/iterator-async-iterator.md).
+
+Sin cambio de IR: **`iterator#callback-iterator`** (Go) se cerró **solo con query**. El
+parametro callback ya era callee, la rama ya registraba que prueba (`TRUTH_TEST`, que
+descuenta negaciones y ajusta la polaridad) y el bucle ya ligaba su elemento. Lo que
+hubo que resolver fue el **join**, y el modo de fallo merece recordarse: `ARGUMENT` en
+KenQL liga una ocurrencia de callsite (`<call>/argument/<pos>`), no el almacenamiento;
+sin pasar por `VALUE` y `LOADED_FROM` la comparación con `ITERATION_BINDING` devuelve
+cero matches **sin fallar**, que es indistinguible de «el patrón no está». Detalles en
+[`iterator#callback-iterator`](docs/structural-validation/gof-completion/iterator-callback-iterator.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`chain#middleware-closures`**, **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -828,7 +837,7 @@ Dependencias: **P1, P2, P4, P6**. Ready iniciales: `external-cursor`, `generator
 
 #### Pendiente `iterator#callback-iterator`
 
-- [ ] Implementar en: `go`.
+- [x] Implementar en: `go`.
 
 Modelar el protocolo range-function de Go: productor llama al callback con elementos y su respuesta de continuación gobierna la producción siguiente. Verificar la versión del protocolo en documentación oficial al implementar. Positivo: productor finito y consumidor que corta temprano.
 

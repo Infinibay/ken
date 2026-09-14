@@ -8,7 +8,7 @@ legacy_query = "require $unit IS CLASS\nvariant python\nrequire $unit HAS_METHOD
 query = '''
 query iterator {
  any { match "iterator#external-cursor"(iterator: $iterator); } or {
- any { match "iterator#generator"(iterator: $iterator); } or { match "iterator#delegated-generator"(iterator: $iterator); } or { match "iterator#explicit-cursor"(iterator: $iterator); } or { match "iterator#paired-cursor"(iterator: $iterator); } or { match "iterator#delegated-cursor"(iterator: $iterator); } or { match "iterator#async-iterator"(iterator: $iterator); }
+ any { match "iterator#generator"(iterator: $iterator); } or { match "iterator#delegated-generator"(iterator: $iterator); } or { match "iterator#explicit-cursor"(iterator: $iterator); } or { match "iterator#paired-cursor"(iterator: $iterator); } or { match "iterator#delegated-cursor"(iterator: $iterator); } or { match "iterator#async-iterator"(iterator: $iterator); } or { match "iterator#callback-iterator"(iterator: $iterator); }
  }
  emit $iterator;
 }
@@ -121,12 +121,35 @@ query_claim = "Python iteration protocol with observable updates to an iterator 
 
 [[variants]]
 id = "callback-iterator"
-status = "design"
+status = "ready"
 languages = ["go"]
 requires = ["range_function_protocol", "callback_control_flow"]
 graph_requirements = ["Callback recibe elemento y su booleano gobierna continuar; requiere versión de lenguaje aplicable."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-go"
+query_claim = "El iterador toma un callback como parametro, recorre una coleccion ligando el elemento, invoca el callback con ESE elemento (por identidad de almacenamiento, via ARGUMENT -> VALUE -> LOADED_FROM) y prueba el resultado de esa misma llamada en una rama uno de cuyos dos desenlaces detiene la iteracion con `return` o `break`. La polaridad no se exige: `!yield(v) { return }`, `yield(v) {} else { return }` y `yield(v) { return }` se admiten por igual, porque la ficha pide que el booleano gobierne continuar, no una convencion concreta. Excluye un callback cuyo resultado se pruebe pero cuyo desenlace no detenga de inmediato, y no prueba agotamiento, tipos de elemento ni progreso."
+query = '''
+query callback_iterator {
+ require $unit IS CALLABLE;
+ require $unit HAS_PARAMETER $callback;
+ parameter(receiver: false) as $callback;
+ require $unit HAS_CALL $call;
+ require $call CALLEE_VALUE $callback;
+ require $call ARGUMENT $argument;
+ require $argument VALUE $value;
+ require $value LOADED_FROM $element;
+ require $unit HAS_OPERATION $loop;
+ operation(kind: loop) as $loop;
+ require $loop ITERATION_BINDING $element;
+ require $unit HAS_OPERATION $branch;
+ operation(kind: branch) as $branch;
+ require $branch TRUTH_TEST $call;
+ require $branch CFG_NEXT $exit;
+ require $unit HAS_OPERATION $exit;
+ any { operation(kind: return) as $exit; } or { operation(native_kind: break_statement) as $exit; }
+ emit iterator=$unit, $callback, $call, $loop, $element, $branch, $exit;
+}
+'''
 
 [[variants]]
 id = "async-iterator"
