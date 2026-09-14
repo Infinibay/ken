@@ -85,7 +85,7 @@ requires = ["copy_protocol_models"]
 graph_requirements = ["Resolver protocolo, constructor de copia o derive; registrar profundidad y aliases desconocidos."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-five-languages"
-query_claim = "La copia la produce el mecanismo propio del lenguaje, en tres formas: un constructor de copia (constructor de aridad 1 cuyo parametro es una referencia lvalue al propio tipo, de modo que `X(X&&)` y `X(X)` quedan fuera), una delegacion a una primitiva de copia reconocida por nombre (`copy`, `deepcopy`, `clone`, `MemberwiseClone`), o un metodo `clone` que devuelve una construccion del propio tipo inicializada desde un campo de ese tipo. La identificacion por nombre de primitiva es evidencia de API, no resolucion de biblioteca. No prueba profundidad: una copia somera y una profunda son indistinguibles aqui, y los alias internos desconocidos no se registran."
+query_claim = "La copia la produce el mecanismo propio del lenguaje, en tres formas: un constructor de copia (constructor de aridad 1 cuyo parametro es una referencia lvalue al propio tipo, de modo que `X(X&&)` y `X(X)` quedan fuera), una delegacion a una primitiva de copia reconocida por nombre (`copy`, `deepcopy`, `clone`, `MemberwiseClone`) **aplicada al propio objeto** (el receptor o el argumento es la instancia; `super.x()`/`base.x()` cuentan como la instancia), o un metodo `clone` que devuelve una construccion del propio tipo inicializada desde un campo de ese tipo. La identificacion por nombre de primitiva es evidencia de API, no resolucion de biblioteca; por eso la rama exige ademas que lo copiado sea la propia instancia, o aceptaria cualquier metodo que copie un contenedor ajeno (`os.environ.copy()`, `tensor.clone()`, `deepcopy(self._rows.get(...))`), que es el falso positivo medido al correr el catalogo sobre proyectos reales. No prueba profundidad: una copia somera y una profunda son indistinguibles aqui, y los alias internos desconocidos no se registran."
 query = '''
 query language_copy {
  require $unit IS CLASS;
@@ -103,6 +103,12 @@ query language_copy {
   or { call(name: "deepcopy") as $delegation; }
   or { call(name: "clone") as $delegation; }
   or { call(name: "MemberwiseClone") as $delegation; }
+  require $unit INSTANCE_RECEIVER $instance;
+  any { require $delegation RECEIVER $instance; }
+  or {
+   require $delegation ARGUMENT $copied;
+   require $copied VALUE $instance;
+  }
  } or {
   require $unit HAS_METHOD $witness;
   callable(name: "clone") as $witness;

@@ -801,7 +801,15 @@ class Lowerer:
             return self.node_entities[node.id]
         spelling = self.text(node)
         receiver = self.receivers.get(scope, "")
-        if spelling and spelling in {receiver, "this", "self"} and cls:
+        # ``super.m()`` / ``base.m()`` call the inherited member **on this object**,
+        # so the receiver denotes the same instance as ``this``; without that the
+        # receiver of an inherited call dangles and a query cannot see that the
+        # object is the one being acted on. Rust and C++ have no such keyword
+        # (``super::`` there is a module path, and ``Base::m()`` names the base), so
+        # the spelling is admitted per language.
+        base_receivers = ({'super'} if self.ir.language in {'java', 'python', 'javascript', 'typescript'}
+                          else {'base'} if self.ir.language == 'csharp' else set())
+        if spelling and spelling in {receiver, "this", "self"} | base_receivers and cls:
             value = f"{cls}/THIS"
             method = self.ir.entities.get(scope)
             if method is not None and method.kind == 'CALLABLE' and not method.attrs.get('static'):

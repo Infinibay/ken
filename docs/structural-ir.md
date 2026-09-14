@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.71.0.** This document describes available behavior
+> **Operational reference: IR 1.72.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -35,6 +35,24 @@ two pairs of arms.
 Rust's ``if`` is an ``if_expression``, so the branch handling now covers both spellings
 -- without that, Rust published no ``TRUTH_TEST`` at all and the dispatch evidence was
 missing in exactly one of the six languages.
+
+## An inherited call acts on the instance (IR 1.72)
+
+``super.m()`` and ``base.m()`` call the inherited member **on this object**, so the
+receiver denotes the same instance as ``this``:
+
+```
+super.clone()   --RECEIVER--> <Class>/THIS
+<Class>         --INSTANCE_RECEIVER--> <Class>/THIS
+```
+
+Before this the receiver of an inherited call was an unresolved reference: the ``THIS``
+spelling set held the callable's receiver name plus ``this``/``self``, and the Java
+spelling of the copy protocol -- ``(Config) super.clone()`` -- therefore published no
+receiver at all. The spelling is admitted per language: ``super`` in java, python,
+javascript and typescript; ``base`` in csharp. Rust and C++ are left out on purpose:
+``super::`` there is a module path and ``Base::m()`` names the base rather than the
+instance, so treating them as ``this`` would be wrong.
 
 ## Rust ownership wrappers denote their payload (IR 1.70)
 
@@ -2084,11 +2102,20 @@ signatures, bug rules, and summaries of the patterns found in each directory.
 ```sh
 ken structural patterns --path .
 ken structural patterns --path . --scope src/factories --pattern factory-method
+ken structural patterns --path . --max-states 2000000 --timeout-ms 60000
 ken structural bugs --path .
 ken structural search --path . --query-file search.kenq
 ken structural ir --path . --scope src/factory.py --symbol Factory
 ken structural catalog
 ```
+
+Every rule runs under a budget (`--limit`, `--timeout-ms`, `--max-states`,
+`--max-rows`). A rule that exhausts it reports `complete: false` with the reason, is
+named in the top-level `incomplete` map, and the CLI also warns on stderr: measured on
+a 684-file Python package, the fixture-sized defaults left **12 of the 23** pattern
+roots unfinished, and their empty `findings` reads as "not present" unless the caller
+checks. Raise the budgets for real projects, and treat an incomplete rule as *not
+searched*, never as *not found*.
 
 The existing MCP surface exposes these through `ken_find` with `scope="structure"`,
 `"patterns"`, or `"bugs"`. For structural searches, `query` is the query language

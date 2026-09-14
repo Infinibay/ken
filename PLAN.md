@@ -42,6 +42,26 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
+IR 1.72 — **una llamada heredada actúa sobre la instancia**: `super.m()` y `base.m()`
+llaman al miembro heredado **sobre este objeto**, así que el receptor denota la misma
+instancia que `this` (`<clase> INSTANCE_RECEIVER <clase>/THIS`). Antes el receptor de una
+llamada heredada quedaba sin resolver y la grafía Java del protocolo de copia
+(`(Config) super.clone()`) no publicaba receptor. Se admite por lenguaje: `super` en
+java/python/javascript/typescript y `base` en csharp; Rust y C++ quedan fuera a propósito
+porque allí `super::` es una ruta de módulo y `Base::m()` nombra la base. Es la mitad del
+arreglo de un **falso positivo medido corriendo el catálogo sobre proyectos reales**:
+`prototype#language-copy` aceptaba cualquier método que llamara a algo llamado
+`copy`/`deepcopy`/`clone`, así que `os.environ.copy()`, el `.copy()` de un `set`, el
+`deepcopy(self._rows.get(...))` y los `.clone()` de tensores de `senn` contaban como
+Prototype de la clase que los contenía. La rama ahora exige que lo copiado sea la propia
+instancia; `prototype` pasa de **7 a 0** matches en `infinidev/src` y de **21 a 0** en
+`senn/senn_byte`, con cinco negativos nuevos que fijan la familia. Además el CLI expone
+`--max-states`/`--max-rows` y el resultado lleva un mapa `incomplete` con el motivo, más
+un aviso por stderr: con los presupuestos de fixture, **12 de las 23** reglas raíz
+quedaban sin terminar sobre `infinidev/src` y sus `findings` vacíos se leían como "no
+hay" en vez de "no se buscó". Detalles en
+[`prototype#language-copy`](docs/structural-validation/gof-completion/prototype-language-copy.md).
+
 Inventario: **77 ready / 0 design** (treinta y tres variantes promovidas en este trabajo:
 **el catalogo no tiene ninguna variante en `design`**).
 

@@ -152,6 +152,62 @@ impl Clone for Config {
 }
 '''
 
+# The false-positive family measured on real projects: the copy primitive is applied
+# to a container that is not the object. ``os.environ.copy()``, a set's ``.copy()``,
+# a tensor's ``.clone()`` and ``deepcopy(self.rows.get(key))`` are all ordinary
+# container duplication inside a method of the class, not a copy of the class.
+PY_FOREIGN_CONTAINER = '''class Config:
+    def __init__(self):
+        self.items = []
+
+    def duplicate(self):
+        return self.items.copy()
+'''
+
+PY_ENVIRONMENT = '''import os
+
+class Config:
+    def environment(self):
+        return os.environ.copy()
+'''
+
+PY_FIELD_DEEPCOPY = '''import copy
+
+class Config:
+    def __init__(self):
+        self.rows = {}
+
+    def restore(self, key):
+        return copy.deepcopy(self.rows.get(key))
+'''
+
+JAVA_FIELD_CLONE = '''class Config implements Cloneable {
+    private Object items;
+
+    public Object duplicate() {
+        return this.items.clone();
+    }
+}
+'''
+
+CSHARP_FIELD_CLONE = '''class Config {
+    private object items;
+
+    public object Duplicate() {
+        return this.items.Clone();
+    }
+}
+'''
+
+JAVA_BASE_CLONE = '''class Config implements Cloneable {
+    private int value;
+
+    public Config duplicate() {
+        return (Config) super.clone();
+    }
+}
+'''
+
 
 def detect(language, source):
     graph = link_project([lower_source(source, language, f'prototype.{EXTENSIONS[language]}')])
@@ -224,3 +280,19 @@ def test_cpp_reference_kind_separates_the_copy_from_the_move():
     kinds = sorted(e.attrs.get('reference_kind') for e in graph.entities.values()
                    if e.kind == 'PARAMETER')
     assert kinds == ['lvalue', 'rvalue'], kinds
+
+def test_copying_a_foreign_container_is_not_a_copy_of_the_object():
+    """The primitive is identified by name, so the branch also requires that what is
+    copied is the instance itself; otherwise every ``.copy()``/``.clone()`` on a
+    dictionary, a set, an environment mapping or a tensor inside a method matched."""
+    assert not detect('python', PY_FOREIGN_CONTAINER)
+    assert not detect('python', PY_ENVIRONMENT)
+    assert not detect('python', PY_FIELD_DEEPCOPY)
+    assert not detect('java', JAVA_FIELD_CLONE)
+    assert not detect('csharp', CSHARP_FIELD_CLONE)
+
+
+def test_an_inherited_clone_is_still_the_instance():
+    """``super.clone()`` calls the inherited member on *this* object, so the Java
+    spelling of the protocol keeps matching."""
+    assert detect('java', JAVA_BASE_CLONE)

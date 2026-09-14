@@ -66,4 +66,9 @@ def detect_patterns(ir: IR | FactIndex, names: list[str] | None = None,
     metadata = {r.id: r for r in RULES}
     findings = [{**m, "category": metadata[m["id"]].category, "caveat": metadata[m["id"]].caveat}
                 for m in result["matches"]]
-    return {"findings": findings, "outcomes": result["outcomes"], "complete": result["complete"]}
+    # A rule that exhausted its budget reports zero matches for the wrong reason:
+    # "not found" and "not searched" must not look the same to a caller.
+    incomplete = {rule: outcome["unknown"] for rule, outcome in result["outcomes"].items()
+                  if not outcome["complete"]}
+    return {"findings": findings, "outcomes": result["outcomes"], "complete": result["complete"],
+            "incomplete": incomplete}

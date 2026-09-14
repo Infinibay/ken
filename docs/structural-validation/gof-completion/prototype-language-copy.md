@@ -88,3 +88,37 @@ en vez de una cada una. Los alias internos desconocidos no se registran.
 
 `tests/structural/` completo, sin regresiones, más las 19 pruebas nuevas.
 `mypy src/ken` limpio.
+
+## Corregido después: el falso positivo de los contenedores ajenos (IR 1.72)
+
+Rodar el catálogo sobre dos proyectos reales (`infinidev`, `senn`) destapó que la
+segunda rama —la primitiva reconocida por nombre— era un generador de falsos positivos:
+pedía sólo que la clase tuviera **algún** método que llamara a algo llamado
+`copy`/`deepcopy`/`clone`/`MemberwiseClone`, sin ligar lo copiado al objeto. Los siete
+matches de `infinidev/src` y los veintiuno de `senn/senn_byte` eran copias de
+**contenedores ajenos**:
+
+```
+os.environ.copy()                       code_interpreter_tool.py:239
+remaining = novel.copy()                file_change_notifications.py:138  (un set)
+return deepcopy(self._rows.get(...))    usage.py:51
+resume = self._last_state_dict.copy()   mini_agent.py:138
+chunk[:-1].clone() / mask[1:].clone()   senn: byte_dataset.py:58-110  (tensores)
+```
+
+La rama ahora exige además que **lo copiado sea la propia instancia**: el receptor de la
+delegación es `THIS`, o el argumento carga de `THIS`. Eso mantiene los tres positivos
+—`copy.deepcopy(self)`, `this.MemberwiseClone()`, `(Config) super.clone()`— y rechaza la
+familia entera. El positivo de Java hacía falta arreglarlo de raíz: `super.clone()` no
+publicaba receptor, así que IR 1.72 admite `super` (java/python/javascript/typescript) y
+`base` (csharp) como la instancia. `Vec`-style: Rust y C++ quedan fuera a propósito,
+porque allí `super::` es una ruta de módulo y `Base::m()` nombra la base, no la instancia.
+
+Negativos nuevos que fijan la medición: `PY_FOREIGN_CONTAINER`, `PY_ENVIRONMENT`,
+`PY_FIELD_DEEPCOPY`, `JAVA_FIELD_CLONE`, `CSHARP_FIELD_CLONE`, más un positivo
+`JAVA_BASE_CLONE` que comprueba que `super.clone()` sigue matcheando.
+
+Medición del efecto, con presupuesto suficiente para que las dos corridas **completen**
+(`complete: true`, sin aviso): `prototype` sobre `infinidev/src` pasa de **7 a 0** matches y
+sobre `senn/senn_byte` de **21 a 0**. Que el cero sea de una búsqueda entera y no de un
+presupuesto agotado es justo lo que ahora distingue el campo `incomplete`.

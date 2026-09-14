@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -21,6 +22,13 @@ def add_parser(subparsers) -> None:
         p.add_argument("--cache-mb", type=float, default=None, help="cache cap in MB; 0 disables; default 500")
         p.add_argument("--limit", type=int, default=100, help="maximum matches per rule")
         p.add_argument("--timeout-ms", type=int, default=2000, help="query budget per rule")
+        # Real projects need more than the fixture-sized defaults: measured on a
+        # 684-file Python package, 12 of the 23 GoF roots exhaust 50k states and
+        # report nothing, which reads as "no matches" instead of "not searched".
+        p.add_argument("--max-states", type=int, default=50_000,
+                       help="join states a rule may visit before it is reported incomplete")
+        p.add_argument("--max-rows", type=int, default=200_000,
+                       help="rows a rule may examine before it is reported incomplete")
         if name in {"search", "save-rule"}:
             group = p.add_mutually_exclusive_group(required=name == "save-rule")
             p.add_argument("--evidence-mode", choices=["strict", "possible"], default="strict")
@@ -51,7 +59,8 @@ def add_parser(subparsers) -> None:
 def dispatch(args: argparse.Namespace) -> int:
     command = args.structural_command
     root = Path(args.path).resolve()
-    budget = QueryBudget(max_matches=args.limit, timeout_ms=args.timeout_ms)
+    budget = QueryBudget(max_matches=args.limit, timeout_ms=args.timeout_ms,
+                         max_states=args.max_states, max_rows=args.max_rows)
     result: dict[str, Any]
     if command == "catalog":
         from .effects import BUG_RULES
@@ -101,4 +110,11 @@ def dispatch(args: argparse.Namespace) -> int:
             data["facts"] = [v for v in data["facts"] if v["subject"] in selected or v["object"] in selected]
         result = {"ok": True, "ir": data, "analysis": analysis}
     print(json.dumps(result, indent=2, ensure_ascii=False))
+    incomplete = result.get("incomplete") or {}
+    if incomplete:
+        # Not on stdout: the JSON stays machine-readable and the warning still
+        # reaches a human reading the terminal.
+        reasons = ", ".join(f"{rule} ({'/'.join(reasons)})" for rule, reasons in sorted(incomplete.items()))
+        print(f"warning: {len(incomplete)} rule(s) did not finish and their result is incomplete: {reasons}",
+              file=sys.stderr)
     return 0
