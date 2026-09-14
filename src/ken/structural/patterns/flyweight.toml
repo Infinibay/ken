@@ -18,7 +18,7 @@ claim = "structural-signature"
 [[variants]]
 id = "explicit-interning"
 status = "ready"
-query_claim = "An indexed write stores the construction supplied with the key parameter, and a direct indexed return uses that same pool and key binding. Does not prove current key values under reassignment, miss-only creation, lifetime identity, intrinsic-state stability or extrinsic use."
+query_claim = "An indexed write stores the construction supplied with the key parameter, and a direct indexed return uses that same pool and key binding. The index may be the key parameter itself or a local the method derives from it (``key = self.get_key(state)``), which is how the canonical Python, TypeScript and Java examples spell the pool. Does not prove the derivation is injective -- ``get_key`` may collapse distinct inputs -- nor current key values under reassignment, miss-only creation, lifetime identity, intrinsic-state stability or extrinsic use."
 languages = ["python", "java", "typescript"]
 requires = ["map_key_flow", "allocation_flow"]
 graph_requirements = ["Lookup/miss/inserción/retorno comparten clave y pool; usuario suministra contexto extrínseco."]
@@ -43,11 +43,27 @@ query flyweight {
  require $input LOADED_FROM $key;
  require $factory HAS_OPERATION $write;
  require $write WRITES_ELEMENT $pool;
- require $write INDEX $key;
- require $write STORES_VALUE $construction;
+ require $write INDEX $index;
+ any { where $index == $key; }
+ or {
+  require $index ASSIGNED_FROM $derived;
+  require $derived ARGUMENT $derived_argument;
+  require $derived_argument VALUE $derived_value;
+  require $derived_value LOADED_FROM $key;
+ }
+ require $write STORES_VALUE $stored;
+ any { where $stored == $construction; }
+ or { require $construction RESULT $stored; }
  require $factory RETURNS $returned;
  require $returned CONTAINER $pool;
- require $returned INDEX $key;
+ require $returned INDEX $return_index;
+ any { where $return_index == $key; }
+ or {
+  require $return_index ASSIGNED_FROM $return_derived;
+  require $return_derived ARGUMENT $return_argument;
+  require $return_argument VALUE $return_value;
+  require $return_value LOADED_FROM $key;
+ }
  emit $unit;
 }
 '''

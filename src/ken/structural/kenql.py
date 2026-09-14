@@ -408,6 +408,28 @@ class Engine:
             self._owned[scope] = members
         return members
 
+    def candidates(self, clause: Clause, sres: str | None, ores: str | None) -> list[Fact]:
+        """The smallest index bucket that still contains every row of a clause.
+
+        An exact attribute filter has its own bucket, so ``call(name: "x")`` no
+        longer walks the entity relation to find the one call it names. The
+        bucket ignores the endpoints (the caller filters those), so this only
+        ever picks a candidate list, never an intersection -- every candidate
+        list is a superset of the clause's rows.
+        """
+        rows = self.index.rows(clause.relation, sres, ores)
+        for key, op, value in clause.attrs:
+            if op != "=" or not value:
+                continue
+            # ``=`` accepts alternatives (``name: "get|Get"``), so the bucket is
+            # their union. Looking up the literal "get|Get" would find nothing and
+            # silently drop every row the clause had.
+            bucket = [fact for alternative in value.split("|")
+                      for fact in self.index.attr_rows(clause.relation, key, alternative)]
+            if len(bucket) < len(rows):
+                rows = bucket
+        return rows
+
     def clause_size(self, clause: Clause, bindings: dict[str, str]) -> int:
         """How many rows this clause would yield for one representative row.
 
@@ -433,7 +455,7 @@ class Engine:
             size = len(facts)
         else:
             size = 0
-            for fact in facts:
+            for fact in self.candidates(clause, sres, ores):
                 if sres is not None and fact.subject != sres: continue
                 if ores is not None and fact.object != ores: continue
                 probe: dict[str, str] = {}
@@ -446,7 +468,7 @@ class Engine:
 
     def facts(self, clause: Clause, row: Row) -> list[Row]:
         result = []
-        for fact in self.index.rows(clause.relation, _resolve(clause.subject, row.bindings), _resolve(clause.object, row.bindings)):
+        for fact in self.candidates(clause, _resolve(clause.subject, row.bindings), _resolve(clause.object, row.bindings)):
             self.tick()
             self.rows += 1
             if self.budget.max_rows is not None and self.rows > self.budget.max_rows: raise _Exhausted('max_rows')

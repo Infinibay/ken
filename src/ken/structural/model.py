@@ -7,6 +7,12 @@ from typing import Any
 IR_VERSION = "1.72.0"
 
 
+def _attribute_key(value: Any) -> str:
+    """How an attribute value is keyed for lookup and compared for equality."""
+    return str(value).lower() if isinstance(value, bool) else str(value)
+
+
+
 @dataclass
 class Entity:
     id: str
@@ -82,6 +88,12 @@ class FactIndex:
     Facts and public index mappings must not be mutated while querying. Adding
     facts to the source IR does not extend this snapshot. ``rows`` chooses a
     candidate bucket, not an intersection; callers still filter both endpoints.
+
+    Three buckets exist because the catalogue asks three kinds of question:
+    which facts name this subject (``rows`` with a subject), which name this
+    object, and which carry this exact attribute value (``attr_rows``). The last
+    one is what turns ``call(name: "computeIfAbsent")`` from a scan of every
+    entity in the project into a dictionary lookup.
     """
     def __init__(self, ir: IR):
         self.ir = ir
@@ -89,6 +101,7 @@ class FactIndex:
         self.by_relation: dict[str, list[Fact]] = {}
         self._by_subject: dict[tuple[str, str], list[Fact]] = {}
         self._by_object: dict[tuple[str, str], list[Fact]] = {}
+        self._by_attr: dict[tuple[str, str], dict[str, list[Fact]]] = {}
         self._subject_relations: set[str] = set()
         self._object_relations: set[str] = set()
         self._subject_complete = False
@@ -153,3 +166,21 @@ class FactIndex:
             if subject is None or len(other) < len(rows):
                 rows = other
         return rows
+
+    def attr_rows(self, relation: str, key: str, value: str) -> list[Fact]:
+        """Facts of ``relation`` whose attribute ``key`` equals ``value`` exactly.
+
+        Built on first use, one attribute at a time, from the relation's posting
+        list. Values are keyed the way ``_compare`` compares them, so a boolean
+        attribute stored as ``False`` buckets as ``"false"``.
+        """
+        index = self._by_attr.get((relation, key))
+        if index is None:
+            index = {}
+            for fact in self.by_relation.get(relation, []):
+                if key not in fact.attrs:
+                    continue
+                index.setdefault(_attribute_key(fact.attrs[key]), []).append(fact)
+            self._by_attr[(relation, key)] = index
+        return index.get(value, [])
+
