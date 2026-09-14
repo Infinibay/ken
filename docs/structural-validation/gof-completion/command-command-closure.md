@@ -3,6 +3,16 @@
 Estado: **cerrada**. La variante es `ready` en sus **ocho** lenguajes declarados.
 Fecha: 2026-09-13. Base: `f3a1f4c`.
 
+> Revisión posterior, sin cambio de IR ni de semántica: el `sha256` de
+> `src/ken/structural/patterns/command.toml` que aparece al final ya no aplica.
+> `callable(constructor: false) as $action` se movió del preámbulo al interior de
+> cada rama del `any`, donde la rama liga `$action` (`$insertion INSERTED_VALUE
+> $action`) antes de comprobarlo. Antes el planificador generaba los ~266
+> callables por fila y la rama descartaba todos: 20 s y 11 M estados sobre
+> `src/ken/structural`, ahora 2.9 s y 3.1 M, con la misma conjunción por rama y
+> los mismos matches. La equivalencia se comprobó con los conjuntos de findings
+> de ocho corpus RefactoringGuru/faif, idénticos antes y después.
+
 ## Qué pide la ficha
 
 > Relacionar captura de acción/datos, transferencia o almacenamiento de la función

@@ -11,7 +11,10 @@ from .gof_sources import PYTHON
 
 def test_cli_pattern_scan_and_directory_summary(tmp_path, capsys):
     (tmp_path / "builder.py").write_text(PYTHON["builder"])
-    assert main(["structural", "patterns", "--path", str(tmp_path), "--pattern", "builder", "--cache-mb", "0"]) == 0
+    # The directory rollup belongs to the verbatim result; the default surface is
+    # the compact summary (see test_compact_report.py).
+    assert main(["structural", "patterns", "--path", str(tmp_path), "--pattern", "builder",
+                 "--cache-mb", "0", "--full"]) == 0
     result = json.loads(capsys.readouterr().out)
     assert result["findings"] and result["directories"]
 

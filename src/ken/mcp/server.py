@@ -942,6 +942,7 @@ def ken_find(
     tags: list[str] | None = None,
     rule_files: list[str] | None = None,
     evidence_mode: Literal["strict", "possible"] = "strict",
+    full: bool = False,
 ) -> Any:
     """Find code by meaning, text, structure, design patterns, or bug signatures.
 
@@ -971,26 +972,34 @@ def ken_find(
     rather than "budget exhausted". Pass *limit* or *timeout_ms* to cap matches
     or latency when a host needs a bound.
 
+    Structural results are compact by default -- what was found, where, with what
+    confidence. Set *full=True* for the verbatim result with evidence trees,
+    per-rule outcomes and directory rollups.
+
     *language* filters ``text`` results (e.g. "python").
     """
     if scope != "structure" and any((rules, collections, tags, rule_files)):
         raise ValueError("saved rule selectors require scope=structure")
     ranked_limit = 10 if limit is None else limit
     if scope in {"structure", "patterns", "bugs"}:
-        from ken.structural import service
+        from ken.structural import report, service
         from ken.structural.query import QueryBudget
         assert _PROJECT_ROOT is not None
         budget = QueryBudget(max_matches=limit, timeout_ms=timeout_ms)
+        detail = "full" if full else "compact"
         if scope == "structure":
-            return service.search(_PROJECT_ROOT, query, path=path, cache_mb=cache_mb, budget=budget,
-                                  rule_ids=rules, collections=collections, tags=tags, rule_files=rule_files, evidence_mode=evidence_mode)
+            return report.present(service.search(_PROJECT_ROOT, query, path=path, cache_mb=cache_mb, budget=budget,
+                                                 rule_ids=rules, collections=collections, tags=tags,
+                                                 rule_files=rule_files, evidence_mode=evidence_mode),
+                                  kind="structure", detail=detail)
         if scope == "patterns":
             names = [name.strip() for name in query.split(",") if name.strip()]
-            return service.patterns(_PROJECT_ROOT, names, path=path, cache_mb=cache_mb, budget=budget)
+            return report.present(service.patterns(_PROJECT_ROOT, names, path=path, cache_mb=cache_mb, budget=budget),
+                                  kind="patterns", detail=detail)
         result = service.bugs(_PROJECT_ROOT, path=path, cache_mb=cache_mb, budget=budget)
         if query:
             result["findings"] = [f for f in result["findings"] if query in f["id"]]
-        return result
+        return report.present(result, kind="bugs", detail=detail)
     if scope == "files":
         return _impl_ken_search_files(query, limit=ranked_limit)
     if scope == "symbols":

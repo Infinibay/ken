@@ -65,6 +65,24 @@ hay" en vez de "no se buscó". Detalles en
 Inventario: **77 ready / 0 design** (treinta y tres variantes promovidas en este trabajo:
 **el catalogo no tiene ninguna variante en `design`**).
 
+Sin cambio de IR — **presupuesto y salida**: el motor ya no aplica topes por defecto
+(`QueryBudget` usa `None` = sin techo; `--limit`, `--timeout-ms`, `--max-states` y
+`--max-rows` siguen disponibles y `0`/negativo se rechaza en vez de leerse como
+"ilimitado"), así que una lista vacía de `findings` significa *buscado y no encontrado*,
+nunca *truncado*. El planificador de joins dimensiona cada clausula por las filas que
+realmente produce (incluye literales de tipo y filtros de atributo), adelanta
+`different`/`where` en cuanto sus roles existen y deja que las clausulas `require`
+conmuten alrededor de esos filtros: cuatro variantes (`memento#serialized-snapshot`,
+`mediator#direct-colleagues`, `command#command-closure`, `observer#event-bus`) que
+costaban **94 s** de los 109 s de un barrido de las 23 raices sobre `src/ken/structural`
+ahora cuestan **4.9 s** y el barrido total baja a **26 s**, con los mismos findings
+(conjuntos identicos en ocho corpus independientes). `command#command-closure` ademas
+mueve el generador `callable(constructor: false) as $action` dentro de cada rama del
+`any`, donde la rama liga `$action` antes de comprobarlo. La salida por defecto pasa a
+ser un resumen legible (patron, variante, confianza, ruta, linea, simbolo) con
+`--full`/`full=True` para el resultado verbatim: 16.8 KB contra 2.74 MB en el corpus
+Java. Detalles en [`docs/structural-ir.md`](docs/structural-ir.md).
+
 Sin cambio de IR: **`proxy#remote-subject`** se cerro **solo con query**, con la segunda
 alternativa que la ficha permite: la **implementacion local visible** que serializa la
 llamada y devuelve su respuesta. La clase implementa el contrato local (`SUBTYPE_OF`, o

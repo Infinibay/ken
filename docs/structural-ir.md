@@ -2125,6 +2125,61 @@ below. For patterns, it is a comma-separated list of catalogue ids, or an empty
 string for all 23. The `path` parameter scopes the scan; `cache_mb=0` disables caching.
 The original semantic/text scopes retain their behavior.
 
+## Output: summary by default, verbatim on request
+
+A pattern scan reports what was found, where, and with what confidence; the
+evidence trees, per-rule outcomes, directory rollups and the analysed file list are
+the *audit* payload, not the reading payload. One 60-finding scan over a single
+package serialized 1.5 MB, and a Java scan 2.7 MB, of which almost all was the
+per-finding copy of the rule's query text.
+
+```json
+{
+  "ok": true,
+  "findings": [
+    {"pattern": "facade", "variant": "module-surface", "confidence": 1.0,
+     "path": "src/Facade/Conceptual/main.py", "line": 101, "symbol": "client_code"}
+  ],
+  "summary": {"facade": 1},
+  "count": 1,
+  "complete": true,
+  "analysis": {"files": 1, "skipped": 0, "coverage_complete": true, "elapsed_ms": 58.2},
+  "note": "Structural evidence consistent with an idiom; not proof of intent."
+}
+```
+
+`confidence` is the share of a variant's clauses the witness satisfies;
+`analysis.coverage_complete` is the same completeness flag the full result carries,
+so a compact caller can still tell a thorough scan from a partial one, and
+`incomplete` appears whenever a caller-imposed ceiling truncated a rule.
+Bug findings keep `rule`, `severity`, `message`, `path` and `line`; a `search`
+keeps each match's `bindings` and drops its evidence.
+
+`--full` on the CLI, and `full=True` on `ken_find`, return the verbatim result. The
+same run in both modes, on the RefactoringGuru Java corpus, is 16.8 KB against
+2.74 MB, and the two agree on the finding set.
+
+## Join planning
+
+The engine does not evaluate a conjunction in source order. Three rules, all
+result-preserving — verified by identical finding sets over eight independent
+corpora and by `tests/structural/test_join_planning.py`:
+
+* a clause is sized by the rows it would actually yield, counting kind literals
+  and attribute filters, so `call(name: /encode/)` is planned as the 1-in-30k
+  filter it is instead of as a scan of the call relation;
+* `different` and a `where` whose operands are bound are applied as soon as their
+  roles exist, before the join multiplies rows they are about to discard;
+* fact clauses commute across those filters, so the cheap check runs before the
+  expensive fan-out. Negation, aggregates, counts, unions, paths and a `where`
+  whose operands are not yet bound remain barriers with their own binding and
+  scope semantics.
+
+Measured on `src/ken/structural` (36 files, 23 roots, no ceilings): 109s before,
+26s after; four variants (`memento#serialized-snapshot`,
+`mediator#direct-colleagues`, `command#command-closure`, `observer#event-bus`)
+accounted for 94s of it and now take 4.9s together.
+
 ## Representation contract
 
 The serialized IR has a schema version, source path, language, entities, operations,

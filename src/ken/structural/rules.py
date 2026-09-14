@@ -300,6 +300,6 @@ def execute_rules(ir: IR | FactIndex, rules: list[SavedRule], budget: QueryBudge
             unit = index.ir.entities.get(match["bindings"].get("$unit", ""))
             primary = (unit.path, unit.line) if unit else (locations[0] if locations else ("", 0))
             matches.append({**match, "id": rule.id, "rule": rule.to_dict(),
-                            "path": primary[0], "line": primary[1],
+                            "path": primary[0], "line": primary[1], "symbol": unit.name if unit else "",
                             "locations": [{"path": p, "line": line} for p, line in locations]})
     return {"matches": matches, "outcomes": outcomes, "complete": all(o["complete"] for o in outcomes.values())}

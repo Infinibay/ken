@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from . import service
+from . import report, service
 from .catalog import catalog
 from .query import QueryBudget
 
@@ -33,6 +33,12 @@ def add_parser(subparsers) -> None:
                        help="join states a rule may visit before it is reported incomplete; unlimited by default")
         p.add_argument("--max-rows", type=int, default=None,
                        help="rows a rule may examine before it is reported incomplete; unlimited by default")
+        if name in {"search", "patterns", "bugs"}:
+            # The default surface is meant to be read: what was found, where,
+            # with what confidence. --full returns the engine's verbatim result
+            # (evidence trees, per-rule outcomes, directory rollups).
+            p.add_argument("--full", action="store_true",
+                           help="print the verbatim result instead of the compact summary")
         if name in {"search", "save-rule"}:
             group = p.add_mutually_exclusive_group(required=name == "save-rule")
             p.add_argument("--evidence-mode", choices=["strict", "possible"], default="strict")
@@ -84,10 +90,13 @@ def dispatch(args: argparse.Namespace) -> int:
         query = args.query_file.read_text() if args.query_file else args.query
         result = service.search(root, query or "", path=args.scope, cache_mb=args.cache_mb, budget=budget,
                                 rule_ids=args.rule, collections=args.collection, tags=args.tag, rule_files=args.rules_file, evidence_mode=args.evidence_mode)
+        result = report.present(result, kind="structure", detail="full" if args.full else "compact")
     elif command == "patterns":
         result = service.patterns(root, args.pattern, path=args.scope, cache_mb=args.cache_mb, budget=budget)
+        result = report.present(result, kind="patterns", detail="full" if args.full else "compact")
     elif command == "bugs":
         result = service.bugs(root, path=args.scope, cache_mb=args.cache_mb, budget=budget)
+        result = report.present(result, kind="bugs", detail="full" if args.full else "compact")
     else:
         if args.format == 'text' and args.view != 'instructions':
             raise ValueError('--format text requires --view instructions')
