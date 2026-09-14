@@ -211,6 +211,39 @@ PY_BOTH_ARMS_DELEGATE = '''def middleware(next_handler):
     return handle
 '''
 
+# The same residual shape in the languages whose invocation form differs:
+# Java and C# call the captured delegate through a method, so the counted callee
+# name is the method's, not the parameter's.
+BOTH_ARMS_DELEGATE = {
+    'javascript': '''function middleware(next) {
+  return function handle(request) {
+    if (request.admin) { return next("a"); }
+    return next("b");
+  };
+}
+''',
+    'java': '''import java.util.function.Function;
+
+class Middleware {
+    static Function<String, String> middleware(Function<String, String> next) {
+        return request -> {
+            if (request.isEmpty()) { return next.apply("a"); }
+            return next.apply("b");
+        };
+    }
+}
+''',
+    'go': '''package chain
+
+func Middleware(next func(string) string) func(string) string {
+\treturn func(request string) string {
+\t\tif request == "" { return next("a") }
+\t\treturn next("b")
+\t}
+}
+''',
+}
+
 
 def variant():
     rule = next(r for r in _load_catalog() if r.id == 'chain-of-responsibility')
@@ -257,20 +290,32 @@ def test_a_handler_that_does_not_capture_next_is_rejected():
     assert not detect('python', PY_NO_CAPTURE)
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    'A branch that forwards on BOTH outcomes is admitted: expressing "this arm does '
-    'not forward" needs exact call cardinality or scoped absence, and KenQL only '
-    'declares closure for HAS_PARAMETER (kenql.py:405, 616-619), so `count = 1` and '
-    '`not exists` are dropped in strict mode. Remove this marker when a completeness '
-    'capability for HAS_CALL lands.'))
-def test_a_branch_that_forwards_on_both_outcomes_is_rejected():
-    """The measured residual of this variant, kept executable.
+@pytest.mark.parametrize('language', sorted(BOTH_ARMS_DELEGATE))
+def test_a_branch_that_forwards_on_both_outcomes_is_rejected(language):
+    """Every path forwards, so no terminating arm exists: still a wrapper.
 
-    Every path forwards, so no terminating arm exists -- structurally this is still a
-    wrapper. It matches today, and the strict marker turns the gap into a failing test
-    the moment it is closed.
+    This was the measured residual of the previous commit, where it matched. It is
+    closed by ``complete:<callable>:HAS_CALL`` (IR 1.61) plus an exact count of calls
+    sharing the delegate's callee name.
     """
+    assert not detect(language, BOTH_ARMS_DELEGATE[language]), language
+
+
+def test_the_python_double_forwarding_shape_is_rejected():
     assert not detect('python', PY_BOTH_ARMS_DELEGATE)
+
+
+def test_unrelated_calls_do_not_count_towards_the_delegation():
+    """The count is scoped by callee name, so logging does not break the match."""
+    assert detect('python', '''def middleware(next_handler):
+    def handle(request):
+        if not request.authenticated:
+            return "denied"
+        log(request)
+        audit(request)
+        return next_handler(request)
+    return handle
+''')
 
 
 def test_variant_declares_every_target_language_as_ready():
@@ -279,8 +324,9 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
     assert 'CAPTURES' in row['query'] and 'SYNTAX_NODE' in row['query']
-    # The measured residual is stated in the published claim, not only in this file.
-    assert 'AMBOS' in row['query_claim']
+    # The residual is closed by an exact call cardinality, not by prose.
+    assert 'count distinct $call = 1' in row['query']
+    assert 'excluido' in row['query_claim']
 
 
 def test_the_rust_tail_expression_is_the_continuation():

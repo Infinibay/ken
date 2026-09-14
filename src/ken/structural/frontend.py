@@ -44,7 +44,12 @@ MEMBERS = {"attribute", "member_expression", "field_access", "member_access_expr
            "selector_expression", "field_expression"}
 INDEXES = {"subscript", "subscript_expression", "element_access_expression", "index_expression", "array_access"}
 CALLS = {"call", "call_expression", "method_invocation", "invocation_expression", "new_expression",
-         "object_creation_expression", "struct_expression", "composite_literal"}
+         "object_creation_expression", "struct_expression", "composite_literal",
+         # A constructor delegating to another constructor is an invocation, and the
+         # grammars name it as one. Without these a Java/C# constructor body could
+         # contain a call the graph never records, which would make HAS_CALL
+         # completeness unsound rather than merely incomplete.
+         "explicit_constructor_invocation", "constructor_initializer"}
 ASSIGNMENTS = {"assignment", "assignment_expression", "assignment_statement", "short_var_declaration",
                "variable_declarator", "init_declarator", "let_declaration", "public_field_definition", "field_definition", "field_declaration",
                "var_declaration", "const_declaration", "static_item", "const_item"}
@@ -1283,6 +1288,10 @@ class Lowerer:
                     self.ir.add(initializer, 'STORES_VALUE', self.value(initial, scope, cls), self.evidence(item), **attrs)
             self.call_nodes[cid] = node
             function = field(node, "function", "constructor", "type", "name")
+            if kind == 'constructor_initializer':
+                # ``: base(...)`` spells its callee as an unnamed token, so no field
+                # lookup finds it.
+                function = next((c for c in node.children if c.type in {'base', 'this'}), None)
             receiver_node = field(node, "object")
             name = self.text(function)
             if function is not None and function.type in MEMBERS:

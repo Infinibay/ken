@@ -1,7 +1,8 @@
-# `chain#middleware-closures` (8 lenguajes) — cerrada, con un residuo medido
+# `chain#middleware-closures` (8 lenguajes) — cerrada
 
-Estado: **cerrada**. La variante es `ready` en sus **ocho** lenguajes declarados.
-Fecha: 2026-09-14. Base: `3a7b624` (IR 1.60.0), **sin cambio de IR**.
+Estado: **cerrada**, sin residuo. La variante es `ready` en sus **ocho** lenguajes
+declarados, y su último hueco se cerró en IR 1.61.
+Fecha: 2026-09-14. Base: `dbe4ec7` (IR 1.60.0), IR 1.61.0.
 
 ## Séptima variante que no necesitó capacidad nueva
 
@@ -46,43 +47,51 @@ any { require $continuing RETURN_OPERAND $delegate; }
 or { require $delegate SYNTAX_NODE $continuing; }
 ```
 
-## Residuo medido, y por qué queda ejecutable
+## El residuo de la ronda anterior, y cómo se cerró
 
-**Una rama que delega en AMBOS desenlaces sigue matcheando.** Ese handler nunca
-termina: todos sus caminos reenvían, así que estructuralmente es un wrapper y no un
-eslabón con decisión real.
+La primera entrega de esta variante **no** necesitó IR, y dejó un hueco medido: una
+rama que delega en **AMBOS** desenlaces matcheaba. Ese handler nunca termina —todos sus
+caminos reenvían—, así que estructuralmente es un wrapper y no un eslabón con decisión
+real. Se midió en vez de suponerse: el fixture de doble delegación daba **2 matches**.
 
-Lo medí en vez de suponerlo: el fixture de doble delegación da **2 matches**. La causa
-está acotada y es de KenQL, no de la query:
+Se registró como `xfail(strict=True)` con la capacidad faltante nombrada, y esta
+entrega la construyó. Hacía falta **completitud de llamadas**: expresar «este ramal no
+delega» exige cardinalidad exacta o ausencia acotada, y ambas exigen que el bloque esté
+*cerrado*, lo que a su vez requiere una capacidad `complete:<sujeto>:<relación>`.
 
-- expresar «este ramal no delega» necesita **cardinalidad exacta**
-  (`count distinct $call = 1 { … }`) o **ausencia acotada**
-  (`not exists { … } within callable($wrapped)`);
-- ambas exigen que el bloque sea *cerrado*, y `closed()` (kenql.py:405) requiere la
-  capacidad `complete:<sujeto>:<relación>`;
-- la única que se declara es `complete:<callable>:HAS_PARAMETER`
-  (kenql.py:616-619, solo Python y sin diagnósticos).
+La cláusula que lo cierra:
 
-Sin clausura, `count = 1` y `not exists` producen incertidumbre y el modo `strict` las
-descarta. Verificado: `count >= 1` matchea y `count = 1` no; el bloque `not exists`
-devuelve 0.
+```kenql
+count distinct $call = 1 {
+ require $wrapped HAS_CALL $call;
+ where $call.name == $delegate.name;
+};
+```
 
-Por eso el residuo se registra como `xfail(strict=True)` en
-`tests/structural/test_chain_middleware_closures.py`, con la capacidad que falta
-nombrada en el `reason`. Cuando aterrice una completitud para `HAS_CALL`, el marcador
-pasará a `XPASS(strict)` y la suite pedirá que se retire: el hueco queda así
-ejecutable, no escondido en prosa.
+Tres detalles costaron iteraciones y quedan como contrato:
 
-Se descartó cerrarlo exigiendo que el desenlace que termina devuelva un valor **no
-llamada**: eso habría rechazado el middleware canónico que cortocircuita con una
-respuesta calculada (`return res.status(403).send("denied")`). Preferí un falso
-positivo acotado y declarado a un falso negativo sobre código real.
+1. **El filtro va en `where`, no en un segundo `require`.** `closed()` resuelve el
+   sujeto de cada hecho contra la fila **externa**, así que un `require` cuyo sujeto se
+   liga *dentro* del bloque nunca puede cerrarse. `where $call.name == …` no añade un
+   hecho y por eso sí funciona.
+2. **Se filtra por el nombre del delegado, no por el del parámetro.** Java invoca el
+   callable capturado como `next.apply(request)`, así que el nombre del callee es
+   `apply` y no `next`; el nombre del parámetro habría rechazado Java.
+3. **El retorno delegado no es necesariamente sucesor directo de la rama.** Con
+   sentencias intermedias (`log(request); audit(request); return next(request)`) el
+   sucesor de la rama es la primera de ellas. `path $continuing CFG_NEXT{0,4}
+   $arm_return` lo generaliza sin aflojar el contrato.
+
+Las llamadas no relacionadas no cuentan: el conteo está acotado por nombre de callee, y
+`test_unrelated_calls_do_not_count_towards_the_delegation` lo fija con dos llamadas
+ajenas de por medio.
 
 ## Negativos cubiertos
 
-22 pruebas en `tests/structural/test_chain_middleware_closures.py`: 8 positivos (uno
+26 pruebas en `tests/structural/test_chain_middleware_closures.py`: 8 positivos (uno
 por lenguaje), 8 negativos de wrapper incondicional (uno por lenguaje), 4 negativos
-propios de Python y 2 comprobaciones del contrato publicado.
+propios de Python, 4 de doble delegación (Python, JavaScript, Java y Go) y 2
+comprobaciones del contrato publicado.
 
 | Negativo | Por qué se rechaza |
 |---|---|
@@ -90,7 +99,7 @@ propios de Python y 2 comprobaciones del contrato publicado.
 | handler que nunca reenvía | no hay llamada al delegado |
 | handler que reenvía pero no devuelve su resultado | `RETURN_OPERAND` no liga el delegado |
 | handler que no captura `next` | falta `CAPTURES` |
-| **(xfail) rama que delega en ambos desenlaces** | residuo medido: falta clausura sobre `HAS_CALL` |
+| rama que delega en ambos desenlaces | el conteo exacto por nombre de callee da 2, no 1 |
 
 ## Límites declarados
 
@@ -101,5 +110,6 @@ incondicional.
 
 ## Validación
 
-`tests/structural/` completo, sin regresiones, más las 22 pruebas nuevas (1 `xfail`
-estricto). `mypy src/ken` limpio. Sin bump de `IR_VERSION`: el grafo no cambia.
+`tests/structural/` completo, sin regresiones, más las 26 pruebas nuevas.
+`mypy src/ken` limpio. `xfailed` vuelve de 141 a 140: el marcador que esta misma
+variante había añadido se retiró al cerrarse la capacidad.

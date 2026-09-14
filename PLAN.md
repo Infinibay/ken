@@ -138,17 +138,29 @@ campo del propio tipo (un `clone` que devuelve un valor fresco no copia), se cie
 **`prototype#language-copy`** en sus cinco lenguajes. Detalles en
 [`prototype#language-copy`](docs/structural-validation/gof-completion/prototype-language-copy.md).
 
-Sin cambio de IR: **`chain#middleware-closures`** se cerró **solo con query**, en sus
+**`chain#middleware-closures`** se cerró **solo con query** en su momento, en sus
 ocho lenguajes. La captura de `next`, la rama y el retorno del resultado delegado ya
 estaban; lo único específico de Rust es que su desenlace que continúa es una
 **expresión de cola** sin `return`, y lo ata a la rama `SYNTAX_NODE` (la entidad `CALL`
-es el nodo sintáctico de ese sucesor concreto), no `RETURN_OPERAND`. Queda un residuo
-**medido y ejecutable**: una rama que delega en AMBOS desenlaces matchea, porque
-expresar «este ramal no delega» exige clausura de cardinalidad sobre `HAS_CALL` y KenQL
-solo declara `complete:<callable>:HAS_PARAMETER` (kenql.py:405 y 616-619), de modo que
-`count = 1` y `not exists` caen en modo estricto. Se registró como `xfail(strict=True)`
-con la capacidad faltante nombrada, así que la suite pedirá retirarlo cuando aterrice.
-Detalles en
+es el nodo sintáctico de ese sucesor concreto), no `RETURN_OPERAND`. En IR 1.61 su
+residuo quedó cerrado con `complete:<callable>:HAS_CALL`: la query exige además que el
+callable no invoque nada con el mismo nombre de callee más de una vez, y acepta
+sentencias intermedias en el brazo vía `path … CFG_NEXT{0,4}`. Detalles en
+[`chain#middleware-closures`](docs/structural-validation/gof-completion/chain-middleware-closures.md).
+
+IR 1.61 — **completitud de llamadas y cardinalidad exacta**: un callable publica
+`complete:<callable>:HAS_CALL`, es decir que sus llamadas están **enumeradas y no
+muestreadas**. Eso habilita las dos formas de mundo cerrado que antes se descartaban en
+modo estricto, `count distinct $x = 1 { … }` y `not exists { … } within
+callable($x)`. Antes hubo que **reparar la clasificación**: `super()`/`this()` de Java
+(`explicit_constructor_invocation`) y `: base()`/`: this()` de C#
+(`constructor_initializer`) no estaban en el conjunto de llamadas, así que un
+constructor de esos lenguajes podía contener una llamada que el grafo nunca registraba
+— eso habría hecho la afirmación **insonora**, no solo incompleta. La afirmación está
+respaldada por `tests/structural/test_call_cardinality_closure.py`, que enumera una
+forma de llamada por lenguaje con su nombre de callee esperado. Con la capacidad
+construida, **el residuo de `chain#middleware-closures` quedó cerrado** y su
+`xfail(strict=True)` retirado: 141 → 140 xfailed. Detalles en
 [`chain#middleware-closures`](docs/structural-validation/gof-completion/chain-middleware-closures.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`adapter#functional-adapter`**,

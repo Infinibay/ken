@@ -55,7 +55,7 @@ requires = ["closure_capture", "control_flow"]
 graph_requirements = ["Handler captura next; rama puede terminar o continuar request; distinguir pipeline incondicional."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
-query_claim = "Un callable fabrica un handler que captura un parametro callable `next`, y la delegacion esta guardada por una rama: el resultado del delegado es el valor que devuelve UNO de los dos desenlaces de la rama (o su expresion de cola, en un lenguaje de expresiones) y el otro desenlace devuelve un valor distinto. Excluye el pipeline incondicional: sin rama no hay match. Residuo medido: una rama que delega en AMBOS desenlaces tambien matchea, porque expresar «este ramal no delega» exige cardinalidad exacta de llamadas o ausencia acotada, y KenQL solo declara clausura para HAS_PARAMETER (kenql.py:405 y 616-619), de modo que `count = 1` y `not exists` se descartan en modo estricto; se midio con un fixture de doble delegacion (2 matches). No prueba manejo exclusivo, preservacion de la request ni topologia de la cadena."
+query_claim = "Un callable fabrica un handler que captura un parametro callable `next`, y la delegacion esta guardada por una rama: el resultado del delegado es el valor que devuelve UNO de los dos desenlaces de la rama (o su expresion de cola, en un lenguaje de expresiones) y el otro desenlace devuelve un valor distinto. El callable no invoca nada con el mismo nombre de callee mas de una vez, de modo que un pipeline que delegue en AMBOS desenlaces queda excluido: sin rama y sin un unico punto de delegacion no hay eslabon, solo un wrapper. El conteo se apoya en `complete:<callable>:HAS_CALL` (IR 1.61) y filtra por el nombre del delegado, no por resolucion, porque la resolucion no es completa. No prueba manejo exclusivo, preservacion de la request ni topologia de la cadena."
 query = '''
 query middleware_closures {
  require $factory HAS_PARAMETER $next;
@@ -68,12 +68,18 @@ query middleware_closures {
  require $branch CFG_NEXT $continuing;
  require $branch CFG_NEXT $terminal;
  different $continuing $terminal;
- any { require $continuing RETURN_OPERAND $delegate; }
- or { require $delegate SYNTAX_NODE $continuing; }
+ path $continuing CFG_NEXT{0,4} $arm_return as $arm_body;
+ any { require $arm_return RETURN_OPERAND $delegate; }
+ or { require $delegate SYNTAX_NODE $arm_return; }
  any { require $delegate CALLEE_VALUE $next; } or { require $delegate RECEIVER $next; }
- operation(kind: return) as $terminal;
- require $terminal RETURN_OPERAND $terminated;
+ path $terminal CFG_NEXT{0,4} $terminal_return as $terminal_body;
+ operation(kind: return) as $terminal_return;
+ require $terminal_return RETURN_OPERAND $terminated;
  different $terminated $delegate;
- emit unit=$wrapped, $factory, $next, $branch, $delegate, $terminal;
+ count distinct $call = 1 {
+  require $wrapped HAS_CALL $call;
+  where $call.name == $delegate.name;
+ };
+ emit unit=$wrapped, $factory, $next, $branch, $delegate, $terminal_return;
 }
 '''

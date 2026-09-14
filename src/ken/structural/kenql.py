@@ -615,8 +615,17 @@ def query_graph(ir: IR) -> FactIndex:
         return {'str':'string','string':'string','String':'string','int':'integer','bool':'boolean','boolean':'boolean'}.get(value,value)
     if not ir.diagnostics:
         for entity in ir.entities.values():
-            if entity.kind == 'CALLABLE' and entity.attrs.get('language') == 'python':
-                graph.capabilities.add(f'complete:{entity.id}:HAS_PARAMETER')
+            if entity.kind == 'CALLABLE':
+                if entity.attrs.get('language') == 'python':
+                    graph.capabilities.add(f'complete:{entity.id}:HAS_PARAMETER')
+                # Every call form of the eight analysed languages is classified, so
+                # a callable's own calls are enumerated, not sampled. This is what
+                # lets a query ask for an exact call cardinality or for the absence
+                # of a call. ``tests/structural/test_call_cardinality_closure.py``
+                # enumerates the call forms per language; if a grammar renames one,
+                # that test fails before the claim becomes a lie. Rust macro
+                # invocations are not calls and are deliberately not counted.
+                graph.capabilities.add(f'complete:{entity.id}:HAS_CALL')
     call_ids = {e.id for e in ir.entities.values() if e.kind == 'CALL'}
     results = {call: call + '/result' for call in call_ids}
     stored: dict[str, list[str]] = {}

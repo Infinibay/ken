@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.60.0.** This document describes available behavior
+> **Operational reference: IR 1.61.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,42 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Call completeness and exact cardinality (IR 1.61)
+
+A callable publishes `complete:<callable>:HAS_CALL`: its own calls are **enumerated,
+not sampled**. Two query forms depend on that and were previously unusable in strict
+evidence mode:
+
+```kenql
+count distinct $call = 1 { require $wrapped HAS_CALL $call; where … ; };
+not exists { require $wrapped HAS_CALL $call; … } within callable($wrapped);
+```
+
+Both are "closed-world" forms. `Engine.closed` (`kenql.py`) walks the block and
+requires a `complete:<subject>:<relation>` capability for every fact, resolving each
+subject against the **outer** row — so a fact whose subject is bound *inside* the block
+can never be closed, and a count block should keep its extra conditions in a `where`
+rather than in a second `require`. Without closure, `=`/`<=`/`<` counts and absence
+carry `cardinality:open_world` and `strict` mode drops them; `>=` works either way
+because a lower bound can be witnessed.
+
+Two Java and C# node types were missing from the call set and had to be added first,
+because a completeness claim is only as good as the classification under it:
+
+| Language | Node | Why it is a call |
+|---|---|---|
+| Java | `explicit_constructor_invocation` | `super(...)`/`this(...)` invokes another constructor |
+| C# | `constructor_initializer` | `: base(...)`/`: this(...)`, same, spelled with an unnamed callee token |
+
+Before them a Java or C# constructor body could contain a call the graph never
+recorded, which would have made the claim **unsound** rather than merely incomplete.
+
+`tests/structural/test_call_cardinality_closure.py` enumerates one call form per
+language with its expected syntactic callee name, and asserts both that the form is
+classified and that the owning callable publishes completeness. A grammar rename fails
+there before the claim becomes a lie. Rust macro invocations are not calls and are
+deliberately not counted. Completeness is withheld when the source carries diagnostics.
 
 ## C++ parameter reference kind (IR 1.60)
 
