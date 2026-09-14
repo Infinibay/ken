@@ -7,7 +7,8 @@ caveat = "Structural evidence requires review of intent and runtime behavior."
 legacy_query = "require $unit HAS_METHOD $coordinate\ncount >=2 $caller CALLS $coordinate distinct=$caller\ncount >=2 $coordinate DELEGATES_TYPE $colleague distinct=$colleague\n"
 query = '''
 query mediator {
- match "mediator#direct-colleagues"(unit: $unit);
+ any { match "mediator#direct-colleagues"(unit: $unit); }
+ or { match "mediator#message-coordination"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -42,9 +43,46 @@ query mediator {
 '''
 [[variants]]
 id = "message-coordination"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
 requires = ["message_api_models", "callback_flow"]
 graph_requirements = ["Mensajes/callbacks sustituyen referencias bidireccionales; correlacionar canal/evento y destinos."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "Un centro con un metodo que **despacha por tag**: dos ramas delegan condicionalmente en **dos campos distintos del propio centro**, y la llamada de cada rama lleva un argumento cargado del **mismo parametro** (el tag). El centro esta ademas **llamado por dos tipos distintos** que se pasan a si mismos (`PASSES_SELF_TO`) invocando un metodo cuyo nombre coincide con el del despachador. Los campos destino no tienen que estar tipados por un contrato comun, y en JavaScript el centro inyectado no tiene tipo registrado: por eso el enlace es por nombre de llamada, el mismo idioma que `composite#recursive-nominal`. NO prueba que las dos ramas sean el `then` y el `else` de un mismo test, ni que los valores del tag difieran, ni la identidad runtime de los destinos, ni que la notificacion retorne. Los lenguajes declarados son los validados; la query no filtra por lenguaje."
+query = '''
+query mediator_message_coordination {
+ require $coordinator IS CLASS;
+ require $coordinator HAS_METHOD $operation;
+ require $operation CONDITIONAL_DELEGATION $first_target;
+ require $coordinator HAS_FIELD $first_target;
+ require $operation CONDITIONAL_DELEGATION $second_target;
+ require $coordinator HAS_FIELD $second_target;
+ different $first_target $second_target;
+ require $operation HAS_CALL $first_call;
+ require $first_call RECEIVER $first_target;
+ require $operation HAS_CALL $second_call;
+ require $second_call RECEIVER $second_target;
+ require $operation HAS_PARAMETER $tag;
+ parameter(receiver: false) as $tag;
+ require $first_call ARGUMENT $first_argument;
+ require $first_argument VALUE $first_value;
+ require $first_value LOADED_FROM $tag;
+ require $second_call ARGUMENT $second_argument;
+ require $second_argument VALUE $second_value;
+ require $second_value LOADED_FROM $tag;
+ require $notifier_a PASSES_SELF_TO $holder_a;
+ require $notifier_a IN_TYPE $colleague_a;
+ require $notifier_a HAS_CALL $outgoing_a;
+ require $outgoing_a CALLEE_NAME $name_a;
+ require $notifier_b PASSES_SELF_TO $holder_b;
+ require $notifier_b IN_TYPE $colleague_b;
+ require $notifier_b HAS_CALL $outgoing_b;
+ require $outgoing_b CALLEE_NAME $name_b;
+ different $colleague_a $colleague_b;
+ different $notifier_a $notifier_b;
+ where $name_a == $operation.name;
+ where $name_b == $operation.name;
+ emit unit=$coordinator, $operation, $first_target, $second_target, $tag, $colleague_a, $colleague_b;
+}
+'''

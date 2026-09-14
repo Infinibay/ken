@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **72 ready / 5 design** (veintiocho variantes promovidas en este trabajo).
+Inventario: **73 ready / 4 design** (veintinueve variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -304,6 +304,17 @@ distinto entre familias. La forma de **objeto literal** de JS/TS
 (`const ocean = { createButton: () => ... }`) queda declarada como no resuelta: el IR
 modela el literal como una colección, no como un tipo con miembros. Detalles en
 [`abstract-factory#structural-families`](docs/structural-validation/gof-completion/abstract-factory-structural-families.md).
+
+Sin cambio de IR: **`mediator#message-coordination`** se cerró **solo con query**. El
+contrato se escribe con hechos que ya existían: el centro tiene un método que despacha
+por tag —dos ramas que delegan condicionalmente en **dos campos distintos del propio
+centro**, cada una con un argumento cargado del **mismo parámetro**— y el centro está
+llamado por **dos tipos distintos** que se pasan a sí mismos (`PASSES_SELF_TO`)
+invocando un método cuyo nombre coincide con el del despachador. Esa última comparación
+es por nombre de llamada, el mismo idioma que `composite#recursive-nominal`, y es lo que
+permite que JavaScript funcione: allí el centro inyectado no tiene tipo registrado.
+Detalles en
+[`mediator#message-coordination`](docs/structural-validation/gof-completion/mediator-message-coordination.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -1052,7 +1063,13 @@ Dependencias: **P1, P2, P4, P6**. Ready iniciales: `direct-colleagues`.
 
 #### Pendiente `mediator#message-coordination`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+  **Cerrada sin cambio de IR:** el contrato se escribe con hechos que ya existían
+  (`PASSES_SELF_TO`, `CONDITIONAL_DELEGATION`, `HAS_FIELD`, `ARGUMENT`→`VALUE`→
+  `LOADED_FROM`). 73 tests (positivo y renombrado por lenguaje, cinco negativos por
+  lenguaje, la consulta raíz y la comprobación de que `PASSES_SELF_TO` es lo que admite
+  el centro). Detalles en
+  [`mediator#message-coordination`](docs/structural-validation/gof-completion/mediator-message-coordination.md).
 
 Relacionar recepción de mensaje de un participante con una decisión de coordinación y acciones hacia otros mediante bus/canal resuelto. Correlacionar participantes, payload y rutas. Positivo: mediador sin referencias bidireccionales obligatorias y con participantes distintos del mismo tipo.
 
