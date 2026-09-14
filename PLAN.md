@@ -32,14 +32,22 @@ superficie de módulo. Detalles en
 Además, IR 1.50 cierra **P1.6 para Go y Rust** (C++ pendiente): el pase
 `structured-locals/3` los admite tras medir que sus constructos de ownership se
 rechazan en vez de adivinarse. Con eso **`facade#module-surface` pasa a `ready`**
-en sus cinco lenguajes, la primera variante del inventario promovida en este
-trabajo. Inventario: **45 ready / 32 design**. Detalles en
+en sus cinco lenguajes. Detalles en
 [P1.6 — Go y Rust](docs/structural-validation/gof-completion/go-rust-p16.md).
 
-Siguiente tarea: **P1.6 para C++**, y luego reutilizar la procedencia de Go/Rust
-en las variantes que los declaran (`strategy#static-policy`,
-`factory-method#contract-slot`, `singleton#module-shared`,
-`iterator#callback-iterator`). En paralelo siguen abiertas **P1.5**, regiones
+IR 1.51 — eventos de C#: `DECLARES_EVENT`, `ADDS_HANDLER`, `REMOVES_HANDLER` y
+`RAISES_EVENT` modelan declaración, registro, baja y emisión sobre el mismo
+almacenamiento, y `MEMBER_DECLARATION` resuelve un acceso a miembro contra el
+campo que declara el tipo nominal del receptor (capacidad general, no específica
+de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
+[`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
+
+Inventario: **46 ready / 31 design** (dos variantes promovidas en este trabajo).
+
+Siguiente tarea: el cuello de botella compartido que sigue es el **modelo de bus /
+topic resuelto** (P6), que desbloquea `observer#event-bus` y
+`mediator#message-coordination`; después P1.6 para C++, que abre las 25 variantes
+que lo declaran. En paralelo siguen abiertas **P1.5**, regiones
 expresivas/cortocircuitos (bloqueada; ver
 [registro](docs/structural-validation/gof-completion/P1.5-expressive-regions-blocked.md)),
 y el alcance pendiente de P1.1 (closures, orden de declaración) y P1.3
@@ -741,7 +749,12 @@ Dependencias: **P1, P2, P4, P6**. Ready iniciales: `listener-registry`, `map-key
 
 #### Pendiente `observer#language-event`
 
-- [ ] Implementar en: `csharp`.
+- [x] Implementar en: `csharp`.
+  **IR 1.51:** `ready`. Declaración, registro, baja y emisión ligados al mismo
+  almacenamiento; accessors personalizados quedan sin marcar. 8 tests (positivo,
+  registro desde otra clase y cinco negativos). La correlación
+  payload→parámetro es un refinamiento P4 declarado como no probado. Detalles en
+  [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
 Identificar event de C#, registro/remoción de handlers e invocación del mismo almacenamiento. Modelar accessors personalizados sólo si su semántica es conocida. Positivo: dos handlers, baja de uno y emisión con payload correlacionado.
 

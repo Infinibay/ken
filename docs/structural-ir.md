@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.50.0.** This document describes available behavior
+> **Operational reference: IR 1.51.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,32 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## C# events (IR 1.51)
+
+An ``event`` is a field-like member with add/remove accessors, not a plain
+delegate field. Four relations model it:
+
+| Relation | Meaning |
+|---|---|
+| `class DECLARES_EVENT storage` | The type declares the event; `name` carries the spelling |
+| `callable ADDS_HANDLER storage` | A method registers a handler (`+=`); `handler` carries the operand |
+| `callable REMOVES_HANDLER storage` | A method unregisters one (`-=`) |
+| `call RAISES_EVENT storage` | The call invokes the event |
+
+A custom accessor (``event_declaration`` with an ``accessor_list``) is **not**
+marked and produces no registration fact: its semantics are unknown.
+
+`MEMBER_DECLARATION` links a member access to the field its receiver's type
+declares. It is emitted only when the receiver's recorded type is a single simple
+nominal name resolving to exactly one class or interface that declares that
+member; a structural, generic or ambiguous receiver yields no fact. The relation
+is general, not event-specific.
+
+The null-conditional invocation ``receiver?.Member(args)`` is lowered as a member
+call: the receiver and the member name come from the
+``conditional_access_expression``, so it carries `RECEIVER` like
+``receiver.Member(args)``.
 
 ## Module exports (IR 1.50)
 
@@ -96,7 +122,7 @@ usable afterwards. C++ is not admitted.
 
 ## Current capabilities
 
-This table describes IR 1.50.0, checked against the implementation on 2026-09-13.
+This table describes IR 1.51.0, checked against the implementation on 2026-09-13.
 Preserving syntax, deriving a relationship and proving runtime behavior are
 different levels of support.
 

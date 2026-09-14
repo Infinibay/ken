@@ -1050,6 +1050,13 @@ class Lowerer:
                         static = declaration.type == 'field_declaration' and any(
                             c.type == 'modifier' and self.text(c) in {'static', 'const'}
                             for c in declaration.named_children)
+                        if declaration.type == 'event_field_declaration':
+                            # A C# ``event`` is not a plain delegate field: it is a
+                            # pair of add/remove accessors over its own backing store.
+                            # Marking it lets a query separate a handler registration
+                            # from an arithmetic ``+=`` on a delegate-typed field.
+                            self.ir.entities[target].attrs['event'] = True
+                            self.ir.add(cls, 'DECLARES_EVENT', target, ev, name=self.text(left))
                     if self.ir.language == 'python' and right is not None:
                         self.ir.entities[target].attrs['class_initialized'] = True
                     if self.ir.language == 'python' and right is None and field(node, 'type') is not None:
@@ -1128,6 +1135,12 @@ class Lowerer:
             name = self.text(function)
             if function is not None and function.type in MEMBERS:
                 receiver_node, name = self.member_parts(function)
+            elif function is not None and function.type == 'conditional_access_expression':
+                # C# ``receiver?.Member(args)``: the null-conditional access is the
+                # callee, so its two named parts are the receiver and the member.
+                parts = function.named_children
+                if len(parts) == 2:
+                    receiver_node, name = parts[0], self.text(parts[1]).lstrip('.')
             receiver = self.value(receiver_node, scope, cls) if receiver_node is not None else ""
             self.ir.add(scope, "HAS_CALL", cid, ev)
             self.ir.add(cid, "CALLEE_NAME", name, ev)

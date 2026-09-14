@@ -446,6 +446,8 @@ def link_project(units: list[IR]) -> IR:
     collection_lifecycle(graph)
     nominal_roots(graph)
     member_access(graph)
+    from .events import csharp_events
+    csharp_events(graph)
     call_bindings(graph)
     field_transfers(graph)
     member_transfers(graph)

@@ -10,6 +10,7 @@ query observer {
  any { match "observer#listener-registry"(unit: $unit); }
  or { match "observer#map-key-registry"(unit: $unit); }
  or { match "observer#snapshot-registry"(unit: $unit); }
+ or { match "observer#language-event"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -101,12 +102,24 @@ query snapshot_registry {
 
 [[variants]]
 id = "language-event"
-status = "design"
+status = "ready"
 languages = ["csharp"]
-requires = ["event_lowering"]
+requires = ["event_lowering", "handler_registration", "nominal_member_resolution"]
 graph_requirements = ["Event add/remove/invoke se modelan como registro y notificación con identidad del evento."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-csharp"
+query_claim = "El tipo declara un event de C#, un método registra un handler, otro lo da de baja y otro lo emite, todo sobre el mismo almacenamiento. No prueba la correlación payload→parámetro del handler, ni orden temporal, ni unicidad de entrega."
+query = '''
+query observer {
+ require $unit DECLARES_EVENT $event;
+ require $attach ADDS_HANDLER $event;
+ require $detach REMOVES_HANDLER $event;
+ different $attach $detach;
+ require $raise HAS_CALL $call;
+ require $call RAISES_EVENT $event;
+ emit $unit, $event, $attach, $detach, $raise;
+}
+'''
 
 [[variants]]
 id = "event-bus"
