@@ -43,6 +43,10 @@ de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
 Inventario: **73 ready / 4 design** (veintinueve variantes promovidas en este trabajo).
+Las cuatro que quedan —`observer#event-bus`, `composite#algebraic-tree`,
+`interpreter#expression-sum` y `proxy#remote-subject`— necesitan una capacidad nueva cada
+una; la medición, el símbolo siguiente y el contraejemplo mínimo de cada una están en
+[bloqueos medidos](docs/structural-validation/gof-completion/P9-remaining-variants-blockers.md).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
