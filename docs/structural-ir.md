@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.62.0.** This document describes available behavior
+> **Operational reference: IR 1.63.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,31 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Parameters typed by a type parameter (IR 1.63)
+
+A parameter whose declared type **is** one of its callable's own type parameters
+publishes that identity:
+
+```
+<parameter> --TYPE_PARAMETER--> <parameter name>
+```
+
+The declared type keeps its decoration, so the bare name has to be recovered:
+
+| Language | Declared | `TYPE_NAME` | `TYPE_PARAMETER` |
+|---|---|---|---|
+| C++ | `Visitor& visitor` | `Visitor &` | `Visitor` |
+| Rust | `visitor: &V` | `&V` | `V` |
+
+Without the undecorated fact there is nothing to join: the method says it binds
+`Visitor` (or `V`) and the parameter says its type is `Visitor &` (or `&V`), and a query
+asking which parameter stands for the bound type silently matches nothing. Reference,
+pointer, `const` and `mut` decoration is stripped for the comparison only; a parameter
+whose type is anything else keeps its own name and publishes no such fact.
+
+This is what makes a visitor **generic** rather than named: the element's method
+selects its visitor by type parameter, so no visitor type has to resolve at the call.
 
 ## Bound type parameters (IR 1.62)
 

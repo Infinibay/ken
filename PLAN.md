@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **65 ready / 12 design** (veintiuna variantes promovidas en este trabajo).
+Inventario: **66 ready / 11 design** (veintidós variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -194,6 +194,18 @@ exigir objeto runtime**: la query no pide contrato, subtipo ni implementaciones.
 capacidad compartida por la familia de genéricos (`visitor#generic-visitor`,
 `bridge#generic-composition`, `builder#consuming-typestate`). Detalles en
 [`strategy#static-policy`](docs/structural-validation/gof-completion/strategy-static-policy.md).
+
+IR 1.63 — **parámetros tipados por un parámetro de tipo**: el tipo declarado de un
+parámetro conserva su decoración (`Visitor &` en C++, `&V` en Rust), así que no unía con
+el `BINDS_TYPE_PARAMETER` de IR 1.62 y una query que preguntara por esa ligadura devolvía
+cero matches **sin fallar**. El hecho nuevo, `<parámetro> TYPE_PARAMETER <nombre>`,
+despoja `&`/`&&`/`*`/`const`/`mut` **solo para la comparación**; `TYPE_NAME` no se toca.
+Es la misma familia que el `TYPE_NAME` de un campo en `strategy#static-policy`: 1.62
+resolvió el lado de la declaración y ésta el lado del uso. Con eso se cierra
+**`visitor#generic-visitor`** en sus dos lenguajes, incluido el negativo que la ficha
+nombra —un `match`/`switch` sin visitante separado no matchea— y la separación
+complementaria con `named-dispatch`. Detalles en
+[`visitor#generic-visitor`](docs/structural-validation/gof-completion/visitor-generic-visitor.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -1105,7 +1117,7 @@ Resolver accept→overload visit seleccionado por el tipo del elemento actual. R
 
 #### Pendiente `visitor#generic-visitor`
 
-- [ ] Implementar en: `cpp`, `rust`.
+- [x] Implementar en: `cpp`, `rust`.
 
 Resolver sustituciones/dispatch genérico y una operación visitante separada aplicada a la familia de elementos. Positivo: std::visit o protocolo de traits con visitante identificado; explicar la distinción respecto de un match de Interpreter.
 

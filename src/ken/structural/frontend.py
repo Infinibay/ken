@@ -308,6 +308,22 @@ class Lowerer:
             current = current.parent
         return sorted(names)
 
+    def type_parameter_reference(self, spelling: str, bound: list[str]) -> str | None:
+        """The bound type parameter a declared type refers to, if it is one.
+
+        ``Visitor &``, ``&V``, ``const T *`` and ``&mut T`` all name the parameter
+        through reference, pointer or qualifier decoration; the parameter itself is the
+        identity a query wants to join on, so the decoration is stripped before the
+        comparison. Anything else returns ``None`` and keeps its own name.
+        """
+        if not spelling or not bound:
+            return None
+        stripped = re.sub(r'\b(?:const|mut|ref|volatile)\b', ' ', spelling)
+        for decoration in ('&', '*', '&&'):
+            stripped = stripped.replace(decoration, ' ')
+        candidate = ' '.join(stripped.split())
+        return candidate if candidate in bound else None
+
     def entity(self, kind: str, name: str, scope: str, node: Node, **attrs: Any) -> str:
         key = f"{scope}/{kind}:{name}@{node.start_byte}" if kind in {"CALL", "PARAMETER", "CALLABLE"} else f"{scope}/{kind}:{name}"
         if kind == 'CLASS' and node.type == 'class':
@@ -519,6 +535,10 @@ class Lowerer:
             single_parameter = field(node, "parameter")
             if parameters is None and single_parameter is not None:
                 parameter_nodes = [single_parameter]
+            # A parameter whose declared type is one of its callable's own type
+            # parameters stands for that parameter: ``Visitor &`` in C++ and ``&V`` in
+            # Rust both name it through reference decoration.
+            bound_parameters = self.bound_type_parameters(node) if self.ir.language in {'rust', 'cpp'} else []
             for position, param in enumerate(parameter_nodes):
                 if param.type == "positional_separator":
                     positional_only = False
@@ -553,6 +573,11 @@ class Lowerer:
                 pid = self.entity("PARAMETER", pname, function, param, kind_=parameter_kind, position=position, receiver=is_receiver)
                 if cpp_reference_kind:
                     self.ir.entities[pid].attrs["reference_kind"] = cpp_reference_kind
+                if bound_parameters:
+                    referenced = self.type_parameter_reference(
+                        cpp_parameter_type or self.text(field(param, 'type')), bound_parameters)
+                    if referenced:
+                        self.ir.add(pid, 'TYPE_PARAMETER', referenced, self.evidence(param))
                 if self.ir.language != 'cpp' or cpp_parameter_name is not None:
                     self.names[(function, pname)] = pid
                 default_node = field(param, 'value', 'default_value')

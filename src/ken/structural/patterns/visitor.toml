@@ -2,13 +2,14 @@ schema = "ken-rule/1"
 id = "visitor"
 name = "Visitor"
 category = "behavioral"
-description = "An element passes itself to a visitor operation, named or overloaded."
-caveat = "Self-passing and typed visiting are evidence; exhaustive double dispatch is not proven. The overloaded variant counts same-named operations on the visitor type, so it proves an overload set exists, not that the language picks the branch matching the element's type."
+description = "An element passes itself to a visitor operation, named, overloaded or generic."
+caveat = "Self-passing and typed visiting are evidence; exhaustive double dispatch is not proven. The overloaded variant counts same-named operations on the visitor type, so it proves an overload set exists, not that the language picks the branch matching the element's type. The generic variant reads the visitor parameter's type as a type parameter of the element's own method, so it proves compile-time selection of the visitor, not which instantiation a use site chose."
 legacy_query = "require $unit HAS_METHOD $accept\nrequire $accept HAS_PARAMETER $visitor receiver=false\nrequire $accept PASSES_SELF_TO $visitor\nrequire $visitor TYPE $visitor_type\nrequire $visitor_type HAS_METHOD $visit\nrequire $visit HAS_PARAMETER $element\nrequire $element TYPE $unit\n"
 query = '''
 query visitor {
  any { match "visitor#named-dispatch"(unit: $unit); }
  or { match "visitor#overloaded-dispatch"(unit: $unit); }
+ or { match "visitor#generic-visitor"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -75,9 +76,25 @@ query visitor {
 '''
 [[variants]]
 id = "generic-visitor"
-status = "design"
+status = "ready"
 languages = ["cpp", "rust"]
 requires = ["generic_substitution", "self_value_flow"]
 graph_requirements = ["Visitor genérico separado recorre familia de elementos; match sin visitor separado no satisface esta variante."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-two-languages"
+query_claim = "El metodo del elemento liga un parametro de tipo propio, el parametro visitante esta tipado por ESE parametro de tipo, y el elemento se pasa a si mismo en una llamada cuyo receptor es ese parametro. La seleccion del visitante es por tanto de compilacion, no por un objeto: es lo que separa esta variante de `named-dispatch`, que exige un tipo de visitante resoluble (`class ShapeVisitor`), y el negativo que la ficha nombra —un `match`/`switch` sobre un tipo suma sin visitante separado— no matchea. El enlace es por nombre de parametro de tipo (`BINDS_TYPE_PARAMETER` en el metodo y `TYPE_PARAMETER` en el parametro), y `TYPE_PARAMETER` normaliza la decoracion de referencia: `Visitor &` en C++ y `&V` en Rust cuentan como el parametro. No prueba sustitucion de tipos, ni que la instanciacion del sitio de uso sea la elegida, ni exhaustividad del visitante."
+query = '''
+query generic_visitor {
+ require $unit HAS_METHOD $accept;
+ require $accept BINDS_TYPE_PARAMETER $visitor_parameter;
+ require $accept HAS_PARAMETER $visitor;
+ parameter(receiver: false) as $visitor;
+ require $visitor TYPE_PARAMETER $visitor_parameter;
+ require $unit INSTANCE_RECEIVER $self;
+ require $accept HAS_CALL $dispatch;
+ require $dispatch RECEIVER $visitor;
+ require $dispatch ARGUMENT $self_argument;
+ require $self_argument VALUE $self;
+ emit unit=$unit, $visitor, $visitor_parameter, $dispatch;
+}
+'''
