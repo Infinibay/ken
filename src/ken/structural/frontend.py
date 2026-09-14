@@ -778,6 +778,15 @@ class Lowerer:
         if node is None:
             return f"{scope}/UNKNOWN"
         node = self.unwrap(node)
+        if node.type in {'unary_expression', 'unary_operator'}:
+            # ``&slot`` and ``*pointer`` denote the storage itself: an argument that
+            # addresses a slot is evidence about that slot. Go passes the destination
+            # this way (``json.Unmarshal(payload, &e.state)``), where an assignment is
+            # what the other languages use.
+            operator = ' '.join(self.text(c) for c in node.children if not c.is_named)
+            operands = [c for c in node.named_children if 'comment' not in c.type]
+            if operator in {'&', '*'} and len(operands) == 1:
+                return self.value(operands[0], scope, cls)
         if self.ir.language == 'typescript' and node.type in {'as_expression', 'type_assertion', 'non_null_expression', 'satisfies_expression'}:
             parts = [c for c in node.named_children if 'comment' not in c.type]
             if parts:

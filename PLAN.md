@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **68 ready / 9 design** (veinticuatro variantes promovidas en este trabajo).
+Inventario: **69 ready / 8 design** (veinticinco variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -236,6 +236,20 @@ slot y no un tipo construido. El lado del *movimiento* no se exige: C++ registra
 `ref_qualifier: '&&'` pero Rust no registra la propiedad del receptor y TypeScript no
 tiene ownership. Detalles en
 [`builder#consuming-typestate`](docs/structural-validation/gof-completion/builder-consuming-typestate.md).
+
+IR 1.66 — **`&slot` denota su slot**: `&e.state` de Go era un `unary_expression` fuera de
+los envoltorios, así que caía al camino genérico y producía un `VALUE` anónimo; el slot
+destino era irrecuperable. Ahora `&slot` y `*puntero` resuelven al almacenamiento que
+nombran, con el operador comprobado para que `-x` y `!x` conserven su valor. Con eso se
+cierra **`memento#serialized-snapshot`** en sus ocho lenguajes, con tres formas de
+decodificar que hubo que medir: el valor del decodificador fluye al slot; el decodificador
+es el **receptor** de otra llamada cuyo valor fluye (el `unwrap()` de Rust); o el estado
+se pasa como **argumento destino** (Go). El códec se identifica por nombre de API con los
+dos lados anclados distinto —codificador al final porque en Rust es
+`serde_json::to_string`, decodificador sin anclar porque en C# es `Deserialize<string>`—
+porque el ancla final del primero es lo que impide que `Serialize` matchee *Deserialize*.
+Detalles en
+[`memento#serialized-snapshot`](docs/structural-validation/gof-completion/memento-serialized-snapshot.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -982,7 +996,7 @@ Dependencias: **P1, P2, P6**. Ready iniciales: `accessor-snapshot`, `snapshot-ob
 
 #### Pendiente `memento#serialized-snapshot`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
 
 Seguir estado del originador→codificación→snapshot retenido→decodificación→restauración correspondiente. Resolver codec y esquema/versión cuando formen parte de la API. Positivo: guardar estado en bytes/string, modificar el originador y restaurar desde el snapshot.
 

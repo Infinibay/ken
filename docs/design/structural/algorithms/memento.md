@@ -95,6 +95,16 @@ seleccionado y de qué mutaciones se permiten:
 Congelar `%snapshot` como binding no basta: `origin.state[0] = 99` puede modificar
 el array al que también apunta `snapshot.saved`, sin reasignar ningún binding.
 El IR necesita distinguir identidad, contenido y alcance de la preservación.
+
+La fila de bytes serializados pasó a `ready` como `memento#serialized-snapshot` en
+IR 1.66, para los ocho lenguajes. Identifica el códec **por nombre de API** y prueba la
+correspondencia sobre el **flujo**: el codificador recibe el estado y el decodificador lo
+devuelve, por una de tres formas que hubo que medir —el valor fluye al slot, el
+decodificador es el receptor de otra llamada cuyo valor fluye al slot (el `unwrap()` de
+Rust), o el estado se pasa como argumento destino (el `&e.state` de Go)—. Lo que **no**
+prueba es el schema ni las pérdidas de información: que el valor decodificado reconstruya
+el estado de forma fiel y completa sigue fuera, y una cadena opaca sin modelo queda
+parcial, como la tabla anticipaba.
 En Rust, `Clone` de un `Arc<Mutex<T>>` comparte el estado mutable; no es equivalente
 a clonar un `Vec<i32>`. En C++, copiar un contenedor de `shared_ptr` tampoco aísla
 los pointees. Estas variantes no se han validado con los tests de este documento.

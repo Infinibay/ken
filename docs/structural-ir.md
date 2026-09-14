@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.65.0.** This document describes available behavior
+> **Operational reference: IR 1.66.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,26 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Address-of denotes its slot (IR 1.66)
+
+``&slot`` and ``*pointer`` resolve to the storage they name, so an argument that
+addresses a slot is evidence about that slot:
+
+```
+Editor/Restore --ARGUMENT--> <argument/0>      the payload
+              --ARGUMENT--> Editor/STORAGE:state   &e.state
+```
+
+Before this a Go ``unary_expression`` such as ``&e.state`` fell through to the primitive
+fallback and produced an anonymous ``VALUE`` with ``native_kind: unary_expression``,
+which made the destination slot unrecoverable. An array of languages pass a destination
+by address instead of assigning to it — Go's ``json.Unmarshal(payload, &e.state)`` is the
+canonical one — so a query asking "this call stores into that slot" had no way to see it.
+
+``pointer_expression`` and ``reference_expression`` were already unwrapped; only the
+operator spelling had to be checked for ``unary_expression``, so ``-x`` and ``!x`` keep
+their own values.
 
 ## Return type arguments (IR 1.65)
 

@@ -2,13 +2,14 @@ schema = "ken-rule/1"
 id = "memento"
 name = "Memento"
 category = "behavioral"
-description = "An originator creates a snapshot and restores state from that type."
-caveat = "Structural evidence requires review of intent and runtime behavior."
+description = "An originator creates a snapshot and restores state from that type, or round-trips it through an encoded form."
+caveat = "Structural evidence requires review of intent and runtime behavior. The serialized variant identifies the codec by API name, so it inherits the usual limits of name-based protocol identification, and it does not prove that the decoded value is a faithful or complete reconstruction."
 legacy_query = "require $unit HAS_FIELD $state\nrequire $unit HAS_METHOD $save\nrequire $save READS $state\nrequire $save RETURNS_NEW $snapshot\nrequire $unit HAS_METHOD $restore\nrequire $restore HAS_PARAMETER $memento\nrequire $memento TYPE $snapshot\nrequire $restore WRITES $state\ndifferent $save $restore\n"
 query = '''
 query memento {
  any { match "memento#snapshot-object"(unit: $unit); }
  or { match "memento#accessor-snapshot"(unit: $unit); }
+ or { match "memento#serialized-snapshot"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -108,9 +109,38 @@ query memento {
 '''
 [[variants]]
 id = "serialized-snapshot"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
 requires = ["serialization_models", "value_flow"]
 graph_requirements = ["Codificación/decodificación preserva correspondencia de estado; una cadena opaca sin modelo queda parcial."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "Un codificador reconocido por nombre (`dumps`, `stringify`, `toJson`, `Serialize`, `encode`, `Marshal`, `to_string`) recibe el estado como argumento, y un decodificador reconocido (`loads`, `parse`, `fromJson`, `Deserialize`, `decode`, `Unmarshal`, `from_str`) devuelve el estado, por una de tres formas que la implementacion tuvo que medir: el valor del decodificador fluye al estado (Python, JS, TS, Java, C++, y C# via `FLOWS_TO`), el decodificador es el RECEPTOR de otra llamada cuyo valor fluye al estado (el `unwrap()` de Rust), o el estado se pasa como argumento destino (el `&e.state` de Go). La identificacion del codec es **por nombre de API**, no por resolucion de biblioteca; el nombre del codificador se ancla al final porque en Rust es `serde_json::to_string` y no `to_string`, mientras que el del decodificador se busca sin anclar porque en C# es `Deserialize<string>`. **No prueba que la decodificacion reconstruya el estado de forma fiel ni completa**: la correspondencia se prueba sobre el flujo, no sobre el contenido."
+query = '''
+query serialized_snapshot {
+ require $unit HAS_FIELD $state;
+ require $unit HAS_METHOD $save;
+ callable(constructor: false) as $save;
+ require $unit HAS_METHOD $load;
+ callable(constructor: false) as $load;
+ different $save $load;
+ require $save HAS_CALL $encode;
+ call(name: /(dumps|stringify|toJson|Serialize|encode|Marshal|to_string)$/) as $encode;
+ require $encode ARGUMENT $argument;
+ require $argument VALUE $encoded_value;
+ require $encoded_value LOADED_FROM $state;
+ require $load HAS_CALL $decode;
+ call(name: /(loads|parse|fromJson|Deserialize|decode|Unmarshal|from_str)/) as $decode;
+ any {
+  path $decode FLOWS_TO{1,3} $state as $direct;
+ } or {
+  require $wrapper RECEIVER $decode;
+  path $wrapper FLOWS_TO{1,3} $state as $wrapped;
+ } or {
+  require $decode ARGUMENT $target;
+  require $target VALUE $target_value;
+  require $target_value LOADED_FROM $state;
+ }
+ emit unit=$unit, state=$state, save=$save, load=$load, encode=$encode, decode=$decode;
+}
+'''
