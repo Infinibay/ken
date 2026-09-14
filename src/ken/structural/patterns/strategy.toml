@@ -2,13 +2,14 @@ schema = "ken-rule/1"
 id = "strategy"
 name = "Strategy"
 category = "behavioral"
-description = "A context delegates to a contract with multiple implementations."
-caveat = "Last supported source writes and contract calls identify supplied-policy composition. Descriptors, hidden effects and temporal order between methods are not resolved. State, Command, Bridge, Decorator and Interpreter can share this structure; algorithm intent requires review."
+description = "A context delegates to a contract with multiple implementations, or to a policy chosen by type."
+caveat = "Last supported source writes and contract calls identify supplied-policy composition. Descriptors, hidden effects and temporal order between methods are not resolved. State, Command, Bridge, Decorator and Interpreter can share this structure; algorithm intent requires review. The static variant reads a field whose type is a bound type parameter, so it proves the policy is chosen at compile time, not which instantiation a use site picked."
 legacy_query = "require $unit HAS_FIELD $strategy\nrequire $strategy TYPE $contract\nrequire $unit HAS_METHOD $algorithm\nrequire $algorithm DELEGATES_TO $strategy\ncount >=2 $implementation SUBTYPE_OF $contract distinct=$implementation\n"
 query = '''
 query strategy {
  any { match "strategy#strategy-object"(unit: $unit); }
  or { match "strategy#strategy-callable"(unit: $unit); }
+ or { match "strategy#static-policy"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -90,12 +91,25 @@ query callable_strategy {
 
 [[variants]]
 id = "static-policy"
-status = "design"
+status = "ready"
 languages = ["cpp", "rust"]
 requires = ["generic_substitution", "static_dispatch"]
 graph_requirements = ["Política por tipo determina algoritmo; preservar instanciación y no exigir objeto runtime."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-two-languages"
+query_claim = "La unidad declara un parametro de tipo, un campo suyo esta tipado por ESE parametro y un metodo no constructor delega en ese campo por receptor. El enlace es por nombre de parametro (`BINDS_TYPE_PARAMETER` y el `TYPE_NAME` del campo), no por resolucion de instanciacion. **No exige objeto runtime**: no pide contrato, subtipo ni implementaciones, que es exactamente lo que separa esta variante de `strategy-object`. No prueba que la instanciacion del sitio de uso sea la que se eligio, ni sustitucion de tipos, ni especializacion parcial, ni que el campo se asigne alguna vez: prueba que la politica esta fijada por tipo en la declaracion."
+query = '''
+query static_policy {
+ require $unit BINDS_TYPE_PARAMETER $parameter;
+ require $unit HAS_FIELD $policy;
+ require $policy TYPE_NAME $parameter;
+ require $unit HAS_METHOD $algorithm;
+ callable(constructor: false) as $algorithm;
+ require $algorithm HAS_CALL $call;
+ require $call RECEIVER $policy;
+ emit unit=$unit, $policy, $parameter, $algorithm, $call;
+}
+'''
 
 [[operations]]
 id = "consumed_policy"

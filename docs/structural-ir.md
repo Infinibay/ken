@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.61.0.** This document describes available behavior
+> **Operational reference: IR 1.62.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,41 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Bound type parameters (IR 1.62)
+
+A declaration that binds type parameters publishes them, and C++ now binds them at all:
+
+| Language | Spelling | Group |
+|---|---|---|
+| Rust | `struct Context<P: Policy>` | the `type_parameters` field, members `type_parameter` |
+| C++ | `template <typename Policy> class Context` | the `template_declaration`'s `parameters` field, members `type_parameter_declaration` |
+
+C++ was the gap. `bound_type_parameters` walked ancestors looking for a
+`type_parameters` field, which C++ does not have: its `template_declaration` puts the
+group in the `parameters` field — the same name a function uses for its ordinary
+parameter list. Only the `type_parameter_declaration` node type is read from that field,
+and only when the ancestor is a `template_declaration`, so a function's arguments are
+never mistaken for a type-parameter group.
+
+Each binding is published as a **fact**, not only as an attribute:
+
+```
+<declaration> --BINDS_TYPE_PARAMETER--> <parameter name>
+```
+
+An attribute list is not reachable from KenQL, and the question a query asks is which
+parameter a *field's* `TYPE_NAME` stands for. With the fact, the two join directly:
+
+```
+require $unit BINDS_TYPE_PARAMETER $parameter;
+require $policy TYPE_NAME $parameter;
+```
+
+That reads "this field is typed by a parameter of this declaration", which is what
+makes a policy static instead of a runtime object. It resolves **no** instantiation: a
+use site's `Context<FastPolicy>` is not connected to the declaration, and partial
+specialisation is not modelled.
 
 ## Call completeness and exact cardinality (IR 1.61)
 

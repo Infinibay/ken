@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **64 ready / 13 design** (veinte variantes promovidas en este trabajo).
+Inventario: **65 ready / 12 design** (veintiuna variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -180,6 +180,20 @@ no resuelve nada, y lo que se exige es que el **conjunto exista**
 clausura). La separación se midió en las dos direcciones y es complementaria. Detalles
 en
 [`visitor#overloaded-dispatch`](docs/structural-validation/gof-completion/visitor-overloaded-dispatch.md).
+
+IR 1.62 — **parámetros de tipo ligados**: una declaración que liga parámetros de tipo los
+publica como hecho (`BINDS_TYPE_PARAMETER`), y **C++ ahora los liga**. Rust ya lo hacía
+(`struct Context<P>`); C++ no, porque el grammar envuelve la declaración en un
+`template_declaration` cuyo grupo está en el campo `parameters` con miembros
+`type_parameter_declaration`, mientras `bound_type_parameters` buscaba un campo
+`type_parameters`. La lectura se acota al tipo de nodo para no confundir la lista de
+argumentos de una función con un grupo de parámetros de tipo. El hecho —y no el
+atributo— es lo que permite unir el `TYPE_NAME` de un campo con el parámetro que
+representa. Con eso se cierra **`strategy#static-policy`** en sus dos lenguajes, **sin
+exigir objeto runtime**: la query no pide contrato, subtipo ni implementaciones. Es
+capacidad compartida por la familia de genéricos (`visitor#generic-visitor`,
+`bridge#generic-composition`, `builder#consuming-typestate`). Detalles en
+[`strategy#static-policy`](docs/structural-validation/gof-completion/strategy-static-policy.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -1039,7 +1053,7 @@ Dependencias: **P1, P4, P5**. Ready iniciales: `strategy-object`, `strategy-call
 
 #### Pendiente `strategy#static-policy`
 
-- [ ] Implementar en: `cpp`, `rust`.
+- [x] Implementar en: `cpp`, `rust`.
 
 Sustituir el tipo policy suministrado y resolver su invocación desde el algoritmo cliente con los datos pertinentes. Positivo: template C++ o trait Rust sin almacenamiento runtime de strategy; incluir un helper intermedio resuelto.
 

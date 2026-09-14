@@ -125,10 +125,14 @@ sola no demuestra toda la intención GoF.
 | Composición de políticas | Comparadores/predicados/estrategias combinadas | Orden, entradas compartidas y consumo de resultados intermedios |
 | Política async | Aplicaciones web/servicios | Await, error/cancelación y procedencia de respuesta |
 
-`static-policy` figura como `design` en el catálogo. La validación nueva usa
-objetos en Python/Java/TypeScript y callables en Python/TypeScript. Las formas
-restantes son requisitos o cobertura previa separada, no resultados nuevos de
-este ejercicio.
+`static-policy` pasó a `ready` en IR 1.62 para C++ y Rust, y **sin exigir objeto
+runtime**: basta con que la unidad declare un parámetro de tipo, un campo suyo esté
+tipado por ese parámetro y un método delegue en el campo por receptor. Rust ya ligaba
+sus parámetros (`struct Context<P>`); C++ no, porque el grammar envuelve la declaración
+en un `template_declaration` cuyo grupo está en el campo `parameters` con miembros
+`type_parameter_declaration`. La validación de las otras formas usa objetos en
+Python/Java/TypeScript y callables en Python/TypeScript. Las formas restantes son
+requisitos o cobertura previa separada, no resultados nuevos de este ejercicio.
 
 ## Evidencia reproducible
 

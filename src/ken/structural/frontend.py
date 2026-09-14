@@ -288,12 +288,23 @@ class Lowerer:
         for _ in range(64):
             if current is None:
                 break
-            group = field(current, 'type_parameters')
-            for parameter in children(group):
-                if parameter.type in {'type_parameter', 'const_parameter'}:
-                    name = field(parameter, 'name')
-                    if name is not None:
-                        names.add(self.text(name))
+            # Rust spells the group ``type_parameters``. C++ wraps the declaration in
+            # a ``template_declaration`` whose group is the ``parameters`` field and
+            # whose members are ``type_parameter_declaration`` nodes; only that node
+            # type is read from it, so a function's ordinary parameter list — which
+            # uses the same field name — is never mistaken for a type-parameter group.
+            groups = [field(current, 'type_parameters')]
+            if current.type == 'template_declaration':
+                groups.append(field(current, 'parameters'))
+            for group in groups:
+                for parameter in children(group):
+                    if parameter.type in {'type_parameter', 'const_parameter', 'type_parameter_declaration'}:
+                        name = field(parameter, 'name')
+                        if name is None:
+                            name = next((child for child in parameter.named_children
+                                         if child.type in {'type_identifier', 'identifier'}), None)
+                        if name is not None:
+                            names.add(self.text(name))
             current = current.parent
         return sorted(names)
 
@@ -306,8 +317,14 @@ class Lowerer:
             # distinguishes the producer from invocation of its result.
             key += f":{node.end_byte}"
         if key not in self.ir.entities:
-            if self.ir.language == 'rust' and kind in {'CLASS', 'INTERFACE', 'CALLABLE'}:
-                attrs['type_parameters'] = self.bound_type_parameters(node)
+            if self.ir.language in {'rust', 'cpp'} and kind in {'CLASS', 'INTERFACE', 'CALLABLE'}:
+                parameters = self.bound_type_parameters(node)
+                attrs['type_parameters'] = parameters
+                # A declaration binds its parameters by name. The fact is what lets a
+                # query join a field's ``TYPE_NAME`` to the parameter it stands for:
+                # an attribute list is not reachable from KenQL.
+                for parameter in parameters:
+                    self.ir.add(key, 'BINDS_TYPE_PARAMETER', parameter, self.evidence(node))
             self.ir.entities[key] = Entity(key, kind, name, self.ir.path,
                                            node.start_point[0] + 1, node.end_point[0] + 1, {**attrs, "native_kind": node.type, "language": self.ir.language, "start_byte": node.start_byte, "end_byte": node.end_byte})
             self.ir.add(key, "IS", kind, self.evidence(node), **attrs)
