@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.70.0.** This document describes available behavior
+> **Operational reference: IR 1.71.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,29 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## A comparison branch publishes the value it discriminates (IR 1.71)
+
+``if kind == Num`` now publishes which slot the branch tests:
+
+```
+<if operation> --TRUTH_TEST--> kind
+<if operation> --TRUTH_TEST--> Num
+```
+
+``TRUTH_TEST`` existed for a bare test (``if value``), where the tested value is the
+condition itself. A *comparison* has a different shape: the condition is not the value
+being discriminated, so nothing was published and a query asking "this branch dispatches
+on that tag field" could only ask "this callable contains a branch". Both sides are
+offered and only the ones that denote a slot (``STORAGE`` or ``MEMBER``) are published;
+no polarity is claimed, because which arm a comparison selects is not the truthiness of
+the value. A comparison against a null literal is **excluded**: that shape already
+publishes ``NULL_TEST`` with its own polarity, and emitting both made the branch carry
+two pairs of arms.
+
+Rust's ``if`` is an ``if_expression``, so the branch handling now covers both spellings
+-- without that, Rust published no ``TRUTH_TEST`` at all and the dispatch evidence was
+missing in exactly one of the six languages.
 
 ## Rust ownership wrappers denote their payload (IR 1.70)
 

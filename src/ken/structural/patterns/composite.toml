@@ -13,6 +13,8 @@ query composite {
   match "composite#recursive-nominal"(unit: $unit);
  } or {
   match "composite#higher-order-traversal"(unit: $unit);
+ } or {
+  match "composite#algebraic-tree"(unit: $unit);
  }
  emit $unit;
 }
@@ -64,12 +66,44 @@ query recursive_nominal {
 
 [[variants]]
 id = "algebraic-tree"
-status = "design"
+status = "ready"
 languages = ["typescript", "java", "csharp", "cpp", "go", "rust"]
 requires = ["sum_types", "match_flow", "recursion"]
 graph_requirements = ["Variante compuesta de sum type contiene hijos recursivos; evaluación uniforme incluye hojas."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-six-languages"
+query_claim = "Un tipo **etiquetado** sin interfaz ni clase base: dos campos suyos estan tipados por el propio tipo (los operandos recursivos), su operacion invoca **su mismo nombre** sobre los dos, y una rama de la operacion **discrimina un campo del mismo tipo** (el tag). La recursion la da el nombre uniforme y el dispatch lo da `TRUTH_TEST` sobre la comparacion (IR 1.71); sin ese segundo hecho la query solo probaria \"un tipo con dos campos recursivos\", que es mas debil. NO se exige que los valores del tag sean distintos ni que las ramas sean exhaustivas, ni que la rama hoja no recurra, ni que los operandos no se reasignen. La codificacion de suma **por casos** (variantes de un `enum` de Rust, union discriminada de TypeScript, records de Java/C#) NO se acepta: sus casos no se modelan como tipos con campos."
+query = '''
+query composite_algebraic_tree {
+ require $unit IS CLASS;
+ require $unit HAS_METHOD $operation;
+ require $unit HAS_FIELD $first;
+ require $first TYPE $unit;
+ require $unit HAS_FIELD $second;
+ require $second TYPE $unit;
+ different $first $second;
+ require $operation HAS_CALL $first_call;
+ require $first_call RECEIVER $first;
+ require $operation HAS_CALL $second_call;
+ require $second_call RECEIVER $second;
+ where $operation.name == $first_call.name;
+ where $operation.name == $second_call.name;
+ require $operation HAS_OPERATION $branch;
+ operation(kind: branch) as $branch;
+ require $branch TRUTH_TEST $tested;
+ any {
+  require $unit HAS_FIELD $tested;
+ } or {
+  require $tested MEMBER_OF $this;
+  require $unit INSTANCE_RECEIVER $this;
+ } or {
+  require $tested MEMBER_OF $receiver;
+  require $operation HAS_PARAMETER $receiver;
+  parameter(receiver: true) as $receiver;
+ }
+ emit unit=$unit, $operation, $first, $second, $branch, $tested;
+}
+'''
 
 [[variants]]
 id = "higher-order-traversal"

@@ -42,7 +42,19 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **74 ready / 3 design** (treinta variantes promovidas en este trabajo).
+Inventario: **75 ready / 2 design** (treinta y una variantes promovidas en este trabajo).
+
+IR 1.71 — **una rama de comparación publica el valor que discrimina**: `if kind == Num`
+emite `TRUTH_TEST` sobre el slot probado (`kind`), que es lo que faltaba para que una
+query pudiera exigir "esta rama despacha sobre ese campo del tag" en vez de sólo "este
+callable contiene una rama". Se publican los dos lados y sólo los que denotan un slot;
+no se afirma polaridad, y una comparación contra un literal nulo queda **excluida**
+porque esa forma ya publica `NULL_TEST` (emitir las dos duplicaba los brazos). El `if`
+de Rust es un `if_expression`, así que el manejo de ramas cubre las dos grafías. Con
+eso se cierra **`composite#algebraic-tree`** en sus seis lenguajes: el tipo etiquetado
+tiene dos campos tipados por sí mismo, su operación invoca su mismo nombre sobre los
+dos, y una rama discrimina un campo del mismo tipo. Detalles en
+[`composite#algebraic-tree`](docs/structural-validation/gof-completion/composite-algebraic-tree.md).
 
 IR 1.70 — **los envoltorios de propiedad de Rust denotan su payload**: un slot
 `Box<Expr>` (`Rc`, `Arc`) está tipado por `Expr`. `normalized_type` despoja `&`/`*`
@@ -944,7 +956,14 @@ Dependencias: **P1, P2, P4, P5/P6 según variante**. Ready iniciales: `recursive
 
 #### Pendiente `composite#algebraic-tree`
 
-- [ ] Implementar en: `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+  **IR 1.70/1.71:** `ready`. Faltaban dos cosas: que un campo `Box<Expr>` de Rust
+  denotara su payload (IR 1.70) y que una rama de comparación publicara el valor que
+  discrimina (IR 1.71). 49 tests (positivo y renombrado por lenguaje, cuatro negativos,
+  la consulta raíz y la comprobación del `TRUTH_TEST`). La codificación de suma **por
+  casos** (variantes de enum, uniones discriminadas, records) no se acepta y queda
+  declarada. Detalles en
+  [`composite#algebraic-tree`](docs/structural-validation/gof-completion/composite-algebraic-tree.md).
 
 Representar casos hoja y compuesto, payload de hijos recursivos y dispatch por tag/match. Seguir la llamada recursiva sobre cada hijo. Positivo: árbol de variantes sin interfaz ni clases base; registrar si el contrato exige agregación o sólo ejecución recursiva.
 

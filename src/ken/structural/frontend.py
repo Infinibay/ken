@@ -1114,7 +1114,7 @@ class Lowerer:
                         key_iteration = self.ir.language in {'javascript','typescript'} and any(c.type == 'in' for c in node.children)
                         role = 'first' if self.ir.language == 'go' and position == 0 else 'key' if key_iteration else 'value'
                         self.ir.add(oid,'ITERATION_BINDING',self.value(binding,scope,cls),ev,position=position,role=role)
-        if kind == "if_statement":
+        if kind in {"if_statement", "if_expression"}:
             condition = field(node, "condition")
             if condition is not None:
                 condition = self.unwrap(condition)
@@ -1132,6 +1132,26 @@ class Lowerer:
                     oid = f'{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{kind}'
                     self.ir.add(oid, 'TRUTH_TEST', self.value(tested, scope, cls), ev,
                                 when='true' if positive else 'false', basis='condition-syntax')
+                    for arm, name in [('BRANCH_TRUE', 'consequence'), ('BRANCH_FALSE', 'alternative')]:
+                        body = field(node, name)
+                        if body is not None:
+                            self.ir.add(oid, arm, f'{self.ir.path}::op:{body.start_byte}:{body.end_byte}:{body.type}', ev)
+                elif (tested.type in {'comparison_operator', 'binary_expression'} and len(operands) == 2
+                        and operator in {'==', '!=', '===', '!=='}
+                        and not any(self.value(side, scope, cls) == 'NULL' for side in operands)):
+                    # ``kind == Num`` discriminates ``kind``: the branch tests a slot
+                    # against a case. Publishing the slot is what lets a query ask
+                    # "this branch dispatches on that tag field" instead of only "this
+                    # callable contains a branch". Either side may be the slot, so both
+                    # are offered and only those that denote a slot are published. No
+                    # polarity is claimed: which arm a comparison selects is not the
+                    # truthiness of the value.
+                    oid = f'{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{kind}'
+                    for side in operands:
+                        tested_value = self.value(side, scope, cls)
+                        tested_entity = self.ir.entities.get(tested_value)
+                        if tested_entity is not None and tested_entity.kind in {'STORAGE', 'MEMBER'}:
+                            self.ir.add(oid, 'TRUTH_TEST', tested_value, ev, basis='comparison-syntax')
                     for arm, name in [('BRANCH_TRUE', 'consequence'), ('BRANCH_FALSE', 'alternative')]:
                         body = field(node, name)
                         if body is not None:
