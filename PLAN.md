@@ -95,6 +95,28 @@ analizado y no cachea el grafo parcial. La dependencia sigue declarada como
 `tree-sitter-language-pack>=1.8` (sin techo): el venv resolvio 1.8.1 y una
 instalacion nueva 1.19.1, y esa deriva es la que expuso el problema.
 
+Recall independiente, primera pasada: el catalogo detectaba **70/169** patrones
+en su propio directorio sobre ocho corpus canonicos. `flyweight` estaba en **0/8**
+y el bisect clausula por clausula mostro que python y typescript morian en una
+sola: `$write INDEX $key`, porque los ejemplos canonicos **derivan** la clave
+(`key = self.get_key(state)`, `const key = this.getKey(state)`) en vez de indexar
+por el parametro. La variante ahora acepta ambas grafias manteniendo la
+correlacion (la derivacion tiene que alcanzar el parametro y el objeto guardado
+tiene que ser la construccion alimentada por el); **flyweight pasa a 2/8** (python
+y typescript), sin perder nada en el resto. Java/C#/Go/Rust/C++ fallan antes:
+usan `Map.get`/`Map.put`/LINQ en vez de subindice, asi que el frontend no emite
+`LOOKS_UP`/`WRITES_ELEMENT`; eso es un **modelo** que falta y exige bump de IR.
+
+Indices (lo que pidio la revision tipo SQL): `FactIndex` solo tenia buckets por
+sujeto y por objeto, de modo que `call(name: "computeIfAbsent")` recorria todas
+las entidades del proyecto. Hay un bucket perezoso `(relacion, atributo) -> valor
+-> facts` y `Engine.candidates` planifica y evalua contra el bucket mas pequeno
+que aun contenga todas las filas de la clausula. **Trampa registrada**: los
+atributos con `=` aceptan alternativas (`name: "get|Get"`, `native_type:
+"variable_declarator|..."`) porque `_compare` parte por `|`; la primera version
+buscaba el literal y perdio 12 findings (`chain-of-responsibility`, `proxy`) en
+cuatro corpus. El bucket ahora es la union de las alternativas (+2/-0).
+
 Sin cambio de IR: **`proxy#remote-subject`** se cerro **solo con query**, con la segunda
 alternativa que la ficha permite: la **implementacion local visible** que serializa la
 llamada y devuelve su respuesta. La clase implementa el contrato local (`SUBTYPE_OF`, o

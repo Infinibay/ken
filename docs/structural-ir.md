@@ -2180,6 +2180,27 @@ Measured on `src/ken/structural` (36 files, 23 roots, no ceilings): 109s before,
 `mediator#direct-colleagues`, `command#command-closure`, `observer#event-bus`)
 accounted for 94s of it and now take 4.9s together.
 
+### Indexes
+
+`FactIndex` is the planner's catalog, and it holds three buckets per relation:
+facts by subject, facts by object, and — built lazily, one attribute at a time —
+facts by exact attribute value. The third one is what makes
+`call(name: "computeIfAbsent")` a dictionary lookup instead of a scan of every
+entity in the project; `Engine.candidates` evaluates a clause against the
+smallest bucket that still contains all of its rows. Buckets are candidate
+lists, never intersections: the caller still binds both endpoints, so choosing
+one cannot change an answer.
+
+Two properties of the data are easy to get wrong here:
+
+* an attribute compared with `=` is a set of alternatives, because `_compare`
+  splits the expected value on `|`. `name: "get|Get"` and
+  `native_type: "variable_declarator|public_field_definition|field_definition"`
+  are in the catalogue today, so the bucket is the union over the alternatives.
+  A lookup on the literal string is not a superset and silently drops rows.
+* boolean attributes are keyed the way they are compared (`False` buckets as
+  `"false"`), not the way Python prints them.
+
 ## Representation contract
 
 The serialized IR has a schema version, source path, language, entities, operations,
