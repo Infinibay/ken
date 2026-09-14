@@ -149,6 +149,46 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
         # A write grammar omitted by the operand projection cannot be ignored.
         if any(o.kind == 'ASSIGN' and o.id not in targets for o in ops):
             reason = reason or 'unmodeled-assignment'
+        # Block-scoped shadowing (P1.1). The frontend keys a local by
+        # ``(owner, name)``, so two declarations with the same spelling in
+        # different lexical blocks collapse into a single STORAGE. The branch
+        # walk would then merge the writes of the inner and the outer binding
+        # and report an origin that is not reachable at the read. Refuse with an
+        # explicit reason instead of inventing that union. ``var`` (JS/TS
+        # ``variable_declaration``) is function-scoped: both declarations really
+        # are one binding, so the existing behaviour is kept for it.
+        block_scopes = {'block', 'statement_block', 'compound_statement'}
+        block_declarations = {
+            'javascript': {'lexical_declaration'},
+            'typescript': {'lexical_declaration'},
+            'java': {'local_variable_declaration'},
+            'csharp': {'variable_declaration'},
+        }
+        scoped_declarations = block_declarations.get(entity.attrs.get('language', ''), set())
+        if scoped_declarations:
+            declared_blocks: dict[str, set[str]] = defaultdict(set)
+            for op in ops:
+                if op.kind != 'ASSIGN' or op.native_kind != 'variable_declarator':
+                    continue
+                binding = targets.get(op.id)
+                if binding is None or binding not in locals_by_owner[owner]:
+                    continue
+                wrapper, block = '', ''
+                ancestor: Operation | None = operations.get(op.parent or '')
+                for _ in range(64):
+                    if ancestor is None:
+                        break
+                    if not wrapper and ancestor.native_kind in {'lexical_declaration', 'local_variable_declaration',
+                                                                'variable_declaration', 'field_declaration'}:
+                        wrapper = ancestor.native_kind
+                    if ancestor.native_kind in block_scopes:
+                        block = ancestor.id
+                        break
+                    ancestor = operations.get(ancestor.parent or '')
+                if wrapper in scoped_declarations and block:
+                    declared_blocks[binding].add(block)
+            if any(len(blocks) > 1 for blocks in declared_blocks.values()):
+                reason = reason or 'shadowed-binding'
         if reason:
             graph.add(owner, 'RETURN_FLOW_STATUS', 'unsupported', analysis='structured-locals/3', reason=reason)
             continue
