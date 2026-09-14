@@ -18,21 +18,35 @@ from typing import Any
 _NOTE = "Structural evidence consistent with an idiom; not proof of intent."
 
 
+def _named_variant(items: Any, depth: int = 0) -> str:
+    """First ``<pattern>#<variant>`` named in an evidence tree."""
+    if depth > 4 or not isinstance(items, list):
+        return ""
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        query = item.get("query")
+        if isinstance(query, str) and "#" in query:
+            return query.split("#", 1)[1]
+        for key in ("alternatives", "evidence", "optional"):
+            nested = _named_variant(item.get(key), depth + 1)
+            if nested:
+                return nested
+    return ""
+
+
 def _variant(finding: dict[str, Any]) -> str:
     """The catalogue variant that matched, for modern (union) rule queries.
 
     A root query is a union of variants and the engine reports ``variant`` as
-    ``default`` for the union; the matching variant survives only in the
-    evidence entry that names it.
+    ``default`` for the union; the matching variant is named only by the
+    evidence, and the union branch that carried it is nested under
+    ``alternatives`` rather than sitting at the top of the list.
     """
     variant = finding.get("variant")
     if variant and variant != "default":
         return str(variant)
-    for item in finding.get("evidence") or []:
-        query = item.get("query") if isinstance(item, dict) else None
-        if isinstance(query, str) and "#" in query:
-            return query.split("#", 1)[1]
-    return str(variant or "default")
+    return _named_variant(finding.get("evidence")) or str(variant or "default")
 
 
 def _confidence(finding: dict[str, Any]) -> float:

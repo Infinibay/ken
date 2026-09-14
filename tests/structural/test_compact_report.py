@@ -79,3 +79,32 @@ def test_bug_findings_keep_their_message_and_severity(tmp_path, capsys):
     finding = result["findings"][0]
     assert finding["rule"] and finding["severity"] and finding["message"]
     assert finding["path"] and "evidence" not in finding
+
+
+def test_the_variant_is_named_even_when_it_hides_under_a_union_branch(tmp_path):
+    """The union reports ``variant: default``; the variant lives in the evidence.
+
+    A root query is ``any { match "...<variant>" } or { ... }``, so the branch
+    that matched is nested under ``alternatives`` -- reading only the top level
+    of the evidence silently reported every catalogue finding as ``default``.
+    """
+    import json as _json
+
+    from ken.structural import report, service
+
+    (tmp_path / "pool.py").write_text(
+        "class Glyph:\n"
+        "    def __init__(self, font): self.font = font\n"
+        "class Pool:\n"
+        "    def __init__(self): self.pool = {}\n"
+        "    def key_for(self, state): return state\n"
+        "    def get(self, state):\n"
+        "        key = self.key_for(state)\n"
+        "        if not self.pool.get(key):\n"
+        "            self.pool[key] = Glyph(state)\n"
+        "        return self.pool[key]\n", encoding="utf-8")
+    result = service.patterns(tmp_path, ["flyweight"], path=".", cache_mb=0)
+    assert result["findings"]
+    compact = report.present(result, kind="patterns")
+    assert compact["findings"][0]["pattern"] == "flyweight"
+    assert compact["findings"][0]["variant"] == "explicit-interning"
