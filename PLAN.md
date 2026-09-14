@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **61 ready / 16 design** (diecisiete variantes promovidas en este trabajo).
+Inventario: **62 ready / 15 design** (dieciocho variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -138,7 +138,20 @@ campo del propio tipo (un `clone` que devuelve un valor fresco no copia), se cie
 **`prototype#language-copy`** en sus cinco lenguajes. Detalles en
 [`prototype#language-copy`](docs/structural-validation/gof-completion/prototype-language-copy.md).
 
-Siguiente tarea: el mismo recorrido de cierre sirve a **`chain#middleware-closures`**, **`adapter#functional-adapter`**,
+Sin cambio de IR: **`chain#middleware-closures`** se cerró **solo con query**, en sus
+ocho lenguajes. La captura de `next`, la rama y el retorno del resultado delegado ya
+estaban; lo único específico de Rust es que su desenlace que continúa es una
+**expresión de cola** sin `return`, y lo ata a la rama `SYNTAX_NODE` (la entidad `CALL`
+es el nodo sintáctico de ese sucesor concreto), no `RETURN_OPERAND`. Queda un residuo
+**medido y ejecutable**: una rama que delega en AMBOS desenlaces matchea, porque
+expresar «este ramal no delega» exige clausura de cardinalidad sobre `HAS_CALL` y KenQL
+solo declara `complete:<callable>:HAS_PARAMETER` (kenql.py:405 y 616-619), de modo que
+`count = 1` y `not exists` caen en modo estricto. Se registró como `xfail(strict=True)`
+con la capacidad faltante nombrada, así que la suite pedirá retirarlo cuando aterrice.
+Detalles en
+[`chain#middleware-closures`](docs/structural-validation/gof-completion/chain-middleware-closures.md).
+
+Siguiente tarea: el mismo recorrido de cierre sirve a **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
 lo que cambia es qué se hace con el callable (almacenarlo, encadenarlo, transformar
 argumentos), no la captura. Sigue pendiente `abstract-factory#structural-families`,
@@ -695,7 +708,7 @@ Dependencias: **P1, P2, P4**. Ready iniciales: `linked-handlers`.
 
 #### Pendiente `chain-of-responsibility#middleware-closures`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
 
 Seguir next capturado por cada handler. Relacionar la decisión de terminar o continuar con la invocación de ese next y el request actual. Positivo: composición de cierres con salida temprana y logging independiente. Distinguir en el contrato una cadena que puede cortar de un pipeline que siempre continúa.
 

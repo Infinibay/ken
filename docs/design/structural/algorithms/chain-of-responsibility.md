@@ -106,8 +106,14 @@ ese protocolo ni la invocación exactamente una vez de la continuación.
 - **Web async:** handlers pueden suspenderse y reanudarse; resultado, error y
   cancelación forman parte del protocolo, no sólo la llamada `next`.
 
-El catálogo mantiene `middleware-closures` como `design`. Esta lista no significa
-que las formas no ensayadas ya sean detectadas.
+`middleware-closures` pasó a `ready` **sin cambio de IR** (el IR sigue en 1.60.0): la
+captura de `next`, la rama y el retorno del resultado delegado ya estaban en el grafo,
+incluida la expresión de cola de Rust vía `SYNTAX_NODE`. Queda un residuo **medido y
+ejecutable**: una rama que delega en ambos desenlaces sigue matcheando, porque expresar
+«este ramal no delega» exige clausura de cardinalidad sobre `HAS_CALL`, que KenQL no
+declara (ver
+[`chain#middleware-closures`](../../../structural-validation/gof-completion/chain-middleware-closures.md)).
+Esta lista no significa que las formas no ensayadas ya sean detectadas.
 
 ## Pruebas y corrección
 

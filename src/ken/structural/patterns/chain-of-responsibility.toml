@@ -2,12 +2,13 @@ schema = "ken-rule/1"
 id = "chain-of-responsibility"
 name = "Chain of Responsibility"
 category = "behavioral"
-description = "A handler conditionally forwards to another handler."
-caveat = "The same shape can be a Proxy; request handling and chain topology require review. The selected forwarding call must occur inside a lexical branch arm; early exits, request/result preservation and exclusive handling are not proven."
+description = "A handler conditionally forwards to another handler, as a linked object or as a closure."
+caveat = "The same shape can be a Proxy; request handling and chain topology require review. The selected forwarding call must occur inside a lexical branch arm; early exits, request/result preservation and exclusive handling are not proven. The closure variant proves the forwarding is branch-guarded, not that a terminating path exists."
 legacy_query = "require $unit SUBTYPE_OF $handler\nrequire $unit HAS_FIELD $next\nrequire $next TYPE $handler\nrequire $unit HAS_METHOD $handle\nrequire $handle CONDITIONAL_DELEGATION $next\n"
 query = '''
 query chain_of_responsibility {
- match "chain-of-responsibility#linked-handlers"(unit: $unit);
+ any { match "chain-of-responsibility#linked-handlers"(unit: $unit); }
+ or { match "chain-of-responsibility#middleware-closures"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -48,9 +49,31 @@ query chain_of_responsibility {
 '''
 [[variants]]
 id = "middleware-closures"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
 requires = ["closure_capture", "control_flow"]
 graph_requirements = ["Handler captura next; rama puede terminar o continuar request; distinguir pipeline incondicional."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "Un callable fabrica un handler que captura un parametro callable `next`, y la delegacion esta guardada por una rama: el resultado del delegado es el valor que devuelve UNO de los dos desenlaces de la rama (o su expresion de cola, en un lenguaje de expresiones) y el otro desenlace devuelve un valor distinto. Excluye el pipeline incondicional: sin rama no hay match. Residuo medido: una rama que delega en AMBOS desenlaces tambien matchea, porque expresar «este ramal no delega» exige cardinalidad exacta de llamadas o ausencia acotada, y KenQL solo declara clausura para HAS_PARAMETER (kenql.py:405 y 616-619), de modo que `count = 1` y `not exists` se descartan en modo estricto; se midio con un fixture de doble delegacion (2 matches). No prueba manejo exclusivo, preservacion de la request ni topologia de la cadena."
+query = '''
+query middleware_closures {
+ require $factory HAS_PARAMETER $next;
+ parameter(receiver: false) as $next;
+ require $factory RETURNS $wrapped;
+ callable(constructor: false) as $wrapped;
+ require $wrapped CAPTURES $next;
+ require $wrapped HAS_OPERATION $branch;
+ operation(kind: branch) as $branch;
+ require $branch CFG_NEXT $continuing;
+ require $branch CFG_NEXT $terminal;
+ different $continuing $terminal;
+ any { require $continuing RETURN_OPERAND $delegate; }
+ or { require $delegate SYNTAX_NODE $continuing; }
+ any { require $delegate CALLEE_VALUE $next; } or { require $delegate RECEIVER $next; }
+ operation(kind: return) as $terminal;
+ require $terminal RETURN_OPERAND $terminated;
+ different $terminated $delegate;
+ emit unit=$wrapped, $factory, $next, $branch, $delegate, $terminal;
+}
+'''
