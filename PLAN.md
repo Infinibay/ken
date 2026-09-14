@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **56 ready / 21 design** (doce variantes promovidas en este trabajo).
+Inventario: **57 ready / 20 design** (trece variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -86,8 +86,18 @@ en `condition_clause`, un envoltorio puro que ahora se desenvuelve como
 ocho lenguajes. Detalles en
 [`proxy#lazy-subject`](docs/structural-validation/gof-completion/proxy-lazy-subject.md).
 
-Siguiente tarea: el mismo recorrido de cierre sirve a **`command#command-closure`**,
-**`chain#middleware-closures`**, **`adapter#functional-adapter`**,
+IR 1.57 — **declaraciones de fichero y static local**: una declaración de ámbito de
+fichero liga ahora un slot **del módulo** (`var`/`const` de Go, `static`/`const` de
+Rust). Antes el nodo no se bajaba en absoluto, así que el `return instance` dentro
+del accessor no resolvía el nombre e **inventaba un `STORAGE` local del callable con
+la misma grafía**: el módulo no declaraba nada y la inicialización y la lectura
+apuntaban a dos entidades distintas con un solo nombre. Además, una declaración de
+C++ con la clase de almacenamiento `static` marca su slot `static: True`, que es lo
+único que separa un static local de un local por llamada de sintaxis idéntica. Con
+eso se cierra **`singleton#module-shared`** en sus seis lenguajes. Detalles en
+[`singleton#module-shared`](docs/structural-validation/gof-completion/singleton-module-shared.md).
+
+Siguiente tarea: el mismo recorrido de cierre sirve a **`chain#middleware-closures`**, **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
 lo que cambia es qué se hace con el callable (almacenarlo, encadenarlo, transformar
 argumentos), no la captura. Sigue pendiente `abstract-factory#structural-families`,
@@ -909,7 +919,7 @@ Dependencias: **P1, P2, P4, P6**. Ready iniciales: `eager-shared`, `lazy-guarded
 
 #### Pendiente `singleton#module-shared`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `cpp`, `go`, `rust`.
 
 Identificar almacenamiento de módulo/static local y el valor inicializado que expone el accessor/export. Declarar alcance: módulo, proceso o instanciación. Positivo: export compartido y acceso repetido; no depender de una clase llamada Singleton.
 

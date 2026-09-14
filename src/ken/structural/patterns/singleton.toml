@@ -2,13 +2,14 @@ schema = "ken-rule/1"
 id = "singleton"
 name = "Singleton"
 category = "creational"
-description = "A guarded lazy construction or restricted eager construction exposes shared class storage."
-caveat = "Lazy requires direct null-miss flow, one explicit write and direct shared-slot returns. Eager requires supported private instance constructor declarations and one resolved allocation site. Neither proves immutable storage, thread safety or global uniqueness."
+description = "A guarded lazy construction, a restricted eager construction, or a module/function-local static exposes shared storage."
+caveat = "Lazy requires direct null-miss flow, one explicit write and direct shared-slot returns. Eager requires supported private instance constructor declarations and one resolved allocation site. Module-shared requires an exported accessor returning a module-scope or ``static``-local slot written once from a construction. None proves immutable storage, thread safety or global uniqueness."
 legacy_query = "require $unit HAS_FIELD $storage static=true\nrequire $storage INITIALIZED_AS NULL\nrequire $unit HAS_METHOD $accessor\nrequire $storage GUARDS_WRITE $accessor\nrequire $accessor RETURNS_STORAGE $storage\nrequire $storage ASSIGNED_FROM $construction\nrequire $construction ALLOCATES_TYPE $unit\n"
 query = '''
 query singleton {
  any { match "singleton#lazy-guarded"(unit: $unit); }
  or { match "singleton#eager-shared"(unit: $unit); }
+ or { match "singleton#module-shared"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -36,12 +37,35 @@ query eager_shared {
 
 [[variants]]
 id = "module-shared"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "cpp", "go", "rust"]
 requires = ["module_storage", "return_flow"]
 graph_requirements = ["Accessor/export exposes module or local-static shared initialized storage; state loader/process scope explicitly."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-six-languages"
+query_claim = "One callable returns a shared slot that is written once from a construction of the very type it holds, and either the slot is a module-scope binding with an exported accessor or the slot carries a function-local ``static`` storage class. The slot is not required to be exported itself. Does not prove thread safety, that the loader is reachable once per process, or that the construction is never repeated by another writer outside the analysed graph."
+query = '''
+query singleton_module_shared {
+ require $module IS MODULE;
+ require $accessor IS CALLABLE;
+ require $accessor OWNED_BY $module;
+ require $accessor RETURNS_STORAGE $storage;
+ require $write ASSIGNMENT_TARGET $storage;
+ require $write ASSIGNMENT_VALUE $creation;
+ require $creation ALLOCATES_TYPE $type;
+ type_decl() as $type;
+ any {
+  require $module DECLARES $storage;
+  variable(static: false) as $storage;
+  require $module EXPORT $accessor;
+  require $module HAS_OPERATION $write;
+ } or {
+  variable(static: true) as $storage;
+  require $accessor HAS_OPERATION $write;
+ }
+ emit unit=$type, $module, $storage, $accessor, $creation, $type;
+}
+'''
 
 [[variants]]
 id = "lazy-guarded"

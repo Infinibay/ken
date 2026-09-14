@@ -109,8 +109,12 @@ propiedades diferentes.
 | Memoización por clave | Varios lenguajes | Varias instancias según clave; no colapsarlo a unicidad sin ámbito/key |
 
 Los nombres de API de esta tabla son candidatos para futuros modelos, no pruebas
-implementadas de sus garantías. El catálogo marca `module-shared` y
-`once-primitive` como `design`. Los nuevos tests no validan protocolos concurrentes.
+implementadas de sus garantías. El catálogo marca `once-primitive` como `design`;
+`module-shared` pasó a `ready` en IR 1.57 para export de módulo (Python/JS/TS/Go/Rust)
+y local estático (C++), con la precaución "local persistente vs. local nuevo en cada
+invocación" resuelta marcando `static` en la declaración de C++. Holder/enum,
+contenedor DI y memoización por clave siguen sin modelo. Los tests no validan
+protocolos concurrentes.
 
 ## Uso de named queries
 

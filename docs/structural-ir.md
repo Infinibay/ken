@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.56.0.** This document describes available behavior
+> **Operational reference: IR 1.57.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,40 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## File-scope declarations and function-local statics (IR 1.57)
+
+A declaration at file scope binds a **module-scope** slot:
+
+| Language | Source | Slot owner |
+|---|---|---|
+| Go | `var instance = Config{value: 1}` | the module |
+| Go | `const limit = 3` | the module |
+| Rust | `static INSTANCE: Config = Config { value: 1 };` | the module |
+| Rust | `const LIMIT: i32 = 3;` | the module |
+
+Before this the declaration node was not lowered at all. The read inside an
+accessor (`return instance`) therefore could not resolve the name and created a
+**callable-local** `STORAGE` of the same spelling: the module declared nothing, and
+the initialization and the read pointed at two different entities sharing one name.
+The binding is now created while declaring, so its identity does not depend on
+whether the file reads or declares the name first.
+
+A Go grouped declaration (`var ( a = 1; b = 2 )`) and a multi-target
+`var a, b = 1, 2` stay unresolved. One declaration node cannot carry two
+independent assignment occurrences without inventing which operand reached which
+target.
+
+A C++ declaration carrying the `static` storage class marks its slot
+`static: True`. That is what separates a function-local static —
+
+```cpp
+Config& get_config() { static Config instance = Config(); return instance; }
+```
+
+— from the per-call local with the same syntax minus the specifier. Once the slot
+exists the two are indistinguishable downstream, so the fact has to be recorded at
+the declaration.
 
 ## C++ condition clauses (IR 1.56)
 

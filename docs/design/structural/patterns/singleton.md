@@ -30,8 +30,10 @@ IR 1.41.0 incorpora [eager-shared](../eager-singleton.md) en Java/C#/JS/TS y la
 operación pública `singleton.shared_instance`. Une inicialización de campo static
 con construcción de su propia clase y accessor static que empieza devolviendo
 ese slot. La operación amplia no prueba constructor privado, unicidad global, inmutabilidad
-ni seguridad concurrente. `module-shared`, holder y primitivas once necesitan
-modelos separados. Ver [resultados](../../../structural-validation/multilanguage/eager-singleton.md).
+ni seguridad concurrente. Holder y primitivas once siguen necesitando
+modelos separados; `module-shared` se incorporó en IR 1.57 como
+[`singleton#module-shared`](../../../structural-validation/gof-completion/singleton-module-shared.md).
+Ver [resultados](../../../structural-validation/multilanguage/eager-singleton.md).
 
 Los fragmentos requieren contexto omitido; no son fixtures compiladas.
 

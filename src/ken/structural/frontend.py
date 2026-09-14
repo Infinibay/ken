@@ -38,7 +38,14 @@ INDEXES = {"subscript", "subscript_expression", "element_access_expression", "in
 CALLS = {"call", "call_expression", "method_invocation", "invocation_expression", "new_expression",
          "object_creation_expression", "struct_expression", "composite_literal"}
 ASSIGNMENTS = {"assignment", "assignment_expression", "assignment_statement", "short_var_declaration",
-               "variable_declarator", "init_declarator", "let_declaration", "public_field_definition", "field_definition", "field_declaration"}
+               "variable_declarator", "init_declarator", "let_declaration", "public_field_definition", "field_definition", "field_declaration",
+               "var_declaration", "const_declaration", "static_item", "const_item"}
+# Declarations that bind a name outside any callable. Go spells both name and
+# initializer on a ``var_spec``/``const_spec`` child rather than on the
+# declaration itself, so the declaration only carries an assignment once that
+# spec is resolved; Rust puts both fields on the item directly.
+FILE_DECLARATIONS = {"var_declaration", "const_declaration", "static_item", "const_item"}
+SPEC_DECLARATIONS = {"var_declaration": "var_spec", "const_declaration": "const_spec"}
 LOOPS = {"for_statement", "for_in_statement", "enhanced_for_statement", "for_each_statement",
          "foreach_statement", "for_expression", "for_range_loop", "while_statement", "while_expression", "loop_expression", "do_statement"}
 BRANCHES = {"if_statement", "if_expression", "conditional_expression", "ternary_expression"}
@@ -393,6 +400,19 @@ class Lowerer:
                     declared_node = nested_declarator
                 if declared_node.type in {"field_identifier", "identifier"}:
                     self.storage(self.text(declared_node), scope, declared_node)
+        elif kind in FILE_DECLARATIONS and scope == self.module:
+            # A file-scope declaration binds a module-scope name. Creating the
+            # binding while declaring, rather than on the first read that cannot
+            # resolve it, keeps the identity of the storage independent of
+            # whether the file reads or declares the name first — otherwise the
+            # read invents a callable-local slot with the same spelling.
+            spec_type = SPEC_DECLARATIONS.get(kind)
+            specs = ([c for c in node.named_children if c.type == spec_type]
+                     if spec_type is not None else [node])
+            for spec in specs:
+                for declared_name in self.declared_names(spec):
+                    if declared_name.type in {"identifier", "field_identifier"}:
+                        self.storage(self.text(declared_name), scope, declared_name)
         elif kind == "impl_item":
             target_node = field(node, "type")
             # Type arguments specialize a nominal declaration; they are not
@@ -607,6 +627,37 @@ class Lowerer:
             node = node.named_children[0]
         return node
 
+    def declared_names(self, node: Node) -> list[Node]:
+        """Every name the node declares, in declaration order.
+
+        A repeated field (Go's ``var a, b = 1, 2``) yields each name, so a caller
+        can refuse the shape instead of silently keeping only the first.
+        """
+        return [child for index, child in enumerate(node.children)
+                if node.field_name_for_child(index) == "name"]
+
+    def declaration_parts(self, node: Node) -> tuple[Node | None, Node | None]:
+        """The declared name and the initializer of a declaration node.
+
+        Go carries both on a single ``var_spec``/``const_spec`` child, so the
+        declaration node itself has no ``name``/``value`` field to read. Shapes
+        whose single operand list is paired with several targets are left
+        unresolved: one declaration node cannot carry two independent assignment
+        occurrences without inventing which value reached which name.
+        """
+        source = node
+        spec_type = SPEC_DECLARATIONS.get(node.type)
+        if spec_type is not None:
+            specs = [c for c in node.named_children if c.type == spec_type]
+            if len(specs) != 1:
+                return None, None
+            source = specs[0]
+        names = self.declared_names(source)
+        if len(names) > 1:
+            return None, None
+        left = names[0] if names else field(source, "left", "pattern", "declarator", "property")
+        return left, field(source, "right", "value")
+
     def member_parts(self, node: Node) -> tuple[Node | None, str]:
         obj = field(node, "object", "expression", "operand", "argument", "value")
         member = field(node, "attribute", "property", "field", "name")
@@ -805,9 +856,10 @@ class Lowerer:
             bare_declarator = (
                 native == 'variable_declarator' and self.ir.language in {'javascript', 'typescript', 'java', 'csharp'}
                 or native == 'let_declaration' and self.ir.language == 'rust'
+                or native in FILE_DECLARATIONS
                 or native == 'assignment' and self.ir.language == 'python' and node.child_by_field_name('type') is not None
             )
-            if (bare_declarator and field(node, 'value', 'right') is None
+            if (bare_declarator and self.declaration_parts(node)[1] is None
                     and not any(c.type == '=' for c in node.children)):
                 kind = 'DECLARATION'
         elif native in MEMBERS:
@@ -991,7 +1043,12 @@ class Lowerer:
         if kind == "identifier" and callable_scope:
             value = self.resolve_name(self.text(node), scope)
             parent = node.parent
-            defining = parent is not None and (parent.type in FUNCTIONS or parent.type in ASSIGNMENTS and field(parent, "left", "name", "pattern") == node)
+            # A declared name is bound, not read: Go's ``var x = 1`` spells the
+            # name on a ``var_spec`` child, so the enclosing declaration is not
+            # the identifier's direct parent.
+            declared = self.declared_names(parent) if parent is not None else []
+            defining = parent is not None and (parent.type in FUNCTIONS or node in declared
+                                               or parent.type in ASSIGNMENTS and field(parent, "left", "name", "pattern") == node)
             if value and not defining and self.ir.entities[value].kind in {"STORAGE", "PARAMETER"}:
                 self.ir.add(scope, "READS", value, ev)
         if kind in MEMBERS and callable_scope:
@@ -1015,8 +1072,7 @@ class Lowerer:
                     self.ir.add(scope, 'WRITES', target, ev)
                     if value == 'NULL':self.ir.add(target, 'INITIALIZED_AS', 'NULL', ev)
                 return  # Type/name normalization happened once during declaration collection.
-            left = field(node, "left", "name", "pattern", "declarator", "property")
-            right = field(node, "right", "value")
+            left, right = self.declaration_parts(node)
             if right is None and self.ir.language == "csharp" and kind == "variable_declarator":
                 # This grammar leaves the initializer unfielded after '='.
                 equal = next((i for i, c in enumerate(node.children) if c.type == "="), None)
@@ -1062,6 +1118,19 @@ class Lowerer:
                 target = self.value(left, scope, cls)
                 if target in self.ir.entities:
                     self.ir.entities[target].attrs["declared"] = True
+                if self.ir.language == 'cpp' and scope != cls and target in self.ir.entities:
+                    # A function-local ``static`` outlives the call that
+                    # initialized it, so the slot is shared state rather than a
+                    # per-call local. Without the specifier the two shapes are
+                    # indistinguishable downstream.
+                    declaration = node.parent if node.parent is not None and node.parent.type == 'declaration' else None
+                    if declaration is not None and any(
+                            c.type == 'storage_class_specifier' and self.text(c) == 'static'
+                            for c in declaration.children):
+                        self.ir.entities[target].attrs["static"] = True
+                        for f in self.ir.facts:
+                            if f.subject == scope and f.object == target and f.relation == 'DECLARES':
+                                f.attrs["static"] = True
                 if scope == cls and target in self.ir.entities:
                     static = self.ir.language == "python" or bool(re.search(r"\bstatic\b", self.text(node.parent if node.parent and node.parent.type == "field_declaration" else node)))
                     if self.ir.language == 'csharp':
