@@ -2,14 +2,15 @@ schema = "ken-rule/1"
 id = "builder"
 name = "Builder"
 category = "creational"
-description = "Stepwise construction, fluent setters or an external director."
-caveat = "Fluent setters are a Builder-like idiom; product validation and lifecycle are not proven."
+description = "Stepwise construction, fluent setters, an external director or a typestate builder."
+caveat = "Fluent setters are a Builder-like idiom; product validation and lifecycle are not proven. The typestate variant reads the return type's type argument, so it proves a step moves the builder to another state; for it the ``product`` role is the slot the finish yields, not a constructed type."
 legacy_query = "require $unit IS CLASS\nvariant fluent\ncount >=2 $unit HAS_METHOD $method distinct=$method where $method RETURNS_SELF $unit and $method WRITES _\nend\nvariant director\nrequire $unit HAS_METHOD $build\nrequire $build RETURNS_NEW $product\nrequire $director DELEGATES_TYPE $unit\ncount >=2 $director CALLS $step distinct=$step where $unit HAS_METHOD $step and $step WRITES _\nend\n"
 query = '''
 query builder {
  any { match "builder#mutable-product"(builder: $builder, finish: $finish, product: $product); } or { match "builder#director"(builder: $builder, finish: $finish, product: $product); }
  or { match "builder#stored-product"(builder:$builder,finish:$finish,product:$product); }
 or { match "builder#immutable-product"(builder:$builder,finish:$finish,product:$product); }
+or { match "builder#consuming-typestate"(builder:$builder,finish:$finish,product:$product); }
  emit $builder, $finish, $product;
 }
 '''
@@ -107,12 +108,32 @@ query immutable_builder {
 
 [[variants]]
 id = "consuming-typestate"
-status = "design"
+status = "ready"
 languages = ["rust", "cpp", "typescript"]
 requires = ["generic_substitution", "ownership_flow"]
 graph_requirements = ["El paso cambia parámetros de estado o mueve el builder; la finalización recibe un estado admitido."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-three-languages"
+query_claim = "El builder liga un parametro de tipo de estado; un paso no constructor devuelve OTRA instanciacion del propio builder (`RETURN_TYPE_ARGUMENT`, el argumento del tipo de retorno generico) cuyo argumento difiere del nombre del parametro, y hay al menos DOS estados distintos, de modo que hay transicion y no solo un retorno generico. La finalizacion se fija positivamente: devuelve el slot acumulado del builder. **El rol `product` es ese slot, no un tipo construido**: esta variante no exige que la finalizacion construya nada. La ficha ofrece una disyuncion —«el paso cambia parametros de estado **o** mueve el builder»— y aqui se implementa el primer lado: C++ registra `ref_qualifier: '&&'` en el metodo, pero Rust no registra la propiedad del receptor (`self` vs `&self`) y TypeScript no tiene ownership, asi que el lado del movimiento no se exige ni se prueba. Tampoco prueba que la finalizacion solo sea alcanzable desde un estado admitido: la especializacion (`Builder<Ready>`) no se modela, ambos `impl` resuelven al mismo tipo."
+query = '''
+query consuming_typestate {
+ require $builder BINDS_TYPE_PARAMETER $state_parameter;
+ require $builder HAS_FIELD $storage;
+ require $builder HAS_METHOD $step;
+ callable(constructor: false) as $step;
+ require $step RETURN_TYPE_ARGUMENT $admitted_state;
+ where $admitted_state != $state_parameter;
+ require $builder HAS_METHOD $finish;
+ callable(constructor: false) as $finish;
+ require $finish RETURNS $storage;
+ different $step $finish;
+ count distinct $state >= 2 {
+  require $builder HAS_METHOD $transition;
+  require $transition RETURN_TYPE_ARGUMENT $state;
+ };
+ emit builder=$builder, finish=$finish, product=$storage, state=$admitted_state;
+}
+'''
 
 [[variants]]
 id = "director"

@@ -139,9 +139,15 @@ correlación adicional. Tampoco resuelve lifetime ni orden entre llamadas.
 | Rust | `&mut self`, `self -> Self`, `Builder<State>` | Borrow, consumo, tipos asociados/genéricos y `build` habilitado por estado |
 
 La matriz nueva cubre Python/Java/TypeScript. La variante almacenada previa tiene
-pruebas Rust con producto movido o clon derivado; eso no equivale a soporte
-completo de `consuming-typestate`, que sigue en diseño junto con
-`immutable-product`.
+pruebas Rust con producto movido o clon derivado. `consuming-typestate` pasó a `ready` en
+IR 1.65 para Rust, C++ y TypeScript, por el lado de la **disyunción de la ficha** que es
+uniforme en los tres: el paso devuelve otra instanciación del propio builder
+(`RETURN_TYPE_ARGUMENT`), y se exigen **dos** estados distintos para que sea una
+transición y no un retorno genérico. El lado del *movimiento* no se exige: C++ registra
+`ref_qualifier: '&&'`, pero Rust no registra la propiedad del receptor y TypeScript no
+tiene ownership. Y la especialización (`Builder<Ready>`) no se modela —ambos `impl`
+resuelven al mismo tipo—, así que no se prueba que la finalización solo sea alcanzable
+desde un estado admitido.
 
 ## Resultados y limitaciones observadas
 

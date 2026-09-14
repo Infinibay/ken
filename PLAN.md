@@ -42,7 +42,7 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **67 ready / 10 design** (veintitrés variantes promovidas en este trabajo).
+Inventario: **68 ready / 9 design** (veinticuatro variantes promovidas en este trabajo).
 
 Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
 contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
@@ -222,6 +222,20 @@ genérica matchea aquélla y no ésta—. El conteo se acota a tipos con `type_d
 constructor y los métodos también ligan el parámetro, y contarlos hacía que una sola
 clase satisficiera el `>= 2`. Detalles en
 [`bridge#generic-composition`](docs/structural-validation/gof-completion/bridge-generic-composition.md).
+
+IR 1.65 — **argumentos del tipo de retorno**: un método cuyo tipo de retorno aplica **su
+propio tipo declarante** publica el argumento (`RETURN_TYPE_ARGUMENT`). `Builder<Pending>`
+→ `Builder<Ready>` es cómo un paso de typestate registra el estado al que movió, y el
+nombre pelado del tipo no lo dice: la grafía genérica sobrevive en `native_return_type`
+pero una query no puede casar un prefijo contra un nombre ligado. Con eso se cierra
+**`builder#consuming-typestate`** en sus tres lenguajes, por el lado de la disyunción que
+es uniforme: el paso cambia el parámetro de estado. Se exigen **dos** estados distintos
+—si no, un builder fluido genérico que devuelve `Builder<State>` pasaría— y la
+finalización se fija positivamente devolviendo el slot acumulado; el rol `product` es ese
+slot y no un tipo construido. El lado del *movimiento* no se exige: C++ registra
+`ref_qualifier: '&&'` pero Rust no registra la propiedad del receptor y TypeScript no
+tiene ownership. Detalles en
+[`builder#consuming-typestate`](docs/structural-validation/gof-completion/builder-consuming-typestate.md).
 
 Siguiente tarea: el mismo recorrido de cierre sirve a **`adapter#functional-adapter`**,
 **`template-method#composed-skeleton`** y **`composite#higher-order-traversal`**;
@@ -765,7 +779,7 @@ Cada paso recibe un estado de construcción, crea un sucesor que conserva los ca
 
 #### Pendiente `builder#consuming-typestate`
 
-- [ ] Implementar en: `rust`, `cpp`, `typescript`.
+- [x] Implementar en: `rust`, `cpp`, `typescript`.
 
 Relacionar transiciones de tipo/estado entre pasos, sustituciones genéricas y consumo/move cuando el lenguaje lo modele. finish debe corresponder al estado permitido. Positivo: builder Rust que consume self y devuelve otro tipo; equivalentes C++ y TypeScript con contratos de estados.
 

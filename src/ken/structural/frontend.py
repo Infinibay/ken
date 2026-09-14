@@ -526,6 +526,13 @@ class Lowerer:
             if self.ir.language == 'cpp' and direct_method:
                 self.ir.entities[function].attrs.update(cpp_attrs)
                 self.ir.entities[function].attrs['return_type'] = cpp_attrs.get('native_return_type') or 'unknown'
+            # ``-> Builder<Ready>`` is the declaring type applied to another argument:
+            # that is how a typestate step records the state it moved to, and the
+            # argument is unrecoverable from the bare type name.
+            return_spelling = self.ir.entities[function].attrs.get('native_return_type') or annotation
+            applied = re.fullmatch(r'\s*([A-Za-z_]\w*)\s*<\s*(.+?)\s*>\s*', return_spelling or '')
+            if applied is not None and cls and self.ir.entities[cls].name == applied[1]:
+                self.ir.add(function, 'RETURN_TYPE_ARGUMENT', applied[2], self.evidence(node))
             self.ir.entities[function].attrs["generator"] = "generator" in kind
             self.node_entities[node.id] = function
             self.names[(scope, name)] = function

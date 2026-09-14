@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.64.0.** This document describes available behavior
+> **Operational reference: IR 1.65.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,26 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Return type arguments (IR 1.65)
+
+A method whose return type applies **its own declaring type** publishes the argument it
+is applied to:
+
+```
+<method> --RETURN_TYPE_ARGUMENT--> <argument>
+```
+
+``Builder<Pending>`` becomes ``Builder<Ready>`` across a typestate step, and the bare type
+name cannot say so: the generic spelling survives in ``native_return_type``, but a query
+cannot match a prefix against a bound name, and no other fact recovers which state a step
+moved to. The fact is emitted only when the applied base equals the declaring type's
+name, so a method returning someone else's generic type is untouched.
+
+The argument is a **name**, not a resolved type: nothing here links it to a declaration
+of ``Ready``, and no instantiation is resolved. A step returning the declaring type
+applied to its *own* parameter (``Builder<State>``) is recorded too, and it is the query
+that has to exclude it.
 
 ## Type parameters in every generic grammar (IR 1.64)
 
