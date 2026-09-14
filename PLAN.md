@@ -42,28 +42,29 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **49 ready / 28 design** (cinco variantes promovidas en este trabajo).
+Inventario: **50 ready / 27 design** (seis variantes promovidas en este trabajo).
 
-IR 1.52 — **C++ en el pase de locales** (cierra P1.6 para los tres lenguajes
-declarados: Go, Rust y C++), y con eso **`builder#immutable-product`** se cierra
-en sus **ocho** lenguajes. Además se resolvieron los **primeros xfail** del
-ejercicio: los 3 casos de `test_algorithm_builder.py` que esperaban esta variante
-daban `XPASS(strict)` y se convirtieron en regresión normal (**146 → 143**).
-Detalles en [P1.6 — C++](docs/structural-validation/gof-completion/cpp-p16.md) y
-[`builder#immutable-product`](docs/structural-validation/gof-completion/builder-immutable-product.md).
+IR 1.53 — resolución nominal de miembros y satisfacción estructural: con
+**`method_elem`** (la firma de método de Go, que faltaba en `FUNCTIONS`), **Go
+satisface interfaces** por method set emitido como `IMPLEMENTS` —nunca
+`SUBTYPE_OF`, como exige la ficha—, y `&dyn Trait`/`impl Trait` resuelven a su
+trait. Con eso se cierra **`factory-method#contract-slot`** (Go/Rust). Detalles en
+[`factory-method#contract-slot`](docs/structural-validation/gof-completion/factory-method-contract-slot.md).
 
-Dos de las cinco variantes cerradas no necesitaron capacidad nueva; las otras
-tres sí. **Antes de asumir que una fila `design` requiere análisis nuevo, escribir
-su query y correrla** — y si de verdad falta una capacidad, construirla en el IR
-en lugar de rodearla en la query.
+Una regresión valiosa: la primera versión del pase nominal emitía `TARGET` para
+todo miembro y rompió `test_declared_dispatch.py`, que documenta la separación
+`DECLARED_TARGET` / `MAY_TARGET` / `TARGET`. Se corrigió respetando ese diseño en
+lugar de relajar el test.
 
-Siguiente tarea: el cuello de botella compartido que sigue es el **modelo de bus /
-topic resuelto** (P6), que desbloquea `observer#event-bus` y
-`mediator#message-coordination`. Con C++ admitido, las 25 variantes que lo
-declaran dejan de estar bloqueadas por lenguaje y queda su capacidad propia.
-Candidatos por dependencias: `prototype#language-copy`, `state#state-enum`,
-`decorator#callable-wrapper`, `singleton#module-shared`. En paralelo siguen
-abiertas **P1.5**, regiones expresivas/cortocircuitos (bloqueada; ver
+Siguiente tarea: `IMPLEMENTS` estructural ya existe, así que el candidato inmediato
+es **`abstract-factory#structural-families`** (javascript, typescript, go), que
+pide relacionar structs con el mismo conjunto de operaciones de creación sin exigir
+herencia. Después, `iterator#callback-iterator` (Go) e `iterator#async-iterator`
+(python/js/ts/csharp), y el **modelo de bus/topic** (P6) para `observer#event-bus`
+y `mediator#message-coordination`. Candidatos con C++ ya admitido:
+`prototype#language-copy`, `state#state-enum`, `decorator#callable-wrapper`,
+`singleton#module-shared`. En paralelo siguen abiertas **P1.5**, regiones
+expresivas/cortocircuitos (bloqueada; ver
 [registro](docs/structural-validation/gof-completion/P1.5-expressive-regions-blocked.md)),
 y el alcance pendiente de P1.1 (closures, orden de declaración) y P1.3
 (callee/receptor). P3 todavía requiere conectar el núcleo de instrucciones al
@@ -689,7 +690,15 @@ Dependencias: **P1, P4, P5 para traits**. Ready iniciales: `virtual-slot`.
 
 #### Pendiente `factory-method#contract-slot`
 
-- [ ] Implementar en: `go`, `rust`.
+- [x] Implementar en: `go`, `rust`.
+  **IR 1.53:** los dos lenguajes cubiertos. Requirió tres cosas: `method_elem`
+  como firma de método de Go, satisfacción estructural de Go emitida como
+  `IMPLEMENTS` (la ficha prohíbe sintetizar `SUBTYPE_OF` para un contrato
+  estructural) y la normalización `&dyn Trait`/`impl Trait` en `resolve`. 8 tests.
+  La primera versión del pase emitía `TARGET` para todo miembro nominal y rompió
+  `test_declared_dispatch.py`, que documenta la separación
+  `DECLARED_TARGET`/`MAY_TARGET`/`TARGET`; la versión final no la pisa. Detalles en
+  [`factory-method#contract-slot`](docs/structural-validation/gof-completion/factory-method-contract-slot.md).
 
 Resolver el contrato de creación suministrado al algoritmo cliente y la llamada de ese cliente al slot. Vincular la implementación concreta con el producto devuelto compatible. Positivo: method set Go o trait Rust sin herencia de clases.
 

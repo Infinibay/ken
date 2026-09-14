@@ -7,7 +7,8 @@ caveat = "Structural evidence requires review of intent and runtime behavior."
 legacy_query = "require $unit HAS_METHOD $factory\nrequire $factory OVERRIDES $base_factory\nrequire $factory RETURNS_NEW $product\n"
 query = '''
 query factory_method {
- match "factory-method#virtual-slot"(creator: $creator, factory: $factory, product: $product, unit: $unit);
+ any { match "factory-method#virtual-slot"(creator: $creator, factory: $factory, product: $product, unit: $unit); }
+ or { match "factory-method#contract-slot"(creator: $creator, factory: $factory, product: $product, unit: $unit); }
  emit $creator, $factory, $product, $unit;
 }
 '''
@@ -35,12 +36,34 @@ query factory_method {
 '''
 [[variants]]
 id = "contract-slot"
-status = "design"
+status = "ready"
 languages = ["go", "rust"]
-requires = ["contract_resolution", "call_targets"]
+requires = ["contract_resolution", "call_targets", "structural_satisfaction"]
 graph_requirements = ["El algoritmo invoca una operación de creación suministrada por contrato; marcar variante sin herencia de clase."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-go-rust"
+query_claim = "El cliente recibe por parametro un contrato, invoca en ese parametro un slot que el contrato declara, y un tipo concreto que satisface el contrato (method set en Go, impl de trait en Rust) sobrescribe ese slot y devuelve una construccion nueva. No prueba dispatch dinamico en ejecucion, ni que el cliente reciba realmente esa implementacion, ni la compatibilidad de tipos del producto mas alla de que sea una construccion."
+query = '''
+query factory_contract_slot {
+ require $client HAS_PARAMETER $supplied;
+ parameter(receiver: false) as $supplied;
+ require $client HAS_CALL $creation;
+ require $creation RECEIVER $supplied;
+ require $creation TARGET $slot;
+ callable(constructor: false) as $slot;
+ require $contract HAS_METHOD $slot;
+ require $implementation OVERRIDES $slot;
+ different $implementation $slot;
+ require $implementation IN_TYPE $concrete;
+ any {
+  require $concrete SUBTYPE_OF $contract;
+ } or {
+  require $concrete IMPLEMENTS $contract;
+ }
+ require $implementation RETURNS_NEW $product;
+ emit $concrete, $slot, $client, $contract, unit=$concrete, creator=$concrete, factory=$slot, product=$product;
+}
+'''
 
 [[operations]]
 id = "client_flow"

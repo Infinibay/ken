@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.52.0.** This document describes available behavior
+> **Operational reference: IR 1.53.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 
@@ -12,6 +12,30 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Nominal member resolution and structural satisfaction (IR 1.53)
+
+`MEMBER_DECLARATION` links a member access to the **field** its receiver's type
+declares. It is emitted only when the receiver's recorded type is a single simple
+nominal name resolving to exactly one class or interface declaring that member; a
+structural, generic or ambiguous receiver yields no fact. Method members are
+**not** linked here: the nominal call resolution already separates
+`DECLARED_TARGET` (the declared slot), `MAY_TARGET` (several possible concrete
+targets) and `TARGET` (exactly one), and collapsing them would present an
+ambiguous dispatch as resolved.
+
+Type spellings are normalised before lookup: `&dyn Trait`, `dyn Trait` and
+`impl Trait` name the same declaration as `Trait`. That is what lets
+``creator.create()`` on a ``&dyn Creator`` parameter reach the trait slot.
+
+Go satisfies an interface by method set rather than by an ``implements`` keyword.
+That is `IMPLEMENTS` with `basis='method-set'`, plus an `OVERRIDES` per satisfied
+operation, and it is deliberately **not** `SUBTYPE_OF`: the ficha for the affected
+variants forbids synthesising a nominal subtype for a structural contract. The
+link requires exact coverage of the required operations (name and arity); a type
+covering only part of an interface produces no fact. Go's interface method
+specifications are declared as `method_elem`, which the frontend now treats as a
+method signature like the Java, TypeScript and C# forms.
 
 ## C++ constructor resolution (IR 1.52)
 
@@ -135,7 +159,7 @@ usable afterwards. C++ is not admitted.
 
 ## Current capabilities
 
-This table describes IR 1.52.0, checked against the implementation on 2026-09-13.
+This table describes IR 1.53.0, checked against the implementation on 2026-09-13.
 Preserving syntax, deriving a relationship and proving runtime behavior are
 different levels of support.
 

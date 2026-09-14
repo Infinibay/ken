@@ -25,6 +25,8 @@ TYPES = {"class", "abstract_class_declaration", "class_definition", "class_decla
          "struct_specifier", "struct_item", "trait_item", "type_spec", "record_declaration"}
 FUNCTIONS = {"abstract_method_signature", "function_definition", "function_declaration", "method_definition", "method_declaration",
              "constructor_declaration", "function_item", "function_signature_item", "method_signature",
+             # Go declares an interface's required operations as ``method_elem``.
+             "method_elem",
              "generator_function_declaration", "generator_function", "arrow_function", "lambda",
              "local_function_statement", "func_literal", "function_expression", "lambda_expression"}
 MEMBERS = {"attribute", "member_expression", "field_access", "member_access_expression",

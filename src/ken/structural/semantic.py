@@ -124,6 +124,10 @@ def link_project(units: list[IR]) -> IR:
         if entity not in entities:
             return None
         name = name.strip(": &*?'").removeprefix("mut ")
+        # ``&dyn Trait`` / ``impl Trait`` name the same declaration as ``Trait``
+        # for member and slot lookup. The concrete call target is still decided
+        # separately, so this does not erase dispatch ambiguity.
+        name = re.sub(r'^(?:dyn|impl)\s+', '', name).strip()
         origin = entities[entity].path
         scope = entity
         while scope:
@@ -454,6 +458,8 @@ def link_project(units: list[IR]) -> IR:
     collection_lifecycle(graph)
     nominal_roots(graph)
     member_access(graph)
+    from .structural_contracts import structural_contracts
+    structural_contracts(graph)
     from .events import csharp_events
     csharp_events(graph)
     call_bindings(graph)
