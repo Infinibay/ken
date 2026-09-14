@@ -42,7 +42,13 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **54 ready / 23 design** (diez variantes promovidas en este trabajo).
+Inventario: **55 ready / 22 design** (once variantes promovidas en este trabajo).
+
+Sin cambio de IR: **`adapter#functional-adapter`** se cerró **solo con query**. El
+contrato que la separa de `decorator#callable-wrapper` es la adaptación —dos
+argumentos distintos indexados del único parámetro de entrada—, y el negativo de
+passthrough lo verifica. **Cinco de las once variantes cerradas no necesitaron
+capacidad nueva.**
 
 IR 1.55 — cierres encolados y dos capacidades de lenguaje: **`append` de Go** es
 una función libre, no un método, así que no producía `INSERTS_INTO`; el
@@ -554,7 +560,13 @@ Dependencias: **P1, P2, P4**. Ready iniciales: `object-adapter`.
 
 #### Pendiente `adapter#functional-adapter`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+  **Cerrada sin cambio de IR:** el grafo ya daba la captura, la invocación y —lo
+  que parecía específico— `INDEX` sobre el argumento del parámetro. La obligación
+  que la separa de `decorator#callable-wrapper` es la **adaptación**: dos
+  argumentos distintos indexados de la entrada, no un passthrough de uno. 14 tests.
+  Detalles en
+  [`adapter#functional-adapter`](docs/structural-validation/gof-completion/adapter-functional-adapter.md).
 
 Seguir la función capturada hasta la llamada efectiva. Probar que la transformación de entrada llega al argumento correcto, o que la transformación de salida consume el resultado envuelto. Positivo: convertir una estructura de entrada en dos parámetros y transformar la respuesta; incluir funciones anidadas y lambdas.
 

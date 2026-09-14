@@ -9,6 +9,7 @@ query = '''
 query adapter {
  any { match "adapter#object-adapter"(unit: $unit); }
  or { match "adapter#class-adapter"(unit: $unit); }
+ or { match "adapter#functional-adapter"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -45,12 +46,38 @@ query adapter {
 '''
 [[variants]]
 id = "functional-adapter"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
-requires = ["closure_capture", "callable_contracts"]
+requires = ["closure_capture", "callable_contracts", "argument_adaptation"]
 graph_requirements = ["Callable envuelve otra y adapta su contrato de entrada/salida sin requerir clase."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "Una fabrica recibe un callable, devuelve un callable propio que lo captura y lo invoca con DOS argumentos distintos, cada uno obtenido indexando el unico parametro de entrada: convierte una estructura de entrada en dos parametros. La invocacion se acepta como llamada directa (CALLEE_VALUE) o como metodo sobre el callable (RECEIVER, la interfaz funcional de Java). No prueba el contrato de tipos de la adaptacion, ni la variante de transformacion de SALIDA, ni que el callable adaptado sea el efectivamente invocado en ejecucion."
+query = '''
+query adapter {
+ require $factory HAS_PARAMETER $inner;
+ parameter(receiver: false) as $inner;
+ require $factory RETURNS $wrapped;
+ different $factory $wrapped;
+ callable(constructor: false) as $wrapped;
+ require $wrapped CAPTURES $inner;
+ require $wrapped HAS_PARAMETER $request;
+ parameter(receiver: false) as $request;
+ require $wrapped HAS_CALL $delegation;
+ any { require $delegation CALLEE_VALUE $inner; } or { require $delegation RECEIVER $inner; }
+ count distinct $argument >= 2 {
+  require $delegation ARGUMENT $argument;
+ };
+ require $delegation ARGUMENT $first_argument;
+ require $delegation ARGUMENT $second_argument;
+ different $first_argument $second_argument;
+ require $first_argument VALUE $first_value;
+ require $first_value INDEX $first_index;
+ require $second_argument VALUE $second_value;
+ require $second_value INDEX $second_index;
+ emit unit=$wrapped, $factory, $inner, $wrapped, $request;
+}
+'''
 
 [[variants]]
 id = "class-adapter"
