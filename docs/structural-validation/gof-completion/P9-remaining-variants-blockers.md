@@ -35,40 +35,40 @@ nombre, antes de diagnosticar un problema de identidad.
 **El contrato:** casos hoja y compuesto, payload de hijos recursivos y dispatch
 por tag/match; la evaluación de cada hijo relacionada con el resultado combinado.
 
-**Lo que sí existe (medido, Rust).** Con `enum Expr { Num(i32), Add(Box<Expr>,
-Box<Expr>) }` y un `match`:
+**Medición por lenguaje** (seis formas canónicas de tipo suma, `evaluate` que
+recurre sobre los operandos y `CALLS <operación> -> <operación>` dos veces en las
+seis):
 
-```
-IS Expr[CLASS]
-HAS_CALL evaluate -> <llamada>   CALLEE_NAME -> evaluate   (recursión)
-ARGUMENT <llamada> -> left / right / ctx        (los bindings del patrón)
-IS left[STORAGE]   IS right[STORAGE]
-CALLS evaluate -> evaluate
-```
+| Lenguaje | Forma medida | Casos | Payload recursivo | Qué falta |
+|---|---|---|---|---|
+| java | `sealed interface` + `record` posicional | `SUBTYPE_OF Num/Add -> Expr` | ✗ los componentes del record no dan `HAS_FIELD`: el acceso es la **llamada** `add.left()` | modelar los componentes del record (o escribir el fixture con clases y campos) |
+| csharp | `record` posicional | `SUBTYPE_OF` | ✗ `add.Left` es un `MEMBER` sin `TYPE` | ídem |
+| go | `interface` + structs | `IMPLEMENTS Num/Add -> Expr {basis: method-set}` | parcial: `HAS_FIELD Add -> left/right`, sin `TYPE left -> Expr` | `TYPE` del campo al contrato |
+| rust | `enum` + `match` | `IS Expr[CLASS]`, **sin casos** | ✗ las variantes no producen entidad ni hecho | variantes como tipos con campos + binding de patrón |
+| typescript | unión discriminada | ✗ la unión no es un tipo | ✗ | miembros de la unión como tipos con campos |
+| cpp | `std::variant` + structs | `HAS_FIELD Add -> left/right` pero sin vínculo a `Expr` | parcial | vínculo variante↔caso |
 
-**El bloqueo.** Las **variantes del enum no se modelan**: `enum_variant` aparece
-como operación pero no produce entidades ni hechos, así que no hay tipo por caso
-ni campo por payload. Y los bindings del patrón (`left`, `right`) son `STORAGE`
-sin ninguna arista al enum, al scrutinee ni a la variante que los declara: no se
-puede decir de qué caso salió cada hijo ni que `left` es el campo recursivo de
-`Add`. Sin eso, `interpreter#expression-sum` no puede exigir "los dos operandos
-del mismo caso" y `composite#algebraic-tree` no puede distinguir hoja de
-compuesto.
+Lo que ya está en las seis: la **recursión** es visible (`CALLS` de la operación a
+sí misma, dos veces, con el `ARGUMENT` correspondiente al operando: la llamada al
+accesor en Java, el `MEMBER` en C#/Go/TS, el `STORAGE` del patrón en Rust, el
+scrutinee en C++). Lo que falta en las seis, con distinta gravedad, es el **caso
+como tipo con campos recursivos**: Java/C# lo tendrían escribiendo clases con
+campos en vez de records posicionales, Go casi lo tiene, y Rust/TS/C++ necesitan
+que el lenguaje de variantes se modele.
 
 **Siguiente símbolo:** la rama que IR 1.58 agregó para enums (`ENUM_TYPES` /
 `ENUM_CONSTANTS` y `enum_constant_names` en `src/ken/structural/frontend.py`),
-extendida a `enum_variant` / `enum_variant_list`: una entidad por variante con sus
-campos como `STORAGE` (`HAS_FIELD`) tipados por su declaración, y una relación del
-binding de patrón a la variante emitida desde el lowering de
-`match_pattern`/`tuple_struct_pattern`.
+extendida a `enum_variant` / `enum_variant_list` —una entidad por variante con sus
+campos como `STORAGE` (`HAS_FIELD`) tipados por su declaración— más el binding de
+patrón emitido desde el lowering de `match_pattern`/`tuple_struct_pattern`, y el
+mismo tratamiento para los miembros de una `union_type` de TypeScript y para los
+casos de un `std::variant`.
 
-**Ojo con el orden:** conviene medir primero si las dos variantes pueden
-compartir una query. `expression-sum` pide además el **contexto** y la
-**combinación** de los resultados de los dos operandos, que es justo lo que
-`expression-objects` deja declarado como no probado; `algebraic-tree` sólo pide
-el árbol y la ejecución recursiva. Si la combinación necesita flujo de valores
-que no existe, `expression-sum` se cierra con la parte que sí se pruebe y el
-límite escrito, como se hizo en `singleton#once-primitive`.
+**Antes de tocar el frontend, cerrar `algebraic-tree` con cuatro lenguajes no es
+una opción**: la variante declara seis. Pero sí conviene medir primero la query
+contra la forma de **clases con campos** en java/csharp/go/cpp (donde el payload
+recursivo sí es un campo) para fijar el contrato, y dejar Rust/TS como lo que la
+capacidad nueva desbloquea.
 
 ## 2. `proxy#remote-subject` (8 lenguajes) — falta el modelo de transporte
 
@@ -100,8 +100,7 @@ argumento↔resultado. Es la variante con menos guía de diseño: la tabla de
 
 ## Orden sugerido
 
-1. Las **variantes de tipo suma**, que desbloquean **dos** variantes de una vez y
-   son la única familia que queda sin medición de query (sólo se midió el grafo).
-   Antes de tocar el frontend, escribir la query de `composite#algebraic-tree`
-   contra el grafo actual para ver exactamente qué cláusula falta.
-2. `proxy#remote-subject`, que necesita además el modelo de transporte.
+1. Las **variantes de tipo suma** en Rust y TypeScript (más el vínculo
+   variante↔caso en C++), que desbloquean **dos** variantes de una vez. El resto
+   del contrato ya está medido: la recursión es visible en las seis formas.
+2. `proxy#remote-subject`, que necesita el modelo de transporte.
