@@ -161,7 +161,14 @@ class _Exhausted(Exception):
     pass
 
 
+@lru_cache(maxsize=4096)
 def _variable(term: str) -> bool:
+    """Is this clause term a role rather than a literal?
+
+    Called tens of millions of times per unbudgeted catalogue scan, always with
+    terms drawn from a small fixed set, so the classification is memoized rather
+    than recomputed per fact.
+    """
     return term.startswith("$") or term == "@unit"
 
 

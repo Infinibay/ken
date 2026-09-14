@@ -194,16 +194,18 @@ query command_closure {
  callable(constructor: false) as $run;
  different $run $submit;
  require $unit HAS_METHOD $run;
- callable(constructor: false) as $action;
  require $submit HAS_CALL $insertion;
  require $insertion INSERTS_INTO $queue;
  any {
   require $insertion INSERTED_VALUE $action;
+  callable(constructor: false) as $action;
  } or {
   require $insertion INSERTED_VALUE $inserted;
+  callable(constructor: false) as $action;
   path $action FLOWS_TO{0,2} $inserted as $alias;
  } or {
   require $insertion INSERTED_VALUE $wrapper;
+  callable(constructor: false) as $action;
   require $wrapper ARGUMENT $wrapper_argument;
   require $wrapper_argument VALUE $wrapper_value;
   require $wrapper_value LOADED_FROM $slot;

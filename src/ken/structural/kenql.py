@@ -12,7 +12,7 @@ from dataclasses import dataclass, field, replace
 from typing import Any
 
 from .model import Entity, Fact, FactIndex, IR
-from .query import Clause, Pattern, QueryBudget, QuotedTerm, _compare, _Exhausted, _bind, _resolve
+from .query import Clause, Pattern, QueryBudget, QuotedTerm, _compare, _Exhausted, _bind, _resolve, _variable
 
 TOKEN = re.compile(r'\s*(?:(\#[^\n]*)|("(?:\\.|[^"\\])*")|(/(?:\\.|[^/\\\n])*/[ims]*)|(\$[\w]+(?:\.[\w]+)?)|([A-Za-z_][\w.-]*)|(>=|<=|==|!=|[0-9]+)|([{}():,;\[\]*=<>]))')
 
@@ -47,6 +47,14 @@ RELATIONS |= frozenset({'MEMBER_DECLARATION', 'DECLARES_EVENT', 'ADDS_HANDLER', 
 RELATIONS |= frozenset({'CONSTRUCTOR_TARGET', 'CONSTRUCTOR_STATUS', 'CALL_BINDING', 'BINDING_STATUS',
                        'BINDING_PARAMETER', 'BINDING_VALUE', 'BINDING_TARGET',
                        'RETURNS_FIELD', 'FINAL_FIELD_INPUT', 'FINAL_FIELD_VALUE', 'FIELD_FLOW_STATUS', 'CALL_RECEIVER_INPUT'})
+
+# Relations a scoped ``not`` may read to decide whether an owner holds a subject,
+# and the relations that name global entities and so are never owner-scoped.
+_OWNERSHIP_RELATIONS = ('HAS_OPERATION', 'HAS_PARAMETER', 'HAS_CALL', 'HAS_METHOD', 'DECLARES')
+_GLOBAL_RELATIONS = frozenset({'ENTITY', 'TYPE', 'INSTANCE_OF'})
+# Nodes whose binding, scope or evidence semantics forbid running a later
+# constraint ahead of them.
+_BARRIERS = frozenset({'any', 'match', 'not', 'count', 'optional', 'path'})
 
 @dataclass
 class Node:
@@ -322,6 +330,13 @@ class Engine:
         self.started=time.monotonic(); self.states=0; self.rows=0
         self.cache: dict[tuple, list[Row]] = {}
         self.dependencies: set[str]=set()
+        # A scoped ``not`` re-asks the same question for every candidate row: which
+        # subjects does this owner hold? The answer only depends on the owner, so
+        # the ownership set is computed once instead of re-reading five relations
+        # per fact.
+        self._owned: dict[str, set[str]] = {}
+        # Selectivity of a clause shape, for join ordering only.
+        self._sizes: dict[tuple, int] = {}
 
     def validate(self, root: Query) -> None:
         visited: dict[str, dict[str, set[str]]] = {}
@@ -378,16 +393,66 @@ class Engine:
         if self.budget.max_states is not None and self.states>self.budget.max_states: raise _Exhausted('max_states')
         if self.budget.timeout_ms is not None and (time.monotonic()-self.started)*1000>=self.budget.timeout_ms: raise _Exhausted('timeout_ms')
 
+    def owned_subjects(self, scope: str) -> set[str]:
+        """Subjects ``scope`` owns, memoized per engine.
+
+        ``scope`` is set only while a scoped ``not`` is evaluated, and that
+        happens for very many rows against the same owner. Scanning the five
+        ownership relations once per owner instead of once per fact is the
+        difference between a linear and a quadratic scope check.
+        """
+        members = self._owned.get(scope)
+        if members is None:
+            members = {fact.object for relation in _OWNERSHIP_RELATIONS
+                       for fact in self.index.rows(relation, scope)}
+            self._owned[scope] = members
+        return members
+
+    def clause_size(self, clause: Clause, bindings: dict[str, str]) -> int:
+        """How many rows this clause would yield for one representative row.
+
+        ``len(index.rows(...))`` only counts the relation slice; it ignores a
+        clause's kind literals and attribute filters. That rated a generator like
+        ``call(name: /encode/)`` -- which matches 171 of ~30k calls -- as if it
+        enumerated the whole relation, so the optimizer put it last and the join
+        cross-producted millions of rows before the filter removed them.
+
+        A clause is counted exactly, once per (clause, endpoints) shape; the count
+        only decides join order, so it never changes which rows a query returns.
+        """
+        sres = _resolve(clause.subject, bindings)
+        ores = _resolve(clause.object, bindings)
+        key = (id(clause), sres, ores)
+        cached = self._sizes.get(key)
+        if cached is not None:
+            return cached
+        facts = self.index.rows(clause.relation, sres, ores)
+        subject_filters = sres is not None or (not _variable(clause.subject) and clause.subject != '_')
+        object_filters = ores is not None or (not _variable(clause.object) and clause.object != '_')
+        if not clause.attrs and not subject_filters and not object_filters:
+            size = len(facts)
+        else:
+            size = 0
+            for fact in facts:
+                if sres is not None and fact.subject != sres: continue
+                if ores is not None and fact.object != ores: continue
+                probe: dict[str, str] = {}
+                if subject_filters and sres is None and not _bind(clause.subject, fact.subject, probe): continue
+                if object_filters and ores is None and not _bind(clause.object, fact.object, probe): continue
+                if not all(_compare(fact.attrs.get(k), op, value) for k, op, value in clause.attrs): continue
+                size += 1
+        self._sizes[key] = size
+        return size
+
     def facts(self, clause: Clause, row: Row) -> list[Row]:
         result = []
         for fact in self.index.rows(clause.relation, _resolve(clause.subject, row.bindings), _resolve(clause.object, row.bindings)):
             self.tick()
             self.rows += 1
             if self.budget.max_rows is not None and self.rows > self.budget.max_rows: raise _Exhausted('max_rows')
-            if self.scope and clause.relation not in {'ENTITY', 'TYPE', 'INSTANCE_OF'}:
-                if fact.subject != self.scope:
-                    owned = any(f.subject == self.scope and f.object == fact.subject for relation in ('HAS_OPERATION', 'HAS_PARAMETER', 'HAS_CALL', 'HAS_METHOD', 'DECLARES') for f in self.index.rows(relation, self.scope))
-                    if not owned: continue
+            if self.scope and clause.relation not in _GLOBAL_RELATIONS:
+                if fact.subject != self.scope and fact.subject not in self.owned_subjects(self.scope):
+                    continue
             bindings = dict(row.bindings)
             if not _bind(clause.subject, fact.subject, bindings) or not _bind(clause.object, fact.object, bindings): continue
             if not all(_compare(fact.attrs.get(k), op, value) for k, op, value in clause.attrs): continue
@@ -426,22 +491,72 @@ class Engine:
         if text.startswith('"'): return json.loads(text)
         return text
 
+    @staticmethod
+    def where_ready(node: Node, bound: set[str]) -> bool:
+        first, _, second = node.value
+        return all(not _variable(term) or term.split('.')[0] in bound for term in (first, second))
+
+    def pool_boundary(self, pending: list[Node], bound: set[str]) -> int:
+        """End of the stretch of nodes whose order cannot change a result.
+
+        A fact clause may be evaluated at any point in a conjunction: it only adds
+        a binding and filters the rows it cannot satisfy. The exceptions are the
+        barriers (negation, aggregates, named queries, path and unions own binding
+        and scope semantics) and a ``where`` whose operands are not bound yet --
+        crossing that one would let a later fact bind a role the ``where`` would
+        otherwise have reported as ``attribute:missing``.
+
+        ``different`` and ready ``where`` constraints are *not* boundaries: they
+        are pure row filters, so they can be crossed and applied early. Keeping
+        the whole stretch reorderable is what lets a cheap check run before an
+        expensive fan-out instead of after it.
+        """
+        for index, node in enumerate(pending):
+            if node.kind in _BARRIERS or (node.kind == 'where' and not self.where_ready(node, bound)):
+                return index
+        return len(pending)
+
+    def ready_filter(self, pending: list[Node], bound: set[str]) -> int | None:
+        """Index of a constraint whose roles are already bound, if any.
+
+        ``different`` and ``where`` remove exactly the rows they would remove at
+        the end, so evaluating them as soon as their roles exist cannot change a
+        result -- but it stops the join from multiplying rows that are about to
+        be discarded. In the ``mediator`` catalogue rule the three ``different``
+        clauses used to run after 1.8M rows had been built and then removed every
+        one of them.
+        """
+        for index, node in enumerate(pending):
+            if node.kind == 'different':
+                first, second = node.value
+                if first in bound and second in bound:
+                    return index
+            elif node.kind == 'where' and self.where_ready(node, bound):
+                return index
+        return None
+
     def run_nodes(self,nodes: list[Node],rows: list[Row]) -> list[Row]:
         pending = list(nodes)
         while pending and rows:
-            # Only commute adjacent positive joins. Negation, aggregates and
-            # named queries are barriers with their own binding/scope semantics.
-            prefix = 0
-            while prefix < len(pending) and pending[prefix].kind == 'fact':
-                prefix += 1
+            # Every row at this point binds the same roles, so the first row's
+            # bindings are the representative ones; only the values differ.
+            bound = set(rows[0].bindings)
+            boundary = self.pool_boundary(pending, bound)
             chosen = 0
-            if prefix > 1:
-                bindings = rows[0].bindings
-                def estimate(position: int) -> int:
-                    clause = pending[position].value
-                    return len(self.index.rows(clause.relation,
-                        _resolve(clause.subject, bindings), _resolve(clause.object, bindings)))
-                chosen = min(range(prefix), key=estimate)
+            early = self.ready_filter(pending[:boundary], bound)
+            if early is not None:
+                chosen = early
+            else:
+                joins = [index for index in range(boundary) if pending[index].kind == 'fact']
+                if joins:
+                    chosen = joins[0]
+                if len(joins) > 1:
+                    bindings = rows[0].bindings
+                    best = -1
+                    for position in joins:
+                        size = self.clause_size(pending[position].value, bindings)
+                        if best < 0 or size < best:
+                            best, chosen = size, position
             n = pending.pop(chosen)
             following=[]
             for row in rows:
