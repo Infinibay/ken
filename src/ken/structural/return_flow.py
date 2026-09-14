@@ -55,9 +55,12 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
         if f.relation == 'CALLEE_NAME' and f.object in {'eval', 'exec', 'locals', 'globals', '_getframe', 'currentframe'}:
             dynamic.add(graph.entities[f.subject].attrs.get('owner'))
     result: dict[tuple[str, str], set[str]] = {}
+    # ``statement_list`` is the Go grammar's statement container between the body
+    # block and its statements. It holds statements without being a region, so a
+    # write or return inside it still belongs to the enclosing body.
     containers = {'expression_statement', 'lexical_declaration', 'variable_declaration',
                   'local_variable_declaration', 'local_declaration_statement', 'declaration',
-                  'return_statement'}
+                  'return_statement', 'statement_list'}
     blocked_kinds = {'LOOP', 'TRY', 'THROW', 'YIELD', 'AWAIT', 'RESOURCE_SCOPE', 'MATCH', 'IMPORT', 'EXPORT'}
     blocked_native = {'global_statement', 'nonlocal_statement', 'delete_statement',
                       'update_expression', 'augmented_assignment', 'augmented_assignment_expression',
@@ -89,7 +92,13 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
         reason = ''
         if graph.diagnostics:
             reason = 'diagnostics'
-        elif entity.attrs.get('language') not in {'python', 'javascript', 'typescript', 'java', 'csharp'}:
+        # Go and Rust are admitted for the bodies measured in P1.6. Multiple
+        # assignment (Go ``a, b := f()``, Rust ``let (a, b) = f()``) targets an
+        # expression list or a pattern rather than a STORAGE, and reference writes
+        # are indirect; both are refused as non-local or indirect writes instead of
+        # being given Python semantics. Rust ``let b = a`` keeps the value's
+        # provenance, which is exactly what a move preserves.
+        elif entity.attrs.get('language') not in {'python', 'javascript', 'typescript', 'java', 'csharp', 'go', 'rust'}:
             reason = 'language'
         elif owner in nested or owner in dynamic:
             reason = 'nested-or-dynamic-execution'
@@ -258,7 +267,9 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
                     return parent.id
                 if not (parent.id in targets or parent.id in operands or parent.kind == 'CALL'
                         or parent.native_kind in containers | {
-                            'argument_list', 'arguments', 'argument', 'parenthesized_expression'}):
+                            'argument_list', 'arguments', 'argument', 'parenthesized_expression',
+                            # Go wraps the operands of ``a := f(x)`` in an expression list.
+                            'expression_list'}):
                     return None
                 current = parent
             return current.id

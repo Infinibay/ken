@@ -79,12 +79,20 @@ edge by itself: one syntactic write does not prove order or reachability.
 
 Supported calls are standalone, nested calls, and calls in assignment/return
 operands within the existing loop-free structured-local analysis in Python,
-JavaScript, TypeScript, Java and C#. Calls are sampled before the enclosing store
-or return. Call mapping uses owner and byte span, including file identity through
-the owner. Functions without an explicit return can also have argument evidence.
-Unmodeled expression regions, indirect writes and existing unsupported constructs
-remain conservative; this does not implement arbitrary callee/receiver resolution,
-heap preservation, short-circuit evaluation, or interprocedural effects.
+JavaScript, TypeScript, Java, C#, Go and Rust. Calls are sampled before the
+enclosing store or return. Call mapping uses owner and byte span, including file
+identity through the owner. Functions without an explicit return can also have
+argument evidence. Unmodeled expression regions, indirect writes and existing
+unsupported constructs remain conservative; this does not implement arbitrary
+callee/receiver resolution, heap preservation, short-circuit evaluation, or
+interprocedural effects.
+
+Go and Rust were admitted by measuring their ownership constructs first: Go
+multiple assignment (``a, b := f()``), Rust tuple destructuring
+(``let (a, b) = f()``), Rust reference writes and ``if let`` all surface as
+``unsupported`` instead of invented origins. Rust ``let b = a`` keeps the value's
+provenance, which is what a move preserves; no claim is made about ``a`` being
+usable afterwards. C++ is not admitted.
 
 ## Current capabilities
 

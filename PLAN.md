@@ -29,16 +29,19 @@ hecho `IS MODULE`. Es el requisito `exports` que faltaba para las variantes de
 superficie de módulo. Detalles en
 [`facade#module-surface`](docs/structural-validation/gof-completion/facade-module-surface.md).
 
-No se promovieron variantes GoF a ready en estas entregas.
-`facade#module-surface` queda `design` con 3 de sus 5 lenguajes cubiertos; el
-bloqueo medido es **P1.6** (Go y Rust fuera de `structured-locals/3`).
+Además, IR 1.50 cierra **P1.6 para Go y Rust** (C++ pendiente): el pase
+`structured-locals/3` los admite tras medir que sus constructos de ownership se
+rechazan en vez de adivinarse. Con eso **`facade#module-surface` pasa a `ready`**
+en sus cinco lenguajes, la primera variante del inventario promovida en este
+trabajo. Inventario: **45 ready / 32 design**. Detalles en
+[P1.6 — Go y Rust](docs/structural-validation/gof-completion/go-rust-p16.md).
 
-Siguiente tarea: **P1.6 para Go** (`:=` como escritura y retornos
-`(valor, error)`), que es lo que cierra `facade#module-surface`; después P1.6
-para Rust con los contratos de `move`/`borrow` (el fixture actual ya pasa con
-solo habilitar el lenguaje, pero no debe publicarse sin esos contratos). En
-paralelo siguen abiertas **P1.5**, regiones expresivas/cortocircuitos (bloqueada;
-ver [registro](docs/structural-validation/gof-completion/P1.5-expressive-regions-blocked.md)),
+Siguiente tarea: **P1.6 para C++**, y luego reutilizar la procedencia de Go/Rust
+en las variantes que los declaran (`strategy#static-policy`,
+`factory-method#contract-slot`, `singleton#module-shared`,
+`iterator#callback-iterator`). En paralelo siguen abiertas **P1.5**, regiones
+expresivas/cortocircuitos (bloqueada; ver
+[registro](docs/structural-validation/gof-completion/P1.5-expressive-regions-blocked.md)),
 y el alcance pendiente de P1.1 (closures, orden de declaración) y P1.3
 (callee/receptor). P3 todavía requiere conectar el núcleo de instrucciones al
 buscador.
@@ -297,6 +300,12 @@ Pasos:
   argumentos soportado y retornos abruptos. No evaluar ambos brazos como secuencia.
 - [ ] **P1.6 Extensión:** Go, Rust y C++ con fixtures equivalentes y contratos de
   asignación múltiples/move/referencia explícitos. No simular semántica Python.
+  **Parcial IR 1.50:** Go y Rust admitidos en `structured-locals/3`. Los
+  contratos se midieron antes de habilitarlos: asignación múltiple (Go
+  `a, b := f()`, Rust `let (a, b) = f()`), `deref`/`borrow` y `if let` salen
+  `unsupported`, no hechos inventados; en Rust `let b = a` conserva la procedencia
+  del valor, que es lo que un move preserva. C++ sigue fuera. Detalles en
+  [P1.6 — Go y Rust](docs/structural-validation/gof-completion/go-rust-p16.md).
 
 **Esquema elegido en IR 1.48:** `ARGUMENT_ORIGIN` conserva posición, orígenes,
 unknown y pares origen/escritura en `cases`; `ARGUMENT_REACHES` identifica posición
@@ -617,11 +626,10 @@ Dependencias: **P1, P2, P4**. Ready iniciales: `object-surface`.
 
 #### Pendiente `facade#module-surface`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `go`, `rust`.
-  **Parcial IR 1.50:** `python`, `javascript` y `typescript` cubiertos con query
-  validada y 24 tests (positivo, renombrado y cinco negativos). `EXPORT` de
-  módulo ya existe en los cinco lenguajes. `go` y `rust` siguen bloqueados por
-  P1.6 (`structured-locals/3` no los admite). Detalles y motivo medido en
+- [x] Implementar en: `python`, `javascript`, `typescript`, `go`, `rust`.
+  **IR 1.50:** los cinco lenguajes cubiertos. La query vive en el TOML, la
+  variante es `ready` y la raíz `facade` la incorpora a su unión. 36 tests
+  (positivo, renombrado y cinco negativos por lenguaje). Detalles en
   [`facade#module-surface`](docs/structural-validation/gof-completion/facade-module-surface.md).
 
 Resolver exports y entradas públicas de un módulo. Relacionar una entrada con la coordinación efectiva de varios subsistemas sin exigir campos ni clase Facade. Positivo: función exportada que obtiene datos de un servicio y los entrega al siguiente, con logging independiente.
