@@ -42,7 +42,16 @@ campo que declara el tipo nominal del receptor (capacidad general, no específic
 de eventos). Con eso **`observer#language-event` pasa a `ready`**. Detalles en
 [`observer#language-event`](docs/structural-validation/gof-completion/observer-language-event.md).
 
-Inventario: **52 ready / 25 design** (ocho variantes promovidas en este trabajo).
+Inventario: **53 ready / 24 design** (nueve variantes promovidas en este trabajo).
+
+Sin cambio de IR: **`template-method#composed-skeleton`** se cerró **solo con
+query**. El grafo ya ligaba los tres hooks, su invocación y la cadena de valores
+`prepare -> transform -> finish`; el contrato son los tres `different` (tres hooks
+distintos) más las dos cadenas `VALUE_FLOW` (pasos encadenados por valor). Detalles
+en [`template-method#composed-skeleton`](docs/structural-validation/gof-completion/template-method-composed-skeleton.md).
+
+**Cuatro de las nueve variantes cerradas no necesitaron capacidad nueva.** La regla
+se sostiene: escribir la query y correrla antes de asumir que falta análisis.
 
 IR 1.54 — **cierres como callables**: Rust declara un cierre como
 `closure_expression`, que no estaba en `FUNCTIONS`; el cuerpo se aplanaba en la
@@ -930,7 +939,12 @@ Resolver algoritmo default del trait, slots que llama y sus implementaciones con
 
 #### Pendiente `template-method#composed-skeleton`
 
-- [ ] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+- [x] Implementar en: `python`, `javascript`, `typescript`, `java`, `csharp`, `cpp`, `go`, `rust`.
+  **Cerrada sin cambio de IR:** el grafo ya daba los tres parámetros callables, la
+  invocación de cada hook y la cadena de valores `prepare -> transform -> finish`.
+  Los tres `different` exigen tres hooks distintos y las dos cadenas `VALUE_FLOW`
+  exigen que los pasos estén encadenados por valor. 14 tests. Detalles en
+  [`template-method#composed-skeleton`](docs/structural-validation/gof-completion/template-method-composed-skeleton.md).
 
 Relacionar esqueleto fijo con hooks suministrados como funciones y el orden/control/flujo exigidos por su contrato. Positivo: preparar→hook de transformación→finalizar, con pasos extra independientes. Especificar por qué es skeleton y no sólo un callback Strategy.
 

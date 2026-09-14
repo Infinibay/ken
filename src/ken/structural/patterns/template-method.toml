@@ -9,6 +9,7 @@ query = '''
 query template_method {
  any { match "template-method#virtual-skeleton"(unit: $unit); }
  or { match "template-method#trait-default"(unit: $unit); }
+ or { match "template-method#composed-skeleton"(unit: $unit); }
  emit $unit;
 }
 '''
@@ -63,12 +64,41 @@ query template_method {
 
 [[variants]]
 id = "composed-skeleton"
-status = "design"
+status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
-requires = ["callable_contracts", "control_flow"]
-graph_requirements = ["Esqueleto recibe hooks y conserva secuencia; variante por composición, no override ficticio."]
+requires = ["callable_contracts", "argument_result_flow"]
+graph_requirements = ["Esqueleto recibe hooks y conserva secuencia; variante por composicion, no override ficticio."]
 missing_capability = "unknown"
-fixtures_status = "documented-not-validated"
+fixtures_status = "source-regression-matrix-eight-languages"
+query_claim = "Un callable recibe tres hooks distintos por parametro y los invoca, pasando el resultado del primero al argumento del segundo y el del segundo al del tercero: esqueleto fijo por composicion, sin herencia ni override. La invocacion de cada hook se acepta como llamada directa (CALLEE_VALUE) o como metodo sobre el hook (RECEIVER), que es la forma de una interfaz funcional en Java. No prueba el orden real de ejecucion mas alla de la cadena de valores, ni pasos en ramas excluyentes, ni que el esqueleto sea reutilizado por varios clientes."
+query = '''
+query template_method {
+ require $unit HAS_PARAMETER $prepare;
+ parameter(receiver: false) as $prepare;
+ require $unit HAS_PARAMETER $transform;
+ parameter(receiver: false) as $transform;
+ require $unit HAS_PARAMETER $finish;
+ parameter(receiver: false) as $finish;
+ different $prepare $transform;
+ different $transform $finish;
+ different $prepare $finish;
+ require $unit HAS_CALL $prepare_call;
+ any { require $prepare_call CALLEE_VALUE $prepare; } or { require $prepare_call RECEIVER $prepare; }
+ require $unit HAS_CALL $transform_call;
+ any { require $transform_call CALLEE_VALUE $transform; } or { require $transform_call RECEIVER $transform; }
+ require $unit HAS_CALL $finish_call;
+ any { require $finish_call CALLEE_VALUE $finish; } or { require $finish_call RECEIVER $finish; }
+ require $prepare_call RESULT $prepared;
+ require $transform_call ARGUMENT $transform_argument;
+ require $transform_argument VALUE $transform_input;
+ path $prepared VALUE_FLOW{0,3} $transform_input as $handoff;
+ require $transform_call RESULT $transformed;
+ require $finish_call ARGUMENT $finish_argument;
+ require $finish_argument VALUE $finish_input;
+ path $transformed VALUE_FLOW{0,3} $finish_input as $handoff2;
+ emit $unit, $prepare, $transform, $finish;
+}
+'''
 
 [[operations]]
 id = "dependent_steps"
