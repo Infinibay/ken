@@ -69,6 +69,16 @@ def test_a_disabled_cache_stores_nothing(tmp_path):
     assert counts(second)[0] == 0 and counts(second)[1] > 0
 
 
+def test_results_can_be_bypassed_without_profiling_or_disabling_the_index(tmp_path):
+    root = tree(tmp_path, names=("a",))
+    service.patterns(root, ["flyweight"])
+    result = service.patterns(root, ["flyweight"], use_result_cache=False)
+    assert result["complete"]
+    assert result["analysis"]["query_index"]["hit"]
+    assert result["analysis"]["query_cache"] == {"enabled": False}
+    assert "operator_profile" not in result["outcomes"]["flyweight"]["stats"]
+
+
 def test_the_rule_text_and_the_engine_version_are_the_version():
     rule = next(r for r in builtin_rules() if r.id == "flyweight")
     base = rule_fingerprint(rule, "strict")
@@ -113,3 +123,30 @@ def test_editing_a_matched_saved_rule_invalidates_the_caller(tmp_path):
         if len(seen) > 1:
             assert result["analysis"]["query_cache"]["hits"] == 0, "a rewritten saved rule must not hit"
     assert f"CALLABLE:one@" in seen[0] and f"CALLABLE:two@" in seen[1]
+
+
+def test_exhausted_result_is_retried_with_a_larger_budget(tmp_path):
+    from ken.structural.query import QueryBudget
+
+    (tmp_path / 'a.py').write_text('def one(): pass\ndef two(): pass\n')
+    query = 'query selected { function() as $f; emit $f; }'
+    partial = service.search(tmp_path, query, budget=QueryBudget(max_states=1))
+    assert not partial['complete']
+    complete = service.search(tmp_path, query)
+    assert complete['complete'] and len(complete['matches']) == 2
+    assert complete['analysis']['query_cache']['hits'] == 0
+    cached = service.search(tmp_path, query)
+    assert cached['analysis']['query_cache']['hits'] == 1
+
+
+def test_cached_complete_result_respects_a_smaller_match_limit(tmp_path):
+    from ken.structural.query import QueryBudget
+
+    (tmp_path / 'a.py').write_text('def one(): pass\ndef two(): pass\n')
+    query = 'query selected { function() as $f; emit $f; }'
+    complete = service.search(tmp_path, query)
+    assert len(complete['matches']) == 2
+    limited = service.search(tmp_path, query, budget=QueryBudget(max_matches=1))
+    assert len(limited['matches']) <= 1
+    again = service.search(tmp_path, query)
+    assert again['complete'] and len(again['matches']) == 2

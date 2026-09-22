@@ -1,5 +1,11 @@
 # Cobertura ejecutable de los 23 GoF
 
+Actualización IR **1.78.0 / KQL 2**: el catálogo ejecutable suma 33 raíces
+(23 GoF y 10 modernas), 91 variantes y 30 operaciones nombradas. La
+[segunda revisión de xfail y fuentes externas](structural-validation/xfail-second-review-2026-09-14/README.md)
+distingue correcciones de consultas generales, contratos optativos nuevos y
+limitaciones todavía abiertas. Los estados y números siguientes son históricos.
+
 Estado comprobado con IR 1.47.0: 23 conceptos con query, 44 variantes ejecutables
 y 33 variantes de diseño pendientes. Los diez detectores modernos/web se cuentan
 por separado. La última [regresión externa](structural-validation/multilanguage/ir147-corpus-regression.json)

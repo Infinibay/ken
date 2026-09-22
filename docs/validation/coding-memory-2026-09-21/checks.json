@@ -1,0 +1,23 @@
+{
+  "mcp": {
+    "test": "tests/test_reasoning_memory.py::test_cli_decodes_goal_and_premise_objects",
+    "exit_code": 0,
+    "stdout": ".                                                                        [100%]\n1 passed in 0.72s\n",
+    "stderr": "",
+    "seconds": 1.12800154206343
+  },
+  "body": {
+    "test": "tests/kql2/test_body_field_initializer.py",
+    "exit_code": 0,
+    "stdout": "......                                                                   [100%]\n6 passed in 0.42s\n",
+    "stderr": "",
+    "seconds": 0.6479903340805322
+  },
+  "mcp_rejected_variant": {
+    "test": "tests/test_reasoning_memory.py::test_cli_decodes_goal_and_premise_objects",
+    "exit_code": 1,
+    "stdout": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________________ test_cli_decodes_goal_and_premise_objects ___________________\n\ntmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-2526/test_cli_decodes_goal_and_prem0')\ncapsys = <_pytest.capture.CaptureFixture object at 0x10b657980>\n\n    def test_cli_decodes_goal_and_premise_objects(tmp_path, capsys):\n        from ken.cli import main\n        (tmp_path / '.ken').mkdir()\n        (tmp_path / '.ken/meta.json').write_text('{}')\n        prefix = ['tools', '--path', str(tmp_path)]\n        assert main(prefix + ['reason_record', 's', '--facts', json.dumps(a('p'))]) == 0\n>       assert json.loads(capsys.readouterr().out)['changed']\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       KeyError: 'changed'\n\ntests/test_reasoning_memory.py:203: KeyError\n=========================== short test summary info ============================\nFAILED tests/test_reasoning_memory.py::test_cli_decodes_goal_and_premise_objects\n1 failed in 0.65s\n",
+    "stderr": "",
+    "seconds": 1.045119500020519
+  }
+}

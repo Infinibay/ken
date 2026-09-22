@@ -1,8 +1,61 @@
 # Plan de implementación: completar las variantes de los 23 GoF
 
+## Catálogo migrado a KQL 2 — 14 de septiembre de 2026
+
+Los 33 TOML activos (23 GoF y 10 modernos) contienen 138 queries KQL 2.
+El [perfil ejecutable de grafo](docs/design/kql2/graph-queries.md) documenta
+relaciones, contexto, composición, recorridos y conteos. El
+[reporte de migración](docs/structural-validation/catalog-kql2-migration-2026-09-14/README.md)
+registra tests, paridad y performance. Se conserva el IR 1.77 y sus límites.
+Esto completa la migración de dialecto; no convierte las casillas históricas de
+este plan en tareas terminadas ni implementa todos los contratos BODY/heap.
+
+## KQL 2 — diseño e implementación experimental
+
+La nueva definición del lenguaje está en
+[docs/design/kql2/README.md](docs/design/kql2/README.md).
+Incluye modelo del programa, gramática, patrones estructurales, BODY, adyacencia,
+intervalos protegidos, composición, recursión, incertidumbre, evaluación y caché.
+La [ruta de migración](docs/design/kql2/migration.md) y los
+[96 contratos iniciales de conformidad](docs/design/kql2/conformance.md) guían una
+implementación. El encargo inicial fue sólo documental; el usuario autorizó
+posteriormente implementarlo. El [estado actual](docs/design/kql2/implementation-status.md)
+distingue el subconjunto ejecutable de las tareas todavía pendientes.
+KQL 1 y el IR operativo siguen vigentes. El resto de este plan conserva el trabajo
+del catálogo y sus pendientes; esta propuesta no los declara completados.
+
+El [plan técnico de implementación de KQL 2](docs/design/kql2/implementation-plan.md)
+desglosa parser, almacenamiento, optimizador, buscador, caché e índices en tareas
+con dependencias y criterios de aceptación. Incluye un
+[schema y migraciones up/down](docs/design/kql2/storage-plan.md), el
+[diseño de compilación y ejecución](docs/design/kql2/query-engine-plan.md) y
+[performance desde el primer corte](docs/design/kql2/cache-index-plan.md):
+presupuesto compartido de 500 MB, índices justificados, invalidación conservadora,
+benchmarks fríos/calientes/incrementales y contadores de trabajo para CI.
+La DB principal `.ken/ken.db` se conserva; el reemplazo propuesto afecta al
+almacén estructural reconstruible. La implementación es parcial y no cierra
+todas las tareas del plan. Los objetivos de latencia se distinguen de las
+[mediciones iniciales](docs/structural-validation/kql2-bootstrap/README.md).
+
 Fecha del inventario: **2026-09-13**. Base: **IR 1.47.0 / kenql/1 /
 ken-instructions/1**. Este archivo es una guía para el siguiente implementador;
 las casillas sin marcar son trabajo pendiente, no funcionalidades disponibles.
+
+## Revisión del catálogo del 14 de septiembre: IR 1.77
+
+Se reforzaron los **33 TOML** (23 GoF y 10 modernos), manteniendo las queries
+visibles en los archivos. La [referencia IR](docs/structural-ir.md#catalog-precision-contracts-ir-177)
+describe ejecución léxica, descartes, inventarios de escritura, casts, condiciones
+y procedencia de bases añadidos; la [guía KenQL](docs/structural-queries.md#evidencia-de-implementación-desde-ir-177)
+explica cómo usarlos. El [reporte de correcciones](docs/structural-validation/catalog-corrections-2026-09-14/README.md)
+contiene resultados reproducibles, cambios por patrón y límites pendientes.
+
+La matriz mantiene positivos y negativos por variante/lenguaje, separados del
+registro de discrepancias. No confundir corregir esa matriz con completar todos
+los contratos algorítmicos fuertes de los tests históricos. En particular,
+Abstract Factory con objetos literales requiere representación explícita de
+miembros de registros; `persistence.unit-of-work#transactional-change-set` sigue
+en diseño y no tiene query ejecutable.
 
 
 ## Avance posterior al inventario: IR 1.48 / IR 1.49 / IR 1.50
@@ -1684,3 +1737,157 @@ Checklist de cierre global:
 Hasta cumplir esas condiciones, describir el avance por variante/lenguaje y
 contrato. «23 patrones tienen query» no equivale a «todas sus implementaciones
 están soportadas».
+
+Ronda 5 — diagnosticos medidos, sin cambio de codigo:
+
+**Kotlin no es un trabajo de tablas.** El parser existe (`ken/parsers/kotlin.py`, con
+`_PARSER`) y parsea limpio, pero la gramatica de tree-sitter-kotlin **no expone
+campos**: `field(node, "name")`, `"type"`, `"value"`, `"receiver"` devuelven todos
+`None`, asi que un `class Pool` baja como `CLASS:anonymous@0`, un `fun get` como
+`CALLABLE:anonymous@71@71`, los `CALLEE_NAME` salen vacios y no hay `HAS_FIELD` ni
+`HAS_PARAMETER`. Todo el lowering es dirigido por campos, de modo que Kotlin
+necesita un **adaptador posicional** (primer `type_identifier` para el nombre de
+clase, primer `simple_identifier` para el de funcion, `variable_declaration` para
+propiedad, `navigation_suffix` para miembros, `indexing_suffix` para indices,
+`value_arguments` para argumentos), no un puñado de entradas en las tablas. Es la
+diferencia con Ruby, cuya gramatica si nombra sus campos.
+
+**C++ flyweight usa `find` + `insert(make_pair(...))`**, no `try_emplace`:
+`this->flyweights_.find(key) == this->flyweights_.end()` para el fallo y
+`this->flyweights_.insert(std::make_pair(key, Flyweight(&shared_state)))` para
+escribir. Falta (a) `find` en `MAP_READS` y (b) **desempaquetar el par**: la
+escritura llega con **un** argumento (`make_pair`), y el modelo exige dos para no
+leer un *setter* como escritura indexada. Ambas cosas son cambio de frontend con
+bump de IR, y no se empiezan sin poder verificarlas.
+
+Ronda 7 — diagnostico de `decorator`, sin cambio de codigo:
+
+El mapa de cobertura marcaba `callable-wrapper` muriendo en `$wrapper ENTITY CALLABLE`
+(step 5) en csharp/cpp/go/rust, lo que parecia un hueco comun de una clausula. No lo
+es: esos corpus implementan el decorador **de objeto** (`Decorator : Component` con un
+campo y `override Operation()` que delega), no de callable. Lo que fallaba era que
+`object-wrapper` solo esta declarado para python/java/typescript, y el mapa mostraba la
+variante *mas cercana* entre las declaradas.
+
+Medido ejecutando **ambas** variantes, ignorando la restriccion de lenguajes, sobre los
+grafos completos de los cuatro corpus: `object-wrapper` **0 matches** y `callable-wrapper`
+**0 matches** en los cuatro. Es decir, declarar los lenguajes no arregla nada: la
+consulta de `object-wrapper` no cubre la forma como la escriben C#, Go, C++ y Rust. Antes
+de tocar el catalogo hay que bisectar `object-wrapper` clausula por clausula contra el
+ejemplo canonico de C# (`Decorator.Conceptual/Program.cs`) y ver que hecho falta
+(candidato: la delegacion `this._component.Operation()` como `CONTAINER`/`RECEIVER` de
+un campo del propio tipo base, y la herencia `Decorator : Component` como `SUBTYPE_OF`).
+
+Ronda 8 — `decorator#object-wrapper` bisectado contra el C# canonico:
+
+`Decorator.Conceptual/Program.cs` pasa **ocho** clausulas seguidas — `$unit SUBTYPE_OF
+$contract`, `HAS_FIELD $wrapped`, `$wrapped TYPE $contract`, `HAS_METHOD $method`,
+`$method OVERRIDES $slot`, `HAS_CALL $forward`, `$forward RECEIVER $wrapped`,
+`HAS_CALL $extra` — y muere en la novena: `different $forward $extra`.
+
+La causa no es un hecho que falte, es el **claim**: la variante exige que el metodo
+llame al envuelto *y a algo mas distinto*, y en el ejemplo canonico C# la conducta
+anadida es un **literal de cadena** (`$"ConcreteDecoratorA({base.Operation()})"`), no
+una segunda llamada. Con una sola llamada, `$forward` y `$extra` ligan al mismo nodo y
+`different` la descarta.
+
+Asi que aqui no sirve ni declarar lenguajes (ronda 7) ni anadir un hecho: hay que
+rediseñar la clausula de "conducta anadida" para que acepte *cualquier* prueba de que
+el decorador agrega algo — p. ej. que el valor devuelto combine el resultado del
+reenvio con algo mas (`RESULT`/`FLOWS_TO` hacia el retorno, o una operacion de
+concatenacion sobre ese resultado) — **sin** admitir un decorador que solo reenvia,
+que es justo lo que `different $forward $extra` existe para excluir. Eso es un cambio
+de claim con positivos y negativos nuevos en los cuatro lenguajes del corpus, no una
+clausula.
+
+Ronda 9 — la rama alternativa de `decorator` esta respaldada por hechos pero no
+matchea, y se revierte:
+
+Los hechos del decorador canonico de C# (`ConcreteDecoratorA.Operation`) son
+exactamente los que pide la alternativa:
+
+```
+RETURNS      CALLABLE:Operation@4262 -> VALUE:4328     (la cadena interpolada)
+FLOWS_TO     VALUE:4328              -> CALL:4350@4350:4366   (el reenvio)
+HAS_CALL     CALLABLE:Operation@4262 -> CALL:4350@4350:4366
+RESULT       CALL:4350@4350:4366     -> result
+```
+
+Se probo `any { HAS_CALL $extra; different $extra $forward } or { RETURNS
+$returned; path $returned FLOWS_TO{1,2} $forward }`. Toda la suite de decorator
+sigue verde (324 passed / 9 xfailed, o sea ningun positivo ni negativo existente
+se debilita) pero el `any` sigue dando **0 filas** y el corpus C# **0 matches**, asi
+que el cambio se revirtio: un claim que no matchea nada no se publica.
+
+Lo que queda para la proxima: evaluar **la rama 2 aislada** contra ese grafo
+(quitar el `any` y dejar solo `RETURNS` + `path`), que separa dos causas posibles —
+la direccion/cota del `path` (`FLOWS_TO` va de valor a llamada, y `{1,2}` exige al
+menos un salto) o la combinacion con las ligaduras anteriores. Es una prueba de un
+minuto y ya no hay que redescubrir los hechos.
+
+Ronda 10 — la rama 2 de `decorator` matchea aislada pero no bajo el prefijo, y donde
+dispara lo hace en no-decoradores. Resultado negativo util:
+
+Medido por separado, la rama `require $method RETURNS $returned; path $returned
+FLOWS_TO{1,2} $forward` **si** matchea: 2 filas en el grafo del fichero canonico de
+C# (7 con `{0,2}`), y 2 tambien cuando se le antepone `HAS_CALL $forward`. O sea el
+`path`, su direccion y su cota estan bien.
+
+Pero al sustituir con ella `HAS_CALL $extra; different $extra $forward` en la
+variante completa, el `any` sigue dando **0 filas** en csharp/go/cpp/rust — el
+prefijo entero (`SUBTYPE_OF`, `HAS_FIELD`, `$wrapped TYPE $contract`, `OVERRIDES`,
+`RECEIVER`) estrecha `$method`/`$forward` hasta una fila donde la rama ya no casa,
+y eso no se ve en las pruebas sueltas porque ninguna repite el prefijo completo.
+
+Y donde el cambio **si** dispara es peor: java pasa de 0 a **3** unidades
+(`AndExpression`, `OrExpression`, `YouTubeCacheProxy`), que son interpreter y proxy,
+no decoradores. Es decir la alternativa, tal como esta escrita, es a la vez
+demasiado estrecha para el caso que buscaba y demasiado ancha para el resto.
+
+Conclusion para el proximo intento: **no** relajar la clausula de conducta anadida;
+el problema esta antes. Hay que bisectar el prefijo *completo* mas la rama 2 (no la
+rama suelta) para encontrar que ligadura concreta la bloquea, y solo despues decidir
+si el claim cambia. El TOML queda revertido y las suites de decorator verdes.
+
+Ronda 12 — el "casi" de `entry-api` en Rust no era un casi:
+
+El bisect marcaba `flyweight#entry-api` muriendo en `$value LOADED_FROM $key`
+(paso 12) sobre el corpus Rust, lo que parecia una clausula de distancia. Al mirar
+los hechos, las cinco filas que llegan a la union de nombres `entry` vienen de
+`Publisher.subscribe` (observer) y `NginxServer.check_rate_limiting` (facade), **no**
+del flyweight: son clases que casualmente llaman a un metodo llamado `entry`. Y el
+flyweight canonico de Rust no usa un pool con API de entrada, comparte estado con
+`Rc<TreeKind>` (`struct Tree { kind: Rc<TreeKind> }`), o sea el idiom es *estado
+intrinseco compartido por referencia*, no un mapa.
+
+Conclusion: no habia near-miss y cualquier cambio guiado por ese paso habria tocado
+la union de nombres por la razon equivocada (y probablemente aflojado justo la
+deteccion de observer/facade). Rust flyweight necesita su propia forma (`Rc`/`Arc`
+compartido, o `HashMap` con `get`/`insert` como el caso C++), no la variante de
+entrada. Tercera vez en la campana que verificar la *procedencia* de las filas antes
+de editar evita un arreglo equivocado; conviene que sea el paso por defecto: ante un
+"muere en el paso k", mirar primero *quien* produce esas filas.
+
+Ronda 13 — `event.equals("A")` en Java: el hecho se publica pero el mediator muere antes:
+
+Se probo publicar `PARAMETER_TEST` cuando la condicion es una llamada de igualdad
+(`equals`, `equalsIgnoreCase`, ...) sobre un parametro, porque el mediator canonico de
+Java escribe `if (s.equals("A"))` donde los otros lenguajes escriben `==`. El hecho
+sale bien (`PARAMETER_TEST if_statement -> PARAMETER:s`), pero el bisect de
+`mediator#tag-dispatch` sobre el fichero de Java muestra que la variante muere **antes**
+de esa clausula, en el paso 9:
+
+```
+5  $operation CONDITIONAL_DELEGATION $first_target    rows=5
+6  $coordinator HAS_FIELD $first_target               rows=1
+7  $operation CONDITIONAL_DELEGATION $second_target   rows=5
+8  $coordinator HAS_FIELD $second_target              rows=1
+9  different $first_target $second_target             rows=0   <-- aqui
+```
+
+O sea: las dos delegaciones condicionales del `Notify` de Java acaban en **el mismo
+campo** del coordinador, no en dos distintos. Es otro problema (como el ejemplo Java
+estructura sus componentes), no el del operador de comparacion. El cambio se revirtio
+—hecho correcto pero sin ganancia verificable, y con bump de IR— y el diagnostico
+queda aqui: Java mediator necesita primero entender por que las dos delegaciones
+colapsan a un campo.

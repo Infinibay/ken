@@ -157,4 +157,6 @@ def test_variant_is_ready_for_all_eight_declared_languages():
     assert sorted(row['languages']) == sorted(SOURCES)
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'VALUE_FLOW' in row['query'] and 'different' in row['query']
+    assert 'body {' in row['query'] and 'let $prepared = call' in row['query']
+    assert 'argument $prepared at 0' in row['query'] and ' != ' in row['query']
+    assert 'edge ' not in row['query'] and 'walk ' not in row['query']

@@ -1,0 +1,328 @@
+{
+  "snapshot": "/private/tmp/ken-codex-perf/native-full-v11/query-index.sqlite",
+  "graph": 1,
+  "provenance": "Pre-existing semantic snapshot, not reacquired or source-validated",
+  "ir_version": "1.85.0",
+  "facts": 47154730,
+  "entities": 2620444,
+  "backend": "exploration",
+  "timeout_ms": 5000,
+  "seconds_including_compilation": 7.0179596659727395,
+  "cprofile_enabled": true,
+  "result": {
+    "findings": [],
+    "outcomes": {
+      "iterator": {
+        "complete": false,
+        "unknown": [
+          "budget:timeout_ms"
+        ],
+        "stats": {
+          "states": 2,
+          "rows_examined": 0,
+          "elapsed_ms": 5003.14,
+          "dependencies": []
+        }
+      }
+    },
+    "complete": false,
+    "incomplete": {
+      "iterator": [
+        "budget:timeout_ms"
+      ]
+    }
+  },
+  "operator_profile_enabled": false,
+  "count_statements_first_40": [
+    "SELECT count(*) FROM k2_graph_facts f INDEXED BY k2_graph_fact_attribute WHERE f.graph_id=1 AND f.relation=30 AND f.object IN (100,24449) AND f.attributes IN (SELECT parent FROM k2_graph_members WHERE graph_id=1 AND key=103 AND comparison IN (2151574))",
+    "SELECT count(*) FROM k2_graph_facts f INDEXED BY k2_graph_fact_reverse WHERE f.graph_id=1 AND f.relation=30 AND f.object=503",
+    "SELECT count(*) FROM k2_graph_facts f INDEXED BY k2_graph_fact_relation WHERE f.graph_id=1 AND f.relation=12016876",
+    "SELECT count(*) FROM k2_graph_facts f INDEXED BY k2_graph_fact_attribute WHERE f.graph_id=1 AND f.relation=30 AND f.object=110 AND f.attributes IN (SELECT parent FROM k2_graph_members WHERE graph_id=1 AND key=549 AND comparison IN (12760)) AND f.attributes IN (SELECT parent FROM k2_graph_members WHERE graph_id=1 AND key=114 AND comparison IN (113))",
+    "SELECT count(*) FROM k2_graph_facts f INDEXED BY k2_graph_fact_relation WHERE f.graph_id=1 AND f.relation=12016705",
+    "SELECT count(*) FROM k2_graph_facts f INDEXED BY k2_graph_fact_attribute WHERE f.graph_id=1 AND f.relation=30 AND f.object=110 AND f.attributes IN (SELECT parent FROM k2_graph_members WHERE graph_id=1 AND key=549 AND comparison IN ()) AND f.attributes IN (SELECT parent FROM k2_graph_members WHERE graph_id=1 AND key=114 AND comparison IN (113))",
+    "SELECT count(*) FROM k2_graph_facts f INDEXED BY k2_graph_fact_attribute WHERE f.graph_id=1 AND f.relation=12015621 AND f.attributes IN (SELECT parent FROM k2_graph_members WHERE graph_id=1 AND key=553 AND comparison IN (554))",
+    "SELECT count(*) FROM k2_graph_facts f INDEXED BY k2_graph_fact_attribute WHERE f.graph_id=1 AND f.relation=12015608 AND f.attributes IN (SELECT parent FROM k2_graph_members WHERE graph_id=1 AND key=553 AND comparison IN (554))"
+  ],
+  "functions": [
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/catalog.py",
+      "line": 58,
+      "function": "detect_patterns",
+      "calls": 1,
+      "self_seconds": 3.9625e-05,
+      "cumulative_seconds": 7.017914333
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/rules.py",
+      "line": 327,
+      "function": "execute_rules",
+      "calls": 1,
+      "self_seconds": 5.2458000000000005e-05,
+      "cumulative_seconds": 6.33333275
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method builtins.len>",
+      "calls": 563724,
+      "self_seconds": 0.036193169000000004,
+      "cumulative_seconds": 5.028172089
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational.py",
+      "line": 750,
+      "function": "execute",
+      "calls": 1,
+      "self_seconds": 3.4625e-05,
+      "cumulative_seconds": 5.003141208000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational.py",
+      "line": 631,
+      "function": "run_nodes",
+      "calls": 3,
+      "self_seconds": 3.0459e-05,
+      "cumulative_seconds": 5.001846417
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational_operators.py",
+      "line": 128,
+      "function": "apply_any",
+      "calls": 1,
+      "self_seconds": 1.833e-06,
+      "cumulative_seconds": 4.999978250000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational_operators.py",
+      "line": 135,
+      "function": "apply_match",
+      "calls": 1,
+      "self_seconds": 4.876e-06,
+      "cumulative_seconds": 4.999950375
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational_planning.py",
+      "line": 263,
+      "function": "choose_next",
+      "calls": 3,
+      "self_seconds": 2.3335000000000003e-05,
+      "cumulative_seconds": 4.999893792
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational_planning.py",
+      "line": 214,
+      "function": "estimate_rows",
+      "calls": 11,
+      "self_seconds": 7.498000000000001e-06,
+      "cumulative_seconds": 4.99985629
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational.py",
+      "line": 472,
+      "function": "clause_size",
+      "calls": 11,
+      "self_seconds": 5.8462000000000004e-05,
+      "cumulative_seconds": 4.999848792
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational_planning.py",
+      "line": 15,
+      "function": "clause_size",
+      "calls": 11,
+      "self_seconds": 3.9329e-05,
+      "cumulative_seconds": 4.999780499
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural_store/graph_index.py",
+      "line": 220,
+      "function": "estimate_clause",
+      "calls": 11,
+      "self_seconds": 1.9873e-05,
+      "cumulative_seconds": 4.999675333
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural_store/graph_control.py",
+      "line": 34,
+      "function": "call",
+      "calls": 49,
+      "self_seconds": 2.4454e-05,
+      "cumulative_seconds": 4.999200041
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural_store/graph_control.py",
+      "line": 46,
+      "function": "execute",
+      "calls": 25,
+      "self_seconds": 5.9007000000000006e-05,
+      "cumulative_seconds": 4.997304504000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<method 'execute' of 'sqlite3.Connection' objects>",
+      "calls": 25,
+      "self_seconds": 4.975113113,
+      "cumulative_seconds": 4.997223712
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural_store/graph_rows.py",
+      "line": 31,
+      "function": "__len__",
+      "calls": 11,
+      "self_seconds": 2.1374000000000002e-05,
+      "cumulative_seconds": 4.991950373
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural_store/graph_index.py",
+      "line": 87,
+      "function": "_count_rows",
+      "calls": 8,
+      "self_seconds": 4.7453e-05,
+      "cumulative_seconds": 4.991928999000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/rules.py",
+      "line": 56,
+      "function": "_validate",
+      "calls": 52,
+      "self_seconds": 0.000845226,
+      "cumulative_seconds": 1.986330211
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/rules.py",
+      "line": 23,
+      "function": "_parsed_query",
+      "calls": 359,
+      "self_seconds": 0.0008576990000000001,
+      "cumulative_seconds": 1.983738299
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/catalog.py",
+      "line": 86,
+      "function": "compile_source",
+      "calls": 186,
+      "self_seconds": 0.000187655,
+      "cumulative_seconds": 1.9469912440000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/catalog.py",
+      "line": 47,
+      "function": "_compile",
+      "calls": 186,
+      "self_seconds": 0.005572376,
+      "cumulative_seconds": 1.9468035890000002
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/cache.py",
+      "line": 76,
+      "function": "get_or_compute",
+      "calls": 186,
+      "self_seconds": 0.003118584,
+      "cumulative_seconds": 1.93203421
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/catalog.py",
+      "line": 50,
+      "function": "compute",
+      "calls": 161,
+      "self_seconds": 0.006455065,
+      "cumulative_seconds": 1.668849548
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/rules.py",
+      "line": 227,
+      "function": "query_registry",
+      "calls": 1,
+      "self_seconds": 0.00037666,
+      "cumulative_seconds": 1.244345416
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/syntax/parser.py",
+      "line": 304,
+      "function": "parse",
+      "calls": 322,
+      "self_seconds": 0.000571682,
+      "cumulative_seconds": 0.779979839
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/compiler.py",
+      "line": 687,
+      "function": "compile",
+      "calls": 161,
+      "self_seconds": 0.069822434,
+      "cumulative_seconds": 0.6867243270000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/rules.py",
+      "line": 106,
+      "function": "builtin_rules",
+      "calls": 1,
+      "self_seconds": 0.000164126,
+      "cumulative_seconds": 0.6827007500000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/rules.py",
+      "line": 53,
+      "function": "validate",
+      "calls": 10,
+      "self_seconds": 5.2543e-05,
+      "cumulative_seconds": 0.663077127
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/syntax/parser.py",
+      "line": 102,
+      "function": "parse",
+      "calls": 322,
+      "self_seconds": 0.0021814200000000003,
+      "cumulative_seconds": 0.6306072850000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/syntax/parser.py",
+      "line": 153,
+      "function": "declaration",
+      "calls": 650,
+      "self_seconds": 0.00201294,
+      "cumulative_seconds": 0.5671120900000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/syntax/parser.py",
+      "line": 217,
+      "function": "block",
+      "calls": 3928,
+      "self_seconds": 0.008961929,
+      "cumulative_seconds": 0.523359372
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/syntax/parser.py",
+      "line": 238,
+      "function": "clause",
+      "calls": 6630,
+      "self_seconds": 0.005138623,
+      "cumulative_seconds": 0.501125425
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/syntax/parser.py",
+      "line": 243,
+      "function": "_clause",
+      "calls": 6630,
+      "self_seconds": 0.002478697,
+      "cumulative_seconds": 0.489461737
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/syntax/clause_parser.py",
+      "line": 312,
+      "function": "parse_clause",
+      "calls": 6630,
+      "self_seconds": 0.016685597,
+      "cumulative_seconds": 0.48869407400000003
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/syntax/lexer.py",
+      "line": 66,
+      "function": "peek",
+      "calls": 167246,
+      "self_seconds": 0.023724374000000003,
+      "cumulative_seconds": 0.40665863100000005
+    }
+  ]
+}

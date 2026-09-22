@@ -247,4 +247,5 @@ def test_variant_is_ready_for_all_eight_declared_languages():
     assert sorted(row['languages']) == sorted(SOURCES)
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'GUARDS_WRITE' in row['query'] and 'ALLOCATES_TYPE' in row['query']
+    assert 'guarded_write($subject, $access)' in row['query']
+    assert 'construct $created' in row['query'] and 'delegates_to($access, $subject)' in row['query']

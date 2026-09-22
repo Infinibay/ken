@@ -3,17 +3,31 @@ id = "bridge"
 name = "Bridge"
 category = "structural"
 description = "An abstraction hierarchy holds a separate implementation hierarchy, at run time or through a type parameter."
-caveat = "Structural evidence requires review of intent and runtime behavior. The generic variant reads a field typed by a shared type parameter, so it proves the implementation is chosen at compile time and that the parameter is not tied to one abstraction; it does not require virtual dispatch, nor prove which instantiation a use site chose."
+caveat = "Structural evidence requires review of intent and runtime behavior. The generic variant reads a parameter-typed implementation field and a connected generic refinement; it does not require virtual dispatch, nor prove which instantiation a use site chose."
 legacy_query = "require $unit SUBTYPE_OF $abstraction\nrequire $abstraction HAS_FIELD $field\nrequire $field TYPE $implementation\ncount >=2 $concrete SUBTYPE_OF $implementation distinct=$concrete\ndifferent $abstraction $implementation\n"
 query = '''
-query bridge {
- any { match "bridge#runtime-composition"(unit: $unit); }
- or { match "bridge#refined-composition"(unit: $unit); }
- or { match "bridge#generic-composition"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.bridge;
+import ken.catalog.bridge.variants.generic_composition;
+import ken.catalog.bridge.variants.refined_composition;
+import ken.catalog.bridge.variants.runtime_composition;
+
+pattern detect(out GraphTerm $unit) {
+  either {
+    use ken.catalog.bridge.variants.runtime_composition.detect(unit: $unit);
+  } or {
+    use ken.catalog.bridge.variants.refined_composition.detect(unit: $unit);
+  } or {
+    use ken.catalog.bridge.variants.generic_composition.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -27,26 +41,44 @@ fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query bridge {
+language "kql/2";
+module ken.catalog.bridge.variants.runtime_composition;
 
- require $unit SUBTYPE_OF $abstraction;
- require $abstraction HAS_FIELD $field;
- require $field TYPE $implementation;
- any {
-  where $unit.language != "cpp";
- } or {
-  where $unit.language == "cpp";
-  require $abstraction NOMINAL_ROOT $abstraction_root;
-  require $implementation NOMINAL_ROOT $implementation_root;
-  different $abstraction_root $implementation_root;
- }
- require $abstraction HAS_METHOD $operation;
- require $operation DELEGATES_TO $field;
- require $first SUBTYPE_OF $implementation;
- require $second SUBTYPE_OF $implementation;
- different $first $second;
- different $abstraction $implementation;
- emit $unit;
+pattern detect(out TypeDecl $unit) {
+  type $implementation {
+    method $delegate { }
+  }
+  type $abstraction {
+    field $field { type: nominal($implementation); }
+    method $operation {
+      body {
+        call $delegate { receiver: $field; };
+      }
+    }
+  }
+  type $unit { }
+  type $first { }
+  type $second { }
+  where subtype($unit, $abstraction);
+  where subtype($first, $implementation);
+  where subtype($second, $implementation);
+  where $first != $second;
+  where $abstraction != $implementation;
+  either {
+    where $unit.language != "cpp";
+  } or {
+    where $unit.language == "cpp";
+    type $abstraction_root { }
+    type $implementation_root { }
+    where nominal_root($abstraction, $abstraction_root);
+    where nominal_root($implementation, $implementation_root);
+    where $abstraction_root != $implementation_root;
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -57,21 +89,36 @@ requires = ["generic_substitution", "contract_resolution"]
 graph_requirements = ["Parámetro de tipo de implementación independiente de variantes de abstracción; no exigir virtual dispatch."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-six-languages"
-query_claim = "Un tipo liga un parametro de tipo, un campo suyo esta tipado por ESE parametro y un metodo no constructor delega en el campo por receptor; ademas **al menos dos tipos** ligan el mismo nombre de parametro, que es lo que expresa que el parametro de implementacion no este atado a una sola abstraccion. No exige despacho virtual ni contrato: no se pide subtipo, ni interfaz, ni implementaciones multiples, que es lo que separa esta variante de `runtime-composition`, y la comparte con `strategy#static-policy` salvo por el conteo —una sola declaracion ligando el parametro matchea aquella y no esta—. El conteo es una cota inferior sobre TIPOS (`type_decl()`), no sobre toda entidad que ligue el parametro: el constructor y el metodo de una clase generica tambien lo ligan, y contarlos haria que una sola clase satisfaciera el `>= 2`. No prueba sustitucion de tipos ni que la instanciacion del sitio de uso sea la elegida."
+query_claim = "A generic abstraction delegates through its implementation parameter and has a distinct generic refinement connected by inheritance or a field of the abstraction type. Sharing a parameter spelling across unrelated declarations is insufficient; the refinement may rename its parameter. Does not prove substitution of every type argument, independent evolution, feasible instantiations or runtime dispatch."
 query = '''
-query generic_composition {
- require $abstraction BINDS_TYPE_PARAMETER $implementation_parameter;
- require $abstraction HAS_FIELD $implementation;
- require $implementation TYPE_NAME $implementation_parameter;
- require $abstraction HAS_METHOD $operation;
- callable(constructor: false) as $operation;
- require $operation HAS_CALL $call;
- require $call RECEIVER $implementation;
- count distinct $variant >= 2 {
-  require $variant BINDS_TYPE_PARAMETER $implementation_parameter;
-  type_decl() as $variant;
- };
- emit unit=$abstraction, $implementation, $implementation_parameter, $operation;
+language "kql/2";
+module ken.catalog.bridge.variants.generic_composition;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $implementation, out GraphTerm $implementation_parameter, out GraphTerm $operation) {
+  type $unit {
+    type_parameter $implementation_parameter;
+    field $implementation { type: parameter($implementation_parameter); }
+    method $operation {
+      constructor: false;
+      body { call on $implementation { }; }
+    }
+  }
+  type $local_variant {
+    type_parameter $local_variant_parameter;
+  }
+  where $local_variant != $unit;
+  either {
+    where subtype($local_variant, $unit);
+  } or {
+    type $local_variant {
+      field $local_abstraction_field { type: nominal($unit); }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit, implementation: $implementation, implementation_parameter: $implementation_parameter, operation: $operation);
+  select $unit, $implementation, $implementation_parameter, $operation;
 }
 '''
 
@@ -85,27 +132,41 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
 query_claim = "Two nominal variation dimensions with a delegated implementation field. Does not prove constructor injection, current field value, feasible combinations, independent evolution or runtime contracts. Inherited instance slots retain the Python/JS/TS single-inheritance model and its exclusions; Lombok and other generators are not expanded."
 query = '''
-query refined_bridge {
- require $unit SUBTYPE_OF $abstraction;
- require $unit HAS_METHOD $operation;
- require $operation OVERRIDES $slot;
- require $abstraction HAS_METHOD $slot;
- require $operation DELEGATES_TO $access;
- require $unit HAS_FIELD $access;
- path $access INSTANCE_SLOT{0,1} $field as $member_slot;
- require $field TYPE $implementation;
- variable(static:false) as $field;
- require $abstraction NOMINAL_ROOT $abstraction_root;
- require $implementation NOMINAL_ROOT $implementation_root;
- different $abstraction_root $implementation_root;
- require $first SUBTYPE_OF $implementation;
- require $second SUBTYPE_OF $implementation;
- different $first $second;
- different $abstraction $implementation;
- different $unit $implementation;
- require $peer SUBTYPE_OF $abstraction;
- different $unit $peer;
- emit $unit,$peer,$abstraction,$operation,$slot,$access,$field,$implementation,$first,$second;
+language "kql/2";
+module ken.catalog.bridge.variants.refined_composition;
+
+pattern detect(out TypeDecl $unit, out TypeDecl $peer, out TypeDecl $abstraction, out Callable $operation, out Callable $slot, out Field $access, out Field $field, out TypeDecl $implementation, out TypeDecl $first, out TypeDecl $second) {
+  type $implementation {}
+  type $abstraction { method $slot {} }
+  type $unit {
+    field $access { effective: true; declaration: $field; type: nominal($implementation); static: false; }
+    method $operation {
+      call $invocation {}
+      body { call $invocation { receiver: $access; }; }
+    }
+  }
+  type $peer {}
+  type $first {}
+  type $second {}
+  type $abstraction_root {}
+  type $implementation_root {}
+  where subtype($unit, $abstraction);
+  where overrides($operation, $slot);
+  where nominal_root($abstraction, $abstraction_root);
+  where nominal_root($implementation, $implementation_root);
+  where $abstraction_root != $implementation_root;
+  where subtype($first, $implementation);
+  where subtype($second, $implementation);
+  where $first != $second;
+  where $abstraction != $implementation;
+  where $unit != $implementation;
+  where subtype($peer, $abstraction);
+  where $unit != $peer;
+}
+
+query results {
+  use detect(unit: $unit, peer: $peer, abstraction: $abstraction, operation: $operation, slot: $slot, access: $access, field: $field, implementation: $implementation, first: $first, second: $second);
+  select $unit, $peer, $abstraction, $operation, $slot, $access, $field, $implementation, $first, $second;
 }
 '''
 
@@ -115,11 +176,58 @@ status = "ready"
 description = "A refined abstraction returns the origin of an invocation on its implementation field."
 caveat = "Requires supported return-origin analysis; does not prove injection, hidden effects or runtime receiver identity."
 query = '''
-query bridge_returned_primitive {
- match "bridge#refined-composition"(unit:$unit,operation:$operation,access:$access);
- require $operation HAS_OPERATION $return;
- require $return RETURN_ORIGIN $call;
- require $call RECEIVER $access;
- emit $unit,$operation,$call;
+language "kql/2";
+module ken.catalog.bridge.returned_primitive;
+import ken.core;
+import ken.catalog.bridge.variants.refined_composition;
+
+pattern detect(out TypeDecl $unit, out Callable $operation, out Call $call) {
+  use ken.catalog.bridge.variants.refined_composition.detect(unit: $unit, operation: $operation, access: $access);
+  type $unit {
+    field $access {}
+    method $operation {
+      call $call {}
+      body {
+        let $result = call $call { receiver: $access; };
+        return $result;
+      }
+    }
+  }
+}
+query results {
+  use detect(unit: $unit, operation: $operation, call: $call);
+  select $unit, $operation, $call;
+}
+'''
+
+[[operations]]
+id = "injected_returned_primitive"
+status = "ready"
+description = "A refined abstraction retains its supplied backend and returns a call result from that field."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch."
+query = '''
+language "kql/2";
+module ken.catalog.bridge.injected_returned_primitive;
+import ken.catalog.bridge.variants.refined_composition;
+
+pattern detect(out GraphTerm $unit) {
+  use ken.catalog.bridge.variants.refined_composition.detect(unit: $unit, operation: $operation, access: $access, field: $field);
+  type $unit {
+    constructor $local_constructor {
+      parameters { param $local_input {} }
+      body { initializer { $field = $local_input; } }
+    }
+    method $operation {
+      body {
+        let $local_result = call $local_call { receiver: $field; unreplaced: true; };
+        return $local_result;
+      }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''

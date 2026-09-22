@@ -320,4 +320,6 @@ def test_variant_is_ready_for_all_eight_declared_languages():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'RETURNS_NEW' in row['query'] and 'LOADED_FROM' in row['query']
+    assert 'let $successor = construct $builder' in row['query']
+    assert 'initializer $state;' in row['query'] and 'return $successor;' in row['query']
+    assert 'edge ' not in row['query']

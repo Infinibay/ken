@@ -6,6 +6,8 @@ runtime models.
 """
 import pytest
 
+from .contract_support import contract_matches
+
 from ken.structural.frontend import lower_source
 from ken.structural.rules import builtin_rules, execute_rules, named_rule
 from ken.structural.semantic import link_project
@@ -81,16 +83,15 @@ def test_broken_provenance_is_rejected_with_logging_retained(language, mutation)
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Observer signature does not correlate the incoming event with callback arguments')
 def test_event_delivery_contract_rejects_discarded_event(language):
     # This stricter named-event contract is not guaranteed by the current broad
     # Observer candidate rule; it must not be reported as supported coverage.
     text = source(language).replace('item.next(value)', 'item.next(0)')
-    assert search(text, language) == set()
+    assert contract_matches(source(language), language, 'observer.event_delivery')
+    assert not contract_matches(text, language, 'observer.event_delivery')
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Observer graph signature does not reject unreachable snapshot notification')
 def test_unreachable_notification_is_not_an_observer_algorithm(language):
     text = source(language)
     text = text.replace('  for item', '  return\n  for item') if language == 'python' else text.replace('for(const item', 'return;for(const item')

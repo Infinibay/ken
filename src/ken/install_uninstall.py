@@ -19,6 +19,7 @@ from ken.codex_hooks_template import (
     remove_ken_mcp_block,
     write_codex_hooks,
 )
+from ken.deepseek_template import unwire_deepseek
 from ken.hooks_template import remove_ken_hooks, write_settings
 from ken.install import (
     CLAUDE_SETTINGS,
@@ -31,6 +32,7 @@ from ken.opencode_template import (
     remove_ken_mcp_entry,
     write_opencode_json,
 )
+from ken.skills.installation import uninstall_skills
 
 
 def _uninstall_opencode(root: Path) -> None:
@@ -68,6 +70,14 @@ def uninstall(project_path: Path, *, keep_db: bool) -> int:
     root = project_path.resolve()
     if not _paths.meta_path(root).is_file():
         print(f"no .ken project at {root}", file=sys.stderr)
+        return 1
+
+    # Read ownership while .ken still exists; preserve complete edited bundles.
+    try:
+        unwire_deepseek(root)
+        uninstall_skills(root).report(verbose=True)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
         return 1
 
     settings_p = root / CLAUDE_SETTINGS

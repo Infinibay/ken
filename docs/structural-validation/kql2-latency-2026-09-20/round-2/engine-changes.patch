@@ -1,0 +1,393 @@
+--- before/src/ken/structural/relational.py
++++ after/src/ken/structural/relational.py
+@@ -354,6 +354,12 @@
+             self._source_executor = None
+         if hasattr(self, "_candidate_planner"):
+             del self._candidate_planner
++        for attribute in ("_source_type_semantics", "_receiver_effects", "_declaration_initializers"):
++            # These adapters own callbacks bound to this executor as well.
++            adapter = self.__dict__.pop(attribute, None)
++            close = getattr(adapter, "close", None)
++            if close is not None:
++                close()
+         self.cache.clear()
+         self._source_plans.clear()
+         self._sizes.clear()
+@@ -631,6 +637,7 @@
+     def run_nodes(self, nodes: list[Node], rows: list[Row]) -> list[Row]:
+         from .relational_operators import OPERATORS
+         from .relational_planning import choose_next, prune_empty_relation
++        from .relational_predicates import fact_constraints
+ 
+         if not self.reference and rows and prune_empty_relation(self, nodes, len(rows)):
+             return []
+@@ -665,11 +672,14 @@
+                 raise ValueError(f"unsupported node {node.kind}")
+             if spec.clears_scan_constraints:
+                 scan_constraints = None
++            operator_constraints = fact_constraints(
++                self, node, pending, rows[0].bindings, scan_constraints
++            )
+             following: list[Row] = []
+             if self.profile is None:
+                 for row in rows:
+                     self.tick()
+-                    spec.apply(self, node, row, following, scan_constraints)
++                    spec.apply(self, node, row, following, operator_constraints)
+             else:
+                 # Inclusive time intentionally includes nested pattern/scoped work.
+                 # The parent index makes those costs inspectable without double counting.
+@@ -695,6 +705,12 @@
+                         metric["subject"] = node.value.subject
+                         metric["object"] = node.value.object
+                         metric["attributes"] = node.value.attrs
++                        if hasattr(operator_constraints, "predicates"):
++                            metric["property_prefilter"] = [
++                                {"role": p.role, "attribute": p.attribute,
++                                 "other": p.other, "left": p.left, "literal": p.literal}
++                                for p in operator_constraints.predicates
++                            ]
+                     if (
+                         scan_constraints is not None
+                         and scan_constraints.owner is not None
+@@ -717,7 +733,7 @@
+                 try:
+                     for row in rows:
+                         self.tick()
+-                        spec.apply(self, node, row, following, scan_constraints)
++                        spec.apply(self, node, row, following, operator_constraints)
+                 finally:
+                     metric.update(
+                         output_rows=metric["output_rows"] + len(following),
+--- before/src/ken/structural/relational_planning.py
++++ after/src/ken/structural/relational_planning.py
+@@ -146,6 +146,31 @@
+     if cached is not None and cached[0] is nodes:
+         return cached[1]
+     plan = [_fact_union(node) for node in nodes]
++    # A body-free positive dependency is a relation: seed its exported roles
++    # from the caller's fact joins instead of materializing its Cartesian
++    # product first. BODY, scope, aggregation and proof captures prevent this
++    # transformation; prebinding their outputs can change their semantics.
++    position = 0
++    while position < len(plan):
++        dependency = plan[position]
++        if dependency.kind == "match" and not dependency.value[2]:
++            name, bindings, _ = dependency.value
++            child = engine.queries.get(name)
++            if child is not None and _positive_relation(child.nodes):
++                end = position + 1
++                while end < len(plan) and plan[end].kind in {"fact", "fact_union"}:
++                    end += 1
++                following = plan[position + 1:end]
++                produced = {
++                    term for node in following
++                    for clause in (node.value if node.kind == "fact_union" else (node.value,))
++                    for term in (clause.subject, clause.object) if _variable(term)
++                }
++                if produced & set(bindings.values()):
++                    plan[position:end] = following + [dependency]
++                    position = end
++                    continue
++        position += 1
+     # An independent domain before a positive union repeats every branch for
+     # each domain member. Delay it until the union has produced its witnesses.
+     # Only a single fact followed by a fully understood positive union is
+@@ -225,6 +250,15 @@
+     return plan
+ 
+ 
++def _positive_relation(nodes: list[Node]) -> bool:
++    """Only operators whose result is unchanged by binding an exported term."""
++    return all(
++        node.kind in {"fact", "where", "different"}
++        or node.kind == "any" and all(_positive_relation(branch) for branch in node.children)
++        for node in nodes
++    )
++
++
+ def _fact_union(node: Node) -> Node:
+     """Lower alternatives with identical bindings to a reorderable fact scan.
+ 
+--- before/src/ken/structural/relational_predicates.py
++++ after/src/ken/structural/relational_predicates.py
+@@ -0,0 +1,119 @@
++"""Bounded property postings for correlated positive fact scans.
++
++These are necessary filters only. The original WHERE still runs, including its
++missing-attribute uncertainty and asymmetric alternative-string comparisons.
++"""
++
++from __future__ import annotations
++
++from dataclasses import dataclass
++from typing import Any
++
++from .query import Clause, _variable
++from .relational import Executor, Node, Row
++from .relational_operators import OPERATORS
++
++PropertyPostings = tuple[dict[str, frozenset[str]], frozenset[str]]
++
++
++@dataclass
++class PropertyConstraint:
++    role: str
++    attribute: str
++    other: str
++    left: bool
++    literal: bool
++
++
++class PredicateScan:
++    def __init__(self, engine: Executor, clause: Clause,
++                 predicates: list[PropertyConstraint], source: Any):
++        self.engine, self.clause = engine, clause
++        self.predicates, self.source = predicates, source
++        self.owner = getattr(source, "owner", None)
++
++    def allows(self, bindings: dict[str, str]) -> bool:
++        return self.source is None or self.source.allows(bindings)
++
++    def domain(self, bindings: dict[str, str], role: str) -> set[str] | frozenset[str] | None:
++        domain = self.source.domain(bindings, role) if self.source else None
++        for predicate in self.predicates:
++            if predicate.role != role:
++                continue
++            other = self.engine.operand(predicate.other, Row(bindings))
++            if other is None:
++                continue  # WHERE propagates unknown, so no denial is sound.
++            key = (self.clause.relation, role == self.clause.subject,
++                   predicate.attribute, predicate.left)
++            postings, _ = self.engine.resources.property_postings.get_or_compute(
++                repr(key), lambda: self._postings(*key)
++            )
++            if postings is None:
++                continue
++            groups, missing = postings
++            # WHERE compares str(left), lowercasing bools, against alternatives
++            # in str(right). Do not reverse equality or normalize both sides.
++            if predicate.left:
++                alternatives = [str(other)] if predicate.literal else str(other).split("|")
++                selected = [groups.get(value, ()) for value in alternatives]
++            else:
++                value = str(other).lower() if isinstance(other, bool) else str(other)
++                selected = ([groups.get(value, ())] if predicate.literal else
++                            [ids for spelling, ids in groups.items()
++                             if value in spelling.split("|")])
++            allowed = missing.union(*selected)
++            domain = allowed if domain is None else domain & allowed
++        return domain
++
++    def _postings(self, relation: str, subject: bool, attribute: str,
++                  left: bool) -> PropertyPostings | None:
++        # Broad operation relations must not become a second project index.
++        if len(self.engine.index.by_relation.get(relation, ())) > 10000:
++            return None
++        facts = self.engine.index.rows(relation)
++        groups: dict[str, set[str]] = {}
++        missing: set[str] = set()
++        seen: set[str] = set()
++        for fact in facts:
++            self.engine.tick()
++            identifier = fact.subject if subject else fact.object
++            if identifier in seen:
++                continue
++            seen.add(identifier)
++            value = self.engine.operand("$value." + attribute,
++                                        Row({"$value": identifier}))
++            if value is None:
++                missing.add(identifier)
++            else:
++                spelling = str(value).lower() if left and isinstance(value, bool) else str(value)
++                groups.setdefault(spelling, set()).add(identifier)
++        return ({key: frozenset(ids) for key, ids in groups.items()}, frozenset(missing))
++
++
++def fact_constraints(engine: Executor, node: Node, pending: list[Node],
++                     bindings: dict[str, str], source: Any) -> Any:
++    """Use only mandatory WHERE predicates before the next semantic barrier."""
++    if engine.reference or node.kind != "fact" or getattr(engine, "usage_metadata", None):
++        return source
++    clause = node.value
++    introduced = {term for term in (clause.subject, clause.object)
++                  if _variable(term) and term not in bindings}
++    if not introduced:
++        return source
++    predicates = []
++    for following in pending:
++        spec = OPERATORS.get(following.kind)
++        if spec is None or spec.barrier:
++            break
++        if following.kind != "where":
++            continue
++        first, operation, second = following.value
++        if operation not in {"=", "==", "literal"}:
++            continue
++        for term, other, left in ((first, second, True), (second, first, False)):
++            role, dot, attribute = term.partition(".")
++            if (dot and role in introduced and
++                    (not _variable(other) or other.split(".")[0] in bindings)):
++                predicates.append(PropertyConstraint(role, attribute, other, left,
++                                                    operation == "literal"))
++    return PredicateScan(engine, clause, predicates, source) if predicates else source
+--- before/src/ken/structural/relational_resources.py
++++ after/src/ken/structural/relational_resources.py
+@@ -39,3 +39,9 @@
+         from ken.kql2.cache import ArtifactCache
+ 
+         return ArtifactCache(8_000_000)
++
++    @cached_property
++    def property_postings(self):
++        from ken.kql2.cache import ArtifactCache
++
++        return ArtifactCache(4_000_000)
+--- before/src/ken/kql2/receiver_effects.py
++++ after/src/ken/kql2/receiver_effects.py
+@@ -9,10 +9,20 @@
+ class ReceiverEffects:
+     def __init__(self, index, tick):
+         self.index, self.tick = index, tick
+-        self.operations = {o.id: o for o in index.ir.operations}
+-        self.owned = defaultdict(list)
+-        for op in index.ir.operations:
+-            tick(); self.owned[op.owner].append(op)
++        native = getattr(index, 'operations', None)
++        if native is not None:
++            from ken.structural_store.graph_source import Lookup
++
++            # A receiver summary belongs to one callable. Native owner/id
++            # indexes also preserve parents across nested callable boundaries.
++            self.operations = Lookup(lambda key: next(native(local_id=key), None)
++                                     if key is not None else None, capacity=256)
++            self.owned = Lookup(lambda owner: list(native(owner=owner)), capacity=16)
++        else:
++            self.operations = {o.id: o for o in index.ir.operations}
++            self.owned = defaultdict(list)
++            for op in index.ir.operations:
++                tick(); self.owned[op.owner].append(op)
+         self.cache = {}
+ 
+     def rows(self, relation, subject):
+@@ -26,10 +36,10 @@
+         if key in self.cache:
+             return self.cache[key]
+         self.cache[key] = None  # recursive invocation is not a proof
+-        ops = self.owned.get(owner, ())
+         status = list(self.rows('CFG_STATUS', owner))
+         if not status or any(f.object != 'structured' for f in status):
+             return None
++        ops = self.owned.get(owner, ())
+         entity = self.index.ir.entities.get(receiver)
+         names = {'this', 'self'}
+         if entity and entity.name:
+--- before/src/ken/kql2/declaration_initializers.py
++++ after/src/ken/kql2/declaration_initializers.py
+@@ -19,6 +19,18 @@
+ class Initializers:
+     def __init__(self,index,tick=lambda:None):
+         self.index,self.tick=index,tick
++        self.cache={}
++        native=getattr(index,'operations',None)
++        if native is not None and hasattr(index,'syntax_bounds'):
++            from ken.structural_store.graph_source import Lookup
++
++            self.operations=Lookup(lambda key: next(native(local_id=key),None)
++                                   if key is not None else None,capacity=512)
++            self.children=Lookup(self._native_children,capacity=128)
++            self.calls=Lookup(self._native_calls,capacity=512)
++            self.by_path=Lookup(self._native_assignments,capacity=16)
++            self._assignments_by_path=None
++            return
+         self.operations={o.id:o for o in index.ir.operations}
+         self.children=defaultdict(list)
+         self.by_path=defaultdict(list)
+@@ -30,7 +42,47 @@
+         for fact in index.rows('SYNTAX_NODE'):
+             entity=index.ir.entities.get(fact.subject)
+             if entity is not None and entity.kind=='CALL':self.calls[fact.object].add(fact.subject)
+-        self.cache={}
++
++    def close(self):
++        # Native Lookup wrappers hold bound methods; break that cycle and the
++        # budget callback before releasing a query's adapters.
++        self.tick=None
++        self.index=None
++        for name in ('operations','children','by_path','calls','_assignments_by_path'):
++            self.__dict__.pop(name,None)
++        self.cache.clear()
++
++    def _native_children(self,parent):
++        operation=self.operations.get(parent)
++        if operation is None:return []
++        # Syntax membership, not ownership: an initializer may contain a
++        # lambda/arrow whose operations belong to another callable.
++        result=[]
++        for child in self.index.operations(region=operation):
++            self.tick()
++            if child.parent==parent:result.append(child)
++        return result
++
++    def _native_calls(self,expression):
++        calls=set()
++        for fact in self.index.rows('SYNTAX_NODE',object=expression):
++            self.tick()
++            entity=self.index.ir.entities.get(fact.subject)
++            if entity is not None and entity.kind=='CALL':calls.add(fact.subject)
++        return calls
++
++    def _native_assignments(self,path):
++        # Needed only when a declaration has no target link. Retain the
++        # conservative missing-link audit, but read the indexed ASSIGN kind
++        # once instead of materializing every project operation twice.
++        if self._assignments_by_path is None:
++            grouped=defaultdict(list)
++            for operation in self.index.operations(kind='ASSIGN'):
++                self.tick()
++                owner=self.index.ir.entities.get(operation.owner)
++                if owner is not None:grouped[owner.path].append(operation)
++            self._assignments_by_path=grouped
++        return self._assignments_by_path.get(path,[])
+ 
+     def regions(self,binding):
+         if binding in self.cache:return self.cache[binding]
+--- before/src/ken/structural_store/graph_source.py
++++ after/src/ken/structural_store/graph_source.py
+@@ -103,8 +103,11 @@
+         subjects = dict(entities)
+         subjects.update((e.id, e) for e in self.index.entities(owner=owner))
+         for subject in subjects.values():
+-            node = self.nodes[subject.id]
+-            if subject.attrs.get("owner", node.owner) != owner:
++            # dict.get evaluates its fallback eagerly. Most occurrences already
++            # publish an owner, so do not fetch/decode a second node for them.
++            actual_owner = (subject.attrs["owner"] if "owner" in subject.attrs
++                            else self.nodes[subject.id].owner)
++            if actual_owner != owner:
+                 continue
+             for relation in (
+                 "ARGUMENT",
+--- before/src/ken/kql2/exploration/catalog_index.py
++++ after/src/ken/kql2/exploration/catalog_index.py
+@@ -221,6 +221,8 @@
+         return self.base.rows(relation, subject, object)
+ 
+     def candidates(self, clause, subject=None, object=None):
++        from ken.structural.query import _variable
++
+         if not clause.attrs:
+             from ken.structural.query import QuotedTerm, _variable
+ 
+@@ -262,9 +264,9 @@
+                 clause.relation,
+                 (
+                     "clause",
+-                    clause.subject,
++                    ("role",) if _variable(clause.subject) else clause.subject,
+                     clause.relation,
+-                    clause.object,
++                    ("role",) if _variable(clause.object) else clause.object,
+                     tuple(clause.attrs),
+                     subject,
+                     object,

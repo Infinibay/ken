@@ -1,0 +1,88 @@
+{
+  "language": "kql/2",
+  "capability": "structural-source/1",
+  "query": "q",
+  "columns": [
+    "column_1"
+  ],
+  "rows": [
+    [
+      {
+        "id": 74,
+        "unit": 1,
+        "local_id": "src/ken/vectors.py::module/CALLABLE:_atomic_write@7101",
+        "kind": "CALLABLE",
+        "name": "_atomic_write",
+        "owner": "src/ken/vectors.py::module",
+        "line": 182,
+        "end_line": 209,
+        "path": "src/ken/vectors.py",
+        "language": "python"
+      }
+    ]
+  ],
+  "complete": true,
+  "coverage_complete": true,
+  "unknown_candidates": 0,
+  "reason": null,
+  "results_truncated": false,
+  "plan": [
+    {
+      "operator": "scan",
+      "role": "f",
+      "selector": "callable",
+      "owner": null,
+      "access": "name_lookup"
+    }
+  ],
+  "optional_evidence": [],
+  "analysis": {
+    "snapshot": 1,
+    "manifest": [
+      [
+        "src/ken/vectors.py",
+        "a88770b6accdadbb1aba12e8970c2c51ce5a619ca8d40a7929aa7131396c5d4a"
+      ]
+    ],
+    "frontend": "be45be646549c24d8249c68e740a3bd0370ce925af4b9ce7bb6f14928b1596dd",
+    "freshness": "captured_snapshot",
+    "skipped": [],
+    "parsed_units": 0,
+    "reused_units": 1,
+    "cache_mb": 500.0,
+    "disk_budget_mb": 400.0,
+    "compilation_cache": {
+      "retained_bytes": 3474,
+      "capacity_bytes": 100000000,
+      "entries": 1,
+      "hits": 0,
+      "misses": 1,
+      "shared": 0,
+      "evictions": 0,
+      "in_flight": 0,
+      "status": "disk_hit"
+    },
+    "result_cache": "disk_hit",
+    "ephemeral": false,
+    "allocated_bytes": 9342976,
+    "gc": {
+      "deferred": false,
+      "snapshots": 0,
+      "units": 0
+    },
+    "quota_reclamation": {
+      "before_bytes": 9342976,
+      "after_bytes": 9342976,
+      "deferred": false,
+      "snapshots": 0,
+      "units": 0
+    },
+    "scanned_nodes": 0,
+    "states": 0,
+    "compile_ms": 25.206875056028366,
+    "build_ms": 1.483249943703413,
+    "query_ms": null,
+    "result_lookup_ms": 0.05070795305073261,
+    "total_ms": 61.44704204052687
+  }
+}

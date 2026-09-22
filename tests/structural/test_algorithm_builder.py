@@ -137,7 +137,6 @@ def test_composed_director_and_state_flow_contract(language):
 
 
 @pytest.mark.parametrize('language', SOURCES)
-@pytest.mark.xfail(strict=True, reason='Director receiver equality does not invalidate reassigned bindings')
 def test_director_rebinding_does_not_mix_build_lifetimes(language):
     source = instrument(SOURCES[language], language)
     source = source.replace(' return parts.finish()', ' parts=other\n return parts.finish()') if language == 'python' else source.replace('return parts.finish()', 'parts=other; return parts.finish()')

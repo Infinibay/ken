@@ -1,0 +1,95 @@
+{
+  "id": "python.commit-requires-own-rollback",
+  "description": "Every class under src that directly owns a method named commit must also directly own a method named rollback. Classes without their own commit are outside the obligation; inherited, nested, module-level, or other-class rollback declarations do not satisfy it. This checks source declarations, not runtime transaction behavior.",
+  "path": "src",
+  "expectation": "no_matches",
+  "query": "language \"kql/2\";\nmodule contracts.transactions;\nquery missing_own_rollback {\n  class $type {\n    method $commit { name: \"commit\"; }\n    not exists {\n      method $rollback { name: \"rollback\"; }\n    }\n  }\n  select $type;\n}\n",
+  "examples": [
+    {
+      "name": "pass: directly owned commit and rollback",
+      "files": {
+        "src/sample.py": "class Transaction:\n    def commit(self):\n        return 1\n    def rollback(self):\n        pass\n"
+      },
+      "expect": "pass"
+    },
+    {
+      "name": "pass: classes without their own commit have no obligation",
+      "files": {
+        "src/sample.py": "def commit():\n    pass\n\nclass Logger:\n    def log(self):\n        pass\n\nclass Recovery:\n    def rollback(self):\n        pass\n"
+      },
+      "expect": "pass"
+    },
+    {
+      "name": "fail: own commit missing own rollback",
+      "files": {
+        "src/sample.py": "class Transaction:\n    def commit(self):\n        return 1\n"
+      },
+      "expect": "fail"
+    },
+    {
+      "name": "fail: a good class must not hide a bad class",
+      "files": {
+        "src/sample.py": "class Good:\n    def commit(self):\n        pass\n    def rollback(self):\n        pass\n\nclass Bad:\n    def commit(self):\n        pass\n"
+      },
+      "expect": "fail"
+    },
+    {
+      "name": "fail: rollback on another class cannot satisfy the requirement",
+      "files": {
+        "src/sample.py": "class Transaction:\n    def commit(self):\n        pass\n\nclass Recovery:\n    def rollback(self):\n        pass\n"
+      },
+      "expect": "fail"
+    },
+    {
+      "name": "fail: same class name in another file is a different owner",
+      "files": {
+        "src/bad.py": "class Transaction:\n    def commit(self):\n        pass\n",
+        "src/good.py": "class Transaction:\n    def commit(self):\n        pass\n    def rollback(self):\n        pass\n"
+      },
+      "expect": "fail"
+    },
+    {
+      "name": "fail: module-level rollback is a lookalike",
+      "files": {
+        "src/sample.py": "def rollback():\n    pass\n\nclass Transaction:\n    def commit(self):\n        pass\n"
+      },
+      "expect": "fail"
+    },
+    {
+      "name": "fail: rollback nested in a method is not directly owned",
+      "files": {
+        "src/sample.py": "class Transaction:\n    def commit(self):\n        def rollback():\n            pass\n        return rollback\n"
+      },
+      "expect": "fail"
+    },
+    {
+      "name": "fail: rollback on a nested class is not the outer class method",
+      "files": {
+        "src/sample.py": "class Transaction:\n    def commit(self):\n        pass\n    class Recovery:\n        def rollback(self):\n            pass\n"
+      },
+      "expect": "fail"
+    },
+    {
+      "name": "fail: inherited rollback does not satisfy direct ownership",
+      "files": {
+        "src/sample.py": "class Base:\n    def rollback(self):\n        pass\n\nclass Transaction(Base):\n    def commit(self):\n        pass\n"
+      },
+      "expect": "fail"
+    },
+    {
+      "name": "pass: inherited commit does not impose a direct ownership obligation",
+      "files": {
+        "src/sample.py": "class Base:\n    def commit(self):\n        pass\n    def rollback(self):\n        pass\n\nclass Derived(Base):\n    def log(self):\n        pass\n"
+      },
+      "expect": "pass"
+    },
+    {
+      "name": "pass: commit-only class outside src is outside the domain",
+      "files": {
+        "src/sample.py": "class Transaction:\n    def commit(self):\n        pass\n    def rollback(self):\n        pass\n",
+        "tests/example.py": "class OutsideDomain:\n    def commit(self):\n        pass\n"
+      },
+      "expect": "pass"
+    }
+  ]
+}

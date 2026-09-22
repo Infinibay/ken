@@ -1,0 +1,538 @@
+{
+  "schema": "ken-open-source-oracle/1",
+  "method": "Manual reading of implementations; labels are entity/pattern pairs, not mutually exclusive directory classifications. Ambiguous overlaps are explicitly discussed.",
+  "cases": [
+    {
+      "id": "python-patterns/patterns/structural/composite.py:composite/CompositeGraphic",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/structural/composite.py",
+      "rule": "composite",
+      "entity": "CompositeGraphic",
+      "expected": true,
+      "why": "CompositeGraphic implements Graphic and recursively renders its stored Graphic children.",
+      "files": [
+        {
+          "path": "patterns/structural/composite.py",
+          "sha256": "e2e419ec9ecacc4c8086d8738894a443251dc29fe799d106a9453a243d2ded48"
+        }
+      ]
+    },
+    {
+      "id": "python-patterns/patterns/structural/composite.py:observer/CompositeGraphic",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/structural/composite.py",
+      "rule": "observer",
+      "entity": "CompositeGraphic",
+      "expected": false,
+      "why": "Rendering children is not event notification; add/remove and iteration alone collide with Observer.",
+      "files": [
+        {
+          "path": "patterns/structural/composite.py",
+          "sha256": "e2e419ec9ecacc4c8086d8738894a443251dc29fe799d106a9453a243d2ded48"
+        }
+      ]
+    },
+    {
+      "id": "python-patterns/patterns/structural/composite.py:singleton/CompositeGraphic",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/structural/composite.py",
+      "rule": "singleton",
+      "entity": "CompositeGraphic",
+      "expected": false,
+      "why": "No shared accessor or unique stored instance.",
+      "files": [
+        {
+          "path": "patterns/structural/composite.py",
+          "sha256": "e2e419ec9ecacc4c8086d8738894a443251dc29fe799d106a9453a243d2ded48"
+        }
+      ]
+    },
+    {
+      "id": "python-patterns/patterns/behavioral/observer.py:observer/Subject",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/behavioral/observer.py",
+      "rule": "observer",
+      "entity": "Subject",
+      "expected": true,
+      "why": "Subject attaches and detaches dependents and notify calls update(self); Data.data invokes notify on change.",
+      "files": [
+        {
+          "path": "patterns/behavioral/observer.py",
+          "sha256": "b4557f29fc63a7d8cfaf49be73f22c5be567546478714f9a76d8b917fa553a28"
+        }
+      ]
+    },
+    {
+      "id": "python-patterns/patterns/behavioral/observer.py:abstract-factory/Subject",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/behavioral/observer.py",
+      "rule": "abstract-factory",
+      "entity": "Subject",
+      "expected": false,
+      "why": "The subject registers existing observers; it does not manufacture product families.",
+      "files": [
+        {
+          "path": "patterns/behavioral/observer.py",
+          "sha256": "b4557f29fc63a7d8cfaf49be73f22c5be567546478714f9a76d8b917fa553a28"
+        }
+      ]
+    },
+    {
+      "id": "python-patterns/patterns/structural/adapter.py:adapter/Adapter",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/structural/adapter.py",
+      "rule": "adapter",
+      "entity": "Adapter",
+      "expected": true,
+      "why": "__dict__.update installs supplied adapted methods; __getattr__ forwards other operations to obj. Requires dynamic member models.",
+      "files": [
+        {
+          "path": "patterns/structural/adapter.py",
+          "sha256": "ebf797920d47199796eba400fb880f11c9884b82bc05ef7455e750c2c02ae5a4"
+        }
+      ]
+    },
+    {
+      "id": "python-patterns/patterns/behavioral/visitor.py:visitor/Visitor",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/behavioral/visitor.py",
+      "rule": "visitor",
+      "entity": "Visitor",
+      "expected": true,
+      "why": "Extrinsic Visitor selects visit_<type> along the node MRO using getattr, with a generic fallback; no accept(self) double dispatch.",
+      "files": [
+        {
+          "path": "patterns/behavioral/visitor.py",
+          "sha256": "60089a0c4838f5ad223f64da400e1bc4ad46d69b012644750f15d07f1778dbdf"
+        }
+      ]
+    },
+    {
+      "id": "python-patterns/patterns/behavioral/mediator.py:mediator/ChatRoom",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/behavioral/mediator.py",
+      "rule": "mediator",
+      "entity": "ChatRoom",
+      "expected": false,
+      "why": "The advertised example only formats a string; each User creates its own ChatRoom and no colleague receives the message. An upstream positive label is questionable.",
+      "files": [
+        {
+          "path": "patterns/behavioral/mediator.py",
+          "sha256": "758e9797e0fa907a283dbc68cebda7be0a1e16d1c9230543c9e195f18bf5c549"
+        }
+      ]
+    },
+    {
+      "id": "cpp-patterns/adapter/ObjectAdapter.cpp:adapter/Adapter",
+      "repo": "cpp-patterns",
+      "revision": "4fae40666a970dc4c7901df54964d6ebcd80ba5c",
+      "url": "https://github.com/JakubVojvoda/design-patterns-cpp",
+      "scope": "adapter/ObjectAdapter.cpp",
+      "rule": "adapter",
+      "entity": "Adapter",
+      "expected": true,
+      "why": "Target.request delegates to retained Adaptee.specificRequest.",
+      "files": [
+        {
+          "path": "adapter/ObjectAdapter.cpp",
+          "sha256": "1fa00d4918b12ba77080c9dd6cfc72189e84e39e73530f01a3e907949b7af225"
+        }
+      ]
+    },
+    {
+      "id": "cpp-patterns/adapter/ObjectAdapter.cpp:iterator/Adapter",
+      "repo": "cpp-patterns",
+      "revision": "4fae40666a970dc4c7901df54964d6ebcd80ba5c",
+      "url": "https://github.com/JakubVojvoda/design-patterns-cpp",
+      "scope": "adapter/ObjectAdapter.cpp",
+      "rule": "iterator",
+      "entity": "Adapter",
+      "expected": false,
+      "why": "No iteration or cursor protocol in the adapter.",
+      "files": [
+        {
+          "path": "adapter/ObjectAdapter.cpp",
+          "sha256": "1fa00d4918b12ba77080c9dd6cfc72189e84e39e73530f01a3e907949b7af225"
+        }
+      ]
+    },
+    {
+      "id": "cpp-patterns/command/Command.cpp:command/ConcreteCommand",
+      "repo": "cpp-patterns",
+      "revision": "4fae40666a970dc4c7901df54964d6ebcd80ba5c",
+      "url": "https://github.com/JakubVojvoda/design-patterns-cpp",
+      "scope": "command/Command.cpp",
+      "rule": "command",
+      "entity": "ConcreteCommand",
+      "expected": true,
+      "why": "Invoker retains Command and confirms execute, which invokes the retained Receiver.action.",
+      "files": [
+        {
+          "path": "command/Command.cpp",
+          "sha256": "6772f212af6e320921b85bef8bb085597e4ee6f477e3c06eda0378ef85ba9524"
+        }
+      ]
+    },
+    {
+      "id": "cpp-patterns/command/Command.cpp:adapter/ConcreteCommand",
+      "repo": "cpp-patterns",
+      "revision": "4fae40666a970dc4c7901df54964d6ebcd80ba5c",
+      "url": "https://github.com/JakubVojvoda/design-patterns-cpp",
+      "scope": "command/Command.cpp",
+      "rule": "adapter",
+      "entity": "ConcreteCommand",
+      "expected": false,
+      "why": "The primary behavior is encapsulating a deferred request; the different method name alone does not establish adapting an incompatible interface. Overlapping structural interpretations are plausible; excluded from TP/TN/FP/FN rates.",
+      "files": [
+        {
+          "path": "command/Command.cpp",
+          "sha256": "6772f212af6e320921b85bef8bb085597e4ee6f477e3c06eda0378ef85ba9524"
+        }
+      ],
+      "ambiguous": true
+    },
+    {
+      "id": "cpp-patterns/visitor/Visitor.cpp:visitor/ConcreteElementA",
+      "repo": "cpp-patterns",
+      "revision": "4fae40666a970dc4c7901df54964d6ebcd80ba5c",
+      "url": "https://github.com/JakubVojvoda/design-patterns-cpp",
+      "scope": "visitor/Visitor.cpp",
+      "rule": "visitor",
+      "entity": "ConcreteElementA",
+      "expected": true,
+      "why": "accept passes this to the concrete visitor overload.",
+      "files": [
+        {
+          "path": "visitor/Visitor.cpp",
+          "sha256": "50e6755cc60121baf9d2706b3391debc2daf83a611e2705b480534eda94683e1"
+        }
+      ]
+    },
+    {
+      "id": "guru-rust/creational/prototype/:prototype/Circle",
+      "repo": "guru-rust",
+      "revision": "f4a1499d13e8b27fa75e4e8ff9fd9bed645d23ca",
+      "url": "https://github.com/RefactoringGuru/design-patterns-rust",
+      "scope": "creational/prototype/",
+      "rule": "prototype",
+      "entity": "Circle",
+      "expected": true,
+      "why": "Derived Clone creates circle2 from circle1; radius is independently changed on the clone.",
+      "files": [
+        {
+          "path": "creational/prototype/main.rs",
+          "sha256": "866d3072a2a0774fd9e8369c903ee1395092cde2f6df960e42804acf78df7ad2"
+        }
+      ]
+    },
+    {
+      "id": "guru-rust/creational/prototype/:singleton/Circle",
+      "repo": "guru-rust",
+      "revision": "f4a1499d13e8b27fa75e4e8ff9fd9bed645d23ca",
+      "url": "https://github.com/RefactoringGuru/design-patterns-rust",
+      "scope": "creational/prototype/",
+      "rule": "singleton",
+      "entity": "Circle",
+      "expected": false,
+      "why": "Two explicit independent values are used; there is no shared accessor.",
+      "files": [
+        {
+          "path": "creational/prototype/main.rs",
+          "sha256": "866d3072a2a0774fd9e8369c903ee1395092cde2f6df960e42804acf78df7ad2"
+        }
+      ]
+    },
+    {
+      "id": "guru-rust/behavioral/mediator/mediator-top-down/:mediator/TrainStation",
+      "repo": "guru-rust",
+      "revision": "f4a1499d13e8b27fa75e4e8ff9fd9bed645d23ca",
+      "url": "https://github.com/RefactoringGuru/design-patterns-rust",
+      "scope": "behavioral/mediator/mediator-top-down/",
+      "rule": "mediator",
+      "entity": "TrainStation",
+      "expected": true,
+      "why": "TrainStation coordinates arrivals and departures, queued trains and platform occupancy through the Mediator interface.",
+      "files": [
+        {
+          "path": "behavioral/mediator/mediator-top-down/main.rs",
+          "sha256": "3534f77ac3c82a48e1603b0213d270469722f626f585a525612804cade18baed"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/train_station.rs",
+          "sha256": "31e1ce0ca95d3e4cce8d70afe58e5392a0e1af907dd81b5c8f821aec573ddd02"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/trains/freight_train.rs",
+          "sha256": "c05e26c5107be062a368933214495dbd6ba52369b666e4c9e9d134190195a1c7"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/trains/mod.rs",
+          "sha256": "be86ac6f65285be89918d91f8ab5b106f5e7801a6a4af3b237bd66371d9ac55b"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/trains/passenger_train.rs",
+          "sha256": "55321024a542a54e3d80f06de0f43ac771eddb06437a37b0b750c6750849d909"
+        }
+      ]
+    },
+    {
+      "id": "guru-rust/behavioral/mediator/mediator-top-down/:state/TrainStation",
+      "repo": "guru-rust",
+      "revision": "f4a1499d13e8b27fa75e4e8ff9fd9bed645d23ca",
+      "url": "https://github.com/RefactoringGuru/design-patterns-rust",
+      "scope": "behavioral/mediator/mediator-top-down/",
+      "rule": "state",
+      "entity": "TrainStation",
+      "expected": false,
+      "why": "Changing occupancy and collection fields is not the State pattern; no interchangeable state handler or behavioral state dispatch is established. Overlapping structural interpretations are plausible; excluded from TP/TN/FP/FN rates.",
+      "files": [
+        {
+          "path": "behavioral/mediator/mediator-top-down/main.rs",
+          "sha256": "3534f77ac3c82a48e1603b0213d270469722f626f585a525612804cade18baed"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/train_station.rs",
+          "sha256": "31e1ce0ca95d3e4cce8d70afe58e5392a0e1af907dd81b5c8f821aec573ddd02"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/trains/freight_train.rs",
+          "sha256": "c05e26c5107be062a368933214495dbd6ba52369b666e4c9e9d134190195a1c7"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/trains/mod.rs",
+          "sha256": "be86ac6f65285be89918d91f8ab5b106f5e7801a6a4af3b237bd66371d9ac55b"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/trains/passenger_train.rs",
+          "sha256": "55321024a542a54e3d80f06de0f43ac771eddb06437a37b0b750c6750849d909"
+        }
+      ],
+      "ambiguous": true
+    },
+    {
+      "id": "java-patterns/interpreter/src/main/java/:interpreter/PlusExpression",
+      "repo": "java-patterns",
+      "revision": "41625d8d354cdf6b6f10a82e29c2392b3efd5d20",
+      "url": "https://github.com/iluwatar/java-design-patterns",
+      "scope": "interpreter/src/main/java/",
+      "rule": "interpreter",
+      "entity": "PlusExpression",
+      "expected": true,
+      "why": "interpret returns the sum of recursive left and right expression results; context is stored in terminal nodes, so no evaluation parameter is needed.",
+      "files": [
+        {
+          "path": "interpreter/src/main/java/com/iluwatar/interpreter/App.java",
+          "sha256": "839e1475d3b802b228339ba8a562d4d8c1dd2ec402fd9b04b21783cc302f0cca"
+        },
+        {
+          "path": "interpreter/src/main/java/com/iluwatar/interpreter/Expression.java",
+          "sha256": "73ee70475eeb9514d3e2d38a1728058787aab078ef26215be8b40d16bf9d363d"
+        },
+        {
+          "path": "interpreter/src/main/java/com/iluwatar/interpreter/MinusExpression.java",
+          "sha256": "086a987f07ca55b0a3a8e98808e0da2e8cd0cb230487b70873fa7aab68fa7d50"
+        },
+        {
+          "path": "interpreter/src/main/java/com/iluwatar/interpreter/MultiplyExpression.java",
+          "sha256": "31b0988fb6f25b0640204741920e3752fc7d534b8c0cd19e8a9ae3231678fe18"
+        },
+        {
+          "path": "interpreter/src/main/java/com/iluwatar/interpreter/NumberExpression.java",
+          "sha256": "799e0d3da4e89759db004488eb55836a83d4036dcf5bc95ddf0856ee96385117"
+        },
+        {
+          "path": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java",
+          "sha256": "0de77344f5b35b9761fd944c8c4fdec11b7b6049181626217fd5643f02701759"
+        }
+      ]
+    },
+    {
+      "id": "java-patterns/mediator/src/main/java/:mediator/PartyImpl",
+      "repo": "java-patterns",
+      "revision": "41625d8d354cdf6b6f10a82e29c2392b3efd5d20",
+      "url": "https://github.com/iluwatar/java-design-patterns",
+      "scope": "mediator/src/main/java/",
+      "rule": "mediator",
+      "entity": "PartyImpl",
+      "expected": true,
+      "why": "PartyImpl distributes an action to members other than its actor and establishes the party back-reference when registering a member.",
+      "files": [
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/Action.java",
+          "sha256": "e18e6862c6297b9505b0561e5b648ab66882328a99c87ba582db7d0cf576e81b"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/App.java",
+          "sha256": "5097cd488dab339483d412e8e88a11415507a1fb0369fa9ada4e884298c63c73"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/Hobbit.java",
+          "sha256": "e9e1f8304db52999f27f352e4856a5fda1a4e7f9a9c302623ccc61fad8d5518a"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/Hunter.java",
+          "sha256": "9fc78a14b8f901f5998be09199537896dff881f22e844b6d60e9908bb6c26851"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/Party.java",
+          "sha256": "c6230669225ca6baef864b44c2e746eeeda483aa5b9326bd1e5aa3eb1c2c7d42"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java",
+          "sha256": "bc91289c13c3ffbf61cb78068f536b0609c5f3cc106276b395fbc3e6e2bc83e8"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/PartyMember.java",
+          "sha256": "aa3e82a653283a5d84c3e52f4b2aac9d43224732f94e02956a7fb64322e1a7c3"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java",
+          "sha256": "d58d6c8acd5815daf217528891a82cf05de231bf59d3c8d89b82e8dc91b381d7"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/Rogue.java",
+          "sha256": "ba3fc9989419de0b95b61c2449afd701b81af43b4e1e51b9ca96fe299baf9742"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/Wizard.java",
+          "sha256": "d87109fc27830527ecd6eca3f9de29b0f31d3e1468588b61617aecacc340c3a9"
+        }
+      ]
+    },
+    {
+      "id": "java-patterns/singleton/src/main/java/:singleton/IvoryTower",
+      "repo": "java-patterns",
+      "revision": "41625d8d354cdf6b6f10a82e29c2392b3efd5d20",
+      "url": "https://github.com/iluwatar/java-design-patterns",
+      "scope": "singleton/src/main/java/",
+      "rule": "singleton",
+      "entity": "IvoryTower",
+      "expected": true,
+      "why": "Private constructor and an eager static instance returned by the accessor.",
+      "files": [
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/App.java",
+          "sha256": "ba97730c56dd0e4debfc31ec11e74c3e843628c8216775dc57d6fbd59bd42246"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/BillPughImplementation.java",
+          "sha256": "d07d94679eb5f261fd2f6c50b3756a9476cf4c6a7675820652f50da2c5a301e4"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/EnumIvoryTower.java",
+          "sha256": "2d297d6255dc9af1595f6c2cba3d1a2b37e04bda3b35afa36e80d461bdb99718"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/InitializingOnDemandHolderIdiom.java",
+          "sha256": "91fef64ab16df9f026c41a44ff624c3cb92d4f109082998988b20bc642d39a72"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java",
+          "sha256": "7ff63a23dd4154851e15feb31c8191253268e8a4dcb569124479363bdbb61c5b"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/ThreadSafeDoubleCheckLocking.java",
+          "sha256": "83e6ee191d2bd6ea44bd2e0c1daa234ba43a93525c5a4a33cf676a1a6e1ba7d2"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/ThreadSafeLazyLoadedIvoryTower.java",
+          "sha256": "319cce21ca36bb6dfc24f638d64ab97189dd911503e9f94e941e91b3b88d4cd2"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/package-info.java",
+          "sha256": "3ec90965fe5a8dc44bc150759b5001782106fb5c803ac240443e98d4c47861e0"
+        }
+      ]
+    },
+    {
+      "id": "java-patterns/visitor/src/main/java/:visitor/Commander",
+      "repo": "java-patterns",
+      "revision": "41625d8d354cdf6b6f10a82e29c2392b3efd5d20",
+      "url": "https://github.com/iluwatar/java-design-patterns",
+      "scope": "visitor/src/main/java/",
+      "rule": "visitor",
+      "entity": "Commander",
+      "expected": true,
+      "why": "The commander accepts the visitor, calls its typed visit and traverses the unit hierarchy.",
+      "files": [
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/App.java",
+          "sha256": "52ed3c4d3bb4dbb928944bc5c0f17eda8dd7c113d24d8abdf1e66b019e1680e3"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/Commander.java",
+          "sha256": "771d2aec375d9e9eacd0a9c5748d5ca5296e234d861550207138a4845423efa6"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/CommanderVisitor.java",
+          "sha256": "77a0a9d471e646ae166165aaab8f0f0e9e041a8f5e607c9fc06689f36c7a225f"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/Sergeant.java",
+          "sha256": "d5e717dec69c352d9b9f2b6f32d4e879e6091de2c3d1c908574500d79fea8d59"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/SergeantVisitor.java",
+          "sha256": "54a5f5e5c43eb1a6212a163ed975c9bf5100efef2e14586c9392647ff0115748"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/Soldier.java",
+          "sha256": "b3924682d9c09348791bad468b374aa804ca8afe4bc10bd245756b3415d901bc"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/SoldierVisitor.java",
+          "sha256": "095ef882b5148ac43745db31acc2234dce2073c1b3a5426b1a31177db9a3088d"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/Unit.java",
+          "sha256": "07c0252f7229c02b4703aff78d9911e11567bec4994362711d9a0e0b185d9c1b"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java",
+          "sha256": "7dc8b7dd669a4f7c68b10c210fbd352bd5f248c491f1d5f2753a6897164e321b"
+        }
+      ]
+    },
+    {
+      "id": "pandovski/Creational/Prototype/java/:prototype/EmployeeRecord",
+      "repo": "pandovski",
+      "revision": "db0dcf0ceade1a84fc5466fc625a50cc1dd066fe",
+      "url": "https://github.com/ZoranPandovski/design-patterns",
+      "scope": "Creational/Prototype/java/",
+      "rule": "prototype",
+      "entity": "EmployeeRecord",
+      "expected": true,
+      "why": "getClone passes all five instance fields to the matching overloaded constructor; this() runs before explicit retention writes. Regression found during this second review.",
+      "files": [
+        {
+          "path": "Creational/Prototype/java/EmployeeRecord.java",
+          "sha256": "afb545aee8f1a0318d9536996857ae0e44a033864eda0811191494266f6ee5c4"
+        },
+        {
+          "path": "Creational/Prototype/java/Prototype.java",
+          "sha256": "4d5422231dd02ef07eac5b704920f71a256f93ced4b008edc7f4fdc44b96426a"
+        },
+        {
+          "path": "Creational/Prototype/java/PrototypeDemo.java",
+          "sha256": "3ee7897a7801562f36d12d6d06d292ffe28a5fcbfc81fc6543df8c3c58e1a429"
+        }
+      ]
+    }
+  ]
+}

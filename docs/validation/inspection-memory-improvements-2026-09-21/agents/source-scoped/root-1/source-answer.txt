@@ -1,0 +1,7 @@
+En [`src/ken/_paths.py`, símbolo `find_project_root`](/private/tmp/ken-staged-source-scoped-20260921/project/src/ken/_paths.py:69):
+
+- Si `KEN_PROJECT_ROOT` tiene un valor no vacío, expande `~`, resuelve la ruta y devuelve ese directorio únicamente si contiene `.ken/meta.json`.
+- **Si falta ese archivo, devuelve `None` inmediatamente; no busca en los padres.**
+- Si la variable está ausente o vacía, empieza en `start` o en el directorio actual y asciende hasta encontrar el primer directorio con `.ken/meta.json`; si no encuentra ninguno, devuelve `None`.
+
+La ruta del archivo de metadatos se construye en [`meta_path`](/private/tmp/ken-staged-source-scoped-20260921/project/src/ken/_paths.py:31).

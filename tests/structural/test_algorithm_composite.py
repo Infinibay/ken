@@ -7,6 +7,8 @@ import re
 
 import pytest
 
+from .contract_support import contract_matches
+
 from ken.structural import lower_instructions
 from ken.structural.frontend import lower_source
 from ken.structural.rules import builtin_rules, execute_rules, named_rule
@@ -117,15 +119,14 @@ def test_iterating_external_collection_does_not_use_stored_children(language):
 
 @pytest.mark.parametrize('language', SOURCES)
 @pytest.mark.parametrize('mutation', ['discard-result', 'replace-context'])
-@pytest.mark.xfail(strict=True, reason='Composite signature does not enforce aggregation or argument propagation')
 def test_requested_aggregate_contract_rejects_broken_value_flow(language, mutation):
     source = instrument(SOURCES[language], language)
     source = source.replace('total = total + value', 'total = total + 0') if mutation == 'discard-result' else source.replace('child.Count(context)', 'child.Count(0)')
-    assert not detect(source, language)[1]
+    assert contract_matches(instrument(SOURCES[language], language), language, 'composite.additive_aggregate')
+    assert not contract_matches(source, language, 'composite.additive_aggregate')
 
 
 @pytest.mark.parametrize('language', SOURCES)
-@pytest.mark.xfail(strict=True, reason='ITERATED_CALL does not invalidate element provenance after child rebinding')
 def test_rebound_child_is_not_the_iterated_element(language):
     source = instrument(SOURCES[language], language)
     if language == 'python':

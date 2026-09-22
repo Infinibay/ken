@@ -1,0 +1,24 @@
+{
+  "broad": {
+    "command": "PYTHONPATH=.:src .venv/bin/python -m pytest -o addopts='' -q tests/kql2 tests/common_ast tests/structural tests/test_gitignore_filter.py tests/test_paths.py tests/test_watcher.py tests/test_index_queue.py tests/test_daemon_helpers.py",
+    "passed": 13148,
+    "xfailed": 10,
+    "seconds": 420.43
+  },
+  "focused_final": {
+    "command": "PYTHONPATH=.:src .venv/bin/python -m pytest -o addopts='' -q tests/kql2/test_exploration.py",
+    "passed": 32
+  },
+  "cli": {
+    "ken_entrypoint": "complete response, 53 rows on exploration package source",
+    "module_entrypoint": "incomplete response and exit 3 at max_rows=2"
+  },
+  "oracle": "Final benchmark row counts and hashes equal independent Tree-sitter oracle from cold-final.json",
+  "typing": {
+    "command": ".venv/bin/python -m mypy src/ken/kql2/exploration --follow-imports=silent --ignore-missing-imports",
+    "result": "Success: no issues found in 8 source files"
+  },
+  "post_benchmark_changes": [
+    "Added a type annotation to SyntaxCache.units; no runtime behavior changed."
+  ]
+}

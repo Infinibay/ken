@@ -1,6 +1,8 @@
 """Command algorithm interleaving atop retained-contract source fixtures."""
 import pytest
 
+from .contract_support import contract_matches
+
 from .test_gof_executable import evaluate
 from .test_retained_contract_command import LANGUAGES, source
 
@@ -43,7 +45,6 @@ def test_retention_and_action_identity_survive_negative_contrasts(language, chan
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Retained-contract signature does not prove field identity at runtime dispatch')
 def test_received_command_identity_contract_rejects_dispatch_after_clear(language):
     text = source(language)
     if language == 'python':
@@ -56,7 +57,6 @@ def test_received_command_identity_contract_rejects_dispatch_after_clear(languag
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Command actions with explicit execution context are excluded by zero-arity variants')
 def test_execution_context_is_a_valid_command_parameter(language):
     text = source(language)
     if language == 'python':
@@ -93,6 +93,6 @@ def test_command_can_retain_receiver_and_payload(language):
 
 
 @pytest.mark.parametrize('language', ['python', 'java', 'typescript'])
-@pytest.mark.xfail(strict=True, reason='Command signature does not correlate constructor-captured payload with work arguments')
 def test_captured_payload_contract_rejects_discarded_data(language):
-    assert not evaluate(with_payload(language, discard=True), language, 'command')
+    assert contract_matches(with_payload(language), language, 'command.captured_payload')
+    assert not contract_matches(with_payload(language, discard=True), language, 'command.captured_payload')

@@ -3,17 +3,31 @@ id = "proxy"
 name = "Proxy"
 category = "structural"
 description = "A same-contract wrapper conditionally forwards operations."
-caveat = "Conditional same-contract delegation overlaps with guarded decorators."
+caveat = "Conditional same-contract delegation overlaps with guarded decorators. Guarded access accepts a call within a branch arm or after a guard whose other outcome returns immediately; it does not prove authorization semantics or runtime receiver identity."
 legacy_query = "require $unit SUBTYPE_OF $contract\nrequire $unit HAS_FIELD $subject\nrequire $subject TYPE $contract\nrequire $unit HAS_METHOD $method\nrequire $method CONDITIONAL_DELEGATION $subject\n"
 query = '''
-query proxy {
- any { match "proxy#guarded-access"(unit: $unit); }
- or { match "proxy#lazy-subject"(unit: $unit); }
- or { match "proxy#remote-subject"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.proxy;
+import ken.catalog.proxy.variants.guarded_access;
+import ken.catalog.proxy.variants.lazy_subject;
+import ken.catalog.proxy.variants.remote_subject;
+
+pattern detect(out GraphTerm $unit) {
+  either {
+    use ken.catalog.proxy.variants.guarded_access.detect(unit: $unit);
+  } or {
+    use ken.catalog.proxy.variants.lazy_subject.detect(unit: $unit);
+  } or {
+    use ken.catalog.proxy.variants.remote_subject.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -27,25 +41,30 @@ fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query proxy {
+language "kql/2";
+module ken.catalog.proxy.variants.guarded_access;
 
- require $unit SUBTYPE_OF $contract;
- require $unit HAS_FIELD $subject;
- require $subject TYPE $contract;
- require $unit HAS_METHOD $method;
- require $method OVERRIDES $slot;
- require $method CONDITIONAL_DELEGATION $subject;
- require $method HAS_CALL $forward;
- require $forward RECEIVER $subject;
- require $forward SYNTAX_NODE $forward_syntax;
- path $forward_syntax SYNTAX_PARENT{0,32} $arm as $guard_scope;
- operation(role: [consequence, alternative]) as $arm;
- require $arm SYNTAX_PARENT $guard;
- operation(kind: branch) as $guard;
- call() as $forward;
- callable() as $method;
- where $method.name == $forward.name;
- emit $unit;
+pattern detect(out TypeDecl $unit) {
+  type $contract { method $slot { } }
+  type $unit {
+    field $subject { type: nominal($contract); }
+    method $method {
+      call $forward { }
+      either {
+        body { if (_) { call $forward { receiver: $subject; }; } }
+      } or {
+        body { if (_) { return _; } call $forward { receiver: $subject; }; }
+      }
+    }
+  }
+  where subtype($unit, $contract);
+  where overrides($method, $slot);
+  where $forward.name == $method.name;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -56,18 +75,44 @@ requires = ["guarded_allocation", "receiver_identity"]
 graph_requirements = ["Carga diferida de subject y delegacion posterior usan el mismo almacenamiento."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
-query_claim = "Un metodo escribe un campo bajo una guarda que referencia ese mismo campo, contiene una construccion de OTRO tipo, y delega sobre el mismo campo: carga diferida del subject y delegacion posterior sobre ese almacenamiento. No exige una forma concreta del test de ausencia (comparacion nula, `is_none()` o `== None`), solo que la escritura este guardada por el propio campo, ni prueba que la construccion sea alcanzable en ejecucion ni la identidad runtime del receptor."
+query_claim = "Un metodo escribe un campo bajo una guarda que referencia ese mismo campo, almacena en ese campo una construccion de OTRO tipo (directamente o como argumento de un contenedor), y delega sobre el mismo campo: carga diferida del subject y delegacion posterior sobre ese almacenamiento. No exige una forma concreta del test de ausencia (comparacion nula, `is_none()` o `== None`), solo que la escritura este guardada por el propio campo, ni prueba que la construccion sea alcanzable en ejecucion ni la identidad runtime del receptor."
 query = '''
-query proxy {
- require $unit HAS_FIELD $subject;
- require $unit HAS_METHOD $access;
- callable(constructor: false) as $access;
- require $subject GUARDS_WRITE $access;
- require $access HAS_CALL $creation;
- require $creation ALLOCATES_TYPE $created;
- different $created $unit;
- require $access DELEGATES_TO $subject;
- emit $unit, $subject, $access, $creation, $created;
+language "kql/2";
+module ken.catalog.proxy.variants.lazy_subject;
+
+pattern detect(out TypeDecl $unit, out Field $subject, out Callable $access, out Call $creation, out TypeDecl $created) {
+  either {
+    type $unit {
+      field $subject { }
+      method $access {
+        constructor: false;
+        body {
+          let $local_created = construct $created { } as $creation;
+          $subject = $local_created as $write;
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $subject { }
+      method $access {
+        constructor: false;
+        body {
+          let $local_created = construct $created { } as $creation;
+          call $wrapper { argument $creation at any; };
+          $subject = $wrapper as $write;
+        }
+      }
+    }
+  }
+  where guarded_write($subject, $access);
+  where delegates_to($access, $subject);
+  where $created != $unit;
+}
+
+query results {
+  use detect(unit: $unit, subject: $subject, access: $access, creation: $creation, created: $created);
+  select $unit, $subject, $access, $creation, $created;
 }
 '''
 
@@ -79,29 +124,74 @@ requires = ["rpc_models", "contract_resolution"]
 graph_requirements = ["Contrato local representa operación remota y mapea argumentos/resultados; modelo RPC identificado."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
-query_claim = "La **implementacion local visible** que serializa la llamada y devuelve su respuesta: la clase implementa el contrato local (`SUBTYPE_OF`, o `IMPLEMENTS` en Go, que satisface la interfaz por method set), guarda un cliente cuyo tipo **no** es ese contrato, su metodo delega en el cliente pasando como argumento el resultado de un **codificador** alimentado por su propio parametro, y devuelve el resultado de un **decodificador** distinto de la llamada de transporte. El tipo del cliente se alcanza por declaracion (anotaciones o campos) o por la **construccion** con la que se inicializa el campo, que es lo que tiene JavaScript en vez de declaracion. NO prueba que el transporte sea realmente remoto, ni que el codec serialice de verdad, ni que el cliente no se reasigne, ni que la respuesta se consuma entera, ni que ningun camino de excepcion salte el decodificado. La otra alternativa de la ficha (una tabla de nombres de API RPC) no se implementa."
+query_claim = "La **implementacion local visible** que serializa la llamada y devuelve su respuesta: la clase implementa el contrato local (`SUBTYPE_OF`, o `IMPLEMENTS` en Go, que satisface la interfaz por method set), guarda un cliente cuyo tipo **no** es ese contrato, su metodo delega en el cliente pasando como argumento el resultado de un **codificador** alimentado por su propio parametro, y devuelve el resultado de un **decodificador** distinto de la llamada de transporte cuyo argumento proviene de la respuesta de ESE transporte. El flujo local exige el origen vigente, por lo que una respuesta descartada o sobrescrita no satisface la query. El tipo del cliente se alcanza por declaracion (anotaciones o campos) o por la **construccion** con la que se inicializa el campo, que es lo que tiene JavaScript en vez de declaracion. NO prueba que el transporte sea realmente remoto, ni que el codec serialice de verdad, ni que el cliente no se reasigne, ni que la respuesta se consuma entera, ni que ningun camino de excepcion salte el decodificado. La otra alternativa de la ficha (una tabla de nombres de API RPC) no se implementa."
 query = '''
-query proxy_remote_subject {
- require $unit HAS_FIELD $client;
- require $client TYPE $client_type;
- require $unit HAS_METHOD $method;
- require $method OVERRIDES $slot;
- any { require $unit SUBTYPE_OF $contract; }
- or { require $unit IMPLEMENTS $contract; }
- different $client_type $contract;
- require $method HAS_CALL $transport;
- require $transport RECEIVER $client;
- require $method HAS_PARAMETER $request;
- parameter(receiver: false) as $request;
- require $transport ARGUMENT $argument;
- require $argument VALUE $encoded;
- require $encoder RESULT $encoded;
- call() as $encoder;
- require $encoder ARGUMENT $encoder_argument;
- require $encoder_argument VALUE $encoder_input;
- require $encoder_input LOADED_FROM $request;
- require $method RETURNS_CALL $decoder;
- different $transport $decoder;
- emit unit=$unit, $contract, $client, $method, $transport, $encoder, $decoder, $request;
+language "kql/2";
+module ken.catalog.proxy.variants.remote_subject;
+
+pattern detect(out TypeDecl $unit, out TypeDecl $contract, out Field $client, out Callable $method, out Parameter $request, out Call $transport, out Call $encoder, out Call $decoder) {
+  type $contract { method $slot { } }
+  type $unit {
+    field $client { type: nominal($client_type); }
+    method $method {
+      constructor: false;
+      param $request { }
+      call $encoder { }
+      call $decoder { }
+      body {
+        let $local_response = call $transport { receiver: $client; argument $encoder at any; };
+        let $local_decoded = call $decoder { argument $local_response at any; };
+        return $local_decoded;
+      }
+      body { call $encoder { argument $request at any; }; }
+    }
+  }
+  either {
+    where subtype($unit, $contract);
+  } or {
+    where implements($unit, $contract);
+  }
+  where overrides($method, $slot);
+  where $client_type != $contract;
+  where $transport != $decoder;
+}
+
+query results {
+  use detect(unit: $unit, contract: $contract, client: $client, method: $method, transport: $transport, encoder: $encoder, decoder: $decoder, request: $request);
+  select $unit, $contract, $client, $method, $transport, $encoder, $decoder, $request;
+}
+'''
+
+[[operations]]
+id = "single_guarded_dispatch"
+status = "ready"
+description = "A protected wrapper has one syntactic dispatch of its operation, under the existing branch or early-denial guard model."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch."
+query = '''
+language "kql/2";
+module ken.catalog.proxy.single_guarded_dispatch;
+
+pattern detect(out TypeDecl $unit) {
+  type $contract { method $slot { } }
+  type $unit {
+    field $subject { type: nominal($contract); }
+    method $method {
+      call $forward { }
+      either {
+        body { if (_) { call $forward { receiver: $subject; }; } }
+      } or {
+        body { if (_) { return _; } call $forward { receiver: $subject; }; }
+      }
+    }
+  }
+  where subtype($unit, $contract);
+  where overrides($method, $slot);
+  where $forward.name == $method.name;
+  require one dispatch of $method;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''

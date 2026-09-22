@@ -1,0 +1,9 @@
+language "kql/2";
+module bugs.catch_swallow;
+query catch_without_throw {
+  node $catch { kind: "catch"; }
+  not exists {
+    node $throw { kind: "throw"; }
+  }
+  select $catch;
+}

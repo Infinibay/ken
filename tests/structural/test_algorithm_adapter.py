@@ -3,6 +3,8 @@ import re
 
 import pytest
 
+from .contract_support import contract_matches
+
 from .test_gof_executable import evaluate
 
 
@@ -97,18 +99,17 @@ def test_unrelated_marker_cannot_supply_different_target_contract(language):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Broad object Adapter query does not implement input-transformation provenance')
 def test_input_conversion_contract_rejects_discarded_input(language):
-    assert not evaluate(source(language, argument='0'), language, 'adapter')
+    assert contract_matches(source(language), language, 'adapter.input_conversion')
+    assert not contract_matches(source(language, argument='0'), language, 'adapter.input_conversion')
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Broad object Adapter query does not implement output-transformation provenance')
 def test_output_conversion_contract_rejects_discarded_result(language):
-    assert not evaluate(source(language, returned='0'), language, 'adapter')
+    assert contract_matches(source(language), language, 'adapter.output_conversion')
+    assert not contract_matches(source(language, returned='0'), language, 'adapter.output_conversion')
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Same-name adaptation of arguments/results is excluded by object-adapter name inequality')
 def test_conversion_does_not_require_renaming_operation(language):
     assert evaluate(source(language).replace('perform', 'request'), language, 'adapter')

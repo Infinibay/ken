@@ -352,6 +352,14 @@ class _Handler(BaseHTTPRequestHandler):
             elif self.path == "/prompts":
                 content = str(payload.get("prompt", ""))
                 block = _handle_prompt(st, payload["session_id"], content)
+                from ken.checks.automation import scheduler
+                notice = scheduler(st).drain(payload["session_id"])
+                if notice and len(block) + len(notice) + 1 <= HOOK_CONTEXT_MAX_CHARS:
+                    block = block + "\n" + notice
+                elif notice:
+                    # Keep well-formed context blocks; a check update is more
+                    # actionable than a repeated ranking when both do not fit.
+                    block = notice
                 self._respond(200, {"ok": True, "context_block": block})
             elif self.path == "/tools/pre":
                 _record_tool_pre(st, payload)
@@ -374,6 +382,8 @@ class _Handler(BaseHTTPRequestHandler):
                 self._respond(200, _handle_references(st, payload))
             elif self.path == "/turn-end":
                 _handle_turn_end(st, payload)
+                from ken.checks.automation import scheduler
+                scheduler(st).enqueue(payload["session_id"], [])
                 self._respond(200, {"ok": True})
             elif self.path == "/shutdown":
                 self._respond(200, {"ok": True})
@@ -444,6 +454,13 @@ def _handle_session_start(st: DaemonState, agent_id: str) -> tuple[int, str]:
     except Exception:  # pragma: no cover
         logger.exception("session brief build failed")
         block = ""
+    try:
+        from ken.checks.automation import resume
+        notice = resume(st.project_root)
+        if notice:
+            block = block + "\n" + notice
+    except Exception:
+        logger.exception("contract-check resume brief failed")
     return pk, block
 
 
@@ -495,7 +512,20 @@ def _handle_prompt(st: DaemonState, agent_id: str, content: str) -> str:
             sess["last_rank_result"] = result
             sess["last_rank_prompt"] = content
 
-    return render_block(st.conn, result, verbose=0, max_chars=HOOK_CONTEXT_MAX_CHARS)
+    from ken.knowledge.context import render_brief
+
+    try:
+        with st.lock:
+            session = st.sessions.get(agent_id)
+            seen = session.setdefault("seen_knowledge", {}) if session is not None else None
+            knowledge = render_brief(st.conn, [f.topic for f in result.findings],
+                                     root=st.project_root, seen=seen)
+    except Exception:  # pragma: no cover - memory enrichment never blocks a prompt
+        logger.exception("knowledge brief failed")
+        knowledge = ""
+    remaining = HOOK_CONTEXT_MAX_CHARS - len(knowledge) - (1 if knowledge else 0)
+    block = render_block(st.conn, result, verbose=0, max_chars=remaining)
+    return block + ("\n" + knowledge if knowledge else "")
 
 
 def _handle_rank(st: DaemonState, payload: dict[str, Any]) -> dict[str, Any]:
@@ -932,6 +962,15 @@ def _record_tool_post(st: DaemonState, payload: dict[str, Any]) -> None:
         target = _extract_target(tool_input)
         if target:
             st.invalidate_last_interaction(agent_id, target)
+    else:
+        tool_input = payload.get("input") or payload.get("tool_input") or {}
+        event, target = _classify_tool(tool, tool_input)
+        if event == "edit":
+            from ken.checks.automation import edited_paths, scheduler
+            try:
+                scheduler(st).enqueue(agent_id, edited_paths(st.project_root, tool_input, target))
+            except Exception:
+                logger.exception("could not schedule contract checks")
 
 
 # Verb stems for harnesses that name tools in snake_case rather than with
@@ -1095,6 +1134,8 @@ def run(project_root: Path) -> int:
 
     state.shutdown_event.wait()
     logger.info("ken daemon shutting down")
+    if hasattr(state, "contract_checks"):
+        state.contract_checks.close()
     _finalize_active_sessions(state)
     server.shutdown()
     server.server_close()

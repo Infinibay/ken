@@ -135,6 +135,11 @@ def _render_verbose(
         for i, it in enumerate(result.symbols[:max_symbols], 1):
             lines.append(f"  {i}. {it.target}  [score={it.score:.1f}] — {it.reason}")
     if result.findings and max_findings:
+        from ken.knowledge.context import brief_line
+        from ken.knowledge.records import for_topics
+
+        memories = {h["topic"]: h for h in for_topics(
+            conn, [it.topic for it in result.findings[:max_findings]])}
         lines.append("")
         lines.append("Findings:")
         for i, it in enumerate(result.findings[:max_findings], 1):
@@ -144,7 +149,9 @@ def _render_verbose(
             lines.append(
                 f"  {i}. {it.topic}{tags}  [type={kind}; score={it.score:.1f}; {channels}] — {it.reason}"
             )
-            lines.append(f"       {_one_line(it.content)}")
+            memory = memories.get(it.topic, {})
+            content = brief_line(memory) if "justification" in memory else _one_line(it.content)
+            lines.append(f"       {content}")
     if outline_rows:
         lines.append("")
         lines.append("Outlines:")

@@ -1,0 +1,8 @@
+language "kql/2";
+module bugs.final;
+query try_with_throw {
+  node $try { kind: "try"; }
+  node $catch { kind: "catch"; }
+  node $throw { kind: "throw"; }
+  select $try;
+}

@@ -6,16 +6,37 @@ description = "A subject broadcasts a call to a collection of listeners."
 caveat = "Broadcast iteration is Observer-like; subscription lifecycle and event semantics require review."
 legacy_query = "require $unit HAS_FIELD $listeners\nrequire $unit HAS_METHOD $notify\nrequire $notify ITERATES_CALLS $listeners\n"
 query = '''
-query observer {
- any { match "observer#listener-registry"(unit: $unit); }
- or { match "observer#map-key-registry"(unit: $unit); }
- or { match "observer#snapshot-registry"(unit: $unit); }
- or { match "observer#language-event"(unit: $unit); }
- or { match "observer#event-bus"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.observer;
+import ken.catalog.observer.variants.event_bus;
+import ken.catalog.observer.variants.language_event;
+import ken.catalog.observer.variants.listener_registry;
+import ken.catalog.observer.variants.registered_listeners;
+import ken.catalog.observer.variants.map_key_registry;
+import ken.catalog.observer.variants.snapshot_registry;
+
+pattern detect(out GraphTerm $unit) {
+  either {
+    use ken.catalog.observer.variants.listener_registry.detect(unit: $unit);
+  } or {
+    use ken.catalog.observer.variants.registered_listeners.detect(unit: $unit);
+  } or {
+    use ken.catalog.observer.variants.map_key_registry.detect(unit: $unit);
+  } or {
+    use ken.catalog.observer.variants.snapshot_registry.detect(unit: $unit);
+  } or {
+    use ken.catalog.observer.variants.language_event.detect(unit: $unit);
+  } or {
+    use ken.catalog.observer.variants.event_bus.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -26,45 +47,82 @@ requires = ["collection_mutation", "callback_flow"]
 graph_requirements = ["Registro agrega listener al mismo conjunto que notifica evento; correlacionar listener y payload."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
-
-
+query_claim = "Un metodo **inserta** en una coleccion el listener que recibe por parametro (`insert $listener into $listeners`) y otro metodo distinto **recorre esa coleccion invocando a sus elementos** (`iterates_calls`). La insercion se acredita por la ocurrencia que la produce y el valor insertado debe ser ese parametro, no cualquier elemento. No prueba el ciclo de vida del registro (bajas, duplicados), ni que la notificacion sea el unico consumidor, ni la semantica del evento."
 query = '''
-query observer {
+language "kql/2";
+module ken.catalog.observer.variants.listener_registry;
 
- require $insertion INSERTS_INTO $listeners;
- require $insertion INSERTED_VALUE $listener;
- require $subscribe HAS_CALL $insertion;
- require $subscribe HAS_PARAMETER $listener;
- parameter(receiver: false) as $listener;
- require $unit HAS_FIELD $listeners;
- require $unit HAS_METHOD $subscribe;
- require $unit HAS_METHOD $notify;
- require $notify ITERATES_CALLS $listeners;
- different $subscribe $notify;
- emit $unit;
+pattern detect(out TypeDecl $unit, out Field $listeners, out Callable $subscribe, out Callable $notify) {
+  type $unit {
+    field $listeners { }
+    method $subscribe {
+      constructor: false;
+      param $listener { }
+      body {
+        insert $listener into $listeners;
+      }
+    }
+    method $notify {
+      constructor: false;
+    }
+  }
+  where iterates_calls($notify, $listeners);
+  where $subscribe != $notify;
+}
+
+query results {
+  use detect(unit: $unit, listeners: $listeners, subscribe: $subscribe, notify: $notify);
+  select $unit;
 }
 '''
 [[variants]]
 id = "map-key-registry"
 status = "ready"
 languages = ["go"]
+requires = ["keyed_collection", "callback_flow"]
+graph_requirements = ["Un mapa de callbacks se puebla con el listener como clave y otro metodo recorre las CLAVES invocandolas con el payload."]
+missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
-query_claim = "A supplied listener is used as a map key and another method invokes keys of the same map. Lifecycle and event semantics still require review."
+query_claim = "Un metodo registra el listener **como clave** del mapa (`insert $listener into $registry at $listener`) y otro recorre las **claves** del mismo mapa (`iterate keys of $registry as $key`) invocando sobre cada clave la operacion del contrato con el payload. La clave es la que la coleccion entrega (`KEY_TYPE` del mapa), no sus valores: invocar el valor no satisface la variante. No prueba el ciclo de vida del registro ni la semantica de entrega."
 query = '''
-query map_key_registry {
- type_decl(language: go) as $unit;
- require $unit HAS_FIELD $listeners;
- variable(native_type: /^map\[/) as $listeners;
- require $unit HAS_METHOD $subscribe;
- require $subscribe HAS_PARAMETER $listener;
- parameter(receiver: false) as $listener;
- require $subscribe HAS_OPERATION $write;
- require $write WRITES_ELEMENT $listeners;
- require $write INDEX $listener;
- require $unit HAS_METHOD $notify;
- different $subscribe $notify;
- require $notify ITERATES_KEYS_CALLS $listeners;
- emit $unit;
+language "kql/2";
+module ken.catalog.observer.variants.map_key_registry;
+
+pattern detect(out TypeDecl $unit, out TypeDecl $contract, out Field $registry, out Callable $register, out Callable $notify, out Parameter $payload) {
+  type $contract {
+    method $receive { }
+  }
+  type $unit {
+    field $registry { }
+    method $register {
+      constructor: false;
+      param $listener { type: nominal($contract); }
+      body {
+        insert $listener into $registry at $listener;
+      }
+    }
+    method $notify {
+      constructor: false;
+      param $payload { }
+      body {
+        iterate keys of $registry as $key {
+          body {
+            call $receive {
+              receiver: $key;
+              argument $payload at 0;
+              dispatch: possible;
+            };
+          }
+        }
+      }
+    }
+  }
+  where $register != $notify;
+}
+
+query results {
+  use detect(unit: $unit, contract: $contract, registry: $registry, register: $register, notify: $notify, payload: $payload);
+  select $unit, $contract, $registry, $register, $notify, $payload;
 }
 '''
 
@@ -75,29 +133,59 @@ languages = ["python", "javascript", "typescript"]
 fixtures_status = "source-regression-matrix"
 query_claim = "A method, or a callback it passes to a call, registers a supplied listener in the field copied for notification. Standard builtin copy models are assumed; callback execution and event lifecycle are not proven."
 query = '''
-query snapshot_registry {
- require $iteration ITERATION_SNAPSHOT $copy;
- require $copy COLLECTION_SNAPSHOT_OF $listeners;
- require $iteration ITERATION_INVOKES_VALUE $invocation;
- require $notify HAS_CALL $invocation;
- require $unit HAS_METHOD $notify;
- require $unit HAS_FIELD $listeners;
- require $insertion INSERTS_INTO $listeners;
- require $insertion INSERTED_VALUE $listener;
- require $subscribe HAS_CALL $insertion;
- require $subscribe HAS_PARAMETER $listener;
- parameter(receiver: false) as $listener;
- any { require $unit HAS_METHOD $subscribe; }
- or {
-   require $subscribe OWNED_BY $registration;
-   require $unit HAS_METHOD $registration;
-   require $registration HAS_CALL $setup;
-   require $setup ARGUMENT $callback;
-   require $callback VALUE $subscribe;
-   different $registration $notify;
- }
- different $subscribe $notify;
- emit $unit;
+language "kql/2";
+module ken.catalog.observer.variants.snapshot_registry;
+
+pattern detect(out TypeDecl $unit, out Field $listeners, out Callable $subscribe, out Callable $notify, out Parameter $listener) {
+  type $unit {
+    field $listeners { }
+    either {
+      method $notify {
+        constructor: false;
+        body {
+          iterate copy of $listeners as $handler {
+            body { call $handler { }; }
+          }
+        }
+      }
+    } or {
+      method $notify {
+        constructor: false;
+        body {
+          iterate copy of $listeners as $handler {
+            body { call on $handler { }; }
+          }
+        }
+      }
+    }
+    either {
+      method $subscribe {
+        constructor: false;
+        param $listener { }
+        body {
+          insert $listener into $listeners;
+        }
+      }
+    } or {
+      method $registration {
+        callable $subscribe {
+          param $listener { }
+          body {
+            insert $listener into $listeners;
+          }
+        }
+        body {
+          call $local_setup { argument $subscribe at any; };
+        }
+      }
+    }
+  }
+  where $subscribe != $notify;
+}
+
+query results {
+  use detect(unit: $unit, listeners: $listeners, subscribe: $subscribe, notify: $notify, listener: $listener);
+  select $unit;
 }
 '''
 
@@ -111,71 +199,166 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-csharp"
 query_claim = "El tipo declara un event de C#, un método registra un handler, otro lo da de baja y otro lo emite, todo sobre el mismo almacenamiento. No prueba la correlación payload→parámetro del handler, ni orden temporal, ni unicidad de entrega."
 query = '''
-query observer {
- require $unit DECLARES_EVENT $event;
- require $attach ADDS_HANDLER $event;
- require $detach REMOVES_HANDLER $event;
- different $attach $detach;
- require $raise HAS_CALL $call;
- require $call RAISES_EVENT $event;
- emit $unit, $event, $attach, $detach, $raise;
+language "kql/2";
+module ken.catalog.observer.variants.language_event;
+
+pattern detect(out TypeDecl $unit, out Field $event, out Callable $attach, out Callable $detach, out Callable $raise) {
+  type $unit {
+    field $event { }
+    method $attach { constructor: false; }
+    method $detach { constructor: false; }
+    method $raise { constructor: false; }
+  }
+  where declares_event($unit, $event);
+  where subscribes($attach, $event);
+  where unsubscribes($detach, $event);
+  where raises($raise, $event);
+  where $attach != $detach;
+}
+
+query results {
+  use detect(unit: $unit, event: $event, attach: $attach, detach: $detach, raise: $raise);
+  select $unit, $event, $attach, $detach, $raise;
 }
 '''
 
 [[variants]]
 id = "event-bus"
 status = "ready"
-languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
-requires = ["event_api_models", "topic_flow"]
-graph_requirements = ["Subscribe y publish comparten bus/topic resueltos; preservar restricciones y delivery desconocido."]
+languages = ["python", "javascript", "typescript", "csharp", "cpp", "go", "rust"]
+pending_languages = ["java"]
+requires = ["keyed_registry", "callback_flow"]
+graph_requirements = ["Registro bajo un slot de topic compartido: el alta inserta el subscriber en ese bucket y la publicacion recorre el bucket invocando a cada subscriber con el payload."]
 missing_capability = "unknown"
-fixtures_status = "source-regression-matrix-eight-languages"
-query_claim = "Un bus con un registro y un **slot de topic** compartidos: el alta inserta el subscriber en el registro **bajo ese topic** y la publicacion recorre el registro **bajo el mismo topic** invocando el elemento con el payload. El topic se une **por identidad de entidad**, no comparando cadenas: es el mismo campo en los dos lados. El acceso al registro se acepta en sus dos formas, porque los lenguajes se reparten: sintaxis de indice (`handlers[topic]`: Go, JS/TS, C#, C++, Rust), donde el acceso lleva `CONTAINER`/`INDEX` y es lo que apunta `INSERTS_INTO`, o sintaxis de metodo (Python `dict.setdefault`/`get`, Java `Map.computeIfAbsent`/`get`), donde el acceso es una llamada con el registro de receptor y el topic como argumento 0; Java ademas liga el bucket a un local antes de iterar. NO prueba entrega exactamente una vez, ni orden, ni que el topic no se reasigne, ni que el subscriber se invoque de verdad en ejecucion; tampoco que el registro no se comparta con otros topics."
+fixtures_status = "source-regression-matrix"
+query_claim = "El mismo campo de tipo **slot de topic** indexa la insercion y el recorrido: el alta inserta el subscriber en el bucket `$registry[$topic]` (la clave tiene que ser ese campo, no otra) y la publicacion recorre **ese mismo bucket** invocando cada elemento con el payload. El elemento invocado es el que la coleccion entrega, acreditado por `CALLEE_VALUE`, no por parecido de nombre. No prueba el ciclo de vida de las suscripciones (bajas, duplicados, orden), ni la entrega exacta del payload a cada handler, ni el modelo de concurrencia."
 query = '''
-query observer_event_bus {
- require $unit IS CLASS;
- require $unit HAS_FIELD $registry;
- require $unit HAS_FIELD $topic;
- require $unit HAS_METHOD $subscription;
- require $unit HAS_METHOD $publication;
- different $subscription $publication;
- require $subscription HAS_PARAMETER $subscriber;
- parameter(receiver: false) as $subscriber;
- require $subscription HAS_CALL $insert;
- require $insert INSERTED_VALUE $subscriber;
- require $insert INSERTS_INTO $registration_bucket;
- any {
-  require $registration_bucket CONTAINER $registry;
-  require $registration_bucket INDEX $topic;
- } or {
-  require $registration_bucket RECEIVER $registry;
-  require $registration_bucket ARGUMENT $registration_argument;
-  require $registration_argument VALUE $registration_value;
-  require $registration_value LOADED_FROM $topic;
- }
- require $publication HAS_PARAMETER $payload;
- parameter(receiver: false) as $payload;
- require $publication ITERATES_CALLS $publication_bucket;
- any {
-  require $publication_bucket CONTAINER $registry;
-  require $publication_bucket INDEX $topic;
- } or {
-  require $publication_bucket RECEIVER $registry;
-  require $publication_bucket ARGUMENT $publication_argument;
-  require $publication_argument VALUE $publication_value;
-  require $publication_value LOADED_FROM $topic;
- } or {
-  require $publication_bucket ASSIGNED_FROM $lookup;
-  require $lookup RECEIVER $registry;
-  require $lookup ARGUMENT $lookup_argument;
-  require $lookup_argument VALUE $lookup_value;
-  require $lookup_value LOADED_FROM $topic;
- }
- require $publication HAS_OPERATION $iteration;
- require $iteration ITERATION_INVOKES_VALUE $invocation;
- require $invocation ARGUMENT $invocation_argument;
- require $invocation_argument VALUE $invocation_value;
- require $invocation_value LOADED_FROM $payload;
- emit unit=$unit, $subscription, $publication, $registry, $topic, $subscriber, $payload, $invocation;
+language "kql/2";
+module ken.catalog.observer.variants.event_bus;
+
+pattern detect(out TypeDecl $unit, out Field $registry, out Field $topic, out Callable $subscription, out Callable $publication, out Parameter $subscriber, out Parameter $payload) {
+  type $unit {
+    field $registry { }
+    field $topic { }
+    method $subscription {
+      constructor: false;
+      param $subscriber { }
+      body {
+        insert $subscriber into $registry[$topic];
+      }
+    }
+    method $publication {
+      constructor: false;
+      param $payload { }
+      body {
+        iterate $registry[$topic] as $handler {
+          body {
+            call $handler { argument $payload at 0; };
+          }
+        }
+      }
+    }
+  }
+  where $subscription != $publication;
+}
+
+query results {
+  use detect(unit: $unit, registry: $registry, topic: $topic, subscription: $subscription, publication: $publication, subscriber: $subscriber, payload: $payload);
+  select $unit, $registry, $topic, $subscription, $publication, $subscriber, $payload;
+}
+'''
+
+[[variants]]
+id = "registered-listeners"
+status = "ready"
+languages = ["python", "java", "typescript"]
+requires = ["collection_api_shape", "iteration_call", "element_write"]
+graph_requirements = ["El sujeto registra suscriptores en una coleccion y luego la recorre invocando a cada elemento; el registro y la notificacion son operaciones distintas del sujeto."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+query_claim = "Un tipo tiene un campo de coleccion; un metodo suyo **escribe elementos** en esa coleccion (registro) y otro metodo distinto **la recorre invocando** a sus elementos (notificacion). Se apoya en los hechos gruesos de escritura de elemento e iteracion-con-llamada del IR, que ya distinguen el contenedor: no exige el nombre del metodo de registro ni una API concreta, y no prueba baja de suscriptores, instantanea de la coleccion ni el payload de la notificacion."
+query = '''
+language "kql/2";
+module ken.catalog.observer.variants.registered_listeners;
+
+pattern detect(out TypeDecl $unit) {
+  type $unit {
+    field $listeners { }
+    method $register { constructor: false; }
+    method $notify { constructor: false; }
+  }
+  where writes_element($register, $listeners);
+  where iterates_calls($notify, $listeners);
+  where $register != $notify;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
+}
+'''
+
+[[operations]]
+id = "event_delivery"
+status = "ready"
+description = "A snapshot registry delivers the publication input to an invocation on its iterated element."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch."
+query = '''
+language "kql/2";
+module ken.catalog.observer.event_delivery;
+import ken.catalog.observer.variants.snapshot_registry;
+
+pattern detect(out TypeDecl $unit, out Field $listeners, out Callable $subscribe, out Callable $notify, out Parameter $listener, out Parameter $event) {
+  type $unit {
+    field $listeners { }
+    either {
+      method $notify {
+        constructor: false;
+        param $event { }
+        body {
+          iterate copy of $listeners as $handler {
+            body { call $handler { argument $event at 0; }; }
+          }
+        }
+      }
+    } or {
+      method $notify {
+        constructor: false;
+        param $event { }
+        body {
+          iterate copy of $listeners as $handler {
+            body { call on $handler { argument $event at 0; }; }
+          }
+        }
+      }
+    }
+    either {
+      method $subscribe {
+        constructor: false;
+        param $listener { }
+        body {
+          insert $listener into $listeners;
+        }
+      }
+    } or {
+      method $registration {
+        callable $subscribe {
+          param $listener { }
+          body {
+            insert $listener into $listeners;
+          }
+        }
+        body {
+          call $local_setup { argument $subscribe at any; };
+        }
+      }
+    }
+  }
+  where $subscribe != $notify;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''

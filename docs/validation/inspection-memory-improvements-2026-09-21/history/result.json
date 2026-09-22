@@ -1,0 +1,152 @@
+{
+  "cases": [
+    {
+      "id": "ken.manifest-permissions",
+      "commit": "e67c7449b0bf8c1510cc2559c3e9e97fd5f9d232",
+      "path": "src/ken/vectors.py",
+      "owner": "_atomic_write",
+      "call": "chmod",
+      "description": "The manifest writer contains an explicit chmod call; guards the omission fixed in e67c744.",
+      "limit": "Does not prove the mode expression, umask behavior, or successful chmod at runtime.",
+      "before_sha256": "7554948656132b0fee4afe83675695571cd6be6a90d6a098bf86a9090ab078a0",
+      "after_sha256": "a88770b6accdadbb1aba12e8970c2c51ce5a619ca8d40a7929aa7131396c5d4a",
+      "validation": {
+        "revision": "229a8a238662f9a3c72c5cc1a611ff21a5733a5fafd66809012f17d6c4f91112",
+        "engine": "53f1c0139a20eafce7b5dfc6d289164f2593d70f16d333db2054862bb1cbd949",
+        "passed": true,
+        "cases": [
+          {
+            "name": "historical-before",
+            "expected": "fail",
+            "actual": "fail",
+            "passed": true,
+            "reason": null
+          },
+          {
+            "name": "historical-after",
+            "expected": "pass",
+            "actual": "pass",
+            "passed": true,
+            "reason": null
+          },
+          {
+            "name": "valid-with-unrelated-operation",
+            "expected": "pass",
+            "actual": "pass",
+            "passed": true,
+            "reason": null
+          },
+          {
+            "name": "unrelated-fix-cannot-mask-bug",
+            "expected": "fail",
+            "actual": "fail",
+            "passed": true,
+            "reason": null
+          }
+        ]
+      },
+      "before": "fail",
+      "after": "pass",
+      "elapsed_seconds": 4.961
+    },
+    {
+      "id": "ken.migration-reclaim",
+      "commit": "1736a1e1df17a887a6f917451f9514b5a83a0183",
+      "path": "src/ken/cli.py",
+      "owner": "_vectors_cli",
+      "call": "reclaim_database",
+      "description": "The vector CLI invokes reclaim_database; guards the missing reclamation fixed in 1736a1e.",
+      "limit": "Does not prove the migrate branch guard, VACUUM execution or physical disk recovery.",
+      "before_sha256": "7fe042d9597e97bdb7ba94b15f83dbe1a84b08d143d6b0caf93430da6245c948",
+      "after_sha256": "8bbb8c7c91ce5d7e7a0979f70db1609ca34b2465c4f3121b2ed65782dcaea49e",
+      "validation": {
+        "revision": "8a30900f8a9fd917a25a18fb272b71759676272adaf7f73c545e3d857e773ced",
+        "engine": "53f1c0139a20eafce7b5dfc6d289164f2593d70f16d333db2054862bb1cbd949",
+        "passed": true,
+        "cases": [
+          {
+            "name": "historical-before",
+            "expected": "fail",
+            "actual": "fail",
+            "passed": true,
+            "reason": null
+          },
+          {
+            "name": "historical-after",
+            "expected": "pass",
+            "actual": "pass",
+            "passed": true,
+            "reason": null
+          },
+          {
+            "name": "valid-with-unrelated-operation",
+            "expected": "pass",
+            "actual": "pass",
+            "passed": true,
+            "reason": null
+          },
+          {
+            "name": "unrelated-fix-cannot-mask-bug",
+            "expected": "fail",
+            "actual": "fail",
+            "passed": true,
+            "reason": null
+          }
+        ]
+      },
+      "before": "fail",
+      "after": "pass",
+      "elapsed_seconds": 8.488
+    },
+    {
+      "id": "ken.nested-gitignore",
+      "commit": "7d8a195a75fd02287fe526a9a2c9517b9806ea20",
+      "path": "src/ken/gitignore_filter.py",
+      "owner": "iter_files",
+      "call": "is_ignored",
+      "description": "File traversal delegates filtering to is_ignored; guards bypass of nested-ignore matching fixed in 7d8a195.",
+      "limit": "Does not prove GitignoreMatcher's internal matching algorithm.",
+      "before_sha256": "92862ce1bfa3712dc01e2d5ff2ca37c4eea818f7f79fd85b4ade9ee36dc913ae",
+      "after_sha256": "8c18c1a5929a99bf44bf1aafeecd2b76998334bf0f7275d61aa56ba16cebd9f2",
+      "validation": {
+        "revision": "4ab62dd86c16ed9488ffd4fb474a368ee89cefd74af4d59cda0400dafa16faf5",
+        "engine": "53f1c0139a20eafce7b5dfc6d289164f2593d70f16d333db2054862bb1cbd949",
+        "passed": true,
+        "cases": [
+          {
+            "name": "historical-before",
+            "expected": "fail",
+            "actual": "fail",
+            "passed": true,
+            "reason": null
+          },
+          {
+            "name": "historical-after",
+            "expected": "pass",
+            "actual": "pass",
+            "passed": true,
+            "reason": null
+          },
+          {
+            "name": "valid-with-unrelated-operation",
+            "expected": "pass",
+            "actual": "pass",
+            "passed": true,
+            "reason": null
+          },
+          {
+            "name": "unrelated-fix-cannot-mask-bug",
+            "expected": "fail",
+            "actual": "fail",
+            "passed": true,
+            "reason": null
+          }
+        ]
+      },
+      "before": "fail",
+      "after": "pass",
+      "elapsed_seconds": 1.775
+    }
+  ],
+  "claim": "Three real historical regressions discriminated by explicit structural guards; not a general bug detector benchmark."
+}

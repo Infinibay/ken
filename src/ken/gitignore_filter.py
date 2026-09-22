@@ -17,7 +17,6 @@ from pathlib import Path
 
 from pathspec import GitIgnoreSpec
 
-
 # Ken-specific extra ignores. Git already ignores these for most users
 # but we shouldn't depend on that — also, `.ken/` itself contains the
 # database we're writing to and must never be indexed.
@@ -27,6 +26,9 @@ ALWAYS_IGNORE = (
     ".hg/",
     ".svn/",
     ".claude/",        # claude code's local workspace state
+    ".agents/skills/", # assistant examples must not compete with project code
+    ".opencode/skills/",
+    ".dsh/skills/",
     "__pycache__/",
     "*.pyc",
     ".venv/",
@@ -53,6 +55,7 @@ def _make_spec(patterns: Iterable[str]) -> GitIgnoreSpec:
 class _ScopedSpec:
     base: Path
     spec: GitIgnoreSpec
+    prefix_length: int
 
 
 class GitignoreMatcher:
@@ -73,11 +76,9 @@ class GitignoreMatcher:
             return True
         ignored: bool | None = None
         for scoped in self._applicable_specs(rel):
-            try:
-                local_rel = rel if scoped.base == Path(".") else rel.relative_to(scoped.base)
-            except ValueError:
-                continue
-            local = local_rel.as_posix() + "/" if is_dir else local_rel.as_posix()
+            # Applicability already guarantees an ancestor directory. Strip its
+            # complete path prefix without re-walking pathlib parents per rule.
+            local = always_path[scoped.prefix_length:]
             result = scoped.spec.check_file(local)
             if result.include is not None:
                 ignored = bool(result.include)
@@ -87,7 +88,10 @@ class GitignoreMatcher:
         specs: list[_ScopedSpec] = []
         parent = rel.parent
         for base in _ancestor_dirs(parent):
-            specs.append(_ScopedSpec(base, self._spec_for(base)))
+            spec = self._spec_for(base)
+            if spec.patterns:
+                prefix_length = 0 if base == Path(".") else len(base.as_posix()) + 1
+                specs.append(_ScopedSpec(base, spec, prefix_length))
         return specs
 
     def _spec_for(self, rel_dir: Path) -> GitIgnoreSpec:
@@ -114,7 +118,7 @@ def _ancestor_dirs(rel_dir: Path) -> Iterator[Path]:
         yield cur
 
 
-def iter_files(project_root: Path) -> Iterator[Path]:
+def iter_files(project_root: Path, *, path: str | Path = ".") -> Iterator[Path]:
     """Yield every file under *project_root* not ignored by gitignore.
 
     Composes nested `.gitignore` files with the static `ALWAYS_IGNORE`
@@ -123,10 +127,21 @@ def iter_files(project_root: Path) -> Iterator[Path]:
     `.venv/` and `node_modules/` on real-world projects (those can
     contain millions of files).
     """
-    root = project_root.resolve()
-    matcher = GitignoreMatcher(root)
+    from ken._paths import resolve_project_path
 
-    stack: list[Path] = [root]
+    root = project_root.resolve()
+    target = resolve_project_path(root, path)
+    matcher = GitignoreMatcher(root)
+    # Keep repository-relative identities and inherited ignore rules while
+    # avoiding all sibling subtrees for a scoped search. An ignored ancestor
+    # must still prune the target, even if a descendant negates the pattern.
+    ancestor = Path()
+    for part in target.relative_to(root).parts:
+        ancestor /= part
+        if matcher.is_ignored(ancestor, is_dir=True):
+            return
+
+    stack: list[Path] = [target]
     while stack:
         cur = stack.pop()
         try:

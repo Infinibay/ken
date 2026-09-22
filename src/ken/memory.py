@@ -6,6 +6,8 @@ import json
 import sqlite3
 import time
 from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
 
 from ken.embedder import cosine_against, get_embedder, stack_embeddings, vec_to_blob
 
@@ -20,6 +22,8 @@ def remember(
     tags: list[str] | None = None,
     kind: str | None = None,
     anchors: dict[str, str] | None = None,
+    justification: dict[str, Any] | None = None,
+    project_root: Path | None = None,
 ) -> dict:
     """Store or update a reusable finding.
 
@@ -33,6 +37,12 @@ def remember(
     content = content.strip()
     if not topic or not content:
         return {"ok": False, "error": "topic and content must be non-empty"}
+    from ken.knowledge import records
+
+    try:
+        prepared = records.prepare(justification, project_root or records.project_root(conn)) if justification is not None else None
+    except (ValueError, OSError) as exc:
+        return {"ok": False, "error": str(exc)}
     clean_tags = [t for t in (tags or []) if isinstance(t, str)]
     if kind is not None:
         kind = kind.strip()
@@ -67,6 +77,7 @@ def remember(
     except Exception:  # pragma: no cover - defensive
         enabled = False
     try:
+        records.ensure_schema(conn)
         conn.execute("BEGIN IMMEDIATE")
         conn.execute(
             """
@@ -82,6 +93,7 @@ def remember(
         )
         # last_insert_rowid() is wrong on the DO UPDATE path — look the id up.
         row = conn.execute("SELECT id FROM cr_findings WHERE topic = ?", (topic,)).fetchone()
+        records.save(conn, int(row["id"]), prepared)
         if enabled:
             apply_remember(conn, int(row["id"]), f"{topic}\n{content}")
         if anchors:
@@ -127,7 +139,9 @@ def recall_by_anchor(
         ensure_finding_graph(conn)
     except Exception:  # pragma: no cover - defensive
         return []
-    return find_by_anchor(conn, anchors, limit=limit)
+    from ken.knowledge.records import enrich
+
+    return enrich(conn, find_by_anchor(conn, anchors, limit=limit))
 
 
 def forget(conn: sqlite3.Connection, topic: str) -> dict:
@@ -191,7 +205,9 @@ def list_findings(
         if wanted is not None and wanted not in tags:
             continue
         out.append(_finding_row_to_dict(r, tags=tags))
-    return out
+    from ken.knowledge.records import enrich
+
+    return enrich(conn, out)
 
 
 def recall(
@@ -225,7 +241,9 @@ def recall(
         )
         if score >= min_score
     ][: max(1, limit)]
-    return [
+    from ken.knowledge.records import enrich
+
+    return enrich(conn, [
         {
             **_finding_row_to_dict(r),
             "score": round(float(score), 3),
@@ -233,7 +251,7 @@ def recall(
             "min_score": min_score,
         }
         for score, r in ranked
-    ]
+    ])
 
 
 def format_recall_hits(hits: list[dict]) -> str:
@@ -246,6 +264,8 @@ def format_recall_hits(hits: list[dict]) -> str:
             meta.append(str(hit["type"]))
         if hit.get("updated_at"):
             meta.append(f"updated {hit['updated_at']}")
+        if hit.get("validity"):
+            meta.append(f"dependencies: {hit['validity']['state']}")
         meta_text = f" ({'; '.join(meta)})" if meta else ""
         lines.append(f"{hit['score']:.3f}  {hit['topic']}{suffix}{meta_text}")
         lines.append(f"       {hit['content']}")

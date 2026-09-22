@@ -1,0 +1,11 @@
+language "kql/2";
+module contracts.transactions;
+query missing_own_rollback {
+  class $type {
+    method $commit { name: "commit"; }
+    not exists {
+      method $rollback { name: "rollback"; }
+    }
+  }
+  select $type;
+}

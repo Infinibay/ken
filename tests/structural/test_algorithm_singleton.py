@@ -62,7 +62,7 @@ def usages(text: str, language: str):
 
 
 @pytest.mark.parametrize('language,correct_usage', [
-    pytest.param('python', True, marks=pytest.mark.xfail(strict=True, reason='Python classmethod call target resolution is not modeled by direct-class-static')),
+    ('python', True),
     ('java', True), ('typescript', True),
     ('python', False), ('java', False), ('typescript', False),
 ])
@@ -93,6 +93,5 @@ def with_local_work(language: str, position: str) -> str:
 
 @pytest.mark.parametrize('language', LANGUAGES)
 @pytest.mark.parametrize('position', ['before-guard', 'before-return'])
-@pytest.mark.xfail(strict=True, reason='Lazy query requires immediate CFG entry/return adjacency even across pure independent arithmetic; algorithms/singleton.md')
 def test_desired_lazy_algorithm_tolerates_pure_local_arithmetic(language, position):
     assert evaluate(with_local_work(language, position), language, 'singleton')

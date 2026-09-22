@@ -157,4 +157,9 @@ def test_variant_is_ready_for_its_single_declared_language():
     assert row['languages'] == ['csharp']
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'DECLARES_EVENT' in row['query'] and 'RAISES_EVENT' in row['query']
+    # The migrated variant states the same requirement in KQL 2: it asks for the
+    # declaration and the raise as named predicates, and never falls back to the
+    # legacy edge clauses the frozen catalogue was written with.
+    assert 'declares_event($unit, $event)' in row['query']
+    assert 'raises($raise, $event)' in row['query']
+    assert not any(clause in row['query'] for clause in ('edge ', 'walk ', 'tally '))

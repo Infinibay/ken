@@ -1,0 +1,69 @@
+{
+  "language": "kql/2",
+  "capability": "syntax-exploration/1",
+  "query": "except_without_raise",
+  "columns": [
+    "column_1",
+    "column_2"
+  ],
+  "coverage_complete": true,
+  "rows": [
+    [
+      "sample.py",
+      4
+    ]
+  ],
+  "complete": true,
+  "reason": null,
+  "unknown_candidates": 0,
+  "results_truncated": false,
+  "plan": [
+    [
+      {
+        "operator": "explore",
+        "role": "handler",
+        "selector": "node",
+        "owner": null,
+        "seed": {
+          "kind": "catch"
+        }
+      },
+      {
+        "operator": "calculate",
+        "role": ""
+      }
+    ]
+  ],
+  "optional_evidence": [],
+  "analysis": {
+    "backend": "flatbuffers_exploration",
+    "semantic_resolution": "not_requested",
+    "manifest": [
+      [
+        "sample.py",
+        "11a844b20233e434bc12ee8c34f2a4ec690d6db9ec30356dd3562fbad6fe0ebe"
+      ]
+    ],
+    "skipped": [],
+    "parsed_units": 1,
+    "reused_units": 0,
+    "result_cache": "disabled",
+    "ephemeral": false,
+    "retention_budget_bytes": 500000000,
+    "evicted_units": 0,
+    "allocated_bytes": 32768,
+    "compile_ms": 1.047499943524599,
+    "build_ms": 34.105250146239996,
+    "phase_ms": {
+      "read_ms": 0.028791138902306557,
+      "parse_ms": 24.806292029097676,
+      "projection_ms": 0.4816250875592232,
+      "persist_ms": 1.4047089498490095
+    },
+    "states": 20,
+    "scanned_nodes": 3,
+    "query_ms": 0.9412080980837345,
+    "total_ms": 218.4419168625027,
+    "timeout_ms": 10000
+  }
+}

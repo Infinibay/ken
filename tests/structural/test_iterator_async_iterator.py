@@ -10,10 +10,9 @@ await`` and ``await foreach`` already produced ``LOOP``, ``ITERATION_SOURCE`` an
 produces. The async-ness lived only in the unnamed token list, which no query can
 see, so it is now recorded on the loop itself as ``async``.
 
-The producer half was already expressible: an async callable that yields. The
-contract additionally requires it to ``await`` while advancing, which is the
-concrete reading of "producción/avance ... se rigen por protocolo async" and the
-reason ``await`` cannot be silently reinterpreted as blocking work.
+The producer is an async callable that yields. Its body need not await: the
+async generator protocol governs advancing even when a yielded value is ready
+immediately. Await is an optional implementation detail, not a requirement.
 """
 import pytest
 
@@ -159,13 +158,9 @@ def test_an_async_callable_that_never_yields_is_rejected():
     assert not detect('python', PY_NOT_A_GENERATOR)
 
 
-def test_a_declared_async_iterator_that_never_awaits_is_rejected():
-    """Both sides can carry the ``async`` keyword and still drive nothing.
-
-    Requiring an ``await`` in the producer is what separates a declared async
-    generator from one whose advance is actually governed by the protocol.
-    """
-    assert not detect('python', PY_NEVER_AWAITS)
+def test_an_async_generator_without_await_uses_the_async_protocol():
+    """Immediately available values are still produced by an async generator."""
+    assert detect('python', PY_NEVER_AWAITS)
 
 
 def test_an_async_loop_over_a_synchronous_source_is_rejected():
@@ -177,7 +172,8 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'async: true' in row['query'] and 'ITERATION_SOURCE' in row['query']
+    assert 'async: true' in row['query'] and 'iterate $source' in row['query']
+    assert 'edge ' not in row['query'] and 'walk ' not in row['query']
 
 
 @pytest.mark.parametrize('language', LANGUAGES)

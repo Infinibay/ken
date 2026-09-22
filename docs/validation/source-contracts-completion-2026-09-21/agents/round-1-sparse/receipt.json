@@ -1,0 +1,151 @@
+{
+  "version": 1,
+  "run_id": "c72559650bc84428881c7eaa1fa89d71",
+  "created_at": "2026-09-21T21:19:13.117018+00:00",
+  "scope": "project",
+  "selection": ".",
+  "status": "pass",
+  "checks": [
+    {
+      "rule": "vectors.manifest-chmod",
+      "description": "Manifest writer contains an explicit chmod call",
+      "revision": "84024551bf3d05772e7269ee539d5c9a4ad59109695d3fcb8f932f8e688cc029",
+      "path": "src/ken/vectors.py",
+      "query": "language \"kql/2\"; module demo; query q { callable $f { name:\"_atomic_write\"; call $c { name:\"chmod\"; } } select $f,$c; }",
+      "libraries": {},
+      "expectation": "some_match",
+      "status": "pass",
+      "engine": "f637632f137acdf864bbf38c2aa39022a894e3c8503d47aed60f94ccb849b1a9",
+      "result": {
+        "language": "kql/2",
+        "capability": "structural-source/1",
+        "query": "q",
+        "columns": [
+          "column_1",
+          "column_2"
+        ],
+        "rows": [
+          [
+            {
+              "id": 74,
+              "unit": 1,
+              "local_id": "src/ken/vectors.py::module/CALLABLE:_atomic_write@7101",
+              "kind": "CALLABLE",
+              "name": "_atomic_write",
+              "owner": "src/ken/vectors.py::module",
+              "line": 182,
+              "end_line": 209,
+              "path": "src/ken/vectors.py",
+              "language": "python"
+            },
+            {
+              "id": 207,
+              "unit": 1,
+              "local_id": "src/ken/vectors.py::module/CALLABLE:_atomic_write@7101/CALL:8215@8215:8255",
+              "kind": "CALL",
+              "name": "chmod",
+              "owner": "src/ken/vectors.py::module/CALLABLE:_atomic_write@7101",
+              "line": 203,
+              "end_line": 203,
+              "path": "src/ken/vectors.py",
+              "language": "python"
+            }
+          ]
+        ],
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "reason": null,
+        "results_truncated": false,
+        "plan": [
+          {
+            "operator": "scan",
+            "role": "f",
+            "selector": "callable",
+            "owner": null,
+            "access": "name_lookup"
+          },
+          {
+            "operator": "scan",
+            "role": "c",
+            "selector": "call",
+            "owner": "f",
+            "access": "name_lookup"
+          }
+        ],
+        "optional_evidence": [],
+        "analysis": {
+          "snapshot": 1,
+          "manifest": [
+            [
+              "src/ken/vectors.py",
+              "a88770b6accdadbb1aba12e8970c2c51ce5a619ca8d40a7929aa7131396c5d4a"
+            ]
+          ],
+          "frontend": "05885d479947ed3da189c2c10ae0d1841144c78dad363b18c34ac827a3ca4358",
+          "freshness": "captured_snapshot",
+          "skipped": [],
+          "parsed_units": 1,
+          "reused_units": 0,
+          "cache_mb": 100.0,
+          "disk_budget_mb": 80.0,
+          "compilation_cache": {
+            "retained_bytes": 3001,
+            "capacity_bytes": 20000000,
+            "entries": 1,
+            "hits": 0,
+            "misses": 1,
+            "shared": 0,
+            "evictions": 0,
+            "in_flight": 0,
+            "status": "miss"
+          },
+          "result_cache": "miss",
+          "ephemeral": false,
+          "allocated_bytes": 9351168,
+          "gc": {
+            "deferred": false,
+            "snapshots": 0,
+            "units": 0
+          },
+          "quota_reclamation": {
+            "before_bytes": 425984,
+            "after_bytes": 425984,
+            "deferred": false,
+            "snapshots": 0,
+            "units": 0
+          },
+          "scanned_nodes": 2,
+          "states": 8,
+          "compile_ms": 5.4262911435216665,
+          "build_ms": 531.8424578290433,
+          "query_ms": 0.41033397428691387,
+          "result_lookup_ms": 0.020083971321582794,
+          "total_ms": 558.9750411454588
+        },
+        "check_snapshot": {
+          "scope": "src/ken/vectors.py",
+          "sha256": "c6d0b1260af29f73c6f29ffb45d4815101fd62d1af928543399ff290788dc432",
+          "manifest": [
+            [
+              "src/ken/vectors.py",
+              "a88770b6accdadbb1aba12e8970c2c51ce5a619ca8d40a7929aa7131396c5d4a"
+            ]
+          ]
+        },
+        "check_dependencies": {
+          "manifest": [],
+          "imports": [
+            [
+              "src/ken/vectors.py",
+              []
+            ]
+          ],
+          "issues": []
+        },
+        "check_engine": "f637632f137acdf864bbf38c2aa39022a894e3c8503d47aed60f94ccb849b1a9"
+      }
+    }
+  ],
+  "selection_evidence": {}
+}

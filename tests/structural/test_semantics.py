@@ -59,6 +59,29 @@ def test_python_relative_imports_resolve_package_siblings():
     assert facts(g, "ALLOCATES_TYPE")
 
 
+def test_rust_module_paths_resolve_across_files():
+    g = link_project([lower_source('pub struct Product { pub value: i32 }', "rust", "src/model.rs"),
+                      lower_source('mod model;\nuse model::Product;\n\n'
+                                   'pub fn build() -> Product { Product { value: 1 } }', "rust", "src/main.rs")])
+    assert facts(g, "ALLOCATES_TYPE")
+    assert g.entities[facts(g, "ALLOCATES_TYPE")[0].object].path == "src/model.rs"
+
+
+def test_rust_crate_relative_use_resolves_from_the_crate_root():
+    # ``crate::`` is rooted at the crate, not at the importing file, so
+    # ``app/cart.rs`` reaches ``app/model.rs`` through the package. Without the
+    # ``use`` the field type stays unresolved.
+    g = link_project([lower_source('pub struct Product { pub value: i32 }', "rust", "app/model.rs"),
+                      lower_source('use crate::model::Product;\n\n'
+                                   'pub struct Cart { pub item: Product }', "rust", "app/cart.rs")])
+    resolved = facts(g, "TYPE")
+    assert resolved
+    assert g.entities[resolved[0].object].path == "app/model.rs"
+    unlinked = link_project([lower_source('pub struct Product { pub value: i32 }', "rust", "app/model.rs"),
+                             lower_source('pub struct Cart { pub item: Product }', "rust", "app/cart.rs")])
+    assert not facts(unlinked, "TYPE")
+
+
 @pytest.mark.parametrize("language,extension", [("javascript", ".js"), ("typescript", ".ts")])
 def test_js_ts_named_import_aliases(language, extension):
     g = link_project([lower_source('export class Product {}', language, "models"+extension),

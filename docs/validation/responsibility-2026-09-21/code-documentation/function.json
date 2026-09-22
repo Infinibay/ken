@@ -1,0 +1,179 @@
+{
+  "ok": true,
+  "question": "Who resolves paths and requires them to remain inside the project?",
+  "hypotheses": [],
+  "status": "candidates",
+  "candidates": [
+    {
+      "symbol": "resolve_project_path",
+      "path": "src/ken/_paths.py",
+      "line": 51,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.75,
+        "band": "strong",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who resolves paths and requires them to remain inside the project?",
+      "documentation": "Resolve *path* and require it to remain inside *project_root*.\n\nRelative paths are interpreted from the project root. Absolute paths are\naccepted when they point inside it. Resolving both sides before the\ncontainment check also rejects ``..`` traversal and escapes through\nexisting symbolic links.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.7285714285714285,
+          "explanation": "Documentation similarity 0.625; term coverage 0.857 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.42857142857142855,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "e6af40a5215554d99b9614b89d93732193e8faa027bdf5b40b5cea72de116af1",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "documentation_kind": "function_docstring",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/_paths.py",
+        "include": [
+          "source"
+        ],
+        "qualname": "resolve_project_path"
+      }
+    },
+    {
+      "symbol": "src/ken/_paths.py",
+      "path": "src/ken/_paths.py",
+      "line": 1,
+      "kind": "module",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.5,
+        "band": "moderate",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who resolves paths and requires them to remain inside the project?",
+      "documentation": "Project-root discovery + canonical paths inside `.ken/`.\n\nA \"ken project\" is any directory that contains a `.ken/meta.json`. We\nfollow git's pattern: walk up from the caller's cwd until we find one,\notherwise return None.\n\nThe hook commands (`ken hook session-start`, etc.) call\n`find_project_root()` first thing so they know which DB to write to.\nThe CLI's `install` / `serve` / `status` accept an explicit path\nargument that takes precedence.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.4925037622451782,
+          "explanation": "Documentation similarity 0.493; term coverage 0.429 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.14285714285714285,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "e6af40a5215554d99b9614b89d93732193e8faa027bdf5b40b5cea72de116af1",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "documentation_kind": "module_docstring",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/_paths.py",
+        "include": [
+          "source"
+        ],
+        "start_line": 1,
+        "end_line": 11
+      }
+    },
+    {
+      "symbol": "src/ken/gitignore_filter.py",
+      "path": "src/ken/gitignore_filter.py",
+      "line": 1,
+      "kind": "module",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.495,
+        "band": "weak",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who resolves paths and requires them to remain inside the project?",
+      "documentation": "Walk a project tree honouring `.gitignore` (+ `.ken`, `.git`, etc.).\n\n`pathspec` parses gitignore-format patterns. We accumulate every\n`.gitignore` we encounter and apply them to descendants in scope —\nmatches git's compositional behaviour without shelling out to git\n(which would also work but adds a fork per project).\n\nReturned paths are *relative* to the supplied project root, with\nforward slashes, mirroring how the DB stores `ci_files.path`.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.49463993310928345,
+          "explanation": "Documentation similarity 0.495; term coverage 0.429 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "a58286cd9b4eb0eaef2e42e3dc521fe5ed7ddfe16d517fde6530f002b34480b9",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "documentation_kind": "module_docstring",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/gitignore_filter.py",
+        "include": [
+          "source"
+        ],
+        "start_line": 1,
+        "end_line": 10
+      }
+    }
+  ],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 2210,
+    "inspected_symbols": 40,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "sources": [
+      "module_docstrings",
+      "class_docstrings",
+      "method_docstrings",
+      "function_docstrings"
+    ],
+    "findings_used": false,
+    "issues": [],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

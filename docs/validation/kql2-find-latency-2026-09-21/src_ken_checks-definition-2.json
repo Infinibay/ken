@@ -1,0 +1,132 @@
+{
+  "language": "kql/2",
+  "capability": "structural-source/1",
+  "query": "q",
+  "columns": [
+    "column_1"
+  ],
+  "rows": [
+    [
+      {
+        "id": 889,
+        "unit": 6,
+        "local_id": "src/ken/checks/report.py::module/CALLABLE:query_view@797",
+        "kind": "CALLABLE",
+        "name": "query_view",
+        "owner": "src/ken/checks/report.py::module",
+        "line": 30,
+        "end_line": 52,
+        "path": "src/ken/checks/report.py",
+        "language": "python"
+      }
+    ]
+  ],
+  "complete": true,
+  "coverage_complete": true,
+  "unknown_candidates": 0,
+  "reason": null,
+  "results_truncated": false,
+  "plan": [
+    {
+      "operator": "scan",
+      "role": "f",
+      "selector": "callable",
+      "owner": null,
+      "access": "name_lookup"
+    }
+  ],
+  "optional_evidence": [],
+  "analysis": {
+    "snapshot": 1,
+    "manifest": [
+      [
+        "src/ken/checks/__init__.py",
+        "a81c0a39b168cb3580f1b1d9d42e494c81e5310a7d02a8edf3422d226a532937"
+      ],
+      [
+        "src/ken/checks/automation.py",
+        "3286f16128bb9ca45a67736473a85c17bd19782e9e4ebaed35754bb2376140db"
+      ],
+      [
+        "src/ken/checks/execution.py",
+        "cdbcc4b7b5ad475bef4b85c05af0e30734899de16cbc744dce2e581ad243251c"
+      ],
+      [
+        "src/ken/checks/integration.py",
+        "d3f225596cec5abb53057df1aaec5132dd64548bce291015439d064b49da2f66"
+      ],
+      [
+        "src/ken/checks/model.py",
+        "8ed04f0880ecbc73321078e5ea3401daba1f4d31122db11308839c31edadc33e"
+      ],
+      [
+        "src/ken/checks/report.py",
+        "8cf4024b04910f2a218856b4ece69eaf099d31b64a2ae36c43e73cad96b01b93"
+      ],
+      [
+        "src/ken/checks/rules.py",
+        "3f3856496b782bf1e6ab8d1fab11993dfdd230efb0ad1b2e159cb165e47b96be"
+      ],
+      [
+        "src/ken/checks/selection.py",
+        "c1ed5155fa1a1c7c08c2014333290ed9d151d136e95b067f576f5350894c8d4c"
+      ],
+      [
+        "src/ken/checks/service.py",
+        "2174f238baa928e1c9587796964dca982286721d7d9d991f93905cd81286ded9"
+      ],
+      [
+        "src/ken/checks/snapshot.py",
+        "6f43838d0c163eafed0766794bdc79a5b15065db2b1e8fd53a7c366c7336bbc5"
+      ],
+      [
+        "src/ken/checks/store.py",
+        "796590be6eb7c957cf5aca2a21d884c51e8a318451444c3319cdd50fbf1d57b7"
+      ],
+      [
+        "src/ken/checks/worker.py",
+        "3d8dc7216de0d10aeb9d58bcd2ad53976cb8dc1363c6dbbaa66fc78eba75db02"
+      ]
+    ],
+    "frontend": "be45be646549c24d8249c68e740a3bd0370ce925af4b9ce7bb6f14928b1596dd",
+    "freshness": "captured_snapshot",
+    "skipped": [],
+    "parsed_units": 0,
+    "reused_units": 12,
+    "cache_mb": 500.0,
+    "disk_budget_mb": 400.0,
+    "compilation_cache": {
+      "retained_bytes": 3465,
+      "capacity_bytes": 100000000,
+      "entries": 1,
+      "hits": 0,
+      "misses": 1,
+      "shared": 0,
+      "evictions": 0,
+      "in_flight": 0,
+      "status": "disk_hit"
+    },
+    "result_cache": "disk_hit",
+    "ephemeral": false,
+    "allocated_bytes": 20500480,
+    "gc": {
+      "deferred": false,
+      "snapshots": 0,
+      "units": 0
+    },
+    "quota_reclamation": {
+      "before_bytes": 20500480,
+      "after_bytes": 20500480,
+      "deferred": false,
+      "snapshots": 0,
+      "units": 0
+    },
+    "scanned_nodes": 0,
+    "states": 0,
+    "compile_ms": 25.25016595609486,
+    "build_ms": 48.09733293950558,
+    "query_ms": null,
+    "result_lookup_ms": 0.07062498480081558,
+    "total_ms": 108.57874993234873
+  }
+}

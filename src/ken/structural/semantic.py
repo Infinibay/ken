@@ -39,12 +39,17 @@ def rust_denoted_type(spelling: str) -> str:
     return re.sub(r"^(?:dyn|impl)\s+", "", pointer[1].strip())
 
 
-def link_project(units: list[IR]) -> IR:
+def link_project(units: list[IR], *, copy_entities: bool = True) -> IR:
+    """Link units, isolating their mutable entity metadata by default.
+
+    A caller that owns disposable units may transfer their entities with
+    ``copy_entities=False``. Those units must not be reused after linking.
+    """
     graph = IR("<project>", "mixed")
     graph.capabilities = set.intersection(*(u.capabilities for u in units)) if units else set()
     for unit in units:
         from copy import deepcopy
-        graph.entities.update(deepcopy(unit.entities))
+        graph.entities.update(deepcopy(unit.entities) if copy_entities else unit.entities)
         graph.operations.extend(unit.operations)
         graph.facts.extend(unit.facts)
         graph.diagnostics.extend(unit.diagnostics)
@@ -59,6 +64,13 @@ def link_project(units: list[IR]) -> IR:
             class_names[(e.path, e.name)].append(e.id)
     paths = {u.path for u in units}
     imports: dict[tuple[str, str], tuple[str, str]] = {}
+    module_imports: dict[tuple[str, str], set[str]] = defaultdict(set)
+    ambiguous_imports: set[tuple[str, str]] = set()
+    import_origins: dict[tuple[str, str], set[tuple[str, ...]]] = defaultdict(set)
+    import_options: dict[tuple[str, str], set[tuple[str, str]]] = defaultdict(set)
+    module_declarations = {(e.path, e.name) for e in entities.values()
+                           if e.id.rsplit('/', 1)[0] == e.path + '::module'
+                           and e.kind in {'CALLABLE', 'CLASS', 'STORAGE'}}
     exported: dict[tuple[str, str], str] = {}
     java_packages = {u.path: u.entities[u.path + "::module"].attrs.get("package", "")
                      for u in units if u.language == "java"}
@@ -86,21 +98,50 @@ def link_project(units: list[IR]) -> IR:
                     exported[(path, names[-1])] = names[0]
 
 
+    rust_common_path: str | None = None
+
+    def rust_module_path(origin: str, module: str) -> str | None:
+        """Resolve a Rust module path (``crate::log``, ``model``, ``self::x``) to a file."""
+        nonlocal rust_common_path
+        segments = [s for s in module.split("::") if s and s != "self"]
+        if not segments:
+            return None
+        directory = str(PurePosixPath(origin).parent)
+        base = directory
+        if segments[0] == "crate":
+            segments = segments[1:]
+            if not segments:
+                return None
+            # The manifest is fixed for this link pass. Re-sorting and splitting
+            # every project path for every imported symbol is quadratic on large
+            # Rust repositories (including grouped imports).
+            if rust_common_path is None:
+                rust_common_path = posixpath.commonpath(sorted(paths)) if paths else directory
+            common = rust_common_path
+            base = common if common not in paths else str(PurePosixPath(common).parent)
+        elif segments[0] == "super":
+            base = posixpath.dirname(directory)
+            segments = segments[1:]
+        candidates = []
+        for root in (base, directory) if base != directory else (base,):
+            stem = posixpath.join(root, *segments) if segments else root
+            candidates.extend([stem + ".rs", posixpath.join(stem, "mod.rs")])
+        existing = list(dict.fromkeys(p for p in candidates if p in paths))
+        return existing[0] if len(existing) == 1 else None
+
     def module_path(origin: str, module: str, language: str) -> str | None:
         if language == "python":
-            dots = len(module) - len(module.lstrip("."))
-            base = str(PurePosixPath(origin).parent) if dots else ""
-            for _ in range(max(0, dots - 1)):
-                base = posixpath.dirname(base)
-            candidate = posixpath.normpath(posixpath.join(base, module[dots:].replace(".", "/")))
-            candidates = [candidate + ".py", candidate + "/__init__.py"]
+            from .python_imports import targets
+            candidates = targets(origin, module, paths)
         else:
             if not module.startswith("."):
                 return None  # Package aliases need a project-specific resolver.
             candidate = posixpath.normpath(posixpath.join(str(PurePosixPath(origin).parent), module))
             candidates = [candidate, *(candidate + ext for ext in (".ts", ".tsx", ".js", ".jsx")),
                           candidate + "/index.ts", candidate + "/index.js"]
-        existing = [p for p in candidates if p in paths]
+        # The same file can appear at two precedences (``models.py`` is both the
+        # sibling and the root candidate); dedupe before judging ambiguity.
+        existing = list(dict.fromkeys(p for p in candidates if p in paths))
         return existing[0] if len(existing) == 1 else None
 
     for fact in by_relation["IMPORT_SYNTAX"]:
@@ -112,14 +153,63 @@ def link_project(units: list[IR]) -> IR:
             if match:
                 java_imports[(origin, match[1].rsplit(".", 1)[-1])].add(match[1])
         elif language == "python":
+            if spelling.startswith("import "):
+                for item in spelling.removeprefix("import ").split(","):
+                    names = re.split(r"\s+as\s+", item.strip())
+                    target = module_path(origin, names[0], language)
+                    local = names[-1] if len(names) == 2 else names[0].split('.')[0]
+                    import_origins[(origin, local)].add(('module', target or '?' + names[0]))
+                    # Dotted unaliased imports bind the leading package, not
+                    # its leaf module. Leave that receiver chain unresolved.
+                    if target and (len(names) == 2 or "." not in names[0]):
+                        module_imports[(origin, names[-1])].add(target)
             match = re.fullmatch(r"from\s+([\w.]+)\s+import\s+(.+)", spelling, re.S)
             if match:
                 target = module_path(origin, match[1], language)
+                for item in match[2].strip("() \n").split(","):
+                    names = re.split(r"\s+as\s+", item.strip())
+                    separator = "" if match[1].endswith(".") else "."
+                    child = module_path(origin, match[1] + separator + names[0], language)
+                    if child and (target, names[0]) not in module_declarations:
+                        module_imports[(origin, names[-1])].add(child)
+                        import_origins[(origin, names[-1])].add(('module', child))
+                    elif names[0] and names[0] != '*':
+                        import_origins[(origin, names[-1])].add(
+                            ('member', target or '?' + match[1], names[0]))
                 if target:
                     for item in match[2].strip("() \n").split(","):
                         names = re.split(r"\s+as\s+", item.strip())
                         if names[0] and names[0] != "*":
-                            imports[(origin, names[-1])] = (target, names[0])
+                            key, value = (origin, names[-1]), (target, names[0])
+                            import_options[key].add(value)
+                            if key in imports and imports[key] != value:
+                                ambiguous_imports.add(key)
+                                imports.pop(key)
+                            elif key not in ambiguous_imports:
+                                imports[key] = value
+        elif language == "rust":
+            # ``use crate::log::{self, Level, Log};`` / ``use model::Product;``
+            spelling = spelling.strip()
+            if not spelling.startswith("use ") or not spelling.endswith(";"):
+                continue
+            body = spelling[4:-1].strip()
+            prefix, _, tail = body.rpartition("::")
+            if tail.startswith("{"):
+                items = [item.strip() for item in tail.strip("{}").split(",")]
+            else:
+                items = [tail]
+                prefix, _, _ = body.rpartition("::")
+            for item in items:
+                if not item:
+                    continue
+                names = re.split(r"\s+as\s+", item)
+                original, local = names[0], names[-1]
+                if original == "self":
+                    original = local = prefix.rsplit("::", 1)[-1]
+                module = prefix if original != prefix.rsplit("::", 1)[-1] or item == "self" else prefix
+                target = rust_module_path(origin, module or prefix)
+                if target:
+                    imports[(origin, local)] = (target, original)
         elif language in {"javascript", "typescript"}:
             match = re.search(r"import\s*\{([^}]+)\}\s*from\s*['\"]([^'\"]+)['\"]", spelling)
             if match:
@@ -130,6 +220,12 @@ def link_project(units: list[IR]) -> IR:
                         original = exported.get((target, names[0]))
                         if original:
                             imports[(origin, names[-1])] = (target, original)
+
+    # A missing alternative still competes with an acquired import. Selective
+    # acquisition must not turn `try local / except external` into certainty.
+    ambiguous_imports.update(key for key, origins in import_origins.items() if len(origins) > 1)
+    for key in ambiguous_imports:
+        imports.pop(key, None)
 
     bindings_by_scope: dict[tuple[str, str], list[Entity]] = defaultdict(list)
     for e in entities.values():
@@ -206,7 +302,14 @@ def link_project(units: list[IR]) -> IR:
             if bound.kind in {'CLASS', 'INTERFACE'}:
                 graph.add(f.subject, 'SUBTYPE_OF', base_binding, *f.evidence[:1])
                 continue
-        target = resolve(f.object, f.subject)
+        base_name = f.object
+        # Nominal generic bases denote the declaration at their head. Keep this
+        # language-gated: Python's Base[T] can be an arbitrary runtime operation.
+        if entities[f.subject].attrs.get('language') in {'java', 'csharp', 'cpp', 'typescript'}:
+            generic = re.fullmatch(r'([\w.$:]+)\s*<.+>', base_name.strip())
+            if generic:
+                base_name = generic[1]
+        target = resolve(base_name, f.subject)
         if target:
             graph.add(f.subject, "SUBTYPE_OF", target, *f.evidence[:1])
     nominal_heads = {f.subject: f.object for f in by_relation['TYPE_HEAD']}
@@ -226,6 +329,10 @@ def link_project(units: list[IR]) -> IR:
         # wrapper (``Box``) and the payload is the declaration, so the unwrapped
         # spelling has to win over the head.
         head = spelling if unwrapped else nominal_heads.get(f.subject, spelling)
+        if declared_entity is not None and declared_entity.attrs.get('language') == 'go':
+            generic = re.fullmatch(r'([\w.]+)\s*\[.+\]', head.strip())
+            if generic:
+                head = generic[1]
         target = None if f.subject in opaque_heads else resolve(head, f.subject)
         if target:
             known[f.subject].add(target)
@@ -234,10 +341,25 @@ def link_project(units: list[IR]) -> IR:
         element = re.search(r"(?:list|List|Sequence|Collection|Iterable|Array|Vec|vector|IEnumerable|IList|Set)[<\[]\s*([\w]+)", f.object)
         if entities.get(f.subject) is not None and entities[f.subject].attrs.get('language') == 'go':
             element = re.fullmatch(r"\[\]\s*\*?\s*([A-Za-z_]\w*)", f.object.strip())
+        if entities.get(f.subject) is not None and entities[f.subject].attrs.get('language') in {'typescript', 'java', 'csharp'}:
+            # Exactly one array dimension; T[][] contains arrays, not T values.
+            element = element or re.fullmatch(r'\s*([A-Za-z_$][\w.$]*)\s*\[\]\s*', f.object)
         if element:
             target = resolve(element[1], f.subject)
             if target:
                 graph.add(f.subject, "ELEMENT_TYPE", target, *f.evidence[:1])
+        # A keyed collection has two component types and a walk hands over one or the
+        # other: ``for k := range m`` yields the key type, ``for v := range m`` the value
+        # type. Publishing both keeps that distinction visible to a query.
+        language = entities[f.subject].attrs.get('language') if f.subject in entities else None
+        keyed = (re.fullmatch(r"map\s*\[\s*([\w.*]+?)\s*\]\s*([\w.*]+)", f.object.strip()) if language == 'go'
+                 else re.fullmatch(r"(?:Map|Dictionary|HashMap|map|dict)\s*<\s*([\w.$]+)\s*,\s*([\w.$]+)\s*>",
+                                   f.object.strip()))
+        if keyed:
+            for relation, spelling in (("KEY_TYPE", keyed[1]), ("VALUE_TYPE", keyed[2])):
+                target = resolve(spelling.strip(" *&"), f.subject)
+                if target:
+                    graph.add(f.subject, relation, target, *f.evidence[:1])
     owners = {f.subject: f.object for f in by_relation["IN_TYPE"]}
     methods: dict[tuple[str, str], list[str]] = defaultdict(list)
     for f in by_relation["HAS_METHOD"]:
@@ -335,8 +457,14 @@ def link_project(units: list[IR]) -> IR:
             continue
         scope = call_owner[call]
         candidates: list[str] = []
+        possible_import = False
         while scope:
-            if any(e.kind in {"STORAGE", "PARAMETER"} for e in bindings_by_scope.get((scope, name), [])):
+            if any(e.kind == "PARAMETER" or e.kind == "STORAGE" and (
+                    e.attrs.get('language') != 'python' or e.attrs.get('declared'))
+                   for e in bindings_by_scope.get((scope, name), [])):
+                # Python lowering can materialize a read-only name reference
+                # inside a dict/list expression. It is not a local declaration
+                # shadowing an explicit import.
                 break
             candidates = lexical_callables.get((scope, name), [])
             if candidates:
@@ -346,14 +474,110 @@ def link_project(units: list[IR]) -> IR:
             imported = imports.get((entities[call].path, name))
             if imported:
                 candidates = lexical_callables.get((imported[0] + "::module", imported[1]), [])
+            elif (entities[call].path, name) in ambiguous_imports:
+                possible_import = True
+                candidates = sorted({candidate
+                                     for file, symbol in import_options[(entities[call].path, name)]
+                                     for candidate in lexical_callables.get((file + '::module', symbol), [])})
+        # A bare member invocation in Java/C#/C++ uses the current instance.
+        # Only synthesize this receiver after lexical lookup resolved members:
+        # free functions, local callable parameters and static methods have no
+        # instance receiver merely because their call appears inside a class.
+        caller = entities.get(call_owner[call])
+        instance_type = owners.get(call_owner[call])
+        if (candidates and caller is not None and instance_type is not None
+                and caller.attrs.get('language') in {'java', 'csharp', 'cpp'}
+                and not caller.attrs.get('static')
+                and all(owners.get(target) in {instance_type, *ancestors(instance_type)}
+                        and not entities[target].attrs.get('static')
+                        for target in candidates)):
+            receiver = instance_type + '/THIS'
+            evidence = f"{entities[call].path}:{entities[call].line}"
+            graph.add(instance_type, 'INSTANCE_RECEIVER', receiver, evidence,
+                      basis='resolved-implicit-instance-member')
+            graph.add(call, 'RECEIVER', receiver, evidence,
+                      basis='resolved-implicit-instance-member')
         for target in candidates:
             ev = f"{entities[call].path}:{entities[call].line}"
-            graph.add(call, "TARGET" if len(candidates) == 1 else "MAY_TARGET", target, ev)
-            graph.add(call_owner[call], "CALLS" if len(candidates) == 1 else "MAY_CALLS", target, ev)
+            graph.add(call, "TARGET" if len(candidates) == 1 and not possible_import else "MAY_TARGET", target, ev)
+            graph.add(call_owner[call], "CALLS" if len(candidates) == 1 and not possible_import else "MAY_CALLS", target, ev,
+                      execution=entities[call].attrs.get('execution', 'unknown'))
+    # Audited Java functional slots. These declarations model only the declared
+    # invocation contract, not implementation bodies, purity or runtime targets.
+    # https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/IntSupplier.html
+    # https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/IntUnaryOperator.html
+    functional_slots = {
+        'java.util.function.IntSupplier': ('getAsInt', 0),
+        'java.util.function.IntUnaryOperator': ('applyAsInt', 1),
+    }
+    type_spellings = {f.subject: f.object for f in by_relation['TYPE_NAME']}
+    explicit_arguments: dict[str, list[Fact]] = defaultdict(list)
+    for fact in by_relation['ARGUMENT']:
+        explicit_arguments[fact.subject].append(fact)
+
+    def external_functional_slot(receiver: str, call: str) -> str | None:
+        binding = entities.get(receiver)
+        if binding is None or binding.attrs.get('language') != 'java':
+            return None
+        spelling = type_spellings.get(receiver, '').strip()
+        if not spelling or resolve(spelling, receiver) is not None:
+            return None  # Source declarations and homonyms take precedence.
+        scope = receiver
+        while scope:
+            container = entities.get(scope)
+            if container is not None and spelling in container.attrs.get('type_parameters', []):
+                return None
+            scope = lexical_owners.get(scope, scope.rsplit('/', 1)[0] if '/' in scope else '')
+        imports_for_name = java_imports.get((binding.path, spelling), set())
+        qualified = spelling if spelling in functional_slots else (
+            next(iter(imports_for_name)) if len(imports_for_name) == 1 else '')
+        model = functional_slots.get(qualified)
+        if model is None or callees[call] != model[0]:
+            return None
+        arguments = explicit_arguments.get(call, [])
+        if len(arguments) != model[1] or any(a.attrs.get('kind') != 'positional' for a in arguments):
+            return None
+        model_path = '<model:' + qualified + '>'
+        contract = model_path + '::module/INTERFACE:' + qualified.rsplit('.', 1)[-1]
+        target = contract + '/CALLABLE:' + model[0]
+        if target not in entities:
+            common = dict(language='java', external=True, model='java-functional-slots/1')
+            entities[contract] = Entity(contract, 'INTERFACE', qualified.rsplit('.',1)[-1],
+                                        model_path, 0, 0, common.copy())
+            entities[target] = Entity(target, 'CALLABLE', model[0], model_path, 0, 0,
+                                      {**common, 'constructor':False, 'static':False, 'functional':True,
+                                       'arity':model[1], 'return_type':'int', 'type':'unknown'})
+            graph.add(contract, 'HAS_METHOD', target, basis='external-api-contract')
+            graph.add(target, 'IN_TYPE', contract, basis='external-api-contract')
+            graph.add(target, 'OWNED_BY', contract, basis='external-api-contract')
+            for position in range(model[1]):
+                parameter = target + '/PARAMETER:operand'
+                entities[parameter] = Entity(parameter, 'PARAMETER', 'operand', model_path, 0, 0,
+                                              {**common,'receiver':False,'position':position,
+                                               'kind':'positional','type':'int'})
+                graph.add(target,'HAS_PARAMETER',parameter,position=position,receiver=False,kind='positional')
+        graph.add(receiver,'TYPE',contract,basis='external-api-contract')
+        return target
+
     property_accessors = {op.owner for op in graph.operations if op.native_kind == 'method_definition'
                           and op.kind == 'FUNCTION' and {'get', 'set'} & set(op.attrs.get('tokens', []))}
     for call, receiver in receivers.items():
-        if receiver in types and entities[receiver].attrs.get('language') in {'java', 'csharp', 'javascript', 'typescript'}:
+        binding = entities.get(receiver)
+        imported_module = (module_imports.get((binding.path, binding.name))
+                           if binding is not None and binding.kind == 'STORAGE'
+                           and not binding.attrs.get('declared') else None)
+        if imported_module and binding is not None:
+            candidates = sorted({target for module in imported_module
+                                 for target in lexical_callables.get((module + '::module', callees[call]), [])})
+            certain = len(candidates) == 1 and (binding.path, binding.name) not in ambiguous_imports
+            for target in candidates:
+                ev = f"{entities[call].path}:{entities[call].line}"
+                graph.add(call, 'TARGET' if certain else 'MAY_TARGET', target, ev,
+                          basis='explicit-module-import')
+                graph.add(call_owner[call], 'CALLS' if certain else 'MAY_CALLS', target, ev,
+                          basis='explicit-module-import', execution=entities[call].attrs.get('execution', 'unknown'))
+            continue
+        if receiver in types and entities[receiver].attrs.get('language') in {'java', 'csharp', 'javascript', 'typescript', 'python'}:
             name = callees[call]
             # A class-valued receiver selects its own static declarations. Do not
             # reinterpret that class as an instance or guess inherited lookup.
@@ -362,13 +586,25 @@ def link_project(units: list[IR]) -> IR:
                              or any(m in property_accessors for m in methods.get((receiver, name), []))))
             static_targets = [] if shadowed else [m for m in methods.get((receiver, name), [])
                                            if entities[m].attrs.get('static') and m not in property_accessors]
+            if entities[receiver].attrs.get('language') == 'python':
+                # Only the direct built-in descriptor spelling is modeled.
+                # Additional decorators or field assignments can replace it.
+                static_targets = [m for m in static_targets
+                                  if entities[m].attrs.get('decorators') in (['@classmethod'], ['@staticmethod'])
+                                  and (receiver, name) not in fields
+                                  and not any(f.object == m for f in by_relation['ASSIGNMENT_TARGET'])]
             for target in static_targets:
                 ev = f"{entities[call].path}:{entities[call].line}"
                 graph.add(call, 'TARGET' if len(static_targets) == 1 else 'MAY_TARGET', target, ev,
                           basis='direct-class-static')
                 graph.add(call_owner[call], 'CALLS' if len(static_targets) == 1 else 'MAY_CALLS', target, ev,
-                          basis='direct-class-static')
+                          basis='direct-class-static', execution=entities[call].attrs.get('execution', 'unknown'))
             continue
+        modeled_slot = external_functional_slot(receiver, call)
+        if modeled_slot is not None:
+            graph.add(call, 'DECLARED_TARGET', modeled_slot,
+                      f'{entities[call].path}:{entities[call].line}',
+                      basis='external-api-contract', model='java-functional-slots/1')
         possible = {receiver.removesuffix("/THIS")} if receiver.endswith("/THIS") else known[receiver]
         name = callees[call]
         declared = declared_types.get(receiver)
@@ -390,9 +626,11 @@ def link_project(units: list[IR]) -> IR:
         for target in method_targets:
             ev = f"{entities[call].path}:{entities[call].line}"
             graph.add(call, "TARGET" if len(method_targets) == 1 else "MAY_TARGET", target, ev)
-            graph.add(call_owner[call], "CALLS" if len(method_targets) == 1 else "MAY_CALLS", target, ev)
+            graph.add(call_owner[call], "CALLS" if len(method_targets) == 1 else "MAY_CALLS", target, ev,
+                      execution=entities[call].attrs.get('execution', 'unknown'))
         for cls in possible:
-            graph.add(call_owner[call], "DELEGATES_TYPE", cls, f"{entities[call].path}:{entities[call].line}", name=name)
+            graph.add(call_owner[call], "DELEGATES_TYPE", cls, f"{entities[call].path}:{entities[call].line}", name=name,
+                      execution=entities[call].attrs.get('execution', 'unknown'))
     resolved_call_ids = {f.subject for f in graph.facts if f.relation == "TARGET"}
     ambiguous_call_ids = {f.subject for f in graph.facts if f.relation == "MAY_TARGET"}
     for e in entities.values():
@@ -406,7 +644,7 @@ def link_project(units: list[IR]) -> IR:
     precise_returns = sequential_returns(graph)
     for f in by_relation["RETURNS"]:
         if f.object in entities and entities[f.object].kind == "STORAGE":
-            graph.add(f.subject, "RETURNS_STORAGE", f.object, *f.evidence[:1])
+            graph.add(f.subject, "RETURNS_STORAGE", f.object, *f.evidence[:1], execution=f.attrs.get('execution', 'unknown'))
         precise = precise_returns.get((f.subject, f.object))
         possible_values = set(precise) if precise is not None else {f.object}
         frontier = [] if precise is not None else [f.object]
@@ -419,11 +657,12 @@ def link_project(units: list[IR]) -> IR:
         for value in sorted(possible_values):
             if value in allocations:
                 attrs = {'modality': 'may', 'basis': 'flow'} if precise is not None and len(precise) > 1 else {}
+                attrs['execution'] = f.attrs.get('execution', 'unknown')
                 graph.add(f.subject, "RETURNS_NEW", allocations[value], *f.evidence[:1], **attrs)
                 if f.subject in owners and owners[f.subject] == allocations[value]:
                     graph.add(f.subject, "RETURNS_NEW_SELF", owners[f.subject], *f.evidence[:1], **attrs)
         if f.object in callees:
-            graph.add(f.subject, "RETURNS_CALL", f.object, *f.evidence[:1])
+            graph.add(f.subject, "RETURNS_CALL", f.object, *f.evidence[:1], execution=f.attrs.get('execution', 'unknown'))
     resolved_calls = {f.subject: f.object for f in graph.facts if f.relation == "TARGET"}
     params = defaultdict(list)
     returns = defaultdict(list)
@@ -454,14 +693,19 @@ def link_project(units: list[IR]) -> IR:
     for f in by_relation["HAS_PARAMETER"]:
         e = entities[f.object]
         e.attrs.update(pos=f.attrs["position"], parameter_kind=f.attrs["kind"])
+    from .base_dispatch import resolve as resolve_base_dispatch
+    resolve_base_dispatch(graph)
+    from .functional_interfaces import annotate as annotate_functional_interfaces
+    annotate_functional_interfaces(graph)
     for e in entities.values():
         if e.kind == 'CALL' and not graph.diagnostics:
             e.attrs['explicit_arguments'] = len(arguments_by_call[e.id])
         graph.add(e.id, "ENTITY", e.kind, f"{e.path}:{e.line}", **{**e.attrs, "name": e.name})
     for op in graph.operations:
         graph.add(op.id, "OPERATION", op.kind, f"{graph.entities[op.owner].path}:{op.line}",
-                  kind=op.kind, native_kind=op.native_kind, owner=op.owner, role=op.role, **op.attrs)
-        graph.add(op.owner, "HAS_OPERATION", op.id)
+                  kind=op.kind, native_kind=op.native_kind, owner=op.owner, role=op.role,
+                  start_byte=op.start, end_byte=op.end, **op.attrs)
+        graph.add(op.owner, "HAS_OPERATION", op.id, execution=op.attrs.get('execution', 'unknown'))
     if not graph.diagnostics:
         graph.capabilities.add("resolved_types")
     from .effects import concurrency_effects
@@ -498,4 +742,8 @@ def link_project(units: list[IR]) -> IR:
     concurrency_effects(graph)
     from .construction import resolved_allocations
     resolved_allocations(graph)
+    from .write_inventory import explicit_write_inventory
+    explicit_write_inventory(graph)
+    from .value_contracts import value_contracts
+    value_contracts(graph)
     return graph

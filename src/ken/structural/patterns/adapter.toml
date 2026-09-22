@@ -6,14 +6,30 @@ description = "An implementation delegates to a different contract."
 caveat = "Structural evidence requires review of intent and runtime behavior."
 legacy_query = "require $unit SUBTYPE_OF $target\nrequire $unit HAS_FIELD $field\nrequire $field TYPE $adaptee\nrequire $unit HAS_METHOD $method\nrequire $method DELEGATES_TO $field\ndifferent $target $adaptee\n"
 query = '''
-query adapter {
- any { match "adapter#object-adapter"(unit: $unit); }
- or { match "adapter#class-adapter"(unit: $unit); }
- or { match "adapter#functional-adapter"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.adapter;
+import ken.catalog.adapter.input_conversion;
+import ken.catalog.adapter.output_conversion;
+import ken.catalog.adapter.variants.class_adapter;
+import ken.catalog.adapter.variants.functional_adapter;
+import ken.catalog.adapter.variants.object_adapter;
+
+pattern detect(out GraphTerm $unit) {
+  either {
+    use ken.catalog.adapter.variants.object_adapter.detect(unit: $unit);
+  } or {
+    use ken.catalog.adapter.variants.functional_adapter.detect(unit: $unit);
+  } or {
+    use ken.catalog.adapter.variants.class_adapter.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -25,23 +41,42 @@ graph_requirements = ["Contrato objetivo cumplido; argumentos/resultados se adap
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
 
-
 query = '''
-query adapter {
+language "kql/2";
+module ken.catalog.adapter.variants.object_adapter;
+import ken.catalog.adapter.input_conversion;
+import ken.catalog.adapter.output_conversion;
 
- require $unit SUBTYPE_OF $contract;
- require $unit HAS_FIELD $field;
- require $field TYPE $adaptee;
- require $unit HAS_METHOD $method;
- require $method OVERRIDES $slot;
- require $contract HAS_METHOD $slot;
- require $method HAS_CALL $forward;
- require $forward RECEIVER $field;
- call() as $forward;
- callable() as $method;
- different $contract $adaptee;
- where $method.name != $forward.name;
- emit $unit;
+pattern detect(out TypeDecl $unit) {
+  type $adaptee {
+    method $delegate { }
+  }
+  type $contract {
+    method $slot { }
+  }
+  type $unit {
+    field $place { type: nominal($adaptee); }
+    method $method {
+      body {
+        call $delegate { receiver: $place; };
+      }
+    }
+  }
+  where subtype($unit, $contract);
+  where overrides($method, $slot);
+  where $contract != $adaptee;
+  either {
+    where $method.name != $delegate.name;
+  } or {
+    use ken.catalog.adapter.input_conversion.detect(unit: $unit);
+  } or {
+    use ken.catalog.adapter.output_conversion.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -52,30 +87,27 @@ requires = ["closure_capture", "callable_contracts", "argument_adaptation"]
 graph_requirements = ["Callable envuelve otra y adapta su contrato de entrada/salida sin requerir clase."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
-query_claim = "Una fabrica recibe un callable, devuelve un callable propio que lo captura y lo invoca con DOS argumentos distintos, cada uno obtenido indexando el unico parametro de entrada: convierte una estructura de entrada en dos parametros. La invocacion se acepta como llamada directa (CALLEE_VALUE) o como metodo sobre el callable (RECEIVER, la interfaz funcional de Java). No prueba el contrato de tipos de la adaptacion, ni la variante de transformacion de SALIDA, ni que el callable adaptado sea el efectivamente invocado en ejecucion."
+query_claim = "Una fabrica recibe un callable, devuelve un callable propio que lo captura y lo invoca con DOS argumentos distintos, cada uno obtenido indexando un mismo parametro de entrada: convierte una estructura de entrada en dos parametros. La invocacion se acepta como llamada directa (CALLEE_VALUE) o como metodo sobre el callable (RECEIVER, la interfaz funcional de Java). No prueba el contrato de tipos de la adaptacion, ni la variante de transformacion de SALIDA, ni que el callable adaptado sea el efectivamente invocado en ejecucion."
 query = '''
-query adapter {
- require $factory HAS_PARAMETER $inner;
- parameter(receiver: false) as $inner;
- require $factory RETURNS $wrapped;
- different $factory $wrapped;
- callable(constructor: false) as $wrapped;
- require $wrapped CAPTURES $inner;
- require $wrapped HAS_PARAMETER $request;
- parameter(receiver: false) as $request;
- require $wrapped HAS_CALL $delegation;
- any { require $delegation CALLEE_VALUE $inner; } or { require $delegation RECEIVER $inner; }
- count distinct $argument >= 2 {
-  require $delegation ARGUMENT $argument;
- };
- require $delegation ARGUMENT $first_argument;
- require $delegation ARGUMENT $second_argument;
- different $first_argument $second_argument;
- require $first_argument VALUE $first_value;
- require $first_value INDEX $first_index;
- require $second_argument VALUE $second_value;
- require $second_value INDEX $second_index;
- emit unit=$wrapped, $factory, $inner, $wrapped, $request;
+language "kql/2";
+module ken.catalog.adapter.variants.functional_adapter;
+
+pattern detect(out Callable $unit, out Callable $factory, out Parameter $inner, out Callable $wrapped, out Parameter $request) {
+  callable $factory { parameters { param $inner {} } }
+  callable $wrapped { constructor: false; captures: $inner; parameters { param $request {} } }
+  callable $factory { body { return $wrapped; } }
+  where $factory != $wrapped;
+  either {
+    callable $wrapped { body { call $inner { argument $request[_] at 0; argument $request[_] at 1; } as $delegation; } }
+  } or {
+    callable $wrapped { body { call on $inner { argument $request[_] at 0; argument $request[_] at 1; } as $delegation; } }
+  }
+  bind $unit = $wrapped;
+}
+
+query results {
+  use detect(unit: $unit, factory: $factory, inner: $inner, wrapped: $wrapped, request: $request);
+  select $unit, $factory, $inner, $wrapped, $request;
 }
 '''
 
@@ -89,16 +121,96 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-python-cpp"
 query_claim = "La clase hereda de dos bases distintas, sobrescribe el slot que una de ellas declara, y dentro de esa sobrescritura invoca un metodo que la otra base declara: adaptacion por herencia, no por campo. La desigualdad de nombres no define el patron: la query no compara nombres. No prueba el MRO completo de Python ni el orden de bases de C++ mas alla de que ambas existan, ni que el slot se invoque en ejecucion. LIMITE: una adaptacion con el MISMO nombre de metodo en ambas bases exige calificacion explicita (Adaptee::request(), Adaptee.request(self)), que hoy no se resuelve; ese caso queda como falso negativo declarado."
 query = '''
-query adapter {
- require $unit SUBTYPE_OF $target;
- require $unit SUBTYPE_OF $adaptee;
- different $target $adaptee;
- require $target HAS_METHOD $slot;
- require $unit HAS_METHOD $override;
- require $override OVERRIDES $slot;
- require $override HAS_CALL $call;
- require $call TARGET $delegate;
- require $adaptee HAS_METHOD $delegate;
- emit $unit, $target, $adaptee, $slot, $override, $delegate;
+language "kql/2";
+module ken.catalog.adapter.variants.class_adapter;
+
+pattern detect(out TypeDecl $unit, out TypeDecl $target, out TypeDecl $adaptee, out Callable $slot, out Callable $override, out Callable $delegate) {
+  type $target {
+    method $slot { }
+  }
+  type $adaptee {
+    method $delegate { }
+  }
+  class $unit {
+    method $override {
+      receiver $self {}
+      body {
+        call $delegate { receiver: $self; };
+      }
+    }
+  }
+  where subtype($unit, $target);
+  where subtype($unit, $adaptee);
+  where overrides($override, $slot);
+  where $target != $adaptee;
+}
+
+query results {
+  use detect(unit: $unit, target: $target, adaptee: $adaptee, slot: $slot, override: $override, delegate: $delegate);
+  select $unit, $target, $adaptee, $slot, $override, $delegate;
+}
+'''
+
+[[operations]]
+id = "input_conversion"
+status = "ready"
+description = "An object adapter computes an argument from its incoming parameter. Syntactic dependence, not mathematical sensitivity."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch."
+query = '''
+language "kql/2";
+module ken.catalog.adapter.input_conversion;
+
+pattern detect(out GraphTerm $unit) {
+  type $local_contract { method $local_slot {} }
+  type $unit {
+    field $local_field { type: nominal($local_adaptee); }
+    method $local_method {
+      constructor: false; static: false;
+      param $input {}
+      body {
+        call $local_forward { receiver: $local_field; argument from $input at any; };
+      }
+    }
+  }
+  where subtype($unit, $local_contract);
+  where overrides($local_method, $local_slot);
+  where $local_contract != $local_adaptee;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
+}
+'''
+
+[[operations]]
+id = "output_conversion"
+status = "ready"
+description = "An object adapter returns a computation consuming the delegated call result. Syntactic dependence, not mathematical sensitivity."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch."
+query = '''
+language "kql/2";
+module ken.catalog.adapter.output_conversion;
+
+pattern detect(out GraphTerm $unit) {
+  type $local_contract { method $local_slot {} }
+  type $unit {
+    field $local_field { type: nominal($local_adaptee); }
+    method $local_method {
+      constructor: false; static: false;
+      body {
+        call $local_forward { receiver: $local_field; } as $local_call;
+        return from $local_forward;
+      }
+    }
+  }
+  where subtype($unit, $local_contract);
+  where overrides($local_method, $local_slot);
+  where $local_contract != $local_adaptee;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''

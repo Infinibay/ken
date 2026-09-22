@@ -1,0 +1,13 @@
+Trabaja sólo sobre esta copia de Ken. Es una evaluación de diagnóstico: no modifiques archivos ni memorias. Puedes consultar Ken y leer código; evita búsquedas o lecturas si el contexto ya resuelve una parte. Responde en español, máximo 180 palabras, con conclusión, evidencia y prueba recomendada.
+
+<context-rank>
+Relevant context:
+Files:
+- src/ken/mcp/server.py
+- src/ken/cli.py
+- tests/test_reasoning_memory.py
+Notes:
+- mcp-object-cli-parameters
+</context-rank>
+
+Quiero exponer una tool nueva que recibe list[dict[str, Any]] y que funcione igual desde MCP y ken tools. ¿Dónde integrarías ese soporte y qué comprobación evitaría repetir bugs anteriores? Confirma el contrato actual y da una recomendación concreta.

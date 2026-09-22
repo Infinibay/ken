@@ -1,0 +1,917 @@
+{
+  "ok": true,
+  "findings": [
+    {
+      "bindings": {
+        "$iterator": "sdk/typescript/tests/abort.test.ts::module/CALLABLE:infiniteShellCall@293"
+      },
+      "status": "structural_match",
+      "unknown": [],
+      "evidence": [
+        {
+          "query": "2f3384cb0af2daafa1647394e1ec5b01eabb7953d6c532ed9fe802a918da93f8:ken.catalog.iterator.variants.generator.detect",
+          "proof": "",
+          "evidence": [
+            {
+              "subject": "sdk/typescript/tests/abort.test.ts::module/CALLABLE:infiniteShellCall@293",
+              "relation": "ENTITY",
+              "object": "CALLABLE",
+              "source": [
+                "sdk/typescript/tests/abort.test.ts:14"
+              ]
+            },
+            {
+              "body_owner": "sdk/typescript/tests/abort.test.ts::module/CALLABLE:infiniteShellCall@293"
+            }
+          ]
+        }
+      ],
+      "variant": "default",
+      "evidence_score": 1.0,
+      "id": "iterator",
+      "rule": {
+        "id": "iterator",
+        "query": "language \"kql/2\";\nmodule ken.catalog.iterator;\nimport ken.catalog.iterator.variants.async_iterator;\nimport ken.catalog.iterator.variants.callback_iterator;\nimport ken.catalog.iterator.variants.delegated_cursor;\nimport ken.catalog.iterator.variants.delegated_generator;\nimport ken.catalog.iterator.variants.explicit_cursor;\nimport ken.catalog.iterator.variants.external_cursor;\nimport ken.catalog.iterator.variants.generator;\nimport ken.catalog.iterator.variants.paired_cursor;\n\npattern detect(out GraphTerm $iterator) {\n  either {\n    use ken.catalog.iterator.variants.external_cursor.detect(iterator: $iterator);\n  } or {\n    either {\n      use ken.catalog.iterator.variants.generator.detect(iterator: $iterator);\n    } or {\n      use ken.catalog.iterator.variants.delegated_generator.detect(iterator: $iterator);\n    } or {\n      use ken.catalog.iterator.variants.explicit_cursor.detect(iterator: $iterator);\n    } or {\n      use ken.catalog.iterator.variants.paired_cursor.detect(iterator: $iterator);\n    } or {\n      use ken.catalog.iterator.variants.delegated_cursor.detect(iterator: $iterator);\n    } or {\n      use ken.catalog.iterator.variants.async_iterator.detect(iterator: $iterator);\n    } or {\n      use ken.catalog.iterator.variants.callback_iterator.detect(iterator: $iterator);\n    }\n  }\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n",
+        "name": "Iterator",
+        "description": "Traversal through a cursor protocol, a generator, an asynchronous producer/consumer, or a Go callback that stops on false.",
+        "tags": [
+          "design",
+          "behavioral"
+        ],
+        "collections": [
+          "gof"
+        ],
+        "severity": null,
+        "recommendation": "",
+        "caveat": "Protocol names are intentional API evidence; exhaustion and traversal correctness are not proven. The async variant records that a loop suspends to advance, not that the awaited work ever completes.",
+        "variants": [
+          {
+            "id": "external-cursor",
+            "status": "ready",
+            "languages": [
+              "cpp"
+            ],
+            "fixtures_status": "source-regression-matrix",
+            "query_claim": "External cursor API with shared stored position; termination and overloaded increment semantics are not proven.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.external_cursor;\n\npattern detect(out TypeDecl $iterator) {\n  type $iterator {\n    language: \"cpp\";\n    field $position { }\n    method $advance { name: \"next\"; constructor: false; }\n    method $test { name: \"isDone\"; constructor: false; }\n    method $current { name: \"currentItem\"; constructor: false; }\n  }\n  where reads($advance, $position);\n  where writes($advance, $position);\n  where reads($test, $position);\n  where reads($current, $position);\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n"
+          },
+          {
+            "id": "generator",
+            "status": "ready",
+            "languages": [
+              "python",
+              "javascript",
+              "typescript",
+              "csharp"
+            ],
+            "requires": [
+              "generator_lowering"
+            ],
+            "graph_requirements": [
+              "Callable suspende produciendo elementos; la evidencia prueba forma generadora, no recorrido correcto."
+            ],
+            "missing_capability": "unknown",
+            "fixtures_status": "source-regression-matrix",
+            "query_claim": "BODY alcanza una suspension que produce un valor en el callable seleccionado; excluye context managers y terminacion yield break. No prueba factibilidad runtime, reanudacion, progreso ni agotamiento; un unico yield permite CFG parcial solamente por suspensiones yield/await reconocidas.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.generator;\n\npattern detect(out Callable $iterator) {\n  callable $iterator {\n    generator: true;\n    context_manager: false;\n    body { yield _; }\n  }\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n"
+          },
+          {
+            "id": "delegated-generator",
+            "status": "ready",
+            "languages": [
+              "python",
+              "javascript",
+              "typescript"
+            ],
+            "requires": [
+              "generator_delegation"
+            ],
+            "graph_requirements": [
+              "Delegaci\u00f3n de iteraci\u00f3n enlaza iterable delegado y suspensi\u00f3n; conservar protocolo nativo."
+            ],
+            "missing_capability": "unknown",
+            "fixtures_status": "source-regression-matrix",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.delegated_generator;\n\npattern detect(out Callable $iterator) {\n  callable $iterator {\n    generator: true;\n    context_manager: false;\n    body { yield from _; }\n  }\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n"
+          },
+          {
+            "id": "explicit-cursor",
+            "status": "ready",
+            "languages": [
+              "python"
+            ],
+            "pending_languages": [
+              "javascript",
+              "typescript",
+              "java",
+              "csharp",
+              "cpp",
+              "rust"
+            ],
+            "requires": [
+              "iteration_protocol",
+              "storage_flow"
+            ],
+            "graph_requirements": [
+              "Contrato de iteraci\u00f3n, progreso y fin; protocolo resuelto, no solo m\u00e9todos hom\u00f3nimos."
+            ],
+            "missing_capability": "unknown",
+            "fixtures_status": "source-regression-matrix",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.explicit_cursor;\n\npattern detect(out TypeDecl $iterator) {\n  type $iterator {\n    language: \"python\";\n    field $state { }\n    method $iter { name: \"__iter__\"; constructor: false; }\n    method $next { name: \"__next__\"; constructor: false; }\n  }\n  where returns_self($iter, $iterator);\n  where writes($next, $state);\n  where reads($next, $state);\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n",
+            "query_claim": "Python iteration protocol with observable updates to an iterator field; local bookkeeping is not cursor state. Numeric progress, yielded element provenance and exhaustion are not proven."
+          },
+          {
+            "id": "callback-iterator",
+            "status": "ready",
+            "languages": [
+              "go"
+            ],
+            "requires": [
+              "range_function_protocol",
+              "callback_control_flow"
+            ],
+            "graph_requirements": [
+              "Callback recibe elemento y su booleano gobierna continuar; requiere versi\u00f3n de lenguaje aplicable."
+            ],
+            "missing_capability": "unknown",
+            "fixtures_status": "source-regression-matrix-go",
+            "query_claim": "El iterador Go invoca el callback con el mismo elemento ligado por el bucle y detiene la iteracion cuando ese callback devuelve false, como exige el protocolo range-over-function. Se aceptan la negacion con salida en then y el test positivo con salida en else. La salida inmediata es return o break; no prueba agotamiento, tipos de elemento ni progreso.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.callback_iterator;\n\npattern detect(out GraphTerm $iterator, out Parameter $callback, out Call $call, out Operation $loop, out Binding $element, out Operation $branch, out Operation $exit) {\n  operation $branch { kind: \"branch\"; }\n  either {\n    callable $iterator {\n      param $callback {}\n      body {\n        iterate $collection as $element as $loop {\n          body {\n            let $accepted = call $callback { argument $element at any; } as $call;\n            if ($accepted == false) { return as $exit; }\n          }\n        }\n      }\n    }\n  } or {\n    callable $iterator {\n      param $callback {}\n      body {\n        iterate $collection as $element as $loop {\n          body {\n            let $accepted = call $callback { argument $element at any; } as $call;\n            if ($accepted == false) { break $loop as $exit; }\n          }\n        }\n      }\n    }\n  } or {\n    callable $iterator {\n      param $callback {}\n      body {\n        iterate $collection as $element as $loop {\n          body {\n            let $accepted = call $callback { argument $element at any; } as $call;\n            if ($accepted) { } else { return as $exit; }\n          }\n        }\n      }\n    }\n  } or {\n    callable $iterator {\n      param $callback {}\n      body {\n        iterate $collection as $element as $loop {\n          body {\n            let $accepted = call $callback { argument $element at any; } as $call;\n            if ($accepted) { } else { break $loop as $exit; }\n          }\n        }\n      }\n    }\n  }\n}\n\nquery results {\n  use detect(iterator: $iterator, callback: $callback, call: $call, loop: $loop, element: $element, branch: $branch, exit: $exit);\n  select $iterator, $callback, $call, $loop, $element, $branch, $exit;\n}\n"
+          },
+          {
+            "id": "async-iterator",
+            "status": "ready",
+            "languages": [
+              "python",
+              "javascript",
+              "typescript",
+              "csharp"
+            ],
+            "requires": [
+              "async_iteration_protocol",
+              "generator_lowering"
+            ],
+            "graph_requirements": [
+              "Producci\u00f3n/avance y consumo se rigen por protocolo async; await no se transforma en thread."
+            ],
+            "missing_capability": "unknown",
+            "fixtures_status": "source-regression-matrix-four-languages",
+            "query_claim": "Un callable async recorre con un bucle que suspende (`async for`, `for await`, `await foreach`) la fuente producida por otro callable async que produce valores mediante `yield`. El bucle asincrono se registra en el propio bucle: los hechos de iteracion son identicos a los de un bucle sincrono sobre la misma fuente. No prueba agotamiento, tipos de elemento, ni que lo awaitado termine; el productor no necesita una expresion await: un generador async sigue el protocolo asincrono aun si sus elementos estan disponibles inmediatamente.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.async_iterator;\n\npattern detect(out Callable $iterator, out Callable $producer, out Operation $loop, out Call $source, out Operation $suspend) {\n  callable $producer {\n    async: true;\n    body { yield _ as $suspend; }\n  }\n  callable $iterator {\n    async: true;\n    call $source { target: $producer; }\n    body {\n      iterate $source as $item as $loop {\n        async: true;\n        body {}\n      }\n    }\n  }\n  where $iterator != $producer;\n}\n\nquery results {\n  use detect(iterator: $iterator, producer: $producer, loop: $loop, source: $source, suspend: $suspend);\n  select $iterator, $producer, $loop, $source, $suspend;\n}\n"
+          },
+          {
+            "id": "paired-cursor",
+            "status": "ready",
+            "languages": [
+              "java",
+              "typescript"
+            ],
+            "fixtures_status": "source-regression-matrix",
+            "query_claim": "Paired next/hasNext API and an observable cursor update; termination is not proven.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.paired_cursor;\n\npattern detect(out TypeDecl $iterator) {\n  type $iterator {\n    field $state { }\n    method $next { name: \"next\"; constructor: false; }\n    method $test { name: \"hasNext\"; constructor: false; }\n  }\n  where writes($next, $state);\n  where reads($next, $state);\n  where reads($test, $state);\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n"
+          },
+          {
+            "id": "delegated-cursor",
+            "status": "ready",
+            "languages": [
+              "python"
+            ],
+            "fixtures_status": "source-regression-matrix",
+            "query_claim": "Python next() delegation on stored iterator with self-returning iterable protocol.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.delegated_cursor;\n\npattern detect(out TypeDecl $iterator, out Call $local_advance) {\n  type $iterator {\n    field $cursor { }\n    method $iter { name: \"__iter__\"; constructor: false; }\n    method $next {\n      name: \"__next__\"; constructor: false;\n      body {\n        let $local_result = call $advance { argument $cursor at any; } as $local_advance;\n        return $local_result;\n      }\n    }\n  }\n  where returns_self($iter, $iterator);\n  where advances($local_advance, $cursor);\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n"
+          }
+        ],
+        "source": "/tmp/ken-opt5-baseline-20260921/ken/structural/patterns/iterator.toml",
+        "operations": [
+          {
+            "id": "iterate_over",
+            "status": "ready",
+            "description": "Expose a foreach source, value binding, body and iteration occurrence.",
+            "caveat": "Syntax-level consumption shape. Not a guarantee of execution, element types, absence of rebinding or full block-scope shadow resolution. Explicit cursor and callback pipelines require additional variants.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.iterate_over;\n\npattern detect(out GraphTerm $source, out Binding $item, out Operation $body, out Operation $iteration) {\n  callable $unit {\n    body {\n      iterate $source as $item as $iteration { body: $body; body {} }\n    }\n  }\n}\n\nquery results {\n  use detect(source: $source, item: $item, body: $body, iteration: $iteration);\n  select $source, $item, $body, $iteration;\n}\n"
+          },
+          {
+            "id": "advancing_element",
+            "status": "ready",
+            "description": "A cursor returns the indexed element it reads and explicitly increments that same index by one. Does not prove eventual termination or bounds.",
+            "caveat": "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch. The element is read from a field of the cursor at an index the cursor also holds, the read stores it in a place no other write produces, that same index then advances by the literal one, and the cursor returns that place.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.advancing_element;\nimport ken.catalog.iterator;\n\npattern detect(out TypeDecl $unit) {\n  use ken.catalog.iterator.detect(iterator: $unit);\n  type $unit {\n    field $index {}\n    field $items {}\n    method $next {\n      name: [\"next\", \"__next__\"]; constructor: false;\n      body {\n        let $value = $items[$index];\n        $index = $index + 1;\n        return $value;\n      }\n    }\n  }\n}\n\nquery results {\n  use detect(unit: $unit);\n  select $unit;\n}\n"
+          }
+        ],
+        "query_language": "kql/2"
+      },
+      "path": "sdk/typescript/tests/abort.test.ts",
+      "line": 14,
+      "symbol": "",
+      "locations": [
+        {
+          "path": "sdk/typescript/tests/abort.test.ts",
+          "line": 14
+        }
+      ],
+      "category": "behavioral",
+      "caveat": "Protocol names are intentional API evidence; exhaustion and traversal correctness are not proven. The async variant records that a loop suspends to advance, not that the awaited work ever completes."
+    },
+    {
+      "bindings": {
+        "$iterator": "sdk/typescript/tests/run.test.ts::module/CALLABLE:anonymous@437@437/CALLABLE:anonymous@24760@24760/CALLABLE:anonymous@24879@24879"
+      },
+      "status": "structural_match",
+      "unknown": [],
+      "evidence": [
+        {
+          "alternatives": [
+            {
+              "evidence": [
+                {
+                  "query": "2f3384cb0af2daafa1647394e1ec5b01eabb7953d6c532ed9fe802a918da93f8:ken.catalog.iterator.variants.generator.detect",
+                  "proof": "",
+                  "evidence": [
+                    {
+                      "subject": "sdk/typescript/tests/run.test.ts::module/CALLABLE:anonymous@437@437/CALLABLE:anonymous@24760@24760/CALLABLE:anonymous@24879@24879",
+                      "relation": "ENTITY",
+                      "object": "CALLABLE",
+                      "source": [
+                        "sdk/typescript/tests/run.test.ts:809"
+                      ]
+                    },
+                    {
+                      "body_owner": "sdk/typescript/tests/run.test.ts::module/CALLABLE:anonymous@437@437/CALLABLE:anonymous@24760@24760/CALLABLE:anonymous@24879@24879"
+                    }
+                  ]
+                }
+              ],
+              "unknown": []
+            }
+          ],
+          "truncated": false
+        }
+      ],
+      "variant": "default",
+      "evidence_score": 1.0,
+      "id": "iterator",
+      "rule": {
+        "id": "iterator",
+        "query": "language \"kql/2\";\nmodule ken.catalog.iterator;\nimport ken.catalog.iterator.variants.async_iterator;\nimport ken.catalog.iterator.variants.callback_iterator;\nimport ken.catalog.iterator.variants.delegated_cursor;\nimport ken.catalog.iterator.variants.delegated_generator;\nimport ken.catalog.iterator.variants.explicit_cursor;\nimport ken.catalog.iterator.variants.external_cursor;\nimport ken.catalog.iterator.variants.generator;\nimport ken.catalog.iterator.variants.paired_cursor;\n\npattern detect(out GraphTerm $iterator) {\n  either {\n    use ken.catalog.iterator.variants.external_cursor.detect(iterator: $iterator);\n  } or {\n    either {\n      use ken.catalog.iterator.variants.generator.detect(iterator: $iterator);\n    } or {\n      use ken.catalog.iterator.variants.delegated_generator.detect(iterator: $iterator);\n    } or {\n      use ken.catalog.iterator.variants.explicit_cursor.detect(iterator: $iterator);\n    } or {\n      use ken.catalog.iterator.variants.paired_cursor.detect(iterator: $iterator);\n    } or {\n      use ken.catalog.iterator.variants.delegated_cursor.detect(iterator: $iterator);\n    } or {\n      use ken.catalog.iterator.variants.async_iterator.detect(iterator: $iterator);\n    } or {\n      use ken.catalog.iterator.variants.callback_iterator.detect(iterator: $iterator);\n    }\n  }\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n",
+        "name": "Iterator",
+        "description": "Traversal through a cursor protocol, a generator, an asynchronous producer/consumer, or a Go callback that stops on false.",
+        "tags": [
+          "design",
+          "behavioral"
+        ],
+        "collections": [
+          "gof"
+        ],
+        "severity": null,
+        "recommendation": "",
+        "caveat": "Protocol names are intentional API evidence; exhaustion and traversal correctness are not proven. The async variant records that a loop suspends to advance, not that the awaited work ever completes.",
+        "variants": [
+          {
+            "id": "external-cursor",
+            "status": "ready",
+            "languages": [
+              "cpp"
+            ],
+            "fixtures_status": "source-regression-matrix",
+            "query_claim": "External cursor API with shared stored position; termination and overloaded increment semantics are not proven.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.external_cursor;\n\npattern detect(out TypeDecl $iterator) {\n  type $iterator {\n    language: \"cpp\";\n    field $position { }\n    method $advance { name: \"next\"; constructor: false; }\n    method $test { name: \"isDone\"; constructor: false; }\n    method $current { name: \"currentItem\"; constructor: false; }\n  }\n  where reads($advance, $position);\n  where writes($advance, $position);\n  where reads($test, $position);\n  where reads($current, $position);\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n"
+          },
+          {
+            "id": "generator",
+            "status": "ready",
+            "languages": [
+              "python",
+              "javascript",
+              "typescript",
+              "csharp"
+            ],
+            "requires": [
+              "generator_lowering"
+            ],
+            "graph_requirements": [
+              "Callable suspende produciendo elementos; la evidencia prueba forma generadora, no recorrido correcto."
+            ],
+            "missing_capability": "unknown",
+            "fixtures_status": "source-regression-matrix",
+            "query_claim": "BODY alcanza una suspension que produce un valor en el callable seleccionado; excluye context managers y terminacion yield break. No prueba factibilidad runtime, reanudacion, progreso ni agotamiento; un unico yield permite CFG parcial solamente por suspensiones yield/await reconocidas.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.generator;\n\npattern detect(out Callable $iterator) {\n  callable $iterator {\n    generator: true;\n    context_manager: false;\n    body { yield _; }\n  }\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n"
+          },
+          {
+            "id": "delegated-generator",
+            "status": "ready",
+            "languages": [
+              "python",
+              "javascript",
+              "typescript"
+            ],
+            "requires": [
+              "generator_delegation"
+            ],
+            "graph_requirements": [
+              "Delegaci\u00f3n de iteraci\u00f3n enlaza iterable delegado y suspensi\u00f3n; conservar protocolo nativo."
+            ],
+            "missing_capability": "unknown",
+            "fixtures_status": "source-regression-matrix",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.delegated_generator;\n\npattern detect(out Callable $iterator) {\n  callable $iterator {\n    generator: true;\n    context_manager: false;\n    body { yield from _; }\n  }\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n"
+          },
+          {
+            "id": "explicit-cursor",
+            "status": "ready",
+            "languages": [
+              "python"
+            ],
+            "pending_languages": [
+              "javascript",
+              "typescript",
+              "java",
+              "csharp",
+              "cpp",
+              "rust"
+            ],
+            "requires": [
+              "iteration_protocol",
+              "storage_flow"
+            ],
+            "graph_requirements": [
+              "Contrato de iteraci\u00f3n, progreso y fin; protocolo resuelto, no solo m\u00e9todos hom\u00f3nimos."
+            ],
+            "missing_capability": "unknown",
+            "fixtures_status": "source-regression-matrix",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.explicit_cursor;\n\npattern detect(out TypeDecl $iterator) {\n  type $iterator {\n    language: \"python\";\n    field $state { }\n    method $iter { name: \"__iter__\"; constructor: false; }\n    method $next { name: \"__next__\"; constructor: false; }\n  }\n  where returns_self($iter, $iterator);\n  where writes($next, $state);\n  where reads($next, $state);\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n",
+            "query_claim": "Python iteration protocol with observable updates to an iterator field; local bookkeeping is not cursor state. Numeric progress, yielded element provenance and exhaustion are not proven."
+          },
+          {
+            "id": "callback-iterator",
+            "status": "ready",
+            "languages": [
+              "go"
+            ],
+            "requires": [
+              "range_function_protocol",
+              "callback_control_flow"
+            ],
+            "graph_requirements": [
+              "Callback recibe elemento y su booleano gobierna continuar; requiere versi\u00f3n de lenguaje aplicable."
+            ],
+            "missing_capability": "unknown",
+            "fixtures_status": "source-regression-matrix-go",
+            "query_claim": "El iterador Go invoca el callback con el mismo elemento ligado por el bucle y detiene la iteracion cuando ese callback devuelve false, como exige el protocolo range-over-function. Se aceptan la negacion con salida en then y el test positivo con salida en else. La salida inmediata es return o break; no prueba agotamiento, tipos de elemento ni progreso.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.callback_iterator;\n\npattern detect(out GraphTerm $iterator, out Parameter $callback, out Call $call, out Operation $loop, out Binding $element, out Operation $branch, out Operation $exit) {\n  operation $branch { kind: \"branch\"; }\n  either {\n    callable $iterator {\n      param $callback {}\n      body {\n        iterate $collection as $element as $loop {\n          body {\n            let $accepted = call $callback { argument $element at any; } as $call;\n            if ($accepted == false) { return as $exit; }\n          }\n        }\n      }\n    }\n  } or {\n    callable $iterator {\n      param $callback {}\n      body {\n        iterate $collection as $element as $loop {\n          body {\n            let $accepted = call $callback { argument $element at any; } as $call;\n            if ($accepted == false) { break $loop as $exit; }\n          }\n        }\n      }\n    }\n  } or {\n    callable $iterator {\n      param $callback {}\n      body {\n        iterate $collection as $element as $loop {\n          body {\n            let $accepted = call $callback { argument $element at any; } as $call;\n            if ($accepted) { } else { return as $exit; }\n          }\n        }\n      }\n    }\n  } or {\n    callable $iterator {\n      param $callback {}\n      body {\n        iterate $collection as $element as $loop {\n          body {\n            let $accepted = call $callback { argument $element at any; } as $call;\n            if ($accepted) { } else { break $loop as $exit; }\n          }\n        }\n      }\n    }\n  }\n}\n\nquery results {\n  use detect(iterator: $iterator, callback: $callback, call: $call, loop: $loop, element: $element, branch: $branch, exit: $exit);\n  select $iterator, $callback, $call, $loop, $element, $branch, $exit;\n}\n"
+          },
+          {
+            "id": "async-iterator",
+            "status": "ready",
+            "languages": [
+              "python",
+              "javascript",
+              "typescript",
+              "csharp"
+            ],
+            "requires": [
+              "async_iteration_protocol",
+              "generator_lowering"
+            ],
+            "graph_requirements": [
+              "Producci\u00f3n/avance y consumo se rigen por protocolo async; await no se transforma en thread."
+            ],
+            "missing_capability": "unknown",
+            "fixtures_status": "source-regression-matrix-four-languages",
+            "query_claim": "Un callable async recorre con un bucle que suspende (`async for`, `for await`, `await foreach`) la fuente producida por otro callable async que produce valores mediante `yield`. El bucle asincrono se registra en el propio bucle: los hechos de iteracion son identicos a los de un bucle sincrono sobre la misma fuente. No prueba agotamiento, tipos de elemento, ni que lo awaitado termine; el productor no necesita una expresion await: un generador async sigue el protocolo asincrono aun si sus elementos estan disponibles inmediatamente.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.async_iterator;\n\npattern detect(out Callable $iterator, out Callable $producer, out Operation $loop, out Call $source, out Operation $suspend) {\n  callable $producer {\n    async: true;\n    body { yield _ as $suspend; }\n  }\n  callable $iterator {\n    async: true;\n    call $source { target: $producer; }\n    body {\n      iterate $source as $item as $loop {\n        async: true;\n        body {}\n      }\n    }\n  }\n  where $iterator != $producer;\n}\n\nquery results {\n  use detect(iterator: $iterator, producer: $producer, loop: $loop, source: $source, suspend: $suspend);\n  select $iterator, $producer, $loop, $source, $suspend;\n}\n"
+          },
+          {
+            "id": "paired-cursor",
+            "status": "ready",
+            "languages": [
+              "java",
+              "typescript"
+            ],
+            "fixtures_status": "source-regression-matrix",
+            "query_claim": "Paired next/hasNext API and an observable cursor update; termination is not proven.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.paired_cursor;\n\npattern detect(out TypeDecl $iterator) {\n  type $iterator {\n    field $state { }\n    method $next { name: \"next\"; constructor: false; }\n    method $test { name: \"hasNext\"; constructor: false; }\n  }\n  where writes($next, $state);\n  where reads($next, $state);\n  where reads($test, $state);\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n"
+          },
+          {
+            "id": "delegated-cursor",
+            "status": "ready",
+            "languages": [
+              "python"
+            ],
+            "fixtures_status": "source-regression-matrix",
+            "query_claim": "Python next() delegation on stored iterator with self-returning iterable protocol.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.variants.delegated_cursor;\n\npattern detect(out TypeDecl $iterator, out Call $local_advance) {\n  type $iterator {\n    field $cursor { }\n    method $iter { name: \"__iter__\"; constructor: false; }\n    method $next {\n      name: \"__next__\"; constructor: false;\n      body {\n        let $local_result = call $advance { argument $cursor at any; } as $local_advance;\n        return $local_result;\n      }\n    }\n  }\n  where returns_self($iter, $iterator);\n  where advances($local_advance, $cursor);\n}\n\nquery results {\n  use detect(iterator: $iterator);\n  select $iterator;\n}\n"
+          }
+        ],
+        "source": "/tmp/ken-opt5-baseline-20260921/ken/structural/patterns/iterator.toml",
+        "operations": [
+          {
+            "id": "iterate_over",
+            "status": "ready",
+            "description": "Expose a foreach source, value binding, body and iteration occurrence.",
+            "caveat": "Syntax-level consumption shape. Not a guarantee of execution, element types, absence of rebinding or full block-scope shadow resolution. Explicit cursor and callback pipelines require additional variants.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.iterate_over;\n\npattern detect(out GraphTerm $source, out Binding $item, out Operation $body, out Operation $iteration) {\n  callable $unit {\n    body {\n      iterate $source as $item as $iteration { body: $body; body {} }\n    }\n  }\n}\n\nquery results {\n  use detect(source: $source, item: $item, body: $body, iteration: $iteration);\n  select $source, $item, $body, $iteration;\n}\n"
+          },
+          {
+            "id": "advancing_element",
+            "status": "ready",
+            "description": "A cursor returns the indexed element it reads and explicitly increments that same index by one. Does not prove eventual termination or bounds.",
+            "caveat": "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch. The element is read from a field of the cursor at an index the cursor also holds, the read stores it in a place no other write produces, that same index then advances by the literal one, and the cursor returns that place.",
+            "query": "language \"kql/2\";\nmodule ken.catalog.iterator.advancing_element;\nimport ken.catalog.iterator;\n\npattern detect(out TypeDecl $unit) {\n  use ken.catalog.iterator.detect(iterator: $unit);\n  type $unit {\n    field $index {}\n    field $items {}\n    method $next {\n      name: [\"next\", \"__next__\"]; constructor: false;\n      body {\n        let $value = $items[$index];\n        $index = $index + 1;\n        return $value;\n      }\n    }\n  }\n}\n\nquery results {\n  use detect(unit: $unit);\n  select $unit;\n}\n"
+          }
+        ],
+        "query_language": "kql/2"
+      },
+      "path": "sdk/typescript/tests/run.test.ts",
+      "line": 809,
+      "symbol": "",
+      "locations": [
+        {
+          "path": "sdk/typescript/tests/run.test.ts",
+          "line": 809
+        }
+      ],
+      "category": "behavioral",
+      "caveat": "Protocol names are intentional API evidence; exhaustion and traversal correctness are not proven. The async variant records that a loop suspends to advance, not that the awaited work ever completes."
+    }
+  ],
+  "outcomes": {
+    "abstract-factory": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 1359,
+        "rows_examined": 76,
+        "elapsed_ms": 46.26,
+        "dependencies": [
+          "783715c92104656b2de2848f0aa6529d7be6d2417cdfcd3183acd0c62d1f3d9c:ken.catalog.abstract_factory.variants.associated_products.detect",
+          "783715c92104656b2de2848f0aa6529d7be6d2417cdfcd3183acd0c62d1f3d9c:ken.catalog.abstract_factory.variants.nominal_families.detect",
+          "783715c92104656b2de2848f0aa6529d7be6d2417cdfcd3183acd0c62d1f3d9c:ken.catalog.abstract_factory.variants.structural_families.detect"
+        ]
+      }
+    },
+    "adapter": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 1150,
+        "rows_examined": 261,
+        "elapsed_ms": 32.979,
+        "dependencies": [
+          "5c0dfb338a896edb4b597feb6a63480d28f162c21e637c0aeb139083770e1f64:ken.catalog.adapter.variants.class_adapter.detect",
+          "5c0dfb338a896edb4b597feb6a63480d28f162c21e637c0aeb139083770e1f64:ken.catalog.adapter.variants.functional_adapter.detect",
+          "5c0dfb338a896edb4b597feb6a63480d28f162c21e637c0aeb139083770e1f64:ken.catalog.adapter.variants.object_adapter.detect"
+        ]
+      }
+    },
+    "bridge": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 4,
+        "rows_examined": 0,
+        "elapsed_ms": 0.163,
+        "dependencies": [
+          "270c0d00ac67a405b2ba98990ebec61c397692deca19b8ed8f7f5f80892a7334:ken.catalog.bridge.variants.generic_composition.detect",
+          "270c0d00ac67a405b2ba98990ebec61c397692deca19b8ed8f7f5f80892a7334:ken.catalog.bridge.variants.refined_composition.detect",
+          "270c0d00ac67a405b2ba98990ebec61c397692deca19b8ed8f7f5f80892a7334:ken.catalog.bridge.variants.runtime_composition.detect"
+        ]
+      }
+    },
+    "builder": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 16582,
+        "rows_examined": 1654,
+        "elapsed_ms": 142.189,
+        "dependencies": [
+          "aa4e1e59eaf51b7be42d7ccab9dd0980286f04dd3bf64f521ab2eb65acfdcf66:ken.catalog.builder.variants.accumulated_state.detect",
+          "aa4e1e59eaf51b7be42d7ccab9dd0980286f04dd3bf64f521ab2eb65acfdcf66:ken.catalog.builder.variants.consuming_typestate.detect",
+          "aa4e1e59eaf51b7be42d7ccab9dd0980286f04dd3bf64f521ab2eb65acfdcf66:ken.catalog.builder.variants.director.detect",
+          "aa4e1e59eaf51b7be42d7ccab9dd0980286f04dd3bf64f521ab2eb65acfdcf66:ken.catalog.builder.variants.immutable_product.detect",
+          "aa4e1e59eaf51b7be42d7ccab9dd0980286f04dd3bf64f521ab2eb65acfdcf66:ken.catalog.builder.variants.mutable_product.detect",
+          "aa4e1e59eaf51b7be42d7ccab9dd0980286f04dd3bf64f521ab2eb65acfdcf66:ken.catalog.builder.variants.stored_product.detect"
+        ]
+      }
+    },
+    "chain-of-responsibility": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 1149,
+        "rows_examined": 261,
+        "elapsed_ms": 2.885,
+        "dependencies": [
+          "53a8f5e6867ee17e2ebc57d8c20d441a80671cb654a30c01a145ceb41bf8fd7f:ken.catalog.chain_of_responsibility.variants.linked_handlers.detect",
+          "53a8f5e6867ee17e2ebc57d8c20d441a80671cb654a30c01a145ceb41bf8fd7f:ken.catalog.chain_of_responsibility.variants.middleware_closures.detect"
+        ]
+      }
+    },
+    "command": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 711977,
+        "rows_examined": 34193,
+        "elapsed_ms": 1879.605,
+        "dependencies": [
+          "0945ccb010093d27fd8cb56bd0a544c5bad42c1f556302911578567fb260c955:ken.catalog.architecture.batch_work_queue.drain.detect",
+          "0945ccb010093d27fd8cb56bd0a544c5bad42c1f556302911578567fb260c955:ken.catalog.command.variants.command_closure.detect",
+          "0945ccb010093d27fd8cb56bd0a544c5bad42c1f556302911578567fb260c955:ken.catalog.command.variants.command_object.detect",
+          "0945ccb010093d27fd8cb56bd0a544c5bad42c1f556302911578567fb260c955:ken.catalog.command.variants.queued_object.detect",
+          "0945ccb010093d27fd8cb56bd0a544c5bad42c1f556302911578567fb260c955:ken.catalog.command.variants.retained_contract.detect",
+          "0945ccb010093d27fd8cb56bd0a544c5bad42c1f556302911578567fb260c955:ken.catalog.command.variants.retained_object.detect",
+          "0945ccb010093d27fd8cb56bd0a544c5bad42c1f556302911578567fb260c955:ken.catalog.command.variants.stored_closure.detect"
+        ]
+      }
+    },
+    "composite": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 4722,
+        "rows_examined": 259,
+        "elapsed_ms": 15.288,
+        "dependencies": [
+          "cedd808a4a9ff2766b5219f1973d0304db0a7d94c71370bd39629a93de0ee8bf:ken.catalog.composite.variants.algebraic_tree.detect",
+          "cedd808a4a9ff2766b5219f1973d0304db0a7d94c71370bd39629a93de0ee8bf:ken.catalog.composite.variants.higher_order_traversal.detect",
+          "cedd808a4a9ff2766b5219f1973d0304db0a7d94c71370bd39629a93de0ee8bf:ken.catalog.composite.variants.recursive_contract.detect",
+          "cedd808a4a9ff2766b5219f1973d0304db0a7d94c71370bd39629a93de0ee8bf:ken.catalog.composite.variants.recursive_nominal.detect"
+        ]
+      }
+    },
+    "decorator": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 1301,
+        "rows_examined": 221,
+        "elapsed_ms": 3.641,
+        "dependencies": [
+          "b5a13d3e6c070b39d72eae14abe7b81564f2050a7d25a44c4a8b529ef745e0df:ken.catalog.decorator.variants.callable_wrapper.detect",
+          "b5a13d3e6c070b39d72eae14abe7b81564f2050a7d25a44c4a8b529ef745e0df:ken.catalog.decorator.variants.object_wrapper.detect",
+          "b5a13d3e6c070b39d72eae14abe7b81564f2050a7d25a44c4a8b529ef745e0df:ken.catalog.decorator.variants.subclass_addition.detect",
+          "b5a13d3e6c070b39d72eae14abe7b81564f2050a7d25a44c4a8b529ef745e0df:ken.catalog.decorator.variants.typed_delegator.detect",
+          "b5a13d3e6c070b39d72eae14abe7b81564f2050a7d25a44c4a8b529ef745e0df:ken.catalog.decorator.variants.untyped_delegator.detect"
+        ]
+      }
+    },
+    "facade": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 819,
+        "rows_examined": 385,
+        "elapsed_ms": 9.217,
+        "dependencies": [
+          "319c1e8c9a43cc809fe0d684d4173c37df34dad777eb8b88f368995e87cb2d4b:ken.catalog.facade.variants.module_surface.Subsystems",
+          "319c1e8c9a43cc809fe0d684d4173c37df34dad777eb8b88f368995e87cb2d4b:ken.catalog.facade.variants.module_surface.detect",
+          "319c1e8c9a43cc809fe0d684d4173c37df34dad777eb8b88f368995e87cb2d4b:ken.catalog.facade.variants.object_surface.detect"
+        ]
+      }
+    },
+    "factory-method": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 3,
+        "rows_examined": 0,
+        "elapsed_ms": 0.132,
+        "dependencies": [
+          "8c8b331b1bcd4dfa0da69ce76efefa514fdb5ccdbbaca00e688c5f85d7945f89:ken.catalog.factory_method.variants.contract_slot.detect",
+          "8c8b331b1bcd4dfa0da69ce76efefa514fdb5ccdbbaca00e688c5f85d7945f89:ken.catalog.factory_method.variants.virtual_slot.detect"
+        ]
+      }
+    },
+    "flyweight": {
+      "complete": true,
+      "unknown": [
+        "parameter_writes:unknown",
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 25072,
+        "rows_examined": 1806,
+        "elapsed_ms": 56.472,
+        "dependencies": [
+          "225c5f935220cc1f260d2ac83e981de0ff99b0501f714f7bd6a7fcc300dedb15:ken.catalog.flyweight.variants.entry_api.detect",
+          "225c5f935220cc1f260d2ac83e981de0ff99b0501f714f7bd6a7fcc300dedb15:ken.catalog.flyweight.variants.explicit_interning.detect"
+        ]
+      }
+    },
+    "interpreter": {
+      "complete": true,
+      "unknown": [
+        "cardinality:open_world"
+      ],
+      "stats": {
+        "states": 208,
+        "rows_examined": 101,
+        "elapsed_ms": 0.949,
+        "dependencies": [
+          "b5e34b576fd9331d2a5e4dc42a5b34d696030449322477b959587a7e393a215c:ken.catalog.interpreter.variants.context_free_binary.detect",
+          "b5e34b576fd9331d2a5e4dc42a5b34d696030449322477b959587a7e393a215c:ken.catalog.interpreter.variants.expression_objects.detect",
+          "b5e34b576fd9331d2a5e4dc42a5b34d696030449322477b959587a7e393a215c:ken.catalog.interpreter.variants.expression_sum.detect"
+        ]
+      }
+    },
+    "iterator": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 34280,
+        "rows_examined": 6235,
+        "elapsed_ms": 171.63,
+        "dependencies": [
+          "2f3384cb0af2daafa1647394e1ec5b01eabb7953d6c532ed9fe802a918da93f8:ken.catalog.iterator.variants.async_iterator.detect",
+          "2f3384cb0af2daafa1647394e1ec5b01eabb7953d6c532ed9fe802a918da93f8:ken.catalog.iterator.variants.callback_iterator.detect",
+          "2f3384cb0af2daafa1647394e1ec5b01eabb7953d6c532ed9fe802a918da93f8:ken.catalog.iterator.variants.delegated_cursor.detect",
+          "2f3384cb0af2daafa1647394e1ec5b01eabb7953d6c532ed9fe802a918da93f8:ken.catalog.iterator.variants.delegated_generator.detect",
+          "2f3384cb0af2daafa1647394e1ec5b01eabb7953d6c532ed9fe802a918da93f8:ken.catalog.iterator.variants.explicit_cursor.detect",
+          "2f3384cb0af2daafa1647394e1ec5b01eabb7953d6c532ed9fe802a918da93f8:ken.catalog.iterator.variants.external_cursor.detect",
+          "2f3384cb0af2daafa1647394e1ec5b01eabb7953d6c532ed9fe802a918da93f8:ken.catalog.iterator.variants.generator.detect",
+          "2f3384cb0af2daafa1647394e1ec5b01eabb7953d6c532ed9fe802a918da93f8:ken.catalog.iterator.variants.paired_cursor.detect"
+        ]
+      }
+    },
+    "mediator": {
+      "complete": true,
+      "unknown": [
+        "attribute:missing",
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 407039,
+        "rows_examined": 95601,
+        "elapsed_ms": 839.451,
+        "dependencies": [
+          "6d0692cb1ce17c039b1a1bcd3b49d3fe7ec70789efb5d1f5597531d173c250e1:ken.catalog.mediator.variants.broadcast_colleagues.detect",
+          "6d0692cb1ce17c039b1a1bcd3b49d3fe7ec70789efb5d1f5597531d173c250e1:ken.catalog.mediator.variants.direct_colleagues.detect",
+          "6d0692cb1ce17c039b1a1bcd3b49d3fe7ec70789efb5d1f5597531d173c250e1:ken.catalog.mediator.variants.message_coordination.detect",
+          "6d0692cb1ce17c039b1a1bcd3b49d3fe7ec70789efb5d1f5597531d173c250e1:ken.catalog.mediator.variants.registered_colleagues.detect",
+          "6d0692cb1ce17c039b1a1bcd3b49d3fe7ec70789efb5d1f5597531d173c250e1:ken.catalog.mediator.variants.tag_dispatch.detect"
+        ]
+      }
+    },
+    "memento": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 37630,
+        "rows_examined": 3926,
+        "elapsed_ms": 188.796,
+        "dependencies": [
+          "bb67b46c12e8ab4fb47951695e43fe19dd917bf54ebdc16e52871593543b371c:ken.catalog.memento.variants.accessor_snapshot.detect",
+          "bb67b46c12e8ab4fb47951695e43fe19dd917bf54ebdc16e52871593543b371c:ken.catalog.memento.variants.serialized_snapshot.detect",
+          "bb67b46c12e8ab4fb47951695e43fe19dd917bf54ebdc16e52871593543b371c:ken.catalog.memento.variants.serialized_snapshot.wrapped",
+          "bb67b46c12e8ab4fb47951695e43fe19dd917bf54ebdc16e52871593543b371c:ken.catalog.memento.variants.snapshot_object.detect"
+        ]
+      }
+    },
+    "observer": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 24392,
+        "rows_examined": 1515,
+        "elapsed_ms": 91.15,
+        "dependencies": [
+          "bb583e0250a0e195c43f76979a400d6dc8050ff3943de2e05646dc883118c66f:ken.catalog.observer.variants.event_bus.detect",
+          "bb583e0250a0e195c43f76979a400d6dc8050ff3943de2e05646dc883118c66f:ken.catalog.observer.variants.language_event.detect",
+          "bb583e0250a0e195c43f76979a400d6dc8050ff3943de2e05646dc883118c66f:ken.catalog.observer.variants.listener_registry.detect",
+          "bb583e0250a0e195c43f76979a400d6dc8050ff3943de2e05646dc883118c66f:ken.catalog.observer.variants.map_key_registry.detect",
+          "bb583e0250a0e195c43f76979a400d6dc8050ff3943de2e05646dc883118c66f:ken.catalog.observer.variants.registered_listeners.detect",
+          "bb583e0250a0e195c43f76979a400d6dc8050ff3943de2e05646dc883118c66f:ken.catalog.observer.variants.snapshot_registry.detect"
+        ]
+      }
+    },
+    "prototype": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 4254,
+        "rows_examined": 252,
+        "elapsed_ms": 85.046,
+        "dependencies": [
+          "3efe06f9c1511fa23660434a65147ecaa8d5e5d5ed52c6c929bd6f113edf075c:ken.catalog.prototype.derived_copy.detect",
+          "3efe06f9c1511fa23660434a65147ecaa8d5e5d5ed52c6c929bd6f113edf075c:ken.catalog.prototype.variants.derived_clone.detect",
+          "3efe06f9c1511fa23660434a65147ecaa8d5e5d5ed52c6c929bd6f113edf075c:ken.catalog.prototype.variants.explicit_copy.detect",
+          "3efe06f9c1511fa23660434a65147ecaa8d5e5d5ed52c6c929bd6f113edf075c:ken.catalog.prototype.variants.field_copy.detect",
+          "3efe06f9c1511fa23660434a65147ecaa8d5e5d5ed52c6c929bd6f113edf075c:ken.catalog.prototype.variants.language_copy.detect"
+        ]
+      }
+    },
+    "proxy": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 4,
+        "rows_examined": 0,
+        "elapsed_ms": 0.194,
+        "dependencies": [
+          "865242aab7692675088bd3b135818fbf691325da5385fb8e291d37341e9edf3f:ken.catalog.proxy.variants.guarded_access.detect",
+          "865242aab7692675088bd3b135818fbf691325da5385fb8e291d37341e9edf3f:ken.catalog.proxy.variants.lazy_subject.detect",
+          "865242aab7692675088bd3b135818fbf691325da5385fb8e291d37341e9edf3f:ken.catalog.proxy.variants.remote_subject.detect"
+        ]
+      }
+    },
+    "singleton": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 273183,
+        "rows_examined": 90354,
+        "elapsed_ms": 968.713,
+        "dependencies": [
+          "f289af23b268147ed265ab1f8972b06ec9711de860d0299cdcec49349bdedb48:ken.catalog.singleton.lazy_instance.detect",
+          "f289af23b268147ed265ab1f8972b06ec9711de860d0299cdcec49349bdedb48:ken.catalog.singleton.shared_instance.detect",
+          "f289af23b268147ed265ab1f8972b06ec9711de860d0299cdcec49349bdedb48:ken.catalog.singleton.variants.eager_shared.detect",
+          "f289af23b268147ed265ab1f8972b06ec9711de860d0299cdcec49349bdedb48:ken.catalog.singleton.variants.lazy_guarded.detect",
+          "f289af23b268147ed265ab1f8972b06ec9711de860d0299cdcec49349bdedb48:ken.catalog.singleton.variants.module_shared.detect",
+          "f289af23b268147ed265ab1f8972b06ec9711de860d0299cdcec49349bdedb48:ken.catalog.singleton.variants.once_primitive.detect"
+        ]
+      }
+    },
+    "state": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 1510,
+        "rows_examined": 103,
+        "elapsed_ms": 3.496,
+        "dependencies": [
+          "ac70eac49e44027e5516f43b5260f12f36eeb40ed058d619db993194f98bc844:ken.catalog.state.variants.context_transition.detect",
+          "ac70eac49e44027e5516f43b5260f12f36eeb40ed058d619db993194f98bc844:ken.catalog.state.variants.state_enum.detect",
+          "ac70eac49e44027e5516f43b5260f12f36eeb40ed058d619db993194f98bc844:ken.catalog.state.variants.state_object.detect"
+        ]
+      }
+    },
+    "strategy": {
+      "complete": true,
+      "unknown": [
+        "parameter_writes:unknown",
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 4944,
+        "rows_examined": 482,
+        "elapsed_ms": 77.965,
+        "dependencies": [
+          "5dce45f57914e9f813fe5a3d200367c5b098ae2f900395c449e548216af8883c:ken.catalog.strategy.supplied_policy.detect",
+          "5dce45f57914e9f813fe5a3d200367c5b098ae2f900395c449e548216af8883c:ken.catalog.strategy.variants.static_policy.detect",
+          "5dce45f57914e9f813fe5a3d200367c5b098ae2f900395c449e548216af8883c:ken.catalog.strategy.variants.strategy_callable.detect",
+          "5dce45f57914e9f813fe5a3d200367c5b098ae2f900395c449e548216af8883c:ken.catalog.strategy.variants.strategy_object.detect"
+        ]
+      }
+    },
+    "template-method": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 105515,
+        "rows_examined": 2393,
+        "elapsed_ms": 559.931,
+        "dependencies": [
+          "6bcc51f12bba30cb640dcd134206d34f099ddcae29fbd30a726d7de53703eaf8:ken.catalog.template_method.variants.composed_skeleton.detect",
+          "6bcc51f12bba30cb640dcd134206d34f099ddcae29fbd30a726d7de53703eaf8:ken.catalog.template_method.variants.trait_default.detect",
+          "6bcc51f12bba30cb640dcd134206d34f099ddcae29fbd30a726d7de53703eaf8:ken.catalog.template_method.variants.virtual_skeleton.detect"
+        ]
+      }
+    },
+    "visitor": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 243,
+        "rows_examined": 112,
+        "elapsed_ms": 2.426,
+        "dependencies": [
+          "22b36d64d6fd1a1208ad410467e998734298a97c666dd00892942cf42c262693:ken.catalog.visitor.variants.generic_visitor.detect",
+          "22b36d64d6fd1a1208ad410467e998734298a97c666dd00892942cf42c262693:ken.catalog.visitor.variants.named_dispatch.detect",
+          "22b36d64d6fd1a1208ad410467e998734298a97c666dd00892942cf42c262693:ken.catalog.visitor.variants.overloaded_dispatch.detect"
+        ]
+      }
+    }
+  },
+  "complete": true,
+  "incomplete": {},
+  "directories": [
+    {
+      "directory": "sdk/typescript",
+      "analyzed_files": 3,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/typescript/samples",
+      "analyzed_files": 4,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/typescript/src",
+      "analyzed_files": 10,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/typescript/tests",
+      "analyzed_files": 9,
+      "patterns": [
+        {
+          "id": "iterator",
+          "matching_files": 2,
+          "share": 0.222,
+          "files": [
+            "sdk/typescript/tests/abort.test.ts",
+            "sdk/typescript/tests/run.test.ts"
+          ]
+        }
+      ]
+    }
+  ],
+  "analysis": {
+    "resolution": {
+      "resolved_calls": 292,
+      "unresolved_calls": 808
+    },
+    "files": [
+      "sdk/typescript/eslint.config.js",
+      "sdk/typescript/jest.config.cjs",
+      "sdk/typescript/samples/basic_streaming.ts",
+      "sdk/typescript/samples/helpers.ts",
+      "sdk/typescript/samples/structured_output.ts",
+      "sdk/typescript/samples/structured_output_zod.ts",
+      "sdk/typescript/src/codex.ts",
+      "sdk/typescript/src/codexOptions.ts",
+      "sdk/typescript/src/events.ts",
+      "sdk/typescript/src/exec.ts",
+      "sdk/typescript/src/index.ts",
+      "sdk/typescript/src/items.ts",
+      "sdk/typescript/src/outputSchemaFile.ts",
+      "sdk/typescript/src/thread.ts",
+      "sdk/typescript/src/threadOptions.ts",
+      "sdk/typescript/src/turnOptions.ts",
+      "sdk/typescript/tests/abort.test.ts",
+      "sdk/typescript/tests/codexExecSpy.ts",
+      "sdk/typescript/tests/exec.test.ts",
+      "sdk/typescript/tests/mcpConformance.test.ts",
+      "sdk/typescript/tests/responsesProxy.ts",
+      "sdk/typescript/tests/run.test.ts",
+      "sdk/typescript/tests/runStreamed.test.ts",
+      "sdk/typescript/tests/setupCodexHome.ts",
+      "sdk/typescript/tests/testCodex.ts",
+      "sdk/typescript/tsup.config.ts"
+    ],
+    "skipped": [],
+    "coverage_complete": true,
+    "diagnostics": [],
+    "cache": {
+      "hits": 1,
+      "misses": 0,
+      "evictions": 0,
+      "enabled": true,
+      "error": null
+    },
+    "graph_key": "5759c3e26e291741c01d10c10458388aa108c08534ee724ceacbb2a1d9dfc9be",
+    "elapsed_ms": 39.767,
+    "query_index": {
+      "backend": "sqlite_columns",
+      "hit": true,
+      "persistent": true,
+      "bytes": 52236288,
+      "entities": 5098,
+      "facts": 94197,
+      "reclaimed_snapshots": 0,
+      "phase_ms": {
+        "manifest": 5.866,
+        "store_open": 29.566,
+        "index_open": 1.56
+      }
+    },
+    "query_cache": {
+      "enabled": false
+    },
+    "pattern_engine": {
+      "backend": "exploration",
+      "semantic_backend": "sqlite_columns",
+      "buckets": {
+        "hits": 16033,
+        "disk_hits": 212,
+        "builds": 0,
+        "fallback": 0,
+        "loaded_rows": 49369,
+        "build_ms": 0.0
+      }
+    }
+  }
+}

@@ -13,12 +13,17 @@ def detect_patterns(*args, **kwargs):
 from ken.structural.frontend import lower_source
 from ken.structural.semantic import link_project
 from .examples import MULTILINGUAL, PYTHON
+from .gof_sources import PYTHON as CURRENT_PYTHON
 
 
 @pytest.mark.parametrize("name", sorted(PYTHON))
 @pytest.mark.parametrize("rename", [False, True])
 def test_every_gof_pattern_from_python_source(name, rename):
-    source = PYTHON[name]
+    # legacy=True falls back to the current query after its legacy definition
+    # is retired. Use that query's canonical contract in the fallback case;
+    # otherwise this accidentally tests a stricter query with a legacy seed.
+    rule = next(rule for rule in RULES if rule.id == name)
+    source = (PYTHON if rule.legacy_query else CURRENT_PYTHON)[name]
     if rename:
         # Rename all class identifiers and references, including type annotations.
         for i, identifier in enumerate(re.findall(r"class (\w+)", source)):

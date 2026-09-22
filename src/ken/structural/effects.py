@@ -5,7 +5,7 @@ import re
 from collections import defaultdict
 
 from .frontend import ASSIGNMENTS, FUNCTIONS, Lowerer, descendants, field
-from .model import IR
+from .model import IR, Fact
 
 
 def syntax_effects(lowerer: Lowerer) -> None:
@@ -92,6 +92,9 @@ def concurrency_effects(graph: IR) -> None:
         args[f.subject].append(f)
     contexts: dict[str, set[str]] = defaultdict(set)
     rebound = {f.subject for f in by_relation["ASSIGNED_FROM"]}
+    shadowed_aliases = {(e.path, e.name) for e in graph.entities.values()
+                        if (e.path, e.name) in aliases
+                        and (e.kind in {"PARAMETER", "CALLABLE", "CLASS"} or e.id in rebound)}
     for call, name in names.items():
         entity = graph.entities[call]
         rec = receiver.get(call)
@@ -100,7 +103,7 @@ def concurrency_effects(graph: IR) -> None:
         api = aliases.get((entity.path, alias), "")
         if not api:
             continue
-        if rec in rebound or any(e.path == entity.path and e.name == alias and (e.kind in {"PARAMETER", "CALLABLE", "CLASS"} or e.id in rebound) for e in graph.entities.values()):
+        if rec in rebound or (entity.path, alias) in shadowed_aliases:
             continue
         if rec_entity:
             api += "." + name
@@ -117,17 +120,26 @@ def concurrency_effects(graph: IR) -> None:
     for _ in range(16):
         changed = False
         for f in by_relation["ASSIGNED_FROM"]:
+            inherited = contexts.get(f.object)
+            if not inherited:
+                continue
             before = len(contexts[f.subject])
-            contexts[f.subject].update(contexts[f.object])
+            contexts[f.subject].update(inherited)
             changed |= len(contexts[f.subject]) != before
         if not changed:
             break
+    # Include facts created above, retaining the first witness just as the
+    # previous per-call scan did. Looking it up must not re-scan the repository.
+    creations: dict[str, Fact] = {}
+    for fact in graph.facts:
+        if fact.relation in {"CREATES_LOCK", "CREATES_CONTEXT"}:
+            creations.setdefault(fact.subject, fact)
     for call, rec in receiver.items():
-        for context in contexts[rec]:
+        for context in contexts.get(rec, ()):
             name = names[call]
             if name not in {"start", "join", "acquire", "release"}:
                 continue
-            creation = next((f for f in graph.facts if f.subject == context and f.relation in {"CREATES_LOCK", "CREATES_CONTEXT"}), None)
+            creation = creations.get(context)
             if creation is None:
                 continue
             if name in {"start", "join"} and creation.relation != "CREATES_CONTEXT":

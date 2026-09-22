@@ -70,8 +70,10 @@ class Traced {
 }
 ''', 'T.cs'),
     'cpp': ('''#include <functional>
+#include <cstdio>
 std::function<int(int)> traced(std::function<int(int)> inner) {
   return [inner](int value) {
+    std::puts("before");
     int result = inner(value);
     return result;
   };
@@ -198,4 +200,39 @@ def test_variant_is_ready_for_all_eight_declared_languages():
     assert sorted(row['languages']) == sorted(SOURCES)
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'CAPTURES' in row['query'] and 'CALLEE_VALUE' in row['query']
+    assert 'captures: $inner' in row['query'] and 'call $inner' in row['query']
+    assert 'edge ' not in row['query'] and 'walk ' not in row['query']
+
+@pytest.mark.parametrize('language',sorted(SOURCES))
+def test_unrelated_argument_rejects_each_language(language):
+    source,path=SOURCES[language]
+    source=source.replace('inner(value)','inner(0)').replace('inner.applyAsInt(value)','inner.applyAsInt(0)')
+    assert not detect(language,source,path)
+
+
+def test_rust_tail_closure_return_belongs_to_factory_not_closure():
+    source,path=SOURCES['rust']
+    graph=link_project([lower_source(source,'rust',path)])
+    closure=next(e for e in graph.entities.values() if e.kind=='CALLABLE' and e.name.startswith('anonymous'))
+    returns=[f for f in graph.facts if f.relation=='RETURN_OPERAND' and f.object==closure.id]
+    assert len(returns)==1
+    operation=next(o for o in graph.operations if o.id==returns[0].subject)
+    factory=next(e for e in graph.entities.values() if e.kind=='CALLABLE' and e.name=='traced')
+    assert operation.owner==factory.id
+    assert all(o.owner==closure.id for o in graph.operations if o.kind=='RETURN' and o.id!=operation.id)
+
+
+@pytest.mark.parametrize('mutation',['unrelated_macro','dead_macro','discarded_closure'])
+def test_rust_macro_responsibility_and_returned_closure_are_required(mutation):
+    source,path=SOURCES['rust']
+    if mutation=='unrelated_macro':source=source.replace('println!','unrelated!')
+    if mutation=='dead_macro':
+        source=source.replace('println!("before");','').replace('println!("after");','').replace('        result','        return result;\n        println!("dead");')
+    if mutation=='discarded_closure':source=source.replace('    move |','    let ignored = move |').replace('    }\n}', '    };\n    inner\n}')
+    assert not detect('rust',source,path)
+
+
+def test_java_homonymous_nonfunctional_receiver_is_not_a_callable_wrapper():
+    source,path=SOURCES['java']
+    source=source.replace('import java.util.function.IntUnaryOperator;','interface IntUnaryOperator { int applyAsInt(int x); void close(); }')
+    assert not detect('java',source,path)

@@ -68,6 +68,10 @@ def add_parser(subparsers) -> None:
             p.add_argument("--overwrite", action="store_true")
         if name == "patterns":
             p.add_argument("--pattern", action="append", help="catalogue id (repeatable); omitted searches all 23")
+            p.add_argument("--backend", choices=("exploration", "indexed"), default="exploration")
+            p.add_argument("--cache-directory", type=Path, default=None,
+                           help="directory for the semantic index and FlatBuffers buckets")
+            p.add_argument("--profile", action="store_true", help="report operator costs and bypass cached results")
         if name == "ir":
             p.add_argument("--view", choices=["source", "query", "instructions"], default="query", help="source facts, KenQL graph or instruction IR")
             p.add_argument("--format", choices=["json", "text"], default="json", help="text is available for the instruction view")
@@ -102,8 +106,9 @@ def dispatch(args: argparse.Namespace) -> int:
         result = report.present(result, kind="structure", detail="full" if args.full else "compact")
     elif command == "patterns":
         result = service.patterns(root, args.pattern, path=args.scope, cache_mb=args.cache_mb, budget=budget,
-                                  max_files=args.max_files, max_file_bytes=args.max_file_bytes)
-        result = report.present(result, kind="patterns", detail="full" if args.full else "compact")
+                                  max_files=args.max_files, max_file_bytes=args.max_file_bytes,
+                                  backend=args.backend, cache_directory=args.cache_directory, profile=args.profile)
+        result = report.present(result, kind="patterns", detail="full" if args.full or args.profile else "compact")
     elif command == "bugs":
         result = service.bugs(root, path=args.scope, cache_mb=args.cache_mb, budget=budget,
                               max_files=args.max_files, max_file_bytes=args.max_file_bytes)

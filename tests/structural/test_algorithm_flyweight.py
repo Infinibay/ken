@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import pytest
 
+from .contract_support import contract_matches
+
 from .test_gof_executable import evaluate
 
 LANGUAGES = ('python', 'java', 'typescript')
@@ -100,19 +102,17 @@ def test_pool_requires_same_key_and_retained_creation(language, mutation):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Pooling query does not prove miss-only creation or stable returned identity; algorithms/flyweight.md')
 def test_interning_must_reuse_an_existing_entry(language):
     assert not evaluate(source(language, 'replace-every-time'), language, 'flyweight')
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Stronger stable-intrinsic-state contract: draw stores per-call position into shared font; generic pooling query does not inspect use')
 def test_desired_stable_intrinsic_state_rejects_extrinsic_overwrite(language):
-    assert not evaluate(source(language, 'captures-extrinsic'), language, 'flyweight')
+    assert contract_matches(source(language), language, 'flyweight.stable_intrinsic')
+    assert not contract_matches(source(language, 'captures-extrinsic'), language, 'flyweight.stable_intrinsic')
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Indexed key facts identify bindings but do not preserve their values through assignments; algorithms/flyweight.md')
 def test_interning_preserves_key_value_until_return(language):
     text = source(language)
     if language == 'python':

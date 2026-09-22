@@ -4,16 +4,29 @@ name = "Abstract Factory"
 category = "creational"
 description = "A factory subtype exposes multiple product creation methods."
 caveat = "Structural evidence requires review of intent and runtime behavior."
-legacy_query = "require $unit SUBTYPE_OF $factory\ncount >=2 $unit HAS_METHOD $method distinct=$method where $method RETURNS_NEW _\n"
 query = '''
-query abstract_factory {
- any { match "abstract-factory#nominal-families"(unit: $unit); }
- or { match "abstract-factory#associated-products"(unit: $unit); }
- or { match "abstract-factory#structural-families"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.abstract_factory;
+import ken.catalog.abstract_factory.variants.associated_products;
+import ken.catalog.abstract_factory.variants.nominal_families;
+import ken.catalog.abstract_factory.variants.structural_families;
+
+pattern detect(out TypeDecl $unit) {
+  either {
+    use ken.catalog.abstract_factory.variants.nominal_families.detect(unit: $unit);
+  } or {
+    use ken.catalog.abstract_factory.variants.associated_products.detect(unit: $unit);
+  } or {
+    use ken.catalog.abstract_factory.variants.structural_families.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -24,24 +37,34 @@ requires = ["nominal_contracts", "return_flow"]
 graph_requirements = ["Correlacionar slots de creación entre familias; distinguir al menos dos contratos de producto; conservar el producto correspondiente a cada slot."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
+query_claim = "Two distinct creation methods override two distinct slots declared by the same factory contract. Their returned constructions have distinct nominal product contracts. This establishes product categories, not runtime compatibility between a selected family, and does not yet cover object-literal providers."
 
 
 query = '''
-query abstract_factory {
+language "kql/2";
+module ken.catalog.abstract_factory.variants.nominal_families;
 
- require $unit SUBTYPE_OF $contract;
- require $unit HAS_METHOD $first;
- require $unit HAS_METHOD $second;
- require $first OVERRIDES $slot1;
- require $second OVERRIDES $slot2;
- require $first RETURNS_NEW $product1;
- require $second RETURNS_NEW $product2;
- require $product1 SUBTYPE_OF $family1;
- require $product2 SUBTYPE_OF $family2;
- different $family1 $family2;
- different $first $second;
- different $product1 $product2;
- emit $unit;
+pattern detect(out TypeDecl $unit) {
+  type $contract { method $slot1 {} method $slot2 {} }
+  type $unit {
+    method $first { body { let $a = construct $product1 {}; return $a; } }
+    method $second { body { let $b = construct $product2 {}; return $b; } }
+  }
+  type $category1 {} type $category2 {}
+  where subtype($unit, $contract);
+  where overrides($first, $slot1);
+  where overrides($second, $slot2);
+  where subtype($product1, $category1);
+  where subtype($product2, $category2);
+  where $slot1 != $slot2;
+  where $first != $second;
+  where $category1 != $category2;
+  where $product1 != $product2;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -52,34 +75,37 @@ requires = ["structural_contracts", "return_flow"]
 graph_requirements = ["Relacionar objetos/structs con el mismo conjunto de operaciones de creación sin exigir herencia."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-three-languages"
-query_claim = "Dos tipos nominales sin base comun declaran los **mismos slots de creacion** (mismo nombre y aridad), cada slot devuelve una construccion de un tipo distinto, y el producto del mismo slot difiere entre las dos familias mientras los dos productos de una familia difieren entre si. Los slots se unen por **identidad** a traves de `MATCHES_SIGNATURE` (IR 1.69), no comparando nombres, que es lo que evita el producto cartesiano de todas las creaciones. NO resuelve la forma de objeto literal de JavaScript/TypeScript (`const ocean = { createButton: () => ... }`): el IR modela el literal como una coleccion, no como un tipo con miembros. Tampoco prueba que los productos implementen el mismo contrato ni la intencion de familia."
+query_claim = "Two providers expose matching creation operation names and arities. Each BODY returns its own created Value, with distinct product categories within and across providers. This is a structural provider candidate: compatibility of products is not proven, and object literal providers remain unsupported. Signature comparison is currently a relational property join; large-provider performance must be measured."
+
 query = '''
-query abstract_factory_structural_families {
- require $first IS CLASS;
- require $second IS CLASS;
- different $first $second;
- require $first HAS_METHOD $first_slot;
- require $first_slot MATCHES_SIGNATURE $first_signature;
- require $second HAS_METHOD $second_slot;
- require $second_slot MATCHES_SIGNATURE $first_signature;
- require $first HAS_METHOD $first_other;
- require $first_other MATCHES_SIGNATURE $second_signature;
- require $second HAS_METHOD $second_other;
- require $second_other MATCHES_SIGNATURE $second_signature;
- different $first_signature $second_signature;
- require $first_slot RETURNS_NEW $first_product;
- require $second_slot RETURNS_NEW $second_product;
- require $first_other RETURNS_NEW $third_product;
- require $second_other RETURNS_NEW $fourth_product;
- require $first_product IS CLASS;
- require $second_product IS CLASS;
- require $third_product IS CLASS;
- require $fourth_product IS CLASS;
- different $first_product $second_product;
- different $third_product $fourth_product;
- different $first_product $third_product;
- different $second_product $fourth_product;
- emit unit=$first, $second, $first_slot, $second_slot, $first_product, $second_product, $third_product, $fourth_product;
+language "kql/2";
+module ken.catalog.abstract_factory.variants.structural_families;
+
+pattern detect(out TypeDecl $unit, out TypeDecl $second, out Callable $first_slot, out Callable $second_slot, out TypeDecl $first_product, out TypeDecl $second_product, out TypeDecl $third_product, out TypeDecl $fourth_product) {
+  type $unit {
+    method $first_slot { body { let $a = construct $first_product {}; return $a; } }
+    method $other_slot { body { let $b = construct $third_product {}; return $b; } }
+  }
+  type $second {
+    method $second_slot { body { let $c = construct $second_product {}; return $c; } }
+    method $other_second_slot { body { let $d = construct $fourth_product {}; return $d; } }
+  }
+  where $unit != $second;
+  where $first_slot.name == $second_slot.name;
+  where $first_slot.arity == $second_slot.arity;
+  where $other_slot.name == $other_second_slot.name;
+  where $other_slot.arity == $other_second_slot.arity;
+  either { where $first_slot.name != $other_slot.name; }
+  or { where $first_slot.arity != $other_slot.arity; }
+  where $first_product != $second_product;
+  where $third_product != $fourth_product;
+  where $first_product != $third_product;
+  where $second_product != $fourth_product;
+}
+
+query results {
+  use detect(unit: $unit, second: $second, first_slot: $first_slot, second_slot: $second_slot, first_product: $first_product, second_product: $second_product, third_product: $third_product, fourth_product: $fourth_product);
+  select $unit, $second, $first_slot, $second_slot, $first_product, $second_product, $third_product, $fourth_product;
 }
 '''
 
@@ -93,33 +119,46 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-rust"
 query_claim = "Un trait declara al menos dos slots de creación; al menos dos tipos lo implementan; cada tipo sobrescribe los dos slots y devuelve tipos concretos distintos entre sí; y el producto del mismo slot difiere entre las dos familias. Las declaraciones 'type X = Y' NO se modelan: el contrato se expresa con los productos realmente devueltos, no con la sustitución del tipo asociado."
 query = '''
-query abstract_factory {
- require $unit SUBTYPE_OF $contract;
- require $other SUBTYPE_OF $contract;
- different $unit $other;
- require $contract HAS_METHOD $first_slot;
- require $contract HAS_METHOD $second_slot;
- different $first_slot $second_slot;
- require $first_reader OVERRIDES $first_slot;
- require $first_reader IN_TYPE $unit;
- require $first_reader RETURNS $first_product;
- require $first_product IS CLASS;
- require $first_writer OVERRIDES $second_slot;
- require $first_writer IN_TYPE $unit;
- require $first_writer RETURNS $second_product;
- require $second_product IS CLASS;
- different $first_product $second_product;
- require $second_reader OVERRIDES $first_slot;
- require $second_reader IN_TYPE $other;
- require $second_reader RETURNS $third_product;
- require $third_product IS CLASS;
- require $second_writer OVERRIDES $second_slot;
- require $second_writer IN_TYPE $other;
- require $second_writer RETURNS $fourth_product;
- require $fourth_product IS CLASS;
- different $third_product $fourth_product;
- different $first_product $third_product;
- different $second_product $fourth_product;
- emit $unit, $contract;
+language "kql/2";
+module ken.catalog.abstract_factory.variants.associated_products;
+
+pattern detect(out TypeDecl $unit, out TypeDecl $contract) {
+  type $contract {
+    method $first_slot { }
+    method $second_slot { }
+  }
+  type $unit {
+    method $first_reader { }
+    method $first_writer { }
+  }
+  type $other {
+    method $second_reader { }
+    method $second_writer { }
+  }
+  type $first_product { }
+  type $second_product { }
+  type $third_product { }
+  type $fourth_product { }
+  where subtype($unit, $contract);
+  where subtype($other, $contract);
+  where overrides($first_reader, $first_slot);
+  where overrides($first_writer, $second_slot);
+  where overrides($second_reader, $first_slot);
+  where overrides($second_writer, $second_slot);
+  where returns_type($first_reader, $first_product);
+  where returns_type($first_writer, $second_product);
+  where returns_type($second_reader, $third_product);
+  where returns_type($second_writer, $fourth_product);
+  where $unit != $other;
+  where $first_slot != $second_slot;
+  where $first_product != $second_product;
+  where $third_product != $fourth_product;
+  where $first_product != $third_product;
+  where $second_product != $fourth_product;
+}
+
+query results {
+  use detect(unit: $unit, contract: $contract);
+  select $unit, $contract;
 }
 '''

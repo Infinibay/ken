@@ -1,0 +1,233 @@
+{
+  "ok": true,
+  "question": "Who provides SQLite connection helpers?",
+  "hypotheses": [],
+  "status": "candidates",
+  "candidates": [
+    {
+      "symbol": "src/ken/db.py",
+      "path": "src/ken/db.py",
+      "line": 1,
+      "kind": "module",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.637,
+        "band": "moderate",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who provides SQLite connection helpers?",
+      "documentation": "SQLite connection helpers.\n\nTwo access patterns coexist:\n\n* **Hooks** (short-lived `ken hook ...` invocations) open a connection,\n  do one or two writes, close. They use WAL so they don't block the\n  daemon's writer.\n* **The daemon** (`ken serve`) holds a single long-lived connection in its\n  main thread plus per-worker connections for the indexer / watcher\n  threads (sqlite3 connections are not safe to share across threads).\n\nWAL is enabled lazily on the first connection per database — once set,\nit persists in the file header.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.6375,
+          "explanation": "Documentation similarity 0.492; term coverage 0.750 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "aebb80568c548d04059393a4376a90773f60b933dc74f7d2637f9151cdda8108",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "documentation_kind": "module_docstring",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/db.py",
+        "include": [
+          "source"
+        ],
+        "start_line": 1,
+        "end_line": 14
+      }
+    },
+    {
+      "symbol": "connect",
+      "path": "src/ken/db.py",
+      "line": 23,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.425,
+        "band": "weak",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who provides SQLite connection helpers?",
+      "documentation": "Open a connection with sane defaults.\n\n* `WAL` journal so concurrent readers don't block.\n* `foreign_keys = ON` (sqlite ships it OFF by default).\n* `busy_timeout = 5000` so a slow writer doesn't make hooks fail\n  with `database is locked` — they just wait.\n* `check_same_thread = False` so the daemon's HTTP threads can\n  share its single writer connection. Safety comes from a\n  ``threading.Lock`` around every write inside the daemon — sqlite\n  itself serialises journaling, but the Python wrapper would\n  otherwise reject cross-thread use even when properly locked.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.425,
+          "explanation": "Documentation similarity 0.318; term coverage 0.500 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "aebb80568c548d04059393a4376a90773f60b933dc74f7d2637f9151cdda8108",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "documentation_kind": "function_docstring",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/db.py",
+        "include": [
+          "source"
+        ],
+        "qualname": "connect"
+      }
+    },
+    {
+      "symbol": "in_immediate_transaction",
+      "path": "src/ken/vectors.py",
+      "line": 224,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.425,
+        "band": "weak",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who provides SQLite connection helpers?",
+      "documentation": "Is this connection inside a write transaction it acquired up front?\n\n``Connection.in_transaction`` cannot answer this: it is True for a deferred\ntransaction too, and the deferred case is exactly the unsafe one. SQLite\nexposes no way to ask \"do you hold the write lock\", so the answer comes from\n:class:`immediate`, the only sanctioned way to take it.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.425,
+          "explanation": "Documentation similarity 0.322; term coverage 0.500 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "a88770b6accdadbb1aba12e8970c2c51ce5a619ca8d40a7929aa7131396c5d4a",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "documentation_kind": "function_docstring",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/vectors.py",
+        "include": [
+          "source"
+        ],
+        "qualname": "in_immediate_transaction"
+      }
+    }
+  ],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 2213,
+    "inspected_symbols": 26,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "sources": [
+      "module_docstrings",
+      "class_docstrings",
+      "method_docstrings",
+      "function_docstrings"
+    ],
+    "findings_used": false,
+    "issues": [
+      {
+        "path": "src/ken/structural/query_view.py",
+        "qualname": "src/ken/structural/query_view.py",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/structural_store/graph_values.py",
+        "qualname": "src/ken/structural_store/graph_values.py",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/structural_store/schema.py",
+        "qualname": "src/ken/structural_store/schema.py",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/structural_store/graph_revision.py",
+        "qualname": "src/ken/structural_store/graph_revision.py",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/kql2/values.py",
+        "qualname": "src/ken/kql2/values.py",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/mcp/server.py",
+        "qualname": "ken_related",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/kql2/outcome.py",
+        "qualname": "src/ken/kql2/outcome.py",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/mcp/server.py",
+        "qualname": "ken_who",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/structural/model.py",
+        "qualname": "FactIndex",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/kql2/source_patterns.py",
+        "qualname": "src/ken/kql2/source_patterns.py",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/embedder/__init__.py",
+        "qualname": "vec_to_blob",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/kql2/compilation.py",
+        "qualname": "src/ken/kql2/compilation.py",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/parsers/_helpers.py",
+        "qualname": "src/ken/parsers/_helpers.py",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/parsers/php.py",
+        "qualname": "_emit_include",
+        "reason": "source file budget exhausted"
+      }
+    ],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

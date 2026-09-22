@@ -1,0 +1,28 @@
+{
+  "date": "2026-09-17",
+  "ken_head": "a2b317d4056c7ecebc48eb2796613f073a411881",
+  "working_tree": "includes pre-existing refactor and catalogue changes; no commit created",
+  "implementation_fingerprint": "001d8f3828c53deb651a71cb89f46627ca3eb23b854618f5acafb8791d60df70",
+  "sdk_repository_head": "4fa7e82274bd70e145da05c66117865f7615e61d",
+  "broad_suite": {
+    "command": "PYTHONPATH=.:src .venv/bin/python -m pytest -o addopts='' -q tests/kql2 tests/structural tests/common_ast",
+    "passed": 13170,
+    "xfailed": 10,
+    "seconds": 412.71,
+    "note": "Final selective large-relation union optimization followed this run and is covered by the focused final suite."
+  },
+  "focused_final": {
+    "command": "PYTHONPATH=.:src .venv/bin/python -m pytest -o addopts='' -q tests/kql2/test_catalog_exploration.py",
+    "passed": 104,
+    "seconds": 17.83,
+    "languages": [
+      "python",
+      "java",
+      "typescript",
+      "ruby"
+    ]
+  },
+  "ruff": "passed for new implementation, tests and benchmark",
+  "mypy": "passed for catalog_index.py and records.py with --follow-imports=silent --ignore-missing-imports",
+  "diff_check": "Changed integration files pass. Global check reports a pre-existing extra EOF newline in docs/structural-validation/kql2-catalog-rewrite-2026-09-15/migration-status.md, untouched by this port."
+}

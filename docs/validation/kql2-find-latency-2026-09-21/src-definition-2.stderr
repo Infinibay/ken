@@ -1,0 +1,46 @@
+Traceback (most recent call last):
+  File "/Users/andres/Projects/ken/src/ken/kql2/service.py", line 206, in search
+    unit = store.put_unit(key, ir, source_hash, frontend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andres/Projects/ken/src/ken/structural_store/store.py", line 161, in put_unit
+    with self.transaction():
+         ^^^^^^^^^^^^^^^^^^
+  File "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/Users/andres/Projects/ken/src/ken/structural_store/store.py", line 135, in transaction
+    raise MemoryError('structural retention budget exceeded; use an ephemeral store')
+MemoryError: structural retention budget exceeded; use an ephemeral store
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/andres/Projects/ken/src/ken/__main__.py", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/Users/andres/Projects/ken/src/ken/cli.py", line 442, in main
+    return _dispatch(args, parser)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andres/Projects/ken/src/ken/cli.py", line 623, in _dispatch
+    return _tools_cli(
+           ^^^^^^^^^^^
+  File "/Users/andres/Projects/ken/src/ken/cli.py", line 1716, in _tools_cli
+    result = tool.fn(**kwargs)
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/andres/Projects/ken/src/ken/mcp/server.py", line 1000, in ken_find
+    result = search_kql2(_PROJECT_ROOT, query, path=path, cache_mb=cache_mb,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andres/Projects/ken/src/ken/kql2/service.py", line 219, in search
+    temporary.put_unit(
+  File "/Users/andres/Projects/ken/src/ken/structural_store/store.py", line 208, in put_unit
+    project_ast(self,unit,normalize(ir))
+                          ^^^^^^^^^^^^^
+  File "/Users/andres/Projects/ken/src/ken/common_ast/normalize.py", line 48, in normalize
+    nodes[i]=replace(nodes[i],subtree_end=len(nodes))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/dataclasses.py", line 1588, in replace
+    return obj.__class__(**changes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 19, in __init__
+KeyboardInterrupt

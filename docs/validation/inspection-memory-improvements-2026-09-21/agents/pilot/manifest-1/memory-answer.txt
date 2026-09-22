@@ -1,0 +1,7 @@
+Según la revisión de fuente registrada en `vector-manifest-permissions`, cuyos insumos declarados siguen sin cambios:
+
+- **Ubicación:** `<project_root>/.ken/vectors/<space>.json`. En [vectors.py](/private/tmp/ken-staged-memory-20260921/project/src/ken/vectors.py), `vectors_dir` y `VectorStore.manifest_path` construyen la ruta usando `ken_dir` de [_paths.py](/private/tmp/ken-staged-memory-20260921/project/src/ken/_paths.py).
+- **Escritor y llamadas:** `_atomic_write` crea un temporal, escribe, hace `flush`/`fsync` y lo publica con `os.replace`. Lo llaman `VectorStore._load_or_create` y la función `compact`, que primero escribe un manifiesto provisional.
+- **Permisos:** antes del reemplazo intenta `chmod(tmp, 0o666 & ~_process_umask())`. `_process_umask` establece temporalmente `022` y restaura el valor anterior. Los errores `OSError` de `chmod` se ignoran; los manifiestos existentes se leen sin corregir sus permisos.
+
+Esto describe código observado, **no garantiza los permisos efectivos en ejecución**. Reutilicé la revisión registrada; “sin cambios” no constituye una prueba independiente de su conclusión.

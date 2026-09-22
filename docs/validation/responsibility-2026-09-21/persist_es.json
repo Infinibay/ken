@@ -1,0 +1,50 @@
+{
+  "ok": true,
+  "question": "\u00bfQui\u00e9n guarda las memorias entre sesiones?",
+  "hypotheses": [],
+  "status": "unknown",
+  "candidates": [],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 1965,
+    "inspected_symbols": 35,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "issues": [
+      {
+        "path": "src/ken/cli.py",
+        "qualname": "_models_cli",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/parsers/css.py",
+        "qualname": "_collapse",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/grep.py",
+        "qualname": "grep",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/responsibility/reasoners.py",
+        "qualname": "confidence",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/structural/service.py",
+        "qualname": "directory_summary",
+        "reason": "source file budget exhausted"
+      }
+    ],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

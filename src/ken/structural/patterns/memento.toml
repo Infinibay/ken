@@ -6,14 +6,28 @@ description = "An originator creates a snapshot and restores state from that typ
 caveat = "Structural evidence requires review of intent and runtime behavior. The serialized variant identifies the codec by API name, so it inherits the usual limits of name-based protocol identification, and it does not prove that the decoded value is a faithful or complete reconstruction."
 legacy_query = "require $unit HAS_FIELD $state\nrequire $unit HAS_METHOD $save\nrequire $save READS $state\nrequire $save RETURNS_NEW $snapshot\nrequire $unit HAS_METHOD $restore\nrequire $restore HAS_PARAMETER $memento\nrequire $memento TYPE $snapshot\nrequire $restore WRITES $state\ndifferent $save $restore\n"
 query = '''
-query memento {
- any { match "memento#snapshot-object"(unit: $unit); }
- or { match "memento#accessor-snapshot"(unit: $unit); }
- or { match "memento#serialized-snapshot"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.memento;
+import ken.catalog.memento.variants.accessor_snapshot;
+import ken.catalog.memento.variants.serialized_snapshot;
+import ken.catalog.memento.variants.snapshot_object;
+
+pattern detect(out GraphTerm $unit) {
+  either {
+    use ken.catalog.memento.variants.snapshot_object.detect(unit: $unit);
+  } or {
+    use ken.catalog.memento.variants.accessor_snapshot.detect(unit: $unit);
+  } or {
+    use ken.catalog.memento.variants.serialized_snapshot.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -22,48 +36,82 @@ status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp"]
 query_claim = "State supplied to a unique explicit constructor reaches a snapshot field read by a simple getter, whose result is assigned to the original field during restore. Nominal contracts or an observed caller passing the snapshot correlate the receiver. Linear field models exclude explicit overwrites and parameter rebinding, not hidden effects, deep-copy semantics, runtime dispatch closure or global snapshot immutability."
 query = '''
-query accessor_snapshot {
- require $unit HAS_FIELD $state;
- require $unit HAS_METHOD $save;
- require $save RETURNS_VALUE $created;
- require $construction RESULT $created;
- require $created INSTANCE_OF $snapshot;
- require $construction CONSTRUCTOR_TARGET $constructor;
- require $construction CALL_BINDING $binding [mode: direct];
- require $binding BINDING_TARGET $constructor;
- require $binding BINDING_VALUE $state;
- require $binding BINDING_PARAMETER $input;
- require $constructor HAS_OPERATION $initialization;
- require $initialization FINAL_FIELD_INPUT $input;
- require $initialization ASSIGNMENT_TARGET $saved;
- require $snapshot HAS_FIELD $saved;
- require $snapshot HAS_METHOD $getter;
- callable(arity: 0, static: false) as $getter;
- require $getter RETURNS_FIELD $saved;
- require $unit HAS_METHOD $restore;
- different $save $restore;
- require $restore HAS_PARAMETER $memento;
- require $restore HAS_CALL $read;
- require $read CALL_RECEIVER_INPUT $memento;
- any {
-  require $memento TYPE $contract;
-  path $snapshot SUBTYPE_OF{0,8} $contract as $contract_path;
-  any { require $read TARGET $getter; }
-  or { require $read TARGET $slot; require $getter OVERRIDES $slot; }
- } or {
-  parameter(type_state: unknown) as $memento;
-  require $usage CALL_BINDING $supplied [mode: direct];
-  require $supplied BINDING_PARAMETER $memento;
-  require $supplied BINDING_VALUE $provided;
-  any { require $provided ALLOCATES_TYPE $snapshot; }
-  or { require $provided TYPE $snapshot; }
-  call(resolution: unresolved) as $read;
-  where $read.name == $getter.name;
- }
- require $restore HAS_OPERATION $write;
- require $write ASSIGNMENT_TARGET $state;
- require $write FINAL_FIELD_VALUE $read;
- emit $unit;
+language "kql/2";
+module ken.catalog.memento.variants.accessor_snapshot;
+
+pattern detect(out GraphTerm $unit) {
+  type $snapshot {
+    field $saved {}
+    constructor $initialize {
+      receiver $self { escapes: false; }
+      parameters { param $input { reassigned: false; } }
+      writes: exactly($saved, 1);
+      body { $saved = $input as $retention; }
+    }
+    method $getter {
+      arity: 0; constructor: false; writes: exactly($saved, 0);
+      body { return $saved; }
+    }
+  }
+  type $unit {
+    field $state {}
+    method $save {
+      constructor: false;
+      body {
+        let $created = call $initialize { argument $state for $input; };
+        return $created;
+      }
+    }
+  }
+  either {
+    type $unit {
+      method $restore {
+        constructor: false;
+        parameters { param $memento { type: nominal($snapshot); } }
+        writes: exactly($state, 1);
+        body {
+          let $read = call $getter { receiver_input: $memento; };
+          $state = $read as $write;
+        }
+      }
+    }
+    where $save != $restore;
+  } or {
+    type $contract { method $slot {} }
+    type $unit {
+      method $restore {
+        constructor: false;
+        parameters { param $memento { type: nominal($contract); } }
+        writes: exactly($state, 1);
+        body {
+          let $read = call $slot { receiver_input: $memento; };
+          $state = $read as $write;
+        }
+      }
+    }
+    where $save != $restore;
+    where subtype($snapshot, $contract);
+    where overrides($getter, $slot);
+  } or {
+    type $unit {
+      method $restore {
+        constructor: false;
+        parameters { param $memento {} }
+        writes: exactly($state, 1);
+        body {
+          let $read = call $callee { receiver: $memento; resolution: unresolved; };
+          $state = $read as $write;
+        }
+      }
+    }
+    where $save != $restore;
+    where receives($memento, $snapshot);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 
@@ -79,32 +127,40 @@ fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query memento {
+language "kql/2";
+module ken.catalog.memento.variants.snapshot_object;
 
- require $unit HAS_FIELD $state;
- require $unit HAS_METHOD $save;
- require $save RETURNS_VALUE $created;
- require $construction RESULT $created;
- require $created INSTANCE_OF $snapshot;
- require $construction CONSTRUCTOR_TARGET $constructor;
- require $construction CALL_BINDING $binding [mode: direct];
- require $binding BINDING_TARGET $constructor;
- require $binding BINDING_VALUE $state;
- require $binding BINDING_PARAMETER $input;
- require $constructor HAS_OPERATION $initialization;
- require $initialization FINAL_FIELD_INPUT $input;
- require $initialization ASSIGNMENT_TARGET $saved;
- require $snapshot HAS_FIELD $saved;
- require $unit HAS_METHOD $restore;
- require $restore HAS_PARAMETER $memento;
- require $memento TYPE $snapshot;
- require $restore HAS_OPERATION $write;
- require $write ASSIGNMENT_TARGET $state;
- require $write FINAL_FIELD_VALUE $member;
- require $member MEMBER_OF $memento;
- where $member.name == $saved.name;
- different $save $restore;
- emit $unit;
+pattern detect(out GraphTerm $unit) {
+  type $snapshot {
+    field $saved {}
+    constructor $initialize {
+      receiver $self { escapes: false; }
+      parameters { param $input {} }
+      body { $saved = $input as $retention; }
+    }
+  }
+  type $unit {
+    field $state {}
+    method $save {
+      constructor: false;
+      body {
+        let $created = call $initialize { argument $state for $input; };
+        return $created;
+      }
+    }
+    method $restore {
+      constructor: false;
+      parameters { param $memento { type: nominal($snapshot); } }
+      body { $state = $memento.$saved as $write; }
+    }
+  }
+  where $save != $restore;
+  where final_field_value($write, $memento.$saved);
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -115,32 +171,71 @@ requires = ["serialization_models", "value_flow"]
 graph_requirements = ["Codificación/decodificación preserva correspondencia de estado; una cadena opaca sin modelo queda parcial."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
-query_claim = "Un codificador reconocido por nombre (`dumps`, `stringify`, `toJson`, `Serialize`, `encode`, `Marshal`, `to_string`) recibe el estado como argumento, y un decodificador reconocido (`loads`, `parse`, `fromJson`, `Deserialize`, `decode`, `Unmarshal`, `from_str`) devuelve el estado, por una de tres formas que la implementacion tuvo que medir: el valor del decodificador fluye al estado (Python, JS, TS, Java, C++, y C# via `FLOWS_TO`), el decodificador es el RECEPTOR de otra llamada cuyo valor fluye al estado (el `unwrap()` de Rust), o el estado se pasa como argumento destino (el `&e.state` de Go). La identificacion del codec es **por nombre de API**, no por resolucion de biblioteca; el nombre del codificador se ancla al final porque en Rust es `serde_json::to_string` y no `to_string`, mientras que el del decodificador se busca sin anclar porque en C# es `Deserialize<string>`. **No prueba que la decodificacion reconstruya el estado de forma fiel ni completa**: la correspondencia se prueba sobre el flujo, no sobre el contenido."
+query_claim = "Save retorna el resultado del codificador (directamente o mediante una llamada sobre ese resultado), y el decodificador recibe el parametro snapshot de load. Un codificador reconocido por nombre (`dumps`, `stringify`, `toJson`, `Serialize`, `encode`, `Marshal`, `to_string`) recibe el estado como argumento, y un decodificador reconocido (`loads`, `parse`, `fromJson`, `Deserialize`, `decode`, `Unmarshal`, `from_str`) devuelve el estado, por una de tres formas que la implementacion tuvo que medir: el valor del decodificador fluye al estado (Python, JS, TS, Java, C++, y C# via `FLOWS_TO`), el decodificador es el RECEPTOR de otra llamada cuyo valor fluye al estado (el `unwrap()` de Rust), o el estado se pasa como argumento destino (el `&e.state` de Go). La identificacion del codec es **por nombre de API**, no por resolucion de biblioteca; el nombre del codificador se ancla al final porque en Rust es `serde_json::to_string` y no `to_string`, mientras que el del decodificador se busca sin anclar porque en C# es `Deserialize<string>`. **No prueba que la decodificacion reconstruya el estado de forma fiel ni completa**: la correspondencia se prueba sobre el flujo, no sobre el contenido."
 query = '''
-query serialized_snapshot {
- require $unit HAS_FIELD $state;
- require $unit HAS_METHOD $save;
- callable(constructor: false) as $save;
- require $unit HAS_METHOD $load;
- callable(constructor: false) as $load;
- different $save $load;
- require $save HAS_CALL $encode;
- call(name: /(dumps|stringify|toJson|Serialize|encode|Marshal|to_string)$/) as $encode;
- require $encode ARGUMENT $argument;
- require $argument VALUE $encoded_value;
- require $encoded_value LOADED_FROM $state;
- require $load HAS_CALL $decode;
- call(name: /(loads|parse|fromJson|Deserialize|decode|Unmarshal|from_str)/) as $decode;
- any {
-  path $decode FLOWS_TO{1,3} $state as $direct;
- } or {
-  require $wrapper RECEIVER $decode;
-  path $wrapper FLOWS_TO{1,3} $state as $wrapped;
- } or {
-  require $decode ARGUMENT $target;
-  require $target VALUE $target_value;
-  require $target_value LOADED_FROM $state;
- }
- emit unit=$unit, state=$state, save=$save, load=$load, encode=$encode, decode=$decode;
+language "kql/2";
+module ken.catalog.memento.variants.serialized_snapshot;
+
+/* The wrapped shape (Rust): the codec's own call is the receiver of the operation the
+   method returns, and the same wrapping stands between the decoder and the state. */
+pattern wrapped(out TypeDecl $unit, out Field $state, out Callable $save, out Callable $load, out Call $encode, out Call $decode, out Call $local_unwrapped) {
+  type $unit {
+    field $state {}
+    method $save {
+      constructor: false;
+      body {
+        call $encode { name: /to_string$/; argument $state at 0; };
+        call on $encode { returned: true; };
+      }
+    }
+    method $load {
+      constructor: false;
+      parameters { param $payload {} }
+      body {
+        call $decode { name: /from_str/; argument $payload at 0; };
+        call on $decode { } as $local_unwrapped;
+        $state = $local_unwrapped;
+      }
+    }
+  }
+  where $save != $load;
+}
+
+pattern detect(out TypeDecl $unit, out Field $state, out Callable $save, out Callable $load, out Call $encode, out Call $decode) {
+  type $unit {
+    field $state {}
+    method $save { constructor: false; }
+    method $load { constructor: false; parameters { param $payload {} } }
+  }
+  where $save != $load;
+  either {
+    /* Python, JavaScript, TypeScript, Java, C#, C++: the codec's own call receives the
+       state and its owner returns the encoded value; the decoder's value is stored. */
+    type $unit {
+      method $save {
+        body { call $encode { name: /(dumps|stringify|toJson|Serialize|encode|Marshal)$/; argument $state at any; returned: true; }; }
+      }
+      method $load {
+        body { call $decode { name: /(loads|parse|fromJson|Deserialize|decode)/; argument $payload at 0; }; $state = $decode; }
+      }
+    }
+  } or {
+    use wrapped(unit: $unit, state: $state, save: $save, load: $load, encode: $encode, decode: $decode);
+  } or {
+    /* Go hands the decoder the state itself as the destination it writes into. */
+    type $unit {
+      method $save {
+        body { call $encode { name: /Marshal$/; argument $state at 0; returned: true; }; }
+      }
+      method $load {
+        body { call $decode { name: /Unmarshal/; argument $payload at 0; argument $state at 1; }; }
+      }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit, state: $state, save: $save, load: $load, encode: $encode, decode: $decode);
+  select $unit, $state, $save, $load, $encode, $decode;
 }
 '''

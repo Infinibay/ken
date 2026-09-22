@@ -178,13 +178,20 @@ class QuotedTerm(str):
     Legacy patterns use shlex and retain their existing term semantics.
     """
 
+    __slots__ = ("_literal",)
+    _literal: str
+
     def __new__(cls, token: str):
-        json.loads(token)  # Reject malformed escapes at parse time.
-        return super().__new__(cls, token)
+        # Validate and decode once when building the plan, not for every row
+        # of every join that resolves or compares this literal.
+        decoded = str(json.loads(token))
+        value = super().__new__(cls, token)
+        value._literal = decoded
+        return value
 
     @property
     def literal(self) -> str:
-        return str(json.loads(self))
+        return self._literal
 
 
 def _resolve(term: str, bindings: dict[str, str]) -> str | None:

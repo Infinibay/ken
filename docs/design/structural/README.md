@@ -1,5 +1,10 @@
 # Ken: diseño del IR y de la búsqueda estructural
 
+El nuevo diseño del lenguaje de consultas está en [KQL 2](../kql2/README.md),
+propuesta documental sin implementación. Sus decisiones de sintaxis sustituyen
+las propuestas de lenguaje de este directorio; los contratos de algoritmos e IR
+siguen siendo antecedentes útiles y conservan sus límites de implementación.
+
 **Estado: propuesta de diseño, 12 de septiembre de 2026.**
 La implementación disponible y sus límites están descritos en la [guía operativa](../../structural-queries.md). Estos documentos
 especifican el producto que queremos construir. No son una lista de capacidades

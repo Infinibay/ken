@@ -6,13 +6,28 @@ description = "An expression recursively forwards an evaluation context."
 caveat = "Recursive evaluation also occurs outside interpreters; grammar intent requires review."
 legacy_query = "require $unit SUBTYPE_OF $expression\nrequire $unit HAS_FIELD $child\nrequire $child TYPE $expression\nrequire $unit HAS_METHOD $interpret\nrequire $interpret HAS_PARAMETER $context receiver=false\nrequire $interpret HAS_CALL $call\nrequire $call RECEIVER $child\nrequire $call ARGUMENT $context\n"
 query = '''
-query interpreter {
- any { match "interpreter#expression-objects"(unit: $unit); }
- or { match "interpreter#expression-sum"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.interpreter;
+import ken.catalog.interpreter.variants.context_free_binary;
+import ken.catalog.interpreter.variants.expression_objects;
+import ken.catalog.interpreter.variants.expression_sum;
+
+pattern detect(out GraphTerm $unit) {
+  either {
+    use ken.catalog.interpreter.variants.expression_objects.detect(unit: $unit);
+  } or {
+    use ken.catalog.interpreter.variants.expression_sum.detect(unit: $unit);
+  } or {
+    use ken.catalog.interpreter.variants.context_free_binary.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -26,24 +41,29 @@ fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query interpreter {
+language "kql/2";
+module ken.catalog.interpreter.variants.expression_objects;
 
- require $unit SUBTYPE_OF $expression;
- require $unit HAS_FIELD $child;
- require $child TYPE $expression;
- require $unit HAS_METHOD $interpret;
- require $interpret OVERRIDES $slot;
- require $interpret HAS_PARAMETER $context;
- parameter(receiver: false) as $context;
- require $interpret HAS_CALL $call;
- require $call RECEIVER $child;
- require $call ARGUMENT $arg;
- require $arg VALUE $input;
- require $input LOADED_FROM $context;
- callable() as $interpret;
- call() as $call;
- where $interpret.name == $call.name;
- emit $unit;
+pattern detect(out TypeDecl $unit) {
+  type $expression {
+    method $slot { }
+  }
+  type $unit {
+    field $child { type: nominal($expression); }
+    method $interpret {
+      param $context { }
+      body {
+        call $slot { receiver: $child; argument $context at 0; };
+      }
+    }
+  }
+  where subtype($unit, $expression);
+  where overrides($interpret, $slot);
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -56,41 +76,104 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-six-languages"
 query_claim = "Una expresion **etiquetada** sin subtipado: un tipo con dos campos tipados por si mismo, una rama de su operacion que **discrimina un campo del mismo tipo** (el tag), y las dos llamadas recursivas llevan un argumento cargado del **mismo parametro** (el contexto). La recursion la da el nombre uniforme, el dispatch `TRUTH_TEST` (IR 1.71) y el contexto la identidad del parametro. NO prueba que los dos resultados se **combinen** en vez de descartarse: eso exige flujo de valores de las dos llamadas al retorno, que el IR no tiene; es el mismo limite que `expression-objects` ya declara. Tampoco que el tag sea exhaustivo, ni que la rama hoja no recurra, ni la codificacion de suma **por casos** (variantes de enum, uniones discriminadas, records)."
 query = '''
-query interpreter_expression_sum {
- require $unit IS CLASS;
- require $unit HAS_METHOD $operation;
- require $unit HAS_FIELD $first;
- require $first TYPE $unit;
- require $unit HAS_FIELD $second;
- require $second TYPE $unit;
- different $first $second;
- require $operation HAS_CALL $first_call;
- require $first_call RECEIVER $first;
- require $operation HAS_CALL $second_call;
- require $second_call RECEIVER $second;
- where $operation.name == $first_call.name;
- where $operation.name == $second_call.name;
- require $operation HAS_OPERATION $branch;
- operation(kind: branch) as $branch;
- require $branch TRUTH_TEST $tested;
- any {
-  require $unit HAS_FIELD $tested;
- } or {
-  require $tested MEMBER_OF $this;
-  require $unit INSTANCE_RECEIVER $this;
- } or {
-  require $tested MEMBER_OF $receiver;
-  require $operation HAS_PARAMETER $receiver;
-  parameter(receiver: true) as $receiver;
- }
- require $operation HAS_PARAMETER $context;
- parameter(receiver: false) as $context;
- require $first_call ARGUMENT $first_argument;
- require $first_argument VALUE $first_value;
- require $first_value LOADED_FROM $context;
- require $second_call ARGUMENT $second_argument;
- require $second_argument VALUE $second_value;
- require $second_value LOADED_FROM $context;
- emit unit=$unit, $operation, $first, $second, $branch, $tested, $context;
+language "kql/2";
+module ken.catalog.interpreter.variants.expression_sum;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $operation, out GraphTerm $first, out GraphTerm $second, out GraphTerm $branch, out GraphTerm $tested, out GraphTerm $context) {
+  type $unit {
+    field $first { type: nominal($unit); }
+    field $second { type: nominal($unit); }
+    field $tested { }
+    method $operation {
+      param $context { }
+      body {
+        if ($tested == _) as $branch { }
+        call $local_first_call { receiver: $first; dispatch: possible; argument $context at 0; };
+        call alongside $local_second_call { receiver: $second; dispatch: possible; argument $context at 0; };
+      }
+    }
+  }
+  where $first != $second;
+  where $operation.name == $local_first_call.name;
+  where $operation.name == $local_second_call.name;
+}
+
+query results {
+  use detect(unit: $unit, operation: $operation, first: $first, second: $second, branch: $branch, tested: $tested, context: $context);
+  select $unit, $operation, $first, $second, $branch, $tested, $context;
+}
+'''
+
+[[operations]]
+id = "binary_result"
+status = "ready"
+description = "Two recursive child evaluations receive the same context and both contribute to a returned expression."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch."
+query = '''
+language "kql/2";
+module ken.catalog.interpreter.binary_result;
+
+pattern detect(out GraphTerm $unit) {
+  type $expression {
+    method $slot { }
+  }
+  type $unit { }
+  at least 2 distinct $child {
+    type $unit {
+      field $child { type: nominal($expression); }
+      method $interpret {
+        param $context { }
+        body {
+          let $stored = call $call { receiver: $child; unreplaced: true; dispatch: possible; argument $context at 0; } writes: 1;
+          return from $call;
+        }
+      }
+    }
+    where subtype($unit, $expression);
+    where overrides($interpret, $slot);
+    where $interpret.name == $call.name;
+  };
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
+}
+'''
+
+[[variants]]
+id = "context-free-binary"
+status = "ready"
+languages = ["python", "java", "typescript"]
+query_claim = "Two nominal expression children implement the same zero-argument evaluation slot; both call results are operands of the returned computation. This covers grammars whose context is already in terminal nodes. Does not prove grammar intent or mathematical sensitivity to the operands."
+query = '''
+language "kql/2";
+module ken.catalog.interpreter.variants.context_free_binary;
+
+pattern detect(out GraphTerm $unit) {
+  type $expression {
+    method $slot { }
+  }
+  type $unit { }
+  at least 2 distinct $child {
+    type $unit {
+      field $child { type: nominal($expression); }
+      method $evaluate {
+        constructor: false; arity: 0;
+        body {
+          let $stored = call $call { receiver: $child; unreplaced: true; dispatch: possible; } writes: 1;
+          return from $call;
+        }
+      }
+    }
+    where subtype($unit, $expression);
+    where overrides($evaluate, $slot);
+    where $call.name == $evaluate.name;
+  };
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''

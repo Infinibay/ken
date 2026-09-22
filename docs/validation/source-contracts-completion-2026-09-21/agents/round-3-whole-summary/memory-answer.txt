@@ -1,0 +1,7 @@
+- **Ubicación:** `_paths.ken_dir(project_root)/vectors/<space>.json`, según [`vectors_dir` y `VectorStore.manifest_path`](/private/tmp/ken-contract-agent-whole-memory-20260921/project/src/ken/vectors.py:169). [`_paths.ken_dir`](/private/tmp/ken-contract-agent-whole-memory-20260921/project/src/ken/_paths.py:27) devuelve `project_root / KEN_DIR_NAME`.
+
+- **Escritura y permisos:** [`_atomic_write`](/private/tmp/ken-contract-agent-whole-memory-20260921/project/src/ken/vectors.py:182) escribe un temporal, hace `flush` y `fsync`, intenta `chmod(tmp, 0o666 & ~_process_umask())` y después ejecuta `os.replace`. `_process_umask` establece temporalmente `022` y restaura el valor anterior. Se ignora `OSError` de `chmod`; los manifiestos existentes se leen sin reparar permisos.
+
+- **Llamadores:** [`VectorStore._load_or_create`](/private/tmp/ken-contract-agent-whole-memory-20260921/project/src/ken/vectors.py:379) y [`VectorStore.compact`](/private/tmp/ken-contract-agent-whole-memory-20260921/project/src/ken/vectors.py:772); este último escribe primero un manifiesto provisional.
+
+Esto describe el código observado, **no garantiza los permisos efectivos en ejecución**. La comprobación registrada solo verifica la presencia de `chmod`. No modifiqué código ni ejecuté operaciones de producción.

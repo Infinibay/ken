@@ -1,0 +1,30 @@
+{
+  "status": "candidates",
+  "score_kind": "heuristic_not_probability",
+  "candidates": [
+    {
+      "kind": "module",
+      "path": "src/ken/db.py",
+      "line": 1,
+      "score": 0.637,
+      "evidence": "SQLite connection helpers."
+    },
+    {
+      "symbol": "connect",
+      "kind": "function",
+      "path": "src/ken/db.py",
+      "line": 23,
+      "score": 0.425,
+      "evidence": "Open a connection with sane defaults."
+    },
+    {
+      "symbol": "in_immediate_transaction",
+      "kind": "function",
+      "path": "src/ken/vectors.py",
+      "line": 224,
+      "score": 0.425,
+      "evidence": "Is this connection inside a write transaction it acquired up front?"
+    }
+  ],
+  "uninspected_candidates": 14
+}

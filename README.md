@@ -102,7 +102,7 @@ Run this once from the project you want ken to index:
 ken install .
 ```
 
-By default, ken detects the assistant setup you use and wires itself into the supported local agent config. The install creates `.ken/`, adds it to `.gitignore`, installs hooks/MCP config where applicable, and performs the initial structural code index.
+By default, ken detects the assistant setup you use and wires itself into the supported local agent config. The install creates `.ken/`, adds it to `.gitignore`, installs hooks/MCP config and problem-oriented skills where applicable, and performs the initial structural code index.
 
 Embeddings are lazy by default. That means `ken install .` does not eagerly embed the whole repository; the daemon warms embeddings as they are needed. This keeps install fast and avoids doing expensive work before the project needs it.
 
@@ -130,6 +130,22 @@ wiring — it registers ken as a local MCP server in the project's
 ken install --opencode .
 ```
 
+For the official [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
+(`dsh`), install its project overlay and launch with that overlay:
+
+```sh
+ken install --deepseek .
+dsh --profile web --patch .dsh/ken.cordis.json
+# Or run a task from the CLI:
+dsh --profile headless --patch .dsh/ken.cordis.json "Use Ken to locate the storage implementation"
+```
+
+DeepSeek requires the explicit `--patch` argument. Ken prints the launch command,
+including in quiet mode, and detects `.dsh/` on subsequent installs. The overlay
+pins the MCP process to this project and the Python installation that ran
+`ken install`. Reinstall after moving the project or replacing that environment.
+It composes with existing profile patches; no global Harness profile is edited.
+
 You can pass several when a project uses several assistants:
 
 ```sh
@@ -139,15 +155,52 @@ ken install --codex --opencode .
 ken install --claude --codex --opencode .
 ```
 
-OpenCode has no lifecycle-hook equivalent to Claude Code's
-`SessionStart` or Codex's `Stop` — its plugin system is JS/TS-based and
-runs on Bun/Node. So the OpenCode wiring is narrower than the other
-two: just the MCP registration. The six ken tools (`ken_find`,
-`ken_read`, `ken_related`, `ken_rank`, `ken_recall`, `ken_remember`)
-are available to OpenCode through MCP
-exactly the way they are to Claude Code, and the daemon-side hook
-logic (session memory, predictive ranking, finding recall) keeps
-working because it lives in the daemon, not in the host agent.
+OpenCode and DeepSeek receive MCP tools and skills. Ken does not currently
+install native lifecycle hooks for these two hosts: recall, ranking, and
+contract checks are available on demand. Automatic context injection and edit
+checks require a host hook integration; merely connecting MCP does not run them.
+
+### Skills organized by problem
+
+All eight bundled skills are in English. Each works through a programming
+problem: the question, evidence to collect, how to interpret the result, and
+what to do when it is ambiguous or incomplete:
+
+| Skill | When to use it |
+| --- | --- |
+| `ken-locate-code` | Find who implements a behavior or handles an entry point. |
+| `ken-investigate-bug` | Connect a failure to its cause, consumers, and tests. |
+| `ken-plan-change` | Scope a refactor or migration and compare existing contracts. |
+| `ken-understand-architecture` | Explain responsibilities and observed collaboration. |
+| `ken-reuse-code` | Find reusable code and a candidate access expression in Python. |
+| `ken-find-code-patterns` | Search structural properties and bug signatures with KQL2. |
+| `ken-prevent-regressions` | Author and validate an explicit source contract. |
+| `ken-resume-work` | Reuse conclusions with their sources, assumptions, and validity. |
+
+The two query-authoring skills include a self-contained KQL2 guide with
+executable examples: captures and ownership, filters, correlated absence,
+returned values, target identity, reusable patterns, libraries, and graph
+hazards. The contract skill includes both witness (`some_match`) and violation
+(`no_matches`) examples with cases that expose misleading success.
+
+`ken install` follows the selected/detected hosts: `.claude/skills` for Claude,
+`.agents/skills` for Codex, `.opencode/skills` for OpenCode, and `.dsh/skills`
+for DeepSeek. OpenCode can reuse Claude/Codex copies; DeepSeek can reuse the
+Codex copy. Skills are loaded on demand by the assistant. Installed skill
+directories are excluded from Ken's code index and text search so their example
+code does not compete with the project implementation.
+
+Reinstall replaces older content under the same eight skill names; it does not
+install a second generation alongside them. It updates unchanged Ken-owned
+bundles, removes obsolete owned references, and reports local customizations
+without overwriting them. Uninstall removes unchanged owned files and preserves
+edited bundles and extra user files. Ownership is tracked in
+`.ken/installed-skills.json`; existing unowned skills are never adopted.
+`ken install --no-wire` skips skills as well as hooks and MCP wiring. Installing
+skills does not enable source contracts or automatic checks.
+
+See [installation design and verified host contracts](docs/design/assistant-skills.md)
+and the [skill rewrite and validation report](docs/validation/skills-learning-2026-09-22/README.md).
 
 ### Eagerly build embeddings
 
@@ -408,6 +461,17 @@ ken remember "codex wiring" "Use ken install --codex . to repair invalid hooks."
 ken recall "codex hook repair"
 ```
 
+Findings can also carry a justification, evidence files and file/tree dependencies
+through `ken_remember(..., justification={...})` or `ken tools remember`.
+The existing session and prompt hooks surface compact dependency validity, and
+`ken_recall(topic="…", detail="answer", max_chars=1800)` starts with a whole
+conclusion, source references, assumptions and input validity. Expand with
+`detail="full"` or read the relevant symbol when evidence is missing or stale;
+`summary` adds a short rationale. See
+[justified programming memory](docs/design/justified-memory.md) for the contract,
+examples and limits. Unchanged dependencies do not establish that a conclusion
+is true or that its assumptions still apply.
+
 ## Run MCP tools from the shell
 
 Every tool the ken MCP server exposes is also runnable directly with `ken tools`, so you can use the structured code-intelligence tools (call graph, blast radius, co-change, wiring, clones, …) without an assistant in the loop. The list, descriptions, and parameters are read live from the same MCP surface, so `ken tools` never drifts from what the agent sees.
@@ -418,9 +482,38 @@ ken tools find --help                           # show one tool's parameters
 ken tools find "MY_ENV_VAR" --scope text --literal   # required params are positional, options are --flags
 ken tools related src/ken/cli.py blast_radius
 ken tools read src/ken/search.py --include symbols imports
+ken tools who "Who stores reusable findings?" --path src/ken
 ```
 
 The tool name may be given with or without the `ken_` prefix (`find` or `ken_find`). Required parameters are positional in schema order — `ken_related` takes `target` then `relation`. Results print as JSON; `--compact` prints a single line and `--path /repo` points at another checkout, and both flags come *before* the tool name.
+
+`ken_who` answers responsibility questions with ranked symbol hypotheses, current
+documentation, evidence from names and call expressions, and explicit assumptions.
+Its confidence score is a heuristic, not a calibrated probability. Optional
+`--hypotheses "Store reusable findings"` supplies an alternative formulation,
+useful when the question and documentation use different terminology or languages.
+See [responsibility questions and confidence](docs/design/responsibility.md).
+
+`ken_rule` registers KQL2 source contracts with passing/failing examples;
+`ken_check` validates the current code, keeps evidence receipts, and compares
+regressions or resolutions. `ken_related(..., relation="checks")` finds applicable
+contracts; `ken_remember(..., check_run="...")` binds a memory to a check.
+Validated rules can opt into bounded background edit checks through Ken's
+existing hooks. See [source contracts, MCP/CLI examples and limits](docs/design/source-contract-tools.md).
+
+`ken_related` also exposes `impact` (result consumers and related tests), `roles`
+(call chains and structural role hypotheses), and `available` (explicit Python
+access expressions with outstanding compatibility obligations). For example:
+
+```sh
+ken tools related 'src/ken/checks/report.py::query_view' impact --path src/ken/checks --depth 3
+```
+
+Inspections follow explicit imports; same-named functions in unrelated files do
+not establish a dependency. Memories retain per-rule freshness, including imported
+dependencies. Compact recall preserves whole conclusions or offers an explicit
+expansion when the character budget is too small. See [program inspection and
+coding workflows](docs/design/code-inspection.md).
 
 File-path arguments handled by these tools are confined to that selected
 project root. Relative paths are resolved from the root; absolute paths are

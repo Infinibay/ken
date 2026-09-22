@@ -1,0 +1,10 @@
+{
+  "status": "aborted_during_index_publication",
+  "elapsed_seconds_at_interrupt": 2660,
+  "entities_written": 2620444,
+  "operations_written": 8756899,
+  "facts_total": 47154730,
+  "reason": "Single transaction with 2 MB SQLite page cache produced multi-GB WAL and expensive WAL frame lookups; rerun with bounded publication batches and 64 MB cache. No query timings from this run.",
+  "profile": "native-facts-sample.txt",
+  "last_progress": "INDEX k2_graph_facts 2359296"
+}

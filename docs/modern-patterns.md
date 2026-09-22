@@ -1,5 +1,12 @@
 # Patrones de arquitectura y web
 
+Actualización IR **1.78.0 / KQL 2**: las diez raíces modernas se verifican en la
+suite de catálogo, junto con las 23 GoF. Véase la
+[segunda revisión y benchmark](structural-validation/xfail-second-review-2026-09-14/README.md).
+La auditoría externa etiquetada de esta revisión usa consultas GoF; no atribuye
+a los patrones web la cobertura medida allí. Unit of Work conserva su contrato
+transaccional en diseño.
+
 El objetivo sigue abierto: ampliar y corregir GoF y cubrir patrones habituales
 de aplicaciones web en varios lenguajes. El corpus independiente muestra que los
 tests propios de los 23 conceptos no equivalen a cobertura de sus variantes reales.

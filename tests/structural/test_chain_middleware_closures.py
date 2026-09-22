@@ -323,9 +323,10 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'CAPTURES' in row['query'] and 'SYNTAX_NODE' in row['query']
-    # The residual is closed by an exact call cardinality, not by prose.
-    assert 'count distinct $call = 1' in row['query']
+    # The capture, the branch guard and the yielded delegation are stated in KQL 2.
+    assert 'captures: $next' in row['query']
+    assert 'if (_) { return _; }' in row['query']
+    assert 'return $delegated;' in row['query']
     assert 'excluido' in row['query_claim']
 
 

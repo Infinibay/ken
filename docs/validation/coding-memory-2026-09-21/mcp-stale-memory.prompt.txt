@@ -1,0 +1,18 @@
+Trabaja sólo sobre esta copia de Ken. Es una evaluación de diagnóstico: no modifiques archivos ni memorias. Puedes consultar Ken y leer código; evita búsquedas o lecturas si el contexto ya resuelve una parte. Responde en español, máximo 180 palabras, con conclusión, evidencia y prueba recomendada.
+
+<context-rank>
+Relevant context:
+Files:
+- src/ken/mcp/server.py
+- src/ken/cli.py
+- tests/test_reasoning_memory.py
+Notes:
+- mcp-object-cli-parameters
+</context-rank>
+<ken-knowledge>
+Vigencia de dependencias declaradas; conservar alcance y supuestos.
+- [REVISAR: cambió una dependencia; supuestos pendientes] mcp-object-cli-parameters — Reasoning tool CLI smoke exposed two independent object-argument gaps: _items_schema omitted dict items in list[dict[str, Any]], and _tool_py_type treated object flags as raw strings. Fixed dict/list…. Revisar: Inspeccionar _items_schema y _tool_py_type, y ejecutar test_cli_decodes_goal_and_premise_objects.
+Ampliar: ken_recall(topic="…", detail="full").
+</ken-knowledge>
+
+Quiero exponer una tool nueva que recibe list[dict[str, Any]] y que funcione igual desde MCP y ken tools. ¿Dónde integrarías ese soporte y qué comprobación evitaría repetir bugs anteriores? Confirma el contrato actual y da una recomendación concreta.

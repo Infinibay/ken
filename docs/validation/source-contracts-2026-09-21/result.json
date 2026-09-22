@@ -1,0 +1,19 @@
+{
+  "source": "src/ken/checks/report.py",
+  "source_sha256": "d394aec8f29f97adbb83a7e7ddc89c00ee63cc179d39c3deda53ca13e0e6ecba",
+  "scope": "Isolated exact copy of Ken source, then one deliberate mutation; no edits to the working source",
+  "before": "pass",
+  "mutated": "fail",
+  "restored": "pass",
+  "comparison": [
+    {
+      "rule": "report.full-response",
+      "change": "regression",
+      "before": "pass",
+      "after": "fail"
+    }
+  ],
+  "memory_after_mutation": "stale",
+  "automatic_notice": "<ken-checks>\nreport.full-response: fail\nScope: selected source contracts. Inspect: ken_check(run_id=\"40ad6a5048594c9b80bb3258772ec57e\", full=true).\n</ken-checks>",
+  "claim": "Existence of a source return of the selected parameter; not a universal branch or runtime guarantee."
+}

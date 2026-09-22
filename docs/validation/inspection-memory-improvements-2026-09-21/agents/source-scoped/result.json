@@ -1,0 +1,121 @@
+{
+  "project": "/private/tmp/ken-staged-source-scoped-20260921/project",
+  "policy": "staged recall; source and memory order alternates",
+  "questions": {
+    "manifest": [
+      "vector-manifest-permissions",
+      "Where does this project write vector manifests and how does the source handle their permissions? Identify the writer and at least one caller, cite file and symbol, distinguish observed code from runtime guarantees. Do not modify source or run production operations. Answer briefly in Spanish."
+    ],
+    "root": [
+      "project-root-discovery",
+      "How does find_project_root choose the project directory? If KEN_PROJECT_ROOT points to a directory without the metadata file, does it fall back to parent discovery? Cite file and symbol. Do not modify source or run production operations. Answer briefly in Spanish."
+    ]
+  },
+  "runs": [
+    {
+      "mode": "source",
+      "case": "manifest",
+      "exit_code": 0,
+      "usage": [
+        {
+          "type": "turn.completed",
+          "usage": {
+            "input_tokens": 58020,
+            "cached_input_tokens": 39424,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 927,
+            "reasoning_output_tokens": 214
+          }
+        }
+      ],
+      "tool_calls": 5,
+      "tool_names": [
+        "/bin/zsh -lc 'rg --files src tests'",
+        "/bin/zsh -lc \"rg -n -i 'vector.?manifest|manifest|chmod|permission|umask' src tests\"",
+        "/bin/zsh -lc 'nl -ba src/ken/_paths.py'",
+        "/bin/zsh -lc \"nl -ba src/ken/vectors.py | sed -n '1,230p;340,420p;725,815p'\"",
+        "/bin/zsh -lc \"nl -ba tests/test_vectors.py | sed -n '1,100p;540,590p'\""
+      ],
+      "recorded_tool_event_characters": 33718,
+      "tool_result_characters": 31079,
+      "elapsed_seconds": 39.854,
+      "repetition": 1
+    },
+    {
+      "mode": "memory",
+      "case": "manifest",
+      "exit_code": 0,
+      "usage": [
+        {
+          "type": "turn.completed",
+          "usage": {
+            "input_tokens": 48648,
+            "cached_input_tokens": 35328,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 800,
+            "reasoning_output_tokens": 436
+          }
+        }
+      ],
+      "tool_calls": 1,
+      "tool_names": [
+        "ken_recall"
+      ],
+      "recorded_tool_event_characters": 2159,
+      "tool_result_characters": 1954,
+      "elapsed_seconds": 37.182,
+      "repetition": 1
+    },
+    {
+      "mode": "memory",
+      "case": "root",
+      "exit_code": 0,
+      "usage": [
+        {
+          "type": "turn.completed",
+          "usage": {
+            "input_tokens": 48581,
+            "cached_input_tokens": 39040,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 471,
+            "reasoning_output_tokens": 163
+          }
+        }
+      ],
+      "tool_calls": 1,
+      "tool_names": [
+        "ken_recall"
+      ],
+      "recorded_tool_event_characters": 1746,
+      "tool_result_characters": 1546,
+      "elapsed_seconds": 26.941,
+      "repetition": 1
+    },
+    {
+      "mode": "source",
+      "case": "root",
+      "exit_code": 0,
+      "usage": [
+        {
+          "type": "turn.completed",
+          "usage": {
+            "input_tokens": 48549,
+            "cached_input_tokens": 30592,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 300,
+            "reasoning_output_tokens": 0
+          }
+        }
+      ],
+      "tool_calls": 2,
+      "tool_names": [
+        "/bin/zsh -lc \"rg -n 'find_project_root|KEN_PROJECT_ROOT' src/ tests/\"",
+        "/bin/zsh -lc 'nl -ba src/ken/_paths.py'"
+      ],
+      "recorded_tool_event_characters": 4173,
+      "tool_result_characters": 3591,
+      "elapsed_seconds": 19.051,
+      "repetition": 1
+    }
+  ]
+}

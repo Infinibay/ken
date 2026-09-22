@@ -68,11 +68,11 @@ def test_parameter_base_is_not_a_same_spelled_nominal_class(language):
 
 
 @pytest.mark.parametrize('language',LANGUAGES)
-def test_base_alias_requires_a_separate_value_flow_model(language):
+def test_unique_preceding_base_alias_preserves_supplied_base(language):
     text=source(language)
     if language=='python':text=text.replace('class Derived(base)','selected=base\n class Derived(selected)')
     else:text=text.replace('{return class','{const selected=base;return class').replace('extends base','extends selected')
-    _,out=search(text,language);assert not out['matches']
+    _,out=search(text,language);assert out['matches']
 
 
 @pytest.mark.parametrize('language',LANGUAGES)

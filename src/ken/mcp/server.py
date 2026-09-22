@@ -309,6 +309,10 @@ def _items_schema(args: tuple[Any, ...]) -> dict[str, Any]:
     inner, _ = _unwrap_optional(args[0])
     if inner in _PRIMITIVE_JSON_TYPE:
         return {"type": _PRIMITIVE_JSON_TYPE[inner]}
+    if typing.get_origin(inner) is dict:
+        return {"type": "object"}
+    if typing.get_origin(inner) is list:
+        return {"type": "array", "items": _items_schema(typing.get_args(inner))}
     if typing.get_origin(inner) is typing.Literal:
         # ``list[Literal[...]]`` — the element enum is the only place that
         # says which values the list may hold.
@@ -503,6 +507,7 @@ def _impl_ken_remember(
     tags: list[str] | None = None,
     kind: str | None = None,
     anchors: dict[str, str] | None = None,
+    justification: dict[str, Any] | None = None,
 ) -> dict:
     """Write a finding for future sessions to recall.
 
@@ -516,7 +521,8 @@ def _impl_ken_remember(
     live = {k: v for k, v in (anchors or {}).items() if (v or "").strip()}
     with _conn() as conn:
         return remember(conn, topic, content, tags=tags, kind=kind,
-                        anchors=live or None)
+                        anchors=live or None, justification=justification,
+                        project_root=_PROJECT_ROOT)
 
 
 def _impl_ken_forget(topic: str) -> dict:
@@ -943,6 +949,8 @@ def ken_find(
     rule_files: list[str] | None = None,
     evidence_mode: Literal["strict", "possible"] = "strict",
     full: bool = False,
+    query_language: Literal["kenql/1", "kql/2"] = "kenql/1",
+    libraries: dict[str, str] | None = None,
 ) -> Any:
     """Find code by meaning, text, structure, design patterns, or bug signatures.
 
@@ -977,11 +985,38 @@ def ken_find(
     per-rule outcomes and directory rollups.
 
     *language* filters ``text`` results (e.g. "python").
+    For KQL2 use scope="structure", query_language="kql/2" and an inline
+    versioned query. *libraries* maps module names to KQL2 source text; results
+    retain coverage and budget status. Saved TOML selectors still use KQL1.
     """
+    if query_language == 'kql/2':
+        if scope != 'structure' or any((rules, collections, tags, rule_files)):
+            raise ValueError('KQL2 requires an inline structural query; TOML migration is separate')
+        if evidence_mode != 'strict':
+            raise ValueError('KQL2 evidence modes are expressed by the query, not the KQL1 flag')
+        from ken.kql2.service import search as search_kql2
+        from ken.checks.report import query_view
+        assert _PROJECT_ROOT is not None
+        result = search_kql2(_PROJECT_ROOT, query, path=path, cache_mb=cache_mb,
+                           timeout_ms=timeout_ms, max_rows=limit,
+                           libraries=libraries)
+        return query_view(result, full=full)
+    if libraries:
+        raise ValueError('inline libraries require query_language=kql/2')
     if scope != "structure" and any((rules, collections, tags, rule_files)):
         raise ValueError("saved rule selectors require scope=structure")
     ranked_limit = 10 if limit is None else limit
     if scope in {"structure", "patterns", "bugs"}:
+        if scope == "structure" and rules:
+            from ken.checks.store import Store
+            from ken.checks.integration import search as search_checks
+            assert _PROJECT_ROOT is not None
+            known = {r["definition"]["id"] for r in Store(_PROJECT_ROOT).rules()}
+            if set(rules) & known:
+                if set(rules) - known or any((query, collections, tags, rule_files)):
+                    raise ValueError("search registered check rules separately from catalog selectors")
+                return search_checks(_PROJECT_ROOT, rules, path=path, timeout_ms=timeout_ms or 10000,
+                                     max_rows=limit or 100, full=full)
         from ken.structural import report, service
         from ken.structural.query import QueryBudget
         assert _PROJECT_ROOT is not None
@@ -1022,6 +1057,107 @@ def ken_find(
         "error": f"unknown scope {scope!r}",
         "scopes": ["files", "symbols", "text", "tests", "wiring", "intent", "structure", "patterns", "bugs"],
     }
+
+
+@ken_tool
+def ken_rule(
+    action: Literal["list", "create", "show", "update", "validate", "enable", "disable"] = "list",
+    rule_id: str = "",
+    definition: dict[str, Any] | None = None,
+    automatic: bool | None = None,
+    timeout_ms: int = 30000,
+    full: bool = False,
+) -> dict:
+    """Author and validate reusable KQL2 source contracts.
+
+    create/update take a complete definition: {id, query, description, path?: ".",
+    expectation?: "no_matches"|"some_match", libraries?: {module: source},
+    examples?: [{name, files: {relative_path: source_text}, expect: "pass"|"fail"|"unknown"}]}.
+    Query is explicit versioned KQL2, not natural language. no_matches checks for
+    zero violations; some_match requires at least one witness, not every entity.
+    Examples are parsed in isolated temporary projects, never executed as code.
+    New/updated rules are drafts. validate requires passing AND failing examples;
+    enable requires successful validation for this definition and engine.
+    enable(automatic=true) opts this rule into bounded edit/turn-end checks.
+    show(full=true) exposes the full query, examples and validation evidence.
+    """
+    from ken.checks.rules import manage
+    assert _PROJECT_ROOT is not None
+    return manage(_PROJECT_ROOT, action, rule_id=rule_id, definition=definition,
+                  automatic=automatic, timeout_ms=timeout_ms, full=full)
+
+
+@ken_tool
+def ken_check(
+    rules: list[str] | None = None,
+    path: str = ".",
+    scope: Literal["project", "changes"] = "project",
+    compare: str = "",
+    run_id: str = "",
+    timeout_ms: int = 10000,
+    max_rows: int = 100,
+    full: bool = False,
+) -> dict:
+    """Check source contracts and retain an immutable, reusable receipt.
+
+    Defaults to enabled validated rules. Explicit rules may include drafts for
+    diagnostics. path and scope="changes" SELECT relevant rules; each rule still
+    runs over its entire declared path, preserving its proof scope. changes
+    includes staged, unstaged and untracked Git paths. compare is a prior run ID
+    or "last"; regressions/resolutions require comparable determinate results.
+    run_id retrieves a historical receipt without rerunning queries.
+    Status is pass/fail/unknown/not_applicable. Timeout, missing coverage,
+    uncertain candidates or truncation cannot certify a passing check.
+    timeout_ms bounds preparation and execution; full retains queries' evidence,
+    snapshots and coverage. Source contracts are not runtime guarantees.
+    Use ken_remember(check_run=run_id) to attach the receipt to a memory.
+    """
+    from ken.checks.service import check
+    assert _PROJECT_ROOT is not None
+    return check(_PROJECT_ROOT, rules=rules, path=path, scope=scope, compare=compare,
+                 run_id=run_id, timeout_ms=timeout_ms, max_rows=max_rows, full=full)
+
+
+@ken_tool
+def ken_who(
+    question: str,
+    path: str = ".",
+    hypotheses: list[str] | None = None,
+    limit: int = 3,
+    include_tests: bool = False,
+    full: bool = False,
+    verify: bool = True,
+    timeout_ms: int = 3000,
+) -> dict:
+    """Who is responsible? Find modules, classes, methods and functions by documentation.
+
+    Combines documentation, name and call-site reasoners, with counterevidence
+    and explicit assumptions. Confidence is an uncalibrated ranking score, NOT
+    a probability or proof that code implements the documented behavior.
+    Searches current code documentation through the code index, not saved findings.
+    Returns compact candidates and relevant caveats by default. *full* includes
+    all reasoner contributions, assumptions, source hashes and coverage details.
+
+    *hypotheses* optionally supplies up to three alternative formulations of
+    the responsibility, e.g. English terms for English docs. Their equivalence
+    to the question is an assumption, not inferred fact. *path* narrows the
+    search before ranking. Tests are excluded unless *include_tests* is true.
+    Current source is checked; retrieval is bounded and may miss unindexed code.
+    verify additionally observes call sites and returned-call occurrences with
+    scoped KQL2 queries (timeout_ms total). It does not change heuristic scores
+    or prove the prose claim. verify=false omits this structural observation.
+    """
+    from ken.responsibility.service import who
+    from ken.responsibility.report import render
+
+    assert _PROJECT_ROOT is not None
+    with _conn() as conn:
+        result = who(conn, _PROJECT_ROOT, question, path=path, hypotheses=hypotheses,
+                     limit=limit, include_tests=include_tests)
+        if verify:
+            from ken.responsibility.structure import enrich
+            result = enrich(_PROJECT_ROOT, result, timeout_ms=timeout_ms)
+        return render(result, full=full)
 
 
 @ken_tool
@@ -1076,9 +1212,9 @@ def ken_read(
         result["source"] = _impl_ken_file_snippets(
             path,
             symbols=[qualname] if qualname else None,
-            start_line=start_line,
-            end_line=end_line,
-            max_chars=max_chars,
+            start_line=start_line or None,
+            end_line=end_line or None,
+            max_chars=max_chars or 12000,
         )
     if "profile" in want:
         result["profile"] = _impl_ken_profile(path)
@@ -1090,11 +1226,16 @@ def ken_related(
     target: str,
     relation: Literal[
         "neighbors", "imports", "callers", "callees", "subtypes",
-        "supertypes", "cochange", "blast_radius", "clones",
+        "supertypes", "cochange", "blast_radius", "clones", "checks",
+        "impact", "roles", "available",
     ],
     limit: int = 10,
     depth: int = 1,
     min_confidence: float = 0.0,
+    path: str = ".",
+    timeout_ms: int = 10000,
+    full: bool = False,
+    from_path: str = "",
 ) -> Any:
     """What else is connected to *target*, by a named relationship:
     neighbors, imports, callers, callees, subtypes, supertypes, cochange,
@@ -1112,7 +1253,28 @@ def ken_related(
     * ``blast_radius`` — what a change here is likely to break. *depth* is
       the hop limit.
     * ``clones``       — near-duplicate code, by MinHash over token shingles.
+    * ``checks``       — applicable source contracts and latest receipts with
+      live input validity. Reads saved evidence; does not execute KQL queries.
+    * ``impact``       — live KQL result consumers, returned-value propagation,
+      and tests that use the target. Use file::qualname to disambiguate symbols.
+    * ``roles``        — observed call chains with explicit structural role hypotheses.
+    * ``available``    — explicit Python access expressions from from_path to a
+      callable, with unresolved typing, initialization and shadowing obligations.
+      For impact/roles, path sets the analysis scope, timeout_ms its total budget,
+      full includes the underlying queries' observations. Unresolved calls stay unknown.
     """
+    if relation in {"impact", "roles", "available"}:
+        from ken.inspection.service import inspect
+        assert _PROJECT_ROOT is not None
+        result = inspect(_PROJECT_ROOT, target, relation=relation, path=path,
+                         depth=depth, limit=limit, timeout_ms=timeout_ms, full=full,
+                         from_path=from_path)
+        if relation == "impact":
+            from ken.checks.integration import related
+            targets = result.get("targets", [])
+            result["contracts"] = [related(_PROJECT_ROOT, p, limit=limit)
+                                   for p in sorted({t["path"] for t in targets})]
+        return result
     if relation == "neighbors":
         return _impl_ken_file_neighbors(_project_relative_path(target), limit=limit)
     if relation == "imports":
@@ -1136,9 +1298,16 @@ def ken_related(
             limit=limit,
         )
     if relation == "blast_radius":
-        return _impl_ken_blast_radius(
-            _project_relative_path(target), max_hops=max(1, depth)
-        )
+        path = _project_relative_path(target)
+        result = _impl_ken_blast_radius(path, max_hops=max(1, depth))
+        from ken.checks.integration import related
+        assert _PROJECT_ROOT is not None
+        result["contracts"] = related(_PROJECT_ROOT, path, limit=limit)
+        return result
+    if relation == "checks":
+        from ken.checks.integration import related
+        assert _PROJECT_ROOT is not None
+        return related(_PROJECT_ROOT, _project_relative_path(target), limit=limit)
     if relation == "clones":
         return _impl_ken_clones(path=_project_relative_path(target), limit=limit)
     return {
@@ -1146,7 +1315,8 @@ def ken_related(
         "error": f"unknown relation {relation!r}",
         "relations": [
             "neighbors", "imports", "callers", "callees", "subtypes",
-            "supertypes", "cochange", "blast_radius", "clones",
+            "supertypes", "cochange", "blast_radius", "clones", "checks",
+            "impact", "roles", "available",
         ],
     }
 
@@ -1201,6 +1371,92 @@ def ken_rank(
 
 
 @ken_tool
+def ken_reason_record(
+    source: str,
+    facts: list[dict[str, Any]] | None = None,
+    rules: list[dict[str, Any]] | None = None,
+    evidence: str = "",
+    context: str = "main",
+    retract: bool = False,
+) -> Any:
+    """Persist premises for reasoning, with a stable source ID and evidence.
+
+    An atom is {predicate, subject, object, negative?: bool, scope?: str}.
+    Supply stable entity/sense IDs; identical spellings do not prove identity.
+    Rules are {body: [atoms], head: atom}, with one to three premises;
+    variables such as ?x are allowed only in rule subject/object positions.
+    Builtins support type, subclass and all/<predicate>. No implicit verb
+    transitivity or negation-as-failure. Evidence is an attributed source,
+    not an assertion that Ken independently verified it. Reusing a source
+    replaces its bundle and invalidates dependent context reasoning.
+    retract=true removes that bundle. Contexts never share premises implicitly.
+    Use ken_remember for notes that have not been formalized.
+    """
+    from ken.reasoning.store import Memory
+
+    assert _PROJECT_ROOT is not None
+    try:
+        return Memory(_paths.ken_dir(_PROJECT_ROOT) / "reasoning.sqlite").record(
+            source, context=context, facts=facts, rules=rules, evidence=evidence, retract=retract)
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}
+
+
+@ken_tool
+def ken_reason(
+    question: str,
+    goal: dict[str, Any] | None = None,
+    context: str = "main",
+    budget: int = 1000,
+    seed: int = 7,
+    assumptions: list[dict[str, Any]] | None = None,
+) -> Any:
+    """Ask persistent Ken reasoning; repeated/resumed queries reuse prior work.
+
+    question is the human-readable request; goal is its explicit interpretation:
+    {predicate, subject, object, negative?: bool, scope?: str}. Use ?answer
+    in subject or object for a variable query. Interpret senses/referents before
+    calling: lexical similarity is not a logical rule. Without goal, retrieve
+    candidate Ken memories for interpretation; they are not automatically facts.
+    Returns support/opposition, proof/source links, incomplete-search coverage
+    and conditional candidates for missing evidence. Scores are not probability.
+    Ground assumptions create an isolated additive world, never base facts.
+    Call again to resume a budget-limited search. A completed unchanged context
+    needs zero new inference work, including after restart. No external tools
+    are run. Use ken_calculate for arithmetic and record tool results explicitly.
+    """
+    from ken.reasoning.store import Memory
+
+    assert _PROJECT_ROOT is not None
+    if not question.strip() or len(question) > 4000:
+        return {"ok": False, "error": "question must contain 1..4000 characters"}
+    if goal is None:
+        return {"status": "needs_interpretation", "question": question,
+                "candidates": ken_recall(query=question, limit=5),
+                "note": "These are retrieval candidates, not premises. Supply a scoped goal and record supported premises."}
+    try:
+        return Memory(_paths.ken_dir(_PROJECT_ROOT) / "reasoning.sqlite").ask(
+            goal, context=context, budget=budget, seed=seed, assumptions=assumptions) | {"question": question}
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}
+
+
+@ken_tool
+def ken_calculate(expression: str) -> Any:
+    """Calculate exact rational arithmetic with + - * / ** and parentheses.
+
+    Bounded numeric expressions only: no names, code, tools, symbolic algebra,
+    or units. Returns an exact result, not an automatically stored premise.
+    """
+    from ken.reasoning.arithmetic import calculate
+
+    try:
+        return calculate(expression)
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}
+
+
+@ken_tool
 def ken_recall(
     query: str = "",
     path: str = "",
@@ -1212,6 +1468,8 @@ def ken_recall(
     anchor_symbol: str = "",
     anchor_tool: str = "",
     anchor_error: str = "",
+    detail: Literal["full", "summary", "answer"] = "full",
+    max_chars: int = 3000,
 ) -> Any:
     """Recall what earlier sessions in this project already worked out.
 
@@ -1227,7 +1485,37 @@ def ken_recall(
     this?" and combine with OR — pass every anchor the action has and get
     back whatever fires on any of them. ``anchor_error`` matches as a
     substring of the message you pass.
+
+    Justified findings include live dependency validity: unchanged, stale,
+    unknown or untracked. Unchanged does not verify truth, assumptions or
+    completeness. detail="summary" returns a bounded memories/omitted envelope
+    (max_chars=300..20000); full preserves existing shapes and includes the
+    focused finding for topic lookups, its rationale and evidence references.
+    Start with detail="answer" for a reusable conclusion, input validity,
+    assumptions and source references. An exact topic then reads only that
+    finding. Reuse it if the question and assumptions fit unchanged inputs;
+    expand to full or read the missing source only when needed. Stale/unknown
+    inputs require review. No structural query is run automatically by recall.
     """
+    from ken.knowledge.context import recall_view
+
+    if detail not in {"full", "summary", "answer"} or not 300 <= max_chars <= 20000:
+        return {"ok": False, "error": "detail must be full/summary/answer; max_chars must be 300..20000"}
+    if detail == "answer" and topic and not any((anchor_file, anchor_symbol, anchor_tool, anchor_error)):
+        from ken.knowledge.context import compact
+        from ken.knowledge.records import for_topics
+
+        with _conn() as conn:
+            hits = for_topics(conn, [topic], root=_PROJECT_ROOT)
+            return compact(hits, max_chars, detail="answer")
+    result = _select_memories(query, path, topic, tag, limit, min_score,
+                              anchor_file, anchor_symbol, anchor_tool, anchor_error)
+    with _conn() as conn:
+        return recall_view(conn, result, root=_PROJECT_ROOT, detail=detail, max_chars=max_chars)
+
+
+def _select_memories(query, path, topic, tag, limit, min_score,
+                     anchor_file, anchor_symbol, anchor_tool, anchor_error):
     anchors = {
         "file": anchor_file, "symbol": anchor_symbol,
         "tool": anchor_tool, "error": anchor_error,
@@ -1257,6 +1545,8 @@ def ken_remember(
     anchor_symbol: str = "",
     anchor_tool: str = "",
     anchor_error: str = "",
+    justification: dict[str, Any] | None = None,
+    check_run: str = "",
 ) -> Any:
     """Persist a finding so the next session starts knowing it. *action*
     is save (default), forget (delete by topic), or dismiss (mark a path
@@ -1275,16 +1565,36 @@ def ken_remember(
     to search: ``anchor_file`` and ``anchor_symbol`` name code,
     ``anchor_tool`` a command or tool name, ``anchor_error`` a substring of
     an error message. Several may be set; the memory fires on any of them.
+
+    Optional justification records why the conclusion follows:
+    {kind: observation|decision|hypothesis|derivation, rationale: str,
+     evidence: [{path, note?, sha256?}], assumptions: [str], recheck: str,
+     dependencies: [{kind: file|tree, path, pattern?, sha256?}]}.
+    Evidence files are dependencies automatically. Paths stay in the project.
+    Ken captures SHA-256 now; supply sha256 to bind an earlier observation and
+    reject changes before saving. Trees include new/deleted matching files;
+    pattern defaults to * and matches relative paths recursively. Declare the
+    search scope for absence/completeness claims. Assumptions are never verified.
+    Hooks surface concise validity; no commands or LLM run during recall.
+    Overwriting without justification removes any previous justification.
+    check_run attaches a ken_check receipt. Its source/rule/engine inputs must
+    still match. Recall checks freshness without rerunning KQL or asserting
+    that the note's prose follows from the selected source contracts.
     """
     if action == "save":
         if not content.strip():
             return {"ok": False, "error": "content is required when saving a finding"}
+        if check_run:
+            from ken.checks.integration import justification as from_check
+            assert _PROJECT_ROOT is not None
+            justification = from_check(_PROJECT_ROOT, check_run, justification)
         return _impl_ken_remember(
             topic, content, tags=tags,
             anchors={
                 "file": anchor_file, "symbol": anchor_symbol,
                 "tool": anchor_tool, "error": anchor_error,
             },
+            justification=justification,
         )
     if action == "forget":
         return _impl_ken_forget(topic)

@@ -19,13 +19,13 @@ def structured_control(graph: IR) -> None:
             children[parent.id].append(op)
     for siblings in children.values():
         siblings.sort(key=lambda op: op.start)
-    blocks = {'block','statement_block','compound_statement','else_clause','statement_list'}
-    loops = {'while_statement','while_expression','for_statement','for_in_statement',
+    blocks = {'do','block','statement_block','compound_statement','else_clause','statement_list','body_statement'}
+    loops = {'for','while_statement','while_expression','for_statement','for_in_statement',
              'enhanced_for_statement','for_each_statement','foreach_statement','for_expression',
              'loop_expression','do_statement','for_range_loop'}
     unsupported = {'try_statement','try_with_resources_statement','with_statement','using_statement',
                    'switch_statement','switch_expression','match_expression','match_statement',
-                   'goto_statement','labeled_statement','lock_statement','synchronized_statement'}
+                   'rescue','ensure','rescue_modifier','goto_statement','labeled_statement','lock_statement','synchronized_statement'}
     for body in graph.operations:
         parent = operations.get(body.parent or '')
         if body.role != 'body' or parent is None or parent.kind != 'FUNCTION' or body.owner != parent.owner:
@@ -54,7 +54,7 @@ def structured_control(graph: IR) -> None:
                     if 'comment' not in child.native_kind:
                         entry = build(child,entry,break_to,continue_to,depth+1)
                 return entry
-            if op.native_kind in {'if_statement','if_expression','elif_clause'}:
+            if op.native_kind in {'if_modifier','if_statement','if_expression','elif_clause'}:
                 condition = fields.get('condition')
                 if condition is not None and condition.native_kind == 'empty_statement':
                     condition = None
@@ -82,7 +82,7 @@ def structured_control(graph: IR) -> None:
                 if clause is not None:
                     fields.update({c.role:c for c in children[clause.id] if c.role})
                 iterable = fields.get('right') or fields.get('value') or fields.get('iterable')
-                foreach = (op.native_kind in {'for_in_statement','enhanced_for_statement','for_each_statement','foreach_statement','for_expression','for_range_loop'}
+                foreach = (op.native_kind in {'for','for_in_statement','enhanced_for_statement','for_each_statement','foreach_statement','for_expression','for_range_loop'}
                            or op.native_kind == 'for_statement' and language == 'python'
                            or clause is not None and clause.native_kind == 'range_clause')
                 condition = fields.get('condition')
@@ -108,7 +108,7 @@ def structured_control(graph: IR) -> None:
                 initializer = fields.get('initializer')
                 start = entry if op.native_kind == 'do_statement' else op.id
                 return build(initializer,start,break_to,continue_to,depth+1) if initializer is not None else start
-            if op.native_kind in {'break_statement','continue_statement','break_expression','continue_expression'}:
+            if op.native_kind in {'break','break_statement','continue_statement','break_expression','continue_expression'}:
                 is_break = op.native_kind.startswith('break')
                 target = break_to if is_break else continue_to
                 if target is None or any('comment' not in c.native_kind for c in nested):
@@ -116,7 +116,7 @@ def structured_control(graph: IR) -> None:
                 else:
                     edge(op.id,target,'break' if is_break else 'continue')
                 return op.id
-            if op.native_kind in {'return_statement','return_expression'}:
+            if op.kind == 'RETURN' or op.kind == 'YIELD' and 'break' in op.attrs.get('tokens',()):
                 edge(op.id,exit_id,'return')
                 return op.id
             if op.native_kind in unsupported or op.kind in {'TRY','THROW','YIELD','AWAIT','RESOURCE_SCOPE','MATCH'}:
@@ -133,6 +133,8 @@ def structured_control(graph: IR) -> None:
         graph.add(owner,'CFG_EXIT',exit_id,basis='structured-syntax')
         for a,b,kind in sorted(set(edges)):
             graph.add(a,'CFG_NEXT',b,kind=kind,basis='structured-syntax')
+            if kind == 'next':
+                graph.add(a,'CFG_FALLTHROUGH',b,basis='structured-syntax')
         for a,r,b in facts:
             graph.add(a,r,b,basis='syntax')
         graph.add(owner,'CFG_STATUS','partial' if missing or graph.diagnostics else 'structured',

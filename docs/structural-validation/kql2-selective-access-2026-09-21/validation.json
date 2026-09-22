@@ -1,0 +1,24 @@
+{
+  "command": "PYTHONPATH=src:. .venv/bin/python -m pytest tests/kql2 tests/structural -o addopts='' -q --tb=short",
+  "exit_code": 0,
+  "passed": 13202,
+  "xfailed": 10,
+  "seconds": 418.75,
+  "new_tests": 18,
+  "type_check": {
+    "files": [
+      "src/ken/kql2/exploration/records.py",
+      "src/ken/structural_store/graph_index.py"
+    ],
+    "exit_code": 0,
+    "flags": [
+      "--follow-imports=silent",
+      "--disable-error-code=import-untyped"
+    ]
+  },
+  "rejected_experiment": {
+    "change": "BODY input projection based on memo-key roles",
+    "regressions": 109,
+    "status": "removed; all affected tests pass again"
+  }
+}

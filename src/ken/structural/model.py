@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
-IR_VERSION = "1.75.0"
+IR_VERSION = "1.85.0"
 
 
 def _attribute_key(value: Any) -> str:
@@ -13,8 +13,22 @@ def _attribute_key(value: Any) -> str:
 
 
 
-@dataclass
-class Entity:
+class _SlottedRecord:
+    """Compact fixed-schema records, including compatibility with older pickles.
+
+    Persistent IR still uses JSON; local diagnostic snapshots made before the
+    slots migration carry a plain instance dictionary rather than slot state.
+    """
+    __slots__ = ()
+
+    def __setstate__(self, state: Any) -> None:
+        fields = state[1] if isinstance(state, tuple) else state
+        for name, value in fields.items():
+            setattr(self, name, value)
+
+
+@dataclass(slots=True)
+class Entity(_SlottedRecord):
     id: str
     kind: str
     name: str
@@ -24,8 +38,8 @@ class Entity:
     attrs: dict[str, Any] = field(default_factory=dict)
 
 
-@dataclass
-class Operation:
+@dataclass(slots=True)
+class Operation(_SlottedRecord):
     id: str
     kind: str
     native_kind: str
@@ -38,13 +52,21 @@ class Operation:
     attrs: dict[str, Any] = field(default_factory=dict)
 
 
-@dataclass
-class Fact:
+@dataclass(slots=True)
+class Fact(_SlottedRecord):
     subject: str
     relation: str
     object: str
     attrs: dict[str, Any] = field(default_factory=dict)
     evidence: list[str] = field(default_factory=list)
+
+    def attribute(self, key: str) -> Any:
+        """Read one attribute without requiring a full metadata document."""
+        return self.attrs.get(key)
+
+    def same_evidence(self, other: Fact) -> bool:
+        """Compare provenance, allowing storage implementations to avoid decoding."""
+        return self.evidence == other.evidence
 
 
 @dataclass
@@ -183,4 +205,3 @@ class FactIndex:
                 index.setdefault(_attribute_key(fact.attrs[key]), []).append(fact)
             self._by_attr[(relation, key)] = index
         return index.get(value, [])
-

@@ -55,7 +55,7 @@ def test_shared_initialization_and_direct_return(language,change):
 
 @pytest.mark.parametrize('language',SOURCES)
 @pytest.mark.parametrize('change',['before','branch','alias','parameter','static-block'])
-def test_more_complex_valid_idioms_remain_coverage_gaps(language,change):
+def test_nonadjacent_returns_and_remaining_coverage_gaps(language,change):
     text=source(language);binding='Shared.instance' if language in {'javascript','typescript'} else 'instance';ret='return '+binding+';'
     if change=='before':text=text.replace(ret,'prepare();'+ret)
     elif change=='branch':text=text.replace(ret,'if(flag){'+ret+'}'+ret)
@@ -66,7 +66,7 @@ def test_more_complex_valid_idioms_remain_coverage_gaps(language,change):
             text=text.replace('=new Shared()','').replace('private Shared(){}',('static Shared()' if language=='csharp' else 'static')+'{instance=new Shared();}private Shared(){}')
         else:text=text.replace('=new Shared()','').replace('static get()','static {Shared.instance=new Shared();}static get()')
     _,out=search(text,language)
-    assert not out['matches']
+    assert bool(out['matches']) == (change in {'before', 'branch'})
 
 
 @pytest.mark.parametrize('language',SOURCES)

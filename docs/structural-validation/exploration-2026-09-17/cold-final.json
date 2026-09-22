@@ -1,0 +1,898 @@
+{
+  "root": "/Users/andres/Projects/codex",
+  "records": [
+    {
+      "repeat": 0,
+      "query": "if",
+      "rows": 31968,
+      "sha256": "435e946f331fe7dc66efcfc3965861a436570371d519be9493fe03ea8224005b",
+      "complete": true,
+      "reason": null,
+      "unknown_candidates": 0,
+      "coverage_complete": false,
+      "analysis": {
+        "backend": "flatbuffers_exploration",
+        "semantic_resolution": "not_requested",
+        "skipped": [
+          {
+            "path": "codex-rs/app-server/src/main.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/bwrap/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/utils/pty/src/process.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bubblewrap.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/test-utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/try-syscall.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/use-as-subproject/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.h",
+            "reason": "unsupported_frontend"
+          }
+        ],
+        "parsed_units": 5295,
+        "reused_units": 0,
+        "result_cache": "disabled",
+        "ephemeral": false,
+        "retention_budget_bytes": 500000000,
+        "evicted_units": 0,
+        "allocated_bytes": 470773760,
+        "compile_ms": 0.7328339852392673,
+        "build_ms": 26995.81916583702,
+        "phase_ms": {
+          "read_ms": 314.6471153013408,
+          "parse_ms": 4521.425275830552,
+          "projection_ms": 11173.378921346739,
+          "persist_ms": 8782.71276736632
+        },
+        "states": 66870,
+        "scanned_nodes": 31968,
+        "query_ms": 765.1655410882086,
+        "operator_profile": {
+          "n": {
+            "candidates": 31968,
+            "matched": 31968
+          }
+        },
+        "total_ms": 27774.19395884499
+      }
+    },
+    {
+      "repeat": 0,
+      "query": "return_contains_call",
+      "rows": 8566,
+      "sha256": "e6f4db20c6cd8d0e8839fa5cd080b196ac13b94c0a361b5a15dad533f9023094",
+      "complete": true,
+      "reason": null,
+      "unknown_candidates": 0,
+      "coverage_complete": false,
+      "analysis": {
+        "backend": "flatbuffers_exploration",
+        "semantic_resolution": "not_requested",
+        "skipped": [
+          {
+            "path": "codex-rs/app-server/src/main.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/bwrap/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/utils/pty/src/process.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bubblewrap.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/test-utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/try-syscall.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/use-as-subproject/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.h",
+            "reason": "unsupported_frontend"
+          }
+        ],
+        "parsed_units": 0,
+        "reused_units": 5295,
+        "result_cache": "disabled",
+        "ephemeral": false,
+        "retention_budget_bytes": 500000000,
+        "evicted_units": 0,
+        "allocated_bytes": 470773760,
+        "compile_ms": 0.8784579113125801,
+        "build_ms": 1617.5093341153115,
+        "phase_ms": {
+          "read_ms": 124.25489164888859,
+          "parse_ms": 0.0,
+          "projection_ms": 0.0,
+          "persist_ms": 0.0
+        },
+        "states": 113913,
+        "scanned_nodes": 24064,
+        "query_ms": 826.0730840265751,
+        "operator_profile": {
+          "n": {
+            "candidates": 15498,
+            "matched": 15498
+          },
+          "c": {
+            "candidates": 8566,
+            "matched": 8566
+          }
+        },
+        "total_ms": 2446.438957937062
+      }
+    },
+    {
+      "repeat": 0,
+      "query": "function_branch_return",
+      "rows": 7125,
+      "sha256": "36635370a32e1e3f0732d0d73ac58b9d17fb760082fa2cfe1f34a8bd719d9ac4",
+      "complete": true,
+      "reason": null,
+      "unknown_candidates": 3,
+      "coverage_complete": false,
+      "analysis": {
+        "backend": "flatbuffers_exploration",
+        "semantic_resolution": "not_requested",
+        "skipped": [
+          {
+            "path": "codex-rs/app-server/src/main.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/bwrap/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/utils/pty/src/process.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bubblewrap.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/test-utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/try-syscall.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/use-as-subproject/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.h",
+            "reason": "unsupported_frontend"
+          }
+        ],
+        "parsed_units": 0,
+        "reused_units": 5295,
+        "result_cache": "disabled",
+        "ephemeral": false,
+        "retention_budget_bytes": 500000000,
+        "evicted_units": 0,
+        "allocated_bytes": 470773760,
+        "compile_ms": 0.8904589340090752,
+        "build_ms": 1598.658791044727,
+        "phase_ms": {
+          "read_ms": 124.81617438606918,
+          "parse_ms": 0.0,
+          "projection_ms": 0.0,
+          "persist_ms": 0.0
+        },
+        "states": 556724,
+        "scanned_nodes": 106307,
+        "query_ms": 2241.462833015248,
+        "operator_profile": {
+          "n": {
+            "candidates": 85189,
+            "matched": 85189
+          },
+          "b": {
+            "candidates": 13993,
+            "matched": 13993
+          },
+          "r": {
+            "candidates": 7125,
+            "matched": 7125
+          }
+        },
+        "total_ms": 3842.4407918937504
+      }
+    },
+    {
+      "repeat": 1,
+      "query": "if",
+      "rows": 31968,
+      "sha256": "435e946f331fe7dc66efcfc3965861a436570371d519be9493fe03ea8224005b",
+      "complete": true,
+      "reason": null,
+      "unknown_candidates": 0,
+      "coverage_complete": false,
+      "analysis": {
+        "backend": "flatbuffers_exploration",
+        "semantic_resolution": "not_requested",
+        "skipped": [
+          {
+            "path": "codex-rs/app-server/src/main.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/bwrap/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/utils/pty/src/process.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bubblewrap.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/test-utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/try-syscall.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/use-as-subproject/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.h",
+            "reason": "unsupported_frontend"
+          }
+        ],
+        "parsed_units": 0,
+        "reused_units": 5295,
+        "result_cache": "disabled",
+        "ephemeral": false,
+        "retention_budget_bytes": 500000000,
+        "evicted_units": 0,
+        "allocated_bytes": 470773760,
+        "compile_ms": 0.4865000955760479,
+        "build_ms": 1602.5478329975158,
+        "phase_ms": {
+          "read_ms": 125.26102387346327,
+          "parse_ms": 0.0,
+          "projection_ms": 0.0,
+          "persist_ms": 0.0
+        },
+        "states": 66870,
+        "scanned_nodes": 31968,
+        "query_ms": 766.6962088551372,
+        "operator_profile": {
+          "n": {
+            "candidates": 31968,
+            "matched": 31968
+          }
+        },
+        "total_ms": 2381.2562501989305
+      }
+    },
+    {
+      "repeat": 1,
+      "query": "return_contains_call",
+      "rows": 8566,
+      "sha256": "e6f4db20c6cd8d0e8839fa5cd080b196ac13b94c0a361b5a15dad533f9023094",
+      "complete": true,
+      "reason": null,
+      "unknown_candidates": 0,
+      "coverage_complete": false,
+      "analysis": {
+        "backend": "flatbuffers_exploration",
+        "semantic_resolution": "not_requested",
+        "skipped": [
+          {
+            "path": "codex-rs/app-server/src/main.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/bwrap/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/utils/pty/src/process.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bubblewrap.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/test-utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/try-syscall.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/use-as-subproject/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.h",
+            "reason": "unsupported_frontend"
+          }
+        ],
+        "parsed_units": 0,
+        "reused_units": 5295,
+        "result_cache": "disabled",
+        "ephemeral": false,
+        "retention_budget_bytes": 500000000,
+        "evicted_units": 0,
+        "allocated_bytes": 470773760,
+        "compile_ms": 0.7782499305903912,
+        "build_ms": 1611.6793749388307,
+        "phase_ms": {
+          "read_ms": 123.67983465082943,
+          "parse_ms": 0.0,
+          "projection_ms": 0.0,
+          "persist_ms": 0.0
+        },
+        "states": 113913,
+        "scanned_nodes": 24064,
+        "query_ms": 852.8537498787045,
+        "operator_profile": {
+          "n": {
+            "candidates": 15498,
+            "matched": 15498
+          },
+          "c": {
+            "candidates": 8566,
+            "matched": 8566
+          }
+        },
+        "total_ms": 2467.294457834214
+      }
+    },
+    {
+      "repeat": 1,
+      "query": "function_branch_return",
+      "rows": 7125,
+      "sha256": "36635370a32e1e3f0732d0d73ac58b9d17fb760082fa2cfe1f34a8bd719d9ac4",
+      "complete": true,
+      "reason": null,
+      "unknown_candidates": 3,
+      "coverage_complete": false,
+      "analysis": {
+        "backend": "flatbuffers_exploration",
+        "semantic_resolution": "not_requested",
+        "skipped": [
+          {
+            "path": "codex-rs/app-server/src/main.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/bwrap/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/utils/pty/src/process.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bubblewrap.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/test-utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/try-syscall.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/use-as-subproject/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.h",
+            "reason": "unsupported_frontend"
+          }
+        ],
+        "parsed_units": 0,
+        "reused_units": 5295,
+        "result_cache": "disabled",
+        "ephemeral": false,
+        "retention_budget_bytes": 500000000,
+        "evicted_units": 0,
+        "allocated_bytes": 470773760,
+        "compile_ms": 0.9393750224262476,
+        "build_ms": 1665.716249961406,
+        "phase_ms": {
+          "read_ms": 139.6373121533543,
+          "parse_ms": 0.0,
+          "projection_ms": 0.0,
+          "persist_ms": 0.0
+        },
+        "states": 556724,
+        "scanned_nodes": 106307,
+        "query_ms": 2270.336000015959,
+        "operator_profile": {
+          "n": {
+            "candidates": 85189,
+            "matched": 85189
+          },
+          "b": {
+            "candidates": 13993,
+            "matched": 13993
+          },
+          "r": {
+            "candidates": 7125,
+            "matched": 7125
+          }
+        },
+        "total_ms": 3939.067958155647
+      }
+    },
+    {
+      "repeat": 2,
+      "query": "if",
+      "rows": 31968,
+      "sha256": "435e946f331fe7dc66efcfc3965861a436570371d519be9493fe03ea8224005b",
+      "complete": true,
+      "reason": null,
+      "unknown_candidates": 0,
+      "coverage_complete": false,
+      "analysis": {
+        "backend": "flatbuffers_exploration",
+        "semantic_resolution": "not_requested",
+        "skipped": [
+          {
+            "path": "codex-rs/app-server/src/main.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/bwrap/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/utils/pty/src/process.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bubblewrap.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/test-utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/try-syscall.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/use-as-subproject/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.h",
+            "reason": "unsupported_frontend"
+          }
+        ],
+        "parsed_units": 0,
+        "reused_units": 5295,
+        "result_cache": "disabled",
+        "ephemeral": false,
+        "retention_budget_bytes": 500000000,
+        "evicted_units": 0,
+        "allocated_bytes": 470773760,
+        "compile_ms": 0.5300410557538271,
+        "build_ms": 1602.2624999750406,
+        "phase_ms": {
+          "read_ms": 126.89552386291325,
+          "parse_ms": 0.0,
+          "projection_ms": 0.0,
+          "persist_ms": 0.0
+        },
+        "states": 66870,
+        "scanned_nodes": 31968,
+        "query_ms": 772.7868331130594,
+        "operator_profile": {
+          "n": {
+            "candidates": 31968,
+            "matched": 31968
+          }
+        },
+        "total_ms": 2387.2656249441206
+      }
+    },
+    {
+      "repeat": 2,
+      "query": "return_contains_call",
+      "rows": 8566,
+      "sha256": "e6f4db20c6cd8d0e8839fa5cd080b196ac13b94c0a361b5a15dad533f9023094",
+      "complete": true,
+      "reason": null,
+      "unknown_candidates": 0,
+      "coverage_complete": false,
+      "analysis": {
+        "backend": "flatbuffers_exploration",
+        "semantic_resolution": "not_requested",
+        "skipped": [
+          {
+            "path": "codex-rs/app-server/src/main.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/bwrap/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/utils/pty/src/process.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bubblewrap.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/test-utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/try-syscall.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/use-as-subproject/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.h",
+            "reason": "unsupported_frontend"
+          }
+        ],
+        "parsed_units": 0,
+        "reused_units": 5295,
+        "result_cache": "disabled",
+        "ephemeral": false,
+        "retention_budget_bytes": 500000000,
+        "evicted_units": 0,
+        "allocated_bytes": 470773760,
+        "compile_ms": 0.7836248259991407,
+        "build_ms": 1662.20233310014,
+        "phase_ms": {
+          "read_ms": 155.69372684694827,
+          "parse_ms": 0.0,
+          "projection_ms": 0.0,
+          "persist_ms": 0.0
+        },
+        "states": 113913,
+        "scanned_nodes": 24064,
+        "query_ms": 862.548208096996,
+        "operator_profile": {
+          "n": {
+            "candidates": 15498,
+            "matched": 15498
+          },
+          "c": {
+            "candidates": 8566,
+            "matched": 8566
+          }
+        },
+        "total_ms": 2528.038291959092
+      }
+    },
+    {
+      "repeat": 2,
+      "query": "function_branch_return",
+      "rows": 7125,
+      "sha256": "36635370a32e1e3f0732d0d73ac58b9d17fb760082fa2cfe1f34a8bd719d9ac4",
+      "complete": true,
+      "reason": null,
+      "unknown_candidates": 3,
+      "coverage_complete": false,
+      "analysis": {
+        "backend": "flatbuffers_exploration",
+        "semantic_resolution": "not_requested",
+        "skipped": [
+          {
+            "path": "codex-rs/app-server/src/main.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/bwrap/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/utils/pty/src/process.rs",
+            "reason": "parse_error"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bind-mount.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/bubblewrap.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/network.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/test-utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/try-syscall.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/tests/use-as-subproject/config.h",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.c",
+            "reason": "unsupported_frontend"
+          },
+          {
+            "path": "codex-rs/vendor/bubblewrap/utils.h",
+            "reason": "unsupported_frontend"
+          }
+        ],
+        "parsed_units": 0,
+        "reused_units": 5295,
+        "result_cache": "disabled",
+        "ephemeral": false,
+        "retention_budget_bytes": 500000000,
+        "evicted_units": 0,
+        "allocated_bytes": 470773760,
+        "compile_ms": 1.0188331361860037,
+        "build_ms": 1620.8139169029891,
+        "phase_ms": {
+          "read_ms": 126.55754410661757,
+          "parse_ms": 0.0,
+          "projection_ms": 0.0,
+          "persist_ms": 0.0
+        },
+        "states": 556724,
+        "scanned_nodes": 106307,
+        "query_ms": 2243.164333049208,
+        "operator_profile": {
+          "n": {
+            "candidates": 85189,
+            "matched": 85189
+          },
+          "b": {
+            "candidates": 13993,
+            "matched": 13993
+          },
+          "r": {
+            "candidates": 7125,
+            "matched": 7125
+          }
+        },
+        "total_ms": 3866.641500033438
+      }
+    }
+  ],
+  "warm_query_median_ms": {
+    "if": 766.6962088551372,
+    "return_contains_call": 852.8537498787045,
+    "function_branch_return": 2243.164333049208
+  },
+  "peak_rss_mib": 145.109375,
+  "oracle": {
+    "if": {
+      "rows": 31968,
+      "sha256": "435e946f331fe7dc66efcfc3965861a436570371d519be9493fe03ea8224005b"
+    },
+    "return_contains_call": {
+      "rows": 8566,
+      "sha256": "e6f4db20c6cd8d0e8839fa5cd080b196ac13b94c0a361b5a15dad533f9023094"
+    },
+    "function_branch_return": {
+      "rows": 7125,
+      "sha256": "36635370a32e1e3f0732d0d73ac58b9d17fb760082fa2cfe1f34a8bd719d9ac4"
+    }
+  }
+}

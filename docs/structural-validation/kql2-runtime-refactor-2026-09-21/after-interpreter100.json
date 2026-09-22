@@ -1,0 +1,305 @@
+{
+  "ok": true,
+  "findings": [],
+  "outcomes": {
+    "interpreter": {
+      "complete": true,
+      "unknown": [
+        "cardinality:open_world"
+      ],
+      "stats": {
+        "states": 615182,
+        "rows_examined": 307588,
+        "elapsed_ms": 3088.711,
+        "dependencies": [
+          "4df2e0cf29652d9781e0eaa76bd1e6a48b7509ed025e76df4cef9a955b682d0e:ken.catalog.interpreter.variants.context_free_binary.detect",
+          "4df2e0cf29652d9781e0eaa76bd1e6a48b7509ed025e76df4cef9a955b682d0e:ken.catalog.interpreter.variants.expression_objects.detect",
+          "4df2e0cf29652d9781e0eaa76bd1e6a48b7509ed025e76df4cef9a955b682d0e:ken.catalog.interpreter.variants.expression_sum.detect"
+        ]
+      }
+    }
+  },
+  "complete": true,
+  "incomplete": {},
+  "directories": [
+    {
+      "directory": "sdk/python",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples",
+      "analyzed_files": 1,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/01_quickstart_constructor",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/02_turn_run",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/03_turn_stream_events",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/04_models_and_metadata",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/05_existing_thread",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/06_thread_lifecycle_and_controls",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/07_image_and_text",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/08_local_image_and_text",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/09_async_parity",
+      "analyzed_files": 1,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/10_error_handling_and_retry",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/11_cli_mini_app",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/12_turn_params_kitchen_sink",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/13_model_select_and_turn_params",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/14_turn_controls",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/15_login_and_account",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/16_external_message",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/scripts",
+      "analyzed_files": 1,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/src/openai_codex",
+      "analyzed_files": 18,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/src/openai_codex/generated",
+      "analyzed_files": 3,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/tests",
+      "analyzed_files": 18,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/typescript",
+      "analyzed_files": 3,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/typescript/samples",
+      "analyzed_files": 4,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/typescript/src",
+      "analyzed_files": 10,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/typescript/tests",
+      "analyzed_files": 9,
+      "patterns": []
+    }
+  ],
+  "analysis": {
+    "resolution": {
+      "resolved_calls": 1188,
+      "unresolved_calls": 6261
+    },
+    "files": [
+      "sdk/python/_runtime_setup.py",
+      "sdk/python/examples/01_quickstart_constructor/async.py",
+      "sdk/python/examples/01_quickstart_constructor/sync.py",
+      "sdk/python/examples/02_turn_run/async.py",
+      "sdk/python/examples/02_turn_run/sync.py",
+      "sdk/python/examples/03_turn_stream_events/async.py",
+      "sdk/python/examples/03_turn_stream_events/sync.py",
+      "sdk/python/examples/04_models_and_metadata/async.py",
+      "sdk/python/examples/04_models_and_metadata/sync.py",
+      "sdk/python/examples/05_existing_thread/async.py",
+      "sdk/python/examples/05_existing_thread/sync.py",
+      "sdk/python/examples/06_thread_lifecycle_and_controls/async.py",
+      "sdk/python/examples/06_thread_lifecycle_and_controls/sync.py",
+      "sdk/python/examples/07_image_and_text/async.py",
+      "sdk/python/examples/07_image_and_text/sync.py",
+      "sdk/python/examples/08_local_image_and_text/async.py",
+      "sdk/python/examples/08_local_image_and_text/sync.py",
+      "sdk/python/examples/09_async_parity/sync.py",
+      "sdk/python/examples/10_error_handling_and_retry/async.py",
+      "sdk/python/examples/10_error_handling_and_retry/sync.py",
+      "sdk/python/examples/11_cli_mini_app/async.py",
+      "sdk/python/examples/11_cli_mini_app/sync.py",
+      "sdk/python/examples/12_turn_params_kitchen_sink/async.py",
+      "sdk/python/examples/12_turn_params_kitchen_sink/sync.py",
+      "sdk/python/examples/13_model_select_and_turn_params/async.py",
+      "sdk/python/examples/13_model_select_and_turn_params/sync.py",
+      "sdk/python/examples/14_turn_controls/async.py",
+      "sdk/python/examples/14_turn_controls/sync.py",
+      "sdk/python/examples/15_login_and_account/async.py",
+      "sdk/python/examples/15_login_and_account/sync.py",
+      "sdk/python/examples/16_external_message/async.py",
+      "sdk/python/examples/16_external_message/sync.py",
+      "sdk/python/examples/_bootstrap.py",
+      "sdk/python/release_version.py",
+      "sdk/python/scripts/update_sdk_artifacts.py",
+      "sdk/python/src/openai_codex/__init__.py",
+      "sdk/python/src/openai_codex/_approval_mode.py",
+      "sdk/python/src/openai_codex/_goal.py",
+      "sdk/python/src/openai_codex/_initialize_metadata.py",
+      "sdk/python/src/openai_codex/_inputs.py",
+      "sdk/python/src/openai_codex/_login.py",
+      "sdk/python/src/openai_codex/_message_router.py",
+      "sdk/python/src/openai_codex/_run.py",
+      "sdk/python/src/openai_codex/_runtime_requirements.py",
+      "sdk/python/src/openai_codex/_sandbox.py",
+      "sdk/python/src/openai_codex/_version.py",
+      "sdk/python/src/openai_codex/api.py",
+      "sdk/python/src/openai_codex/async_client.py",
+      "sdk/python/src/openai_codex/client.py",
+      "sdk/python/src/openai_codex/errors.py",
+      "sdk/python/src/openai_codex/generated/__init__.py",
+      "sdk/python/src/openai_codex/generated/notification_registry.py",
+      "sdk/python/src/openai_codex/generated/v2_all.py",
+      "sdk/python/src/openai_codex/models.py",
+      "sdk/python/src/openai_codex/retry.py",
+      "sdk/python/src/openai_codex/types.py",
+      "sdk/python/tests/app_server_harness.py",
+      "sdk/python/tests/app_server_helpers.py",
+      "sdk/python/tests/conftest.py",
+      "sdk/python/tests/installed_sdk_smoke.py",
+      "sdk/python/tests/test_app_server_approvals.py",
+      "sdk/python/tests/test_app_server_goal_operations.py",
+      "sdk/python/tests/test_app_server_inputs.py",
+      "sdk/python/tests/test_app_server_lifecycle.py",
+      "sdk/python/tests/test_app_server_login.py",
+      "sdk/python/tests/test_app_server_run.py",
+      "sdk/python/tests/test_app_server_streaming.py",
+      "sdk/python/tests/test_app_server_turn_controls.py",
+      "sdk/python/tests/test_artifact_workflow_and_binaries.py",
+      "sdk/python/tests/test_async_client_behavior.py",
+      "sdk/python/tests/test_client_rpc_methods.py",
+      "sdk/python/tests/test_contract_generation.py",
+      "sdk/python/tests/test_mcp_conformance_fixtures.py",
+      "sdk/python/tests/test_public_api_runtime_behavior.py",
+      "sdk/typescript/eslint.config.js",
+      "sdk/typescript/jest.config.cjs",
+      "sdk/typescript/samples/basic_streaming.ts",
+      "sdk/typescript/samples/helpers.ts",
+      "sdk/typescript/samples/structured_output.ts",
+      "sdk/typescript/samples/structured_output_zod.ts",
+      "sdk/typescript/src/codex.ts",
+      "sdk/typescript/src/codexOptions.ts",
+      "sdk/typescript/src/events.ts",
+      "sdk/typescript/src/exec.ts",
+      "sdk/typescript/src/index.ts",
+      "sdk/typescript/src/items.ts",
+      "sdk/typescript/src/outputSchemaFile.ts",
+      "sdk/typescript/src/thread.ts",
+      "sdk/typescript/src/threadOptions.ts",
+      "sdk/typescript/src/turnOptions.ts",
+      "sdk/typescript/tests/abort.test.ts",
+      "sdk/typescript/tests/codexExecSpy.ts",
+      "sdk/typescript/tests/exec.test.ts",
+      "sdk/typescript/tests/mcpConformance.test.ts",
+      "sdk/typescript/tests/responsesProxy.ts",
+      "sdk/typescript/tests/run.test.ts",
+      "sdk/typescript/tests/runStreamed.test.ts",
+      "sdk/typescript/tests/setupCodexHome.ts",
+      "sdk/typescript/tests/testCodex.ts",
+      "sdk/typescript/tsup.config.ts"
+    ],
+    "skipped": [],
+    "coverage_complete": true,
+    "diagnostics": [],
+    "cache": {
+      "hits": 1,
+      "misses": 0,
+      "evictions": 0,
+      "enabled": true,
+      "error": null
+    },
+    "graph_key": "e1573c914a3cfe82993f01067aa24dd46f23fd781ad1ae9c80a3f6149391012b",
+    "elapsed_ms": 55.71,
+    "query_index": {
+      "backend": "sqlite_columns",
+      "hit": true,
+      "persistent": true,
+      "bytes": 500207616,
+      "entities": 39727,
+      "facts": 837018,
+      "reclaimed_snapshots": 0,
+      "phase_ms": {
+        "manifest": 18.834,
+        "store_open": 31.658,
+        "index_open": 2.274
+      }
+    },
+    "query_cache": {
+      "enabled": false
+    },
+    "pattern_engine": {
+      "backend": "exploration",
+      "semantic_backend": "sqlite_columns",
+      "buckets": {
+        "hits": 1025,
+        "disk_hits": 5,
+        "builds": 0,
+        "fallback": 0,
+        "loaded_rows": 55046,
+        "build_ms": 0.0
+      }
+    }
+  }
+}

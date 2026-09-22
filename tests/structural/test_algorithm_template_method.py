@@ -98,7 +98,10 @@ def test_refinement_rejects_broken_instance_or_data_collaboration(language, muta
     else:
         text = text.replace(f'{receiver}.second({receiver}.first(key))', f'{receiver}.second(0)')
         text = text.replace('  return ', '  self.first(key)\n  return ') if language == 'python' else text.replace('return this.second', 'this.first(key);return this.second')
-    assert detect(text, language, refined=False)
+    # An extension invoked on a different object is delegation, not a hook
+    # executed by this instance's template. Discarding a hook result remains a
+    # Template Method, but fails the stronger dependent-result contract.
+    assert bool(detect(text, language, refined=False)) is (mutation != 'other-instance')
     assert not detect(text, language)
 
 

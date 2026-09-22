@@ -1,0 +1,345 @@
+{
+  "seconds": 93.89414479094557,
+  "complete": false,
+  "analysis": {
+    "resolution": {
+      "resolved_calls": 1188,
+      "unresolved_calls": 6261
+    },
+    "files": [
+      "sdk/python/_runtime_setup.py",
+      "sdk/python/examples/01_quickstart_constructor/async.py",
+      "sdk/python/examples/01_quickstart_constructor/sync.py",
+      "sdk/python/examples/02_turn_run/async.py",
+      "sdk/python/examples/02_turn_run/sync.py",
+      "sdk/python/examples/03_turn_stream_events/async.py",
+      "sdk/python/examples/03_turn_stream_events/sync.py",
+      "sdk/python/examples/04_models_and_metadata/async.py",
+      "sdk/python/examples/04_models_and_metadata/sync.py",
+      "sdk/python/examples/05_existing_thread/async.py",
+      "sdk/python/examples/05_existing_thread/sync.py",
+      "sdk/python/examples/06_thread_lifecycle_and_controls/async.py",
+      "sdk/python/examples/06_thread_lifecycle_and_controls/sync.py",
+      "sdk/python/examples/07_image_and_text/async.py",
+      "sdk/python/examples/07_image_and_text/sync.py",
+      "sdk/python/examples/08_local_image_and_text/async.py",
+      "sdk/python/examples/08_local_image_and_text/sync.py",
+      "sdk/python/examples/09_async_parity/sync.py",
+      "sdk/python/examples/10_error_handling_and_retry/async.py",
+      "sdk/python/examples/10_error_handling_and_retry/sync.py",
+      "sdk/python/examples/11_cli_mini_app/async.py",
+      "sdk/python/examples/11_cli_mini_app/sync.py",
+      "sdk/python/examples/12_turn_params_kitchen_sink/async.py",
+      "sdk/python/examples/12_turn_params_kitchen_sink/sync.py",
+      "sdk/python/examples/13_model_select_and_turn_params/async.py",
+      "sdk/python/examples/13_model_select_and_turn_params/sync.py",
+      "sdk/python/examples/14_turn_controls/async.py",
+      "sdk/python/examples/14_turn_controls/sync.py",
+      "sdk/python/examples/15_login_and_account/async.py",
+      "sdk/python/examples/15_login_and_account/sync.py",
+      "sdk/python/examples/16_external_message/async.py",
+      "sdk/python/examples/16_external_message/sync.py",
+      "sdk/python/examples/_bootstrap.py",
+      "sdk/python/release_version.py",
+      "sdk/python/scripts/update_sdk_artifacts.py",
+      "sdk/python/src/openai_codex/__init__.py",
+      "sdk/python/src/openai_codex/_approval_mode.py",
+      "sdk/python/src/openai_codex/_goal.py",
+      "sdk/python/src/openai_codex/_initialize_metadata.py",
+      "sdk/python/src/openai_codex/_inputs.py",
+      "sdk/python/src/openai_codex/_login.py",
+      "sdk/python/src/openai_codex/_message_router.py",
+      "sdk/python/src/openai_codex/_run.py",
+      "sdk/python/src/openai_codex/_runtime_requirements.py",
+      "sdk/python/src/openai_codex/_sandbox.py",
+      "sdk/python/src/openai_codex/_version.py",
+      "sdk/python/src/openai_codex/api.py",
+      "sdk/python/src/openai_codex/async_client.py",
+      "sdk/python/src/openai_codex/client.py",
+      "sdk/python/src/openai_codex/errors.py",
+      "sdk/python/src/openai_codex/generated/__init__.py",
+      "sdk/python/src/openai_codex/generated/notification_registry.py",
+      "sdk/python/src/openai_codex/generated/v2_all.py",
+      "sdk/python/src/openai_codex/models.py",
+      "sdk/python/src/openai_codex/retry.py",
+      "sdk/python/src/openai_codex/types.py",
+      "sdk/python/tests/app_server_harness.py",
+      "sdk/python/tests/app_server_helpers.py",
+      "sdk/python/tests/conftest.py",
+      "sdk/python/tests/installed_sdk_smoke.py",
+      "sdk/python/tests/test_app_server_approvals.py",
+      "sdk/python/tests/test_app_server_goal_operations.py",
+      "sdk/python/tests/test_app_server_inputs.py",
+      "sdk/python/tests/test_app_server_lifecycle.py",
+      "sdk/python/tests/test_app_server_login.py",
+      "sdk/python/tests/test_app_server_run.py",
+      "sdk/python/tests/test_app_server_streaming.py",
+      "sdk/python/tests/test_app_server_turn_controls.py",
+      "sdk/python/tests/test_artifact_workflow_and_binaries.py",
+      "sdk/python/tests/test_async_client_behavior.py",
+      "sdk/python/tests/test_client_rpc_methods.py",
+      "sdk/python/tests/test_contract_generation.py",
+      "sdk/python/tests/test_mcp_conformance_fixtures.py",
+      "sdk/python/tests/test_public_api_runtime_behavior.py",
+      "sdk/typescript/eslint.config.js",
+      "sdk/typescript/jest.config.cjs",
+      "sdk/typescript/samples/basic_streaming.ts",
+      "sdk/typescript/samples/helpers.ts",
+      "sdk/typescript/samples/structured_output.ts",
+      "sdk/typescript/samples/structured_output_zod.ts",
+      "sdk/typescript/src/codex.ts",
+      "sdk/typescript/src/codexOptions.ts",
+      "sdk/typescript/src/events.ts",
+      "sdk/typescript/src/exec.ts",
+      "sdk/typescript/src/index.ts",
+      "sdk/typescript/src/items.ts",
+      "sdk/typescript/src/outputSchemaFile.ts",
+      "sdk/typescript/src/thread.ts",
+      "sdk/typescript/src/threadOptions.ts",
+      "sdk/typescript/src/turnOptions.ts",
+      "sdk/typescript/tests/abort.test.ts",
+      "sdk/typescript/tests/codexExecSpy.ts",
+      "sdk/typescript/tests/exec.test.ts",
+      "sdk/typescript/tests/mcpConformance.test.ts",
+      "sdk/typescript/tests/responsesProxy.ts",
+      "sdk/typescript/tests/run.test.ts",
+      "sdk/typescript/tests/runStreamed.test.ts",
+      "sdk/typescript/tests/setupCodexHome.ts",
+      "sdk/typescript/tests/testCodex.ts",
+      "sdk/typescript/tsup.config.ts"
+    ],
+    "skipped": [],
+    "coverage_complete": true,
+    "diagnostics": [],
+    "cache": {
+      "hits": 0,
+      "misses": 101,
+      "evictions": 0,
+      "max_bytes": 500000000,
+      "bytes": 6983680,
+      "enabled": true,
+      "error": null
+    },
+    "graph_key": "5b43218ff6f64b14bf521ad4364f6ff87be8c61ac92d2b4e2e43799a03fc00c4",
+    "elapsed_ms": 56446.315,
+    "query_index": {
+      "backend": "sqlite_columns",
+      "hit": false,
+      "persistent": true,
+      "bytes": 240607232,
+      "entities": 39727,
+      "facts": 837018,
+      "reclaimed_snapshots": 0,
+      "phase_ms": {
+        "manifest": 24.083,
+        "store_open": 20.154,
+        "source_build": 16286.477,
+        "normalization": 1110.465,
+        "index_write": 38205.486,
+        "index_open": 681.949
+      }
+    },
+    "query_cache": {
+      "enabled": false
+    },
+    "pattern_engine": {
+      "backend": "exploration",
+      "semantic_backend": "sqlite_columns",
+      "buckets": {
+        "hits": 116956,
+        "disk_hits": 0,
+        "builds": 379,
+        "fallback": 0,
+        "loaded_rows": 206534,
+        "build_ms": 7158.373074838892
+      }
+    }
+  },
+  "outcomes": {
+    "abstract-factory": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2000.09,
+        "states": 5396,
+        "rows_examined": 840
+      }
+    },
+    "adapter": {
+      "complete": true,
+      "stats": {
+        "elapsed_ms": 503.244,
+        "states": 3183,
+        "rows_examined": 423
+      }
+    },
+    "bridge": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2000.152,
+        "states": 136410,
+        "rows_examined": 20435
+      }
+    },
+    "builder": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2000.128,
+        "states": 49986,
+        "rows_examined": 4120
+      }
+    },
+    "chain-of-responsibility": {
+      "complete": true,
+      "stats": {
+        "elapsed_ms": 21.304,
+        "states": 3160,
+        "rows_examined": 423
+      }
+    },
+    "command": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2000.062,
+        "states": 84645,
+        "rows_examined": 6855
+      }
+    },
+    "composite": {
+      "complete": true,
+      "stats": {
+        "elapsed_ms": 1450.445,
+        "states": 163063,
+        "rows_examined": 11606
+      }
+    },
+    "decorator": {
+      "complete": true,
+      "stats": {
+        "elapsed_ms": 455.85,
+        "states": 3710,
+        "rows_examined": 505
+      }
+    },
+    "facade": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2034.755,
+        "states": 445565,
+        "rows_examined": 143190
+      }
+    },
+    "factory-method": {
+      "complete": true,
+      "stats": {
+        "elapsed_ms": 0.241,
+        "states": 3,
+        "rows_examined": 0
+      }
+    },
+    "flyweight": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2002.134,
+        "states": 337729,
+        "rows_examined": 18078
+      }
+    },
+    "interpreter": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2018.069,
+        "states": 145131,
+        "rows_examined": 140370
+      }
+    },
+    "iterator": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2000.085,
+        "states": 100548,
+        "rows_examined": 28099
+      }
+    },
+    "mediator": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2005.282,
+        "states": 325219,
+        "rows_examined": 80946
+      }
+    },
+    "memento": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2013.996,
+        "states": 16379,
+        "rows_examined": 174
+      }
+    },
+    "observer": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2000.061,
+        "states": 502,
+        "rows_examined": 0
+      }
+    },
+    "prototype": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2012.242,
+        "states": 6277,
+        "rows_examined": 172
+      }
+    },
+    "proxy": {
+      "complete": true,
+      "stats": {
+        "elapsed_ms": 1624.306,
+        "states": 196940,
+        "rows_examined": 8804
+      }
+    },
+    "singleton": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2000.052,
+        "states": 44987,
+        "rows_examined": 20784
+      }
+    },
+    "state": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2038.78,
+        "states": 436356,
+        "rows_examined": 71340
+      }
+    },
+    "strategy": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2010.795,
+        "states": 49875,
+        "rows_examined": 3555
+      }
+    },
+    "template-method": {
+      "complete": false,
+      "stats": {
+        "elapsed_ms": 2068.433,
+        "states": 166345,
+        "rows_examined": 68404
+      }
+    },
+    "visitor": {
+      "complete": true,
+      "stats": {
+        "elapsed_ms": 279.758,
+        "states": 87908,
+        "rows_examined": 32157
+      }
+    }
+  },
+  "note": "Original engine; cold acquisition included; 2000 ms diagnostic timeout per pattern, so this is not full-scan latency."
+}

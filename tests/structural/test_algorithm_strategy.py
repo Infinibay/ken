@@ -22,6 +22,7 @@ CONSUMED_POLICY = SavedRule('same_input_policy_result', '''query same_input_poli
   call() as $invocation { has_argument(pos:0, kind:positional) as $argument; }
   require $argument VALUE $read;
   require $read LOADED_FROM $input;
+  require $invocation ARGUMENT_VALUE_ORIGIN $input [position:0];
   require $algorithm RETURNS_VALUE $result;
   require $invocation RESULT $result;
   emit $unit, $policy, $algorithm, $invocation, $input, $result;

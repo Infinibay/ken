@@ -145,8 +145,8 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'IS MODULE' in row['query'] and 'EXPORT' in row['query']
-    assert 'RETURNS_STORAGE' in row['query']
+    assert 'module_decl $module' in row['query'] and 'exported: true' in row['query']
+    assert 'body { return $storage; }' in row['query']
 
 
 @pytest.mark.parametrize('language,ext', [('go', 'go'), ('rust', 'rs')])

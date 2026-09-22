@@ -3,8 +3,8 @@
 The variant is a published rule, so the test goes through the registry name
 ``template-method#trait-default`` rather than a private copy of the query.
 
-The query counts concrete implementations: a hook implemented by a single type
-does not satisfy the contract.
+A hook implemented by one concrete type already supplies an extension point;
+implementation counts are repository inventory, not part of Template Method.
 """
 import pytest
 
@@ -150,9 +150,9 @@ def test_default_calling_a_free_function_is_rejected():
     assert not detect(FREE_FUNCTION)
 
 
-def test_hook_implemented_by_a_single_type_is_rejected():
-    """The contract asks for the hook to be implemented by more than one type."""
-    assert not detect(SINGLE_IMPLEMENTATION)
+def test_hook_implemented_by_a_single_type_is_a_valid_extension_point():
+    """A default skeleton plus a real override needs no second concrete type."""
+    assert detect(SINGLE_IMPLEMENTATION)
 
 
 def test_variant_is_ready_for_its_single_declared_language():
@@ -161,4 +161,6 @@ def test_variant_is_ready_for_its_single_declared_language():
     assert row['languages'] == ['rust']
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'OVERRIDES' in row['query'] and 'count distinct' in row['query']
+    assert 'overrides(' in row['query'] and 'trait $unit' in row['query']
+    assert 'body {' in row['query'] and 'receiver: $self' in row['query']
+    assert 'edge ' not in row['query'] and 'walk ' not in row['query']

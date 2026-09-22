@@ -103,7 +103,8 @@ def test_toml_root_ready_design_and_operation_availability(rule):
     assert document['query'] == rule.query
     assert document.get('variants', []) == rule.variants
     assert document.get('operations', []) == rule.operations
-    assert document['query'].lstrip().startswith('query ')
+    assert document['query_language'] == 'kql/2'
+    assert document['query'].lstrip().startswith('language "kql/2";')
     assert parse(document['query']).exports
     for section, separator in [('variants', '#'), ('operations', '.')]:
         declared = document.get(section, [])
@@ -227,6 +228,16 @@ def test_promoted_operations_equal_existing_algorithm_queries(name, language, po
     current = Engine(query_graph(roundtrip(graph)), QUERIES).execute(QUERIES[name])
     assert previous['complete'] and current['complete']
     assert bool(previous['matches']) == positive, (name, language, previous)
+    if name in {'factory-method.client_flow','strategy.consumed_policy','template-method.dependent_steps'}:
+        # Authored BODY exports Operation witnesses. Compare the exact same
+        # owner and byte span against historical Call-entity witnesses, rather
+        # than requiring the legacy entity namespace in the public language.
+        operations = {(op.owner,op.start,op.end):op.id for op in graph.operations if op.kind == 'CALL'}
+        identities = {entity.id:operations[(entity.attrs.get('owner'),entity.attrs.get('start_byte'),entity.attrs.get('end_byte'))]
+                      for entity in graph.entities.values() if entity.kind == 'CALL'
+                      and (entity.attrs.get('owner'),entity.attrs.get('start_byte'),entity.attrs.get('end_byte')) in operations}
+        previous = {**previous,'matches':[{**match,'bindings':{key:identities.get(value,value)
+                     for key,value in match['bindings'].items()}} for match in previous['matches']]}
     assert match_contract(current) == match_contract(previous), (name, language)
 
 
@@ -243,6 +254,39 @@ def original_operation_cases():
     yield 'architecture.batch-work-queue.drain', 'python', queued_source('python')
     yield 'architecture.read-through-cache.read_fill', 'python', read_through_source('python')
     yield 'persistence.unit-of-work.keyed_flush', 'python', work_source('python')
+
+
+    from . import test_algorithm_adapter as adapter
+    from . import test_algorithm_visitor as visitor
+    from . import test_algorithm_decorator as decorator
+    from . import test_algorithm_bridge as bridge
+    from . import test_algorithm_command as command
+    from . import test_algorithm_mediator as mediator
+    from . import test_algorithm_observer as observer
+    from . import test_algorithm_interpreter as interpreter
+    from . import test_algorithm_state as state
+    from . import test_algorithm_flyweight as flyweight
+    from . import test_algorithm_proxy as proxy
+    from . import test_algorithm_chain_of_responsibility as chain
+    from . import test_algorithm_composite as composite
+    from . import test_algorithm_iterator as cursor
+    for language in ('python', 'java', 'typescript'):
+        yield 'adapter.input_conversion', language, adapter.source(language)
+        yield 'adapter.output_conversion', language, adapter.source(language)
+        yield 'visitor.result_forwarding', language, visitor.source(language)
+        yield 'decorator.result_forwarding', language, decorator.source(language, decorator.body(language))
+        yield 'bridge.injected_returned_primitive', language, bridge.body(language, bridge.statements(language))
+        yield 'command.captured_payload', language, command.with_payload(language)
+        yield 'mediator.event_delivery', language, mediator.source(language)
+        yield 'interpreter.binary_result', language, interpreter.source(language)
+        yield 'state.event_transition', language, state.source(language)
+        yield 'flyweight.stable_intrinsic', language, flyweight.source(language)
+        yield 'proxy.single_guarded_dispatch', language, proxy.source(language, proxy.guarded(language))
+        yield 'chain-of-responsibility.single_exclusive_handler', language, chain.source(language)
+        yield 'composite.additive_aggregate', language, composite.instrument(composite.SOURCES[language], language)
+        yield 'iterator.advancing_element', language, cursor.instrument(cursor.CURSORS[language], language)
+    for language in observer.LANGUAGES:
+        yield 'observer.event_delivery', language, observer.source(language)
 
 
 ORIGINAL_OPERATIONS = tuple(original_operation_cases())
@@ -275,7 +319,10 @@ def test_gof_roots_reach_every_ready_variant_without_enabling_design_variants():
                 if name not in reachable:
                     reachable.add(name)
                     pending.append(name)
-        ready = {rule.id + '#' + variant['id'] for variant in rule.variants if variant['status'] == 'ready'}
+        from ken.kql2.syntax import parse as parse_kql2
+        ready = {parse_kql2(variant['query']).module + '.detect'
+                 for variant in rule.variants if variant['status'] == 'ready'}
         planned = {rule.id + '#' + variant['id'] for variant in rule.variants if variant['status'] == 'design'}
-        assert ready <= reachable, (rule.id, ready - reachable)
-        assert not planned & reachable, (rule.id, planned & reachable)
+        reached_patterns = {QUERIES[name].name for name in reachable}
+        assert ready <= reached_patterns, (rule.id, ready - reached_patterns)
+        assert not planned & QUERIES.keys(), (rule.id, planned & QUERIES.keys())

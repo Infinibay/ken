@@ -1,0 +1,14 @@
+{
+  "fixture": "class First:\n    def load(self):\n        pass\nclass Closed:\n    def load(self):\n        pass\n    def clear(self):\n        pass\nclass Distractor:\n    def clear(self):\n        pass\nclass Second:\n    def load(self):\n        pass\nclass Unrelated:\n    pass\n",
+  "expected": [
+    "First",
+    "Second"
+  ],
+  "matched": [
+    "First",
+    "Second"
+  ],
+  "complete": true,
+  "coverage_complete": true,
+  "unknown_candidates": 0
+}

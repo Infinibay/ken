@@ -1,0 +1,185 @@
+{
+  "find": {
+    "prompt": "Use the relevant installed Ken skill to find classes in src that directly own a load method but do not directly own a clear method. Produce a KQL2 query file, actually execute it, and explain the result and its limitations. This must not confuse a clear method on another class with one on the class being examined. Do not change source files. The Ken source checkout and tests are not learning material for this task: use only the installed skill/references, this fixture, and CLI help. The Ken CLI is available at /Users/andres/Projects/ken/.venv/bin/python -m ken (pass --root or tools --path explicitly as appropriate). Write your query to answer.kql. Finish with the query path, matched classes, completion/coverage, and any unsupported claims. Do not use repository MCP servers or tools for other projects. Do not start other agents.",
+    "fixture": "class BufferedReader:\n    def load(self):\n        return 1\n    def clear(self):\n        pass\n\nclass StreamingReader:\n    def load(self):\n        return 2\n\nclass CacheCleaner:\n    def clear(self):\n        pass\n\nclass EmptyReader:\n    pass\n",
+    "final_response": "Created and executed [answer.kql](/private/tmp/ken-skill-learning-20260922/find/answer.kql) using the installed Ken skill and CLI with explicit `--root` and `--path src`. Exit status: **0**.\n\n**Matched:** [StreamingReader, line 7](/private/tmp/ken-skill-learning-20260922/find/src/sample.py:7).\n\nBoth the required `load` and `not exists` check for `clear` are nested inside the same captured class. Therefore, `BufferedReader.clear` and `CacheCleaner.clear` cannot suppress `StreamingReader`.\n\n- `BufferedReader` is excluded because it directly owns `clear`.\n- `CacheCleaner` and `EmptyReader` are excluded because they do not directly own `load`.\n\n**Completion/coverage:** `complete: true`, `coverage_complete: true`, `unknown_candidates: 0`, `results_truncated: false`. One source file was parsed; none were skipped.\n\n**Limitations / unsupported claims:** This establishes direct method ownership in the analyzed `src` snapshot. It does not establish absence of inherited or dynamically supplied `clear` methods, runtime correctness, or anything outside that scope.\n\nNo source files were changed.",
+    "query": "language \"kql/2\";\nmodule investigation.method_ownership;\n\nquery load_without_own_clear {\n  class $type {\n    method $load { name: \"load\"; }\n    not exists {\n      method $clear { name: \"clear\"; }\n    }\n  }\n  select $type;\n}\n",
+    "commands": [
+      "/bin/zsh -lc \"pwd; rg --files -g 'AGENTS.md' -g 'SKILL.md' -g '*.py' -g '*.kql' -g 'pyproject.toml' -g 'README*' -g 'ken*' -g '.ken*'\"",
+      "/bin/zsh -lc 'cat /private/tmp/ken-skill-learning-20260922/find/.agents/skills/ken-find-code-patterns/SKILL.md'",
+      "/bin/zsh -lc 'cat .agents/skills/ken-find-code-patterns/references/kql2/README.md'",
+      "/bin/zsh -lc 'for candidate in /AGENTS.md /private/AGENTS.md /private/tmp/AGENTS.md /private/tmp/ken-skill-learning-20260922/AGENTS.md /private/tmp/ken-skill-learning-20260922/find/AGENTS.md; do if [ -f \"$candidate\" ]; then printf '\"'%s\\\\n' \\\"\"'$candidate\"; cat \"$candidate\"; fi; done'",
+      "/bin/zsh -lc \"rg --files --hidden -g '\"'!.git/**'\"'; cat src/sample.py\"",
+      "/bin/zsh -lc '/Users/andres/Projects/ken/.venv/bin/python -m ken kql2 --help'",
+      "/bin/zsh -lc '/Users/andres/Projects/ken/.venv/bin/python -m ken kql2 /private/tmp/ken-skill-learning-20260922/find/answer.kql --root /private/tmp/ken-skill-learning-20260922/find --path src'",
+      "/bin/zsh -lc 'cat answer.kql'",
+      "/bin/zsh -lc 'nl -ba src/sample.py; shasum -a 256 src/sample.py'"
+    ],
+    "completed": true
+  },
+  "contract": {
+    "prompt": "Use the relevant installed Ken skill to create and validate a source contract for this project: every class under src that directly owns commit must also directly own rollback. Classes without commit are outside the obligation. Use a violation query with no_matches; a good class must not hide a bad one and a rollback on a different class must not satisfy the requirement. Include passing, failing, and misleading-lookalike examples. Adopt the rule for on-demand checks only and capture a baseline. Then demonstrate a regression by temporarily removing Transaction.rollback in the fixture, compare to the explicit baseline ID, and restore the fixture. Save the complete definition to answer.json and the query to answer.kql. Do not modify files outside this temporary project. Use only installed skills/references, this fixture, and CLI help as learning material; do not inspect Ken implementation/tests. CLI: /Users/andres/Projects/ken/.venv/bin/python -m ken. Use explicit project roots. Do not use repository MCP servers or other agents. Finish with validation results, before/after statuses, comparison, and limitations.",
+    "fixture": "class Transaction:\n    def commit(self):\n        return 1\n    def rollback(self):\n        pass\n\nclass Logger:\n    def log(self):\n        pass\n",
+    "final_response": "Saved [answer.json](/private/tmp/ken-skill-learning-20260922/contract/answer.json), [answer.kql](/private/tmp/ken-skill-learning-20260922/contract/answer.kql), and [validation results and receipts](/private/tmp/ken-skill-learning-20260922/contract/answer-results.json).\n\nThe `no_matches` rule checks direct ownership within each class under `src`. Classes without their own `commit` are excluded. It is enabled for **on-demand checks only** (`automatic: false`).\n\nAll **12 examples validated**: four expected passes and eight expected failures, including good/bad mixtures, unrelated classes, identical class names, and inherited, nested, or module-level lookalikes.\n\nExplicit baseline: `61e7a9968abf4159935aea8576c06616`.\n\n| Fixture state | Status | Violations | Comparison |\n|---|---|---:|---|\n| Original | pass | 0 | Baseline captured |\n| `Transaction.rollback` removed | fail | 1 | `regression` against explicit baseline |\n| Restored | pass | 0 | `resolved` against failing run |\n\nThe violation identified `Transaction` at `src/sample.py:1`. All three checks had complete coverage, zero unknown candidates, and no truncation. The fixture was restored byte for byte.\n\nLimitations: this checks source declarations, not method signatures or runtime transaction correctness. Examples are parsed, not executed; runtime behavior still requires behavioral tests.",
+    "query": "language \"kql/2\";\nmodule contracts.transactions;\nquery missing_own_rollback {\n  class $type {\n    method $commit { name: \"commit\"; }\n    not exists {\n      method $rollback { name: \"rollback\"; }\n    }\n  }\n  select $type;\n}\n",
+    "commands": [
+      "/bin/zsh -lc \"pwd; rg --files -g AGENTS.md -g SKILL.md -g '*.py' -g '*ken*' -g '*.json' -g '*.kql' -g 'README*' -g 'pyproject.toml' -g '\"'!**/.git/**'\"' -g '\"'!**/.venv/**'\"'\"",
+      "/bin/zsh -lc 'cat /private/tmp/ken-skill-learning-20260922/contract/.agents/skills/ken-prevent-regressions/SKILL.md'",
+      "/bin/zsh -lc 'cat /private/tmp/ken-skill-learning-20260922/contract/.agents/skills/ken-prevent-regressions/references/kql2/README.md /private/tmp/ken-skill-learning-20260922/contract/.agents/skills/ken-prevent-regressions/references/mutable-default-contract.json'",
+      "/bin/zsh -lc \"rg --files --hidden -g '\"'!**/.git/**'\"' -g '\"'!**/.venv/**'\"' -g '\"'!**/.agents/skills/**'\"'; cat src/sample.py\"",
+      "/bin/zsh -lc '/Users/andres/Projects/ken/.venv/bin/python -m ken --help'",
+      "/bin/zsh -lc '/Users/andres/Projects/ken/.venv/bin/python -m ken tools --help'",
+      "/bin/zsh -lc '/Users/andres/Projects/ken/.venv/bin/python -m ken tools check --help'",
+      "/bin/zsh -lc '/Users/andres/Projects/ken/.venv/bin/python -m ken tools rule --help'",
+      "/bin/zsh -lc '/Users/andres/Projects/ken/.venv/bin/python -m ken tools related --help; /Users/andres/Projects/ken/.venv/bin/python -m ken kql2 --help'",
+      "/bin/zsh -lc 'PYTHONDONTWRITEBYTECODE=1 /Users/andres/Projects/ken/.venv/bin/python -m ken tools --path /private/tmp/ken-skill-learning-20260922/contract related src/sample.py checks --full'",
+      "/bin/zsh -lc 'PYTHONDONTWRITEBYTECODE=1 /Users/andres/Projects/ken/.venv/bin/python -m ken install --help'",
+      "/bin/zsh -lc 'PYTHONDONTWRITEBYTECODE=1 /Users/andres/Projects/ken/.venv/bin/python -m ken install /private/tmp/ken-skill-learning-20260922/contract --no-wire'",
+      "/bin/zsh -lc 'PYTHONDONTWRITEBYTECODE=1 /Users/andres/Projects/ken/.venv/bin/python -m ken tools --path /private/tmp/ken-skill-learning-20260922/contract related src/sample.py checks --full'",
+      "/bin/zsh -lc \"PYTHONDONTWRITEBYTECODE=1 /Users/andres/Projects/ken/.venv/bin/python - <<'PY'\nimport json\nimport os\nfrom pathlib import Path\nimport subprocess\n\nroot = Path('/private/tmp/ken-skill-learning-20260922/contract')\nevidence = root / '.ken' / 'contract-evidence'\nevidence.mkdir(exist_ok=True)\ntmpdir = root / '.ken' / 'tmp'\ntmpdir.mkdir(exist_ok=True)\nenv = dict(os.environ, PYTHONDONTWRITEBYTECODE='1', TMPDIR=str(tmpdir))\ndefinition = json.loads((root / 'answer.json').read_text())\nassert definition['query'] == (root / 'answer.kql').read_text()\ncommand = ['/Users/andres/Projects/ken/.venv/bin/python', '-m', 'ken', 'tools', '--path', str(root)]\nfor name, arguments in [\n    ('create', ['rule', '--action', 'create', '--definition', json.dumps(definition)]),\n    ('validation', ['rule', '--action', 'validate', '--rule-id', definition['id'], '--full'])\n]:\n    result = subprocess.run(command + arguments, cwd=root, env=env, text=True, capture_output=True)\n    (evidence / f'{name}.json').write_text(result.stdout)\n    print(name, 'exit_code=', result.returncode)\n    print(result.stdout)\n    if result.stderr:\n        print(result.stderr)\n    if result.returncode:\n        raise SystemExit(result.returncode)\nPY\"",
+      "/bin/zsh -lc \"PYTHONDONTWRITEBYTECODE=1 /Users/andres/Projects/ken/.venv/bin/python - <<'PY'\nimport json\nimport os\nfrom pathlib import Path\nimport subprocess\n\nroot = Path('/private/tmp/ken-skill-learning-20260922/contract')\nevidence = root / '.ken' / 'contract-evidence'\nenv = dict(os.environ, PYTHONDONTWRITEBYTECODE='1', TMPDIR=str(root / '.ken' / 'tmp'))\ndefinition = json.loads((root / 'answer.json').read_text())\nomitted = {\n    'pass: rollback-only class has no obligation',\n    'pass: module-level commit does not impose a class obligation',\n    'fail: similar spelling and calls do not declare rollback',\n}\ndefinition['examples'] = [example for example in definition['examples'] if example['name'] not in omitted]\ndefinition['examples'][1] = {\n    'name': 'pass: classes without their own commit have no obligation',\n    'files': {'src/sample.py': 'def commit():\\\\n    pass\\\\n\\\\nclass Logger:\\\\n    def log(self):\\\\n        pass\\\\n\\\\nclass Recovery:\\\\n    def rollback(self):\\\\n        pass\\\\n'},\n    'expect': 'pass',\n}\n(root / 'answer.json').write_text(json.dumps(definition, indent=2) + '\\\\n')\nassert len(definition['examples']) == 12\nassert definition['query'] == (root / 'answer.kql').read_text()\ncommand = ['/Users/andres/Projects/ken/.venv/bin/python', '-m', 'ken', 'tools', '--path', str(root)]\nfor name, arguments in [\n    ('create', ['rule', '--action', 'create', '--definition', json.dumps(definition)]),\n    ('validation', ['rule', '--action', 'validate', '--rule-id', definition['id'], '--full'])\n]:\n    result = subprocess.run(command + arguments, cwd=root, env=env, text=True, capture_output=True)\n    (evidence / f'{name}.json').write_text(result.stdout)\n    print(name, 'exit_code=', result.returncode)\n    print(result.stdout)\n    if result.stderr:\n        print(result.stderr)\n    if result.returncode:\n        raise SystemExit(result.returncode)\nPY\"",
+      "/bin/zsh -lc \"PYTHONDONTWRITEBYTECODE=1 /Users/andres/Projects/ken/.venv/bin/python - <<'PY'\nimport json\nimport os\nfrom pathlib import Path\nimport subprocess\n\nroot = Path('/private/tmp/ken-skill-learning-20260922/contract')\nevidence = root / '.ken' / 'contract-evidence'\nvalidation = json.loads((evidence / 'validation.json').read_text())\nassert validation['validation']['passed'] is True\nassert all(case['passed'] for case in validation['validation']['cases'])\nenv = dict(os.environ, PYTHONDONTWRITEBYTECODE='1', TMPDIR=str(root / '.ken' / 'tmp'))\ncommand = ['/Users/andres/Projects/ken/.venv/bin/python', '-m', 'ken', 'tools', '--path', str(root)]\nrule_id = validation['id']\nfor name, arguments in [\n    ('adoption', ['rule', '--action', 'enable', '--rule-id', rule_id, '--no-automatic']),\n    ('baseline', ['check', '--rules', rule_id, '--full'])\n]:\n    result = subprocess.run(command + arguments, cwd=root, env=env, text=True, capture_output=True)\n    (evidence / f'{name}.json').write_text(result.stdout)\n    print(name, 'exit_code=', result.returncode)\n    print(result.stdout)\n    if result.stderr:\n        print(result.stderr)\n    if result.returncode:\n        raise SystemExit(result.returncode)\n    payload = json.loads(result.stdout)\n    if name == 'adoption':\n        assert payload['state'] == 'enabled'\n        assert payload['automatic'] is False\nPY\"",
+      "/bin/zsh -lc \"PYTHONDONTWRITEBYTECODE=1 /Users/andres/Projects/ken/.venv/bin/python - <<'PY'\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport subprocess\n\nroot = Path('/private/tmp/ken-skill-learning-20260922/contract')\nevidence = root / '.ken' / 'contract-evidence'\nfixture = root / 'src' / 'sample.py'\nbaseline = json.loads((evidence / 'baseline.json').read_text())\nassert baseline['status'] == 'pass'\nassert baseline['run_id'] == '61e7a9968abf4159935aea8576c06616'\noriginal = fixture.read_bytes()\noriginal_hash = hashlib.sha256(original).hexdigest()\nassert baseline['checks'][0]['result']['check_snapshot']['manifest'] == [['src/sample.py', original_hash]]\n(evidence / 'sample.py.original.txt').write_bytes(original)\nremoval = b'    def rollback(self):\\\\n        pass\\\\n'\nassert original.count(removal) == 1\nregressed = original.replace(removal, b'', 1)\n(evidence / 'sample.py.regressed.txt').write_bytes(regressed)\nenv = dict(os.environ, PYTHONDONTWRITEBYTECODE='1', TMPDIR=str(root / '.ken' / 'tmp'))\ncommand = ['/Users/andres/Projects/ken/.venv/bin/python', '-m', 'ken', 'tools', '--path', str(root)]\ndef check(name, compared_run):\n    result = subprocess.run(command + ['check', '--rules', 'python.commit-requires-own-rollback', '--compare', compared_run, '--full'], cwd=root, env=env, text=True, capture_output=True)\n    (evidence / f'{name}.json').write_text(result.stdout)\n    print(name, 'exit_code=', result.returncode, flush=True)\n    print(result.stdout, flush=True)\n    if result.stderr:\n        print(result.stderr, flush=True)\n    result.check_returncode()\n    return json.loads(result.stdout)\n\ntry:\n    fixture.write_bytes(regressed)\n    regression = check('regression', baseline['run_id'])\nfinally:\n    fixture.write_bytes(original)\n    assert fixture.read_bytes() == original\n    (evidence / 'restoration.json').write_text(json.dumps({\n        'fixture': 'src/sample.py',\n        'restored_byte_for_byte': True,\n        'original_sha256': original_hash,\n        'regressed_sha256': hashlib.sha256(regressed).hexdigest(),\n        'restored_sha256': hashlib.sha256(fixture.read_bytes()).hexdigest(),\n    }, indent=2) + '\\\\n')\n\nrestored = check('restored', regression['run_id'])\nassert regression['status'] == 'fail'\nassert restored['status'] == 'pass'\nprint('Fixture restored byte for byte.', flush=True)\nPY\"",
+      "/bin/zsh -lc \"PYTHONDONTWRITEBYTECODE=1 /Users/andres/Projects/ken/.venv/bin/python - <<'PY'\nimport hashlib\nimport json\nfrom pathlib import Path\n\nroot = Path('/private/tmp/ken-skill-learning-20260922/contract')\nevidence = root / '.ken' / 'contract-evidence'\ndef read(name):\n    return json.loads((evidence / f'{name}.json').read_text())\ndefinition = json.loads((root / 'answer.json').read_text())\nvalidation = read('validation')\nadoption = read('adoption')\nbaseline = read('baseline')\nregression = read('regression')\nrestored = read('restored')\nrestoration = read('restoration')\nassert definition['query'] == (root / 'answer.kql').read_text()\nassert all(validation['definition'][key] == value for key, value in definition.items())\nassert validation['validation']['passed'] is True\nassert all(case['passed'] for case in validation['validation']['cases'])\nassert adoption['state'] == 'enabled' and adoption['automatic'] is False\nassert regression['comparison']['baseline'] == baseline['run_id']\nassert regression['comparison']['changes'][0]['change'] == 'regression'\nassert restored['comparison']['baseline'] == regression['run_id']\nassert restored['comparison']['changes'][0]['change'] == 'resolved'\nassert (root / 'src' / 'sample.py').read_bytes() == (evidence / 'sample.py.original.txt').read_bytes()\nassert hashlib.sha256((root / 'src' / 'sample.py').read_bytes()).hexdigest() == restoration['original_sha256']\nassert baseline['checks'][0]['result']['check_snapshot'] == restored['checks'][0]['result']['check_snapshot']\nruns = []\nfor stage, receipt, status, count in [\n    ('baseline', baseline, 'pass', 0),\n    ('rollback_removed', regression, 'fail', 1),\n    ('fixture_restored', restored, 'pass', 0),\n]:\n    result = receipt['checks'][0]['result']\n    assert receipt['status'] == status\n    assert result['complete'] and result['coverage_complete']\n    assert result['unknown_candidates'] == 0 and not result['results_truncated']\n    assert len(result['rows']) == count\n    runs.append({\n        'stage': stage,\n        'run_id': receipt['run_id'],\n        'status': receipt['status'],\n        'rows': result['rows'],\n        'complete': result['complete'],\n        'coverage_complete': result['coverage_complete'],\n        'unknown_candidates': result['unknown_candidates'],\n        'results_truncated': result['results_truncated'],\n        'snapshot': result['check_snapshot'],\n        'comparison': receipt.get('comparison'),\n    })\nassert regression['checks'][0]['result']['rows'][0][0]['name'] == 'Transaction'\nreport = {\n    'project_root': str(root),\n    'rule_id': definition['id'],\n    'definition_file': 'answer.json',\n    'query_file': 'answer.kql',\n    'definition_matches_validated_rule': True,\n    'query_matches_definition': True,\n    'scope': 'src',\n    'expectation': 'no_matches',\n    'adoption': adoption,\n    'validation': validation['validation'],\n    'validation_summary': {'total': 12, 'passed': 12, 'expected_pass': 4, 'expected_fail': 8},\n    'explicit_baseline_id': baseline['run_id'],\n    'runs': runs,\n    'restoration': restoration,\n    'full_receipts_directory': '.ken/contract-evidence',\n    'on_demand_command': '/Users/andres/Projects/ken/.venv/bin/python -m ken tools --path ' + str(root) + ' check --rules ' + definition['id'] + ' --full',\n    'limitations': [\n        'Source-level direct method declarations in src; validated here on Python fixtures.',\n        'Does not prove signatures, callability, runtime behavior, transaction correctness, or that rollback undoes commit.',\n        'Inherited rollback does not satisfy direct ownership, and inherited commit alone imposes no obligation.',\n        'Examples are parsed, not executed; missing coverage, unknown candidates, or truncation cannot certify a pass.',\n        'Enabled for on-demand checks only; automatic checking is false and installation used --no-wire.',\n    ],\n}\n(root / 'answer-results.json').write_text(json.dumps(report, indent=2) + '\\\\n')\nprint(json.dumps({\n    'validation': report['validation_summary'],\n    'state': adoption['state'],\n    'automatic': adoption['automatic'],\n    'runs': [{key: run[key] for key in ['stage', 'run_id', 'status', 'comparison']} for run in runs],\n    'fixture_restored_byte_for_byte': True,\n    'results_file': str(root / 'answer-results.json'),\n}, indent=2))\nPY\""
+    ],
+    "completed": true,
+    "validation": {
+      "state": "validated",
+      "passed": true,
+      "cases": [
+        {
+          "name": "pass: directly owned commit and rollback",
+          "expected": "pass",
+          "actual": "pass",
+          "passed": true,
+          "reason": null
+        },
+        {
+          "name": "pass: classes without their own commit have no obligation",
+          "expected": "pass",
+          "actual": "pass",
+          "passed": true,
+          "reason": null
+        },
+        {
+          "name": "fail: own commit missing own rollback",
+          "expected": "fail",
+          "actual": "fail",
+          "passed": true,
+          "reason": null
+        },
+        {
+          "name": "fail: a good class must not hide a bad class",
+          "expected": "fail",
+          "actual": "fail",
+          "passed": true,
+          "reason": null
+        },
+        {
+          "name": "fail: rollback on another class cannot satisfy the requirement",
+          "expected": "fail",
+          "actual": "fail",
+          "passed": true,
+          "reason": null
+        },
+        {
+          "name": "fail: same class name in another file is a different owner",
+          "expected": "fail",
+          "actual": "fail",
+          "passed": true,
+          "reason": null
+        },
+        {
+          "name": "fail: module-level rollback is a lookalike",
+          "expected": "fail",
+          "actual": "fail",
+          "passed": true,
+          "reason": null
+        },
+        {
+          "name": "fail: rollback nested in a method is not directly owned",
+          "expected": "fail",
+          "actual": "fail",
+          "passed": true,
+          "reason": null
+        },
+        {
+          "name": "fail: rollback on a nested class is not the outer class method",
+          "expected": "fail",
+          "actual": "fail",
+          "passed": true,
+          "reason": null
+        },
+        {
+          "name": "fail: inherited rollback does not satisfy direct ownership",
+          "expected": "fail",
+          "actual": "fail",
+          "passed": true,
+          "reason": null
+        },
+        {
+          "name": "pass: inherited commit does not impose a direct ownership obligation",
+          "expected": "pass",
+          "actual": "pass",
+          "passed": true,
+          "reason": null
+        },
+        {
+          "name": "pass: commit-only class outside src is outside the domain",
+          "expected": "pass",
+          "actual": "pass",
+          "passed": true,
+          "reason": null
+        }
+      ]
+    },
+    "automatic": false,
+    "baseline": {
+      "run_id": "61e7a9968abf4159935aea8576c06616",
+      "status": "pass"
+    },
+    "regression": {
+      "run_id": "621423b3a28847e8b9b71da9a9da20ac",
+      "status": "fail",
+      "comparison": {
+        "baseline": "61e7a9968abf4159935aea8576c06616",
+        "changes": [
+          {
+            "rule": "python.commit-requires-own-rollback",
+            "change": "regression",
+            "before": "pass",
+            "after": "fail",
+            "matches_before": 0,
+            "matches_after": 1
+          }
+        ],
+        "not_checked": []
+      }
+    },
+    "restored": {
+      "run_id": "5e27aa821e78403ab3059d2b31e064c9",
+      "status": "pass",
+      "comparison": {
+        "baseline": "621423b3a28847e8b9b71da9a9da20ac",
+        "changes": [
+          {
+            "rule": "python.commit-requires-own-rollback",
+            "change": "resolved",
+            "before": "fail",
+            "after": "pass",
+            "matches_before": 1,
+            "matches_after": 0
+          }
+        ],
+        "not_checked": []
+      }
+    },
+    "restoration": {
+      "fixture": "src/sample.py",
+      "restored_byte_for_byte": true,
+      "original_sha256": "1d89f09a534881201ee8edc99f5eb223896f4fed1e952da88d60236840896109",
+      "regressed_sha256": "8e9561abdc2f65cf1935122293086ff92697429343a4bcd42cd8534b123678f1",
+      "restored_sha256": "1d89f09a534881201ee8edc99f5eb223896f4fed1e952da88d60236840896109"
+    }
+  }
+}

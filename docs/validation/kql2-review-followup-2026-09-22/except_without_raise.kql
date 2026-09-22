@@ -1,0 +1,1 @@
+language "kql/2"; module review; query except_without_raise {node $handler {kind:"catch";} not exists { node $raised {kind:"throw";} where contains($handler,$raised); } select $handler.path,$handler.line;}

@@ -163,8 +163,9 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'MATCHES_SIGNATURE' in row['query']
-    assert 'RETURNS_NEW' in row['query']
+    assert 'method $first_slot' in row['query']
+    assert 'let $a = construct' in row['query'] and 'return $a;' in row['query']
+    assert 'edge ' not in row['query']
 
 
 @pytest.mark.parametrize('language', LANGUAGES)

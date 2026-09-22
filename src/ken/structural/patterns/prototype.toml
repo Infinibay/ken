@@ -6,15 +6,31 @@ description = "A method creates its own type while reading instance state, or th
 caveat = "Copy-like construction is a candidate; deep-copy semantics are not proven. The language variant identifies the protocol by a copy-constructor shape or by recognised primitive names, so it inherits the usual name-based limits of protocol identification."
 legacy_query = "require $unit HAS_METHOD $clone\nrequire $clone RETURNS_NEW_SELF $unit\nrequire $unit HAS_FIELD $state\nrequire $clone READS $state\n"
 query = '''
-query prototype {
- any { match "prototype#explicit-copy"(unit: $unit); }
- or { match "prototype#derived-clone"(unit: $unit); }
- or { match "prototype#field-copy"(unit: $unit); }
- or { match "prototype#language-copy"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.prototype;
+import ken.catalog.prototype.variants.derived_clone;
+import ken.catalog.prototype.variants.explicit_copy;
+import ken.catalog.prototype.variants.field_copy;
+import ken.catalog.prototype.variants.language_copy;
+
+pattern detect(out GraphTerm $unit) {
+  either {
+    use ken.catalog.prototype.variants.explicit_copy.detect(unit: $unit);
+  } or {
+    use ken.catalog.prototype.variants.derived_clone.detect(unit: $unit);
+  } or {
+    use ken.catalog.prototype.variants.field_copy.detect(unit: $unit);
+  } or {
+    use ken.catalog.prototype.variants.language_copy.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -23,19 +39,25 @@ status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp"]
 query_claim = "A returned fresh allocation of the same nominal type retains at least one explicit same-named field copy from the receiver. Branch alternatives retain allocation/write correlation. Escapes and opaque uses are excluded conservatively. Does not prove complete/deep copy, feasible conditions, setter behavior or runtime type identity."
 query = '''
-query field_copy {
- require $unit HAS_METHOD $clone;
- require $clone HAS_OPERATION $return;
- require $return RETURN_FIELD_STATE $state;
- require $state FIELD_STATE_ORIGIN $construction;
- require $construction ALLOCATES_TYPE $unit;
- require $state FIELD_STATE_WRITE $write;
- require $write ASSIGNMENT_TARGET $target;
- require $write ASSIGNMENT_VALUE $source;
- require $unit HAS_FIELD $source;
- variable(static: false) as $source;
- where $target.name == $source.name;
- emit $unit;
+language "kql/2";
+module ken.catalog.prototype.variants.field_copy;
+
+pattern detect(out TypeDecl $unit) {
+  type $unit {
+    fields { field $state { static: false; } }
+    method $clone {
+      constructor: false;
+      body {
+        let $replica = construct $unit {};
+        return $replica copies $state;
+      }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 
@@ -46,9 +68,17 @@ languages = ["rust"]
 fixtures_status = "source-regression-matrix"
 query_claim = "Explicit Clone spelling in derive and clone invocation on that nominal type without a resolved explicit method target. Macro expansion, custom derive imports, deep-copy behavior and arbitrary trait-method resolution are not proven."
 query = '''
-query derived_clone {
- match "prototype.derived_copy"(unit:$unit);
- emit $unit;
+language "kql/2";
+module ken.catalog.prototype.variants.derived_clone;
+import ken.catalog.prototype.derived_copy;
+
+pattern detect(out GraphTerm $unit) {
+  use ken.catalog.prototype.derived_copy.detect(unit: $unit);
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 
@@ -56,7 +86,7 @@ query derived_clone {
 id = "explicit-copy"
 status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp"]
-query_claim = "Same-type construction receives an instance field and is returned. Supported return-flow scopes preserve origins through local aliases and overwrites; other scopes retain syntax projection. Does not distinguish every copy from a successor or prove deep/complete copy."
+query_claim = "Selected constructor retains an input in an instance field; a method supplies its own field to that same parameter and returns the newly produced value. Parameter binding supports modeled positional and named arguments; unresolved packs remain unknown. Does not prove complete or deep copying."
 requires = ["allocation_identity", "field_value_flow"]
 graph_requirements = ["Un valor nuevo recibe estado de la instancia fuente; el resultado no es un alias del receptor."]
 missing_capability = "unknown"
@@ -64,17 +94,31 @@ fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query prototype {
+language "kql/2";
+module ken.catalog.prototype.variants.explicit_copy;
 
- require $unit HAS_METHOD $clone;
- require $clone RETURNS_VALUE $result;
- require $construction RESULT $result;
- require $result INSTANCE_OF $unit;
- require $unit HAS_FIELD $state;
- require $construction ARGUMENT $argument;
- require $argument VALUE $input;
- require $input LOADED_FROM $state;
- emit $unit;
+pattern detect(out TypeDecl $unit) {
+  type $unit {
+    fields { field $state { static: false; } }
+    constructor $initialize {
+      receiver $self { escapes: false; }
+      parameters { param $input {} }
+      body { $state = $input as $retention; }
+    }
+    method $copy {
+      constructor: false;
+      body {
+        let $replica = call $initialize { argument $state for $input; };
+        return $replica;
+      }
+    }
+  }
+  where final_member_input($retention, $input);
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -85,56 +129,105 @@ requires = ["copy_protocol_models"]
 graph_requirements = ["Resolver protocolo, constructor de copia o derive; registrar profundidad y aliases desconocidos."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-five-languages"
-query_claim = "La copia la produce el mecanismo propio del lenguaje, en tres formas: un constructor de copia (constructor de aridad 1 cuyo parametro es una referencia lvalue al propio tipo, de modo que `X(X&&)` y `X(X)` quedan fuera), una delegacion a una primitiva de copia reconocida por nombre (`copy`, `deepcopy`, `clone`, `MemberwiseClone`) **aplicada al propio objeto** (el receptor o el argumento es la instancia; `super.x()`/`base.x()` cuentan como la instancia), o un metodo `clone` que devuelve una construccion del propio tipo inicializada desde un campo de ese tipo. La identificacion por nombre de primitiva es evidencia de API, no resolucion de biblioteca; por eso la rama exige ademas que lo copiado sea la propia instancia, o aceptaria cualquier metodo que copie un contenedor ajeno (`os.environ.copy()`, `tensor.clone()`, `deepcopy(self._rows.get(...))`), que es el falso positivo medido al correr el catalogo sobre proyectos reales. No prueba profundidad: una copia somera y una profunda son indistinguibles aqui, y los alias internos desconocidos no se registran."
+query_claim = "La copia la produce el mecanismo propio del lenguaje, en tres formas: un constructor de copia (constructor de aridad 1 cuyo parametro es una referencia lvalue al propio tipo, de modo que `X(X&&)` y `X(X)` quedan fuera; se exige copia de al menos un campo de igual nombre desde el parametro, mediante initializer o asignacion, y su cuerpo debe admitir terminacion normal; una firma sin copia o un constructor que siempre lanza quedan fuera), una delegacion a una primitiva de copia reconocida por nombre (`copy`, `deepcopy`, `clone`, `MemberwiseClone`) **aplicada al propio objeto y cuyo resultado se retorna** (directamente o mediante un cast Java/C# conservado como CAST_VALUE; el receptor o el argumento es la instancia; `super.x()`/`base.x()` cuentan como la instancia), o un metodo `clone` que devuelve una construccion del propio tipo inicializada desde un campo de ese tipo. La identificacion por nombre de primitiva es evidencia de API, no resolucion de biblioteca; por eso la rama exige ademas que lo copiado sea la propia instancia, o aceptaria cualquier metodo que copie un contenedor ajeno (`os.environ.copy()`, `tensor.clone()`, `deepcopy(self._rows.get(...))`), que es el falso positivo medido al correr el catalogo sobre proyectos reales. No prueba profundidad: una copia somera y una profunda son indistinguibles aqui, y los alias internos desconocidos no se registran."
 query = '''
-query language_copy {
- require $unit IS CLASS;
- any {
-  require $unit HAS_METHOD $witness;
-  callable(constructor: true, arity: 1) as $witness;
-  require $witness HAS_PARAMETER $source;
-  parameter(receiver: false, reference_kind: lvalue) as $source;
-  require $source TYPE $unit;
- } or {
-  require $unit HAS_METHOD $witness;
-  callable(constructor: false) as $witness;
-  require $witness HAS_CALL $delegation;
-  any { call(name: "copy") as $delegation; }
-  or { call(name: "deepcopy") as $delegation; }
-  or { call(name: "clone") as $delegation; }
-  or { call(name: "MemberwiseClone") as $delegation; }
-  require $unit INSTANCE_RECEIVER $instance;
-  any { require $delegation RECEIVER $instance; }
-  or {
-   require $delegation ARGUMENT $copied;
-   require $copied VALUE $instance;
+language "kql/2";
+module ken.catalog.prototype.variants.language_copy;
+
+pattern detect(out TypeDecl $unit, out Callable $witness) {
+  either {
+    /* The language's copy constructor: a constructor of the type whose single
+       parameter is an lvalue reference of the type's own name. The reference kind
+       is the declarator spelling, so a move (`X&&`) or by-value (`X`) parameter
+       states a different protocol. */
+    type $unit {
+      field $state {}
+      method $witness {
+        constructor: true;
+        arity: 1;
+        completes: true;
+        param $source { reference_kind: "lvalue"; type: nominal($unit); }
+        body { initializer { $state = $source; } }
+      }
+    }
+  } or {
+    /* The language's copy primitive invoked on the instance itself (`this.clone()`,
+       `super.clone()`, `this.MemberwiseClone()`), which is what separates the copy
+       from an ordinary `.copy()` on a field or a foreign mapping. */
+    type $unit {
+      method $witness {
+        constructor: false;
+        receiver $self {}
+        body {
+          call $copier {
+            name: ["copy", "deepcopy", "clone", "MemberwiseClone"];
+            receiver: $self;
+            returned: true;
+            resolution: unresolved;
+          };
+        }
+      }
+    }
+  } or {
+    /* ... or receiving the instance as its argument (`copy.deepcopy(self)`). */
+    type $unit {
+      method $witness {
+        constructor: false;
+        receiver $self {}
+        body {
+          call $copier {
+            name: ["copy", "deepcopy", "clone", "MemberwiseClone"];
+            argument $self at any;
+            returned: true;
+            resolution: unresolved;
+          };
+        }
+      }
+    }
+  } or {
+    /* The Clone trait's required method: it returns a construction of the type
+       initialized from a field of that same type, so a fresh value is not a copy. */
+    type $unit {
+      field $state {}
+      method $witness {
+        name: "clone";
+        constructor: false;
+        body {
+          let $replica = construct $unit { initializer $state; };
+          return $replica;
+        }
+      }
+    }
   }
- } or {
-  require $unit HAS_METHOD $witness;
-  callable(name: "clone") as $witness;
-  require $witness RETURNS_VALUE $result;
-  require $construction RESULT $result;
-  require $construction ALLOCATES_TYPE $unit;
-  require $construction HAS_INITIALIZER $initializer;
-  require $initializer STORES_VALUE $state;
-  require $unit HAS_FIELD $state;
- }
- emit unit=$unit, $witness;
+}
+
+query results {
+  use detect(unit: $unit, witness: $witness);
+  select $unit, $witness;
 }
 '''
 
 [[operations]]
 id = "derived_copy"
 status = "ready"
-description = "Expose a nominal Rust type, receiver and unresolved clone call under the existing derive(Clone) syntax model."
+description = "Expose a nominal Rust type, a receiver place of that type (parameter or local) and an unresolved clone call under the existing derive(Clone) syntax model."
 caveat = "Does not prove macro expansion, imported derive identity, deep copy or arbitrary trait method dispatch."
 query = '''
-query derived_copy {
- type_decl(language: rust) as $unit;
- require $unit DERIVE_NAME "Clone";
- require $receiver TYPE $unit;
- require $copy RECEIVER $receiver;
- call(name: "clone", resolution: unresolved) as $copy;
- emit $unit, $receiver, $copy;
+language "kql/2";
+module ken.catalog.prototype.derived_copy;
+
+pattern detect(out TypeDecl $unit, out GraphTerm $receiver, out Call $copy) {
+  type $unit { language: "rust"; derive: "Clone"; }
+  either {
+    param $receiver { type: nominal($unit); }
+  } or {
+    var $receiver { type: nominal($unit); }
+  }
+  call $copy { receiver: $receiver; name: "clone"; resolution: unresolved; }
+}
+
+query results {
+  use detect(unit: $unit, receiver: $receiver, copy: $copy);
+  select $unit, $receiver, $copy;
 }
 '''

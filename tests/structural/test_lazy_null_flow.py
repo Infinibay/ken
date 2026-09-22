@@ -80,7 +80,7 @@ def test_null_arm_controls_initialization_and_both_returns(language,change):
 
 @pytest.mark.parametrize('language',LANGUAGES)
 @pytest.mark.parametrize('change',['logging','alias','nested-condition'])
-def test_more_complex_initialization_remains_a_documented_gap(language,change):
+def test_logging_preserves_initialization_but_alias_and_conditional_creation_are_excluded(language,change):
     s=source(language);v='cls.value' if language=='python' else 'Shared.value'
     if language=='python':
         if change=='logging':s=s.replace('   cls.value','   log()\n   cls.value')
@@ -90,7 +90,29 @@ def test_more_complex_initialization_remains_a_documented_gap(language,change):
         if change=='logging':s=s.replace('{Shared.value =','{log();Shared.value =')
         elif change=='alias':s=s.replace('return Shared.value;',('Shared' if language in {'java','csharp'} else 'const')+' result=Shared.value;return result;')
         else:s=s.replace('{Shared.value = new Shared();}','{if(permitted){Shared.value = new Shared();}}')
-    _,out=search(s,language);assert not out['matches']
+    _,out=search(s,language);assert bool(out['matches']) == (change == 'logging')
+
+
+@pytest.mark.parametrize('language',LANGUAGES)
+@pytest.mark.parametrize('change',['log-before-write','log-before-hit-return','conditional-write'])
+def test_early_return_requires_unconditional_missing_initialization(language,change):
+    s=source(language,'early-return')
+    if language=='python':
+        if change=='log-before-write':
+            s=s.replace('  cls.value = Shared()', '  log()\n  cls.value = Shared()')
+        elif change=='log-before-hit-return':
+            s=s.replace('   return cls.value', '   log()\n   return cls.value')
+        else:
+            s=s.replace('  cls.value = Shared()', '  if permitted:\n   cls.value = Shared()')
+    else:
+        if change=='log-before-write':
+            s=s.replace('}Shared.value = new Shared();', '}log();Shared.value = new Shared();')
+        elif change=='log-before-hit-return':
+            s=s.replace('{return Shared.value;}', '{log();return Shared.value;}')
+        else:
+            s=s.replace('}Shared.value = new Shared();', '}if(permitted){Shared.value = new Shared();}')
+    g,out=search(s,language);assert not g.diagnostics
+    assert bool(out['matches']) == (change != 'conditional-write')
 
 
 @pytest.mark.parametrize('language',LANGUAGES)
@@ -118,5 +140,14 @@ def test_parsing_errors_do_not_prove_lazy_flow(language):
 
 
 def test_lazy_join_budget_with_many_candidates():
-    s=''.join(source('java').replace('Shared',f'T{i}') for i in range(100))
-    _,out=search(s,'java','singleton.lazy_instance',QueryBudget(max_matches=150,max_states=25000,max_rows=25000,timeout_ms=5000));assert len(out['matches'])==100
+    # Source BODY budgets charge CFG traversal/provenance as well as relational
+    # rows. Compare scaling explicitly instead of retaining a graph-only 25k
+    # budget that counted a different unit of work.
+    costs=[]
+    for count in (100,200):
+        s=''.join(source('java').replace('Shared',f'T{i}') for i in range(count))
+        _,out=search(s,'java','singleton.lazy_instance',QueryBudget(
+            max_matches=count+10,max_states=count*1000,max_rows=count*250,timeout_ms=5000))
+        assert len(out['matches'])==count
+        costs.append(out['outcomes']['singleton.lazy_instance']['stats']['states'])
+    assert costs[1] <= costs[0]*2.2

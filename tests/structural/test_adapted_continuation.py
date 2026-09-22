@@ -98,3 +98,30 @@ def wrap(next):
 def test_local_handler_binding(language, source):
     assert matches(source, language)
     assert not matches(source.replace('adapt(fn)', 'adapt(other)').replace('H(fn)', 'H(other)'), language)
+
+@pytest.mark.parametrize('language',['python','javascript','typescript','go'])
+@pytest.mark.parametrize('mode',['alias','overwritten','overwritten_after_return','conditional_binding','earlier_replaced'])
+def test_adapted_handler_uses_the_current_local_callable(language,mode):
+    if language=='python':
+        declaration=' fn = lambda x: next(x)\n'
+        middle={'alias':' chosen = fn\n','overwritten':' fn = other\n',
+                'overwritten_after_return':'','conditional_binding':'', 'earlier_replaced':''}[mode]
+        if mode=='conditional_binding': declaration=' if flag:\n '+declaration
+        if mode=='earlier_replaced': declaration=' fn = other\n'+declaration
+        returned='chosen' if mode=='alias' else 'fn'
+        source='def wrap(next, flag, other):\n'+declaration+middle+' return adapt('+returned+')\n'
+        if mode=='overwritten_after_return': source+=' fn = other\n'
+    else:
+        declaration='let fn = x => next(x);'
+        if language=='go': declaration='fn := func(x int) int {return next(x)};'
+        middle={'alias':'let chosen=fn;','overwritten':'fn=other;',
+                'overwritten_after_return':'','conditional_binding':'','earlier_replaced':''}[mode]
+        if language=='go': middle=middle.replace('let chosen=','chosen:=')
+        if mode=='conditional_binding': declaration='if (flag) {'+declaration+'};'
+        if mode=='earlier_replaced': declaration=('fn := other; fn = func(x int) int {return next(x)};' if language=='go' else 'let fn=other; fn=x => next(x);')
+        returned='chosen' if mode=='alias' else 'fn'
+        body=declaration+middle+'return adapt('+returned+');'
+        if mode=='overwritten_after_return': body+='fn=other;'
+        source=('package p; type Handler func(int) int; func adapt(fn Handler) Handler {return fn}; func wrap(next Handler, flag bool, other Handler) Handler {'+body+'}' if language=='go'
+                else 'function wrap(next, flag, other){'+body+'}')
+    assert bool(matches(source,language)) is (mode in ('alias','overwritten_after_return','earlier_replaced'))

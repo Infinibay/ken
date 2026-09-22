@@ -306,8 +306,14 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    for relation in ['PASSES_SELF_TO', 'CONDITIONAL_DELEGATION', 'HAS_FIELD', 'LOADED_FROM']:
-        assert relation in row['query'], relation
+    # The KQL 2 spelling of the four evidence clauses the variant needs: the colleague
+    # hands itself over (``argument $self_a at 0``), the centre delegates on a branch
+    # (``if ($tag == _) { .. } else { .. }``), the target is a field of the centre
+    # (``field $first_target {}``), and the delegated call carries the tag
+    # (``argument $tag at 0``).  The registry keeps the roles, not the payloads.
+    for clause in ['argument $self_a at 0', 'else {', 'field $first_target {}',
+                   'argument $tag at 0']:
+        assert clause in row['query'], clause
 
 
 @pytest.mark.parametrize('language', LANGUAGES)

@@ -9,16 +9,17 @@ from ken.structural.rules import SavedRule, builtin_rules, execute_rules, query_
 
 
 def test_batch_parses_each_distinct_query_source_once(monkeypatch):
+    from ken.kql2 import catalog
     registry = builtin_rules()
     rules = select_rules(registry, collections=['gof', 'modern'])
-    original = kenql.parse
+    original = catalog.compile_source
     counts = Counter()
 
-    def counting(source):
+    def counting(source, **kwargs):
         counts[source] += 1
-        return original(source)
+        return original(source, **kwargs)
 
-    monkeypatch.setattr(kenql, 'parse', counting)
+    monkeypatch.setattr(catalog, 'compile_source', counting)
     result = execute_rules(IR('', ''), rules, registry=registry)
     assert result['complete']
     assert counts

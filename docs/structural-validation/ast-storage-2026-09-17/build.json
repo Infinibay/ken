@@ -1,0 +1,62 @@
+{
+  "root": "/Users/andres/Projects/codex",
+  "scope": "all tracked files supported by structural frontend",
+  "files": 5295,
+  "languages": {
+    "python": 198,
+    "rust": 4340,
+    "javascript": 6,
+    "typescript": 750,
+    "cpp": 1
+  },
+  "nodes": 16096065,
+  "named_nodes": 8719607,
+  "source_bytes": 66872846,
+  "parse_errors": [
+    "codex-rs/app-server/src/main.rs",
+    "codex-rs/utils/pty/src/process.rs"
+  ],
+  "read_seconds": 1.8528074955102056,
+  "parse_seconds": 5.018894146196544,
+  "projection_seconds": 16.109783101826906,
+  "oracle_seconds_excluded": 12.634992716368288,
+  "persistence_seconds": {
+    "sqlite": 45.301047961227596,
+    "flatbuffers": 26.680018103448674,
+    "packed": 26.145761319901794
+  },
+  "total_cold_seconds": {
+    "sqlite": 68.28253270476125,
+    "flatbuffers": 49.66150284698233,
+    "packed": 49.12724606343545
+  },
+  "database_bytes": {
+    "sqlite": 684826624,
+    "flatbuffers": 671768576,
+    "packed": 671260672
+  },
+  "ast_payload_bytes": {
+    "sqlite": 0,
+    "flatbuffers": 338501856,
+    "packed": 338059725
+  },
+  "build_peak_mb_all_three_backends": 223.890625,
+  "update_candidate": [
+    391129,
+    5200,
+    "sdk/python/src/openai_codex/generated/v2_all.py"
+  ],
+  "python": "3.12.9",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "flatbuffers": "25.12.19",
+  "numpy": "2.4.4",
+  "sqlite": "3.47.1",
+  "limitations": [
+    "Syntax only, no GoF or cross-file semantic evaluation",
+    "Equivalent minimal SQLite columns, not current complete graph schema",
+    "Shared parsing/projection; persistence timed separately and rotated per file",
+    "Cold means fresh cache, not flushed OS page cache",
+    "Raw Tree-sitter trees are not serialized; stable numeric syntax projection is stored",
+    "Blobs loaded per candidate file via SQLite, no mmap claim"
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "scope": "src/ken/checks",
+  "targets": [
+    {
+      "path": "src/ken/checks/report.py",
+      "line": 30,
+      "name": "query_view",
+      "kind": "CALLABLE"
+    }
+  ],
+  "consumers": [
+    {
+      "caller": {
+        "path": "src/ken/checks/integration.py",
+        "line": 18,
+        "name": "search",
+        "kind": "CALLABLE",
+        "symbol": "search"
+      },
+      "call": {
+        "path": "src/ken/checks/integration.py",
+        "line": 46,
+        "name": "query_view",
+        "kind": "CALL"
+      },
+      "resolution": "resolved",
+      "result_uses": [],
+      "hops": 1,
+      "via": [
+        {
+          "path": "src/ken/checks/report.py",
+          "line": 30,
+          "name": "query_view",
+          "kind": "CALLABLE"
+        }
+      ],
+      "usage_status": "unknown"
+    }
+  ],
+  "tests": [],
+  "unresolved_candidates": [],
+  "truncated": false,
+  "depth": 3,
+  "coverage": {
+    "definitions": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 0,
+      "results_truncated": false,
+      "reason": null
+    },
+    "calls": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 0,
+      "results_truncated": false,
+      "reason": null
+    },
+    "targets": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 0,
+      "results_truncated": false,
+      "reason": null
+    },
+    "possible_targets": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 0,
+      "results_truncated": false,
+      "reason": null
+    },
+    "usages": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 2,
+      "results_truncated": false,
+      "reason": "source_body:unknown"
+    }
+  },
+  "claim": "Observed result consumers and return propagation. Test links show use, not assertion coverage; empty uses are not proof of discard.",
+  "status": "observed",
+  "acquisition": {
+    "paths": [
+      "src/ken/checks/automation.py",
+      "src/ken/checks/integration.py",
+      "src/ken/checks/model.py",
+      "src/ken/checks/report.py",
+      "src/ken/checks/service.py"
+    ],
+    "issues": [],
+    "basis": "explicit imports; unresolved acquisition falls back to supplied scope"
+  },
+  "contracts": [
+    {
+      "rules": [],
+      "checks": []
+    }
+  ]
+}

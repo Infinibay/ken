@@ -1,0 +1,45 @@
+{
+  "broad_suite": {
+    "command": "PYTHONPATH=.:src .venv/bin/pytest tests/kql2 tests/structural -q --tb=short",
+    "exit_code": 0,
+    "stage": "After initial property-posting optimization; before dependency/native-view additions"
+  },
+  "final_targeted_suite": {
+    "files": [
+      "tests/structural/test_relational_planning_cost.py",
+      "tests/structural/test_relational_property_joins.py",
+      "tests/structural/test_source_body_join_optimization.py",
+      "tests/structural/test_authored_receiver_escape.py",
+      "tests/kql2/test_graph_columns.py",
+      "tests/kql2/test_graph_column_catalog.py",
+      "tests/kql2/test_catalog_exploration.py",
+      "tests/structural/test_declaration_initializer_coverage.py",
+      "tests/structural/test_authored_singleton_initializers.py",
+      "tests/structural/test_eager_singleton.py",
+      "tests/structural/test_relational_resources.py"
+    ],
+    "exit_code": 0,
+    "passed": 532
+  },
+  "typing": {
+    "auxiliary_modules_checked": 7,
+    "exit_code": 0,
+    "relational_py": {
+      "baseline_errors": 7,
+      "candidate_errors": 7,
+      "new_error_messages": 0
+    }
+  },
+  "gate": {
+    "exit_code": 1,
+    "measured_seconds": 67.16727183409967,
+    "complete": false,
+    "timed_out_patterns": 10,
+    "after_measurement": "Added explicit initializer callback release; covered by final suite"
+  },
+  "mermaid": {
+    "new_diagrams": 3,
+    "text_review": true,
+    "rendered": false
+  }
+}

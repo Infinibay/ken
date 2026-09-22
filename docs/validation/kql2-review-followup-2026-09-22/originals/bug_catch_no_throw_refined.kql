@@ -1,0 +1,10 @@
+language "kql/2";
+module bugs.catch_no_throw;
+query catch_without_throw {
+  node $try { kind: "try"; }
+  node $catch { kind: "catch"; parent: $try; }
+  not exists {
+    node $throw { kind: "throw"; parent: $catch; }
+  }
+  select $catch;
+}

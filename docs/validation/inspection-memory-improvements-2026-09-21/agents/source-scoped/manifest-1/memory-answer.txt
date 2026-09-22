@@ -1,0 +1,7 @@
+Según la revisión guardada en `vector-manifest-permissions`, cuyas entradas declaradas siguen sin cambios:
+
+- **Destino:** `<project_root>/.ken/vectors/<space>.json`, determinado por [`_paths.ken_dir`](src/ken/_paths.py), [`vectors_dir` y `VectorStore.manifest_path`](src/ken/vectors.py).
+- **Escritor:** [`_atomic_write`](src/ken/vectors.py) crea un temporal, escribe, hace `flush`/`fsync`, intenta `chmod(tmp, 0o666 & ~_process_umask())` y finalmente ejecuta `os.replace`. `_process_umask` cambia temporalmente la máscara a `022` y restaura la anterior.
+- **Llamadores:** [`VectorStore._load_or_create` y `compact`](src/ken/vectors.py); este último escribe primero un manifiesto provisional.
+
+El código **ignora `OSError` de `chmod`**, por lo que esos permisos no están garantizados en ejecución. Los manifiestos existentes se leen sin corregir sus permisos. Esto reutiliza una observación previa del código; que las entradas no hayan cambiado no constituye una prueba independiente.

@@ -6,15 +6,31 @@ description = "A guarded lazy construction, a restricted eager construction, or 
 caveat = "Lazy requires direct null-miss flow, one explicit write and direct shared-slot returns. Eager requires supported private instance constructor declarations and one resolved allocation site. Module-shared requires an exported accessor returning a module-scope or ``static``-local slot written once from a construction. None proves immutable storage, thread safety or global uniqueness."
 legacy_query = "require $unit HAS_FIELD $storage static=true\nrequire $storage INITIALIZED_AS NULL\nrequire $unit HAS_METHOD $accessor\nrequire $storage GUARDS_WRITE $accessor\nrequire $accessor RETURNS_STORAGE $storage\nrequire $storage ASSIGNED_FROM $construction\nrequire $construction ALLOCATES_TYPE $unit\n"
 query = '''
-query singleton {
- any { match "singleton#lazy-guarded"(unit: $unit); }
- or { match "singleton#eager-shared"(unit: $unit); }
- or { match "singleton#module-shared"(unit: $unit); }
- or { match "singleton#once-primitive"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.singleton;
+import ken.catalog.singleton.variants.eager_shared;
+import ken.catalog.singleton.variants.lazy_guarded;
+import ken.catalog.singleton.variants.module_shared;
+import ken.catalog.singleton.variants.once_primitive;
+
+pattern detect(out TypeDecl $unit) {
+  either {
+    use ken.catalog.singleton.variants.lazy_guarded.detect(unit: $unit);
+  } or {
+    use ken.catalog.singleton.variants.eager_shared.detect(unit: $unit);
+  } or {
+    use ken.catalog.singleton.variants.module_shared.detect(unit: $unit);
+  } or {
+    use ken.catalog.singleton.variants.once_primitive.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -22,17 +38,24 @@ id = "eager-shared"
 status = "ready"
 languages = ["java", "csharp", "typescript"]
 requires = ["class_storage", "control_flow", "return_operand"]
-graph_requirements = ["Class field initialization constructs its own type; a static zero-argument accessor begins by returning that same storage."]
+graph_requirements = ["Class field initialization constructs its own type; a static zero-argument accessor has a reachable return of that same storage without explicit accessor writes to it."]
 fixtures_status = "source-regression-matrix"
-query_claim = "Class-initialized shared storage, direct accessor, all explicit instance constructor declarations private and one resolved allocation site in the analysed graph. Does not prove global uniqueness, immutable storage or runtime enforcement of TypeScript access."
+query_claim = "Class-initialized shared storage, a reachable direct storage return with no explicit accessor writes, all explicit instance constructor declarations private and one resolved allocation site in the analysed graph. Independent work may precede the return within 32 statement CFG edges. Does not prove every branch returns the storage, global uniqueness, hidden effects, immutable storage or runtime enforcement of TypeScript access."
 query = '''
-query eager_shared {
- match "singleton.shared_instance"(unit:$unit);
- require $unit CONSTRUCTOR_INVENTORY supported [other:0];
- require $unit HAS_METHOD $constructor;
- callable(instance_constructor:true,visibility:private) as $constructor;
- require $unit RESOLVED_ALLOCATION_COUNT _ [count:1];
- emit $unit;
+language "kql/2";
+module ken.catalog.singleton.variants.eager_shared;
+import ken.catalog.singleton.shared_instance;
+
+pattern detect(out TypeDecl $unit) {
+  use ken.catalog.singleton.shared_instance.detect(unit: $unit);
+  require exists constructor of $unit;
+  require every constructor of $unit { visibility: private; }
+  require one allocation of $unit;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 
@@ -44,27 +67,40 @@ requires = ["module_storage", "return_flow"]
 graph_requirements = ["Accessor/export exposes module or local-static shared initialized storage; state loader/process scope explicitly."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-six-languages"
-query_claim = "One callable returns a shared slot that is written once from a construction of the very type it holds, and either the slot is a module-scope binding with an exported accessor or the slot carries a function-local ``static`` storage class. The slot is not required to be exported itself. Does not prove thread safety, that the loader is reachable once per process, or that the construction is never repeated by another writer outside the analysed graph."
+query_claim = "One callable returns a shared slot with exactly one explicit binding write in the supported source inventory, initialized from a construction of the very type it holds, and either the slot is a module-scope binding with an exported accessor or the slot carries a function-local ``static`` storage class. The slot is not required to be exported itself. Does not prove thread safety, that the loader is reachable once per process, or that the construction is never repeated by another writer outside the analysed graph."
 query = '''
-query singleton_module_shared {
- require $module IS MODULE;
- require $accessor IS CALLABLE;
- require $accessor OWNED_BY $module;
- require $accessor RETURNS_STORAGE $storage;
- require $write ASSIGNMENT_TARGET $storage;
- require $write ASSIGNMENT_VALUE $creation;
- require $creation ALLOCATES_TYPE $type;
- type_decl() as $type;
- any {
-  require $module DECLARES $storage;
-  variable(static: false) as $storage;
-  require $module EXPORT $accessor;
-  require $module HAS_OPERATION $write;
- } or {
-  variable(static: true) as $storage;
-  require $accessor HAS_OPERATION $write;
- }
- emit unit=$type, $module, $storage, $accessor, $creation, $type;
+language "kql/2";
+module ken.catalog.singleton.variants.module_shared;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $module, out GraphTerm $storage, out GraphTerm $accessor, out GraphTerm $creation, out GraphTerm $type) {
+  either {
+    type $unit {}
+    module_decl $module {
+      field $storage { static: false; initializer { construct $unit {} as $creation; } }
+      callable $accessor {
+        exported: true;
+        body { return $storage; }
+      }
+    }
+  } or {
+    module_decl $module {
+      callable $accessor {
+        var $storage { static: true; }
+        body {
+          let $initialized = construct $unit {} as $creation;
+          $storage = $initialized;
+          return $storage;
+        }
+      }
+    }
+  }
+  bind $type = $unit;
+  require one allocation of $unit;
+}
+
+query results {
+  use detect(unit: $unit, module: $module, storage: $storage, accessor: $accessor, creation: $creation, type: $type);
+  select $unit, $module, $storage, $accessor, $creation, $type;
 }
 '''
 
@@ -78,11 +114,19 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
 
 
-query_claim = "Direct null-miss initialization flow with a single explicit write and direct returns of the shared slot. Does not prove private construction, thread safety, stable heap contents or global uniqueness."
+query_claim = "Null-miss initialization flow with a single explicit write and direct returns of the shared slot. Bounded paths of up to 32 CFG_FALLTHROUGH edges admit independent work before the guard, initialization and returns without crossing another decision or abrupt exit. Initialization is inside the missing arm, or follows a hit arm that unconditionally returns; an extra condition that can skip initialization is excluded. Does not prove feasible conditions, absence of hidden call effects, private construction, thread safety, stable heap contents or global uniqueness."
 query = '''
-query lazy_guarded {
- match "singleton.lazy_instance"(unit:$unit);
- emit $unit;
+language "kql/2";
+module ken.catalog.singleton.variants.lazy_guarded;
+import ken.catalog.singleton.lazy_instance;
+
+pattern detect(out TypeDecl $unit) {
+  use ken.catalog.singleton.lazy_instance.detect(unit: $unit);
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 
@@ -94,79 +138,117 @@ requires = ["api_identity", "once_models"]
 graph_requirements = ["Resolver primitiva once y flujo del valor retenido; conservar alcance e hipótesis del modelo."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-five-languages"
-query_claim = "Una celda compartida de una API de inicializacion unica (`sync.Once`, `std::once_flag` + `call_once`, `OnceLock::get_or_init`, `Lazy<T>`, `AtomicReference::updateAndGet`) recibe un thunk que construye un tipo, y el accessor devuelve el valor retenido por esa misma celda: el slot compartido que el thunk publica (Go y C++, con el tipo declarado del slot comprobado), el resultado de la llamada a la celda (Rust y Java) o un miembro de la celda (C#). El slot o la celda deben ser de modulo o `static`. No prueba que el valor retenido no se reasigne despues del inicializador, ni la seguridad de hilos, ni que el tipo construido coincida con el argumento de tipo declarado de la celda en Rust, Java y C#."
+query_claim = "Una celda compartida de una API de inicializacion o retencion compartida (`sync.Once`, `std::once_flag` + `call_once`, `OnceLock::get_or_init`, `Lazy<T>`, `AtomicReference::updateAndGet` con rama nula) recibe un thunk que construye un tipo, y el accessor devuelve el valor retenido por esa misma celda: el slot compartido que el thunk publica (Go y C++, con el tipo declarado del slot comprobado), el resultado de la llamada a la celda (Rust y Java) o un miembro de la celda (C#). El slot o la celda deben ser de modulo o `static`. La publicacion de Go/C++ retiene ESA construccion; Rust y C# requieren que el cuerpo produzca la construccion. Java exige que la rama nula construya y la rama no nula devuelva el parametro anterior, no basta cualquier updateAndGet. El callback atomico puede ejecutarse varias veces por contencion: no se afirma exactly-once de la construccion. Los nombres de API y tipos declarados son evidencia de protocolo, no resolucion completa de biblioteca (Go/C++ aun carecen de tipo de celda resuelto). No prueba que el valor retenido no se reasigne despues, ni la seguridad de hilos, ni la coincidencia de argumentos genericos de la celda."
 query = '''
-query singleton_once_primitive {
- require $accessor IS CALLABLE;
- any {
-  require $accessor HAS_CALL $call;
-  require $call ARGUMENT $argument;
-  require $argument VALUE $thunk;
-  require $thunk HAS_CALL $construction;
-  require $construction ALLOCATES_TYPE $type;
-  type_decl() as $type;
-  require $accessor RETURNS_STORAGE $slot;
-  require $thunk WRITES $slot;
-  require $slot TYPE $type;
-  any { require $call RECEIVER $cell; }
-  or {
-   require $call ARGUMENT $cell_argument;
-   require $cell_argument ENTITY ARGUMENT [position: 0];
-   require $cell_argument VALUE $cell_value;
-   require $cell_value LOADED_FROM $cell;
+language "kql/2";
+module ken.catalog.singleton.variants.once_primitive;
+
+pattern detect(out TypeDecl $unit, out Callable $accessor, out Field $cell, out Callable $thunk, out Call $construction, out Value $type) {
+  either {
+    callable $thunk {
+      body { let $created = construct $unit {} as $construction; }
+    }
+    module_decl $module {
+      field $cell {}
+      field $retained {}
+      callable $accessor {
+        body {
+          call $local_call { name: "Do"; receiver: $cell; argument $thunk at 0; };
+          return $retained;
+        }
+      }
+    }
+    where writes($thunk, $retained);
+  } or {
+    callable $thunk {
+      body { let $created = construct $unit {} as $construction; }
+    }
+    module_decl $module {
+      field $cell {}
+      field $retained {}
+      callable $accessor {
+        body {
+          call $local_call { name: ["std::call_once", "call_once"]; argument $cell at 0; argument $thunk at 1; };
+          return $retained;
+        }
+      }
+    }
+    where writes($thunk, $retained);
+  } or {
+    callable $thunk {
+      body { let $created = construct $unit {} as $construction; }
+    }
+    module_decl $module {
+      field $cell {}
+      callable $accessor {
+        body {
+          let $out = call $local_call { name: "get_or_init"; receiver: $cell; argument $thunk at 0; };
+          return $out;
+        }
+      }
+    }
+  } or {
+    callable $thunk {
+      param $previous {}
+      body { let $created = construct $unit { retained: $previous; } as $construction; }
+    }
+    type $holder {
+      field $cell { static: true; }
+      method $accessor {
+        body {
+          let $out = call $local_call { name: "updateAndGet"; receiver: $cell; argument $thunk at 0; };
+          return $out;
+        }
+      }
+    }
+  } or {
+    callable $thunk {
+      body { let $created = construct $unit {} as $construction; }
+    }
+    type $holder {
+      fields { field $cell { static: true; } }
+      method $accessor {
+        body { return $cell._; }
+      }
+    }
+    where initialized_with($cell, $thunk, name: "^Lazy");
   }
-  any { require $module DECLARES $slot; }
-  or { variable(static: true) as $slot; }
- } or {
-  require $accessor HAS_CALL $call;
-  require $call ARGUMENT $argument;
-  require $argument VALUE $thunk;
-  require $thunk HAS_CALL $construction;
-  require $construction ALLOCATES_TYPE $type;
-  type_decl() as $type;
-  require $call RECEIVER $cell;
-  require $accessor RETURNS_CALL $call;
- } or {
-  require $cell_creation ARGUMENT $argument;
-  require $argument VALUE $thunk;
-  require $thunk HAS_CALL $construction;
-  require $construction ALLOCATES_TYPE $type;
-  type_decl() as $type;
-  require $cell ASSIGNED_FROM $cell_creation;
-  require $accessor RETURNS $member;
-  require $member MEMBER_OF $cell;
- }
- require $module IS MODULE;
- any { require $module DECLARES $cell; }
- or { variable(static: true) as $cell; }
- emit unit=$type, $accessor, $cell, $thunk, $construction, $type;
+  bind $type = $unit;
+}
+
+query results {
+  use detect(unit: $unit, accessor: $accessor, cell: $cell, thunk: $thunk, construction: $construction, type: $type);
+  select $unit, $accessor, $cell, $thunk, $construction, $type;
 }
 '''
 
 [[operations]]
 id = "shared_instance"
 status = "ready"
-description = "Expose class storage initialized with its own type and a direct static accessor."
-caveat = "Declaration and direct-return syntax only. Resets, public construction and shared-default intent remain possible; no lifetime, heap, thread-safety or global uniqueness proof."
+description = "Expose class storage initialized with its own type and a reachable direct static accessor return."
+caveat = "Declaration, explicit accessor write inventory and bounded CFG reachability. External resets, public construction and shared-default intent remain possible; no lifetime, heap, thread-safety or global uniqueness proof."
 query = '''
-query shared_instance {
- require $unit HAS_FIELD $storage;
- variable(static:true) as $storage;
- require $write ASSIGNMENT_TARGET $storage;
- require $unit HAS_OPERATION $write;
- operation(native_kind:[variable_declarator,public_field_definition,field_definition]) as $write;
- require $write ASSIGNMENT_VALUE $creation;
- require $creation ALLOCATES_TYPE $unit;
- require $unit HAS_CALL $creation;
- require $unit HAS_METHOD $accessor;
- callable(static:true,arity:0) as $accessor;
- require $accessor CFG_STATUS structured;
- require $accessor CFG_ENTRY $return;
- operation(kind:return) as $return;
- require $return RETURN_OPERAND $storage;
- require $accessor CFG_EXIT $exit;
- require $return CFG_NEXT $exit [kind:return];
- emit $unit,$storage,$accessor,$creation;
+language "kql/2";
+module ken.catalog.singleton.shared_instance;
+
+pattern detect(out TypeDecl $unit, out Field $storage, out Callable $accessor, out Call $creation) {
+  type $unit {
+    field $storage {
+      static: true;
+      initializer { construct $unit {} as $creation; }
+    }
+    method $accessor {
+      static: true;
+      arity: 0;
+      writes: exactly($storage, 0);
+      body { return $storage; }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit, storage: $storage, accessor: $accessor, creation: $creation);
+  select $unit, $storage, $accessor, $creation;
 }
 '''
 
@@ -176,40 +258,69 @@ status = "ready"
 description = "Expose direct null-miss initialization and return of shared class storage."
 caveat = "Supported statement CFG and explicit write inventory only. No private-construction, overload purity, heap stability, locking, reentrancy or global uniqueness proof. More complex initialization protocols require other variants."
 query = '''
-query lazy_instance {
- require $unit HAS_FIELD $storage;
- variable(static:true) as $storage;
- require $storage FIELD_INITIAL_STATUS supported;
- require $storage FIELD_INITIAL_VALUE NULL;
- require $unit HAS_METHOD $accessor;
- callable(static:true) as $accessor;
- require $accessor CFG_STATUS structured;
- require $accessor BINDING_WRITE_STATUS supported;
- require $accessor BINDING_WRITE_COUNT $storage [count:1];
- require $accessor CFG_ENTRY $branch;
- any {
-  require $branch NULL_TEST $storage [when:true];
-  require $branch CFG_NEXT $miss_entry [kind:true];
-  require $branch CFG_NEXT $hit_return [kind:false];
- } or {
-  require $branch NULL_TEST $storage [when:false];
-  require $branch CFG_NEXT $miss_entry [kind:false];
-  require $branch CFG_NEXT $hit_return [kind:true];
- }
- require $hit_return RETURN_OPERAND $storage;
- require $accessor CFG_EXIT $exit;
- require $hit_return CFG_NEXT $exit [kind:return];
- require $accessor HAS_OPERATION $write;
- require $write ASSIGNMENT_TARGET $storage;
- require $write ASSIGNMENT_VALUE $creation;
- require $creation ALLOCATES_TYPE $unit;
- require $accessor HAS_CALL $creation;
- any { require $write SYNTAX_PARENT $miss_entry; }
- or { where $write == $miss_entry; }
- require $miss_entry CFG_NEXT $miss_return [kind:next];
- require $miss_return RETURN_OPERAND $storage;
- require $miss_return CFG_NEXT $exit [kind:return];
- emit $unit,$storage,$accessor,$creation;
+language "kql/2";
+module ken.catalog.singleton.lazy_instance;
+
+pattern detect(out TypeDecl $unit, out Field $storage, out Callable $accessor, out Call $creation) {
+  type $unit {
+    fields { field $storage { static: true; initial: null; } }
+    method $accessor {
+      static: true;
+      writes: exactly($storage, 1);
+    }
+  }
+  either {
+    callable $accessor {
+      body linear {
+        if ($storage == null) {
+          let $initialized = construct $unit {};
+          $storage = $initialized;
+        }
+        return $storage;
+      }
+    }
+  } or {
+    callable $accessor {
+      body linear {
+        if ($storage != null) { return $storage; }
+        let $initialized = construct $unit {};
+        $storage = $initialized;
+        return $storage;
+      }
+    }
+  } or {
+    callable $accessor {
+      body linear {
+        if ($storage == null) {
+          let $initialized = construct $unit {};
+          $storage = $initialized;
+          return $storage;
+        } else { return $storage; }
+      }
+    }
+  } or {
+    callable $accessor {
+      body linear {
+        if ($storage != null) { return $storage; }
+        else {
+          let $initialized = construct $unit {};
+          $storage = $initialized;
+          return $storage;
+        }
+      }
+    }
+  }
+  callable $accessor {
+    body {
+      let $created = construct $unit {} as $creation;
+      $storage = $created;
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit, storage: $storage, accessor: $accessor, creation: $creation);
+  select $unit, $storage, $accessor, $creation;
 }
 '''
 
@@ -219,9 +330,17 @@ status = "ready"
 description = "An invocation resolves to the accessor of a modeled lazy shared instance."
 caveat = "Retains lazy_instance exclusions; Python classmethod targets, concurrency, uniqueness and accessor purity are not proven."
 query = '''
-query observed_lazy_use {
-      match "singleton.lazy_instance"(unit:$unit, storage:$storage, accessor:$accessor, creation:$creation);
-      require $call TARGET $accessor;
-      emit $unit, $storage, $accessor, $creation, $call;
-    }
+language "kql/2";
+module ken.catalog.singleton.observed_lazy_use;
+import ken.catalog.singleton.lazy_instance;
+
+pattern detect(out TypeDecl $unit, out Field $storage, out Callable $accessor, out Call $creation, out Call $call) {
+  use ken.catalog.singleton.lazy_instance.detect(unit: $unit, storage: $storage, accessor: $accessor, creation: $creation);
+  call $call { target: $accessor; }
+}
+
+query results {
+  use detect(unit: $unit, storage: $storage, accessor: $accessor, creation: $creation, call: $call);
+  select $unit, $storage, $accessor, $creation, $call;
+}
 '''

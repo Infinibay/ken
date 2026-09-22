@@ -1,0 +1,150 @@
+[
+  {
+    "question": "Who provides SQLite connection helpers?",
+    "expected_kind": "module",
+    "expected_symbol": "src/ken/db.py",
+    "found": [
+      [
+        "module",
+        "src/ken/db.py",
+        0.637
+      ],
+      [
+        "function",
+        "connect",
+        0.425
+      ],
+      [
+        "function",
+        "in_immediate_transaction",
+        0.425
+      ]
+    ],
+    "status": "candidates",
+    "seconds": 1.167,
+    "correct_first": true,
+    "command": [
+      "/Users/andres/Projects/ken/.venv/bin/python",
+      "-m",
+      "ken",
+      "tools",
+      "who",
+      "Who provides SQLite connection helpers?",
+      "--path",
+      "src/ken",
+      "--limit",
+      "3"
+    ]
+  },
+  {
+    "question": "Who resolves non-relative JS/TS imports via tsconfig paths and workspace names?",
+    "expected_kind": "class",
+    "expected_symbol": "AliasResolver",
+    "found": [
+      [
+        "class",
+        "AliasResolver",
+        0.89
+      ],
+      [
+        "module",
+        "src/ken/jsresolve.py",
+        0.695
+      ],
+      [
+        "function",
+        "_resolve_internal_imports",
+        0.587
+      ]
+    ],
+    "status": "candidates",
+    "seconds": 1.216,
+    "correct_first": true,
+    "command": [
+      "/Users/andres/Projects/ken/.venv/bin/python",
+      "-m",
+      "ken",
+      "tools",
+      "who",
+      "Who resolves non-relative JS/TS imports via tsconfig paths and workspace names?",
+      "--path",
+      "src/ken",
+      "--limit",
+      "3"
+    ]
+  },
+  {
+    "question": "Who fsyncs every segment touched since the last flush?",
+    "expected_kind": "method",
+    "expected_symbol": "VectorStore.flush",
+    "found": [
+      [
+        "method",
+        "VectorStore.flush",
+        0.857
+      ],
+      [
+        "function",
+        "snapshot_session_scores",
+        0.465
+      ],
+      [
+        "module",
+        "src/ken/ranker/snapshot.py",
+        0.4
+      ]
+    ],
+    "status": "candidates",
+    "seconds": 1.227,
+    "correct_first": true,
+    "command": [
+      "/Users/andres/Projects/ken/.venv/bin/python",
+      "-m",
+      "ken",
+      "tools",
+      "who",
+      "Who fsyncs every segment touched since the last flush?",
+      "--path",
+      "src/ken",
+      "--limit",
+      "3"
+    ]
+  },
+  {
+    "question": "Who resolves paths and requires them to remain inside the project?",
+    "expected_kind": "function",
+    "expected_symbol": "resolve_project_path",
+    "found": [
+      [
+        "function",
+        "resolve_project_path",
+        0.75
+      ],
+      [
+        "module",
+        "src/ken/_paths.py",
+        0.5
+      ],
+      [
+        "module",
+        "src/ken/gitignore_filter.py",
+        0.495
+      ]
+    ],
+    "status": "candidates",
+    "seconds": 1.223,
+    "correct_first": true,
+    "command": [
+      "/Users/andres/Projects/ken/.venv/bin/python",
+      "-m",
+      "ken",
+      "tools",
+      "who",
+      "Who resolves paths and requires them to remain inside the project?",
+      "--path",
+      "src/ken",
+      "--limit",
+      "3"
+    ]
+  }
+]

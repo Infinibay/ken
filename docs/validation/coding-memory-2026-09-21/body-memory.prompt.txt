@@ -1,0 +1,18 @@
+Trabaja sólo sobre esta copia de Ken. Es una evaluación de diagnóstico: no modifiques archivos ni memorias. Puedes consultar Ken y leer código; evita búsquedas o lecturas si el contexto ya resuelve una parte. Responde en español, máximo 180 palabras, con conclusión, evidencia y prueba recomendada.
+
+<context-rank>
+Relevant context:
+Files:
+- src/ken/kql2/body.py
+- src/ken/kql2/source_execution.py
+- tests/kql2/test_body_field_initializer.py
+Notes:
+- kql2-body-input-projection-dependency-trap-20260921
+</context-rank>
+<ken-knowledge>
+Vigencia de dependencias declaradas; conservar alcance y supuestos.
+- [dependencias sin cambios; supuestos pendientes] kql2-body-input-projection-dependency-trap-20260921 — An attempted optimization resolved only SourceExecutor._inputs roles into the BODY evaluation environment. It caused 109 missing-positive semantic regressions (input conversion adapters, static polic…. Motivo: El acceso de member_place a current.values() depende de roles que no aparecen necesariamente en _inputs. La memoria registra que …
+Ampliar: ken_recall(topic="…", detail="full").
+</ken-knowledge>
+
+Quiero reducir el coste de BODY pasando a su evaluación únicamente los roles que aparecen en SourceExecutor._inputs, en lugar del entorno completo. Evalúa si es una optimización válida hoy y propone una comprobación concreta antes de implementarla.

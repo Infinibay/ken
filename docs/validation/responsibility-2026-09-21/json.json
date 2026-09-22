@@ -1,0 +1,106 @@
+{
+  "ok": true,
+  "question": "Who decodes object parameters including each item of an array of objects?",
+  "hypotheses": [],
+  "status": "candidates",
+  "candidates": [
+    {
+      "symbol": "_tool_json_object",
+      "path": "src/ken/cli.py",
+      "line": 1765,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.857,
+        "band": "strong",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who decodes object parameters including each item of an array of objects?",
+      "documentation": "Decode object parameters, including each item of an array of objects.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.85,
+          "explanation": "Documentation similarity 0.756; term coverage 1.000 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.14285714285714285,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "c7ed7c379654815aee4a36f3b1b469530f5b13ba664d3386d6658fd24143418e",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/cli.py",
+        "qualname": "_tool_json_object",
+        "include": [
+          "source"
+        ]
+      }
+    }
+  ],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 1965,
+    "inspected_symbols": 34,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "issues": [
+      {
+        "path": "src/ken/ranker/channels.py",
+        "qualname": "_token_overlaps",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/kql2/body.py",
+        "qualname": "BodyEngine.match_context",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/kql2/source_quantifiers.py",
+        "qualname": "Declarations",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/structural_store/graph_syntax.py",
+        "qualname": "intervals",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/structural/relational_planning.py",
+        "qualname": "_positive_union_roles",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/structural_store/graph_records.py",
+        "qualname": "GraphView",
+        "reason": "source file budget exhausted"
+      }
+    ],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

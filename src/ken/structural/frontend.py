@@ -20,7 +20,7 @@ from .cpp_methods import function_parts, method_info, parameter_head, parameter_
 LANGUAGES = {".py": "python", ".pyi": "python", ".js": "javascript", ".jsx": "javascript",
              ".mjs": "javascript", ".cjs": "javascript", ".ts": "typescript", ".tsx": "typescript",
              ".java": "java", ".cs": "csharp", ".cpp": "cpp", ".hpp": "cpp", ".cc": "cpp",
-             ".go": "go", ".rs": "rust"}
+             ".go": "go", ".rs": "rust", ".rb": "ruby", ".rake": "ruby", ".gemspec": "ruby"}
 TYPES = {"class", "abstract_class_declaration", "class_definition", "class_declaration", "interface_declaration", "class_specifier",
          "struct_specifier", "struct_item", "trait_item", "type_spec", "record_declaration",
          "enum_specifier", "enum_item", "enum_declaration"}
@@ -42,10 +42,15 @@ FUNCTIONS = {"abstract_method_signature", "function_definition", "function_decla
              # the ``lambda`` and ``arrow_function`` forms of the other languages.
              "closure_expression",
              "generator_function_declaration", "generator_function", "arrow_function", "lambda",
-             "local_function_statement", "func_literal", "function_expression", "lambda_expression"}
+             "local_function_statement", "func_literal", "function_expression", "lambda_expression",
+             # Ruby spells a method ``def name`` -- a ``method`` node, or
+             # ``singleton_method`` for ``def self.name``.
+             "method", "singleton_method"}
 MEMBERS = {"attribute", "member_expression", "field_access", "member_access_expression",
            "selector_expression", "field_expression"}
-INDEXES = {"subscript", "subscript_expression", "element_access_expression", "index_expression", "array_access"}
+INDEXES = {"subscript", "subscript_expression", "element_access_expression", "index_expression", "array_access",
+           # Ruby indexes with ``[]``: ``pool[key]``.
+           "element_reference"}
 CALLS = {"call", "call_expression", "method_invocation", "invocation_expression", "new_expression",
          "object_creation_expression", "struct_expression", "composite_literal",
          # A constructor delegating to another constructor is an invocation, and the
@@ -59,7 +64,9 @@ ASSIGNMENTS = {"assignment", "assignment_expression", "assignment_statement", "s
 # Dictionary access spelled as a method call. ``put``/``set``/``insert`` are only
 # treated as a write when the call supplies at least two arguments, so a property
 # setter (``obj.set(x)``) is not read as an indexed write.
-MAP_READS = {"get", "Get", "fetch", "Fetch", "lookup", "Lookup", "getOrDefault", "GetValueOrDefault"}
+MAP_READS = {"get", "Get", "fetch", "Fetch", "lookup", "Lookup", "getOrDefault", "GetValueOrDefault",
+             # C++ spells a pool miss test ``entries.find(key) == entries.end()``.
+             "find"}
 MAP_WRITES = {"put", "Put", "set", "Set", "add", "Add", "insert", "Insert", "store", "Store",
               "emplace", "Emplace", "try_emplace", "insert_or_assign", "AddOrUpdate", "GetOrAdd",
               "setdefault", "setDefault"}
@@ -71,18 +78,26 @@ RETURN_TYPES = {"return_statement", "return_expression"}
 # spec is resolved; Rust puts both fields on the item directly.
 FILE_DECLARATIONS = {"var_declaration", "const_declaration", "static_item", "const_item"}
 SPEC_DECLARATIONS = {"var_declaration": "var_spec", "const_declaration": "const_spec"}
-LOOPS = {"for_statement", "for_in_statement", "enhanced_for_statement", "for_each_statement",
+LOOPS = {"for", "for_statement", "for_in_statement", "enhanced_for_statement", "for_each_statement",
          "foreach_statement", "for_expression", "for_range_loop", "while_statement", "while_expression", "loop_expression", "do_statement"}
-BRANCHES = {"if_statement", "if_expression", "conditional_expression", "ternary_expression"}
+BRANCHES = {"if_modifier", "if_statement", "if_expression", "conditional_expression", "ternary_expression",
+            # Ruby: ``if``/``unless``/``elsif``. ``case``/``when`` are a dispatch
+            # table, not a two-armed branch, so they stay out until something
+            # needs them.
+            "if", "unless", "elsif",
+            # A Python ``elif`` is a branch of its own: it carries the condition
+            # that selects it and its own arms, so an ``else { if ... }`` shape is
+            # the same decision in every language.
+            "elif_clause"}
 WRAPPERS = {"expression_list", "parenthesized_expression", "type", "type_annotation", "argument",
             "expression_statement", "reference_expression", "pointer_expression",
             # C++ wraps an if/while condition in a ``condition_clause``; it is a
             # pure wrapper, so unwrapping it exposes the tested expression.
             "condition_clause"}
-OPERATOR_NODES = {"binary_expression", "binary_operator", "comparison_operator", "boolean_operator",
+OPERATOR_NODES = {"binary", "unary", "binary_expression", "binary_operator", "comparison_operator", "boolean_operator",
                   "unary_expression", "unary_operator", "not_operator", "update_expression",
                   "prefix_unary_expression", "postfix_unary_expression", "augmented_assignment",
-                  "augmented_assignment_expression"}
+                  "augmented_assignment_expression", "compound_assignment_expr"}
 
 # Lexical blocks that scope a local declaration. JS/TS ``var``
 # (``variable_declaration``) is function-scoped and is deliberately absent, so
@@ -163,6 +178,7 @@ class Lowerer:
         # be able to state that a subject is a module.
         self.ir.add(self.module, "IS", "MODULE", f"{path}:1", basis="module-root")
         self.node_entities: dict[int, str] = {}
+        self.expression_values: set[str] = set()
         self.owner: dict[int, str] = {}
         self.class_owner: dict[int, str] = {}
         self.methods: dict[str, list[str]] = {}
@@ -356,9 +372,9 @@ class Lowerer:
         key = f"{scope}/{kind}:{name}@{node.start_byte}" if kind in {"CALL", "PARAMETER", "CALLABLE"} else f"{scope}/{kind}:{name}"
         if kind == 'CLASS' and node.type == 'class':
             key += f'@{node.start_byte}'
-        if kind == "CALL":
-            # f(x)(y) has two calls starting at the same byte; the end offset
-            # distinguishes the producer from invocation of its result.
+        if kind in {"CALL", "VALUE"}:
+            # Nested calls/expressions may start at the same byte. In 1 + 2,
+            # the binary expression and literal 1 must have different IDs too.
             key += f":{node.end_byte}"
         if key not in self.ir.entities:
             if self.ir.language in TYPE_PARAMETER_LANGUAGES and kind in {'CLASS', 'INTERFACE', 'CALLABLE'}:
@@ -419,7 +435,7 @@ class Lowerer:
             else:
                 name = self.name(node)
                 type_kind = "INTERFACE" if "interface" in kind or kind == "trait_item" or type_node is not None and type_node.type == "interface_type" else "CLASS"
-                expression = kind == 'class'
+                expression = kind == 'class' and self.ir.language in {'javascript', 'typescript'}
                 enclosing_scope = scope
                 declared = self.entity(type_kind, name, scope, node, **({'expression': True} if expression else {}))
                 self.ir.add(scope, "DECLARES", declared, self.evidence(node), kind="type-expression" if expression else "type", name=name)
@@ -534,6 +550,7 @@ class Lowerer:
             static = cpp_attrs.get('static', static)
             function = self.entity("CALLABLE", name, scope, node, static=static,
                                    constructor=name in {"__init__", "__new__", "constructor"} or kind == "constructor_declaration" or
+                                   bool(self.ir.language == "ruby" and direct_method and name == "initialize") or
                                    bool(self.ir.language == "cpp" and direct_method and name == self.ir.entities[cls].name),
                                    async_=(any(self.text(c) == "async" for c in node.children) if kind in {"arrow_function", "lambda_expression"} else bool(re.search(r"\basync\b", declaration))), decorators=decor,
                                    context_manager=any(d.removeprefix("@") in self.context_decorators for d in decor))
@@ -609,6 +626,8 @@ class Lowerer:
                                   else "keyword_only" if keyword_only else "positional_only" if positional_only else "positional")
                 is_receiver = direct_method and position == 0 and (pname in {"self", "cls"} or param.type == "self_parameter")
                 pid = self.entity("PARAMETER", pname, function, param, kind_=parameter_kind, position=position, receiver=is_receiver)
+                self.ir.entities[pid].attrs['accepts_position'] = parameter_kind in {
+                    'positional', 'positional_only', 'variadic_positional'}
                 if cpp_reference_kind:
                     self.ir.entities[pid].attrs["reference_kind"] = cpp_reference_kind
                 if bound_parameters:
@@ -736,6 +755,18 @@ class Lowerer:
             node = node.named_children[0]
         return node
 
+    def branch_region(self, body: Node) -> Node:
+        """The arm's statement, not the ``else`` wrapper the grammar put around it.
+
+        ``else if`` in C++/Rust nests the second branch inside an ``else_clause``;
+        in JavaScript/Java it *is* the else arm. Publishing the statement makes the
+        arm the same shape in every language, so a query can nest an ``if`` in an
+        arm without knowing the grammar.
+        """
+        while body.type == 'else_clause' and len(body.named_children) == 1:
+            body = body.named_children[0]
+        return body
+
     def enum_constant_names(self, node: Node) -> set[str]:
         """Names a nominal enum declaration introduces as constants.
 
@@ -834,10 +865,23 @@ class Lowerer:
             if method is not None and method.kind == 'CALLABLE' and not method.attrs.get('static'):
                 self.ir.add(cls, 'INSTANCE_RECEIVER', value, self.evidence(node), basis='instance-relative')
             return value
+        if node.type in {"instance_variable", "class_variable"} and cls:
+            # ``@pool`` is the field of the enclosing class, exactly as ``self.pool``
+            # is in Python: an instance variable has no receiver expression, so it
+            # never reaches the member branch below.
+            return self.storage(self.text(node).lstrip("@"), cls, node)
+        if node.type in {"global_variable"} or spelling.startswith("$") and node.type == "identifier" and self.text(node).startswith("$"):
+            return self.storage(self.text(node).lstrip("$"), self.module, node)
         if node.type in {"none", "null", "null_literal", "nil", "nil_literal"} or spelling in {"None", "null", "nil", "nullptr"}:
             return "NULL"
         if node.type in CALLS or self.go_indexed_call(node, scope, cls) is not None:
-            return self.entity("CALL", str(node.start_byte), scope, node)
+            call = self.entity("CALL", str(node.start_byte), scope, node)
+            if node.type not in CALLS:
+                # A Go indexed call (``table[key](arg)``) is parsed as a type conversion,
+                # so the call handler never reaches it. Attribute the call occurrence to
+                # its callable here: an owner-scoped selector still has to see it.
+                self.ir.entities[call].attrs.update(owner=scope)
+            return call
         if node.type in MEMBERS:
             obj, member = self.member_parts(node)
             objname = self.text(obj)
@@ -876,11 +920,40 @@ class Lowerer:
                     and not any(c.type == ',' for c in node.children)
                     and not any('comment' not in c.type for c in node.named_children)):
                 self.ir.add(collection, 'EMPTY_COLLECTION', collection_kind, self.evidence(node), basis='literal')
+            elements = [c for c in node.named_children if 'comment' not in c.type]
+            if (self.ir.language in {'javascript', 'typescript'} and node.type == 'array'
+                    and len(elements) == 1 and elements[0].type == 'spread_element'
+                    and len(elements[0].named_children) == 1):
+                self.ir.add(collection, 'SHALLOW_COPY_SOURCE',
+                            self.value(elements[0].named_children[0], scope, cls), self.evidence(node),
+                            model='array-single-spread')
             return collection
         primitive = {"integer": "int", "integer_literal": "int", "int_literal": "int", "float": "float", "float_literal": "float", "string": "str", "string_literal": "str", "true": "bool", "false": "bool", "boolean": "bool", "number": "number"}.get(node.type, "unknown")
+        if node.type in {'decimal_integer_literal', 'hex_integer_literal', 'octal_integer_literal', 'binary_integer_literal'}:
+            primitive = 'int'
         if node.type in {'character_literal','char_literal'}:
             primitive = 'char'
-        return self.entity("VALUE", str(node.start_byte), scope, node, native_kind=node.type, type=primitive)
+        literal_attrs = {'literal': spelling} if primitive in {'int', 'float', 'number'} else {}
+        result = self.entity("VALUE", str(node.start_byte), scope, node, native_kind=node.type, type=primitive, **literal_attrs)
+        if (result not in self.expression_values
+                and node.type in {'binary_operator', 'binary_expression', 'unary_operator', 'unary_expression'}):
+            self.expression_values.add(result)
+            operator = ' '.join(self.text(c) for c in node.children if not c.is_named)
+            if operator in {'+', '-', '*', '/', '%', '**', '<', '>', '<=', '>=', '==', '!=', '!', '~'}:
+                # Value operands, distinct from OPERAND's syntax-node endpoints.
+                # A later flow pass snapshots bindings when this expression is
+                # evaluated. This does not assert algebraic dependence (x * 0).
+                for position, operand in enumerate(c for c in node.named_children if 'comment' not in c.type):
+                    self.ir.add(result, 'EXPRESSION_OPERAND', self.value(operand, scope, cls),
+                                self.evidence(node), position=position, operator=operator)
+        if node.type == 'cast_expression' and self.ir.language in {'java', 'csharp'}:
+            operand = field(node, 'value')
+            if operand is not None:
+                # A runtime cast can throw or convert. Expose its operand without
+                # collapsing it into the operand's identity as TS assertions do.
+                self.ir.add(result, 'CAST_VALUE', self.value(operand, scope, cls), self.evidence(node),
+                            basis='runtime-cast-operand')
+        return result
 
     def storage(self, name: str, scope: str, node: Node, static: bool = False) -> str:
         known = self.names.get((scope, name))
@@ -891,6 +964,16 @@ class Lowerer:
         self.ir.add(scope, "DECLARES", sid, self.evidence(node), kind="storage", name=name, static=static)
         if scope in self.type_nodes:
             self.ir.add(scope, "HAS_FIELD", sid, self.evidence(node), name=name, static=static)
+            declaration = node
+            field_forms = {'field_declaration','public_field_definition','property_declaration'}
+            while declaration.type not in field_forms and declaration.parent is not None:
+                if declaration.type in FUNCTIONS or declaration.id == self.type_nodes[scope].id:
+                    break
+                declaration = declaration.parent
+            if declaration.type in field_forms:
+                access = callable_access(self.ir.language,declaration,self.ir.entities[scope].kind)
+                self.ir.entities[sid].attrs.update({key:value for key,value in access.items()
+                                                   if key.startswith('visibility')})
         return sid
 
     def export_clause_names(self, node: Node) -> set[str]:
@@ -972,10 +1055,32 @@ class Lowerer:
         # Declare types first so Go receivers and Rust impl blocks resolve even
         # when their declarations occur later in the file.
         self.declare(self.tree.root_node, self.module)
+        self.undefined_shadowed = any(e.name == 'undefined' for e in self.ir.entities.values())
+        if self.ir.language in {'javascript', 'typescript'}:
+            for node in descendants(self.tree.root_node):
+                if node.type in ASSIGNMENTS:
+                    left, _ = self.declaration_parts(node)
+                    self.undefined_shadowed |= self.text(left) == 'undefined'
+                elif node.type in {'import_statement', 'import_clause'}:
+                    self.undefined_shadowed |= bool(re.search(r'\bundefined\b', self.text(node)))
+                elif node.type == 'with_statement' or (node.type == 'call_expression'
+                        and self.text(field(node, 'function')) == 'eval'):
+                    self.undefined_shadowed = True
         for node in descendants(self.tree.root_node):
             self.operation(node)
+        self.operation_by_id = {o.id: o for o in self.ir.operations}
+        from .execution import BEHAVIOR_RELATIONS, lexical_execution
+        execution = lexical_execution(self.ir, invalid=self.tree.root_node.has_error)
         for node in descendants(self.tree.root_node):
+            first = len(self.ir.facts)
             self.semantics(node)
+            oid = f'{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{node.type}'
+            state = execution[oid]
+            for fact in self.ir.facts[first:]:
+                if fact.relation in BEHAVIOR_RELATIONS:
+                    fact.attrs['execution'] = state
+                if fact.relation == 'HAS_CALL':
+                    self.ir.entities[fact.object].attrs['execution'] = state
         for subject, name, evidence in self.pending_bases:
             self.ir.add(subject, "BASE_NAME", name, evidence)
         for subject, base, reference_scope in self.base_references:
@@ -996,7 +1101,33 @@ class Lowerer:
         constructor_inventory(self.ir, self.type_nodes)
         from .effects import syntax_effects
         syntax_effects(self)
+        # Instance-relative identity exists even when no bare self/this
+        # expression is present (e.g. an empty constructor or field-only writes).
+        receiver_types = {f.subject for f in self.ir.facts if f.relation == 'INSTANCE_RECEIVER'}
+        for entity in self.ir.entities.values():
+            if entity.kind in {'CLASS', 'INTERFACE'} and entity.id not in receiver_types:
+                self.ir.add(entity.id, 'INSTANCE_RECEIVER', entity.id + '/THIS',
+                            basis='instance-relative')
         return self.ir
+
+    def pair_arguments(self, node: Node) -> list[Node] | None:
+        """The two arguments of a ``make_pair``/``pair<...>`` construction.
+
+        C++ writes a pool insert as ``insert(std::make_pair(key, value))``: one
+        argument that *is* the pair. The key and the value are inside it, and
+        without unpacking them an indexed write cannot be recognised -- while
+        accepting any single argument would read a property setter as one.
+        """
+        if node.type not in CALLS:
+            return None
+        callee = field(node, "function", "name", "type")
+        spelling = self.text(callee) if callee is not None else self.text(node)
+        if "pair" not in spelling:
+            return None
+        arguments = field(node, "arguments")
+        items = [child for child in children(arguments)
+                 if child.type not in {"comment", "line_comment", "block_comment"}]
+        return items[:2] if len(items) >= 2 else None
 
     def argument_value(self, argument: Node, scope: str, cls: str) -> str:
         """The value an argument supplies, past the grammar's argument wrapper.
@@ -1023,10 +1154,16 @@ class Lowerer:
             kind = "CALL"
         elif native in ASSIGNMENTS:
             kind = "DECLARATION" if node.id in self.cpp_method_declarations else "ASSIGN"
+            if (native == 'let_declaration' and self.ir.language == 'rust'
+                    and self.text(field(node, 'pattern')) == '_'):
+                # Rust's wildcard evaluates the RHS without introducing a binding.
+                # Keep the operation and its effects; there is no writable `_` slot.
+                kind = 'DISCARD'
             bare_declarator = (
                 native == 'variable_declarator' and self.ir.language in {'javascript', 'typescript', 'java', 'csharp'}
                 or native == 'let_declaration' and self.ir.language == 'rust'
                 or native in FILE_DECLARATIONS
+                or native in {'field_declaration', 'public_field_definition', 'field_definition'}
                 or native == 'assignment' and self.ir.language == 'python' and node.child_by_field_name('type') is not None
             )
             if (bare_declarator and self.declaration_parts(node)[1] is None
@@ -1054,7 +1191,7 @@ class Lowerer:
                     role = parent.field_name_for_child(i) or ""
                     break
         attrs: dict[str, Any] = {}
-        if not node.named_children:
+        if not node.named_children or native in {'string','string_literal','raw_string_literal','interpreted_string_literal','char_literal','character_literal','rune_literal'}:
             attrs["text"] = self.text(node)
         # Operators and modifiers can be unnamed tree-sitter nodes.
         attrs["tokens"] = [self.text(c) for c in node.children if not c.is_named]
@@ -1071,13 +1208,14 @@ class Lowerer:
             '++', '--', 'in', 'not in', 'is', 'is not', '??', '??=', '&&=', '||='}]
         operator_node = (native in OPERATOR_NODES or native in ASSIGNMENTS) and node.id not in self.cpp_method_declarations
         if operator_node and operator_tokens:
-            if native in ASSIGNMENTS or native in {'augmented_assignment', 'augmented_assignment_expression'}:
-                kind = 'ASSIGN'
+            if native in ASSIGNMENTS or native in {'augmented_assignment', 'augmented_assignment_expression', 'compound_assignment_expr'}:
+                if kind != 'DISCARD':
+                    kind = 'ASSIGN'
             elif any(t in {'++', '--'} for t in operator_tokens):
                 kind = 'UPDATE'
             elif any(t in {'<', '>', '<=', '>=', '==', '!=', '===', '!==', '<=>', 'in', 'not in', 'is', 'is not'} for t in operator_tokens):
                 kind = 'COMPARE'
-            elif native in {'unary_expression', 'unary_operator', 'not_operator', 'prefix_unary_expression', 'postfix_unary_expression'}:
+            elif native in {'unary', 'unary_expression', 'unary_operator', 'not_operator', 'prefix_unary_expression', 'postfix_unary_expression'}:
                 kind = 'UNARY'
             else:
                 kind = 'BINARY'
@@ -1085,6 +1223,8 @@ class Lowerer:
             attrs["delegated"] = "from" in attrs["tokens"] or "*" in attrs["tokens"]
         oid = f"{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{native}"
         parent_id = f"{self.ir.path}::op:{parent.start_byte}:{parent.end_byte}:{parent.type}" if parent else None
+        if self.ir.language == 'ruby' and parent is not None and parent.type == 'if_modifier' and role == 'body':
+            role='consequence'
         self.ir.operations.append(Operation(oid, kind, native, parent_id, role, node.start_byte, node.end_byte,
                                             node.start_point[0] + 1, owner, attrs))
         if operator_node and operator_tokens:
@@ -1126,14 +1266,24 @@ class Lowerer:
         if kind == "package_clause" and self.ir.language == "go" and node.named_children:
             self.ir.entities[self.module].attrs["package"] = self.text(node.named_children[0])
         callable_scope = self.ir.entities.get(scope) is not None and self.ir.entities[scope].kind == "CALLABLE"
+        if callable_scope and kind in MEMBERS | {'identifier','name'}:
+            referenced = (self.value(node,scope,cls) if kind in MEMBERS
+                          else self.resolve_name(self.text(node),scope))
+            entity = self.ir.entities.get(referenced) if referenced is not None else None
+            if entity is not None and entity.kind in {'STORAGE','PARAMETER','MEMBER'}:
+                operation_id = f'{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{node.type}'
+                self.ir.add(operation_id,'BINDING_REFERENCE',entity.id,ev,basis='lexical-reference')
         if kind in LOOPS:
             iteration_node = node
             if self.ir.language == 'go':
                 iteration_node = next((c for c in node.named_children if c.type == 'range_clause'), node)
-            foreach = kind in {'for_in_statement','enhanced_for_statement','for_each_statement','foreach_statement','for_expression','for_range_loop'} or self.ir.language == 'python' and kind == 'for_statement' or iteration_node.type == 'range_clause'
+            foreach = kind in {'for','for_in_statement','enhanced_for_statement','for_each_statement','foreach_statement','for_expression','for_range_loop'} or self.ir.language == 'python' and kind == 'for_statement' or iteration_node.type == 'range_clause'
             if foreach:
                 left, right = field(iteration_node,'left','name','pattern','declarator'), field(iteration_node,'right','value','iterable')
                 body = field(node,'body')
+                if self.ir.language == 'ruby' and right is not None and right.type == 'in':
+                    operands=[child for child in right.named_children if 'comment' not in child.type]
+                    right=operands[0] if len(operands)==1 else None
                 if left is not None and right is not None and body is not None:
                     oid = f'{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{kind}'
                     self.ir.add(oid,'ITERATION_SOURCE',self.value(right,scope,cls),ev)
@@ -1153,7 +1303,15 @@ class Lowerer:
                         key_iteration = self.ir.language in {'javascript','typescript'} and any(c.type == 'in' for c in node.children)
                         role = 'first' if self.ir.language == 'go' and position == 0 else 'key' if key_iteration else 'value'
                         self.ir.add(oid,'ITERATION_BINDING',self.value(binding,scope,cls),ev,position=position,role=role)
-        if kind in {"if_statement", "if_expression"}:
+        if kind in {"if_statement", "if_expression", "ternary_expression", "conditional_expression", "elif_clause"}:
+            if kind in {'ternary_expression', 'conditional_expression'}:
+                expression_id = f'{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{kind}'
+                self.ir.add(self.value(node, scope, cls), 'SYNTAX_NODE', expression_id, ev)
+                for arm_name in ('consequence', 'alternative'):
+                    arm = field(node, arm_name)
+                    if arm is not None:
+                        arm_id = f'{self.ir.path}::op:{arm.start_byte}:{arm.end_byte}:{arm.type}'
+                        self.ir.add(arm_id, 'VALUE', self.value(arm, scope, cls), ev, basis='conditional-arm-operand')
             condition = field(node, "condition")
             if condition is not None:
                 condition = self.unwrap(condition)
@@ -1167,16 +1325,29 @@ class Lowerer:
                         break
                     positive = not positive
                     tested = self.unwrap(operands[0])
-                if tested.type in CALLS | MEMBERS | {'identifier'}:
+                if tested.type in CALLS | MEMBERS | INDEXES | {'identifier'}:
                     oid = f'{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{kind}'
                     self.ir.add(oid, 'TRUTH_TEST', self.value(tested, scope, cls), ev,
                                 when='true' if positive else 'false', basis='condition-syntax')
                     for arm, name in [('BRANCH_TRUE', 'consequence'), ('BRANCH_FALSE', 'alternative')]:
                         body = field(node, name)
                         if body is not None:
+                            body = self.branch_region(body)
+                            self.ir.add(oid, arm, f'{self.ir.path}::op:{body.start_byte}:{body.end_byte}:{body.type}', ev)
+                elif (self.ir.language == 'python' and tested.type == 'comparison_operator'
+                      and len(operands) == 2 and operator in {'in', 'not in'}):
+                    oid = f'{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{kind}'
+                    key, container = (self.value(side, scope, cls) for side in operands)
+                    self.ir.add(oid, 'MEMBERSHIP_CONTAINER', container, ev,
+                                when='true' if (operator == 'in') == positive else 'false', basis='membership-syntax')
+                    self.ir.add(oid, 'MEMBERSHIP_KEY', key, ev, basis='membership-syntax')
+                    for arm, name in [('BRANCH_TRUE', 'consequence'), ('BRANCH_FALSE', 'alternative')]:
+                        body = field(node, name)
+                        if body is not None:
+                            body = self.branch_region(body)
                             self.ir.add(oid, arm, f'{self.ir.path}::op:{body.start_byte}:{body.end_byte}:{body.type}', ev)
                 elif (tested.type in {'comparison_operator', 'binary_expression'} and len(operands) == 2
-                        and operator in {'==', '!=', '===', '!=='}
+                        and operator in {'==', '!=', '===', '!==', '<', '>', '<=', '>='}
                         and not any(self.value(side, scope, cls) == 'NULL' for side in operands)):
                     # ``kind == Num`` discriminates ``kind``: the branch tests a slot
                     # against a case. Publishing the slot is what lets a query ask
@@ -1189,7 +1360,8 @@ class Lowerer:
                     for side in operands:
                         tested_value = self.value(side, scope, cls)
                         tested_entity = self.ir.entities.get(tested_value)
-                        if tested_entity is not None and tested_entity.kind in {'STORAGE', 'MEMBER'}:
+                        if (tested_entity is not None and tested_entity.kind in {'STORAGE', 'MEMBER'}
+                                and operator in {'==', '!=', '===', '!=='}):
                             self.ir.add(oid, 'TRUTH_TEST', tested_value, ev, basis='comparison-syntax')
                         elif tested_entity is not None and tested_entity.kind == 'PARAMETER':
                             # A comparison against a parameter is not a truth test --
@@ -1204,11 +1376,25 @@ class Lowerer:
                     for arm, name in [('BRANCH_TRUE', 'consequence'), ('BRANCH_FALSE', 'alternative')]:
                         body = field(node, name)
                         if body is not None:
+                            body = self.branch_region(body)
                             self.ir.add(oid, arm, f'{self.ir.path}::op:{body.start_byte}:{body.end_byte}:{body.type}', ev)
                 operands = [c for c in tested.named_children if 'comment' not in c.type]
                 operator = " ".join(self.text(c) for c in tested.children if not c.is_named)
                 # A neutral null comparison; logical negation changes its polarity.
                 if tested.type in {"comparison_operator", "binary_expression"} and len(operands) == 2 and operator in {"is", "is not", "==", "!=", "===", "!=="}:
+                    if self.ir.language in {'javascript', 'typescript'} and not self.undefined_shadowed:
+                        undefined = [c.type == 'undefined' or c.type == 'identifier' and self.text(c) == 'undefined'
+                                     for c in operands]
+                        if undefined[0] != undefined[1]:
+                            oid = f'{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{kind}'
+                            self.ir.add(oid, 'UNDEFINED_TEST', self.value(operands[1] if undefined[0] else operands[0], scope, cls), ev,
+                                        when='true' if (operator in {'==', '==='}) == positive else 'false',
+                                        operator=operator, basis='unshadowed-undefined-syntax')
+                            for arm, arm_name in [('BRANCH_TRUE', 'consequence'), ('BRANCH_FALSE', 'alternative')]:
+                                body = field(node, arm_name)
+                                if body is not None:
+                                    body = self.branch_region(body)
+                                    self.ir.add(oid, arm, f'{self.ir.path}::op:{body.start_byte}:{body.end_byte}:{body.type}', ev)
                     null_left, null_right = (self.value(c, scope, cls) for c in operands)
                     if (null_left == "NULL") != (null_right == "NULL"):
                         oid = f"{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{kind}"
@@ -1218,6 +1404,7 @@ class Lowerer:
                         for arm, names in [("BRANCH_TRUE", ("consequence",)), ("BRANCH_FALSE", ("alternative",))]:
                             body = field(node, *names)
                             if body is not None:
+                                body = self.branch_region(body)
                                 self.ir.add(oid, arm, f"{self.ir.path}::op:{body.start_byte}:{body.end_byte}:{body.type}", ev)
         indexed_call = self.go_indexed_call(node, scope, cls)
         if indexed_call is not None:
@@ -1265,8 +1452,13 @@ class Lowerer:
             left, right = field(node, "left"), field(node, "right")
             if left is not None and right is not None:
                 assignment_id = f"{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{kind}"
-                self.ir.add(assignment_id, "ASSIGNMENT_TARGET", self.value(left, scope, cls), ev)
+                target = self.value(left, scope, cls)
+                self.ir.add(assignment_id, "ASSIGNMENT_TARGET", target, ev)
                 self.ir.add(assignment_id, "ASSIGNMENT_VALUE", self.value(right, scope, cls), ev)
+                # ``x += 1`` reads and writes that place, like ``x++`` above.
+                if callable_scope:
+                    self.ir.add(scope, "READS", target, ev)
+                    self.ir.add(scope, "WRITES", target, ev)
         if kind in ASSIGNMENTS:
             if self.ir.language == 'cpp' and scope == cls and kind == 'field_declaration':
                 for cpp_assignment, target, cpp_initial in self.cpp_field_initializers.get(node.id, []):
@@ -1279,6 +1471,12 @@ class Lowerer:
                     if value == 'NULL':self.ir.add(target, 'INITIALIZED_AS', 'NULL', ev)
                 return  # Type/name normalization happened once during declaration collection.
             left, right = self.declaration_parts(node)
+            if self.ir.language == 'rust' and kind == 'let_declaration' and self.text(left) == '_':
+                if right is not None:
+                    value = self.value(right, scope, cls)
+                    assignment_id = f'{self.ir.path}::op:{node.start_byte}:{node.end_byte}:{kind}'
+                    self.ir.add(assignment_id, 'DISCARDS_RESULT', value, ev, basis='rust-wildcard')
+                return
             if right is None and self.ir.language == "csharp" and kind == "variable_declarator":
                 # This grammar leaves the initializer unfielded after '='.
                 equal = next((i for i, c in enumerate(node.children) if c.type == "="), None)
@@ -1440,7 +1638,31 @@ class Lowerer:
                 # lookup finds it.
                 function = next((c for c in node.children if c.type in {'base', 'this'}), None)
             receiver_node = field(node, "object")
+            if receiver_node is None and self.ir.language == "ruby":
+                # A Ruby call spells its parts ``receiver.method`` rather than
+                # ``object.function``.
+                function = function or field(node, "method")
+                receiver_node = field(node, "receiver")
             name = self.text(function)
+            if self.ir.language == 'cpp' and function is not None and function.type == 'qualified_identifier':
+                qualifier = field(function, 'scope')
+                if qualifier is not None:
+                    parameter_name = self.text(qualifier)
+                    ancestor = node.parent
+                    while ancestor is not None:
+                        if ancestor.type == 'template_declaration':
+                            parameters = field(ancestor, 'parameters')
+                            declared = {self.text(c) for p in children(parameters)
+                                        if p.type in {'type_parameter_declaration', 'variadic_type_parameter_declaration'}
+                                        for c in children(p) if c.type == 'type_identifier'}
+                            if parameter_name in declared:
+                                declaration = next((c for c in ancestor.named_children if c.id in self.node_entities), None)
+                                if declaration is not None:
+                                    self.ir.add(cid, 'TYPE_PARAMETER_RECEIVER', parameter_name, ev,
+                                                owner=self.node_entities[declaration.id], basis='lexical-template-qualifier')
+                                    self.ir.add(cid, 'TYPE_PARAMETER_OWNER', self.node_entities[declaration.id], ev)
+                                break
+                        ancestor = ancestor.parent
             if function is not None and function.type in MEMBERS:
                 receiver_node, name = self.member_parts(function)
             elif function is not None and function.type == 'conditional_access_expression':
@@ -1450,6 +1672,21 @@ class Lowerer:
                 if len(parts) == 2:
                     receiver_node, name = parts[0], self.text(parts[1]).lstrip('.')
             receiver = self.value(receiver_node, scope, cls) if receiver_node is not None else ""
+            if receiver_node is not None and cls:
+                native_base=(self.ir.language in {'java','javascript','typescript'} and receiver_node.type=='super'
+                             or self.ir.language=='csharp' and self.text(receiver_node)=='base')
+                base_function = field(receiver_node, 'function')
+                base_arguments = field(receiver_node, 'arguments')
+                python_base=(self.ir.language=='python' and receiver_node.type=='call'
+                             and base_function is not None
+                             and base_function.type=='identifier'
+                             and self.text(base_function)=='super'
+                             and base_arguments is not None
+                             and not base_arguments.named_children
+                             and not any(name=='super' and (scope==owner or scope.startswith(owner+'/')) for owner,name in self.names))
+                method_context=self.ir.entities.get(scope)
+                if (native_base or python_base) and method_context is not None and method_context.kind=='CALLABLE' and not method_context.attrs.get('static') and scope.rsplit('/CALLABLE:',1)[0]==cls:
+                    self.ir.entities[cid].attrs['base_dispatch_owner']=cls
             self.ir.add(scope, "HAS_CALL", cid, ev)
             self.ir.add(cid, "CALLEE_NAME", name, ev)
             callee_expression = self.unwrap(function) if function is not None else None
@@ -1487,6 +1724,13 @@ class Lowerer:
                     self.ir.add(cid, "ITERATED_CALL", collection, ev)
             self.ir.entities[cid].attrs.update(name=name, owner=scope,
                                                construction=kind in {"new_expression", "object_creation_expression", "struct_expression", "composite_literal"})
+            if name:
+                # The call entity is created before its callee spelling is known, so
+                # its name starts as the byte offset. Keep the entity name equal to
+                # the callee spelling: an owner-scoped ``call`` selector reads it,
+                # and the store publishes entity names while the query view publishes
+                # this attribute -- the two must not disagree.
+                self.ir.entities[cid].name = name
             if receiver:
                 self.ir.add(cid, "RECEIVER", receiver, ev)
                 self.ir.add(scope, "DELEGATES_TO", receiver, ev, name=name)
@@ -1510,7 +1754,7 @@ class Lowerer:
             arguments = field(node, "arguments")
             for position, arg in enumerate(children(arguments)):
                 spelling = self.text(arg)
-                arg_kind = ("spread_named" if spelling.startswith("**") else "spread_positional" if spelling.startswith(("*", "..."))
+                arg_kind = ("spread_named" if spelling.startswith("**") else "spread_positional" if (spelling.startswith("...") or self.ir.language in {"python", "ruby"} and spelling.startswith("*"))
                             else "named" if arg.type == "keyword_argument" or field(arg, "name") is not None and arg.type == "argument" else "positional")
                 # Only argument wrappers expose their expression via 'value'.
                 # A Python subscript also has that field, but it is the container,
@@ -1522,17 +1766,26 @@ class Lowerer:
                     valnode = arg.named_children[-1]
                 value = self.value(valnode or arg, scope, cls)
                 self.ir.add(cid, "ARGUMENT", value, ev, position=position, kind=arg_kind, name=self.text(field(arg, "name")))
+                if (self.ir.language == 'python' and name == 'list' and receiver_node is None
+                        and function is not None and function.type == 'identifier'
+                        and self.resolve_name('list', scope) is None and self.block_local('list', scope, node) is None
+                        and len(children(arguments)) == 1 and arg_kind == 'positional'):
+                    self.ir.add(cid, 'SHALLOW_COPY_SOURCE', value, ev, model='python-builtin-list')
                 if self.ir.language == "python" and not receiver and name == "next" and position == 0 and self.resolve_name("next", scope) is None:
                     self.ir.add(cid, "ADVANCES_ITERATOR", value, ev, model="python-next")
                 if receiver and name in {"append", "add", "push", "push_back", "Add"} and position == 0:
                     self.ir.add(cid, "INSERTS_INTO", receiver, ev, model="collection-api-shape")
                     self.ir.add(cid, "INSERTED_VALUE", value, ev)
+                    # The containing callable adds to that collection, the coarse
+                    # counterpart of the subscript write above.
+                    self.ir.add(scope, "WRITES_ELEMENT", receiver, ev)
                 # Go's ``append(slice, element)`` is a free function, not a method,
                 # and is the language's canonical way to add to a slice.
                 if (not receiver and self.ir.language == "go" and name == "append"
                         and position == 0 and len(children(arguments)) == 2):
                     self.ir.add(cid, "INSERTS_INTO", value, ev, model="collection-api-shape")
                     self.ir.add(cid, "INSERTED_VALUE", self.value(children(arguments)[1], scope, cls), ev)
+                    self.ir.add(scope, "WRITES_ELEMENT", value, ev)
                 if receiver and value == f"{cls}/THIS":
                     self.ir.add(scope, "PASSES_SELF_TO", receiver, ev, name=name)
             # ``map.get(k)`` / ``map.put(k, v)`` are the non-subscript spelling of
@@ -1557,12 +1810,19 @@ class Lowerer:
                     self.ir.add(cid, "INDEX", supplied[0], ev, model="map-api-shape")
                     if node.parent is not None and node.parent.type in RETURN_TYPES:
                         self.ir.add(scope, "RETURNS_LOOKUP", receiver, ev, model="map-api-shape")
-                if name in MAP_WRITES and len(supplied) >= 2:
-                    self.ir.add(scope, "WRITES_ELEMENT", receiver, ev, model="map-api-shape")
-                    self.ir.add(cid, "WRITES_ELEMENT", receiver, ev, model="map-api-shape")
-                    self.ir.add(cid, "CONTAINER", receiver, ev, model="map-api-shape")
-                    self.ir.add(cid, "INDEX", supplied[0], ev, model="map-api-shape")
-                    self.ir.add(cid, "STORES_VALUE", supplied[1], ev, model="map-api-shape")
+                if name in MAP_WRITES:
+                    written = supplied
+                    if len(written) == 1:
+                        # ``insert(std::make_pair(k, v))``: one argument that is the pair.
+                        pair = self.pair_arguments(children(arguments)[0])
+                        if pair is not None:
+                            written = [self.argument_value(item, scope, cls) for item in pair]
+                    if len(written) >= 2:
+                        self.ir.add(scope, "WRITES_ELEMENT", receiver, ev, model="map-api-shape")
+                        self.ir.add(cid, "WRITES_ELEMENT", receiver, ev, model="map-api-shape")
+                        self.ir.add(cid, "CONTAINER", receiver, ev, model="map-api-shape")
+                        self.ir.add(cid, "INDEX", written[0], ev, model="map-api-shape")
+                        self.ir.add(cid, "STORES_VALUE", written[1], ev, model="map-api-shape")
 
         if kind in INDEXES:
             base = field(node, "value", "object", "argument", "operand", "array") or next(iter(node.named_children), None)
@@ -1605,10 +1865,36 @@ class Lowerer:
         # Rust's final block expression is an implicit return. Only the final
         # expression in a callable body is eligible, not a nested block's tail.
         if self.ir.language == "rust" and kind == "block" and node.parent and node.parent.type in FUNCTIONS:
-            last = next(iter(reversed(node.named_children)), None)
+            last = next((child for child in reversed(node.named_children) if "comment" not in child.type), None)
             if last and last.type not in {"expression_statement", "let_declaration", "return_expression"}:
+                # A ``let`` in this block declares its slot where it is written.
+                # The block node is visited before its statements, so a read that
+                # arrives first -- the tail expression below -- would register the
+                # slot at its own byte, and a body walk anchors the accumulator on
+                # the declaration. Bind the block's declared names first.
+                for statement in node.named_children:
+                    if statement.type != "let_declaration":
+                        continue
+                    binding = self.declaration_parts(statement)[0]
+                    if binding is None:
+                        continue
+                    binding = self.unwrap(binding)
+                    if binding.type == "identifier" and (scope, self.text(binding)) not in self.names:
+                        self.storage(self.text(binding), scope, binding)
                 value = self.value(last, scope, cls)
                 self.ir.add(scope, "RETURNS", value, self.evidence(last))
+                # Normalize a simple tail expression into the same return/operand
+                # tree as an explicit return. Keep the expression and its source
+                # span; the wrapper is synthetic and has a distinct stable id.
+                if last.type not in {"if_expression", "match_expression", "block", "loop_expression"}:
+                    expression_id = f"{self.ir.path}::op:{last.start_byte}:{last.end_byte}:{last.type}"
+                    expression = self.operation_by_id[expression_id]
+                    return_id = expression_id + "/implicit-return"
+                    self.ir.operations.append(Operation(return_id, "RETURN", "implicit_return",
+                        expression.parent, expression.role, expression.start, expression.end,
+                        expression.line, scope, {**expression.attrs, "synthetic": True}))
+                    expression.parent, expression.role = return_id, "value"
+                    self.ir.add(return_id, "RETURN_OPERAND", value, self.evidence(last))
                 if value == f"{cls}/THIS":
                     self.ir.add(scope, "RETURNS_SELF", cls, self.evidence(last))
         if kind in {"import_from_statement", "import_statement", "import_declaration", "use_declaration"}:

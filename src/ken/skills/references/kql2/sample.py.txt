@@ -1,0 +1,30 @@
+def save():
+    return 42
+
+def save_user():
+    return save()
+
+def discard_user():
+    save()
+    return 0
+
+def overwrite_user():
+    result = save()
+    result = 0
+    return result
+
+def bad_default(items=[]):
+    return items
+
+def fresh_default(items=None):
+    return [] if items is None else items
+
+class Writer:
+    def write(self):
+        return save()
+    def close(self):
+        pass
+
+class ReadOnly:
+    def read(self):
+        return 1

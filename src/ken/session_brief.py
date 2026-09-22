@@ -134,14 +134,17 @@ def build_session_brief(
     """Return a ``<ken-session-brief>`` block, or ``""`` when there's
     nothing worth injecting (first-ever session, empty DB).
 
-    ``project_root`` is used only to relativise file paths for display —
-    tool hooks record absolute paths, which read as noise in the brief.
+    ``project_root`` relativises paths and checks the declared dependencies
+    of justified memories against the live worktree.
     """
     from ken.memory import list_findings
+    from ken.knowledge.context import brief_line
+    from ken.knowledge.records import enrich
 
     now_ms = int(time.time() * 1000) if now_ms is None else now_ms
     anchor = _latest_prompt(conn)
     findings = list_findings(conn, limit=_MAX_FINDINGS)
+    findings = enrich(conn, findings, root=project_root)
     upgrade = _upgrade_notice(conn, now_ms)
     reembed = _reembed_notice(conn, now_ms)
 
@@ -171,7 +174,10 @@ def build_session_brief(
         lines.append("")
         lines.append(f"Findings guardados ({len(findings)} recientes):")
         for f in findings:
-            lines.append(f"  • {f['topic']} — {_truncate(f['content'], _FINDING_MAX)}")
+            if "justification" in f:
+                lines.append(f"  • {brief_line(f, max_chars=360)}")
+            else:
+                lines.append(f"  • {f['topic']} — {_truncate(f['content'], _FINDING_MAX)}")
 
     lines.append("")
     lines.append("Profundizá con ken_rank / ken_recall si seguís en esta tarea.")

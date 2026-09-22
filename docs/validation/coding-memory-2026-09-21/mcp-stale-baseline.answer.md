@@ -1,0 +1,8 @@
+Revisaré el contrato actual en MCP y `ken tools`, junto con la nota indicada, sin modificar archivos ni memorias.
+Integraría la nueva tool mediante `@ken_tool` en [server.py](/private/tmp/ken-coding-memory-4n2epo1i/mcp-stale-baseline/src/ken/mcp/server.py:192): registra la función en MCP y en el registro `ToolDef` consumido por `ken tools`. La firma define los parámetros; en CLI, los obligatorios son posicionales y los opcionales, flags. Las listas reciben un argumento por elemento.
+
+El contrato **actual no garantiza equivalencia**: `list[dict[str, Any]]` ya genera un esquema `array` con `items: {"type":"object"}`, pero [_tool_py_type](/private/tmp/ken-coding-memory-4n2epo1i/mcp-stale-baseline/src/ken/cli.py:1757) devuelve `str` para objetos. `_tool_json_object` existe, pero esa conversión no se conecta. La nota `mcp-object-cli-parameters` afirma que quedó corregido; el código de esta copia contradice esa afirmación.
+
+Recomiendo conectar `"object"` con `_tool_json_object`, aprovechando el parser común para objetos individuales y elementos de listas. Como regresión, comprobar el esquema y ejecutar `ken.cli.main` con JSON en `--facts`, `--goal` y `--assumptions`, verificando resultados equivalentes a MCP y rechazo de JSON inválido o no objeto. [Ya existen pruebas pertinentes](/private/tmp/ken-coding-memory-4n2epo1i/mcp-stale-baseline/tests/test_reasoning_memory.py:182); llamar únicamente a wrappers MCP omitiría el fallo del CLI.
+
+No modifiqué archivos ni memorias, ni ejecuté pruebas.

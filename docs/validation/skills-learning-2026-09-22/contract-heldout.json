@@ -1,0 +1,70 @@
+[
+  {
+    "case": "valid",
+    "files": {
+      "src/a.py": "class Unit:\n def commit(self): pass\n def rollback(self): pass\n"
+    },
+    "expected": [],
+    "matched": [],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 0
+  },
+  {
+    "case": "unrelated rollback",
+    "files": {
+      "src/a.py": "class Unit:\n def commit(self): pass\nclass Other:\n def rollback(self): pass\n"
+    },
+    "expected": [
+      "src/a.py::Unit"
+    ],
+    "matched": [
+      "src/a.py::Unit"
+    ],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 0
+  },
+  {
+    "case": "same name different files",
+    "files": {
+      "src/a.py": "class Unit:\n def commit(self): pass\n",
+      "src/b.py": "class Unit:\n def commit(self): pass\n def rollback(self): pass\n"
+    },
+    "expected": [
+      "src/a.py::Unit"
+    ],
+    "matched": [
+      "src/a.py::Unit"
+    ],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 0
+  },
+  {
+    "case": "inherited is not direct",
+    "files": {
+      "src/a.py": "class Base:\n def rollback(self): pass\nclass Unit(Base):\n def commit(self): pass\n"
+    },
+    "expected": [
+      "src/a.py::Unit"
+    ],
+    "matched": [
+      "src/a.py::Unit"
+    ],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 0
+  },
+  {
+    "case": "no obligated class",
+    "files": {
+      "src/a.py": "def commit(): pass\nclass Other:\n def rollback(self): pass\n"
+    },
+    "expected": [],
+    "matched": [],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 0
+  }
+]

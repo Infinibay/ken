@@ -15,6 +15,10 @@ Two deliberate exclusions:
   semantics are not known.
 - Only a registration whose target resolves to an event produces a fact. An
   unresolvable member yields nothing.
+
+The invocation fact is published twice on purpose: ``RAISES_EVENT(call, event)``
+names the call, and ``METHOD_RAISES_EVENT(method, event)`` names the callable that
+owns it, which is the question a design-pattern query asks.
 """
 from collections import defaultdict
 
@@ -47,8 +51,18 @@ def csharp_events(graph: IR) -> None:
         graph.add(op.owner, 'ADDS_HANDLER' if operator == '+=' else 'REMOVES_HANDLER', slot,
                   evidence, handler=handlers.get(op.id, ''))
 
+    owners = {fact.object: fact.subject for fact in index.rows('HAS_CALL')}
     for relation in ('RECEIVER', 'CALLEE_VALUE'):
         for fact in index.rows(relation):
             if fact.object in events:
-                graph.add(fact.subject, 'RAISES_EVENT', fact.object,
-                          fact.evidence[0] if fact.evidence else '', basis='event-invocation')
+                evidence = fact.evidence[0] if fact.evidence else ''
+                graph.add(fact.subject, 'RAISES_EVENT', fact.object, evidence,
+                          basis='event-invocation')
+                owner = owners.get(fact.subject)
+                if owner is not None:
+                    # The two-hop join a query actually wants: "this method raises
+                    # that event". ``RAISES_EVENT`` is keyed by the call, so the
+                    # callable-level form is published beside it rather than left
+                    # for each query to reconstruct through the intermediate call.
+                    graph.add(owner, 'METHOD_RAISES_EVENT', fact.object, evidence,
+                              basis='event-invocation')

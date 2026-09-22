@@ -1,0 +1,29 @@
+{
+  "pytest": {
+    "command": "PYTHONPATH=src:. .venv/bin/pytest tests/kql2 tests/structural -o addopts='' -q --tb=short",
+    "exit_code": 0,
+    "passed": 13184,
+    "xfailed": 10,
+    "seconds": 414.84,
+    "summary": "13184 passed, 10 xfailed in 414.84s (0:06:54)"
+  },
+  "typing": {
+    "affected_modules": 14,
+    "affected_errors": 0,
+    "full_before_errors": 461,
+    "full_after_errors": 454,
+    "new_errors": 0,
+    "removed_executor_errors": 7
+  },
+  "compatibility": {
+    "old_plan_pickle_read": true,
+    "old_public_imports_preserved": true
+  },
+  "benchmarks": {
+    "all_measured_queries_complete": true,
+    "semantic_hashes_equal": true,
+    "index_prepared": true,
+    "result_cache": false,
+    "global_100_file_gate_rerun": false
+  }
+}

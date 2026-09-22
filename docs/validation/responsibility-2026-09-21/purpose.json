@@ -1,0 +1,175 @@
+{
+  "ok": true,
+  "question": "Who scores files and symbols by explicit purpose text such as docstrings?",
+  "hypotheses": [],
+  "status": "candidates",
+  "candidates": [
+    {
+      "symbol": "doc_intent_scores",
+      "path": "src/ken/ranker/channels.py",
+      "line": 658,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.855,
+        "band": "strong",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who scores files and symbols by explicit purpose text such as docstrings?",
+      "documentation": "Score files/symbols by explicit purpose text such as docstrings.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.85,
+          "explanation": "Documentation similarity 0.820; term coverage 1.000 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.1,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "3f7e061b1fd28132102a83fbf0d3ea70c638f2cf4f3a24e43b7eb6b3649cbef8",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/ranker/channels.py",
+        "qualname": "doc_intent_scores",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "embed_intent_text",
+      "path": "src/ken/embedder/__init__.py",
+      "line": 492,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.705,
+        "band": "strong",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who scores files and symbols by explicit purpose text such as docstrings?",
+      "documentation": "Canonical text for explicit purpose/intent sources such as docstrings.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.6998364329338074,
+          "explanation": "Documentation similarity 0.700; term coverage 0.600 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.1,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "a4f04b53b92cb1597ffe6be1ad1895ac73aaaa1e1053220279fda07a6630eddf",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/embedder/__init__.py",
+        "qualname": "embed_intent_text",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "apply_symbol_file_affinity",
+      "path": "src/ken/ranker/boosts.py",
+      "line": 306,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.617,
+        "band": "moderate",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who scores files and symbols by explicit purpose text such as docstrings?",
+      "documentation": "Surface the containing file for high-confidence symbol hits.\n\nFuzzy/lexical symbol search often identifies the exact function or\nclass before the file embedding does. The agent still needs the file\npath to read or edit, so propagate a capped score from top symbols\nto their indexed files.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.6070352792739868,
+          "explanation": "Documentation similarity 0.607; term coverage 0.300 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.2,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "6b95adb13f6bc5716bdec214867bed386a68f14e51f2c7a994b6650197c5d588",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/ranker/boosts.py",
+        "qualname": "apply_symbol_file_affinity",
+        "include": [
+          "source"
+        ]
+      }
+    }
+  ],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 1965,
+    "inspected_symbols": 40,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "issues": [],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

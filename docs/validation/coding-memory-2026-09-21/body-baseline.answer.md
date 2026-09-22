@@ -1,0 +1,7 @@
+Voy a revisar la dependencia indicada y cómo BODY recibe y usa el entorno, sin modificar archivos ni memorias.
+
+**Conclusión:** hoy no es una optimización válida. Mantendría el entorno completo hasta disponer de un contrato exhaustivo de dependencias de BODY.
+
+**Evidencia:** [`SourceExecutor.match`](/private/tmp/ken-coding-memory-4n2epo1i/body-baseline/src/ken/kql2/source_execution.py:197) calcula `_inputs` para memoización recorriendo roles, alias y expresiones; omite `Clause.name`. Sin embargo, [`member_place`](/private/tmp/ken-coding-memory-4n2epo1i/body-baseline/src/ken/kql2/body.py:1111) resuelve miembros literales buscando declaraciones entre **todos** los nodos de `current.values()`. Puede depender de roles ausentes de `_inputs`. La memoria consultada registra 109 positivos perdidos con esa proyección, recuperados al retirarla; es evidencia histórica, no una ejecución realizada ahora. También conviene auditar por separado la suficiencia de la clave de memoización.
+
+**Prueba recomendada, antes de implementarla:** comparar evaluación completa y proyectada, con cachés independientes y vacías, para un BODY que use `$place.state` y una declaración externa de `state` cuyo rol no figure en `_inputs`. Exigir idénticas coincidencias, capturas e incertidumbre, conservando el positivo esperado. Añadir el caso `initializer { $state = $input; }` para cubrir referencias transportadas mediante `Clause.name`.

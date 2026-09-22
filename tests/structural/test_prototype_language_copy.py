@@ -270,7 +270,7 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'reference_kind' in row['query'] and 'STORES_VALUE' in row['query']
+    assert 'reference_kind' in row['query'] and 'initializer' in row['query']
 
 
 def test_cpp_reference_kind_separates_the_copy_from_the_move():

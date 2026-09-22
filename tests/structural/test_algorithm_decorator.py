@@ -3,6 +3,8 @@ import re
 
 import pytest
 
+from .contract_support import contract_matches
+
 from .test_gof_executable import evaluate
 
 
@@ -69,7 +71,6 @@ def test_missing_decorator_collaboration_is_rejected(language, mutation):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Object-wrapper counts extra lexical calls without proving reachable added behavior')
 def test_unreachable_trace_does_not_add_a_responsibility(language):
     text = ('return self.inner.run(value)\nprint("trace")' if language == 'python' else
             'return this.inner.run(value);' + ('System.out.println("trace");' if language == 'java' else 'console.log("trace");'))
@@ -77,18 +78,17 @@ def test_unreachable_trace_does_not_add_a_responsibility(language):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Result transformation can decorate without a second call, which object-wrapper requires')
 def test_arithmetic_result_decoration_needs_no_extra_call(language):
     text = 'return self.inner.run(value)+1' if language == 'python' else 'return this.inner.run(value)+1;'
     assert evaluate(source(language, text), language, 'decorator')
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Result-transparency is a stronger optional contract than broad Decorator')
 def test_transparent_tracing_variant_rejects_discarded_result(language):
     # Other Decorator variants may intentionally transform/discard results.
     text = body(language).replace('return result', 'return 0')
-    assert not evaluate(source(language, text), language, 'decorator')
+    assert contract_matches(source(language, body(language)), language, 'decorator.result_forwarding')
+    assert not contract_matches(source(language, text), language, 'decorator.result_forwarding')
 
 
 @pytest.mark.parametrize('language', LANGUAGES)

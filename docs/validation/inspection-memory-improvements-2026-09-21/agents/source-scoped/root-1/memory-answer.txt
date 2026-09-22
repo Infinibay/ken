@@ -1,0 +1,6 @@
+Según la revisión guardada en `project-root-discovery`, con entradas declaradas sin cambios, [`src/ken/_paths.py`](/private/tmp/ken-staged-source-scoped-20260921/project/src/ken/_paths.py), símbolo `find_project_root`:
+
+- Si `KEN_PROJECT_ROOT` no está vacío, expande `~`, resuelve la ruta y la acepta solo si contiene el archivo `.ken/meta.json`. **Si falta, devuelve `None` inmediatamente: no busca en los padres.**
+- Sin esa variable, resuelve `start` (o el directorio actual) y busca desde ese directorio hacia sus padres. Devuelve el primero con `.ken/meta.json`, o `None`.
+
+Los símbolos `meta_path` y `ken_dir` construyen la ruta del archivo. Se comprueba que sea un archivo, no que contenga JSON válido.

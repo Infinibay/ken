@@ -1,0 +1,36 @@
+{
+  "schema": "ken-test-review/1",
+  "ir_version": "1.78.0",
+  "command": ".venv/bin/pytest tests/structural tests/kql2 tests/common_ast -q -o addopts='' --disable-warnings --junitxml=/tmp/ken-xfail-review-clean.xml",
+  "counts": {
+    "passed": 11298,
+    "xfail": 10
+  },
+  "seconds": 296.33,
+  "scope": "structural, kql2, common_ast; not all unrelated Ken tests",
+  "original_xfail_ids_verified": 111,
+  "remaining_xfail": [
+    "tests.structural.test_algorithm_abstract_factory::test_requested_uniform_family_refinement_rejects_mixed_provider[python]",
+    "tests.structural.test_algorithm_abstract_factory::test_requested_uniform_family_refinement_rejects_mixed_provider[java]",
+    "tests.structural.test_algorithm_abstract_factory::test_requested_uniform_family_refinement_rejects_mixed_provider[typescript]",
+    "tests.structural.test_algorithm_memento::test_desired_historical_snapshot_rejects_shared_mutable_array[python]",
+    "tests.structural.test_algorithm_memento::test_desired_historical_snapshot_rejects_shared_mutable_array[java]",
+    "tests.structural.test_algorithm_memento::test_desired_historical_snapshot_rejects_shared_mutable_array[typescript]",
+    "tests.structural.test_algorithm_prototype::test_desired_independent_state_contract_rejects_shared_array[python]",
+    "tests.structural.test_algorithm_prototype::test_desired_independent_state_contract_rejects_shared_array[java]",
+    "tests.structural.test_algorithm_prototype::test_desired_independent_state_contract_rejects_shared_array[typescript]",
+    "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[directed/abstract-factory-object-literals]"
+  ],
+  "mypy": {
+    "files": [
+      "write_inventory.py",
+      "return_flow.py",
+      "semantic.py",
+      "call_bindings.py",
+      "field_transfers.py",
+      "relational.py"
+    ],
+    "result": "passed",
+    "scope": "src/ken/structural; --follow-imports=silent"
+  }
+}

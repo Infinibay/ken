@@ -1,0 +1,19 @@
+{
+  "pytest": {
+    "command": "PYTHONPATH=src:. .venv/bin/pytest tests/kql2 tests/structural -q --tb=short",
+    "exit_code": 0,
+    "passed": 13170,
+    "xfailed": 10,
+    "total": 13180
+  },
+  "typing": {
+    "exit_code": 0,
+    "checked_modules": 7,
+    "output": "pyproject.toml: note: unused section(s): module = ['ken.cli', 'ken.embedder.onnx_fastembed', 'ken.embedder.st_backend', 'ken.embedder.static_head', 'ken.findings_graph', 'ken.graphtools', 'ken.indexer', 'ken.mcp.server', 'ken.parsers.cpp', 'ken.parsers.dart', 'ken.parsers.php', 'ken.parsers.sql', 'ken.ranker.output', 'ken.reembed', 'ken.status', 'ken.structure', 'ken.vectors']\nSuccess: no issues found in 7 source files\n"
+  },
+  "measured_runtime_unchanged": true,
+  "prior_optimization_commit": "ae82f39",
+  "new_runtime_changes_committed": false,
+  "whitespace_check": "clean for changed task files",
+  "baseline_suite_note": "Earlier broad run failed one existing alternative-proof projection test; reproduced on ae82f39 runtime, fixed and full suite rerun successfully."
+}

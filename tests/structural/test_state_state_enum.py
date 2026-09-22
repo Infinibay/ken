@@ -8,12 +8,14 @@ What the contract refuses to require is a ``State`` object. The ficha is explici
 is that a guard mentioning the field sits over a write to that same field, with at
 least two distinct constants written.
 
-``count distinct`` therefore has to count **constant identities**, not syntax
-positions. This is not cosmetic. Before IR 1.58 a C++ or Rust ``State::Idle`` was
-lowered as an anonymous ``VALUE`` keyed by byte offset, so a "machine" whose two
-branches both wrote ``State::Running`` carried two distinct value entities and
-satisfied the count. The measured false positive is in
-``test_writing_one_state_twice_is_not_a_transition``.
+The evidence is now a **cycle of two correlated transitions**: the method compares
+the field with ``$observed`` and writes ``$next`` in that arm, and in the alternative
+arm compares with ``$next`` and writes ``$observed`` back. BODY captures both values
+from the occurrences, so the query states the machine instead of counting constants,
+and the C++/Rust "one constant, two syntax positions" false positive cannot occur:
+``test_writing_one_state_twice_is_not_a_transition`` pins it. A single guarded
+transition is rejected (``test_a_single_guarded_transition_is_rejected``), which is
+why the variant does not accept one-arm machines.
 """
 import pytest
 
@@ -24,6 +26,12 @@ from ken.structural.semantic import link_project
 
 RULE = 'state#state-enum'
 LANGUAGES = ['python', 'javascript', 'typescript', 'java', 'csharp', 'cpp', 'go', 'rust']
+# Languages where the variant is claimed. C++ and Rust write ``else if`` as a branch
+# nested directly in an ``else`` wrapper; BODY reaches the consequence arm of that
+# nesting but not yet the alternative one, so the cycle is unmatched there and the
+# gap is pinned by ``test_pending_languages_record_the_unmatched_arm_shape``.
+DECLARED = ['python', 'javascript', 'typescript', 'java', 'csharp', 'go']
+PENDING = ['cpp', 'rust']
 EXTENSIONS = {'python': 'py', 'javascript': 'js', 'typescript': 'ts', 'java': 'java',
               'csharp': 'cs', 'cpp': 'cpp', 'go': 'go', 'rust': 'rs'}
 
@@ -219,7 +227,7 @@ def detect(language, source):
     return result['matches']
 
 
-@pytest.mark.parametrize('language', LANGUAGES)
+@pytest.mark.parametrize('language', DECLARED)
 def test_guarded_transition_between_two_states_is_detected(language):
     matches = detect(language, SOURCES[language])
     assert matches, language
@@ -254,12 +262,29 @@ def test_a_single_guarded_transition_is_rejected():
     assert not detect('python', PY_SINGLE_BRANCH)
 
 
+def test_pending_languages_record_the_unmatched_arm_shape():
+    """A measured gap, pinned so it cannot silently become a claim.
+
+    C++/Rust ``else if`` is a branch inside an ``else`` wrapper. The consequence arm
+    of that nesting matches; the alternative arm does not, so the two-transition
+    cycle is not witnessed and the variant stays unclaimed there.
+    """
+    for language in PENDING:
+        assert not detect(language, SOURCES[language]), language
+        assert not detect(language, NO_CHANGE[language]), language
+
+
 def test_variant_declares_every_target_language_as_ready():
     row = variant()
-    assert row['languages'] == LANGUAGES
+    assert row['languages'] == DECLARED
+    assert row.get('pending_languages') == PENDING
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'GUARDS_WRITE' in row['query'] and 'count distinct' in row['query']
+    # The KQL 2 evidence: the guard is a BODY branch and the transition is the
+    # compared/written pair, so no ``edge`` join and no profile-side tally remain.
+    assert 'edge ' not in row['query'] and 'tally distinct' not in row['query']
+    assert 'if ($state == $observed)' in row['query']
+    assert 'where $observed != $next;' in row['query']
 
 
 # The declared-constant machinery, per language that declares one. Go spells its

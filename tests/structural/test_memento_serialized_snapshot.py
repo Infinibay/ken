@@ -25,6 +25,8 @@ Three decode shapes had to be admitted, and each is a language's own spelling:
 Go's shape needed IR 1.66: ``&e.state`` was an unwrapped ``unary_expression`` and
 produced an anonymous ``VALUE``, so the destination slot was unrecoverable.
 """
+import re
+
 import pytest
 
 from ken.structural.catalog import _load_catalog
@@ -376,7 +378,10 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'LOADED_FROM' in row['query'] and 'FLOWS_TO' in row['query']
+    # The query is pure KQL 2: the codec is named by its spelling and the three decode
+    # shapes are stated as selectors, not as FLOWS_TO walks over LOADED_FROM values.
+    assert not re.search(r'^\s*(edge|walk|tally)\b', row['query'], re.M)
+    assert 'returned: true' in row['query'] and 'argument $state at 1' in row['query']
 
 
 def test_an_address_of_argument_denotes_its_slot():

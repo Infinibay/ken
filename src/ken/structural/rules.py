@@ -16,11 +16,21 @@ from .query import QueryBudget, evaluate_pattern
 from .selectors import parse_query
 
 
+def is_block_query(source: str) -> bool:
+    return source.lstrip().startswith(('query ', 'language "kql/2"'))
+
+
 def _parsed_query(source: str, parsed: dict[str, Any]):
     """Compile once within one request; never share mutable ASTs across requests."""
     from .kenql import parse
     if source not in parsed:
-        parsed[source] = parse(source)
+        if source.lstrip().startswith('language "kql/2"'):
+            from ken.kql2.catalog import compile_source, sources
+            if '__kql2_catalog_snapshot__' not in parsed:
+                parsed['__kql2_catalog_snapshot__'] = sources()
+            parsed[source] = compile_source(source, snapshot=parsed['__kql2_catalog_snapshot__'])
+        else:
+            parsed[source] = parse(source)
     return parsed[source]
 
 
@@ -38,16 +48,21 @@ class SavedRule:
     variants: list[dict[str, Any]] = field(default_factory=list)
     source: str = ""
     operations: list[dict[str, str]] = field(default_factory=list)
+    query_language: str = ""
 
     def validate(self) -> None:
         self._validate({})
 
     def _validate(self, parsed: dict[str, Any]) -> None:
+        if self.query_language not in ('', 'kenql/1', 'kql/2'):
+            raise ValueError('unsupported query_language')
         if not isinstance(self.id, str) or not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9_.-]*(?:#[a-zA-Z0-9_.-]+)?", self.id):
             raise ValueError("rule id must contain only letters, numbers, dots, underscores or hyphens")
         for key in ("query", "name", "description", "recommendation", "caveat", "source"):
             if not isinstance(getattr(self, key), str):
                 raise ValueError(f"rule {self.id}: {key} must be a string")
+        if self.query_language == 'kql/2' and not self.query.lstrip().startswith('language "kql/2"'):
+            raise ValueError('KQL 2 rule requires its language header')
         for key in ("tags", "collections"):
             values = getattr(self, key)
             if not isinstance(values, list) or any(not isinstance(v, str) or not v.strip() for v in values):
@@ -79,7 +94,7 @@ class SavedRule:
                 _parsed_query(operation.get('query',''), parsed)
         if self.severity is not None and not isinstance(self.severity, str):
             raise ValueError(f"rule {self.id}: severity must be a string or null")
-        if self.query.lstrip().startswith("query "):
+        if is_block_query(self.query):
             _parsed_query(self.query, parsed)
         else:
             parse_query(self.query)
@@ -101,7 +116,7 @@ def builtin_rules() -> list[SavedRule]:
             rule.validate()
             modern.append(rule)
     return [SavedRule(r.id, r.query, r.name, r.description,
-                      tags=["design", r.category], collections=["gof"], caveat=r.caveat, variants=r.variants, source=r.source, operations=r.operations) for r in RULES] + [
+                      tags=["design", r.category], collections=["gof"], caveat=r.caveat, variants=r.variants, source=r.source, operations=r.operations, query_language=r.query_language) for r in RULES] + [
         SavedRule(id, f"require $unit HAS_HAZARD {id}", name=id, description=message,
                   tags=["correctness"], collections=["bugs"], severity=severity)
         for id, (message, severity) in BUG_RULES.items()] + modern
@@ -220,7 +235,7 @@ def query_registry(rules: list[SavedRule], *, _parsed: dict[str, Any] | None = N
         old = historical.get(item.id)
         if old and item.source == old.source:
             queries["legacy.gof." + item.id] = legacy_query(old.legacy_query, item.id)
-        queries[item.id] = _parsed_query(item.query, compiled) if item.query.lstrip().startswith("query ") else legacy_query(item.query, item.id)
+        queries[item.id] = _parsed_query(item.query, compiled) if is_block_query(item.query) else legacy_query(item.query, item.id)
         if "gof" in item.collections:
             queries["gof." + item.id] = queries[item.id]
         for variant in item.variants:
@@ -240,6 +255,8 @@ def query_registry(rules: list[SavedRule], *, _parsed: dict[str, Any] | None = N
     for item in rules:
         if "gof" not in item.collections:
             continue
+        if item.query.lstrip().startswith('language "kql/2"'):
+            continue  # The KQL 2 root itself contains its alternatives.
         ready = [v for v in item.variants if v.get("status") == "ready"]
         if ready:
             common = set.intersection(*(set(_parsed_query(v["query"], compiled).exports) for v in ready))
@@ -249,6 +266,8 @@ def query_registry(rules: list[SavedRule], *, _parsed: dict[str, Any] | None = N
             branches = [[Node("match", (item.id + "#" + v["id"], exports, ""))] for v in ready]
             # The canonical relation unites variants with a compatible public interface.
             queries["gof." + item.id] = Query("gof." + item.id, [Node("any", children=branches)], exports)
+    for query in tuple(queries.values()):
+        queries.update(query.definitions)
     return queries
 
 
@@ -268,7 +287,7 @@ def named_rule(rule_id: str, registry: list[SavedRule]) -> SavedRule:
 # a query -- editing it, or promoting a variant from design to ready, changes the
 # fingerprint -- but a planner or evidence-mode change is invisible to the text,
 # so it gets its own number.
-QUERY_CACHE_VERSION = "1"
+QUERY_CACHE_VERSION = "3"
 
 
 def rule_fingerprint(rule: SavedRule, evidence_mode: str, *, queries: dict[str, Any] | None = None,
@@ -300,7 +319,7 @@ def rule_fingerprint(rule: SavedRule, evidence_mode: str, *, queries: dict[str, 
                 parts.append(saved.query)
             child = queries.get(name)
             if child is not None:
-                parts.append(json.dumps(child.exports, sort_keys=True))
+                parts.append(json.dumps(dict(child.exports), sort_keys=True))
                 stack.extend(dependency for dependency, _ in child.dependencies())
     return "\x00".join(parts)
 
@@ -311,7 +330,7 @@ def execute_rules(ir: IR | FactIndex, rules: list[SavedRule], budget: QueryBudge
     compiled = {} if _parsed is None else _parsed
     for rule in rules:
         rule._validate(compiled)
-        if rule.query.lstrip().startswith("query "):
+        if is_block_query(rule.query):
             pattern = None
         else:
             pattern = parse_query(rule.query)
@@ -320,10 +339,13 @@ def execute_rules(ir: IR | FactIndex, rules: list[SavedRule], budget: QueryBudge
         parsed.append((rule, pattern))
     index = ir if isinstance(ir, FactIndex) else FactIndex(ir)
     modern_index = None
+    resources = None
     queries = {}
     if any(pattern is None for _, pattern in parsed):
-        from .kenql import query_graph
-        modern_index = query_graph(index.ir)
+        from .query_view import query_graph
+        from .relational_resources import ExecutionResources
+        modern_index = index if index.ir.view == 'query' else query_graph(index.ir)
+        resources = ExecutionResources(modern_index)
         queries = query_registry(registry or rules, _parsed=compiled)
     matches = []
     outcomes = {}
@@ -336,7 +358,10 @@ def execute_rules(ir: IR | FactIndex, rules: list[SavedRule], budget: QueryBudge
             cache_key = cache.key(rule_fingerprint(rule, evidence_mode, queries=queries,
                                                   root=compiled_query, registry=registry or rules), graph_key)
             stored = cache.get(cache_key)
-            if stored is not None:
+            usable = stored is not None and stored.get("complete") is True
+            if usable and budget is not None and budget.max_matches is not None:
+                usable = len(stored["matches"]) <= budget.max_matches
+            if usable:
                 outcome = QueryOutcome(**stored)
                 outcomes[rule.id] = {"complete": outcome.complete, "unknown": outcome.unknown, "stats": outcome.stats}
                 for match in outcome.matches:
@@ -349,12 +374,21 @@ def execute_rules(ir: IR | FactIndex, rules: list[SavedRule], budget: QueryBudge
                                     "locations": [{"path": p, "line": line} for p, line in locations]})
                 continue
         if pattern is None:
-            from .kenql import Engine
+            from .relational import Executor as Engine
             assert modern_index is not None
-            outcome = QueryOutcome(**Engine(modern_index, queries, budget, evidence_mode).execute(_parsed_query(rule.query, compiled)))
+            engine = Engine(modern_index, queries, budget, evidence_mode, resources=resources,
+                            profile=getattr(modern_index, "profile", False))
+            try:
+                outcome = QueryOutcome(**engine.execute(_parsed_query(rule.query, compiled)))
+                if getattr(modern_index, "profile", False):
+                    outcome.stats["operator_profile"] = engine.profile
+            finally:
+                engine.close()
         else:
             outcome = evaluate_pattern(index, pattern, budget)
-        if cache_key:
+        # Exhaustion depends on the caller's resource budget. Never preserve a
+        # timeout/truncated answer as the answer to an unchanged query forever.
+        if cache_key and outcome.complete:
             cache.put(cache_key, outcome.to_dict())
         outcomes[rule.id] = {"complete": outcome.complete, "unknown": outcome.unknown, "stats": outcome.stats}
         for match in outcome.matches:

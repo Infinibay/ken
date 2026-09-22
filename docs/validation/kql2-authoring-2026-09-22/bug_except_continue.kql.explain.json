@@ -1,0 +1,33 @@
+{
+  "language": "kql/2",
+  "query": "except_with_continue",
+  "backend": "exploration",
+  "validated": true,
+  "executed": false,
+  "diagnostics": [
+    {
+      "code": "disconnected_captures",
+      "severity": "warning",
+      "message": "Independent capture groups can form a Cartesian product. Their existence does not establish containment or ownership.",
+      "hint": "If the question requires a relationship, nest direct children or add where contains($owner, $witness). Project witnesses while checking the query. Independent groups are allowed when intentional.",
+      "span": {
+        "source": "<query>",
+        "start": 148,
+        "end": 154
+      },
+      "groups": [
+        [
+          "$catch"
+        ],
+        [
+          "$continue"
+        ]
+      ]
+    }
+  ],
+  "columns": [
+    "column_1"
+  ],
+  "diagnostic_scope": "source capture relationships; graph authoring warnings are not covered",
+  "claim": "Valid for this backend. Query validity and complete source coverage do not prove that the intended question is encoded or that runtime behavior is correct."
+}

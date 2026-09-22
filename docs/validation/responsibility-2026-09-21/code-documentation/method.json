@@ -1,0 +1,186 @@
+{
+  "ok": true,
+  "question": "Who fsyncs every segment touched since the last flush?",
+  "hypotheses": [],
+  "status": "candidates",
+  "candidates": [
+    {
+      "symbol": "VectorStore.flush",
+      "path": "src/ken/vectors.py",
+      "line": 522,
+      "kind": "method",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.857,
+        "band": "strong",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who fsyncs every segment touched since the last flush?",
+      "documentation": "fsync every segment touched since the last flush.\n\nThe dirty set is swapped out under the lock before iterating: a writer\nthread calling ``write`` mid-flush would otherwise mutate the set being\niterated and raise ``RuntimeError: Set changed size during iteration``.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.85,
+          "explanation": "Documentation similarity 0.565; term coverage 1.000 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.14285714285714285,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "a88770b6accdadbb1aba12e8970c2c51ce5a619ca8d40a7929aa7131396c5d4a",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "documentation_kind": "method_docstring",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/vectors.py",
+        "include": [
+          "source"
+        ],
+        "qualname": "VectorStore.flush"
+      }
+    },
+    {
+      "symbol": "snapshot_session_scores",
+      "path": "src/ken/ranker/snapshot.py",
+      "line": 17,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.465,
+        "band": "weak",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who fsyncs every segment touched since the last flush?",
+      "documentation": "Atomically replace a session snapshot, retaining work from every turn.\n\nNULL anchors in legacy history form one group. Multiple turns touching the\nsame file contribute their strongest observation, rather than inflating it\nwith session length. current_iteration is retained for caller compatibility.\nCallers sharing a connection across threads must hold their connection lock.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.4652147889137268,
+          "explanation": "Documentation similarity 0.465; term coverage 0.143 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "c6e70575a57e83ac833bf2db99c608b6fdd9178f4bf23328b88757ebdb3b2578",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "documentation_kind": "function_docstring",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/ranker/snapshot.py",
+        "include": [
+          "source"
+        ],
+        "qualname": "snapshot_session_scores"
+      }
+    },
+    {
+      "symbol": "src/ken/ranker/snapshot.py",
+      "path": "src/ken/ranker/snapshot.py",
+      "line": 1,
+      "kind": "module",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.4,
+        "band": "weak",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who fsyncs every segment touched since the last flush?",
+      "documentation": "Persist the strongest productive turn for every file in a session.\n\nUses the existing raw-score + pattern format: old databases need no migration\nor rebuild, and older readers can consume new snapshots. Reactive recency is\nonly for live ranking; it must not erase early work from durable memory.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.4003450870513916,
+          "explanation": "Documentation similarity 0.400; term coverage 0.143 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "c6e70575a57e83ac833bf2db99c608b6fdd9178f4bf23328b88757ebdb3b2578",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "documentation_kind": "module_docstring",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/ranker/snapshot.py",
+        "include": [
+          "source"
+        ],
+        "start_line": 1,
+        "end_line": 6
+      }
+    }
+  ],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 2210,
+    "inspected_symbols": 37,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "sources": [
+      "module_docstrings",
+      "class_docstrings",
+      "method_docstrings",
+      "function_docstrings"
+    ],
+    "findings_used": false,
+    "issues": [
+      {
+        "path": "src/ken/kql2/exploration/catalog_index.py",
+        "qualname": "src/ken/kql2/exploration/catalog_index.py",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/structural/cache.py",
+        "qualname": "src/ken/structural/cache.py",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/graphtools.py",
+        "qualname": "blast_radius",
+        "reason": "source file budget exhausted"
+      }
+    ],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

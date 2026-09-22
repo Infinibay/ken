@@ -32,7 +32,7 @@ def member_transfers(graph: IR) -> None:
     for owner, ops in by_owner.items():
         entity = graph.entities[owner]
         if entity.kind != 'CALLABLE' or entity.attrs.get('language') not in {
-                'python', 'javascript', 'typescript', 'java', 'csharp', 'rust', 'cpp', 'go'}:
+                'python', 'javascript', 'typescript', 'java', 'csharp', 'rust', 'cpp', 'go', 'ruby'}:
             continue
         member_writes = any(targets.get(op.id) in members for op in ops)
         if not any(op.id in targets for op in ops):

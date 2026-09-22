@@ -1,0 +1,755 @@
+{
+  "repo": {
+    "name": "go-patterns",
+    "url": "https://github.com/tmrts/go-patterns",
+    "commit": "f978e420361704bd7531e2b57905a308a3a012c8",
+    "tracked_files": 30,
+    "extensions": {
+      "": 2,
+      ".yml": 1,
+      ".md": 21,
+      ".go": 4,
+      ".json": 1,
+      ".png": 1
+    },
+    "license_files": [
+      "LICENSE"
+    ],
+    "cases": 2,
+    "selected_files": 2,
+    "status": "scanned subset",
+    "expected_found": 1,
+    "errors": 0
+  },
+  "results": [
+    {
+      "scope": "behavioral/observer/main.go",
+      "expected": "observer",
+      "files": [
+        {
+          "path": "behavioral/observer/main.go",
+          "sha256": "8846d4dd08acda78edae24d629b6009fec996dafe00ae4366ff549154c97ec05"
+        }
+      ],
+      "languages": [
+        "go"
+      ],
+      "diagnostics": [],
+      "entities": 68,
+      "facts": 1636,
+      "elapsed_ms": 27.48,
+      "expected_found": true,
+      "matches": [
+        {
+          "rule": "observer",
+          "variant": "default",
+          "status": "structural_match",
+          "roles": {
+            "$unit": {
+              "name": "eventNotifier",
+              "path": "behavioral/observer/main.go",
+              "line": 47
+            }
+          }
+        }
+      ],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 0,
+            "elapsed_ms": 0.18,
+            "dependencies": [
+              "ed2334d7ad17370d5183aa5305f8f1a6da31d9c2c7319a9f88446d08134f481a:ken.catalog.abstract_factory.variants.associated_products.detect",
+              "ed2334d7ad17370d5183aa5305f8f1a6da31d9c2c7319a9f88446d08134f481a:ken.catalog.abstract_factory.variants.nominal_families.detect",
+              "ed2334d7ad17370d5183aa5305f8f1a6da31d9c2c7319a9f88446d08134f481a:ken.catalog.abstract_factory.variants.structural_families.detect"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 0,
+            "elapsed_ms": 0.152,
+            "dependencies": [
+              "5fb2a497131a40a45e2aa31e799be9c8bb31b0177103d71cc93e0becfab5b3f7:ken.catalog.adapter.variants.class_adapter.detect",
+              "5fb2a497131a40a45e2aa31e799be9c8bb31b0177103d71cc93e0becfab5b3f7:ken.catalog.adapter.variants.functional_adapter.detect",
+              "5fb2a497131a40a45e2aa31e799be9c8bb31b0177103d71cc93e0becfab5b3f7:ken.catalog.adapter.variants.object_adapter.detect"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 0,
+            "elapsed_ms": 0.105,
+            "dependencies": [
+              "a23401418c9afb108e05c9b5a4474dc93e1248d4284afefa736649722f06aa40:ken.catalog.bridge.variants.generic_composition.detect",
+              "a23401418c9afb108e05c9b5a4474dc93e1248d4284afefa736649722f06aa40:ken.catalog.bridge.variants.refined_composition.detect",
+              "a23401418c9afb108e05c9b5a4474dc93e1248d4284afefa736649722f06aa40:ken.catalog.bridge.variants.runtime_composition.detect"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 17,
+            "rows_examined": 3,
+            "elapsed_ms": 0.516,
+            "dependencies": [
+              "cdd260f2af9aec0260283e2c8974a330a92bc9592f68d8a73cd56e5f199d279e:ken.catalog.builder.variants.consuming_typestate.detect",
+              "cdd260f2af9aec0260283e2c8974a330a92bc9592f68d8a73cd56e5f199d279e:ken.catalog.builder.variants.director.detect",
+              "cdd260f2af9aec0260283e2c8974a330a92bc9592f68d8a73cd56e5f199d279e:ken.catalog.builder.variants.immutable_product.detect",
+              "cdd260f2af9aec0260283e2c8974a330a92bc9592f68d8a73cd56e5f199d279e:ken.catalog.builder.variants.mutable_product.detect",
+              "cdd260f2af9aec0260283e2c8974a330a92bc9592f68d8a73cd56e5f199d279e:ken.catalog.builder.variants.stored_product.detect"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.223,
+            "dependencies": [
+              "3a5c37b92ec83904cba4e6d14b5e38bbec6a1cb1bf61ceed1bc58214ac088399:ken.catalog.chain_of_responsibility.variants.linked_handlers.detect",
+              "3a5c37b92ec83904cba4e6d14b5e38bbec6a1cb1bf61ceed1bc58214ac088399:ken.catalog.chain_of_responsibility.variants.middleware_closures.detect"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 113,
+            "rows_examined": 52,
+            "elapsed_ms": 0.78,
+            "dependencies": [
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.architecture.batch_work_queue.drain.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.retained_dispatch.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.variants.command_closure.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.variants.command_object.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.variants.queued_object.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.variants.retained_contract.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.variants.retained_object.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.variants.stored_closure.detect"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 31,
+            "rows_examined": 11,
+            "elapsed_ms": 0.192,
+            "dependencies": [
+              "e0c5eaba8e4f64b459c775cee84f061f7ac2d622061c81fb7d9a4181a84231e6:ken.catalog.composite.variants.algebraic_tree.detect",
+              "e0c5eaba8e4f64b459c775cee84f061f7ac2d622061c81fb7d9a4181a84231e6:ken.catalog.composite.variants.higher_order_traversal.detect",
+              "e0c5eaba8e4f64b459c775cee84f061f7ac2d622061c81fb7d9a4181a84231e6:ken.catalog.composite.variants.recursive_contract.detect",
+              "e0c5eaba8e4f64b459c775cee84f061f7ac2d622061c81fb7d9a4181a84231e6:ken.catalog.composite.variants.recursive_nominal.detect"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.192,
+            "dependencies": [
+              "e1319bb950af1242f25646235ea7bcf1a495424ec988ca0a5f09c158743253eb:ken.catalog.decorator.variants.callable_wrapper.detect",
+              "e1319bb950af1242f25646235ea7bcf1a495424ec988ca0a5f09c158743253eb:ken.catalog.decorator.variants.object_wrapper.detect"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 22,
+            "rows_examined": 10,
+            "elapsed_ms": 0.134,
+            "dependencies": [
+              "4aeafef895c44e022ae066f6ae94f873acc839ba569ea180da684c99b6276527:ken.catalog.facade.variants.module_surface.detect",
+              "4aeafef895c44e022ae066f6ae94f873acc839ba569ea180da684c99b6276527:ken.catalog.facade.variants.object_surface.detect"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 11,
+            "rows_examined": 3,
+            "elapsed_ms": 0.108,
+            "dependencies": [
+              "8ad1a68d6fddc6360646621b393fee439544ff2e3271c1da50f56f085ab1925c:ken.catalog.factory_method.variants.contract_slot.detect",
+              "8ad1a68d6fddc6360646621b393fee439544ff2e3271c1da50f56f085ab1925c:ken.catalog.factory_method.variants.virtual_slot.detect"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 69,
+            "rows_examined": 24,
+            "elapsed_ms": 0.326,
+            "dependencies": [
+              "f56705fee3b778fed678e63d0ee11bf6e3e8c62abbc49793e817615ebf5b47be:ken.catalog.flyweight.variants.entry_api.detect",
+              "f56705fee3b778fed678e63d0ee11bf6e3e8c62abbc49793e817615ebf5b47be:ken.catalog.flyweight.variants.explicit_interning.detect"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 27,
+            "rows_examined": 11,
+            "elapsed_ms": 0.152,
+            "dependencies": [
+              "a4c3aaccae566432429817d628f77fc7e4163772474c11d2524b3d4a60624dfa:ken.catalog.interpreter.variants.expression_objects.detect",
+              "a4c3aaccae566432429817d628f77fc7e4163772474c11d2524b3d4a60624dfa:ken.catalog.interpreter.variants.expression_sum.detect"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 18,
+            "rows_examined": 0,
+            "elapsed_ms": 0.652,
+            "dependencies": [
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.async_iterator.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.callback_iterator.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.delegated_cursor.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.delegated_generator.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.explicit_cursor.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.external_cursor.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.generator.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.paired_cursor.detect"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 21,
+            "rows_examined": 7,
+            "elapsed_ms": 0.339,
+            "dependencies": [
+              "2bc0cac901d5c4c8a57cf75295dc60b7adad1b720deb518c2591597c8a1357da:ken.catalog.mediator.variants.direct_colleagues.detect",
+              "2bc0cac901d5c4c8a57cf75295dc60b7adad1b720deb518c2591597c8a1357da:ken.catalog.mediator.variants.message_coordination.detect",
+              "2bc0cac901d5c4c8a57cf75295dc60b7adad1b720deb518c2591597c8a1357da:ken.catalog.mediator.variants.tag_dispatch.detect"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 91,
+            "rows_examined": 33,
+            "elapsed_ms": 0.682,
+            "dependencies": [
+              "c6a52efe3bca91e8bd60a5ec4ccfa73094abb471ab8a38348f24b2997b4e2424:ken.catalog.memento.variants.accessor_snapshot.detect",
+              "c6a52efe3bca91e8bd60a5ec4ccfa73094abb471ab8a38348f24b2997b4e2424:ken.catalog.memento.variants.serialized_snapshot.detect",
+              "c6a52efe3bca91e8bd60a5ec4ccfa73094abb471ab8a38348f24b2997b4e2424:ken.catalog.memento.variants.snapshot_object.detect"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 42,
+            "rows_examined": 20,
+            "elapsed_ms": 0.482,
+            "dependencies": [
+              "fd8d5faaa40de7a399db91b772f711007b2de4ecd8c76f2cd908d3e4657ba4f8:ken.catalog.observer.variants.event_bus.detect",
+              "fd8d5faaa40de7a399db91b772f711007b2de4ecd8c76f2cd908d3e4657ba4f8:ken.catalog.observer.variants.language_event.detect",
+              "fd8d5faaa40de7a399db91b772f711007b2de4ecd8c76f2cd908d3e4657ba4f8:ken.catalog.observer.variants.listener_registry.detect",
+              "fd8d5faaa40de7a399db91b772f711007b2de4ecd8c76f2cd908d3e4657ba4f8:ken.catalog.observer.variants.map_key_registry.detect",
+              "fd8d5faaa40de7a399db91b772f711007b2de4ecd8c76f2cd908d3e4657ba4f8:ken.catalog.observer.variants.snapshot_registry.detect"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 67,
+            "rows_examined": 16,
+            "elapsed_ms": 0.794,
+            "dependencies": [
+              "c74fb6318971dba8e4791310d9383ec3f19100fcbd41149978a207bde319d10e:ken.catalog.prototype.derived_copy.detect",
+              "c74fb6318971dba8e4791310d9383ec3f19100fcbd41149978a207bde319d10e:ken.catalog.prototype.variants.derived_clone.detect",
+              "c74fb6318971dba8e4791310d9383ec3f19100fcbd41149978a207bde319d10e:ken.catalog.prototype.variants.explicit_copy.detect",
+              "c74fb6318971dba8e4791310d9383ec3f19100fcbd41149978a207bde319d10e:ken.catalog.prototype.variants.field_copy.detect",
+              "c74fb6318971dba8e4791310d9383ec3f19100fcbd41149978a207bde319d10e:ken.catalog.prototype.variants.language_copy.detect"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 13,
+            "rows_examined": 3,
+            "elapsed_ms": 0.41,
+            "dependencies": [
+              "f77e62e0ff6616e7ff042d3f8649f1d39c61106a884807d5fc139ad57a862cbc:ken.catalog.proxy.variants.guarded_access.detect",
+              "f77e62e0ff6616e7ff042d3f8649f1d39c61106a884807d5fc139ad57a862cbc:ken.catalog.proxy.variants.lazy_subject.detect",
+              "f77e62e0ff6616e7ff042d3f8649f1d39c61106a884807d5fc139ad57a862cbc:ken.catalog.proxy.variants.remote_subject.detect"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 56,
+            "rows_examined": 9,
+            "elapsed_ms": 0.9,
+            "dependencies": [
+              "111c7cc58a25cba16443dd8525d2ef9024b3dfd8ac1ba383f0f71015e8542980:ken.catalog.singleton.lazy_instance.detect",
+              "111c7cc58a25cba16443dd8525d2ef9024b3dfd8ac1ba383f0f71015e8542980:ken.catalog.singleton.shared_instance.detect",
+              "111c7cc58a25cba16443dd8525d2ef9024b3dfd8ac1ba383f0f71015e8542980:ken.catalog.singleton.variants.eager_shared.detect",
+              "111c7cc58a25cba16443dd8525d2ef9024b3dfd8ac1ba383f0f71015e8542980:ken.catalog.singleton.variants.lazy_guarded.detect",
+              "111c7cc58a25cba16443dd8525d2ef9024b3dfd8ac1ba383f0f71015e8542980:ken.catalog.singleton.variants.module_shared.detect",
+              "111c7cc58a25cba16443dd8525d2ef9024b3dfd8ac1ba383f0f71015e8542980:ken.catalog.singleton.variants.once_primitive.detect"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 0,
+            "elapsed_ms": 0.159,
+            "dependencies": [
+              "0ab9bacbaf6243c6aeea50a6ec2671d25ca60a37095acc5a2d2f738974dd668a:ken.catalog.state.variants.context_transition.detect",
+              "0ab9bacbaf6243c6aeea50a6ec2671d25ca60a37095acc5a2d2f738974dd668a:ken.catalog.state.variants.state_enum.detect",
+              "0ab9bacbaf6243c6aeea50a6ec2671d25ca60a37095acc5a2d2f738974dd668a:ken.catalog.state.variants.state_object.detect"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 10,
+            "rows_examined": 0,
+            "elapsed_ms": 0.181,
+            "dependencies": [
+              "465c1d456d3bf750178874d88bdfa73f19417c681a50b2c6ac1df4c4cc3939d9:ken.catalog.strategy.supplied_policy.detect",
+              "465c1d456d3bf750178874d88bdfa73f19417c681a50b2c6ac1df4c4cc3939d9:ken.catalog.strategy.variants.static_policy.detect",
+              "465c1d456d3bf750178874d88bdfa73f19417c681a50b2c6ac1df4c4cc3939d9:ken.catalog.strategy.variants.strategy_callable.detect",
+              "465c1d456d3bf750178874d88bdfa73f19417c681a50b2c6ac1df4c4cc3939d9:ken.catalog.strategy.variants.strategy_object.detect"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 71,
+            "rows_examined": 29,
+            "elapsed_ms": 0.247,
+            "dependencies": [
+              "6a16a077feb3ffae3dbb1e886eb9533dd95e8c0961a52516c529f9ed39c1102e:ken.catalog.template_method.variants.composed_skeleton.detect",
+              "6a16a077feb3ffae3dbb1e886eb9533dd95e8c0961a52516c529f9ed39c1102e:ken.catalog.template_method.variants.trait_default.detect",
+              "6a16a077feb3ffae3dbb1e886eb9533dd95e8c0961a52516c529f9ed39c1102e:ken.catalog.template_method.variants.virtual_skeleton.detect"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 0,
+            "elapsed_ms": 0.123,
+            "dependencies": [
+              "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.generic_visitor.detect",
+              "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.named_dispatch.detect",
+              "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.overloaded_dispatch.detect"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scope": "structural/proxy/main.go",
+      "expected": "proxy",
+      "files": [
+        {
+          "path": "structural/proxy/main.go",
+          "sha256": "f970ef52235c7da44354610e98b85b21d588d616f6ff627b6cdc1b48478116c9"
+        }
+      ],
+      "languages": [
+        "go"
+      ],
+      "diagnostics": [],
+      "entities": 85,
+      "facts": 2160,
+      "elapsed_ms": 32.02,
+      "expected_found": false,
+      "matches": [],
+      "outcomes": {
+        "abstract-factory": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 0,
+            "elapsed_ms": 0.181,
+            "dependencies": [
+              "ed2334d7ad17370d5183aa5305f8f1a6da31d9c2c7319a9f88446d08134f481a:ken.catalog.abstract_factory.variants.associated_products.detect",
+              "ed2334d7ad17370d5183aa5305f8f1a6da31d9c2c7319a9f88446d08134f481a:ken.catalog.abstract_factory.variants.nominal_families.detect",
+              "ed2334d7ad17370d5183aa5305f8f1a6da31d9c2c7319a9f88446d08134f481a:ken.catalog.abstract_factory.variants.structural_families.detect"
+            ]
+          }
+        },
+        "adapter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 0,
+            "elapsed_ms": 0.234,
+            "dependencies": [
+              "5fb2a497131a40a45e2aa31e799be9c8bb31b0177103d71cc93e0becfab5b3f7:ken.catalog.adapter.variants.class_adapter.detect",
+              "5fb2a497131a40a45e2aa31e799be9c8bb31b0177103d71cc93e0becfab5b3f7:ken.catalog.adapter.variants.functional_adapter.detect",
+              "5fb2a497131a40a45e2aa31e799be9c8bb31b0177103d71cc93e0becfab5b3f7:ken.catalog.adapter.variants.object_adapter.detect"
+            ]
+          }
+        },
+        "bridge": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 0,
+            "elapsed_ms": 0.113,
+            "dependencies": [
+              "a23401418c9afb108e05c9b5a4474dc93e1248d4284afefa736649722f06aa40:ken.catalog.bridge.variants.generic_composition.detect",
+              "a23401418c9afb108e05c9b5a4474dc93e1248d4284afefa736649722f06aa40:ken.catalog.bridge.variants.refined_composition.detect",
+              "a23401418c9afb108e05c9b5a4474dc93e1248d4284afefa736649722f06aa40:ken.catalog.bridge.variants.runtime_composition.detect"
+            ]
+          }
+        },
+        "builder": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 34,
+            "rows_examined": 10,
+            "elapsed_ms": 0.74,
+            "dependencies": [
+              "cdd260f2af9aec0260283e2c8974a330a92bc9592f68d8a73cd56e5f199d279e:ken.catalog.builder.variants.consuming_typestate.detect",
+              "cdd260f2af9aec0260283e2c8974a330a92bc9592f68d8a73cd56e5f199d279e:ken.catalog.builder.variants.director.detect",
+              "cdd260f2af9aec0260283e2c8974a330a92bc9592f68d8a73cd56e5f199d279e:ken.catalog.builder.variants.immutable_product.detect",
+              "cdd260f2af9aec0260283e2c8974a330a92bc9592f68d8a73cd56e5f199d279e:ken.catalog.builder.variants.mutable_product.detect",
+              "cdd260f2af9aec0260283e2c8974a330a92bc9592f68d8a73cd56e5f199d279e:ken.catalog.builder.variants.stored_product.detect"
+            ]
+          }
+        },
+        "chain-of-responsibility": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.281,
+            "dependencies": [
+              "3a5c37b92ec83904cba4e6d14b5e38bbec6a1cb1bf61ceed1bc58214ac088399:ken.catalog.chain_of_responsibility.variants.linked_handlers.detect",
+              "3a5c37b92ec83904cba4e6d14b5e38bbec6a1cb1bf61ceed1bc58214ac088399:ken.catalog.chain_of_responsibility.variants.middleware_closures.detect"
+            ]
+          }
+        },
+        "command": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 72,
+            "rows_examined": 32,
+            "elapsed_ms": 0.814,
+            "dependencies": [
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.architecture.batch_work_queue.drain.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.retained_dispatch.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.variants.command_closure.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.variants.command_object.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.variants.queued_object.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.variants.retained_contract.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.variants.retained_object.detect",
+              "8831b54676cfaa8002f6f57daa8ffa364ea493148b9a9905c4442d55681b286f:ken.catalog.command.variants.stored_closure.detect"
+            ]
+          }
+        },
+        "composite": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 24,
+            "rows_examined": 8,
+            "elapsed_ms": 0.221,
+            "dependencies": [
+              "e0c5eaba8e4f64b459c775cee84f061f7ac2d622061c81fb7d9a4181a84231e6:ken.catalog.composite.variants.algebraic_tree.detect",
+              "e0c5eaba8e4f64b459c775cee84f061f7ac2d622061c81fb7d9a4181a84231e6:ken.catalog.composite.variants.higher_order_traversal.detect",
+              "e0c5eaba8e4f64b459c775cee84f061f7ac2d622061c81fb7d9a4181a84231e6:ken.catalog.composite.variants.recursive_contract.detect",
+              "e0c5eaba8e4f64b459c775cee84f061f7ac2d622061c81fb7d9a4181a84231e6:ken.catalog.composite.variants.recursive_nominal.detect"
+            ]
+          }
+        },
+        "decorator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 5,
+            "rows_examined": 0,
+            "elapsed_ms": 0.099,
+            "dependencies": [
+              "e1319bb950af1242f25646235ea7bcf1a495424ec988ca0a5f09c158743253eb:ken.catalog.decorator.variants.callable_wrapper.detect",
+              "e1319bb950af1242f25646235ea7bcf1a495424ec988ca0a5f09c158743253eb:ken.catalog.decorator.variants.object_wrapper.detect"
+            ]
+          }
+        },
+        "facade": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 138,
+            "rows_examined": 52,
+            "elapsed_ms": 0.564,
+            "dependencies": [
+              "4aeafef895c44e022ae066f6ae94f873acc839ba569ea180da684c99b6276527:ken.catalog.facade.variants.module_surface.detect",
+              "4aeafef895c44e022ae066f6ae94f873acc839ba569ea180da684c99b6276527:ken.catalog.facade.variants.object_surface.detect"
+            ]
+          }
+        },
+        "factory-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 11,
+            "rows_examined": 2,
+            "elapsed_ms": 0.139,
+            "dependencies": [
+              "8ad1a68d6fddc6360646621b393fee439544ff2e3271c1da50f56f085ab1925c:ken.catalog.factory_method.variants.contract_slot.detect",
+              "8ad1a68d6fddc6360646621b393fee439544ff2e3271c1da50f56f085ab1925c:ken.catalog.factory_method.variants.virtual_slot.detect"
+            ]
+          }
+        },
+        "flyweight": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 107,
+            "rows_examined": 27,
+            "elapsed_ms": 0.483,
+            "dependencies": [
+              "f56705fee3b778fed678e63d0ee11bf6e3e8c62abbc49793e817615ebf5b47be:ken.catalog.flyweight.variants.entry_api.detect",
+              "f56705fee3b778fed678e63d0ee11bf6e3e8c62abbc49793e817615ebf5b47be:ken.catalog.flyweight.variants.explicit_interning.detect"
+            ]
+          }
+        },
+        "interpreter": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 20,
+            "rows_examined": 8,
+            "elapsed_ms": 0.159,
+            "dependencies": [
+              "a4c3aaccae566432429817d628f77fc7e4163772474c11d2524b3d4a60624dfa:ken.catalog.interpreter.variants.expression_objects.detect",
+              "a4c3aaccae566432429817d628f77fc7e4163772474c11d2524b3d4a60624dfa:ken.catalog.interpreter.variants.expression_sum.detect"
+            ]
+          }
+        },
+        "iterator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 18,
+            "rows_examined": 0,
+            "elapsed_ms": 1.055,
+            "dependencies": [
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.async_iterator.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.callback_iterator.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.delegated_cursor.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.delegated_generator.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.explicit_cursor.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.external_cursor.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.generator.detect",
+              "87f1f6a860d73a713651ae9772061dc2487e7bf71368146db1d06664ae506c79:ken.catalog.iterator.variants.paired_cursor.detect"
+            ]
+          }
+        },
+        "mediator": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 22,
+            "rows_examined": 7,
+            "elapsed_ms": 0.428,
+            "dependencies": [
+              "2bc0cac901d5c4c8a57cf75295dc60b7adad1b720deb518c2591597c8a1357da:ken.catalog.mediator.variants.direct_colleagues.detect",
+              "2bc0cac901d5c4c8a57cf75295dc60b7adad1b720deb518c2591597c8a1357da:ken.catalog.mediator.variants.message_coordination.detect",
+              "2bc0cac901d5c4c8a57cf75295dc60b7adad1b720deb518c2591597c8a1357da:ken.catalog.mediator.variants.tag_dispatch.detect"
+            ]
+          }
+        },
+        "memento": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 31,
+            "rows_examined": 12,
+            "elapsed_ms": 0.567,
+            "dependencies": [
+              "c6a52efe3bca91e8bd60a5ec4ccfa73094abb471ab8a38348f24b2997b4e2424:ken.catalog.memento.variants.accessor_snapshot.detect",
+              "c6a52efe3bca91e8bd60a5ec4ccfa73094abb471ab8a38348f24b2997b4e2424:ken.catalog.memento.variants.serialized_snapshot.detect",
+              "c6a52efe3bca91e8bd60a5ec4ccfa73094abb471ab8a38348f24b2997b4e2424:ken.catalog.memento.variants.snapshot_object.detect"
+            ]
+          }
+        },
+        "observer": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 31,
+            "rows_examined": 20,
+            "elapsed_ms": 0.363,
+            "dependencies": [
+              "fd8d5faaa40de7a399db91b772f711007b2de4ecd8c76f2cd908d3e4657ba4f8:ken.catalog.observer.variants.event_bus.detect",
+              "fd8d5faaa40de7a399db91b772f711007b2de4ecd8c76f2cd908d3e4657ba4f8:ken.catalog.observer.variants.language_event.detect",
+              "fd8d5faaa40de7a399db91b772f711007b2de4ecd8c76f2cd908d3e4657ba4f8:ken.catalog.observer.variants.listener_registry.detect",
+              "fd8d5faaa40de7a399db91b772f711007b2de4ecd8c76f2cd908d3e4657ba4f8:ken.catalog.observer.variants.map_key_registry.detect",
+              "fd8d5faaa40de7a399db91b772f711007b2de4ecd8c76f2cd908d3e4657ba4f8:ken.catalog.observer.variants.snapshot_registry.detect"
+            ]
+          }
+        },
+        "prototype": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 80,
+            "rows_examined": 16,
+            "elapsed_ms": 0.913,
+            "dependencies": [
+              "c74fb6318971dba8e4791310d9383ec3f19100fcbd41149978a207bde319d10e:ken.catalog.prototype.derived_copy.detect",
+              "c74fb6318971dba8e4791310d9383ec3f19100fcbd41149978a207bde319d10e:ken.catalog.prototype.variants.derived_clone.detect",
+              "c74fb6318971dba8e4791310d9383ec3f19100fcbd41149978a207bde319d10e:ken.catalog.prototype.variants.explicit_copy.detect",
+              "c74fb6318971dba8e4791310d9383ec3f19100fcbd41149978a207bde319d10e:ken.catalog.prototype.variants.field_copy.detect",
+              "c74fb6318971dba8e4791310d9383ec3f19100fcbd41149978a207bde319d10e:ken.catalog.prototype.variants.language_copy.detect"
+            ]
+          }
+        },
+        "proxy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 34,
+            "rows_examined": 12,
+            "elapsed_ms": 0.377,
+            "dependencies": [
+              "f77e62e0ff6616e7ff042d3f8649f1d39c61106a884807d5fc139ad57a862cbc:ken.catalog.proxy.variants.guarded_access.detect",
+              "f77e62e0ff6616e7ff042d3f8649f1d39c61106a884807d5fc139ad57a862cbc:ken.catalog.proxy.variants.lazy_subject.detect",
+              "f77e62e0ff6616e7ff042d3f8649f1d39c61106a884807d5fc139ad57a862cbc:ken.catalog.proxy.variants.remote_subject.detect"
+            ]
+          }
+        },
+        "singleton": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 41,
+            "rows_examined": 6,
+            "elapsed_ms": 0.925,
+            "dependencies": [
+              "111c7cc58a25cba16443dd8525d2ef9024b3dfd8ac1ba383f0f71015e8542980:ken.catalog.singleton.lazy_instance.detect",
+              "111c7cc58a25cba16443dd8525d2ef9024b3dfd8ac1ba383f0f71015e8542980:ken.catalog.singleton.shared_instance.detect",
+              "111c7cc58a25cba16443dd8525d2ef9024b3dfd8ac1ba383f0f71015e8542980:ken.catalog.singleton.variants.eager_shared.detect",
+              "111c7cc58a25cba16443dd8525d2ef9024b3dfd8ac1ba383f0f71015e8542980:ken.catalog.singleton.variants.lazy_guarded.detect",
+              "111c7cc58a25cba16443dd8525d2ef9024b3dfd8ac1ba383f0f71015e8542980:ken.catalog.singleton.variants.module_shared.detect",
+              "111c7cc58a25cba16443dd8525d2ef9024b3dfd8ac1ba383f0f71015e8542980:ken.catalog.singleton.variants.once_primitive.detect"
+            ]
+          }
+        },
+        "state": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 11,
+            "rows_examined": 2,
+            "elapsed_ms": 0.152,
+            "dependencies": [
+              "0ab9bacbaf6243c6aeea50a6ec2671d25ca60a37095acc5a2d2f738974dd668a:ken.catalog.state.variants.context_transition.detect",
+              "0ab9bacbaf6243c6aeea50a6ec2671d25ca60a37095acc5a2d2f738974dd668a:ken.catalog.state.variants.state_enum.detect",
+              "0ab9bacbaf6243c6aeea50a6ec2671d25ca60a37095acc5a2d2f738974dd668a:ken.catalog.state.variants.state_object.detect"
+            ]
+          }
+        },
+        "strategy": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 10,
+            "rows_examined": 0,
+            "elapsed_ms": 0.192,
+            "dependencies": [
+              "465c1d456d3bf750178874d88bdfa73f19417c681a50b2c6ac1df4c4cc3939d9:ken.catalog.strategy.supplied_policy.detect",
+              "465c1d456d3bf750178874d88bdfa73f19417c681a50b2c6ac1df4c4cc3939d9:ken.catalog.strategy.variants.static_policy.detect",
+              "465c1d456d3bf750178874d88bdfa73f19417c681a50b2c6ac1df4c4cc3939d9:ken.catalog.strategy.variants.strategy_callable.detect",
+              "465c1d456d3bf750178874d88bdfa73f19417c681a50b2c6ac1df4c4cc3939d9:ken.catalog.strategy.variants.strategy_object.detect"
+            ]
+          }
+        },
+        "template-method": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 125,
+            "rows_examined": 59,
+            "elapsed_ms": 0.258,
+            "dependencies": [
+              "6a16a077feb3ffae3dbb1e886eb9533dd95e8c0961a52516c529f9ed39c1102e:ken.catalog.template_method.variants.composed_skeleton.detect",
+              "6a16a077feb3ffae3dbb1e886eb9533dd95e8c0961a52516c529f9ed39c1102e:ken.catalog.template_method.variants.trait_default.detect",
+              "6a16a077feb3ffae3dbb1e886eb9533dd95e8c0961a52516c529f9ed39c1102e:ken.catalog.template_method.variants.virtual_skeleton.detect"
+            ]
+          }
+        },
+        "visitor": {
+          "complete": true,
+          "unknown": [],
+          "stats": {
+            "states": 7,
+            "rows_examined": 0,
+            "elapsed_ms": 0.095,
+            "dependencies": [
+              "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.generic_visitor.detect",
+              "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.named_dispatch.detect",
+              "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.overloaded_dispatch.detect"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

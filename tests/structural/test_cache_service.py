@@ -57,6 +57,36 @@ def test_oversized_entry_bypasses_cache(tmp_path):
     cache.close()
 
 
+def test_eviction_reuses_freed_pages_without_flushing_the_entire_cache(tmp_path):
+    import random
+
+    path = tmp_path / "cache.sqlite"
+    cache = IRCache(path, .15)
+    random_bytes = random.Random(42)
+    for i in range(20):
+        before = cache.evictions
+        cache.put(str(i), {"data": random_bytes.randbytes(10_000).hex()})
+        assert path.stat().st_size <= cache.limit
+        if cache.evictions > before:
+            assert cache.evictions - before <= 2
+            assert cache.get(str(i - 1)) is not None
+    assert cache.evictions > 0
+    cache.close()
+
+
+def test_one_graph_can_use_more_than_half_the_cache_budget(tmp_path):
+    import random
+
+    path = tmp_path / "cache.sqlite"
+    cache = IRCache(path, 1)
+    value = {"data": random.Random(42).randbytes(600_000).hex()}
+    cache.put("graph", value)
+    assert cache.get("graph") == value
+    assert path.stat().st_size <= cache.limit
+    assert cache.error == ""
+    cache.close()
+
+
 def test_corrupt_cache_is_disposable(tmp_path):
     path = tmp_path / "cache.sqlite"
     path.write_bytes(b"not a database")
@@ -151,11 +181,13 @@ def test_gitignored_and_unsupported_files_report_coverage(tmp_path):
     (tmp_path / ".gitignore").write_text("ignored.py\n")
     (tmp_path / "a.py").write_text("pass")
     (tmp_path / "ignored.py").write_text("raise RuntimeError()")
-    (tmp_path / "a.rb").write_text("puts 1")
+    # Ruby used to be the example of an unsupported file; it has a frontend now,
+    # so this pins the *reporting* contract with a language that has none.
+    (tmp_path / "a.swift").write_text("print(1)")
     _, analysis = build_project(tmp_path, cache_mb=0)
     assert analysis["files"] == ["a.py"]
     assert not analysis["coverage_complete"]
-    assert analysis["skipped"][0]["path"] == "a.rb"
+    assert analysis["skipped"] == [{"path": "a.swift", "reason": "no structural frontend"}]
 
 
 @pytest.mark.parametrize("option", [{"max_files": 1}, {"max_file_bytes": 3}])

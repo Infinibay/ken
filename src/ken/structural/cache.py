@@ -11,7 +11,10 @@ import sqlite3
 import time
 import zlib
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from .model import IR
 
 DEFAULT_CACHE_MB = 500
 
@@ -56,7 +59,9 @@ class IRCache:
             try:
                 row = self.conn.execute("SELECT value FROM entries WHERE key=?", (key,)).fetchone()
                 if row:
-                    value = json.loads(zlib.decompress(row[0]))
+                    from .serialization import decoded_json
+
+                    value = decoded_json(zlib.decompress(row[0]))
                     with self.conn:
                         self.conn.execute("UPDATE entries SET touched=? WHERE key=?", (time.time_ns(), key))
                     self.hits += 1
@@ -71,8 +76,12 @@ class IRCache:
             return
         while True:
             pages = self.conn.execute("PRAGMA page_count").fetchone()[0]
+            free_pages = self.conn.execute("PRAGMA freelist_count").fetchone()[0]
             page_size = self.conn.execute("PRAGMA page_size").fetchone()[0]
-            if pages * page_size + reserve <= self.limit:
+            # FULL auto-vacuum shrinks the file at commit, not after each DELETE.
+            # Count pages already freed by this transaction or a full cache
+            # evicts every entry before its apparent page count can decrease.
+            if (pages - free_pages) * page_size + reserve <= self.limit:
                 return
             victim = self.conn.execute("SELECT key FROM entries ORDER BY touched, key LIMIT 1").fetchone()
             if victim is None:
@@ -84,7 +93,24 @@ class IRCache:
         if self.conn is None:
             return
         payload = zlib.compress(json.dumps(value, separators=(",", ":"), ensure_ascii=False).encode())
-        reserve = len(payload) * 2 + 16_384
+        self._put_payload(key, payload)
+
+    def put_ir(self, key: str, ir: IR) -> None:
+        if self.conn is None:
+            return
+        from .serialization import compressed_ir
+
+        self._put_payload(key, compressed_ir(ir))
+
+    def _put_payload(self, key: str, payload: bytes) -> None:
+        assert self.conn is not None
+        page_size = self.conn.execute("PRAGMA page_size").fetchone()[0]
+        # A BLOB uses overflow pages with a four-byte next-page pointer. Its
+        # transaction journal is a separate file, so reserving twice the BLOB
+        # inside the database needlessly rejects graphs larger than half the
+        # configured cache. Leave additional room for the row and index pages.
+        payload_pages = (len(payload) + page_size - 5) // (page_size - 4)
+        reserve = payload_pages * page_size + 16_384
         if reserve + 32_768 > self.limit:
             return
         try:

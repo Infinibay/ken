@@ -1,0 +1,8 @@
+language "kql/2";
+module bugs.except;
+query except_calls_logger_exception {
+  node $catch { kind: "catch"; }
+  node $call { kind: "call"; }
+  node $method { kind: "identifier"; name: "exception"; }
+  select $catch;
+}

@@ -1,0 +1,31 @@
+{
+  "scope": "100000 existing Codex terms sampled from five ordinal ranges; 1MiB page cache; 10000 deterministic random exact lookups; hash collisions always checked against original text",
+  "terms": 100000,
+  "text_bytes": 7469939,
+  "runs": [
+    {
+      "hashed": false,
+      "write_seconds": 0.3688745840918273,
+      "lookup_seconds": 0.10985108418390155,
+      "bytes": 19492864
+    },
+    {
+      "hashed": true,
+      "write_seconds": 0.5407317921053618,
+      "lookup_seconds": 0.11592200002633035,
+      "bytes": 14422016
+    },
+    {
+      "hashed": true,
+      "write_seconds": 0.5388700829353184,
+      "lookup_seconds": 0.11280479212291539,
+      "bytes": 14422016
+    },
+    {
+      "hashed": false,
+      "write_seconds": 0.3715307910460979,
+      "lookup_seconds": 0.11281241616234183,
+      "bytes": 19492864
+    }
+  ]
+}

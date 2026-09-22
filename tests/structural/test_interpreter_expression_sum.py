@@ -141,8 +141,13 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    for relation in ['TRUTH_TEST', 'TYPE', 'ARGUMENT', 'LOADED_FROM']:
-        assert relation in row['query'], relation
+    # The legacy vocabulary named `TRUTH_TEST`, `TYPE`, `ARGUMENT` and `LOADED_FROM`;
+    # the KQL 2 rewrite states the same four claims with a branch test on the tag
+    # field, a self-typed operand field, the context argument both calls load and
+    # the sibling-operand clause that ties the two evaluations to one statement.
+    for spelling in ['if ($tested == _)', 'type: nominal($unit)',
+                     'argument $context at 0', 'call alongside']:
+        assert spelling in row['query'], spelling
 
 
 @pytest.mark.parametrize('language', LANGUAGES)

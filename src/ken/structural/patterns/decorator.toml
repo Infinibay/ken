@@ -4,15 +4,35 @@ name = "Decorator"
 category = "structural"
 description = "A wrapper delegates through the same contract it implements."
 caveat = "Same-contract delegation also occurs in Proxy; added responsibilities require review."
-legacy_query = "require $unit SUBTYPE_OF $contract\nrequire $unit HAS_FIELD $wrapped\nrequire $wrapped TYPE $contract\nrequire $unit HAS_METHOD $method\nrequire $method DELEGATES_TO $wrapped\n"
 query = '''
-query decorator {
- any { match "decorator#object-wrapper"(unit: $unit); }
- or { match "decorator#callable-wrapper"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.decorator;
+import ken.catalog.decorator.variants.callable_wrapper;
+import ken.catalog.decorator.variants.object_wrapper;
+import ken.catalog.decorator.variants.subclass_addition;
+import ken.catalog.decorator.variants.typed_delegator;
+import ken.catalog.decorator.variants.untyped_delegator;
+
+pattern detect(out Entity $unit) {
+  either {
+    use ken.catalog.decorator.variants.object_wrapper.detect(unit: $unit);
+  } or {
+    use ken.catalog.decorator.variants.callable_wrapper.detect(unit: $unit);
+  } or {
+    use ken.catalog.decorator.variants.typed_delegator.detect(unit: $unit);
+  } or {
+    use ken.catalog.decorator.variants.untyped_delegator.detect(unit: $unit);
+  } or {
+    use ken.catalog.decorator.variants.subclass_addition.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -26,21 +46,40 @@ fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query decorator {
+language "kql/2";
+module ken.catalog.decorator.variants.object_wrapper;
 
- require $unit SUBTYPE_OF $contract;
- require $unit HAS_FIELD $wrapped;
- require $wrapped TYPE $contract;
- require $unit HAS_METHOD $method;
- require $method OVERRIDES $slot;
- require $method HAS_CALL $forward;
- require $forward RECEIVER $wrapped;
- require $method HAS_CALL $extra;
- different $extra $forward;
- callable() as $method;
- call() as $forward;
- where $method.name == $forward.name;
- emit $unit;
+import ken.catalog.decorator.variants.typed_delegator;
+
+pattern detect(out TypeDecl $unit) {
+  either {
+    use ken.catalog.decorator.variants.typed_delegator.detect(unit: $unit);
+  } or {
+    type $contract { method $slot {} }
+    type $unit {
+      field $wrapped { type: nominal($contract); }
+      method $method { call $forward {} }
+    }
+    where subtype($unit, $contract);
+    where overrides($method, $slot);
+    where $forward.name == $slot.name;
+    either {
+      type $unit { method $method { body {
+        let $result = call $forward { receiver: $wrapped; };
+        return binary(left: $result, operator: _, right: _);
+      } } }
+    } or {
+      type $unit { method $method { body {
+        let $result = call $forward { receiver: $wrapped; };
+        return binary(left: _, operator: _, right: $result);
+      } } }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -51,26 +90,238 @@ requires = ["closure_capture", "argument_result_flow", "callable_contracts"]
 graph_requirements = ["Closure conserva callable envuelta; adapta efecto o resultado preservando contrato relevante."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
-query_claim = "La fabrica recibe un callable por parametro, devuelve un callable propio que lo captura, y ese wrapper invoca el capturado pasandole su propio argumento. La invocacion se acepta como llamada directa (CALLEE_VALUE) o como metodo sobre el callable (RECEIVER), que es la forma de una interfaz funcional en Java. No prueba que el comportamiento anadido sea alcanzable en ejecucion, ni la modificacion aritmetica del resultado sin segunda llamada, ni la transparencia del contrato de llamada."
+query_claim = "La fabrica devuelve un callable que captura su parametro e invoca ese callable con un argumento del wrapper. BODY exige una llamada o macro de salida adicional en la misma ruta, o una expresion binaria retornada que usa el resultado delegado. Java acredita el slot de una interfaz funcional, no cualquier metodo del receptor. No simplifica identidades aritmeticas ni prueba efectos observables de helpers; interfaces Java heredadas requieren ampliacion del modelo. Capturas y retornos de closures conservan su propietario lexical."
 query = '''
-query decorator {
- require $factory HAS_PARAMETER $inner;
- parameter(receiver: false) as $inner;
- require $factory RETURNS $wrapper;
- different $factory $wrapper;
- callable(constructor: false) as $wrapper;
- require $wrapper CAPTURES $inner;
- require $wrapper HAS_PARAMETER $value;
- parameter(receiver: false) as $value;
- require $wrapper HAS_CALL $delegation;
- any {
-  require $delegation CALLEE_VALUE $inner;
- } or {
-  require $delegation RECEIVER $inner;
- }
- require $delegation ARGUMENT $argument;
- require $argument VALUE $input;
- require $input LOADED_FROM $value;
- emit unit=$wrapper, $factory, $inner, $wrapper;
+language "kql/2";
+module ken.catalog.decorator.variants.callable_wrapper;
+
+pattern Invocation(in Callable $unit, in Parameter $inner, out Call $delegation) {
+  callable $unit { parameters { param $value {} } }
+  either {
+    callable $unit { body { call $inner { argument $value at any; } as $delegation; } }
+  } or {
+    callable $slot { functional: true; }
+    callable $unit { body {
+      call $slot { receiver: $inner; argument $value at any; } as $delegation;
+    } }
+  }
 }
+
+pattern detect(out Callable $unit, out Callable $factory, out Parameter $inner, out Callable $wrapper) {
+  callable $factory { parameters { param $inner {} } }
+  callable $unit { constructor: false; captures: $inner; }
+  callable $factory { body { return $unit; } }
+  where $factory != $unit;
+  use Invocation(unit: $unit, inner: $inner, delegation: $delegation);
+  either {
+    callable $unit { call $extra {} }
+    where $extra != $delegation;
+    either {
+      callable $unit { body { call $extra {}; call $delegation {}; } }
+    } or {
+      callable $unit { body { call $delegation {}; call $extra {}; } }
+    }
+  } or {
+    callable $unit { macro $log { name: /^(print|println|eprint|eprintln)$/; } }
+    either {
+      callable $unit { body { macro $log; call $delegation {}; } }
+    } or {
+      callable $unit { body { call $delegation {}; macro $log; } }
+    }
+  } or {
+    callable $unit { body {
+      let $result = call $delegation {};
+      return binary(left: $result, operator: _, right: _);
+    } }
+  } or {
+    callable $unit { body {
+      let $result = call $delegation {};
+      return binary(left: _, operator: _, right: $result);
+    } }
+  }
+  bind $wrapper = $unit;
+}
+
+query results {
+  use detect(unit: $unit, factory: $factory, inner: $inner, wrapper: $wrapper);
+  select $unit, $factory, $inner, $wrapper;
+}
+'''
+
+[[variants]]
+id = "typed-delegator"
+status = "ready"
+languages = ["python", "typescript", "java", "csharp", "cpp", "rust"]
+requires = ["contract_resolution", "delegation_correlation", "effect_flow"]
+graph_requirements = ["Un tipo retiene un campo declarado del contrato que implementa, su metodo sobrescrito reenvia a ese campo la operacion del mismo nombre y el metodo realiza ademas otra llamada alcanzable."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+query_claim = "Un wrapper implementa y sobrescribe un contrato, conserva un campo tipado por ese contrato e invoca su operación homónima. BODY acredita una llamada adicional antes o después de esa delegación en una misma ruta del CFG. El contraste usa identidades de ocurrencia, por lo que otra llamada homónima no se excluye arbitrariamente. No acredita efectos observables de un helper puro ni factibilidad runtime; Proxy puede compartir este comportamiento. No exige resultado idéntico: result_forwarding expresa ese refinamiento."
+query = '''
+language "kql/2";
+module ken.catalog.decorator.variants.typed_delegator;
+import ken.core;
+
+pattern detect(out TypeDecl $unit, out TypeDecl $contract) {
+  type $contract { method $slot {} }
+  type $unit {
+    field $wrapped { type: nominal($contract); }
+    method $method {
+      call $dispatch {}
+      call $extra {}
+    }
+  }
+  where subtype($unit, $contract);
+  where overrides($method, $slot);
+  where $dispatch.name == $slot.name;
+  where $dispatch != $extra;
+  either {
+    type $unit { method $method { body {
+      call $extra {};
+      call $dispatch { receiver: $wrapped; };
+    } } }
+  } or {
+    type $unit { method $method { body {
+      call $dispatch { receiver: $wrapped; };
+      call $extra {};
+    } } }
+  }
+}
+query results { use detect(unit: $unit, contract: $contract); select $unit; }
+'''
+
+[[variants]]
+id = "untyped-delegator"
+status = "ready"
+languages = ["python", "javascript", "ruby"]
+requires = ["contract_resolution", "delegation_correlation", "effect_flow"]
+graph_requirements = ["Sin anotacion en el campo: el tipo hereda del contrato, el campo se recibe por parametro, el metodo sobrescrito reenvia la operacion homonima y ademas hay otra llamada alcanzable."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+query_claim = "El tipo hereda el contrato y retiene en un campo un parametro sin reasignaciones explicitas. BODY linear y gap hasta salida prueban que esa asignacion permanece al completar normalmente el configurador; no prueban efectos de heap o descriptores. El metodo sobrescribe el slot y en una ruta delega su operacion homonima sobre el campo y realiza otra llamada. Sin anotacion no prueba el contrato runtime del objeto suministrado; Proxy sigue siendo ambiguo."
+query = '''
+language "kql/2";
+module ken.catalog.decorator.variants.untyped_delegator;
+
+pattern detect(out TypeDecl $unit, out TypeDecl $contract) {
+  type $contract { method $slot {} }
+  type $unit {
+    field $place {}
+    method $configure {
+      param $supplied { reassigned: false; }
+      body linear {
+        $place = $supplied;
+        gap until exit { forbid assign(binding($place)); }
+      }
+    }
+    method $method { call $forward {} call $extra {} }
+  }
+  where subtype($unit, $contract);
+  where overrides($method, $slot);
+  where $forward.name == $slot.name;
+  where $forward != $extra;
+  where $configure != $method;
+  either {
+    type $unit { method $method { body {
+      call $extra {}; call $forward { receiver: $place; };
+    } } }
+  } or {
+    type $unit { method $method { body {
+      call $forward { receiver: $place; }; call $extra {};
+    } } }
+  }
+}
+
+query results {
+  use detect(unit: $unit, contract: $contract);
+  select $unit;
+}
+'''
+
+[[variants]]
+id = "subclass-addition"
+status = "ready"
+languages = ["python", "typescript", "csharp", "java"]
+requires = ["contract_resolution", "delegation_correlation", "effect_flow"]
+graph_requirements = ["Un decorador abstracto retiene el contrato y delega; una subclase suya vuelve a declarar ese metodo y anade trabajo observable, delegando ella misma o invocando la implementacion heredada."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+query_claim = "El tipo retiene un campo del contrato y sobrescribe su slot. Una subclase sobrescribe ese metodo, realiza una llamada adicional y o invoca realmente la implementacion base que delega, o delega ella misma sobre el campo heredado acreditado por identidad. Super/base se resuelve por la cadena nominal unica; no se adivina MRO multiple, overloads o shadowing Python. BODY vincula responsabilidad y reenvio en la misma ruta, sin afirmar efectos observables ni distinguir Proxy."
+query = '''
+language "kql/2";
+module ken.catalog.decorator.variants.subclass_addition;
+
+pattern detect(out TypeDecl $unit, out TypeDecl $contract, out TypeDecl $concrete) {
+  type $contract { method $slot {} }
+  type $unit {
+    field $place { type: nominal($contract); }
+    method $method { call $delegate {} }
+  }
+  type $concrete { method $addition { call $forward {} call $extra {} } }
+  where subtype($concrete, $unit);
+  where overrides($addition, $method);
+  where overrides($method, $slot);
+  where $forward != $extra;
+  either {
+    where $delegate.name == $slot.name;
+    type $unit { method $method { body { call $delegate { receiver: $place; }; } } }
+    type $concrete { method $addition { call $forward { target: $method; } } }
+    either {
+      type $concrete { method $addition { body { call $extra {}; call $forward {}; } } }
+    } or {
+      type $concrete { method $addition { body { call $forward {}; call $extra {}; } } }
+    }
+  } or {
+    type $concrete { field $inherited { effective: true; declaration: $place; type: nominal($contract); } }
+    where $forward.name == $slot.name;
+    either {
+      type $concrete { method $addition { body { call $extra {}; call $forward { receiver: $inherited; }; } } }
+    } or {
+      type $concrete { method $addition { body { call $forward { receiver: $inherited; }; call $extra {}; } } }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit, contract: $contract, concrete: $concrete);
+  select $unit;
+}
+'''
+
+[[operations]]
+id = "result_forwarding"
+status = "ready"
+description = "An object wrapper adds an executed call and forwards its wrapped operation result."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch."
+query = '''
+language "kql/2";
+module ken.catalog.decorator.result_forwarding;
+import ken.core;
+
+pattern detect(out TypeDecl $unit, out TypeDecl $contract) {
+  type $contract { method $slot {} }
+  type $unit {
+    field $wrapped { type: nominal($contract); }
+    method $method {
+      call $dispatch {}
+      call $extra {}
+    }
+  }
+  where subtype($unit, $contract);
+  where overrides($method, $slot);
+  where $dispatch.name == $slot.name;
+  where $dispatch != $extra;
+  either {
+    type $unit { method $method { body {
+      call $extra {};
+      let $result = call $dispatch { receiver: $wrapped; }; return $result;
+    } } }
+  } or {
+    type $unit { method $method { body {
+      let $result = call $dispatch { receiver: $wrapped; };
+      call $extra {}; return $result;
+    } } }
+  }
+}
+query results { use detect(unit: $unit, contract: $contract); select $unit; }
 '''

@@ -1,0 +1,6 @@
+language "kql/2";
+module bugs.hazards;
+query mutable_defaults {
+  edge HAS_HAZARD($site, "mutable-default-argument");
+  select $site;
+}

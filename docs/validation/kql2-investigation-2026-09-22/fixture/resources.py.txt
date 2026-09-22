@@ -1,0 +1,36 @@
+created = []
+class Resource:
+    def __init__(self): self.closed = False
+    def close(self): self.closed = True
+
+def _conn():
+    resource = Resource()
+    created.append(resource)
+    return resource
+
+def consume(resource):
+    resource.close()
+
+def leak():
+    connection = _conn()
+
+def direct_close():
+    connection = _conn()
+    connection.close()
+
+def alias_close():
+    connection = _conn()
+    alias = connection
+    connection = None
+    alias.close()
+
+def wrong_close():
+    first = _conn()
+    second = _conn()
+    second.close()
+
+def transferred():
+    return _conn()
+
+def delegated():
+    consume(_conn())

@@ -1,0 +1,76 @@
+{
+  "language": "kql/2",
+  "capability": "syntax-exploration/1",
+  "query": "while_true",
+  "columns": [
+    "column_1",
+    "column_2"
+  ],
+  "coverage_complete": true,
+  "rows": [
+    [
+      "sample.py",
+      12
+    ]
+  ],
+  "complete": true,
+  "reason": null,
+  "unknown_candidates": 0,
+  "results_truncated": false,
+  "plan": [
+    [
+      {
+        "operator": "explore",
+        "role": "loop",
+        "selector": "node",
+        "owner": null,
+        "seed": {
+          "kind": "while"
+        }
+      },
+      {
+        "operator": "explore",
+        "role": "condition",
+        "selector": "node",
+        "owner": "loop",
+        "seed": {
+          "role": "condition",
+          "kind": "literal",
+          "text": "True"
+        }
+      }
+    ]
+  ],
+  "optional_evidence": [],
+  "analysis": {
+    "backend": "flatbuffers_exploration",
+    "semantic_resolution": "not_requested",
+    "manifest": [
+      [
+        "sample.py",
+        "11a844b20233e434bc12ee8c34f2a4ec690d6db9ec30356dd3562fbad6fe0ebe"
+      ]
+    ],
+    "skipped": [],
+    "parsed_units": 0,
+    "reused_units": 1,
+    "result_cache": "disabled",
+    "ephemeral": false,
+    "retention_budget_bytes": 500000000,
+    "evicted_units": 0,
+    "allocated_bytes": 32768,
+    "compile_ms": 1.0504999663680792,
+    "build_ms": 5.332208005711436,
+    "phase_ms": {
+      "read_ms": 0.03824988380074501,
+      "parse_ms": 0.0,
+      "projection_ms": 0.0,
+      "persist_ms": 0.0
+    },
+    "states": 15,
+    "scanned_nodes": 3,
+    "query_ms": 0.5454998463392258,
+    "total_ms": 178.80854196846485,
+    "timeout_ms": 10000
+  }
+}

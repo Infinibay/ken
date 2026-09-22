@@ -25,9 +25,24 @@ def call_bindings(graph: IR) -> None:
         methods[f.subject].append(f.object)
         if graph.entities[f.object].attrs.get('constructor'):
             constructors[f.subject].append(f.object)
+    unsupported_signatures = {o.owner for o in graph.operations
+                              if any(t in {'ref', 'out', 'params'} for t in o.attrs.get('tokens', []))}
     for f in index.rows('ALLOCATES_TYPE'):
         unit = graph.entities[f.object]
         candidates = constructors[f.object]
+        basis = 'unique-declaration'
+        if (len(candidates) > 1 and unit.attrs.get('language') in {'java', 'csharp'}
+                and not set(candidates) & unsupported_signatures
+                and all(a.attrs.get('kind') == 'positional' for a in arguments[f.subject])
+                and all(p.attrs.get('kind') == 'positional' and not p.attrs.get('default')
+                        for constructor in candidates for p in params[constructor])):
+            # Fixed arity can reject impossible overloads without choosing by
+            # type. Optional/variadic/named signatures remain conservative.
+            compatible = [constructor for constructor in candidates
+                          if len(params[constructor]) == len(arguments[f.subject])]
+            if len(compatible) == 1:
+                candidates = compatible
+                basis = 'unique-fixed-arity'
         if unit.attrs.get('language') not in {'python', 'javascript', 'typescript', 'java', 'csharp'}:
             graph.add(f.subject, 'CONSTRUCTOR_STATUS', 'unsupported', *f.evidence[:1], reason='language')
             continue
@@ -35,16 +50,14 @@ def call_bindings(graph: IR) -> None:
             graph.add(f.subject, 'CONSTRUCTOR_STATUS', 'unsupported', *f.evidence[:1], reason='custom-allocation')
             continue
         if len(candidates) == 1:
-            graph.add(f.subject, 'CONSTRUCTOR_TARGET', candidates[0], *f.evidence[:1], basis='unique-declaration')
-            graph.add(f.subject, 'CONSTRUCTOR_STATUS', 'resolved', *f.evidence[:1], basis='unique-declaration')
+            graph.add(f.subject, 'CONSTRUCTOR_TARGET', candidates[0], *f.evidence[:1], basis=basis)
+            graph.add(f.subject, 'CONSTRUCTOR_STATUS', 'resolved', *f.evidence[:1], basis=basis)
             targets[f.subject] = {candidates[0]}
         else:
             for candidate in candidates:
                 graph.add(f.subject, 'MAY_CONSTRUCTOR_TARGET', candidate, *f.evidence[:1], modality='may')
             graph.add(f.subject, 'CONSTRUCTOR_STATUS', 'unsupported', *f.evidence[:1],
                       reason='ambiguous' if candidates else 'implicit-or-inherited')
-    unsupported_signatures = {o.owner for o in graph.operations
-                              if any(t in {'ref', 'out', 'params'} for t in o.attrs.get('tokens', []))}
     for call, call_targets in targets.items():
         if len(call_targets) != 1:
             continue

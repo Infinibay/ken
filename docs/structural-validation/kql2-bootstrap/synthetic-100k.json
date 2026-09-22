@@ -1,0 +1,136 @@
+{
+  "python": "3.12.9 (main, Mar 17 2025, 21:36:21) [Clang 20.1.0 ]",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "ir": "1.77.0",
+  "query": "language \"kql/2\"; module bench; query q { class $c { name: \"Target\"; } select $c; }",
+  "nodes": 100000,
+  "repeats": 7,
+  "build_ms": 1095.7869170233607,
+  "store_bytes": 12722176,
+  "reopen_and_query_ms": 2.223541960120201,
+  "reopened_scanned_nodes": 1,
+  "runs": {
+    "indexed": {
+      "samples": [
+        {
+          "ms": 0.21454086527228355,
+          "scanned_nodes": 1,
+          "states": 4
+        },
+        {
+          "ms": 0.06095808930695057,
+          "scanned_nodes": 1,
+          "states": 4
+        },
+        {
+          "ms": 0.04212488420307636,
+          "scanned_nodes": 1,
+          "states": 4
+        },
+        {
+          "ms": 0.03474997356534004,
+          "scanned_nodes": 1,
+          "states": 4
+        },
+        {
+          "ms": 0.034084077924489975,
+          "scanned_nodes": 1,
+          "states": 4
+        },
+        {
+          "ms": 0.03224983811378479,
+          "scanned_nodes": 1,
+          "states": 4
+        },
+        {
+          "ms": 0.029499875381588936,
+          "scanned_nodes": 1,
+          "states": 4
+        }
+      ],
+      "median_ms": 0.03474997356534004
+    },
+    "reference": {
+      "samples": [
+        {
+          "ms": 239.5147499628365,
+          "scanned_nodes": 100000,
+          "states": 4
+        },
+        {
+          "ms": 236.74295796081424,
+          "scanned_nodes": 100000,
+          "states": 4
+        },
+        {
+          "ms": 238.82212513126433,
+          "scanned_nodes": 100000,
+          "states": 4
+        },
+        {
+          "ms": 239.48320909403265,
+          "scanned_nodes": 100000,
+          "states": 4
+        },
+        {
+          "ms": 237.90245805867016,
+          "scanned_nodes": 100000,
+          "states": 4
+        },
+        {
+          "ms": 237.64020903035998,
+          "scanned_nodes": 100000,
+          "states": 4
+        },
+        {
+          "ms": 236.86266620643437,
+          "scanned_nodes": 100000,
+          "states": 4
+        }
+      ],
+      "median_ms": 237.90245805867016
+    }
+  },
+  "sqlite_plan": [
+    [
+      5,
+      0,
+      61,
+      "SEARCH n USING INDEX k2_nodes_kind_name (kind=? AND name=?)"
+    ],
+    [
+      14,
+      0,
+      45,
+      "SEARCH u USING INTEGER PRIMARY KEY (rowid=?)"
+    ],
+    [
+      20,
+      0,
+      44,
+      "SEARCH m USING COVERING INDEX sqlite_autoindex_k2_snapshot_units_2 (snapshot_id=? AND unit_id=?)"
+    ]
+  ],
+  "implementation_hashes": {
+    "src/ken/kql2/__init__.py": "c01cb0f963ed08bf6261a5a8a1a4355b49ccdec215cc0558ef1947008e41862c",
+    "src/ken/kql2/__main__.py": "9329f34fdf4ffc68280001e9fcb18b675f95317f804aab6f45dcf8cd9ff00507",
+    "src/ken/kql2/compiler.py": "befffdbaf350353ae47cc354756c4bf15ef721af4fb1c293dab6a7482cfb2804",
+    "src/ken/kql2/execution.py": "79d80878c15207463ff1976165bcbb692fa02c41d34e81e8236ff23909595a74",
+    "src/ken/kql2/service.py": "4338d9b06ceef5d42c47b924de02be485dce19092f7b34f7b3e8cc4adafb969f",
+    "src/ken/kql2/syntax/__init__.py": "9b1f40badd3df2abd477d22ab6d8483a4b3e371815718f4c18e8a7853747a25a",
+    "src/ken/kql2/syntax/ast.py": "7b7ed8f9ad99e07d8087227fc88ca9fea1d73b02b0363fa34fc571e7053cab4b",
+    "src/ken/kql2/syntax/lexer.py": "ee4a836cf2d758eaecc06c01372f5825efcfd04651236574ad3962cce4195032",
+    "src/ken/kql2/syntax/parser.py": "6f49fe1def46c14b8165d71066f03d3f2abb01bc4b085ffb633ae3bee1d101d5",
+    "src/ken/structural_store/__init__.py": "51f595b5f1934e5878facf7216b148aaf86c500afdcede80d9f24c3bd3f96bfc",
+    "src/ken/structural_store/migrations.py": "e04b1d4190c7b9a2e6cc3edba43bb5cdd65ed6ee0857690b8668f5771bc9e45e",
+    "src/ken/structural_store/schema.py": "e51abeab2619839f7e87a675254d431da350dae4138b21cebcaea8c4924f8972",
+    "src/ken/structural_store/store.py": "6a6982df543268c8bca8d18588f39a461a82e8eb9674b9b6fe4c96b7b9400eca"
+  },
+  "limitations": [
+    "Synthetic selective query, not the full catalogue",
+    "Reference scans same typed store; not KQL1",
+    "Reopen retains OS page cache",
+    "No result memoization; warm times execute joins",
+    "No p95 claim from seven samples"
+  ]
+}

@@ -1,0 +1,977 @@
+{
+  "schema": "ken-xfail-review/1",
+  "baseline_count": 111,
+  "cases": [
+    {
+      "name": "tests.structural.test_algorithm_abstract_factory::test_requested_uniform_family_refinement_rejects_mixed_provider[python]",
+      "reason": "Uniform-family refinement needs explicit product-family compatibility evidence",
+      "status": "pending",
+      "test_file": "tests/structural/test_algorithm_abstract_factory.py",
+      "issue": "missing-family-evidence",
+      "resolution": "The source gives product categories but no compatibility relation between category instances. Class-name prefixes are not a sound family oracle. Add explicit family metadata/constraints and a separately selectable uniform-family contract, including unknown/conflicting annotations."
+    },
+    {
+      "name": "tests.structural.test_algorithm_abstract_factory::test_requested_uniform_family_refinement_rejects_mixed_provider[java]",
+      "reason": "Uniform-family refinement needs explicit product-family compatibility evidence",
+      "status": "pending",
+      "test_file": "tests/structural/test_algorithm_abstract_factory.py",
+      "issue": "missing-family-evidence",
+      "resolution": "The source gives product categories but no compatibility relation between category instances. Class-name prefixes are not a sound family oracle. Add explicit family metadata/constraints and a separately selectable uniform-family contract, including unknown/conflicting annotations."
+    },
+    {
+      "name": "tests.structural.test_algorithm_abstract_factory::test_requested_uniform_family_refinement_rejects_mixed_provider[typescript]",
+      "reason": "Uniform-family refinement needs explicit product-family compatibility evidence",
+      "status": "pending",
+      "test_file": "tests/structural/test_algorithm_abstract_factory.py",
+      "issue": "missing-family-evidence",
+      "resolution": "The source gives product categories but no compatibility relation between category instances. Class-name prefixes are not a sound family oracle. Add explicit family metadata/constraints and a separately selectable uniform-family contract, including unknown/conflicting annotations."
+    },
+    {
+      "name": "tests.structural.test_algorithm_adapter::test_input_conversion_contract_rejects_discarded_input[python]",
+      "reason": "Broad object Adapter query does not implement input-transformation provenance",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_adapter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "adapter.input_conversion",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_adapter::test_input_conversion_contract_rejects_discarded_input[java]",
+      "reason": "Broad object Adapter query does not implement input-transformation provenance",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_adapter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "adapter.input_conversion",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_adapter::test_input_conversion_contract_rejects_discarded_input[typescript]",
+      "reason": "Broad object Adapter query does not implement input-transformation provenance",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_adapter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "adapter.input_conversion",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_adapter::test_output_conversion_contract_rejects_discarded_result[python]",
+      "reason": "Broad object Adapter query does not implement output-transformation provenance",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_adapter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "adapter.output_conversion",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_adapter::test_output_conversion_contract_rejects_discarded_result[java]",
+      "reason": "Broad object Adapter query does not implement output-transformation provenance",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_adapter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "adapter.output_conversion",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_adapter::test_output_conversion_contract_rejects_discarded_result[typescript]",
+      "reason": "Broad object Adapter query does not implement output-transformation provenance",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_adapter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "adapter.output_conversion",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_adapter::test_conversion_does_not_require_renaming_operation[python]",
+      "reason": "Same-name adaptation of arguments/results is excluded by object-adapter name inequality",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_adapter.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Adapter: same-name slots require actual input/output conversion instead of a mandatory rename."
+    },
+    {
+      "name": "tests.structural.test_algorithm_adapter::test_conversion_does_not_require_renaming_operation[java]",
+      "reason": "Same-name adaptation of arguments/results is excluded by object-adapter name inequality",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_adapter.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Adapter: same-name slots require actual input/output conversion instead of a mandatory rename."
+    },
+    {
+      "name": "tests.structural.test_algorithm_adapter::test_conversion_does_not_require_renaming_operation[typescript]",
+      "reason": "Same-name adaptation of arguments/results is excluded by object-adapter name inequality",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_adapter.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Adapter: same-name slots require actual input/output conversion instead of a mandatory rename."
+    },
+    {
+      "name": "tests.structural.test_algorithm_bridge::test_requested_injected_backend_contract_rejects_ignored_selection[python]",
+      "reason": "Injected-backend refinement does not correlate constructor input with stored implementation",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_bridge.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "bridge.injected_returned_primitive",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_bridge::test_requested_injected_backend_contract_rejects_ignored_selection[java]",
+      "reason": "Injected-backend refinement does not correlate constructor input with stored implementation",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_bridge.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "bridge.injected_returned_primitive",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_bridge::test_requested_injected_backend_contract_rejects_ignored_selection[typescript]",
+      "reason": "Injected-backend refinement does not correlate constructor input with stored implementation",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_bridge.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "bridge.injected_returned_primitive",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_builder::test_director_rebinding_does_not_mix_build_lifetimes[python]",
+      "reason": "Director receiver equality does not invalidate reassigned bindings",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_builder.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Builder: construction steps and finalization must use the same explicit receiver binding version."
+    },
+    {
+      "name": "tests.structural.test_algorithm_builder::test_director_rebinding_does_not_mix_build_lifetimes[java]",
+      "reason": "Director receiver equality does not invalidate reassigned bindings",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_builder.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Builder: construction steps and finalization must use the same explicit receiver binding version."
+    },
+    {
+      "name": "tests.structural.test_algorithm_builder::test_director_rebinding_does_not_mix_build_lifetimes[typescript]",
+      "reason": "Director receiver equality does not invalidate reassigned bindings",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_builder.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Builder: construction steps and finalization must use the same explicit receiver binding version."
+    },
+    {
+      "name": "tests.structural.test_algorithm_chain_of_responsibility::test_desired_exclusive_handler_contract_preserves_request_and_result[wrong-request-python]",
+      "reason": "Stronger same-request/result-preserving/exclusive-handler contracts are not established by conditional delegation; algorithms/chain-of-responsibility.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_chain_of_responsibility.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "chain-of-responsibility.single_exclusive_handler",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_chain_of_responsibility::test_desired_exclusive_handler_contract_preserves_request_and_result[wrong-request-java]",
+      "reason": "Stronger same-request/result-preserving/exclusive-handler contracts are not established by conditional delegation; algorithms/chain-of-responsibility.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_chain_of_responsibility.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "chain-of-responsibility.single_exclusive_handler",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_chain_of_responsibility::test_desired_exclusive_handler_contract_preserves_request_and_result[wrong-request-typescript]",
+      "reason": "Stronger same-request/result-preserving/exclusive-handler contracts are not established by conditional delegation; algorithms/chain-of-responsibility.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_chain_of_responsibility.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "chain-of-responsibility.single_exclusive_handler",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_chain_of_responsibility::test_desired_exclusive_handler_contract_preserves_request_and_result[discard-result-python]",
+      "reason": "Stronger same-request/result-preserving/exclusive-handler contracts are not established by conditional delegation; algorithms/chain-of-responsibility.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_chain_of_responsibility.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "chain-of-responsibility.single_exclusive_handler",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_chain_of_responsibility::test_desired_exclusive_handler_contract_preserves_request_and_result[discard-result-java]",
+      "reason": "Stronger same-request/result-preserving/exclusive-handler contracts are not established by conditional delegation; algorithms/chain-of-responsibility.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_chain_of_responsibility.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "chain-of-responsibility.single_exclusive_handler",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_chain_of_responsibility::test_desired_exclusive_handler_contract_preserves_request_and_result[discard-result-typescript]",
+      "reason": "Stronger same-request/result-preserving/exclusive-handler contracts are not established by conditional delegation; algorithms/chain-of-responsibility.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_chain_of_responsibility.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "chain-of-responsibility.single_exclusive_handler",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_chain_of_responsibility::test_desired_exclusive_handler_contract_preserves_request_and_result[process-and-forward-python]",
+      "reason": "Stronger same-request/result-preserving/exclusive-handler contracts are not established by conditional delegation; algorithms/chain-of-responsibility.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_chain_of_responsibility.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "chain-of-responsibility.single_exclusive_handler",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_chain_of_responsibility::test_desired_exclusive_handler_contract_preserves_request_and_result[process-and-forward-java]",
+      "reason": "Stronger same-request/result-preserving/exclusive-handler contracts are not established by conditional delegation; algorithms/chain-of-responsibility.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_chain_of_responsibility.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "chain-of-responsibility.single_exclusive_handler",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_chain_of_responsibility::test_desired_exclusive_handler_contract_preserves_request_and_result[process-and-forward-typescript]",
+      "reason": "Stronger same-request/result-preserving/exclusive-handler contracts are not established by conditional delegation; algorithms/chain-of-responsibility.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_chain_of_responsibility.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "chain-of-responsibility.single_exclusive_handler",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_command::test_received_command_identity_contract_rejects_dispatch_after_clear[python]",
+      "reason": "Retained-contract signature does not prove field identity at runtime dispatch",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_command.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Command: require the original retained receiver at dispatch."
+    },
+    {
+      "name": "tests.structural.test_algorithm_command::test_received_command_identity_contract_rejects_dispatch_after_clear[typescript]",
+      "reason": "Retained-contract signature does not prove field identity at runtime dispatch",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_command.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Command: require the original retained receiver at dispatch."
+    },
+    {
+      "name": "tests.structural.test_algorithm_command::test_received_command_identity_contract_rejects_dispatch_after_clear[java]",
+      "reason": "Retained-contract signature does not prove field identity at runtime dispatch",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_command.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Command: require the original retained receiver at dispatch."
+    },
+    {
+      "name": "tests.structural.test_algorithm_command::test_received_command_identity_contract_rejects_dispatch_after_clear[csharp]",
+      "reason": "Retained-contract signature does not prove field identity at runtime dispatch",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_command.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Command: require the original retained receiver at dispatch."
+    },
+    {
+      "name": "tests.structural.test_algorithm_command::test_received_command_identity_contract_rejects_dispatch_after_clear[cpp]",
+      "reason": "Retained-contract signature does not prove field identity at runtime dispatch",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_command.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Command: require the original retained receiver at dispatch."
+    },
+    {
+      "name": "tests.structural.test_algorithm_command::test_execution_context_is_a_valid_command_parameter[python]",
+      "reason": "Command actions with explicit execution context are excluded by zero-arity variants",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_command.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Command: match explicit argument count to action slot arity instead of hard-coding zero."
+    },
+    {
+      "name": "tests.structural.test_algorithm_command::test_execution_context_is_a_valid_command_parameter[typescript]",
+      "reason": "Command actions with explicit execution context are excluded by zero-arity variants",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_command.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Command: match explicit argument count to action slot arity instead of hard-coding zero."
+    },
+    {
+      "name": "tests.structural.test_algorithm_command::test_execution_context_is_a_valid_command_parameter[java]",
+      "reason": "Command actions with explicit execution context are excluded by zero-arity variants",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_command.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Command: match explicit argument count to action slot arity instead of hard-coding zero."
+    },
+    {
+      "name": "tests.structural.test_algorithm_command::test_execution_context_is_a_valid_command_parameter[csharp]",
+      "reason": "Command actions with explicit execution context are excluded by zero-arity variants",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_command.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Command: match explicit argument count to action slot arity instead of hard-coding zero."
+    },
+    {
+      "name": "tests.structural.test_algorithm_command::test_execution_context_is_a_valid_command_parameter[cpp]",
+      "reason": "Command actions with explicit execution context are excluded by zero-arity variants",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_command.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Command: match explicit argument count to action slot arity instead of hard-coding zero."
+    },
+    {
+      "name": "tests.structural.test_algorithm_command::test_captured_payload_contract_rejects_discarded_data[python]",
+      "reason": "Command signature does not correlate constructor-captured payload with work arguments",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_command.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "command.captured_payload",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_command::test_captured_payload_contract_rejects_discarded_data[java]",
+      "reason": "Command signature does not correlate constructor-captured payload with work arguments",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_command.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "command.captured_payload",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_command::test_captured_payload_contract_rejects_discarded_data[typescript]",
+      "reason": "Command signature does not correlate constructor-captured payload with work arguments",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_command.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "command.captured_payload",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_composite::test_requested_aggregate_contract_rejects_broken_value_flow[discard-result-python]",
+      "reason": "Composite signature does not enforce aggregation or argument propagation",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_composite.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "composite.additive_aggregate",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_composite::test_requested_aggregate_contract_rejects_broken_value_flow[discard-result-java]",
+      "reason": "Composite signature does not enforce aggregation or argument propagation",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_composite.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "composite.additive_aggregate",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_composite::test_requested_aggregate_contract_rejects_broken_value_flow[discard-result-typescript]",
+      "reason": "Composite signature does not enforce aggregation or argument propagation",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_composite.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "composite.additive_aggregate",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_composite::test_requested_aggregate_contract_rejects_broken_value_flow[replace-context-python]",
+      "reason": "Composite signature does not enforce aggregation or argument propagation",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_composite.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "composite.additive_aggregate",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_composite::test_requested_aggregate_contract_rejects_broken_value_flow[replace-context-java]",
+      "reason": "Composite signature does not enforce aggregation or argument propagation",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_composite.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "composite.additive_aggregate",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_composite::test_requested_aggregate_contract_rejects_broken_value_flow[replace-context-typescript]",
+      "reason": "Composite signature does not enforce aggregation or argument propagation",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_composite.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "composite.additive_aggregate",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_composite::test_rebound_child_is_not_the_iterated_element[python]",
+      "reason": "ITERATED_CALL does not invalidate element provenance after child rebinding",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_composite.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Composite: reject a child receiver explicitly replaced before its recursive call."
+    },
+    {
+      "name": "tests.structural.test_algorithm_composite::test_rebound_child_is_not_the_iterated_element[java]",
+      "reason": "ITERATED_CALL does not invalidate element provenance after child rebinding",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_composite.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Composite: reject a child receiver explicitly replaced before its recursive call."
+    },
+    {
+      "name": "tests.structural.test_algorithm_composite::test_rebound_child_is_not_the_iterated_element[typescript]",
+      "reason": "ITERATED_CALL does not invalidate element provenance after child rebinding",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_composite.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Composite: reject a child receiver explicitly replaced before its recursive call."
+    },
+    {
+      "name": "tests.structural.test_algorithm_decorator::test_transparent_tracing_variant_rejects_discarded_result[python]",
+      "reason": "Result-transparency is a stronger optional contract than broad Decorator",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_decorator.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "decorator.result_forwarding",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_decorator::test_transparent_tracing_variant_rejects_discarded_result[java]",
+      "reason": "Result-transparency is a stronger optional contract than broad Decorator",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_decorator.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "decorator.result_forwarding",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_decorator::test_transparent_tracing_variant_rejects_discarded_result[typescript]",
+      "reason": "Result-transparency is a stronger optional contract than broad Decorator",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_decorator.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "decorator.result_forwarding",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_flyweight::test_desired_stable_intrinsic_state_rejects_extrinsic_overwrite[python]",
+      "reason": "Stronger stable-intrinsic-state contract: draw stores per-call position into shared font; generic pooling query does not inspect use",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_flyweight.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "flyweight.stable_intrinsic",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_flyweight::test_desired_stable_intrinsic_state_rejects_extrinsic_overwrite[java]",
+      "reason": "Stronger stable-intrinsic-state contract: draw stores per-call position into shared font; generic pooling query does not inspect use",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_flyweight.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "flyweight.stable_intrinsic",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_flyweight::test_desired_stable_intrinsic_state_rejects_extrinsic_overwrite[typescript]",
+      "reason": "Stronger stable-intrinsic-state contract: draw stores per-call position into shared font; generic pooling query does not inspect use",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_flyweight.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "flyweight.stable_intrinsic",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_interpreter::test_desired_pure_binary_contract_requires_all_contexts_and_result_consumption[right-context-python]",
+      "reason": "Interpreter signature does not prove every operand context or combine/result consumption; see algorithms/interpreter.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_interpreter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "interpreter.binary_result",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_interpreter::test_desired_pure_binary_contract_requires_all_contexts_and_result_consumption[right-context-java]",
+      "reason": "Interpreter signature does not prove every operand context or combine/result consumption; see algorithms/interpreter.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_interpreter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "interpreter.binary_result",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_interpreter::test_desired_pure_binary_contract_requires_all_contexts_and_result_consumption[right-context-typescript]",
+      "reason": "Interpreter signature does not prove every operand context or combine/result consumption; see algorithms/interpreter.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_interpreter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "interpreter.binary_result",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_interpreter::test_desired_pure_binary_contract_requires_all_contexts_and_result_consumption[discard-left-python]",
+      "reason": "Interpreter signature does not prove every operand context or combine/result consumption; see algorithms/interpreter.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_interpreter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "interpreter.binary_result",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_interpreter::test_desired_pure_binary_contract_requires_all_contexts_and_result_consumption[discard-left-java]",
+      "reason": "Interpreter signature does not prove every operand context or combine/result consumption; see algorithms/interpreter.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_interpreter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "interpreter.binary_result",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_interpreter::test_desired_pure_binary_contract_requires_all_contexts_and_result_consumption[discard-left-typescript]",
+      "reason": "Interpreter signature does not prove every operand context or combine/result consumption; see algorithms/interpreter.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_interpreter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "interpreter.binary_result",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_interpreter::test_desired_pure_binary_contract_requires_all_contexts_and_result_consumption[discard-both-python]",
+      "reason": "Interpreter signature does not prove every operand context or combine/result consumption; see algorithms/interpreter.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_interpreter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "interpreter.binary_result",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_interpreter::test_desired_pure_binary_contract_requires_all_contexts_and_result_consumption[discard-both-java]",
+      "reason": "Interpreter signature does not prove every operand context or combine/result consumption; see algorithms/interpreter.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_interpreter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "interpreter.binary_result",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_interpreter::test_desired_pure_binary_contract_requires_all_contexts_and_result_consumption[discard-both-typescript]",
+      "reason": "Interpreter signature does not prove every operand context or combine/result consumption; see algorithms/interpreter.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_interpreter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "interpreter.binary_result",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_interpreter::test_desired_pure_binary_contract_requires_all_contexts_and_result_consumption[overwrite-result-python]",
+      "reason": "Interpreter signature does not prove every operand context or combine/result consumption; see algorithms/interpreter.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_interpreter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "interpreter.binary_result",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_interpreter::test_desired_pure_binary_contract_requires_all_contexts_and_result_consumption[overwrite-result-java]",
+      "reason": "Interpreter signature does not prove every operand context or combine/result consumption; see algorithms/interpreter.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_interpreter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "interpreter.binary_result",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_interpreter::test_desired_pure_binary_contract_requires_all_contexts_and_result_consumption[overwrite-result-typescript]",
+      "reason": "Interpreter signature does not prove every operand context or combine/result consumption; see algorithms/interpreter.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_interpreter.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "interpreter.binary_result",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_iterator::test_requested_finite_sequence_contract_rejects_broken_traversal[no-progress-python]",
+      "reason": "Finite-sequence refinement does not prove numeric progress or returned element provenance",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_iterator.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "iterator.advancing_element",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_iterator::test_requested_finite_sequence_contract_rejects_broken_traversal[no-progress-java]",
+      "reason": "Finite-sequence refinement does not prove numeric progress or returned element provenance",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_iterator.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "iterator.advancing_element",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_iterator::test_requested_finite_sequence_contract_rejects_broken_traversal[no-progress-typescript]",
+      "reason": "Finite-sequence refinement does not prove numeric progress or returned element provenance",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_iterator.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "iterator.advancing_element",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_iterator::test_requested_finite_sequence_contract_rejects_broken_traversal[unrelated-result-python]",
+      "reason": "Finite-sequence refinement does not prove numeric progress or returned element provenance",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_iterator.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "iterator.advancing_element",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_iterator::test_requested_finite_sequence_contract_rejects_broken_traversal[unrelated-result-java]",
+      "reason": "Finite-sequence refinement does not prove numeric progress or returned element provenance",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_iterator.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "iterator.advancing_element",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_iterator::test_requested_finite_sequence_contract_rejects_broken_traversal[unrelated-result-typescript]",
+      "reason": "Finite-sequence refinement does not prove numeric progress or returned element provenance",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_iterator.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "iterator.advancing_element",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_mediator::test_two_instances_of_one_colleague_type_can_be_mediated[python]",
+      "reason": "Mediator signature requires distinct colleague types rather than distinct participant instances",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_mediator.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Mediator: require distinct colleague fields, not distinct colleague nominal types."
+    },
+    {
+      "name": "tests.structural.test_algorithm_mediator::test_two_instances_of_one_colleague_type_can_be_mediated[java]",
+      "reason": "Mediator signature requires distinct colleague types rather than distinct participant instances",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_mediator.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Mediator: require distinct colleague fields, not distinct colleague nominal types."
+    },
+    {
+      "name": "tests.structural.test_algorithm_mediator::test_two_instances_of_one_colleague_type_can_be_mediated[typescript]",
+      "reason": "Mediator signature requires distinct colleague types rather than distinct participant instances",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_mediator.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Mediator: require distinct colleague fields, not distinct colleague nominal types."
+    },
+    {
+      "name": "tests.structural.test_algorithm_mediator::test_payload_contract_rejects_discarded_event_data[python]",
+      "reason": "Payload preservation is an optional stronger coordination contract absent from broad Mediator",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_mediator.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "mediator.event_delivery",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_mediator::test_payload_contract_rejects_discarded_event_data[java]",
+      "reason": "Payload preservation is an optional stronger coordination contract absent from broad Mediator",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_mediator.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "mediator.event_delivery",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_mediator::test_payload_contract_rejects_discarded_event_data[typescript]",
+      "reason": "Payload preservation is an optional stronger coordination contract absent from broad Mediator",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_mediator.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "mediator.event_delivery",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_memento::test_desired_historical_snapshot_rejects_shared_mutable_array[python]",
+      "reason": "Stronger historical-snapshot contract: explicit shared array mutation invalidates saved history; not proved by structural Memento query",
+      "status": "pending",
+      "test_file": "tests/structural/test_algorithm_memento.py",
+      "issue": "missing-shared-heap-history",
+      "resolution": "Track capture-time heap identity, aliasing and element writes across save/edit/restore; distinguish immutable/scalar state and independent copies from a shared mutable array. A structural snapshot is not a historical isolation proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_memento::test_desired_historical_snapshot_rejects_shared_mutable_array[java]",
+      "reason": "Stronger historical-snapshot contract: explicit shared array mutation invalidates saved history; not proved by structural Memento query",
+      "status": "pending",
+      "test_file": "tests/structural/test_algorithm_memento.py",
+      "issue": "missing-shared-heap-history",
+      "resolution": "Track capture-time heap identity, aliasing and element writes across save/edit/restore; distinguish immutable/scalar state and independent copies from a shared mutable array. A structural snapshot is not a historical isolation proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_memento::test_desired_historical_snapshot_rejects_shared_mutable_array[typescript]",
+      "reason": "Stronger historical-snapshot contract: explicit shared array mutation invalidates saved history; not proved by structural Memento query",
+      "status": "pending",
+      "test_file": "tests/structural/test_algorithm_memento.py",
+      "issue": "missing-shared-heap-history",
+      "resolution": "Track capture-time heap identity, aliasing and element writes across save/edit/restore; distinguish immutable/scalar state and independent copies from a shared mutable array. A structural snapshot is not a historical isolation proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_observer::test_event_delivery_contract_rejects_discarded_event[python]",
+      "reason": "Observer signature does not correlate the incoming event with callback arguments",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_observer.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "observer.event_delivery",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_observer::test_event_delivery_contract_rejects_discarded_event[javascript]",
+      "reason": "Observer signature does not correlate the incoming event with callback arguments",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_observer.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "observer.event_delivery",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_observer::test_event_delivery_contract_rejects_discarded_event[typescript]",
+      "reason": "Observer signature does not correlate the incoming event with callback arguments",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_observer.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "observer.event_delivery",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_prototype::test_prototype_requires_constructor_to_retain_captured_state[python]",
+      "reason": "explicit-copy correlates constructor argument but not retained constructor state; algorithms/prototype.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_prototype.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Prototype: correlate actual argument with constructor parameter and retained destination field."
+    },
+    {
+      "name": "tests.structural.test_algorithm_prototype::test_prototype_requires_constructor_to_retain_captured_state[java]",
+      "reason": "explicit-copy correlates constructor argument but not retained constructor state; algorithms/prototype.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_prototype.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Prototype: correlate actual argument with constructor parameter and retained destination field."
+    },
+    {
+      "name": "tests.structural.test_algorithm_prototype::test_prototype_requires_constructor_to_retain_captured_state[typescript]",
+      "reason": "explicit-copy correlates constructor argument but not retained constructor state; algorithms/prototype.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_prototype.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Prototype: correlate actual argument with constructor parameter and retained destination field."
+    },
+    {
+      "name": "tests.structural.test_algorithm_prototype::test_desired_independent_state_contract_rejects_shared_array[python]",
+      "reason": "Stronger independent-state contract: shallow array reference copy shares later writes; generic Prototype permits sharing",
+      "status": "pending",
+      "test_file": "tests/structural/test_algorithm_prototype.py",
+      "issue": "missing-copy-depth-policy",
+      "resolution": "Expose independent-state policy separately from generic Prototype (which permits shallow sharing), then prove retained fields are immutable or copied to disjoint locations. Track nested containers, aliases and unknown external mutation."
+    },
+    {
+      "name": "tests.structural.test_algorithm_prototype::test_desired_independent_state_contract_rejects_shared_array[java]",
+      "reason": "Stronger independent-state contract: shallow array reference copy shares later writes; generic Prototype permits sharing",
+      "status": "pending",
+      "test_file": "tests/structural/test_algorithm_prototype.py",
+      "issue": "missing-copy-depth-policy",
+      "resolution": "Expose independent-state policy separately from generic Prototype (which permits shallow sharing), then prove retained fields are immutable or copied to disjoint locations. Track nested containers, aliases and unknown external mutation."
+    },
+    {
+      "name": "tests.structural.test_algorithm_prototype::test_desired_independent_state_contract_rejects_shared_array[typescript]",
+      "reason": "Stronger independent-state contract: shallow array reference copy shares later writes; generic Prototype permits sharing",
+      "status": "pending",
+      "test_file": "tests/structural/test_algorithm_prototype.py",
+      "issue": "missing-copy-depth-policy",
+      "resolution": "Expose independent-state policy separately from generic Prototype (which permits shallow sharing), then prove retained fields are immutable or copied to disjoint locations. Track nested containers, aliases and unknown external mutation."
+    },
+    {
+      "name": "tests.structural.test_algorithm_proxy::test_access_enforcement_variant_rejects_unconditional_bypass[python]",
+      "reason": "Conditional candidate does not prove all delegation paths obey access policy",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_proxy.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "proxy.single_guarded_dispatch",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_proxy::test_access_enforcement_variant_rejects_unconditional_bypass[java]",
+      "reason": "Conditional candidate does not prove all delegation paths obey access policy",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_proxy.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "proxy.single_guarded_dispatch",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_proxy::test_access_enforcement_variant_rejects_unconditional_bypass[typescript]",
+      "reason": "Conditional candidate does not prove all delegation paths obey access policy",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_proxy.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "proxy.single_guarded_dispatch",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_singleton::test_named_usage_keeps_called_owner_and_storage_scope[python-True]",
+      "reason": "Python classmethod call target resolution is not modeled by direct-class-static",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_singleton.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Singleton usage: resolve bounded direct Python classmethod/staticmethod calls on their actual owner."
+    },
+    {
+      "name": "tests.structural.test_algorithm_state::test_desired_event_transition_preserves_event_owner_and_active_state[wrong-event-python]",
+      "reason": "Stronger event/current-owner/current-dispatch contract needs temporal data flow, not historical constructor/slot associations; algorithms/state.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_state.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "state.event_transition",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_state::test_desired_event_transition_preserves_event_owner_and_active_state[wrong-event-java]",
+      "reason": "Stronger event/current-owner/current-dispatch contract needs temporal data flow, not historical constructor/slot associations; algorithms/state.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_state.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "state.event_transition",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_state::test_desired_event_transition_preserves_event_owner_and_active_state[wrong-event-typescript]",
+      "reason": "Stronger event/current-owner/current-dispatch contract needs temporal data flow, not historical constructor/slot associations; algorithms/state.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_state.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "state.event_transition",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_state::test_desired_event_transition_preserves_event_owner_and_active_state[different-current-context-python]",
+      "reason": "Stronger event/current-owner/current-dispatch contract needs temporal data flow, not historical constructor/slot associations; algorithms/state.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_state.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "state.event_transition",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_state::test_desired_event_transition_preserves_event_owner_and_active_state[different-current-context-java]",
+      "reason": "Stronger event/current-owner/current-dispatch contract needs temporal data flow, not historical constructor/slot associations; algorithms/state.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_state.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "state.event_transition",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_state::test_desired_event_transition_preserves_event_owner_and_active_state[different-current-context-typescript]",
+      "reason": "Stronger event/current-owner/current-dispatch contract needs temporal data flow, not historical constructor/slot associations; algorithms/state.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_state.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "state.event_transition",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_state::test_desired_event_transition_preserves_event_owner_and_active_state[current-state-replaced-python]",
+      "reason": "Stronger event/current-owner/current-dispatch contract needs temporal data flow, not historical constructor/slot associations; algorithms/state.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_state.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "state.event_transition",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_state::test_desired_event_transition_preserves_event_owner_and_active_state[current-state-replaced-java]",
+      "reason": "Stronger event/current-owner/current-dispatch contract needs temporal data flow, not historical constructor/slot associations; algorithms/state.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_state.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "state.event_transition",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_state::test_desired_event_transition_preserves_event_owner_and_active_state[current-state-replaced-typescript]",
+      "reason": "Stronger event/current-owner/current-dispatch contract needs temporal data flow, not historical constructor/slot associations; algorithms/state.md",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_state.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "state.event_transition",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_visitor::test_replacing_received_visitor_breaks_received_visitor_contract[python]",
+      "reason": "Visitor parameter identity is not protected against earlier slot reassignment",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_visitor.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Visitor: reject explicit replacement of the visitor receiver before dispatch."
+    },
+    {
+      "name": "tests.structural.test_algorithm_visitor::test_replacing_received_visitor_breaks_received_visitor_contract[java]",
+      "reason": "Visitor parameter identity is not protected against earlier slot reassignment",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_visitor.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Visitor: reject explicit replacement of the visitor receiver before dispatch."
+    },
+    {
+      "name": "tests.structural.test_algorithm_visitor::test_replacing_received_visitor_breaks_received_visitor_contract[typescript]",
+      "reason": "Visitor parameter identity is not protected against earlier slot reassignment",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_visitor.py",
+      "resolution_kind": "root-or-ir-fix",
+      "resolution": "Visitor: reject explicit replacement of the visitor receiver before dispatch."
+    },
+    {
+      "name": "tests.structural.test_algorithm_visitor::test_result_forwarding_variant_rejects_replaced_result[python]",
+      "reason": "Broad Visitor signature does not implement the result-forwarding variant contract",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_visitor.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "visitor.result_forwarding",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_visitor::test_result_forwarding_variant_rejects_replaced_result[java]",
+      "reason": "Broad Visitor signature does not implement the result-forwarding variant contract",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_visitor.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "visitor.result_forwarding",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_algorithm_visitor::test_result_forwarding_variant_rejects_replaced_result[typescript]",
+      "reason": "Broad Visitor signature does not implement the result-forwarding variant contract",
+      "status": "resolved",
+      "test_file": "tests/structural/test_algorithm_visitor.py",
+      "resolution_kind": "new-explicit-contract",
+      "query": "visitor.result_forwarding",
+      "resolution": "The original stronger oracle is now tested against this explicit KQL 2 operation, with a positive control. The broad GoF root retains its general semantics. See README for the bounded guarantee; this is not a universal algorithm proof."
+    },
+    {
+      "name": "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[directed/abstract-factory-object-literals]",
+      "reason": "structural-object-provider: La variante structural-families exige CLASS para ambos proveedores; objetos con slots equivalentes no están representados.",
+      "status": "pending",
+      "test_file": "tests/structural/test_catalog_adversarial_matrix.py",
+      "issue": "missing-object-literal-members",
+      "resolution": "JavaScript/TypeScript object literals are collection values, not nominal CLASS providers. Add object identities with callable member slots and reaching definitions for property writes; query structural providers without inventing classes."
+    }
+  ],
+  "ir_version": "1.78.0",
+  "counts": {
+    "pending": 10,
+    "resolved": 101
+  },
+  "resolution_kinds": {
+    "pending": 10,
+    "new-explicit-contract": 72,
+    "root-or-ir-fix": 29
+  },
+  "note": "Original 111 expected failures retained by ID. Resolved requires the corresponding unmarked test to pass in tests.json; explicit contract additions are separated from corrections of broad root queries."
+}

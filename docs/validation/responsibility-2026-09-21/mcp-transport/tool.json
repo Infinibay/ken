@@ -1,0 +1,58 @@
+{
+  "name": "ken_who",
+  "title": null,
+  "description": "Who is responsible? Find modules, classes, methods and functions by documentation.\n\n    Combines documentation, name and call-site reasoners, with counterevidence\n    and explicit assumptions. Confidence is an uncalibrated ranking score, NOT\n    a probability or proof that code implements the documented behavior.\n    Searches current code documentation through the code index, not saved findings.\n    Returns compact candidates and relevant caveats by default. *full* includes\n    all reasoner contributions, assumptions, source hashes and coverage details.\n\n    *hypotheses* optionally supplies up to three alternative formulations of\n    the responsibility, e.g. English terms for English docs. Their equivalence\n    to the question is an assumption, not inferred fact. *path* narrows the\n    search before ranking. Tests are excluded unless *include_tests* is true.\n    Current source is checked; retrieval is bounded and may miss unindexed code.\n    ",
+  "inputSchema": {
+    "properties": {
+      "question": {
+        "title": "Question",
+        "type": "string"
+      },
+      "path": {
+        "default": ".",
+        "title": "Path",
+        "type": "string"
+      },
+      "hypotheses": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Hypotheses"
+      },
+      "limit": {
+        "default": 3,
+        "title": "Limit",
+        "type": "integer"
+      },
+      "include_tests": {
+        "default": false,
+        "title": "Include Tests",
+        "type": "boolean"
+      },
+      "full": {
+        "default": false,
+        "title": "Full",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "question"
+    ],
+    "type": "object",
+    "title": "ken_whoArguments"
+  },
+  "execution": null,
+  "outputSchema": null,
+  "icons": null,
+  "annotations": null,
+  "_meta": null
+}

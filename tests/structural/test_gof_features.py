@@ -98,11 +98,11 @@ def test_every_catalogue_entry_has_executable_root_and_variant():
     rules = [r for r in registry if 'gof' in r.collections]
     assert len(rules) == 23
     for rule in rules:
-        assert rule.query.startswith('query ')
+        assert rule.query.startswith('language "kql/2";')
         assert any(v['status']=='ready' and v.get('query') for v in rule.variants)
         rule.validate()
         assert named_rule('gof.'+rule.id, registry)
-    assert all(item['query'].startswith('query ') for item in catalog())
+    assert all(item['query'].startswith('language "kql/2";') for item in catalog())
 
 
 def test_legacy_observer_requires_explicit_namespace():
@@ -149,6 +149,22 @@ def test_go_map_keys_observer():
     assert evaluate(GO_MAP_OBSERVER.replace('Listener', 'Client').replace('Hub', 'Registry'), 'go', 'observer')
 
 
+def evaluate_map_key_variant(source):
+    """The map-key contract specifically, not the whole observer union.
+
+    ``observer#listener-registry`` (KQL 2) accepts a registry whose values are the
+    listeners, which the ``value.Receive`` mutation still is; the *key* correlation is
+    this variant's own claim, so it is asserted against the variant.
+    """
+    unit = lower_source(source, 'go', 'sample.go')
+    assert not unit.diagnostics, unit.diagnostics
+    registry = builtin_rules()
+    result = execute_rules(link_project([unit]), [named_rule('observer#map-key-registry', registry)],
+                           registry=registry)
+    assert result['complete'], result['outcomes']
+    return result['matches']
+
+
 @pytest.mark.parametrize('before,after', [
  ('key.Receive(event)', 'value.Receive(event)'),
  ('range h.listeners', 'range h.others'),
@@ -157,7 +173,7 @@ def test_go_map_keys_observer():
  ('h.listeners[listener] = listener', '_ = h.listeners[listener]'),
 ])
 def test_go_map_observer_requires_registered_keys_of_same_map(before, after):
-    assert not evaluate(GO_MAP_OBSERVER.replace(before, after), 'go', 'observer')
+    assert not evaluate_map_key_variant(GO_MAP_OBSERVER.replace(before, after))
 
 
 def test_director_correlates_all_steps_and_finish_to_same_receiver():

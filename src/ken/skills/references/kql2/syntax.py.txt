@@ -1,0 +1,35 @@
+def reraises():
+    try:
+        work()
+    except ValueError:
+        raise
+
+def ignores():
+    try:
+        work()
+    except ValueError:
+        pass
+
+def retries(items):
+    for item in items:
+        try:
+            work(item)
+        except ValueError:
+            continue
+
+def forever():
+    while True:
+        break
+
+def drains(pending):
+    while pending:
+        pending.pop()
+
+def no_value():
+    return None
+
+def some_value():
+    return 1
+
+from somewhere import *
+from elsewhere import named

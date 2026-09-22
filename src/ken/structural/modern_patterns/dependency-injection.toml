@@ -1,14 +1,27 @@
+query_language = "kql/2"
 id = "architecture.dependency-injection"
 name = "Dependency Injection"
 description = "An object receives a collaborator or callable in a field and uses it from a distinct method."
 collections = ["architecture", "modern"]
 tags = ["composition", "dependency-injection", "web"]
-caveat = "Structural supply/use evidence, not a composition root, container, lifetime or runtime identity guarantee. Object assignment retains its historical-write model; callable input requires a last supported source binding write or constructor input. Neither proves descriptor storage behavior or temporal order between methods."
+caveat = "Structural supply/use evidence, not a composition root, container, lifetime or runtime identity guarantee. Object assignment requires one explicit field write in the injecting method and an unreassigned supplied parameter. Conditional supply is admitted; all-path retention, descriptor behavior and temporal order between methods remain unproven."
 query = '''
-query injected_collaborator {
- any { match "architecture.dependency-injection#object-assignment"(unit:$unit,dependency:$dependency,inject:$inject,operation:$operation); }
- or { match "architecture.dependency-injection#callable-input"(unit:$unit,dependency:$dependency,inject:$inject,operation:$operation); }
-emit $unit,$dependency,$inject,$operation;
+language "kql/2";
+module ken.catalog.architecture.dependency_injection;
+import ken.catalog.architecture.dependency_injection.variants.callable_input;
+import ken.catalog.architecture.dependency_injection.variants.object_assignment;
+
+pattern detect(out TypeDecl $unit, out Field $dependency, out Callable $inject, out Callable $operation) {
+  either {
+    use ken.catalog.architecture.dependency_injection.variants.object_assignment.detect(unit: $unit, dependency: $dependency, inject: $inject, operation: $operation);
+  } or {
+    use ken.catalog.architecture.dependency_injection.variants.callable_input.detect(unit: $unit, dependency: $dependency, inject: $inject, operation: $operation);
+  }
+}
+
+query results {
+  use detect(unit: $unit, dependency: $dependency, inject: $inject, operation: $operation);
+  select $unit, $dependency, $inject, $operation;
 }
 '''
 
@@ -16,14 +29,26 @@ emit $unit,$dependency,$inject,$operation;
 id = "retained-object"
 status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp"]
-query_claim = "Opt-in precision contract: the supplied object is the final supported source input to the delegated field, or a supported constructor input. Conditional configuration may be unsupported; descriptor behavior and field identity between methods remain unproven. The broad parent intentionally retains its historical supply/use contract."
+query_claim = "Opt-in precision contract: the supplied object is the final supported source input to the delegated field, or a supported constructor input. Conditional configuration may be unsupported; descriptor behavior and field identity between methods remain unproven. The parent also admits conditional supply with a unique explicit field write."
 query = '''
-query retained_object {
- match "strategy.supplied_policy"(unit:$unit,configure:$inject,policy:$dependency);
- require $unit HAS_METHOD $operation;
- different $inject $operation;
- require $operation DELEGATES_TO $dependency;
- emit $unit,$dependency,$inject,$operation;
+language "kql/2";
+module ken.catalog.architecture.dependency_injection.variants.retained_object;
+import ken.catalog.strategy.supplied_policy;
+
+pattern detect(out TypeDecl $unit, out Field $dependency, out Callable $inject, out Callable $operation) {
+  use ken.catalog.strategy.supplied_policy.detect(unit: $unit, configure: $inject, policy: $dependency);
+  type $unit {
+    method $operation {
+      call $invocation {}
+      body { call $invocation { receiver: $dependency; }; }
+    }
+  }
+  where $inject != $operation;
+}
+
+query results {
+  use detect(unit: $unit, dependency: $dependency, inject: $inject, operation: $operation);
+  select $unit, $dependency, $inject, $operation;
 }
 '''
 
@@ -31,19 +56,30 @@ query retained_object {
 id = "object-assignment"
 status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp"]
-query_claim = "A supplied parameter is assigned to a field used for delegation by another method; source history does not establish final storage or all-path retention."
+query_claim = "A supplied parameter reaches the only explicit write to the field in the injecting method, then a distinct method delegates through that field. Conditional supply is allowed; hidden writes, aliases and cross-method ordering remain outside this contract."
 query = '''
-query assigned_object {
- require $unit HAS_FIELD $dependency;
- require $unit HAS_METHOD $inject;
- require $inject HAS_PARAMETER $supplied;
- parameter(receiver: false) as $supplied;
- require $inject WRITES $dependency;
- require $dependency ASSIGNED_FROM $supplied;
- require $unit HAS_METHOD $operation;
- different $inject $operation;
- require $operation DELEGATES_TO $dependency;
- emit $unit, $dependency, $inject, $operation;
+language "kql/2";
+module ken.catalog.architecture.dependency_injection.variants.object_assignment;
+
+pattern detect(out TypeDecl $unit, out Field $dependency, out Callable $inject, out Callable $operation) {
+  type $unit {
+    field $dependency {}
+    method $inject {
+      writes: exactly($dependency, 1);
+      parameters { param $supplied { reassigned: false; } }
+      body { $dependency = $supplied; }
+    }
+    method $operation {
+      call $invocation {}
+      body { call $invocation { receiver: $dependency; }; }
+    }
+  }
+  where $inject != $operation;
+}
+
+query results {
+  use detect(unit: $unit, dependency: $dependency, inject: $inject, operation: $operation);
+  select $unit, $dependency, $inject, $operation;
 }
 '''
 
@@ -53,12 +89,22 @@ status = "ready"
 languages = ["python", "javascript", "typescript", "go", "csharp", "cpp", "rust"]
 query_claim = "A supplied callable has a last supported source write or constructor input and is invoked through that field from a distinct method; descriptor behavior, heap stability and call order are not proved."
 query = '''
-query callable_input {
- match "strategy.supplied_policy"(unit:$unit,configure:$inject,policy:$dependency);
- require $unit HAS_METHOD $operation;
- different $inject $operation;
- require $operation HAS_CALL $call;
- require $call CALLEE_VALUE $dependency;
- emit $unit,$dependency,$inject,$operation;
+language "kql/2";
+module ken.catalog.architecture.dependency_injection.variants.callable_input;
+import ken.catalog.strategy.supplied_policy;
+
+pattern detect(out TypeDecl $unit, out Field $dependency, out Callable $inject, out Callable $operation) {
+  use ken.catalog.strategy.supplied_policy.detect(unit: $unit, configure: $inject, policy: $dependency);
+  type $unit {
+    method $operation {
+      body { call $dependency {}; }
+    }
+  }
+  where $inject != $operation;
+}
+
+query results {
+  use detect(unit: $unit, dependency: $dependency, inject: $inject, operation: $operation);
+  select $unit, $dependency, $inject, $operation;
 }
 '''

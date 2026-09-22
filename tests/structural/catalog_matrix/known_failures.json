@@ -1,0 +1,520 @@
+{
+  "schema": "ken-catalog-regressions/1",
+  "base_commit": "353fc1444823bded9e04b465e7ee64b3809bb043",
+  "ir_version": "1.77.0",
+  "issues": {
+    "cfg-adjacency": {
+      "title": "Control tolerante a ruido",
+      "cause_and_fix": "La query exige CFG_ENTRY o aristas adyacentes/caminos de longitud fija; una asignación independiente no cambia el algoritmo. Usar alcanzabilidad con efectos relevantes."
+    },
+    "named-construction-flow": {
+      "title": "Builder con campos de construcción Go/Rust",
+      "cause_and_fix": "FINAL_MEMBER_INPUT existe y finish retorna el producto, pero faltan enlaces de valor/argumento para la construcción por campos. Extender RESULT/RETURNS_VALUE y binding de inicializadores nombrados."
+    },
+    "array-element-type": {
+      "title": "Composite TypeScript T[]",
+      "cause_and_fix": "El campo conserva native_type Node[] y la llamada ITERATED_CALL, pero no se emite ELEMENT_TYPE. Normalizar arrays sufijados con el mismo modelo de elemento que Array<T>."
+    },
+    "rust-wildcard-summary": {
+      "title": "Ruido Rust con let _",
+      "cause_and_fix": "let _ = 1 + 2 marca BINDING_FLOW_STATUS unmodeled-write y RETURN_FLOW_STATUS nonlocal-or-nested-write. Descartar un valor puro no escribe un binding retenido; modelar wildcard explícito."
+    },
+    "declaration-only-copy": {
+      "title": "Firma de constructor de copia",
+      "cause_and_fix": "La query language-copy acepta el constructor X(const X&) por declaración aunque el cuerpo sólo lance una excepción. Es límite de firma, no contradicción de su claim; falta variante de implementación."
+    },
+    "dead-implementation": {
+      "title": "Evidencia sintáctica inalcanzable",
+      "cause_and_fix": "Los métodos retornan antes del algoritmo. Hechos históricos de llamadas/campos permanecen; una firma estructural puede aceptarlos. Separar firma de prueba de implementación alcanzable."
+    },
+    "remote-response-join": {
+      "title": "Remote Proxy desconectado",
+      "cause_and_fix": "El resultado del transporte no se une al argumento del decoder. Unir origen por ocurrencia de llamada."
+    },
+    "adapter-request-join": {
+      "title": "Adapter input ajeno",
+      "cause_and_fix": "Dos lecturas indexadas no se unen al parámetro request; índices de constantes satisfacen el claim de adaptación del input."
+    },
+    "builder-construction-join": {
+      "title": "Builder sucesor ajeno",
+      "cause_and_fix": "HAS_CALL elige logging y RETURNS_NEW otra construcción; exigir argumentos de la construcción retornada."
+    },
+    "once-api": {
+      "title": "CAS no equivale a once",
+      "cause_and_fix": "updateAndGet(prev -> new Config()) crea y publica cada vez. Resolver API/contrato de retención y diferenciar publicación de número de ejecuciones."
+    },
+    "memento-return-join": {
+      "title": "Snapshot descartado",
+      "cause_and_fix": "HAS_CALL encode no exige devolver encode(state), ni conectar el argumento de decode al snapshot recibido. El claim actual es más débil que Memento completo."
+    },
+    "async-await-requirement": {
+      "title": "Async Iterator sin await",
+      "cause_and_fix": "async def con yield implementa async generator sin await explícito. FN de variante; la raíz lo encuentra por generator."
+    },
+    "go-yield-polarity": {
+      "title": "Polaridad de yield Go",
+      "cause_and_fix": "La salida al devolver true contradice el protocolo de range-function; el claim permite indebidamente ambas polaridades."
+    },
+    "generic-name-identity": {
+      "title": "Identidad genérica por string",
+      "cause_and_fix": "Unrelated<T> cambia el conteo de Bridge por el spelling de un parámetro de ámbito ajeno. Requiere identidad scoped y relación real de variantes."
+    },
+    "facade-composition": {
+      "title": "Composición no prueba subsistemas",
+      "cause_and_fix": "La firma acepta composición aritmética sin frontera de subsistemas. Mantener query base y evidencia adicional de Facade."
+    },
+    "decorator-identity": {
+      "title": "Wrapper transparente",
+      "cause_and_fix": "Forwarding exacto no demuestra responsabilidad añadida; la firma débil describe un wrapper, no el algoritmo completo de Decorator."
+    },
+    "copy-use-vs-return": {
+      "title": "Copia descartada",
+      "cause_and_fix": "Se observa copy(self) pero no una operación que entregue un clon; separar usage y retorno de copia."
+    },
+    "early-exit-guard": {
+      "title": "Guarda temprana equivalente",
+      "cause_and_fix": "CONDITIONAL_DELEGATION requiere que la llamada esté dentro de if; no reconoce salida temprana equivalente. Usar control efectivo."
+    },
+    "structural-object-provider": {
+      "title": "Familia por literales de objeto",
+      "cause_and_fix": "La variante structural-families exige CLASS para ambos proveedores; objetos con slots equivalentes no están representados."
+    },
+    "static-policy-field": {
+      "title": "Política estática sin campo",
+      "cause_and_fix": "P::apply() elige algoritmo por tipo sin objeto/campo. La query actual exige composición mediante campo."
+    },
+    "base-alias": {
+      "title": "Alias de base de subclase",
+      "cause_and_fix": "BASE_VALUE no sigue Alias=Base. Añadir origen de la expresión base con reaching definitions y estado supported."
+    },
+    "finally-overrides-continue": {
+      "title": "Finally anula retry",
+      "cause_and_fix": "finally break impide el continue efectivo. El caveat de explicit-continue declara este límite léxico."
+    },
+    "di-historical-input": {
+      "title": "Dependencia sobrescrita",
+      "cause_and_fix": "La raíz/variante object-assignment conserva asignación histórica; retained-object ofrece un contrato distinto más fuerte."
+    },
+    "dispatch-historical-value": {
+      "title": "Handler sobrescrito",
+      "cause_and_fix": "La escritura original del handler persiste aunque table[key] se cambie a None antes de usarla. Falta versión de contenido."
+    },
+    "command-context-join": {
+      "title": "Contexto enviado a otra llamada",
+      "cause_and_fix": "audit(context) completa la query aunque el comando iterado recibe 0. Unir la invocación de esa iteración con el argumento."
+    },
+    "eventbus-payload-join": {
+      "title": "Payload enviado a otro registro",
+      "cause_and_fix": "La invocación con payload pertenece a otro loop/registro. Unir bucket, iteración, valor invocado y argumento."
+    },
+    "continuation-rebind": {
+      "title": "Continuación sustituida",
+      "cause_and_fix": "La captura apunta al binding recibido, pero su valor ya fue reemplazado. Falta origen vigente del callable."
+    },
+    "adapter-discards-handler": {
+      "title": "Adaptador devuelve escalar",
+      "cause_and_fix": "adapt(handler) devuelve 42 en el cuerpo visible. Pasar handler al adaptador no demuestra que lo retenga ni devuelva un callable."
+    },
+    "queue-preclear": {
+      "title": "Lote descartado antes de consumir",
+      "cause_and_fix": "La colección se vacía antes de la iteración; clear después de ella sólo prueba orden léxico. Falta versión de lote."
+    },
+    "uow-preclear": {
+      "title": "Cambios descartados antes de commit",
+      "cause_and_fix": "Commit reemplaza el mapa por lotes vacíos. No se conecta la versión registrada con la persistida."
+    },
+    "flyweight-replacement": {
+      "title": "Pool que siempre reemplaza",
+      "cause_and_fix": "Lookup y write no prueban creación sólo en miss ni reutilización. Claim actual declara esta limitación."
+    },
+    "module-write-count": {
+      "title": "Claim written once no comprobado",
+      "cause_and_fix": "Dos escrituras visibles matchean. La query no restringe el conteo de escrituras del slot compartido."
+    },
+    "lazy-construction-join": {
+      "title": "Construcción no publicada",
+      "cause_and_fix": "La construcción se descarta y la escritura guardada almacena None. Falta ligar construcción a escritura y delegación."
+    }
+  },
+  "cases": {
+    "directed/abstract-factory-object-literals": {
+      "issue": "structural-object-provider",
+      "observed": "FN"
+    }
+  },
+  "resolved_cases": {
+    "singleton#lazy-guarded/python/noise-1": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#lazy-guarded/python/noise-20": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#lazy-guarded/java/noise-1": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#lazy-guarded/java/noise-20": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#lazy-guarded/typescript/noise-1": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#lazy-guarded/typescript/noise-20": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "template-method#composed-skeleton/rust/noise-1": {
+      "issue": "rust-wildcard-summary",
+      "observed": "FN"
+    },
+    "template-method#composed-skeleton/rust/noise-20": {
+      "issue": "rust-wildcard-summary",
+      "observed": "FN"
+    },
+    "architecture.dependency-injection#callable-input/rust/noise-1": {
+      "issue": "rust-wildcard-summary",
+      "observed": "FN"
+    },
+    "architecture.dependency-injection#callable-input/rust/noise-20": {
+      "issue": "rust-wildcard-summary",
+      "observed": "FN"
+    },
+    "facade#module-surface/rust/noise-1": {
+      "issue": "rust-wildcard-summary",
+      "observed": "FN"
+    },
+    "facade#module-surface/rust/noise-20": {
+      "issue": "rust-wildcard-summary",
+      "observed": "FN"
+    },
+    "builder#stored-product/rust/noise-1": {
+      "issue": "rust-wildcard-summary",
+      "observed": "FN"
+    },
+    "builder#stored-product/rust/noise-20": {
+      "issue": "rust-wildcard-summary",
+      "observed": "FN"
+    },
+    "prototype#language-copy/cpp/algorithm-removed": {
+      "issue": "declaration-only-copy",
+      "observed": "FP"
+    },
+    "builder#mutable-product/rust/canonical": {
+      "issue": "named-construction-flow",
+      "observed": "FN"
+    },
+    "builder#mutable-product/rust/noise-1": {
+      "issue": "named-construction-flow",
+      "observed": "FN"
+    },
+    "builder#mutable-product/rust/noise-20": {
+      "issue": "named-construction-flow",
+      "observed": "FN"
+    },
+    "builder#mutable-product/go/canonical": {
+      "issue": "named-construction-flow",
+      "observed": "FN"
+    },
+    "builder#mutable-product/go/noise-1": {
+      "issue": "named-construction-flow",
+      "observed": "FN"
+    },
+    "builder#mutable-product/go/noise-20": {
+      "issue": "named-construction-flow",
+      "observed": "FN"
+    },
+    "singleton#eager-shared/java/noise-1": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#eager-shared/java/noise-20": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#eager-shared/csharp/noise-1": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#eager-shared/csharp/noise-20": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#eager-shared/typescript/noise-1": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#eager-shared/typescript/noise-20": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#lazy-guarded/javascript/noise-1": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#lazy-guarded/javascript/noise-20": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#lazy-guarded/csharp/noise-1": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "singleton#lazy-guarded/csharp/noise-20": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "composite#recursive-nominal/typescript/canonical": {
+      "issue": "array-element-type",
+      "observed": "FN"
+    },
+    "composite#recursive-nominal/typescript/noise-1": {
+      "issue": "array-element-type",
+      "observed": "FN"
+    },
+    "composite#recursive-nominal/typescript/noise-20": {
+      "issue": "array-element-type",
+      "observed": "FN"
+    },
+    "directed/noise-singleton": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "directed/dead-adapter": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-bridge": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-composite": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-decorator": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-facade": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-flyweight": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-proxy": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-chain-of-responsibility": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-command": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-interpreter": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-iterator": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-mediator": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-observer": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-state": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-strategy": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-template-method": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/dead-visitor": {
+      "issue": "dead-implementation",
+      "observed": "FP"
+    },
+    "directed/remote-unrelated-response-python": {
+      "issue": "remote-response-join",
+      "observed": "FP"
+    },
+    "directed/remote-unrelated-response-javascript": {
+      "issue": "remote-response-join",
+      "observed": "FP"
+    },
+    "directed/remote-unrelated-response-typescript": {
+      "issue": "remote-response-join",
+      "observed": "FP"
+    },
+    "directed/remote-unrelated-response-java": {
+      "issue": "remote-response-join",
+      "observed": "FP"
+    },
+    "directed/remote-unrelated-response-csharp": {
+      "issue": "remote-response-join",
+      "observed": "FP"
+    },
+    "directed/remote-unrelated-response-cpp": {
+      "issue": "remote-response-join",
+      "observed": "FP"
+    },
+    "directed/remote-unrelated-response-go": {
+      "issue": "remote-response-join",
+      "observed": "FP"
+    },
+    "directed/adapter-ignores-request-python": {
+      "issue": "adapter-request-join",
+      "observed": "FP"
+    },
+    "directed/adapter-ignores-request-javascript": {
+      "issue": "adapter-request-join",
+      "observed": "FP"
+    },
+    "directed/adapter-ignores-request-typescript": {
+      "issue": "adapter-request-join",
+      "observed": "FP"
+    },
+    "directed/immutable-disconnected-copy-python": {
+      "issue": "builder-construction-join",
+      "observed": "FP"
+    },
+    "directed/immutable-disconnected-copy-javascript": {
+      "issue": "builder-construction-join",
+      "observed": "FP"
+    },
+    "directed/immutable-disconnected-copy-typescript": {
+      "issue": "builder-construction-join",
+      "observed": "FP"
+    },
+    "directed/once-java-always-new": {
+      "issue": "once-api",
+      "observed": "FP"
+    },
+    "directed/serialized-discards-snapshot": {
+      "issue": "memento-return-join",
+      "observed": "FP"
+    },
+    "directed/async-yield-no-await": {
+      "issue": "async-await-requirement",
+      "observed": "FN"
+    },
+    "directed/go-callback-wrong-polarity": {
+      "issue": "go-yield-polarity",
+      "observed": "FP"
+    },
+    "directed/bridge-generic-T": {
+      "issue": "generic-name-identity",
+      "observed": "FP"
+    },
+    "directed/facade-basic-arithmetic": {
+      "issue": "facade-composition",
+      "observed": "FP"
+    },
+    "directed/decorator-pass-through": {
+      "issue": "decorator-identity",
+      "observed": "FP"
+    },
+    "directed/prototype-discarded-copy": {
+      "issue": "copy-use-vs-return",
+      "observed": "FP"
+    },
+    "directed/long-noise-cache-aside": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "directed/long-noise-read-through-cache": {
+      "issue": "cfg-adjacency",
+      "observed": "FN"
+    },
+    "directed/early-exit-proxy": {
+      "issue": "early-exit-guard",
+      "observed": "FN"
+    },
+    "directed/early-exit-chain-of-responsibility": {
+      "issue": "early-exit-guard",
+      "observed": "FN"
+    },
+    "directed/strategy-static-no-field": {
+      "issue": "static-policy-field",
+      "observed": "FN"
+    },
+    "directed/subclass-base-alias": {
+      "issue": "base-alias",
+      "observed": "FN"
+    },
+    "directed/retry-finally-break": {
+      "issue": "finally-overrides-continue",
+      "observed": "FP"
+    },
+    "directed/di-overwritten-input": {
+      "issue": "di-historical-input",
+      "observed": "FP"
+    },
+    "directed/dispatch-overwritten-handler": {
+      "issue": "dispatch-historical-value",
+      "observed": "FP"
+    },
+    "directed/command-unrelated-context-python": {
+      "issue": "command-context-join",
+      "observed": "FP"
+    },
+    "directed/command-unrelated-context-javascript": {
+      "issue": "command-context-join",
+      "observed": "FP"
+    },
+    "directed/command-unrelated-context-typescript": {
+      "issue": "command-context-join",
+      "observed": "FP"
+    },
+    "directed/eventbus-unrelated-payload": {
+      "issue": "eventbus-payload-join",
+      "observed": "FP"
+    },
+    "directed/continuation-rebound": {
+      "issue": "continuation-rebind",
+      "observed": "FP"
+    },
+    "directed/adapted-returns-number": {
+      "issue": "adapter-discards-handler",
+      "observed": "FP"
+    },
+    "directed/queue-cleared-before-drain": {
+      "issue": "queue-preclear",
+      "observed": "FP"
+    },
+    "directed/uow-erases-before-commit": {
+      "issue": "uow-preclear",
+      "observed": "FP"
+    },
+    "directed/flyweight-replaces-every-read": {
+      "issue": "flyweight-replacement",
+      "observed": "FP"
+    },
+    "directed/module-shared-two-writes": {
+      "issue": "module-write-count",
+      "observed": "FP"
+    },
+    "directed/lazy-proxy-unrelated-construction": {
+      "issue": "lazy-construction-join",
+      "observed": "FP"
+    }
+  },
+  "resolution_note": "93 disagreements corrected in IR 1.77/catalog revision; original oracles retained. Historical baseline in docs/structural-validation/catalog-adversarial-2026-09-14."
+}

@@ -1,0 +1,5 @@
+En [`src/ken/_paths.py`, símbolo `find_project_root`](/private/tmp/ken-staged-memory-20260921/project/src/ken/_paths.py:69):
+
+- Si `KEN_PROJECT_ROOT` tiene un valor no vacío, expande `~`, resuelve la ruta y devuelve ese directorio únicamente si contiene el archivo `.ken/meta.json`.
+- **Si falta ese archivo, devuelve `None` inmediatamente; no busca en los padres.**
+- Si la variable no está definida o está vacía, examina `start` (por defecto, el directorio actual) y luego sus padres, devolviendo el primero con `.ken/meta.json`. Si no encuentra ninguno, devuelve `None`.

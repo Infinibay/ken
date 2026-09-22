@@ -1,0 +1,139 @@
+{
+  "python": "3.12.9",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "ken_head": "ff36cb6932da60f441010f8e0e02e288bc8c72be",
+  "source_head": "4fa7e82274bd70e145da05c66117865f7615e61d",
+  "source_scope_status": "?? sdk/typescript/.ken/",
+  "root": "/Users/andres/Projects/codex",
+  "scope": "sdk/typescript",
+  "implementation_fingerprint": "001d8f3828c53deb651a71cb89f46627ca3eb23b854618f5acafb8791d60df70",
+  "catalogue_source_sha256": "974b1c9ee9c3b69dede5d3a6ed63496cf7c94040898421b67b8489351a2fb92a",
+  "manifest_sha256": "591abc2dcb7ff5b5692edbbb89814d8c5cfa8325424dce1ded70501ac534dcc9",
+  "parse": {
+    "queries": 161,
+    "seconds": [
+      0.1028448750730604,
+      0.11131004197522998,
+      0.10321533307433128
+    ],
+    "median_seconds": 0.10321533307433128
+  },
+  "compilation": [
+    {
+      "repeat": 0,
+      "seconds": 0.6333157080225646,
+      "named_entries": 767,
+      "cache_delta": {
+        "hits": 25,
+        "misses": 161,
+        "evictions": 0
+      },
+      "cache": {
+        "retained_bytes": 3873512,
+        "capacity_bytes": 8000000,
+        "entries": 161,
+        "hits": 25,
+        "misses": 161,
+        "shared": 0,
+        "evictions": 0,
+        "in_flight": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "seconds": 0.02642541704699397,
+      "named_entries": 767,
+      "cache_delta": {
+        "hits": 186,
+        "misses": 0,
+        "evictions": 0
+      },
+      "cache": {
+        "retained_bytes": 3873512,
+        "capacity_bytes": 8000000,
+        "entries": 161,
+        "hits": 211,
+        "misses": 161,
+        "shared": 0,
+        "evictions": 0,
+        "in_flight": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "seconds": 0.027453625109046698,
+      "named_entries": 767,
+      "cache_delta": {
+        "hits": 186,
+        "misses": 0,
+        "evictions": 0
+      },
+      "cache": {
+        "retained_bytes": 3873512,
+        "capacity_bytes": 8000000,
+        "entries": 161,
+        "hits": 397,
+        "misses": 161,
+        "shared": 0,
+        "evictions": 0,
+        "in_flight": 0
+      }
+    }
+  ],
+  "manifest": [
+    {
+      "repeat": 0,
+      "variant": "current",
+      "seconds": 1.59151891595684,
+      "files_yielded": 8176,
+      "supported_files": 26,
+      "skipped": []
+    },
+    {
+      "repeat": 0,
+      "variant": "scoped",
+      "seconds": 0.006289042066782713,
+      "files_yielded": 31,
+      "supported_files": 26,
+      "skipped": []
+    },
+    {
+      "repeat": 1,
+      "variant": "scoped",
+      "seconds": 0.006558374967426062,
+      "files_yielded": 31,
+      "supported_files": 26,
+      "skipped": []
+    },
+    {
+      "repeat": 1,
+      "variant": "current",
+      "seconds": 1.5730433750431985,
+      "files_yielded": 8176,
+      "supported_files": 26,
+      "skipped": []
+    },
+    {
+      "repeat": 2,
+      "variant": "current",
+      "seconds": 1.5617784159258008,
+      "files_yielded": 8176,
+      "supported_files": 26,
+      "skipped": []
+    },
+    {
+      "repeat": 2,
+      "variant": "scoped",
+      "seconds": 0.005971957929432392,
+      "files_yielded": 31,
+      "supported_files": 26,
+      "skipped": []
+    }
+  ],
+  "manifest_equal_including_content_and_skips": true,
+  "limitations": [
+    "Scoped traversal equivalence checked only on the recorded scope.",
+    "No cold OS cache, no production changes, no universal speedup claim.",
+    "Catalogue compilation is measured separately from query execution."
+  ]
+}

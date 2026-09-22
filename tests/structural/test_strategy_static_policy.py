@@ -157,6 +157,31 @@ impl<P> Context<P> {
 }
 '''
 
+CPP_QUALIFIED_PARAMETER_CALL = '''struct Policy {
+    static int apply(int x) { return x + 1; }
+};
+
+template <class P>
+struct Algorithm {
+    int run(int x) { return P::apply(x); }
+};
+'''
+
+CPP_QUALIFIED_CONCRETE_CALL = '''struct Policy {
+    static int apply(int x) { return x + 1; }
+};
+
+struct Algorithm {
+    int run(int x) { return Policy::apply(x); }
+};
+'''
+
+CPP_QUALIFIED_WITHOUT_INVOCATION = '''template <class P>
+struct Algorithm {
+    int run(int x) { return x; }
+};
+'''
+
 
 def variant():
     rule = next(r for r in _load_catalog() if r.id == 'strategy')
@@ -231,13 +256,42 @@ def test_no_runtime_object_is_required(language):
     assert not detect(language, SOURCES[language], SIBLING), language
 
 
+def test_a_qualified_type_parameter_call_is_a_static_policy():
+    """The ficha's second form: ``P::apply(x)`` with no stored object.
+
+    ``query_claim`` says the policy role is "the field or the type parameter,
+    according to the form", so authoring against the field alone loses half the
+    pattern. Here the call is qualified by the declaration's own generic
+    parameter, which the frontend accredits as ``TYPE_PARAMETER_RECEIVER``.
+    """
+    matches = detect('cpp', CPP_QUALIFIED_PARAMETER_CALL)
+    assert len(matches) == 1
+    bindings = matches[0]['bindings']
+    assert '/CLASS:Algorithm' in bindings['$unit']
+    assert bindings['$policy'] == bindings['$parameter']
+    assert bindings['$parameter'] in {'P'}
+    assert bindings['$algorithm'] != bindings['$policy']
+
+
+def test_a_qualified_call_to_a_concrete_type_is_not_a_static_policy():
+    """``Policy::apply(x)`` names a known type, so nothing is chosen by type."""
+    assert not detect('cpp', CPP_QUALIFIED_CONCRETE_CALL)
+
+
+def test_a_type_parameter_that_is_not_invoked_is_not_a_static_policy():
+    assert not detect('cpp', CPP_QUALIFIED_WITHOUT_INVOCATION)
+
+
 def test_variant_declares_every_target_language_as_ready():
     row = variant()
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'BINDS_TYPE_PARAMETER' in row['query']
-    assert 'TYPE_NAME' in row['query']
+    # The published query must bind the declaration's type parameter and compare
+    # it with the field's type name. KQL 2 spells those two steps
+    # ``type_parameter $t;`` and ``type: parameter($t)``.
+    assert 'type_parameter' in row['query']
+    assert 'parameter(' in row['query']
 
 
 @pytest.mark.parametrize('language', LANGUAGES)

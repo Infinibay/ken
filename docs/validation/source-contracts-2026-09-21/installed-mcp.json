@@ -1,0 +1,49 @@
+{
+  "command": [
+    "ken",
+    "mcp"
+  ],
+  "transport": "stdio",
+  "tools": [
+    "ken_find",
+    "ken_rule",
+    "ken_check",
+    "ken_who",
+    "ken_read",
+    "ken_related",
+    "ken_rank",
+    "ken_reason_record",
+    "ken_reason",
+    "ken_calculate",
+    "ken_recall",
+    "ken_remember"
+  ],
+  "query": "language \"kql/2\"; module verify; query q { callable $f { name: \"query_view\"; } select $f; }",
+  "response": {
+    "language": "kql/2",
+    "query": "q",
+    "columns": [
+      "column_1"
+    ],
+    "rows": [
+      [
+        {
+          "id": 217,
+          "unit": 2,
+          "local_id": "src/ken/checks/report.py::module/CALLABLE:query_view@797",
+          "kind": "CALLABLE",
+          "name": "query_view",
+          "owner": "src/ken/checks/report.py::module",
+          "line": 30,
+          "end_line": 51,
+          "path": "src/ken/checks/report.py",
+          "language": "python"
+        }
+      ]
+    ],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 0,
+    "results_truncated": false
+  }
+}

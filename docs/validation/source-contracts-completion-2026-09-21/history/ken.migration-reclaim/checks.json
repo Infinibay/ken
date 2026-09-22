@@ -1,0 +1,291 @@
+[
+  {
+    "version": 1,
+    "run_id": "9a9822cb8b9d4d1d9a48076c20060184",
+    "created_at": "2026-09-21T21:50:28.936057+00:00",
+    "scope": "project",
+    "selection": ".",
+    "status": "fail",
+    "checks": [
+      {
+        "rule": "ken.migration-reclaim",
+        "description": "The vector CLI invokes reclaim_database; guards the missing reclamation fixed in 1736a1e.",
+        "revision": "8a30900f8a9fd917a25a18fb272b71759676272adaf7f73c545e3d857e773ced",
+        "path": "src/ken/cli.py",
+        "query": "language \"kql/2\"; module ken.history; query guard { callable $owner { name: \"_vectors_cli\"; call $site { name: \"reclaim_database\"; } } select $owner,$site; }",
+        "libraries": {},
+        "expectation": "some_match",
+        "status": "fail",
+        "engine": "c536fd18015cbd02cde42882025177d92fde9b0536fe29e167787695a8283d07",
+        "result": {
+          "language": "kql/2",
+          "capability": "structural-source/1",
+          "query": "guard",
+          "columns": [
+            "column_1",
+            "column_2"
+          ],
+          "rows": [],
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "reason": null,
+          "results_truncated": false,
+          "plan": [
+            {
+              "operator": "scan",
+              "role": "owner",
+              "selector": "callable",
+              "owner": null,
+              "access": "name_lookup"
+            },
+            {
+              "operator": "scan",
+              "role": "site",
+              "selector": "call",
+              "owner": "owner",
+              "access": "name_lookup"
+            }
+          ],
+          "optional_evidence": [],
+          "analysis": {
+            "snapshot": 1,
+            "manifest": [
+              [
+                "src/ken/cli.py",
+                "7fe042d9597e97bdb7ba94b15f83dbe1a84b08d143d6b0caf93430da6245c948"
+              ]
+            ],
+            "frontend": "17c8dcaa475892215d832bd38bc06521af3cbae2c96bdc9388ebec1140757468",
+            "freshness": "captured_snapshot",
+            "skipped": [],
+            "parsed_units": 1,
+            "reused_units": 0,
+            "cache_mb": 100.0,
+            "disk_budget_mb": 80.0,
+            "compilation_cache": {
+              "retained_bytes": 3113,
+              "capacity_bytes": 20000000,
+              "entries": 1,
+              "hits": 0,
+              "misses": 1,
+              "shared": 0,
+              "evictions": 0,
+              "in_flight": 0,
+              "status": "miss"
+            },
+            "result_cache": "miss",
+            "ephemeral": false,
+            "allocated_bytes": 17444864,
+            "gc": {
+              "deferred": false,
+              "snapshots": 0,
+              "units": 0
+            },
+            "quota_reclamation": {
+              "before_bytes": 425984,
+              "after_bytes": 425984,
+              "deferred": false,
+              "snapshots": 0,
+              "units": 0
+            },
+            "scanned_nodes": 1,
+            "states": 3,
+            "compile_ms": 5.126125179231167,
+            "build_ms": 1107.3270000051707,
+            "query_ms": 0.45904098078608513,
+            "result_lookup_ms": 0.031291041523218155,
+            "total_ms": 1133.7727920617908
+          },
+          "check_snapshot": {
+            "scope": "src/ken/cli.py",
+            "sha256": "9900779a4a210500170d92b09375907f91bb721563e27ec2d33497344bdb6479",
+            "manifest": [
+              [
+                "src/ken/cli.py",
+                "7fe042d9597e97bdb7ba94b15f83dbe1a84b08d143d6b0caf93430da6245c948"
+              ]
+            ]
+          },
+          "check_dependencies": {
+            "manifest": [],
+            "imports": [
+              [
+                "src/ken/cli.py",
+                []
+              ]
+            ],
+            "issues": []
+          },
+          "check_engine": "c536fd18015cbd02cde42882025177d92fde9b0536fe29e167787695a8283d07"
+        }
+      }
+    ],
+    "selection_evidence": {}
+  },
+  {
+    "version": 1,
+    "run_id": "bfaafa727c3e4547ba1eef901adffb65",
+    "created_at": "2026-09-21T21:50:30.394255+00:00",
+    "scope": "project",
+    "selection": ".",
+    "status": "pass",
+    "checks": [
+      {
+        "rule": "ken.migration-reclaim",
+        "description": "The vector CLI invokes reclaim_database; guards the missing reclamation fixed in 1736a1e.",
+        "revision": "8a30900f8a9fd917a25a18fb272b71759676272adaf7f73c545e3d857e773ced",
+        "path": "src/ken/cli.py",
+        "query": "language \"kql/2\"; module ken.history; query guard { callable $owner { name: \"_vectors_cli\"; call $site { name: \"reclaim_database\"; } } select $owner,$site; }",
+        "libraries": {},
+        "expectation": "some_match",
+        "status": "pass",
+        "engine": "c536fd18015cbd02cde42882025177d92fde9b0536fe29e167787695a8283d07",
+        "result": {
+          "language": "kql/2",
+          "capability": "structural-source/1",
+          "query": "guard",
+          "columns": [
+            "column_1",
+            "column_2"
+          ],
+          "rows": [
+            [
+              {
+                "id": 2183,
+                "unit": 2,
+                "local_id": "src/ken/cli.py::module/CALLABLE:_vectors_cli@31759",
+                "kind": "CALLABLE",
+                "name": "_vectors_cli",
+                "owner": "src/ken/cli.py::module",
+                "line": 884,
+                "end_line": 986,
+                "path": "src/ken/cli.py",
+                "language": "python"
+              },
+              {
+                "id": 3419,
+                "unit": 2,
+                "local_id": "src/ken/cli.py::module/CALLABLE:_vectors_cli@31759/CALL:33474@33474:33496",
+                "kind": "CALL",
+                "name": "reclaim_database",
+                "owner": "src/ken/cli.py::module/CALLABLE:_vectors_cli@31759",
+                "line": 925,
+                "end_line": 925,
+                "path": "src/ken/cli.py",
+                "language": "python"
+              }
+            ]
+          ],
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "reason": null,
+          "results_truncated": false,
+          "plan": [
+            {
+              "operator": "scan",
+              "role": "owner",
+              "selector": "callable",
+              "owner": null,
+              "access": "name_lookup"
+            },
+            {
+              "operator": "scan",
+              "role": "site",
+              "selector": "call",
+              "owner": "owner",
+              "access": "name_lookup"
+            }
+          ],
+          "optional_evidence": [],
+          "analysis": {
+            "snapshot": 2,
+            "manifest": [
+              [
+                "src/ken/cli.py",
+                "8bbb8c7c91ce5d7e7a0979f70db1609ca34b2465c4f3121b2ed65782dcaea49e"
+              ]
+            ],
+            "frontend": "17c8dcaa475892215d832bd38bc06521af3cbae2c96bdc9388ebec1140757468",
+            "freshness": "captured_snapshot",
+            "skipped": [],
+            "parsed_units": 1,
+            "reused_units": 0,
+            "cache_mb": 100.0,
+            "disk_budget_mb": 80.0,
+            "compilation_cache": {
+              "retained_bytes": 6198,
+              "capacity_bytes": 20000000,
+              "entries": 1,
+              "hits": 0,
+              "misses": 1,
+              "shared": 0,
+              "evictions": 0,
+              "in_flight": 0,
+              "status": "disk_hit"
+            },
+            "result_cache": "miss",
+            "ephemeral": false,
+            "allocated_bytes": 34877440,
+            "gc": {
+              "deferred": false,
+              "snapshots": 0,
+              "units": 0
+            },
+            "quota_reclamation": {
+              "before_bytes": 17444864,
+              "after_bytes": 17444864,
+              "deferred": false,
+              "snapshots": 0,
+              "units": 0
+            },
+            "scanned_nodes": 2,
+            "states": 8,
+            "compile_ms": 20.80508298240602,
+            "build_ms": 1158.5037920158356,
+            "query_ms": 0.4300421569496393,
+            "result_lookup_ms": 0.03179092891514301,
+            "total_ms": 1213.6768749915063
+          },
+          "check_snapshot": {
+            "scope": "src/ken/cli.py",
+            "sha256": "b501f900edb041212ce81b617dcf8d2ea7875a95e5525d36f1724c5375f61648",
+            "manifest": [
+              [
+                "src/ken/cli.py",
+                "8bbb8c7c91ce5d7e7a0979f70db1609ca34b2465c4f3121b2ed65782dcaea49e"
+              ]
+            ]
+          },
+          "check_dependencies": {
+            "manifest": [],
+            "imports": [
+              [
+                "src/ken/cli.py",
+                []
+              ]
+            ],
+            "issues": []
+          },
+          "check_engine": "c536fd18015cbd02cde42882025177d92fde9b0536fe29e167787695a8283d07"
+        }
+      }
+    ],
+    "selection_evidence": {},
+    "comparison": {
+      "baseline": "9a9822cb8b9d4d1d9a48076c20060184",
+      "changes": [
+        {
+          "rule": "ken.migration-reclaim",
+          "change": "resolved",
+          "before": "fail",
+          "after": "pass",
+          "matches_before": 0,
+          "matches_after": 1
+        }
+      ],
+      "not_checked": []
+    }
+  }
+]

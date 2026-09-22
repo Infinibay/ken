@@ -84,11 +84,11 @@ def test_all_ten_public_rules_and_ready_children_are_executable():
     assert {r.id for r in modern} == {rule_id(c) for c in CONCEPTS}
     for rule in modern:
         rule.validate()
-        assert rule.query.strip().startswith('query ')
-        assert 'require ' in rule.query or 'match ' in rule.query
+        assert rule.query.strip().startswith('language "kql/2";')
+        assert 'edge ' in rule.query or 'use ' in rule.query
         for child in [*rule.variants, *rule.operations]:
             if child['status'] == 'ready':
-                assert 'require ' in child['query'] or 'match ' in child['query']
+                assert 'edge ' in child['query'] or 'use ' in child['query']
 
 
 @pytest.mark.parametrize('language', list(INJECTION))

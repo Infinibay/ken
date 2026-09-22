@@ -1,0 +1,1 @@
+language "kql/2"; module review; query while_true {node $loop {kind:"while"; node $condition {role:"condition"; kind:"literal"; text:"True";} } select $loop.path,$loop.line;}

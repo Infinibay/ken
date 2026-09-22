@@ -1,0 +1,48 @@
+{
+  "language": "kql/2",
+  "query": "try_without_throw",
+  "backend": "exploration",
+  "validated": true,
+  "executed": false,
+  "diagnostics": [
+    {
+      "code": "uncorrelated_exists",
+      "severity": "warning",
+      "message": "not exists is global in the selected source scope; it does not test each outer capture.",
+      "hint": "If you mean a descendant of a captured node, add where contains($owner, $witness) inside the block. Keep it global only when that is the intended property.",
+      "span": {
+        "source": "<query>",
+        "start": 127,
+        "end": 178
+      },
+      "captures": [
+        "$catch",
+        "$try"
+      ]
+    },
+    {
+      "code": "disconnected_captures",
+      "severity": "warning",
+      "message": "Independent capture groups can form a Cartesian product. Their existence does not establish containment or ownership.",
+      "hint": "If the question requires a relationship, nest direct children or add where contains($owner, $witness). Project witnesses while checking the query. Independent groups are allowed when intentional.",
+      "span": {
+        "source": "<query>",
+        "start": 188,
+        "end": 192
+      },
+      "groups": [
+        [
+          "$catch"
+        ],
+        [
+          "$try"
+        ]
+      ]
+    }
+  ],
+  "columns": [
+    "column_1"
+  ],
+  "diagnostic_scope": "source capture relationships; graph authoring warnings are not covered",
+  "claim": "Valid for this backend. Query validity and complete source coverage do not prove that the intended question is encoded or that runtime behavior is correct."
+}

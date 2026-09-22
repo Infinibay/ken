@@ -1,0 +1,167 @@
+{
+  "ok": true,
+  "question": "Who returns source snippets for selected symbols or a line range?",
+  "hypotheses": [],
+  "status": "ambiguous",
+  "candidates": [
+    {
+      "symbol": "_impl_ken_file_snippets",
+      "path": "src/ken/mcp/server.py",
+      "line": 478,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.856,
+        "band": "strong",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who returns source snippets for selected symbols or a line range?",
+      "documentation": "Return source snippets for selected symbols or a line range.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.85,
+          "explanation": "Documentation similarity 0.799; term coverage 1.000 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.125,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "87cce26a6f8f6f1625c3a32378112abda8605cf94af8945de866f981b9150c5c",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/mcp/server.py",
+        "qualname": "_impl_ken_file_snippets",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "file_snippets",
+      "path": "src/ken/search.py",
+      "line": 408,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.856,
+        "band": "strong",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who returns source snippets for selected symbols or a line range?",
+      "documentation": "Return source snippets for selected symbols or a line range.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.85,
+          "explanation": "Documentation similarity 0.799; term coverage 1.000 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.125,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "68b97064047964eb843d38f304db5d335560a7e2435948bcc7a6cc6a3170d493",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/search.py",
+        "qualname": "file_snippets",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "ken_read",
+      "path": "src/ken/mcp/server.py",
+      "line": 1079,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.531,
+        "band": "moderate",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who returns source snippets for selected symbols or a line range?",
+      "documentation": "Read an indexed file's structure, and optionally its source. Pick\nfields with *include*: symbols, imports, docstrings, source, profile.\n\n*include* selects what comes back \u2014 any of ``symbols``, ``imports``,\n``docstrings``, ``source``, ``profile``. Defaults to ``[\"symbols\"]``.\n\n``source`` needs somewhere to read from: pass *qualname* for one symbol,\nor *start_line*/*end_line* for a range. ``profile`` answers what the file\nis *for* and how it differs from its siblings, which is the question you\nhave before you know which symbol you want.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.53125,
+          "explanation": "Documentation similarity 0.523; term coverage 0.625 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "87cce26a6f8f6f1625c3a32378112abda8605cf94af8945de866f981b9150c5c",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/mcp/server.py",
+        "qualname": "ken_read",
+        "include": [
+          "source"
+        ]
+      }
+    }
+  ],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 1965,
+    "inspected_symbols": 40,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "issues": [],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

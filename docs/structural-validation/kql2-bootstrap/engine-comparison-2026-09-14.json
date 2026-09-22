@@ -1,0 +1,187 @@
+{
+  "nodes": 100000,
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "query1": "query q { class(name: \"Target\") as $c; emit $c; }",
+  "query2": "language \"kql/2\"; module bench; query q { class $c { name: \"Target\"; } select $c; }",
+  "compile_ms": {
+    "kql1": 0.10012509301304817,
+    "kql2": 0.9151659905910492
+  },
+  "prepare_graph_ms": {
+    "kql1_in_memory": 269.8142088484019,
+    "kql2_persisted": 2547.7808751165867
+  },
+  "first_query_ms": {
+    "kql1": 29.304125113412738,
+    "kql2": 0.4615001380443573
+  },
+  "warm_median_ms": {
+    "kql1": 0.014666584320366383,
+    "kql2": 0.045729451812803745
+  },
+  "samples": {
+    "kql1": [
+      {
+        "ms": 29.304125113412738,
+        "candidates": 1
+      },
+      {
+        "ms": 0.04420895129442215,
+        "candidates": 1
+      },
+      {
+        "ms": 0.030791154131293297,
+        "candidates": 1
+      },
+      {
+        "ms": 0.021292129531502724,
+        "candidates": 1
+      },
+      {
+        "ms": 0.015208031982183456,
+        "candidates": 1
+      },
+      {
+        "ms": 0.016666948795318604,
+        "candidates": 1
+      },
+      {
+        "ms": 0.01695798709988594,
+        "candidates": 1
+      },
+      {
+        "ms": 0.014750054106116295,
+        "candidates": 1
+      },
+      {
+        "ms": 0.013082986697554588,
+        "candidates": 1
+      },
+      {
+        "ms": 0.01458311453461647,
+        "candidates": 1
+      },
+      {
+        "ms": 0.011041993275284767,
+        "candidates": 1
+      },
+      {
+        "ms": 0.012333039194345474,
+        "candidates": 1
+      },
+      {
+        "ms": 0.009667128324508667,
+        "candidates": 1
+      },
+      {
+        "ms": 0.013458076864480972,
+        "candidates": 1
+      },
+      {
+        "ms": 0.01100008375942707,
+        "candidates": 1
+      }
+    ],
+    "kql2": [
+      {
+        "ms": 0.4615001380443573,
+        "candidates": 1
+      },
+      {
+        "ms": 0.07762503810226917,
+        "candidates": 1
+      },
+      {
+        "ms": 0.06474996916949749,
+        "candidates": 1
+      },
+      {
+        "ms": 0.04995916970074177,
+        "candidates": 1
+      },
+      {
+        "ms": 0.05833292379975319,
+        "candidates": 1
+      },
+      {
+        "ms": 0.046833883970975876,
+        "candidates": 1
+      },
+      {
+        "ms": 0.048958929255604744,
+        "candidates": 1
+      },
+      {
+        "ms": 0.0439169816672802,
+        "candidates": 1
+      },
+      {
+        "ms": 0.12333295308053493,
+        "candidates": 1
+      },
+      {
+        "ms": 0.043416162952780724,
+        "candidates": 1
+      },
+      {
+        "ms": 0.044625019654631615,
+        "candidates": 1
+      },
+      {
+        "ms": 0.04212488420307636,
+        "candidates": 1
+      },
+      {
+        "ms": 0.04124990664422512,
+        "candidates": 1
+      },
+      {
+        "ms": 0.042165862396359444,
+        "candidates": 1
+      },
+      {
+        "ms": 0.04224991425871849,
+        "candidates": 1
+      }
+    ]
+  },
+  "limitations": [
+    "One selective synthetic workload; not general speed comparison",
+    "Both evaluate every query; no result memo",
+    "KQL1 returns proof metadata; KQL2 returns nodes",
+    "KQL1 graph preparation is RAM-only; KQL2 includes persistence",
+    "No source parsing, OS cold-cache or incremental timings in this experiment"
+  ],
+  "code_hashes": {
+    "src/ken/kql2/service.py": "67bfc6026ce5d5f2cd3d070bf1ed03a2b443e0b1bc52475ef04bdf51015d5737",
+    "src/ken/kql2/execution.py": "439fd0be19af9bbc0f7ae39bcff5ad7a9060d11c22828c98055cb769dbc86cea",
+    "src/ken/kql2/values.py": "39c7e2d4f848304a449591be93c847d43ba30039cb0c4bf304298e102be8cb3e",
+    "src/ken/kql2/semantic.py": "bcef7982cf9c5973f5d38fa07e096ddb83f426dec3071903740d64fa16b0fcf3",
+    "src/ken/kql2/compiler.py": "4ac8567a6b585f740083de9501c39674de0d9c2d6efaf3166d0640631970858c",
+    "src/ken/kql2/body.py": "9ef14986687f1512408bea5cd5a4e292cb9c60d01f4d7a99b4112a28e3420c9b",
+    "src/ken/kql2/models.py": "da385f0ca42d5363cbdb9e15d788692fc0f5dba37618051ff946c3cfce82e48d",
+    "src/ken/kql2/expressions.py": "111d37582f14d921c1b5b18554ce188177cc902e711d619ce89777f3e780e7c9",
+    "src/ken/kql2/cache.py": "c62aae4955574dd76a63f3dca9dca0009d5a9dbe9f41d116e0ef0b10010819f4",
+    "src/ken/kql2/__init__.py": "c01cb0f963ed08bf6261a5a8a1a4355b49ccdec215cc0558ef1947008e41862c",
+    "src/ken/kql2/libraries.py": "600955c3238eac972817a96dd736f8d1eb91ed02998a112bb0900122d2d2541f",
+    "src/ken/kql2/logic.py": "c1cde23f1a5575506fd9a8a02c18e1de14c3af9729e84a1f28526209ff745576",
+    "src/ken/kql2/compilation.py": "f9501f035eb2d9ff04867807f51b53d73f5a7ed3ca35d160ff46d55d3d003f35",
+    "src/ken/kql2/cli.py": "42a48334a853835424587a95152badd6769b199d70a50299b4133e9f22deda52",
+    "src/ken/kql2/codec.py": "4986270e0cf8635b7551003519667e4a156a38148c8aa67dbe82399662c58ca7",
+    "src/ken/kql2/source_types.py": "b3c0bea4ff66d1e240db1331fb81f305b42f1f795300f8691146568b18161c73",
+    "src/ken/kql2/__main__.py": "87c4eb96b64c54a011826987469df6f5974be3f7240385c03fef9602e2346a57",
+    "src/ken/kql2/syntax/__init__.py": "9b1f40badd3df2abd477d22ab6d8483a4b3e371815718f4c18e8a7853747a25a",
+    "src/ken/kql2/syntax/parser.py": "6f49fe1def46c14b8165d71066f03d3f2abb01bc4b085ffb633ae3bee1d101d5",
+    "src/ken/kql2/syntax/lexer.py": "ee4a836cf2d758eaecc06c01372f5825efcfd04651236574ad3962cce4195032",
+    "src/ken/kql2/syntax/ast.py": "7b7ed8f9ad99e07d8087227fc88ca9fea1d73b02b0363fa34fc571e7053cab4b",
+    "src/ken/structural_store/store.py": "5efc54d134a36cd1f1813efb1c54e7dcf44395e8a5a68ecfaf59749f98d540c3",
+    "src/ken/structural_store/leases.py": "8366c44b87f092f14182fe582e0b09f94d7ca7631132c59bb3e759f965a20df4",
+    "src/ken/structural_store/maintenance.py": "68a467d8631d786c425139527ebc84cac31d31dffdeba1dd24e6859665d66e70",
+    "src/ken/structural_store/__init__.py": "51f595b5f1934e5878facf7216b148aaf86c500afdcede80d9f24c3bd3f96bfc",
+    "src/ken/structural_store/operations.py": "512546330001972086af451450f6406e90097f67024d0ae705ec86b066e08d39",
+    "src/ken/structural_store/migrations.py": "a893d2d761c0e2e6e93a7b96bf6661c6fdac451dff32eef3362c0a309ca4d307",
+    "src/ken/structural_store/artifacts.py": "95b70ceb0a7a905ead91c0b61fc75a6edd66604035959b6f0aefc31cb7c9591f",
+    "src/ken/structural_store/acquisition.py": "9eacd347499e77a8a2cfde7fde1be9947d47ada96ca268900509eca4af118997",
+    "src/ken/structural_store/schema.py": "def7c6d6e8c22e44edfe6baa52f7b94151a8b349808cc9e5bd3aa78a55a4f4d5"
+  }
+}

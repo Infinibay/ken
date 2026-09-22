@@ -1,0 +1,7 @@
+- **Ubicación:** `_paths.ken_dir(project_root)/vectors/<space>.json`, según [src/ken/vectors.py::vectors_dir](/private/tmp/ken-contract-agent-verified-20260921/project/src/ken/vectors.py:169) y [VectorStore.manifest_path](/private/tmp/ken-contract-agent-verified-20260921/project/src/ken/vectors.py:376). La resolución del directorio base queda delegada a `_paths.ken_dir`.
+
+- **Escritor y permisos:** [_atomic_write](/private/tmp/ken-contract-agent-verified-20260921/project/src/ken/vectors.py:182) crea un temporal en el mismo directorio, escribe, hace `flush` y `fsync`, intenta `os.chmod(tmp, 0o666 & ~_process_umask())` y finalmente ejecuta `os.replace`. Con umask `022`, el modo solicitado es `0644`. **Ignora `OSError` del chmod**, por lo que no garantiza esos permisos en ejecución.
+
+- **Llamadores:** [VectorStore._load_or_create](/private/tmp/ken-contract-agent-verified-20260921/project/src/ken/vectors.py:379) lo llama al crear un manifiesto; [compact](/private/tmp/ken-contract-agent-verified-20260921/project/src/ken/vectors.py:772) también lo usa, escribiendo primero en `vectors.compact`.
+
+Esto describe código observado. El chequeo guardado `vectors.manifest-chmod` confirma únicamente la presencia de una llamada explícita a `chmod`; no demuestra que el modo sea correcto ni que la operación tenga éxito.

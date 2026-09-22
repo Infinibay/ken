@@ -1,0 +1,757 @@
+{
+  "passed": false,
+  "target_seconds": 5.0,
+  "expected_files": 100,
+  "files": [
+    {
+      "path": "sdk/python/_runtime_setup.py",
+      "bytes": 12129,
+      "lines": 372,
+      "sha256": "87aaed2e0a20c7037d2b536fd4abb4145006ac5093b531f375db71189600bb9a"
+    },
+    {
+      "path": "sdk/python/examples/01_quickstart_constructor/async.py",
+      "bytes": 818,
+      "lines": 34,
+      "sha256": "80c28acc9c2a4ef3f24bcdab5f90d82f79c6776c2f42bcde51457492f6626037"
+    },
+    {
+      "path": "sdk/python/examples/01_quickstart_constructor/sync.py",
+      "bytes": 648,
+      "lines": 24,
+      "sha256": "c50468284cfde7e9315e1443a83f80569eb2037366d9abfe03eb7dc9073a9487"
+    },
+    {
+      "path": "sdk/python/examples/02_turn_run/async.py",
+      "bytes": 966,
+      "lines": 35,
+      "sha256": "c2e2a1a0f82eed835c4a764811493388cee861aa764a616c63ed36cc2c7b841d"
+    },
+    {
+      "path": "sdk/python/examples/02_turn_run/sync.py",
+      "bytes": 754,
+      "lines": 24,
+      "sha256": "ae4d05a5aa2daca2d1289e8596b5b5ff40cdcde3417ac76a51baeef7479eabc6"
+    },
+    {
+      "path": "sdk/python/examples/03_turn_stream_events/async.py",
+      "bytes": 2106,
+      "lines": 66,
+      "sha256": "6c57e08b3378ccb384fe9e9076ca2fe470eaefa28e21c23d31fada916a4b9486"
+    },
+    {
+      "path": "sdk/python/examples/03_turn_stream_events/sync.py",
+      "bytes": 1798,
+      "lines": 56,
+      "sha256": "152a676131106da6b2503183d79e73bbebee34c7b4c04178132582d8c4939182"
+    },
+    {
+      "path": "sdk/python/examples/04_models_and_metadata/async.py",
+      "bytes": 685,
+      "lines": 26,
+      "sha256": "70f64cc17ca02878dd3b816172cb7fb44c17447d8e641e3524e8baacdc94af34"
+    },
+    {
+      "path": "sdk/python/examples/04_models_and_metadata/sync.py",
+      "bytes": 547,
+      "lines": 18,
+      "sha256": "4641d19d212f4bc22d72cf6d36ceb3eb69359843d035f435d9af554cd7880852"
+    },
+    {
+      "path": "sdk/python/examples/05_existing_thread/async.py",
+      "bytes": 946,
+      "lines": 34,
+      "sha256": "15a3c0313237367cc56e34c79e6abcd01e53ff1a3026587badd0e7b8b3f0b60e"
+    },
+    {
+      "path": "sdk/python/examples/05_existing_thread/sync.py",
+      "bytes": 801,
+      "lines": 23,
+      "sha256": "5bb7ccd0d4e4ea1b5a5f062ddc382a2c5a3e4ecf04a5b7239c7ba36764682f93"
+    },
+    {
+      "path": "sdk/python/examples/06_thread_lifecycle_and_controls/async.py",
+      "bytes": 2241,
+      "lines": 60,
+      "sha256": "4bd926a92e7a444f183c637add10a5e9050bf4773809df57679cc0de5e13bfb4"
+    },
+    {
+      "path": "sdk/python/examples/06_thread_lifecycle_and_controls/sync.py",
+      "bytes": 1847,
+      "lines": 48,
+      "sha256": "1aa4127d83a6a125d75b0c12c3bfe66c742dfdb8575d9b8b56b985ba77be33ee"
+    },
+    {
+      "path": "sdk/python/examples/07_image_and_text/async.py",
+      "bytes": 983,
+      "lines": 37,
+      "sha256": "3f6ffc01fd49b6709574bcbf07610d5209c5599504e3919911cc63a3119adf30"
+    },
+    {
+      "path": "sdk/python/examples/07_image_and_text/sync.py",
+      "bytes": 771,
+      "lines": 26,
+      "sha256": "8d01a7965b72a271d464f80dae6b2de808e8bc3aaac55f9f3df53b68b080711c"
+    },
+    {
+      "path": "sdk/python/examples/08_local_image_and_text/async.py",
+      "bytes": 1157,
+      "lines": 43,
+      "sha256": "917bbe85d1ba823f1be91722c4863397cd21097f2608951522c97dd3468c54d8"
+    },
+    {
+      "path": "sdk/python/examples/08_local_image_and_text/sync.py",
+      "bytes": 921,
+      "lines": 32,
+      "sha256": "5a9cd32e0402528d0ccf6bca3bc691986c1df6e7c5ebc1d7dcf3f19dfedc410a"
+    },
+    {
+      "path": "sdk/python/examples/09_async_parity/sync.py",
+      "bytes": 686,
+      "lines": 23,
+      "sha256": "d5e0003f2260e1d9b669b8fd2aa6f29b6c16f3a670e11611dc5fab715930a174"
+    },
+    {
+      "path": "sdk/python/examples/10_error_handling_and_retry/async.py",
+      "bytes": 2454,
+      "lines": 91,
+      "sha256": "c7ba33065d5882277607dbe79806837fc244f77bdc956ff65cc6b5f6a6ef2c7b"
+    },
+    {
+      "path": "sdk/python/examples/10_error_handling_and_retry/sync.py",
+      "bytes": 1135,
+      "lines": 38,
+      "sha256": "9d5a00665979b2b3c314442bcf0d4eba79ca372fe2c613dbac98a4f239e04684"
+    },
+    {
+      "path": "sdk/python/examples/11_cli_mini_app/async.py",
+      "bytes": 2819,
+      "lines": 88,
+      "sha256": "cc452093ed859ec1f5154639842010c3b8cdcf74cac0d453c2a65a970c037fc0"
+    },
+    {
+      "path": "sdk/python/examples/11_cli_mini_app/sync.py",
+      "bytes": 2471,
+      "lines": 79,
+      "sha256": "b1956c0933b82cdb9d60024e40a44c128deb93cdd1b4f8b6a5978423f38fa239"
+    },
+    {
+      "path": "sdk/python/examples/12_turn_params_kitchen_sink/async.py",
+      "bytes": 2218,
+      "lines": 83,
+      "sha256": "491c2371ec9e834794ae87821d4ae52f5a96af19f6c82241166c91db98775b4f"
+    },
+    {
+      "path": "sdk/python/examples/12_turn_params_kitchen_sink/sync.py",
+      "bytes": 1942,
+      "lines": 73,
+      "sha256": "6fb790e335d1b74f47bb4ef2a03fa69ac6d8c5f9eb3700c95e686faf38a2e070"
+    },
+    {
+      "path": "sdk/python/examples/13_model_select_and_turn_params/async.py",
+      "bytes": 3222,
+      "lines": 112,
+      "sha256": "de88459ebd1f265acbbdb2a05d8a3a700ee217528f786c7c311c6072db20ebf2"
+    },
+    {
+      "path": "sdk/python/examples/13_model_select_and_turn_params/sync.py",
+      "bytes": 2896,
+      "lines": 102,
+      "sha256": "0933bd3e7bcb8dd78c313b9d91b48047cfe018f35a1496977f7f58c8e9f489cb"
+    },
+    {
+      "path": "sdk/python/examples/14_turn_controls/async.py",
+      "bytes": 2763,
+      "lines": 71,
+      "sha256": "1c4f7b3c28439dd5348c52d3c2c6240dfff2b1435107df7622c0c1fffd8bdd52"
+    },
+    {
+      "path": "sdk/python/examples/14_turn_controls/sync.py",
+      "bytes": 2405,
+      "lines": 59,
+      "sha256": "97a93661b827c760c6833fe14689a9cce793ab6c18f184645305a1672925b63f"
+    },
+    {
+      "path": "sdk/python/examples/15_login_and_account/async.py",
+      "bytes": 1069,
+      "lines": 34,
+      "sha256": "a5ae486a0d3984b300ffeadf24a54c7860983d47a1b3ddf87985b8b922ecbab9"
+    },
+    {
+      "path": "sdk/python/examples/15_login_and_account/sync.py",
+      "bytes": 884,
+      "lines": 26,
+      "sha256": "9f1c2434aa9afd8e3a92fc069444295165a2cc84907b7b6359d98c2b5e60ea09"
+    },
+    {
+      "path": "sdk/python/examples/16_external_message/async.py",
+      "bytes": 1294,
+      "lines": 40,
+      "sha256": "d72b3c2f3480ba6e923abd5074d71b41ebc982607d6716b441795ca3069ca566"
+    },
+    {
+      "path": "sdk/python/examples/16_external_message/sync.py",
+      "bytes": 1097,
+      "lines": 33,
+      "sha256": "39735c0c85576b1f422127d22704d1fa948e299b57f2bf3e240437a0044cd458"
+    },
+    {
+      "path": "sdk/python/examples/_bootstrap.py",
+      "bytes": 3401,
+      "lines": 113,
+      "sha256": "64a8950295876db8f5b109052c9ab67fb42ea91ff6f5c1522d7430bca3c7d8b4"
+    },
+    {
+      "path": "sdk/python/release_version.py",
+      "bytes": 3127,
+      "lines": 88,
+      "sha256": "71beaa66ac1821c80a68740614d646cc9c858d23fb469b6fc4286cc25d43f390"
+    },
+    {
+      "path": "sdk/python/scripts/update_sdk_artifacts.py",
+      "bytes": 56080,
+      "lines": 1510,
+      "sha256": "6bc659177497820aeddab5185d05a5d9255b3215d3ed5bd3edb604b4284c3c3e"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/__init__.py",
+      "bytes": 2053,
+      "lines": 95,
+      "sha256": "9a58d9301d099824b21c15fef2fdc4e98191aa9ee4fb1b9b9026e5d700590bd3"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/_approval_mode.py",
+      "bytes": 1685,
+      "lines": 51,
+      "sha256": "9cd7dbf7f20529b97adb9291832ed01645befff58d9642670f1fb8b774bd1b62"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/_goal.py",
+      "bytes": 16291,
+      "lines": 448,
+      "sha256": "b61a1a25322e8d385ded39a1a93f0c4131d5bf0c66461cee89989930d2352643"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/_initialize_metadata.py",
+      "bytes": 1863,
+      "lines": 54,
+      "sha256": "9ab05330ae46e2c2fc1e6279efeca98789a759f43b19601e887e4772d0f4f6da"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/_inputs.py",
+      "bytes": 3122,
+      "lines": 103,
+      "sha256": "6b6b92ce54bb65c8eb68585e794207d3c800434a5486d91b38c4eefefdb371ce"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/_login.py",
+      "bytes": 5985,
+      "lines": 172,
+      "sha256": "0acc5d5e801afbb9b1b73ce2867412031dbb099fb4747713fdaec41b3c02e91b"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/_message_router.py",
+      "bytes": 16756,
+      "lines": 389,
+      "sha256": "8c1239bae89e3128ea797fd1ed23619bccab5614212908f3cb498f84ea67c396"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/_run.py",
+      "bytes": 4295,
+      "lines": 135,
+      "sha256": "ca0e0c0d9a2c3ae8606cc5986c93bae100c47583df6c4e5643dc5cc582428263"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/_runtime_requirements.py",
+      "bytes": 2481,
+      "lines": 64,
+      "sha256": "dab856ff4ff4a02c567b3f362c5b1298b0cdeaed6d2a84384c5dc87765447d28"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/_sandbox.py",
+      "bytes": 2443,
+      "lines": 78,
+      "sha256": "01ab6cabc1642941ba958b287c34a5475066c934b67e4fd194d78b4bb2eb27b2"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/_version.py",
+      "bytes": 906,
+      "lines": 36,
+      "sha256": "678f4945d9906b0150a3d84cfc217e06824b9a963e7d248bd4b0d0fb51210658"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/api.py",
+      "bytes": 33152,
+      "lines": 901,
+      "sha256": "bd9cac51820997fa4d3fa4ac5c24894f45b92da8ba481d49c44cb96dcc9af430"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/async_client.py",
+      "bytes": 16245,
+      "lines": 413,
+      "sha256": "7d1e291eed8ce7a907b9dafd79580f286451224c12c59302b61918046a01f99c"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/client.py",
+      "bytes": 33781,
+      "lines": 924,
+      "sha256": "8452afbd8148ea212c94e8a6727468054b175acb0daf95002c84b66b604d05a6"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/errors.py",
+      "bytes": 3656,
+      "lines": 121,
+      "sha256": "104b435d7e9f293c3327ad59fc7985363503fb4d919cadbb73f943d12a75a615"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/generated/__init__.py",
+      "bytes": 71,
+      "lines": 1,
+      "sha256": "0fa172a905073649a4c73e2559c8f3c81816da814ebb692ee812d67ae0dcc599"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/generated/notification_registry.py",
+      "bytes": 14466,
+      "lines": 302,
+      "sha256": "e34220926b8254311eebc66b6662e8bed20e82c3252cfd883420a314ed8dc5a5"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/generated/v2_all.py",
+      "bytes": 391129,
+      "lines": 12807,
+      "sha256": "b15f917c98afa54bb54a5f9dd2cbd59e3d46e5ffeb43f876fe6ea1d78a22d550"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/models.py",
+      "bytes": 3337,
+      "lines": 76,
+      "sha256": "f0a33994b07369711e4d5b2c7a977d20dfbad5d9e0a72b922ca14ce639a6c4fd"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/retry.py",
+      "bytes": 1007,
+      "lines": 41,
+      "sha256": "0d0d048748a675ea29a2df497ae416d79887d5a69d03453fb7ca7387c4c8af47"
+    },
+    {
+      "path": "sdk/python/src/openai_codex/types.py",
+      "bytes": 1910,
+      "lines": 81,
+      "sha256": "31a95f0a42e1e4f655663db0473927d102664547f534713ec2040cdb913c8afc"
+    },
+    {
+      "path": "sdk/python/tests/app_server_harness.py",
+      "bytes": 15538,
+      "lines": 462,
+      "sha256": "5102fb4ee77fbfecc8660681aa02f05f55b8018f8fa08210c604d1089c16c4b7"
+    },
+    {
+      "path": "sdk/python/tests/app_server_helpers.py",
+      "bytes": 3935,
+      "lines": 167,
+      "sha256": "06c23a65f35c69cdc097f4ffc026fb9c8a97edcdd6d6f52a20c2f6748536ace9"
+    },
+    {
+      "path": "sdk/python/tests/conftest.py",
+      "bytes": 393,
+      "lines": 16,
+      "sha256": "4a511df86d2957eac3413f473372f1483284cbf316030b7b5e548d0cc522a471"
+    },
+    {
+      "path": "sdk/python/tests/installed_sdk_smoke.py",
+      "bytes": 1519,
+      "lines": 39,
+      "sha256": "e5fcdb13084de27d207a652d96bbc4e0def5772e51c15acc0166282af5cda846"
+    },
+    {
+      "path": "sdk/python/tests/test_app_server_approvals.py",
+      "bytes": 8678,
+      "lines": 208,
+      "sha256": "0de6d2de573fff620a8f975c134cd33991611d608a58785ca13c3854b0375d10"
+    },
+    {
+      "path": "sdk/python/tests/test_app_server_goal_operations.py",
+      "bytes": 3445,
+      "lines": 90,
+      "sha256": "0075af77961bda0e47ba59883c3e38c80f6efcc72b257577ea2f9ac1ee0499b8"
+    },
+    {
+      "path": "sdk/python/tests/test_app_server_inputs.py",
+      "bytes": 11677,
+      "lines": 297,
+      "sha256": "09ae9bb20a59ace1edf1869c26639075dd49ea31332373fd4efed845a0474690"
+    },
+    {
+      "path": "sdk/python/tests/test_app_server_lifecycle.py",
+      "bytes": 10794,
+      "lines": 271,
+      "sha256": "eeede255b9bc48cf4bff6ea0d64d603362c73f0d8852962eea788ca0ae114dc2"
+    },
+    {
+      "path": "sdk/python/tests/test_app_server_login.py",
+      "bytes": 3377,
+      "lines": 90,
+      "sha256": "5f99c14d82faa6376d4d13786796f37ac0a83927140a198c56c2e4a64c45e19d"
+    },
+    {
+      "path": "sdk/python/tests/test_app_server_run.py",
+      "bytes": 13918,
+      "lines": 381,
+      "sha256": "67dd49aef4b51379d09b067efcb2aa6ed38b831a0b60d1f91b5430161d36498e"
+    },
+    {
+      "path": "sdk/python/tests/test_app_server_streaming.py",
+      "bytes": 10383,
+      "lines": 274,
+      "sha256": "b91a225521f0f7219b775c900a7e7c3760eda69b436604c362da9850dbfc2c74"
+    },
+    {
+      "path": "sdk/python/tests/test_app_server_turn_controls.py",
+      "bytes": 2988,
+      "lines": 81,
+      "sha256": "99fcdfd32b63c23ad8fba32f491652d5cf844ca383535977d5ed83c13ecaeb64"
+    },
+    {
+      "path": "sdk/python/tests/test_artifact_workflow_and_binaries.py",
+      "bytes": 52500,
+      "lines": 1436,
+      "sha256": "01ac962d16ce193c3fff3abbe6cdbc37f8f18f9f6db06a9372c67b7170614f25"
+    },
+    {
+      "path": "sdk/python/tests/test_async_client_behavior.py",
+      "bytes": 3852,
+      "lines": 104,
+      "sha256": "1d7c4db9c8b15333291269e92b3263238e4ae6dfaef6816cef888af01374fc79"
+    },
+    {
+      "path": "sdk/python/tests/test_client_rpc_methods.py",
+      "bytes": 23800,
+      "lines": 694,
+      "sha256": "5ffb5477b1afb871948bbe7cb8527f9d7faf1d23a32ab2860ac158a602432a2d"
+    },
+    {
+      "path": "sdk/python/tests/test_contract_generation.py",
+      "bytes": 3342,
+      "lines": 96,
+      "sha256": "0425ac4ba4a71b7749d9cb93f24513e528111486bf6652d6e37755b2942634d5"
+    },
+    {
+      "path": "sdk/python/tests/test_mcp_conformance_fixtures.py",
+      "bytes": 1189,
+      "lines": 37,
+      "sha256": "9d686143f8cd98d0ee1f4841b3f2499074cf53d7f1f606dda0a2a86b4c5dd696"
+    },
+    {
+      "path": "sdk/python/tests/test_public_api_runtime_behavior.py",
+      "bytes": 12267,
+      "lines": 358,
+      "sha256": "6b4984e4fda7ef9b8558c056bc66c5ce035905b4a52f609807c8bce6b315ae3f"
+    },
+    {
+      "path": "sdk/typescript/eslint.config.js",
+      "bytes": 523,
+      "lines": 21,
+      "sha256": "26a9317fd75922d37151f5d17a30058166341cafd6347239f7593c04a31b2af4"
+    },
+    {
+      "path": "sdk/typescript/jest.config.cjs",
+      "bytes": 838,
+      "lines": 32,
+      "sha256": "c5babef9cbbbf1e3ada6fec43c56415fee9f3e6562fc8db9103f3afba52e4b0c"
+    },
+    {
+      "path": "sdk/typescript/samples/basic_streaming.ts",
+      "bytes": 2682,
+      "lines": 90,
+      "sha256": "9c4f66c236f0e53e96ebca5b3e8261bd53d6a6c7b5f40b5c0986faa4c6cc32fc"
+    },
+    {
+      "path": "sdk/typescript/samples/helpers.ts",
+      "bytes": 204,
+      "lines": 8,
+      "sha256": "50deb2ac3b76a16041e16dfd19214aa5b414446e20e9e319fc11dee77a7c3ce4"
+    },
+    {
+      "path": "sdk/typescript/samples/structured_output.ts",
+      "bytes": 619,
+      "lines": 22,
+      "sha256": "2c83a7715ec0e5c4355838d016dd207614289796405c86b15df2a07fba7b4d7c"
+    },
+    {
+      "path": "sdk/typescript/samples/structured_output_zod.ts",
+      "bytes": 596,
+      "lines": 19,
+      "sha256": "33314312549e5aef2a739707bcb9591ea0c0b40138c9dc459400d9bd2ed37d75"
+    },
+    {
+      "path": "sdk/typescript/src/codex.ts",
+      "bytes": 1230,
+      "lines": 39,
+      "sha256": "25a5b9ccb6a485f3aaa474d6e39f3d48ad72903d9e3a2f02e7b6218228d6a470"
+    },
+    {
+      "path": "sdk/typescript/src/codexOptions.ts",
+      "bytes": 955,
+      "lines": 27,
+      "sha256": "702158cdee21c53ef4ad3905a8d7c94d2459925242acf300bbe9ff74c3c83c2f"
+    },
+    {
+      "path": "sdk/typescript/src/events.ts",
+      "bytes": 2404,
+      "lines": 84,
+      "sha256": "dca9d5a0c216eff99f242067814be1985c027e64bf38ab4a6b6fe5c2571a4403"
+    },
+    {
+      "path": "sdk/typescript/src/exec.ts",
+      "bytes": 14203,
+      "lines": 499,
+      "sha256": "cac7c2ef4f834bc1cdca133d3950f229451460d9c495eb017dd931c63eaacc79"
+    },
+    {
+      "path": "sdk/typescript/src/index.ts",
+      "bytes": 810,
+      "lines": 40,
+      "sha256": "2a8cd853e832b207277dedb7de56a8c64ea2cf446488badd5d745719bb5ee4d1"
+    },
+    {
+      "path": "sdk/typescript/src/items.ts",
+      "bytes": 3598,
+      "lines": 128,
+      "sha256": "baee8195a8b1820301973ead2bc33678ac50886823b5ab65360f7e5d6d35ffea"
+    },
+    {
+      "path": "sdk/typescript/src/outputSchemaFile.ts",
+      "bytes": 1084,
+      "lines": 40,
+      "sha256": "fa415b396f87ba69b196abb637ac639d077f46f8f04ea4d99c39aced4f2e41ac"
+    },
+    {
+      "path": "sdk/typescript/src/thread.ts",
+      "bytes": 4971,
+      "lines": 158,
+      "sha256": "cc0dda041278e007ed5114da5081a45f14f01ad931601c026628b8c5cc8c534c"
+    },
+    {
+      "path": "sdk/typescript/src/threadOptions.ts",
+      "bytes": 812,
+      "lines": 30,
+      "sha256": "7377dbe5e2dee65cf43005ae42bdf96c10f01a34d89ddc683c4a66e821901998"
+    },
+    {
+      "path": "sdk/typescript/src/turnOptions.ts",
+      "bytes": 181,
+      "lines": 6,
+      "sha256": "87055110e00f1878da7ebb58a818bf22488662a7476016c324ed629c91321bdb"
+    },
+    {
+      "path": "sdk/typescript/tests/abort.test.ts",
+      "bytes": 4975,
+      "lines": 165,
+      "sha256": "62230174567b219a7157e1475ade2b0a559c82bf1954787af76877064c6b4912"
+    },
+    {
+      "path": "sdk/typescript/tests/codexExecSpy.ts",
+      "bytes": 1356,
+      "lines": 37,
+      "sha256": "ded178b232db5673eae501b9993dbf8570527a39dcca8222ecea1fe66bc0d5a2"
+    },
+    {
+      "path": "sdk/typescript/tests/exec.test.ts",
+      "bytes": 12767,
+      "lines": 365,
+      "sha256": "b8fdebb70f761b729093555d09328879cf9400db53aa8c47156f21fb7f44f594"
+    },
+    {
+      "path": "sdk/typescript/tests/mcpConformance.test.ts",
+      "bytes": 4819,
+      "lines": 158,
+      "sha256": "b1aab74357b75938b08cec989b8730d8fc711f64e10c096987b4979436385f62"
+    },
+    {
+      "path": "sdk/typescript/tests/responsesProxy.ts",
+      "bytes": 5679,
+      "lines": 224,
+      "sha256": "53f86d2a5c313966a9e5c9dd9fc69676755f7dbf50be530558d254571424b0f6"
+    },
+    {
+      "path": "sdk/typescript/tests/run.test.ts",
+      "bytes": 26283,
+      "lines": 860,
+      "sha256": "2ebd05b461504a53c0a9453efb877f3fee06202284fd6dc5ddef035f3be33255"
+    },
+    {
+      "path": "sdk/typescript/tests/runStreamed.test.ts",
+      "bytes": 6123,
+      "lines": 209,
+      "sha256": "80592f5f89ee33da8ec6e5676b6dced0af6847aa540795cfd5f3a6f88312fb3e"
+    },
+    {
+      "path": "sdk/typescript/tests/setupCodexHome.ts",
+      "bytes": 746,
+      "lines": 28,
+      "sha256": "7212a09dd1169661746eb9c5f7d90271beb336134648c268804a256e241e1e44"
+    },
+    {
+      "path": "sdk/typescript/tests/testCodex.ts",
+      "bytes": 3005,
+      "lines": 108,
+      "sha256": "ea92b150acd8aae5c7fe1231a636b720cbd41690358b198f5506eba0226848fc"
+    },
+    {
+      "path": "sdk/typescript/tsup.config.ts",
+      "bytes": 218,
+      "lines": 12,
+      "sha256": "dc2fe9756f54c9deaacfbd6c27f5f0ddf0aef3ba9de0d94506b5d0688551cfc3"
+    }
+  ],
+  "preparation": {
+    "resolution": {
+      "resolved_calls": 1188,
+      "unresolved_calls": 6261
+    },
+    "files": [
+      "sdk/python/_runtime_setup.py",
+      "sdk/python/examples/01_quickstart_constructor/async.py",
+      "sdk/python/examples/01_quickstart_constructor/sync.py",
+      "sdk/python/examples/02_turn_run/async.py",
+      "sdk/python/examples/02_turn_run/sync.py",
+      "sdk/python/examples/03_turn_stream_events/async.py",
+      "sdk/python/examples/03_turn_stream_events/sync.py",
+      "sdk/python/examples/04_models_and_metadata/async.py",
+      "sdk/python/examples/04_models_and_metadata/sync.py",
+      "sdk/python/examples/05_existing_thread/async.py",
+      "sdk/python/examples/05_existing_thread/sync.py",
+      "sdk/python/examples/06_thread_lifecycle_and_controls/async.py",
+      "sdk/python/examples/06_thread_lifecycle_and_controls/sync.py",
+      "sdk/python/examples/07_image_and_text/async.py",
+      "sdk/python/examples/07_image_and_text/sync.py",
+      "sdk/python/examples/08_local_image_and_text/async.py",
+      "sdk/python/examples/08_local_image_and_text/sync.py",
+      "sdk/python/examples/09_async_parity/sync.py",
+      "sdk/python/examples/10_error_handling_and_retry/async.py",
+      "sdk/python/examples/10_error_handling_and_retry/sync.py",
+      "sdk/python/examples/11_cli_mini_app/async.py",
+      "sdk/python/examples/11_cli_mini_app/sync.py",
+      "sdk/python/examples/12_turn_params_kitchen_sink/async.py",
+      "sdk/python/examples/12_turn_params_kitchen_sink/sync.py",
+      "sdk/python/examples/13_model_select_and_turn_params/async.py",
+      "sdk/python/examples/13_model_select_and_turn_params/sync.py",
+      "sdk/python/examples/14_turn_controls/async.py",
+      "sdk/python/examples/14_turn_controls/sync.py",
+      "sdk/python/examples/15_login_and_account/async.py",
+      "sdk/python/examples/15_login_and_account/sync.py",
+      "sdk/python/examples/16_external_message/async.py",
+      "sdk/python/examples/16_external_message/sync.py",
+      "sdk/python/examples/_bootstrap.py",
+      "sdk/python/release_version.py",
+      "sdk/python/scripts/update_sdk_artifacts.py",
+      "sdk/python/src/openai_codex/__init__.py",
+      "sdk/python/src/openai_codex/_approval_mode.py",
+      "sdk/python/src/openai_codex/_goal.py",
+      "sdk/python/src/openai_codex/_initialize_metadata.py",
+      "sdk/python/src/openai_codex/_inputs.py",
+      "sdk/python/src/openai_codex/_login.py",
+      "sdk/python/src/openai_codex/_message_router.py",
+      "sdk/python/src/openai_codex/_run.py",
+      "sdk/python/src/openai_codex/_runtime_requirements.py",
+      "sdk/python/src/openai_codex/_sandbox.py",
+      "sdk/python/src/openai_codex/_version.py",
+      "sdk/python/src/openai_codex/api.py",
+      "sdk/python/src/openai_codex/async_client.py",
+      "sdk/python/src/openai_codex/client.py",
+      "sdk/python/src/openai_codex/errors.py",
+      "sdk/python/src/openai_codex/generated/__init__.py",
+      "sdk/python/src/openai_codex/generated/notification_registry.py",
+      "sdk/python/src/openai_codex/generated/v2_all.py",
+      "sdk/python/src/openai_codex/models.py",
+      "sdk/python/src/openai_codex/retry.py",
+      "sdk/python/src/openai_codex/types.py",
+      "sdk/python/tests/app_server_harness.py",
+      "sdk/python/tests/app_server_helpers.py",
+      "sdk/python/tests/conftest.py",
+      "sdk/python/tests/installed_sdk_smoke.py",
+      "sdk/python/tests/test_app_server_approvals.py",
+      "sdk/python/tests/test_app_server_goal_operations.py",
+      "sdk/python/tests/test_app_server_inputs.py",
+      "sdk/python/tests/test_app_server_lifecycle.py",
+      "sdk/python/tests/test_app_server_login.py",
+      "sdk/python/tests/test_app_server_run.py",
+      "sdk/python/tests/test_app_server_streaming.py",
+      "sdk/python/tests/test_app_server_turn_controls.py",
+      "sdk/python/tests/test_artifact_workflow_and_binaries.py",
+      "sdk/python/tests/test_async_client_behavior.py",
+      "sdk/python/tests/test_client_rpc_methods.py",
+      "sdk/python/tests/test_contract_generation.py",
+      "sdk/python/tests/test_mcp_conformance_fixtures.py",
+      "sdk/python/tests/test_public_api_runtime_behavior.py",
+      "sdk/typescript/eslint.config.js",
+      "sdk/typescript/jest.config.cjs",
+      "sdk/typescript/samples/basic_streaming.ts",
+      "sdk/typescript/samples/helpers.ts",
+      "sdk/typescript/samples/structured_output.ts",
+      "sdk/typescript/samples/structured_output_zod.ts",
+      "sdk/typescript/src/codex.ts",
+      "sdk/typescript/src/codexOptions.ts",
+      "sdk/typescript/src/events.ts",
+      "sdk/typescript/src/exec.ts",
+      "sdk/typescript/src/index.ts",
+      "sdk/typescript/src/items.ts",
+      "sdk/typescript/src/outputSchemaFile.ts",
+      "sdk/typescript/src/thread.ts",
+      "sdk/typescript/src/threadOptions.ts",
+      "sdk/typescript/src/turnOptions.ts",
+      "sdk/typescript/tests/abort.test.ts",
+      "sdk/typescript/tests/codexExecSpy.ts",
+      "sdk/typescript/tests/exec.test.ts",
+      "sdk/typescript/tests/mcpConformance.test.ts",
+      "sdk/typescript/tests/responsesProxy.ts",
+      "sdk/typescript/tests/run.test.ts",
+      "sdk/typescript/tests/runStreamed.test.ts",
+      "sdk/typescript/tests/setupCodexHome.ts",
+      "sdk/typescript/tests/testCodex.ts",
+      "sdk/typescript/tsup.config.ts"
+    ],
+    "skipped": [],
+    "coverage_complete": true,
+    "diagnostics": [],
+    "cache": {
+      "hits": 1,
+      "misses": 0,
+      "evictions": 0,
+      "enabled": true,
+      "error": null
+    },
+    "graph_key": "638266cc6da8cf1dbabf243b65a6a95c2c19c5cb408d92fa2fd554f723c0d90a",
+    "elapsed_ms": 64.908,
+    "query_index": {
+      "backend": "sqlite_columns",
+      "hit": true,
+      "persistent": true,
+      "bytes": 500207616,
+      "entities": 39727,
+      "facts": 837018,
+      "reclaimed_snapshots": 0,
+      "phase_ms": {
+        "manifest": 19.617,
+        "store_open": 30.842,
+        "index_open": 2.419
+      }
+    }
+  },
+  "runs": [
+    {
+      "warmup": false,
+      "seconds": 64.6986289168708,
+      "complete": false,
+      "patterns": 23,
+      "index_hit": true,
+      "result_cache": {
+        "enabled": false
+      },
+      "semantic_sha256": "d3b7fc4f1108cc1a33619df97eafd1dbbc0dbdae7efbd0b66adaa69843a04490",
+      "passed": false
+    }
+  ],
+  "profile": false,
+  "timeout_note": "Per-pattern timeout is diagnostic; acceptance requires the whole batch below the target."
+}

@@ -1,0 +1,50 @@
+{
+  "ok": true,
+  "question": "Who turns JSON command-line arguments into dictionaries?",
+  "hypotheses": [],
+  "status": "unknown",
+  "candidates": [],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 1965,
+    "inspected_symbols": 35,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "issues": [
+      {
+        "path": "src/ken/kql2/constructor_initializers.py",
+        "qualname": "_copies_from_member",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/embedder/__init__.py",
+        "qualname": "prompts_for",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/codeflow.py",
+        "qualname": "_resolve",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/kql2/syntax/call_parser.py",
+        "qualname": "argument",
+        "reason": "source file budget exhausted"
+      },
+      {
+        "path": "src/ken/structural/__init__.py",
+        "qualname": "evaluate_query",
+        "reason": "source file budget exhausted"
+      }
+    ],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

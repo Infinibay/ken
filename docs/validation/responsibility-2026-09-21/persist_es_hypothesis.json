@@ -1,0 +1,164 @@
+{
+  "ok": true,
+  "question": "\u00bfQui\u00e9n guarda las memorias entre sesiones?",
+  "hypotheses": [
+    "Store or update a reusable finding"
+  ],
+  "status": "candidates",
+  "candidates": [
+    {
+      "symbol": "remember",
+      "path": "src/ken/memory.py",
+      "line": 18,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.85,
+        "band": "strong",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Store or update a reusable finding",
+      "documentation": "Store or update a reusable finding.\n\n*anchors* declares what the memory is about \u2014 ``{\"file\": \"src/a.py\"}``,\n``{\"tool\": \"pytest\"}``, and so on (see ``findings_graph.ANCHOR_KINDS``).\nAn anchored finding can be looked up by the thing that provoked it\ninstead of by a query, which is what lets a caller surface it at the\nmoment it becomes relevant rather than hoping someone searches for it.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.85,
+          "explanation": "Documentation similarity 0.392; term coverage 1.000 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "This supplied formulation preserves the question's meaning: Store or update a reusable finding",
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "853109a2de666c003cd1a760bb27a4353196cdae2f3306b82f8ec0c1e75ae706",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/memory.py",
+        "qualname": "remember",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "_impl_ken_remember",
+      "path": "src/ken/mcp/server.py",
+      "line": 504,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.51,
+        "band": "moderate",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Store or update a reusable finding",
+      "documentation": "Write a finding for future sessions to recall.\n\n*topic* is a short lookup key (unique \u2014 re-using a topic updates\nthe existing row). *content* is the body \u2014 usually a few sentences\ncapturing a fact you don't want to re-derive next time. *kind* can\nexplicitly classify the note as finding, persistent_rule,\nexperimental_finding, or hypothesis. *anchors* declares what the note\nis about so it can be recalled by that instead of by a query.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.51,
+          "explanation": "Documentation similarity 0.367; term coverage 0.600 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "This supplied formulation preserves the question's meaning: Store or update a reusable finding",
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "87cce26a6f8f6f1625c3a32378112abda8605cf94af8945de866f981b9150c5c",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/mcp/server.py",
+        "qualname": "_impl_ken_remember",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "recompute_finding_refs",
+      "path": "src/ken/findings_graph.py",
+      "line": 235,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.41,
+        "band": "weak",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Store or update a reusable finding",
+      "documentation": "Replace one finding's *extracted* refs (delete + re-extract).\n\nAnchors are spared. An extracted ref is a guess re-derived from the prose\nevery time the finding is rewritten; an anchor is something the author\ndeclared, and re-reading the text can never recover it.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.39973700046539307,
+          "explanation": "Documentation similarity 0.400; term coverage 0.200 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.2,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "This supplied formulation preserves the question's meaning: Store or update a reusable finding",
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "f7ba86087156bb7e58492fa5acac2feb4cd8be0e8450830c344df17e1f2609f2",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/findings_graph.py",
+        "qualname": "recompute_finding_refs",
+        "include": [
+          "source"
+        ]
+      }
+    }
+  ],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 1965,
+    "inspected_symbols": 40,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "issues": [],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

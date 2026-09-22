@@ -1,0 +1,759 @@
+[
+  {
+    "tool": "ken_rule",
+    "arguments": {
+      "action": "create",
+      "definition": {
+        "id": "report.full-response",
+        "description": "query_view has a source path that returns its original result parameter",
+        "path": "src/ken/checks/report.py",
+        "query": "language \"kql/2\"; module ken.validation;\nquery full_response {\n  callable $f { name: \"query_view\";\n    param $input { name: \"result\"; }\n    body { return read($input); }\n  }\n  select $f;\n}",
+        "expectation": "some_match",
+        "examples": [
+          {
+            "name": "passthrough",
+            "files": {
+              "src/ken/checks/report.py": "def query_view(result, full=False):\n if full: return result\n return {}\n"
+            },
+            "expect": "pass"
+          },
+          {
+            "name": "discarded",
+            "files": {
+              "src/ken/checks/report.py": "def query_view(result, full=False):\n if full: return {}\n return {}\n"
+            },
+            "expect": "fail"
+          }
+        ]
+      }
+    },
+    "result": {
+      "id": "report.full-response",
+      "description": "query_view has a source path that returns its original result parameter",
+      "path": "src/ken/checks/report.py",
+      "expectation": "some_match",
+      "state": "draft",
+      "automatic": false,
+      "revision": "b82217a5bd2f4aefe3ee2d27bf2c262e192e6a2d2e03c4f56963627af855f99c"
+    }
+  },
+  {
+    "tool": "ken_rule",
+    "arguments": {
+      "action": "validate",
+      "rule_id": "report.full-response"
+    },
+    "result": {
+      "id": "report.full-response",
+      "description": "query_view has a source path that returns its original result parameter",
+      "path": "src/ken/checks/report.py",
+      "expectation": "some_match",
+      "state": "validated",
+      "automatic": false,
+      "revision": "b82217a5bd2f4aefe3ee2d27bf2c262e192e6a2d2e03c4f56963627af855f99c",
+      "definition": {
+        "id": "report.full-response",
+        "query": "language \"kql/2\"; module ken.validation;\nquery full_response {\n  callable $f { name: \"query_view\";\n    param $input { name: \"result\"; }\n    body { return read($input); }\n  }\n  select $f;\n}",
+        "description": "query_view has a source path that returns its original result parameter",
+        "path": "src/ken/checks/report.py",
+        "expectation": "some_match",
+        "examples": [
+          {
+            "name": "passthrough",
+            "files": {
+              "src/ken/checks/report.py": "def query_view(result, full=False):\n if full: return result\n return {}\n"
+            },
+            "expect": "pass"
+          },
+          {
+            "name": "discarded",
+            "files": {
+              "src/ken/checks/report.py": "def query_view(result, full=False):\n if full: return {}\n return {}\n"
+            },
+            "expect": "fail"
+          }
+        ],
+        "libraries": {}
+      },
+      "validation": {
+        "revision": "b82217a5bd2f4aefe3ee2d27bf2c262e192e6a2d2e03c4f56963627af855f99c",
+        "engine": "c536fd18015cbd02cde42882025177d92fde9b0536fe29e167787695a8283d07",
+        "passed": true,
+        "cases": [
+          {
+            "name": "passthrough",
+            "expected": "pass",
+            "actual": "pass",
+            "passed": true,
+            "reason": null
+          },
+          {
+            "name": "discarded",
+            "expected": "fail",
+            "actual": "fail",
+            "passed": true,
+            "reason": null
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tool": "ken_rule",
+    "arguments": {
+      "action": "enable",
+      "rule_id": "report.full-response",
+      "automatic": true
+    },
+    "result": {
+      "id": "report.full-response",
+      "description": "query_view has a source path that returns its original result parameter",
+      "path": "src/ken/checks/report.py",
+      "expectation": "some_match",
+      "state": "enabled",
+      "automatic": true,
+      "revision": "b82217a5bd2f4aefe3ee2d27bf2c262e192e6a2d2e03c4f56963627af855f99c"
+    }
+  },
+  {
+    "tool": "ken_check",
+    "arguments": {
+      "full": true
+    },
+    "result": {
+      "version": 1,
+      "run_id": "eb1fab63ed3346a6b7c423c2bcfa519c",
+      "created_at": "2026-09-21T21:50:33.817493+00:00",
+      "scope": "project",
+      "selection": ".",
+      "status": "pass",
+      "checks": [
+        {
+          "rule": "report.full-response",
+          "description": "query_view has a source path that returns its original result parameter",
+          "revision": "b82217a5bd2f4aefe3ee2d27bf2c262e192e6a2d2e03c4f56963627af855f99c",
+          "path": "src/ken/checks/report.py",
+          "query": "language \"kql/2\"; module ken.validation;\nquery full_response {\n  callable $f { name: \"query_view\";\n    param $input { name: \"result\"; }\n    body { return read($input); }\n  }\n  select $f;\n}",
+          "libraries": {},
+          "expectation": "some_match",
+          "status": "pass",
+          "engine": "c536fd18015cbd02cde42882025177d92fde9b0536fe29e167787695a8283d07",
+          "result": {
+            "language": "kql/2",
+            "capability": "structural-source/1",
+            "query": "full_response",
+            "columns": [
+              "column_1"
+            ],
+            "rows": [
+              [
+                {
+                  "id": 6,
+                  "unit": 1,
+                  "local_id": "src/ken/checks/report.py::module/CALLABLE:query_view@797",
+                  "kind": "CALLABLE",
+                  "name": "query_view",
+                  "owner": "src/ken/checks/report.py::module",
+                  "line": 30,
+                  "end_line": 52,
+                  "path": "src/ken/checks/report.py",
+                  "language": "python"
+                }
+              ]
+            ],
+            "complete": true,
+            "coverage_complete": true,
+            "unknown_candidates": 0,
+            "reason": null,
+            "results_truncated": false,
+            "plan": [
+              {
+                "operator": "scan",
+                "role": "f",
+                "selector": "callable",
+                "owner": null,
+                "access": "name_lookup"
+              },
+              {
+                "operator": "scan",
+                "role": "input",
+                "selector": "param",
+                "owner": "f",
+                "access": "name_lookup"
+              },
+              {
+                "operator": "body",
+                "owner": "f",
+                "outputs": [],
+                "barrier": true
+              }
+            ],
+            "optional_evidence": [],
+            "analysis": {
+              "snapshot": 1,
+              "manifest": [
+                [
+                  "src/ken/checks/report.py",
+                  "8cf4024b04910f2a218856b4ece69eaf099d31b64a2ae36c43e73cad96b01b93"
+                ]
+              ],
+              "frontend": "17c8dcaa475892215d832bd38bc06521af3cbae2c96bdc9388ebec1140757468",
+              "freshness": "captured_snapshot",
+              "skipped": [],
+              "parsed_units": 1,
+              "reused_units": 0,
+              "cache_mb": 100.0,
+              "disk_budget_mb": 80.0,
+              "compilation_cache": {
+                "retained_bytes": 3908,
+                "capacity_bytes": 20000000,
+                "entries": 1,
+                "hits": 0,
+                "misses": 1,
+                "shared": 0,
+                "evictions": 0,
+                "in_flight": 0,
+                "status": "miss"
+              },
+              "result_cache": "miss",
+              "ephemeral": false,
+              "allocated_bytes": 5369856,
+              "gc": {
+                "deferred": false,
+                "snapshots": 0,
+                "units": 0
+              },
+              "quota_reclamation": {
+                "before_bytes": 425984,
+                "after_bytes": 425984,
+                "deferred": false,
+                "snapshots": 0,
+                "units": 0
+              },
+              "scanned_nodes": 9,
+              "states": 263,
+              "compile_ms": 6.3374999444931746,
+              "build_ms": 129.87345806322992,
+              "query_ms": 109.66249997727573,
+              "result_lookup_ms": 0.02187490463256836,
+              "total_ms": 268.45312491059303
+            },
+            "check_snapshot": {
+              "scope": "src/ken/checks/report.py",
+              "sha256": "c3b93c7a0eae48603984f8655ce9dc910dc09d16fe4058519e05cbbd8bee231b",
+              "manifest": [
+                [
+                  "src/ken/checks/report.py",
+                  "8cf4024b04910f2a218856b4ece69eaf099d31b64a2ae36c43e73cad96b01b93"
+                ]
+              ]
+            },
+            "check_dependencies": {
+              "manifest": [],
+              "imports": [
+                [
+                  "src/ken/checks/report.py",
+                  []
+                ]
+              ],
+              "issues": []
+            },
+            "check_engine": "c536fd18015cbd02cde42882025177d92fde9b0536fe29e167787695a8283d07"
+          }
+        }
+      ],
+      "selection_evidence": {}
+    }
+  },
+  {
+    "tool": "ken_remember",
+    "arguments": {
+      "topic": "report-original-response",
+      "content": "The observed query_view implementation can return its original result parameter.",
+      "check_run": "eb1fab63ed3346a6b7c423c2bcfa519c",
+      "anchor_file": "src/ken/checks/report.py"
+    },
+    "result": {
+      "ok": true,
+      "topic": "report-original-response",
+      "anchors": 1
+    }
+  },
+  {
+    "tool": "ken_find",
+    "arguments": {
+      "scope": "structure",
+      "rules": [
+        "report.full-response"
+      ]
+    },
+    "result": {
+      "results": [
+        {
+          "rule": "report.full-response",
+          "path": "src/ken/checks/report.py",
+          "result": {
+            "language": "kql/2",
+            "query": "full_response",
+            "columns": [
+              "column_1"
+            ],
+            "rows": [
+              [
+                {
+                  "id": 6,
+                  "unit": 1,
+                  "local_id": "src/ken/checks/report.py::module/CALLABLE:query_view@797",
+                  "kind": "CALLABLE",
+                  "name": "query_view",
+                  "owner": "src/ken/checks/report.py::module",
+                  "line": 30,
+                  "end_line": 52,
+                  "path": "src/ken/checks/report.py",
+                  "language": "python"
+                }
+              ]
+            ],
+            "complete": true,
+            "coverage_complete": true,
+            "unknown_candidates": 0,
+            "results_truncated": false
+          }
+        }
+      ],
+      "complete": true
+    }
+  },
+  {
+    "tool": "ken_related",
+    "arguments": {
+      "target": "src/ken/checks/report.py",
+      "relation": "checks"
+    },
+    "result": {
+      "rules": [
+        {
+          "id": "report.full-response",
+          "description": "query_view has a source path that returns its original result parameter",
+          "path": "src/ken/checks/report.py",
+          "expectation": "some_match",
+          "state": "enabled",
+          "automatic": true,
+          "revision": "b82217a5bd2f4aefe3ee2d27bf2c262e192e6a2d2e03c4f56963627af855f99c"
+        }
+      ],
+      "checks": [
+        {
+          "rule": "report.full-response",
+          "description": "query_view has a source path that returns its original result parameter",
+          "path": "src/ken/checks/report.py",
+          "expectation": "some_match",
+          "status": "pass",
+          "matches": 1,
+          "locations": [
+            {
+              "path": "src/ken/checks/report.py",
+              "line": 30,
+              "name": "query_view",
+              "kind": "CALLABLE"
+            }
+          ],
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "run_id": "eb1fab63ed3346a6b7c423c2bcfa519c",
+          "validity": {
+            "state": "unchanged",
+            "issues": [],
+            "checks": [
+              {
+                "rule": "report.full-response",
+                "path": "src/ken/checks/report.py",
+                "status": "pass",
+                "validity": "unchanged",
+                "changed_files": []
+              }
+            ],
+            "scope": "Recorded check inputs; the memory's prose is not independently proved."
+          }
+        }
+      ],
+      "omitted_rules": 0,
+      "selection_evidence": {
+        "report.full-response": {
+          "basis": "declared_scope"
+        }
+      }
+    }
+  },
+  {
+    "tool": "ken_check",
+    "arguments": {
+      "compare": "eb1fab63ed3346a6b7c423c2bcfa519c",
+      "full": true
+    },
+    "result": {
+      "version": 1,
+      "run_id": "528b4663ed654e208a04508793ebd9c1",
+      "created_at": "2026-09-21T21:50:34.912830+00:00",
+      "scope": "project",
+      "selection": ".",
+      "status": "fail",
+      "checks": [
+        {
+          "rule": "report.full-response",
+          "description": "query_view has a source path that returns its original result parameter",
+          "revision": "b82217a5bd2f4aefe3ee2d27bf2c262e192e6a2d2e03c4f56963627af855f99c",
+          "path": "src/ken/checks/report.py",
+          "query": "language \"kql/2\"; module ken.validation;\nquery full_response {\n  callable $f { name: \"query_view\";\n    param $input { name: \"result\"; }\n    body { return read($input); }\n  }\n  select $f;\n}",
+          "libraries": {},
+          "expectation": "some_match",
+          "status": "fail",
+          "engine": "c536fd18015cbd02cde42882025177d92fde9b0536fe29e167787695a8283d07",
+          "result": {
+            "language": "kql/2",
+            "capability": "structural-source/1",
+            "query": "full_response",
+            "columns": [
+              "column_1"
+            ],
+            "rows": [],
+            "complete": true,
+            "coverage_complete": true,
+            "unknown_candidates": 0,
+            "reason": null,
+            "results_truncated": false,
+            "plan": [
+              {
+                "operator": "scan",
+                "role": "f",
+                "selector": "callable",
+                "owner": null,
+                "access": "name_lookup"
+              },
+              {
+                "operator": "scan",
+                "role": "input",
+                "selector": "param",
+                "owner": "f",
+                "access": "name_lookup"
+              },
+              {
+                "operator": "body",
+                "owner": "f",
+                "outputs": [],
+                "barrier": true
+              }
+            ],
+            "optional_evidence": [],
+            "analysis": {
+              "snapshot": 2,
+              "manifest": [
+                [
+                  "src/ken/checks/report.py",
+                  "c3da47e0acf08341f0e8f6e4fd4e70a7c68e45c1723b1f15fea5ab608ab99581"
+                ]
+              ],
+              "frontend": "17c8dcaa475892215d832bd38bc06521af3cbae2c96bdc9388ebec1140757468",
+              "freshness": "captured_snapshot",
+              "skipped": [],
+              "parsed_units": 1,
+              "reused_units": 0,
+              "cache_mb": 100.0,
+              "disk_budget_mb": 80.0,
+              "compilation_cache": {
+                "retained_bytes": 6788,
+                "capacity_bytes": 20000000,
+                "entries": 1,
+                "hits": 0,
+                "misses": 1,
+                "shared": 0,
+                "evictions": 0,
+                "in_flight": 0,
+                "status": "disk_hit"
+              },
+              "result_cache": "miss",
+              "ephemeral": false,
+              "allocated_bytes": 10366976,
+              "gc": {
+                "deferred": false,
+                "snapshots": 0,
+                "units": 0
+              },
+              "quota_reclamation": {
+                "before_bytes": 5369856,
+                "after_bytes": 5369856,
+                "deferred": false,
+                "snapshots": 0,
+                "units": 0
+              },
+              "scanned_nodes": 9,
+              "states": 261,
+              "compile_ms": 21.74520888365805,
+              "build_ms": 129.35624993406236,
+              "query_ms": 106.75962502136827,
+              "result_lookup_ms": 0.04920782521367073,
+              "total_ms": 293.5424998868257
+            },
+            "check_snapshot": {
+              "scope": "src/ken/checks/report.py",
+              "sha256": "5739f85655d1a34ffd726c7598015f4eb505e40e1386ed05d739d7afadcff8d0",
+              "manifest": [
+                [
+                  "src/ken/checks/report.py",
+                  "c3da47e0acf08341f0e8f6e4fd4e70a7c68e45c1723b1f15fea5ab608ab99581"
+                ]
+              ]
+            },
+            "check_dependencies": {
+              "manifest": [],
+              "imports": [
+                [
+                  "src/ken/checks/report.py",
+                  []
+                ]
+              ],
+              "issues": []
+            },
+            "check_engine": "c536fd18015cbd02cde42882025177d92fde9b0536fe29e167787695a8283d07"
+          }
+        }
+      ],
+      "selection_evidence": {},
+      "comparison": {
+        "baseline": "eb1fab63ed3346a6b7c423c2bcfa519c",
+        "changes": [
+          {
+            "rule": "report.full-response",
+            "change": "regression",
+            "before": "pass",
+            "after": "fail",
+            "matches_before": 1,
+            "matches_after": 0
+          }
+        ],
+        "not_checked": []
+      }
+    }
+  },
+  {
+    "tool": "ken_recall",
+    "arguments": {
+      "topic": "report-original-response",
+      "detail": "summary"
+    },
+    "result": {
+      "memories": [
+        {
+          "topic": "report-original-response",
+          "conclusion": "The observed query_view implementation can return its original result parameter.",
+          "conclusion_complete": true,
+          "kind": "observation",
+          "validity": {
+            "state": "stale",
+            "issues": [
+              "report.full-response: source inventory or contents changed"
+            ],
+            "checks": [
+              {
+                "run_id": "eb1fab63ed3346a6b7c423c2bcfa519c",
+                "status": "pass",
+                "rules": [
+                  "report.full-response"
+                ],
+                "validity": "stale",
+                "observations": [
+                  {
+                    "rule": "report.full-response",
+                    "path": "src/ken/checks/report.py",
+                    "status": "pass",
+                    "validity": "stale",
+                    "changed_files": [
+                      "src/ken/checks/report.py"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "scope": "Declared inputs; no KQL replay or verification of memory prose."
+          },
+          "rationale": "This note references the selected KQL2 source-contract checks; retain their scope and uncertainty.",
+          "assumptions": [],
+          "sources": [],
+          "recheck": "ken_check with the referenced rules; update this note only after reviewing the new result.",
+          "expand": {
+            "topic": "report-original-response",
+            "detail": "full"
+          }
+        }
+      ],
+      "omitted": 0,
+      "detail": "summary"
+    }
+  },
+  {
+    "tool": "ken_check",
+    "arguments": {
+      "compare": "528b4663ed654e208a04508793ebd9c1",
+      "full": true
+    },
+    "result": {
+      "version": 1,
+      "run_id": "d8345f526d814bba90d8b2cd2e12e59a",
+      "created_at": "2026-09-21T21:50:35.161459+00:00",
+      "scope": "project",
+      "selection": ".",
+      "status": "pass",
+      "checks": [
+        {
+          "rule": "report.full-response",
+          "description": "query_view has a source path that returns its original result parameter",
+          "revision": "b82217a5bd2f4aefe3ee2d27bf2c262e192e6a2d2e03c4f56963627af855f99c",
+          "path": "src/ken/checks/report.py",
+          "query": "language \"kql/2\"; module ken.validation;\nquery full_response {\n  callable $f { name: \"query_view\";\n    param $input { name: \"result\"; }\n    body { return read($input); }\n  }\n  select $f;\n}",
+          "libraries": {},
+          "expectation": "some_match",
+          "status": "pass",
+          "engine": "c536fd18015cbd02cde42882025177d92fde9b0536fe29e167787695a8283d07",
+          "result": {
+            "language": "kql/2",
+            "capability": "structural-source/1",
+            "query": "full_response",
+            "columns": [
+              "column_1"
+            ],
+            "rows": [
+              [
+                {
+                  "id": 6,
+                  "unit": 1,
+                  "local_id": "src/ken/checks/report.py::module/CALLABLE:query_view@797",
+                  "kind": "CALLABLE",
+                  "name": "query_view",
+                  "owner": "src/ken/checks/report.py::module",
+                  "line": 30,
+                  "end_line": 52,
+                  "path": "src/ken/checks/report.py",
+                  "language": "python"
+                }
+              ]
+            ],
+            "complete": true,
+            "coverage_complete": true,
+            "unknown_candidates": 0,
+            "reason": null,
+            "results_truncated": false,
+            "plan": [
+              {
+                "operator": "scan",
+                "role": "f",
+                "selector": "callable",
+                "owner": null,
+                "access": "name_lookup"
+              },
+              {
+                "operator": "scan",
+                "role": "input",
+                "selector": "param",
+                "owner": "f",
+                "access": "name_lookup"
+              },
+              {
+                "operator": "body",
+                "owner": "f",
+                "outputs": [],
+                "barrier": true
+              }
+            ],
+            "optional_evidence": [],
+            "analysis": {
+              "snapshot": 1,
+              "manifest": [
+                [
+                  "src/ken/checks/report.py",
+                  "8cf4024b04910f2a218856b4ece69eaf099d31b64a2ae36c43e73cad96b01b93"
+                ]
+              ],
+              "frontend": "17c8dcaa475892215d832bd38bc06521af3cbae2c96bdc9388ebec1140757468",
+              "freshness": "captured_snapshot",
+              "skipped": [],
+              "parsed_units": 0,
+              "reused_units": 1,
+              "cache_mb": 100.0,
+              "disk_budget_mb": 80.0,
+              "compilation_cache": {
+                "retained_bytes": 6788,
+                "capacity_bytes": 20000000,
+                "entries": 1,
+                "hits": 0,
+                "misses": 1,
+                "shared": 0,
+                "evictions": 0,
+                "in_flight": 0,
+                "status": "disk_hit"
+              },
+              "result_cache": "disk_hit",
+              "ephemeral": false,
+              "allocated_bytes": 10366976,
+              "gc": {
+                "deferred": false,
+                "snapshots": 0,
+                "units": 0
+              },
+              "quota_reclamation": {
+                "before_bytes": 10366976,
+                "after_bytes": 10366976,
+                "deferred": false,
+                "snapshots": 0,
+                "units": 0
+              },
+              "scanned_nodes": 0,
+              "states": 0,
+              "compile_ms": 21.917250007390976,
+              "build_ms": 1.3207918964326382,
+              "query_ms": null,
+              "result_lookup_ms": 0.05587493069469929,
+              "total_ms": 57.70912510342896
+            },
+            "check_snapshot": {
+              "scope": "src/ken/checks/report.py",
+              "sha256": "c3b93c7a0eae48603984f8655ce9dc910dc09d16fe4058519e05cbbd8bee231b",
+              "manifest": [
+                [
+                  "src/ken/checks/report.py",
+                  "8cf4024b04910f2a218856b4ece69eaf099d31b64a2ae36c43e73cad96b01b93"
+                ]
+              ]
+            },
+            "check_dependencies": {
+              "manifest": [],
+              "imports": [
+                [
+                  "src/ken/checks/report.py",
+                  []
+                ]
+              ],
+              "issues": []
+            },
+            "check_engine": "c536fd18015cbd02cde42882025177d92fde9b0536fe29e167787695a8283d07"
+          }
+        }
+      ],
+      "selection_evidence": {},
+      "comparison": {
+        "baseline": "528b4663ed654e208a04508793ebd9c1",
+        "changes": [
+          {
+            "rule": "report.full-response",
+            "change": "resolved",
+            "before": "fail",
+            "after": "pass",
+            "matches_before": 0,
+            "matches_after": 1
+          }
+        ],
+        "not_checked": []
+      }
+    }
+  }
+]

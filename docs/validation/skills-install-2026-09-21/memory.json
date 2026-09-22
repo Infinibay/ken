@@ -1,0 +1,66 @@
+{
+  "before": {
+    "memories": [
+      {
+        "topic": "storage-return-contract",
+        "conclusion": "The service returns the identifier from storage unchanged.",
+        "conclusion_complete": true,
+        "kind": "observation",
+        "validity": {
+          "state": "unchanged"
+        },
+        "assumptions": [
+          "The explicit import is the active runtime binding."
+        ],
+        "sources": [
+          {
+            "path": "src/service.py",
+            "note": "Observed return of persist()."
+          }
+        ],
+        "expand": {
+          "topic": "storage-return-contract",
+          "detail": "full"
+        },
+        "reuse": "consider_if_question_and_assumptions_match"
+      }
+    ],
+    "omitted": 0,
+    "detail": "answer",
+    "validity_scope": "Declared inputs only; the conclusion and assumptions are not independently proved."
+  },
+  "after": {
+    "memories": [
+      {
+        "topic": "storage-return-contract",
+        "conclusion": "The service returns the identifier from storage unchanged.",
+        "conclusion_complete": true,
+        "kind": "observation",
+        "validity": {
+          "state": "stale",
+          "issues": [
+            "src/service.py"
+          ]
+        },
+        "assumptions": [
+          "The explicit import is the active runtime binding."
+        ],
+        "sources": [
+          {
+            "path": "src/service.py",
+            "note": "Observed return of persist()."
+          }
+        ],
+        "recheck": "Inspect the caller and rerun the storage tests.",
+        "expand": {
+          "topic": "storage-return-contract",
+          "detail": "full"
+        },
+        "reuse": "review_inputs_before_reusing"
+      }
+    ],
+    "omitted": 0,
+    "detail": "answer",
+    "validity_scope": "Declared inputs only; the conclusion and assumptions are not independently proved."
+  }
+}

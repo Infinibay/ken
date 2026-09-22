@@ -1,17 +1,27 @@
+query_language = "kql/2"
 id = "resilience.exception-retry"
 name = "Exception Retry Loop"
 description = "A protected call returns from a loop on success; an exception handler continues explicitly or falls through at the tail of that loop."
 collections = ["modern", "resilience"]
 tags = ["web", "retry", "exceptions"]
-caveat = "Lexical retry candidate, not proof of reachable retries, stable target/arguments, transient errors, safe repetition, backoff, bounds or cancellation. Fallthrough excludes finally/resources/else and unsupported statement flow. The explicit-continue variant retains its lexical contract, where finally may override exits. Result/error protocols and library policies need other variants. A loop trying distinct providers may represent fallback instead of retry."
+caveat = "Lexical retry candidate, not proof of reachable retries, stable target/arguments, transient errors, safe repetition, backoff, bounds or cancellation. Fallthrough excludes finally/resources/else and unsupported statement flow. Explicit continue excludes finalizers with explicit exits/suspension and unsupported resource handling; implicit exceptions can still override completion. Result/error protocols and library policies need other variants. A loop trying distinct providers may represent fallback instead of retry."
 query = '''
-query exception_retry {
- any {
-  match "resilience.exception-retry#explicit-continue"(unit:$unit,loop:$loop,protected:$protected,handler:$handler,attempt:$attempt,retry:$retry);
- } or {
-  match "resilience.exception-retry#handler-fallthrough"(unit:$unit,loop:$loop,protected:$protected,handler:$handler,attempt:$attempt,retry:$retry);
- }
- emit $unit, $loop, $protected, $handler, $attempt, $retry;
+language "kql/2";
+module ken.catalog.resilience.exception_retry;
+import ken.catalog.resilience.exception_retry.variants.explicit_continue;
+import ken.catalog.resilience.exception_retry.variants.handler_fallthrough;
+
+pattern detect(out Callable $unit, out Operation $loop, out Operation $protected, out Operation $handler, out Operation $attempt, out Operation $retry) {
+  either {
+    use ken.catalog.resilience.exception_retry.variants.explicit_continue.detect(unit: $unit, loop: $loop, protected: $protected, handler: $handler, attempt: $attempt, retry: $retry);
+  } or {
+    use ken.catalog.resilience.exception_retry.variants.handler_fallthrough.detect(unit: $unit, loop: $loop, protected: $protected, handler: $handler, attempt: $attempt, retry: $retry);
+  }
+}
+
+query results {
+  use detect(unit: $unit, loop: $loop, protected: $protected, handler: $handler, attempt: $attempt, retry: $retry);
+  select $unit, $loop, $protected, $handler, $attempt, $retry;
 }
 '''
 
@@ -20,20 +30,33 @@ id = "explicit-continue"
 status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp"]
 query = '''
-query explicit_continue {
- operation(native_kind: continue_statement) as $retry;
- require $retry IN_HANDLER $handler;
- require $handler HANDLER_OF $protected;
- require $protected ENCLOSING_LOOP $loop;
- require $retry CONTINUE_TARGET $loop;
- require $unit HAS_OPERATION $loop;
- callable() as $unit;
- operation(kind: return) as $success;
- require $success IN_TRY_BODY $protected;
- require $success ENCLOSING_LOOP $loop;
- operation(kind: call) as $attempt;
- path $attempt SYNTAX_PARENT{1,3} $success as $returned;
- emit $unit, $loop, $protected, $handler, $attempt, $retry;
+language "kql/2";
+module ken.catalog.resilience.exception_retry.variants.explicit_continue;
+
+pattern detect(out Callable $unit, out Operation $loop, out Operation $protected, out Operation $handler, out Operation $attempt, out Operation $retry) {
+  callable $unit { }
+  operation $loop { kind: "loop"; }
+  operation $protected { kind: "try"; }
+  operation $handler { }
+  operation $retry { native_kind: "continue_statement"; }
+  operation $success { kind: "return"; }
+  operation $attempt { kind: "call"; }
+  where runs($unit, $loop);
+  where inside_try($success, $protected);
+  where inside_try($attempt, $protected);
+  where enclosed_by($success, $loop);
+  where enclosed_by($protected, $loop);
+  where enclosed_by($retry, $loop);
+  where handles($handler, $protected);
+  where inside_handler($retry, $handler);
+  where continues_to($retry, $loop);
+  where exits_cleanly($protected);
+  where returns_operand($success, $attempt);
+}
+
+query results {
+  use detect(unit: $unit, loop: $loop, protected: $protected, handler: $handler, attempt: $attempt, retry: $retry);
+  select $unit, $loop, $protected, $handler, $attempt, $retry;
 }
 '''
 
@@ -42,16 +65,30 @@ id = "handler-fallthrough"
 status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp"]
 query = '''
-query handler_fallthrough {
- require $handler HANDLER_FALLTHROUGH $protected;
- require $loop LOOP_BODY_TAIL $protected;
- require $unit HAS_OPERATION $loop;
- callable() as $unit;
- operation(kind: return) as $success;
- require $success IN_TRY_BODY $protected;
- require $success ENCLOSING_LOOP $loop;
- operation(kind: call) as $attempt;
- path $attempt SYNTAX_PARENT{1,3} $success as $returned;
- emit $unit, $loop, $protected, $handler, $attempt, retry=$handler;
+language "kql/2";
+module ken.catalog.resilience.exception_retry.variants.handler_fallthrough;
+
+pattern detect(out Callable $unit, out Operation $loop, out Operation $protected, out Operation $handler, out Operation $attempt, out Operation $retry) {
+  callable $unit { }
+  operation $loop { kind: "loop"; }
+  operation $protected { kind: "try"; }
+  operation $handler { }
+  operation $success { kind: "return"; }
+  operation $attempt { kind: "call"; }
+  where runs($unit, $loop);
+  where inside_try($success, $protected);
+  where inside_try($attempt, $protected);
+  where enclosed_by($success, $loop);
+  where enclosed_by($protected, $loop);
+  where handles($handler, $protected);
+  where ends_with($loop, $protected);
+  where falls_through($handler, $protected);
+  where returns_operand($success, $attempt);
+  bind $retry = $handler;
+}
+
+query results {
+  use detect(unit: $unit, loop: $loop, protected: $protected, handler: $handler, attempt: $attempt, retry: $retry);
+  select $unit, $loop, $protected, $handler, $attempt, $retry;
 }
 '''

@@ -1,0 +1,132 @@
+{
+  "scope": "src",
+  "targets": [
+    {
+      "path": "src/ken/vectors.py",
+      "line": 182,
+      "name": "_atomic_write",
+      "kind": "CALLABLE"
+    }
+  ],
+  "consumers": [
+    {
+      "caller": {
+        "path": "src/ken/vectors.py",
+        "line": 772,
+        "name": "compact",
+        "kind": "CALLABLE",
+        "symbol": "compact"
+      },
+      "call": {
+        "path": "src/ken/vectors.py",
+        "line": 797,
+        "name": "_atomic_write",
+        "kind": "CALL"
+      },
+      "resolution": "resolved",
+      "result_uses": [],
+      "hops": 1,
+      "via": [
+        {
+          "path": "src/ken/vectors.py",
+          "line": 182,
+          "name": "_atomic_write",
+          "kind": "CALLABLE"
+        }
+      ],
+      "usage_status": "unknown"
+    },
+    {
+      "caller": {
+        "path": "src/ken/vectors.py",
+        "line": 379,
+        "name": "_load_or_create",
+        "kind": "CALLABLE",
+        "symbol": "VectorStore._load_or_create"
+      },
+      "call": {
+        "path": "src/ken/vectors.py",
+        "line": 405,
+        "name": "_atomic_write",
+        "kind": "CALL"
+      },
+      "resolution": "resolved",
+      "result_uses": [],
+      "hops": 1,
+      "via": [
+        {
+          "path": "src/ken/vectors.py",
+          "line": 182,
+          "name": "_atomic_write",
+          "kind": "CALLABLE"
+        }
+      ],
+      "usage_status": "unknown"
+    }
+  ],
+  "tests": [],
+  "unresolved_candidates": [],
+  "truncated": false,
+  "depth": 1,
+  "coverage": {
+    "definitions": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 0,
+      "results_truncated": false,
+      "reason": null,
+      "evaluations": 1
+    },
+    "calls": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 0,
+      "results_truncated": false,
+      "reason": null,
+      "evaluations": 1
+    },
+    "targets": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 0,
+      "results_truncated": false,
+      "reason": null,
+      "evaluations": 1
+    },
+    "possible_targets": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 0,
+      "results_truncated": false,
+      "reason": null,
+      "evaluations": 1
+    },
+    "usages": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 2,
+      "results_truncated": false,
+      "reason": "source_body:unknown",
+      "evaluations": 1
+    }
+  },
+  "claim": "Observed result consumers and return propagation. Test links show use, not assertion coverage; empty uses are not proof of discard.",
+  "status": "observed",
+  "acquisition": {
+    "basis": "requested identities and explicit imports, one frontier at a time",
+    "claim": "Statically modeled calls; computed imports/member names and runtime dispatch are not traced.",
+    "paths": [
+      "src/ken/vectors.py"
+    ],
+    "issues": [],
+    "import_files_read": 271,
+    "expanded_symbols": 1,
+    "depth_limited": false
+  },
+  "contracts": [
+    {
+      "rules": [],
+      "checks": []
+    }
+  ]
+}

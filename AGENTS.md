@@ -1,3 +1,60 @@
+## Design by concepts and responsibilities (outside-in)
+
+Use **concept-driven, responsibility-focused, outside-in design** as the default
+way of programming in this repository. Aim for elegance, extensibility, and
+maintainability together: a small set of clear concepts that solves the current
+problem and remains useful as the system evolves.
+
+1. **Understand the core problem first.** Start with the overall purpose and
+   the essential problem to solve. Identify the concepts involved before
+   choosing implementation details, frameworks, or patterns.
+2. **Name the concepts and their responsibilities.** Give each important
+   concept a precise name and express its role in one clear sentence. Let
+   those concepts guide the names of classes, modules, and functions. Choose
+   the representation that fits; not every concept needs a class. A component
+   should have one coherent responsibility and a clear reason to change.
+3. **Design from use toward implementation.** Write a representative usage
+   example or caller first. Sketch the interfaces, methods, collaborators,
+   inputs, outputs, and failure behavior needed to make that usage natural.
+   Temporary empty bodies are useful design scaffolding; implement them or
+   remove them before presenting the work as complete.
+4. **Decompose recursively as problems appear.** When a component needs work
+   outside its role, identify that new problem, name its concept, define its
+   interface, and delegate to it. Repeat outside-in at each level. Keep
+   orchestration concerned with coordination and domain decisions with the
+   concept that owns them. Moving a large conditional into another file does
+   not by itself improve the decomposition.
+5. **Keep logic with its owner.** A rule, invariant, or decision should have
+   one authoritative home. Check whether someone investigating a behavior
+   would naturally look there. Avoid duplicated rules, hidden dependencies,
+   and classes that accumulate unrelated work.
+6. **Make extension a design check.** Consider a plausible next capability:
+   which parts would change? Prefer adding or composing a focused component
+   through an explicit interface over modifying unrelated components. Build
+   extension points around real variation; keep hypothetical capabilities
+   inexpensive to add without implementing them in advance.
+7. **Make debugging and maintenance design checks.** Keep dependencies,
+   state transitions, inputs, outputs, and errors understandable. A failure
+   should be traceable to a small, identifiable responsibility. Use tests at
+   meaningful boundaries and through representative public usage to verify
+   behavior without coupling them to incidental implementation details.
+8. **Refine the model through working examples.** Implement a complete slice,
+   exercise it, and revisit names, boundaries, and interfaces when the code
+   reveals a better understanding. Keep the design proportional to the
+   problem; unnecessary layers and fragmented one-line classes can obscure
+   it as much as oversized classes.
+
+Before considering a nontrivial change finished, ask: Is the core concept
+clear? Does each component have one role? Is every piece of logic where it
+belongs? Is any component doing too much? Is the problem divided into parts
+that can be understood independently? Can the next capability be added
+locally? Would a bug be easy to locate?
+
+Treat **beauty as conceptual clarity, coherence, and economy**, and **potential
+as useful composability and room to evolve**. Judge the design by how naturally
+it expresses the problem and how little unrelated code must change to extend
+or repair it.
+
 ## Code intelligence: ken
 
 **A `<context-rank>` block in the prompt is ken's ranked guess for this
@@ -35,6 +92,19 @@ question you can already answer from context needs no call at all.
 **Write back what cost you real effort** — a root cause, a constraint the
 code does not state, a trap you fell into: `ken_remember(topic, content)`.
 Not what the code already says plainly. Re-using a topic overwrites it.
+
+For a conclusion that depends on code or an experiment, use the optional
+`justification` object to retain its rationale, evidence files, dependencies,
+assumptions and recheck step (see `docs/design/justified-memory.md`). Keep
+`content` a concise conclusion. Declare a tree scope for absence/search claims
+so new files can invalidate them. `unchanged` means declared inputs match, not
+that the conclusion or assumptions were independently proved. Use
+`ken_recall(topic="…", detail="answer")` to start with the whole conclusion,
+sources, assumptions and validity. Reuse it only when question, scope and
+assumptions fit; expand with `detail="full"` or read the relevant symbol when
+evidence is missing or stale. `detail="summary"` adds a short rationale. Do not
+repeat structural inspection solely because a memory was retrieved. Plain notes
+remain appropriate for unformalized findings.
 
 **Anchor it, or it only fires if someone searches.** An anchored memory is
 handed to whoever next touches the same thing — no query needed:

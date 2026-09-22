@@ -119,6 +119,9 @@ def test_parameter_alias_normalizes_to_original_parameter_load():
 def test_unsupported_scopes_keep_syntax_projection_with_explicit_basis(body):
     graph, result = run('python', [body])
     assert not [m for m in result['matches'] if m['id'] == 'returned']
-    assert [m for m in result['matches'] if m['id'] == 'prototype#explicit-copy']
+    # Authored BODY requires modeled control flow. Historical syntax-only
+    # RETURNS_VALUE projection remains available, but is not a proof of BODY.
+    pattern = [m for m in result['matches'] if m['id'] == 'prototype#explicit-copy']
+    assert bool(pattern) is body.startswith('while')
     returned = [f for f in query_graph(graph).ir.facts if f.relation == 'RETURNS_VALUE']
     assert returned and all(f.attrs.get('basis') == 'syntax' for f in returned)

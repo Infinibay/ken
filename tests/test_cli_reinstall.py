@@ -21,7 +21,7 @@ def test_reinstall_cli_reinstalls_tool_and_project(monkeypatch, tmp_path):
 
     monkeypatch.setattr("ken.cli.subprocess.run", fake_run)
 
-    rc = main(["reinstall", str(tmp_path), "--codex", "--embed", "--embed-limit", "7"])
+    rc = main(["reinstall", str(tmp_path), "--codex", "--deepseek", "--embed", "--embed-limit", "7"])
 
     assert rc == 0
     assert calls[0][0][:4] == ["/usr/bin/uv", "tool", "install", "--editable"]
@@ -31,6 +31,7 @@ def test_reinstall_cli_reinstalls_tool_and_project(monkeypatch, tmp_path):
         "install",
         str(tmp_path),
         "--codex",
+        "--deepseek",
         "--embed",
         "--embed-limit",
         "7",

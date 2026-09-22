@@ -18,9 +18,9 @@ def test_graph_miss_reuses_unchanged_units(tmp_path, monkeypatch, change):
         parsed.append(path)
         return original_lower(text, language, path)
 
-    def link(units):
+    def link(units, **kwargs):
         linked.append(len(units))
-        return original_link(units)
+        return original_link(units, **kwargs)
 
     monkeypatch.setattr(service, 'lower_source', lower)
     monkeypatch.setattr(service, 'link_project', link)

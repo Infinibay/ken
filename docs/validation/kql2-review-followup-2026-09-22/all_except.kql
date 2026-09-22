@@ -1,0 +1,1 @@
+language "kql/2"; module review; query all_except {node $handler {kind:"catch";} select $handler.path,$handler.line;}

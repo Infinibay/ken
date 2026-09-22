@@ -286,4 +286,4 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'INSTANCE_RECEIVER' in row['query'] and 'count distinct' in row['query']
+    assert 'receiver $local_self' in row['query'] and 'at least 2 distinct' in row['query']

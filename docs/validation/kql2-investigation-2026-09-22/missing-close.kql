@@ -1,0 +1,9 @@
+language "kql/2"; module investigation;
+query missing_close {
+ callable $target {name:"_conn";}
+ callable $owner {
+  call $open {target:$target;}
+  not exists {call $close {name:/^(close|closing)$/;}}
+ }
+ select $owner;
+}

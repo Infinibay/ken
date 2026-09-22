@@ -1,0 +1,53 @@
+{
+  "base_commit": "353fc1444823bded9e04b465e7ee64b3809bb043",
+  "ir_version": "1.76.0",
+  "checks": [
+    {
+      "command": ".venv/bin/python -m pytest tests/structural/test_catalog_adversarial_matrix.py tests/structural/test_gof_executable.py tests/structural/test_modern_catalog_review.py tests/structural/test_catalog_ir_contracts.py tests/structural/test_negative_corpus.py -q",
+      "tests": 3039,
+      "passed": 2945,
+      "xfail": 94,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 49.706,
+      "timestamp": "2026-09-14T16:07:05.748586-03:00"
+    },
+    {
+      "command": ".venv/bin/python -m pytest tests/structural/test_catalog_adversarial_matrix.py -k 'functional-adapter/java or module-shared/typescript or lazy-subject/rust' -q",
+      "tests": 20,
+      "passed": 20,
+      "xfail": 0,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 0.426,
+      "timestamp": "2026-09-14T16:10:04.642877-03:00"
+    },
+    {
+      "command": ".venv/bin/python -m pytest tests/structural/test_catalog_adversarial_matrix.py -k 'inventory or ledger or identities' -q",
+      "tests": 3,
+      "passed": 3,
+      "failures": 0
+    }
+  ],
+  "runtime_and_toml_unchanged": true,
+  "initial_cases": 252,
+  "matrix_cases": 2060,
+  "required_variant_language_cells": 412,
+  "missing_cells": 0,
+  "unexpected_results": [],
+  "selected_query_counts": {
+    "TP": 1358,
+    "TN": 860,
+    "FN": 42,
+    "FP": 52
+  },
+  "unique_language_source_pairs": 1725,
+  "new_files_sha256": {
+    "examples/bench/audit_catalog_semantics.py": "d0f12d5f59ab421c1f818fda419ef96bb0c6c453c844ef2872fae28b163a81a3",
+    "examples/bench/audit_catalog_matrix.py": "b3c2e06d3e5b4871f096208afa38836b64e536a5f9f35bf3c71abf9152a8fb96",
+    "tests/structural/catalog_matrix_support.py": "4460dda53eb4f4b4ad398426dac3cda4efd1c6651ae9162477abba14e8a90ec0",
+    "tests/structural/test_catalog_adversarial_matrix.py": "833e0a46afc4579d1f0dd4859df5fa2345c3ced537a849054a504aff98ac9e50",
+    "tests/structural/catalog_matrix/seeds.json": "5c9a31b3097759eb90e6a3cf7c769d672cfc96377079cb65a3971da5bba55b93",
+    "tests/structural/catalog_matrix/known_failures.json": "42ddc336bad0b0999572ab50b1b9b00e07a60b1f5ee34e4fb3a7f12e44c32be9"
+  }
+}

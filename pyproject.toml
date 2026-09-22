@@ -33,6 +33,8 @@ dependencies = [
     # CPU; same model infinidev runs in production.
     "fastembed>=0.5",
     "numpy>=1.26",
+    # Persistent syntax vectors for the KQL2 exploration backend.
+    "flatbuffers>=25.12.19",
     # MCP SDK — exposes ken's tools to Claude Code over stdio.
     # Pinned to the 2.x line: 2.0 renamed ``FastMCP`` to ``MCPServer``
     # and moved it to ``mcp.server``; 0.10.0 of ken-rank shipped with the
@@ -140,3 +142,20 @@ module = [
     "ken.vectors",
 ]
 ignore_errors = true
+
+# Query and lowering branches intentionally reuse local names for different types.
+# Keep checking each assignment and use with mypy's flow-sensitive redefinitions.
+[[tool.mypy.overrides]]
+module = [
+    "ken.kql2.body", "ken.kql2.graph", "ken.kql2.source_patterns",
+    "ken.structural.frontend", "ken.structural.return_flow",
+    "ken.structural.semantic", "ken.structural.events",
+]
+allow_redefinition_new = true
+local_partial_types = true
+
+# These runtime libraries publish no typing metadata. Keep their boundary
+# explicit without excluding any Ken module from the typing gate.
+[[tool.mypy.overrides]]
+module = ["flatbuffers", "flatbuffers.*", "regex"]
+ignore_missing_imports = true

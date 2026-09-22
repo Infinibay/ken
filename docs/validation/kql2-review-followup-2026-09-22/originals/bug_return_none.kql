@@ -1,0 +1,7 @@
+language "kql/2";
+module bugs.return_none;
+query return_none_literal {
+  node $ret { kind: "return"; }
+  node $none { kind: "identifier"; name: "None"; }
+  select $ret;
+}

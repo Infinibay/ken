@@ -1,0 +1,1 @@
+language "kql/2"; module review; query return_none {node $ret {kind:"return"; node $value {kind:"literal"; text:"None";} } select $ret.path,$ret.line;}

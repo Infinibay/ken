@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import pytest
 
+from .contract_support import contract_matches
+
 from .test_state_context_transitions import detect, source as context_source
 
 LANGUAGES = ('python', 'java', 'typescript')
@@ -69,6 +71,6 @@ def test_noise_cannot_hide_transition_writing_another_slot(language):
 
 @pytest.mark.parametrize('language', LANGUAGES)
 @pytest.mark.parametrize('mutation', ['wrong-event', 'different-current-context', 'current-state-replaced'])
-@pytest.mark.xfail(strict=True, reason='Stronger event/current-owner/current-dispatch contract needs temporal data flow, not historical constructor/slot associations; algorithms/state.md')
 def test_desired_event_transition_preserves_event_owner_and_active_state(language, mutation):
-    assert not detect(source(language, mutation), language)[1]['matches']
+    assert contract_matches(source(language), language, 'state.event_transition')
+    assert not contract_matches(source(language, mutation), language, 'state.event_transition')

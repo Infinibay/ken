@@ -1,8 +1,19 @@
-> **Operational reference: IR 1.72.0.** This document describes available behavior
+> **Operational reference: IR 1.85.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
+> The [KQL 2 specification](design/kql2/README.md) defines the query language and
+> [required analysis contracts](design/kql2/ir-and-evaluation.md). Those contracts
+> do not imply that every specified capability is implemented. Later version
+> notes below describe additions to the earlier contracts.
 
 # Structural IR and queries
+
+The active GoF/modern TOML catalog now uses [KQL 2 graph queries](design/kql2/graph-queries.md).
+`edge`, `walk` and `tally` compile to the shared relational operator plan over the
+normalized semantic facts described here. This changes the query language, not
+the evidence contracts; the IR 1.78 extensions below add new facts. KenQL 1 queries and explicit historical aliases
+remain supported. The [migration report](structural-validation/catalog-kql2-migration-2026-09-14/README.md)
+records differential tests and measurements.
 
 Read [Representation contract](#representation-contract) for the serialized graph
 and the difference between source operands and query values;
@@ -12,6 +23,139 @@ before interpreting an absent match. The [KenQL guide](structural-queries.md)
 documents the current query language and named dependencies. Versioned sections
 below explain when a contract appeared; their exclusions still apply unless a
 later section explicitly extends them.
+
+## Read-site contracts (IR 1.78)
+
+The [second review report](structural-validation/xfail-second-review-2026-09-14/README.md)
+tracks the original 111 expected failures individually. The catalog contains
+154 executable KQL 2 entries: 33 roots, 91 variants and 30 operations.
+New operations are selectable contracts, not automatic requirements for all
+implementations of their parent pattern.
+
+| Relation / attribute | Available meaning | Explicit boundary |
+|---|---|---|
+| `RECEIVER_BINDING_VERSION(call, version)` | The latest lexically preceding explicit receiver assignment or foreach binding in the same callable; otherwise the receiver binding itself | Source prefix, not SSA, heap identity, branch feasibility, interprocedural mutation or loop fixed points |
+| `RECEIVER_UNREPLACED(call, receiver)` | No explicit replacement precedes the call after callable entry or the latest foreach binding | An opaque write inventory withholds the fact; arbitrary helper effects and alias writes are not proven absent |
+| `EXPRESSION_OPERAND(value, input)` | Source value operands for admitted eager arithmetic/comparison/unary expressions; `position` and `operator` identify the slot | Different from `OPERAND`, whose endpoints are syntax nodes; logical short circuit, overloaded semantics and arbitrary calls are not interpreted |
+| `VALUE_DEPENDS_ON(expression, origin)` | An operand origin snapshotted when the expression is evaluated in supported structured local flow | Syntactic consumption, not mathematical sensitivity: `x * 0` still consumes `x`; not a taint/sanitizer or whole-program flow analysis |
+| `ARGUMENT_VALUE_ORIGIN(call, origin)` | Reaching argument origin at this call; `position` retains argument correlation | `modality=may` when branches disagree or include unknown; never infer certainty from historical assignment alone |
+| `VALUE.literal` | Numeric literal source spelling, including Java decimal/hex/octal/binary integer nodes | Not a constant evaluator: `1`, `1L`, `0x1` remain different spellings |
+| `OPERATION.start_byte`, `end_byte` | Half-open byte span, available to graph `where` predicates | Source order, not execution order; compare only operations in the same source callable |
+
+Value IDs include both start and end offsets. For `1 + 2`, the expression and
+its first literal no longer collide. This is a serialized-IR change: old graph
+and persisted query-view artifacts are invalidated through `IR_VERSION`.
+
+Structured local flow now seeds parameters with their entry origins and applies
+explicit assignments to those bindings. In `converted = input * 2; input = 0;
+use(converted)`, the computation still consumes the entry input. In `converted =
+input * 2; converted = 0; use(converted)`, it does not. Receiver replacement after
+a call does not retroactively invalidate that call's result. Unsupported control,
+reference writes and dynamic scope retain existing conservative exclusions.
+Expression traversal has depth/work budgets and deduplicated operand edges.
+
+Direct Python class receivers resolve a directly declared `@classmethod` or
+`@staticmethod` with that sole decorator. Field shadows, extra decorators and
+inherited descriptor lookup remain excluded. This is a lexical built-in spelling
+model, not proof of runtime monkey-patching or descriptor identity.
+Java/C# constructor overloads with fixed positional signatures can be selected
+when explicit arity leaves exactly one candidate; same-arity overloads, optional
+parameters, variadics and named calls remain conservative. A leading Java `this()`
+initializer no longer counts as bare-receiver publication when summarizing later
+explicit constructor writes; delegated field values are never invented.
+`PARAMETER_TEST` now includes ordered comparisons (`<`, `>`, `<=`, `>=`);
+these do not invent field `TRUTH_TEST` facts.
+
+```kql2
+language "kql/2";
+module example.visitor_result;
+import ken.catalog.visitor.result_forwarding;
+query results {
+  use ken.catalog.visitor.result_forwarding.detect(unit: $element);
+  select $element;
+}
+```
+
+This asks for the result-forwarding contract. The broad Visitor query may accept
+visitors that deliberately return nothing; the stronger operation must not erase
+those valid definitions.
+
+## Catalog precision contracts (IR 1.77)
+
+The [catalog correction report](structural-validation/catalog-corrections-2026-09-14/README.md)
+records the measured changes to all 23 GoF and 10 modern TOMLs. These contracts
+are source analyses, not whole-program execution proofs. Persisted graphs from
+older IR versions are invalidated through `IR_VERSION`.
+
+### Execution evidence retains dead syntax
+
+Operations, calls, `HAS_OPERATION`, `HAS_CALL`, and the source behavior summaries
+used by the catalog carry `execution: possible`, `unreachable`, or `unknown`.
+`unreachable` proves only a lexical suffix after an unconditional return, throw,
+break or continue in the same statement sequence. Nested blocks inherit this
+state; function/class declarations and Python defaults retain their enclosing
+context. Hoisted JS/TS function declaration bodies and parameters remain possible.
+Parse errors produce unknown. Branch feasibility, exceptions, nontermination,
+macros and runtime dispatch are not solved. **Possible does not mean executed.**
+
+The raw operations and facts remain available. Catalog queries explicitly filter
+implementation evidence with `[execution:possible]`. Declarations (`HAS_FIELD`,
+`HAS_METHOD`) do not acquire this requirement. A generator's lexical yield still
+defines a valid generator even if that yield cannot execute; generator-shape
+queries intentionally retain that distinction.
+
+### Values, types and native constructs
+
+* Rust `let _ = expression;` is a `DISCARD` operation with `DISCARDS_RESULT` to
+  its operand. It creates no storage or assignment target. Calls, writes and
+  other effects inside the expression remain visible; this is not a purity claim.
+  Bare typed field declarations also stop masquerading as assignments.
+* A single suffix array dimension `T[]` in TS/Java/C# supplies `ELEMENT_TYPE` when
+  `T` resolves. `T[][]` is not flattened to `T`. Nominal generic bases in
+  TS/Java/C#/C++ and Go generic field types resolve their declaration head;
+  generic substitution and constraints are not inferred from that edge.
+* A C++ `P::apply(...)` call exposes `TYPE_PARAMETER_RECEIVER` to the lexical
+  parameter spelling and `TYPE_PARAMETER_OWNER` to its declaring type/callable.
+  Join both: equal parameter spellings in different scopes are unrelated.
+* `CAST_VALUE` links a Java/C# cast value to its source operand, preserving the
+  cast as a separate value because it may convert or throw. It does not have the
+  erased identity semantics of TypeScript `TYPE_ASSERTION_VALUE`.
+* Ternary expressions expose their value's `SYNTAX_NODE`, `NULL_TEST`, branch
+  arms, and each arm operation's `VALUE` operand. These edges distinguish
+  `old != null ? old : new T()` from constructing in both branches.
+* Python membership tests expose `MEMBERSHIP_CONTAINER` with `when` indicating
+  the branch where membership holds, and `MEMBERSHIP_KEY`. Indexed truth tests
+  expose `TRUTH_TEST`. `UNDEFINED_TEST` is separate from `NULL_TEST`; its JS/TS
+  model is withheld for explicit `undefined` declarations/imports or dynamic
+  `with`/direct `eval` in the file. No property getter or membership API is proved.
+
+### Write inventories and preservation
+
+| Relation | Source contract | Important limit |
+|---|---|---|
+| `binding STORAGE_WRITE_COUNT "0"` | Number of explicit assignment/foreach binding sites in the analyzed file, including module and captured slots | Source sites, not executions; no alias/heap/purity guarantee |
+| `binding STORAGE_WRITE_STATUS supported` | Inventory covers the supported explicit writes | Unmodeled targets, updates, destructuring, dynamic scope and unsupported binding forms withhold counts conservatively |
+| `write INDEXED_WRITE_COUNT "1"` | Explicit writes sharing this callable, container and exact index binding | Different index bindings may evaluate to the same key; API semantics and hidden mutations remain unknown |
+| `loop ITERATION_ENTRY_SOURCE storage` | No earlier explicit replacement or recognized clearing of this source in the callable | Does not prove ownership or absence of indirect mutation |
+| `call CALL_ENTRY_BINDING field` | A resolved target reads this field and the caller has no earlier explicit replacement/clear | Enumerates actual call/read pairs, not a method × field product; hidden effects remain unknown |
+| `try TRY_EXIT_STATUS no-explicit-override` | No explicit exit/suspension in its finalizer; resources and diagnostics can be unsupported | Logging may still throw; not a runtime guarantee of retry |
+| `class BASE_INPUT parameter` | Direct base input or at most 32 unique, preceding top-level local aliases from an unreassigned parameter | Conditional aliases, clobbers and unsupported inventories are withheld |
+| `call CALL_RESULT_KIND scalar` | Supported local return origins are all scalar literals/null, for a direct resolved callable without wrapping, explicit rebinding or dynamic scope | Virtual/member calls and unresolved/library adapters remain `unknown`; no whole-program guarantee |
+
+Negative evidence must use a published inventory/status, not assume that missing
+facts prove immutability. The new inventories are deliberately conservative.
+Cache and Singleton queries use bounded CFG paths of at most 32 steps; they now
+tolerate the tested 20 intervening statements, but arbitrary-length interleaving
+still needs a different traversal contract. No unbounded search or `preserve`
+statement was added to KenQL.
+
+`CFG_FALLTHROUGH` is the subset of `CFG_NEXT` whose `kind` is `next`. Its paths
+do not traverse conditional, loop, return, break or continue edges. This lets a
+query admit neutral statements without borrowing a nested conditional path as
+proof of unconditional initialization. It still requires checking `CFG_STATUS`;
+a partial CFG does not certify execution. Error-recovery syntax can contain
+colliding operation IDs: execution annotation returns unknown without traversing
+such graphs, and traversal is visited-set bounded even for malformed topology.
 
 ## A comparison branch publishes the value it discriminates (IR 1.71)
 
@@ -524,6 +668,7 @@ delegate field. Four relations model it:
 | `callable ADDS_HANDLER storage` | A method registers a handler (`+=`); `handler` carries the operand |
 | `callable REMOVES_HANDLER storage` | A method unregisters one (`-=`) |
 | `call RAISES_EVENT storage` | The call invokes the event |
+| `callable METHOD_RAISES_EVENT storage` | The method owns that call — the same invocation seen from the callable, so a query can name the method instead of the intermediate call |
 
 A custom accessor (``event_declaration`` with an ``accessor_list``) is **not**
 marked and produces no registration fact: its semantics are unknown.
@@ -1624,7 +1769,7 @@ Four public relations support this analysis:
 
 | Relation | Source → destination | Contract |
 |---|---|---|
-| `INSTANCE_RECEIVER` | type → source receiver value | `basis=instance-relative`; observed `this/self` use in an instance callable. Not a runtime object ID. |
+| `INSTANCE_RECEIVER` | type → source receiver value | `basis=instance-relative`; instance-relative identity for a declared type, including empty constructors and field-only bodies. Not a runtime object ID. |
 | `PARAMETER_INITIALIZES_FIELD` | parameter → field | TypeScript constructor property syntax, preserving two identities and their annotation; `basis=typescript-parameter-property`. |
 | `CONSTRUCTOR_FIELD_INPUT` | field → constructor parameter | Final direct parameter input in the restricted linear constructor model, including implicit TypeScript parameter-property initialization and supported explicit C++ member initializers before body assignments; `basis=linear-syntax`. |
 | `DECLARED_TARGET` | call → declared method slot | Unique method lookup from the receiver's resolved nominal annotation; `basis=nominal-annotation`. Does not replace `TARGET` or remove `MAY_TARGET`. |
@@ -2475,3 +2620,64 @@ for the regression suite and `uv run mypy` for the repository typing gate.
 
 References: [GoF publisher catalogue](https://www.informit.com/store/design-patterns-elements-of-reusable-object-oriented-9780321770462),
 [PyO3 distribution](https://pyo3.rs/main/building-and-distribution).
+
+
+### IR 1.81: source-oriented KQL2 authoring
+
+`BINDING_REFERENCE` maps a source operation to its lexically resolved storage,
+parameter or member. It distinguishes `self.field` from `other.field`; matching a
+condition does not depend on attribute text alone. Field visibility and parameter
+`accepts_position` metadata are retained for the documented source selectors.
+
+Simple Rust callable tail expressions are wrapped by a synthetic `RETURN`
+operation (`native_kind=implicit_return`, `synthetic=true`). The original expression
+becomes its operand, preserving its source span and identity; `RETURN_OPERAND`
+and the normal CFG/return-origin pass apply. A semicolon and an earlier return
+remain semantically significant. Control-valued tails are not normalized by this
+limited model.
+
+`SHALLOW_COPY_SOURCE` links a modeled copy expression to its collection source.
+Models currently cover unshadowed Python `list(x)` and a JS/TS array with exactly
+one spread. It asserts shallow source transfer, not deep copy or iterator purity.
+`INSTANCE_RECEIVER` exists for declared types even without a bare receiver use.
+Lexically resolved implicit nonstatic calls in Java/C#/C++ retain that receiver;
+static and unrelated free calls do not acquire one.
+
+Java `java.util.function.IntSupplier.getAsInt` and
+`java.util.function.IntUnaryOperator.applyAsInt` have narrowly scoped nominal slot
+models, guarded by import/type and arity resolution. `DECLARED_TARGET` accredits a
+contract; it does not claim a known runtime implementation. All these changes
+invalidate earlier persistent IR artifacts through version 1.81.0.
+
+### IR 1.82: evaluated condition inputs
+
+`READ_ORIGIN(operation, value)` snapshots a lexically resolved binding read in an
+if/elif condition, immediately before entering its arms. `modality=must` requires
+one known origin; multiple or partially unknown reaching values are `may`.
+This is currently a structured, local, loop-free analysis with the same rejection
+boundaries as return origins. It is not a general heap read or historical value-flow
+edge. BODY conditions on captured values consume this occurrence-specific fact.
+C++ compound else blocks participate in that structured walk. Persistent graphs
+from IR 1.81 are invalidated by version 1.82.0.
+
+### IR 1.85: iteration-local condition origins and Ruby control
+
+`READ_ORIGIN` can also describe a condition inside one supported loop iteration.
+This pass starts with unknown local bindings at the iteration boundary, propagates
+explicit assignments and aliases in order, merges branch uncertainty, and stops
+at break/continue/return. It does not carry values from previous iterations or
+claim global return-flow support for the looping callable. Nested loops, indirect
+writes, embedded assignments and unsupported shadowing remain conservative.
+
+Assignment/value-dependency analysis now also runs for eligible callables without
+an explicit return or argument-consuming call. This supports queries about uses
+in assignments and arithmetic without manufacturing a return statement.
+
+Ruby `for`, conditional statement modifiers and loop exits participate in the
+existing LOOP/BRANCH/CFG model. Together with these origin changes, this requires
+invalidating persisted IR through version 1.85.0.
+
+KQL2 `usages of` builds occurrence-level consumers over these facts and direct
+syntactic operand links. It retains modality and an open-inventory diagnostic;
+the query's Usage objects are not injected into the immutable source graph. See
+[value capture and usage semantics](design/kql2/value-usages.md).

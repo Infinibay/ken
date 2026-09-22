@@ -1,0 +1,92 @@
+{
+  "language": "kql/2",
+  "capability": "structural-source/1",
+  "query": "mutable_defaults",
+  "columns": [
+    "site"
+  ],
+  "rows": [
+    [
+      "defaults.py::module/CALLABLE:bad@0/HAZARD:mutable-default-argument:8"
+    ]
+  ],
+  "complete": true,
+  "coverage_complete": true,
+  "unknown_candidates": 0,
+  "reason": null,
+  "results_truncated": false,
+  "plan": [
+    {
+      "operator": "relational_graph",
+      "optimized": true,
+      "graph_disk_hit": false,
+      "patterns": 0,
+      "branches": "preserved"
+    }
+  ],
+  "optional_evidence": [
+    {
+      "row": 0,
+      "evidence": [
+        {
+          "subject": "defaults.py::module/CALLABLE:bad@0/HAZARD:mutable-default-argument:8",
+          "relation": "HAS_HAZARD",
+          "object": "mutable-default-argument",
+          "source": [
+            "defaults.py:1"
+          ]
+        }
+      ]
+    }
+  ],
+  "analysis": {
+    "snapshot": 1,
+    "manifest": [
+      [
+        "defaults.py",
+        "df6d15646ecccd76ce7eeeb8e109b4cc9ae5040d417aa920cec1a9b2194f6fe4"
+      ]
+    ],
+    "frontend": "edd51a11070f3a8f1c518669cd32f0ff8c1caa1f492ac4314ed5bd1bec5676c5",
+    "freshness": "captured_snapshot",
+    "skipped": [],
+    "parsed_units": 1,
+    "reused_units": 0,
+    "cache_mb": 500.0,
+    "disk_budget_mb": 400.0,
+    "compilation_cache": {
+      "retained_bytes": 3158,
+      "capacity_bytes": 100000000,
+      "entries": 1,
+      "hits": 0,
+      "misses": 1,
+      "shared": 0,
+      "evictions": 0,
+      "in_flight": 0,
+      "status": "miss"
+    },
+    "result_cache": "miss",
+    "ephemeral": false,
+    "allocated_bytes": 475136,
+    "gc": {
+      "deferred": false,
+      "snapshots": 0,
+      "units": 0
+    },
+    "quota_reclamation": {
+      "before_bytes": 425984,
+      "after_bytes": 425984,
+      "deferred": false,
+      "snapshots": 0,
+      "units": 0
+    },
+    "scanned_nodes": 1,
+    "states": 2,
+    "compile_ms": 10.330165969207883,
+    "build_ms": 25.63420799560845,
+    "query_ms": 17.461083130910993,
+    "result_lookup_ms": 0.023167114704847336,
+    "total_ms": 275.3227911889553,
+    "timeout_ms": 3000
+  }
+}

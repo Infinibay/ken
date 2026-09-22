@@ -5,6 +5,7 @@ import json
 import os
 import time
 from collections import defaultdict
+from contextlib import ExitStack, closing, nullcontext
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Any
@@ -76,8 +77,45 @@ def _cached_ir(cache: IRCache, key: str) -> IR | None:
         return None
 
 
+def source_manifest(root: Path, target: Path, versions: str, max_files: int | None,
+                    max_file_bytes: int) -> tuple[list[tuple[str, str, bytes]], list[dict[str, str]]]:
+    """Capture source revisions once; both acquisition and index reuse use this manifest."""
+    from .cache import IRCache as CacheKeys
+    manifest: list[tuple[str, str, bytes]] = []
+    skipped: list[dict[str, str]] = []
+    considered = sorted(iter_files(root, path=target)) if target.is_dir() else [target.relative_to(root)]
+    for relative in considered:
+        try:
+            absolute = resolve_project_path(root, relative)
+        except ValueError:
+            skipped.append({"path": relative.as_posix(), "reason": "symlink escapes project"})
+            continue
+        if target.is_dir() and not absolute.is_relative_to(target):
+            continue
+        language = LANGUAGES.get(relative.suffix.lower())
+        if language is None:
+            if relative.suffix.lower() in {".c", ".h", ".kt", ".dart", ".php", ".swift", ".scala"}:
+                skipped.append({"path": relative.as_posix(), "reason": "no structural frontend"})
+            continue
+        if max_files is not None and len(manifest) >= max_files:
+            skipped.append({"path": relative.as_posix(), "reason": "max_files"})
+            continue
+        if absolute.stat().st_size > max_file_bytes:
+            skipped.append({"path": relative.as_posix(), "reason": "max_file_bytes"})
+            continue
+        try:
+            content = absolute.read_bytes()
+        except OSError as exc:
+            skipped.append({"path": relative.as_posix(), "reason": str(exc)})
+            continue
+        key = CacheKeys.key("unit", IR_VERSION, versions, relative.as_posix(), language, content)
+        manifest.append((relative.as_posix(), key, content))
+    return manifest, skipped
+
+
 def build_project(root: Path, *, path: str = ".", cache_mb: float | None = None,
-                  max_files: int | None = None, max_file_bytes: int = 2_000_000) -> tuple[IR, dict[str, Any]]:
+                  max_files: int | None = None, max_file_bytes: int = 2_000_000,
+                  _manifest=None, _cache_project=True, _cache_path=None) -> tuple[IR, dict[str, Any]]:
     """Lower every supported file under ``path`` and link them into one graph.
 
     ``max_files`` is an opt-in ceiling. It used to default to 2000 and skip the
@@ -94,38 +132,12 @@ def build_project(root: Path, *, path: str = ".", cache_mb: float | None = None,
     if (max_files is not None and max_files <= 0) or max_file_bytes <= 0:
         raise ValueError("scan limits must be positive")
     started = time.monotonic()
-    cache = IRCache(root / ".ken" / "structural-cache.sqlite", _configuration(root, cache_mb))
+    cache = IRCache(_cache_path or root / ".ken" / "structural-cache.sqlite", _configuration(root, cache_mb))
     versions = _parser_versions()
-    manifest: list[tuple[str, str, bytes]] = []
-    skipped: list[dict[str, str]] = []
-    considered = sorted(iter_files(root)) if target.is_dir() else [target.relative_to(root)]
     try:
-        for relative in considered:
-            try:
-                absolute = resolve_project_path(root, relative)
-            except ValueError:
-                skipped.append({"path": relative.as_posix(), "reason": "symlink escapes project"})
-                continue
-            if target.is_dir() and not absolute.is_relative_to(target):
-                continue
-            language = LANGUAGES.get(relative.suffix.lower())
-            if language is None:
-                if relative.suffix.lower() in {".c", ".h", ".rb", ".kt", ".dart", ".php", ".swift", ".scala"}:
-                    skipped.append({"path": relative.as_posix(), "reason": "no structural frontend"})
-                continue
-            if max_files is not None and len(manifest) >= max_files:
-                skipped.append({"path": relative.as_posix(), "reason": "max_files"})
-                continue
-            if absolute.stat().st_size > max_file_bytes:
-                skipped.append({"path": relative.as_posix(), "reason": "max_file_bytes"})
-                continue
-            try:
-                content = absolute.read_bytes()
-            except OSError as exc:
-                skipped.append({"path": relative.as_posix(), "reason": str(exc)})
-                continue
-            key = cache.key("unit", IR_VERSION, versions, relative.as_posix(), language, content)
-            manifest.append((relative.as_posix(), key, content))
+        manifest, skipped = (_manifest if _manifest is not None else
+                             source_manifest(root, target, versions, max_files, max_file_bytes))
+        skipped = list(skipped)
         graph_key = cache.key("project", IR_VERSION, versions, *(key for _, key, _ in manifest))
         graph = _cached_ir(cache, graph_key)
         failed: set[str] = set()
@@ -145,14 +157,17 @@ def build_project(root: Path, *, path: str = ".", cache_mb: float | None = None,
                         skipped.append({"path": relative_name,
                                         "reason": f"frontend error: {type(exc).__name__}: {exc}"})
                         continue
-                    cache.put(key, unit.to_dict())
+                    cache.put_ir(key, unit)
                 units.append(unit)
-            graph = link_project(units)
-            if not failed:
+            graph = link_project(units, copy_entities=False)
+            # These units are private to this build. Transfer entity ownership
+            # instead of duplicating the entire repository before linking.
+            del units
+            if not failed and _cache_project:
                 # A graph built without some of its files must not be cached under
                 # the key of the complete manifest, or the next run would read a
                 # partial result and report it as whole.
-                cache.put(graph_key, graph.to_dict())
+                cache.put_ir(graph_key, graph)
         resolved = {f.subject for f in graph.facts if f.relation in {"TARGET", "ALLOCATES_TYPE"}}
         unresolved = {f.object for f in graph.facts if f.relation == "HAS_CALL"} - resolved
         return graph, {"resolution": {"resolved_calls": len(resolved), "unresolved_calls": len(unresolved)},
@@ -186,7 +201,7 @@ def search(root: Path, query: str = "", *, path: str = ".", cache_mb: float | No
            max_file_bytes: int = 2_000_000, rule_ids: list[str] | None = None,
            collections: list[str] | None = None, tags: list[str] | None = None,
            rule_files: list[str] | None = None, evidence_mode: str = "strict") -> dict[str, Any]:
-    from .rules import SavedRule, execute_rules, load_rules, select_rules
+    from .rules import SavedRule, execute_rules, load_rules, select_rules, is_block_query
     if evidence_mode not in {"strict", "possible"}:
         raise ValueError("evidence_mode must be strict or possible")
     selecting = bool(rule_ids or collections or tags)
@@ -208,23 +223,28 @@ def search(root: Path, query: str = "", *, path: str = ".", cache_mb: float | No
     compiled: dict[str, Any] = {}
     for rule in selected:
         rule._validate(compiled)
-    if any(rule.query.lstrip().startswith("query ") for rule in selected):
-        from .kenql import Engine
+    if any(is_block_query(rule.query) for rule in selected):
+        from .relational import Executor as Engine
         from .rules import query_registry, _parsed_query
         queries = query_registry(registry, _parsed=compiled)
         validator = Engine(FactIndex(IR("", "")), queries, budget)
         for rule in selected:
-            if rule.query.lstrip().startswith("query "):
+            if is_block_query(rule.query):
                 validator.validate(_parsed_query(rule.query, compiled))
-    graph, analysis = build_project(root, path=path, cache_mb=cache_mb, max_files=max_files,
-                                    max_file_bytes=max_file_bytes)
-    cache = _query_cache(root, cache_mb)
-    try:
-        result = execute_rules(graph, selected, budget, registry=registry, evidence_mode=evidence_mode,
-                               _parsed=compiled, cache=cache, graph_key=analysis["graph_key"])
-        analysis["query_cache"] = cache.stats()
-    finally:
-        cache.close()
+    from .index_service import project_index
+    acquisition = (project_index(root, path=path, cache_mb=cache_mb, max_files=max_files,
+                                 max_file_bytes=max_file_bytes)
+                   if all(is_block_query(rule.query) for rule in selected) else
+                   nullcontext(build_project(root, path=path, cache_mb=cache_mb,
+                                             max_files=max_files, max_file_bytes=max_file_bytes)))
+    with acquisition as (graph, analysis):
+        cache = _query_cache(root, cache_mb)
+        try:
+            result = execute_rules(graph, selected, budget, registry=registry, evidence_mode=evidence_mode,
+                                   _parsed=compiled, cache=cache, graph_key=analysis["graph_key"])
+            analysis["query_cache"] = cache.stats()
+        finally:
+            cache.close()
     summaries = directory_summary(result["matches"], analysis["files"])
     for summary in summaries:
         summary["rules"] = summary.pop("patterns")
@@ -236,19 +256,54 @@ def search(root: Path, query: str = "", *, path: str = ".", cache_mb: float | No
     return response
 
 
-def patterns(root: Path, names: list[str] | None = None, *, path: str = ".",
-             cache_mb: float | None = None, budget: QueryBudget | None = None,
-             max_files: int | None = None, max_file_bytes: int = 2_000_000) -> dict[str, Any]:
-    graph, analysis = build_project(root, path=path, cache_mb=cache_mb, max_files=max_files,
-                                    max_file_bytes=max_file_bytes)
-    cache = _query_cache(root, cache_mb)
-    try:
-        result = detect_patterns(FactIndex(graph), names, budget, cache=cache, graph_key=analysis["graph_key"])
-        analysis["query_cache"] = cache.stats()
-    finally:
-        cache.close()
-    return {"ok": True, **result, "directories": directory_summary(result["findings"], analysis["files"]),
-            "analysis": analysis}
+def patterns(
+    root: Path, names: list[str] | None = None, *, path: str = ".",
+    cache_mb: float | None = None, budget: QueryBudget | None = None,
+    max_files: int | None = None, max_file_bytes: int = 2_000_000,
+    backend: str = "exploration", cache_directory: Path | None = None,
+    profile: bool = False, use_result_cache: bool = True,
+) -> dict[str, Any]:
+    """Run the semantic catalogue with shared exploration or indexed access."""
+    from .index_service import project_index
+    from ken.kql2.exploration.catalog_index import CatalogIndex
+
+    if backend not in {"indexed", "exploration"}:
+        raise ValueError("unsupported pattern backend: " + backend)
+    capacity = _configuration(root, cache_mb)
+    directory = Path(cache_directory) if cache_directory is not None else root / ".ken/structural/v2"
+    source_cache = directory / "source-cache.sqlite" if cache_directory is not None else None
+    with project_index(
+        root, path=path, cache_mb=cache_mb, max_files=max_files,
+        max_file_bytes=max_file_bytes, database=directory / "patterns.sqlite",
+        source_cache_path=source_cache,
+    ) as (index, analysis), ExitStack() as resources:
+        hybrid = None
+        if backend == "exploration":
+            bucket_path = directory / "pattern-buckets.sqlite" if capacity > 0 and analysis["graph_key"] else None
+            hybrid = resources.enter_context(closing(CatalogIndex(
+                index, cache_path=bucket_path,
+                revision=IRCache.key(analysis["graph_key"], str(index.graph)),
+                cache_mb=min(256, capacity),
+            )))
+            index = hybrid
+        index.profile = profile
+        cache = None
+        if not profile and use_result_cache:
+            cache = resources.enter_context(closing(
+                IRCache(directory / "results.sqlite", capacity)
+                if cache_directory is not None else _query_cache(root, cache_mb)
+            ))
+        result = detect_patterns(index, names, budget, cache=cache, graph_key=analysis["graph_key"])
+        analysis["query_cache"] = cache.stats() if cache is not None else {"enabled": False}
+        analysis["pattern_engine"] = {
+            "backend": backend, "semantic_backend": "sqlite_columns",
+            **({"buckets": dict(hybrid.cache.metrics)} if hybrid is not None else {}),
+        }
+    return {
+        "ok": True, **result,
+        "directories": directory_summary(result["findings"], analysis["files"]),
+        "analysis": analysis,
+    }
 
 
 def bugs(root: Path, *, path: str = ".", cache_mb: float | None = None,

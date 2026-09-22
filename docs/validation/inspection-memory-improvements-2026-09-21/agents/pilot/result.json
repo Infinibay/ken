@@ -1,0 +1,121 @@
+{
+  "project": "/private/tmp/ken-staged-memory-20260921/project",
+  "policy": "staged recall; source and memory order alternates",
+  "questions": {
+    "manifest": [
+      "vector-manifest-permissions",
+      "Where does this project write vector manifests and how does the source handle their permissions? Identify the writer and at least one caller, cite file and symbol, distinguish observed code from runtime guarantees. Do not modify source or run production operations. Answer briefly in Spanish."
+    ],
+    "root": [
+      "project-root-discovery",
+      "How does find_project_root choose the project directory? If KEN_PROJECT_ROOT points to a directory without the metadata file, does it fall back to parent discovery? Cite file and symbol. Do not modify source or run production operations. Answer briefly in Spanish."
+    ]
+  },
+  "runs": [
+    {
+      "mode": "source",
+      "case": "manifest",
+      "exit_code": 0,
+      "usage": [
+        {
+          "type": "turn.completed",
+          "usage": {
+            "input_tokens": 75716,
+            "cached_input_tokens": 50304,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1033,
+            "reasoning_output_tokens": 169
+          }
+        }
+      ],
+      "tool_calls": 5,
+      "tool_names": [
+        "/bin/zsh -lc \"pwd && rg --files -g 'AGENTS.md' -g '\"'!node_modules'\"' -g '\"'!vendor'\"' -g '\"'!'\"\\\\.git' && rg -n --hidden -g '\"'!'\"\\\\.git/**' 'manifest|chmod|permission|vector' .\"",
+        "/bin/zsh -lc \"rg --files --hidden -g '\"'!.git/**'\"'\"",
+        "/bin/zsh -lc \"rg -n --hidden -g '\"'!.git/**'\"' 'manifest|chmod|permission|vector' .\"",
+        "/bin/zsh -lc \"nl -ba src/ken/_paths.py; nl -ba src/ken/vectors.py | sed -n '145,230p;350,430p;765,840p'\"",
+        "/bin/zsh -lc \"nl -ba tests/test_vectors.py | sed -n '558,585p'; rg -n '_atomic_write|def _process_umask|umask|SPACES|self.dir' src/ken/vectors.py\""
+      ],
+      "recorded_tool_event_characters": 30143,
+      "tool_result_characters": 27648,
+      "elapsed_seconds": 42.546,
+      "repetition": 1
+    },
+    {
+      "mode": "memory",
+      "case": "manifest",
+      "exit_code": 0,
+      "usage": [
+        {
+          "type": "turn.completed",
+          "usage": {
+            "input_tokens": 48622,
+            "cached_input_tokens": 31488,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 664,
+            "reasoning_output_tokens": 261
+          }
+        }
+      ],
+      "tool_calls": 1,
+      "tool_names": [
+        "ken_recall"
+      ],
+      "recorded_tool_event_characters": 2159,
+      "tool_result_characters": 1954,
+      "elapsed_seconds": 32.088,
+      "repetition": 1
+    },
+    {
+      "mode": "memory",
+      "case": "root",
+      "exit_code": 0,
+      "usage": [
+        {
+          "type": "turn.completed",
+          "usage": {
+            "input_tokens": 48584,
+            "cached_input_tokens": 31488,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 419,
+            "reasoning_output_tokens": 129
+          }
+        }
+      ],
+      "tool_calls": 1,
+      "tool_names": [
+        "ken_recall"
+      ],
+      "recorded_tool_event_characters": 1746,
+      "tool_result_characters": 1546,
+      "elapsed_seconds": 29.402,
+      "repetition": 1
+    },
+    {
+      "mode": "source",
+      "case": "root",
+      "exit_code": 0,
+      "usage": [
+        {
+          "type": "turn.completed",
+          "usage": {
+            "input_tokens": 48937,
+            "cached_input_tokens": 38656,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 397,
+            "reasoning_output_tokens": 65
+          }
+        }
+      ],
+      "tool_calls": 2,
+      "tool_names": [
+        "/bin/zsh -lc \"pwd; rg --files -g AGENTS.md -g '*.*' -g '\"'!**/.git/**'\"' -g '\"'!**/.codex/**'\"' -g '\"'!**/.agents/**'\"'\"",
+        "/bin/zsh -lc \"rg -n 'find_project_root|KEN_PROJECT_ROOT|meta\\\\.json' src tests\nnl -ba src/ken/_paths.py\""
+      ],
+      "recorded_tool_event_characters": 5112,
+      "tool_result_characters": 4374,
+      "elapsed_seconds": 23.596,
+      "repetition": 1
+    }
+  ]
+}

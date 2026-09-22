@@ -1,0 +1,7 @@
+language "kql/2";
+module bugs.import_star;
+query import_star {
+  node $import { kind: "import"; }
+  node $name { kind: "identifier"; name: "*"; }
+  select $import;
+}

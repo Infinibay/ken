@@ -1,0 +1,7 @@
+language "kql/2";
+module bugs.except;
+query except_with_continue {
+  node $catch { kind: "catch"; }
+  node $continue { kind: "continue"; }
+  select $catch;
+}

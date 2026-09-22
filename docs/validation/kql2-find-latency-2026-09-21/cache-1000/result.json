@@ -1,0 +1,24 @@
+{
+  "engine": "53f1c0139a20eafce7b5dfc6d289164f2593d70f16d333db2054862bb1cbd949",
+  "source_files": 271,
+  "query_timeout_ms": 10000,
+  "wall_timeout_seconds": 90,
+  "limit": 100,
+  "cache_mb": 1000,
+  "runs": [
+    {
+      "scope": "src",
+      "case": "definition",
+      "repetition": 0,
+      "seconds": 90.1406,
+      "exit_code": 124,
+      "rows": 0,
+      "result": {},
+      "analysis": {},
+      "artifact": "src-definition-0.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { name:\"_atomic_write\"; } select $f; }"
+    }
+  ],
+  "engine_unchanged": true,
+  "sources_unchanged": true
+}

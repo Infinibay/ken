@@ -1,0 +1,25 @@
+INDEX k2_graph_capabilities 9 4.987s
+INDEX k2_graph_entities 2620444 10.513s
+INDEX k2_graph_operations 8756899 13.927s
+INDEX k2_graph_facts 5505024 37.580s
+Traceback (most recent call last):
+  File "/Users/andres/Projects/ken/examples/bench/pattern_search.py", line 278, in <module>
+    main()
+  File "/Users/andres/Projects/ken/examples/bench/pattern_search.py", line 169, in main
+    graph_id = publish(
+               ^^^^^^^^
+  File "/Users/andres/Projects/ken/src/ken/structural_store/graph_projection.py", line 183, in publish
+    insert("k2_graph_facts", 7, facts())
+  File "/Users/andres/Projects/ken/src/ken/structural_store/graph_publication.py", line 114, in insert
+    with self.transaction():
+         ^^^^^^^^^^^^^^^^^^
+  File "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/Users/andres/Projects/ken/src/ken/structural_store/graph_publication.py", line 39, in transaction
+    self.checkpoint()
+  File "/Users/andres/Projects/ken/src/ken/structural_store/graph_publication.py", line 45, in checkpoint
+    renew(self.store)
+  File "/Users/andres/Projects/ken/src/ken/structural_store/leases.py", line 31, in renew
+    raise SnapshotExpired('snapshot lease expired; restart acquisition')
+ken.structural_store.leases.SnapshotExpired: snapshot lease expired; restart acquisition

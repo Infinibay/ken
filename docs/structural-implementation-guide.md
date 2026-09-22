@@ -5,6 +5,18 @@ Referencia práctica verificada contra **IR 1.54.0**, `kenql/1` y
 implementación actual y dónde extenderla. El trabajo pendiente está en
 [PLAN.md](../PLAN.md). Las secciones que dicen **PROPUESTO** no son APIs disponibles.
 
+**Actualización posterior: IR 1.77.** Los contratos nuevos y la revisión del
+catálogo están en [la referencia operativa](structural-ir.md#catalog-precision-contracts-ir-177)
+y [el reporte de correcciones](structural-validation/catalog-corrections-2026-09-14/README.md).
+La referencia histórica 1.54 de las secciones siguientes no sustituye esas
+adiciones ni acredita que los contratos todavía pendientes estén implementados.
+
+Para el rediseño futuro del lenguaje, leer el
+[plan de implementación de KQL 2](design/kql2/implementation-plan.md): parser,
+schema/migraciones, optimizador, ejecución, caché e índices. Es documentación de
+trabajo objetivo; el [estado experimental](design/kql2/implementation-status.md)
+registra la implementación parcial. No sustituye las APIs KQL 1 de esta guía.
+
 ## 1. Qué leer y qué considerar implementado
 
 | Necesidad | Documento | Cómo interpretarlo |

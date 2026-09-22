@@ -1,0 +1,88 @@
+{
+  "language": "kql/2",
+  "capability": "structural-source/1",
+  "query": "q",
+  "columns": [
+    "column_1"
+  ],
+  "rows": [
+    [
+      {
+        "id": 74,
+        "unit": 1,
+        "local_id": "src/ken/vectors.py::module/CALLABLE:_atomic_write@7101",
+        "kind": "CALLABLE",
+        "name": "_atomic_write",
+        "owner": "src/ken/vectors.py::module",
+        "line": 182,
+        "end_line": 209,
+        "path": "src/ken/vectors.py",
+        "language": "python"
+      }
+    ]
+  ],
+  "complete": true,
+  "coverage_complete": true,
+  "unknown_candidates": 0,
+  "reason": null,
+  "results_truncated": false,
+  "plan": [
+    {
+      "operator": "scan",
+      "role": "f",
+      "selector": "callable",
+      "owner": null,
+      "access": "name_lookup"
+    }
+  ],
+  "optional_evidence": [],
+  "analysis": {
+    "snapshot": 1,
+    "manifest": [
+      [
+        "src/ken/vectors.py",
+        "a88770b6accdadbb1aba12e8970c2c51ce5a619ca8d40a7929aa7131396c5d4a"
+      ]
+    ],
+    "frontend": "be45be646549c24d8249c68e740a3bd0370ce925af4b9ce7bb6f14928b1596dd",
+    "freshness": "captured_snapshot",
+    "skipped": [],
+    "parsed_units": 1,
+    "reused_units": 0,
+    "cache_mb": 500.0,
+    "disk_budget_mb": 400.0,
+    "compilation_cache": {
+      "retained_bytes": 2133,
+      "capacity_bytes": 100000000,
+      "entries": 1,
+      "hits": 0,
+      "misses": 1,
+      "shared": 0,
+      "evictions": 0,
+      "in_flight": 0,
+      "status": "miss"
+    },
+    "result_cache": "miss",
+    "ephemeral": false,
+    "allocated_bytes": 9342976,
+    "gc": {
+      "deferred": false,
+      "snapshots": 0,
+      "units": 0
+    },
+    "quota_reclamation": {
+      "before_bytes": 425984,
+      "after_bytes": 425984,
+      "deferred": false,
+      "snapshots": 0,
+      "units": 0
+    },
+    "scanned_nodes": 1,
+    "states": 5,
+    "compile_ms": 9.207583963871002,
+    "build_ms": 570.587582886219,
+    "query_ms": 0.34791696816682816,
+    "result_lookup_ms": 0.02937507815659046,
+    "total_ms": 602.4100841023028
+  }
+}

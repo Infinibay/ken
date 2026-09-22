@@ -3,16 +3,28 @@ id = "chain-of-responsibility"
 name = "Chain of Responsibility"
 category = "behavioral"
 description = "A handler conditionally forwards to another handler, as a linked object or as a closure."
-caveat = "The same shape can be a Proxy; request handling and chain topology require review. The selected forwarding call must occur inside a lexical branch arm; early exits, request/result preservation and exclusive handling are not proven. The closure variant proves the forwarding is branch-guarded, not that a terminating path exists."
+caveat = "The same shape can be a Proxy; request handling and chain topology require review. The selected forwarding call occurs inside a lexical branch arm, or on the continuation of a guard whose other outcome returns immediately. Request/result preservation and exclusive handling are not proven. The closure variant proves the forwarding is branch-guarded, not that a terminating path exists."
 legacy_query = "require $unit SUBTYPE_OF $handler\nrequire $unit HAS_FIELD $next\nrequire $next TYPE $handler\nrequire $unit HAS_METHOD $handle\nrequire $handle CONDITIONAL_DELEGATION $next\n"
 query = '''
-query chain_of_responsibility {
- any { match "chain-of-responsibility#linked-handlers"(unit: $unit); }
- or { match "chain-of-responsibility#middleware-closures"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.chain_of_responsibility;
+import ken.catalog.chain_of_responsibility.variants.linked_handlers;
+import ken.catalog.chain_of_responsibility.variants.middleware_closures;
+
+pattern detect(out GraphTerm $unit) {
+  either {
+    use ken.catalog.chain_of_responsibility.variants.linked_handlers.detect(unit: $unit);
+  } or {
+    use ken.catalog.chain_of_responsibility.variants.middleware_closures.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -26,25 +38,30 @@ fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query chain_of_responsibility {
+language "kql/2";
+module ken.catalog.chain_of_responsibility.variants.linked_handlers;
 
- require $unit SUBTYPE_OF $contract;
- require $unit HAS_FIELD $next;
- require $next TYPE $contract;
- require $unit HAS_METHOD $handle;
- require $handle OVERRIDES $slot;
- require $handle CONDITIONAL_DELEGATION $next;
- require $handle HAS_CALL $forward;
- require $forward RECEIVER $next;
- require $forward SYNTAX_NODE $forward_syntax;
- path $forward_syntax SYNTAX_PARENT{0,32} $arm as $decision_scope;
- operation(role: [consequence, alternative]) as $arm;
- require $arm SYNTAX_PARENT $decision;
- operation(kind: branch) as $decision;
- call() as $forward;
- callable() as $handle;
- where $handle.name == $forward.name;
- emit $unit;
+pattern detect(out TypeDecl $unit) {
+  type $contract { method $slot { } }
+  type $unit {
+    field $next { type: nominal($contract); }
+    method $handle {
+      call $forward { }
+      either {
+        body { if (_) { call $forward { receiver: $next; }; } }
+      } or {
+        body { if (_) { return _; } call $forward { receiver: $next; }; }
+      }
+    }
+  }
+  where subtype($unit, $contract);
+  where overrides($handle, $slot);
+  where $handle.name == $forward.name;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -55,31 +72,82 @@ requires = ["closure_capture", "control_flow"]
 graph_requirements = ["Handler captura next; rama puede terminar o continuar request; distinguir pipeline incondicional."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
-query_claim = "Un callable fabrica un handler que captura un parametro callable `next`, y la delegacion esta guardada por una rama: el resultado del delegado es el valor que devuelve UNO de los dos desenlaces de la rama (o su expresion de cola, en un lenguaje de expresiones) y el otro desenlace devuelve un valor distinto. El callable no invoca nada con el mismo nombre de callee mas de una vez, de modo que un pipeline que delegue en AMBOS desenlaces queda excluido: sin rama y sin un unico punto de delegacion no hay eslabon, solo un wrapper. El conteo se apoya en `complete:<callable>:HAS_CALL` (IR 1.61) y filtra por el nombre del delegado, no por resolucion, porque la resolucion no es completa. No prueba manejo exclusivo, preservacion de la request ni topologia de la cadena."
+query_claim = "Un callable fabrica un handler que captura un parametro callable `next`, y la delegacion esta guardada por una rama: el resultado del delegado es el valor que devuelve UNO de los dos desenlaces de la rama (o su expresion de cola, en un lenguaje de expresiones), el otro desenlace termina sin delegar, y el delegado se invoca con la request del propio handler. Se aceptan las dos formas de invocacion del delegado, callee directo (`next(request)`) y llamada sobre el parametro (`next.apply(request)`). Un wrapper incondicional queda excluido: sin rama, y sin un desenlace que devuelva el resultado del delegado, no hay eslabon, solo un wrapper. El corpus adversarial que delega en AMBOS desenlaces lo hace con argumentos constantes, de modo que el filtro del argumento tambien lo excluye. No prueba manejo exclusivo, preservacion de la request ni topologia de la cadena."
 query = '''
-query middleware_closures {
- require $factory HAS_PARAMETER $next;
- parameter(receiver: false) as $next;
- require $factory RETURNS $wrapped;
- callable(constructor: false) as $wrapped;
- require $wrapped CAPTURES $next;
- require $wrapped HAS_OPERATION $branch;
- operation(kind: branch) as $branch;
- require $branch CFG_NEXT $continuing;
- require $branch CFG_NEXT $terminal;
- different $continuing $terminal;
- path $continuing CFG_NEXT{0,4} $arm_return as $arm_body;
- any { require $arm_return RETURN_OPERAND $delegate; }
- or { require $delegate SYNTAX_NODE $arm_return; }
- any { require $delegate CALLEE_VALUE $next; } or { require $delegate RECEIVER $next; }
- path $terminal CFG_NEXT{0,4} $terminal_return as $terminal_body;
- operation(kind: return) as $terminal_return;
- require $terminal_return RETURN_OPERAND $terminated;
- different $terminated $delegate;
- count distinct $call = 1 {
-  require $wrapped HAS_CALL $call;
-  where $call.name == $delegate.name;
- };
- emit unit=$wrapped, $factory, $next, $branch, $delegate, $terminal_return;
+language "kql/2";
+module ken.catalog.chain_of_responsibility.variants.middleware_closures;
+
+pattern detect(out Callable $unit, out Callable $factory, out Parameter $next, out Call $delegate) {
+  callable $factory { parameters { param $next {} } }
+  callable $unit { constructor: false; captures: $next; parameters { param $request {} } }
+  callable $factory { body { return $unit; } }
+  where $factory != $unit;
+  either {
+    callable $unit { body {
+      if (_) { return _; }
+      let $delegated = call $next { argument $request at any; } as $delegate;
+      return $delegated;
+    } }
+  } or {
+    callable $unit { body {
+      if (_) { return _; }
+      let $delegated = call $delegate { receiver: $next; argument $request at any; };
+      return $delegated;
+    } }
+  }
+}
+
+query results {
+  use detect(unit: $unit, factory: $factory, next: $next, delegate: $delegate);
+  select $unit, $factory, $next, $delegate;
+}
+'''
+
+[[operations]]
+id = "single_exclusive_handler"
+status = "ready"
+description = "A linked handler returns the same request delegation or its one local processing call. Bounded single-dispatch source contract."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch."
+query = '''
+language "kql/2";
+module ken.catalog.chain_of_responsibility.single_exclusive_handler;
+
+pattern detect(out TypeDecl $unit, out Callable $handle, out Callable $processing, out Call $forward, out Call $local, out Parameter $request) {
+  type $contract { method $slot { } }
+  type $unit {
+    field $next { type: nominal($contract); }
+    method $processing { constructor: false; }
+    method $handle {
+      constructor: false;
+      param $request { }
+      receiver $self { }
+      either {
+        body { if (_) { call $forward { receiver: $next; }; } }
+      } or {
+        body { if (_) { return _; } call $forward { receiver: $next; }; }
+      }
+      body {
+        let $forwarded = call $forward { receiver: $next; argument $request at any; };
+        return $forwarded;
+      }
+      call $local { receiver: $self; target: $processing; }
+      body {
+        let $locally_handled = call $local { receiver: $self; argument $request at any; };
+        return $locally_handled;
+      }
+    }
+  }
+  where subtype($unit, $contract);
+  where overrides($handle, $slot);
+  where $handle.name == $forward.name;
+  where $processing != $handle;
+  where $forward != $local;
+  require one dispatch of $handle named $forward;
+  require one dispatch of $handle named $local;
+}
+
+query results {
+  use detect(unit: $unit, handle: $handle, processing: $processing, forward: $forward, local: $local, request: $request);
+  select $unit, $handle, $processing, $forward, $local, $request;
 }
 '''

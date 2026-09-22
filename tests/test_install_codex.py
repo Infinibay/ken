@@ -57,6 +57,7 @@ def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path):
         force_claude,
         force_codex,
         force_opencode,
+        force_deepseek,
         embed,
         embed_limit,
         no_wire,
@@ -68,6 +69,7 @@ def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path):
                 force_claude,
                 force_codex,
                 force_opencode,
+                force_deepseek,
                 embed,
                 embed_limit,
                 no_wire,
@@ -92,7 +94,7 @@ def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path):
     )
 
     assert rc == 0
-    assert calls == [(tmp_path, False, True, True, True, True, 7, True)]
+    assert calls == [(tmp_path, False, True, True, True, False, True, 7, True)]
 
 
 def test_install_cli_rejects_embed_limit_without_embed(tmp_path):
@@ -107,6 +109,7 @@ def test_detect_agent_wiring_defaults_fresh_project_to_claude(tmp_path):
         True,
         False,
         False,
+        False,
     )
 
 
@@ -116,6 +119,7 @@ def test_detect_agent_wiring_uses_existing_codex_only(tmp_path):
     assert _detect_agent_wiring(tmp_path, force_claude=False, force_codex=False) == (
         False,
         True,
+        False,
         False,
     )
 
@@ -128,6 +132,7 @@ def test_detect_agent_wiring_uses_both_when_both_configs_exist(tmp_path):
         True,
         True,
         False,
+        False,
     )
 
 
@@ -136,6 +141,7 @@ def test_detect_agent_wiring_explicit_flags_override_detection(tmp_path):
 
     assert _detect_agent_wiring(tmp_path, force_claude=True, force_codex=False) == (
         True,
+        False,
         False,
         False,
     )

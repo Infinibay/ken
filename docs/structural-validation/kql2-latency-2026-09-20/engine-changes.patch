@@ -1,0 +1,519 @@
+--- a/src/ken/gitignore_filter.py
++++ b/src/ken/gitignore_filter.py
+@@ -115,7 +115,7 @@
+         yield cur
+ 
+ 
+-def iter_files(project_root: Path) -> Iterator[Path]:
++def iter_files(project_root: Path, *, path: str | Path = ".") -> Iterator[Path]:
+     """Yield every file under *project_root* not ignored by gitignore.
+ 
+     Composes nested `.gitignore` files with the static `ALWAYS_IGNORE`
+@@ -124,10 +124,21 @@
+     `.venv/` and `node_modules/` on real-world projects (those can
+     contain millions of files).
+     """
++    from ken._paths import resolve_project_path
++
+     root = project_root.resolve()
++    target = resolve_project_path(root, path)
+     matcher = GitignoreMatcher(root)
++    # Keep repository-relative identities and inherited ignore rules while
++    # avoiding all sibling subtrees for a scoped search. An ignored ancestor
++    # must still prune the target, even if a descendant negates the pattern.
++    ancestor = Path()
++    for part in target.relative_to(root).parts:
++        ancestor /= part
++        if matcher.is_ignored(ancestor, is_dir=True):
++            return
+ 
+-    stack: list[Path] = [root]
++    stack: list[Path] = [target]
+     while stack:
+         cur = stack.pop()
+         try:
+--- a/src/ken/kql2/body.py
++++ b/src/ken/kql2/body.py
+@@ -6,9 +6,9 @@
+ from dataclasses import dataclass, replace
+ import json
+ import re
+-from typing import Callable, Iterator
+-
+-from ken.structural.model import IR, Operation
++from typing import Callable, Iterator, NamedTuple
++
++from ken.structural.model import Entity, IR, Operation
+ from ken.structural_store import Node, Store
+ from .cache import ArtifactCache
+ from .semantic import SemanticRelations
+@@ -825,12 +825,23 @@
+     return BodyPattern(owner,clauses,'adjacent' in body_flags,tuple(outputs),tuple(nested),tuple(controls),'linear' in body_flags,tuple(call_aliases))
+ 
+ 
++class _BodyContext(NamedTuple):
++    ir: IR
++    operations: dict[str, Operation]
++    children: dict[str, list[Operation]]
++    local_nodes: tuple[Node, ...]
++    calls: dict[tuple[int | None, int | None], Entity]
++    operation_spans: dict[tuple[int, int], Operation]
++    foreign_call_ids: frozenset[str]
++
++
+ class BodyEngine:
+     def __init__(self, store: Store, snapshot: int, semantic: SemanticRelations,
+                  check: Callable[[],None], regex: Callable[[str,Expr],bool],
+                  evaluate: Callable[[Expr,dict[str,QueryValue]],QueryValue]):
+         self.store,self.snapshot,self.semantic,self.check,self.regex = store,snapshot,semantic,check,regex
+         self.units: ArtifactCache[IR] = ArtifactCache(8_000_000)
++        self.contexts: ArtifactCache[_BodyContext] = ArtifactCache(8_000_000)
+         self.evaluate = evaluate
+         self.iteration_values: dict[str, tuple[Operation, str]] = {}
+         # Loops whose walk hands over keys rather than values.
+@@ -839,6 +850,31 @@
+     def source_unit(self, unit: int, owner: str) -> IR:
+         from ken.structural_store.operations import load
+         return load(self.store,unit,owner)
++
++    def match_context(self, owner: Node, region: Operation | None) -> _BodyContext:
++        """Owner-derived read-only maps shared across distinct BODY bindings."""
++        ir, _ = self.units.get_or_compute(
++            str(owner.unit) + ':' + owner.local_id,
++            lambda: self.source_unit(owner.unit, owner.local_id),
++        )
++        reader = getattr(self.store, 'region_operations', None)
++        candidates = reader(owner.local_id, region) if region is not None and reader is not None else ir.operations
++        operations = {o.id: o for o in candidates if o.owner == owner.local_id
++                      and (region is None or region.start <= o.start and o.end <= region.end)}
++        children: dict[str, list[Operation]] = {}
++        for op in operations.values():
++            children.setdefault(op.parent or '', []).append(op)
++        local_nodes = tuple(self.store.scan(self.snapshot, owner=owner))
++        calls = {(e.attrs.get('start_byte'), e.attrs.get('end_byte')): e
++                 for e in ir.entities.values() if e.kind == 'CALL' and e.attrs.get('owner') == owner.local_id}
++        operation_spans = {(o.start, o.end): o for o in operations.values()}
++        # Some grammars classify a call as another native kind (for example
++        # Go indexed calls). The semantic occurrence's span still identifies it.
++        call_spans = {(e.attrs.get('start_byte'), e.attrs.get('end_byte'))
++                      for e in ir.entities.values() if e.kind == 'CALL'}
++        foreign_call_ids = frozenset(o.id for o in operations.values()
++                                     if o.kind != 'CALL' and (o.start, o.end) in call_spans)
++        return _BodyContext(ir, operations, children, local_nodes, calls, operation_spans, foreign_call_ids)
+ 
+     def match(self, pattern: BodyPattern, bindings: dict[str,QueryValue], *, region: Operation | None = None, linear_arm: bool = False) -> Iterator[tuple[dict[str,QueryValue],bool]]:
+         if not pattern.clauses:
+@@ -874,11 +910,10 @@
+         if not entries or not supports_pattern(statuses, pattern):
+             yield {**bindings,**{r:Unknown('control_flow_incomplete') for r in pattern.outputs}},True
+             return
+-        ir,_ = self.units.get_or_compute(str(owner.unit)+':'+owner.local_id,lambda:self.source_unit(owner.unit,owner.local_id))
+-        region_reader = getattr(self.store, "region_operations", None)
+-        candidates = region_reader(owner.local_id, region) if region is not None and region_reader is not None else ir.operations
+-        operations = {o.id:o for o in candidates if o.owner == owner.local_id
+-                      and (region is None or region.start <= o.start and o.end <= region.end)}
++        context_key = repr((owner.unit, owner.local_id,
++                            (region.id, region.start, region.end) if region is not None else None))
++        context, _ = self.contexts.get_or_compute(context_key, lambda: self.match_context(owner, region))
++        ir, operations, children, local_nodes, calls, operation_spans, foreign_call_ids = context
+         # A nested function expression (lambda, arrow, func literal) parses as its own
+         # callable and owns its sub-tree, so its root operation is missing from the
+         # owner-filtered table above even though it is the *value* an enclosing
+@@ -908,20 +943,6 @@
+                 return
+         nested_patterns = dict(pattern.nested)
+         control_patterns = dict(pattern.controls)
+-        children: dict[str,list[Operation]] = {}
+-        for op in operations.values():
+-            children.setdefault(op.parent or '',[]).append(op)
+-        local_nodes = list(self.store.scan(self.snapshot,owner=owner))
+-        calls = {(e.attrs.get('start_byte'),e.attrs.get('end_byte')):e for e in ir.entities.values() if e.kind == 'CALL' and e.attrs.get('owner') == owner.local_id}
+-        operation_spans = {(o.start,o.end):o for o in operations.values()}
+-        # Some grammars classify a call form under another native kind (Go parses an
+-        # indexed ``table[key](arg)`` as a type conversion). The semantic layer still
+-        # published a CALL occurrence over the same byte span, so an operation over
+-        # such a span is a call the ``call`` clause may match.
+-        call_spans = {(e.attrs.get('start_byte'),e.attrs.get('end_byte'))
+-                      for e in ir.entities.values() if e.kind == 'CALL'}
+-        foreign_call_ids = frozenset(op.id for op in operations.values()
+-                                     if op.kind != 'CALL' and (op.start,op.end) in call_spans)
+         # Which call produced each captured value, for provenance of arguments.
+         producers: dict[str,str] = {}
+         boolean_results = None
+@@ -1368,13 +1389,13 @@
+                             # of the statement the cursor anchors: it is inside that statement,
+                             # so the operand-order rule has nothing to exclude.
+                             inside = op.id in foreign_callee_ids
+-                            parent = operations.get(op.parent)
++                            parent = operations.get(op.parent) if op.parent is not None else None
+                             seen = {op.id}
+                             while inside and parent is not None and parent.id not in seen:
+                                 if parent.id == cursor:
+                                     break
+                                 seen.add(parent.id)
+-                                parent = operations.get(parent.parent)
++                                parent = operations.get(parent.parent) if parent.parent is not None else None
+                             if not inside or parent is None or parent.id != cursor:
+                                 continue
+                 truth: QueryValue = False
+@@ -2050,7 +2071,7 @@
+                             # resolve the temporary iteration variable itself.
+                             receiver_role = next((c.expressions[0].value for c in clause.blocks[0]
+                                 if c.kind == 'property' and c.name == 'receiver'),None)
+-                            receiver = current.get(receiver_role)
++                            receiver = current.get(receiver_role) if receiver_role is not None else None
+                             if isinstance(receiver,Node) and receiver.local_id in self.iteration_values:
+                                 loop,_ = self.iteration_values[receiver.local_id]
+                                 # A keyed walk hands over the key type and a value walk the
+@@ -2423,8 +2444,8 @@
+                                     entity = ir.entities.get(argument.object)
+                                     start = entity.attrs.get('start_byte') if entity else None
+                                     end = entity.attrs.get('end_byte') if entity else None
+-                                    operand = operation_spans.get((start,end)) if isinstance(start,int) and isinstance(end,int) else None
+-                                    candidate = source_matches(expected,operand,current) if operand else Unknown('argument_expression_missing')
++                                    argument_operation = operation_spans.get((start,end)) if isinstance(start,int) and isinstance(end,int) else None
++                                    candidate = source_matches(expected,argument_operation,current) if argument_operation else Unknown('argument_expression_missing')
+                                 matched = disjunction(matched,candidate)
+                             truth = conjunction(truth,matched)
+                         if item.kind == 'let' and truth is not False:
+@@ -2448,7 +2469,7 @@
+                                     # walk stays cheap.
+                                     place = None
+                                     saw_place = False
+-                                    holder = op
++                                    holder: Operation | None = op
+                                     for _ in range(3):
+                                         if holder is None:
+                                             break
+--- a/src/ken/kql2/source_execution.py
++++ b/src/ken/kql2/source_execution.py
+@@ -109,6 +109,27 @@
+                        facts=[], capabilities=set(), diagnostics=[], relations=set())
+ 
+ 
++class _PatternKey:
++    """Cache an immutable plan's structural hash within one execution.
++
++    Retain the plan so identity lookups cannot collide with reused object IDs.
++    Structural equality still shares matches between equal, distinct plans;
++    this execution-only wrapper does not change the compiled artifact schema.
++    """
++
++    __slots__ = ("pattern", "value")
++
++    def __init__(self, pattern):
++        self.pattern = pattern
++        self.value = hash(pattern)
++
++    def __hash__(self):
++        return self.value
++
++    def __eq__(self, other):
++        return isinstance(other, _PatternKey) and self.pattern == other.pattern
++
++
+ class SourceExecutor:
+     def __init__(self, executor):
+         from ken.structural.query import _regex
+@@ -117,6 +138,7 @@
+         # Per-execution memoization only: irrelevant outer joins must not rerun
+         # the same BODY. Bound input identities include seeded output roles.
+         self._inputs = {}
++        self._patterns = {}
+         self._matches = OrderedDict()
+         def regex(text, expression):
+             pattern, flags = expression.value[1:].rsplit('/', 1)
+@@ -145,6 +167,8 @@
+             return Unknown('source_condition_unsupported')
+         self.engine = IndexedBodyEngine(self.view, 0, SourceSemantics(executor.index, executor.tick),
+                                         executor.tick, regex, evaluate)
++        self.engine.units = executor.resources.body_units
++        self.engine.contexts = executor.resources.body_contexts
+ 
+     def close(self):
+         # The recursive expression evaluator closes over this adapter, and its
+@@ -152,8 +176,11 @@
+         # finished queries cannot retain another full SourceView until a global
+         # cyclic collection walks the entire repository graph.
+         self._inputs.clear()
++        self._patterns.clear()
+         self._matches.clear()
+-        self.engine.units.clear()
++        if self.executor._owns_resources:
++            self.engine.units.clear()
++            self.engine.contexts.clear()
+         self.engine.store = None
+         self.engine.semantic.index = None
+         self.engine.semantic.check = None
+@@ -164,7 +191,10 @@
+     def match(self, pattern, row):
+         from ken.structural.relational import Row
+         self.executor.tick()
+-        if pattern not in self._inputs:
++        pattern_key = self._patterns.get(id(pattern))
++        if pattern_key is None:
++            pattern_key = self._patterns[id(pattern)] = _PatternKey(pattern)
++        if pattern_key not in self._inputs:
+             roles = {pattern.owner}
+             def expression(expr):
+                 if expr.kind == 'role':
+@@ -178,15 +208,15 @@
+                 for block in item.blocks:
+                     for child in block: clause(child)
+             for item in pattern.clauses: clause(item)
+-            self._inputs[pattern] = tuple(sorted('$'+role for role in roles))
+-        key = (pattern,tuple((role,row.bindings[role]) for role in self._inputs[pattern] if role in row.bindings))
+-        bindings = {key.removeprefix('$'): self.view.nodes.get(value, value)
+-                    for key, value in row.bindings.items()}
++            self._inputs[pattern_key] = tuple(sorted('$'+role for role in roles))
++        key = (pattern_key,tuple((role,row.bindings[role]) for role in self._inputs[pattern_key] if role in row.bindings))
+         cached = self._matches.get(key)
+         if cached is not None:
+             self._matches.move_to_end(key)
+             outcomes = iter(cached)
+         else:
++            bindings = {key.removeprefix('$'): self.view.nodes.get(value, value)
++                        for key, value in row.bindings.items()}
+             outcomes = self.engine.match(pattern, bindings)
+         collected = []
+         for values, uncertain in outcomes:
+@@ -206,7 +236,8 @@
+                     reasons.add('source_body:unknown')
+                 else:
+                     result['$'+role] = str(value)
+-            yield Row(result, row.evidence + [{'body_owner': getattr(bindings[pattern.owner], 'local_id', None)}], reasons)
++            owner = self.view.nodes.get(row.bindings['$'+pattern.owner])
++            yield Row(result, row.evidence + [{'body_owner': getattr(owner, 'local_id', None)}], reasons)
+         if cached is None and len(collected) <= 16:
+             self._matches[key] = tuple(collected)
+             while len(self._matches) > 1024:
+--- a/src/ken/structural/relational_operators.py
++++ b/src/ken/structural/relational_operators.py
+@@ -23,6 +23,13 @@
+     engine: Executor, node: Node, row: Row, following: list[Row], scan_constraints: Any
+ ) -> None:
+     following.extend(engine.facts(node.value, row, scan_constraints))
++
++
++def apply_fact_union(
++    engine: Executor, node: Node, row: Row, following: list[Row], scan_constraints: Any
++) -> None:
++    for clause in node.value:
++        following.extend(engine.facts(clause, row, scan_constraints))
+ 
+ 
+ def apply_where(
+@@ -302,6 +309,7 @@
+         "source_type": OperatorSpec(apply_source_type),
+         "source_body": OperatorSpec(apply_source_body, clears_scan_constraints=True),
+         "any": OperatorSpec(apply_any),
++        "fact_union": OperatorSpec(apply_fact_union, barrier=False),
+         "match": OperatorSpec(apply_match),
+         "count": OperatorSpec(apply_scoped),
+         "not": OperatorSpec(apply_scoped),
+--- a/src/ken/structural/relational_planning.py
++++ b/src/ken/structural/relational_planning.py
+@@ -134,7 +134,9 @@
+     already selected declarations. New domain generators stay after BODY;
+     its captured outputs are the actual
+     dependency boundary. Never move a constraint that reads those outputs;
+-    never cross unions, absence, aggregation, paths or named-query scopes.
++    never cross general unions, absence, aggregation, paths or named-query
++    scopes. Single-fact alternatives with identical endpoints are positive
++    scans; an independent domain can also follow a proven positive union.
+     Source receiver/type operators are also pure, with explicit output roles.
+     The remaining join planner can then choose selective subtype/override
+     facts before enumerating method bodies, regardless of authoring order.
+@@ -143,11 +145,23 @@
+     cached = engine._source_plans.get(key)
+     if cached is not None and cached[0] is nodes:
+         return cached[1]
+-    plan = list(nodes)
++    plan = [_fact_union(node) for node in nodes]
++    # An independent domain before a positive union repeats every branch for
++    # each domain member. Delay it until the union has produced its witnesses.
++    # Only a single fact followed by a fully understood positive union is
++    # eligible: scopes that embed incoming evidence (not/count/optional) remain
++    # barriers, as do all operators whose dependencies we cannot prove here.
++    if len(plan) >= 2 and plan[0].kind == "fact" and plan[1].kind == "any":
++        fact = plan[0].value
++        factor = {t for t in (fact.subject, fact.object) if _variable(t)}
++        dependencies = _positive_union_roles(plan[1])
++        if factor and dependencies is not None and not factor & (dependencies | initial):
++            plan[0], plan[1] = plan[1], plan[0]
+ 
+     def roles(node: Node) -> set[str]:
+-        if node.kind == "fact":
+-            terms = (node.value.subject, node.value.object)
++        if node.kind in {"fact", "fact_union"}:
++            fact = node.value if node.kind == "fact" else node.value[0]
++            terms = (fact.subject, fact.object)
+         elif node.kind == "where":
+             terms = (node.value[0], node.value[2])
+         elif node.kind == "different":
+@@ -168,7 +182,7 @@
+             # restrictions hoisted across a later source matcher.
+             _, bindings, proof = node.value
+             return set(bindings.values()) | ({proof} if proof else set())
+-        if node.kind == "fact":
++        if node.kind in {"fact", "fact_union"}:
+             return roles(node)
+         return set()
+ 
+@@ -190,7 +204,7 @@
+                 candidate = plan[end]
+                 if candidate.kind in {"source_body", "source_type", "source_receiver"}:
+                     crossed_outputs.update(outputs(candidate))
+-                elif candidate.kind in {"fact", "where", "different"}:
++                elif candidate.kind in {"fact", "fact_union", "where", "different"}:
+                     if roles(candidate) <= bound and not crossed_outputs & roles(
+                         candidate
+                     ):
+@@ -209,6 +223,69 @@
+         position += 1
+     engine._source_plans[key] = (nodes, plan)
+     return plan
++
++
++def _fact_union(node: Node) -> Node:
++    """Lower alternatives with identical bindings to a reorderable fact scan.
++
++    Keep branch order, duplicates, modality and individual fact evidence. No
++    scopes or filters are moved out of branches; they retain the ANY barrier.
++    """
++    if node.kind != "any" or len(node.children) < 2:
++        return node
++    if any(len(branch) != 1 or branch[0].kind != "fact" for branch in node.children):
++        return node
++    clauses = tuple(branch[0].value for branch in node.children)
++    endpoints = {(c.subject, c.object) for c in clauses}
++    if len(endpoints) != 1 or len({c.relation for c in clauses}) == 1:
++        return node
++    return Node("fact_union", clauses)
++
++
++def _positive_union_roles(node: Node) -> set[str] | None:
++    """Conservative dependencies for distributing one independent fact over ANY."""
++    roles: set[str] = set()
++
++    def expression(expr):
++        if expr.kind == "role":
++            roles.add("$" + expr.value)
++        for child in expr.args:
++            expression(child)
++
++    def clause(item):
++        if "qualify" in item.flags:
++            roles.add("$unit")
++        for name in (item.role, item.alias, item.name):
++            if name:
++                roles.add("$" + name)
++        for expr in item.expressions:
++            expression(expr)
++        for block in item.blocks:
++            for child in block:
++                clause(child)
++
++    def visit(item):
++        if item.kind == "any":
++            return all(visit(child) for branch in item.children for child in branch)
++        if item.kind == "fact":
++            terms = (item.value.subject, item.value.object)
++        elif item.kind == "where":
++            terms = (item.value[0], item.value[2])
++        elif item.kind == "different":
++            terms = item.value
++        elif item.kind == "source_body":
++            pattern = item.value
++            roles.add("$" + pattern.owner)
++            roles.update("$" + name for name in pattern.outputs)
++            for c in pattern.clauses:
++                clause(c)
++            return True
++        else:
++            return False
++        roles.update(t.split(".")[0] for t in terms if _variable(t))
++        return True
++
++    return roles if visit(node) else None
+ 
+ 
+ def estimate_rows(
+@@ -270,19 +347,25 @@
+     early = engine.ready_filter(pending[:boundary], bound)
+     if early is not None:
+         return _selection(engine, early, "bound_filter")
+-    joins = [index for index in range(boundary) if pending[index].kind == "fact"]
++    joins = [
++        index for index in range(boundary)
++        if pending[index].kind in {"fact", "fact_union"}
++    ]
+     if not joins:
+         return _selection(engine, 0, "semantic_barrier")
+     if len(joins) == 1 and engine.profile is None:
+         return joins[0]
+-    estimates = [
+-        (index, estimate_rows(engine, pending[index].value, bindings, constraints))
+-        for index in joins
+-    ]
++    def estimate(node):
++        clauses = node.value if node.kind == "fact_union" else (node.value,)
++        return sum(estimate_rows(engine, clause, bindings, constraints) for clause in clauses)
++
++    estimates = [(index, estimate(pending[index])) for index in joins]
+ 
+     def cost(item):
+         index, size = item
+         clause = pending[index].value
++        if pending[index].kind == "fact_union":
++            clause = clause[0]
+         roles = {term for term in (clause.subject, clause.object) if _variable(term)}
+         # Prefer correlation when cardinality ties, so an unrelated domain does
+         # not introduce a Cartesian product ahead of an equally selective join.
+--- a/src/ken/structural/relational_resources.py
++++ b/src/ken/structural/relational_resources.py
+@@ -27,3 +27,15 @@
+ 
+         factory = getattr(self.index, 'source_view', None)
+         return factory() if factory is not None else SourceView(self.index)
++
++    @cached_property
++    def body_units(self):
++        from ken.kql2.cache import ArtifactCache
++
++        return ArtifactCache(8_000_000)
++
++    @cached_property
++    def body_contexts(self):
++        from ken.kql2.cache import ArtifactCache
++
++        return ArtifactCache(8_000_000)
+--- a/src/ken/structural/service.py
++++ b/src/ken/structural/service.py
+@@ -83,7 +83,7 @@
+     from .cache import IRCache as CacheKeys
+     manifest: list[tuple[str, str, bytes]] = []
+     skipped: list[dict[str, str]] = []
+-    considered = sorted(iter_files(root)) if target.is_dir() else [target.relative_to(root)]
++    considered = sorted(iter_files(root, path=target)) if target.is_dir() else [target.relative_to(root)]
+     for relative in considered:
+         try:
+             absolute = resolve_project_path(root, relative)
+@@ -261,7 +261,7 @@
+     cache_mb: float | None = None, budget: QueryBudget | None = None,
+     max_files: int | None = None, max_file_bytes: int = 2_000_000,
+     backend: str = "exploration", cache_directory: Path | None = None,
+-    profile: bool = False,
++    profile: bool = False, use_result_cache: bool = True,
+ ) -> dict[str, Any]:
+     """Run the semantic catalogue with shared exploration or indexed access."""
+     from .index_service import project_index
+@@ -288,7 +288,7 @@
+             index = hybrid
+         index.profile = profile
+         cache = None
+-        if not profile:
++        if not profile and use_result_cache:
+             cache = resources.enter_context(closing(
+                 IRCache(directory / "results.sqlite", capacity)
+                 if cache_directory is not None else _query_cache(root, cache_mb)

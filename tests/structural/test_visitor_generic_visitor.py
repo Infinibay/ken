@@ -233,7 +233,8 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'TYPE_PARAMETER' in row['query'] and 'INSTANCE_RECEIVER' in row['query']
+    assert ('type_parameter $visitor_parameter' in row['query']
+            and 'receiver $local_self' in row['query'])
 
 
 @pytest.mark.parametrize('language', LANGUAGES)

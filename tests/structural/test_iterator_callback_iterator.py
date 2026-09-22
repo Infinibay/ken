@@ -116,7 +116,7 @@ def test_variant_declares_its_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'TRUTH_TEST' in row['query'] and 'ITERATION_BINDING' in row['query']
+    assert 'iterate $collection as $element' in row['query'] and 'break $loop as $exit' in row['query']
 
 
 def test_the_element_link_is_storage_identity_not_a_call_site_occurrence():

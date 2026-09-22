@@ -1,0 +1,89 @@
+{
+  "workspace": "/private/tmp/ken-coding-memory-4n2epo1i",
+  "source_project": "/Users/andres/Projects/ken",
+  "counts": {
+    "cr_findings": 275,
+    "cr_sessions": 60,
+    "cr_contexts": 40172,
+    "cr_interactions": 16105,
+    "ci_files": 2532,
+    "ci_symbols": 8432
+  },
+  "runs": [
+    {
+      "id": "mcp-baseline",
+      "workspace": "/private/tmp/ken-coding-memory-4n2epo1i/mcp-baseline",
+      "prompt": "/Users/andres/Projects/ken/docs/validation/coding-memory-2026-09-21/mcp-baseline.prompt.txt",
+      "prompt_chars": 716,
+      "injected_chars": 164,
+      "expected_stale": false,
+      "topic": "mcp-object-cli-parameters"
+    },
+    {
+      "id": "mcp-memory",
+      "workspace": "/private/tmp/ken-coding-memory-4n2epo1i/mcp-memory",
+      "prompt": "/Users/andres/Projects/ken/docs/validation/coding-memory-2026-09-21/mcp-memory.prompt.txt",
+      "prompt_chars": 1284,
+      "injected_chars": 732,
+      "expected_stale": false,
+      "topic": "mcp-object-cli-parameters"
+    },
+    {
+      "id": "mcp-stale-baseline",
+      "workspace": "/private/tmp/ken-coding-memory-4n2epo1i/mcp-stale-baseline",
+      "prompt": "/Users/andres/Projects/ken/docs/validation/coding-memory-2026-09-21/mcp-stale-baseline.prompt.txt",
+      "prompt_chars": 716,
+      "injected_chars": 164,
+      "expected_stale": true,
+      "topic": "mcp-object-cli-parameters"
+    },
+    {
+      "id": "mcp-stale-memory",
+      "workspace": "/private/tmp/ken-coding-memory-4n2epo1i/mcp-stale-memory",
+      "prompt": "/Users/andres/Projects/ken/docs/validation/coding-memory-2026-09-21/mcp-stale-memory.prompt.txt",
+      "prompt_chars": 1259,
+      "injected_chars": 707,
+      "expected_stale": true,
+      "topic": "mcp-object-cli-parameters"
+    },
+    {
+      "id": "body-baseline",
+      "workspace": "/private/tmp/ken-coding-memory-4n2epo1i/body-baseline",
+      "prompt": "/Users/andres/Projects/ken/docs/validation/coding-memory-2026-09-21/body-baseline.prompt.txt",
+      "prompt_chars": 768,
+      "injected_chars": 218,
+      "expected_stale": false,
+      "topic": "kql2-body-input-projection-dependency-trap-20260921"
+    },
+    {
+      "id": "body-memory",
+      "workspace": "/private/tmp/ken-coding-memory-4n2epo1i/body-memory",
+      "prompt": "/Users/andres/Projects/ken/docs/validation/coding-memory-2026-09-21/body-memory.prompt.txt",
+      "prompt_chars": 1362,
+      "injected_chars": 812,
+      "expected_stale": false,
+      "topic": "kql2-body-input-projection-dependency-trap-20260921"
+    },
+    {
+      "id": "mcp-baseline-fixed",
+      "workspace": "/private/tmp/ken-coding-memory-4n2epo1i/mcp-baseline-fixed",
+      "prompt": "/Users/andres/Projects/ken/docs/validation/coding-memory-2026-09-21/mcp-baseline-fixed.prompt.txt",
+      "prompt_chars": 716,
+      "injected_chars": 164,
+      "expected_stale": false,
+      "topic": "mcp-object-cli-parameters",
+      "round": "source-budget-fixed"
+    },
+    {
+      "id": "mcp-memory-fixed",
+      "workspace": "/private/tmp/ken-coding-memory-4n2epo1i/mcp-memory-fixed",
+      "prompt": "/Users/andres/Projects/ken/docs/validation/coding-memory-2026-09-21/mcp-memory-fixed.prompt.txt",
+      "prompt_chars": 1284,
+      "injected_chars": 732,
+      "expected_stale": false,
+      "topic": "mcp-object-cli-parameters",
+      "round": "source-budget-fixed"
+    }
+  ],
+  "method": "Frozen real DB/code, fixed same retrieval seeds, full legacy memory in both arms, explicit brief injection; diagnostic read-only Codex sessions."
+}

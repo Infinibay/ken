@@ -173,7 +173,7 @@ def test_wire_opencode_leaves_both_files_alone_when_both_exist(tmp_path, capsys)
 
 def test_detect_agent_wiring_picks_opencode_marker(tmp_path):
     (tmp_path / "opencode.json").write_text("{}\n", encoding="utf-8")
-    _, _, use_opencode = _detect_agent_wiring(
+    _, _, use_opencode, _ = _detect_agent_wiring(
         tmp_path, force_claude=False, force_codex=False
     )
     assert use_opencode is True
@@ -182,7 +182,7 @@ def test_detect_agent_wiring_picks_opencode_marker(tmp_path):
 def test_detect_agent_wiring_picks_opencode_dir_with_content(tmp_path):
     (tmp_path / ".opencode" / "agents").mkdir(parents=True)
     (tmp_path / ".opencode" / "agents" / "x.md").write_text("# x\n", encoding="utf-8")
-    _, _, use_opencode = _detect_agent_wiring(
+    _, _, use_opencode, _ = _detect_agent_wiring(
         tmp_path, force_claude=False, force_codex=False
     )
     assert use_opencode is True
@@ -190,14 +190,14 @@ def test_detect_agent_wiring_picks_opencode_dir_with_content(tmp_path):
 
 def test_detect_agent_wiring_ignores_empty_opencode_dir(tmp_path):
     (tmp_path / ".opencode").mkdir()
-    _, _, use_opencode = _detect_agent_wiring(
+    _, _, use_opencode, _ = _detect_agent_wiring(
         tmp_path, force_claude=False, force_codex=False
     )
     assert use_opencode is False
 
 
 def test_detect_agent_wiring_force_opencode_overrides(tmp_path):
-    _, _, use_opencode = _detect_agent_wiring(
+    _, _, use_opencode, _ = _detect_agent_wiring(
         tmp_path, force_claude=False, force_codex=False, force_opencode=True
     )
     assert use_opencode is True

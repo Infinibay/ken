@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import pytest
 
+from .contract_support import contract_matches
+
 from .test_gof_executable import evaluate
 
 LANGUAGES = ('python', 'java', 'typescript')
@@ -92,12 +94,11 @@ def test_forwarding_itself_must_be_conditional(language, mutation):
 
 @pytest.mark.parametrize('language', LANGUAGES)
 @pytest.mark.parametrize('mutation', ['wrong-request', 'discard-result', 'process-and-forward'])
-@pytest.mark.xfail(strict=True, reason='Stronger same-request/result-preserving/exclusive-handler contracts are not established by conditional delegation; algorithms/chain-of-responsibility.md')
 def test_desired_exclusive_handler_contract_preserves_request_and_result(language, mutation):
-    assert not evaluate(source(language, mutation), language, 'chain-of-responsibility')
+    assert contract_matches(source(language), language, 'chain-of-responsibility.single_exclusive_handler')
+    assert not contract_matches(source(language, mutation), language, 'chain-of-responsibility.single_exclusive_handler')
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Early handled return requires control dependence beyond lexical branch containment')
 def test_early_local_handling_still_controls_forwarding(language):
     assert evaluate(source(language, 'early-handled'), language, 'chain-of-responsibility')

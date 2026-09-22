@@ -3,6 +3,8 @@ import re
 
 import pytest
 
+from .contract_support import contract_matches
+
 from .test_gof_executable import evaluate
 
 
@@ -70,7 +72,6 @@ def test_missing_dispatch_identity_is_rejected(language, mutation):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Visitor parameter identity is not protected against earlier slot reassignment')
 def test_replacing_received_visitor_breaks_received_visitor_contract(language):
     replacement = 'visitor=Visitor()' if language == 'python' else 'visitor=new Visitor();'
     assert not evaluate(source(language, before=replacement), language, 'visitor')
@@ -86,9 +87,9 @@ def test_self_argument_must_belong_to_typed_visit_call(language):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Broad Visitor signature does not implement the result-forwarding variant contract')
 def test_result_forwarding_variant_rejects_replaced_result(language):
     # Discarding a result is legal for other Visitor variants. This expected
     # failure is an unavailable stronger query contract, not a broad-rule FP.
     overwrite = 'result=0' if language == 'python' else 'result=0;'
-    assert not evaluate(source(language, after=overwrite), language, 'visitor')
+    assert contract_matches(source(language), language, 'visitor.result_forwarding')
+    assert not contract_matches(source(language, after=overwrite), language, 'visitor.result_forwarding')

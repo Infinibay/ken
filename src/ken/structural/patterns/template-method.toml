@@ -4,16 +4,29 @@ name = "Template Method"
 category = "behavioral"
 description = "A base algorithm calls a step overridden by a subtype."
 caveat = "Structural evidence requires review of intent and runtime behavior."
-legacy_query = "require $unit HAS_METHOD $template\nrequire $template CALLS $step\nrequire $unit HAS_METHOD $step\nrequire $override OVERRIDES $step\ndifferent $template $step\n"
 query = '''
-query template_method {
- any { match "template-method#virtual-skeleton"(unit: $unit); }
- or { match "template-method#trait-default"(unit: $unit); }
- or { match "template-method#composed-skeleton"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.template_method;
+import ken.catalog.template_method.variants.composed_skeleton;
+import ken.catalog.template_method.variants.trait_default;
+import ken.catalog.template_method.variants.virtual_skeleton;
+
+pattern detect(out Entity $unit) {
+  either {
+    use ken.catalog.template_method.variants.virtual_skeleton.detect(unit: $unit);
+  } or {
+    use ken.catalog.template_method.variants.trait_default.detect(unit: $unit);
+  } or {
+    use ken.catalog.template_method.variants.composed_skeleton.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -27,14 +40,29 @@ fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query template_method {
+language "kql/2";
+module ken.catalog.template_method.variants.virtual_skeleton;
+import ken.core;
 
- require $unit HAS_METHOD $template;
- require $template CALLS $step;
- require $unit HAS_METHOD $step;
- require $override OVERRIDES $step;
- different $template $step;
- emit $unit;
+pattern detect(out TypeDecl $unit) {
+  class $unit {
+    method $step { constructor: false; }
+    method $template {
+      constructor: false;
+      receiver $self {}
+      body {
+        call $step { receiver: $self; dispatch: possible; };
+      }
+    }
+  }
+  method $override { constructor: false; }
+  where overrides($override, $step);
+  where $template != $step;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -45,20 +73,29 @@ requires = ["trait_defaults", "call_targets", "trait_impl_linkage"]
 graph_requirements = ["Método default llama slot de trait implementado por tipo concreto."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-rust"
-query_claim = "Un método default de un trait llama al menos un slot declarado por el mismo trait, y ese slot está implementado por al menos dos tipos concretos que implementan el trait. No prueba instanciación, dispatch dinámico en ejecución ni el orden real de las llamadas."
+query_claim = "Un método default de trait invoca un hook del mismo trait sobre su propio receptor. Existe al menos una implementación que sobrescribe el hook. No impone dos implementaciones concretas en el proyecto ni prueba despacho runtime."
 query = '''
-query template_method {
- require $unit HAS_METHOD $algorithm;
- require $algorithm HAS_CALL $hook_call;
- require $hook_call TARGET $hook;
- require $unit HAS_METHOD $hook;
- different $algorithm $hook;
- count distinct $concrete >= 2 {
-   require $implementation OVERRIDES $hook;
-   require $implementation IN_TYPE $concrete;
-   require $concrete SUBTYPE_OF $unit;
- };
- emit $unit, $algorithm, $hook;
+language "kql/2";
+module ken.catalog.template_method.variants.trait_default;
+import ken.core;
+
+pattern detect(out TypeDecl $unit, out Callable $algorithm, out Callable $hook) {
+  trait $unit {
+    method $hook {}
+    method $algorithm {
+      receiver $self {}
+      body { call $hook { receiver: $self; dispatch: possible; }; }
+    }
+  }
+  type $concrete { method $implementation {} }
+  where subtype($concrete, $unit);
+  where overrides($implementation, $hook);
+  where $algorithm != $hook;
+}
+
+query results {
+  use detect(unit: $unit, algorithm: $algorithm, hook: $hook);
+  select $unit, $algorithm, $hook;
 }
 '''
 
@@ -70,33 +107,43 @@ requires = ["callable_contracts", "argument_result_flow"]
 graph_requirements = ["Esqueleto recibe hooks y conserva secuencia; variante por composicion, no override ficticio."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
-query_claim = "Un callable recibe tres hooks distintos por parametro y los invoca, pasando el resultado del primero al argumento del segundo y el del segundo al del tercero: esqueleto fijo por composicion, sin herencia ni override. La invocacion de cada hook se acepta como llamada directa (CALLEE_VALUE) o como metodo sobre el hook (RECEIVER), que es la forma de una interfaz funcional en Java. No prueba el orden real de ejecucion mas alla de la cadena de valores, ni pasos en ramas excluyentes, ni que el esqueleto sea reutilizado por varios clientes."
+query_claim = "Un esqueleto recibe tres hooks distintos y encadena sus resultados en una misma ruta: prepare produce la entrada de transform y transform la de finish. Admite callables directos y métodos de interfaces funcionales con destino acreditado. Permite ruido intermedio, rechaza resultados reemplazados. Formas mixtas de callable y objeto en un mismo esqueleto siguen pendientes de composición local en BODY."
 query = '''
-query template_method {
- require $unit HAS_PARAMETER $prepare;
- parameter(receiver: false) as $prepare;
- require $unit HAS_PARAMETER $transform;
- parameter(receiver: false) as $transform;
- require $unit HAS_PARAMETER $finish;
- parameter(receiver: false) as $finish;
- different $prepare $transform;
- different $transform $finish;
- different $prepare $finish;
- require $unit HAS_CALL $prepare_call;
- any { require $prepare_call CALLEE_VALUE $prepare; } or { require $prepare_call RECEIVER $prepare; }
- require $unit HAS_CALL $transform_call;
- any { require $transform_call CALLEE_VALUE $transform; } or { require $transform_call RECEIVER $transform; }
- require $unit HAS_CALL $finish_call;
- any { require $finish_call CALLEE_VALUE $finish; } or { require $finish_call RECEIVER $finish; }
- require $prepare_call RESULT $prepared;
- require $transform_call ARGUMENT $transform_argument;
- require $transform_argument VALUE $transform_input;
- path $prepared VALUE_FLOW{0,3} $transform_input as $handoff;
- require $transform_call RESULT $transformed;
- require $finish_call ARGUMENT $finish_argument;
- require $finish_argument VALUE $finish_input;
- path $transformed VALUE_FLOW{0,3} $finish_input as $handoff2;
- emit $unit, $prepare, $transform, $finish;
+language "kql/2";
+module ken.catalog.template_method.variants.composed_skeleton;
+import ken.core;
+
+pattern detect(out Callable $unit, out Parameter $prepare, out Parameter $transform, out Parameter $finish) {
+  callable $unit {
+    parameters {
+      param $prepare {}
+      param $transform {}
+      param $finish {}
+    }
+  }
+  either {
+    callable $unit {
+      body {
+        let $prepared = call $prepare {};
+        let $transformed = call $transform { argument $prepared at 0; };
+        call $finish { argument $transformed at 0; };
+      }
+    }
+  } or {
+    callable $unit {
+      body {
+        let $prepared = call $prepare_operation { receiver: $prepare; dispatch: possible; };
+        let $transformed = call $transform_operation { receiver: $transform; dispatch: possible; argument $prepared at 0; };
+        call $finish_operation { receiver: $finish; dispatch: possible; argument $transformed at 0; };
+      }
+    }
+  }
+  where $prepare != $transform and $transform != $finish and $prepare != $finish;
+}
+
+query results {
+  use detect(unit: $unit, prepare: $prepare, transform: $transform, finish: $finish);
+  select $unit, $prepare, $transform, $finish;
 }
 '''
 
@@ -104,27 +151,32 @@ query template_method {
 id = "dependent_steps"
 status = "ready"
 description = "Two distinct extension slots are invoked on the same modeled instance, passing the first result to the second."
-caveat = "Direct argument/result flow only; does not prove dynamic dispatch, global ordering or local alias flow."
+caveat = "Dos pasos distintos del mismo receptor, en una misma ruta, con origen del argumento acreditado desde el primer resultado. Admite aliases locales y ruido; no prueba despacho runtime ni efectos de heap."
 query = '''
-query template_dependent_steps {
- match "template-method"(unit:$unit);
- require $unit INSTANCE_RECEIVER $self;
- require $unit HAS_METHOD $template;
- require $unit HAS_METHOD $first_slot;
- require $unit HAS_METHOD $second_slot;
- require $override OVERRIDES $first_slot;
- require $template HAS_CALL $first;
- require $template HAS_CALL $second;
- require $first TARGET $first_slot;
- require $second TARGET $second_slot;
- require $first RECEIVER $self;
- require $second RECEIVER $self;
- require $first RESULT $value;
- require $second ARGUMENT $argument;
- require $argument VALUE $value;
- different $first_slot $second_slot;
- different $template $first_slot;
- different $template $second_slot;
- emit $unit,$template,$first,$second;
+language "kql/2";
+module ken.catalog.template_method.dependent_steps;
+import ken.core;
+
+pattern detect(out TypeDecl $unit, out Callable $template, out Operation $first, out Operation $second) {
+  class $unit {
+    method $first_step {}
+    method $second_step {}
+    method $template {
+      receiver $self {}
+      body {
+        let $value = call $first_step { receiver: $self; dispatch: possible; } as $first;
+        call $second_step { receiver: $self; dispatch: possible; argument $value at 0; } as $second;
+      }
+    }
+  }
+  method $override {}
+  where overrides($override, $first_step);
+  where $first_step != $second_step;
+  where $template != $first_step and $template != $second_step;
+}
+
+query results {
+  use detect(unit: $unit, template: $template, first: $first, second: $second);
+  select $unit, $template, $first, $second;
 }
 '''

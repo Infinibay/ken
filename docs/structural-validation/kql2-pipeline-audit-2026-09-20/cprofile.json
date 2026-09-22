@@ -1,0 +1,664 @@
+{
+  "note": "Separate warm-index run; cProfile distorts wall time. Do not sum inclusive timings.",
+  "total_calls": 139033432,
+  "total_seconds": 37.586852871999845,
+  "functions": [
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method builtins.exec>",
+      "primitive_calls": 1,
+      "calls": 744,
+      "self_seconds": 0.021985782000000002,
+      "cumulative_seconds": 40.620015958
+    },
+    {
+      "file": "<frozen runpy>",
+      "line": 201,
+      "function": "run_module",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 5.3330000000000004e-06,
+      "cumulative_seconds": 40.619991875000004
+    },
+    {
+      "file": "<frozen runpy>",
+      "line": 65,
+      "function": "_run_code",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 3.249e-06,
+      "cumulative_seconds": 40.619169584000005
+    },
+    {
+      "file": "/Users/andres/Projects/ken/examples/bench/catalog_exploration.py",
+      "line": 1,
+      "function": "<module>",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 0.0007074560000000001,
+      "cumulative_seconds": 40.61913475
+    },
+    {
+      "file": "/Users/andres/Projects/ken/examples/bench/catalog_exploration.py",
+      "line": 15,
+      "function": "main",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 0.000122378,
+      "cumulative_seconds": 40.514779542
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/service.py",
+      "line": 259,
+      "function": "patterns",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 0.00014021000000000001,
+      "cumulative_seconds": 40.259775875
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/catalog.py",
+      "line": 58,
+      "function": "detect_patterns",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 9.1249e-05,
+      "cumulative_seconds": 35.374208958000004
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/rules.py",
+      "line": 327,
+      "function": "execute_rules",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 0.00067692,
+      "cumulative_seconds": 34.720420917000006
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational.py",
+      "line": 750,
+      "function": "execute",
+      "primitive_calls": 23,
+      "calls": 23,
+      "self_seconds": 0.00041584300000000005,
+      "cumulative_seconds": 33.350403711000006
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational.py",
+      "line": 631,
+      "function": "run_nodes",
+      "primitive_calls": 23,
+      "calls": 78327,
+      "self_seconds": 0.789462373,
+      "cumulative_seconds": 33.343305749
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational_operators.py",
+      "line": 128,
+      "function": "apply_any",
+      "primitive_calls": 23,
+      "calls": 38878,
+      "self_seconds": 0.035749768,
+      "cumulative_seconds": 33.340979706
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational_operators.py",
+      "line": 135,
+      "function": "apply_match",
+      "primitive_calls": 86,
+      "calls": 172,
+      "self_seconds": 0.068891808,
+      "cumulative_seconds": 33.338571589000004
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<method 'extend' of 'list' objects>",
+      "primitive_calls": 1111109,
+      "calls": 1808272,
+      "self_seconds": 0.467316424,
+      "cumulative_seconds": 17.927091053
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational_operators.py",
+      "line": 118,
+      "function": "apply_source_body",
+      "primitive_calls": 136701,
+      "calls": 136701,
+      "self_seconds": 0.064801173,
+      "cumulative_seconds": 16.846947882000002
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/source_execution.py",
+      "line": 164,
+      "function": "match",
+      "primitive_calls": 180272,
+      "calls": 180272,
+      "self_seconds": 0.91181091,
+      "cumulative_seconds": 16.704836507
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational_operators.py",
+      "line": 22,
+      "function": "apply_fact",
+      "primitive_calls": 636240,
+      "calls": 636240,
+      "self_seconds": 0.269343312,
+      "cumulative_seconds": 11.617882471000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational.py",
+      "line": 477,
+      "function": "facts",
+      "primitive_calls": 636240,
+      "calls": 636240,
+      "self_seconds": 2.024441878,
+      "cumulative_seconds": 11.282387591
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/body.py",
+      "line": 843,
+      "function": "match",
+      "primitive_calls": 36102,
+      "calls": 36132,
+      "self_seconds": 0.901034505,
+      "cumulative_seconds": 8.677033896000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method builtins.hash>",
+      "primitive_calls": 1757659,
+      "calls": 20943310,
+      "self_seconds": 3.4985854840000004,
+      "cumulative_seconds": 6.012582975
+    },
+    {
+      "file": "<string>",
+      "line": 2,
+      "function": "__hash__",
+      "primitive_calls": 546850,
+      "calls": 1040000,
+      "self_seconds": 0.181671454,
+      "cumulative_seconds": 5.996215402000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method builtins.next>",
+      "primitive_calls": 145396,
+      "calls": 145458,
+      "self_seconds": 0.028680116000000002,
+      "cumulative_seconds": 5.154122268
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/index_service.py",
+      "line": 20,
+      "function": "project_index",
+      "primitive_calls": 2,
+      "calls": 2,
+      "self_seconds": 0.0029449560000000003,
+      "cumulative_seconds": 4.786861292
+    },
+    {
+      "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/contextlib.py",
+      "line": 132,
+      "function": "__enter__",
+      "primitive_calls": 24,
+      "calls": 51,
+      "self_seconds": 5.7707e-05,
+      "cumulative_seconds": 4.782953251
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/service.py",
+      "line": 80,
+      "function": "source_manifest",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 0.009333061,
+      "cumulative_seconds": 4.680422792
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/body.py",
+      "line": 1323,
+      "function": "match_step",
+      "primitive_calls": 85659,
+      "calls": 85703,
+      "self_seconds": 0.8024608400000001,
+      "cumulative_seconds": 3.370204037
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/cache.py",
+      "line": 76,
+      "function": "get_or_compute",
+      "primitive_calls": 11697,
+      "calls": 11697,
+      "self_seconds": 0.020114038,
+      "cumulative_seconds": 3.1004151880000004
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational.py",
+      "line": 413,
+      "function": "candidates",
+      "primitive_calls": 636240,
+      "calls": 636240,
+      "self_seconds": 0.242529669,
+      "cumulative_seconds": 2.961092551
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method builtins.sorted>",
+      "primitive_calls": 174067,
+      "calls": 175014,
+      "self_seconds": 0.077040601,
+      "cumulative_seconds": 2.776174649
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<method 'get' of 'dict' objects>",
+      "primitive_calls": 8398095,
+      "calls": 8398095,
+      "self_seconds": 1.127890979,
+      "cumulative_seconds": 2.7395388720000002
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/gitignore_filter.py",
+      "line": 118,
+      "function": "iter_files",
+      "primitive_calls": 8177,
+      "calls": 8177,
+      "self_seconds": 0.023697554000000003,
+      "cumulative_seconds": 2.673700311
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/exploration/catalog_index.py",
+      "line": 223,
+      "function": "candidates",
+      "primitive_calls": 636240,
+      "calls": 636240,
+      "self_seconds": 0.537789135,
+      "cumulative_seconds": 2.6431992
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural_store/graph_values.py",
+      "line": 160,
+      "function": "get",
+      "primitive_calls": 245720,
+      "calls": 2095031,
+      "self_seconds": 0.9685067860000001,
+      "cumulative_seconds": 2.148258159
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method builtins.all>",
+      "primitive_calls": 780046,
+      "calls": 780046,
+      "self_seconds": 0.17450927600000002,
+      "cumulative_seconds": 2.094405916
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/rules.py",
+      "line": 56,
+      "function": "_validate",
+      "primitive_calls": 74,
+      "calls": 74,
+      "self_seconds": 0.001139482,
+      "cumulative_seconds": 1.978458413
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/rules.py",
+      "line": 23,
+      "function": "_parsed_query",
+      "primitive_calls": 506,
+      "calls": 506,
+      "self_seconds": 0.0010833820000000001,
+      "cumulative_seconds": 1.9751564350000002
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/catalog.py",
+      "line": 86,
+      "function": "compile_source",
+      "primitive_calls": 186,
+      "calls": 186,
+      "self_seconds": 0.000181633,
+      "cumulative_seconds": 1.9548021320000002
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/catalog.py",
+      "line": 47,
+      "function": "_compile",
+      "primitive_calls": 186,
+      "calls": 186,
+      "self_seconds": 0.005896940000000001,
+      "cumulative_seconds": 1.954620499
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/body.py",
+      "line": 968,
+      "function": "parts",
+      "primitive_calls": 79112,
+      "calls": 79112,
+      "self_seconds": 0.45679141100000004,
+      "cumulative_seconds": 1.891532626
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational.py",
+      "line": 522,
+      "function": "<genexpr>",
+      "primitive_calls": 803301,
+      "calls": 803301,
+      "self_seconds": 0.332292863,
+      "cumulative_seconds": 1.879652037
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational.py",
+      "line": 374,
+      "function": "tick",
+      "primitive_calls": 2799585,
+      "calls": 2799585,
+      "self_seconds": 0.685083644,
+      "cumulative_seconds": 1.846759889
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<method 'move_to_end' of 'collections.OrderedDict' objects>",
+      "primitive_calls": 4110209,
+      "calls": 4110209,
+      "self_seconds": 0.47134697900000005,
+      "cumulative_seconds": 1.811478144
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural_store/graph_records.py",
+      "line": 20,
+      "function": "attrs",
+      "primitive_calls": 860378,
+      "calls": 860378,
+      "self_seconds": 0.08184827,
+      "cumulative_seconds": 1.6907335140000002
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/catalog.py",
+      "line": 50,
+      "function": "compute",
+      "primitive_calls": 161,
+      "calls": 161,
+      "self_seconds": 0.006573283,
+      "cumulative_seconds": 1.677618797
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/gitignore_filter.py",
+      "line": 68,
+      "function": "is_ignored",
+      "primitive_calls": 9129,
+      "calls": 9129,
+      "self_seconds": 0.020225775,
+      "cumulative_seconds": 1.666225556
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/exploration/catalog_index.py",
+      "line": 169,
+      "function": "rows",
+      "primitive_calls": 1887499,
+      "calls": 1887499,
+      "self_seconds": 0.562931387,
+      "cumulative_seconds": 1.657975999
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/values.py",
+      "line": 70,
+      "function": "identity",
+      "primitive_calls": 95790,
+      "calls": 2187072,
+      "self_seconds": 0.8623409460000001,
+      "cumulative_seconds": 1.474717424
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural_store/graph_index.py",
+      "line": 255,
+      "function": "operations",
+      "primitive_calls": 185592,
+      "calls": 185592,
+      "self_seconds": 0.18447238800000001,
+      "cumulative_seconds": 1.4648520120000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/_paths.py",
+      "line": 51,
+      "function": "resolve_project_path",
+      "primitive_calls": 8177,
+      "calls": 8177,
+      "self_seconds": 0.018517408000000003,
+      "cumulative_seconds": 1.447837567
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/values.py",
+      "line": 73,
+      "function": "<genexpr>",
+      "primitive_calls": 792884,
+      "calls": 2884166,
+      "self_seconds": 0.367951741,
+      "cumulative_seconds": 1.371134249
+    },
+    {
+      "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/pathlib.py",
+      "line": 663,
+      "function": "relative_to",
+      "primitive_calls": 17412,
+      "calls": 17412,
+      "self_seconds": 0.056092278,
+      "cumulative_seconds": 1.245584073
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/gitignore_filter.py",
+      "line": 84,
+      "function": "_applicable_specs",
+      "primitive_calls": 9123,
+      "calls": 9123,
+      "self_seconds": 0.043963626000000006,
+      "cumulative_seconds": 1.1950417050000002
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/cache.py",
+      "line": 19,
+      "function": "retained_size",
+      "primitive_calls": 638,
+      "calls": 638,
+      "self_seconds": 0.38077873300000004,
+      "cumulative_seconds": 1.173981721
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural_store/graph_index.py",
+      "line": 311,
+      "function": "heartbeat",
+      "primitive_calls": 2799585,
+      "calls": 2799585,
+      "self_seconds": 0.48503426800000005,
+      "cumulative_seconds": 1.161676245
+    },
+    {
+      "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/pathlib.py",
+      "line": 690,
+      "function": "is_relative_to",
+      "primitive_calls": 25588,
+      "calls": 25588,
+      "self_seconds": 0.024250324,
+      "cumulative_seconds": 1.159233162
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural_store/graph_values.py",
+      "line": 125,
+      "function": "encoded",
+      "primitive_calls": 2095031,
+      "calls": 2095031,
+      "self_seconds": 0.5174921060000001,
+      "cumulative_seconds": 1.121046859
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational_planning.py",
+      "line": 263,
+      "function": "choose_next",
+      "primitive_calls": 86592,
+      "calls": 86592,
+      "self_seconds": 0.130807047,
+      "cumulative_seconds": 1.076667521
+    },
+    {
+      "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/pathlib.py",
+      "line": 437,
+      "function": "__str__",
+      "primitive_calls": 441739,
+      "calls": 441739,
+      "self_seconds": 0.192704116,
+      "cumulative_seconds": 1.033511082
+    },
+    {
+      "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/pathlib.py",
+      "line": 519,
+      "function": "__eq__",
+      "primitive_calls": 299059,
+      "calls": 299059,
+      "self_seconds": 0.106913382,
+      "cumulative_seconds": 1.0050428260000002
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method builtins.isinstance>",
+      "primitive_calls": 12343739,
+      "calls": 12343739,
+      "self_seconds": 0.9363339430000001,
+      "cumulative_seconds": 1.0025154280000002
+    },
+    {
+      "file": "<frozen _collections_abc>",
+      "line": 1022,
+      "function": "__iter__",
+      "primitive_calls": 271616,
+      "calls": 271616,
+      "self_seconds": 0.057777976,
+      "cumulative_seconds": 0.97841895
+    },
+    {
+      "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/pathlib.py",
+      "line": 484,
+      "function": "_str_normcase",
+      "primitive_calls": 659800,
+      "calls": 659800,
+      "self_seconds": 0.23936912300000002,
+      "cumulative_seconds": 0.930146875
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/body.py",
+      "line": 941,
+      "function": "successors",
+      "primitive_calls": 551493,
+      "calls": 551493,
+      "self_seconds": 0.301240971,
+      "cumulative_seconds": 0.9248799510000001
+    },
+    {
+      "file": "/Users/andres/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/lib/python3.12/pathlib.py",
+      "line": 277,
+      "function": "__getitem__",
+      "primitive_calls": 254173,
+      "calls": 254173,
+      "self_seconds": 0.137362751,
+      "cumulative_seconds": 0.9206409740000001
+    },
+    {
+      "file": "<frozen _collections_abc>",
+      "line": 1032,
+      "function": "__contains__",
+      "primitive_calls": 25588,
+      "calls": 25588,
+      "self_seconds": 0.053913511000000004,
+      "cumulative_seconds": 0.8984255550000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/query.py",
+      "line": 197,
+      "function": "_resolve",
+      "primitive_calls": 1825807,
+      "calls": 1825807,
+      "self_seconds": 0.5628184660000001,
+      "cumulative_seconds": 0.8706549600000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural_store/graph_control.py",
+      "line": 17,
+      "function": "__iter__",
+      "primitive_calls": 229233,
+      "calls": 229233,
+      "self_seconds": 0.847406238,
+      "cumulative_seconds": 0.8565164310000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/kql2/exploration/catalog_index.py",
+      "line": 227,
+      "function": "endpoint",
+      "primitive_calls": 1246708,
+      "calls": 1246708,
+      "self_seconds": 0.8132142450000001,
+      "cumulative_seconds": 0.8139277260000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/relational.py",
+      "line": 266,
+      "function": "merge_proofs",
+      "primitive_calls": 37407,
+      "calls": 37407,
+      "self_seconds": 0.581413202,
+      "cumulative_seconds": 0.7453859020000001
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural_store/leases.py",
+      "line": 24,
+      "function": "renew",
+      "primitive_calls": 2811144,
+      "calls": 2811144,
+      "self_seconds": 0.447007203,
+      "cumulative_seconds": 0.6799670990000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<method 'execute' of 'sqlite3.Connection' objects>",
+      "primitive_calls": 34030,
+      "calls": 34030,
+      "self_seconds": 0.44646997400000005,
+      "cumulative_seconds": 0.45101225500000003
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<method 'append' of 'list' objects>",
+      "primitive_calls": 3894181,
+      "calls": 3894181,
+      "self_seconds": 0.377741765,
+      "cumulative_seconds": 0.377741765
+    },
+    {
+      "file": "/Users/andres/Projects/ken/src/ken/structural/query.py",
+      "line": 205,
+      "function": "_bind",
+      "primitive_calls": 1441240,
+      "calls": 1441240,
+      "self_seconds": 0.354294708,
+      "cumulative_seconds": 0.478611483
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method builtins.len>",
+      "primitive_calls": 3372938,
+      "calls": 3900715,
+      "self_seconds": 0.325731806,
+      "cumulative_seconds": 0.444664942
+    }
+  ]
+}

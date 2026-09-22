@@ -1,0 +1,9 @@
+Voy a contrastar la memoria indicada con el esquema MCP y la conversión de argumentos de `ken tools`, sin modificar archivos ni memorias.
+La conversión CLI ya decodifica cada elemento como objeto JSON, y existe una regresión que pasa por `ken.cli.main`. Estoy terminando de verificar el registro compartido; la memoria sólo acredita sus dependencias declaradas.
+El soporte **ya existe**. Integraría la nueva función con `@ken_tool` y la anotación `list[dict[str, Any]]`; mantendría la conversión en la infraestructura común.
+
+En [server.py](/private/tmp/ken-coding-memory-4n2epo1i/mcp-memory/src/ken/mcp/server.py:192), el decorador registra MCP y CLI; `_annotation_to_schema` y `_items_schema` producen `{"type":"array","items":{"type":"object"}}`. En [cli.py](/private/tmp/ken-coding-memory-4n2epo1i/mcp-memory/src/ken/cli.py:1757), `_tool_py_type` selecciona `_tool_json_object`: decodifica JSON y rechaza valores que no sean objetos. El CLI recibe **un objeto JSON por argumento**: `--items '{"a":1}' '{"b":2}'`. Si el parámetro es obligatorio, usa argumentos posicionales y exige al menos uno: hay una diferencia con MCP para listas vacías.
+
+Recomiendo comprobar el esquema anunciado por MCP y el registro, y comparar resultados con una llamada real a `ken.cli.main`, incluyendo varios objetos y entradas inválidas. El precedente es [test_cli_decodes_goal_and_premise_objects](/private/tmp/ken-coding-memory-4n2epo1i/mcp-memory/tests/test_reasoning_memory.py:197): llamar sólo al wrapper MCP no detectaba los dos fallos independientes, esquema de elementos y conversión CLI.
+
+Confirmado por lectura, sin ejecutar pruebas ni modificar archivos o memorias. La memoria figura vigente únicamente respecto de sus dependencias declaradas.

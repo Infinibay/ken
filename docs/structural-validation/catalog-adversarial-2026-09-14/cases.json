@@ -1,0 +1,2522 @@
+[
+  {
+    "id": "control-abstract-factory-python",
+    "rule": "abstract-factory",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Base:\n    def a(self): pass\n    def b(self): pass\nclass FamilyOne: pass\nclass FamilyTwo: pass\nclass One(FamilyOne): pass\nclass Two(FamilyTwo): pass\nclass Subject(Base):\n    def a(self): return One()\n    def b(self): return Two()\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-builder-python",
+    "rule": "builder",
+    "language": "python",
+    "source": "\nclass Product:\n def __init__(self, x): self.x = x\nclass Subject:\n def size(self, x): self.x = x\n def finish(self): return Product(self.x)\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-factory-method-python",
+    "rule": "factory-method",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Base:\n    def make(self): pass\nclass Product: pass\nclass Subject(Base):\n    def make(self): return Product()\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-prototype-python",
+    "rule": "prototype",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n    def __init__(self, state): self.state = state\n    def copy(self): return Subject(self.state)\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-singleton-python",
+    "rule": "singleton",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n    value = None\n    @classmethod\n    def get(cls):\n        if cls.value is None:\n            cls.value = Subject()\n        return cls.value\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-adapter-python",
+    "rule": "adapter",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n    def request(self): pass\nclass Legacy:\n    def run(self): pass\nclass Subject(Contract):\n    def __init__(self, service: Legacy): self.service = service\n    def request(self): return self.service.run()\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-bridge-python",
+    "rule": "bridge",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Driver:\n    def run(self): pass\nclass Fast(Driver): pass\nclass Slow(Driver): pass\nclass Base:\n    def __init__(self, driver: Driver): self.driver = driver\n    def run(self): return self.driver.run()\nclass Subject(Base): pass\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-composite-python",
+    "rule": "composite",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Component:\n    def run(self): pass\nclass Subject(Component):\n    def __init__(self): self.children: list[Component] = []\n    def run(self):\n        for child in self.children:\n            child.run()\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-decorator-python",
+    "rule": "decorator",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n    def run(self): pass\nclass Subject(Contract):\n    def __init__(self, inner: Contract): self.inner = inner\n    def run(self):\n        print(\"before\")\n        return self.inner.run()\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-facade-python",
+    "rule": "facade",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass One:\n    def run(self): pass\nclass Two:\n    def run(self): pass\nclass Subject:\n    def __init__(self, one: One, two: Two):\n        self.one = one\n        self.two = two\n    def run(self):\n        self.one.run()\n        self.two.run()\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-flyweight-python",
+    "rule": "flyweight",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Product:\n    def __init__(self, key): self.key = key\nclass Subject:\n    def __init__(self): self.pool = {}\n    def get(self, key):\n        if key not in self.pool:\n            self.pool[key] = Product(key)\n        return self.pool[key]\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-proxy-python",
+    "rule": "proxy",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n    def run(self): pass\nclass Subject(Contract):\n    def __init__(self, inner: Contract): self.inner = inner\n    def run(self, allowed):\n        if allowed: return self.inner.run()\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-chain-of-responsibility-python",
+    "rule": "chain-of-responsibility",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Handler:\n    def run(self): pass\nclass Subject(Handler):\n    def __init__(self, following: Handler): self.following = following\n    def run(self, request):\n        if request: return self.following.run()\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-command-python",
+    "rule": "command",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Receiver:\n    def act(self): pass\nclass Subject:\n    def __init__(self, receiver: Receiver): self.receiver = receiver\n    def execute(self): self.receiver.act()\n\nclass Invoker:\n def run(self, command: Subject): command.execute()\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-interpreter-python",
+    "rule": "interpreter",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Expression:\n    def evaluate(self, context): pass\nclass Subject(Expression):\n    def __init__(self, child: Expression): self.child = child\n    def evaluate(self, context): return self.child.evaluate(context)\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-iterator-python",
+    "rule": "iterator",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n    def __iter__(self): return self\n    def __next__(self):\n        self.index = self.index + 1\n        return self.index\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-mediator-python",
+    "rule": "mediator",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass One:\n    def act(self): pass\n    def changed(self, hub: Hub): hub.coordinate()\nclass Two:\n    def act(self): pass\n    def changed(self, hub: Hub): hub.coordinate()\nclass Hub:\n    def __init__(self, one: One, two: Two):\n        self.one = one\n        self.two = two\n    def coordinate(self):\n        self.one.act()\n        self.two.act()\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-memento-python",
+    "rule": "memento",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Snapshot:\n    def __init__(self, state): self.state = state\nclass Subject:\n    def __init__(self, state): self.state = state\n    def save(self): return Snapshot(self.state)\n    def restore(self, snapshot: Snapshot): self.state = snapshot.state\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-observer-python",
+    "rule": "observer",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n    def __init__(self): self.listeners = []\n    def subscribe(self, listener): self.listeners.append(listener)\n    def notify(self):\n        for listener in self.listeners:\n            listener.update()\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-state-python",
+    "rule": "state",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n    def run(self): pass\nclass Concrete(Contract):\n    def run(self): pass\nclass Subject:\n    def __init__(self, state: Contract): self.state: Contract = state\n    def run(self): self.state.run()\n    def change(self): self.state = Concrete()\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-strategy-python",
+    "rule": "strategy",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n    def run(self): pass\nclass First(Contract):\n    def run(self): pass\nclass Second(Contract):\n    def run(self): pass\nclass Subject:\n    def __init__(self, strategy: Contract): self.strategy = strategy\n    def run(self): return self.strategy.run()\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-template-method-python",
+    "rule": "template-method",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Base:\n    def run(self):\n        self.step()\n    def step(self): pass\nclass Subject(Base):\n    def step(self): print(\"step\")\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-visitor-python",
+    "rule": "visitor",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n    def accept(self, visitor: Visitor): visitor.visit(self)\nclass Visitor:\n    def visit(self, element: Subject): print(element)\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-abstract-factory-java",
+    "rule": "abstract-factory",
+    "language": "java",
+    "source": "\nabstract class Base { abstract One a(); abstract Two b(); }\ninterface FamilyOne {} interface FamilyTwo {} class One implements FamilyOne {} class Two implements FamilyTwo {}\nclass Subject extends Base { One a(){return new One();} Two b(){return new Two();} }\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-builder-java",
+    "rule": "builder",
+    "language": "java",
+    "source": "\nclass Product { Product(int value){} }\nclass Subject { int value; Subject size(int x){this.value=x;return this;} Product finish(){return new Product(this.value);} }\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-factory-method-java",
+    "rule": "factory-method",
+    "language": "java",
+    "source": "\nabstract class Base { abstract Product make(); }\nclass Product {}\nclass Subject extends Base { Product make(){return new Product();} }\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-prototype-java",
+    "rule": "prototype",
+    "language": "java",
+    "source": "\nclass Subject { int value; Subject(int x){this.value=x;} Subject duplicate(){return new Subject(this.value);} }\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-singleton-java",
+    "rule": "singleton",
+    "language": "java",
+    "source": "\nclass Subject { static Subject instance=null;\n static Subject shared(){if(Subject.instance==null){Subject.instance=new Subject();}return Subject.instance;}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-adapter-java",
+    "rule": "adapter",
+    "language": "java",
+    "source": "\ninterface Contract { int request(); }\nclass Legacy { int perform(){return 1;} }\nclass Subject implements Contract { Legacy service;\n Subject(Legacy service){this.service=service;}\n public int request(){return this.service.perform();}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-bridge-java",
+    "rule": "bridge",
+    "language": "java",
+    "source": "\ninterface Driver { int run(); }\nclass First implements Driver {public int run(){return 1;}}\nclass Second implements Driver {public int run(){return 2;}}\nclass Base {Driver driver; Base(Driver driver){this.driver=driver;} int run(){return this.driver.run();}}\nclass Subject extends Base {Subject(Driver driver){super(driver);}}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-composite-java",
+    "rule": "composite",
+    "language": "java",
+    "source": "\nimport java.util.List;\ninterface Component { void run(); }\nclass Subject implements Component { List<Component> children;\n Subject(List<Component> children){this.children=children;}\n public void run(){for(Component child:this.children){child.run();}}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-decorator-java",
+    "rule": "decorator",
+    "language": "java",
+    "source": "\ninterface Contract {int run();}\nclass Subject implements Contract {Contract inner;\n Subject(Contract inner){this.inner=inner;}\n public int run(){System.out.println(\"before\");return this.inner.run();}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-facade-java",
+    "rule": "facade",
+    "language": "java",
+    "source": "\nclass First {void run(){}} class Second {void run(){}}\nclass Subject {First one; Second two;\n Subject(First one,Second two){this.one=one;this.two=two;}\n void run(){this.one.run();this.two.run();}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-flyweight-java",
+    "rule": "flyweight",
+    "language": "java",
+    "source": "\nclass Product {Product(int key){}}\nclass Subject {Product[] pool=new Product[100];\n Product get(int key){if(this.pool[key]==null){this.pool[key]=new Product(key);}return this.pool[key];}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-proxy-java",
+    "rule": "proxy",
+    "language": "java",
+    "source": "\ninterface Contract {int run(boolean allowed);}\nclass Subject implements Contract {Contract inner;\n Subject(Contract inner){this.inner=inner;}\n public int run(boolean allowed){if(allowed){return this.inner.run(allowed);}return 0;}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-chain-of-responsibility-java",
+    "rule": "chain-of-responsibility",
+    "language": "java",
+    "source": "\ninterface Handler {void run(boolean request);}\nclass Subject implements Handler {Handler following;\n Subject(Handler following){this.following=following;}\n public void run(boolean request){if(request){this.following.run(request);}}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-command-java",
+    "rule": "command",
+    "language": "java",
+    "source": "\nclass Receiver {void act(){}}\nclass Subject {Receiver receiver; Subject(Receiver receiver){this.receiver=receiver;} void execute(){this.receiver.act();}}\nclass Invoker {void run(Subject command){command.execute();}}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-interpreter-java",
+    "rule": "interpreter",
+    "language": "java",
+    "source": "\ninterface Expression {int evaluate(int context);}\nclass Subject implements Expression {Expression child;\n Subject(Expression child){this.child=child;}\n public int evaluate(int context){return this.child.evaluate(context);}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-iterator-java",
+    "rule": "iterator",
+    "language": "java",
+    "source": "\nclass Subject {int index=0;\n boolean hasNext(){return this.index<10;}\n int next(){this.index=this.index+1;return this.index;}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-mediator-java",
+    "rule": "mediator",
+    "language": "java",
+    "source": "\nclass First {void act(){} void changed(Hub hub){hub.coordinate();}}\nclass Second {void act(){} void changed(Hub hub){hub.coordinate();}}\nclass Hub {First one;Second two;\n Hub(First one,Second two){this.one=one;this.two=two;}\n void coordinate(){this.one.act();this.two.act();}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-memento-java",
+    "rule": "memento",
+    "language": "java",
+    "source": "\nclass Snapshot {int value;Snapshot(int value){this.value=value;}}\nclass Subject {int value;\n Snapshot save(){return new Snapshot(this.value);}\n void restore(Snapshot snapshot){this.value=snapshot.value;}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-observer-java",
+    "rule": "observer",
+    "language": "java",
+    "source": "\nimport java.util.List;\nimport java.util.ArrayList;\ninterface Listener {void update();}\nclass Subject {List<Listener> listeners=new ArrayList<>();\n void subscribe(Listener listener){this.listeners.add(listener);}\n void notifyAllListeners(){for(Listener listener:this.listeners){listener.update();}}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-state-java",
+    "rule": "state",
+    "language": "java",
+    "source": "\ninterface Contract {void run();}\nclass Concrete implements Contract {public void run(){}}\nclass Subject {Contract state;\n Subject(Contract state){this.state=state;}\n void run(){this.state.run();}\n void change(){this.state=new Concrete();}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-strategy-java",
+    "rule": "strategy",
+    "language": "java",
+    "source": "\ninterface Contract {int run();}\nclass First implements Contract {public int run(){return 1;}}\nclass Second implements Contract {public int run(){return 2;}}\nclass Subject {Contract strategy;\n Subject(Contract strategy){this.strategy=strategy;}\n int run(){return this.strategy.run();}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-template-method-java",
+    "rule": "template-method",
+    "language": "java",
+    "source": "\nabstract class Base {void run(){this.step();}abstract void step();}\nclass Subject extends Base {void step(){System.out.println(\"step\");}}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-visitor-java",
+    "rule": "visitor",
+    "language": "java",
+    "source": "\nclass Subject {void accept(Visitor visitor){visitor.visit(this);}}\nclass Visitor {void visit(Subject element){System.out.println(element);}}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-abstract-factory-typescript",
+    "rule": "abstract-factory",
+    "language": "typescript",
+    "source": "\ninterface Base { a(): One; b(): Two; }\ninterface FamilyOne {} interface FamilyTwo {} class One implements FamilyOne {} class Two implements FamilyTwo {}\nclass Subject implements Base { a():One{return new One();} b():Two{return new Two();} }\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-builder-typescript",
+    "rule": "builder",
+    "language": "typescript",
+    "source": "\nclass Product {constructor(value:number){}}\nclass Subject {value:number=0; size(x:number):this{this.value=x;return this;} finish():Product{return new Product(this.value);} }\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-factory-method-typescript",
+    "rule": "factory-method",
+    "language": "typescript",
+    "source": "\ninterface Base {make():Product;}\nclass Product {}\nclass Subject implements Base {make():Product{return new Product();}}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-prototype-typescript",
+    "rule": "prototype",
+    "language": "typescript",
+    "source": "\nclass Subject {value:number;constructor(x:number){this.value=x;} duplicate():Subject{return new Subject(this.value);}}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-singleton-typescript",
+    "rule": "singleton",
+    "language": "typescript",
+    "source": "\nclass Subject {static instance:Subject|null=null;\n static shared():Subject {if(Subject.instance===null){Subject.instance=new Subject();}return Subject.instance;}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-adapter-typescript",
+    "rule": "adapter",
+    "language": "typescript",
+    "source": "\ninterface Contract {request():number;}\nclass Legacy {perform():number{return 1;}}\nclass Subject implements Contract {service:Legacy;\n constructor(service:Legacy){this.service=service;}\n request():number{return this.service.perform();}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-bridge-typescript",
+    "rule": "bridge",
+    "language": "typescript",
+    "source": "\ninterface Driver {run():number;}\nclass First implements Driver {run():number{return 1;}}\nclass Second implements Driver {run():number{return 2;}}\nclass Base {driver:Driver;constructor(driver:Driver){this.driver=driver;}run():number{return this.driver.run();}}\nclass Subject extends Base {}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-composite-typescript",
+    "rule": "composite",
+    "language": "typescript",
+    "source": "\ninterface Component {run():void;}\nclass Subject implements Component {children:Array<Component>=[];\n run():void{for(const child of this.children){child.run();}}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-decorator-typescript",
+    "rule": "decorator",
+    "language": "typescript",
+    "source": "\ninterface Contract {run():number;}\nclass Subject implements Contract {inner:Contract;\n constructor(inner:Contract){this.inner=inner;}\n run():number{console.log(\"before\");return this.inner.run();}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-facade-typescript",
+    "rule": "facade",
+    "language": "typescript",
+    "source": "\nclass First {run():void{}} class Second {run():void{}}\nclass Subject {one:First;two:Second;\n constructor(one:First,two:Second){this.one=one;this.two=two;}\n run():void{this.one.run();this.two.run();}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-flyweight-typescript",
+    "rule": "flyweight",
+    "language": "typescript",
+    "source": "\nclass Product {constructor(key:number){}}\nclass Subject {pool:Array<Product>=[];\n get(key:number):Product{if(!this.pool[key]){this.pool[key]=new Product(key);}return this.pool[key];}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-proxy-typescript",
+    "rule": "proxy",
+    "language": "typescript",
+    "source": "\ninterface Contract {run(allowed:boolean):number;}\nclass Subject implements Contract {inner:Contract;\n constructor(inner:Contract){this.inner=inner;}\n run(allowed:boolean):number{if(allowed){return this.inner.run(allowed);}return 0;}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-chain-of-responsibility-typescript",
+    "rule": "chain-of-responsibility",
+    "language": "typescript",
+    "source": "\ninterface Handler {run(request:boolean):void;}\nclass Subject implements Handler {following:Handler;\n constructor(following:Handler){this.following=following;}\n run(request:boolean):void{if(request){this.following.run(request);}}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-command-typescript",
+    "rule": "command",
+    "language": "typescript",
+    "source": "\nclass Receiver {act():void{}}\nclass Subject {receiver:Receiver;constructor(receiver:Receiver){this.receiver=receiver;}execute():void{this.receiver.act();}}\nclass Invoker {run(command:Subject):void{command.execute();}}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-interpreter-typescript",
+    "rule": "interpreter",
+    "language": "typescript",
+    "source": "\ninterface Expression {evaluate(context:number):number;}\nclass Subject implements Expression {child:Expression;\n constructor(child:Expression){this.child=child;}\n evaluate(context:number):number{return this.child.evaluate(context);}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-iterator-typescript",
+    "rule": "iterator",
+    "language": "typescript",
+    "source": "\nexport function* sequence(values:number[]):Generator<number>{\n yield* values;\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-mediator-typescript",
+    "rule": "mediator",
+    "language": "typescript",
+    "source": "\nclass First {act():void{}changed(hub:Hub):void{hub.coordinate();}}\nclass Second {act():void{}changed(hub:Hub):void{hub.coordinate();}}\nclass Hub {one:First;two:Second;\n constructor(one:First,two:Second){this.one=one;this.two=two;}\n coordinate():void{this.one.act();this.two.act();}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-memento-typescript",
+    "rule": "memento",
+    "language": "typescript",
+    "source": "\nclass Snapshot {value:number;constructor(value:number){this.value=value;}}\nclass Subject {value:number=0;\n save():Snapshot{return new Snapshot(this.value);}\n restore(snapshot:Snapshot):void{this.value=snapshot.value;}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-observer-typescript",
+    "rule": "observer",
+    "language": "typescript",
+    "source": "\nclass Subject {listeners:Array<(event:number)=>void>=[];\n subscribe(listener:(event:number)=>void):void{this.listeners.push(listener);}\n notify(event:number):void{for(const listener of this.listeners){listener(event);}}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-state-typescript",
+    "rule": "state",
+    "language": "typescript",
+    "source": "\ninterface Contract {run():void;}\nclass Concrete implements Contract {run():void{}}\nclass Subject {state:Contract;\n constructor(state:Contract){this.state=state;}\n run():void{this.state.run();}\n change():void{this.state=new Concrete();}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-strategy-typescript",
+    "rule": "strategy",
+    "language": "typescript",
+    "source": "\ninterface Contract {run():number;}\nclass First implements Contract {run():number{return 1;}}\nclass Second implements Contract {run():number{return 2;}}\nclass Subject {strategy:Contract;\n constructor(strategy:Contract){this.strategy=strategy;}\n run():number{return this.strategy.run();}\n}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-template-method-typescript",
+    "rule": "template-method",
+    "language": "typescript",
+    "source": "\nabstract class Base {run():void{this.step();}abstract step():void;}\nclass Subject extends Base {step():void{console.log(\"step\");}}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "control-visitor-typescript",
+    "rule": "visitor",
+    "language": "typescript",
+    "source": "\nclass Subject {accept(visitor:Visitor):void{visitor.visit(this);}}\nclass Visitor {visit(element:Subject):void{console.log(element);}}\n",
+    "expected": true,
+    "why": "Control canónico existente; valida que el harness encuentra la firma conocida.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "noise-abstract-factory",
+    "rule": "abstract-factory",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Base:\n\n    def a(self):\n        audit_metric = 1 + 2\n        pass\n\n    def b(self):\n        audit_metric = 1 + 2\n        pass\n\nclass FamilyOne:\n    pass\n\nclass FamilyTwo:\n    pass\n\nclass One(FamilyOne):\n    pass\n\nclass Two(FamilyTwo):\n    pass\n\nclass Subject(Base):\n\n    def a(self):\n        audit_metric = 1 + 2\n        return One()\n\n    def b(self):\n        audit_metric = 1 + 2\n        return Two()\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-abstract-factory",
+    "rule": "abstract-factory",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Base:\n\n    def a(self):\n        return None\n        pass\n\n    def b(self):\n        return None\n        pass\n\nclass FamilyOne:\n    pass\n\nclass FamilyTwo:\n    pass\n\nclass One(FamilyOne):\n    pass\n\nclass Two(FamilyTwo):\n    pass\n\nclass Subject(Base):\n\n    def a(self):\n        return None\n        return One()\n\n    def b(self):\n        return None\n        return Two()\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-builder",
+    "rule": "builder",
+    "language": "python",
+    "source": "class Product:\n\n    def __init__(self, x):\n        self.x = x\n\nclass Subject:\n\n    def size(self, x):\n        audit_metric = 1 + 2\n        self.x = x\n\n    def finish(self):\n        audit_metric = 1 + 2\n        return Product(self.x)\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-builder",
+    "rule": "builder",
+    "language": "python",
+    "source": "class Product:\n\n    def __init__(self, x):\n        self.x = x\n\nclass Subject:\n\n    def size(self, x):\n        return None\n        self.x = x\n\n    def finish(self):\n        return None\n        return Product(self.x)\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-factory-method",
+    "rule": "factory-method",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Base:\n\n    def make(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Product:\n    pass\n\nclass Subject(Base):\n\n    def make(self):\n        audit_metric = 1 + 2\n        return Product()\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-factory-method",
+    "rule": "factory-method",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Base:\n\n    def make(self):\n        return None\n        pass\n\nclass Product:\n    pass\n\nclass Subject(Base):\n\n    def make(self):\n        return None\n        return Product()\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-prototype",
+    "rule": "prototype",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n\n    def __init__(self, state):\n        self.state = state\n\n    def copy(self):\n        audit_metric = 1 + 2\n        return Subject(self.state)\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-prototype",
+    "rule": "prototype",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n\n    def __init__(self, state):\n        self.state = state\n\n    def copy(self):\n        return None\n        return Subject(self.state)\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-singleton",
+    "rule": "singleton",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n    value = None\n\n    @classmethod\n    def get(cls):\n        audit_metric = 1 + 2\n        if cls.value is None:\n            cls.value = Subject()\n        return cls.value\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-singleton",
+    "rule": "singleton",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n    value = None\n\n    @classmethod\n    def get(cls):\n        return None\n        if cls.value is None:\n            cls.value = Subject()\n        return cls.value\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-adapter",
+    "rule": "adapter",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n\n    def request(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Legacy:\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Subject(Contract):\n\n    def __init__(self, service: Legacy):\n        self.service = service\n\n    def request(self):\n        audit_metric = 1 + 2\n        return self.service.run()\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-adapter",
+    "rule": "adapter",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n\n    def request(self):\n        return None\n        pass\n\nclass Legacy:\n\n    def run(self):\n        return None\n        pass\n\nclass Subject(Contract):\n\n    def __init__(self, service: Legacy):\n        self.service = service\n\n    def request(self):\n        return None\n        return self.service.run()\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-bridge",
+    "rule": "bridge",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Driver:\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Fast(Driver):\n    pass\n\nclass Slow(Driver):\n    pass\n\nclass Base:\n\n    def __init__(self, driver: Driver):\n        self.driver = driver\n\n    def run(self):\n        audit_metric = 1 + 2\n        return self.driver.run()\n\nclass Subject(Base):\n    pass\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-bridge",
+    "rule": "bridge",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Driver:\n\n    def run(self):\n        return None\n        pass\n\nclass Fast(Driver):\n    pass\n\nclass Slow(Driver):\n    pass\n\nclass Base:\n\n    def __init__(self, driver: Driver):\n        self.driver = driver\n\n    def run(self):\n        return None\n        return self.driver.run()\n\nclass Subject(Base):\n    pass\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-composite",
+    "rule": "composite",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Component:\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Subject(Component):\n\n    def __init__(self):\n        self.children: list[Component] = []\n\n    def run(self):\n        audit_metric = 1 + 2\n        for child in self.children:\n            child.run()\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-composite",
+    "rule": "composite",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Component:\n\n    def run(self):\n        return None\n        pass\n\nclass Subject(Component):\n\n    def __init__(self):\n        self.children: list[Component] = []\n\n    def run(self):\n        return None\n        for child in self.children:\n            child.run()\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-decorator",
+    "rule": "decorator",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Subject(Contract):\n\n    def __init__(self, inner: Contract):\n        self.inner = inner\n\n    def run(self):\n        audit_metric = 1 + 2\n        print('before')\n        return self.inner.run()\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-decorator",
+    "rule": "decorator",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n\n    def run(self):\n        return None\n        pass\n\nclass Subject(Contract):\n\n    def __init__(self, inner: Contract):\n        self.inner = inner\n\n    def run(self):\n        return None\n        print('before')\n        return self.inner.run()\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-facade",
+    "rule": "facade",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass One:\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Two:\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Subject:\n\n    def __init__(self, one: One, two: Two):\n        self.one = one\n        self.two = two\n\n    def run(self):\n        audit_metric = 1 + 2\n        self.one.run()\n        self.two.run()\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-facade",
+    "rule": "facade",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass One:\n\n    def run(self):\n        return None\n        pass\n\nclass Two:\n\n    def run(self):\n        return None\n        pass\n\nclass Subject:\n\n    def __init__(self, one: One, two: Two):\n        self.one = one\n        self.two = two\n\n    def run(self):\n        return None\n        self.one.run()\n        self.two.run()\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-flyweight",
+    "rule": "flyweight",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Product:\n\n    def __init__(self, key):\n        self.key = key\n\nclass Subject:\n\n    def __init__(self):\n        self.pool = {}\n\n    def get(self, key):\n        audit_metric = 1 + 2\n        if key not in self.pool:\n            self.pool[key] = Product(key)\n        return self.pool[key]\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-flyweight",
+    "rule": "flyweight",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Product:\n\n    def __init__(self, key):\n        self.key = key\n\nclass Subject:\n\n    def __init__(self):\n        self.pool = {}\n\n    def get(self, key):\n        return None\n        if key not in self.pool:\n            self.pool[key] = Product(key)\n        return self.pool[key]\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-proxy",
+    "rule": "proxy",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Subject(Contract):\n\n    def __init__(self, inner: Contract):\n        self.inner = inner\n\n    def run(self, allowed):\n        audit_metric = 1 + 2\n        if allowed:\n            return self.inner.run()\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-proxy",
+    "rule": "proxy",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n\n    def run(self):\n        return None\n        pass\n\nclass Subject(Contract):\n\n    def __init__(self, inner: Contract):\n        self.inner = inner\n\n    def run(self, allowed):\n        return None\n        if allowed:\n            return self.inner.run()\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-chain-of-responsibility",
+    "rule": "chain-of-responsibility",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Handler:\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Subject(Handler):\n\n    def __init__(self, following: Handler):\n        self.following = following\n\n    def run(self, request):\n        audit_metric = 1 + 2\n        if request:\n            return self.following.run()\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-chain-of-responsibility",
+    "rule": "chain-of-responsibility",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Handler:\n\n    def run(self):\n        return None\n        pass\n\nclass Subject(Handler):\n\n    def __init__(self, following: Handler):\n        self.following = following\n\n    def run(self, request):\n        return None\n        if request:\n            return self.following.run()\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-command",
+    "rule": "command",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Receiver:\n\n    def act(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Subject:\n\n    def __init__(self, receiver: Receiver):\n        self.receiver = receiver\n\n    def execute(self):\n        audit_metric = 1 + 2\n        self.receiver.act()\n\nclass Invoker:\n\n    def run(self, command: Subject):\n        audit_metric = 1 + 2\n        command.execute()\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-command",
+    "rule": "command",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Receiver:\n\n    def act(self):\n        return None\n        pass\n\nclass Subject:\n\n    def __init__(self, receiver: Receiver):\n        self.receiver = receiver\n\n    def execute(self):\n        return None\n        self.receiver.act()\n\nclass Invoker:\n\n    def run(self, command: Subject):\n        return None\n        command.execute()\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-interpreter",
+    "rule": "interpreter",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Expression:\n\n    def evaluate(self, context):\n        audit_metric = 1 + 2\n        pass\n\nclass Subject(Expression):\n\n    def __init__(self, child: Expression):\n        self.child = child\n\n    def evaluate(self, context):\n        audit_metric = 1 + 2\n        return self.child.evaluate(context)\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-interpreter",
+    "rule": "interpreter",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Expression:\n\n    def evaluate(self, context):\n        return None\n        pass\n\nclass Subject(Expression):\n\n    def __init__(self, child: Expression):\n        self.child = child\n\n    def evaluate(self, context):\n        return None\n        return self.child.evaluate(context)\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-iterator",
+    "rule": "iterator",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n\n    def __iter__(self):\n        audit_metric = 1 + 2\n        return self\n\n    def __next__(self):\n        audit_metric = 1 + 2\n        self.index = self.index + 1\n        return self.index\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-iterator",
+    "rule": "iterator",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n\n    def __iter__(self):\n        return None\n        return self\n\n    def __next__(self):\n        return None\n        self.index = self.index + 1\n        return self.index\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-mediator",
+    "rule": "mediator",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass One:\n\n    def act(self):\n        audit_metric = 1 + 2\n        pass\n\n    def changed(self, hub: Hub):\n        audit_metric = 1 + 2\n        hub.coordinate()\n\nclass Two:\n\n    def act(self):\n        audit_metric = 1 + 2\n        pass\n\n    def changed(self, hub: Hub):\n        audit_metric = 1 + 2\n        hub.coordinate()\n\nclass Hub:\n\n    def __init__(self, one: One, two: Two):\n        self.one = one\n        self.two = two\n\n    def coordinate(self):\n        audit_metric = 1 + 2\n        self.one.act()\n        self.two.act()\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-mediator",
+    "rule": "mediator",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass One:\n\n    def act(self):\n        return None\n        pass\n\n    def changed(self, hub: Hub):\n        return None\n        hub.coordinate()\n\nclass Two:\n\n    def act(self):\n        return None\n        pass\n\n    def changed(self, hub: Hub):\n        return None\n        hub.coordinate()\n\nclass Hub:\n\n    def __init__(self, one: One, two: Two):\n        self.one = one\n        self.two = two\n\n    def coordinate(self):\n        return None\n        self.one.act()\n        self.two.act()\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-memento",
+    "rule": "memento",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Snapshot:\n\n    def __init__(self, state):\n        self.state = state\n\nclass Subject:\n\n    def __init__(self, state):\n        self.state = state\n\n    def save(self):\n        audit_metric = 1 + 2\n        return Snapshot(self.state)\n\n    def restore(self, snapshot: Snapshot):\n        audit_metric = 1 + 2\n        self.state = snapshot.state\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-memento",
+    "rule": "memento",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Snapshot:\n\n    def __init__(self, state):\n        self.state = state\n\nclass Subject:\n\n    def __init__(self, state):\n        self.state = state\n\n    def save(self):\n        return None\n        return Snapshot(self.state)\n\n    def restore(self, snapshot: Snapshot):\n        return None\n        self.state = snapshot.state\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-observer",
+    "rule": "observer",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n\n    def __init__(self):\n        self.listeners = []\n\n    def subscribe(self, listener):\n        audit_metric = 1 + 2\n        self.listeners.append(listener)\n\n    def notify(self):\n        audit_metric = 1 + 2\n        for listener in self.listeners:\n            listener.update()\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-observer",
+    "rule": "observer",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n\n    def __init__(self):\n        self.listeners = []\n\n    def subscribe(self, listener):\n        return None\n        self.listeners.append(listener)\n\n    def notify(self):\n        return None\n        for listener in self.listeners:\n            listener.update()\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-state",
+    "rule": "state",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Concrete(Contract):\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Subject:\n\n    def __init__(self, state: Contract):\n        self.state: Contract = state\n\n    def run(self):\n        audit_metric = 1 + 2\n        self.state.run()\n\n    def change(self):\n        audit_metric = 1 + 2\n        self.state = Concrete()\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-state",
+    "rule": "state",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n\n    def run(self):\n        return None\n        pass\n\nclass Concrete(Contract):\n\n    def run(self):\n        return None\n        pass\n\nclass Subject:\n\n    def __init__(self, state: Contract):\n        self.state: Contract = state\n\n    def run(self):\n        return None\n        self.state.run()\n\n    def change(self):\n        return None\n        self.state = Concrete()\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-strategy",
+    "rule": "strategy",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass First(Contract):\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Second(Contract):\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Subject:\n\n    def __init__(self, strategy: Contract):\n        self.strategy = strategy\n\n    def run(self):\n        audit_metric = 1 + 2\n        return self.strategy.run()\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-strategy",
+    "rule": "strategy",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n\n    def run(self):\n        return None\n        pass\n\nclass First(Contract):\n\n    def run(self):\n        return None\n        pass\n\nclass Second(Contract):\n\n    def run(self):\n        return None\n        pass\n\nclass Subject:\n\n    def __init__(self, strategy: Contract):\n        self.strategy = strategy\n\n    def run(self):\n        return None\n        return self.strategy.run()\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-template-method",
+    "rule": "template-method",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Base:\n\n    def run(self):\n        audit_metric = 1 + 2\n        self.step()\n\n    def step(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Subject(Base):\n\n    def step(self):\n        audit_metric = 1 + 2\n        print('step')\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-template-method",
+    "rule": "template-method",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Base:\n\n    def run(self):\n        return None\n        self.step()\n\n    def step(self):\n        return None\n        pass\n\nclass Subject(Base):\n\n    def step(self):\n        return None\n        print('step')\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "noise-visitor",
+    "rule": "visitor",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n\n    def accept(self, visitor: Visitor):\n        audit_metric = 1 + 2\n        visitor.visit(self)\n\nclass Visitor:\n\n    def visit(self, element: Subject):\n        audit_metric = 1 + 2\n        print(element)\n",
+    "expected": true,
+    "why": "Aritmética local independiente antes de cada método.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "dead-visitor",
+    "rule": "visitor",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Subject:\n\n    def accept(self, visitor: Visitor):\n        return None\n        visitor.visit(self)\n\nclass Visitor:\n\n    def visit(self, element: Subject):\n        return None\n        print(element)\n",
+    "expected": false,
+    "why": "Todos los métodos operativos retornan antes de ejecutar su algoritmo; constructores intactos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "modern-continuation-wrapper-python-control",
+    "rule": "architecture.continuation-wrapper",
+    "language": "python",
+    "source": "def wrap(next):\n def handler(x):\n  return next(x)\n return handler\n",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-continuation-wrapper-python-negative",
+    "rule": "architecture.continuation-wrapper",
+    "language": "python",
+    "source": "def wrap(next):\n def handler(x):\n  return other(x)\n return handler\n",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-continuation-wrapper-javascript-control",
+    "rule": "architecture.continuation-wrapper",
+    "language": "javascript",
+    "source": "function wrap(next) { return function(x) { return next(x); }; }",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-continuation-wrapper-javascript-negative",
+    "rule": "architecture.continuation-wrapper",
+    "language": "javascript",
+    "source": "function wrap(next) { return function(x) { return other(x); }; }",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-continuation-wrapper-typescript-control",
+    "rule": "architecture.continuation-wrapper",
+    "language": "typescript",
+    "source": "function wrap(next: (x: number) => number) { return function(x: number) { return next(x); }; }",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-continuation-wrapper-typescript-negative",
+    "rule": "architecture.continuation-wrapper",
+    "language": "typescript",
+    "source": "function wrap(next: (x: number) => number) { return function(x: number) { return other(x); }; }",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "noise-continuation-wrapper",
+    "rule": "architecture.continuation-wrapper",
+    "language": "python",
+    "source": "def wrap(next):\n    audit_metric = 1 + 2\n\n    def handler(x):\n        audit_metric = 1 + 2\n        return next(x)\n    return handler\n",
+    "expected": true,
+    "why": "Aritmética local sin efectos intercalada.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "modern-adapted-continuation-wrapper-python-control",
+    "rule": "architecture.adapted-continuation-wrapper",
+    "language": "python",
+    "source": "def wrap(next):\n def handler(request):\n  return next.handle(request)\n return adapt(handler)\n",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-adapted-continuation-wrapper-python-negative",
+    "rule": "architecture.adapted-continuation-wrapper",
+    "language": "python",
+    "source": "def wrap(next):\n def handler(request):\n  return other.handle(request)\n return adapt(handler)\n",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-adapted-continuation-wrapper-javascript-control",
+    "rule": "architecture.adapted-continuation-wrapper",
+    "language": "javascript",
+    "source": "function wrap(next) { return adapt(function(request) { return next.handle(request); }); }",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-adapted-continuation-wrapper-javascript-negative",
+    "rule": "architecture.adapted-continuation-wrapper",
+    "language": "javascript",
+    "source": "function wrap(next) { return adapt(function(request) { return other.handle(request); }); }",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-adapted-continuation-wrapper-typescript-control",
+    "rule": "architecture.adapted-continuation-wrapper",
+    "language": "typescript",
+    "source": "function wrap(next: Handler) { return adapt((request: Request) => next.handle(request)); }",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-adapted-continuation-wrapper-typescript-negative",
+    "rule": "architecture.adapted-continuation-wrapper",
+    "language": "typescript",
+    "source": "function wrap(next: Handler) { return adapt((request: Request) => other.handle(request)); }",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "noise-adapted-continuation-wrapper",
+    "rule": "architecture.adapted-continuation-wrapper",
+    "language": "python",
+    "source": "def wrap(next):\n    audit_metric = 1 + 2\n\n    def handler(request):\n        audit_metric = 1 + 2\n        return next.handle(request)\n    return adapt(handler)\n",
+    "expected": true,
+    "why": "Aritmética local sin efectos intercalada.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "modern-dependency-injection-python-control",
+    "rule": "architecture.dependency-injection",
+    "language": "python",
+    "source": "class Service:\n def run(self): pass\nclass Consumer:\n def configure(self, incoming: Service): self.dependency = incoming\n def handle(self): self.dependency.run()\n",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-dependency-injection-python-negative",
+    "rule": "architecture.dependency-injection",
+    "language": "python",
+    "source": "class Service:\n def run(self): pass\nclass Consumer:\n def configure(self, incoming: Service): self.dependency = incoming\n def handle(self): self.other.run()\n",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-dependency-injection-javascript-control",
+    "rule": "architecture.dependency-injection",
+    "language": "javascript",
+    "source": "class Service { run() {} }\nclass Consumer {\n configure(incoming) { this.dependency = incoming; }\n handle() { this.dependency.run(); }\n}",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-dependency-injection-javascript-negative",
+    "rule": "architecture.dependency-injection",
+    "language": "javascript",
+    "source": "class Service { run() {} }\nclass Consumer {\n configure(incoming) { this.dependency = incoming; }\n handle() { this.other.run(); }\n}",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-dependency-injection-typescript-control",
+    "rule": "architecture.dependency-injection",
+    "language": "typescript",
+    "source": "class Service { run(): void {} }\nclass Consumer {\n dependency: Service;\n configure(incoming: Service): void { this.dependency = incoming; }\n handle(): void { this.dependency.run(); }\n}",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-dependency-injection-typescript-negative",
+    "rule": "architecture.dependency-injection",
+    "language": "typescript",
+    "source": "class Service { run(): void {} }\nclass Consumer {\n dependency: Service;\n configure(incoming: Service): void { this.dependency = incoming; }\n handle(): void { this.other.run(); }\n}",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "noise-dependency-injection",
+    "rule": "architecture.dependency-injection",
+    "language": "python",
+    "source": "class Service:\n\n    def run(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Consumer:\n\n    def configure(self, incoming: Service):\n        audit_metric = 1 + 2\n        self.dependency = incoming\n\n    def handle(self):\n        audit_metric = 1 + 2\n        self.dependency.run()\n",
+    "expected": true,
+    "why": "Aritmética local sin efectos intercalada.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "modern-dispatch-table-python-control",
+    "rule": "architecture.dispatch-table",
+    "language": "python",
+    "source": "class Registry:\n def register(self, key, handler): self.table[key] = handler\n def dispatch(self, requested, data): return self.table[requested](data)\n",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-dispatch-table-python-negative",
+    "rule": "architecture.dispatch-table",
+    "language": "python",
+    "source": "class Registry:\n def register(self, key, handler): self.table[key] = handler\n def dispatch(self, requested, data): return self.other[requested](data)\n",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-dispatch-table-javascript-control",
+    "rule": "architecture.dispatch-table",
+    "language": "javascript",
+    "source": "class Registry { register(key, handler) { this.table[key] = handler; } dispatch(requested, data) { return this.table[requested](data); } }",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-dispatch-table-javascript-negative",
+    "rule": "architecture.dispatch-table",
+    "language": "javascript",
+    "source": "class Registry { register(key, handler) { this.table[key] = handler; } dispatch(requested, data) { return this.other[requested](data); } }",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-dispatch-table-typescript-control",
+    "rule": "architecture.dispatch-table",
+    "language": "typescript",
+    "source": "class Registry { table: Record<string, (x:number)=>number>; register(key:string, handler:(x:number)=>number) { this.table[key] = handler; } dispatch(requested:string, data:number) { return this.table[requested](data); } }",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-dispatch-table-typescript-negative",
+    "rule": "architecture.dispatch-table",
+    "language": "typescript",
+    "source": "class Registry { table: Record<string, (x:number)=>number>; register(key:string, handler:(x:number)=>number) { this.table[key] = handler; } dispatch(requested:string, data:number) { return this.other[requested](data); } }",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "noise-dispatch-table",
+    "rule": "architecture.dispatch-table",
+    "language": "python",
+    "source": "class Registry:\n\n    def register(self, key, handler):\n        audit_metric = 1 + 2\n        self.table[key] = handler\n\n    def dispatch(self, requested, data):\n        audit_metric = 1 + 2\n        return self.table[requested](data)\n",
+    "expected": true,
+    "why": "Aritmética local sin efectos intercalada.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "modern-exception-retry-python-control",
+    "rule": "resilience.exception-retry",
+    "language": "python",
+    "source": "def f():\n while True:\n  try:\n   return work()\n  except Error:\n   continue\n",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-exception-retry-python-negative",
+    "rule": "resilience.exception-retry",
+    "language": "python",
+    "source": "def f():\n while True:\n  try:\n   return work()\n  except Error:\n   break\n",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-exception-retry-javascript-control",
+    "rule": "resilience.exception-retry",
+    "language": "javascript",
+    "source": "function f(){for(;;){try{return work();}catch(e){continue;}}}",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-exception-retry-javascript-negative",
+    "rule": "resilience.exception-retry",
+    "language": "javascript",
+    "source": "function f(){for(;;){try{return work();}catch(e){break;}}}",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-exception-retry-typescript-control",
+    "rule": "resilience.exception-retry",
+    "language": "typescript",
+    "source": "function f(){for(;;){try{return work();}catch(e){continue;}}}",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-exception-retry-typescript-negative",
+    "rule": "resilience.exception-retry",
+    "language": "typescript",
+    "source": "function f(){for(;;){try{return work();}catch(e){break;}}}",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "noise-exception-retry",
+    "rule": "resilience.exception-retry",
+    "language": "python",
+    "source": "def f():\n    audit_metric = 1 + 2\n    while True:\n        try:\n            return work()\n        except Error:\n            continue\n",
+    "expected": true,
+    "why": "Aritmética local sin efectos intercalada.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "modern-subclass-factory-python-control",
+    "rule": "architecture.subclass-factory",
+    "language": "python",
+    "source": "def extend(base):\n class Derived(base):\n  def render(self): return 1\n return Derived\n",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-subclass-factory-python-negative",
+    "rule": "architecture.subclass-factory",
+    "language": "python",
+    "source": "def extend(base):\n class Derived(base):\n  def render(self): return 1\n return base\n",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-subclass-factory-javascript-control",
+    "rule": "architecture.subclass-factory",
+    "language": "javascript",
+    "source": "function extend(base){return class Derived extends base{render(){return 1;}};}",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-subclass-factory-javascript-negative",
+    "rule": "architecture.subclass-factory",
+    "language": "javascript",
+    "source": "function extend(base){const Result=class extends base{};return base;}",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-subclass-factory-typescript-control",
+    "rule": "architecture.subclass-factory",
+    "language": "typescript",
+    "source": "type Constructor=new(...args:any[])=>{};function extend<T extends Constructor>(base:T){return class Derived extends base{render(){return 1;}};}",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-subclass-factory-typescript-negative",
+    "rule": "architecture.subclass-factory",
+    "language": "typescript",
+    "source": "type Constructor=new(...args:any[])=>{};function extend<T extends Constructor>(base:T){const Result=class extends base{};return base;}",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "noise-subclass-factory",
+    "rule": "architecture.subclass-factory",
+    "language": "python",
+    "source": "def extend(base):\n    audit_metric = 1 + 2\n\n    class Derived(base):\n\n        def render(self):\n            audit_metric = 1 + 2\n            return 1\n    return Derived\n",
+    "expected": true,
+    "why": "Aritmética local sin efectos intercalada.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "modern-cache-aside-python-control",
+    "rule": "architecture.cache-aside",
+    "language": "python",
+    "source": "def fetch(cache, source, key):\n value = cache.get(key)\n if value is None:\n  value = source.load(key)\n  cache.set(key, value)\n return value\n",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-cache-aside-python-negative",
+    "rule": "architecture.cache-aside",
+    "language": "python",
+    "source": "def fetch(cache, source, key):\n value = cache.get(key)\n if value is None:\n  value = source.load(key)\n  value = None\n  cache.set(key, value)\n return value\n",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-cache-aside-javascript-control",
+    "rule": "architecture.cache-aside",
+    "language": "javascript",
+    "source": "function fetch(cache, source, key) { let value = cache.get(key); if (value === null) { value = source.load(key); cache.set(key, value); } return value; }",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-cache-aside-javascript-negative",
+    "rule": "architecture.cache-aside",
+    "language": "javascript",
+    "source": "function fetch(cache, source, key) { let value = cache.get(key); if (value === null) { value = source.load(key); value = null; cache.set(key, value); } return value; }",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-cache-aside-typescript-control",
+    "rule": "architecture.cache-aside",
+    "language": "typescript",
+    "source": "function fetch(cache: Cache, source: Store, key: string) { let value = cache.get(key); if (value === null) { value = source.load(key); cache.set(key, value); } return value; }",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-cache-aside-typescript-negative",
+    "rule": "architecture.cache-aside",
+    "language": "typescript",
+    "source": "function fetch(cache: Cache, source: Store, key: string) { let value = cache.get(key); if (value === null) { value = source.load(key); value = null; cache.set(key, value); } return value; }",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "noise-cache-aside",
+    "rule": "architecture.cache-aside",
+    "language": "python",
+    "source": "def fetch(cache, source, key):\n    audit_metric = 1 + 2\n    value = cache.get(key)\n    if value is None:\n        value = source.load(key)\n        cache.set(key, value)\n    return value\n",
+    "expected": true,
+    "why": "Aritmética local sin efectos intercalada.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "modern-read-through-cache-python-control",
+    "rule": "architecture.read-through-cache",
+    "language": "python",
+    "source": "class Memo: pass\nclass Provider:\n def __init__(self, external): self.cache=Memo()\n def read(self, source, key):\n  if self.cache.contains(key):\n   return self.cache.get(key)\n  value=source.load(key)\n  self.cache.set(key,value)\n  return value\n",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-read-through-cache-python-negative",
+    "rule": "architecture.read-through-cache",
+    "language": "python",
+    "source": "class Memo: pass\nclass Provider:\n def __init__(self, external): self.cache=Memo()\n def read(self, source, key):\n  if self.cache.contains(key):\n   return self.cache.get(key)\n  value=source.load(key)\n  self.cache.set(key,other)\n  return value\n",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-read-through-cache-javascript-control",
+    "rule": "architecture.read-through-cache",
+    "language": "javascript",
+    "source": "class Memo {} class Provider {\n constructor(external) {this.cache=new Memo();}\n read(source,key) {if(this.cache.contains(key)){return this.cache.get(key);}\n let value=source.load(key);this.cache.set(key,value);return value;}\n}",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-read-through-cache-javascript-negative",
+    "rule": "architecture.read-through-cache",
+    "language": "javascript",
+    "source": "class Memo {} class Provider {\n constructor(external) {this.cache=new Memo();}\n read(source,key) {if(this.cache.contains(key)){return this.cache.get(key);}\n let value=source.load(key);this.cache.set(key,other);return value;}\n}",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-read-through-cache-typescript-control",
+    "rule": "architecture.read-through-cache",
+    "language": "typescript",
+    "source": "class Memo {} class Provider {cache:Memo;\n constructor(external:Memo) {this.cache=new Memo();}\n read(source:Store,key:string) {if(this.cache.contains(key)){return this.cache.get(key);}\n let value=source.load(key);this.cache.set(key,value);return value;}\n}",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-read-through-cache-typescript-negative",
+    "rule": "architecture.read-through-cache",
+    "language": "typescript",
+    "source": "class Memo {} class Provider {cache:Memo;\n constructor(external:Memo) {this.cache=new Memo();}\n read(source:Store,key:string) {if(this.cache.contains(key)){return this.cache.get(key);}\n let value=source.load(key);this.cache.set(key,other);return value;}\n}",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "noise-read-through-cache",
+    "rule": "architecture.read-through-cache",
+    "language": "python",
+    "source": "class Memo:\n    pass\n\nclass Provider:\n\n    def __init__(self, external):\n        self.cache = Memo()\n\n    def read(self, source, key):\n        audit_metric = 1 + 2\n        if self.cache.contains(key):\n            return self.cache.get(key)\n        value = source.load(key)\n        self.cache.set(key, value)\n        return value\n",
+    "expected": true,
+    "why": "Aritmética local sin efectos intercalada.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "modern-batch-work-queue-python-control",
+    "rule": "architecture.batch-work-queue",
+    "language": "python",
+    "source": "class Action:\n def perform(self): pass\nclass Sink:\n def write(self, value): pass\nclass Job(Action):\n sink: Sink\n def __init__(self, sink: Sink, value: int):\n  self.sink = sink\n  self.value = value\n def perform(self):\n  self.sink.write(self.value)\nclass Queue:\n tasks: list[Action]\n other: list[Action]\n def __init__(self):\n  self.tasks = []\n  self.other = []\n def register(self, task: Action):\n  self.tasks.append(task)\n def consume(self):\n  for item in self.tasks:\n   item.perform()\n  self.tasks = []\ndef client(sink: Sink):\n queue = Queue()\n queue.register(Job(sink, 1))\n",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-batch-work-queue-python-negative",
+    "rule": "architecture.batch-work-queue",
+    "language": "python",
+    "source": "class Action:\n def perform(self): pass\nclass Sink:\n def write(self, value): pass\nclass Job(Action):\n sink: Sink\n def __init__(self, sink: Sink, value: int):\n  self.sink = sink\n  self.value = value\n def perform(self):\n  self.sink.write(self.value)\nclass Queue:\n tasks: list[Action]\n other: list[Action]\n def __init__(self):\n  self.tasks = []\n  self.other = []\n def register(self, task: Action):\n  self.tasks.append(task)\n def consume(self):\n  for item in self.tasks:\n   other.perform()\n  self.tasks = []\ndef client(sink: Sink):\n queue = Queue()\n queue.register(Job(sink, 1))\n",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-batch-work-queue-javascript-control",
+    "rule": "architecture.batch-work-queue",
+    "language": "javascript",
+    "source": "class Action { perform() {} }\nclass Sink { write(value) { } }\nclass Job extends Action { \n constructor(sink, value) { super(); this.sink = sink; this.value = value; }\n perform() { this.sink.write(this.value); }\n}\nclass Queue { \n constructor() {this.tasks=[]; this.other=[];}\n register(task) { this.tasks.push(task); }\n consume() { for (const item of this.tasks) { item.perform(); } this.tasks = []; }\n}\nfunction client(sink) { const queue = new Queue(); queue.register(new Job(sink, 1)); }\n",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-batch-work-queue-javascript-negative",
+    "rule": "architecture.batch-work-queue",
+    "language": "javascript",
+    "source": "class Action { perform() {} }\nclass Sink { write(value) { } }\nclass Job extends Action { \n constructor(sink, value) { super(); this.sink = sink; this.value = value; }\n perform() { this.sink.write(this.value); }\n}\nclass Queue { \n constructor() {this.tasks=[]; this.other=[];}\n register(task) { this.tasks.push(task); }\n consume() { for (const item of this.tasks) { other.perform(); } this.tasks = []; }\n}\nfunction client(sink) { const queue = new Queue(); queue.register(new Job(sink, 1)); }\n",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-batch-work-queue-typescript-control",
+    "rule": "architecture.batch-work-queue",
+    "language": "typescript",
+    "source": "interface Action { perform(): void; }\nclass Sink { write(value: number) { } }\nclass Job implements Action { sink: Sink; value: number;\n constructor(sink: Sink, value: number) { this.sink = sink; this.value = value; }\n perform() { this.sink.write(this.value); }\n}\nclass Queue { tasks: Action[]; other: Action[];\n constructor() {this.tasks=[]; this.other=[];}\n register(task: Action) { this.tasks.push(task); }\n consume() { for (const item of this.tasks) { item.perform(); } this.tasks = []; }\n}\nfunction client(sink) { const queue = new Queue(); queue.register(new Job(sink, 1)); }\n",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-batch-work-queue-typescript-negative",
+    "rule": "architecture.batch-work-queue",
+    "language": "typescript",
+    "source": "interface Action { perform(): void; }\nclass Sink { write(value: number) { } }\nclass Job implements Action { sink: Sink; value: number;\n constructor(sink: Sink, value: number) { this.sink = sink; this.value = value; }\n perform() { this.sink.write(this.value); }\n}\nclass Queue { tasks: Action[]; other: Action[];\n constructor() {this.tasks=[]; this.other=[];}\n register(task: Action) { this.tasks.push(task); }\n consume() { for (const item of this.tasks) { other.perform(); } this.tasks = []; }\n}\nfunction client(sink) { const queue = new Queue(); queue.register(new Job(sink, 1)); }\n",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "noise-batch-work-queue",
+    "rule": "architecture.batch-work-queue",
+    "language": "python",
+    "source": "class Action:\n\n    def perform(self):\n        audit_metric = 1 + 2\n        pass\n\nclass Sink:\n\n    def write(self, value):\n        audit_metric = 1 + 2\n        pass\n\nclass Job(Action):\n    sink: Sink\n\n    def __init__(self, sink: Sink, value: int):\n        self.sink = sink\n        self.value = value\n\n    def perform(self):\n        audit_metric = 1 + 2\n        self.sink.write(self.value)\n\nclass Queue:\n    tasks: list[Action]\n    other: list[Action]\n\n    def __init__(self):\n        self.tasks = []\n        self.other = []\n\n    def register(self, task: Action):\n        audit_metric = 1 + 2\n        self.tasks.append(task)\n\n    def consume(self):\n        audit_metric = 1 + 2\n        for item in self.tasks:\n            item.perform()\n        self.tasks = []\n\ndef client(sink: Sink):\n    audit_metric = 1 + 2\n    queue = Queue()\n    queue.register(Job(sink, 1))\n",
+    "expected": true,
+    "why": "Aritmética local sin efectos intercalada.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "modern-unit-of-work-python-control",
+    "rule": "persistence.unit-of-work",
+    "language": "python",
+    "source": "class Work:\n def __init__(self, store):\n  self.changes={}\n  self.store=store\n def register(self, entity, key):\n  batch=self.changes.get(key)\n  if batch is None: batch=[]\n  batch.append(entity)\n  self.changes[key]=batch\n def commit(self):\n  self.process_new()\n  self.process_old()\n def process_new(self):\n  batch=self.changes.get(\"new\")\n  for item in batch:\n   self.store.insert(item)\n def process_old(self):\n  batch=self.changes.get(\"old\")\n  for item in batch:\n   self.store.delete(item)\n",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-unit-of-work-python-negative",
+    "rule": "persistence.unit-of-work",
+    "language": "python",
+    "source": "class Work:\n def __init__(self, store):\n  self.changes={}\n  self.store=store\n def register(self, entity, key):\n  batch=self.changes.get(key)\n  if batch is None: batch=[]\n  batch.append(entity)\n  self.changes[key]=batch\n def commit(self):\n  self.process_new()\n  self.process_old()\n def process_new(self):\n  batch=self.changes.get(\"new\")\n  for item in batch:\n   self.store.insert(item)\n def process_old(self):\n  batch=self.changes.get(\"old\")\n  for item in batch:\n   self.store.delete(other)\n",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-unit-of-work-javascript-control",
+    "rule": "persistence.unit-of-work",
+    "language": "javascript",
+    "source": "class Work {\n constructor(store){this.store=store;this.changes=new Map();}\n register(entity,key){let batch=this.changes.get(key);if(batch==null){batch=[];}\n batch.push(entity);this.changes.set(key,batch);}\n commit(){this.process_new();this.process_old();}\n process_new(){const batch=this.changes.get(\"new\");for(const item of batch){this.store.insert(item);}}\n process_old(){const batch=this.changes.get(\"old\");for(const item of batch){this.store.delete(item);}}\n}",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-unit-of-work-javascript-negative",
+    "rule": "persistence.unit-of-work",
+    "language": "javascript",
+    "source": "class Work {\n constructor(store){this.store=store;this.changes=new Map();}\n register(entity,key){let batch=this.changes.get(key);if(batch==null){batch=[];}\n batch.push(entity);this.changes.set(key,batch);}\n commit(){this.process_new();this.process_old();}\n process_new(){const batch=this.changes.get(\"new\");for(const item of batch){this.store.insert(item);}}\n process_old(){const batch=this.changes.get(\"old\");for(const item of batch){this.store.delete(other);}}\n}",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-unit-of-work-typescript-control",
+    "rule": "persistence.unit-of-work",
+    "language": "typescript",
+    "source": "class Work {\n constructor(store){this.store=store;this.changes=new Map();}\n register(entity,key){let batch=this.changes.get(key);if(batch==null){batch=[];}\n batch.push(entity);this.changes.set(key,batch);}\n commit(){this.process_new();this.process_old();}\n process_new(){const batch=this.changes.get(\"new\");for(const item of batch){this.store.insert(item);}}\n process_old(){const batch=this.changes.get(\"old\");for(const item of batch){this.store.delete(item);}}\n}",
+    "expected": true,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "modern-unit-of-work-typescript-negative",
+    "rule": "persistence.unit-of-work",
+    "language": "typescript",
+    "source": "class Work {\n constructor(store){this.store=store;this.changes=new Map();}\n register(entity,key){let batch=this.changes.get(key);if(batch==null){batch=[];}\n batch.push(entity);this.changes.set(key,batch);}\n commit(){this.process_new();this.process_old();}\n process_new(){const batch=this.changes.get(\"new\");for(const item of batch){this.store.insert(item);}}\n process_old(){const batch=this.changes.get(\"old\");for(const item of batch){this.store.delete(other);}}\n}",
+    "expected": false,
+    "why": "Control de contraste existente.",
+    "variant": null,
+    "kind": "control"
+  },
+  {
+    "id": "noise-unit-of-work",
+    "rule": "persistence.unit-of-work",
+    "language": "python",
+    "source": "class Work:\n\n    def __init__(self, store):\n        self.changes = {}\n        self.store = store\n\n    def register(self, entity, key):\n        audit_metric = 1 + 2\n        batch = self.changes.get(key)\n        if batch is None:\n            batch = []\n        batch.append(entity)\n        self.changes[key] = batch\n\n    def commit(self):\n        audit_metric = 1 + 2\n        self.process_new()\n        self.process_old()\n\n    def process_new(self):\n        audit_metric = 1 + 2\n        batch = self.changes.get('new')\n        for item in batch:\n            self.store.insert(item)\n\n    def process_old(self):\n        audit_metric = 1 + 2\n        batch = self.changes.get('old')\n        for item in batch:\n            self.store.delete(item)\n",
+    "expected": true,
+    "why": "Aritmética local sin efectos intercalada.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "remote-control-python",
+    "rule": "proxy",
+    "language": "python",
+    "source": "class Service:\n    def call(self, payload):\n        pass\n\n\nclass JsonCodec:\n    def encode(self, value):\n        return \"{}\"\n\n    def decode(self, text):\n        return None\n\n\nclass HttpClient:\n    def post(self, url, body):\n        return \"\"\n\n\nclass RemoteService(Service):\n    def __init__(self, client: HttpClient, codec: JsonCodec):\n        self.client = client\n        self.codec = codec\n\n    def call(self, payload):\n        response = self.client.post(\"/api\", self.codec.encode(payload))\n        return self.codec.decode(response)\n",
+    "expected": true,
+    "why": "Control de implementación local de transporte.",
+    "variant": "remote-subject",
+    "kind": "control"
+  },
+  {
+    "id": "remote-unrelated-response-python",
+    "rule": "proxy",
+    "language": "python",
+    "source": "class Service:\n    def call(self, payload):\n        pass\n\n\nclass JsonCodec:\n    def encode(self, value):\n        return \"{}\"\n\n    def decode(self, text):\n        return None\n\n\nclass HttpClient:\n    def post(self, url, body):\n        return \"\"\n\n\nclass RemoteService(Service):\n    def __init__(self, client: HttpClient, codec: JsonCodec):\n        self.client = client\n        self.codec = codec\n\n    def call(self, payload):\n        response = self.client.post(\"/api\", self.codec.encode(payload))\n        return self.codec.decode(\"unrelated\")\n",
+    "expected": false,
+    "why": "Se retorna decode de una constante; la respuesta del transporte nunca llega al resultado.",
+    "variant": "remote-subject",
+    "kind": "contract"
+  },
+  {
+    "id": "remote-control-javascript",
+    "rule": "proxy",
+    "language": "javascript",
+    "source": "class Service { call(payload) { } }\n\nclass JsonCodec {\n  encode(value) { return \"{}\"; }\n  decode(text) { return null; }\n}\n\nclass HttpClient { post(url, body) { return \"\"; } }\n\nclass RemoteService extends Service {\n  constructor(client, codec) { super(); this.client = new HttpClient(); this.codec = new JsonCodec(); }\n  call(payload) {\n    const response = this.client.post(\"/api\", this.codec.encode(payload));\n    return this.codec.decode(response);\n  }\n}\n",
+    "expected": true,
+    "why": "Control de implementación local de transporte.",
+    "variant": "remote-subject",
+    "kind": "control"
+  },
+  {
+    "id": "remote-unrelated-response-javascript",
+    "rule": "proxy",
+    "language": "javascript",
+    "source": "class Service { call(payload) { } }\n\nclass JsonCodec {\n  encode(value) { return \"{}\"; }\n  decode(text) { return null; }\n}\n\nclass HttpClient { post(url, body) { return \"\"; } }\n\nclass RemoteService extends Service {\n  constructor(client, codec) { super(); this.client = new HttpClient(); this.codec = new JsonCodec(); }\n  call(payload) {\n    const response = this.client.post(\"/api\", this.codec.encode(payload));\n    return this.codec.decode(\"unrelated\");\n  }\n}\n",
+    "expected": false,
+    "why": "Se retorna decode de una constante; la respuesta del transporte nunca llega al resultado.",
+    "variant": "remote-subject",
+    "kind": "contract"
+  },
+  {
+    "id": "remote-control-typescript",
+    "rule": "proxy",
+    "language": "typescript",
+    "source": "class Service { call(payload) { } }\n\nclass JsonCodec {\n  encode(value) { return \"{}\"; }\n  decode(text) { return null; }\n}\n\nclass HttpClient { post(url, body) { return \"\"; } }\n\nclass RemoteService extends Service {\n  client: HttpClient;\n  codec: JsonCodec;\n  constructor(client: HttpClient, codec: JsonCodec) { super(); this.client = client; this.codec = codec; }\n  call(payload) {\n    const response = this.client.post(\"/api\", this.codec.encode(payload));\n    return this.codec.decode(response);\n  }\n}\n",
+    "expected": true,
+    "why": "Control de implementación local de transporte.",
+    "variant": "remote-subject",
+    "kind": "control"
+  },
+  {
+    "id": "remote-unrelated-response-typescript",
+    "rule": "proxy",
+    "language": "typescript",
+    "source": "class Service { call(payload) { } }\n\nclass JsonCodec {\n  encode(value) { return \"{}\"; }\n  decode(text) { return null; }\n}\n\nclass HttpClient { post(url, body) { return \"\"; } }\n\nclass RemoteService extends Service {\n  client: HttpClient;\n  codec: JsonCodec;\n  constructor(client: HttpClient, codec: JsonCodec) { super(); this.client = client; this.codec = codec; }\n  call(payload) {\n    const response = this.client.post(\"/api\", this.codec.encode(payload));\n    return this.codec.decode(\"unrelated\");\n  }\n}\n",
+    "expected": false,
+    "why": "Se retorna decode de una constante; la respuesta del transporte nunca llega al resultado.",
+    "variant": "remote-subject",
+    "kind": "contract"
+  },
+  {
+    "id": "remote-control-java",
+    "rule": "proxy",
+    "language": "java",
+    "source": "class Service { String call(String payload) { return null; } }\n\nclass JsonCodec {\n  String encode(String value) { return \"{}\"; }\n  String decode(String text) { return null; }\n}\n\nclass HttpClient { String post(String url, String body) { return \"\"; } }\n\nclass RemoteService extends Service {\n    private HttpClient client;\n    private JsonCodec codec;\n    RemoteService(HttpClient client, JsonCodec codec) { this.client = client; this.codec = codec; }\n    String call(String payload) {\n        String response = client.post(\"/api\", codec.encode(payload));\n        return codec.decode(response);\n    }\n}\n",
+    "expected": true,
+    "why": "Control de implementación local de transporte.",
+    "variant": "remote-subject",
+    "kind": "control"
+  },
+  {
+    "id": "remote-unrelated-response-java",
+    "rule": "proxy",
+    "language": "java",
+    "source": "class Service { String call(String payload) { return null; } }\n\nclass JsonCodec {\n  String encode(String value) { return \"{}\"; }\n  String decode(String text) { return null; }\n}\n\nclass HttpClient { String post(String url, String body) { return \"\"; } }\n\nclass RemoteService extends Service {\n    private HttpClient client;\n    private JsonCodec codec;\n    RemoteService(HttpClient client, JsonCodec codec) { this.client = client; this.codec = codec; }\n    String call(String payload) {\n        String response = client.post(\"/api\", codec.encode(payload));\n        return codec.decode(\"unrelated\");\n    }\n}\n",
+    "expected": false,
+    "why": "Se retorna decode de una constante; la respuesta del transporte nunca llega al resultado.",
+    "variant": "remote-subject",
+    "kind": "contract"
+  },
+  {
+    "id": "remote-control-csharp",
+    "rule": "proxy",
+    "language": "csharp",
+    "source": "class Service { public virtual string call(string payload) { return null; } }\n\nclass JsonCodec {\n  public string Encode(string value) { return \"{}\"; }\n  public string Decode(string text) { return null; }\n}\n\nclass HttpClient { public string Post(string url, string body) { return \"\"; } }\n\nclass RemoteService : Service {\n    private readonly HttpClient client;\n    private readonly JsonCodec codec;\n    public RemoteService(HttpClient client, JsonCodec codec) { this.client = client; this.codec = codec; }\n    public override string call(string payload) {\n        string response = client.Post(\"/api\", codec.Encode(payload));\n        return codec.Decode(response);\n    }\n}\n",
+    "expected": true,
+    "why": "Control de implementación local de transporte.",
+    "variant": "remote-subject",
+    "kind": "control"
+  },
+  {
+    "id": "remote-unrelated-response-csharp",
+    "rule": "proxy",
+    "language": "csharp",
+    "source": "class Service { public virtual string call(string payload) { return null; } }\n\nclass JsonCodec {\n  public string Encode(string value) { return \"{}\"; }\n  public string Decode(string text) { return null; }\n}\n\nclass HttpClient { public string Post(string url, string body) { return \"\"; } }\n\nclass RemoteService : Service {\n    private readonly HttpClient client;\n    private readonly JsonCodec codec;\n    public RemoteService(HttpClient client, JsonCodec codec) { this.client = client; this.codec = codec; }\n    public override string call(string payload) {\n        string response = client.Post(\"/api\", codec.Encode(payload));\n        return codec.Decode(\"unrelated\");\n    }\n}\n",
+    "expected": false,
+    "why": "Se retorna decode de una constante; la respuesta del transporte nunca llega al resultado.",
+    "variant": "remote-subject",
+    "kind": "contract"
+  },
+  {
+    "id": "remote-control-cpp",
+    "rule": "proxy",
+    "language": "cpp",
+    "source": "#include <string>\n\nclass Service { public: virtual int call(int payload) { return 0; } };\n\nclass JsonCodec {\npublic:\n    int encode(int value) { return 0; }\n    int decode(int text) { return 0; }\n};\n\nclass HttpClient { public: int post(std::string url, int body) { return 0; } };\n\nclass RemoteService : public Service {\n    HttpClient* client;\n    JsonCodec* codec;\npublic:\n    RemoteService(HttpClient* a, JsonCodec* b) : client(a), codec(b) {}\n    int call(int payload) override {\n        int response = client->post(\"/api\", codec->encode(payload));\n        return codec->decode(response);\n    }\n};\n",
+    "expected": true,
+    "why": "Control de implementación local de transporte.",
+    "variant": "remote-subject",
+    "kind": "control"
+  },
+  {
+    "id": "remote-unrelated-response-cpp",
+    "rule": "proxy",
+    "language": "cpp",
+    "source": "#include <string>\n\nclass Service { public: virtual int call(int payload) { return 0; } };\n\nclass JsonCodec {\npublic:\n    int encode(int value) { return 0; }\n    int decode(int text) { return 0; }\n};\n\nclass HttpClient { public: int post(std::string url, int body) { return 0; } };\n\nclass RemoteService : public Service {\n    HttpClient* client;\n    JsonCodec* codec;\npublic:\n    RemoteService(HttpClient* a, JsonCodec* b) : client(a), codec(b) {}\n    int call(int payload) override {\n        int response = client->post(\"/api\", codec->encode(payload));\n        return codec->decode(\"unrelated\");\n    }\n};\n",
+    "expected": false,
+    "why": "Se retorna decode de una constante; la respuesta del transporte nunca llega al resultado.",
+    "variant": "remote-subject",
+    "kind": "contract"
+  },
+  {
+    "id": "remote-control-go",
+    "rule": "proxy",
+    "language": "go",
+    "source": "package remote\n\ntype Service interface{ Call(payload string) string }\n\ntype JsonCodec struct{}\nfunc (JsonCodec) Encode(value string) string { return \"{}\" }\nfunc (JsonCodec) Decode(text string) string { return \"\" }\n\ntype HttpClient struct{}\nfunc (HttpClient) Post(url string, body string) string { return \"\" }\n\ntype RemoteService struct {\n\tclient HttpClient\n\tcodec JsonCodec\n}\n\nfunc (r RemoteService) Call(payload string) string {\n\tresponse := r.client.Post(\"/api\", r.codec.Encode(payload))\n\treturn r.codec.Decode(response)\n}\n",
+    "expected": true,
+    "why": "Control de implementación local de transporte.",
+    "variant": "remote-subject",
+    "kind": "control"
+  },
+  {
+    "id": "remote-unrelated-response-go",
+    "rule": "proxy",
+    "language": "go",
+    "source": "package remote\n\ntype Service interface{ Call(payload string) string }\n\ntype JsonCodec struct{}\nfunc (JsonCodec) Encode(value string) string { return \"{}\" }\nfunc (JsonCodec) Decode(text string) string { return \"\" }\n\ntype HttpClient struct{}\nfunc (HttpClient) Post(url string, body string) string { return \"\" }\n\ntype RemoteService struct {\n\tclient HttpClient\n\tcodec JsonCodec\n}\n\nfunc (r RemoteService) Call(payload string) string {\n\tresponse := r.client.Post(\"/api\", r.codec.Encode(payload))\n\treturn r.codec.Decode(\"unrelated\")\n}\n",
+    "expected": false,
+    "why": "Se retorna decode de una constante; la respuesta del transporte nunca llega al resultado.",
+    "variant": "remote-subject",
+    "kind": "contract"
+  },
+  {
+    "id": "remote-control-rust",
+    "rule": "proxy",
+    "language": "rust",
+    "source": "struct JsonCodec;\n\nimpl JsonCodec {\n    fn encode(&self, value: &str) -> String { String::from(\"{}\") }\n    fn decode(&self, text: &str) -> String { String::new() }\n}\n\nstruct HttpClient;\n\nimpl HttpClient {\n    fn post(&self, url: &str, body: String) -> String { String::new() }\n}\n\ntrait Service { fn call(&self, payload: &str) -> String; }\n\nstruct RemoteService { client: HttpClient, codec: JsonCodec }\n\nimpl Service for RemoteService {\n    fn call(&self, payload: &str) -> String {\n        let response = self.client.post(\"/api\", self.codec.encode(payload));\n        return self.codec.decode(&response);\n    }\n}\n",
+    "expected": true,
+    "why": "Control de implementación local de transporte.",
+    "variant": "remote-subject",
+    "kind": "control"
+  },
+  {
+    "id": "adapter-ignores-request-python",
+    "rule": "adapter",
+    "language": "python",
+    "source": "def adapt(inner):\n    def wrapped(pair):\n        return inner([10, 20][0], [10, 20][1])\n    return wrapped\n",
+    "expected": false,
+    "why": "La conversión no lee el parámetro declarado; los dos índices pertenecen a una colección ajena.",
+    "variant": "functional-adapter",
+    "kind": "contract"
+  },
+  {
+    "id": "adapter-ignores-request-javascript",
+    "rule": "adapter",
+    "language": "javascript",
+    "source": "function adapt(inner) {\n  return function wrapped(pair) {\n    return inner([10, 20][0], [10, 20][1]);\n  };\n}\n",
+    "expected": false,
+    "why": "La conversión no lee el parámetro declarado; los dos índices pertenecen a una colección ajena.",
+    "variant": "functional-adapter",
+    "kind": "contract"
+  },
+  {
+    "id": "adapter-ignores-request-typescript",
+    "rule": "adapter",
+    "language": "typescript",
+    "source": "function adapt(inner: (a: number, b: number) => number): (pair: number[]) => number {\n  return function wrapped(pair: number[]): number {\n    return inner([10, 20][0], [10, 20][1]);\n  };\n}\n",
+    "expected": false,
+    "why": "La conversión no lee el parámetro declarado; los dos índices pertenecen a una colección ajena.",
+    "variant": "functional-adapter",
+    "kind": "contract"
+  },
+  {
+    "id": "immutable-control-python",
+    "rule": "builder",
+    "language": "python",
+    "source": "class Product:\n    def __init__(self, name, size):\n        self.name = name\n        self.size = size\nclass Builder:\n    def __init__(self, name, size):\n        self.name = name\n        self.size = size\n    def with_name(self, name):\n        return Builder(name, self.size)\n    def build(self):\n        return Product(self.name, self.size)\n",
+    "expected": true,
+    "why": "Control de sucesor que conserva estado.",
+    "variant": "immutable-product",
+    "kind": "control"
+  },
+  {
+    "id": "immutable-disconnected-copy-python",
+    "rule": "builder",
+    "language": "python",
+    "source": "class Product:\n    def __init__(self, name, size):\n        self.name = name\n        self.size = size\nclass Builder:\n    def __init__(self, name, size):\n        self.name = name\n        self.size = size\n    def with_name(self, name):\n        print(name, self.size)\n        return Builder(0, 0)\n    def build(self):\n        return Product(self.name, self.size)\n",
+    "expected": false,
+    "why": "El constructor devuelto descarta el input y estado; sólo una llamada de logging los recibe.",
+    "variant": "immutable-product",
+    "kind": "contract"
+  },
+  {
+    "id": "immutable-control-javascript",
+    "rule": "builder",
+    "language": "javascript",
+    "source": "class Product {\n  constructor(name, size) { this.name = name; this.size = size; }\n}\nclass Builder {\n  constructor(name, size) { this.name = name; this.size = size; }\n  withName(name) { return new Builder(name, this.size); }\n  build() { return new Product(this.name, this.size); }\n}\n",
+    "expected": true,
+    "why": "Control de sucesor que conserva estado.",
+    "variant": "immutable-product",
+    "kind": "control"
+  },
+  {
+    "id": "immutable-disconnected-copy-javascript",
+    "rule": "builder",
+    "language": "javascript",
+    "source": "function audit(a,b) {}\nclass Product {\n  constructor(name, size) { this.name = name; this.size = size; }\n}\nclass Builder {\n  constructor(name, size) { this.name = name; this.size = size; }\n  withName(name) { audit(name, this.size); return new Builder(0, 0); }\n  build() { return new Product(this.name, this.size); }\n}\n",
+    "expected": false,
+    "why": "El constructor devuelto descarta el input y estado; sólo una llamada de logging los recibe.",
+    "variant": "immutable-product",
+    "kind": "contract"
+  },
+  {
+    "id": "immutable-control-typescript",
+    "rule": "builder",
+    "language": "typescript",
+    "source": "class Product {\n  constructor(public name: number, public size: number) {}\n}\nclass Builder {\n  constructor(public name: number, public size: number) {}\n  withName(name: number): Builder { return new Builder(name, this.size); }\n  build(): Product { return new Product(this.name, this.size); }\n}\n",
+    "expected": true,
+    "why": "Control de sucesor que conserva estado.",
+    "variant": "immutable-product",
+    "kind": "control"
+  },
+  {
+    "id": "immutable-disconnected-copy-typescript",
+    "rule": "builder",
+    "language": "typescript",
+    "source": "function audit(a,b) {}\nclass Product {\n  constructor(public name: number, public size: number) {}\n}\nclass Builder {\n  constructor(public name: number, public size: number) {}\n  withName(name: number): Builder { audit(name, this.size); return new Builder(0, 0); }\n  build(): Product { return new Product(this.name, this.size); }\n}\n",
+    "expected": false,
+    "why": "El constructor devuelto descarta el input y estado; sólo una llamada de logging los recibe.",
+    "variant": "immutable-product",
+    "kind": "contract"
+  },
+  {
+    "id": "immutable-control-java",
+    "rule": "builder",
+    "language": "java",
+    "source": "class Product { Product(int name, int size) {} }\nclass Builder {\n  int name; int size;\n  Builder(int name, int size) { this.name = name; this.size = size; }\n  Builder withName(int name) { return new Builder(name, this.size); }\n  Product build() { return new Product(this.name, this.size); }\n}\n",
+    "expected": true,
+    "why": "Control de sucesor que conserva estado.",
+    "variant": "immutable-product",
+    "kind": "control"
+  },
+  {
+    "id": "immutable-control-csharp",
+    "rule": "builder",
+    "language": "csharp",
+    "source": "class Product { public Product(int name, int size) {} }\nclass Builder {\n  int name; int size;\n  public Builder(int name, int size) { this.name = name; this.size = size; }\n  public Builder WithName(int name) { return new Builder(name, this.size); }\n  public Product Build() { return new Product(this.name, this.size); }\n}\n",
+    "expected": true,
+    "why": "Control de sucesor que conserva estado.",
+    "variant": "immutable-product",
+    "kind": "control"
+  },
+  {
+    "id": "once-java-control",
+    "rule": "singleton",
+    "language": "java",
+    "source": "import java.util.concurrent.atomic.AtomicReference;\n\nclass Config { int value = 1; }\n\npublic final class Holder {\n    private static final AtomicReference<Config> guard = new AtomicReference<>(null);\n    public static Config current() {\n        return guard.updateAndGet(prev -> prev != null ? prev : new Config());\n    }\n}\n",
+    "expected": true,
+    "why": "Control del CAS que conserva prev si existe.",
+    "variant": "once-primitive",
+    "kind": "control"
+  },
+  {
+    "id": "once-java-always-new",
+    "rule": "singleton",
+    "language": "java",
+    "source": "import java.util.concurrent.atomic.AtomicReference;\n\nclass Config { int value = 1; }\n\npublic final class Holder {\n    private static final AtomicReference<Config> guard = new AtomicReference<>(null);\n    public static Config current() {\n        return guard.updateAndGet(prev -> new Config());\n    }\n}\n",
+    "expected": false,
+    "why": "AtomicReference.updateAndGet aplica una actualización en cada acceso: siempre sustituye por una instancia nueva.",
+    "variant": "once-primitive",
+    "kind": "contract"
+  },
+  {
+    "id": "serialized-control-python",
+    "rule": "memento",
+    "language": "python",
+    "source": "import json\n\nclass Editor:\n    def __init__(self):\n        self.state = \"\"\n\n    def snapshot(self):\n        return json.dumps(self.state)\n\n    def restore(self, payload):\n        self.state = json.loads(payload)\n",
+    "expected": true,
+    "why": "Control del codec.",
+    "variant": "serialized-snapshot",
+    "kind": "control"
+  },
+  {
+    "id": "serialized-discards-snapshot",
+    "rule": "memento",
+    "language": "python",
+    "source": "import json\n\nclass Editor:\n\n    def __init__(self):\n        self.state = ''\n\n    def snapshot(self):\n        json.dumps(self.state)\n        return 'discarded'\n\n    def restore(self, payload):\n        self.state = json.loads(payload)\n",
+    "expected": false,
+    "why": "save descarta el resultado del encoder y retorna una constante que no codifica el estado.",
+    "variant": "serialized-snapshot",
+    "kind": "contract"
+  },
+  {
+    "id": "serialized-control-javascript",
+    "rule": "memento",
+    "language": "javascript",
+    "source": "class Editor {\n  constructor() { this.state = \"\"; }\n  snapshot() { return JSON.stringify(this.state); }\n  restore(payload) { this.state = JSON.parse(payload); }\n}\n",
+    "expected": true,
+    "why": "Control del codec.",
+    "variant": "serialized-snapshot",
+    "kind": "control"
+  },
+  {
+    "id": "serialized-control-typescript",
+    "rule": "memento",
+    "language": "typescript",
+    "source": "class Editor {\n  private state: string = \"\";\n  snapshot(): string { return JSON.stringify(this.state); }\n  restore(payload: string): void { this.state = JSON.parse(payload); }\n}\n",
+    "expected": true,
+    "why": "Control del codec.",
+    "variant": "serialized-snapshot",
+    "kind": "control"
+  },
+  {
+    "id": "async-yield-no-await",
+    "rule": "iterator",
+    "language": "python",
+    "source": "async def numbers():\n yield 1\nasync def consume():\n async for n in numbers():\n  print(n)\n",
+    "expected": true,
+    "why": "Un async generator es válido sin await explícito; async for consume su protocolo.",
+    "variant": "async-iterator",
+    "kind": "contract"
+  },
+  {
+    "id": "go-callback-correct",
+    "rule": "iterator",
+    "language": "go",
+    "source": "package p\nfunc Items(yield func(int) bool) {\n for _, x := range []int{1,2} {\n  if !yield(x) { return }\n }\n}\n",
+    "expected": true,
+    "why": "Go range-function exige dejar de invocar yield cuando devuelve false.",
+    "variant": "callback-iterator",
+    "kind": "control"
+  },
+  {
+    "id": "go-callback-wrong-polarity",
+    "rule": "iterator",
+    "language": "go",
+    "source": "package p\nfunc Items(yield func(int) bool) {\n for _, x := range []int{1,2} {\n  if yield(x) { return }\n }\n}\n",
+    "expected": false,
+    "why": "Go range-function exige dejar de invocar yield cuando devuelve false.",
+    "variant": "callback-iterator",
+    "kind": "protocol"
+  },
+  {
+    "id": "bridge-generic-T",
+    "rule": "bridge",
+    "language": "typescript",
+    "source": "interface Driver { run(): number; }\nclass Box<T extends Driver> { constructor(private driver:T) {} run() { return this.driver.run(); } }\nclass Unrelated<T> {}\n",
+    "expected": false,
+    "why": "Un tipo genérico ajeno comparte o no el spelling T; no crea otra dimensión de Bridge.",
+    "variant": "generic-composition",
+    "kind": "behavioral"
+  },
+  {
+    "id": "bridge-generic-U",
+    "rule": "bridge",
+    "language": "typescript",
+    "source": "interface Driver { run(): number; }\nclass Box<T extends Driver> { constructor(private driver:T) {} run() { return this.driver.run(); } }\nclass Unrelated<U> {}\n",
+    "expected": false,
+    "why": "Un tipo genérico ajeno comparte o no el spelling T; no crea otra dimensión de Bridge.",
+    "variant": "generic-composition",
+    "kind": "behavioral"
+  },
+  {
+    "id": "facade-basic-arithmetic",
+    "rule": "facade",
+    "language": "python",
+    "source": "def increment(x): return x+1\ndef double(x): return 2*x\ndef calculate(x): return double(increment(x))\n",
+    "expected": false,
+    "why": "Composición aritmética sin subsistemas ni frontera de API.",
+    "variant": "module-surface",
+    "kind": "behavioral"
+  },
+  {
+    "id": "decorator-pass-through",
+    "rule": "decorator",
+    "language": "python",
+    "source": "def identity(inner):\n def wrapper(value):\n  return inner(value)\n return wrapper\n",
+    "expected": false,
+    "why": "Wrapper transparente sin responsabilidad añadida.",
+    "variant": "callable-wrapper",
+    "kind": "behavioral"
+  },
+  {
+    "id": "prototype-discarded-copy",
+    "rule": "prototype",
+    "language": "python",
+    "source": "import copy\nclass Sample:\n def operation(self):\n  copy.copy(self)\n  return 0\n",
+    "expected": false,
+    "why": "Se descarta la copia y no existe operación que devuelva el clon.",
+    "variant": "language-copy",
+    "kind": "contract"
+  },
+  {
+    "id": "long-noise-cache-aside",
+    "rule": "architecture.cache-aside",
+    "language": "python",
+    "source": "def fetch(cache, source, key):\n    audit_0 = 1 + 2\n    audit_1 = 1 + 2\n    audit_2 = 1 + 2\n    audit_3 = 1 + 2\n    audit_4 = 1 + 2\n    audit_5 = 1 + 2\n    audit_6 = 1 + 2\n    audit_7 = 1 + 2\n    audit_8 = 1 + 2\n    audit_9 = 1 + 2\n    audit_10 = 1 + 2\n    audit_11 = 1 + 2\n    audit_12 = 1 + 2\n    audit_13 = 1 + 2\n    audit_14 = 1 + 2\n    audit_15 = 1 + 2\n    audit_16 = 1 + 2\n    audit_17 = 1 + 2\n    audit_18 = 1 + 2\n    audit_19 = 1 + 2\n    value = cache.get(key)\n    audit_0 = 1 + 2\n    audit_1 = 1 + 2\n    audit_2 = 1 + 2\n    audit_3 = 1 + 2\n    audit_4 = 1 + 2\n    audit_5 = 1 + 2\n    audit_6 = 1 + 2\n    audit_7 = 1 + 2\n    audit_8 = 1 + 2\n    audit_9 = 1 + 2\n    audit_10 = 1 + 2\n    audit_11 = 1 + 2\n    audit_12 = 1 + 2\n    audit_13 = 1 + 2\n    audit_14 = 1 + 2\n    audit_15 = 1 + 2\n    audit_16 = 1 + 2\n    audit_17 = 1 + 2\n    audit_18 = 1 + 2\n    audit_19 = 1 + 2\n    if value is None:\n        value = source.load(key)\n        cache.set(key, value)\n    audit_0 = 1 + 2\n    audit_1 = 1 + 2\n    audit_2 = 1 + 2\n    audit_3 = 1 + 2\n    audit_4 = 1 + 2\n    audit_5 = 1 + 2\n    audit_6 = 1 + 2\n    audit_7 = 1 + 2\n    audit_8 = 1 + 2\n    audit_9 = 1 + 2\n    audit_10 = 1 + 2\n    audit_11 = 1 + 2\n    audit_12 = 1 + 2\n    audit_13 = 1 + 2\n    audit_14 = 1 + 2\n    audit_15 = 1 + 2\n    audit_16 = 1 + 2\n    audit_17 = 1 + 2\n    audit_18 = 1 + 2\n    audit_19 = 1 + 2\n    return value\n",
+    "expected": true,
+    "why": "20 asignaciones independientes entre statements exceden un path CFG{...,16} sin cambiar el algoritmo.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "long-noise-read-through-cache",
+    "rule": "architecture.read-through-cache",
+    "language": "python",
+    "source": "class Memo:\n    pass\n\nclass Provider:\n\n    def __init__(self, external):\n        self.cache = Memo()\n\n    def read(self, source, key):\n        audit_0 = 1 + 2\n        audit_1 = 1 + 2\n        audit_2 = 1 + 2\n        audit_3 = 1 + 2\n        audit_4 = 1 + 2\n        audit_5 = 1 + 2\n        audit_6 = 1 + 2\n        audit_7 = 1 + 2\n        audit_8 = 1 + 2\n        audit_9 = 1 + 2\n        audit_10 = 1 + 2\n        audit_11 = 1 + 2\n        audit_12 = 1 + 2\n        audit_13 = 1 + 2\n        audit_14 = 1 + 2\n        audit_15 = 1 + 2\n        audit_16 = 1 + 2\n        audit_17 = 1 + 2\n        audit_18 = 1 + 2\n        audit_19 = 1 + 2\n        if self.cache.contains(key):\n            return self.cache.get(key)\n        audit_0 = 1 + 2\n        audit_1 = 1 + 2\n        audit_2 = 1 + 2\n        audit_3 = 1 + 2\n        audit_4 = 1 + 2\n        audit_5 = 1 + 2\n        audit_6 = 1 + 2\n        audit_7 = 1 + 2\n        audit_8 = 1 + 2\n        audit_9 = 1 + 2\n        audit_10 = 1 + 2\n        audit_11 = 1 + 2\n        audit_12 = 1 + 2\n        audit_13 = 1 + 2\n        audit_14 = 1 + 2\n        audit_15 = 1 + 2\n        audit_16 = 1 + 2\n        audit_17 = 1 + 2\n        audit_18 = 1 + 2\n        audit_19 = 1 + 2\n        value = source.load(key)\n        audit_0 = 1 + 2\n        audit_1 = 1 + 2\n        audit_2 = 1 + 2\n        audit_3 = 1 + 2\n        audit_4 = 1 + 2\n        audit_5 = 1 + 2\n        audit_6 = 1 + 2\n        audit_7 = 1 + 2\n        audit_8 = 1 + 2\n        audit_9 = 1 + 2\n        audit_10 = 1 + 2\n        audit_11 = 1 + 2\n        audit_12 = 1 + 2\n        audit_13 = 1 + 2\n        audit_14 = 1 + 2\n        audit_15 = 1 + 2\n        audit_16 = 1 + 2\n        audit_17 = 1 + 2\n        audit_18 = 1 + 2\n        audit_19 = 1 + 2\n        self.cache.set(key, value)\n        audit_0 = 1 + 2\n        audit_1 = 1 + 2\n        audit_2 = 1 + 2\n        audit_3 = 1 + 2\n        audit_4 = 1 + 2\n        audit_5 = 1 + 2\n        audit_6 = 1 + 2\n        audit_7 = 1 + 2\n        audit_8 = 1 + 2\n        audit_9 = 1 + 2\n        audit_10 = 1 + 2\n        audit_11 = 1 + 2\n        audit_12 = 1 + 2\n        audit_13 = 1 + 2\n        audit_14 = 1 + 2\n        audit_15 = 1 + 2\n        audit_16 = 1 + 2\n        audit_17 = 1 + 2\n        audit_18 = 1 + 2\n        audit_19 = 1 + 2\n        return value\n",
+    "expected": true,
+    "why": "20 asignaciones independientes entre statements exceden un path CFG{...,16} sin cambiar el algoritmo.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "early-exit-proxy",
+    "rule": "proxy",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Contract:\n    def run(self): pass\nclass Subject(Contract):\n    def __init__(self, inner: Contract): self.inner = inner\n    def run(self, allowed):\n        if not allowed: return None\n        return self.inner.run()\n",
+    "expected": true,
+    "why": "Guarda de salida temprana equivalente al if que encierra la delegación.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "early-exit-chain-of-responsibility",
+    "rule": "chain-of-responsibility",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Handler:\n    def run(self): pass\nclass Subject(Handler):\n    def __init__(self, following: Handler): self.following = following\n    def run(self, request):\n        if not request: return None\n        return self.following.run()\n",
+    "expected": true,
+    "why": "Guarda de salida temprana equivalente al if que encierra la delegación.",
+    "variant": null,
+    "kind": "metamorphic"
+  },
+  {
+    "id": "abstract-factory-object-literals",
+    "rule": "abstract-factory",
+    "language": "typescript",
+    "source": "class RedButton {}\nclass BlueButton {}\nclass RedMenu {}\nclass BlueMenu {}\nconst red={button:()=>new RedButton(),menu:()=>new RedMenu()};\nconst blue={button:()=>new BlueButton(),menu:()=>new BlueMenu()};\n",
+    "expected": true,
+    "why": "Familias estructurales con slots equivalentes en literales de objeto, sin clases proveedoras.",
+    "variant": "structural-families",
+    "kind": "coverage"
+  },
+  {
+    "id": "strategy-static-no-field",
+    "rule": "strategy",
+    "language": "cpp",
+    "source": "struct Policy { static int apply(int x){return x+1;} };\ntemplate<class P> struct Algorithm { int run(int x){ return P::apply(x); } };\n",
+    "expected": true,
+    "why": "Política estática por parámetro de tipo sin campo runtime.",
+    "variant": "static-policy",
+    "kind": "coverage"
+  },
+  {
+    "id": "subclass-base-alias",
+    "rule": "architecture.subclass-factory",
+    "language": "python",
+    "source": "def mixin(Base):\n Alias=Base\n class Derived(Alias):\n  pass\n return Derived\n",
+    "expected": true,
+    "why": "Alias inmutable de la base; la clase devuelta sigue extendiendo el parámetro.",
+    "variant": "returned-subclass",
+    "kind": "coverage"
+  },
+  {
+    "id": "retry-finally-break",
+    "rule": "resilience.exception-retry",
+    "language": "python",
+    "source": "def fetch():\n while True:\n  try:\n   return request()\n  except Exception:\n   continue\n  finally:\n   break\n",
+    "expected": false,
+    "why": "finally break impide todo reintento y reemplaza incluso el retorno del try.",
+    "variant": "explicit-continue",
+    "kind": "behavioral"
+  },
+  {
+    "id": "di-overwritten-input",
+    "rule": "architecture.dependency-injection",
+    "language": "python",
+    "source": "class Service:\n def run(self): pass\nclass Consumer:\n def configure(self, incoming: Service): self.dependency = incoming; self.dependency = None\n def handle(self): self.dependency.run()\n",
+    "expected": false,
+    "why": "La dependencia recibida se sobrescribe antes de salir del punto de inyección.",
+    "variant": "object-assignment",
+    "kind": "behavioral"
+  },
+  {
+    "id": "dispatch-overwritten-handler",
+    "rule": "architecture.dispatch-table",
+    "language": "python",
+    "source": "class Registry:\n def register(self, key, handler): self.table[key] = handler; self.table[key] = None\n def dispatch(self, requested, data): return self.table[requested](data)\n",
+    "expected": false,
+    "why": "Se registra y se elimina inmediatamente el callable; la tabla no retiene el handler.",
+    "variant": "direct",
+    "kind": "behavioral"
+  },
+  {
+    "id": "command-context-control-python",
+    "rule": "command",
+    "language": "python",
+    "source": "class Dispatcher:\n    def __init__(self):\n        self.pending = []\n    def submit(self, payload):\n        def action(context):\n            return payload + context\n        self.pending.append(action)\n    def run(self, context):\n        for action in self.pending:\n            action(context)\n",
+    "expected": true,
+    "why": "Control de contexto que sí llega al comando iterado.",
+    "variant": "command-closure",
+    "kind": "control"
+  },
+  {
+    "id": "command-unrelated-context-python",
+    "rule": "command",
+    "language": "python",
+    "source": "def audit(context): pass\nclass Dispatcher:\n    def __init__(self):\n        self.pending = []\n    def submit(self, payload):\n        def action(context):\n            return payload + context\n        self.pending.append(action)\n    def run(self, context):\n        audit(context)\n        for action in self.pending:\n            action(0)\n",
+    "expected": false,
+    "why": "El comando sólo recibe 0; una llamada a audit recibe el contexto y completa la query.",
+    "variant": "command-closure",
+    "kind": "contract"
+  },
+  {
+    "id": "command-context-control-javascript",
+    "rule": "command",
+    "language": "javascript",
+    "source": "class Dispatcher {\n  constructor() { this.pending = []; }\n  submit(payload) {\n    const action = (context) => payload + context;\n    this.pending.push(action);\n  }\n  run(context) {\n    for (const action of this.pending) { action(context); }\n  }\n}\n",
+    "expected": true,
+    "why": "Control de contexto que sí llega al comando iterado.",
+    "variant": "command-closure",
+    "kind": "control"
+  },
+  {
+    "id": "command-unrelated-context-javascript",
+    "rule": "command",
+    "language": "javascript",
+    "source": "function audit(context) {}\nclass Dispatcher {\n  constructor() { this.pending = []; }\n  submit(payload) {\n    const action = (context) => payload + context;\n    this.pending.push(action);\n  }\n  run(context) {\n    audit(context);\n    for (const action of this.pending) { action(0); }\n  }\n}\n",
+    "expected": false,
+    "why": "El comando sólo recibe 0; una llamada a audit recibe el contexto y completa la query.",
+    "variant": "command-closure",
+    "kind": "contract"
+  },
+  {
+    "id": "command-context-control-typescript",
+    "rule": "command",
+    "language": "typescript",
+    "source": "class Dispatcher {\n  pending: ((c: number) => number)[] = [];\n  submit(payload: number): void {\n    const action = (context: number): number => payload + context;\n    this.pending.push(action);\n  }\n  run(context: number): void {\n    for (const action of this.pending) { action(context); }\n  }\n}\n",
+    "expected": true,
+    "why": "Control de contexto que sí llega al comando iterado.",
+    "variant": "command-closure",
+    "kind": "control"
+  },
+  {
+    "id": "command-unrelated-context-typescript",
+    "rule": "command",
+    "language": "typescript",
+    "source": "function audit(context: number) {}\nclass Dispatcher {\n  pending: ((c: number) => number)[] = [];\n  submit(payload: number): void {\n    const action = (context: number): number => payload + context;\n    this.pending.push(action);\n  }\n  run(context: number): void {\n    audit(context);\n    for (const action of this.pending) { action(0); }\n  }\n}\n",
+    "expected": false,
+    "why": "El comando sólo recibe 0; una llamada a audit recibe el contexto y completa la query.",
+    "variant": "command-closure",
+    "kind": "contract"
+  },
+  {
+    "id": "eventbus-control",
+    "rule": "observer",
+    "language": "python",
+    "source": "class EventBus:\n    def __init__(self):\n        self.handlers = {}\n        self.spare = []\n        self.topic = \"click\"\n        self.topicOut = \"click\"\n\n    def subscribe(self, handler):\n        self.handlers.setdefault(self.topic, []).append(handler)\n\n    def publish(self, payload):\n        for handler in self.handlers.get(self.topic, []):\n            handler(payload)\n",
+    "expected": true,
+    "why": "Control de payload enviado al registro suscrito.",
+    "variant": "event-bus",
+    "kind": "control"
+  },
+  {
+    "id": "eventbus-unrelated-payload",
+    "rule": "observer",
+    "language": "python",
+    "source": "class EventBus:\n    def __init__(self):\n        self.handlers = {}\n        self.spare = []\n        self.topic = \"click\"\n        self.topicOut = \"click\"\n\n    def subscribe(self, handler):\n        self.handlers.setdefault(self.topic, []).append(handler)\n\n    def publish(self, payload):\n        for handler in self.handlers.get(self.topic, []):\n            handler(\"wrong\")\n        for unrelated in self.spare:\n            unrelated(payload)\n",
+    "expected": false,
+    "why": "El registro suscrito recibe una constante; otro registro recibe el payload.",
+    "variant": "event-bus",
+    "kind": "contract"
+  },
+  {
+    "id": "continuation-rebound",
+    "rule": "architecture.continuation-wrapper",
+    "language": "python",
+    "source": "def wrap(next):\n next = lambda x: 0\n def handler(x):\n  return next(x)\n return handler\n",
+    "expected": false,
+    "why": "Se reemplaza la continuación recibida antes de crear el handler; nunca se invoca la suministrada.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "adapted-returns-number",
+    "rule": "architecture.adapted-continuation-wrapper",
+    "language": "python",
+    "source": "def adapt(handler): return 42\ndef wrap(next):\n def handler(request):\n  return next.handle(request)\n return adapt(handler)\n",
+    "expected": false,
+    "why": "El adaptador visible devuelve 42, no un handler ni wrapper.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "queue-cleared-before-drain",
+    "rule": "architecture.batch-work-queue",
+    "language": "python",
+    "source": "class Action:\n def perform(self): pass\nclass Sink:\n def write(self, value): pass\nclass Job(Action):\n sink: Sink\n def __init__(self, sink: Sink, value: int):\n  self.sink = sink\n  self.value = value\n def perform(self):\n  self.sink.write(self.value)\nclass Queue:\n tasks: list[Action]\n other: list[Action]\n def __init__(self):\n  self.tasks = []\n  self.other = []\n def register(self, task: Action):\n  self.tasks.append(task)\n def consume(self):\n  self.tasks = []\n  for item in self.tasks:\n   item.perform()\n  self.tasks = []\ndef client(sink: Sink):\n queue = Queue()\n queue.register(Job(sink, 1))\n",
+    "expected": false,
+    "why": "Se descartan todos los trabajos pendientes antes de recorrer el lote.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "uow-erases-before-commit",
+    "rule": "persistence.unit-of-work",
+    "language": "python",
+    "source": "class Work:\n def __init__(self, store):\n  self.changes={}\n  self.store=store\n def register(self, entity, key):\n  batch=self.changes.get(key)\n  if batch is None: batch=[]\n  batch.append(entity)\n  self.changes[key]=batch\n def commit(self):\n  self.changes = {\"new\": [], \"old\": []}\n  self.process_new()\n  self.process_old()\n def process_new(self):\n  batch=self.changes.get(\"new\")\n  for item in batch:\n   self.store.insert(item)\n def process_old(self):\n  batch=self.changes.get(\"old\")\n  for item in batch:\n   self.store.delete(item)\n",
+    "expected": false,
+    "why": "Commit elimina las entidades registradas y persiste lotes vacíos.",
+    "variant": null,
+    "kind": "behavioral"
+  },
+  {
+    "id": "flyweight-replaces-every-read",
+    "rule": "flyweight",
+    "language": "python",
+    "source": "from __future__ import annotations\n\nclass Product:\n    def __init__(self, key): self.key = key\nclass Subject:\n    def __init__(self): self.pool = {}\n    def get(self, key):\n        previous = self.pool.get(key)\n        self.pool[key] = Product(key)\n        return self.pool[key]\n",
+    "expected": false,
+    "why": "Cada consulta sustituye el objeto por uno nuevo; dos accesos a la misma clave no comparten la instancia.",
+    "variant": "explicit-interning",
+    "kind": "behavioral"
+  },
+  {
+    "id": "module-shared-control",
+    "rule": "singleton",
+    "variant": "module-shared",
+    "language": "python",
+    "source": "class Config:\n    pass\n\nshared = Config()\n\ndef current():\n    return shared\n",
+    "expected": true,
+    "why": "Control de una escritura desde construcción.",
+    "kind": "control"
+  },
+  {
+    "id": "module-shared-two-writes",
+    "rule": "singleton",
+    "variant": "module-shared",
+    "language": "python",
+    "source": "class Config:\n    pass\n\nshared = Config()\nshared = Config()\n\ndef current():\n    return shared\n",
+    "expected": false,
+    "why": "La query_claim exige written once; existen dos escrituras visibles del slot compartido.",
+    "kind": "contract"
+  },
+  {
+    "id": "lazy-proxy-control",
+    "rule": "proxy",
+    "variant": "lazy-subject",
+    "language": "python",
+    "source": "class RealSubject:\n    def request(self):\n        return 1\n\nclass Proxy:\n    def __init__(self):\n        self.subject = None\n    def request(self):\n        if self.subject is None:\n            self.subject = RealSubject()\n        return self.subject.request()\n",
+    "expected": true,
+    "why": "Control de construcción publicada en subject.",
+    "kind": "control"
+  },
+  {
+    "id": "lazy-proxy-unrelated-construction",
+    "rule": "proxy",
+    "variant": "lazy-subject",
+    "language": "python",
+    "source": "class RealSubject:\n    def request(self):\n        return 1\n\nclass Proxy:\n    def __init__(self):\n        self.subject = None\n    def request(self):\n        if self.subject is None:\n            RealSubject()\n            self.subject = None\n        return self.subject.request()\n",
+    "expected": false,
+    "why": "La construcción se descarta; el almacenamiento usado para delegar nunca recibe un subject.",
+    "kind": "behavioral"
+  }
+]

@@ -86,7 +86,6 @@ def test_prototype_rejects_wrong_origin_or_returned_identity(language, mutation)
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='explicit-copy correlates constructor argument but not retained constructor state; algorithms/prototype.md')
 def test_prototype_requires_constructor_to_retain_captured_state(language):
     assert not evaluate(source(language, 'ignored-input'), language, 'prototype')
 

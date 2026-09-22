@@ -1,32 +1,35 @@
+query_language = "kql/2"
 id = "architecture.adapted-continuation-wrapper"
 name = "Adapted Continuation Wrapper"
 description = "A factory returns an adapter call receiving a nested handler that delegates to a supplied continuation."
 collections = ["architecture", "modern"]
 tags = ["composition", "closure", "web", "middleware"]
-caveat = "Structural candidate for adapted middleware. Does not prove the adapter retains or invokes the handler, HTTP registration, API identity, argument forwarding, call order or freedom from reassignment. Object continuation methods are not restricted by name."
+caveat = "Structural candidate for adapted middleware with no explicit continuation-binding writes. A direct resolved adapter with proved scalar return is rejected; unresolved, decorated and virtual adapters retain unknown result kind. Does not prove handler retention/invocation, HTTP registration, API identity, argument forwarding, hidden rebinding or call order. Object continuation methods are not restricted by name."
 query = '''
-query adapted_continuation_wrapper {
- callable() as $factory;
- require $factory HAS_PARAMETER $continuation;
- parameter(receiver: false) as $continuation;
- require $factory RETURNS $adapter;
- call() as $adapter;
- require $adapter ARGUMENT $argument;
- any {
-   require $argument VALUE $handler;
- } or {
-   require $argument VALUE $loaded;
-   require $loaded LOADED_FROM $stored;
-   require $stored ASSIGNED_FROM $handler;
- }
- callable() as $handler;
- require $handler OWNED_BY $factory;
- require $handler HAS_CALL $invocation;
- any {
-   require $invocation CALLEE_VALUE $continuation;
- } or {
-   require $invocation RECEIVER $continuation;
- }
- emit $factory, $handler, $continuation, $adapter, $invocation;
+language "kql/2";
+module ken.catalog.architecture.adapted_continuation_wrapper;
+
+pattern detect(out Callable $factory, out Callable $handler, out Parameter $continuation, out Call $adapter, out Call $invocation) {
+  callable $factory {
+    parameters { param $continuation { reassigned: false; } }
+    call $adapter { result_family: unknown; }
+    callable $handler {
+      either {
+        body { call $continuation {} as $invocation; }
+      } or {
+        call $invocation {}
+        body { call $invocation { receiver: $continuation; }; }
+      }
+    }
+    body {
+      let $adapted = call $adapter { argument $handler at any; };
+      return $adapted;
+    }
+  }
+}
+
+query results {
+  use detect(factory: $factory, handler: $handler, continuation: $continuation, adapter: $adapter, invocation: $invocation);
+  select $factory, $handler, $continuation, $adapter, $invocation;
 }
 '''

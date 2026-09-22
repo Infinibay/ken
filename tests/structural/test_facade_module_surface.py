@@ -33,56 +33,80 @@ def _camel(name):
 
 
 def source(language, mode, names=None):
+    """A module entry coordinates two explicit service types, not local helpers.
+
+    The previous positive used two identity functions in the same module, a shape
+    indistinguishable from ordinary function composition. Distinct service types
+    now supply the architectural boundary asserted by this strict detector.
+    """
     names = names or NAMES
-    reader, writer = names['reader'], names['writer']
+    reader = _camel(names['reader']) + 'Subsystem'
+    writer = _camel(names['writer']) + 'Subsystem'
     entry = names['entry']
     steps = {
-        'positive': ['carried = {r}(key)', 'metric = 1 + 2', 'log(metric)', 'return {w}(carried)'],
-        'unexported': ['carried = {r}(key)', 'metric = 1 + 2', 'log(metric)', 'return {w}(carried)'],
+        'positive': ['carried = source.read(key)', 'metric = 1 + 2', 'log(metric)', 'return sink.write(carried)'],
+        'unexported': ['carried = source.read(key)', 'metric = 1 + 2', 'log(metric)', 'return sink.write(carried)'],
         'independent': ['return key'],
-        'overwritten': ['carried = {r}(key)', 'carried = 0', 'return {w}(carried)'],
-        'reversed': ['carried = 0', 'result = {w}(carried)', 'carried = {r}(key)', 'return result'],
-        'no-handoff': ['{r}(key)', 'return {w}(0)'],
+        'overwritten': ['carried = source.read(key)', 'carried = 0', 'return sink.write(carried)'],
+        'reversed': ['carried = 0', 'result = sink.write(carried)', 'carried = source.read(key)', 'return result'],
+        'no-handoff': ['source.read(key)', 'return sink.write(0)'],
     }[mode]
-    steps = [s.format(r=reader, w=writer) for s in steps]
     if language == 'python':
         name = '_' + entry if mode == 'unexported' else entry
-        head = [f'def {reader}(key):', '    return key', '', f'def {writer}(value):', '    return value',
-                '', f'def {name}(key):']
-        return '\n'.join(head + ['    ' + s for s in steps]) + '\n'
+        return (f'class {reader}:\n    def read(self, key): return key\n'
+                f'class {writer}:\n    def write(self, value): return value\n'
+                f'def {name}(key):\n    source = {reader}()\n    sink = {writer}()\n'
+                + '\n'.join('    ' + step for step in steps) + '\n')
     if language == 'go':
-        reader, writer = _camel(reader), _camel(writer)
         name = _camel(entry) if mode != 'unexported' else entry
-        body = {'positive': ['carried := {r}(key)', 'metric := 1 + 2', 'println(metric)', 'return {w}(carried)'],
-                'unexported': ['carried := {r}(key)', 'metric := 1 + 2', 'println(metric)', 'return {w}(carried)'],
-                'independent': ['return key'],
-                'overwritten': ['carried := {r}(key)', 'carried = 0', 'return {w}(carried)'],
-                'reversed': ['carried := 0', 'result := {w}(carried)', 'carried = {r}(key)', 'return result'],
-                'no-handoff': ['{r}(key)', 'return {w}(0)']}[mode]
-        body = [s.format(r=reader, w=writer) for s in body]
-        return (f'package facade\n\nfunc {reader}(key int) int {{ return key }}\n'
-                f'func {writer}(value int) int {{ return value }}\n\n'
-                f'func {name}(key int) int {{\n' + '\n'.join('\t' + s for s in body) + '\n}\n')
+        body = []
+        declared = set()
+        for step in steps:
+            step = step.replace('.read(', '.Read(').replace('.write(', '.Write(').replace('log(', 'println(')
+            if ' = ' in step:
+                variable = step.split(' = ')[0]
+                if variable not in declared:
+                    step = step.replace(' = ', ' := ', 1)
+                    declared.add(variable)
+            body.append(step)
+        return (f'package facade\n\ntype {reader} struct{{}}\n'
+                f'func ({reader}) Read(key int) int {{ return key }}\n'
+                f'type {writer} struct{{}}\n'
+                f'func ({writer}) Write(value int) int {{ return value }}\n'
+                f'func {name}(key int) int {{\n source := {reader}{{}}\n sink := {writer}{{}}\n'
+                + '\n'.join('    ' + step for step in body) + '\n}\n')
     if language == 'rust':
-        name = entry
         published = '' if mode == 'unexported' else 'pub '
-        body = {'positive': ['let carried = {r}(key);', 'let metric = 1 + 2;', 'log(metric);', '{w}(carried)'],
-                'unexported': ['let carried = {r}(key);', 'let metric = 1 + 2;', 'log(metric);', '{w}(carried)'],
-                'independent': ['key'],
-                'overwritten': ['let mut carried = {r}(key);', 'carried = 0;', '{w}(carried)'],
-                'reversed': ['let mut carried = 0;', 'let result = {w}(carried);', 'carried = {r}(key);', 'result'],
-                'no-handoff': ['{r}(key);', '{w}(0)']}[mode]
-        body = [s.format(r=reader, w=writer) for s in body]
-        return (f'pub fn {reader}(key: i32) -> i32 {{ key }}\n'
-                f'pub fn {writer}(value: i32) -> i32 {{ value }}\n\n'
-                f'{published}fn {name}(key: i32) -> i32 {{\n' + '\n'.join('    ' + s for s in body) + '\n}\n')
+        body = []
+        declared = set()
+        for step in steps:
+            if ' = ' in step:
+                variable = step.split(' = ')[0]
+                if variable not in declared:
+                    step = 'let mut ' + step
+                    declared.add(variable)
+            body.append(step + ';')
+        return (f'struct {reader} {{}}\nimpl {reader} {{ fn read(&self, key: i32) -> i32 {{ key }} }}\n'
+                f'struct {writer} {{}}\nimpl {writer} {{ fn write(&self, value: i32) -> i32 {{ value }} }}\n'
+                f'{published}fn {entry}(key: i32) -> i32 {{\n'
+                f'    let source = {reader} {{}};\n    let sink = {writer} {{}};\n'
+                + '\n'.join('    ' + step for step in body) + '\n}\n')
     annotation = ': number' if language == 'typescript' else ''
     prefix = '' if mode == 'unexported' else 'export '
-    body = [s + ';' for s in steps]
-    return (f'export function {reader}(key{annotation}){annotation} {{ return key; }}\n'
-            f'export function {writer}(value{annotation}){annotation} {{ return value; }}\n'
+    body = []
+    declared = set()
+    for step in steps:
+        if ' = ' in step:
+            variable = step.split(' = ')[0]
+            if variable not in declared:
+                step = 'let ' + step
+                declared.add(variable)
+        body.append(step + ';')
+    return (f'class {reader} {{ read(key{annotation}){annotation} {{ return key; }} }}\n'
+            f'class {writer} {{ write(value{annotation}){annotation} {{ return value; }} }}\n'
             f'{prefix}function {entry}(key{annotation}){annotation} {{\n'
-            + '\n'.join('  ' + s for s in body) + '\n}\n')
+            f'  const source = new {reader}();\n  const sink = new {writer}();\n'
+            + '\n'.join('  ' + step for step in body) + '\n}\n')
 
 
 def detect(language, mode, names=None, evidence_mode='strict'):
@@ -144,4 +168,20 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'EXPORT' in row['query'] and 'IS MODULE' in row['query']
+    assert 'exported: true;' in row['query'] and 'module_decl $module' in row['query']
+    assert 'edge ' not in row['query'] and 'walk ' not in row['query']
+
+@pytest.mark.parametrize('mode', ['positive','same_module','overwritten'])
+def test_module_boundary_is_resolved_to_distinct_owners(mode):
+    units=[lower_source('export function read(key) { return key; }','javascript','reader.js'),
+           lower_source('export function write(value) { return value; }','javascript','writer.js')]
+    if mode=='same_module':
+        units=[lower_source('export function read(key) { return key; } export function write(value) {return value;}','javascript','reader.js')]
+    target='reader' if mode=='same_module' else 'writer'
+    replacement='value = 7;' if mode=='overwritten' else ''
+    units.append(lower_source(f'import {{read}} from "./reader"; import {{write}} from "./{target}"; export function run(key) {{let value=read(key); {replacement} return write(value);}}','javascript','entry.js'))
+    graph=link_project(units)
+    registry=builtin_rules()
+    result=execute_rules(graph,[named_rule(RULE,registry)],registry=registry)
+    assert result['complete'],result
+    assert bool(result['matches']) is (mode=='positive'),result

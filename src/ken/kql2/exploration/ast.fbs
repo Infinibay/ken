@@ -1,0 +1,14 @@
+// Version 1 syntax cache. IDs reference the enclosing SQLite dictionary.
+// Nodes are in preorder; subtree_end is exclusive. No semantic graph implied.
+namespace Ken.Syntax;
+table Ast {
+  kind:[ushort] (required);
+  role:[ushort] (required);
+  parent:[int] (required);
+  subtree_end:[uint] (required);
+  start_byte:[uint] (required);
+  end_byte:[uint] (required);
+  flags:[ubyte] (required);
+}
+root_type Ast;
+file_identifier "KEX1";

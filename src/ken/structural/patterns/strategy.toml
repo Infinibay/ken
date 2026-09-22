@@ -3,17 +3,31 @@ id = "strategy"
 name = "Strategy"
 category = "behavioral"
 description = "A context delegates to a contract with multiple implementations, or to a policy chosen by type."
-caveat = "Last supported source writes and contract calls identify supplied-policy composition. Descriptors, hidden effects and temporal order between methods are not resolved. State, Command, Bridge, Decorator and Interpreter can share this structure; algorithm intent requires review. The static variant reads a field whose type is a bound type parameter, so it proves the policy is chosen at compile time, not which instantiation a use site picked."
+caveat = "Last supported source writes and contract calls identify supplied-policy composition. Descriptors, hidden effects and temporal order between methods are not resolved. State, Command, Bridge, Decorator and Interpreter can share this structure; algorithm intent requires review. The static variant uses a field typed by a bound parameter, or a C++ call qualified by that parameter. It does not resolve the instantiation selected at a use site."
 legacy_query = "require $unit HAS_FIELD $strategy\nrequire $strategy TYPE $contract\nrequire $unit HAS_METHOD $algorithm\nrequire $algorithm DELEGATES_TO $strategy\ncount >=2 $implementation SUBTYPE_OF $contract distinct=$implementation\n"
 query = '''
-query strategy {
- any { match "strategy#strategy-object"(unit: $unit); }
- or { match "strategy#strategy-callable"(unit: $unit); }
- or { match "strategy#static-policy"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.strategy;
+import ken.catalog.strategy.variants.static_policy;
+import ken.catalog.strategy.variants.strategy_callable;
+import ken.catalog.strategy.variants.strategy_object;
+
+pattern detect(out TypeDecl $unit) {
+  either {
+    use ken.catalog.strategy.variants.strategy_object.detect(unit: $unit);
+  } or {
+    use ken.catalog.strategy.variants.strategy_callable.detect(unit: $unit);
+  } or {
+    use ken.catalog.strategy.variants.static_policy.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[operations]]
@@ -22,21 +36,39 @@ status = "ready"
 description = "A method writes its supplied parameter last to a field, or retains it through supported constructor initialization."
 caveat = "A last source binding write does not prove descriptor/setter storage behavior, heap stability or algorithm intent."
 query = '''
-query supplied_policy {
- any {
-  require $write FINAL_BINDING_INPUT $supplied;
-  require $write ASSIGNMENT_TARGET $policy;
-  require $configure HAS_OPERATION $write;
- } or {
-  require $policy CONSTRUCTOR_FIELD_INPUT $supplied;
-  require $configure HAS_PARAMETER $supplied;
-  callable(constructor:true) as $configure;
- }
- require $unit HAS_FIELD $policy;
- require $unit HAS_METHOD $configure;
- require $configure HAS_PARAMETER $supplied;
- parameter(receiver:false) as $supplied;
- emit $unit,$configure,$supplied,$policy;
+language "kql/2";
+module ken.catalog.strategy.supplied_policy;
+
+pattern detect(out TypeDecl $unit, out Callable $configure, out Parameter $supplied, out Field $policy) {
+  either {
+    type $unit {
+      field $policy {}
+      method $configure {
+        parameters { param $supplied { reassigned: false; } }
+        body linear {
+          $policy = $supplied;
+          gap until exit { forbid assign(binding($policy)); }
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $policy {}
+      constructor $configure {
+        receiver $self { escapes: false; }
+        parameters { param $supplied { reassigned: false; } }
+        body linear {
+          initializer { $policy = $supplied; }
+          gap until exit { forbid assign(binding($policy)); }
+        }
+      }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit, configure: $configure, supplied: $supplied, policy: $policy);
+  select $unit, $configure, $supplied, $policy;
 }
 '''
 
@@ -51,21 +83,29 @@ fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query strategy {
+language "kql/2";
+module ken.catalog.strategy.variants.strategy_object;
+import ken.catalog.strategy.supplied_policy;
 
- match "strategy.supplied_policy"(unit:$unit,configure:$configure,policy:$strategy);
- require $strategy TYPE $contract;
- require $unit HAS_METHOD $algorithm;
- different $configure $algorithm;
- require $algorithm HAS_CALL $call;
- require $call RECEIVER $strategy;
- any { require $call DECLARED_TARGET $slot; }
- or { require $call TARGET $slot; }
- require $contract HAS_METHOD $slot;
- require $first SUBTYPE_OF $contract;
- require $second SUBTYPE_OF $contract;
- different $first $second;
- emit $unit;
+pattern detect(out TypeDecl $unit) {
+  use ken.catalog.strategy.supplied_policy.detect(unit: $unit, configure: $configure, policy: $strategy);
+  type $contract {
+    method $slot { }
+  }
+  type $unit {
+    field $strategy { type: nominal($contract); }
+    method $algorithm {
+      body {
+        call $slot { receiver: $strategy; dispatch: possible; };
+      }
+    }
+  }
+  where $configure != $algorithm;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -79,13 +119,27 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
 query_claim = "A supplied callable is stored and invoked by a distinct method; this is strategy-like callback composition, not proof of algorithmic intent or runtime descriptor behavior."
 query = '''
-query callable_strategy {
- match "strategy.supplied_policy"(unit:$unit,configure:$configure,policy:$policy);
- require $unit HAS_METHOD $algorithm;
- different $configure $algorithm;
- require $algorithm HAS_CALL $call;
- require $call CALLEE_VALUE $policy;
- emit $unit;
+language "kql/2";
+module ken.catalog.strategy.variants.strategy_callable;
+import ken.catalog.strategy.supplied_policy;
+
+pattern detect(out TypeDecl $unit) {
+  use ken.catalog.strategy.supplied_policy.detect(unit: $unit, configure: $configure, policy: $policy);
+  type $unit {
+    field $policy { }
+    method $algorithm {
+      constructor: false;
+      body {
+        call $policy { };
+      }
+    }
+  }
+  where $configure != $algorithm;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 
@@ -97,17 +151,37 @@ requires = ["generic_substitution", "static_dispatch"]
 graph_requirements = ["Política por tipo determina algoritmo; preservar instanciación y no exigir objeto runtime."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-two-languages"
-query_claim = "La unidad declara un parametro de tipo, un campo suyo esta tipado por ESE parametro y un metodo no constructor delega en ese campo por receptor. El enlace es por nombre de parametro (`BINDS_TYPE_PARAMETER` y el `TYPE_NAME` del campo), no por resolucion de instanciacion. **No exige objeto runtime**: no pide contrato, subtipo ni implementaciones, que es exactamente lo que separa esta variante de `strategy-object`. No prueba que la instanciacion del sitio de uso sea la que se eligio, ni sustitucion de tipos, ni especializacion parcial, ni que el campo se asigne alguna vez: prueba que la politica esta fijada por tipo en la declaracion."
+query_claim = "La unidad declara un parametro de tipo y su algoritmo invoca una politica mediante un campo tipado por ese parametro, o mediante una llamada C++ calificada P::operation sin objeto almacenado. TYPE_PARAMETER_RECEIVER une el calificador a la declaracion generica propietaria, por lo que parametros homonimos de otros scopes no aportan evidencia. El rol policy representa el campo o el parametro de tipo segun la forma. Es evidencia de composicion por tipo; no prueba sustitucion, especializacion ni que una instanciacion concreta implemente correctamente el algoritmo."
 query = '''
-query static_policy {
- require $unit BINDS_TYPE_PARAMETER $parameter;
- require $unit HAS_FIELD $policy;
- require $policy TYPE_NAME $parameter;
- require $unit HAS_METHOD $algorithm;
- callable(constructor: false) as $algorithm;
- require $algorithm HAS_CALL $call;
- require $call RECEIVER $policy;
- emit unit=$unit, $policy, $parameter, $algorithm, $call;
+language "kql/2";
+module ken.catalog.strategy.variants.static_policy;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $policy, out GraphTerm $parameter, out GraphTerm $algorithm, out GraphTerm $call) {
+  type $unit {
+    type_parameter $parameter;
+    method $algorithm { constructor: false; }
+  }
+  either {
+    type $unit {
+      field $policy { type: parameter($parameter); }
+      method $algorithm {
+        body { call on $policy { } as $call; }
+      }
+    }
+  } or {
+    type $unit {
+      type_parameter $policy;
+      method $algorithm {
+        body { call qualify $parameter { } as $call; }
+      }
+    }
+    where $policy == $parameter;
+  }
+}
+
+query results {
+  use detect(unit: $unit, policy: $policy, parameter: $parameter, algorithm: $algorithm, call: $call);
+  select $unit, $policy, $parameter, $algorithm, $call;
 }
 '''
 
@@ -115,22 +189,45 @@ query static_policy {
 id = "consumed_policy"
 status = "ready"
 description = "A supplied policy receives a consumer parameter and its invocation result is returned."
-caveat = "Positional input and supported return flow; does not prove parameter value stability, runtime contracts or algorithm intent."
+caveat = "El parámetro no presenta escrituras explícitas en el inventario cerrado de su cuerpo; su lectura entra en la invocación y se retorna el valor producido por ésta. Inventario incompleto conserva unknown. No acredita ausencia de mutaciones de heap; la retención depende todavía de supplied_policy."
 query = '''
-query same_input_policy_result {
-  match "strategy.supplied_policy"(unit:$unit, configure:$configure, policy:$policy);
-  require $unit HAS_METHOD $algorithm;
-  different $configure $algorithm;
-  require $algorithm HAS_PARAMETER $input;
-  parameter(receiver:false) as $input;
-  require $algorithm HAS_CALL $invocation;
-  any { require $invocation RECEIVER $policy; }
-  or { require $invocation CALLEE_VALUE $policy; }
-  call() as $invocation { has_argument(pos:0, kind:positional) as $argument; }
-  require $argument VALUE $read;
-  require $read LOADED_FROM $input;
-  require $algorithm RETURNS_VALUE $result;
-  require $invocation RESULT $result;
-  emit $unit, $policy, $algorithm, $invocation, $input, $result;
+language "kql/2";
+module ken.catalog.strategy.consumed_policy;
+import ken.core;
+import ken.catalog.strategy.supplied_policy;
+
+pattern detect(out TypeDecl $unit, out Field $policy, out Callable $algorithm, out Operation $invocation, out Parameter $input, out Value $result) {
+  use ken.catalog.strategy.supplied_policy.detect(unit: $unit, configure: $configure, policy: $policy);
+  class $unit {
+    field $policy {}
+    method $algorithm {
+      parameters { param $input { reassigned: false; } }
+    }
+  }
+  where $configure != $algorithm;
+  either {
+    class $unit {
+      method $algorithm {
+        body {
+          let $result = call $policy { argument $input at 0; } as $invocation;
+          return $result;
+        }
+      }
+    }
+  } or {
+    class $unit {
+      method $algorithm {
+        body {
+          let $result = call $operation { receiver: $policy; argument $input at 0; dispatch: possible; } as $invocation;
+          return $result;
+        }
+      }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit, policy: $policy, algorithm: $algorithm, invocation: $invocation, input: $input, result: $result);
+  select $unit, $policy, $algorithm, $invocation, $input, $result;
 }
 '''

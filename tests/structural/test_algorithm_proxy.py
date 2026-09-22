@@ -3,6 +3,8 @@ import re
 
 import pytest
 
+from .contract_support import contract_matches
+
 from .test_gof_executable import evaluate
 
 
@@ -78,7 +80,6 @@ def test_invocation_in_guard_condition_is_not_controlled_by_that_guard(language)
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Early denial controls later delegation without lexical branch containment')
 def test_early_denial_is_a_valid_guarded_access_variant(language):
     body = ('if not allowed:\n return 0\nreturn self.inner.run(allowed)' if language == 'python' else
             'if(!allowed){return 0;}return this.inner.run(allowed);')
@@ -86,7 +87,7 @@ def test_early_denial_is_a_valid_guarded_access_variant(language):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Conditional candidate does not prove all delegation paths obey access policy')
 def test_access_enforcement_variant_rejects_unconditional_bypass(language):
     body = guarded(language).replace('return 0', 'return self.inner.run(allowed)' if language == 'python' else 'return this.inner.run(allowed)')
-    assert not evaluate(source(language, body), language, 'proxy')
+    assert contract_matches(source(language, guarded(language)), language, 'proxy.single_guarded_dispatch')
+    assert not contract_matches(source(language, body), language, 'proxy.single_guarded_dispatch')

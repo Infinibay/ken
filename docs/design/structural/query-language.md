@@ -1,5 +1,9 @@
 # KenQL: lenguaje de consulta propuesto
 
+**Antecedente de diseño.** Para el rediseño desde cero del lenguaje, consultar
+[KQL 2](../kql2/README.md). Para la sintaxis que hoy funciona, consultar
+[KQL 1](../../structural-queries.md). No mezclar ejemplos de los tres documentos.
+
 Estado: especificación de diseño. Una parte de esta sintaxis ya está implementada;
 otras extensiones siguen propuestas. Para ejemplos ejecutables y límites del
 parser actual, consultar la [guía operativa](../../structural-queries.md).

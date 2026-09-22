@@ -1,0 +1,10 @@
+language "kql/2";
+module bugs.infinite_loop;
+query while_true_no_break {
+  node $while { kind: "while"; }
+  node $cond { kind: "literal"; value: "True"; parent: $while; }
+  not exists {
+    node $break { kind: "break"; parent: $while; }
+  }
+  select $while;
+}

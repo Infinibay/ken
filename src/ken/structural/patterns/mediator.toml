@@ -6,14 +6,34 @@ description = "A central object is called by and delegates to multiple colleague
 caveat = "Structural evidence requires review of intent and runtime behavior."
 legacy_query = "require $unit HAS_METHOD $coordinate\ncount >=2 $caller CALLS $coordinate distinct=$caller\ncount >=2 $coordinate DELEGATES_TYPE $colleague distinct=$colleague\n"
 query = '''
-query mediator {
- any { match "mediator#direct-colleagues"(unit: $unit); }
- or { match "mediator#message-coordination"(unit: $unit); }
- or { match "mediator#tag-dispatch"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.mediator;
+import ken.catalog.mediator.variants.broadcast_colleagues;
+import ken.catalog.mediator.variants.direct_colleagues;
+import ken.catalog.mediator.variants.message_coordination;
+import ken.catalog.mediator.variants.registered_colleagues;
+import ken.catalog.mediator.variants.tag_dispatch;
+
+pattern detect(out GraphTerm $unit) {
+  either {
+    use ken.catalog.mediator.variants.broadcast_colleagues.detect(unit: $unit);
+  } or {
+    use ken.catalog.mediator.variants.direct_colleagues.detect(unit: $unit);
+  } or {
+    use ken.catalog.mediator.variants.message_coordination.detect(unit: $unit);
+  } or {
+    use ken.catalog.mediator.variants.tag_dispatch.detect(unit: $unit);
+  } or {
+    use ken.catalog.mediator.variants.registered_colleagues.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -22,24 +42,46 @@ status = "ready"
 languages = ["python", "java", "typescript"]
 requires = ["call_graph", "event_value_flow"]
 graph_requirements = ["Varios colegas notifican al centro y eventos gobiernan acciones del centro hacia colegas."]
+query_claim = "Coordinación bidireccional por contratos: el centro llama operaciones sobre dos campos de colegas y métodos de esos tipos invocan la operación del centro. Los colegas pueden recibir el centro como parámetro o retenerlo; no se afirma identidad runtime entre instancias ni enrutamiento por evento. La variante registered-colleagues exige además retención nominal del centro."
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query mediator {
+language "kql/2";
+module ken.catalog.mediator.variants.direct_colleagues;
+import ken.core;
 
- require $unit HAS_METHOD $coordinate;
- require $coordinate DELEGATES_TYPE $first;
- require $coordinate DELEGATES_TYPE $second;
- require $first HAS_METHOD $caller1;
- require $second HAS_METHOD $caller2;
- require $caller1 CALLS $coordinate;
- require $caller2 CALLS $coordinate;
- different $first $second;
- different $unit $first;
- different $unit $second;
- emit $unit;
+pattern detect(out TypeDecl $unit) {
+  class $first_type {}
+  class $second_type {}
+  class $unit {
+    fields {
+      field $first { type: nominal($first_type); }
+      field $second { type: nominal($second_type); }
+    }
+    method $coordinate {
+      body { call $first_operation { receiver: $first; dispatch: possible; }; }
+      body { call $second_operation { receiver: $second; dispatch: possible; }; }
+    }
+  }
+  class $first_type {
+    method $first_caller {
+      body { call $coordinate { dispatch: possible; }; }
+    }
+  }
+  class $second_type {
+    method $second_caller {
+      body { call $coordinate { dispatch: possible; }; }
+    }
+  }
+  where $first != $second;
+  where $unit != $first_type and $unit != $second_type;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -50,41 +92,45 @@ requires = ["message_api_models", "callback_flow"]
 graph_requirements = ["Mensajes/callbacks sustituyen referencias bidireccionales; correlacionar canal/evento y destinos."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
-query_claim = "Un centro con un metodo que **despacha por tag**: dos ramas delegan condicionalmente en **dos campos distintos del propio centro**, y la llamada de cada rama lleva un argumento cargado del **mismo parametro** (el tag). El centro esta ademas **llamado por dos tipos distintos** que se pasan a si mismos (`PASSES_SELF_TO`) invocando un metodo cuyo nombre coincide con el del despachador. Los campos destino no tienen que estar tipados por un contrato comun, y en JavaScript el centro inyectado no tiene tipo registrado: por eso el enlace es por nombre de llamada, el mismo idioma que `composite#recursive-nominal`. NO prueba que las dos ramas sean el `then` y el `else` de un mismo test, ni que los valores del tag difieran, ni la identidad runtime de los destinos, ni que la notificacion retorne. Los lenguajes declarados son los validados; la query no filtra por lenguaje."
+query_claim = "Un centro con un metodo que **despacha por tag**: dos ramas delegan condicionalmente en **dos campos distintos del propio centro**, y la llamada de cada rama lleva un argumento cargado del **mismo parametro** (el tag). El centro esta ademas **llamado por dos tipos distintos** que pasan su propia identidad como argumento de ESA llamada, sobre el mismo receptor de PASSES_SELF_TO, invocando un metodo cuyo nombre coincide con el del despachador. Los campos destino no tienen que estar tipados por un contrato comun, y en JavaScript el centro inyectado no tiene tipo registrado: por eso el enlace es por nombre de llamada, el mismo idioma que `composite#recursive-nominal`. NO prueba que las dos ramas sean el `then` y el `else` de un mismo test, ni que los valores del tag difieran, ni la identidad runtime de los destinos, ni que la notificacion retorne. Los lenguajes declarados son los validados; la query no filtra por lenguaje."
 query = '''
-query mediator_message_coordination {
- require $coordinator IS CLASS;
- require $coordinator HAS_METHOD $operation;
- require $operation CONDITIONAL_DELEGATION $first_target;
- require $coordinator HAS_FIELD $first_target;
- require $operation CONDITIONAL_DELEGATION $second_target;
- require $coordinator HAS_FIELD $second_target;
- different $first_target $second_target;
- require $operation HAS_CALL $first_call;
- require $first_call RECEIVER $first_target;
- require $operation HAS_CALL $second_call;
- require $second_call RECEIVER $second_target;
- require $operation HAS_PARAMETER $tag;
- parameter(receiver: false) as $tag;
- require $first_call ARGUMENT $first_argument;
- require $first_argument VALUE $first_value;
- require $first_value LOADED_FROM $tag;
- require $second_call ARGUMENT $second_argument;
- require $second_argument VALUE $second_value;
- require $second_value LOADED_FROM $tag;
- require $notifier_a PASSES_SELF_TO $holder_a;
- require $notifier_a IN_TYPE $colleague_a;
- require $notifier_a HAS_CALL $outgoing_a;
- require $outgoing_a CALLEE_NAME $name_a;
- require $notifier_b PASSES_SELF_TO $holder_b;
- require $notifier_b IN_TYPE $colleague_b;
- require $notifier_b HAS_CALL $outgoing_b;
- require $outgoing_b CALLEE_NAME $name_b;
- different $colleague_a $colleague_b;
- different $notifier_a $notifier_b;
- where $name_a == $operation.name;
- where $name_b == $operation.name;
- emit unit=$coordinator, $operation, $first_target, $second_target, $tag, $colleague_a, $colleague_b;
+language "kql/2";
+module ken.catalog.mediator.variants.message_coordination;
+
+pattern detect(out TypeDecl $unit, out Callable $operation, out Field $first_target, out Field $second_target, out Parameter $tag, out TypeDecl $colleague_a, out TypeDecl $colleague_b) {
+  type $unit {
+    field $first_target {}
+    field $second_target {}
+    method $operation {
+      param $tag {}
+      body {
+        if ($tag == _) { call $first_delegate { receiver: $first_target; resolution: any; argument $tag at 0; }; }
+        else { call $second_delegate { receiver: $second_target; resolution: any; argument $tag at 0; }; }
+      }
+    }
+  }
+  type $colleague_a {
+    field $holder_a {}
+    method $notifier_a {
+      receiver $self_a {}
+      body { call $outgoing_a { receiver: $holder_a; resolution: any; argument $self_a at 0; }; }
+    }
+  }
+  type $colleague_b {
+    field $holder_b {}
+    method $notifier_b {
+      receiver $self_b {}
+      body { call $outgoing_b { receiver: $holder_b; resolution: any; argument $self_b at 0; }; }
+    }
+  }
+  where $first_target != $second_target;
+  where $colleague_a != $colleague_b;
+  where $outgoing_a.name == $operation.name and $outgoing_b.name == $operation.name;
+}
+
+query results {
+  use detect(unit: $unit, operation: $operation, first_target: $first_target, second_target: $second_target, tag: $tag, colleague_a: $colleague_a, colleague_b: $colleague_b);
+  select $unit, $operation, $first_target, $second_target, $tag, $colleague_a, $colleague_b;
 }
 '''
 
@@ -96,36 +142,183 @@ requires = ["call_graph", "event_value_flow", "branch_dispatch"]
 graph_requirements = ["El centro despacha por una etiqueta que recibe por parametro: una rama del propio metodo compara ese parametro y cada rama delega en un campo distinto del centro, y dos tipos colegas se pasan a si mismos al centro y lo llaman por el mismo nombre de operacion."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
-query_claim = "Un centro con un metodo que **despacha por etiqueta**: el metodo recibe la etiqueta como parametro, una rama del propio metodo la **compara** (``if tag == 1`` / ``switch``-like), y las dos ramas delegan condicionalmente en **dos campos distintos del mismo centro**. El centro esta ademas llamado por **dos tipos colegas** que se pasan a si mismos y lo invocan con el nombre de esa operacion. Es la forma canonica del ejemplo de RefactoringGuru (``notify(sender, event)`` ramificando sobre ``event``); el hermano ``message-coordination`` cubre la otra grafia, donde la etiqueta se **reenvia** como argumento de cada llamada. No prueba orden temporal, exclusividad de ramas ni que la etiqueta sea el unico criterio de despacho. La comparacion tiene que ser un operador; ``event.equals(\"A\")`` (Java) o un ``switch`` sobre un campo no publican el hecho todavia."
+query_claim = "Un centro con un metodo que **despacha por etiqueta**: el metodo recibe la etiqueta como parametro, una rama del propio metodo la **compara** (``if tag == 1`` / ``switch``-like), y las dos ramas delegan condicionalmente en **dos campos distintos del mismo centro**. El centro esta ademas llamado por **dos tipos colegas** que pasan su propia identidad como argumento de esa misma llamada y lo invocan con el nombre de esa operacion. Es la forma canonica del ejemplo de RefactoringGuru (``notify(sender, event)`` ramificando sobre ``event``); el hermano ``message-coordination`` cubre la otra grafia, donde la etiqueta se **reenvia** como argumento de cada llamada. No prueba orden temporal, exclusividad de ramas ni que la etiqueta sea el unico criterio de despacho. La comparacion tiene que ser un operador; ``event.equals(\"A\")`` (Java) o un ``switch`` sobre un campo no publican el hecho todavia."
 query = '''
-query mediator_tag_dispatch {
- require $coordinator IS CLASS;
- require $coordinator HAS_METHOD $operation;
- require $operation HAS_PARAMETER $tag;
- parameter(receiver: false) as $tag;
- require $operation CONDITIONAL_DELEGATION $first_target;
- require $coordinator HAS_FIELD $first_target;
- require $operation CONDITIONAL_DELEGATION $second_target;
- require $coordinator HAS_FIELD $second_target;
- different $first_target $second_target;
- require $operation HAS_CALL $first_call;
- require $first_call RECEIVER $first_target;
- require $operation HAS_CALL $second_call;
- require $second_call RECEIVER $second_target;
- require $operation HAS_OPERATION $branch;
- require $branch PARAMETER_TEST $tag;
- require $notifier_a PASSES_SELF_TO $holder_a;
- require $notifier_a IN_TYPE $colleague_a;
- require $notifier_a HAS_CALL $outgoing_a;
- require $outgoing_a CALLEE_NAME $name_a;
- require $notifier_b PASSES_SELF_TO $holder_b;
- require $notifier_b IN_TYPE $colleague_b;
- require $notifier_b HAS_CALL $outgoing_b;
- require $outgoing_b CALLEE_NAME $name_b;
- different $colleague_a $colleague_b;
- different $notifier_a $notifier_b;
- where $name_a == $operation.name;
- where $name_b == $operation.name;
- emit unit=$coordinator, $operation, $first_target, $second_target, $tag, $colleague_a, $colleague_b;
+language "kql/2";
+module ken.catalog.mediator.variants.tag_dispatch;
+
+pattern detect(out TypeDecl $unit, out Callable $operation, out Field $first_target, out Field $second_target, out Parameter $tag, out TypeDecl $colleague_a, out TypeDecl $colleague_b) {
+  type $unit {
+    field $first_target {}
+    field $second_target {}
+    method $operation {
+      param $tag {}
+      body {
+        if ($tag == _) { call $first_delegate { receiver: $first_target; resolution: any; }; }
+        else { call $second_delegate { receiver: $second_target; resolution: any; }; }
+      }
+    }
+  }
+  type $colleague_a {
+    field $holder_a {}
+    method $notifier_a {
+      receiver $self_a {}
+      body { call $outgoing_a { receiver: $holder_a; resolution: any; argument $self_a at 0; }; }
+    }
+  }
+  type $colleague_b {
+    field $holder_b {}
+    method $notifier_b {
+      receiver $self_b {}
+      body { call $outgoing_b { receiver: $holder_b; resolution: any; argument $self_b at 0; }; }
+    }
+  }
+  where $first_target != $second_target;
+  where $colleague_a != $colleague_b;
+  where $outgoing_a.name == $operation.name and $outgoing_b.name == $operation.name;
+}
+
+query results {
+  use detect(unit: $unit, operation: $operation, first_target: $first_target, second_target: $second_target, tag: $tag, colleague_a: $colleague_a, colleague_b: $colleague_b);
+  select $unit, $operation, $first_target, $second_target, $tag, $colleague_a, $colleague_b;
+}
+'''
+
+[[variants]]
+id = "registered-colleagues"
+status = "ready"
+languages = ["python", "java", "typescript"]
+requires = ["field_contract_types", "call_receivers", "callback_flow"]
+graph_requirements = ["Un coordinador retiene colegas por campo y su operacion los invoca; cada colega vuelve a llamar al coordinador. Una invocacion por colega, sin exigir que compartan un mismo camino de control."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+query_claim = "El coordinador invoca operaciones sobre dos campos de colegas y cada tipo de colega llama al mismo contrato del coordinador mediante un campo o parámetro nominal suyo. Los BODY de los dos destinos son independientes: admite rutas distintas sin fingir una secuencia. No acredita que los campos de dos instancias en runtime designen al mismo centro; ni semántica de tags o payload, que pertenece a las variantes especializadas."
+query = '''
+language "kql/2";
+module ken.catalog.mediator.variants.registered_colleagues;
+import ken.core;
+
+pattern detect(out TypeDecl $unit) {
+  class $first_type { method $first_operation {} }
+  class $second_type { method $second_operation {} }
+  class $unit {
+    fields {
+      field $first { type: nominal($first_type); }
+      field $second { type: nominal($second_type); }
+    }
+    method $coordinate {}
+  }
+  either {
+    class $first_type {
+      field $first_mediator { type: nominal($unit); }
+      method $first_caller {
+        body { call $coordinate { receiver: $first_mediator; dispatch: possible; }; }
+      }
+    }
+  } or {
+    class $first_type {
+      method $first_caller {
+        param $first_center { type: nominal($unit); }
+        body { call $coordinate { receiver: $first_center; dispatch: possible; }; }
+      }
+    }
+  }
+  either {
+    class $second_type {
+      field $second_mediator { type: nominal($unit); }
+      method $second_caller {
+        body { call $coordinate { receiver: $second_mediator; dispatch: possible; }; }
+      }
+    }
+  } or {
+    class $second_type {
+      method $second_caller {
+        param $second_center { type: nominal($unit); }
+        body { call $coordinate { receiver: $second_center; dispatch: possible; }; }
+      }
+    }
+  }
+  class $unit {
+    method $coordinate {
+      body { call $first_operation { receiver: $first; dispatch: possible; }; }
+      body { call $second_operation { receiver: $second; dispatch: possible; }; }
+    }
+  }
+  where $first != $second;
+  where $unit != $first_type and $unit != $second_type;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
+}
+'''
+
+[[variants]]
+id = "broadcast-colleagues"
+status = "ready"
+languages = ["java", "csharp"]
+requires = ["collection_api_shape", "iteration_call", "override_resolution"]
+graph_requirements = ["El coordinador retiene una coleccion de colegas, la registra y la recorre invocandolos; los colegas retienen al coordinador y vuelven a llamarlo."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+query_claim = "Un tipo con un campo de coleccion tiene un metodo que **registra elementos** en ella y otro que la **recorre invocando** a sus elementos; ademas existe un tipo colega con un campo propio cuyo metodo **vuelve a llamar** a la operacion del coordinador — el enlace se acredita tambien a traves de la implementacion que sobrescribe el slot declarado. No prueba orden de notificacion, exclusividad, ni que el coordinador distinga emisor y destinatario."
+query = '''
+language "kql/2";
+module ken.catalog.mediator.variants.broadcast_colleagues;
+
+pattern detect(out TypeDecl $unit) {
+  type $colleague {
+    field $own { }
+    method $caller { constructor: false; }
+  }
+  type $unit {
+    field $colleagues { }
+    method $register { constructor: false; }
+    method $coordinate { constructor: false; }
+  }
+  where writes_element($register, $colleagues);
+  where iterates_calls($coordinate, $colleagues);
+  where possible_call($caller, $coordinate);
+  where $unit != $colleague;
+  where $register != $coordinate;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
+}
+'''
+
+[[operations]]
+id = "event_delivery"
+status = "ready"
+description = "Bidirectional colleagues receive the incoming coordination event on both destination fields."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch."
+query = '''
+language "kql/2";
+module ken.catalog.mediator.event_delivery;
+import ken.catalog.mediator.variants.broadcast_colleagues;
+import ken.catalog.mediator.variants.direct_colleagues;
+
+pattern detect(out TypeDecl $unit, out Callable $coordinate, out Parameter $event) {
+  use ken.catalog.mediator.variants.direct_colleagues.detect(unit: $unit);
+  type $unit {
+    field $first_target {}
+    field $second_target {}
+    method $coordinate {
+      param $event { reassigned: false; }
+      body {
+        if ($event == _) { call $first_delivery { receiver: $first_target; resolution: any; argument $event at 0; }; }
+        else { call $second_delivery { receiver: $second_target; resolution: any; argument $event at 0; }; }
+      }
+    }
+  }
+  where $first_target != $second_target;
+}
+
+query results {
+  use detect(unit: $unit, coordinate: $coordinate, event: $event);
+  select $unit, $coordinate, $event;
 }
 '''

@@ -1,0 +1,8 @@
+Voy a revisar el contrato de MCP y `ken tools`, junto con la nota indicada, sin modificar archivos ni memorias.
+El soporte ya existe: registraría la nueva función con `@ken_tool` en [server.py](/private/tmp/ken-coding-memory-4n2epo1i/mcp-baseline-fixed/src/ken/mcp/server.py:192), delegando su lógica al componente responsable. El decorador la expone por MCP y la incorpora al registro consumido por `ken tools`.
+
+El contrato actual tiene dos piezas: `_annotation_to_schema`/`_items_schema` producen `{"type":"array","items":{"type":"object"}}`; en [cli.py](/private/tmp/ken-coding-memory-4n2epo1i/mcp-baseline-fixed/src/ken/cli.py:1757), `_tool_py_type` selecciona `_tool_json_object`, que decodifica y exige un diccionario por elemento. La CLI recibe objetos JSON separados: `--facts '{"p":1}' '{"p":2}'`, no un array JSON completo. Los parámetros obligatorios son posicionales y sus listas exigen al menos un elemento; las opcionales usan flags y permiten cero.
+
+La nota `mcp-object-cli-parameters` identifica los dos bugs anteriores: omitir el esquema de elementos y entregar strings al handler. [Las regresiones existentes](/private/tmp/ken-coding-memory-4n2epo1i/mcp-baseline-fixed/tests/test_reasoning_memory.py:182) comprueban ambos caminos. Recomiendo ampliarlas para la nueva tool: verificar esquema MCP y registro CLI, invocar `ken.cli.main` con varios objetos y comparar argumentos/resultados con MCP; incluir JSON inválido, valores no objeto y lista vacía. Llamar únicamente al wrapper MCP no basta.
+
+No modifiqué archivos ni memorias.

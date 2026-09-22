@@ -2,18 +2,49 @@ schema = "ken-rule/1"
 id = "iterator"
 name = "Iterator"
 category = "behavioral"
-description = "A class supplies paired traversal protocol methods, or a callable advances a source asynchronously."
+description = "Traversal through a cursor protocol, a generator, an asynchronous producer/consumer, or a Go callback that stops on false."
 caveat = "Protocol names are intentional API evidence; exhaustion and traversal correctness are not proven. The async variant records that a loop suspends to advance, not that the awaited work ever completes."
 legacy_query = "require $unit IS CLASS\nvariant python\nrequire $unit HAS_METHOD $iter name=__iter__\nrequire $unit HAS_METHOD $next name=__next__\nend\nvariant has-next\nrequire $unit HAS_METHOD $next name=next|Next\nrequire $unit HAS_METHOD $has_next name=hasNext|HasNext|MoveNext\nend\nvariant generator\nrequire $unit HAS_METHOD $iter\nrequire $iter HAS_YIELD _\nend\n"
 query = '''
-query iterator {
- any { match "iterator#external-cursor"(iterator: $iterator); } or {
- any { match "iterator#generator"(iterator: $iterator); } or { match "iterator#delegated-generator"(iterator: $iterator); } or { match "iterator#explicit-cursor"(iterator: $iterator); } or { match "iterator#paired-cursor"(iterator: $iterator); } or { match "iterator#delegated-cursor"(iterator: $iterator); } or { match "iterator#async-iterator"(iterator: $iterator); } or { match "iterator#callback-iterator"(iterator: $iterator); }
- }
- emit $iterator;
+language "kql/2";
+module ken.catalog.iterator;
+import ken.catalog.iterator.variants.async_iterator;
+import ken.catalog.iterator.variants.callback_iterator;
+import ken.catalog.iterator.variants.delegated_cursor;
+import ken.catalog.iterator.variants.delegated_generator;
+import ken.catalog.iterator.variants.explicit_cursor;
+import ken.catalog.iterator.variants.external_cursor;
+import ken.catalog.iterator.variants.generator;
+import ken.catalog.iterator.variants.paired_cursor;
+
+pattern detect(out GraphTerm $iterator) {
+  either {
+    use ken.catalog.iterator.variants.external_cursor.detect(iterator: $iterator);
+  } or {
+    either {
+      use ken.catalog.iterator.variants.generator.detect(iterator: $iterator);
+    } or {
+      use ken.catalog.iterator.variants.delegated_generator.detect(iterator: $iterator);
+    } or {
+      use ken.catalog.iterator.variants.explicit_cursor.detect(iterator: $iterator);
+    } or {
+      use ken.catalog.iterator.variants.paired_cursor.detect(iterator: $iterator);
+    } or {
+      use ken.catalog.iterator.variants.delegated_cursor.detect(iterator: $iterator);
+    } or {
+      use ken.catalog.iterator.variants.async_iterator.detect(iterator: $iterator);
+    } or {
+      use ken.catalog.iterator.variants.callback_iterator.detect(iterator: $iterator);
+    }
+  }
+}
+
+query results {
+  use detect(iterator: $iterator);
+  select $iterator;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[operations]]
@@ -22,11 +53,20 @@ status = "ready"
 description = "Expose a foreach source, value binding, body and iteration occurrence."
 caveat = "Syntax-level consumption shape. Not a guarantee of execution, element types, absence of rebinding or full block-scope shadow resolution. Explicit cursor and callback pipelines require additional variants."
 query = '''
-query iterate_over {
- require $iteration ITERATION_SOURCE $source;
- require $iteration ITERATION_BINDING $item [role: value];
- require $iteration ITERATION_BODY $body;
- emit $source, $item, $body, $iteration;
+language "kql/2";
+module ken.catalog.iterator.iterate_over;
+
+pattern detect(out GraphTerm $source, out Binding $item, out Operation $body, out Operation $iteration) {
+  callable $unit {
+    body {
+      iterate $source as $item as $iteration { body: $body; body {} }
+    }
+  }
+}
+
+query results {
+  use detect(source: $source, item: $item, body: $body, iteration: $iteration);
+  select $source, $item, $body, $iteration;
 }
 '''
 
@@ -37,20 +77,26 @@ languages = ["cpp"]
 fixtures_status = "source-regression-matrix"
 query_claim = "External cursor API with shared stored position; termination and overloaded increment semantics are not proven."
 query = '''
-query external_cursor {
- type_decl(language: cpp) as $iterator;
- require $iterator HAS_FIELD $position;
- require $iterator HAS_METHOD $advance;
- callable(name: "next") as $advance;
- require $advance READS $position;
- require $advance WRITES $position;
- require $iterator HAS_METHOD $test;
- callable(name: "isDone") as $test;
- require $test READS $position;
- require $iterator HAS_METHOD $current;
- callable(name: "currentItem") as $current;
- require $current READS $position;
- emit $iterator;
+language "kql/2";
+module ken.catalog.iterator.variants.external_cursor;
+
+pattern detect(out TypeDecl $iterator) {
+  type $iterator {
+    language: "cpp";
+    field $position { }
+    method $advance { name: "next"; constructor: false; }
+    method $test { name: "isDone"; constructor: false; }
+    method $current { name: "currentItem"; constructor: false; }
+  }
+  where reads($advance, $position);
+  where writes($advance, $position);
+  where reads($test, $position);
+  where reads($current, $position);
+}
+
+query results {
+  use detect(iterator: $iterator);
+  select $iterator;
 }
 '''
 
@@ -62,15 +108,23 @@ requires = ["generator_lowering"]
 graph_requirements = ["Callable suspende produciendo elementos; la evidencia prueba forma generadora, no recorrido correcto."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
-query_draft = "query generator_shape {\n  callable(generator: true, context_manager: false) as $iterator;\n  operation(kind: yield) as $suspend;\n  require $iterator HAS_OPERATION $suspend;\n  emit $iterator;\n}\n"
-query_claim = "Presencia de forma generadora; no prueba progreso ni agotamiento."
+query_claim = "BODY alcanza una suspension que produce un valor en el callable seleccionado; excluye context managers y terminacion yield break. No prueba factibilidad runtime, reanudacion, progreso ni agotamiento; un unico yield permite CFG parcial solamente por suspensiones yield/await reconocidas."
 
 query = '''
-query generator {
-  callable(generator: true, context_manager: false) as $iterator;
-  operation(kind: yield) as $suspend;
-  require $iterator HAS_OPERATION $suspend;
-  emit $iterator;
+language "kql/2";
+module ken.catalog.iterator.variants.generator;
+
+pattern detect(out Callable $iterator) {
+  callable $iterator {
+    generator: true;
+    context_manager: false;
+    body { yield _; }
+  }
+}
+
+query results {
+  use detect(iterator: $iterator);
+  select $iterator;
 }
 '''
 
@@ -84,11 +138,20 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
 
 query = '''
-query delegated_generator {
-  callable(generator: true, context_manager: false) as $iterator;
-  operation(kind: yield_delegate) as $suspend;
-  require $iterator HAS_OPERATION $suspend;
-  emit $iterator;
+language "kql/2";
+module ken.catalog.iterator.variants.delegated_generator;
+
+pattern detect(out Callable $iterator) {
+  callable $iterator {
+    generator: true;
+    context_manager: false;
+    body { yield from _; }
+  }
+}
+
+query results {
+  use detect(iterator: $iterator);
+  select $iterator;
 }
 '''
 
@@ -103,18 +166,24 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
 
 query = '''
-query python_cursor {
- type_decl(language: python) as $iterator;
- require $iterator HAS_METHOD $iter;
- callable(name: "__iter__") as $iter;
- require $iter RETURNS_SELF $iterator;
- require $iterator HAS_METHOD $next;
- callable(name: "__next__") as $next;
- require $iterator HAS_FIELD $state;
- require $next HAS_OPERATION $write;
- require $write ASSIGNMENT_TARGET $state;
- require $next READS $state;
- emit $iterator;
+language "kql/2";
+module ken.catalog.iterator.variants.explicit_cursor;
+
+pattern detect(out TypeDecl $iterator) {
+  type $iterator {
+    language: "python";
+    field $state { }
+    method $iter { name: "__iter__"; constructor: false; }
+    method $next { name: "__next__"; constructor: false; }
+  }
+  where returns_self($iter, $iterator);
+  where writes($next, $state);
+  where reads($next, $state);
+}
+
+query results {
+  use detect(iterator: $iterator);
+  select $iterator;
 }
 '''
 query_claim = "Python iteration protocol with observable updates to an iterator field; local bookkeeping is not cursor state. Numeric progress, yielded element provenance and exhaustion are not proven."
@@ -127,27 +196,67 @@ requires = ["range_function_protocol", "callback_control_flow"]
 graph_requirements = ["Callback recibe elemento y su booleano gobierna continuar; requiere versión de lenguaje aplicable."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-go"
-query_claim = "El iterador toma un callback como parametro, recorre una coleccion ligando el elemento, invoca el callback con ESE elemento (por identidad de almacenamiento, via ARGUMENT -> VALUE -> LOADED_FROM) y prueba el resultado de esa misma llamada en una rama uno de cuyos dos desenlaces detiene la iteracion con `return` o `break`. La polaridad no se exige: `!yield(v) { return }`, `yield(v) {} else { return }` y `yield(v) { return }` se admiten por igual, porque la ficha pide que el booleano gobierne continuar, no una convencion concreta. Excluye un callback cuyo resultado se pruebe pero cuyo desenlace no detenga de inmediato, y no prueba agotamiento, tipos de elemento ni progreso."
+query_claim = "El iterador Go invoca el callback con el mismo elemento ligado por el bucle y detiene la iteracion cuando ese callback devuelve false, como exige el protocolo range-over-function. Se aceptan la negacion con salida en then y el test positivo con salida en else. La salida inmediata es return o break; no prueba agotamiento, tipos de elemento ni progreso."
 query = '''
-query callback_iterator {
- require $unit IS CALLABLE;
- require $unit HAS_PARAMETER $callback;
- parameter(receiver: false) as $callback;
- require $unit HAS_CALL $call;
- require $call CALLEE_VALUE $callback;
- require $call ARGUMENT $argument;
- require $argument VALUE $value;
- require $value LOADED_FROM $element;
- require $unit HAS_OPERATION $loop;
- operation(kind: loop) as $loop;
- require $loop ITERATION_BINDING $element;
- require $unit HAS_OPERATION $branch;
- operation(kind: branch) as $branch;
- require $branch TRUTH_TEST $call;
- require $branch CFG_NEXT $exit;
- require $unit HAS_OPERATION $exit;
- any { operation(kind: return) as $exit; } or { operation(native_kind: break_statement) as $exit; }
- emit iterator=$unit, $callback, $call, $loop, $element, $branch, $exit;
+language "kql/2";
+module ken.catalog.iterator.variants.callback_iterator;
+
+pattern detect(out GraphTerm $iterator, out Parameter $callback, out Call $call, out Operation $loop, out Binding $element, out Operation $branch, out Operation $exit) {
+  operation $branch { kind: "branch"; }
+  either {
+    callable $iterator {
+      param $callback {}
+      body {
+        iterate $collection as $element as $loop {
+          body {
+            let $accepted = call $callback { argument $element at any; } as $call;
+            if ($accepted == false) { return as $exit; }
+          }
+        }
+      }
+    }
+  } or {
+    callable $iterator {
+      param $callback {}
+      body {
+        iterate $collection as $element as $loop {
+          body {
+            let $accepted = call $callback { argument $element at any; } as $call;
+            if ($accepted == false) { break $loop as $exit; }
+          }
+        }
+      }
+    }
+  } or {
+    callable $iterator {
+      param $callback {}
+      body {
+        iterate $collection as $element as $loop {
+          body {
+            let $accepted = call $callback { argument $element at any; } as $call;
+            if ($accepted) { } else { return as $exit; }
+          }
+        }
+      }
+    }
+  } or {
+    callable $iterator {
+      param $callback {}
+      body {
+        iterate $collection as $element as $loop {
+          body {
+            let $accepted = call $callback { argument $element at any; } as $call;
+            if ($accepted) { } else { break $loop as $exit; }
+          }
+        }
+      }
+    }
+  }
+}
+
+query results {
+  use detect(iterator: $iterator, callback: $callback, call: $call, loop: $loop, element: $element, branch: $branch, exit: $exit);
+  select $iterator, $callback, $call, $loop, $element, $branch, $exit;
 }
 '''
 
@@ -159,23 +268,32 @@ requires = ["async_iteration_protocol", "generator_lowering"]
 graph_requirements = ["Producción/avance y consumo se rigen por protocolo async; await no se transforma en thread."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-four-languages"
-query_claim = "Un callable async recorre con un bucle que suspende (`async for`, `for await`, `await foreach`) la fuente producida por otro callable async que suspende al avanzar (`yield` mas `await`). El bucle asincrono se registra en el propio bucle: los hechos de iteracion son identicos a los de un bucle sincrono sobre la misma fuente. No prueba agotamiento, tipos de elemento, ni que lo awaitado termine; un generador async que nunca awaits queda excluido, porque entonces la produccion no esta gobernada por el protocolo async."
+query_claim = "Un callable async recorre con un bucle que suspende (`async for`, `for await`, `await foreach`) la fuente producida por otro callable async que produce valores mediante `yield`. El bucle asincrono se registra en el propio bucle: los hechos de iteracion son identicos a los de un bucle sincrono sobre la misma fuente. No prueba agotamiento, tipos de elemento, ni que lo awaitado termine; el productor no necesita una expresion await: un generador async sigue el protocolo asincrono aun si sus elementos estan disponibles inmediatamente."
 query = '''
-query async_iterator {
- require $consumer IS CALLABLE;
- callable(async: true) as $consumer;
- require $consumer HAS_OPERATION $loop;
- operation(kind: loop, async: true) as $loop;
- require $loop ITERATION_SOURCE $source;
- require $source TARGET $producer;
- require $producer IS CALLABLE;
- callable(async: true) as $producer;
- require $producer HAS_OPERATION $suspend;
- operation(kind: yield) as $suspend;
- require $producer HAS_OPERATION $awaited;
- operation(kind: await) as $awaited;
- different $consumer $producer;
- emit iterator=$consumer, $producer, $loop, $source, $suspend, $awaited;
+language "kql/2";
+module ken.catalog.iterator.variants.async_iterator;
+
+pattern detect(out Callable $iterator, out Callable $producer, out Operation $loop, out Call $source, out Operation $suspend) {
+  callable $producer {
+    async: true;
+    body { yield _ as $suspend; }
+  }
+  callable $iterator {
+    async: true;
+    call $source { target: $producer; }
+    body {
+      iterate $source as $item as $loop {
+        async: true;
+        body {}
+      }
+    }
+  }
+  where $iterator != $producer;
+}
+
+query results {
+  use detect(iterator: $iterator, producer: $producer, loop: $loop, source: $source, suspend: $suspend);
+  select $iterator, $producer, $loop, $source, $suspend;
 }
 '''
 
@@ -186,15 +304,23 @@ languages = ["java", "typescript"]
 fixtures_status = "source-regression-matrix"
 query_claim = "Paired next/hasNext API and an observable cursor update; termination is not proven."
 query = '''
-query paired_cursor {
- require $iterator HAS_METHOD $next;
- callable(name: "next") as $next;
- require $iterator HAS_METHOD $test;
- callable(name: "hasNext") as $test;
- require $next WRITES $state;
- require $next READS $state;
- require $test READS $state;
- emit $iterator;
+language "kql/2";
+module ken.catalog.iterator.variants.paired_cursor;
+
+pattern detect(out TypeDecl $iterator) {
+  type $iterator {
+    field $state { }
+    method $next { name: "next"; constructor: false; }
+    method $test { name: "hasNext"; constructor: false; }
+  }
+  where writes($next, $state);
+  where reads($next, $state);
+  where reads($test, $state);
+}
+
+query results {
+  use detect(iterator: $iterator);
+  select $iterator;
 }
 '''
 
@@ -205,15 +331,59 @@ languages = ["python"]
 fixtures_status = "source-regression-matrix"
 query_claim = "Python next() delegation on stored iterator with self-returning iterable protocol."
 query = '''
-query delegated_cursor {
- require $iterator HAS_METHOD $iter;
- callable(name: "__iter__") as $iter;
- require $iter RETURNS_SELF $iterator;
- require $iterator HAS_METHOD $next;
- callable(name: "__next__") as $next;
- require $next RETURNS_CALL $advance;
- require $advance ADVANCES_ITERATOR $cursor;
- require $iterator HAS_FIELD $cursor;
- emit $iterator;
+language "kql/2";
+module ken.catalog.iterator.variants.delegated_cursor;
+
+pattern detect(out TypeDecl $iterator, out Call $local_advance) {
+  type $iterator {
+    field $cursor { }
+    method $iter { name: "__iter__"; constructor: false; }
+    method $next {
+      name: "__next__"; constructor: false;
+      body {
+        let $local_result = call $advance { argument $cursor at any; } as $local_advance;
+        return $local_result;
+      }
+    }
+  }
+  where returns_self($iter, $iterator);
+  where advances($local_advance, $cursor);
+}
+
+query results {
+  use detect(iterator: $iterator);
+  select $iterator;
+}
+'''
+
+[[operations]]
+id = "advancing_element"
+status = "ready"
+description = "A cursor returns the indexed element it reads and explicitly increments that same index by one. Does not prove eventual termination or bounds."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch. The element is read from a field of the cursor at an index the cursor also holds, the read stores it in a place no other write produces, that same index then advances by the literal one, and the cursor returns that place."
+query = '''
+language "kql/2";
+module ken.catalog.iterator.advancing_element;
+import ken.catalog.iterator;
+
+pattern detect(out TypeDecl $unit) {
+  use ken.catalog.iterator.detect(iterator: $unit);
+  type $unit {
+    field $index {}
+    field $items {}
+    method $next {
+      name: ["next", "__next__"]; constructor: false;
+      body {
+        let $value = $items[$index];
+        $index = $index + 1;
+        return $value;
+      }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''

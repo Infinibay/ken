@@ -1,0 +1,1153 @@
+{
+  "query": "language \"kql/2\"; module bench;\nquery q { callable $f { body { var $slot {} return $slot as $ret; } } select $f.path,$f.name,$slot.name,$ret.line; }",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "result": {
+    "language": "kql/2",
+    "capability": "structural-source/1",
+    "query": "q",
+    "columns": [
+      "column_1",
+      "column_2",
+      "column_3",
+      "column_4"
+    ],
+    "rows": [
+      [
+        "src/infinidev/code_intel/parsers/generic_parser.py",
+        "_detect_modifiers",
+        "out",
+        279
+      ],
+      [
+        "src/infinidev/code_intel/parsers/generic_parser.py",
+        "_extract_name",
+        "last_ident",
+        177
+      ],
+      [
+        "src/infinidev/code_intel/parsers/generic_parser.py",
+        "_extract_name",
+        "last_ident",
+        172
+      ],
+      [
+        "src/infinidev/code_intel/parsers/javascript_parser.py",
+        "_find_enclosing_name",
+        "last_prop",
+        105
+      ],
+      [
+        "src/infinidev/code_intel/syntax_check.py",
+        "_generic_skeleton",
+        "out",
+        719
+      ],
+      [
+        "src/infinidev/code_intel/interpreter_api.py",
+        "_q",
+        "out",
+        673
+      ],
+      [
+        "src/infinidev/code_intel/analyzer.py",
+        "_query",
+        "diags",
+        490
+      ],
+      [
+        "src/infinidev/code_intel/method_index.py",
+        "_replace",
+        "tok",
+        220
+      ],
+      [
+        "src/infinidev/code_intel/method_index.py",
+        "_replace",
+        "placeholder",
+        226
+      ],
+      [
+        "src/infinidev/code_intel/syntax_check.py",
+        "_truncate_doc",
+        "cleaned",
+        371
+      ],
+      [
+        "src/infinidev/code_intel/analyzer.py",
+        "check_broken_imports",
+        "diagnostics",
+        149
+      ],
+      [
+        "src/infinidev/code_intel/analyzer.py",
+        "check_missing_docstrings",
+        "diagnostics",
+        414
+      ],
+      [
+        "src/infinidev/code_intel/analyzer.py",
+        "check_undefined_symbols",
+        "diagnostics",
+        230
+      ],
+      [
+        "src/infinidev/code_intel/analyzer.py",
+        "check_unused_definitions",
+        "diagnostics",
+        358
+      ],
+      [
+        "src/infinidev/code_intel/analyzer.py",
+        "check_unused_imports",
+        "diagnostics",
+        289
+      ],
+      [
+        "src/infinidev/code_intel/syntax_check.py",
+        "collect_tree_syntax_issues",
+        "issues",
+        206
+      ],
+      [
+        "src/infinidev/code_intel/parsers/c_parser.py",
+        "extract_imports",
+        "imports",
+        160
+      ],
+      [
+        "src/infinidev/code_intel/parsers/generic_parser.py",
+        "extract_imports",
+        "out",
+        358
+      ],
+      [
+        "src/infinidev/code_intel/parsers/javascript_parser.py",
+        "extract_imports",
+        "imports",
+        393
+      ],
+      [
+        "src/infinidev/code_intel/parsers/python_parser.py",
+        "extract_imports",
+        "imports",
+        296
+      ],
+      [
+        "src/infinidev/code_intel/parsers/rust_parser.py",
+        "extract_imports",
+        "imports",
+        200
+      ],
+      [
+        "src/infinidev/code_intel/extractors/javascript.py",
+        "extract_js_symbols",
+        "out",
+        40
+      ],
+      [
+        "src/infinidev/code_intel/extractors/python.py",
+        "extract_python_symbols",
+        "out",
+        39
+      ],
+      [
+        "src/infinidev/code_intel/parsers/c_parser.py",
+        "extract_references",
+        "refs",
+        119
+      ],
+      [
+        "src/infinidev/code_intel/parsers/javascript_parser.py",
+        "extract_references",
+        "refs",
+        317
+      ],
+      [
+        "src/infinidev/code_intel/parsers/python_parser.py",
+        "extract_references",
+        "refs",
+        239
+      ],
+      [
+        "src/infinidev/code_intel/parsers/rust_parser.py",
+        "extract_references",
+        "refs",
+        169
+      ],
+      [
+        "src/infinidev/code_intel/parsers/c_parser.py",
+        "extract_symbols",
+        "symbols",
+        20
+      ],
+      [
+        "src/infinidev/code_intel/parsers/generic_parser.py",
+        "extract_symbols",
+        "symbols",
+        345
+      ],
+      [
+        "src/infinidev/code_intel/parsers/javascript_parser.py",
+        "extract_symbols",
+        "symbols",
+        127
+      ],
+      [
+        "src/infinidev/code_intel/parsers/python_parser.py",
+        "extract_symbols",
+        "symbols",
+        50
+      ],
+      [
+        "src/infinidev/code_intel/parsers/rust_parser.py",
+        "extract_symbols",
+        "symbols",
+        20
+      ],
+      [
+        "src/infinidev/code_intel/_db.py",
+        "get_pooled_connection",
+        "cached",
+        63
+      ],
+      [
+        "src/infinidev/code_intel/_db.py",
+        "get_pooled_connection",
+        "conn",
+        68
+      ],
+      [
+        "src/infinidev/code_intel/interpreter_api.py",
+        "search_by_intent",
+        "out",
+        296
+      ],
+      [
+        "src/infinidev/code_intel/syntax_check.py",
+        "to_dict",
+        "d",
+        362
+      ]
+    ],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 44,
+    "reason": null,
+    "results_truncated": false,
+    "plan": [
+      {
+        "role": "f",
+        "selector": "callable",
+        "owner": null,
+        "access": "kind_scan"
+      }
+    ],
+    "optional_evidence": [],
+    "analysis": {
+      "snapshot": 1,
+      "manifest": [
+        [
+          "src/infinidev/code_intel/__init__.py",
+          "5550d57afd7ac75cba1cba3e3002608ae367a4c8d8fa54e5653247477a6ef1cc"
+        ],
+        [
+          "src/infinidev/code_intel/_db.py",
+          "ce17f6c1c28322189e6e71fd932fce0346195c18af160a39db5f4f89ba961acc"
+        ],
+        [
+          "src/infinidev/code_intel/analysis_report.py",
+          "b8403b9332e496c8783f0f781e32a925c2135646504c17bcd594f430c02acc46"
+        ],
+        [
+          "src/infinidev/code_intel/analyzer.py",
+          "07e19aacc04446f520875edd2477bf71facdd9d7208bac32ba5a9e981321164b"
+        ],
+        [
+          "src/infinidev/code_intel/background_indexer.py",
+          "0d8e0c9a44973b43e7d6d3c9b23934e42e9202b7b91af62b5fec96f1d34b3b22"
+        ],
+        [
+          "src/infinidev/code_intel/diagnostic.py",
+          "dbee5965e05bca09bdfbccc106230546631b413d65fe5c8b8defb9440613fe3b"
+        ],
+        [
+          "src/infinidev/code_intel/extractors/__init__.py",
+          "19339ff3a95b3f14adb1b23dd34145fffb6c9fcba47ed5839cb591e919f27747"
+        ],
+        [
+          "src/infinidev/code_intel/extractors/_common.py",
+          "e4172405195dc4e4fc3697d4b81ed36caf99f8967404a19f40a50b56387052a0"
+        ],
+        [
+          "src/infinidev/code_intel/extractors/javascript.py",
+          "21146d653c832e61fad0a14fed7a4c104e0e1e04066e99976318ac01377978f3"
+        ],
+        [
+          "src/infinidev/code_intel/extractors/python.py",
+          "cf64c4f62345222779d8dd0580278a277aec52f47cf3e835a9158361f3cc8d96"
+        ],
+        [
+          "src/infinidev/code_intel/file_change_notifications.py",
+          "c7095e5c5323a436bedf2335cdf29a5e002c5059ccc4be089f579eae372786c7"
+        ],
+        [
+          "src/infinidev/code_intel/import_model.py",
+          "72e391e6b9504eff029782d79f1feb5082fd19dd3d1f55d065749199c0ab2d87"
+        ],
+        [
+          "src/infinidev/code_intel/import_resolver.py",
+          "8d7fd88a68ebe8f2659a33ac0759b33b3f37ebd983c594126d97e2f9e9a0ebc6"
+        ],
+        [
+          "src/infinidev/code_intel/index.py",
+          "dbc8b5f85b08fc722fe7f7c5f591bd99198d918e03e9cef9868eb72ac13a4be0"
+        ],
+        [
+          "src/infinidev/code_intel/indexer.py",
+          "5473f74d2ccba1dbbc25dee5d6f85618b785c1632cb2c505d80af02648dbfd91"
+        ],
+        [
+          "src/infinidev/code_intel/interpreter_api.py",
+          "a227f82c4c100c54ed8553c19379cc9265958aed7709813e896a79a5e48c6b2e"
+        ],
+        [
+          "src/infinidev/code_intel/method_index.py",
+          "c9e6cdcb963d1d9094ff0ba7fa1879083f89fdc6ccbeaecd6cbe0bb93df74f38"
+        ],
+        [
+          "src/infinidev/code_intel/models.py",
+          "1c9669dc7a3c68dd309a784723c2f7ea3004d49f425d19c9fc330ba8196626f5"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/__init__.py",
+          "449b79d43570caaeb2668ae5939de6c041dbc1a1857c4d7b52580d013bf177a2"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/base.py",
+          "05a0fe3569006c7272816eee6a00a0753c44d69b274a2b110fa705499347d2cd"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/c_parser.py",
+          "cf79a23c91ca65f46b983dab7f15a5113fc4bfa94ce217ef46421b7770db89ea"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/generic_parser.py",
+          "96b11c42a5ab6bb767ed8802e1e06a2b396dede2b3cd7db083da7183ce547336"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/javascript_parser.py",
+          "eda440fe0f2cb47bb59383543f525081b5ad02a61a6c0e27f9c2ebe3510a7e55"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/python_parser.py",
+          "da498fb2995e5f6b2a01b92ac9c3c19393760411dcd4ba9ebf4aed530694f754"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/rust_parser.py",
+          "d8c76eb51ce4ad4bf638e8861ed30d4f0fbddfa4748c9aef5e4b16a676fcad91"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/typescript_parser.py",
+          "786904e6e3dd847f9f3a64be64f26d8c844e2a6f8c4cc8a125d372b4e29a3614"
+        ],
+        [
+          "src/infinidev/code_intel/query.py",
+          "1ba947e2544f904d7353c07d02ca90e386f19561d92a1064b5de2834b29eb481"
+        ],
+        [
+          "src/infinidev/code_intel/reference.py",
+          "b97c1475700e3a4759f01f6153231a3ce9960ce63140b6916d62d6f10c82b777"
+        ],
+        [
+          "src/infinidev/code_intel/resolve.py",
+          "914e8c9fdd92682a48201e6850d5aab13b4d36dc2417b4205ae07f898b9e52d9"
+        ],
+        [
+          "src/infinidev/code_intel/smart_index.py",
+          "069366ef912339f97c681bdd52abbf92e079c31836304f1b2c8bdd02aeb82ada"
+        ],
+        [
+          "src/infinidev/code_intel/stdlib_modules.py",
+          "918df5fe5d67b5556974b035851fd9242c6249f93ae8f83f40546dab35db1b4b"
+        ],
+        [
+          "src/infinidev/code_intel/symbol.py",
+          "f74c3ef2e9e397572ec8870cad4ba9c8a26bb4c3fb7261bc5c6b1fc4f0c82fde"
+        ],
+        [
+          "src/infinidev/code_intel/symbol_embeddings.py",
+          "f7fca6e888c23c740eea77f0351d9a5aaff373b3a7ac0fa3bf6f014a9bccada4"
+        ],
+        [
+          "src/infinidev/code_intel/symbol_kind.py",
+          "64eedd078e021b45c4418459b5783fa3767917e86abd56a770c020a1da6e8d50"
+        ],
+        [
+          "src/infinidev/code_intel/syntax_check.py",
+          "4aa614789d1bc46d043542f0268857011610e1e7cd45792c9b3ee35347672ce7"
+        ]
+      ],
+      "frontend": "53b4415bba490af0bdf40ad64f8c533f53300667920ec296bf5a0adafc674f98",
+      "freshness": "captured_snapshot",
+      "skipped": [],
+      "parsed_units": 35,
+      "reused_units": 0,
+      "cache_mb": 0.0,
+      "disk_budget_mb": 0,
+      "compilation_cache": {
+        "retained_bytes": 0,
+        "capacity_bytes": 0,
+        "entries": 0,
+        "hits": 0,
+        "misses": 0,
+        "shared": 0,
+        "evictions": 0,
+        "in_flight": 0,
+        "status": "disabled"
+      },
+      "result_cache": "miss",
+      "ephemeral": true,
+      "allocated_bytes": 172474368,
+      "gc": {
+        "deferred": false,
+        "snapshots": 0,
+        "units": 0
+      },
+      "quota_reclamation": {
+        "before_bytes": 147456,
+        "after_bytes": 147456,
+        "deferred": false,
+        "snapshots": 0,
+        "units": 0
+      },
+      "scanned_nodes": 1563,
+      "states": 116749,
+      "compile_ms": 2.3757079616189003,
+      "build_ms": 2936.155667062849,
+      "query_ms": 10940.101667074487,
+      "result_lookup_ms": 0.00020815059542655945,
+      "total_ms": 13884.142624912784
+    }
+  },
+  "independent_checks": [
+    {
+      "path": "src/infinidev/code_intel/parsers/generic_parser.py",
+      "callable": "_detect_modifiers",
+      "slot": "out",
+      "line": 279,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/generic_parser.py",
+      "callable": "_extract_name",
+      "slot": "last_ident",
+      "line": 177,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/generic_parser.py",
+      "callable": "_extract_name",
+      "slot": "last_ident",
+      "line": 172,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/javascript_parser.py",
+      "callable": "_find_enclosing_name",
+      "slot": "last_prop",
+      "line": 105,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/syntax_check.py",
+      "callable": "_generic_skeleton",
+      "slot": "out",
+      "line": 719,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/interpreter_api.py",
+      "callable": "_q",
+      "slot": "out",
+      "line": 673,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/analyzer.py",
+      "callable": "_query",
+      "slot": "diags",
+      "line": 490,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/method_index.py",
+      "callable": "_replace",
+      "slot": "tok",
+      "line": 220,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/method_index.py",
+      "callable": "_replace",
+      "slot": "placeholder",
+      "line": 226,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/syntax_check.py",
+      "callable": "_truncate_doc",
+      "slot": "cleaned",
+      "line": 371,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/analyzer.py",
+      "callable": "check_broken_imports",
+      "slot": "diagnostics",
+      "line": 149,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/analyzer.py",
+      "callable": "check_missing_docstrings",
+      "slot": "diagnostics",
+      "line": 414,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/analyzer.py",
+      "callable": "check_undefined_symbols",
+      "slot": "diagnostics",
+      "line": 230,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/analyzer.py",
+      "callable": "check_unused_definitions",
+      "slot": "diagnostics",
+      "line": 358,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/analyzer.py",
+      "callable": "check_unused_imports",
+      "slot": "diagnostics",
+      "line": 289,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/syntax_check.py",
+      "callable": "collect_tree_syntax_issues",
+      "slot": "issues",
+      "line": 206,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/c_parser.py",
+      "callable": "extract_imports",
+      "slot": "imports",
+      "line": 160,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/generic_parser.py",
+      "callable": "extract_imports",
+      "slot": "out",
+      "line": 358,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/javascript_parser.py",
+      "callable": "extract_imports",
+      "slot": "imports",
+      "line": 393,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/python_parser.py",
+      "callable": "extract_imports",
+      "slot": "imports",
+      "line": 296,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/rust_parser.py",
+      "callable": "extract_imports",
+      "slot": "imports",
+      "line": 200,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/extractors/javascript.py",
+      "callable": "extract_js_symbols",
+      "slot": "out",
+      "line": 40,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/extractors/python.py",
+      "callable": "extract_python_symbols",
+      "slot": "out",
+      "line": 39,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/c_parser.py",
+      "callable": "extract_references",
+      "slot": "refs",
+      "line": 119,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/javascript_parser.py",
+      "callable": "extract_references",
+      "slot": "refs",
+      "line": 317,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/python_parser.py",
+      "callable": "extract_references",
+      "slot": "refs",
+      "line": 239,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/rust_parser.py",
+      "callable": "extract_references",
+      "slot": "refs",
+      "line": 169,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/c_parser.py",
+      "callable": "extract_symbols",
+      "slot": "symbols",
+      "line": 20,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/generic_parser.py",
+      "callable": "extract_symbols",
+      "slot": "symbols",
+      "line": 345,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/javascript_parser.py",
+      "callable": "extract_symbols",
+      "slot": "symbols",
+      "line": 127,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/python_parser.py",
+      "callable": "extract_symbols",
+      "slot": "symbols",
+      "line": 50,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/parsers/rust_parser.py",
+      "callable": "extract_symbols",
+      "slot": "symbols",
+      "line": 20,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/_db.py",
+      "callable": "get_pooled_connection",
+      "slot": "cached",
+      "line": 63,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/_db.py",
+      "callable": "get_pooled_connection",
+      "slot": "conn",
+      "line": 68,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/interpreter_api.py",
+      "callable": "search_by_intent",
+      "slot": "out",
+      "line": 296,
+      "return_name_matches": true
+    },
+    {
+      "path": "src/infinidev/code_intel/syntax_check.py",
+      "callable": "to_dict",
+      "slot": "d",
+      "line": 362,
+      "return_name_matches": true
+    }
+  ],
+  "indexed_context_result": {
+    "language": "kql/2",
+    "capability": "structural-source/1",
+    "query": "q",
+    "columns": [
+      "column_1",
+      "column_2",
+      "column_3",
+      "column_4"
+    ],
+    "rows": [
+      [
+        "src/infinidev/code_intel/parsers/generic_parser.py",
+        "_detect_modifiers",
+        "out",
+        279
+      ],
+      [
+        "src/infinidev/code_intel/parsers/generic_parser.py",
+        "_extract_name",
+        "last_ident",
+        177
+      ],
+      [
+        "src/infinidev/code_intel/parsers/generic_parser.py",
+        "_extract_name",
+        "last_ident",
+        172
+      ],
+      [
+        "src/infinidev/code_intel/parsers/javascript_parser.py",
+        "_find_enclosing_name",
+        "last_prop",
+        105
+      ],
+      [
+        "src/infinidev/code_intel/syntax_check.py",
+        "_generic_skeleton",
+        "out",
+        719
+      ],
+      [
+        "src/infinidev/code_intel/interpreter_api.py",
+        "_q",
+        "out",
+        673
+      ],
+      [
+        "src/infinidev/code_intel/analyzer.py",
+        "_query",
+        "diags",
+        490
+      ],
+      [
+        "src/infinidev/code_intel/method_index.py",
+        "_replace",
+        "tok",
+        220
+      ],
+      [
+        "src/infinidev/code_intel/method_index.py",
+        "_replace",
+        "placeholder",
+        226
+      ],
+      [
+        "src/infinidev/code_intel/syntax_check.py",
+        "_truncate_doc",
+        "cleaned",
+        371
+      ],
+      [
+        "src/infinidev/code_intel/analyzer.py",
+        "check_broken_imports",
+        "diagnostics",
+        149
+      ],
+      [
+        "src/infinidev/code_intel/analyzer.py",
+        "check_missing_docstrings",
+        "diagnostics",
+        414
+      ],
+      [
+        "src/infinidev/code_intel/analyzer.py",
+        "check_undefined_symbols",
+        "diagnostics",
+        230
+      ],
+      [
+        "src/infinidev/code_intel/analyzer.py",
+        "check_unused_definitions",
+        "diagnostics",
+        358
+      ],
+      [
+        "src/infinidev/code_intel/analyzer.py",
+        "check_unused_imports",
+        "diagnostics",
+        289
+      ],
+      [
+        "src/infinidev/code_intel/syntax_check.py",
+        "collect_tree_syntax_issues",
+        "issues",
+        206
+      ],
+      [
+        "src/infinidev/code_intel/parsers/c_parser.py",
+        "extract_imports",
+        "imports",
+        160
+      ],
+      [
+        "src/infinidev/code_intel/parsers/generic_parser.py",
+        "extract_imports",
+        "out",
+        358
+      ],
+      [
+        "src/infinidev/code_intel/parsers/javascript_parser.py",
+        "extract_imports",
+        "imports",
+        393
+      ],
+      [
+        "src/infinidev/code_intel/parsers/python_parser.py",
+        "extract_imports",
+        "imports",
+        296
+      ],
+      [
+        "src/infinidev/code_intel/parsers/rust_parser.py",
+        "extract_imports",
+        "imports",
+        200
+      ],
+      [
+        "src/infinidev/code_intel/extractors/javascript.py",
+        "extract_js_symbols",
+        "out",
+        40
+      ],
+      [
+        "src/infinidev/code_intel/extractors/python.py",
+        "extract_python_symbols",
+        "out",
+        39
+      ],
+      [
+        "src/infinidev/code_intel/parsers/c_parser.py",
+        "extract_references",
+        "refs",
+        119
+      ],
+      [
+        "src/infinidev/code_intel/parsers/javascript_parser.py",
+        "extract_references",
+        "refs",
+        317
+      ],
+      [
+        "src/infinidev/code_intel/parsers/python_parser.py",
+        "extract_references",
+        "refs",
+        239
+      ],
+      [
+        "src/infinidev/code_intel/parsers/rust_parser.py",
+        "extract_references",
+        "refs",
+        169
+      ],
+      [
+        "src/infinidev/code_intel/parsers/c_parser.py",
+        "extract_symbols",
+        "symbols",
+        20
+      ],
+      [
+        "src/infinidev/code_intel/parsers/generic_parser.py",
+        "extract_symbols",
+        "symbols",
+        345
+      ],
+      [
+        "src/infinidev/code_intel/parsers/javascript_parser.py",
+        "extract_symbols",
+        "symbols",
+        127
+      ],
+      [
+        "src/infinidev/code_intel/parsers/python_parser.py",
+        "extract_symbols",
+        "symbols",
+        50
+      ],
+      [
+        "src/infinidev/code_intel/parsers/rust_parser.py",
+        "extract_symbols",
+        "symbols",
+        20
+      ],
+      [
+        "src/infinidev/code_intel/_db.py",
+        "get_pooled_connection",
+        "cached",
+        63
+      ],
+      [
+        "src/infinidev/code_intel/_db.py",
+        "get_pooled_connection",
+        "conn",
+        68
+      ],
+      [
+        "src/infinidev/code_intel/interpreter_api.py",
+        "search_by_intent",
+        "out",
+        296
+      ],
+      [
+        "src/infinidev/code_intel/syntax_check.py",
+        "to_dict",
+        "d",
+        362
+      ]
+    ],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 44,
+    "reason": null,
+    "results_truncated": false,
+    "plan": [
+      {
+        "role": "f",
+        "selector": "callable",
+        "owner": null,
+        "access": "kind_scan"
+      }
+    ],
+    "optional_evidence": [],
+    "analysis": {
+      "snapshot": 1,
+      "manifest": [
+        [
+          "src/infinidev/code_intel/__init__.py",
+          "5550d57afd7ac75cba1cba3e3002608ae367a4c8d8fa54e5653247477a6ef1cc"
+        ],
+        [
+          "src/infinidev/code_intel/_db.py",
+          "ce17f6c1c28322189e6e71fd932fce0346195c18af160a39db5f4f89ba961acc"
+        ],
+        [
+          "src/infinidev/code_intel/analysis_report.py",
+          "b8403b9332e496c8783f0f781e32a925c2135646504c17bcd594f430c02acc46"
+        ],
+        [
+          "src/infinidev/code_intel/analyzer.py",
+          "07e19aacc04446f520875edd2477bf71facdd9d7208bac32ba5a9e981321164b"
+        ],
+        [
+          "src/infinidev/code_intel/background_indexer.py",
+          "0d8e0c9a44973b43e7d6d3c9b23934e42e9202b7b91af62b5fec96f1d34b3b22"
+        ],
+        [
+          "src/infinidev/code_intel/diagnostic.py",
+          "dbee5965e05bca09bdfbccc106230546631b413d65fe5c8b8defb9440613fe3b"
+        ],
+        [
+          "src/infinidev/code_intel/extractors/__init__.py",
+          "19339ff3a95b3f14adb1b23dd34145fffb6c9fcba47ed5839cb591e919f27747"
+        ],
+        [
+          "src/infinidev/code_intel/extractors/_common.py",
+          "e4172405195dc4e4fc3697d4b81ed36caf99f8967404a19f40a50b56387052a0"
+        ],
+        [
+          "src/infinidev/code_intel/extractors/javascript.py",
+          "21146d653c832e61fad0a14fed7a4c104e0e1e04066e99976318ac01377978f3"
+        ],
+        [
+          "src/infinidev/code_intel/extractors/python.py",
+          "cf64c4f62345222779d8dd0580278a277aec52f47cf3e835a9158361f3cc8d96"
+        ],
+        [
+          "src/infinidev/code_intel/file_change_notifications.py",
+          "c7095e5c5323a436bedf2335cdf29a5e002c5059ccc4be089f579eae372786c7"
+        ],
+        [
+          "src/infinidev/code_intel/import_model.py",
+          "72e391e6b9504eff029782d79f1feb5082fd19dd3d1f55d065749199c0ab2d87"
+        ],
+        [
+          "src/infinidev/code_intel/import_resolver.py",
+          "8d7fd88a68ebe8f2659a33ac0759b33b3f37ebd983c594126d97e2f9e9a0ebc6"
+        ],
+        [
+          "src/infinidev/code_intel/index.py",
+          "dbc8b5f85b08fc722fe7f7c5f591bd99198d918e03e9cef9868eb72ac13a4be0"
+        ],
+        [
+          "src/infinidev/code_intel/indexer.py",
+          "5473f74d2ccba1dbbc25dee5d6f85618b785c1632cb2c505d80af02648dbfd91"
+        ],
+        [
+          "src/infinidev/code_intel/interpreter_api.py",
+          "a227f82c4c100c54ed8553c19379cc9265958aed7709813e896a79a5e48c6b2e"
+        ],
+        [
+          "src/infinidev/code_intel/method_index.py",
+          "c9e6cdcb963d1d9094ff0ba7fa1879083f89fdc6ccbeaecd6cbe0bb93df74f38"
+        ],
+        [
+          "src/infinidev/code_intel/models.py",
+          "1c9669dc7a3c68dd309a784723c2f7ea3004d49f425d19c9fc330ba8196626f5"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/__init__.py",
+          "449b79d43570caaeb2668ae5939de6c041dbc1a1857c4d7b52580d013bf177a2"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/base.py",
+          "05a0fe3569006c7272816eee6a00a0753c44d69b274a2b110fa705499347d2cd"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/c_parser.py",
+          "cf79a23c91ca65f46b983dab7f15a5113fc4bfa94ce217ef46421b7770db89ea"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/generic_parser.py",
+          "96b11c42a5ab6bb767ed8802e1e06a2b396dede2b3cd7db083da7183ce547336"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/javascript_parser.py",
+          "eda440fe0f2cb47bb59383543f525081b5ad02a61a6c0e27f9c2ebe3510a7e55"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/python_parser.py",
+          "da498fb2995e5f6b2a01b92ac9c3c19393760411dcd4ba9ebf4aed530694f754"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/rust_parser.py",
+          "d8c76eb51ce4ad4bf638e8861ed30d4f0fbddfa4748c9aef5e4b16a676fcad91"
+        ],
+        [
+          "src/infinidev/code_intel/parsers/typescript_parser.py",
+          "786904e6e3dd847f9f3a64be64f26d8c844e2a6f8c4cc8a125d372b4e29a3614"
+        ],
+        [
+          "src/infinidev/code_intel/query.py",
+          "1ba947e2544f904d7353c07d02ca90e386f19561d92a1064b5de2834b29eb481"
+        ],
+        [
+          "src/infinidev/code_intel/reference.py",
+          "b97c1475700e3a4759f01f6153231a3ce9960ce63140b6916d62d6f10c82b777"
+        ],
+        [
+          "src/infinidev/code_intel/resolve.py",
+          "914e8c9fdd92682a48201e6850d5aab13b4d36dc2417b4205ae07f898b9e52d9"
+        ],
+        [
+          "src/infinidev/code_intel/smart_index.py",
+          "069366ef912339f97c681bdd52abbf92e079c31836304f1b2c8bdd02aeb82ada"
+        ],
+        [
+          "src/infinidev/code_intel/stdlib_modules.py",
+          "918df5fe5d67b5556974b035851fd9242c6249f93ae8f83f40546dab35db1b4b"
+        ],
+        [
+          "src/infinidev/code_intel/symbol.py",
+          "f74c3ef2e9e397572ec8870cad4ba9c8a26bb4c3fb7261bc5c6b1fc4f0c82fde"
+        ],
+        [
+          "src/infinidev/code_intel/symbol_embeddings.py",
+          "f7fca6e888c23c740eea77f0351d9a5aaff373b3a7ac0fa3bf6f014a9bccada4"
+        ],
+        [
+          "src/infinidev/code_intel/symbol_kind.py",
+          "64eedd078e021b45c4418459b5783fa3767917e86abd56a770c020a1da6e8d50"
+        ],
+        [
+          "src/infinidev/code_intel/syntax_check.py",
+          "4aa614789d1bc46d043542f0268857011610e1e7cd45792c9b3ee35347672ce7"
+        ]
+      ],
+      "frontend": "53b4415bba490af0bdf40ad64f8c533f53300667920ec296bf5a0adafc674f98",
+      "freshness": "captured_snapshot",
+      "skipped": [],
+      "parsed_units": 35,
+      "reused_units": 0,
+      "cache_mb": 0.0,
+      "disk_budget_mb": 0,
+      "compilation_cache": {
+        "retained_bytes": 0,
+        "capacity_bytes": 0,
+        "entries": 0,
+        "hits": 0,
+        "misses": 0,
+        "shared": 0,
+        "evictions": 0,
+        "in_flight": 0,
+        "status": "disabled"
+      },
+      "result_cache": "miss",
+      "ephemeral": true,
+      "allocated_bytes": 197668864,
+      "gc": {
+        "deferred": false,
+        "snapshots": 0,
+        "units": 0
+      },
+      "quota_reclamation": {
+        "before_bytes": 167936,
+        "after_bytes": 167936,
+        "deferred": false,
+        "snapshots": 0,
+        "units": 0
+      },
+      "scanned_nodes": 1563,
+      "states": 116749,
+      "compile_ms": 2.677583834156394,
+      "build_ms": 3410.7196249533445,
+      "query_ms": 4748.585665831342,
+      "result_lookup_ms": 0.0001671724021434784,
+      "total_ms": 8167.677334044129
+    }
+  },
+  "indexed_context_code_hashes": {
+    "src/ken/kql2/service.py": "67bfc6026ce5d5f2cd3d070bf1ed03a2b443e0b1bc52475ef04bdf51015d5737",
+    "src/ken/kql2/execution.py": "439fd0be19af9bbc0f7ae39bcff5ad7a9060d11c22828c98055cb769dbc86cea",
+    "src/ken/kql2/values.py": "39c7e2d4f848304a449591be93c847d43ba30039cb0c4bf304298e102be8cb3e",
+    "src/ken/kql2/semantic.py": "bcef7982cf9c5973f5d38fa07e096ddb83f426dec3071903740d64fa16b0fcf3",
+    "src/ken/kql2/compiler.py": "4ac8567a6b585f740083de9501c39674de0d9c2d6efaf3166d0640631970858c",
+    "src/ken/kql2/body.py": "9ef14986687f1512408bea5cd5a4e292cb9c60d01f4d7a99b4112a28e3420c9b",
+    "src/ken/kql2/models.py": "da385f0ca42d5363cbdb9e15d788692fc0f5dba37618051ff946c3cfce82e48d",
+    "src/ken/kql2/expressions.py": "111d37582f14d921c1b5b18554ce188177cc902e711d619ce89777f3e780e7c9",
+    "src/ken/kql2/cache.py": "c62aae4955574dd76a63f3dca9dca0009d5a9dbe9f41d116e0ef0b10010819f4",
+    "src/ken/kql2/__init__.py": "c01cb0f963ed08bf6261a5a8a1a4355b49ccdec215cc0558ef1947008e41862c",
+    "src/ken/kql2/libraries.py": "600955c3238eac972817a96dd736f8d1eb91ed02998a112bb0900122d2d2541f",
+    "src/ken/kql2/logic.py": "c1cde23f1a5575506fd9a8a02c18e1de14c3af9729e84a1f28526209ff745576",
+    "src/ken/kql2/compilation.py": "f9501f035eb2d9ff04867807f51b53d73f5a7ed3ca35d160ff46d55d3d003f35",
+    "src/ken/kql2/cli.py": "42a48334a853835424587a95152badd6769b199d70a50299b4133e9f22deda52",
+    "src/ken/kql2/codec.py": "4986270e0cf8635b7551003519667e4a156a38148c8aa67dbe82399662c58ca7",
+    "src/ken/kql2/source_types.py": "b3c0bea4ff66d1e240db1331fb81f305b42f1f795300f8691146568b18161c73",
+    "src/ken/kql2/__main__.py": "87c4eb96b64c54a011826987469df6f5974be3f7240385c03fef9602e2346a57",
+    "src/ken/kql2/syntax/__init__.py": "9b1f40badd3df2abd477d22ab6d8483a4b3e371815718f4c18e8a7853747a25a",
+    "src/ken/kql2/syntax/parser.py": "6f49fe1def46c14b8165d71066f03d3f2abb01bc4b085ffb633ae3bee1d101d5",
+    "src/ken/kql2/syntax/lexer.py": "ee4a836cf2d758eaecc06c01372f5825efcfd04651236574ad3962cce4195032",
+    "src/ken/kql2/syntax/ast.py": "7b7ed8f9ad99e07d8087227fc88ca9fea1d73b02b0363fa34fc571e7053cab4b",
+    "src/ken/structural_store/store.py": "5efc54d134a36cd1f1813efb1c54e7dcf44395e8a5a68ecfaf59749f98d540c3",
+    "src/ken/structural_store/leases.py": "8366c44b87f092f14182fe582e0b09f94d7ca7631132c59bb3e759f965a20df4",
+    "src/ken/structural_store/maintenance.py": "68a467d8631d786c425139527ebc84cac31d31dffdeba1dd24e6859665d66e70",
+    "src/ken/structural_store/__init__.py": "51f595b5f1934e5878facf7216b148aaf86c500afdcede80d9f24c3bd3f96bfc",
+    "src/ken/structural_store/operations.py": "512546330001972086af451450f6406e90097f67024d0ae705ec86b066e08d39",
+    "src/ken/structural_store/migrations.py": "a893d2d761c0e2e6e93a7b96bf6661c6fdac451dff32eef3362c0a309ca4d307",
+    "src/ken/structural_store/artifacts.py": "95b70ceb0a7a905ead91c0b61fc75a6edd66604035959b6f0aefc31cb7c9591f",
+    "src/ken/structural_store/acquisition.py": "9eacd347499e77a8a2cfde7fde1be9947d47ada96ca268900509eca4af118997",
+    "src/ken/structural_store/schema.py": "def7c6d6e8c22e44edfe6baa52f7b94151a8b349808cc9e5bd3aa78a55a4f4d5"
+  },
+  "limitations": [
+    "One sample per version; OS caches not cleared.",
+    "Same source manifest, rows as sets, unknown counts and state counts compared.",
+    "Python AST confirms each returned name only, not a complete CFG/semantic oracle.",
+    "No GoF classification query.",
+    "cache_mb=0: includes demanded global linking in query time; no warm retained-result reuse."
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "runtime_ground_truth": {
+    "leak": "leak",
+    "direct_close": "released",
+    "alias_close": "released",
+    "wrong_close": "leak",
+    "transferred": "returned_identity",
+    "delegated": "released"
+  },
+  "rg": {
+    "wall_ms": 7.803457789123058,
+    "candidates": [
+      "leak",
+      "direct_close",
+      "alias_close",
+      "wrong_close",
+      "transferred",
+      "delegated"
+    ]
+  },
+  "kql_absence_candidates": [
+    "delegated",
+    "leak",
+    "transferred"
+  ],
+  "query_attempts": 1,
+  "measurements": [
+    {
+      "case": "first",
+      "wall_ms": 270.6287079490721,
+      "complete": true,
+      "rows": 3,
+      "parsed_units": 1,
+      "reused_units": 0,
+      "result_cache": "miss"
+    },
+    {
+      "case": "repeat",
+      "wall_ms": 197.54524994641542,
+      "complete": true,
+      "rows": 3,
+      "parsed_units": 0,
+      "reused_units": 1,
+      "result_cache": "disk_hit"
+    },
+    {
+      "case": "edited",
+      "wall_ms": 212.67508296296,
+      "complete": true,
+      "rows": 3,
+      "parsed_units": 0,
+      "reused_units": 1,
+      "result_cache": "miss"
+    }
+  ],
+  "result_flows": [
+    {
+      "caller": "alias_close",
+      "call_line": 22,
+      "identity": "observed",
+      "boundaries": [
+        {
+          "kind": "receiver",
+          "path": "resources.py",
+          "line": 25,
+          "consumer": {
+            "path": "resources.py",
+            "line": 25,
+            "name": "close",
+            "kind": "CALL"
+          },
+          "resolution": "not_inspected",
+          "status": "cleanup_candidate",
+          "next": "Verify this method releases the resource and runs on all required paths."
+        }
+      ],
+      "ownership": "unproven",
+      "inventory": "open"
+    },
+    {
+      "caller": "delegated",
+      "call_line": 36,
+      "identity": "observed",
+      "boundaries": [
+        {
+          "kind": "argument",
+          "path": "resources.py",
+          "line": 36,
+          "position": 0,
+          "consumer": {
+            "path": "resources.py",
+            "line": 36,
+            "name": "consume",
+            "kind": "CALL"
+          },
+          "resolution": "not_inspected",
+          "status": "argument_boundary",
+          "next": "Read the receiving method's contract and failure paths; ownership is not established by this use."
+        }
+      ],
+      "ownership": "unproven",
+      "inventory": "open"
+    },
+    {
+      "caller": "direct_close",
+      "call_line": 18,
+      "identity": "observed",
+      "boundaries": [
+        {
+          "kind": "receiver",
+          "path": "resources.py",
+          "line": 19,
+          "consumer": {
+            "path": "resources.py",
+            "line": 19,
+            "name": "close",
+            "kind": "CALL"
+          },
+          "resolution": "not_inspected",
+          "status": "cleanup_candidate",
+          "next": "Verify this method releases the resource and runs on all required paths."
+        }
+      ],
+      "ownership": "unproven",
+      "inventory": "open"
+    },
+    {
+      "caller": "leak",
+      "call_line": 15,
+      "identity": "observed",
+      "boundaries": [],
+      "ownership": "unproven",
+      "inventory": "open",
+      "next": "Inspect the call's enclosing statement; no observed use does not prove discard or a leak."
+    },
+    {
+      "caller": "transferred",
+      "call_line": 33,
+      "identity": "observed",
+      "boundaries": [
+        {
+          "kind": "return",
+          "path": "resources.py",
+          "line": 33,
+          "status": "returned_identity",
+          "next": "Inspect callers and their ownership contract.",
+          "followed": true
+        }
+      ],
+      "ownership": "unproven",
+      "inventory": "open"
+    },
+    {
+      "caller": "wrong_close",
+      "call_line": 28,
+      "identity": "observed",
+      "boundaries": [],
+      "ownership": "unproven",
+      "inventory": "open",
+      "next": "Inspect the call's enclosing statement; no observed use does not prove discard or a leak."
+    },
+    {
+      "caller": "wrong_close",
+      "call_line": 29,
+      "identity": "observed",
+      "boundaries": [
+        {
+          "kind": "receiver",
+          "path": "resources.py",
+          "line": 30,
+          "consumer": {
+            "path": "resources.py",
+            "line": 30,
+            "name": "close",
+            "kind": "CALL"
+          },
+          "resolution": "not_inspected",
+          "status": "cleanup_candidate",
+          "next": "Verify this method releases the resource and runs on all required paths."
+        }
+      ],
+      "ownership": "unproven",
+      "inventory": "open"
+    }
+  ],
+  "coverage": {
+    "definitions": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 0,
+      "results_truncated": false,
+      "reason": null,
+      "evaluations": 1
+    },
+    "calls": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 0,
+      "results_truncated": false,
+      "reason": null,
+      "evaluations": 2
+    },
+    "targets": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 0,
+      "results_truncated": false,
+      "reason": null,
+      "evaluations": 1
+    },
+    "possible_targets": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 0,
+      "results_truncated": false,
+      "reason": null,
+      "evaluations": 1
+    },
+    "usages": {
+      "complete": true,
+      "coverage_complete": true,
+      "unknown_candidates": 1,
+      "results_truncated": false,
+      "reason": "usage_inventory_open",
+      "evaluations": 1
+    }
+  },
+  "limits": "Retrieval timings only, not human diagnosis time. Cleanup spelling is not a release contract; the absence query misses wrong_close and includes two safe wrappers."
+}

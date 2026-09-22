@@ -103,3 +103,38 @@ def test_iter_files_respects_subrepo_gitignore(tmp_path):
     assert "service-a/src/app.py" in rels
     assert "service-a/out/bundle.js" not in rels
     assert "service-b/out/bundle.js" in rels
+
+
+def test_scoped_walk_keeps_ancestor_rules_and_never_visits_siblings(tmp_path, monkeypatch):
+    _touch(tmp_path / "pkg/src/keep.py")
+    _touch(tmp_path / "pkg/src/drop.py")
+    _touch(tmp_path / "sibling/unrelated.py")
+    (tmp_path / ".gitignore").write_text("drop.py\n")
+    (tmp_path / "pkg/.gitignore").write_text("*.py\n!src/keep.py\n")
+    expected = {p for p in iter_files(tmp_path) if p.is_relative_to("pkg/src")}
+    original = Path.iterdir
+
+    def iterdir(path):
+        assert path != tmp_path / "sibling", "Scoped scan visited an unrelated subtree"
+        return original(path)
+
+    monkeypatch.setattr(Path, "iterdir", iterdir)
+    actual = set(iter_files(tmp_path, path="pkg/src"))
+    assert actual == expected == {Path("pkg/src/keep.py")}
+
+
+def test_scoped_walk_cannot_reenter_an_ignored_ancestor(tmp_path):
+    _touch(tmp_path / "ignored/src/keep.py")
+    (tmp_path / ".gitignore").write_text("ignored/\n")
+    (tmp_path / "ignored/src/.gitignore").write_text("!keep.py\n")
+    assert list(iter_files(tmp_path, path="ignored/src")) == []
+
+
+def test_scoped_walk_rejects_escape_and_resolves_internal_target(tmp_path):
+    import pytest
+
+    _touch(tmp_path / "pkg/a.py")
+    (tmp_path / "alias").symlink_to(tmp_path / "pkg", target_is_directory=True)
+    assert list(iter_files(tmp_path, path="alias")) == [Path("pkg/a.py")]
+    with pytest.raises(ValueError, match="escapes project"):
+        list(iter_files(tmp_path, path=".."))

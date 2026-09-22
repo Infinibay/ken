@@ -233,8 +233,14 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    for relation in ['TRUTH_TEST', 'TYPE', 'HAS_FIELD', 'RECEIVER']:
-        assert relation in row['query'], relation
+    query = row['query']
+    assert query.startswith('language "kql/2";')
+    for clause in ['field $first { type: nominal($unit); }',
+                   'field $second { type: nominal($unit); }',
+                   'if ($tested == _) as $branch',
+                   'call $first_call { receiver: $first;',
+                   'call alongside $second_call { receiver: $second;']:
+        assert clause in query, clause
 
 
 @pytest.mark.parametrize('language', LANGUAGES)

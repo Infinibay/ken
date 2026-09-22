@@ -149,4 +149,9 @@ def test_variant_is_ready_for_all_eight_declared_languages():
     assert sorted(row['languages']) == sorted(SOURCES)
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'INDEX' in row['query'] and 'CAPTURES' in row['query']
+    # The KQL 2 source states the same two facts the legacy signature spelled with the
+    # internal INDEX and CAPTURES operators: the wrapper captures the factory
+    # parameter, and each argument is an element of its own input parameter.
+    assert 'captures: $inner' in row['query']
+    assert '$request[_]' in row['query']
+    assert 'edge ' not in row['query'] and 'walk ' not in row['query']

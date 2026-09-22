@@ -1,0 +1,652 @@
+{
+  "abstract-factory": {
+    "algorithm": "Un proveedor ofrece varios slots de creación; cada implementación produce una familia de productos compatibles con esos slots.",
+    "variants": [
+      {
+        "id": "nominal-families",
+        "analysis": "Comprueba dos creadores sobrescritos y dos familias nominales. Riesgo de lectura: el contrato del proveedor se selecciona aparte de los slots sobrescritos; la herencia múltiple puede aportar slots de bases no relacionadas. Tampoco prueba compatibilidad funcional de los productos.",
+        "improvement": "Unir cada slot a la interfaz efectiva del proveedor y el tipo retornado al contrato de producto de ese slot. Probar dos mixins ajenos y una familia válida repartida entre ficheros."
+      },
+      {
+        "id": "structural-families",
+        "analysis": "Sólo admite proveedores CLASS y correlaciona nombres/arity de dos métodos, sin sustitución de productos. FN reproducido con dos literales de objeto TS. Igual nombre y aridad no bastan para asegurar que dos productos cumplen el mismo protocolo; el claim ya limita esto.",
+        "improvement": "Añadir proveedores como valores estructurales y slots de objetos; validar firmas de entrada y contratos de salida por slot. Conservar una modalidad de candidato cuando los tipos sean unknown."
+      },
+      {
+        "id": "associated-products",
+        "analysis": "Dos implementaciones Rust de un trait y creadores con productos CLASS; no resuelve sustitución de associated types. Riesgo declarado: alias, wrappers o productos que no sean clases se pierden; la consulta no demuestra igualdad de familias asociadas.",
+        "improvement": "Modelar el binding de cada associated type por impl y su uso en el retorno del slot. Probar Self::Product, alias y Box<dyn Trait>, además del producto nominal directo."
+      }
+    ],
+    "operations": ""
+  },
+  "adapter": {
+    "algorithm": "Una interfaz de entrada se transforma para invocar otra interfaz, conservando la relación entre solicitud y argumentos o entre respuesta y resultado.",
+    "variants": [
+      {
+        "id": "object-adapter",
+        "analysis": "Exige contrato nominal, adaptee por campo y delegación desde un override; además compara nombres distintos. Una adaptación de unidades o argumentos puede conservar el mismo nombre: FN potencial. La delegación muerta sigue dando match en el ensayo conductual.",
+        "improvement": "Correlacionar receptor, argumentos adaptados y retorno; dejar el cambio de nombre como evidencia opcional. Probar conversión Celsius/Fahrenheit en métodos ambos llamados convert, más reordenamiento de argumentos."
+      },
+      {
+        "id": "functional-adapter",
+        "analysis": "FP confirmado en Python/JS/TS: el parámetro request queda sin usar y dos índices sobre constantes satisfacen la query. Existen $request e índices pero falta el enlace CONTAINER/origen hacia ese parámetro; contradice el claim de indexar el único input.",
+        "improvement": "Unir ambas ocurrencias de argumento a lecturas del mismo input con índices pertinentes; ARGUMENT_ORIGIN y CONTAINER permiten expresar buena parte sin una sintaxis nueva. Añadir negativos con índices ajenos, input reasignado y logging que use request."
+      },
+      {
+        "id": "class-adapter",
+        "analysis": "Liga dos bases, un override de una y una llamada resuelta a un método de la otra. El claim reconoce que mismo nombre con calificación explícita y MRO completo quedan fuera.",
+        "improvement": "Resolver llamada calificada y receptor/base efectiva; probar Adaptee.request(self), Adaptee::request(), orden de bases y homónimos ambiguos. Mantener unknown si la resolución es ambigua."
+      }
+    ],
+    "operations": ""
+  },
+  "bridge": {
+    "algorithm": "La abstracción y su implementación tienen dimensiones de variación separadas; una operación usa la implementación elegida.",
+    "variants": [
+      {
+        "id": "runtime-composition",
+        "analysis": "Evidencia nominal de abstracción refinada y contrato de implementación con varias realizaciones. La independencia nominal adicional se trata de forma diferente en C++; en otros lenguajes hay riesgo de solapamiento con wrappers de la misma jerarquía. No comprueba retención temporal del campo.",
+        "improvement": "Uniformar NOMINAL_ROOT y receptor efectivo donde la cobertura lo permita; contrastar un Decorator de la misma jerarquía y dos dimensiones separadas. No exigir varias implementaciones observadas para ofrecer al menos un candidato parcial."
+      },
+      {
+        "id": "generic-composition",
+        "analysis": "FP metamórfico confirmado: Box<T extends Driver> más Unrelated<T> matchea; cambiar sólo T por U en la clase ajena elimina el match. Cuenta declaraciones con igual string de parámetro de tipo, que no identifica una misma abstracción ni un mismo binding. El claim describe el conteo pero su interpretación como independencia no se sostiene.",
+        "improvement": "Dar identidad de ámbito a cada parámetro de tipo y relacionar uso/constraint/instanciación. No arreglarlo exigiendo otro spelling ni aumentando el conteo. Añadir renombrado alfa de tipos ajenos como invariante."
+      },
+      {
+        "id": "refined-composition",
+        "analysis": "Usa raíces nominales distintas, variantes pares e instance slots: mejor separación estructural. No prueba inyección, valor actual del campo ni independencia de evolución; herencia dinámica y código generado siguen limitados.",
+        "improvement": "Reutilizar resúmenes de retención cuando sean soportados, conservar la evidencia nominal separada y probar campo heredado, doble herencia y sustitución del receptor."
+      }
+    ],
+    "operations": "returned_primitive liga una llamada delegada con lo retornado: útil como evidencia adicional. Revisar aliases y origen del receptor; que la raíz matchee no implica que esta operación más fuerte también lo haga."
+  },
+  "builder": {
+    "algorithm": "Los pasos configuran una construcción y la finalización entrega un producto que conserva ese estado, con formas mutables, inmutables y de estados de tipo.",
+    "variants": [
+      {
+        "id": "mutable-product",
+        "analysis": "FINAL_MEMBER_INPUT y retorno de una construcción conectada al campo ofrecen una garantía local útil. El control muerto se rechaza en el corpus de raíz. Los presets sin argumento, normalizaciones y pasos bajo control no soportado son FN de alcance explícito.",
+        "improvement": "Mantener el contrato directo y añadir variantes para presets y transformaciones con origen/effect summary. Probar setter normalizador, rebind de input y escritura posterior que invalida la configuración."
+      },
+      {
+        "id": "immutable-product",
+        "analysis": "FP confirmado en tres lenguajes: el paso hace audit(input, old_state) y devuelve Builder(0,0). HAS_CALL elige el logging, mientras RETURNS_NEW elige otra construcción. La finalización repite el riesgo de testigos independientes.",
+        "improvement": "Fijar primero la ocurrencia de la construcción retornada y exigir que SUS argumentos reciban input y estado; usar RETURN_ORIGIN/RESULT y CALL_BINDING. Probar testigos decorativos desconectados tanto en paso como en finish."
+      },
+      {
+        "id": "consuming-typestate",
+        "analysis": "Detecta distintos argumentos genéricos de retorno y devolución del slot acumulado. El claim declara que no prueba move ni que finish exista sólo en estado Ready; el nombre no debe presentarse como validación de ownership.",
+        "improvement": "Separar transición de tipo y consumo del receptor. Modelar identidad de instanciación y disponibilidad de métodos por impl especializado. Negativo: finish disponible también en Empty; positivo: Builder<Ready> sin construcción final."
+      },
+      {
+        "id": "director",
+        "analysis": "Correlaciona receptor de dos pasos que escriben estado y de la finalización retornada, pero no orden ni estabilidad de esa instancia. Pasos después de return o un receptor sustituido pueden satisfacer evidencia histórica.",
+        "improvement": "Exigir pasos alcanzables antes de la finalización sobre el mismo origen de instancia; permitir logging entre ellos. Añadir negativo con pasos posteriores al retorno y dos builders alternados."
+      },
+      {
+        "id": "stored-product",
+        "analysis": "Inicialización por construcción, escritura final del input en un miembro del producto y retorno del campo o copia modelada. Ya declara que no garantiza estabilidad desde la inicialización ni aislamiento del producto.",
+        "improvement": "Seguir la definición vigente del campo producto hasta step/finish; probar reset intermedio y dos instancias. Conservar referencias de heap desconocidas como incertidumbre."
+      }
+    ],
+    "operations": "directed_state compone director y mutable-product. La composición hereda la falta de orden del director; no proporciona por sí sola un contrato de secuencia ni de ciclo de vida."
+  },
+  "chain-of-responsibility": {
+    "algorithm": "Un participante maneja o deriva una solicitud al siguiente; el camino elegido decide quién procesa la solicitud y cuándo termina la cadena.",
+    "variants": [
+      {
+        "id": "linked-handlers",
+        "analysis": "La query tiene la misma forma que proxy#guarded-access: delegación condicional a campo del mismo contrato/nombre. No distingue cadena de política de acceso. FN confirmado al reescribir if request: forward como if not request: return; forward.",
+        "improvement": "Separar evidencia común de delegación guardada de la evidencia de cadena. Modelar sucesor, solicitud transmitida y salida sin derivación con CFG; aceptar guardas tempranas y varias instancias enlazadas."
+      },
+      {
+        "id": "middleware-closures",
+        "analysis": "Relaciona continuación y rama de salida, más una cota sobre llamadas con el mismo nombre. El spelling del callee no identifica una continuación; aliases generan FN o cuentan llamadas ajenas. Caminos de longitud cuatro son frágiles ante ruido.",
+        "improvement": "Contar ocurrencias con el mismo origen de callable dentro del ámbito y usar alcanzabilidad resumida. Probar alias de next, función ajena homónima, logging largo y next invocado dos veces."
+      }
+    ],
+    "operations": ""
+  },
+  "command": {
+    "algorithm": "Una acción y sus datos quedan retenidos para que otro participante los active; el contexto suministrado debe llegar a esa acción concreta.",
+    "variants": [
+      {
+        "id": "retained-contract",
+        "analysis": "Inyección/retención de contrato, override de aridad cero y trabajo delegado con resultado descartado. Es razonable como firma de acción, pero un objeto de consulta almacenado o despacho dinámico distinto puede compartirla.",
+        "improvement": "Conservar el carácter de candidato; añadir resumen de efectos cuando se pretenda afirmar acción con efectos y comprobar retención de la instancia en el punto de despacho."
+      },
+      {
+        "id": "command-object",
+        "analysis": "Objeto con operación sin parámetros e invocador separado; los caminos aceptados no prueban necesariamente cola ni retención. Un getter o Strategy de aridad cero puede parecerse; el claim formal falta.",
+        "improvement": "Documentar qué forma concreta se ofrece, vincular receptor/datos al comando observado y añadir positivos con contexto y resultados, sin exigir efectos a todos los Commands."
+      },
+      {
+        "id": "stored-closure",
+        "analysis": "Almacena un cierre que captura una dependencia y otro método llama el campo. ASSIGNED_FROM y CAPTURES conservan historia aunque luego se sustituya el campo/captura; el claim declara ese límite temporal.",
+        "improvement": "Exigir origen vigente al invocar en una variante estricta; probar overwrite del slot y rebind de la captura. Distinguir contrato de acción diferida de intención Command/Strategy."
+      },
+      {
+        "id": "retained-object",
+        "analysis": "Invocador conserva objeto y activa su delegación sin parámetros. El claim admite consultas puras y no garantiza orden ni aliases.",
+        "improvement": "Usar retención final y origen del receptor; ampliar de aridad cero a argumentos de contexto correlacionados cuando existan. Negativos: invocador que reemplaza el objeto y getter sin activación diferida."
+      },
+      {
+        "id": "command-closure",
+        "analysis": "FP confirmado en Python/JS/TS: la cola invoca action(0), mientras audit(context) satisface el argumento de ejecución. Falta unir $dispatch a la invocación del elemento de esa iteración.",
+        "improvement": "Reusar ITERATION_SOURCE, ITERATION_BINDING e ITERATION_INVOKES_VALUE y exigir ARGUMENT_ORIGIN del contexto en ESA invocación. Mantener un negativo con logging que recibe el argumento correcto."
+      },
+      {
+        "id": "queued-object",
+        "analysis": "Compone drain con contrato nominal y receptor retenido; identifica mejor el elemento activado. Hereda el reset léxico y no la conservación del lote, además de requerir operaciones sin parámetros.",
+        "improvement": "Aplicar las mejoras de batch-work-queue y probar cancelación previa, rebind del elemento, contexto explícito y métodos async. No prometer exactly-once."
+      }
+    ],
+    "operations": "retained_dispatch es una pieza de correlación reutilizable; revisar estabilidad entre retención y llamada. Unir operaciones por roles ayuda sólo si cada rol nombra el mismo valor/ocurrencia, no cualquier campo del mismo nombre."
+  },
+  "composite": {
+    "algorithm": "Hojas y grupos ofrecen una operación común; el grupo aplica esa operación a sus hijos recursivamente.",
+    "variants": [
+      {
+        "id": "recursive-contract",
+        "analysis": "Colección de elementos del contrato y operación de override que itera/delega. Riesgo de lectura: la llamada iterada no queda necesariamente fijada al mismo slot del componente. El algoritmo muerto sigue dando match.",
+        "improvement": "Enlazar el TARGET de cada llamada al slot de operación o a su override efectivo y comprobar receptor iterado; contrastar llamada a debug() en lugar de operation()."
+      },
+      {
+        "id": "recursive-nominal",
+        "analysis": "La colección contiene elementos de la propia jerarquía y se invoca el mismo nombre. No demuestra existencia de hoja ni resolución exacta por overload/receptor.",
+        "improvement": "Usar contratos efectivos cuando estén disponibles y permitir candidato en una biblioteca donde no se observa la hoja. Probar colección heterogénea y otro objeto con método homónimo."
+      },
+      {
+        "id": "algebraic-tree",
+        "analysis": "Exige dos campos recursivos y llamadas con el mismo nombre bajo una prueba de campo. Es una firma de árbol binario, no un modelo general de sum types. Enums Rust, discriminated unions TS o grupos de N hijos quedan fuera.",
+        "improvement": "Modelar variantes/casos y payloads recursivos; distinguir rama hoja de rama compuesta. Compartir esa estructura con Interpreter sin confundir recorrido y evaluación."
+      },
+      {
+        "id": "higher-order-traversal",
+        "analysis": "La query actual usa iteración y asignación del resultado del hijo al valor retornado; el nombre no implica soporte de map/reduce general. Sobrescribir con el último resultado tampoco demuestra acumulación.",
+        "improvement": "Separar traversal de fold y expresar dependencia del acumulador previo y resultado del hijo. Añadir map, reduce, generadores y el negativo que calcula un hijo y retorna una constante."
+      }
+    ],
+    "operations": ""
+  },
+  "decorator": {
+    "algorithm": "Un wrapper conserva el contrato delegado y añade una responsabilidad alrededor de esa delegación.",
+    "variants": [
+      {
+        "id": "object-wrapper",
+        "analysis": "Exige una llamada adicional además de la delegación. Logging muerto puede completarla y decoración mediante aritmética pura puede no hacerlo. Por tanto llamada adicional no equivale a responsabilidad añadida.",
+        "improvement": "Usar CFG y datos/efectos observables alrededor de la llamada; admitir transformación del resultado sin una llamada extra. Contrastar una suma al resultado y logging después de return."
+      },
+      {
+        "id": "callable-wrapper",
+        "analysis": "La identidad funcional def wrapper(x): return inner(x) matchea sin añadir comportamiento. FP respecto del algoritmo Decorator; firma de wrapper válido dentro del alcance débil.",
+        "improvement": "Exponer wrapper transparente como building block y una variante de Decorator con efecto o transformación observable; definir si sólo logging alcanza. No depender del nombre de la fábrica."
+      }
+    ],
+    "operations": ""
+  },
+  "facade": {
+    "algorithm": "Una superficie simplifica una colaboración con varios subsistemas; la intención de simplificación requiere evidencia de frontera además de llamadas.",
+    "variants": [
+      {
+        "id": "object-surface",
+        "analysis": "Dos campos con tipos diferentes y delegación a ambos desde una operación. Un servicio de aplicación puede ser efectivamente una Facade: no es automáticamente FP. Requiere dos tipos nominales, por lo que módulos o dos instancias de un tipo quedan fuera.",
+        "improvement": "Presentarlo como coordinación de servicios candidata a Facade; añadir evidencias de módulos/dependencias y uso externo, sin convertir métricas de acoplamiento en prueba de intención."
+      },
+      {
+        "id": "module-surface",
+        "analysis": "increment/double/calculate matchea: cualquier composición exportada de dos llamadas con flujo puede cumplirla. FP respecto de una Facade con subsistemas; el flujo local sí existe y no es un fallo de ARGUMENT_ORIGIN.",
+        "improvement": "Factorizar composición de llamadas como query base; añadir fronteras de módulos o interfaces de subsistemas para una variante más precisa. Probar composición aritmética y API agregadora real."
+      }
+    ],
+    "operations": ""
+  },
+  "factory-method": {
+    "algorithm": "Un slot de creación permite variar el producto usado por una colaboración sin fijar la clase concreta en el consumidor.",
+    "variants": [
+      {
+        "id": "virtual-slot",
+        "analysis": "Override que retorna una construcción: evidencia de creación polimórfica, pero no exige un consumidor/algoritmo del creador. El negativo con retorno prematuro se rechaza en este corpus.",
+        "improvement": "Mantener firma de slot y ofrecer evidencia adicional del cliente que consume el producto; probar retorno por alias, método helper y creación a través de constructor genérico."
+      },
+      {
+        "id": "contract-slot",
+        "analysis": "Cliente tipado por contrato, llamada al slot y realizaciones Go/Rust que crean productos. No garantiza que el valor retornado llegue a otro uso ni qué implementación se elige en ejecución.",
+        "improvement": "Correlacionar origen del resultado con consumo cuando se solicite una prueba de colaboración; ampliar punteros/traits/associated products sin confundir constructores comunes con slots polimórficos."
+      }
+    ],
+    "operations": "client_flow añade consumo del producto: debe verificarse por separado. Ampliar aliases/transformaciones con origen por ocurrencia; ausencia de esta operación no invalida por sí sola una firma de creación polimórfica."
+  },
+  "flyweight": {
+    "algorithm": "Una clave identifica estado compartido: se reutiliza el objeto retenido y sólo una ausencia justifica crearlo; estado extrínseco puede venir del usuario.",
+    "variants": [
+      {
+        "id": "explicit-interning",
+        "analysis": "FP conductual confirmado: get lee el pool, lo sustituye siempre por Product(key) y retorna pool[key]. El claim declara que no prueba miss-only creation ni identidad temporal; la firma demuestra almacenamiento/retorno, no interning.",
+        "improvement": "Añadir hit→retorno existente y miss→construcción→inserción→retorno con clave estable. Reusar los resúmenes de cache-aside y contrastar reemplazo en cada acceso, key rebind y dos funciones de clave incompatibles."
+      },
+      {
+        "id": "entry-api",
+        "analysis": "Reconoce nombres computeIfAbsent/GetOrAdd/try_emplace/insert_or_assign/entry, sin resolver biblioteca ni exigir un inicializador concreto. insert_or_assign incluye reemplazo y entry puede devolver una entrada, no el producto compartido. Riesgo de clasificación por API.",
+        "improvement": "Modelos separados por API y resultado retenido; distinguir ensure-entry de overwrite y no inferir exactly-once del callback. Probar API local homónima y el camino Rust or_insert_with completo."
+      }
+    ],
+    "operations": ""
+  },
+  "interpreter": {
+    "algorithm": "Cada variante de una expresión aplica una regla de evaluación; las expresiones compuestas usan evaluaciones de subexpresiones bajo un contexto.",
+    "variants": [
+      {
+        "id": "expression-objects",
+        "analysis": "Recursión por métodos homónimos y paso del contexto. Un walker que visita nodos sin usar sus resultados puede cumplirlo; el programa con métodos inalcanzables también matchea.",
+        "improvement": "Separar recorrido genérico de evaluación: correlacionar resultados de hijos con operación semántica y resultado final. Probar visita sólo para logging y evaluación de un árbol aritmético."
+      },
+      {
+        "id": "expression-sum",
+        "analysis": "Reutiliza la estructura binaria de composite y exige contexto en ambas llamadas, pero no combina resultados ni representa todas las variantes de un enum.",
+        "improvement": "Añadir casos de sum type y dependencia de resultados; no exigir aritmética si el lenguaje interpretado es booleano o imperativo. Probar operadores distintos, terminales y contexto actualizado."
+      }
+    ],
+    "operations": ""
+  },
+  "iterator": {
+    "algorithm": "El productor o cursor proporciona elementos según un protocolo; la sintaxis de suspensión y la corrección del avance son afirmaciones separadas.",
+    "variants": [
+      {
+        "id": "external-cursor",
+        "analysis": "API C++ next/isDone/currentItem con estado compartido. Firma útil y acotada; otros nombres, begin/end y operadores quedan fuera, y no prueba agotamiento.",
+        "improvement": "Variantes de protocolo resueltas por tipos/operadores; probar un cursor válido sin esos nombres y un contador que jamás se agota."
+      },
+      {
+        "id": "generator",
+        "analysis": "Presencia de yield y forma generadora, excluyendo contexto manager modelado. Es un claim sintáctico coherente: yield inalcanzable todavía puede definir un generador vacío.",
+        "improvement": "Mantener esta firma; no convertir ausencia de elementos o generador vacío en FP. Separar una operación opcional para procedencia de elementos/progreso."
+      },
+      {
+        "id": "delegated-generator",
+        "analysis": "Detecta suspensión delegada mediante el protocolo nativo. No implica que el iterable delegado se agote o que los elementos no cambien.",
+        "improvement": "Probar yield from/yield*, aliases del iterable, return value delegado y throw/close cuando se amplíe el contrato."
+      },
+      {
+        "id": "explicit-cursor",
+        "analysis": "Protocolo Python __iter__/__next__ con escritura de campo; no valida procedencia ni agotamiento. El __iter__ que retorna None antes de return self aún matchea: fallo conductual claro del protocolo, aunque la firma histórica siga presente.",
+        "improvement": "Usar origen de retorno vigente y escritura alcanzable; aceptar next delegado sin contador propio mediante la variante correspondiente. Probar StopIteration y retorno prematuro."
+      },
+      {
+        "id": "callback-iterator",
+        "analysis": "FP de protocolo confirmado: if yield(x): return se admite igual que if not yield(x): return. El claim permite ambas polaridades, pero la interfaz de range-function de Go exige detenerse cuando yield devuelve false.",
+        "improvement": "Normalizar la polaridad del test y exigir que false llegue a salida antes de otra invocación. Probar if/else, negación, break y retorno, y distinguir callback genérico de iterador Go."
+      },
+      {
+        "id": "async-iterator",
+        "analysis": "FN confirmado para async def con yield y consumidor async for pero sin await explícito. La query exige await innecesariamente. La raíz iterator sí lo detecta mediante generator: es FN de variante y de su evidencia async, no de toda la raíz.",
+        "improvement": "Basar el protocolo del productor en async+yield y el consumo en async for/for await, sin exigir await en el cuerpo. Separar rol productor y consumidor en exports."
+      },
+      {
+        "id": "paired-cursor",
+        "analysis": "Dos métodos de siguiente/disponibilidad comparten estado; el estado compartido no prueba fin ni elemento correcto.",
+        "improvement": "Modelar el contrato de hasNext/next cuando se conoce la API y mantener candidato estructural en el resto. Probar always-true, avance sin devolución y cursor delegado."
+      },
+      {
+        "id": "delegated-cursor",
+        "analysis": "next sobre cursor almacenado, ADVANCES_ITERATOR y __iter__ que devuelve self. Mejor evidencia de protocolo nativo, limitada a los modelos disponibles.",
+        "improvement": "Ampliar protocolos por lenguaje y origen vigente del cursor; probar reemplazo del campo y shadowing del builtin next."
+      }
+    ],
+    "operations": "iterate_over expone relaciones de iteración, binding y cuerpo. No existe por ello una macro ejecutable %iterate_over ni %map; es composición de query. Probar identidad del elemento cuando se reasigna dentro del cuerpo."
+  },
+  "mediator": {
+    "algorithm": "Los participantes envían eventos a un coordinador y éste dirige la colaboración entre participantes, sin que cada uno conozca a todos los demás.",
+    "variants": [
+      {
+        "id": "direct-colleagues",
+        "analysis": "Campos de dos tipos distintos y referencias/delegaciones de vuelta. Puede solaparse con ciclos de servicios y pierde dos colegas del mismo tipo.",
+        "improvement": "Usar identidades de instancia/rol y flujo de evento, no sólo tipos diferentes; probar dos botones del mismo tipo y un ciclo de servicios sin coordinación."
+      },
+      {
+        "id": "message-coordination",
+        "analysis": "Observa un coordinador que delega con payload y notifiers que pasan self. Riesgo de lectura: el holder receptor de esa notificación no queda unido al coordinador elegido; el nombre de operación puede completar la consulta con una colaboración ajena.",
+        "improvement": "Unir holder/contrato del mediador y TARGET de la notificación con el método coordinador; luego ligar payload a las llamadas salientes. Añadir dos grupos independientes con nombres coincidentes."
+      },
+      {
+        "id": "tag-dispatch",
+        "analysis": "PARAMETER_TEST añade evidencia de comparar un tag: mejora sobre tener cualquier if. Hereda la unión débil de notifiers y no basta por sí solo para vincular cada tag con la rama de destino correcta.",
+        "improvement": "Correlacionar test, rama factible, participante seleccionado y mediador receptor. Probar comparación de un parámetro de logging y rutas que envían siempre al mismo colega."
+      }
+    ],
+    "operations": ""
+  },
+  "memento": {
+    "algorithm": "Guardar produce una representación del estado y restaurar consume esa representación para restablecer el estado del originador.",
+    "variants": [
+      {
+        "id": "accessor-snapshot",
+        "analysis": "Constructor explícito, CALL_BINDING, FINAL_FIELD_INPUT y getter/restore correlacionados ofrecen evidencia más fuerte de flujo local. Ya excluye efectos ocultos y no promete aislamiento profundo.",
+        "improvement": "Mantener los checks de escritura final; probar alias mutable en el snapshot, getters que transforman y restore con rebind. Definir por separado copia somera y aislamiento histórico."
+      },
+      {
+        "id": "snapshot-object",
+        "analysis": "Constructor de snapshot y escritura final de restauración desde el mismo miembro. La identidad nominal es útil, pero no demuestra que se conserve una fotografía inmutable ni excluye todos los rebindings de restore.",
+        "improvement": "Seguir el origen vigente del parámetro snapshot y modelar mutación de campos cuando se pretenda aislamiento. No exigir deep copy para todos los usos legítimos de Memento."
+      },
+      {
+        "id": "serialized-snapshot",
+        "analysis": "FP confirmado: save llama al encoder pero descarta su salida y retorna una constante. HAS_CALL encode no está unido al retorno; la entrada del decoder tampoco se ata completamente al parámetro snapshot.",
+        "improvement": "Exigir retorno cuyo origen sea el encoder de state y argumento del decoder originado en el snapshot recibido; preservar el write final del decode. Probar ambos extremos desconectados y codec homónimo."
+      }
+    ],
+    "operations": ""
+  },
+  "observer": {
+    "algorithm": "Registrar retiene observadores; notificar activa los observadores de ese mismo registro y, cuando el contrato lo pide, les entrega el evento correspondiente.",
+    "variants": [
+      {
+        "id": "listener-registry",
+        "analysis": "Inserción del listener recibido e invocación al recorrer la misma colección. Es una firma razonable para event emitters; llamarlos código ordinario no los convierte en negativos. No valida todo payload/ciclo de vida y admite cuerpo muerto.",
+        "improvement": "Añadir evidencia opcional de payload por ocurrencia y estabilidad del registro. Probar colección borrada antes de notificar y altas por helper."
+      },
+      {
+        "id": "map-key-registry",
+        "analysis": "Variante Go con listeners como claves e invocación de esas claves. No modela necesariamente valores booleanos usados para habilitar/deshabilitar ni baja.",
+        "improvement": "Correlacionar presencia/estado del registro si se promete entrega activa. Probar claves deshabilitadas, borrado y snapshots de claves."
+      },
+      {
+        "id": "snapshot-registry",
+        "analysis": "Usa snapshot modelado y el valor realmente invocado; cubre copia defensiva de listeners. No prueba cuándo corre un callback que registra ni identidad bajo alias/efectos ocultos.",
+        "improvement": "Conservar el enlace a snapshot e invocación; probar copia de colección ajena, snapshot antes de alta y rebind del elemento."
+      },
+      {
+        "id": "language-event",
+        "analysis": "C# add, remove y raise sobre un mismo event: relación fuerte de storage. Exigir un método explícito de baja pierde emisores válidos con sólo alta y emisión.",
+        "improvement": "Dejar remove como operación/capacidad opcional y probar emisor sin unsubscribe, evento heredado y handlers que reciben distintos payloads."
+      },
+      {
+        "id": "event-bus",
+        "analysis": "FP confirmado: el bucket del topic invoca handler(\"wrong\") y un segundo loop sobre spare invoca unrelated(payload). La query mezcla ITERATES_CALLS del primero con invocación/payload del segundo. El topic como campo también limita topics dinámicos por parámetro.",
+        "improvement": "Unir ITERATION_SOURCE al bucket publicado y ITERATION_INVOKES_VALUE a ESA iteración. Exigir ARGUMENT_ORIGIN del payload allí; añadir variante de topic por parámetro con identidad de clave."
+      }
+    ],
+    "operations": ""
+  },
+  "prototype": {
+    "algorithm": "Una operación de copia produce un objeto nuevo a partir del estado del objeto fuente, con profundidad de copia explícita o desconocida.",
+    "variants": [
+      {
+        "id": "field-copy",
+        "analysis": "Correlaciona allocation retornada y al menos un campo del receptor conservado; excluye ciertos escapes y respeta alternativas de rama. Es una garantía parcial de copia, no de todos los campos.",
+        "improvement": "Conservar la correlación allocation/write y ofrecer cobertura de campos como evidencia adicional. Probar field copy parcial válido, setter con efectos y alias del receptor devuelto."
+      },
+      {
+        "id": "derived-clone",
+        "analysis": "Rust derive(Clone) más uso clone sobre el tipo sin target explícito. La capacidad declarada sin sitio de uso queda fuera; macros propias y trait resolution están excluidos.",
+        "improvement": "Separar capacidad de clonación declarada de uso observado; identificar derive estándar por resolución cuando sea posible y probar impl manual coexistente."
+      },
+      {
+        "id": "explicit-copy",
+        "analysis": "Construcción del mismo tipo con estado del receptor y retorno con origen local. Puede ser sucesor inmutable más que clon, algo declarado por el claim.",
+        "improvement": "Mantener candidato y describir qué estado se conserva; aliases y escrituras finales ya tienen soporte que no debe perderse al generalizar. No inferir deep copy."
+      },
+      {
+        "id": "language-copy",
+        "analysis": "copy.copy(self); return 0 matchea. La primitiva sí copia el objeto, pero no existe una operación de clonación que entregue esa copia; es evidencia de uso de copia, más débil que Prototype. Constructor de copia sólo por firma tampoco prueba su implementación.",
+        "improvement": "Separar usage de operación de clonación retornada y usar RETURN_ORIGIN para ésta. Resolver API/constructor y probar copia descartada, constructor vacío y función local llamada copy."
+      }
+    ],
+    "operations": "derived_copy expone uso de Clone; no debe interpretarse como prueba de profundidad ni de implementación del método cuando el derive no se resuelve."
+  },
+  "proxy": {
+    "algorithm": "Un representante del subject controla o media su acceso, preservando la relación entre petición, operación delegada y resultado.",
+    "variants": [
+      {
+        "id": "guarded-access",
+        "analysis": "Coincide estructuralmente con linked-handlers y exige delegación dentro de la condición. FN confirmado para guarda temprana equivalente; admite delegación inalcanzable.",
+        "improvement": "Expresar condición que puede impedir acceso mediante CFG, incluyendo return/throw previos, y unir argumentos y resultado con el subject. Mantener roles de política separados de topología de cadena."
+      },
+      {
+        "id": "lazy-subject",
+        "analysis": "FP conductual confirmado: descarta RealSubject(), asigna None al campo bajo su guarda y luego delega a ese campo. La query exige una construcción en el método, sin ligar esa construcción a la escritura. El claim literal describe una firma más débil que lazy initialization.",
+        "improvement": "Fijar valor de la escritura al origen de construcción y garantizar que la delegación use esa definición; modelar null/miss con polaridad. Probar creación ajena, reemplazo y condición invertida."
+      },
+      {
+        "id": "remote-subject",
+        "analysis": "FP confirmado en siete lenguajes: transport(encode(request)) seguido de return decode(\"unrelated\"). Codificador y transporte se conectan, decoder y retorno también, pero falta el tramo respuesta→decoder. No es incertidumbre sobre red/codec: los valores están visiblemente desconectados.",
+        "improvement": "Unir argumento del decoder con origen del resultado de ESA llamada de transporte; manejar unwrap/await mediante modelos explícitos. Añadir transport equivocado y respuesta sobrescrita como negativos."
+      }
+    ],
+    "operations": ""
+  },
+  "singleton": {
+    "algorithm": "Un ámbito definido publica una instancia compartida y los accesos retornan esa misma instancia; unicidad global y sincronización son contratos adicionales.",
+    "variants": [
+      {
+        "id": "eager-shared",
+        "analysis": "Campo inicializado, inventario de constructores privados, un sitio de allocation y accessor con retorno directo en CFG_ENTRY. Es conservador en closed-world pero la forma directa del accessor pierde logging previo.",
+        "improvement": "Separar alcanzabilidad/origen del retorno de adyacencia a entry; preservar checks de constructor/scope. No convertir un sitio observado en unicidad universal."
+      },
+      {
+        "id": "module-shared",
+        "analysis": "FP de claim confirmado: dos shared = Config() visibles se aceptan aunque promete written once. No hay restricción equivalente de número de escrituras en la query. Compartir el último valor puede ser válido como alcance más débil, pero no cumple esa promesa.",
+        "improvement": "Comprobar conteo/estado de escrituras de módulo con cobertura completa; si aún no existe ese resumen, implementarlo o reducir explícitamente el claim. Probar asignación posterior dentro y fuera del accessor."
+      },
+      {
+        "id": "lazy-guarded",
+        "analysis": "FN confirmado con una sola asignación aritmética independiente al inicio del accessor: exige que CFG_ENTRY sea la rama y otras aristas directas. Los checks de null, write y return son útiles pero la adyacencia no es esencial al algoritmo.",
+        "improvement": "Usar alcanzabilidad relevante, origen de storage y ausencia de escrituras invalidantes; no sólo subir un límite de path. Probar logging antes/después y rebind real que debe ser rechazado."
+      },
+      {
+        "id": "once-primitive",
+        "analysis": "FP confirmado con AtomicReference.updateAndGet(prev -> new Config()): cambia instancia en cada acceso. La query no resuelve ni filtra adecuadamente la API de once; updateAndGet por sí sola no es inicialización única.",
+        "improvement": "Modelos por símbolo de biblioteca y contrato de publicación/retención. Para CAS exigir conservación de prev no nulo y distinguir instancia publicada de número de ejecuciones del inicializador. Probar API homónima y acceso repetido."
+      }
+    ],
+    "operations": "shared_instance/lazy_instance/observed_lazy_use exponen almacenamiento y uso observado. Revisar que las raíces y sus aliases exporten el mismo tipo de rol; no sumar esas evidencias como tres pruebas independientes ni inferir thread safety."
+  },
+  "state": {
+    "algorithm": "El comportamiento de un contexto depende de su estado actual y ciertas operaciones producen transiciones que cambian el comportamiento posterior.",
+    "variants": [
+      {
+        "id": "state-object",
+        "analysis": "Campo del contrato State, delegación y construcción de nuevo estado. Strategy con cambio de política comparte esa forma; la query no demuestra que una transición gobierne la siguiente operación.",
+        "improvement": "Ligar transición al contexto actual y a futuras delegaciones mediante resumen de campo; mantener ambigüedad State/Strategy donde no haya evidencia de transición causada por el estado."
+      },
+      {
+        "id": "state-enum",
+        "analysis": "Dos valores distintos y escritura guardada de un campo. Un flag de configuración o reset de contador puede cumplirlo sin máquina de estados; el claim reconoce que no prueba una máquina completa.",
+        "improvement": "Exigir tests sobre el estado vigente y transición condicionada por evento que cambie la selección posterior. Añadir negativos de umbral/contador y positivos de máquinas con match/switch."
+      },
+      {
+        "id": "context-transition",
+        "analysis": "Usa constructor, referencia al contexto, setters y tipos de estados distintos: mejor evidencia de colaboración. No cierra dispatch dinámico ni identidad runtime; lambdas o tablas de transiciones pueden quedar fuera.",
+        "improvement": "Reusar CALL_BINDING/FINAL_FIELD_INPUT y ampliar a representación por tags/tablas con el mismo contrato de transición. Probar contexto ajeno pasado a un setter."
+      }
+    ],
+    "operations": ""
+  },
+  "strategy": {
+    "algorithm": "Una política suministrada o elegida aporta un algoritmo que el contexto usa sin fijar su implementación.",
+    "variants": [
+      {
+        "id": "strategy-object",
+        "analysis": "supplied_policy correlaciona input, campo y uso, con dos implementaciones nominales. DI ordinaria puede tener ese papel; una sola implementación presente en una biblioteca genera cobertura parcial, no ausencia demostrada de Strategy.",
+        "improvement": "Ofrecer niveles de evidencia para contrato frente a múltiples implementaciones; comprobar origen vigente al usar el campo. Probar inyección condicional y un único plugin externo desconocido."
+      },
+      {
+        "id": "strategy-callable",
+        "analysis": "Callable recibido, retenido y llamado en otro método: forma válida de política funcional. Retención histórica no garantiza que siga siendo el callable recibido en el momento de uso.",
+        "improvement": "Reutilizar resúmenes de retención y distinguir función de política de notificación por uso de resultado cuando la búsqueda lo requiera. Probar callback sustituido y política pura retornada."
+      },
+      {
+        "id": "static-policy",
+        "analysis": "FN confirmado para Algorithm<P>::run que llama P::apply(x) sin campo. Exigir campo de tipo P contradice la generalidad esperada de política estática; el caso actual sólo cubre composición genérica con campo.",
+        "improvement": "Añadir resolución de callee por parámetro de tipo y especialización sin objeto runtime. Probar política por método estático, free function parametrizada y campo genérico sin uso algorítmico."
+      }
+    ],
+    "operations": "supplied_policy/consumed_policy permiten pedir evidencia más fuerte sobre input y consumo del resultado. Documentar alcance lineal/origen directo y no aplicar una exigencia de resultado a políticas cuyo resultado legítimo son efectos."
+  },
+  "template-method": {
+    "algorithm": "Un esqueleto controla una secuencia de pasos personalizables, preservando las dependencias relevantes entre ellos.",
+    "variants": [
+      {
+        "id": "virtual-skeleton",
+        "analysis": "Método que llama un slot sobrescrito. No fija suficientemente el receptor de todas las llamadas ni garantiza orden/alcanzabilidad; el cuerpo muerto sigue matcheando.",
+        "improvement": "Ligar slot efectivo al receptor del esqueleto y pasos alcanzables. Probar hook llamado sobre objeto ajeno, un único hook válido y hook después de return."
+      },
+      {
+        "id": "trait-default",
+        "analysis": "Implementación por defecto llama un hook y exige al menos dos realizaciones. Una sola implementación no invalida Template Method; la ausencia de otra es open-world, no TN universal.",
+        "improvement": "Separar capacidad de personalización de diversidad observada; comprobar que el cuerpo es default del trait/interfaz y probar Rust/Java con un solo impl."
+      },
+      {
+        "id": "composed-skeleton",
+        "analysis": "Pipeline de exactamente tres hooks con flujo acotado entre resultados. Una composición funcional ordinaria puede cumplirlo y dos/cuatro pasos válidos quedan fuera.",
+        "improvement": "Definir un contrato parametrizable de secuencia/dependencia y personalización, con al menos un hook suministrado o sobrescribible. Probar logging largo, dos pasos y resultado intermedio descartado."
+      }
+    ],
+    "operations": "dependent_steps añade orden/dependencias más específicas; debe compartir primitivas de alcanzabilidad y origen, no duplicar variantes por cantidad fija de hooks."
+  },
+  "visitor": {
+    "algorithm": "El elemento entrega su identidad a un visitante y éste selecciona una operación correspondiente a la variante del elemento, separando operación y estructura.",
+    "variants": [
+      {
+        "id": "overloaded-dispatch",
+        "analysis": "Exige varias operaciones homónimas y paso de self, pero contar overloads no equivale a resolver la variante que recibe ese elemento. La raíz sigue matcheando con accepts muertos.",
+        "improvement": "Resolver firma y binding del argumento que lleva self al parámetro de tipo elemento, incluyendo overload candidato/ambigüedad. Probar overload ajeno con el mismo nombre."
+      },
+      {
+        "id": "named-dispatch",
+        "analysis": "Correlaciona tipos del visitante/elemento y paso de self. Riesgo de lectura: tipo de algún parámetro y posición efectiva del self deben quedar unidos por el mismo CALL_BINDING, no por existencia independiente.",
+        "improvement": "Fijar BINDING_PARAMETER/BINDING_VALUE para el self pasado y TARGET del método elegido. Probar self en una posición distinta de la tipada como elemento y visitantes con dos elementos."
+      },
+      {
+        "id": "generic-visitor",
+        "analysis": "Visitante genérico y callback que recibe self. Sin familia de operaciones/casos puede parecerse a un callback genérico de un solo objeto; sustitución de tipos incompleta limita Rust/TS.",
+        "improvement": "Relacionar parámetro de tipo por ámbito, interfaz del visitante y casos de elementos. Mantener candidato si no se observa la familia completa; probar fold de enum y callback sin estructura visitable."
+      }
+    ],
+    "operations": ""
+  },
+  "architecture.adapted-continuation-wrapper": {
+    "algorithm": "Una fábrica devuelve la adaptación de un handler que invoca la continuación recibida.",
+    "variants": [],
+    "operations": "La raíz no tiene variantes: el caso adapt(handler) con adapt definido como return 42 matchea. El flujo hasta el argumento del adaptador existe, pero no hay garantía de que el adaptador devuelva/conserve un callable. Es un FP de algoritmo respecto del alcance sintáctico declarado. Mejorar con resumen de retorno del target resuelto y modelo explícito del adaptador; si es externo, conservar candidato con esa hipótesis. Probar adaptador que envuelve, descarta, invoca inmediatamente o devuelve un escalar."
+  },
+  "architecture.batch-work-queue": {
+    "algorithm": "Se retiene un lote de trabajos, se activa cada elemento del lote y después se vacía ese lote.",
+    "variants": [
+      {
+        "id": "stored-batch",
+        "analysis": "Tiene enlaces fuertes INSERTED_INPUT/ITERATION_SOURCE/ITERATION_INVOKES_VALUE y reset después de iteración. FP conductual confirmado si consume borra tasks antes de iterar: el reset/retención sólo son léxicos.",
+        "improvement": "Seguir versión de colección desde alta a drenaje, distinguir cancelación de consumo y comprobar que clear no invalide el lote previo. Probar rebind del elemento, pop/drain nativo y operaciones con argumentos."
+      }
+    ],
+    "operations": "drain es la pieza usada también por command#queued-object: la mejora se propaga allí. AFTER_ITERATION no significa finally-safe ni exactly-once. Excepciones/async y alias de colección requieren contrato aparte."
+  },
+  "architecture.cache-aside": {
+    "algorithm": "Buscar por clave; si hay hit retornarlo; si hay miss cargar, almacenar ese mismo resultado y retornarlo.",
+    "variants": [
+      {
+        "id": "java-optional",
+        "analysis": "Modelo específico de Optional con identificación más controlada de API y flujo de hit/fallback. No equivale a reconocer cualquier método homónimo; callbacks, entradas reasignadas o composición async requieren atención adicional.",
+        "improvement": "Probar Optional importado frente a tipo local homónimo, orElse eager frente a orElseGet lazy, fallback que retorna otro valor y clave transformada. Mantener las hipótesis de modelo visibles."
+      },
+      {
+        "id": "null-miss",
+        "analysis": "CFG estructurado, origen de retorno, writes y bindings estables: más fuerte que la firma antigua de lookup/write. FN metamórfico confirmado al insertar veinte asignaciones independientes, por caminos CFG acotados a 16.",
+        "improvement": "Sustituir distancia de instrucciones por alcanzabilidad con resumen de efectos relevantes y presupuesto explícito. Probar ruido de 0/1/20/100 instrucciones y una escritura invalidante que siga rechazándose."
+      }
+    ],
+    "operations": ""
+  },
+  "architecture.continuation-wrapper": {
+    "algorithm": "Una fábrica captura la continuación recibida y devuelve un handler que la invoca.",
+    "variants": [],
+    "operations": "La raíz no tiene variantes. FP conductual confirmado: next = lambda x: 0 antes de crear handler conserva un match; CALLEE_VALUE/CAPTURES identifica el binding histórico, no el valor suministrado. El claim es una forma léxica, no prueba de middleware HTTP. Añadir variante estricta con origen del callable vigente y ausencia de rebind relevante; probar captura ajena, shadowing, alias inmutable y múltiples continuaciones."
+  },
+  "architecture.dependency-injection": {
+    "algorithm": "Una dependencia suministrada alcanza el campo o callable que un consumidor utiliza; retención efectiva es una garantía más fuerte que una asignación observada.",
+    "variants": [
+      {
+        "id": "retained-object",
+        "analysis": "Variante opt-in con estrategia de retención más estricta. La raíz intencionalmente conserva object-assignment para configuración condicional; no hereda automáticamente esta garantía.",
+        "improvement": "Mantener visible cuál variante sustenta el resultado y permitir al usuario seleccionar retención estricta. Probar ctor/configure lineal, ramas soportadas, input rebind y overwrite final."
+      },
+      {
+        "id": "object-assignment",
+        "analysis": "FP conductual confirmado si incoming se asigna y enseguida dependency=None. El hecho histórico de suministro y uso sigue existiendo; es un límite declarado del contrato raíz.",
+        "improvement": "Recomendar retained-object para búsquedas que exijan conservación; ampliar sus resúmenes por rama, evitando eliminar silenciosamente las configuraciones condicionales válidas."
+      },
+      {
+        "id": "callable-input",
+        "analysis": "Retiene/invoca callable suministrado mediante supplied_policy. No prueba estabilidad de heap entre métodos ni semántica del callable.",
+        "improvement": "Correlacionar origen vigente y probar rebind antes de almacenar y reemplazo antes de uso. No distinguir Strategy y DI por el nombre de la clase: pueden ser ambos."
+      }
+    ],
+    "operations": ""
+  },
+  "architecture.dispatch-table": {
+    "algorithm": "Una clave registra una acción y el despacho selecciona e invoca la acción conservada bajo la clave solicitada.",
+    "variants": [
+      {
+        "id": "direct",
+        "analysis": "FP conductual confirmado con table[key]=handler seguido de table[key]=None. La query conserva la inserción histórica y la posterior forma de lookup/call, pero no prueba retención vigente.",
+        "improvement": "Introducir versión/contenido de entrada de mapa y enlazar selected callable al valor retenido; probar overwrite, eliminación, alias de clave y tabla ajena con mismo nombre."
+      },
+      {
+        "id": "adapted",
+        "analysis": "Relaciona slots de instancia y retorno/origen de normalización del handler. Es más precisa que equiparar toda construcción a una acción, pero preservar un argumento en algún wrapper no garantiza que la tabla ejecute el recibido.",
+        "improvement": "Componer resumen del adaptador con escritura final/lookup de la entrada. Probar adaptador que descarta el callable y otro que lo conserva por constructor, además de handlers async."
+      }
+    ],
+    "operations": ""
+  },
+  "resilience.exception-retry": {
+    "algorithm": "Ante una excepción se vuelve a intentar la operación; el éxito sale del bucle. Un bucle de fallback a otros proveedores puede tener forma parecida.",
+    "variants": [
+      {
+        "id": "explicit-continue",
+        "analysis": "FP conductual confirmado: finally: break anula continue y no se reintenta. El caveat ya advierte expresamente que finally puede anular salidas, por lo que no contradice su claim léxico.",
+        "improvement": "Ofrecer una variante de control efectivo: resolver finally antes de CONTINUE_TARGET efectivo o excluir conservadoramente finally no modelado. Probar return/break/throw en finally y retry que conserva target/argumentos."
+      },
+      {
+        "id": "handler-fallthrough",
+        "analysis": "HANDLER_FALLTHROUGH/LOOP_BODY_TAIL excluyen finally/resources/else y flujo no soportado: contrato más cuidadoso. La exclusión produce FN de alcance para formas equivalentes más complejas.",
+        "improvement": "Compartir resumen de finalización normal/abrupta con explicit-continue y ampliar sólo con evidencia. Separar retry, fallback, backoff y circuit breaker; no inferir idempotencia."
+      }
+    ],
+    "operations": ""
+  },
+  "architecture.read-through-cache": {
+    "algorithm": "Un objeto administra un cache y ofrece una lectura que devuelve hit o carga/rellena/devuelve en miss.",
+    "variants": [],
+    "operations": "La raíz compone read_fill y exige construcción local del campo cache, lo que prueba forma de inicialización, no ownership exclusivo. FN confirmado por veinte instrucciones inocuas entre pasos: los caminos tienen cota 16. Reusar alcanzabilidad relevante y resúmenes de retorno/binding; agregar variante de cache inyectado si se quiere incluir ese alcance. read_fill debe conservar identidad de clave y resultado, diferenciando rebind de binding de mutación del mapa. Probar cache ajeno, contains/get no atómico, TTL y async como contratos independientes."
+  },
+  "architecture.subclass-factory": {
+    "algorithm": "Una fábrica parametrizada por una clase devuelve una clase que extiende esa base.",
+    "variants": [
+      {
+        "id": "returned-subclass",
+        "analysis": "BASE_VALUE y retorno preservado evitan confundir clases ajenas; FN confirmado con Alias=Base y class Derived(Alias). La exclusión de aliases está declarada, pero la relación semántica es válida y frecuente.",
+        "improvement": "Resolver origen de la expresión base mediante reaching definitions para aliases locales sin rebind; no por igualdad de spelling. Probar alias, shadowing, factory que devuelve otra clase y composición de mixins."
+      }
+    ],
+    "operations": ""
+  },
+  "persistence.unit-of-work": {
+    "algorithm": "Registrar acumula entidades/cambios y commit coordina su persistencia diferida; una transacción atómica es una garantía adicional.",
+    "variants": [
+      {
+        "id": "keyed-change-set",
+        "analysis": "Registro por clave y al menos dos workers que persisten elementos. FP conductual confirmado si commit reemplaza changes por dos lotes vacíos antes de llamar helpers. También falta demostrar correspondencia general entre claves de alta y claves literales consumidas.",
+        "improvement": "Correlacionar versión de change set, clave y entidad desde register a cada worker; no exigir que existan exactamente dos categorías para todas las UoW. Probar alta bajo clave que ningún worker lee, borrado previo y flush parcial."
+      },
+      {
+        "id": "transactional-change-set",
+        "analysis": "Sigue en design y no tiene query. No es un fallo de ejecución ni un FN medido: no existe detector transaccional publicado para esta variante.",
+        "improvement": "Implementar begin/commit/rollback mediante identidad de transacción y resumen de salidas normales/excepcionales; persistencia debe pertenecer a esa transacción. Probar rollback en error, commit fuera de región y conexión ajena antes de marcar ready."
+      }
+    ],
+    "operations": "keyed_flush comparte recorrido/elemento y persistencia con la raíz, pero no garantiza atomicidad ni consume todos los cambios. Etiquetar flush observado y transacción demostrada como afirmaciones diferentes."
+  }
+}

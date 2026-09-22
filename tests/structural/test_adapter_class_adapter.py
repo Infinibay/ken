@@ -159,4 +159,21 @@ def test_variant_is_ready_for_both_declared_languages():
     assert row['languages'] == ['python', 'cpp']
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'SUBTYPE_OF' in row['query'] and 'OVERRIDES' in row['query']
+    # The variant states both inherited contracts and the overridden slot in the
+    # KQL 2 vocabulary; the predicates are the contract, not the encoding.
+    assert 'subtype(' in row['query'] and 'overrides(' in row['query']
+
+@pytest.mark.parametrize('language', ['python','cpp'])
+@pytest.mark.parametrize('mode', ['logging','other_instance','unreachable'])
+def test_inherited_adaptation_uses_this_instance(language,mode):
+    if language == 'python':
+        action = {'logging':'print(123)\n        return self.specific()',
+                  'other_instance':'other = Adaptee()\n        return other.specific()',
+                  'unreachable':'return 7\n        return self.specific()'}[mode]
+        source = PY.replace('return self.specific()',action)
+    else:
+        action = {'logging':'log(); return this->specific();',
+                  'other_instance':'Adaptee other; return other.specific();',
+                  'unreachable':'return 7; return this->specific();'}[mode]
+        source = CPP.replace('return this->specific();',action)
+    assert bool(detect(language,source)) is (mode == 'logging')

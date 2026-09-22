@@ -1,0 +1,6 @@
+Según la revisión guardada en `project-root-discovery`, cuyos insumos registrados siguen sin cambios, [`src/ken/_paths.py` — `find_project_root`](/private/tmp/ken-staged-memory-20260921/project/src/ken/_paths.py):
+
+- Si `KEN_PROJECT_ROOT` no está vacío, expande `~`, resuelve la ruta y la acepta únicamente si contiene el archivo `.ken/meta.json`. **Si falta, devuelve `None` inmediatamente; no busca en los padres.**
+- Sin ese override, examina `start` (o el directorio actual) y luego sus padres, devolviendo el primero con `.ken/meta.json`, o `None`.
+
+Los símbolos `meta_path` y `ken_dir`, del mismo archivo, construyen la ruta del metadato. Devuelve el directorio del proyecto, no `.ken`.

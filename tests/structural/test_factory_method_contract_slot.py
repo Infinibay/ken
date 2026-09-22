@@ -212,4 +212,6 @@ def test_variant_is_ready_for_both_declared_languages():
     assert row['languages'] == ['go', 'rust']
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'TARGET' in row['query'] and 'OVERRIDES' in row['query']
+    assert 'call $slot { receiver: $supplied;' in row['query']
+    assert 'overrides($factory, $slot)' in row['query']
+    assert 'edge ' not in row['query']

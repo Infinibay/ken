@@ -1,0 +1,4 @@
+def bad(items=[]):
+ return items
+def good(items=None):
+ return [] if items is None else items

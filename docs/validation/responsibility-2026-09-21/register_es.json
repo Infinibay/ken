@@ -1,0 +1,159 @@
+{
+  "ok": true,
+  "question": "\u00bfQui\u00e9n registra herramientas para MCP y CLI?",
+  "hypotheses": [],
+  "status": "ambiguous",
+  "candidates": [
+    {
+      "symbol": "_tools_cli",
+      "path": "src/ken/cli.py",
+      "line": 1664,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.438,
+        "band": "weak",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "\u00bfQui\u00e9n registra herramientas para MCP y CLI?",
+      "documentation": "Dispatch `ken tools ...` \u2014 a thin CLI over the MCP tool registry.\n\nThe tool list, descriptions, and per-parameter schemas are read live\nfrom the same ``FastMCP`` object ``ken mcp`` serves, so this stays in\nsync with the MCP surface automatically \u2014 there is no second list of\ntools to maintain.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.425,
+          "explanation": "Documentation similarity 0.278; term coverage 0.500 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.25,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "c7ed7c379654815aee4a36f3b1b469530f5b13ba664d3386d6658fd24143418e",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/cli.py",
+        "qualname": "_tools_cli",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "_create_tables",
+      "path": "src/ken/findings_graph.py",
+      "line": 151,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.425,
+        "band": "weak",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "\u00bfQui\u00e9n registra herramientas para MCP y CLI?",
+      "documentation": "Self-create the graph tables (CLI/MCP paths skip ``init_schema``).",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.425,
+          "explanation": "Documentation similarity 0.174; term coverage 0.500 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "f7ba86087156bb7e58492fa5acac2feb4cd8be0e8450830c344df17e1f2609f2",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/findings_graph.py",
+        "qualname": "_create_tables",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "_wire_codex",
+      "path": "src/ken/install.py",
+      "line": 448,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.425,
+        "band": "weak",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "\u00bfQui\u00e9n registra herramientas para MCP y CLI?",
+      "documentation": "Wire Codex CLI hooks (`.codex/hooks.json`) + MCP (`.codex/config.toml`).\n\nProject-local Codex hooks only fire if the user has marked the\nproject as trusted in their user-level config \u2014 we print an\ninstruction at the end of install rather than auto-editing\n``~/.codex/config.toml``.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.425,
+          "explanation": "Documentation similarity 0.139; term coverage 0.500 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "dec45f33d8ae46d92ffb69f1687b50f3283bbae29d886fb2b4c50dc5bf384ca9",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/install.py",
+        "qualname": "_wire_codex",
+        "include": [
+          "source"
+        ]
+      }
+    }
+  ],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 1965,
+    "inspected_symbols": 40,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "issues": [],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

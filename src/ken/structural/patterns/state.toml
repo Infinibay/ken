@@ -6,14 +6,28 @@ description = "A context delegates through a contract and stores a concrete repl
 caveat = "State and Strategy share structure; transition intent requires review. The value variant counts distinct constant identities written under the guard, so it proves a rewrite happened, not that the state set is exhaustive or the machine total."
 legacy_query = "require $unit HAS_FIELD $state\nrequire $state TYPE $contract\nrequire $unit HAS_METHOD $request\nrequire $request DELEGATES_TO $state\nrequire $unit HAS_METHOD $transition\nrequire $transition WRITES $state\nrequire $state ASSIGNED_FROM $construction\nrequire $construction ALLOCATES_TYPE $concrete\nrequire $concrete SUBTYPE_OF $contract\n"
 query = '''
-query state {
- any { match "state#state-object"(unit: $unit); }
- or { match "state#context-transition"(unit: $unit); }
- or { match "state#state-enum"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.state;
+import ken.catalog.state.variants.context_transition;
+import ken.catalog.state.variants.state_enum;
+import ken.catalog.state.variants.state_object;
+
+pattern detect(out GraphTerm $unit) {
+  either {
+    use ken.catalog.state.variants.state_object.detect(unit: $unit);
+  } or {
+    use ken.catalog.state.variants.context_transition.detect(unit: $unit);
+  } or {
+    use ken.catalog.state.variants.state_enum.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -27,44 +41,72 @@ fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query state {
+language "kql/2";
+module ken.catalog.state.variants.state_object;
 
- require $unit HAS_FIELD $state;
- require $state TYPE $contract;
- require $unit HAS_METHOD $request;
- require $request DELEGATES_TO $state;
- require $unit HAS_METHOD $transition;
- callable(constructor: false) as $transition;
- require $transition WRITES $state;
- require $state ASSIGNED_FROM $construction;
- require $transition HAS_CALL $construction;
- require $construction ALLOCATES_TYPE $concrete;
- require $concrete SUBTYPE_OF $contract;
- emit $unit;
+pattern detect(out TypeDecl $unit) {
+  type $contract {
+    method $handle { }
+  }
+  type $unit {
+    field $state { type: nominal($contract); }
+    method $request {
+      body {
+        call $handle { receiver: $state; };
+      }
+    }
+    method $transition {
+      constructor: false;
+      body {
+        let $next = construct $concrete { } as $construction;
+        $state = $next as $store;
+      }
+    }
+  }
+  where subtype($concrete, $contract);
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
 id = "state-enum"
 status = "ready"
-languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
-requires = ["match_flow", "storage_def_use"]
+languages = ["python", "javascript", "typescript", "java", "csharp", "go"]
+pending_languages = ["cpp", "rust"]
+requires = ["match_flow", "body_value_capture"]
 graph_requirements = ["Valor de estado gobierna ramas y una transición lo cambia; no introducir objetos State ficticios."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
-query_claim = "Un campo del contexto se escribe dentro de una rama cuya condicion menciona ese mismo campo (GUARDS_WRITE) y el mismo callable escribe al menos dos valores distintos en el. `count distinct` cuenta identidades de constante, no posiciones de sintaxis: escribir el mismo estado en dos ramas no satisface la variante. No exige una clase State ni un objeto por estado, no prueba que el conjunto de estados sea exhaustivo, que la maquina sea total ni que la transicion sea alcanzable en ejecucion."
+query_claim = "El campo de estado se **compara con un valor** y, en esa rama, el callable le **escribe otro valor distinto**; en la rama alternativa la misma maquina **cierra el ciclo** comparando con el segundo valor y volviendo al primero. Dos transiciones correlacionadas por los valores comparados y escritos, no un conteo de escrituras. No exige una clase State ni un objeto por estado, no prueba que el conjunto de estados sea exhaustivo, que la maquina sea total ni que la transicion sea alcanzable en ejecucion."
 query = '''
-query state_enum {
- require $unit HAS_FIELD $state;
- variable(static: false) as $state;
- require $unit HAS_METHOD $transition;
- callable(constructor: false) as $transition;
- require $state GUARDS_WRITE $transition;
- count distinct $next >= 2 {
-  require $transition HAS_OPERATION $write;
-  require $write ASSIGNMENT_TARGET $state;
-  require $write ASSIGNMENT_VALUE $next;
- };
- emit unit=$unit, $state, $transition;
+language "kql/2";
+module ken.catalog.state.variants.state_enum;
+
+pattern detect(out TypeDecl $unit, out Field $state, out Callable $transition, out Value $observed, out Value $next) {
+  type $unit {
+    field $state { static: false; }
+    method $transition {
+      constructor: false;
+      body {
+        if ($state == $observed) {
+          $state = $next as $write;
+        } else {
+          if ($state == $next) {
+            $state = $observed as $back;
+          }
+        }
+      }
+    }
+  }
+  where $observed != $next;
+}
+
+query results {
+  use detect(unit: $unit, state: $state, transition: $transition, observed: $observed, next: $next);
+  select $unit, $state, $transition;
 }
 '''
 
@@ -74,59 +116,152 @@ status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp"]
 query_claim = "An installed state retains its context constructor input. A dispatched action calls that context's setter with a newly constructed distinct state of the same nominal contract. Occurrence bindings and linear setter/constructor transfers correlate the structural path; no guarantee of runtime reachability, global receiver stability or exclusive State intent."
 query = '''
-query context_transition {
- require $unit HAS_FIELD $state;
- require $unit INSTANCE_RECEIVER $self;
- require $unit HAS_METHOD $setup;
- callable(constructor: true) as $setup;
- require $setup HAS_CALL $initial;
- require $state ASSIGNED_FROM $initial;
- require $initial ALLOCATES_TYPE $concrete;
- require $initial CONSTRUCTOR_TARGET $constructor;
- require $initial CALL_BINDING $binding [mode: direct];
- require $binding BINDING_TARGET $constructor;
- require $binding BINDING_VALUE $self;
- require $binding BINDING_PARAMETER $context_input;
- require $backref CONSTRUCTOR_FIELD_INPUT $context_input;
- require $concrete HAS_FIELD $backref;
- require $unit HAS_METHOD $request;
- callable(constructor: false) as $request;
- require $request HAS_CALL $dispatch;
- require $dispatch RECEIVER $state;
- any { require $dispatch TARGET $slot; }
- or { require $dispatch DECLARED_TARGET $slot; }
- require $concrete HAS_METHOD $action;
- any { require $dispatch TARGET $action; }
- or { require $action OVERRIDES $slot; }
- require $unit HAS_METHOD $setter;
- callable(constructor: false) as $setter;
- require $setter HAS_PARAMETER $replacement;
- require $setter HAS_OPERATION $write;
- require $write ASSIGNMENT_TARGET $state;
- require $write FINAL_FIELD_INPUT $replacement;
- require $action HAS_CALL $transition;
- require $transition RECEIVER $backref;
- any {
-  require $transition TARGET $setter;
-  require $transition CALL_BINDING $supplied [mode: direct];
-  require $supplied BINDING_TARGET $setter;
-  require $supplied BINDING_PARAMETER $replacement;
-  require $supplied BINDING_VALUE $creation;
- } or {
-  variable(type_state: unknown) as $backref;
-  call(resolution: unresolved) as $transition;
-  callable(arity: 1) as $setter;
-  where $transition.name == $setter.name;
-  require $setter HAS_PARAMETER $replacement [position: 0, kind: positional];
-  require $transition ARGUMENT $argument;
-  require $argument ENTITY ARGUMENT [position: 0, kind: positional];
-  require $argument VALUE $result;
-  require $creation RESULT $result;
- }
- require $creation ALLOCATES_TYPE $next;
- different $concrete $next;
- path $concrete SUBTYPE_OF{1,8} $contract as $current_contract;
- path $next SUBTYPE_OF{1,8} $contract as $next_contract;
- emit $unit;
+language "kql/2";
+module ken.catalog.state.variants.context_transition;
+
+pattern detect(out TypeDecl $unit, out TypeDecl $concrete, out TypeDecl $next,
+               out Field $state, out Field $backref, out Callable $setup,
+               out Callable $request, out Callable $setter, out Callable $action,
+               out Call $creation, out Call $transition) {
+  type $supertype { }
+  type $concrete {
+    field $backref { }
+    constructor $initialize {
+      param $context_input { }
+      body {
+        initializer { $backref = $context_input; }
+      }
+    }
+    method $action {
+      constructor: false;
+      body {
+        let $made = construct $next { } as $creation;
+        call $invocation { receiver: $backref; argument $creation at 0; resolution: any; unreplaced: true; } as $transition;
+      }
+    }
+  }
+  type $unit {
+    field $state { }
+    method $setup {
+      constructor: true;
+      receiver $self { }
+      body {
+        let $initial = construct $concrete { argument $self for $context_input; };
+        $state = $initial as $store;
+      }
+    }
+    method $request {
+      constructor: false;
+      body {
+        call $slot { receiver: $state; unreplaced: true; } as $dispatch;
+      }
+    }
+    method $setter {
+      constructor: false;
+      param $candidate { }
+      body {
+        $state = $candidate as $write;
+      }
+    }
+  }
+  where subtype($concrete, $supertype);
+  where subtype($next, $supertype);
+  where $concrete != $next;
+  where $setter != $setup;
+  where $setter != $request;
+  where $invocation.name == $setter.name;
+  where $transition.explicit_arguments == $setter.arity;
+  either {
+    where $action == $slot;
+  } or {
+    where overrides($action, $slot);
+  }
+  where final_member_input($write, $candidate);
+}
+
+query results {
+  use detect(unit: $unit, concrete: $concrete, next: $next, state: $state,
+             backref: $backref, setup: $setup, request: $request, setter: $setter,
+             action: $action, creation: $creation, transition: $transition);
+  select $unit, $concrete, $next, $state, $backref, $setup, $request, $setter, $action;
+}
+'''
+
+[[operations]]
+id = "event_transition"
+status = "ready"
+description = "The current state receives the request event and calls back through its unreplaced context field."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch."
+query = '''
+language "kql/2";
+module ken.catalog.state.event_transition;
+
+pattern detect(out TypeDecl $unit, out TypeDecl $concrete, out TypeDecl $next,
+               out Field $state, out Field $backref, out Callable $setup,
+               out Callable $request, out Callable $setter, out Callable $action,
+               out Parameter $event, out Call $creation) {
+  type $supertype { }
+  type $unit {
+    field $state { }
+    method $setup {
+      constructor: true;
+      receiver $self { }
+      body {
+        let $initial = construct $concrete { argument $self at 0; };
+        $state = $initial as $store;
+      }
+    }
+    method $request {
+      constructor: false;
+      param $event { position: 0; reassigned: false; }
+      body {
+        call $slot { receiver: $state; argument $event at 0; unreplaced: true; } as $dispatch;
+      }
+    }
+    method $setter {
+      constructor: false;
+      param $candidate { position: 0; }
+      body {
+        $state = $candidate as $write;
+      }
+    }
+  }
+  type $concrete {
+    field $backref { }
+    constructor $initialize {
+      param $context_input { }
+      body {
+        initializer { $backref = $context_input; }
+      }
+    }
+    method $action {
+      constructor: false;
+      param $action_event { position: 0; reassigned: false; }
+      body {
+        if (binary(left: $action_event, operator: _, right: _)) {
+          let $made = construct $next { } as $creation;
+          call $setter { receiver: $backref; argument $creation for $candidate; resolution: any; unreplaced: true; };
+        }
+      }
+    }
+  }
+  where subtype($concrete, $supertype);
+  where subtype($next, $supertype);
+  where $concrete != $next;
+  where $setter != $setup;
+  where $setter != $request;
+  either {
+    where $action == $slot;
+  } or {
+    where overrides($action, $slot);
+  }
+  where final_member_input($write, $candidate);
+}
+
+query results {
+  use detect(unit: $unit, concrete: $concrete, next: $next, state: $state,
+             backref: $backref, setup: $setup, request: $request, setter: $setter,
+             action: $action, event: $event, creation: $creation);
+  select $unit, $concrete, $next, $state, $backref, $setup, $request, $setter, $action;
 }
 '''

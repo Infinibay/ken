@@ -259,4 +259,5 @@ def test_variant_is_ready_for_all_eight_declared_languages():
     assert sorted(row['languages']) == sorted(SOURCES)
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'CAPTURES' in row['query'] and 'ITERATES_CALLS' in row['query']
+    assert 'captures: $local_payload' in row['query']
+    assert 'iterate $queue as $local_element' in row['query']

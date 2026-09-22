@@ -695,6 +695,7 @@ name = "ken-rank"
 source = { editable = "." }
 dependencies = [
     { name = "fastembed" },
+    { name = "flatbuffers" },
     { name = "mcp" },
     { name = "numpy" },
     { name = "pathspec" },
@@ -730,6 +731,7 @@ dev = [
 requires-dist = [
     { name = "fastembed", specifier = ">=0.5" },
     { name = "fastembed-gpu", marker = "sys_platform != 'darwin' and extra == 'gpu'", specifier = ">=0.5" },
+    { name = "flatbuffers", specifier = ">=25.12.19" },
     { name = "mcp", specifier = ">=2.0,<3" },
     { name = "numpy", specifier = ">=1.26" },
     { name = "pathspec", specifier = ">=0.12" },

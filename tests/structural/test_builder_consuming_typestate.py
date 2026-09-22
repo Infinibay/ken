@@ -182,7 +182,8 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'RETURN_TYPE_ARGUMENT' in row['query'] and 'count distinct' in row['query']
+    assert 'type_parameter $local_state_parameter;' in row['query']
+    assert 'return_type: applied($builder, $state);' in row['query']
 
 
 @pytest.mark.parametrize('language', LANGUAGES)

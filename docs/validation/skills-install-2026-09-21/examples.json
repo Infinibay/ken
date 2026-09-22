@@ -1,0 +1,643 @@
+{
+  "contract": {
+    "validation": {
+      "id": "storage.return-id",
+      "description": "At least one save_user callable returns the value from its save call.",
+      "path": "src",
+      "expectation": "some_match",
+      "state": "validated",
+      "automatic": false,
+      "revision": "3980e41cdf11f26ab940a5d6aebb82b96ede316ce6f684269ba503de8e11e017",
+      "definition": {
+        "id": "storage.return-id",
+        "query": "language \"kql/2\"; module project.storage; query returned_identifier { callable $owner { name: \"save_user\"; body { let $value = call $save { name: \"save\"; }; return $value; } } select $owner; }",
+        "description": "At least one save_user callable returns the value from its save call.",
+        "path": "src",
+        "expectation": "some_match",
+        "examples": [
+          {
+            "name": "returns the call result",
+            "files": {
+              "src/store.py": "def save():\n    return 42\n\ndef save_user():\n    return save()\n"
+            },
+            "expect": "pass"
+          },
+          {
+            "name": "discards the call result",
+            "files": {
+              "src/store.py": "def save():\n    return 42\n\ndef save_user():\n    save()\n    return 0\n"
+            },
+            "expect": "fail"
+          }
+        ],
+        "libraries": {}
+      },
+      "validation": {
+        "revision": "3980e41cdf11f26ab940a5d6aebb82b96ede316ce6f684269ba503de8e11e017",
+        "engine": "53f1c0139a20eafce7b5dfc6d289164f2593d70f16d333db2054862bb1cbd949",
+        "passed": true,
+        "cases": [
+          {
+            "name": "returns the call result",
+            "expected": "pass",
+            "actual": "pass",
+            "passed": true,
+            "reason": null
+          },
+          {
+            "name": "discards the call result",
+            "expected": "fail",
+            "actual": "fail",
+            "passed": true,
+            "reason": null
+          }
+        ]
+      }
+    },
+    "before": {
+      "run_id": "ea935665e607428b8d13ef3e68e7c981",
+      "status": "pass",
+      "scope": "project",
+      "selection": ".",
+      "created_at": "2026-09-21T23:18:06.637165+00:00",
+      "checks": [
+        {
+          "rule": "storage.return-id",
+          "description": "At least one save_user callable returns the value from its save call.",
+          "path": "src",
+          "expectation": "some_match",
+          "status": "pass",
+          "matches": 1,
+          "locations": [
+            {
+              "path": "src/storage.py",
+              "line": 8,
+              "name": "save_user",
+              "kind": "CALLABLE"
+            }
+          ],
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0
+        }
+      ],
+      "claim": "Selected source contracts only; not proof of runtime behavior or absence of all bugs."
+    },
+    "after": {
+      "run_id": "2314c3d542fb42779e40ad6e5f0d1bae",
+      "status": "fail",
+      "scope": "project",
+      "selection": ".",
+      "created_at": "2026-09-21T23:18:06.922066+00:00",
+      "checks": [
+        {
+          "rule": "storage.return-id",
+          "description": "At least one save_user callable returns the value from its save call.",
+          "path": "src",
+          "expectation": "some_match",
+          "status": "fail",
+          "matches": 0,
+          "locations": [],
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0
+        }
+      ],
+      "comparison": {
+        "baseline": "ea935665e607428b8d13ef3e68e7c981",
+        "changes": [
+          {
+            "rule": "storage.return-id",
+            "change": "regression",
+            "before": "pass",
+            "after": "fail",
+            "matches_before": 1,
+            "matches_after": 0
+          }
+        ],
+        "not_checked": []
+      },
+      "claim": "Selected source contracts only; not proof of runtime behavior or absence of all bugs."
+    }
+  },
+  "who": {
+    "status": "ambiguous",
+    "score_kind": "heuristic_not_probability",
+    "candidates": [
+      {
+        "symbol": "write_manifest",
+        "kind": "function",
+        "path": "src/storage.py",
+        "line": 12,
+        "score": 0.883,
+        "evidence": "Write the cache manifest with private permissions."
+      },
+      {
+        "kind": "module",
+        "path": "src/storage.py",
+        "line": 1,
+        "score": 0.85,
+        "evidence": "Save records and write cache manifests."
+      }
+    ]
+  },
+  "read": {
+    "ok": true,
+    "path": "src/storage.py",
+    "source": {
+      "ok": true,
+      "path": "src/storage.py",
+      "snippets": [
+        {
+          "label": "write_manifest",
+          "line": 12,
+          "line_end": 14,
+          "code": "12: def write_manifest(path):\n13:     \"\"\"Write the cache manifest with private permissions.\"\"\"\n14:     os.chmod(path, 0o600)"
+        }
+      ]
+    }
+  },
+  "available": {
+    "status": "candidates",
+    "context": "src/service.py",
+    "candidates": [
+      {
+        "target": {
+          "path": "src/storage.py",
+          "line": 4,
+          "name": "save",
+          "kind": "CALLABLE"
+        },
+        "expression": "persist",
+        "basis": "explicit_from_import",
+        "line": 1,
+        "status": "candidate",
+        "obligations": [
+          "binding not shadowed at the use site",
+          "module initialization completed",
+          "argument and return type compatibility",
+          "effects and errors preserved"
+        ]
+      }
+    ],
+    "issues": [],
+    "claim": "Explicit access spellings only; absence does not prove unavailability. No replacement or autofix is certified.",
+    "acquisition": {
+      "basis": "requested identities and explicit imports, one frontier at a time",
+      "claim": "Statically modeled calls; computed imports/member names and runtime dispatch are not traced.",
+      "paths": [
+        "src/storage.py"
+      ],
+      "issues": [],
+      "import_files_read": 0,
+      "expanded_symbols": 0,
+      "depth_limited": false
+    }
+  },
+  "roles": {
+    "scope": "src",
+    "nodes": [
+      {
+        "path": "src/storage.py",
+        "line": 4,
+        "name": "save",
+        "kind": "CALLABLE",
+        "symbol": "save",
+        "id": 0,
+        "roles": [
+          {
+            "role": "executor_candidate",
+            "basis": "End of the observed project-call chain; external effects remain unverified."
+          }
+        ],
+        "inference": "structural_hypothesis"
+      },
+      {
+        "path": "src/service.py",
+        "line": 3,
+        "name": "create_user",
+        "kind": "CALLABLE",
+        "symbol": "create_user",
+        "id": 1,
+        "roles": [
+          {
+            "role": "entry_candidate",
+            "basis": "No incoming calls observed in this scope."
+          },
+          {
+            "role": "delegates",
+            "basis": "Calls a resolved project callable."
+          }
+        ],
+        "inference": "structural_hypothesis"
+      },
+      {
+        "path": "src/storage.py",
+        "line": 8,
+        "name": "save_user",
+        "kind": "CALLABLE",
+        "symbol": "save_user",
+        "id": 2,
+        "roles": [
+          {
+            "role": "entry_candidate",
+            "basis": "No incoming calls observed in this scope."
+          },
+          {
+            "role": "delegates",
+            "basis": "Calls a resolved project callable."
+          }
+        ],
+        "inference": "structural_hypothesis"
+      }
+    ],
+    "calls": [
+      {
+        "from": 1,
+        "to": [
+          0
+        ],
+        "call": {
+          "path": "src/service.py",
+          "line": 4,
+          "name": "persist",
+          "kind": "CALL"
+        },
+        "resolution": "resolved"
+      },
+      {
+        "from": 2,
+        "to": [
+          0
+        ],
+        "call": {
+          "path": "src/storage.py",
+          "line": 10,
+          "name": "save",
+          "kind": "CALL"
+        },
+        "resolution": "resolved"
+      }
+    ],
+    "truncated": false,
+    "coverage": {
+      "definitions": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null,
+        "evaluations": 1
+      },
+      "calls": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null,
+        "evaluations": 2
+      },
+      "targets": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null,
+        "evaluations": 2
+      },
+      "possible_targets": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null,
+        "evaluations": 2
+      },
+      "usages": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null,
+        "evaluations": 0
+      }
+    },
+    "claim": "Roles are hypotheses from observed calls, not proof of business responsibility or public visibility.",
+    "status": "observed",
+    "acquisition": {
+      "basis": "requested identities and explicit imports, one frontier at a time",
+      "claim": "Statically modeled calls; computed imports/member names and runtime dispatch are not traced.",
+      "paths": [
+        "src/service.py",
+        "src/storage.py"
+      ],
+      "issues": [],
+      "import_files_read": 2,
+      "expanded_symbols": 3,
+      "depth_limited": false
+    }
+  },
+  "impact": {
+    "scope": "src",
+    "targets": [
+      {
+        "path": "src/storage.py",
+        "line": 4,
+        "name": "save",
+        "kind": "CALLABLE"
+      }
+    ],
+    "consumers": [
+      {
+        "caller": {
+          "path": "src/service.py",
+          "line": 3,
+          "name": "create_user",
+          "kind": "CALLABLE",
+          "symbol": "create_user"
+        },
+        "call": {
+          "path": "src/service.py",
+          "line": 4,
+          "name": "persist",
+          "kind": "CALL"
+        },
+        "resolution": "resolved",
+        "result_uses": [
+          {
+            "kind": "return",
+            "path": "src/service.py",
+            "line": 4
+          }
+        ],
+        "hops": 1,
+        "via": [
+          {
+            "path": "src/storage.py",
+            "line": 4,
+            "name": "save",
+            "kind": "CALLABLE"
+          }
+        ]
+      },
+      {
+        "caller": {
+          "path": "src/storage.py",
+          "line": 8,
+          "name": "save_user",
+          "kind": "CALLABLE",
+          "symbol": "save_user"
+        },
+        "call": {
+          "path": "src/storage.py",
+          "line": 10,
+          "name": "save",
+          "kind": "CALL"
+        },
+        "resolution": "resolved",
+        "result_uses": [
+          {
+            "kind": "return",
+            "path": "src/storage.py",
+            "line": 10
+          }
+        ],
+        "hops": 1,
+        "via": [
+          {
+            "path": "src/storage.py",
+            "line": 4,
+            "name": "save",
+            "kind": "CALLABLE"
+          }
+        ]
+      }
+    ],
+    "tests": [],
+    "unresolved_candidates": [],
+    "truncated": false,
+    "depth": 2,
+    "coverage": {
+      "definitions": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null,
+        "evaluations": 1
+      },
+      "calls": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null,
+        "evaluations": 2
+      },
+      "targets": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null,
+        "evaluations": 1
+      },
+      "possible_targets": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null,
+        "evaluations": 1
+      },
+      "usages": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 1,
+        "results_truncated": false,
+        "reason": "usage_inventory_open",
+        "evaluations": 1
+      }
+    },
+    "claim": "Observed result consumers and return propagation. Test links show use, not assertion coverage; empty uses are not proof of discard.",
+    "status": "observed",
+    "acquisition": {
+      "basis": "requested identities and explicit imports, one frontier at a time",
+      "claim": "Statically modeled calls; computed imports/member names and runtime dispatch are not traced.",
+      "paths": [
+        "src/service.py",
+        "src/storage.py"
+      ],
+      "issues": [],
+      "import_files_read": 2,
+      "expanded_symbols": 3,
+      "depth_limited": false
+    },
+    "contracts": [
+      {
+        "rules": [
+          {
+            "id": "storage.return-id",
+            "description": "At least one save_user callable returns the value from its save call.",
+            "path": "src",
+            "expectation": "some_match",
+            "state": "enabled",
+            "automatic": false,
+            "revision": "3980e41cdf11f26ab940a5d6aebb82b96ede316ce6f684269ba503de8e11e017"
+          }
+        ],
+        "checks": [
+          {
+            "rule": "storage.return-id",
+            "description": "At least one save_user callable returns the value from its save call.",
+            "path": "src",
+            "expectation": "some_match",
+            "status": "fail",
+            "matches": 0,
+            "locations": [],
+            "complete": true,
+            "coverage_complete": true,
+            "unknown_candidates": 0,
+            "run_id": "2314c3d542fb42779e40ad6e5f0d1bae",
+            "validity": {
+              "state": "stale",
+              "issues": [
+                "storage.return-id: source inventory or contents changed"
+              ],
+              "checks": [
+                {
+                  "rule": "storage.return-id",
+                  "path": "src",
+                  "status": "fail",
+                  "validity": "stale",
+                  "changed_files": [
+                    "src/storage.py"
+                  ]
+                }
+              ],
+              "scope": "Recorded check inputs; the memory's prose is not independently proved."
+            }
+          }
+        ],
+        "omitted_rules": 0,
+        "selection_evidence": {
+          "storage.return-id": {
+            "basis": "declared_scope"
+          }
+        }
+      }
+    ]
+  },
+  "pattern": {
+    "language": "kql/2",
+    "capability": "structural-source/1",
+    "query": "q",
+    "columns": [
+      "column_1",
+      "column_2"
+    ],
+    "rows": [
+      [
+        {
+          "id": 7,
+          "unit": 2,
+          "local_id": "src/storage.py::module/CALLABLE:write_manifest@246",
+          "kind": "CALLABLE",
+          "name": "write_manifest",
+          "owner": "src/storage.py::module",
+          "line": 12,
+          "end_line": 14,
+          "path": "src/storage.py",
+          "language": "python"
+        },
+        {
+          "id": 13,
+          "unit": 2,
+          "local_id": "src/storage.py::module/CALLABLE:write_manifest@246/CALL:337@337:358",
+          "kind": "CALL",
+          "name": "chmod",
+          "owner": "src/storage.py::module/CALLABLE:write_manifest@246",
+          "line": 14,
+          "end_line": 14,
+          "path": "src/storage.py",
+          "language": "python"
+        }
+      ]
+    ],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 0,
+    "reason": null,
+    "results_truncated": false,
+    "plan": [
+      {
+        "operator": "scan",
+        "role": "f",
+        "selector": "callable",
+        "owner": null,
+        "access": "kind_scan"
+      },
+      {
+        "operator": "scan",
+        "role": "c",
+        "selector": "call",
+        "owner": "f",
+        "access": "name_lookup"
+      }
+    ],
+    "optional_evidence": [],
+    "analysis": {
+      "snapshot": 4,
+      "manifest": [
+        [
+          "src/service.py",
+          "e8e32a78929daaf5679be632e397298cfee639a2522e9528ff42c4d37c6194b8"
+        ],
+        [
+          "src/storage.py",
+          "2a5539d4ba38c47ce94d9685a42fe81cd0ce9827b46fad0a2f307f0bda7f5575"
+        ]
+      ],
+      "frontend": "be45be646549c24d8249c68e740a3bd0370ce925af4b9ce7bb6f14928b1596dd",
+      "freshness": "captured_snapshot",
+      "skipped": [],
+      "parsed_units": 0,
+      "reused_units": 2,
+      "cache_mb": 500.0,
+      "disk_budget_mb": 400.0,
+      "compilation_cache": {
+        "retained_bytes": 2612,
+        "capacity_bytes": 100000000,
+        "entries": 1,
+        "hits": 0,
+        "misses": 1,
+        "shared": 0,
+        "evictions": 0,
+        "in_flight": 0,
+        "status": "miss"
+      },
+      "result_cache": "miss",
+      "ephemeral": false,
+      "allocated_bytes": 974848,
+      "gc": {
+        "deferred": false,
+        "snapshots": 0,
+        "units": 0
+      },
+      "quota_reclamation": {
+        "before_bytes": 974848,
+        "after_bytes": 974848,
+        "deferred": false,
+        "snapshots": 0,
+        "units": 0
+      },
+      "scanned_nodes": 5,
+      "states": 14,
+      "compile_ms": 25.10320907458663,
+      "build_ms": 5.0621668342500925,
+      "query_ms": 0.39995787665247917,
+      "result_lookup_ms": 0.021666986867785454,
+      "total_ms": 64.63875016197562
+    }
+  }
+}

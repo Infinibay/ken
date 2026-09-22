@@ -1,0 +1,477 @@
+{
+  "engine": "53f1c0139a20eafce7b5dfc6d289164f2593d70f16d333db2054862bb1cbd949",
+  "source_files": 271,
+  "query_timeout_ms": 10000,
+  "wall_timeout_seconds": 90,
+  "limit": 100,
+  "cache_mb": 2000,
+  "runs": [
+    {
+      "scope": "src",
+      "case": "definition",
+      "repetition": 0,
+      "seconds": 61.3648,
+      "exit_code": 0,
+      "rows": 1,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 271,
+        "reused_units": 0,
+        "build_ms": 60612.754500005394,
+        "query_ms": 0.5252079572528601,
+        "compile_ms": 9.958290960639715,
+        "total_ms": 60644.16987495497,
+        "result_cache": "miss",
+        "ephemeral": false,
+        "states": 5,
+        "scanned_nodes": 1,
+        "allocated_bytes": 969547776,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-definition-0.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { name:\"_atomic_write\"; } select $f; }"
+    },
+    {
+      "scope": "src",
+      "case": "definition",
+      "repetition": 1,
+      "seconds": 0.7708,
+      "exit_code": 0,
+      "rows": 1,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 59.22958301380277,
+        "query_ms": null,
+        "compile_ms": 25.43091611005366,
+        "total_ms": 119.13941614329815,
+        "result_cache": "disk_hit",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 969547776,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-definition-1.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { name:\"_atomic_write\"; } select $f; }"
+    },
+    {
+      "scope": "src",
+      "case": "definition",
+      "repetition": 2,
+      "seconds": 0.7777,
+      "exit_code": 0,
+      "rows": 1,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 62.25583306513727,
+        "query_ms": null,
+        "compile_ms": 26.147084077820182,
+        "total_ms": 123.96012502722442,
+        "result_cache": "disk_hit",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 969547776,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-definition-2.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { name:\"_atomic_write\"; } select $f; }"
+    },
+    {
+      "scope": "src",
+      "case": "chmod",
+      "repetition": 0,
+      "seconds": 0.8884,
+      "exit_code": 0,
+      "rows": 2,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 59.73012512549758,
+        "query_ms": 71.03437511250377,
+        "compile_ms": 26.16095799021423,
+        "total_ms": 193.44100006856024,
+        "result_cache": "miss",
+        "ephemeral": false,
+        "states": 4323,
+        "scanned_nodes": 2158,
+        "allocated_bytes": 969560064,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-chmod-0.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { call $c { name:\"chmod\"; } } select $f,$c; }"
+    },
+    {
+      "scope": "src",
+      "case": "chmod",
+      "repetition": 1,
+      "seconds": 0.7793,
+      "exit_code": 0,
+      "rows": 2,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 58.400999987497926,
+        "query_ms": null,
+        "compile_ms": 26.68408304452896,
+        "total_ms": 120.42916705831885,
+        "result_cache": "disk_hit",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 969560064,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-chmod-1.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { call $c { name:\"chmod\"; } } select $f,$c; }"
+    },
+    {
+      "scope": "src",
+      "case": "chmod",
+      "repetition": 2,
+      "seconds": 0.7702,
+      "exit_code": 0,
+      "rows": 2,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 58.52999980561435,
+        "query_ms": null,
+        "compile_ms": 25.201332988217473,
+        "total_ms": 118.570749880746,
+        "result_cache": "disk_hit",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 969560064,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-chmod-2.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { call $c { name:\"chmod\"; } } select $f,$c; }"
+    },
+    {
+      "scope": "src",
+      "case": "callers",
+      "repetition": 0,
+      "seconds": 26.1884,
+      "exit_code": 0,
+      "rows": 0,
+      "result": {
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "timeout_ms"
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 110.55233306251466,
+        "query_ms": 24850.749833974987,
+        "compile_ms": 27.041624998673797,
+        "total_ms": 25537.37754188478,
+        "result_cache": "miss",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 969564160,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-callers-0.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $target { name:\"_atomic_write\"; } edge TARGET($site,$target); edge HAS_CALL($owner,$site); select $owner,$site; }"
+    },
+    {
+      "scope": "src",
+      "case": "callers",
+      "repetition": 1,
+      "seconds": 26.4726,
+      "exit_code": 0,
+      "rows": 0,
+      "result": {
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "timeout_ms"
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 104.06174999661744,
+        "query_ms": 24902.10875007324,
+        "compile_ms": 40.90750007890165,
+        "total_ms": 25590.291375061497,
+        "result_cache": "miss",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 969564160,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-callers-1.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $target { name:\"_atomic_write\"; } edge TARGET($site,$target); edge HAS_CALL($owner,$site); select $owner,$site; }"
+    },
+    {
+      "scope": "src",
+      "case": "callers",
+      "repetition": 2,
+      "seconds": 26.9441,
+      "exit_code": 0,
+      "rows": 0,
+      "result": {
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "timeout_ms"
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 96.69675002805889,
+        "query_ms": 25437.751291086897,
+        "compile_ms": 41.40254086814821,
+        "total_ms": 26122.08120780997,
+        "result_cache": "miss",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 969564160,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-callers-2.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $target { name:\"_atomic_write\"; } edge TARGET($site,$target); edge HAS_CALL($owner,$site); select $owner,$site; }"
+    },
+    {
+      "scope": "src",
+      "case": "mutable-default",
+      "repetition": 0,
+      "seconds": 26.1961,
+      "exit_code": 0,
+      "rows": 0,
+      "result": {
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "timeout_ms"
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 95.53749999031425,
+        "query_ms": 24722.78116713278,
+        "compile_ms": 44.221249874681234,
+        "total_ms": 25402.178541989997,
+        "result_cache": "miss",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 969568256,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-mutable-default-0.json",
+      "query": "language \"kql/2\"; module measurement; query q { edge HAS_HAZARD($site,\"mutable-default-argument\"); select $site; }"
+    },
+    {
+      "scope": "src",
+      "case": "mutable-default",
+      "repetition": 1,
+      "seconds": 25.6338,
+      "exit_code": 0,
+      "rows": 0,
+      "result": {
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "timeout_ms"
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 93.47287495620549,
+        "query_ms": 24208.81220884621,
+        "compile_ms": 39.09141616895795,
+        "total_ms": 24860.794541193172,
+        "result_cache": "miss",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 969568256,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-mutable-default-1.json",
+      "query": "language \"kql/2\"; module measurement; query q { edge HAS_HAZARD($site,\"mutable-default-argument\"); select $site; }"
+    },
+    {
+      "scope": "src",
+      "case": "mutable-default",
+      "repetition": 2,
+      "seconds": 25.4344,
+      "exit_code": 0,
+      "rows": 0,
+      "result": {
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "timeout_ms"
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 92.09249983541667,
+        "query_ms": 24036.589374998584,
+        "compile_ms": 41.130583034828305,
+        "total_ms": 24680.496582994238,
+        "result_cache": "miss",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 969568256,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-mutable-default-2.json",
+      "query": "language \"kql/2\"; module measurement; query q { edge HAS_HAZARD($site,\"mutable-default-argument\"); select $site; }"
+    },
+    {
+      "scope": "src",
+      "case": "result-usages",
+      "repetition": 0,
+      "seconds": 25.6731,
+      "exit_code": 0,
+      "rows": 0,
+      "result": {
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "timeout_ms"
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 95.90795915573835,
+        "query_ms": 24219.428166979924,
+        "compile_ms": 43.05604100227356,
+        "total_ms": 24864.400333026424,
+        "result_cache": "miss",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 969576448,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-result-usages-0.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $target {} callable $owner { body { let $value=call $target {} as $site; } } usages of $value as $use {} select $owner,$target,$site,$use; }"
+    },
+    {
+      "scope": "src",
+      "case": "result-usages",
+      "repetition": 1,
+      "seconds": 26.0625,
+      "exit_code": 0,
+      "rows": 0,
+      "result": {
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "timeout_ms"
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 95.11820785701275,
+        "query_ms": 24648.044375004247,
+        "compile_ms": 29.979125130921602,
+        "total_ms": 25309.604166075587,
+        "result_cache": "miss",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 969576448,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-result-usages-1.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $target {} callable $owner { body { let $value=call $target {} as $site; } } usages of $value as $use {} select $owner,$target,$site,$use; }"
+    },
+    {
+      "scope": "src",
+      "case": "result-usages",
+      "repetition": 2,
+      "seconds": 26.5026,
+      "exit_code": 0,
+      "rows": 0,
+      "result": {
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "timeout_ms"
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 271,
+        "build_ms": 96.66504198685288,
+        "query_ms": 25040.03891721368,
+        "compile_ms": 42.441667057573795,
+        "total_ms": 25718.083000043407,
+        "result_cache": "miss",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 969576448,
+        "cache_mb": 2000.0
+      },
+      "artifact": "src-result-usages-2.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $target {} callable $owner { body { let $value=call $target {} as $site; } } usages of $value as $use {} select $owner,$target,$site,$use; }"
+    }
+  ],
+  "engine_unchanged": true,
+  "sources_unchanged": true
+}

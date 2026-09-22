@@ -102,7 +102,7 @@ def source(language, mode, names=None):
             statements.append(f'{accumulator} += {direct}')
         else:
             inner = '\n'.join(f'            {line}' for line in body)
-            statements.append(f'        for {element} in {loop}:\n{inner}')
+            statements.append(f'for {element} in {loop}:\n{inner}')
         body_text = '\n'.join(f'        {line}' for line in statements)
         return (f'class {type_name}:\n'
                 f'    def {operation}(self, ctx):\n        return 0\n\n'
@@ -307,6 +307,33 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    for relation in ['ITERATES_CALLS', 'ITERATED_CALL', 'ASSIGNMENT_TARGET',
-                     'ASSIGNMENT_VALUE', 'RETURNS_STORAGE']:
-        assert relation in row['query'], relation
+    query = row['query']
+    assert query.startswith('language "kql/2";')
+    for clause in ['iterate $iterable as $element',
+                   'let $child_call = call $operation { receiver: $element;',
+                   '$accumulator += $child_call as $write',
+                   'return $accumulator;']:
+        assert clause in query, clause
+
+
+def test_rust_tail_expression_returns_the_declared_accumulator():
+    """Rust's implicit return must not become the accumulator's declaring site.
+
+    The block's tail expression is visited before the block's ``let`` statements
+    (``block`` is pre-order), so a read arriving first used to register the slot
+    at its own byte -- after the loop. A body walk anchors ``var $accumulator``
+    on the declaration, which made rust need the loop before ``var`` while the
+    other languages needed the reverse. The declared names are bound first.
+    """
+    text = source('rust', 'positive')
+    name = DEFAULT_NAMES['accumulator']
+    graph = build('rust', 'positive')
+    declared_at = text.index(f'let mut {name}') + len('let mut ')
+    storage = next(entity for entity in graph.entities.values()
+                   if entity.kind == 'STORAGE' and entity.name == name)
+    assert storage.attrs['start_byte'] == declared_at
+    assert storage.attrs['declared'] is True
+    method = next(entity for entity in graph.entities.values()
+                  if entity.kind == 'CALLABLE' and entity.name == DEFAULT_NAMES['operation'])
+    assert any(fact.relation == 'RETURNS_STORAGE' and fact.object == storage.id
+               for fact in graph.facts), 'the method must return the declared slot'

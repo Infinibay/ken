@@ -1,0 +1,122 @@
+{
+  "repository": "/Users/andres/Projects/codex",
+  "entities": 2620444,
+  "facts": 47154730,
+  "preparation": {
+    "snapshot": "/tmp/ken-codex-perf/graph.pickle",
+    "load_seconds": 300.7554888750892
+  },
+  "compilation_seconds": 0.46315312501974404,
+  "timeout_ms": 5000,
+  "profiled": false,
+  "patterns": {
+    "abstract-factory": {
+      "seconds": 5.3666966669261456,
+      "complete": false,
+      "matches": 0,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "result_sha256": "ad4cf2850e354fe3d7d35e46071a1aa099f2838a36d3b39c58daa50034fed386",
+      "stats": {
+        "states": 151,
+        "rows_examined": 147,
+        "elapsed_ms": 5366.633,
+        "dependencies": []
+      }
+    },
+    "adapter": {
+      "seconds": 61.97068937495351,
+      "complete": false,
+      "matches": 0,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "result_sha256": "ad4cf2850e354fe3d7d35e46071a1aa099f2838a36d3b39c58daa50034fed386",
+      "stats": {
+        "states": 96657,
+        "rows_examined": 56384,
+        "elapsed_ms": 61970.602,
+        "dependencies": []
+      }
+    },
+    "bridge": {
+      "seconds": 63.84486583294347,
+      "complete": false,
+      "matches": 0,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "result_sha256": "ad4cf2850e354fe3d7d35e46071a1aa099f2838a36d3b39c58daa50034fed386",
+      "stats": {
+        "states": 496322,
+        "rows_examined": 301459,
+        "elapsed_ms": 63844.751,
+        "dependencies": []
+      }
+    },
+    "builder": {
+      "seconds": 10.461967292008922,
+      "complete": false,
+      "matches": 0,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "result_sha256": "ad4cf2850e354fe3d7d35e46071a1aa099f2838a36d3b39c58daa50034fed386",
+      "stats": {
+        "states": 3,
+        "rows_examined": 0,
+        "elapsed_ms": 10461.88,
+        "dependencies": []
+      }
+    },
+    "chain-of-responsibility": {
+      "seconds": 5.210199374938384,
+      "complete": false,
+      "matches": 0,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "result_sha256": "ad4cf2850e354fe3d7d35e46071a1aa099f2838a36d3b39c58daa50034fed386",
+      "stats": {
+        "states": 1164859,
+        "rows_examined": 837625,
+        "elapsed_ms": 5210.13,
+        "dependencies": []
+      }
+    },
+    "command": {
+      "seconds": 5.0375576668884605,
+      "complete": false,
+      "matches": 0,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "result_sha256": "ad4cf2850e354fe3d7d35e46071a1aa099f2838a36d3b39c58daa50034fed386",
+      "stats": {
+        "states": 272054,
+        "rows_examined": 198727,
+        "elapsed_ms": 5037.536,
+        "dependencies": [
+          "d526b34687cbafaa2ae5a9eceac452750e32cb2bd9222e2d0baaf155f4c584c5:ken.catalog.command.variants.command_object.detect"
+        ]
+      }
+    },
+    "composite": {
+      "seconds": 59.43415120895952,
+      "complete": false,
+      "matches": 0,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "result_sha256": "ad4cf2850e354fe3d7d35e46071a1aa099f2838a36d3b39c58daa50034fed386",
+      "stats": {
+        "states": 75227,
+        "rows_examined": 40808,
+        "elapsed_ms": 59434.092,
+        "dependencies": []
+      }
+    }
+  },
+  "batch_seconds": 211.34233308280818
+}

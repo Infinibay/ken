@@ -27,6 +27,14 @@ def public_transform():
     return value
 public_transform()
 '''
+DELEGATION = '''
+class Service:
+    def perform(self): pass
+class Delegator:
+    def __init__(self, service: Service): self.service = service
+    def forward(self):
+        self.service.perform()
+'''
 RUST = '#[derive(Clone)] struct Product { value: i32 }'
 MUTATIONS = {
     'derives_clone': ('#[derive(Clone)]', '#[derive(Debug)]'),
@@ -34,6 +42,8 @@ MUTATIONS = {
     'writes': ('    value = 1\n', ''),
     'returned_local': ('    value = 1\n', ''),
     'callers': ('public_transform', 'private_transform'),
+    'explicit_delegation': ('        self.service.perform()',
+                            '        return\n        self.service.perform()'),
 }
 
 
@@ -42,7 +52,7 @@ MUTATIONS = {
 @pytest.mark.parametrize('positive', [True, False], ids=['witness', 'missing-evidence'])
 def test_kenql_guide_example(query, positive):
     name = re.search(r'query\s+(\w+)', query)[1]
-    python, rust = PYTHON, RUST
+    python, rust = DELEGATION if name == 'explicit_delegation' else PYTHON, RUST
     if not positive:
         before, after = MUTATIONS[name]
         assert before in python or before in rust

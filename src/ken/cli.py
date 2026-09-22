@@ -73,17 +73,23 @@ def _build_parser() -> argparse.ArgumentParser:
     p_install.add_argument(
         "--claude",
         action="store_true",
-        help="explicitly install Claude Code hooks and MCP config (default)",
+        help="explicitly install Claude Code hooks, MCP config, and skills (default)",
     )
     p_install.add_argument(
         "--codex",
         action="store_true",
-        help="force project-local Codex hooks and MCP config installation",
+        help="install Codex hooks/MCP and project skills in .agents/skills",
     )
     p_install.add_argument(
         "--opencode",
         action="store_true",
-        help="register ken as an MCP server in the project's opencode.json (or opencode.jsonc)",
+        help="register ken in opencode.json (or opencode.jsonc) and install project skills",
+    )
+    p_install.add_argument(
+        "--deepseek",
+        action="store_true",
+        help="install DeepSeek Harness MCP overlay and skills in .dsh/skills "
+        "(.agents/skills when combined with --codex)",
     )
     p_install.add_argument(
         "--embed",
@@ -99,7 +105,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p_install.add_argument(
         "--no-wire",
         action="store_true",
-        help="index only; skip wiring Claude/Codex/OpenCode hooks and MCP config "
+        help="index only; skip assistant hooks, MCP config, and skills "
         "(for external hosts that drive the daemon directly)",
     )
 
@@ -117,6 +123,11 @@ def _build_parser() -> argparse.ArgumentParser:
         "--no-project",
         action="store_true",
         help="only reinstall the ken CLI; do not run `ken install PATH` afterwards",
+    )
+    p_reinstall.add_argument(
+        "--deepseek",
+        action="store_true",
+        help="re-apply the DeepSeek Harness MCP overlay and project skills",
     )
     p_reinstall.add_argument(
         "--claude",
@@ -430,6 +441,8 @@ def _build_parser() -> argparse.ArgumentParser:
 
     from ken.structural.cli import add_parser
     add_parser(sub)
+    from ken.kql2.cli import configure
+    configure(sub.add_parser('kql2', help='run a KQL2 query with optional libraries'))
     return parser
 
 
@@ -442,6 +455,9 @@ def main(argv: list[str] | None = None) -> int:
 
 def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
     """Dispatch an already-parsed command and return its process exit code."""
+    if args.cmd == 'kql2':
+        from ken.kql2.cli import dispatch
+        return dispatch(args)
     if (
         args.cmd in {"install", "reinstall"}
         and args.embed_limit is not None
@@ -465,6 +481,7 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
             force_claude=args.claude,
             force_codex=args.codex,
             force_opencode=args.opencode,
+            force_deepseek=args.deepseek,
             embed=args.embed,
             embed_limit=args.embed_limit,
             no_wire=args.no_wire,
@@ -479,6 +496,7 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
             force_claude=args.claude,
             force_codex=args.codex,
             force_opencode=args.opencode,
+            force_deepseek=args.deepseek,
             embed=args.embed,
             embed_limit=args.embed_limit,
         )
@@ -640,6 +658,7 @@ def _reinstall_cli(
     force_claude: bool,
     force_codex: bool,
     force_opencode: bool,
+    force_deepseek: bool,
     embed: bool,
     embed_limit: int | None,
 ) -> int:
@@ -692,6 +711,8 @@ def _reinstall_cli(
         install_cmd.append("--codex")
     if force_opencode:
         install_cmd.append("--opencode")
+    if force_deepseek:
+        install_cmd.append("--deepseek")
     if embed:
         install_cmd.append("--embed")
     if embed_limit is not None:
@@ -1750,9 +1771,22 @@ def _tool_schema_core(prop: dict[str, Any]) -> dict[str, Any]:
 
 
 def _tool_py_type(json_type: str | None):
+    if json_type == "object":
+        return _tool_json_object
     if json_type is None:
         return str
     return {"integer": int, "number": float, "string": str}.get(json_type, str)
+
+
+def _tool_json_object(value: str) -> dict[str, Any]:
+    """Decode object parameters, including each item of an array of objects."""
+    try:
+        parsed = json.loads(value)
+    except (ValueError, RecursionError) as exc:
+        raise argparse.ArgumentTypeError("expected a JSON object") from exc
+    if not isinstance(parsed, dict):
+        raise argparse.ArgumentTypeError("expected a JSON object")
+    return parsed
 
 
 def _build_tool_parser(tool: Any) -> argparse.ArgumentParser:

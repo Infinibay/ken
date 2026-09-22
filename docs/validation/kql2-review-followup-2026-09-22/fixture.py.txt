@@ -1,0 +1,19 @@
+from another import *
+def no_raise():
+    try: work()
+    except ValueError: pass
+
+def reraises():
+    try: work()
+    except ValueError:
+        raise
+
+def loop():
+    while True:
+        break
+    while pending:
+        print(True)
+    return None
+
+def other():
+    return False

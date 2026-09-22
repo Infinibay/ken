@@ -1,0 +1,195 @@
+(* KQL 2 target syntax. An experimental parser and partial compiler exist;
+   see implementation-status.md for executable capabilities.
+   Case-sensitive. Lexer tokens and contextual rules follow this grammar.
+   { x } repetition, [ x ] optional, | alternative. *)
+
+file = "language", STRING, ";", "module", qualified, ";",
+       { import }, { declaration } ;
+import = "import", qualified, ";" ;
+declaration = pattern | predicate | query | enum | signature | model ;
+
+pattern = "pattern", IDENT, [ generics ], "(", [ parameters ], ")", block ;
+generics = "<", generic, { ",", generic }, ">" ;
+generic = IDENT, ":", qualified ;
+parameters = parameter, { ",", parameter } ;
+parameter = ("in" | "out"), qtype, ROLE ;
+qtype = qualified, [ "<", qtype, { ",", qtype }, ">" ] ;
+predicate = "predicate", IDENT, "(", [ typed_roles ], ")",
+            "{", formula, "}" ;
+typed_roles = typed_role, { ",", typed_role } ;
+typed_role = qtype, ROLE ;
+query = "query", IDENT, "{", { query_clause }, select,
+        [ order ], [ limit ], "}" ;
+query_clause = from | where | bind | use | selector | either | conditional | negative | optional | graph_edge | graph_walk | graph_tally ;
+enum = "enum", IDENT, "{", IDENT, { ",", IDENT }, "}" ;
+signature = "signature", IDENT, "{", { predicate_signature }, "}" ;
+predicate_signature = "predicate", IDENT, "(", [ typed_roles ], ")", ";" ;
+model = "model", IDENT, "implements", qualified, "{", { predicate }, "}" ;
+
+block = "{", { constraint }, "}" ;
+constraint = selector | type_parameter | group | from | where | bind | use | either | negative
+           | optional | conditional | body | syntax | restriction | exposes | property | graph_edge | graph_walk | graph_tally ;
+from = "from", typed_roles, ";" ;
+where = "where", formula, ";" ;
+bind = "bind", ROLE, "=", qexpr, ";" ;
+use = "use", pattern_ref, "(", [ named_args ], ")", [ "as", ROLE ], ";" ;
+pattern_ref = qualified, [ "<", qualified, { ",", qualified }, ">" ] ;
+named_args = named_arg, { ",", named_arg } ;
+named_arg = IDENT, ":", qexpr ;
+exposes = "exposes", ROLE, ";" ;
+either = [ "either" ], block, "or", block, { "or", block } ;
+conditional = "when", formula, block, [ "else", (conditional | block) ] ;
+negative = "not", "exists", block ;
+optional = "optional", block ;
+
+selector = selector_kind, ROLE, block, [ "as", ROLE, ";" ] ;
+selector_kind = "module_decl" | "type" | "class" | "interface" | "trait"
+              | "field" | "property" | "callable" | "method" | "function"
+              | "constructor" | "param" | "receiver" | "var" | "value" | "operation"
+              | "iteration" | "task" | "lock" | "region" | "import_decl"
+              | "export_decl" | "node" | "expression" | "statement" | "constant" ;
+group = ("fields" | "parameters"), [ "exact" ], block ;
+type_parameter = "type_parameter", ROLE, [ block ], ";" ;
+property = IDENT, ":", matcher, ";" ;
+matcher = REGEX | "_" | source_type | qexpr ;
+source_type = qualified, [ "<", type_arguments, ">" ] ;
+type_arguments = type_argument, { ",", type_argument } ;
+type_argument = source_type | "_" | "..." | function_type ;
+function_type = "(", [ type_arguments ], ")", "->", source_type ;
+
+select = "select", projection, { ",", projection }, ";" ;
+projection = qexpr, [ "as", IDENT ] ;
+order = "order", "by", order_term, { ",", order_term }, ";" ;
+order_term = qexpr, [ "asc" | "desc" ] ;
+limit = "limit", INTEGER, ";" ;
+
+formula = disjunction ;
+disjunction = conjunction, { "or", conjunction } ;
+conjunction = comparison, { "and", comparison } ;
+comparison = qexpr, [ comparator, (qexpr | REGEX) ] ;
+comparator = "==" | "!=" | "<" | "<=" | ">" | ">=" | "in" | "matches" ;
+qexpr = additive ;
+additive = multiplicative, { ("+" | "-"), multiplicative } ;
+multiplicative = unary, { ("*" | "/" | "%"), unary } ;
+unary = ("not" | "+" | "-"), unary | qpostfix ;
+qpostfix = primary, { ".", IDENT, [ "(", [ arguments ], ")" ] } ;
+primary = literal | ROLE | "_" | qualified
+        | "(", formula, ")" | list | application | aggregate | quantifier ;
+application = qualified, "(", [ arguments ], ")" ;
+arguments = argument_expr, { ",", argument_expr } ;
+argument_expr = [ IDENT, ":" ], qexpr ;
+list = "[", [ qexpr, { ",", qexpr } ], "]" ;
+aggregate = ("count" | "sum" | "sum_by" | "min" | "max" | "avg"),
+            "(", typed_roles, "|", formula, "|", qexpr, ")" ;
+quantifier = "exists", "(", typed_roles, "|", formula, ")"
+           | "forall", "(", typed_roles, "|", formula, "|", formula, ")" ;
+
+body = "body", [ "adjacent" | "linear" ], body_block ;
+syntax = "syntax", block ;
+body_block = "{", { body_item }, "}" ;
+body_item = selector | from | where | bind | use | body_either | negative | optional
+          | let | source_assignment | call_statement | control | fragment
+          | restriction | gap | body_conditional | "adjacent", ";" | iterate | concurrency ;
+body_either = [ "either" ], body_block, "or", body_block, { "or", body_block } ;
+body_conditional = "when", formula, body_block, [ "else", (body_conditional | body_block) ] ;
+let = "let", ROLE, "=", (source_expr | call | construct), [ "as", ROLE ], ";" ;
+source_assignment = place, assignment_operator, source_expr, [ "as", ROLE ], ";" ;
+assignment_operator = "=" | "+=" | "-=" | "*=" | "/=" | "%=" ;
+call_statement = call, [ "as", ROLE ], ";" ;
+call = "call", ROLE, "{", { call_constraint }, "}" ;
+call_constraint = "argument", source_expr, ("at", argument_position | "for", ROLE),
+                  [ "as", ROLE ], ";"
+                | "argument_pack", ROLE, block
+                | property | where ;
+argument_position = INTEGER | "any" | STRING | "name", "(", STRING, ")" ;
+construct = "construct", ROLE, "{", { initializer | where }, "}" ;
+initializer = "initializer", ROLE, [ "{", "transfer", ":", "[",
+              transfer_form, { ",", transfer_form }, "]", ";", "}" ], ";" ;
+transfer_form = "identity" | "shallow_copy" ;
+fragment = "fragment", ROLE, body_block ;
+
+restriction = "restriction", "between", point, "and", point, effect_block ;
+gap = "gap", "until", "next", effect_block ;
+effect_block = "{", { property | effect_constraint }, "}" ;
+effect_constraint = ("forbid" | "preserve"), application, ";" ;
+point = ROLE, ".", ("before" | "after" | "after_normal" | "after_exceptional"
+                    | "entry" | "exit") ;
+
+control = if | while | for | try | return | throw | yield | await | exit_control ;
+if = "if", "(", source_expr, ")", body_block, [ "else", (body_block | if) ] ;
+while = "while", "(", source_expr, ")", body_block ;
+for = "for", ROLE, "in", source_expr, body_block
+    | "for", "{", "init", body_block, "condition", source_expr, ";",
+      "step", body_block, "body", body_block, "}" ;
+try = "try", body_block, { catch }, [ "else", body_block ], [ "finally", body_block ] ;
+catch = "catch", ROLE, [ "when", "(", source_expr, ")" ], body_block ;
+return = "return", [ source_expr ], [ "as", ROLE ], ";" ;
+throw = "throw", source_expr, [ "as", ROLE ], ";" ;
+yield = "yield", [ "from" ], source_expr, [ "as", ROLE ], ";" ;
+await = "await", source_expr, [ "as", ROLE ], ";" ;
+exit_control = ("break" | "continue"), ";" ;
+
+iterate = "iterate", source_expr, "as", ROLE, [ "into", ROLE ],
+          [ "as", ROLE ], "{", { property | body | where | restriction }, "}" ;
+concurrency = "spawn", ROLE, "as", ROLE, ";"
+            | ("join" | "acquire" | "release"), ROLE, ";"
+            | "send", source_expr, "to", source_expr, ";"
+            | "receive", source_expr, "as", ROLE, ";" ;
+
+source_expr = source_or ;
+source_or = source_and, { "or", source_and } ;
+source_and = source_comparison, { "and", source_comparison } ;
+source_comparison = source_bit_or, [ source_comparator, source_bit_or ] ;
+source_comparator = "==" | "!=" | "<" | "<=" | ">" | ">=" | "in" ;
+source_bit_or = source_bit_xor, { "|", source_bit_xor } ;
+source_bit_xor = source_bit_and, { "^", source_bit_and } ;
+source_bit_and = source_shift, { "&", source_shift } ;
+source_shift = source_sum, { ("<<" | ">>"), source_sum } ;
+source_sum = source_product, { ("+" | "-"), source_product } ;
+source_product = source_unary, { ("*" | "/" | "%"), source_unary } ;
+source_unary = ("not" | "+" | "-" | "~" | "++" | "--"), source_unary | source_power ;
+source_power = source_postfix, [ "**", source_unary ] ;
+source_postfix = source_atom, { ".", IDENT | "[", source_expr, "]" }, [ "++" | "--" ] ;
+source_atom = literal | ROLE | "_" | application | "(", source_expr, ")"
+            | "new", ROLE, "(", [ arguments ], ")" ;
+place = ROLE, { ".", IDENT | "[", source_expr, "]" } ;
+
+qualified = IDENT, { ".", IDENT } ;
+literal = STRING | INTEGER | FLOAT | "true" | "false" | "null" | "undefined" ;
+
+(* Lexer:
+   IDENT = [A-Za-z_][A-Za-z0-9_]*; reserved words accepted as schema property/enums
+           only where the schema permits, not as declaration names; step is contextual
+           and is also permitted as a predicate name.
+   ROLE = '$' IDENT.
+   STRING = JSON quoted string, with JSON escapes.
+   INTEGER = nonnegative decimal digit sequence; signs are unary operators.
+   FLOAT = decimal with fraction and/or exponent.
+   REGEX = '/' regular-pattern '/' optional distinct flags i,m,s.
+   Whitespace and comments are ignored. Operators use longest token match.
+
+   Contextual rules:
+   - The grammar is a syntax specification, not an LL(1) implementation recipe.
+   - matcher: schema resolves source_type vs qexpr; enums/families are registered.
+   - property: paths, concurrency, forms, receiver, dispatch etc are schema checked.
+   - constraints permitted in a block depend on its owner and bindings.
+   - call may introduce an unbound Callable role; argument Value/Binding rules
+     are specified in behavior.md. A Binding may be read implicitly only in BODY.
+   - source ++/-- may also be standalone source operations: represent with
+     `let $old = $x++ as $update;` to make the captured result explicit.
+   - nonempty try must have at least one catch or finally; else requires catch.
+   - global body adjacent and local adjacent are interval constraints, not events.
+   - matches(Pattern, named args) is a reserved relation; not textual expansion.
+   - bare named enum values must resolve uniquely or be qualified.
+   - annotations of native nodes are queried by schema/predicates, not new tokens.
+*)
+
+(* Executable semantic graph profile; see graph-queries.md for restrictions. *)
+graph_edge = "edge", IDENT, "(", qexpr, ",", qexpr, ")", [ block ], ";" ;
+graph_walk = "walk", IDENT, "(", qexpr, ",", qexpr, ")", block, "as", ROLE, ";" ;
+graph_tally = "tally", "distinct", ROLE, comparator, INTEGER, block, ";" ;
+
+(* Implemented source matcher application: binary(left: source_expr,
+   operator: STRING | nonempty STRING list | _, right: source_expr).
+   It matches an operation and occurrence-specific operands; no evaluation
+   of user code occurs. See saved-body-execution.md for backend coverage. *)

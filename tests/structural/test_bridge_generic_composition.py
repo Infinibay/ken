@@ -9,15 +9,14 @@ not require virtual dispatch: nothing here asks for a subtype, an interface or m
 one implementation.
 
 The evidence that separates it from ``strategy#static-policy`` -- which reads the very
-same field shape -- is that the type parameter is **shared by at least two types**. One
-context holding one policy is a strategy; the same parameter flowing through an
-abstraction and its refinements is a bridge. That separation is asserted in both
+same field shape -- is that the type abstraction has a **connected generic refinement**. One
+context holding one policy is a strategy; the generic abstraction with nominal
+refinements or refinements holding it provides the second dimension of Bridge. That separation is asserted in both
 directions.
 
-The count is over **types** (``type_decl()``), not over every entity that binds the
-parameter. A generic class's constructor and its methods bind the parameter too, so
-counting them would let a single class satisfy ``>= 2``; both were measured and are in
-the negatives below.
+The second declaration must inherit the abstraction or hold a field of its type.
+An unrelated generic declaration no longer satisfies the contract merely because
+both parameters happen to be spelled I or T. A refinement may rename its parameter.
 
 The capability is IR 1.64. Type parameters were bound for Rust and C++ only since
 1.62; TypeScript, Java, C# and Go bound none, even though their grammars spell the
@@ -100,11 +99,11 @@ func (a *Abstraction[I]) Operation() int {
 }
 
 type Refined[I any] struct {
-\timpl I
+\tinner Abstraction[I]
 }
 
 func (r *Refined[I]) Operation() int {
-\treturn r.impl.Run()
+\treturn r.inner.Operation()
 }
 ''',
     'rust': '''struct Abstraction<I> { impl_value: I }
@@ -177,11 +176,11 @@ func (a *Abstraction[I]) Operation() int {
 }
 
 type Refined[I any] struct {
-\timpl I
+\tinner Abstraction[I]
 }
 
 func (r *Refined[I]) Operation() int {
-\treturn r.impl.Run()
+\treturn r.inner.Operation()
 }
 '''
 
@@ -247,11 +246,11 @@ func (c *Core[T]) Execute() int {
 }
 
 type Extended[T any] struct {
-\tdelegate T
+\tinner Core[T]
 }
 
 func (e *Extended[T]) Execute() int {
-\treturn e.delegate.Run()
+\treturn e.inner.Execute()
 }
 ''',
     'rust': '''struct Core<T> { delegate_value: T }
@@ -337,7 +336,9 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'type_decl()' in row['query'] and 'count distinct' in row['query']
+    assert 'type_parameter $implementation_parameter;' in row['query']
+    assert 'type: parameter($implementation_parameter);' in row['query']
+    assert 'where subtype($local_variant, $unit);' in row['query']
 
 
 @pytest.mark.parametrize('language', LANGUAGES)

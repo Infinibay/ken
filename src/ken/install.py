@@ -12,14 +12,15 @@ Steps:
   7. Merge Codex hooks and MCP config into `.codex/` when Codex is
      requested/detected.
   8. Register the ken MCP server in ``opencode.json`` / ``opencode.jsonc``
-     when OpenCode is requested/detected.
-  9. Run the initial code index, verbose by default. Embeddings are
+     for OpenCode, or create a project-local Cordis overlay for DeepSeek.
+  9. Install bundled, problem-oriented skills for the selected agents.
+  10. Run the initial code index, verbose by default. Embeddings are
      optional via ``ken install --embed`` because full-repo embedding can
      be expensive on very large codebases.
 
-``ken install --claude`` / ``--codex`` / ``--opencode`` force wiring for
+``ken install --claude`` / ``--codex`` / ``--opencode`` / ``--deepseek`` force wiring for
 their respective agents. Without explicit flags, install detects existing
-`.claude/` / `.codex/` / `opencode.json` project config; fresh projects
+`.claude/` / `.codex/` / `opencode.json` / `.dsh/` project config; fresh projects
 default to Claude.
 
 Idempotent. Re-running on an installed project re-applies the schema
@@ -40,9 +41,11 @@ from pathlib import Path
 
 from ken import _paths
 from ken.db import connect, init_schema, set_meta
+from ken.deepseek_template import launch_command, wire_deepseek
 from ken.gitignore_filter import iter_files
 from ken.hooks_template import merge_settings, write_settings
 from ken.indexer import index_files
+from ken.skills.installation import install_skills
 
 CLAUDE_SETTINGS = ".claude/settings.json"
 MCP_SETTINGS = ".mcp.json"
@@ -96,6 +99,7 @@ def install(
     force_claude: bool = False,
     force_codex: bool = False,
     force_opencode: bool = False,
+    force_deepseek: bool = False,
     embed: bool = False,
     embed_limit: int | None = None,
     no_wire: bool = False,
@@ -103,7 +107,7 @@ def install(
     """Install ken into *project_path*.  Prints progress to stdout.
 
     ``no_wire=True`` indexes the project and provisions ``.ken/`` (meta,
-    DB, schema) but skips wiring any assistant hooks / MCP config. Use it
+    DB, schema) but skips assistant hooks, MCP config, and skills. Use it
     when an external host (e.g. the Infinidev desktop app) drives ken's
     daemon directly and should not touch ``.claude/`` / ``.codex/`` /
     ``.mcp.json``.
@@ -157,17 +161,23 @@ def install(
         _ensure_gitignore(root, verbose=verbose)
 
         if no_wire:
-            install_claude, install_codex, install_opencode = False, False, False
+            install_claude, install_codex, install_opencode, install_deepseek = (
+                False,
+                False,
+                False,
+                False,
+            )
             if verbose:
-                print(
-                    "[hooks] --no-wire: skipping Claude/Codex/OpenCode hook + MCP wiring"
-                )
+                print("[hooks] --no-wire: skipping assistant hooks, MCP, and skills")
         else:
-            install_claude, install_codex, install_opencode = _detect_agent_wiring(
-                root,
-                force_claude=force_claude,
-                force_codex=force_codex,
-                force_opencode=force_opencode,
+            install_claude, install_codex, install_opencode, install_deepseek = (
+                _detect_agent_wiring(
+                    root,
+                    force_claude=force_claude,
+                    force_codex=force_codex,
+                    force_opencode=force_opencode,
+                    force_deepseek=force_deepseek,
+                )
             )
 
         # Step 4: Claude Code hooks + MCP registration.
@@ -192,6 +202,22 @@ def install(
             print(
                 "[opencode] OpenCode config not detected — skipping opencode.json wiring"
             )
+
+        # Skills follow the same host selection as hooks and MCP.
+        try:
+            if install_deepseek:
+                wire_deepseek(root, verbose=verbose)
+            install_skills(
+                root,
+                claude=install_claude,
+                codex=install_codex,
+                opencode=install_opencode,
+                deepseek=install_deepseek,
+            ).report(verbose=verbose, root=root)
+            if verbose and install_codex and install_deepseek:
+                print("[skills] Codex and DeepSeek share .agents/skills")
+        except ValueError as exc:
+            raise SystemExit(f"error: {exc}") from exc
 
         # Step 5: initial index.
         if verbose:
@@ -275,6 +301,10 @@ def install(
         if install_opencode:
             print(f"  next: cd {root} && opencode")
 
+    # Even --quiet must surface the explicit overlay required by this host.
+    if install_deepseek:
+        print(f"[deepseek] next: {launch_command(root)}")
+
     return InstallResult(
         project_root=root,
         project_id=meta["project_id"],
@@ -291,22 +321,24 @@ def _detect_agent_wiring(
     force_claude: bool,
     force_codex: bool,
     force_opencode: bool = False,
-) -> tuple[bool, bool, bool]:
-    """Return ``(install_claude, install_codex, install_opencode)``.
+    force_deepseek: bool = False,
+) -> tuple[bool, bool, bool, bool]:
+    """Return selected Claude, Codex, OpenCode, and DeepSeek integrations.
 
     Fresh projects keep the original Claude-first default. Once a
     project has agent-local config, re-installs follow those signals so
     `ken reinstall .` does not create config for an agent the project
     does not use.
     """
-    if force_claude or force_codex or force_opencode:
-        return force_claude, force_codex, force_opencode
+    if force_claude or force_codex or force_opencode or force_deepseek:
+        return force_claude, force_codex, force_opencode, force_deepseek
     uses_claude = _project_uses_claude(root)
     uses_codex = _project_uses_codex(root)
     uses_opencode = _project_uses_opencode(root)
-    if not uses_claude and not uses_codex and not uses_opencode:
+    uses_deepseek = (root / ".dsh").is_dir()
+    if not uses_claude and not uses_codex and not uses_opencode and not uses_deepseek:
         uses_claude = True
-    return uses_claude, uses_codex, uses_opencode
+    return uses_claude, uses_codex, uses_opencode, uses_deepseek
 
 
 def _project_uses_claude(root: Path) -> bool:

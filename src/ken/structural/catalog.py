@@ -26,6 +26,7 @@ class Rule:
     variants: list[dict[str, Any]] = field(default_factory=list)
     source: str = ""
     operations: list[dict[str, str]] = field(default_factory=list)
+    query_language: str = "kenql/1"
 
     def pattern(self) -> Pattern:
         return parse_pattern(f"pattern {self.name}\n" + (self.legacy_query or self.query))
@@ -48,7 +49,8 @@ RULES = _load_catalog()
 def catalog() -> list[dict[str, Any]]:
     return [{"id": r.id, "name": r.name, "category": r.category,
              "description": r.description, "query": r.query.strip(),
-             "query_language": "kenql/1", "legacy_id": "legacy.gof." + r.id,
+             "query_language": r.query_language,
+             **({"legacy_id": "legacy.gof." + r.id} if r.legacy_query else {}),
              "executable_variants": [v["id"] for v in r.variants if v.get("status") == "ready"],
              "planned_variants": [v["id"] for v in r.variants if v.get("status") != "ready"], "caveat": r.caveat, "variants": r.variants, "operations": r.operations, "source": r.source} for r in RULES]
 
@@ -61,7 +63,7 @@ def detect_patterns(ir: IR | FactIndex, names: list[str] | None = None,
     if legacy:
         from dataclasses import replace
         historical = {r.id: r.legacy_query for r in RULES}
-        registry = [replace(r, query=historical.get(r.id) or r.query) for r in registry]
+        registry = [replace(r, query=historical[r.id], query_language='kenql/1') if historical.get(r.id) else r for r in registry]
     selected = select_rules(registry, ids=names, collections=["gof"])
     result = execute_rules(ir, selected, budget, registry=registry, cache=cache, graph_key=graph_key)
     metadata = {r.id: r for r in RULES}

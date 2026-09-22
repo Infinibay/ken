@@ -1,0 +1,7 @@
+- **Ubicación:** `vectors_dir()` y `VectorStore.manifest_path` construyen `_paths.ken_dir(project_root)/vectors/<space>.json`. Aquí existen manifiestos en `.ken/vectors/`; la implementación de `_paths.ken_dir` no está incluida para verificar su resolución general. Véase [vectors.py:169](/private/tmp/ken-contract-agent-verified-20260921/project/src/ken/vectors.py:169) y [manifest_path:376](/private/tmp/ken-contract-agent-verified-20260921/project/src/ken/vectors.py:376).
+
+- **Escritor y llamadas:** `_atomic_write()` crea un temporal, escribe, hace `flush`/`fsync` y lo reemplaza mediante `os.replace`. Lo llama `VectorStore._load_or_create()` al crear el manifiesto ([línea 405](/private/tmp/ken-contract-agent-verified-20260921/project/src/ken/vectors.py:405)); `compact()` también escribe en `vectors.compact` antes de trasladarlo al directorio definitivo ([línea 784](/private/tmp/ken-contract-agent-verified-20260921/project/src/ken/vectors.py:784)).
+
+- **Permisos:** [_atomic_write y _process_umask](/private/tmp/ken-contract-agent-verified-20260921/project/src/ken/vectors.py:175) intentan aplicar `chmod(0o666 & ~umask)` al temporal, inicialmente `0600`. `_process_umask()` cambia momentáneamente la máscara a `022` y la restaura. **No garantiza el modo final:** ignora `OSError` del ajuste y continúa. Los manifiestos existentes solo se leen, sin corregir permisos.
+
+Esto describe el código inspeccionado; no comprobé garantías en ejecución, ejecuté operaciones de producción ni modifiqué archivos.

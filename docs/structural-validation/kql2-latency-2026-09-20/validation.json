@@ -1,0 +1,29 @@
+{
+  "wide_suite": {
+    "command": "PYTHONPATH=.:src .venv/bin/pytest tests/kql2 tests/structural tests/test_gitignore_filter.py -q",
+    "exit_code": 0,
+    "scope": "before final batch context sharing"
+  },
+  "final_focused_suite": {
+    "command": "PYTHONPATH=.:src .venv/bin/pytest tests/structural/test_relational_resources.py tests/kql2/test_source_body_memo.py tests/kql2/test_graph_columns.py tests/kql2/test_cache_pressure.py tests/structural/test_relational_planning_cost.py tests/structural/test_query_result_cache.py::test_results_can_be_bypassed_without_profiling_or_disabling_the_index -q",
+    "exit_code": 0
+  },
+  "target": {
+    "files": 100,
+    "seconds": 5,
+    "passed": false,
+    "measured_seconds": 76.7730575420428,
+    "complete": false,
+    "incomplete_patterns": 12
+  },
+  "mermaid": {
+    "blocks": 10,
+    "text_reviewed": true,
+    "rendered": false
+  },
+  "corpus_hashes_verified": true,
+  "mypy_six_modules": 0,
+  "mypy_benchmark_module": 0,
+  "body_mypy_clean": false,
+  "engine_patch_basis": "saved current-worktree source before this optimization, not git HEAD"
+}

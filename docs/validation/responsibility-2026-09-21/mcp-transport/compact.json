@@ -1,0 +1,14 @@
+{
+  "_meta": null,
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"status\": \"candidates\",\n  \"score_kind\": \"heuristic_not_probability\",\n  \"candidates\": [\n    {\n      \"kind\": \"module\",\n      \"path\": \"src/ken/db.py\",\n      \"line\": 1,\n      \"score\": 0.637,\n      \"evidence\": \"SQLite connection helpers.\"\n    },\n    {\n      \"symbol\": \"connect\",\n      \"kind\": \"function\",\n      \"path\": \"src/ken/db.py\",\n      \"line\": 23,\n      \"score\": 0.425,\n      \"evidence\": \"Open a connection with sane defaults.\"\n    },\n    {\n      \"symbol\": \"in_immediate_transaction\",\n      \"kind\": \"function\",\n      \"path\": \"src/ken/vectors.py\",\n      \"line\": 224,\n      \"score\": 0.425,\n      \"evidence\": \"Is this connection inside a write transaction it acquired up front?\"\n    }\n  ],\n  \"uninspected_candidates\": 14\n}",
+      "annotations": null,
+      "_meta": null
+    }
+  ],
+  "structuredContent": null,
+  "isError": false,
+  "resultType": "complete"
+}

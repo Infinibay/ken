@@ -1,0 +1,96 @@
+[
+  {
+    "file": "bug_catch_no_throw.kql",
+    "rows": [
+      [
+        {
+          "path": "sample.py",
+          "language": "python",
+          "native_kind": "except_clause",
+          "kind": "catch",
+          "start_byte": 58,
+          "end_byte": 81,
+          "line": 4
+        }
+      ],
+      [
+        {
+          "path": "sample.py",
+          "language": "python",
+          "native_kind": "except_clause",
+          "kind": "catch",
+          "start_byte": 119,
+          "end_byte": 151,
+          "line": 8
+        }
+      ]
+    ],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 0,
+    "reason": null
+  },
+  {
+    "file": "bug_catch_not_exists.kql",
+    "rows": [],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 0,
+    "reason": null
+  },
+  {
+    "file": "bug_while_true_literal.kql",
+    "rows": [
+      [
+        {
+          "path": "sample.py",
+          "language": "python",
+          "native_kind": "while_statement",
+          "kind": "while",
+          "start_byte": 169,
+          "end_byte": 194,
+          "line": 12
+        }
+      ],
+      [
+        {
+          "path": "sample.py",
+          "language": "python",
+          "native_kind": "while_statement",
+          "kind": "while",
+          "start_byte": 199,
+          "end_byte": 233,
+          "line": 14
+        }
+      ]
+    ],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 0,
+    "reason": null
+  },
+  {
+    "file": "bug_return_none.kql",
+    "rows": [],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 0,
+    "reason": null
+  },
+  {
+    "file": "bug_import_star_v2.kql",
+    "rows": [],
+    "complete": true,
+    "coverage_complete": true,
+    "unknown_candidates": 0,
+    "reason": null
+  },
+  {
+    "file": "bug_catch_no_throw_refined.kql",
+    "error": "<query>:134: property 'parent' is not supported for node"
+  },
+  {
+    "file": "bug_while_true_no_break.kql",
+    "error": "<query>:138: property 'value' is not supported for node"
+  }
+]

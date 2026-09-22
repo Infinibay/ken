@@ -1,0 +1,37 @@
+{
+  "id": "python.no-mutable-defaults",
+  "description": "No recognized mutable-default-argument hazard occurs under src.",
+  "path": "src",
+  "expectation": "no_matches",
+  "query": "language \"kql/2\"; module contracts.defaults; query mutable_defaults { edge HAS_HAZARD($site, \"mutable-default-argument\"); select $site; }",
+  "examples": [
+    {
+      "name": "fresh default",
+      "files": {
+        "src/defaults.py": "def collect(items=None):\n    return [] if items is None else items\n"
+      },
+      "expect": "pass"
+    },
+    {
+      "name": "shared mutable default",
+      "files": {
+        "src/defaults.py": "def collect(items=[]):\n    return items\n"
+      },
+      "expect": "fail"
+    },
+    {
+      "name": "similar local list",
+      "files": {
+        "src/defaults.py": "def collect():\n    items = []\n    return items\n"
+      },
+      "expect": "pass"
+    },
+    {
+      "name": "safe neighbor does not hide violation",
+      "files": {
+        "src/defaults.py": "def safe_collect(items=None):\n    return [] if items is None else items\n\ndef collect(items=[]):\n    return items\n"
+      },
+      "expect": "fail"
+    }
+  ]
+}

@@ -67,9 +67,12 @@ def test_the_variant_is_registered_and_its_sibling_keeps_its_own_negative():
     rule = next(r for r in _load_catalog() if r.id == ROOT)
     ids = {v["id"]: v for v in rule.variants}
     assert ids["tag-dispatch"]["status"] == "ready"
-    assert "tag-dispatch" in rule.query
+    assert "variants.tag_dispatch.detect" in rule.query
     # The sibling must not have absorbed the tag-dispatch shape: its own negative
     # fixture is the positive of this variant.
     sibling = ids["message-coordination"]["query"]
-    assert "PARAMETER_TEST" not in sibling
-    assert "PARAMETER_TEST" in ids["tag-dispatch"]["query"]
+    assert "argument $tag at 0" not in ids["tag-dispatch"]["query"]
+    assert "argument $tag at 0" in sibling
+    # The tag test is the dispatch half: this variant branches on the tag parameter,
+    # and the sibling -- which forwards the tag instead -- must not.
+    assert "if ($tag == _)" in ids["tag-dispatch"]["query"]

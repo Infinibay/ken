@@ -32,7 +32,8 @@ def test_strategy_retains_field_and_parameter_binding(declarator,change):
     elif change=='unused':source=source.replace('return field'+op+'run()','return 0')
     elif change=='not-injected':source=source.replace('field=value','field=nullptr')
     elif change=='one-implementation':source=source.replace('Second:public Contract','Second')
-    assert bool(matches(source,'strategy'))==(change in {'positive','renamed'})
+    # A replaceable supplied contract is valid with one observed implementation.
+    assert bool(matches(source,'strategy'))==(change in {'positive','renamed','one-implementation'})
 
 
 @pytest.mark.parametrize('related',[False,True])

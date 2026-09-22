@@ -1,3 +1,4 @@
+query_language = "kql/2"
 id = "architecture.dispatch-table"
 name = "Dispatch Table"
 description = "Registers supplied callables by key and invokes an indexed entry of the same stored table."
@@ -5,38 +6,55 @@ collections = ["architecture", "modern"]
 tags = ["dispatch", "registry", "web"]
 caveat = "Structural dispatch registry, not proof of HTTP routing or event delivery. Does not prove that a runtime key was registered, handler lifetime, authorization or thread safety. Indexed getter/setter overloads may change runtime behavior."
 query = '''
-query dispatch_table {
- any { match "architecture.dispatch-table#direct"(unit:$unit, register:$register, dispatch:$dispatch, table:$table); }
- or { match "architecture.dispatch-table#adapted"(unit:$unit, register:$register, dispatch:$dispatch, table:$table); }
- emit $unit, $register, $dispatch, $table;
+language "kql/2";
+module ken.catalog.architecture.dispatch_table;
+import ken.catalog.architecture.dispatch_table.variants.adapted;
+import ken.catalog.architecture.dispatch_table.variants.direct;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $register, out GraphTerm $dispatch, out GraphTerm $table) {
+  either {
+    use ken.catalog.architecture.dispatch_table.variants.direct.detect(unit: $unit, register: $register, dispatch: $dispatch, table: $table);
+  } or {
+    use ken.catalog.architecture.dispatch_table.variants.adapted.detect(unit: $unit, register: $register, dispatch: $dispatch, table: $table);
+  }
+}
+
+query results {
+  use detect(unit: $unit, register: $register, dispatch: $dispatch, table: $table);
+  select $unit, $register, $dispatch, $table;
 }
 '''
 
 [[variants]]
 id = "direct"
 status = "ready"
+query_claim = "Registro indexado en un campo del propio tipo y despacho que invoca el elemento de ese mismo campo en la clave pedida. El cuerpo del registro nombra la coleccion en la que escribe, asi que la insercion liga el almacen y el selector de campo solo lo confirma: la forma KQL 2 pura cabe en el presupuesto adversario del catalogo. Ver docs/design/kql2/catalog-extensions.md (5.77)."
 query = '''
-query dispatch_table {
- require $unit HAS_FIELD $table;
- require $unit HAS_METHOD $register;
- require $register HAS_PARAMETER $key;
- require $register HAS_PARAMETER $handler;
- require $register HAS_OPERATION $write;
- require $write WRITES_ELEMENT $table;
- require $write INDEX $key;
- require $write STORES_VALUE $handler;
- require $unit HAS_METHOD $dispatch;
- require $dispatch HAS_PARAMETER $requested;
- require $dispatch HAS_CALL $call;
- require $call CALLEE_VALUE $entry;
- require $entry CONTAINER $table;
- require $entry INDEX $requested;
- parameter(receiver: false) as $key;
- parameter(receiver: false) as $handler;
- different $key $handler;
- different $register $dispatch;
- parameter(receiver: false) as $requested;
- emit $unit, $register, $dispatch, $table;
+language "kql/2";
+module ken.catalog.architecture.dispatch_table.variants.direct;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $register, out GraphTerm $dispatch, out Field $table) {
+  type $unit {
+    method $register {
+      arity: 2;
+      param $key { }
+      param $handler { }
+      body { insert $handler into $table at $key writes: 1; }
+    }
+    method $dispatch {
+      arity: 2;
+      param $requested { }
+      body { call $table[$requested] { } as $call; }
+    }
+    field $table { }
+  }
+  where $key != $handler;
+  where $register != $dispatch;
+}
+
+query results {
+  use detect(unit: $unit, register: $register, dispatch: $dispatch, table: $table);
+  select $unit, $register, $dispatch, $table;
 }
 '''
 
@@ -44,45 +62,42 @@ query dispatch_table {
 id = "adapted"
 status = "ready"
 languages = ["python", "javascript", "typescript"]
-query_claim = "Inherited instance-slot registration and an input-derived lookup passed through a resolved adapter, whose result is invoked. Adapter return syntax relates its input to its output; runtime preservation, getter purity and effective dispatch overrides are not proven."
+query_claim = "Registro en la ranura heredada del propio tipo y despacho que resuelve una entrada derivada de la peticion, la pasa por un adaptador que devuelve lo que recibio y invoca su resultado. La sintaxis de retorno del adaptador relaciona su entrada con su salida; no se prueba la preservacion en ejecucion, la pureza de los getters ni los overrides efectivos del despacho. Ver docs/design/kql2/catalog-extensions.md (5.78)."
 query = '''
-query adapted_dispatch {
- require $write WRITES_ELEMENT $registration_table;
- require $registration_table INSTANCE_SLOT $table;
- require $write INDEX $key;
- require $write STORES_VALUE $handler;
- require $register HAS_OPERATION $write;
- require $register HAS_PARAMETER $key;
- require $register HAS_PARAMETER $handler;
- parameter(receiver: false) as $key;
- parameter(receiver: false) as $handler;
- different $key $handler;
- require $unit EFFECTIVE_METHOD $register;
- require $unit HAS_METHOD $dispatch;
- different $register $dispatch;
- require $dispatch HAS_CALL $invocation;
- require $invocation INVOKES_RESULT_OF $adapter;
- require $adapter ARGUMENT $argument;
- require $argument VALUE $entry;
- require $entry CONTAINER $dispatch_table;
- require $dispatch_table INSTANCE_SLOT $table;
- require $entry INDEX $lookup_key;
- require $dispatch HAS_PARAMETER $requested;
- parameter(receiver: false) as $requested;
- any { where $lookup_key == $requested; }
- or { require $lookup_key ACCESS_INPUT $requested; }
- require $adapter TARGET $normalizer;
- require $normalizer HAS_PARAMETER $input;
- require $argument ENTITY "ARGUMENT" [position: 0];
- parameter(pos: 0, receiver: false) as $input;
- require $normalizer HAS_OPERATION $return;
- any { require $return RETURN_ORIGIN $input; }
- or {
-  require $return RETURN_ORIGIN $wrapped;
-  require $wrapped ARGUMENT $forwarded;
-  require $forwarded VALUE $loaded;
-  require $loaded LOADED_FROM $input;
- }
- emit $unit, $register, $dispatch, $table;
+language "kql/2";
+module ken.catalog.architecture.dispatch_table.variants.adapted;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $register, out GraphTerm $dispatch, out Field $table) {
+  type $owner {
+    field $registration_slot { effective: true; declaration: $table; }
+    method $register {
+      param $slot_key { position: 0; }
+      param $handler { position: 1; }
+      body { insert $handler into $registration_slot at $slot_key writes: 1; }
+    }
+  }
+  type $unit {
+    field $dispatch_slot { effective: true; declaration: $table; }
+    method $dispatch {
+      arity: 2;
+      param $requested { position: 0; }
+      body {
+        let $adapted = call $normalizer { argument $dispatch_slot[$lookup_key] at 0; } as $entry;
+        call $adapted { } as $invocation;
+      }
+    }
+  }
+  callable $normalizer { arity: 1; param $input { } }
+  where subtype($unit, $owner);
+  where effective($unit, $register);
+  where preserves($normalizer, $input);
+  where $register != $dispatch;
+  either { where $lookup_key == $requested; }
+  or { where access_input($lookup_key, $requested); }
+}
+
+query results {
+  use detect(unit: $unit, register: $register, dispatch: $dispatch, table: $table);
+  select $unit, $register, $dispatch, $table;
 }
 '''

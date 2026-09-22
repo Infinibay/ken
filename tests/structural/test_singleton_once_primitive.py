@@ -267,9 +267,16 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'ALLOCATES_TYPE' in row['query']
-    assert 'RETURNS_CALL' in row['query'] and 'RETURNS_STORAGE' in row['query']
-    assert 'DECLARES $cell' in row['query'] and 'DECLARES $slot' in row['query']
+    # KQL 2 selectors only: no legacy edge/walk clause survives the migration.
+    assert 'edge ' not in row['query'] and 'walk ' not in row['query']
+    # The five arms: the thunk's construction, the slot-publishing accessor
+    # (Go/C++), the call-returning accessor (Rust/Java), the static-field cell
+    # and the C# tie between the cell's initializer and the thunk it is built from.
+    assert 'construct $unit {} as $construction' in row['query']
+    assert 'return $retained;' in row['query'] and 'return $out;' in row['query']
+    assert 'module_decl $module' in row['query']
+    assert 'field $cell { static: true; }' in row['query']
+    assert 'initialized_with($cell, $thunk, name: "^Lazy")' in row['query']
 
 
 def test_a_function_local_var_is_not_the_module_slot():

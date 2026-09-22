@@ -14,11 +14,12 @@ rendering changes.
 from __future__ import annotations
 
 from typing import Any
+import re
 
 _NOTE = "Structural evidence consistent with an idiom; not proof of intent."
 
 
-def _named_variant(items: Any, depth: int = 0) -> str:
+def _named_variant(items: Any, depth: int = 0, names: dict[str, str] | None = None) -> str:
     """First ``<pattern>#<variant>`` named in an evidence tree."""
     if depth > 4 or not isinstance(items, list):
         return ""
@@ -26,10 +27,14 @@ def _named_variant(items: Any, depth: int = 0) -> str:
         if not isinstance(item, dict):
             continue
         query = item.get("query")
+        if isinstance(query, str) and names:
+            name = names.get(query.split(':', 1)[-1])
+            if name:
+                return name
         if isinstance(query, str) and "#" in query:
             return query.split("#", 1)[1]
         for key in ("alternatives", "evidence", "optional"):
-            nested = _named_variant(item.get(key), depth + 1)
+            nested = _named_variant(item.get(key), depth + 1, names)
             if nested:
                 return nested
     return ""
@@ -46,7 +51,12 @@ def _variant(finding: dict[str, Any]) -> str:
     variant = finding.get("variant")
     if variant and variant != "default":
         return str(variant)
-    return _named_variant(finding.get("evidence")) or str(variant or "default")
+    names = {}
+    for entry in finding.get('rule', {}).get('variants', []):
+        module = re.search(r'(?m)^module\s+([\w.]+);', entry.get('query', ''))
+        if module:
+            names[module[1] + '.detect'] = entry['id']
+    return _named_variant(finding.get("evidence"), names=names) or str(variant or "default")
 
 
 def _confidence(finding: dict[str, Any]) -> float:

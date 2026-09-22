@@ -1,0 +1,261 @@
+{
+  "engine": "53f1c0139a20eafce7b5dfc6d289164f2593d70f16d333db2054862bb1cbd949",
+  "source_files": 271,
+  "query_timeout_ms": 10000,
+  "wall_timeout_seconds": 90,
+  "limit": 100,
+  "cache_mb": "default",
+  "runs": [
+    {
+      "scope": "src/ken/vectors.py",
+      "case": "definition",
+      "repetition": 0,
+      "seconds": 1.5852,
+      "exit_code": 0,
+      "rows": 1,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 1,
+        "reused_units": 0,
+        "build_ms": 570.587582886219,
+        "query_ms": 0.34791696816682816,
+        "compile_ms": 9.207583963871002,
+        "total_ms": 602.4100841023028,
+        "result_cache": "miss",
+        "ephemeral": false,
+        "states": 5,
+        "scanned_nodes": 1,
+        "allocated_bytes": 9342976,
+        "cache_mb": 500.0
+      },
+      "artifact": "src_ken_vectors.py-definition-0.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { name:\"_atomic_write\"; } select $f; }"
+    },
+    {
+      "scope": "src/ken/vectors.py",
+      "case": "definition",
+      "repetition": 1,
+      "seconds": 0.7247,
+      "exit_code": 0,
+      "rows": 1,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 1,
+        "build_ms": 1.483249943703413,
+        "query_ms": null,
+        "compile_ms": 25.206875056028366,
+        "total_ms": 61.44704204052687,
+        "result_cache": "disk_hit",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 9342976,
+        "cache_mb": 500.0
+      },
+      "artifact": "src_ken_vectors.py-definition-1.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { name:\"_atomic_write\"; } select $f; }"
+    },
+    {
+      "scope": "src/ken/vectors.py",
+      "case": "definition",
+      "repetition": 2,
+      "seconds": 0.714,
+      "exit_code": 0,
+      "rows": 1,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 1,
+        "build_ms": 1.3384160120040178,
+        "query_ms": null,
+        "compile_ms": 24.781832937151194,
+        "total_ms": 60.90649985708296,
+        "result_cache": "disk_hit",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 9342976,
+        "cache_mb": 500.0
+      },
+      "artifact": "src_ken_vectors.py-definition-2.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { name:\"_atomic_write\"; } select $f; }"
+    },
+    {
+      "scope": "src/ken/checks",
+      "case": "definition",
+      "repetition": 0,
+      "seconds": 2.1261,
+      "exit_code": 0,
+      "rows": 1,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 12,
+        "reused_units": 0,
+        "build_ms": 1329.341665841639,
+        "query_ms": 0.312417047098279,
+        "compile_ms": 9.77479200810194,
+        "total_ms": 1370.348708005622,
+        "result_cache": "miss",
+        "ephemeral": false,
+        "states": 5,
+        "scanned_nodes": 1,
+        "allocated_bytes": 20500480,
+        "cache_mb": 500.0
+      },
+      "artifact": "src_ken_checks-definition-0.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { name:\"query_view\"; } select $f; }"
+    },
+    {
+      "scope": "src/ken/checks",
+      "case": "definition",
+      "repetition": 1,
+      "seconds": 0.7734,
+      "exit_code": 0,
+      "rows": 1,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 12,
+        "build_ms": 49.37545908614993,
+        "query_ms": null,
+        "compile_ms": 25.50408407114446,
+        "total_ms": 110.84495903924108,
+        "result_cache": "disk_hit",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 20500480,
+        "cache_mb": 500.0
+      },
+      "artifact": "src_ken_checks-definition-1.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { name:\"query_view\"; } select $f; }"
+    },
+    {
+      "scope": "src/ken/checks",
+      "case": "definition",
+      "repetition": 2,
+      "seconds": 0.7697,
+      "exit_code": 0,
+      "rows": 1,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 0,
+        "reused_units": 12,
+        "build_ms": 48.09733293950558,
+        "query_ms": null,
+        "compile_ms": 25.25016595609486,
+        "total_ms": 108.57874993234873,
+        "result_cache": "disk_hit",
+        "ephemeral": false,
+        "states": 0,
+        "scanned_nodes": 0,
+        "allocated_bytes": 20500480,
+        "cache_mb": 500.0
+      },
+      "artifact": "src_ken_checks-definition-2.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { name:\"query_view\"; } select $f; }"
+    },
+    {
+      "scope": "src",
+      "case": "definition",
+      "repetition": 0,
+      "seconds": 79.1643,
+      "exit_code": 0,
+      "rows": 1,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 271,
+        "reused_units": 0,
+        "build_ms": 78422.86070808768,
+        "query_ms": 0.5220829043537378,
+        "compile_ms": 9.47195803746581,
+        "total_ms": 78454.28729103878,
+        "result_cache": "miss",
+        "ephemeral": true,
+        "states": 5,
+        "scanned_nodes": 1,
+        "allocated_bytes": 969134080,
+        "cache_mb": 500.0
+      },
+      "artifact": "src-definition-0.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { name:\"_atomic_write\"; } select $f; }"
+    },
+    {
+      "scope": "src",
+      "case": "definition",
+      "repetition": 1,
+      "seconds": 54.265,
+      "exit_code": 0,
+      "rows": 1,
+      "result": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "analysis": {
+        "parsed_units": 169,
+        "reused_units": 102,
+        "build_ms": 53336.35512506589,
+        "query_ms": 0.5767080001533031,
+        "compile_ms": 31.36266698129475,
+        "total_ms": 53409.10187503323,
+        "result_cache": "miss",
+        "ephemeral": true,
+        "states": 5,
+        "scanned_nodes": 1,
+        "allocated_bytes": 969134080,
+        "cache_mb": 500.0
+      },
+      "artifact": "src-definition-1.json",
+      "query": "language \"kql/2\"; module measurement; query q { callable $f { name:\"_atomic_write\"; } select $f; }"
+    }
+  ],
+  "stopped_after_observation": "Interrupted during third src definition repetition after observing ephemeral fallback on cold and repeated calls. Only completed records are included.",
+  "engine_unchanged": true,
+  "sources_unchanged": true
+}

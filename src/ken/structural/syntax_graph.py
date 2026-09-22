@@ -8,9 +8,12 @@ TRIES = {'try_statement', 'try_with_resources_statement'}
 
 def syntax_contexts(graph: IR) -> None:
     operations = {op.id: op for op in graph.operations}
+    call_kinds = {entity.attrs.get('native_kind', '') for entity in graph.entities.values()
+                  if entity.kind == 'CALL'}
     syntax_locations = {
         (graph.entities[op.owner].path, op.start, op.end, op.native_kind): op.id
         for op in graph.operations
+        if op.native_kind in call_kinds
     }
     for entity in graph.entities.values():
         if entity.kind == 'CALL':
@@ -34,8 +37,12 @@ def syntax_contexts(graph: IR) -> None:
                         break
                     awaited |= parent.native_kind in {'await', 'await_expression'}
                     current = parent
+    # This lookup serves calls only. Release it before allocating the ancestor
+    # context map and millions of derived syntax edges on a large repository.
+    del syntax_locations
     parents = {op.parent for op in graph.operations if op.parent}
     contexts: dict[str, tuple[str, str, str]] = {}
+    context_values: dict[tuple[str, str, str], tuple[str, str, str]] = {}
     for operation in graph.operations:
         # Memoized ancestor evaluation also supports operations supplied out of order.
         pending = []
@@ -62,7 +69,8 @@ def syntax_contexts(graph: IR) -> None:
                     protected = parent.id if op.role == 'body' else ''
                 if op.native_kind in HANDLERS and parent.native_kind in TRIES:
                     graph.add(op.id, 'HANDLER_OF', parent.id)
-            contexts[op.id] = loop, handler, protected
+            context = loop, handler, protected
+            contexts[op.id] = context_values.setdefault(context, context)
             for relation, target in [('ENCLOSING_LOOP', loop), ('IN_HANDLER', handler), ('IN_TRY_BODY', protected)]:
                 if target:
                     graph.add(op.id, relation, target)

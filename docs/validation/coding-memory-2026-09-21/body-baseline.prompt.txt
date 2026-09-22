@@ -1,0 +1,13 @@
+Trabaja sólo sobre esta copia de Ken. Es una evaluación de diagnóstico: no modifiques archivos ni memorias. Puedes consultar Ken y leer código; evita búsquedas o lecturas si el contexto ya resuelve una parte. Responde en español, máximo 180 palabras, con conclusión, evidencia y prueba recomendada.
+
+<context-rank>
+Relevant context:
+Files:
+- src/ken/kql2/body.py
+- src/ken/kql2/source_execution.py
+- tests/kql2/test_body_field_initializer.py
+Notes:
+- kql2-body-input-projection-dependency-trap-20260921
+</context-rank>
+
+Quiero reducir el coste de BODY pasando a su evaluación únicamente los roles que aparecen en SourceExecutor._inputs, en lugar del entorno completo. Evalúa si es una optimización válida hoy y propone una comprobación concreta antes de implementarla.

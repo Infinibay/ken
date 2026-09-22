@@ -1,0 +1,2747 @@
+{
+  "schema": "ken-kql2-catalog-migration/1",
+  "entries": [
+    {
+      "id": "abstract-factory",
+      "file": "src/ken/structural/patterns/abstract-factory.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.abstract_factory",
+      "query_sha256": "baf7ad3e243540fd45ab2ad1f8b8b37b2be286a7563ef8dafb3afbe6ecdd149b",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.abstract_factory.variants.associated_products",
+        "ken.catalog.abstract_factory.variants.nominal_families",
+        "ken.catalog.abstract_factory.variants.structural_families"
+      ]
+    },
+    {
+      "id": "abstract-factory#nominal-families",
+      "file": "src/ken/structural/patterns/abstract-factory.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript",
+        "cpp"
+      ],
+      "module": "ken.catalog.abstract_factory.variants.nominal_families",
+      "query_sha256": "362feab24306ee9d21c64985df52e1fb087b35187618b027aa3cd8df0196196d",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "abstract-factory#structural-families",
+      "file": "src/ken/structural/patterns/abstract-factory.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "javascript",
+        "typescript",
+        "go"
+      ],
+      "module": "ken.catalog.abstract_factory.variants.structural_families",
+      "query_sha256": "1a97896466f11bad331bb75d95cde8c94392416c92d9e58a78163bd4adaaa9c8",
+      "exports": [
+        "unit",
+        "second",
+        "first_slot",
+        "second_slot",
+        "first_product",
+        "second_product",
+        "third_product",
+        "fourth_product"
+      ],
+      "imports": []
+    },
+    {
+      "id": "abstract-factory#associated-products",
+      "file": "src/ken/structural/patterns/abstract-factory.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "rust"
+      ],
+      "module": "ken.catalog.abstract_factory.variants.associated_products",
+      "query_sha256": "7fe5d012cca1e4b89dae81542ff39a97ca07ed6dfaeaedf5676df1a41bb0e776",
+      "exports": [
+        "unit",
+        "contract"
+      ],
+      "imports": []
+    },
+    {
+      "id": "adapter",
+      "file": "src/ken/structural/patterns/adapter.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.adapter",
+      "query_sha256": "f332b376cb9e21099d0ef992d4211ccf21462053a6d0c492b200bf1ef482d93e",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.adapter.variants.class_adapter",
+        "ken.catalog.adapter.variants.functional_adapter",
+        "ken.catalog.adapter.variants.object_adapter"
+      ]
+    },
+    {
+      "id": "adapter#object-adapter",
+      "file": "src/ken/structural/patterns/adapter.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript",
+        "cpp"
+      ],
+      "module": "ken.catalog.adapter.variants.object_adapter",
+      "query_sha256": "e766d72b44b9e94452f3104d953a84e9af8248c820f14096a8cab2c0f2e75efa",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "adapter#functional-adapter",
+      "file": "src/ken/structural/patterns/adapter.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.adapter.variants.functional_adapter",
+      "query_sha256": "75df8546c1cf523e55dfa0ed999b0d438253cad186cf680dfe020e6829753e9b",
+      "exports": [
+        "unit",
+        "factory",
+        "inner",
+        "wrapped",
+        "request"
+      ],
+      "imports": []
+    },
+    {
+      "id": "adapter#class-adapter",
+      "file": "src/ken/structural/patterns/adapter.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "cpp"
+      ],
+      "module": "ken.catalog.adapter.variants.class_adapter",
+      "query_sha256": "b8b6cb1c8e29fd566051842cd7b40f5a28345d867a84fe3d394f2fab8e84266d",
+      "exports": [
+        "unit",
+        "target",
+        "adaptee",
+        "slot",
+        "override",
+        "delegate"
+      ],
+      "imports": []
+    },
+    {
+      "id": "bridge",
+      "file": "src/ken/structural/patterns/bridge.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.bridge",
+      "query_sha256": "97dcd1280cc671279bd616da74161adbca0a54f19cb889f6110b5ac197149973",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.bridge.variants.generic_composition",
+        "ken.catalog.bridge.variants.refined_composition",
+        "ken.catalog.bridge.variants.runtime_composition"
+      ]
+    },
+    {
+      "id": "bridge#runtime-composition",
+      "file": "src/ken/structural/patterns/bridge.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript"
+      ],
+      "module": "ken.catalog.bridge.variants.runtime_composition",
+      "query_sha256": "9146423cdd530b55227c0fbbfc16e0adda23a4d0f6455f030d561c2ed0cfda99",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "bridge#generic-composition",
+      "file": "src/ken/structural/patterns/bridge.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.bridge.variants.generic_composition",
+      "query_sha256": "351f68319115fa3d38ab53b2e433dc1af4ee7700ac4df369a950c9332df0de13",
+      "exports": [
+        "unit",
+        "implementation",
+        "implementation_parameter",
+        "operation"
+      ],
+      "imports": []
+    },
+    {
+      "id": "bridge#refined-composition",
+      "file": "src/ken/structural/patterns/bridge.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "typescript",
+        "java",
+        "csharp"
+      ],
+      "module": "ken.catalog.bridge.variants.refined_composition",
+      "query_sha256": "b5a22cd2df792f4d12c75fa607dc79c664396da2df4efb030f84e057851a3295",
+      "exports": [
+        "unit",
+        "peer",
+        "abstraction",
+        "operation",
+        "slot",
+        "access",
+        "field",
+        "implementation",
+        "first",
+        "second"
+      ],
+      "imports": []
+    },
+    {
+      "id": "bridge.returned_primitive",
+      "file": "src/ken/structural/patterns/bridge.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.bridge.returned_primitive",
+      "query_sha256": "40e4e2f00daad65bdd8574de9f40ba113d46a44a4b71837ae9698a5863275f64",
+      "exports": [
+        "unit",
+        "operation",
+        "call"
+      ],
+      "imports": [
+        "ken.catalog.bridge.variants.refined_composition"
+      ]
+    },
+    {
+      "id": "builder",
+      "file": "src/ken/structural/patterns/builder.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.builder",
+      "query_sha256": "60d9fa9c161a73fef0bc33547dd56753d553f7c248d99c6f6bb0ec00e4683e5b",
+      "exports": [
+        "builder",
+        "finish",
+        "product"
+      ],
+      "imports": [
+        "ken.catalog.builder.variants.consuming_typestate",
+        "ken.catalog.builder.variants.director",
+        "ken.catalog.builder.variants.immutable_product",
+        "ken.catalog.builder.variants.mutable_product",
+        "ken.catalog.builder.variants.stored_product"
+      ]
+    },
+    {
+      "id": "builder#mutable-product",
+      "file": "src/ken/structural/patterns/builder.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.builder.variants.mutable_product",
+      "query_sha256": "3ea279cf669f3a03edd94fab14a3d204c049b062d4d6c677037e4b1a7397ca1a",
+      "exports": [
+        "builder",
+        "finish",
+        "product"
+      ],
+      "imports": []
+    },
+    {
+      "id": "builder#immutable-product",
+      "file": "src/ken/structural/patterns/builder.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.builder.variants.immutable_product",
+      "query_sha256": "3f1a0251b98b528573db51014168f24c7a3a4f76f3fc6aa340b004f932a71636",
+      "exports": [
+        "builder",
+        "finish",
+        "product"
+      ],
+      "imports": []
+    },
+    {
+      "id": "builder#consuming-typestate",
+      "file": "src/ken/structural/patterns/builder.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "rust",
+        "cpp",
+        "typescript"
+      ],
+      "module": "ken.catalog.builder.variants.consuming_typestate",
+      "query_sha256": "c4b7b02877e846375233a5090e7cbe064c14f7a4f3d914e7169819772470a439",
+      "exports": [
+        "builder",
+        "finish",
+        "product",
+        "state"
+      ],
+      "imports": []
+    },
+    {
+      "id": "builder#director",
+      "file": "src/ken/structural/patterns/builder.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.builder.variants.director",
+      "query_sha256": "8688d23d339ea4d0b4076ccb754ea01222b72d3e983b16f68533ecdb67c5bea4",
+      "exports": [
+        "builder",
+        "finish",
+        "product"
+      ],
+      "imports": []
+    },
+    {
+      "id": "builder#stored-product",
+      "file": "src/ken/structural/patterns/builder.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "rust"
+      ],
+      "module": "ken.catalog.builder.variants.stored_product",
+      "query_sha256": "d8f20d42fabec228ec084f218f5491c6fe8a2e0e5a554617b47de67a0b475b91",
+      "exports": [
+        "builder",
+        "finish",
+        "product"
+      ],
+      "imports": [
+        "ken.catalog.prototype.derived_copy"
+      ]
+    },
+    {
+      "id": "builder.directed_state",
+      "file": "src/ken/structural/patterns/builder.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.builder.directed_state",
+      "query_sha256": "2efeec2b90e986f0ab3fc0353ef45c79e8eac5eb969baf10ce21611a6b2b59b3",
+      "exports": [
+        "builder",
+        "finish",
+        "product"
+      ],
+      "imports": [
+        "ken.catalog.builder.variants.director",
+        "ken.catalog.builder.variants.mutable_product"
+      ]
+    },
+    {
+      "id": "chain-of-responsibility",
+      "file": "src/ken/structural/patterns/chain-of-responsibility.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.chain_of_responsibility",
+      "query_sha256": "1ed105583c0eab105d8c7a9d30a3447a143c9b78f74e41a4e68b6fb63e7468d6",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.chain_of_responsibility.variants.linked_handlers",
+        "ken.catalog.chain_of_responsibility.variants.middleware_closures"
+      ]
+    },
+    {
+      "id": "chain-of-responsibility#linked-handlers",
+      "file": "src/ken/structural/patterns/chain-of-responsibility.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript"
+      ],
+      "module": "ken.catalog.chain_of_responsibility.variants.linked_handlers",
+      "query_sha256": "a96d3d34a95616599bfa726836cde413c9f555710eeb2d95831a82b5fb0c10c7",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "chain-of-responsibility#middleware-closures",
+      "file": "src/ken/structural/patterns/chain-of-responsibility.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.chain_of_responsibility.variants.middleware_closures",
+      "query_sha256": "e9d143d5634d3156ef59c58401b32af96ad83deba89e53438f4550b58deca4d4",
+      "exports": [
+        "unit",
+        "factory",
+        "next",
+        "branch",
+        "delegate",
+        "terminal_return"
+      ],
+      "imports": []
+    },
+    {
+      "id": "command",
+      "file": "src/ken/structural/patterns/command.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.command",
+      "query_sha256": "46206601ba01e9fecb671b3d83919844ade0a8e0d642d859c15225f7e24c6b4c",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.command.variants.command_closure",
+        "ken.catalog.command.variants.command_object",
+        "ken.catalog.command.variants.queued_object",
+        "ken.catalog.command.variants.retained_contract",
+        "ken.catalog.command.variants.retained_object",
+        "ken.catalog.command.variants.stored_closure"
+      ]
+    },
+    {
+      "id": "command#retained-contract",
+      "file": "src/ken/structural/patterns/command.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp"
+      ],
+      "module": "ken.catalog.command.variants.retained_contract",
+      "query_sha256": "e219da57b07a81d4441e1cdd71f56fada801770d05778f9bc700f4bc5aef90a0",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.command.retained_dispatch"
+      ]
+    },
+    {
+      "id": "command#command-object",
+      "file": "src/ken/structural/patterns/command.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript"
+      ],
+      "module": "ken.catalog.command.variants.command_object",
+      "query_sha256": "b86c0c94f0782947db9c39256fa4d6e7977aef7751656ced9ea46e534e11fa80",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "command#stored-closure",
+      "file": "src/ken/structural/patterns/command.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "go",
+        "csharp"
+      ],
+      "module": "ken.catalog.command.variants.stored_closure",
+      "query_sha256": "1970d513d7b0bba47186887bc5e39a054652c0ec9b871a1ebb83a9b916b5b22d",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "command#retained-object",
+      "file": "src/ken/structural/patterns/command.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript",
+        "csharp"
+      ],
+      "module": "ken.catalog.command.variants.retained_object",
+      "query_sha256": "85abe9156e07b75ddedc29e9cf334e00ba4e655458c13ea8be37aed83edda82f",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "command#command-closure",
+      "file": "src/ken/structural/patterns/command.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.command.variants.command_closure",
+      "query_sha256": "91f7cfb48bbfce3abc8dc7332b37dd8864ea87a334c320f0d8f55cce75577787",
+      "exports": [
+        "unit",
+        "queue",
+        "submit",
+        "run",
+        "action"
+      ],
+      "imports": []
+    },
+    {
+      "id": "command#queued-object",
+      "file": "src/ken/structural/patterns/command.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp"
+      ],
+      "module": "ken.catalog.command.variants.queued_object",
+      "query_sha256": "29668faf158f9294be66cb0880a6e2675678b2437173c44fd273eeadb0dfc7b0",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.architecture.batch_work_queue.drain"
+      ]
+    },
+    {
+      "id": "command.retained_dispatch",
+      "file": "src/ken/structural/patterns/command.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.command.retained_dispatch",
+      "query_sha256": "01d03084d98e791d0a8d0a1caaf389d113839db6c69042679d868aae283a1a70",
+      "exports": [
+        "invoker",
+        "setter",
+        "input",
+        "storage",
+        "invoke",
+        "dispatch",
+        "contract",
+        "slot"
+      ],
+      "imports": []
+    },
+    {
+      "id": "composite",
+      "file": "src/ken/structural/patterns/composite.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.composite",
+      "query_sha256": "99772b2b90526e065bea92f407a7e37c5b92b5413055fcdc9f8c9c34f2dde6bb",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.composite.variants.algebraic_tree",
+        "ken.catalog.composite.variants.higher_order_traversal",
+        "ken.catalog.composite.variants.recursive_contract",
+        "ken.catalog.composite.variants.recursive_nominal"
+      ]
+    },
+    {
+      "id": "composite#recursive-contract",
+      "file": "src/ken/structural/patterns/composite.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript"
+      ],
+      "module": "ken.catalog.composite.variants.recursive_contract",
+      "query_sha256": "ef6975755126b0ca96d41af9da5eb0f067c3b993a14b1d092b56baa61522cefb",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "composite#recursive-nominal",
+      "file": "src/ken/structural/patterns/composite.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "go",
+        "python",
+        "java",
+        "typescript",
+        "csharp"
+      ],
+      "module": "ken.catalog.composite.variants.recursive_nominal",
+      "query_sha256": "18add54fedf3bbadaac37c350beaa86767d655193703bb4817a40199b51fbc05",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "composite#algebraic-tree",
+      "file": "src/ken/structural/patterns/composite.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.composite.variants.algebraic_tree",
+      "query_sha256": "4053e14e1301ea2349eadd7f560b11cf3f16239294542ce7ff83c502ea95ffbd",
+      "exports": [
+        "unit",
+        "operation",
+        "first",
+        "second",
+        "branch",
+        "tested"
+      ],
+      "imports": []
+    },
+    {
+      "id": "composite#higher-order-traversal",
+      "file": "src/ken/structural/patterns/composite.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.composite.variants.higher_order_traversal",
+      "query_sha256": "843986d5fefc30217ddb9251d1984d7b836e6bceb45e8d8982fe7a3b844ffbfc",
+      "exports": [
+        "unit",
+        "operation",
+        "iterable",
+        "child_call",
+        "accumulator",
+        "write",
+        "element"
+      ],
+      "imports": []
+    },
+    {
+      "id": "decorator",
+      "file": "src/ken/structural/patterns/decorator.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.decorator",
+      "query_sha256": "2ae346569621e4ee25cba9b0f588ccd372255c64caf8cbf9f0fb1bec8c0b5e48",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.decorator.variants.callable_wrapper",
+        "ken.catalog.decorator.variants.object_wrapper"
+      ]
+    },
+    {
+      "id": "decorator#object-wrapper",
+      "file": "src/ken/structural/patterns/decorator.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript"
+      ],
+      "module": "ken.catalog.decorator.variants.object_wrapper",
+      "query_sha256": "d7d6fe94d4785cf01c18ec865574971bab64e36d514ddb4b4c47121d284c3762",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "decorator#callable-wrapper",
+      "file": "src/ken/structural/patterns/decorator.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.decorator.variants.callable_wrapper",
+      "query_sha256": "65e17136e36585771f0454fd6765bd9815b0124e3689f2cb10b2801487786516",
+      "exports": [
+        "unit",
+        "factory",
+        "inner",
+        "wrapper"
+      ],
+      "imports": []
+    },
+    {
+      "id": "facade",
+      "file": "src/ken/structural/patterns/facade.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.facade",
+      "query_sha256": "9a00cfb6dd3c150e4bc5da3ecdd723c2094ee39fc8c676691a8a2b76cfd3131e",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.facade.variants.module_surface",
+        "ken.catalog.facade.variants.object_surface"
+      ]
+    },
+    {
+      "id": "facade#object-surface",
+      "file": "src/ken/structural/patterns/facade.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript"
+      ],
+      "module": "ken.catalog.facade.variants.object_surface",
+      "query_sha256": "66535704c5453506b353b178b4bb091e7bd4c04864443c5c6e56bf962577e23f",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "facade#module-surface",
+      "file": "src/ken/structural/patterns/facade.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.facade.variants.module_surface",
+      "query_sha256": "2580d50e30ffb90ba18bd8edac624340bcbaeba4b6e212a623c8d56f98cd1db3",
+      "exports": [
+        "unit",
+        "module",
+        "producer",
+        "consumer"
+      ],
+      "imports": []
+    },
+    {
+      "id": "factory-method",
+      "file": "src/ken/structural/patterns/factory-method.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.factory_method",
+      "query_sha256": "844cfb8e4cab630b26f852a88ebf7250561ad9904c246439753a3b4dd241e58d",
+      "exports": [
+        "creator",
+        "factory",
+        "product",
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.factory_method.variants.contract_slot",
+        "ken.catalog.factory_method.variants.virtual_slot"
+      ]
+    },
+    {
+      "id": "factory-method#virtual-slot",
+      "file": "src/ken/structural/patterns/factory-method.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript",
+        "cpp"
+      ],
+      "module": "ken.catalog.factory_method.variants.virtual_slot",
+      "query_sha256": "a92cf96366472340c82d11a1d69699814a359631f5735c148eca8c8d9ecefe58",
+      "exports": [
+        "unit",
+        "creator",
+        "factory",
+        "product"
+      ],
+      "imports": []
+    },
+    {
+      "id": "factory-method#contract-slot",
+      "file": "src/ken/structural/patterns/factory-method.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.factory_method.variants.contract_slot",
+      "query_sha256": "c31f807ac83e791a374fee193659c398101e162acb3bbe7016fb82596771bbdc",
+      "exports": [
+        "concrete",
+        "slot",
+        "client",
+        "contract",
+        "unit",
+        "creator",
+        "factory",
+        "product"
+      ],
+      "imports": []
+    },
+    {
+      "id": "factory-method.client_flow",
+      "file": "src/ken/structural/patterns/factory-method.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.factory_method.client_flow",
+      "query_sha256": "26f42f7024567264c18d93905499c1af691a3c7b2b378958b95ea41d942190b3",
+      "exports": [
+        "factory",
+        "creation",
+        "consumer"
+      ],
+      "imports": [
+        "ken.catalog.factory_method"
+      ]
+    },
+    {
+      "id": "flyweight",
+      "file": "src/ken/structural/patterns/flyweight.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.flyweight",
+      "query_sha256": "aef38c699d4cdaf96261d5a59dc1d07ad599c783ff75f298158596d8475f34e7",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.flyweight.variants.entry_api",
+        "ken.catalog.flyweight.variants.explicit_interning"
+      ]
+    },
+    {
+      "id": "flyweight#explicit-interning",
+      "file": "src/ken/structural/patterns/flyweight.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript"
+      ],
+      "module": "ken.catalog.flyweight.variants.explicit_interning",
+      "query_sha256": "3d65c6f1c0f15fe20f04f1c0c179d84a9e50a0b28ff513e202adb35edb570d7c",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "flyweight#entry-api",
+      "file": "src/ken/structural/patterns/flyweight.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "java",
+        "csharp",
+        "cpp",
+        "rust"
+      ],
+      "module": "ken.catalog.flyweight.variants.entry_api",
+      "query_sha256": "c10a905af6948cda9dca8453cf62c5506fd46f3e3b813d9805c6333a422bde1f",
+      "exports": [
+        "unit",
+        "pool",
+        "lookup",
+        "entry",
+        "key"
+      ],
+      "imports": []
+    },
+    {
+      "id": "interpreter",
+      "file": "src/ken/structural/patterns/interpreter.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.interpreter",
+      "query_sha256": "50c41c0bb2bfa8520d3e5530575aaa283959dd8656c1547aad415dd4b613c408",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.interpreter.variants.expression_objects",
+        "ken.catalog.interpreter.variants.expression_sum"
+      ]
+    },
+    {
+      "id": "interpreter#expression-objects",
+      "file": "src/ken/structural/patterns/interpreter.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript",
+        "cpp"
+      ],
+      "module": "ken.catalog.interpreter.variants.expression_objects",
+      "query_sha256": "751a97d9fde78013f3608f9911262a36bed0347e9eb0203684830b330707f084",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "interpreter#expression-sum",
+      "file": "src/ken/structural/patterns/interpreter.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.interpreter.variants.expression_sum",
+      "query_sha256": "52ef52c0edf916c495adcbe390f433f3a626730bb943ea693146e2d8b3a3a614",
+      "exports": [
+        "unit",
+        "operation",
+        "first",
+        "second",
+        "branch",
+        "tested",
+        "context"
+      ],
+      "imports": []
+    },
+    {
+      "id": "iterator",
+      "file": "src/ken/structural/patterns/iterator.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.iterator",
+      "query_sha256": "9fc3526ad162fa2f1adb0793fc3abcd971f7b46a427c7ba1e647feb70f7ca91c",
+      "exports": [
+        "iterator"
+      ],
+      "imports": [
+        "ken.catalog.iterator.variants.async_iterator",
+        "ken.catalog.iterator.variants.callback_iterator",
+        "ken.catalog.iterator.variants.delegated_cursor",
+        "ken.catalog.iterator.variants.delegated_generator",
+        "ken.catalog.iterator.variants.explicit_cursor",
+        "ken.catalog.iterator.variants.external_cursor",
+        "ken.catalog.iterator.variants.generator",
+        "ken.catalog.iterator.variants.paired_cursor"
+      ]
+    },
+    {
+      "id": "iterator#external-cursor",
+      "file": "src/ken/structural/patterns/iterator.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "cpp"
+      ],
+      "module": "ken.catalog.iterator.variants.external_cursor",
+      "query_sha256": "4fcdc6bfb09f3b12590a928913467f2c5ff91bf03b19ef7226ff4b4805107437",
+      "exports": [
+        "iterator"
+      ],
+      "imports": []
+    },
+    {
+      "id": "iterator#generator",
+      "file": "src/ken/structural/patterns/iterator.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "csharp"
+      ],
+      "module": "ken.catalog.iterator.variants.generator",
+      "query_sha256": "debfee95f287426ebebab6f9b7aaecd54c136ef6fc4c3b762edfcc47acb09c1b",
+      "exports": [
+        "iterator"
+      ],
+      "imports": []
+    },
+    {
+      "id": "iterator#delegated-generator",
+      "file": "src/ken/structural/patterns/iterator.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript"
+      ],
+      "module": "ken.catalog.iterator.variants.delegated_generator",
+      "query_sha256": "d237e16a9d1766e36e93caeb980629326cee64d2df7ea85ed9b42f6766ceeb1b",
+      "exports": [
+        "iterator"
+      ],
+      "imports": []
+    },
+    {
+      "id": "iterator#explicit-cursor",
+      "file": "src/ken/structural/patterns/iterator.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python"
+      ],
+      "module": "ken.catalog.iterator.variants.explicit_cursor",
+      "query_sha256": "116d203087fd77e517fa31c97f64d19f7beea862ffce7c7b938e3756b2c05be0",
+      "exports": [
+        "iterator"
+      ],
+      "imports": []
+    },
+    {
+      "id": "iterator#callback-iterator",
+      "file": "src/ken/structural/patterns/iterator.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "go"
+      ],
+      "module": "ken.catalog.iterator.variants.callback_iterator",
+      "query_sha256": "07aca79bf3b60599b51cc4db8f5ea4a9920048d707779a106f7897fcfd5ff42c",
+      "exports": [
+        "iterator",
+        "callback",
+        "call",
+        "loop",
+        "element",
+        "branch",
+        "exit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "iterator#async-iterator",
+      "file": "src/ken/structural/patterns/iterator.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "csharp"
+      ],
+      "module": "ken.catalog.iterator.variants.async_iterator",
+      "query_sha256": "abdd495164350347f3d6cdcc645aeeec98b5373c24009fa725c0a834176896d2",
+      "exports": [
+        "iterator",
+        "producer",
+        "loop",
+        "source",
+        "suspend"
+      ],
+      "imports": []
+    },
+    {
+      "id": "iterator#paired-cursor",
+      "file": "src/ken/structural/patterns/iterator.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "java",
+        "typescript"
+      ],
+      "module": "ken.catalog.iterator.variants.paired_cursor",
+      "query_sha256": "e456b4599df9b3fd767f382046eb2a872507fa34bf40244375b73e2bf39a55de",
+      "exports": [
+        "iterator"
+      ],
+      "imports": []
+    },
+    {
+      "id": "iterator#delegated-cursor",
+      "file": "src/ken/structural/patterns/iterator.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python"
+      ],
+      "module": "ken.catalog.iterator.variants.delegated_cursor",
+      "query_sha256": "1d2d2cddc39566c8321095868a1ca887ab59f408b521a57f82a782c308b50779",
+      "exports": [
+        "iterator"
+      ],
+      "imports": []
+    },
+    {
+      "id": "iterator.iterate_over",
+      "file": "src/ken/structural/patterns/iterator.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.iterator.iterate_over",
+      "query_sha256": "a214d2c76808d391b4cece4e43b4dc8f84bd02a62aacbb771e03c2b3e77e6606",
+      "exports": [
+        "source",
+        "item",
+        "body",
+        "iteration"
+      ],
+      "imports": []
+    },
+    {
+      "id": "mediator",
+      "file": "src/ken/structural/patterns/mediator.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.mediator",
+      "query_sha256": "9a90a9c8eb269105e7aaae4688175e5aed6be80bcf67367add5eeceb1618fd79",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.mediator.variants.direct_colleagues",
+        "ken.catalog.mediator.variants.message_coordination",
+        "ken.catalog.mediator.variants.tag_dispatch"
+      ]
+    },
+    {
+      "id": "mediator#direct-colleagues",
+      "file": "src/ken/structural/patterns/mediator.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript"
+      ],
+      "module": "ken.catalog.mediator.variants.direct_colleagues",
+      "query_sha256": "f4edb8ddd7a84f68f8df45b60e07de54cdd11d73f6613145fcddde97ed5d8e4b",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "mediator#message-coordination",
+      "file": "src/ken/structural/patterns/mediator.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.mediator.variants.message_coordination",
+      "query_sha256": "3cbe5ebf0e6a7eabe7ae5eeb12711fe8b626843535076bb24ba09bc2df73aee7",
+      "exports": [
+        "unit",
+        "operation",
+        "first_target",
+        "second_target",
+        "tag",
+        "colleague_a",
+        "colleague_b"
+      ],
+      "imports": []
+    },
+    {
+      "id": "mediator#tag-dispatch",
+      "file": "src/ken/structural/patterns/mediator.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.mediator.variants.tag_dispatch",
+      "query_sha256": "447578a10684e3c378995590ec2980c2bda7ce77203856129f5e739877339b4d",
+      "exports": [
+        "unit",
+        "operation",
+        "first_target",
+        "second_target",
+        "tag",
+        "colleague_a",
+        "colleague_b"
+      ],
+      "imports": []
+    },
+    {
+      "id": "memento",
+      "file": "src/ken/structural/patterns/memento.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.memento",
+      "query_sha256": "b0faf83fa8835ca148a077bedab702324ccde648e5df382a0a113279e3b7e9fd",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.memento.variants.accessor_snapshot",
+        "ken.catalog.memento.variants.serialized_snapshot",
+        "ken.catalog.memento.variants.snapshot_object"
+      ]
+    },
+    {
+      "id": "memento#accessor-snapshot",
+      "file": "src/ken/structural/patterns/memento.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp"
+      ],
+      "module": "ken.catalog.memento.variants.accessor_snapshot",
+      "query_sha256": "0f484eb5b3fd2792e929af4092c9678c3ab1c36a3fcf96ce2066b348d2f145fa",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "memento#snapshot-object",
+      "file": "src/ken/structural/patterns/memento.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript"
+      ],
+      "module": "ken.catalog.memento.variants.snapshot_object",
+      "query_sha256": "0756b28b8b4daedfbea0656e3f3cfe32e64b42bb6afc713724c953f3a8ac5e0f",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "memento#serialized-snapshot",
+      "file": "src/ken/structural/patterns/memento.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.memento.variants.serialized_snapshot",
+      "query_sha256": "49e60d84bbf71d3be0207fdf6498d862a43a8bc2679594f4052cbb48cbc4f8eb",
+      "exports": [
+        "unit",
+        "state",
+        "save",
+        "load",
+        "encode",
+        "decode"
+      ],
+      "imports": []
+    },
+    {
+      "id": "observer",
+      "file": "src/ken/structural/patterns/observer.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.observer",
+      "query_sha256": "4170bc72f1a9f635455278e22c41de2f2584ccae3011aabdfefd6d537875cd4d",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.observer.variants.event_bus",
+        "ken.catalog.observer.variants.language_event",
+        "ken.catalog.observer.variants.listener_registry",
+        "ken.catalog.observer.variants.map_key_registry",
+        "ken.catalog.observer.variants.snapshot_registry"
+      ]
+    },
+    {
+      "id": "observer#listener-registry",
+      "file": "src/ken/structural/patterns/observer.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript"
+      ],
+      "module": "ken.catalog.observer.variants.listener_registry",
+      "query_sha256": "bf16563a01159aac84c65871ebabc39beb171c8ff519f55eeb6bd8447c02a6b1",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "observer#map-key-registry",
+      "file": "src/ken/structural/patterns/observer.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "go"
+      ],
+      "module": "ken.catalog.observer.variants.map_key_registry",
+      "query_sha256": "6505ce5a0d7d625467b74f52db50eda620928335f0b190dcbf3a637936648891",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "observer#snapshot-registry",
+      "file": "src/ken/structural/patterns/observer.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript"
+      ],
+      "module": "ken.catalog.observer.variants.snapshot_registry",
+      "query_sha256": "a6f5462f286636044af2fc598f3f7959a2acc79d960f2af3f9fe7dac60c2dafb",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "observer#language-event",
+      "file": "src/ken/structural/patterns/observer.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "csharp"
+      ],
+      "module": "ken.catalog.observer.variants.language_event",
+      "query_sha256": "06ea0554a012d7e4670d634a48801014e9494d5724b7a19978b1355867eaaf7c",
+      "exports": [
+        "unit",
+        "event",
+        "attach",
+        "detach",
+        "raise"
+      ],
+      "imports": []
+    },
+    {
+      "id": "observer#event-bus",
+      "file": "src/ken/structural/patterns/observer.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.observer.variants.event_bus",
+      "query_sha256": "c700fcb52e97be715fe514ef6481af4251b97750380a55f0f74eac0186dba8f0",
+      "exports": [
+        "unit",
+        "subscription",
+        "publication",
+        "registry",
+        "topic",
+        "subscriber",
+        "payload",
+        "invocation"
+      ],
+      "imports": []
+    },
+    {
+      "id": "prototype",
+      "file": "src/ken/structural/patterns/prototype.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.prototype",
+      "query_sha256": "ab4c45cdf69a835a73da6ab45a52f555988d3c1813157e578b5ff7677ecdbf72",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.prototype.variants.derived_clone",
+        "ken.catalog.prototype.variants.explicit_copy",
+        "ken.catalog.prototype.variants.field_copy",
+        "ken.catalog.prototype.variants.language_copy"
+      ]
+    },
+    {
+      "id": "prototype#field-copy",
+      "file": "src/ken/structural/patterns/prototype.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp"
+      ],
+      "module": "ken.catalog.prototype.variants.field_copy",
+      "query_sha256": "4c1debcd6215200510c781513f82615102683b2bb5b15829a0e577c617420fd8",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "prototype#derived-clone",
+      "file": "src/ken/structural/patterns/prototype.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "rust"
+      ],
+      "module": "ken.catalog.prototype.variants.derived_clone",
+      "query_sha256": "56f8b64fdc1d9463731183a2668caf898cd16f8a6c61758764c47f868f480600",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.prototype.derived_copy"
+      ]
+    },
+    {
+      "id": "prototype#explicit-copy",
+      "file": "src/ken/structural/patterns/prototype.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp"
+      ],
+      "module": "ken.catalog.prototype.variants.explicit_copy",
+      "query_sha256": "c96e66a54c4dcfeea26be72951033154a9bb14f8831078c2cb6e49ab93874684",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "prototype#language-copy",
+      "file": "src/ken/structural/patterns/prototype.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "csharp",
+        "cpp",
+        "rust"
+      ],
+      "module": "ken.catalog.prototype.variants.language_copy",
+      "query_sha256": "19ac51f6d01f3722b1d4b8847cfc472d5f341cbbabeac7bd87e5dc36aa055ea0",
+      "exports": [
+        "unit",
+        "witness"
+      ],
+      "imports": []
+    },
+    {
+      "id": "prototype.derived_copy",
+      "file": "src/ken/structural/patterns/prototype.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.prototype.derived_copy",
+      "query_sha256": "7d0fda8e8d5388f79a34688f7d878a145a408e3cea1089b1bbfc7f82bdd67dff",
+      "exports": [
+        "unit",
+        "receiver",
+        "copy"
+      ],
+      "imports": []
+    },
+    {
+      "id": "proxy",
+      "file": "src/ken/structural/patterns/proxy.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.proxy",
+      "query_sha256": "db6010ba572792686b71dd4d96ca8fcd0666cfabfcc75550147d13afc789fddc",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.proxy.variants.guarded_access",
+        "ken.catalog.proxy.variants.lazy_subject",
+        "ken.catalog.proxy.variants.remote_subject"
+      ]
+    },
+    {
+      "id": "proxy#guarded-access",
+      "file": "src/ken/structural/patterns/proxy.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript"
+      ],
+      "module": "ken.catalog.proxy.variants.guarded_access",
+      "query_sha256": "e2703144333cfd778a08823516fa67cd7437039b8ff62136ccec566040c612a5",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "proxy#lazy-subject",
+      "file": "src/ken/structural/patterns/proxy.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.proxy.variants.lazy_subject",
+      "query_sha256": "c3b468c86e727b92122d60e028acead138358b6a89109c9c3a123557b07579bc",
+      "exports": [
+        "unit",
+        "subject",
+        "access",
+        "creation",
+        "created"
+      ],
+      "imports": []
+    },
+    {
+      "id": "proxy#remote-subject",
+      "file": "src/ken/structural/patterns/proxy.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.proxy.variants.remote_subject",
+      "query_sha256": "ce2719615329754bfe7e0acbbeb7e8e709e8716e04c67cca46cac78b62600602",
+      "exports": [
+        "unit",
+        "contract",
+        "client",
+        "method",
+        "transport",
+        "encoder",
+        "decoder",
+        "request"
+      ],
+      "imports": []
+    },
+    {
+      "id": "singleton",
+      "file": "src/ken/structural/patterns/singleton.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.singleton",
+      "query_sha256": "c4ecccdafab20080c1e6a208b1cc0a4cc0112ee71b60c1e1d00ba84d6321bd86",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.singleton.variants.eager_shared",
+        "ken.catalog.singleton.variants.lazy_guarded",
+        "ken.catalog.singleton.variants.module_shared",
+        "ken.catalog.singleton.variants.once_primitive"
+      ]
+    },
+    {
+      "id": "singleton#eager-shared",
+      "file": "src/ken/structural/patterns/singleton.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "java",
+        "csharp",
+        "typescript"
+      ],
+      "module": "ken.catalog.singleton.variants.eager_shared",
+      "query_sha256": "04132b00a0a03573fc9cf269fec4d0d8fca60a6700540b0860a33b168907b6d2",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.singleton.shared_instance"
+      ]
+    },
+    {
+      "id": "singleton#module-shared",
+      "file": "src/ken/structural/patterns/singleton.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.singleton.variants.module_shared",
+      "query_sha256": "c7938c936d8d221257a409999a4a86358a03144f3825626224f3f6b0c5d2f362",
+      "exports": [
+        "unit",
+        "module",
+        "storage",
+        "accessor",
+        "creation",
+        "type"
+      ],
+      "imports": []
+    },
+    {
+      "id": "singleton#lazy-guarded",
+      "file": "src/ken/structural/patterns/singleton.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "javascript",
+        "typescript",
+        "csharp"
+      ],
+      "module": "ken.catalog.singleton.variants.lazy_guarded",
+      "query_sha256": "6590da28c69cf68931040bf36c796551d5375e6111c67fca523372d4fab13eb0",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.singleton.lazy_instance"
+      ]
+    },
+    {
+      "id": "singleton#once-primitive",
+      "file": "src/ken/structural/patterns/singleton.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.singleton.variants.once_primitive",
+      "query_sha256": "45ce7d42149ea435811072477639ecff652d6f6eaa47cf4a825347e6bc15f1ba",
+      "exports": [
+        "unit",
+        "accessor",
+        "cell",
+        "thunk",
+        "construction",
+        "type"
+      ],
+      "imports": []
+    },
+    {
+      "id": "singleton.shared_instance",
+      "file": "src/ken/structural/patterns/singleton.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.singleton.shared_instance",
+      "query_sha256": "94008767b6185a32b45ff6e84bc18b93e143d96581618ecbf1b18e2b78a6edd5",
+      "exports": [
+        "unit",
+        "storage",
+        "accessor",
+        "creation"
+      ],
+      "imports": []
+    },
+    {
+      "id": "singleton.lazy_instance",
+      "file": "src/ken/structural/patterns/singleton.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.singleton.lazy_instance",
+      "query_sha256": "50df579d4d7f664334ca7cabc2577a50359fde87cba95aae32607a7393d04dea",
+      "exports": [
+        "unit",
+        "storage",
+        "accessor",
+        "creation"
+      ],
+      "imports": []
+    },
+    {
+      "id": "singleton.observed_lazy_use",
+      "file": "src/ken/structural/patterns/singleton.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.singleton.observed_lazy_use",
+      "query_sha256": "cff25dc7dfbe3af8d7d38434148b41c9ef907f8779aaefe838b8cb5da071e6c3",
+      "exports": [
+        "unit",
+        "storage",
+        "accessor",
+        "creation",
+        "call"
+      ],
+      "imports": [
+        "ken.catalog.singleton.lazy_instance"
+      ]
+    },
+    {
+      "id": "state",
+      "file": "src/ken/structural/patterns/state.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.state",
+      "query_sha256": "163757cd535055fbce5362c1f4ef1d686c32610382f8b5b64f03fd71384b9f74",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.state.variants.context_transition",
+        "ken.catalog.state.variants.state_enum",
+        "ken.catalog.state.variants.state_object"
+      ]
+    },
+    {
+      "id": "state#state-object",
+      "file": "src/ken/structural/patterns/state.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript"
+      ],
+      "module": "ken.catalog.state.variants.state_object",
+      "query_sha256": "4dc3256d2115dfd8f89b22d62586aa1284dbe337ec81709ce5744fd49d98db82",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "state#state-enum",
+      "file": "src/ken/structural/patterns/state.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.state.variants.state_enum",
+      "query_sha256": "09e08f08ee1639a3a65ce2c09ef961621410190ba6b7dde172568e7c35e88d83",
+      "exports": [
+        "unit",
+        "state",
+        "transition"
+      ],
+      "imports": []
+    },
+    {
+      "id": "state#context-transition",
+      "file": "src/ken/structural/patterns/state.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp"
+      ],
+      "module": "ken.catalog.state.variants.context_transition",
+      "query_sha256": "87726124116976f8f320561ba9f2775b9187ff783d0caed72393b0cfb50cefdc",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "strategy",
+      "file": "src/ken/structural/patterns/strategy.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.strategy",
+      "query_sha256": "c0deeb61fc172b86e988c95de1217d778b52e9eab63e9a59bd1ea10ff73b5257",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.strategy.variants.static_policy",
+        "ken.catalog.strategy.variants.strategy_callable",
+        "ken.catalog.strategy.variants.strategy_object"
+      ]
+    },
+    {
+      "id": "strategy#strategy-object",
+      "file": "src/ken/structural/patterns/strategy.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript",
+        "csharp",
+        "cpp"
+      ],
+      "module": "ken.catalog.strategy.variants.strategy_object",
+      "query_sha256": "e3dc21c050a36ca9270147cfd59810ebb6678fa8ba95045f9f5b3c439e647dbc",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.strategy.supplied_policy"
+      ]
+    },
+    {
+      "id": "strategy#strategy-callable",
+      "file": "src/ken/structural/patterns/strategy.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "go"
+      ],
+      "module": "ken.catalog.strategy.variants.strategy_callable",
+      "query_sha256": "cae9ce9ccefa17acf97b229219cc9c22ab80f24681cbba783479d50da4607bfd",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.strategy.supplied_policy"
+      ]
+    },
+    {
+      "id": "strategy#static-policy",
+      "file": "src/ken/structural/patterns/strategy.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "cpp",
+        "rust"
+      ],
+      "module": "ken.catalog.strategy.variants.static_policy",
+      "query_sha256": "979d20b6b91f7a9f7be5e6c9a934bcdb5617a9afba02a45d6e7b8e1cd0686d9b",
+      "exports": [
+        "unit",
+        "policy",
+        "parameter",
+        "algorithm",
+        "call"
+      ],
+      "imports": []
+    },
+    {
+      "id": "strategy.supplied_policy",
+      "file": "src/ken/structural/patterns/strategy.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.strategy.supplied_policy",
+      "query_sha256": "26b90924c9fd98eba1ded0b2366b3d73180c0e7549e88ba7f64e1362670f1e21",
+      "exports": [
+        "unit",
+        "configure",
+        "supplied",
+        "policy"
+      ],
+      "imports": []
+    },
+    {
+      "id": "strategy.consumed_policy",
+      "file": "src/ken/structural/patterns/strategy.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.strategy.consumed_policy",
+      "query_sha256": "8349021ce0efd25cae81be5c5b8b08e8849282200521828963404458b38bb9cf",
+      "exports": [
+        "unit",
+        "policy",
+        "algorithm",
+        "invocation",
+        "input",
+        "result"
+      ],
+      "imports": [
+        "ken.catalog.strategy.supplied_policy"
+      ]
+    },
+    {
+      "id": "template-method",
+      "file": "src/ken/structural/patterns/template-method.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.template_method",
+      "query_sha256": "984171a197f405c666c85de6b5c6fea5c2e84fdc35a23dc87a53e9341bd2d7e8",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.template_method.variants.composed_skeleton",
+        "ken.catalog.template_method.variants.trait_default",
+        "ken.catalog.template_method.variants.virtual_skeleton"
+      ]
+    },
+    {
+      "id": "template-method#virtual-skeleton",
+      "file": "src/ken/structural/patterns/template-method.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript",
+        "cpp"
+      ],
+      "module": "ken.catalog.template_method.variants.virtual_skeleton",
+      "query_sha256": "caf0c05027f28875852666fe453a94f4b18a6df0e7919f96e1a49e30da6b7bef",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "template-method#trait-default",
+      "file": "src/ken/structural/patterns/template-method.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "rust"
+      ],
+      "module": "ken.catalog.template_method.variants.trait_default",
+      "query_sha256": "887dda3becc8a3bc4cb803a1c3007edf45be94291e155cfc51150cf7eb803b21",
+      "exports": [
+        "unit",
+        "algorithm",
+        "hook"
+      ],
+      "imports": []
+    },
+    {
+      "id": "template-method#composed-skeleton",
+      "file": "src/ken/structural/patterns/template-method.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp",
+        "go",
+        "rust"
+      ],
+      "module": "ken.catalog.template_method.variants.composed_skeleton",
+      "query_sha256": "1496dc5e8c68b140474abaf9f988909065ff96b8bb87ba8c622e3ca447c79b16",
+      "exports": [
+        "unit",
+        "prepare",
+        "transform",
+        "finish"
+      ],
+      "imports": []
+    },
+    {
+      "id": "template-method.dependent_steps",
+      "file": "src/ken/structural/patterns/template-method.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.template_method.dependent_steps",
+      "query_sha256": "d15fd9914f46bd935df903e10a90ac8d1683217a72a39a1286fd499b7f594a60",
+      "exports": [
+        "unit",
+        "template",
+        "first",
+        "second"
+      ],
+      "imports": [
+        "ken.catalog.template_method"
+      ]
+    },
+    {
+      "id": "visitor",
+      "file": "src/ken/structural/patterns/visitor.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.visitor",
+      "query_sha256": "cf08ebe2841d1038476a391e9782dabe60f33b7490638dffe640a679552bdb10",
+      "exports": [
+        "unit"
+      ],
+      "imports": [
+        "ken.catalog.visitor.variants.generic_visitor",
+        "ken.catalog.visitor.variants.named_dispatch",
+        "ken.catalog.visitor.variants.overloaded_dispatch"
+      ]
+    },
+    {
+      "id": "visitor#overloaded-dispatch",
+      "file": "src/ken/structural/patterns/visitor.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "java",
+        "csharp",
+        "cpp"
+      ],
+      "module": "ken.catalog.visitor.variants.overloaded_dispatch",
+      "query_sha256": "0ad2e925b46d48bcdb663dacab24c7eea9b1264d1ad5100e5a173f0ea27b9fd1",
+      "exports": [
+        "unit",
+        "visitor",
+        "visitor_type",
+        "dispatch"
+      ],
+      "imports": []
+    },
+    {
+      "id": "visitor#named-dispatch",
+      "file": "src/ken/structural/patterns/visitor.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "java",
+        "typescript",
+        "cpp"
+      ],
+      "module": "ken.catalog.visitor.variants.named_dispatch",
+      "query_sha256": "66a41f83c01b858906b58be28ed46341bdd3bdf5850c3e4759b980689409b602",
+      "exports": [
+        "unit"
+      ],
+      "imports": []
+    },
+    {
+      "id": "visitor#generic-visitor",
+      "file": "src/ken/structural/patterns/visitor.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "cpp",
+        "rust"
+      ],
+      "module": "ken.catalog.visitor.variants.generic_visitor",
+      "query_sha256": "8e617b8b7e865656e5101b1793b82d36aa0480d25519fa6cd0191d12eb29a3b6",
+      "exports": [
+        "unit",
+        "visitor",
+        "visitor_parameter",
+        "dispatch"
+      ],
+      "imports": []
+    },
+    {
+      "id": "architecture.adapted-continuation-wrapper",
+      "file": "src/ken/structural/modern_patterns/adapted-continuation-wrapper.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.architecture.adapted_continuation_wrapper",
+      "query_sha256": "1ea6c32ec86000d910152236bb7dd1b50efdb9ef108fdf0eecfe06f80ccd9d3a",
+      "exports": [
+        "factory",
+        "handler",
+        "continuation",
+        "adapter",
+        "invocation"
+      ],
+      "imports": []
+    },
+    {
+      "id": "architecture.batch-work-queue",
+      "file": "src/ken/structural/modern_patterns/batch-work-queue.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.architecture.batch_work_queue",
+      "query_sha256": "97acd0833ca5adfcbaa95b44d615a4ffa068c14f144c0d640ad2e318ccdb04b0",
+      "exports": [
+        "unit",
+        "queue",
+        "consume"
+      ],
+      "imports": [
+        "ken.catalog.architecture.batch_work_queue.drain"
+      ]
+    },
+    {
+      "id": "architecture.batch-work-queue#stored-batch",
+      "file": "src/ken/structural/modern_patterns/batch-work-queue.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp"
+      ],
+      "module": "ken.catalog.architecture.batch_work_queue.variants.stored_batch",
+      "query_sha256": "875029ffe0884f1d34b0960037dbfba7a42c4b037a84bd88a3ff10532e1fb493",
+      "exports": [
+        "unit",
+        "queue",
+        "consume"
+      ],
+      "imports": [
+        "ken.catalog.architecture.batch_work_queue.drain"
+      ]
+    },
+    {
+      "id": "architecture.batch-work-queue.drain",
+      "file": "src/ken/structural/modern_patterns/batch-work-queue.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.architecture.batch_work_queue.drain",
+      "query_sha256": "01191bb81eac98b32f53bcfba271ef95e97076a0c2e95072d555077b360c9a5a",
+      "exports": [
+        "unit",
+        "queue",
+        "register",
+        "input",
+        "consume",
+        "iteration",
+        "item",
+        "dispatch",
+        "reset"
+      ],
+      "imports": []
+    },
+    {
+      "id": "architecture.cache-aside",
+      "file": "src/ken/structural/modern_patterns/cache-aside.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.architecture.cache_aside",
+      "query_sha256": "eac68a272a57f0eed76d401345c1e5da7d52986e0807c793366850a753dbe764",
+      "exports": [
+        "unit",
+        "cache",
+        "key",
+        "lookup",
+        "load",
+        "write"
+      ],
+      "imports": [
+        "ken.catalog.architecture.cache_aside.variants.java_optional",
+        "ken.catalog.architecture.cache_aside.variants.null_miss"
+      ]
+    },
+    {
+      "id": "architecture.cache-aside#java-optional",
+      "file": "src/ken/structural/modern_patterns/cache-aside.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.architecture.cache_aside.variants.java_optional",
+      "query_sha256": "0b53f674d5ec23ec7e64b4173cf3702dde0e62a8200e3b545ef3b283a41ec854",
+      "exports": [
+        "unit",
+        "cache",
+        "key",
+        "lookup",
+        "load",
+        "write"
+      ],
+      "imports": []
+    },
+    {
+      "id": "architecture.cache-aside#null-miss",
+      "file": "src/ken/structural/modern_patterns/cache-aside.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.architecture.cache_aside.variants.null_miss",
+      "query_sha256": "36c3756755ea7f3dee148a2747a9d124017a916de512c273bb0258e0eb1cc13b",
+      "exports": [
+        "unit",
+        "cache",
+        "key",
+        "lookup",
+        "load",
+        "write"
+      ],
+      "imports": []
+    },
+    {
+      "id": "architecture.continuation-wrapper",
+      "file": "src/ken/structural/modern_patterns/continuation-wrapper.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.architecture.continuation_wrapper",
+      "query_sha256": "770b93670274dc52ac417e4d80fc3ee818761beac7c9ad69e7ab2837c5082854",
+      "exports": [
+        "factory",
+        "handler",
+        "continuation"
+      ],
+      "imports": []
+    },
+    {
+      "id": "architecture.dependency-injection",
+      "file": "src/ken/structural/modern_patterns/dependency-injection.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.architecture.dependency_injection",
+      "query_sha256": "4b0f13838c23dbc9e8b6c16a43de0d03b8cee0bced020dee274bd685b5a6130f",
+      "exports": [
+        "unit",
+        "dependency",
+        "inject",
+        "operation"
+      ],
+      "imports": [
+        "ken.catalog.architecture.dependency_injection.variants.callable_input",
+        "ken.catalog.architecture.dependency_injection.variants.object_assignment"
+      ]
+    },
+    {
+      "id": "architecture.dependency-injection#retained-object",
+      "file": "src/ken/structural/modern_patterns/dependency-injection.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp"
+      ],
+      "module": "ken.catalog.architecture.dependency_injection.variants.retained_object",
+      "query_sha256": "836e1df321a3dd4c5d244a9271343353e3168659fb44933a1e13cca2bac04e28",
+      "exports": [
+        "unit",
+        "dependency",
+        "inject",
+        "operation"
+      ],
+      "imports": [
+        "ken.catalog.strategy.supplied_policy"
+      ]
+    },
+    {
+      "id": "architecture.dependency-injection#object-assignment",
+      "file": "src/ken/structural/modern_patterns/dependency-injection.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp"
+      ],
+      "module": "ken.catalog.architecture.dependency_injection.variants.object_assignment",
+      "query_sha256": "804a49e1ec5e4822ee63a92d569001aaa2311899262cc6bfbf69346bf199e8a6",
+      "exports": [
+        "unit",
+        "dependency",
+        "inject",
+        "operation"
+      ],
+      "imports": []
+    },
+    {
+      "id": "architecture.dependency-injection#callable-input",
+      "file": "src/ken/structural/modern_patterns/dependency-injection.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "go",
+        "csharp",
+        "cpp",
+        "rust"
+      ],
+      "module": "ken.catalog.architecture.dependency_injection.variants.callable_input",
+      "query_sha256": "d715512d212a8d9fc52038c2c9b3e1737c22050ed91b9ecc5b70d8f332bf2f17",
+      "exports": [
+        "unit",
+        "dependency",
+        "inject",
+        "operation"
+      ],
+      "imports": [
+        "ken.catalog.strategy.supplied_policy"
+      ]
+    },
+    {
+      "id": "architecture.dispatch-table",
+      "file": "src/ken/structural/modern_patterns/dispatch-table.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.architecture.dispatch_table",
+      "query_sha256": "f1d966843f7e67fff70e90c7a062a3918874e49eae07b6e788d2badcfb40b0ad",
+      "exports": [
+        "unit",
+        "register",
+        "dispatch",
+        "table"
+      ],
+      "imports": [
+        "ken.catalog.architecture.dispatch_table.variants.adapted",
+        "ken.catalog.architecture.dispatch_table.variants.direct"
+      ]
+    },
+    {
+      "id": "architecture.dispatch-table#direct",
+      "file": "src/ken/structural/modern_patterns/dispatch-table.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.architecture.dispatch_table.variants.direct",
+      "query_sha256": "d676c659a01d03f09ea1fce8799d4ec4c5750e74b3eb02755e34f3b8af15e0a5",
+      "exports": [
+        "unit",
+        "register",
+        "dispatch",
+        "table"
+      ],
+      "imports": []
+    },
+    {
+      "id": "architecture.dispatch-table#adapted",
+      "file": "src/ken/structural/modern_patterns/dispatch-table.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript"
+      ],
+      "module": "ken.catalog.architecture.dispatch_table.variants.adapted",
+      "query_sha256": "eb783b6c249f9ec3a96d12174c6c1edb298614b31d10e433a34fff55cfb9e965",
+      "exports": [
+        "unit",
+        "register",
+        "dispatch",
+        "table"
+      ],
+      "imports": []
+    },
+    {
+      "id": "resilience.exception-retry",
+      "file": "src/ken/structural/modern_patterns/exception-retry.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.resilience.exception_retry",
+      "query_sha256": "bf0e65608285de867bc6a6b0257678722f1d8f97f6c3e81048fd97b608e06949",
+      "exports": [
+        "unit",
+        "loop",
+        "protected",
+        "handler",
+        "attempt",
+        "retry"
+      ],
+      "imports": [
+        "ken.catalog.resilience.exception_retry.variants.explicit_continue",
+        "ken.catalog.resilience.exception_retry.variants.handler_fallthrough"
+      ]
+    },
+    {
+      "id": "resilience.exception-retry#explicit-continue",
+      "file": "src/ken/structural/modern_patterns/exception-retry.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp"
+      ],
+      "module": "ken.catalog.resilience.exception_retry.variants.explicit_continue",
+      "query_sha256": "8d972bf8d5063d0502766383c2cac72dadcf4e30260a05a9e13642dbc6b569e0",
+      "exports": [
+        "unit",
+        "loop",
+        "protected",
+        "handler",
+        "attempt",
+        "retry"
+      ],
+      "imports": []
+    },
+    {
+      "id": "resilience.exception-retry#handler-fallthrough",
+      "file": "src/ken/structural/modern_patterns/exception-retry.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp",
+        "cpp"
+      ],
+      "module": "ken.catalog.resilience.exception_retry.variants.handler_fallthrough",
+      "query_sha256": "674489ceb0a9c272172f80e24869aad9f2689cd2241c3763dbc011b279affae9",
+      "exports": [
+        "unit",
+        "loop",
+        "protected",
+        "handler",
+        "attempt",
+        "retry"
+      ],
+      "imports": []
+    },
+    {
+      "id": "architecture.read-through-cache",
+      "file": "src/ken/structural/modern_patterns/read-through-cache.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.architecture.read_through_cache",
+      "query_sha256": "6915283e7f962161e28f00e849c29f4ad8639ae81cbf905f6120587ab142e041",
+      "exports": [
+        "unit",
+        "read",
+        "cache",
+        "key",
+        "lookup",
+        "load",
+        "write"
+      ],
+      "imports": [
+        "ken.catalog.architecture.read_through_cache.read_fill"
+      ]
+    },
+    {
+      "id": "architecture.read-through-cache.read_fill",
+      "file": "src/ken/structural/modern_patterns/read-through-cache.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.architecture.read_through_cache.read_fill",
+      "query_sha256": "489495e96c6b5a5c6412ac6008cde5d1680063c47bf1b01a1f4a3541168bb21f",
+      "exports": [
+        "read",
+        "cache",
+        "key",
+        "presence",
+        "lookup",
+        "load",
+        "source",
+        "write",
+        "hit_return",
+        "miss_return"
+      ],
+      "imports": []
+    },
+    {
+      "id": "architecture.subclass-factory",
+      "file": "src/ken/structural/modern_patterns/subclass-factory.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.architecture.subclass_factory",
+      "query_sha256": "79bc098db3aaade0b90e86083bc98c3d4ce8400fffb3b138ec8d75d926727315",
+      "exports": [
+        "factory",
+        "derived",
+        "base"
+      ],
+      "imports": [
+        "ken.catalog.architecture.subclass_factory.variants.returned_subclass"
+      ]
+    },
+    {
+      "id": "architecture.subclass-factory#returned-subclass",
+      "file": "src/ken/structural/modern_patterns/subclass-factory.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript"
+      ],
+      "module": "ken.catalog.architecture.subclass_factory.variants.returned_subclass",
+      "query_sha256": "8684c8f44a9040d542c0b9203eab924a23889ced5c8ebd5977d494720a3df5cb",
+      "exports": [
+        "factory",
+        "derived",
+        "base"
+      ],
+      "imports": []
+    },
+    {
+      "id": "persistence.unit-of-work",
+      "file": "src/ken/structural/modern_patterns/unit-of-work.toml",
+      "kind": "root",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.persistence.unit_of_work",
+      "query_sha256": "88ca4f6f09b8b7a24cdf9630ac03819427f6c54fe268222bbbeb3e5983a51d04",
+      "exports": [
+        "unit",
+        "flush",
+        "store"
+      ],
+      "imports": [
+        "ken.catalog.persistence.unit_of_work.variants.keyed_change_set"
+      ]
+    },
+    {
+      "id": "persistence.unit-of-work#keyed-change-set",
+      "file": "src/ken/structural/modern_patterns/unit-of-work.toml",
+      "kind": "variant",
+      "status": "ready",
+      "languages": [
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "csharp"
+      ],
+      "module": "ken.catalog.persistence.unit_of_work.variants.keyed_change_set",
+      "query_sha256": "010a70bc7a232dc608a0c54b44aa80afc34edf0d903190106b92a6ae556b137c",
+      "exports": [
+        "unit",
+        "flush",
+        "store"
+      ],
+      "imports": [
+        "ken.catalog.persistence.unit_of_work.keyed_flush"
+      ]
+    },
+    {
+      "id": "persistence.unit-of-work#transactional-change-set",
+      "file": "src/ken/structural/modern_patterns/unit-of-work.toml",
+      "kind": "variant",
+      "status": "design",
+      "languages": []
+    },
+    {
+      "id": "persistence.unit-of-work.keyed_flush",
+      "file": "src/ken/structural/modern_patterns/unit-of-work.toml",
+      "kind": "operation",
+      "status": "ready",
+      "languages": [],
+      "module": "ken.catalog.persistence.unit_of_work.keyed_flush",
+      "query_sha256": "1ccc04651a7a2f7f319caf75ebbaba3864d0e5bc58f42154ef770ae83c6afda8",
+      "exports": [
+        "unit",
+        "changes",
+        "flush",
+        "worker",
+        "iteration",
+        "item",
+        "store",
+        "action",
+        "effect"
+      ],
+      "imports": []
+    }
+  ]
+}

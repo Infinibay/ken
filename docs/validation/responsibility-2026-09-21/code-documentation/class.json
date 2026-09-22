@@ -1,0 +1,170 @@
+{
+  "ok": true,
+  "question": "Who resolves non-relative JS/TS imports via tsconfig paths and workspace names?",
+  "hypotheses": [],
+  "status": "candidates",
+  "candidates": [
+    {
+      "symbol": "AliasResolver",
+      "path": "src/ken/jsresolve.py",
+      "line": 93,
+      "kind": "class",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.89,
+        "band": "strong",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who resolves non-relative JS/TS imports via tsconfig paths and workspace names?",
+      "documentation": "Resolves non-relative JS/TS imports via tsconfig paths + workspace names.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.8904300332069397,
+          "explanation": "Documentation similarity 0.890; term coverage 1.000 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "228919f225dffc74d193d6e24cab7fe093aed4ec7c8d507e722b3079169efd0a",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "documentation_kind": "class_docstring",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/jsresolve.py",
+        "include": [
+          "source"
+        ],
+        "qualname": "AliasResolver"
+      }
+    },
+    {
+      "symbol": "src/ken/jsresolve.py",
+      "path": "src/ken/jsresolve.py",
+      "line": 1,
+      "kind": "module",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.695,
+        "band": "moderate",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who resolves non-relative JS/TS imports via tsconfig paths and workspace names?",
+      "documentation": "Config-aware import resolution for JS/TS projects.\n\nRelative imports resolve structurally, but real TS/JS codebases lean on tooling\nconfig that ken must read to resolve the rest:\n\n* ``tsconfig.json`` / ``jsconfig.json`` — ``compilerOptions.baseUrl`` +\n  ``paths`` aliases (``@/*`` -> ``src/*``, ``@services/*`` -> ``app/services/*``).\n* ``package.json`` — workspace package ``name`` so a bare ``@scope/pkg`` import\n  resolves into that package's directory.\n\nConfigs are hierarchical: a monorepo has one per sub-package, so each source\nfile is governed by the **nearest** config walking up the tree, not the root.\nWe index every such config (recursively) and pick the deepest one whose\ndirectory contains the importing file.\n\ntsconfig files are JSONC (comments + trailing commas), so we strip those before\nparsing, and follow a single ``extends`` level to inherit ``paths``/``baseUrl``.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.6954545454545454,
+          "explanation": "Documentation similarity 0.611; term coverage 0.818 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "228919f225dffc74d193d6e24cab7fe093aed4ec7c8d507e722b3079169efd0a",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "documentation_kind": "module_docstring",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/jsresolve.py",
+        "include": [
+          "source"
+        ],
+        "start_line": 1,
+        "end_line": 18
+      }
+    },
+    {
+      "symbol": "_resolve_internal_imports",
+      "path": "src/ken/indexer.py",
+      "line": 944,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.587,
+        "band": "moderate",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who resolves non-relative JS/TS imports via tsconfig paths and workspace names?",
+      "documentation": "Resolve import module strings to indexed files.\n\nResolution is dispatched by the *importing* file's language because every\necosystem locates modules differently: JS/TS use relative paths plus\n``tsconfig``/``package.json`` aliases (read from the nearest config), Java\nmaps a dotted package to a directory path, Python uses dotted modules. A\ngeneric path-based pass covers the rest.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.5780784487724304,
+          "explanation": "Documentation similarity 0.578; term coverage 0.636 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.18181818181818182,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "180bd53d540abe7f8da1995a724c5396c8964e80dc27e19184444d81b5179470",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "documentation_kind": "function_docstring",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/indexer.py",
+        "include": [
+          "source"
+        ],
+        "qualname": "_resolve_internal_imports"
+      }
+    }
+  ],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 2210,
+    "inspected_symbols": 40,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "sources": [
+      "module_docstrings",
+      "class_docstrings",
+      "method_docstrings",
+      "function_docstrings"
+    ],
+    "findings_used": false,
+    "issues": [],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

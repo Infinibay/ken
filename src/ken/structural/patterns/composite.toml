@@ -6,20 +6,31 @@ description = "A component iterates over children of its component contract."
 caveat = "Structural evidence requires review of intent and runtime behavior."
 legacy_query = "require $unit SUBTYPE_OF $component\nrequire $unit HAS_FIELD $children\nrequire $children ELEMENT_TYPE $component\nrequire $unit HAS_METHOD $operation\nrequire $operation ITERATES_CALLS $children\n"
 query = '''
-query composite {
- any {
-  match "composite#recursive-contract"(unit: $unit);
- } or {
-  match "composite#recursive-nominal"(unit: $unit);
- } or {
-  match "composite#higher-order-traversal"(unit: $unit);
- } or {
-  match "composite#algebraic-tree"(unit: $unit);
- }
- emit $unit;
+language "kql/2";
+module ken.catalog.composite;
+import ken.catalog.composite.variants.algebraic_tree;
+import ken.catalog.composite.variants.higher_order_traversal;
+import ken.catalog.composite.variants.recursive_contract;
+import ken.catalog.composite.variants.recursive_nominal;
+
+pattern detect(out TypeDecl $unit) {
+  either {
+    use ken.catalog.composite.variants.recursive_contract.detect(unit: $unit);
+  } or {
+    use ken.catalog.composite.variants.recursive_nominal.detect(unit: $unit);
+  } or {
+    use ken.catalog.composite.variants.higher_order_traversal.detect(unit: $unit);
+  } or {
+    use ken.catalog.composite.variants.algebraic_tree.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -33,15 +44,28 @@ fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query composite {
+language "kql/2";
+module ken.catalog.composite.variants.recursive_contract;
 
- require $unit SUBTYPE_OF $component;
- require $unit HAS_FIELD $children;
- require $children ELEMENT_TYPE $component;
- require $unit HAS_METHOD $operation;
- require $operation OVERRIDES $slot;
- require $operation ITERATES_CALLS $children;
- emit $unit;
+pattern detect(out TypeDecl $unit) {
+  type $component { method $slot {} }
+  type $unit {
+    field $children {}
+    method $operation {
+      body {
+        iterate $children as $child {
+          body { call $slot { receiver: $child; dispatch: possible; }; }
+        }
+      }
+    }
+  }
+  where subtype($unit, $component);
+  where overrides($operation, $slot);
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -53,14 +77,25 @@ graph_requirements = ["A nominal type stores a collection of itself; a method in
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
 query = '''
-query recursive_nominal {
- require $unit HAS_FIELD $children;
- require $children ELEMENT_TYPE $unit;
- require $unit HAS_METHOD $operation;
- require $operation HAS_CALL $child_call;
- require $child_call ITERATED_CALL $children;
- where $operation.name == $child_call.name;
- emit $unit;
+language "kql/2";
+module ken.catalog.composite.variants.recursive_nominal;
+
+pattern detect(out TypeDecl $unit) {
+  type $unit {
+    field $children {}
+    method $operation {
+      body {
+        iterate $children as $child {
+          body { call $operation { receiver: $child; dispatch: possible; }; }
+        }
+      }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 
@@ -74,34 +109,30 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-six-languages"
 query_claim = "Un tipo **etiquetado** sin interfaz ni clase base: dos campos suyos estan tipados por el propio tipo (los operandos recursivos), su operacion invoca **su mismo nombre** sobre los dos, y una rama de la operacion **discrimina un campo del mismo tipo** (el tag). La recursion la da el nombre uniforme y el dispatch lo da `TRUTH_TEST` sobre la comparacion (IR 1.71); sin ese segundo hecho la query solo probaria \"un tipo con dos campos recursivos\", que es mas debil. NO se exige que los valores del tag sean distintos ni que las ramas sean exhaustivas, ni que la rama hoja no recurra, ni que los operandos no se reasignen. La codificacion de suma **por casos** (variantes de un `enum` de Rust, union discriminada de TypeScript, records de Java/C#) NO se acepta: sus casos no se modelan como tipos con campos."
 query = '''
-query composite_algebraic_tree {
- require $unit IS CLASS;
- require $unit HAS_METHOD $operation;
- require $unit HAS_FIELD $first;
- require $first TYPE $unit;
- require $unit HAS_FIELD $second;
- require $second TYPE $unit;
- different $first $second;
- require $operation HAS_CALL $first_call;
- require $first_call RECEIVER $first;
- require $operation HAS_CALL $second_call;
- require $second_call RECEIVER $second;
- where $operation.name == $first_call.name;
- where $operation.name == $second_call.name;
- require $operation HAS_OPERATION $branch;
- operation(kind: branch) as $branch;
- require $branch TRUTH_TEST $tested;
- any {
-  require $unit HAS_FIELD $tested;
- } or {
-  require $tested MEMBER_OF $this;
-  require $unit INSTANCE_RECEIVER $this;
- } or {
-  require $tested MEMBER_OF $receiver;
-  require $operation HAS_PARAMETER $receiver;
-  parameter(receiver: true) as $receiver;
- }
- emit unit=$unit, $operation, $first, $second, $branch, $tested;
+language "kql/2";
+module ken.catalog.composite.variants.algebraic_tree;
+
+pattern detect(out TypeDecl $unit, out Callable $operation, out Field $first, out Field $second, out Operation $branch, out Field $tested) {
+  type $unit {
+    field $first { type: nominal($unit); }
+    field $second { type: nominal($unit); }
+    field $tested {}
+    method $operation {
+      body {
+        if ($tested == _) as $branch { }
+        call $first_call { receiver: $first; dispatch: possible; };
+        call alongside $second_call { receiver: $second; dispatch: possible; };
+      }
+    }
+  }
+  where $first != $second;
+  where $operation.name == $first_call.name;
+  where $operation.name == $second_call.name;
+}
+
+query results {
+  use detect(unit: $unit, operation: $operation, first: $first, second: $second, branch: $branch, tested: $tested);
+  select $unit, $operation, $first, $second, $branch, $tested;
 }
 '''
 
@@ -115,22 +146,67 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
 query_claim = "La operación del componente recorre su propia colección de hijos, invoca la operación **del mismo nombre** sobre el elemento iterado, y el resultado de esa llamada se acumula en el local que la operación devuelve. La recursión la da el nombre uniforme sobre el elemento, no el tipo declarado de la colección: la forma de callback (`reduce`/`map`/`sum`) NO se resuelve todavia porque el parámetro de elemento del callback no se liga a la colección. Tampoco prueba que el elemento no se reasigne dentro del bucle, ni que todos los hijos se visiten, ni pureza de la operación."
 query = '''
-query composite_higher_order_traversal {
- require $unit IS CLASS;
- require $unit HAS_METHOD $operation;
- require $operation ITERATES_CALLS $iterable;
- require $child_call ITERATED_CALL $iterable;
- require $child_call RECEIVER $element;
- require $operation HAS_CALL $child_call;
- require $write ASSIGNMENT_TARGET $accumulator;
- require $write ASSIGNMENT_VALUE $child_call;
- require $operation RETURNS_STORAGE $accumulator;
- any { require $unit HAS_FIELD $iterable; }
- or {
-  require $iterable RECEIVER $field;
-  require $unit HAS_FIELD $field;
- }
- where $operation.name == $child_call.name;
- emit unit=$unit, $operation, $iterable, $child_call, $accumulator, $write, $element;
+language "kql/2";
+module ken.catalog.composite.variants.higher_order_traversal;
+
+pattern detect(out TypeDecl $unit, out Callable $operation, out Field $iterable, out Call $child_call, out Value $accumulator, out Operation $write, out Binding $element) {
+  type $unit {
+    field $iterable {}
+    method $operation {
+      body {
+        var $accumulator {}
+        iterate $iterable as $element {
+          body {
+            let $child_call = call $operation { receiver: $element; dispatch: contract; rebound: true; };
+            $accumulator += $child_call as $write;
+          }
+        }
+        return $accumulator;
+      }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit, operation: $operation, iterable: $iterable, child_call: $child_call, accumulator: $accumulator, write: $write, element: $element);
+  select $unit, $operation, $iterable, $child_call, $accumulator, $write, $element;
+}
+'''
+
+[[operations]]
+id = "additive_aggregate"
+status = "ready"
+description = "A recursive nominal Composite accumulates child results and returns the accumulator, with closed explicit write counts."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch."
+query = '''
+language "kql/2";
+module ken.catalog.composite.additive_aggregate;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $operation, out GraphTerm $children) {
+  type $unit {
+    field $children {}
+    method $operation {
+      param $context { reassigned: false; }
+      var $total { }
+      var $value { }
+      writes: exactly($total, 2);
+      body {
+        iterate $children as $element {
+          body {
+            let $child_call = call $operation { receiver: $element; dispatch: contract; rebound: true; argument $context at 0; };
+            $value = $child_call;
+            $total = $total + $value as $update;
+          }
+        }
+        return $total;
+      }
+    }
+  }
+  where element_type($children, $unit);
+}
+
+query results {
+  use detect(unit: $unit, operation: $operation, children: $children);
+  select $unit, $operation, $children;
 }
 '''

@@ -1,0 +1,668 @@
+{
+  "ok": true,
+  "findings": [],
+  "outcomes": {
+    "abstract-factory": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 13899,
+        "rows_examined": 840,
+        "elapsed_ms": 5000.137,
+        "dependencies": [
+          "a5095950dc33eef820f4b54aa68b9688103775050d88e1c689cf73bd97108586:ken.catalog.abstract_factory.variants.associated_products.detect",
+          "a5095950dc33eef820f4b54aa68b9688103775050d88e1c689cf73bd97108586:ken.catalog.abstract_factory.variants.nominal_families.detect"
+        ]
+      }
+    },
+    "adapter": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 3183,
+        "rows_examined": 423,
+        "elapsed_ms": 556.945,
+        "dependencies": [
+          "186a2dd68b324795ed45b9720915f23744d4368aa19d999abeade13331d96b69:ken.catalog.adapter.variants.class_adapter.detect",
+          "186a2dd68b324795ed45b9720915f23744d4368aa19d999abeade13331d96b69:ken.catalog.adapter.variants.functional_adapter.detect",
+          "186a2dd68b324795ed45b9720915f23744d4368aa19d999abeade13331d96b69:ken.catalog.adapter.variants.object_adapter.detect"
+        ]
+      }
+    },
+    "bridge": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 377779,
+        "rows_examined": 20435,
+        "elapsed_ms": 1497.657,
+        "dependencies": [
+          "7b9fa3ef6de5bdea09c2aebb320a1a75148172971b7b761decf9e8b40dd53cb0:ken.catalog.bridge.variants.generic_composition.detect",
+          "7b9fa3ef6de5bdea09c2aebb320a1a75148172971b7b761decf9e8b40dd53cb0:ken.catalog.bridge.variants.refined_composition.detect",
+          "7b9fa3ef6de5bdea09c2aebb320a1a75148172971b7b761decf9e8b40dd53cb0:ken.catalog.bridge.variants.runtime_composition.detect"
+        ]
+      }
+    },
+    "builder": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 1018327,
+        "rows_examined": 350777,
+        "elapsed_ms": 5036.852,
+        "dependencies": [
+          "8a5addaa391cc5951efe8efa34c49e3870cd2715a469bbb6cc479f8404b1318f:ken.catalog.builder.variants.accumulated_state.detect",
+          "8a5addaa391cc5951efe8efa34c49e3870cd2715a469bbb6cc479f8404b1318f:ken.catalog.builder.variants.mutable_product.detect"
+        ]
+      }
+    },
+    "chain-of-responsibility": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 3160,
+        "rows_examined": 423,
+        "elapsed_ms": 47.322,
+        "dependencies": [
+          "8072c5f4b7404fd4d0792e84ab9926c842cc95762907c1ba619444026c0a677c:ken.catalog.chain_of_responsibility.variants.linked_handlers.detect",
+          "8072c5f4b7404fd4d0792e84ab9926c842cc95762907c1ba619444026c0a677c:ken.catalog.chain_of_responsibility.variants.middleware_closures.detect"
+        ]
+      }
+    },
+    "command": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 689967,
+        "rows_examined": 225900,
+        "elapsed_ms": 5000.127,
+        "dependencies": [
+          "10eface73b59b51e40ae6c51120c08975754f4dfef10465a34de6edd0a9759a9:ken.catalog.command.variants.command_object.detect"
+        ]
+      }
+    },
+    "composite": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 163063,
+        "rows_examined": 11606,
+        "elapsed_ms": 1602.031,
+        "dependencies": [
+          "df7428f84aef094625fd41fbc3a67becafc2e5891f3bba19043fd13e4c6e7d0c:ken.catalog.composite.variants.algebraic_tree.detect",
+          "df7428f84aef094625fd41fbc3a67becafc2e5891f3bba19043fd13e4c6e7d0c:ken.catalog.composite.variants.higher_order_traversal.detect",
+          "df7428f84aef094625fd41fbc3a67becafc2e5891f3bba19043fd13e4c6e7d0c:ken.catalog.composite.variants.recursive_contract.detect",
+          "df7428f84aef094625fd41fbc3a67becafc2e5891f3bba19043fd13e4c6e7d0c:ken.catalog.composite.variants.recursive_nominal.detect"
+        ]
+      }
+    },
+    "decorator": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 3710,
+        "rows_examined": 505,
+        "elapsed_ms": 409.788,
+        "dependencies": [
+          "6f4db892ccdf1e622bb44ef7b4a89b5fc05c94fe805e68e4592ed6a930dc4bbe:ken.catalog.decorator.variants.callable_wrapper.Invocation",
+          "6f4db892ccdf1e622bb44ef7b4a89b5fc05c94fe805e68e4592ed6a930dc4bbe:ken.catalog.decorator.variants.callable_wrapper.detect",
+          "6f4db892ccdf1e622bb44ef7b4a89b5fc05c94fe805e68e4592ed6a930dc4bbe:ken.catalog.decorator.variants.object_wrapper.detect",
+          "6f4db892ccdf1e622bb44ef7b4a89b5fc05c94fe805e68e4592ed6a930dc4bbe:ken.catalog.decorator.variants.subclass_addition.detect",
+          "6f4db892ccdf1e622bb44ef7b4a89b5fc05c94fe805e68e4592ed6a930dc4bbe:ken.catalog.decorator.variants.typed_delegator.detect",
+          "6f4db892ccdf1e622bb44ef7b4a89b5fc05c94fe805e68e4592ed6a930dc4bbe:ken.catalog.decorator.variants.untyped_delegator.detect"
+        ]
+      }
+    },
+    "facade": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 400134,
+        "rows_examined": 84631,
+        "elapsed_ms": 1806.5,
+        "dependencies": [
+          "4a4714b0f18763973ba228edbfa9207feaa63619f66e722516dbe67e89b534fa:ken.catalog.facade.variants.module_surface.Subsystems",
+          "4a4714b0f18763973ba228edbfa9207feaa63619f66e722516dbe67e89b534fa:ken.catalog.facade.variants.module_surface.detect",
+          "4a4714b0f18763973ba228edbfa9207feaa63619f66e722516dbe67e89b534fa:ken.catalog.facade.variants.object_surface.detect"
+        ]
+      }
+    },
+    "factory-method": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 3,
+        "rows_examined": 0,
+        "elapsed_ms": 0.193,
+        "dependencies": [
+          "deca3d14e4b8226ad15d63941d0929cf1fd0bb7b1f449781fa687658357a0df1:ken.catalog.factory_method.variants.contract_slot.detect",
+          "deca3d14e4b8226ad15d63941d0929cf1fd0bb7b1f449781fa687658357a0df1:ken.catalog.factory_method.variants.virtual_slot.detect"
+        ]
+      }
+    },
+    "flyweight": {
+      "complete": true,
+      "unknown": [
+        "parameter_writes:unknown",
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 1158065,
+        "rows_examined": 63652,
+        "elapsed_ms": 3800.579,
+        "dependencies": [
+          "8287284f87b9e2d7a44c1b5fcaff1922269d04d041ac0e8fbf485a0a247fc812:ken.catalog.flyweight.variants.entry_api.detect",
+          "8287284f87b9e2d7a44c1b5fcaff1922269d04d041ac0e8fbf485a0a247fc812:ken.catalog.flyweight.variants.explicit_interning.detect"
+        ]
+      }
+    },
+    "interpreter": {
+      "complete": true,
+      "unknown": [
+        "cardinality:open_world"
+      ],
+      "stats": {
+        "states": 615182,
+        "rows_examined": 307588,
+        "elapsed_ms": 3455.032,
+        "dependencies": [
+          "3d0ec8e21ea2ccc5702d257b8d8f5074661769914d982353e0d1892990a99ad9:ken.catalog.interpreter.variants.context_free_binary.detect",
+          "3d0ec8e21ea2ccc5702d257b8d8f5074661769914d982353e0d1892990a99ad9:ken.catalog.interpreter.variants.expression_objects.detect",
+          "3d0ec8e21ea2ccc5702d257b8d8f5074661769914d982353e0d1892990a99ad9:ken.catalog.interpreter.variants.expression_sum.detect"
+        ]
+      }
+    },
+    "iterator": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 81008,
+        "rows_examined": 3434,
+        "elapsed_ms": 5000.121,
+        "dependencies": [
+          "2e95445157bdb3bc71d45e6a16d6ef27a4c365efad4c57dafa7eaf02a840bd99:ken.catalog.iterator.variants.async_iterator.detect",
+          "2e95445157bdb3bc71d45e6a16d6ef27a4c365efad4c57dafa7eaf02a840bd99:ken.catalog.iterator.variants.delegated_cursor.detect",
+          "2e95445157bdb3bc71d45e6a16d6ef27a4c365efad4c57dafa7eaf02a840bd99:ken.catalog.iterator.variants.delegated_generator.detect",
+          "2e95445157bdb3bc71d45e6a16d6ef27a4c365efad4c57dafa7eaf02a840bd99:ken.catalog.iterator.variants.explicit_cursor.detect",
+          "2e95445157bdb3bc71d45e6a16d6ef27a4c365efad4c57dafa7eaf02a840bd99:ken.catalog.iterator.variants.external_cursor.detect",
+          "2e95445157bdb3bc71d45e6a16d6ef27a4c365efad4c57dafa7eaf02a840bd99:ken.catalog.iterator.variants.generator.detect",
+          "2e95445157bdb3bc71d45e6a16d6ef27a4c365efad4c57dafa7eaf02a840bd99:ken.catalog.iterator.variants.paired_cursor.detect"
+        ]
+      }
+    },
+    "mediator": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 1215425,
+        "rows_examined": 365525,
+        "elapsed_ms": 5188.618,
+        "dependencies": [
+          "f128569d27e02c152b50859d0333420d57f6fc2969a3bc04c990083c19505cec:ken.catalog.mediator.variants.broadcast_colleagues.detect",
+          "f128569d27e02c152b50859d0333420d57f6fc2969a3bc04c990083c19505cec:ken.catalog.mediator.variants.direct_colleagues.detect"
+        ]
+      }
+    },
+    "memento": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 543625,
+        "rows_examined": 127778,
+        "elapsed_ms": 5011.183,
+        "dependencies": []
+      }
+    },
+    "observer": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 199276,
+        "rows_examined": 72887,
+        "elapsed_ms": 5011.044,
+        "dependencies": [
+          "8dd693aca18fae970cf8edebf9fc72b637209f6a26cf5e05edd1fdb9cde2164e:ken.catalog.observer.variants.listener_registry.detect",
+          "8dd693aca18fae970cf8edebf9fc72b637209f6a26cf5e05edd1fdb9cde2164e:ken.catalog.observer.variants.registered_listeners.detect"
+        ]
+      }
+    },
+    "prototype": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 96248,
+        "rows_examined": 4875,
+        "elapsed_ms": 2558.99,
+        "dependencies": [
+          "9f48435934b11603d3e695937c7532e0d8cba91b81aaf805736a3213d5797ae0:ken.catalog.prototype.derived_copy.detect",
+          "9f48435934b11603d3e695937c7532e0d8cba91b81aaf805736a3213d5797ae0:ken.catalog.prototype.variants.derived_clone.detect",
+          "9f48435934b11603d3e695937c7532e0d8cba91b81aaf805736a3213d5797ae0:ken.catalog.prototype.variants.explicit_copy.detect",
+          "9f48435934b11603d3e695937c7532e0d8cba91b81aaf805736a3213d5797ae0:ken.catalog.prototype.variants.field_copy.detect",
+          "9f48435934b11603d3e695937c7532e0d8cba91b81aaf805736a3213d5797ae0:ken.catalog.prototype.variants.language_copy.detect"
+        ]
+      }
+    },
+    "proxy": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 196940,
+        "rows_examined": 8804,
+        "elapsed_ms": 1523.384,
+        "dependencies": [
+          "0f33275d32dea42bbf6e1506e1644a3d25bc6a49efa4f3d7a3c18e9cde0ff686:ken.catalog.proxy.variants.guarded_access.detect",
+          "0f33275d32dea42bbf6e1506e1644a3d25bc6a49efa4f3d7a3c18e9cde0ff686:ken.catalog.proxy.variants.lazy_subject.detect",
+          "0f33275d32dea42bbf6e1506e1644a3d25bc6a49efa4f3d7a3c18e9cde0ff686:ken.catalog.proxy.variants.remote_subject.detect"
+        ]
+      }
+    },
+    "singleton": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 46641,
+        "rows_examined": 20784,
+        "elapsed_ms": 5000.053,
+        "dependencies": [
+          "eab8e63fbeb1e3f0bbbcd562cac55b81415939fa28ebaa63f7f5940bd03c0c69:ken.catalog.singleton.lazy_instance.detect",
+          "eab8e63fbeb1e3f0bbbcd562cac55b81415939fa28ebaa63f7f5940bd03c0c69:ken.catalog.singleton.variants.lazy_guarded.detect"
+        ]
+      }
+    },
+    "state": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 681242,
+        "rows_examined": 109047,
+        "elapsed_ms": 2418.099,
+        "dependencies": [
+          "470764ec5ff6b2e4ca8b6f223bb6400656645b139583c5db0df655ef9544cf4f:ken.catalog.state.variants.context_transition.detect",
+          "470764ec5ff6b2e4ca8b6f223bb6400656645b139583c5db0df655ef9544cf4f:ken.catalog.state.variants.state_enum.detect",
+          "470764ec5ff6b2e4ca8b6f223bb6400656645b139583c5db0df655ef9544cf4f:ken.catalog.state.variants.state_object.detect"
+        ]
+      }
+    },
+    "strategy": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 1295617,
+        "rows_examined": 79063,
+        "elapsed_ms": 5009.003,
+        "dependencies": [
+          "8a391962f8f4554c03cb4688be531e96e8c7db674aa343d0c443a83eb08bf89f:ken.catalog.strategy.supplied_policy.detect"
+        ]
+      }
+    },
+    "template-method": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 360553,
+        "rows_examined": 68658,
+        "elapsed_ms": 5029.995,
+        "dependencies": [
+          "1adc638725649d0659682c9552a6dbbb330864ef5a833eb19804c1829cd45211:ken.catalog.template_method.variants.trait_default.detect",
+          "1adc638725649d0659682c9552a6dbbb330864ef5a833eb19804c1829cd45211:ken.catalog.template_method.variants.virtual_skeleton.detect"
+        ]
+      }
+    },
+    "visitor": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 87908,
+        "rows_examined": 32157,
+        "elapsed_ms": 261.57,
+        "dependencies": [
+          "3c9ba6e0ab5944e33f5ddca1301ffd58b885c33030e7e67394da4599987e0425:ken.catalog.visitor.variants.generic_visitor.detect",
+          "3c9ba6e0ab5944e33f5ddca1301ffd58b885c33030e7e67394da4599987e0425:ken.catalog.visitor.variants.named_dispatch.detect",
+          "3c9ba6e0ab5944e33f5ddca1301ffd58b885c33030e7e67394da4599987e0425:ken.catalog.visitor.variants.overloaded_dispatch.detect"
+        ]
+      }
+    }
+  },
+  "complete": false,
+  "incomplete": {
+    "abstract-factory": [
+      "budget:timeout_ms"
+    ],
+    "builder": [
+      "budget:timeout_ms"
+    ],
+    "command": [
+      "budget:timeout_ms"
+    ],
+    "iterator": [
+      "budget:timeout_ms"
+    ],
+    "mediator": [
+      "budget:timeout_ms"
+    ],
+    "memento": [
+      "budget:timeout_ms"
+    ],
+    "observer": [
+      "budget:timeout_ms"
+    ],
+    "singleton": [
+      "budget:timeout_ms"
+    ],
+    "strategy": [
+      "budget:timeout_ms"
+    ],
+    "template-method": [
+      "budget:timeout_ms"
+    ]
+  },
+  "directories": [
+    {
+      "directory": "sdk/python",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples",
+      "analyzed_files": 1,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/01_quickstart_constructor",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/02_turn_run",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/03_turn_stream_events",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/04_models_and_metadata",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/05_existing_thread",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/06_thread_lifecycle_and_controls",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/07_image_and_text",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/08_local_image_and_text",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/09_async_parity",
+      "analyzed_files": 1,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/10_error_handling_and_retry",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/11_cli_mini_app",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/12_turn_params_kitchen_sink",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/13_model_select_and_turn_params",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/14_turn_controls",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/15_login_and_account",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/examples/16_external_message",
+      "analyzed_files": 2,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/scripts",
+      "analyzed_files": 1,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/src/openai_codex",
+      "analyzed_files": 18,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/src/openai_codex/generated",
+      "analyzed_files": 3,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/python/tests",
+      "analyzed_files": 18,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/typescript",
+      "analyzed_files": 3,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/typescript/samples",
+      "analyzed_files": 4,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/typescript/src",
+      "analyzed_files": 10,
+      "patterns": []
+    },
+    {
+      "directory": "sdk/typescript/tests",
+      "analyzed_files": 9,
+      "patterns": []
+    }
+  ],
+  "analysis": {
+    "resolution": {
+      "resolved_calls": 1188,
+      "unresolved_calls": 6261
+    },
+    "files": [
+      "sdk/python/_runtime_setup.py",
+      "sdk/python/examples/01_quickstart_constructor/async.py",
+      "sdk/python/examples/01_quickstart_constructor/sync.py",
+      "sdk/python/examples/02_turn_run/async.py",
+      "sdk/python/examples/02_turn_run/sync.py",
+      "sdk/python/examples/03_turn_stream_events/async.py",
+      "sdk/python/examples/03_turn_stream_events/sync.py",
+      "sdk/python/examples/04_models_and_metadata/async.py",
+      "sdk/python/examples/04_models_and_metadata/sync.py",
+      "sdk/python/examples/05_existing_thread/async.py",
+      "sdk/python/examples/05_existing_thread/sync.py",
+      "sdk/python/examples/06_thread_lifecycle_and_controls/async.py",
+      "sdk/python/examples/06_thread_lifecycle_and_controls/sync.py",
+      "sdk/python/examples/07_image_and_text/async.py",
+      "sdk/python/examples/07_image_and_text/sync.py",
+      "sdk/python/examples/08_local_image_and_text/async.py",
+      "sdk/python/examples/08_local_image_and_text/sync.py",
+      "sdk/python/examples/09_async_parity/sync.py",
+      "sdk/python/examples/10_error_handling_and_retry/async.py",
+      "sdk/python/examples/10_error_handling_and_retry/sync.py",
+      "sdk/python/examples/11_cli_mini_app/async.py",
+      "sdk/python/examples/11_cli_mini_app/sync.py",
+      "sdk/python/examples/12_turn_params_kitchen_sink/async.py",
+      "sdk/python/examples/12_turn_params_kitchen_sink/sync.py",
+      "sdk/python/examples/13_model_select_and_turn_params/async.py",
+      "sdk/python/examples/13_model_select_and_turn_params/sync.py",
+      "sdk/python/examples/14_turn_controls/async.py",
+      "sdk/python/examples/14_turn_controls/sync.py",
+      "sdk/python/examples/15_login_and_account/async.py",
+      "sdk/python/examples/15_login_and_account/sync.py",
+      "sdk/python/examples/16_external_message/async.py",
+      "sdk/python/examples/16_external_message/sync.py",
+      "sdk/python/examples/_bootstrap.py",
+      "sdk/python/release_version.py",
+      "sdk/python/scripts/update_sdk_artifacts.py",
+      "sdk/python/src/openai_codex/__init__.py",
+      "sdk/python/src/openai_codex/_approval_mode.py",
+      "sdk/python/src/openai_codex/_goal.py",
+      "sdk/python/src/openai_codex/_initialize_metadata.py",
+      "sdk/python/src/openai_codex/_inputs.py",
+      "sdk/python/src/openai_codex/_login.py",
+      "sdk/python/src/openai_codex/_message_router.py",
+      "sdk/python/src/openai_codex/_run.py",
+      "sdk/python/src/openai_codex/_runtime_requirements.py",
+      "sdk/python/src/openai_codex/_sandbox.py",
+      "sdk/python/src/openai_codex/_version.py",
+      "sdk/python/src/openai_codex/api.py",
+      "sdk/python/src/openai_codex/async_client.py",
+      "sdk/python/src/openai_codex/client.py",
+      "sdk/python/src/openai_codex/errors.py",
+      "sdk/python/src/openai_codex/generated/__init__.py",
+      "sdk/python/src/openai_codex/generated/notification_registry.py",
+      "sdk/python/src/openai_codex/generated/v2_all.py",
+      "sdk/python/src/openai_codex/models.py",
+      "sdk/python/src/openai_codex/retry.py",
+      "sdk/python/src/openai_codex/types.py",
+      "sdk/python/tests/app_server_harness.py",
+      "sdk/python/tests/app_server_helpers.py",
+      "sdk/python/tests/conftest.py",
+      "sdk/python/tests/installed_sdk_smoke.py",
+      "sdk/python/tests/test_app_server_approvals.py",
+      "sdk/python/tests/test_app_server_goal_operations.py",
+      "sdk/python/tests/test_app_server_inputs.py",
+      "sdk/python/tests/test_app_server_lifecycle.py",
+      "sdk/python/tests/test_app_server_login.py",
+      "sdk/python/tests/test_app_server_run.py",
+      "sdk/python/tests/test_app_server_streaming.py",
+      "sdk/python/tests/test_app_server_turn_controls.py",
+      "sdk/python/tests/test_artifact_workflow_and_binaries.py",
+      "sdk/python/tests/test_async_client_behavior.py",
+      "sdk/python/tests/test_client_rpc_methods.py",
+      "sdk/python/tests/test_contract_generation.py",
+      "sdk/python/tests/test_mcp_conformance_fixtures.py",
+      "sdk/python/tests/test_public_api_runtime_behavior.py",
+      "sdk/typescript/eslint.config.js",
+      "sdk/typescript/jest.config.cjs",
+      "sdk/typescript/samples/basic_streaming.ts",
+      "sdk/typescript/samples/helpers.ts",
+      "sdk/typescript/samples/structured_output.ts",
+      "sdk/typescript/samples/structured_output_zod.ts",
+      "sdk/typescript/src/codex.ts",
+      "sdk/typescript/src/codexOptions.ts",
+      "sdk/typescript/src/events.ts",
+      "sdk/typescript/src/exec.ts",
+      "sdk/typescript/src/index.ts",
+      "sdk/typescript/src/items.ts",
+      "sdk/typescript/src/outputSchemaFile.ts",
+      "sdk/typescript/src/thread.ts",
+      "sdk/typescript/src/threadOptions.ts",
+      "sdk/typescript/src/turnOptions.ts",
+      "sdk/typescript/tests/abort.test.ts",
+      "sdk/typescript/tests/codexExecSpy.ts",
+      "sdk/typescript/tests/exec.test.ts",
+      "sdk/typescript/tests/mcpConformance.test.ts",
+      "sdk/typescript/tests/responsesProxy.ts",
+      "sdk/typescript/tests/run.test.ts",
+      "sdk/typescript/tests/runStreamed.test.ts",
+      "sdk/typescript/tests/setupCodexHome.ts",
+      "sdk/typescript/tests/testCodex.ts",
+      "sdk/typescript/tsup.config.ts"
+    ],
+    "skipped": [],
+    "coverage_complete": true,
+    "diagnostics": [],
+    "cache": {
+      "hits": 1,
+      "misses": 0,
+      "evictions": 0,
+      "enabled": true,
+      "error": null
+    },
+    "graph_key": "e1573c914a3cfe82993f01067aa24dd46f23fd781ad1ae9c80a3f6149391012b",
+    "elapsed_ms": 56.475,
+    "query_index": {
+      "backend": "sqlite_columns",
+      "hit": true,
+      "persistent": true,
+      "bytes": 500207616,
+      "entities": 39727,
+      "facts": 837018,
+      "reclaimed_snapshots": 0,
+      "phase_ms": {
+        "manifest": 19.716,
+        "store_open": 31.668,
+        "index_open": 2.336
+      }
+    },
+    "query_cache": {
+      "enabled": false
+    },
+    "pattern_engine": {
+      "backend": "exploration",
+      "semantic_backend": "sqlite_columns",
+      "buckets": {
+        "hits": 248412,
+        "disk_hits": 0,
+        "builds": 673,
+        "fallback": 0,
+        "loaded_rows": 259188,
+        "build_ms": 10758.332286262885
+      }
+    }
+  }
+}

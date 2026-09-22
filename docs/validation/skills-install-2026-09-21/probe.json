@@ -1,0 +1,87 @@
+{
+  "dshVersion": "0.1.5-rc.1",
+  "tools": [
+    "mcp__ken__ken_find",
+    "mcp__ken__ken_rule",
+    "mcp__ken__ken_check",
+    "mcp__ken__ken_who",
+    "mcp__ken__ken_read",
+    "mcp__ken__ken_related",
+    "mcp__ken__ken_rank",
+    "mcp__ken__ken_reason_record",
+    "mcp__ken__ken_reason",
+    "mcp__ken__ken_calculate",
+    "mcp__ken__ken_recall",
+    "mcp__ken__ken_remember"
+  ],
+  "skills": [
+    {
+      "name": "ken-find-code-patterns",
+      "source": "project-dsh"
+    },
+    {
+      "name": "ken-investigate-bug",
+      "source": "project-dsh"
+    },
+    {
+      "name": "ken-locate-code",
+      "source": "project-dsh"
+    },
+    {
+      "name": "ken-plan-change",
+      "source": "project-dsh"
+    },
+    {
+      "name": "ken-prevent-regressions",
+      "source": "project-dsh"
+    },
+    {
+      "name": "ken-resume-work",
+      "source": "project-dsh"
+    },
+    {
+      "name": "ken-reuse-code",
+      "source": "project-dsh"
+    },
+    {
+      "name": "ken-understand-architecture",
+      "source": "project-dsh"
+    }
+  ],
+  "call": {
+    "tool": "mcp__ken__ken_find",
+    "passed": true,
+    "result": {
+      "ok": true,
+      "mode": "literal",
+      "query": "CACHE_DIR",
+      "results": [
+        {
+          "path": ".dsh/skills/ken-locate-code/SKILL.md",
+          "count": 2,
+          "snippets": [
+            {
+              "line": 12,
+              "text": "- Exact identifier or text: `ken_find(query=\"CACHE_DIR\", scope=\"text\", literal=True)`."
+            },
+            {
+              "line": 37,
+              "text": "ken tools find CACHE_DIR --scope text --literal"
+            }
+          ]
+        },
+        {
+          "path": "src/storage.py",
+          "count": 1,
+          "snippets": [
+            {
+              "line": 3,
+              "text": "CACHE_DIR = \"cache\""
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "modelCalls": 0
+}

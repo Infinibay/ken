@@ -3,22 +3,34 @@ id = "flyweight"
 name = "Flyweight"
 category = "structural"
 description = "A pool creates, stores and returns objects through indexed lookup, or through the map's own entry API."
-caveat = "Indexed insertion and direct return share a pool/key binding, and insertion retains the constructed object. Miss polarity, temporal key stability, immutability and intrinsic/extrinsic state need review. The entry variant identifies the API by name, so it inherits the usual limits of name-based protocol identification."
+caveat = "Indexed insertion and direct return share a pool/key binding, and insertion retains the constructed object. Explicit interning requires a missing-entry branch for the same pool/key and a supported inventory with no key parameter reassignments. Hidden effects, pool lifetime, immutability and intrinsic/extrinsic state need review. The entry variant identifies the API by name, so it inherits the usual limits of name-based protocol identification."
 legacy_query = "require $unit HAS_FIELD $pool\nrequire $unit HAS_METHOD $factory\nrequire $factory LOOKS_UP $pool\nrequire $factory CREATES $product\nrequire $factory WRITES_ELEMENT $pool\nrequire $factory RETURNS_LOOKUP $pool\n"
 query = '''
-query flyweight {
- any { match "flyweight#explicit-interning"(unit: $unit); }
- or { match "flyweight#entry-api"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.flyweight;
+import ken.catalog.flyweight.variants.entry_api;
+import ken.catalog.flyweight.variants.explicit_interning;
+
+pattern detect(out GraphTerm $unit) {
+  either {
+    use ken.catalog.flyweight.variants.explicit_interning.detect(unit: $unit);
+  } or {
+    use ken.catalog.flyweight.variants.entry_api.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
 id = "explicit-interning"
 status = "ready"
-query_claim = "An indexed write stores the construction supplied with the key parameter, and the return yields that same pool and key binding. Each step accepts both spellings of a pool: the index expression (``pool[k]``) and the dictionary API on the field (``pool.put(k, v)``, ``pool.get(k)``), which is how the canonical Java, C# and Go examples write it. The index may be the key parameter itself or a local the method derives from it (``key = self.get_key(state)``), and the returned object may be the pool element itself or a local the method read from the pool (``result = pool.get(name); ...; return result;``). Does not prove the derivation is injective -- ``get_key`` may collapse distinct inputs -- nor current key values under reassignment, miss-only creation, lifetime identity, intrinsic-state stability or extrinsic use."
+query_claim = "An indexed write stores the construction supplied with the key parameter, and the return yields that same pool and key binding. The pool read may be the index expression itself (``pool[k]``), the dictionary API on the field (``pool.get(k)``, ``pool.put(k, v)``) or a local the method filled from either source; the miss test is the language's own spelling (``not in``, a null/undefined comparison, or a truthiness test) and the arm states only the *kind* of test, because a catalog pattern body cannot yet resolve the tested place's element evidence (measured: the same clause answers inside an inline query and not inside a `pattern`). The index may be the key parameter itself or a local the method derived from it through a single captured call (``let $key = call $derive { argument $state at 0; } writes: 1;`` binds the place that call's result was stored into), and the write and the return share that place. For a checked local the arm states its write inventory (``let $read = $pool[$key] writes: 2;``), which rejects extra writes such as a reset before the guard. Does not prove the derivation is injective -- ``get_key`` may collapse distinct inputs -- nor feasibility, hidden mutation, pool lifetime identity, intrinsic-state stability or extrinsic use. Truthiness follows the language convention and is not a claim that every stored value is truthy."
 languages = ["python", "java", "typescript"]
 requires = ["map_key_flow", "allocation_flow"]
 graph_requirements = ["Lookup/miss/inserción/retorno comparten clave y pool; usuario suministra contexto extrínseco."]
@@ -27,59 +39,173 @@ fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query flyweight {
+language "kql/2";
+module ken.catalog.flyweight.variants.explicit_interning;
 
- require $unit HAS_FIELD $pool;
- require $unit HAS_METHOD $factory;
- require $factory LOOKS_UP $pool;
- require $factory WRITES_ELEMENT $pool;
- require $factory HAS_PARAMETER $key;
- parameter(receiver: false) as $key;
- require $factory HAS_CALL $construction;
- require $construction ALLOCATES_TYPE $product;
- require $construction ARGUMENT $argument;
- require $argument VALUE $input;
- require $input LOADED_FROM $key;
- any {
-  require $factory HAS_OPERATION $write;
-  require $write WRITES_ELEMENT $pool;
-  require $write INDEX $index;
-  require $write STORES_VALUE $stored;
- }
- or {
-  require $factory HAS_CALL $write;
-  require $write WRITES_ELEMENT $pool;
-  require $write INDEX $index;
-  require $write STORES_VALUE $stored;
- }
- any { where $index == $key; }
- or {
-  require $index ASSIGNED_FROM $derived;
-  require $derived ARGUMENT $derived_argument;
-  require $derived_argument VALUE $derived_value;
-  require $derived_value LOADED_FROM $key;
- }
- any { where $stored == $construction; }
- or { require $construction RESULT $stored; }
- or { require $stored ASSIGNED_FROM $construction; }
- require $factory RETURNS $returned;
- any {
-  require $returned CONTAINER $pool;
-  require $returned INDEX $return_index;
- }
- or {
-  require $returned ASSIGNED_FROM $read;
-  require $read CONTAINER $pool;
-  require $read INDEX $return_index;
- }
- any { where $return_index == $key; }
- or {
-  require $return_index ASSIGNED_FROM $return_derived;
-  require $return_derived ARGUMENT $return_argument;
-  require $return_argument VALUE $return_value;
-  require $return_value LOADED_FROM $key;
- }
- emit $unit;
+pattern detect(out GraphTerm $unit) {
+  either {
+    type $unit {
+      field $pool {}
+      method $factory {
+        constructor: false;
+        parameters { param $key { reassigned: false; } }
+        body {
+          if ($key not in $pool) {
+            let $filled = construct $product { argument $key at 0; };
+            $pool[$key] = $filled as $write;
+          }
+          return $pool[$key];
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $pool {}
+      method $factory {
+        constructor: false;
+        parameters { param $key { reassigned: false; } }
+        body {
+          if (_ == null) {
+            let $filled = construct $product { argument $key at 0; };
+            $pool[$key] = $filled as $write;
+          }
+          return $pool[$key];
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $pool {}
+      method $factory {
+        constructor: false;
+        parameters { param $key { reassigned: false; } }
+        body {
+          if (not _) {
+            let $filled = construct $product { argument $key at 0; };
+            $pool[$key] = $filled as $write;
+          }
+          return $pool[$key];
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $pool {}
+      method $factory {
+        constructor: false;
+        parameters { param $state {} }
+        body {
+          let $key = call $derive { argument $state at 0; } writes: 1;
+          if (not _) {
+            let $filled = construct $product { argument $state at 0; };
+            $pool[$key] = $filled as $write;
+          }
+          return $pool[$key];
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $pool {}
+      method $factory {
+        constructor: false;
+        parameters { param $state {} }
+        body {
+          let $key = call $derive { argument $state at 0; } writes: 1;
+          if (_ == null) {
+            let $filled = construct $product { argument $state at 0; };
+            $pool[$key] = $filled as $write;
+          }
+          return $pool[$key];
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $pool {}
+      method $factory {
+        constructor: false;
+        parameters { param $key {} }
+        body {
+          let $read = $pool[$key] writes: 2;
+          if ($read == null) {
+            let $filled = construct $product { argument $key at 0; };
+            insert $filled into $pool at $key as $write;
+          }
+          return $read;
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $pool {}
+      method $factory {
+        constructor: false;
+        parameters { param $key {} }
+        body {
+          let $read = $pool[$key] writes: 2;
+          if ($read == null) {
+            let $filled = construct $product { argument $key at 0; };
+            call $write { receiver: $pool; name: ["put", "set"]; argument $key at 0; argument $read at 1; };
+          }
+          return $read;
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $pool {}
+      method $factory {
+        constructor: false;
+        parameters { param $key {} }
+        body {
+          let $read = $pool[$key] writes: 2;
+          if (not $read) {
+            let $filled = construct $product { argument $key at 0; };
+            insert $filled into $pool at $key as $write;
+          }
+          return $read;
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $pool {}
+      method $factory {
+        constructor: false;
+        parameters { param $key {} }
+        body {
+          let $read = $pool[$key] writes: 2;
+          if ($read != null) { } else {
+            let $filled = construct $product { argument $key at 0; };
+            insert $filled into $pool at $key as $write;
+          }
+          return $read;
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $pool {}
+      method $factory {
+        constructor: false;
+        parameters { param $key {} }
+        body {
+          let $read = $pool[$key] writes: 2;
+          if ($read != null) { } else {
+            let $filled = construct $product { argument $key at 0; };
+            call $write { receiver: $pool; name: ["put", "set"]; argument $key at 0; argument $read at 1; };
+          }
+          return $read;
+        }
+      }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -90,28 +216,124 @@ requires = ["map_api_models", "callback_flow"]
 graph_requirements = ["Modelo entry/get-or-add preserva identidad de clave y objeto retenido; no afirmar factory exactly-once."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-four-languages"
-query_claim = "Un metodo de una clase con un campo pool llama a un API de entrada reconocido por nombre (`computeIfAbsent`, `GetOrAdd`, `try_emplace`, `insert_or_assign`, `entry`) cuyo receptor es ESE campo y cuyo argumento en posicion 0 proviene del parametro clave del metodo; ademas el metodo devuelve el objeto retenido, sea la propia llamada, un miembro suyo (la forma encadenada de C++ sobre un `pair`) o el envoltorio `or_insert_with` cuyo receptor es la llamada de entrada (Rust). `no afirmar factory exactly-once`: la variante no cuenta invocaciones del factory ni prueba que la construccion ocurra una sola vez, solo que el API de entrada es el que retiene el objeto. La identificacion del API es por nombre, no por resolucion de biblioteca. No prueba identidad de clave bajo reasignacion, estabilidad temporal del pool ni estado intrinseco/extrinseco."
+query_claim = "Un metodo de una clase con un campo pool llama a un API de entrada reconocido por nombre (`computeIfAbsent`, `GetOrAdd`, `try_emplace`, `entry`) cuyo receptor es ESE campo y cuyo argumento en posicion 0 proviene del parametro clave del metodo; ademas el metodo devuelve el objeto retenido, sea la propia llamada, un miembro suyo (la forma encadenada de C++ sobre un `pair`) o el envoltorio `or_insert_with` cuyo receptor es la llamada de entrada (Rust). `no afirmar factory exactly-once`: la variante no cuenta invocaciones del factory ni prueba que la construccion ocurra una sola vez, solo que el API de entrada es el que retiene el objeto. `insert_or_assign` se excluye porque reemplaza una entrada existente, y en Rust solo se admite `or_insert_with`, no cualquier llamada encadenada. La identificacion del API es por nombre, no por resolucion de biblioteca. No prueba identidad de clave bajo reasignacion, estabilidad temporal del pool ni estado intrinseco/extrinseco."
 query = '''
-query entry_api {
- require $unit HAS_FIELD $pool;
- require $unit HAS_METHOD $lookup;
- callable(constructor: false) as $lookup;
- require $lookup HAS_PARAMETER $key;
- parameter(receiver: false) as $key;
- require $lookup HAS_CALL $entry;
- any { call(name: "computeIfAbsent") as $entry; }
- or { call(name: "GetOrAdd") as $entry; }
- or { call(name: "try_emplace") as $entry; }
- or { call(name: "insert_or_assign") as $entry; }
- or { call(name: "entry") as $entry; }
- require $entry RECEIVER $pool;
- require $entry ARGUMENT $argument;
- require $argument ENTITY ARGUMENT [position: 0, kind: positional];
- require $argument VALUE $value;
- require $value LOADED_FROM $key;
- require $lookup RETURNS $returned;
- any { path $returned MEMBER_OF{0,2} $entry as $retained_path; }
- or { require $returned RECEIVER $entry; }
- emit unit=$unit, $pool, $lookup, $entry, $key;
+language "kql/2";
+module ken.catalog.flyweight.variants.entry_api;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $pool, out GraphTerm $lookup, out Call $entry, out GraphTerm $key) {
+  either {
+    type $unit {
+      field $pool {}
+      method $lookup {
+        constructor: false;
+        parameters { param $key {} }
+        body {
+          call $entry {
+            name: ["computeIfAbsent", "GetOrAdd", "try_emplace", "entry"];
+            receiver: $pool;
+            argument $key at 0;
+            returned: true;
+          };
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $pool {}
+      method $lookup {
+        constructor: false;
+        parameters { param $key {} }
+        body {
+          call $entry {
+            name: ["computeIfAbsent", "GetOrAdd", "try_emplace", "entry"];
+            receiver: $pool;
+            argument $key at 0;
+          };
+          call on $entry { name: "or_insert_with"; returned: true; };
+        }
+      }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit, pool: $pool, lookup: $lookup, entry: $entry, key: $key);
+  select $unit, $pool, $lookup, $entry, $key;
+}
+'''
+
+[[operations]]
+id = "stable_intrinsic"
+status = "ready"
+description = "A pooled product retains the key in a field with exactly one explicit write, in its constructor."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch."
+query = '''
+language "kql/2";
+module ken.catalog.flyweight.stable_intrinsic;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $product, out GraphTerm $intrinsic) {
+  either {
+    type $unit {
+      field $pool {}
+      method $factory {
+        constructor: false;
+        parameters { param $key { reassigned: false; } }
+        body {
+          if ($key not in $pool) {
+            let $filled = construct $product { argument $key at 0; };
+            $pool[$key] = $filled as $write;
+          }
+          return $pool[$key];
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $pool {}
+      method $factory {
+        constructor: false;
+        parameters { param $key { reassigned: false; } }
+        body {
+          if (_ == null) {
+            let $filled = construct $product { argument $key at 0; };
+            $pool[$key] = $filled as $write;
+          }
+          return $pool[$key];
+        }
+      }
+    }
+  } or {
+    type $unit {
+      field $pool {}
+      method $factory {
+        constructor: false;
+        parameters { param $key { reassigned: false; } }
+        body {
+          if (not _) {
+            let $filled = construct $product { argument $key at 0; };
+            $pool[$key] = $filled as $write;
+          }
+          return $pool[$key];
+        }
+      }
+    }
+  }
+  type $product {
+    field $intrinsic {}
+    constructor $ctor {
+      parameters { param $input {} }
+      body { initializer { $intrinsic = $input; } }
+    }
+    method $reader {
+      constructor: false;
+      writes: exactly($intrinsic, 0);
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit, product: $product, intrinsic: $intrinsic);
+  select $unit, $product, $intrinsic;
 }
 '''

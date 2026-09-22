@@ -1,0 +1,291 @@
+[
+  {
+    "version": 1,
+    "run_id": "6f7992eefd97474d894d71142c2d01f3",
+    "created_at": "2026-09-21T22:32:04.152341+00:00",
+    "scope": "project",
+    "selection": ".",
+    "status": "fail",
+    "checks": [
+      {
+        "rule": "ken.nested-gitignore",
+        "description": "File traversal delegates filtering to is_ignored; guards bypass of nested-ignore matching fixed in 7d8a195.",
+        "revision": "4ab62dd86c16ed9488ffd4fb474a368ee89cefd74af4d59cda0400dafa16faf5",
+        "path": "src/ken/gitignore_filter.py",
+        "query": "language \"kql/2\"; module ken.history; query guard { callable $owner { name: \"iter_files\"; call $site { name: \"is_ignored\"; } } select $owner,$site; }",
+        "libraries": {},
+        "expectation": "some_match",
+        "status": "fail",
+        "engine": "6123dc140651c9abf6a37adc0449368897e4c35f2afdc5debe93063717f57b21",
+        "result": {
+          "language": "kql/2",
+          "capability": "structural-source/1",
+          "query": "guard",
+          "columns": [
+            "column_1",
+            "column_2"
+          ],
+          "rows": [],
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "reason": null,
+          "results_truncated": false,
+          "plan": [
+            {
+              "operator": "scan",
+              "role": "owner",
+              "selector": "callable",
+              "owner": null,
+              "access": "name_lookup"
+            },
+            {
+              "operator": "scan",
+              "role": "site",
+              "selector": "call",
+              "owner": "owner",
+              "access": "name_lookup"
+            }
+          ],
+          "optional_evidence": [],
+          "analysis": {
+            "snapshot": 1,
+            "manifest": [
+              [
+                "src/ken/gitignore_filter.py",
+                "92862ce1bfa3712dc01e2d5ff2ca37c4eea818f7f79fd85b4ade9ee36dc913ae"
+              ]
+            ],
+            "frontend": "be45be646549c24d8249c68e740a3bd0370ce925af4b9ce7bb6f14928b1596dd",
+            "freshness": "captured_snapshot",
+            "skipped": [],
+            "parsed_units": 1,
+            "reused_units": 0,
+            "cache_mb": 100.0,
+            "disk_budget_mb": 80.0,
+            "compilation_cache": {
+              "retained_bytes": 3105,
+              "capacity_bytes": 20000000,
+              "entries": 1,
+              "hits": 0,
+              "misses": 1,
+              "shared": 0,
+              "evictions": 0,
+              "in_flight": 0,
+              "status": "miss"
+            },
+            "result_cache": "miss",
+            "ephemeral": false,
+            "allocated_bytes": 1024000,
+            "gc": {
+              "deferred": false,
+              "snapshots": 0,
+              "units": 0
+            },
+            "quota_reclamation": {
+              "before_bytes": 425984,
+              "after_bytes": 425984,
+              "deferred": false,
+              "snapshots": 0,
+              "units": 0
+            },
+            "scanned_nodes": 1,
+            "states": 3,
+            "compile_ms": 5.452915793284774,
+            "build_ms": 57.37954191863537,
+            "query_ms": 0.4564160481095314,
+            "result_lookup_ms": 0.02550007775425911,
+            "total_ms": 85.61229100450873
+          },
+          "check_snapshot": {
+            "scope": "src/ken/gitignore_filter.py",
+            "sha256": "7c38cfc6e783bb698c6ddcaffb5d29772e84b625cc10c00dd4e46a44421883ef",
+            "manifest": [
+              [
+                "src/ken/gitignore_filter.py",
+                "92862ce1bfa3712dc01e2d5ff2ca37c4eea818f7f79fd85b4ade9ee36dc913ae"
+              ]
+            ]
+          },
+          "check_dependencies": {
+            "manifest": [],
+            "imports": [
+              [
+                "src/ken/gitignore_filter.py",
+                []
+              ]
+            ],
+            "issues": []
+          },
+          "check_engine": "6123dc140651c9abf6a37adc0449368897e4c35f2afdc5debe93063717f57b21"
+        }
+      }
+    ],
+    "selection_evidence": {}
+  },
+  {
+    "version": 1,
+    "run_id": "a2b2aea14b7747338207dbe2ea221f95",
+    "created_at": "2026-09-21T22:32:04.511821+00:00",
+    "scope": "project",
+    "selection": ".",
+    "status": "pass",
+    "checks": [
+      {
+        "rule": "ken.nested-gitignore",
+        "description": "File traversal delegates filtering to is_ignored; guards bypass of nested-ignore matching fixed in 7d8a195.",
+        "revision": "4ab62dd86c16ed9488ffd4fb474a368ee89cefd74af4d59cda0400dafa16faf5",
+        "path": "src/ken/gitignore_filter.py",
+        "query": "language \"kql/2\"; module ken.history; query guard { callable $owner { name: \"iter_files\"; call $site { name: \"is_ignored\"; } } select $owner,$site; }",
+        "libraries": {},
+        "expectation": "some_match",
+        "status": "pass",
+        "engine": "6123dc140651c9abf6a37adc0449368897e4c35f2afdc5debe93063717f57b21",
+        "result": {
+          "language": "kql/2",
+          "capability": "structural-source/1",
+          "query": "guard",
+          "columns": [
+            "column_1",
+            "column_2"
+          ],
+          "rows": [
+            [
+              {
+                "id": 84,
+                "unit": 2,
+                "local_id": "src/ken/gitignore_filter.py::module/CALLABLE:iter_files@3610",
+                "kind": "CALLABLE",
+                "name": "iter_files",
+                "owner": "src/ken/gitignore_filter.py::module",
+                "line": 117,
+                "end_line": 148,
+                "path": "src/ken/gitignore_filter.py",
+                "language": "python"
+              },
+              {
+                "id": 214,
+                "unit": 2,
+                "local_id": "src/ken/gitignore_filter.py::module/CALLABLE:iter_files@3610/CALL:4513@4513:4563",
+                "kind": "CALL",
+                "name": "is_ignored",
+                "owner": "src/ken/gitignore_filter.py::module/CALLABLE:iter_files@3610",
+                "line": 143,
+                "end_line": 143,
+                "path": "src/ken/gitignore_filter.py",
+                "language": "python"
+              }
+            ]
+          ],
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "reason": null,
+          "results_truncated": false,
+          "plan": [
+            {
+              "operator": "scan",
+              "role": "owner",
+              "selector": "callable",
+              "owner": null,
+              "access": "name_lookup"
+            },
+            {
+              "operator": "scan",
+              "role": "site",
+              "selector": "call",
+              "owner": "owner",
+              "access": "name_lookup"
+            }
+          ],
+          "optional_evidence": [],
+          "analysis": {
+            "snapshot": 2,
+            "manifest": [
+              [
+                "src/ken/gitignore_filter.py",
+                "8c18c1a5929a99bf44bf1aafeecd2b76998334bf0f7275d61aa56ba16cebd9f2"
+              ]
+            ],
+            "frontend": "be45be646549c24d8249c68e740a3bd0370ce925af4b9ce7bb6f14928b1596dd",
+            "freshness": "captured_snapshot",
+            "skipped": [],
+            "parsed_units": 1,
+            "reused_units": 0,
+            "cache_mb": 100.0,
+            "disk_budget_mb": 80.0,
+            "compilation_cache": {
+              "retained_bytes": 6174,
+              "capacity_bytes": 20000000,
+              "entries": 1,
+              "hits": 0,
+              "misses": 1,
+              "shared": 0,
+              "evictions": 0,
+              "in_flight": 0,
+              "status": "disk_hit"
+            },
+            "result_cache": "miss",
+            "ephemeral": false,
+            "allocated_bytes": 2785280,
+            "gc": {
+              "deferred": false,
+              "snapshots": 0,
+              "units": 0
+            },
+            "quota_reclamation": {
+              "before_bytes": 1024000,
+              "after_bytes": 1024000,
+              "deferred": false,
+              "snapshots": 0,
+              "units": 0
+            },
+            "scanned_nodes": 2,
+            "states": 8,
+            "compile_ms": 23.028875002637506,
+            "build_ms": 108.13541687093675,
+            "query_ms": 0.3966670483350754,
+            "result_lookup_ms": 0.035667093470692635,
+            "total_ms": 166.33462510071695
+          },
+          "check_snapshot": {
+            "scope": "src/ken/gitignore_filter.py",
+            "sha256": "7669e1a6e60138c58afe737d5389aff9fad8b9a9af0a38eac6378d78debada37",
+            "manifest": [
+              [
+                "src/ken/gitignore_filter.py",
+                "8c18c1a5929a99bf44bf1aafeecd2b76998334bf0f7275d61aa56ba16cebd9f2"
+              ]
+            ]
+          },
+          "check_dependencies": {
+            "manifest": [],
+            "imports": [
+              [
+                "src/ken/gitignore_filter.py",
+                []
+              ]
+            ],
+            "issues": []
+          },
+          "check_engine": "6123dc140651c9abf6a37adc0449368897e4c35f2afdc5debe93063717f57b21"
+        }
+      }
+    ],
+    "selection_evidence": {},
+    "comparison": {
+      "baseline": "6f7992eefd97474d894d71142c2d01f3",
+      "changes": [
+        {
+          "rule": "ken.nested-gitignore",
+          "change": "resolved",
+          "before": "fail",
+          "after": "pass",
+          "matches_before": 0,
+          "matches_after": 1
+        }
+      ],
+      "not_checked": []
+    }
+  }
+]

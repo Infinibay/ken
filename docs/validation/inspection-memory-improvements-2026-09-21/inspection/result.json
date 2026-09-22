@@ -1,0 +1,313 @@
+{
+  "engine": "53f1c0139a20eafce7b5dfc6d289164f2593d70f16d333db2054862bb1cbd949",
+  "source_files": 271,
+  "scope": "src",
+  "depth": 2,
+  "timeout_ms": 30000,
+  "runs": [
+    {
+      "elapsed_seconds": 30.03,
+      "case": "manifest",
+      "target": "src/ken/vectors.py::_atomic_write",
+      "strategy": "eager",
+      "cache": "cold",
+      "status": "unknown",
+      "consumers": 0,
+      "behavior_files": 0,
+      "import_files_read": null,
+      "coverage": {
+        "definitions": {
+          "complete": false,
+          "coverage_complete": false,
+          "unknown_candidates": 0,
+          "reason": "timeout"
+        },
+        "calls": {
+          "complete": false,
+          "coverage_complete": false,
+          "unknown_candidates": 0,
+          "reason": "timeout"
+        },
+        "targets": {
+          "complete": false,
+          "coverage_complete": false,
+          "unknown_candidates": 0,
+          "reason": "timeout"
+        },
+        "possible_targets": {
+          "complete": false,
+          "coverage_complete": false,
+          "unknown_candidates": 0,
+          "reason": "timeout"
+        },
+        "usages": {
+          "complete": false,
+          "coverage_complete": false,
+          "unknown_candidates": 0,
+          "reason": "timeout"
+        }
+      },
+      "artifact": "manifest-eager-cold.json"
+    },
+    {
+      "elapsed_seconds": 2.871,
+      "case": "manifest",
+      "target": "src/ken/vectors.py::_atomic_write",
+      "strategy": "focused",
+      "cache": "cold",
+      "status": "observed",
+      "consumers": 2,
+      "behavior_files": 1,
+      "import_files_read": 271,
+      "coverage": {
+        "definitions": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "calls": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "possible_targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "usages": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 2,
+          "results_truncated": false,
+          "reason": "source_body:unknown",
+          "evaluations": 1
+        }
+      },
+      "artifact": "manifest-focused-cold.json"
+    },
+    {
+      "elapsed_seconds": 1.284,
+      "case": "manifest",
+      "target": "src/ken/vectors.py::_atomic_write",
+      "strategy": "focused",
+      "cache": "warm",
+      "status": "observed",
+      "consumers": 2,
+      "behavior_files": 1,
+      "import_files_read": 271,
+      "coverage": {
+        "definitions": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "calls": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "possible_targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "usages": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 2,
+          "results_truncated": false,
+          "reason": "source_body:unknown",
+          "evaluations": 1
+        }
+      },
+      "artifact": "manifest-focused-warm.json"
+    },
+    {
+      "elapsed_seconds": 30.026,
+      "case": "report",
+      "target": "src/ken/checks/report.py::query_view",
+      "strategy": "eager",
+      "cache": "cold",
+      "status": "unknown",
+      "consumers": 0,
+      "behavior_files": 0,
+      "import_files_read": null,
+      "coverage": {
+        "definitions": {
+          "complete": false,
+          "coverage_complete": false,
+          "unknown_candidates": 0,
+          "reason": "timeout"
+        },
+        "calls": {
+          "complete": false,
+          "coverage_complete": false,
+          "unknown_candidates": 0,
+          "reason": "timeout"
+        },
+        "targets": {
+          "complete": false,
+          "coverage_complete": false,
+          "unknown_candidates": 0,
+          "reason": "timeout"
+        },
+        "possible_targets": {
+          "complete": false,
+          "coverage_complete": false,
+          "unknown_candidates": 0,
+          "reason": "timeout"
+        },
+        "usages": {
+          "complete": false,
+          "coverage_complete": false,
+          "unknown_candidates": 0,
+          "reason": "timeout"
+        }
+      },
+      "artifact": "report-eager-cold.json"
+    },
+    {
+      "elapsed_seconds": 10.321,
+      "case": "report",
+      "target": "src/ken/checks/report.py::query_view",
+      "strategy": "focused",
+      "cache": "cold",
+      "status": "observed",
+      "consumers": 3,
+      "behavior_files": 5,
+      "import_files_read": 271,
+      "coverage": {
+        "definitions": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "calls": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 2
+        },
+        "targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "possible_targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "usages": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 1,
+          "results_truncated": false,
+          "reason": "usage_inventory_open",
+          "evaluations": 1
+        }
+      },
+      "artifact": "report-focused-cold.json"
+    },
+    {
+      "elapsed_seconds": 11.72,
+      "case": "report",
+      "target": "src/ken/checks/report.py::query_view",
+      "strategy": "focused",
+      "cache": "warm",
+      "status": "observed",
+      "consumers": 3,
+      "behavior_files": 5,
+      "import_files_read": 271,
+      "coverage": {
+        "definitions": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "calls": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 2
+        },
+        "targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "possible_targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "usages": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 1,
+          "results_truncated": false,
+          "reason": "usage_inventory_open",
+          "evaluations": 1
+        }
+      },
+      "artifact": "report-focused-warm.json"
+    }
+  ]
+}

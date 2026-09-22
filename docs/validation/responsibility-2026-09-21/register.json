@@ -1,0 +1,167 @@
+{
+  "ok": true,
+  "question": "Who registers functions as MCP tools and CLI tools?",
+  "hypotheses": [],
+  "status": "candidates",
+  "candidates": [
+    {
+      "symbol": "ken_tool",
+      "path": "src/ken/mcp/server.py",
+      "line": 192,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.717,
+        "band": "strong",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who registers functions as MCP tools and CLI tools?",
+      "documentation": "Register ``fn`` as both an MCP tool and a CLI-passthrough tool.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.7083333333333334,
+          "explanation": "Documentation similarity 0.635; term coverage 0.833 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.16666666666666666,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "87cce26a6f8f6f1625c3a32378112abda8605cf94af8945de866f981b9150c5c",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/mcp/server.py",
+        "qualname": "ken_tool",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "_tools_cli",
+      "path": "src/ken/cli.py",
+      "line": 1664,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.57,
+        "band": "moderate",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who registers functions as MCP tools and CLI tools?",
+      "documentation": "Dispatch `ken tools ...` \u2014 a thin CLI over the MCP tool registry.\n\nThe tool list, descriptions, and per-parameter schemas are read live\nfrom the same ``FastMCP`` object ``ken mcp`` serves, so this stays in\nsync with the MCP surface automatically \u2014 there is no second list of\ntools to maintain.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.5535393953323364,
+          "explanation": "Documentation similarity 0.554; term coverage 0.500 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.3333333333333333,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "c7ed7c379654815aee4a36f3b1b469530f5b13ba664d3386d6658fd24143418e",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/cli.py",
+        "qualname": "_tools_cli",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "_wire_opencode",
+      "path": "src/ken/install.py",
+      "line": 541,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.567,
+        "band": "moderate",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who registers functions as MCP tools and CLI tools?",
+      "documentation": "Register ``ken`` as a local MCP server in the project's OpenCode config.\n\nOpenCode reads ``opencode.json`` / ``opencode.jsonc`` from the\nproject root (JSONC is allowed). We merge only the ``mcp.ken`` block\ninto the existing file so user-authored ``model``, ``provider``,\ncustom commands, plugins, etc. stay intact.\n\nThe hook lifecycle ken uses for Claude/Codex has no OpenCode\nequivalent \u2014 OpenCode's plugin system is JS/TS-based and would\nrequire node to run. The MCP path is the documented, fully supported\nway to expose structured tools to OpenCode.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.5666666666666667,
+          "explanation": "Documentation similarity 0.289; term coverage 0.667 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "dec45f33d8ae46d92ffb69f1687b50f3283bbae29d886fb2b4c50dc5bf384ca9",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/install.py",
+        "qualname": "_wire_opencode",
+        "include": [
+          "source"
+        ]
+      }
+    }
+  ],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 1965,
+    "inspected_symbols": 40,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "issues": [],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

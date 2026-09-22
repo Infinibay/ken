@@ -6,15 +6,37 @@ description = "Stepwise construction, fluent setters, an external director or a 
 caveat = "Fluent setters are a Builder-like idiom; product validation and lifecycle are not proven. The typestate variant reads the return type's type argument, so it proves a step moves the builder to another state; for it the ``product`` role is the slot the finish yields, not a constructed type."
 legacy_query = "require $unit IS CLASS\nvariant fluent\ncount >=2 $unit HAS_METHOD $method distinct=$method where $method RETURNS_SELF $unit and $method WRITES _\nend\nvariant director\nrequire $unit HAS_METHOD $build\nrequire $build RETURNS_NEW $product\nrequire $director DELEGATES_TYPE $unit\ncount >=2 $director CALLS $step distinct=$step where $unit HAS_METHOD $step and $step WRITES _\nend\n"
 query = '''
-query builder {
- any { match "builder#mutable-product"(builder: $builder, finish: $finish, product: $product); } or { match "builder#director"(builder: $builder, finish: $finish, product: $product); }
- or { match "builder#stored-product"(builder:$builder,finish:$finish,product:$product); }
-or { match "builder#immutable-product"(builder:$builder,finish:$finish,product:$product); }
-or { match "builder#consuming-typestate"(builder:$builder,finish:$finish,product:$product); }
- emit $builder, $finish, $product;
+language "kql/2";
+module ken.catalog.builder;
+import ken.catalog.builder.variants.accumulated_state;
+import ken.catalog.builder.variants.consuming_typestate;
+import ken.catalog.builder.variants.director;
+import ken.catalog.builder.variants.immutable_product;
+import ken.catalog.builder.variants.mutable_product;
+import ken.catalog.builder.variants.stored_product;
+
+pattern detect(out GraphTerm $builder, out GraphTerm $finish, out GraphTerm $product) {
+  either {
+    use ken.catalog.builder.variants.accumulated_state.detect(builder: $builder, finish: $finish, product: $product);
+  } or {
+    use ken.catalog.builder.variants.mutable_product.detect(builder: $builder, finish: $finish, product: $product);
+  } or {
+    use ken.catalog.builder.variants.director.detect(builder: $builder, finish: $finish, product: $product);
+  } or {
+    use ken.catalog.builder.variants.stored_product.detect(builder: $builder, finish: $finish, product: $product);
+  } or {
+    use ken.catalog.builder.variants.immutable_product.detect(builder: $builder, finish: $finish, product: $product);
+  } or {
+    use ken.catalog.builder.variants.consuming_typestate.detect(builder: $builder, finish: $finish, product: $product);
+  }
+}
+
+query results {
+  use detect(builder: $builder, finish: $finish, product: $product);
+  select $builder, $finish, $product;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -23,32 +45,79 @@ status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "cpp", "go", "rust"]
 requires = ["storage_identity", "local_value_flow"]
 graph_requirements = ["Un paso no constructor recibe un parámetro y lo almacena en estado; finalización usa ese estado para construir el producto retornado."]
-query_claim = "Final direct unchanged parameter input in a supported linear step configures a field used to construct the returned product. No-argument presets, transformed inputs and unsupported control need other variants; hidden effects, lifecycle and snapshot intent are not proven."
+query_claim = "Final direct unchanged parameter input in a supported linear step configures a field used in an argument or named field initializer of the returned product construction. This includes Go keyed literals and Rust struct expressions. No-argument presets, transformed inputs and unsupported control need other variants; hidden effects, lifecycle and snapshot intent are not proven."
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
 query_draft = "query mutable_builder {\n  type_decl() as $builder;\n  require $builder HAS_METHOD $step;\n  require $builder HAS_METHOD $finish;\n  different $step $finish;\n  require $builder HAS_FIELD $state;\n  require $step WRITES $state;\n  require $finish READS $state;\n  require $finish HAS_OPERATION $construction;\n  operation(kind: construct) as $construction;\n  require $construction RESULT $created;\n  require $finish RETURNS_VALUE $created;\n  require $created INSTANCE_OF $product;\n  require $construction ARGUMENT $argument;\n  require $argument VALUE $input;\n  operation(kind: load) as $read;\n  require $finish HAS_OPERATION $read;\n  require $read READS $state;\n  require $read RESULT $loaded;\n  path $loaded VALUE_FLOW{0,6} $input as $flow;\n  emit $builder, $finish, $product;\n}\n"
 
 query = '''
-query mutable_product {
- type_decl() as $builder;
- require $builder HAS_METHOD $step;
- callable(constructor: false) as $step;
- require $builder HAS_METHOD $finish;
- callable(static: false) as $finish;
- require $builder HAS_FIELD $state;
- require $step HAS_PARAMETER $configured;
- parameter(receiver: false) as $configured;
- require $step HAS_OPERATION $write;
- require $write FINAL_MEMBER_INPUT $configured;
- require $write ASSIGNMENT_TARGET $state;
- require $finish RETURNS_VALUE $result;
- require $construction RESULT $result;
- require $result INSTANCE_OF $product;
- require $construction ARGUMENT $argument;
- require $argument VALUE $input;
- require $input LOADED_FROM $state;
- different $step $finish;
- emit $builder, $finish, $product;
+language "kql/2";
+module ken.catalog.builder.variants.mutable_product;
+
+pattern detect(out TypeDecl $builder, out Callable $finish, out TypeDecl $product) {
+  type $builder {
+    field $state { }
+    method $step {
+      constructor: false;
+      static: false;
+      param $configured { }
+      body {
+        $state = $configured as $write;
+      }
+    }
+    method $finish {
+      static: false;
+      body {
+        let $built = construct $product { initializer $state; } as $building;
+        return $built;
+      }
+    }
+  }
+  where final_member_input($write, $configured);
+
+  where $step != $finish;
+}
+
+query results {
+  use detect(builder: $builder, finish: $finish, product: $product);
+  select $builder, $finish, $product;
+}
+'''
+
+[[variants]]
+id = "accumulated-state"
+status = "ready"
+languages = ["python", "typescript"]
+requires = ["collection_api_shape", "return_value", "construction_carry"]
+graph_requirements = ["Los pasos acumulan elementos en una coleccion del builder; la finalizacion lee esa coleccion, construye el producto y lo devuelve."]
+missing_capability = "unknown"
+fixtures_status = "source-regression-matrix"
+query_claim = "A step accumulates elements in a collection field. A distinct finalizer constructs a product using that collection directly or through a modeled shallow copy, then returns that same produced value. Python builtin list and JavaScript/TypeScript single-array spread are supported; shadowed or arbitrary copy functions do not establish transfer. Unrelated reads do not suffice; constructor retention, ownership and lifecycle remain unproven."
+query = '''
+language "kql/2";
+module ken.catalog.builder.variants.accumulated_state;
+
+pattern detect(out TypeDecl $builder, out Callable $finish, out TypeDecl $product) {
+  type $builder {
+    field $state { }
+    method $step { constructor: false; }
+    method $finish {
+      constructor: false;
+      body {
+        let $built = construct $product { initializer $state { transfer: [identity, shallow_copy]; }; } as $building;
+        return $built;
+      }
+    }
+  }
+  where writes_element($step, $state);
+  where reads($finish, $state);
+
+  where $step != $finish;
+}
+
+query results {
+  use detect(builder: $builder, finish: $finish, product: $product);
+  select $builder, $finish, $product;
 }
 '''
 
@@ -60,49 +129,37 @@ requires = ["value_flow", "copy_models", "constructor_resolution"]
 graph_requirements = ["El paso devuelve un builder sucesor; su estado modificado llega a la finalización y al producto."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
-query_claim = "Un paso no constructor recibe un valor nuevo, devuelve una construccion nueva de su propia clase, y el constructor del sucesor recibe ese valor nuevo junto con un campo del builder original; otra finalizacion construye un producto distinto que vuelve a consumir ese mismo campo. No prueba copia profunda, ni alias residual del estado compartido, ni el orden real de una cadena de pasos."
+query_claim = "Un paso no constructor recibe un valor nuevo y devuelve una construccion nueva de su propia clase. ESA misma construccion retornada recibe el valor nuevo junto con un campo del builder original; la construccion retornada por otra finalizacion produce un tipo distinto consumiendo ese mismo campo. Una llamada incidental que lea los valores o una construccion descartada no satisfacen la consulta. No prueba copia profunda, alias residual del estado compartido ni el orden real de una cadena de pasos."
 query = '''
-query immutable_builder {
- type_decl() as $builder;
- require $builder HAS_FIELD $state;
- require $builder HAS_METHOD $step;
- callable(constructor: false) as $step;
- require $step HAS_PARAMETER $input;
- parameter(receiver: false) as $input;
- require $step RETURNS_NEW $builder;
- require $step HAS_CALL $copy;
- any {
-  require $copy ARGUMENT $changed_argument;
-  require $changed_argument VALUE $changed_value;
-  require $changed_value LOADED_FROM $input;
- } or {
-  require $copy HAS_INITIALIZER $changed_initializer;
-  require $changed_initializer STORES_VALUE $input;
- }
- any {
-  require $copy ARGUMENT $carried_argument;
-  require $carried_argument VALUE $carried_value;
-  require $carried_value LOADED_FROM $state;
- } or {
-  require $copy HAS_INITIALIZER $carried_initializer;
-  require $carried_initializer STORES_VALUE $state;
- }
- different $input $state;
- require $builder HAS_METHOD $finish;
- callable(constructor: false) as $finish;
- different $finish $step;
- require $finish RETURNS_NEW $product;
- different $product $builder;
- require $finish HAS_CALL $final;
- any {
-  require $final ARGUMENT $final_argument;
-  require $final_argument VALUE $final_value;
-  require $final_value LOADED_FROM $state;
- } or {
-  require $final HAS_INITIALIZER $final_initializer;
-  require $final_initializer STORES_VALUE $state;
- }
- emit $builder, $finish, $product;
+language "kql/2";
+module ken.catalog.builder.variants.immutable_product;
+
+pattern detect(out TypeDecl $builder, out Callable $finish, out TypeDecl $product) {
+  type $builder {
+    fields { field $state {} }
+    method $step {
+      constructor: false;
+      parameters { param $input {} }
+      body {
+        let $successor = construct $builder { initializer $input; initializer $state; };
+        return $successor;
+      }
+    }
+    method $finish {
+      constructor: false;
+      body {
+        let $built = construct $product { initializer $state; };
+        return $built;
+      }
+    }
+  }
+  where $step != $finish;
+  where $product != $builder;
+}
+
+query results {
+  use detect(builder: $builder, finish: $finish, product: $product);
+  select $builder, $finish, $product;
 }
 '''
 
@@ -116,22 +173,35 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-three-languages"
 query_claim = "El builder liga un parametro de tipo de estado; un paso no constructor devuelve OTRA instanciacion del propio builder (`RETURN_TYPE_ARGUMENT`, el argumento del tipo de retorno generico) cuyo argumento difiere del nombre del parametro, y hay al menos DOS estados distintos, de modo que hay transicion y no solo un retorno generico. La finalizacion se fija positivamente: devuelve el slot acumulado del builder. **El rol `product` es ese slot, no un tipo construido**: esta variante no exige que la finalizacion construya nada. La ficha ofrece una disyuncion —«el paso cambia parametros de estado **o** mueve el builder»— y aqui se implementa el primer lado: C++ registra `ref_qualifier: '&&'` en el metodo, pero Rust no registra la propiedad del receptor (`self` vs `&self`) y TypeScript no tiene ownership, asi que el lado del movimiento no se exige ni se prueba. Tampoco prueba que la finalizacion solo sea alcanzable desde un estado admitido: la especializacion (`Builder<Ready>`) no se modela, ambos `impl` resuelven al mismo tipo."
 query = '''
-query consuming_typestate {
- require $builder BINDS_TYPE_PARAMETER $state_parameter;
- require $builder HAS_FIELD $storage;
- require $builder HAS_METHOD $step;
- callable(constructor: false) as $step;
- require $step RETURN_TYPE_ARGUMENT $admitted_state;
- where $admitted_state != $state_parameter;
- require $builder HAS_METHOD $finish;
- callable(constructor: false) as $finish;
- require $finish RETURNS $storage;
- different $step $finish;
- count distinct $state >= 2 {
-  require $builder HAS_METHOD $transition;
-  require $transition RETURN_TYPE_ARGUMENT $state;
- };
- emit builder=$builder, finish=$finish, product=$storage, state=$admitted_state;
+language "kql/2";
+module ken.catalog.builder.variants.consuming_typestate;
+
+pattern detect(out TypeDecl $builder, out Callable $finish, out Field $product, out GraphTerm $state) {
+  type $builder {
+    type_parameter $local_state_parameter;
+    field $product { }
+    method $local_step {
+      constructor: false;
+      return_type: applied($builder, $state);
+    }
+    method $local_transition {
+      constructor: false;
+      return_type: applied($builder, $local_state);
+    }
+    method $finish {
+      constructor: false;
+      body { return $product; }
+    }
+  }
+  where $state != $local_state_parameter;
+  where $state != $local_state;
+  where $local_step != $local_transition;
+  where $local_step != $finish;
+}
+
+query results {
+  use detect(builder: $builder, finish: $finish, product: $product, state: $state);
+  select $builder, $finish, $product, $state;
 }
 '''
 
@@ -145,23 +215,44 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
 
 query = '''
-query directed_product {
- type_decl() as $builder;
- require $builder HAS_METHOD $finish;
- require $finish RETURNS_NEW $product;
- require $director RETURNS_CALL $finish_call;
- require $finish_call TARGET $finish;
- require $finish_call RECEIVER $receiver;
- count distinct $step >= 2 {
-   require $director HAS_CALL $step_call;
-   require $step_call RECEIVER $receiver;
-   require $step_call TARGET $step;
-   callable(constructor: false) as $step;
-   require $builder HAS_METHOD $step;
-   require $builder HAS_FIELD $state;
-   require $step WRITES $state;
- };
- emit $builder, $finish, $product;
+language "kql/2";
+module ken.catalog.builder.variants.director;
+
+pattern detect(out TypeDecl $builder, out Callable $finish, out TypeDecl $product) {
+  either {
+    param $receiver { type: nominal($builder); }
+  } or {
+    var $receiver { type: nominal($builder); }
+  }
+  type $builder {
+    fields { field $state1 { } field $state2 { } }
+    method $finish {
+      constructor: false;
+      body {
+        let $built = construct $product {} as $creation;
+        return $built;
+      }
+    }
+    method $step1 { constructor: false; }
+    method $step2 { constructor: false; }
+  }
+  callable $director {
+    body {
+      call $step1 { receiver: $receiver; receiver_version: $lifetime; };
+      call $step2 { receiver: $receiver; receiver_version: $lifetime; };
+      call $finish { receiver: $receiver; receiver_version: $lifetime; returned: true; };
+    }
+  }
+  where writes($step1, $state1);
+  where writes($step2, $state2);
+  where $step1 != $step2;
+  where $step1 != $finish;
+  where $step2 != $finish;
+}
+
+query results {
+  use detect(builder: $builder, finish: $finish, product: $product);
+  select $builder, $finish, $product;
 }
 '''
 
@@ -171,41 +262,73 @@ status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp", "rust"]
 query_claim = "The builder initializes its own product field from a construction, a linear step writes an unchanged input into that product, and a distinct method returns the field or its modeled derived Rust clone. Initialization/lifetime/alias stability and generic specialization equality are not proven."
 query = '''
-query stored_product {
- require $builder HAS_FIELD $stored;
- require $stored TYPE $product;
- different $builder $product;
- require $builder HAS_METHOD $initialize;
- require $creation ALLOCATES_TYPE $product;
- any {
-  require $stored ASSIGNED_FROM $creation;
-  require $initialize HAS_CALL $creation;
- } or {
-  require $container ALLOCATES_TYPE $builder;
-  require $initialize HAS_CALL $container;
-  require $container HAS_INITIALIZER $initializer;
-  require $initializer INITIALIZES_FIELD $stored;
-  require $initializer STORES_VALUE $creation;
- }
- require $builder HAS_METHOD $step;
- callable(constructor: false, static: false) as $step;
- require $step HAS_PARAMETER $input;
- parameter(receiver: false) as $input;
- require $step HAS_OPERATION $write;
- require $write FINAL_MEMBER_INPUT $input;
- require $write ASSIGNMENT_TARGET $member;
- path $member MEMBER_OF{1,8} $stored as $member_path;
- require $builder HAS_METHOD $finish;
- callable(constructor: false, static: false) as $finish;
- different $step $finish;
- any {
-  require $finish RETURNS_VALUE $result;
-  require $result LOADED_FROM $stored;
- } or {
-  match "prototype.derived_copy"(unit:$product,receiver:$stored,copy:$copy);
-  require $finish RETURNS_CALL $copy;
- }
- emit $builder, $finish, $product;
+language "kql/2";
+module ken.catalog.builder.variants.stored_product;
+
+pattern detect(out TypeDecl $builder, out Callable $finish, out TypeDecl $product) {
+  type $builder {
+    field $stored { }
+    method $step {
+      constructor: false; static: false;
+      param $input { }
+      body { $stored._ = $input as $write; }
+    }
+  }
+  either {
+    /* The builder stores a construction of the product in its own field. */
+    type $builder {
+      method $initialize {
+        body {
+          let $created = construct $product {} as $creation;
+          $stored = $created;
+        }
+      }
+    }
+  } or {
+    /* ... or the builder is itself constructed with that field initialized
+       from a construction of the product. */
+    type $builder {
+      method $initialize {
+        body {
+          let $creation = construct $product {};
+          let $container = construct $builder { initializer $stored from $creation; };
+        }
+      }
+    }
+  }
+  either {
+    /* The finalizer hands back the stored field. */
+    type $builder {
+      method $finish {
+        constructor: false; static: false;
+        body { return $stored; }
+      }
+    }
+  } or {
+    /* ... or returns a modelled copy of it (Rust `Clone`). */
+    type $product { language: "rust"; derive: "Clone"; }
+    type $builder {
+      method $finish {
+        constructor: false; static: false;
+        body {
+          call $local_copy {
+            receiver: $stored._;
+            name: "clone";
+            resolution: unresolved;
+            returned: true;
+          };
+        }
+      }
+    }
+  }
+  where $builder != $product;
+  where $step != $finish;
+  where final_member_input($write, $input);
+}
+
+query results {
+  use detect(builder: $builder, finish: $finish, product: $product);
+  select $builder, $finish, $product;
 }
 '''
 
@@ -215,9 +338,18 @@ status = "ready"
 description = "A director and a mutable-product builder agree on builder, finalizer and product roles."
 caveat = "Correlates definition-level roles; does not prove receiver stability across rebindings, lifecycle or immutable successors."
 query = '''
-query directed_state {
- match "builder#director"(builder:$builder,finish:$finish,product:$product);
- match "builder#mutable-product"(builder:$builder,finish:$finish,product:$product);
- emit $builder,$finish,$product;
+language "kql/2";
+module ken.catalog.builder.directed_state;
+import ken.catalog.builder.variants.director;
+import ken.catalog.builder.variants.mutable_product;
+
+pattern detect(out GraphTerm $builder, out GraphTerm $finish, out GraphTerm $product) {
+  use ken.catalog.builder.variants.director.detect(builder: $builder, finish: $finish, product: $product);
+  use ken.catalog.builder.variants.mutable_product.detect(builder: $builder, finish: $finish, product: $product);
+}
+
+query results {
+  use detect(builder: $builder, finish: $finish, product: $product);
+  select $builder, $finish, $product;
 }
 '''

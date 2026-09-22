@@ -1,0 +1,794 @@
+{
+  "version": 1,
+  "date": "2026-09-14",
+  "meaning": {
+    "case": "Caso enfocado probado; no cobertura de todos los lenguajes/variantes.",
+    "partial": "Una parte del contrato tiene prueba; quedan obligaciones explícitas.",
+    "pending": "Sin cierre ejecutable acreditado."
+  },
+  "counts": {
+    "case": 34,
+    "partial": 18,
+    "pending": 44
+  },
+  "cases": {
+    "C001": {
+      "contract": "Archivo con versión kql/2, imports resueltos y patrón Worker tipado",
+      "expected": "P",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_libraries.py"
+      ],
+      "note": "Imports explícitos; no incluye gestor de paquetes."
+    },
+    "C002": {
+      "contract": "Mismo texto enviado al parser kenql/1",
+      "expected": "E, versión incompatible",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C003": {
+      "contract": "Propiedad inexistente o no aplicable al selector",
+      "expected": "E, span y schema esperado",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_execution.py"
+      ],
+      "note": "Caso estructural; no certifica todas las variantes nativas."
+    },
+    "C004": {
+      "contract": "Entrada in omitida o no ligada en use",
+      "expected": "E",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_execution.py"
+      ],
+      "note": "Caso estructural; no certifica todas las variantes nativas."
+    },
+    "C005": {
+      "contract": "Salida out ya ligada",
+      "expected": "P sólo si misma identidad",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_execution.py"
+      ],
+      "note": "Caso estructural; no certifica todas las variantes nativas."
+    },
+    "C006": {
+      "contract": "Dos bindings homónimos en scopes diferentes se intentan unificar",
+      "expected": "N",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_body.py",
+        "tests/common_ast/test_scopes.py",
+        "tests/common_ast/test_queries.py"
+      ],
+      "note": "Identidades propias del AST común; shadowing TS, Python y Rust y consultas same_symbol. Sigue parcial: no cubre todas las reglas de ámbito de cada lenguaje."
+    },
+    "C007": {
+      "contract": "Dos capturas distintas seleccionan el mismo campo, sin desigualdad",
+      "expected": "P permitido",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_execution.py"
+      ],
+      "note": "Caso estructural; no certifica todas las variantes nativas."
+    },
+    "C008": {
+      "contract": "Lo anterior con where a != b",
+      "expected": "N",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_execution.py"
+      ],
+      "note": "Caso estructural; no certifica todas las variantes nativas."
+    },
+    "C009": {
+      "contract": "Un rol sólo existe en una rama y se usa después",
+      "expected": "E",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_execution.py"
+      ],
+      "note": "Caso estructural; no certifica todas las variantes nativas."
+    },
+    "C010": {
+      "contract": "Variable capturada dentro de not exists/optional escapa",
+      "expected": "E",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_negation.py"
+      ],
+      "note": "Selectores/from/where; composición BODY pendiente."
+    },
+    "C011": {
+      "contract": "Macro/named pattern reutilizado dos veces con internos homónimos",
+      "expected": "P sin captura accidental",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_execution.py"
+      ],
+      "note": "Caso estructural; no certifica todas las variantes nativas."
+    },
+    "C012": {
+      "contract": "`type:string` frente a TypeScript any o unknown declarados",
+      "expected": "N si tipos conocidos distintos",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_source_types.py"
+      ],
+      "note": "Tipos explícitos, desconocidos y ausencia de anotación."
+    },
+    "C013": {
+      "contract": "`type:string` frente a tipo no inferido",
+      "expected": "U",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_source_types.py"
+      ],
+      "note": "Tipos explícitos, desconocidos y ausencia de anotación."
+    },
+    "C014": {
+      "contract": "`type_status:unknown` frente a tipo no inferido",
+      "expected": "P, sin inferir que sea string",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_source_types.py"
+      ],
+      "note": "Tipos explícitos, desconocidos y ausencia de anotación."
+    },
+    "C015": {
+      "contract": "`fields exact` con campo adicional",
+      "expected": "N",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_inventories.py"
+      ],
+      "note": "Inventarios exactos y cobertura; matriz completa por lenguaje pendiente."
+    },
+    "C016": {
+      "contract": "`fields exact` con inventario incompleto",
+      "expected": "U",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_inventories.py"
+      ],
+      "note": "Inventarios exactos y cobertura; matriz completa por lenguaje pendiente."
+    },
+    "C017": {
+      "contract": "Argumento `1 + f()` consultado como Binding con nombre propio",
+      "expected": "E de tipo, no binding inventado",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C018": {
+      "contract": "Pack dinámico no resuelto pedido como argumento efectivo 0",
+      "expected": "U",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_body_calls.py"
+      ],
+      "note": "Packs no expandidos conservan unknown; captura ArgumentPack pendiente."
+    },
+    "C019": {
+      "contract": "family iterable sobre array y generador modelados",
+      "expected": "P en ambos, sin deducir eager",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C020": {
+      "contract": "Método `next` sin contrato/protocolo de iteración",
+      "expected": "N/U según obligación, no P por nombre",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C021": {
+      "contract": "Declaración → logging → asignación; BODY normal",
+      "expected": "P con orden válido",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_body.py"
+      ],
+      "note": "CFG de sentencias; no cobertura de excepciones/suspensión."
+    },
+    "C022": {
+      "contract": "Mismo programa con adjacent entre declaración y asignación",
+      "expected": "N",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_body.py"
+      ],
+      "note": "CFG de sentencias; no cobertura de excepciones/suspensión."
+    },
+    "C023": {
+      "contract": "Sólo comentarios y saltos entre anclas adjacent",
+      "expected": "P",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_body.py"
+      ],
+      "note": "CFG de sentencias; no cobertura de excepciones/suspensión."
+    },
+    "C024": {
+      "contract": "`pass`/sentencia vacía explícita entre anclas adjacent",
+      "expected": "N",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_body.py"
+      ],
+      "note": "CFG de sentencias; no cobertura de excepciones/suspensión."
+    },
+    "C025": {
+      "contract": "Adjacent al comienzo/final o sin ancla siguiente del bloque",
+      "expected": "E",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_body.py"
+      ],
+      "note": "CFG de sentencias; no cobertura de excepciones/suspensión."
+    },
+    "C026": {
+      "contract": "Un solo nodo satisface ambas anclas para fingir adyacencia",
+      "expected": "N",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_body.py"
+      ],
+      "note": "Shadowing TS y grupos distintos; faltan todos los ámbitos/lenguajes."
+    },
+    "C027": {
+      "contract": "Gap seguido por where y luego assignment",
+      "expected": "P; where no mueve el extremo",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_body_gaps.py"
+      ],
+      "note": "Intervalo all, write sobre slots, extremos excluidos."
+    },
+    "C028": {
+      "contract": "Asignación al binding protegido en el ancla final, fuera del intervalo",
+      "expected": "P",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_body_gaps.py"
+      ],
+      "note": "Intervalo all, write sobre slots, extremos excluidos."
+    },
+    "C029": {
+      "contract": "Misma asignación dentro del intervalo",
+      "expected": "N",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_body_gaps.py"
+      ],
+      "note": "Intervalo all, write sobre slots, extremos excluidos."
+    },
+    "C030": {
+      "contract": "Escritura del mismo valor durante forbid write",
+      "expected": "N",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_body_gaps.py"
+      ],
+      "note": "Intervalo all, write sobre slots, extremos excluidos."
+    },
+    "C031": {
+      "contract": "Escritura del mismo valor durante preserve binding, igualdad acreditada",
+      "expected": "P",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C032": {
+      "contract": "Modificar y restaurar dentro de preserve binding/state",
+      "expected": "N",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C033": {
+      "contract": "Llamada externa con posible acceso al objeto protegido",
+      "expected": "U",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C034": {
+      "contract": "Logging modelado que no accede al objeto protegido",
+      "expected": "P para preservación, no garantía de terminación",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C035": {
+      "contract": "Llamada prohibida sólo desde helper dentro del intervalo",
+      "expected": "N con through:transitive; P con direct si no hay llamada directa",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_body_calls.py"
+      ],
+      "note": "Prohibición directa implementada; transitive y recursión dentro de anclas pendientes."
+    },
+    "C036": {
+      "contract": "Método inicial recursa dentro de ancla excluida del intervalo",
+      "expected": "P para prohibición posterior",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_body_calls.py"
+      ],
+      "note": "Prohibición directa implementada; transitive y recursión dentro de anclas pendientes."
+    },
+    "C037": {
+      "contract": "No existe camino entre anclas",
+      "expected": "N, no verdad universal vacía",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_body.py"
+      ],
+      "note": "CFG de sentencias; no cobertura de excepciones/suspensión."
+    },
+    "C038": {
+      "contract": "Un camino conserva binding y otro lo modifica",
+      "expected": "N para all; P para witness válido y etiquetado",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_body_gaps.py"
+      ],
+      "note": "All y ciclos conservadores; witness y contextos de iteración completos pendientes."
+    },
+    "C039": {
+      "contract": "Rama con throw antes del extremo final",
+      "expected": "Preservación all de conectores puede P; must_reach N/U",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C040": {
+      "contract": "Cuerpo de closure no invocada contiene escritura",
+      "expected": "No cuenta como efecto ejecutado del intervalo",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C041": {
+      "contract": "Closure invocada y captura alias protegido",
+      "expected": "N/U según resolución del efecto",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C042": {
+      "contract": "Anclas mezcladas entre iteraciones distintas sin contexto suficiente",
+      "expected": "U",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_body_gaps.py"
+      ],
+      "note": "All y ciclos conservadores; witness y contextos de iteración completos pendientes."
+    },
+    "C043": {
+      "contract": "Rama A produce valor, rama B lo consume sin camino compatible",
+      "expected": "N",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_body.py"
+      ],
+      "note": "CFG de sentencias; no cobertura de excepciones/suspensión."
+    },
+    "C044": {
+      "contract": "Return de valor de otra invocación al mismo factory",
+      "expected": "N",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C045": {
+      "contract": "Fragmentos de dos matches se mezclan por salidas compatibles",
+      "expected": "N",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C046": {
+      "contract": "For C con continue llega a update antes de condition",
+      "expected": "P para CFG normalizado correcto",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C047": {
+      "contract": "Lowering de for a while saltea update en continue",
+      "expected": "Falla del frontend; no aceptar equivalencia",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C048": {
+      "contract": "Break de loop interior frente a break etiquetado exterior",
+      "expected": "Destinos distintos obligatorios",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C049": {
+      "contract": "Finally retorna y sustituye return/continue pendiente",
+      "expected": "N para contrato que depende de salida original",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C050": {
+      "contract": "Try termina por catch recuperado y se pide else nativo",
+      "expected": "N",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C051": {
+      "contract": "Excepción en else intenta entrar a catch hermano",
+      "expected": "N",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C052": {
+      "contract": "Filtro catch falso selecciona otro handler",
+      "expected": "Orden y guardas preservados",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C053": {
+      "contract": "Rust binding mutable después de move o durante borrow incompatible",
+      "expected": "No P de writable_at sin análisis que lo permita",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C054": {
+      "contract": "JS const de lista con push",
+      "expected": "P de binding preservado, N de contenido preservado",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C055": {
+      "contract": "Copia superficial de lista cuyos hijos se modifican",
+      "expected": "P shallow si slots constantes; N reachable",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C056": {
+      "contract": "Sobrecarga + con efecto/throw",
+      "expected": "No deducir pureza de operador ni aritmética normal",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C057": {
+      "contract": "Identificador público Python consultado como enforcement de acceso",
+      "expected": "U/N según perfil; sólo convención acreditada",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C058": {
+      "contract": "Import dentro de callable y export estático de módulo",
+      "expected": "Owners y efectos diferentes",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C059": {
+      "contract": "Class/closure expression define body que no se ejecuta aún",
+      "expected": "contains P, executes_in no P automático",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C060": {
+      "contract": "Default de parámetro con efecto al definir función",
+      "expected": "Efecto pertenece a fase de definición según lenguaje",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C061": {
+      "contract": "Map transforma item y alimenta output",
+      "expected": "P para produces/output_of",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C062": {
+      "contract": "Callback map usa constante/otra variable en vez del item exigido",
+      "expected": "N",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C063": {
+      "contract": "Filter conserva elementos seleccionados por predicado",
+      "expected": "P para selección, no transformación arbitraria",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C064": {
+      "contract": "LINQ Select interpretado como filter por nombre",
+      "expected": "Falla de modelo; N a esa interpretación",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C065": {
+      "contract": "Pipeline lazy construido sin consumidor",
+      "expected": "P defined; N/U consumed según cierre",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C066": {
+      "contract": "Generador con yield léxico inalcanzable",
+      "expected": "P syntax/generator shape; no P producción",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C067": {
+      "contract": "Async generator sin await adicional",
+      "expected": "P para forma generadora válida",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C068": {
+      "contract": "Callback Go ignora false de yield y sigue",
+      "expected": "N para variante stop-on-false",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C069": {
+      "contract": "For y map paralelos cumplen recorrido pero distinto orden",
+      "expected": "P recorrido; N/U preserves_order",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C070": {
+      "contract": "Excepción/early exit impide cubrir todos los elementos",
+      "expected": "No P de exhausts/totalidad por ser map",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C071": {
+      "contract": "Transición de lock A combinada con release de B",
+      "expected": "N",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C072": {
+      "contract": "Acquire conocido, llamada desconocida, uso protegido",
+      "expected": "U si puede alterar recurso/estado",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C073": {
+      "contract": "Escritura concurrente sin happens-before modelado",
+      "expected": "U/N de preservación shared, no P local promovido",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C074": {
+      "contract": "Operación llamada join sin API/protocolo resuelto",
+      "expected": "No P de sincronización",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C075": {
+      "contract": "Sanitización HTML aplicada a sink SQL",
+      "expected": "N/U como barrera de SQL",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C076": {
+      "contract": "Guardar referencia mutable como Memento histórico",
+      "expected": "N cuando se demuestra mutación que rompe snapshot",
+      "status": "pending",
+      "tests": [],
+      "note": "Contrato aún sin cierre ejecutable; la aceptación sintáctica no lo acredita."
+    },
+    "C077": {
+      "contract": "Cadena de llamadas de longitud 100, presupuesto suficiente",
+      "expected": "P alcanzabilidad, sin límite 32",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_predicates.py"
+      ],
+      "note": "SCC positiva, ciclos negativos y dominios finitos; caso 100 llamadas y warning sin semilla pendientes."
+    },
+    "C078": {
+      "contract": "SCC positiva con ciclo y semilla",
+      "expected": "Punto fijo termina, sin duplicados",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_predicates.py"
+      ],
+      "note": "SCC positiva, ciclos negativos y dominios finitos; caso 100 llamadas y warning sin semilla pendientes."
+    },
+    "C079": {
+      "contract": "SCC positiva sin semilla",
+      "expected": "Vacío y warning; no inventa solución",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_predicates.py"
+      ],
+      "note": "SCC positiva, ciclos negativos y dominios finitos; caso 100 llamadas y warning sin semilla pendientes."
+    },
+    "C080": {
+      "contract": "Recursión a través de not o agregado",
+      "expected": "E en revisión 0.1",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_predicates.py"
+      ],
+      "note": "SCC positiva, ciclos negativos y dominios finitos; caso 100 llamadas y warning sin semilla pendientes."
+    },
+    "C081": {
+      "contract": "Generación no acotada de strings/números dentro de SCC",
+      "expected": "E",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_predicates.py"
+      ],
+      "note": "SCC positiva, ciclos negativos y dominios finitos; caso 100 llamadas y warning sin semilla pendientes."
+    },
+    "C082": {
+      "contract": "Relación incompleta negada",
+      "expected": "U",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_negation.py"
+      ],
+      "note": "Selectores/from/where; composición BODY pendiente."
+    },
+    "C083": {
+      "contract": "Count exacto sobre universo incompleto",
+      "expected": "U; at_least puede P con testigos suficientes",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_calculations.py"
+      ],
+      "note": "Agregación exacta unknown en universo abierto; at_least pendiente."
+    },
+    "C084": {
+      "contract": "Sum de valores repetidos versus sum_by eventos",
+      "expected": "Resultados distintos según semántica publicada",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_calculations.py"
+      ],
+      "note": "Oráculos de agregación y barreras de errores."
+    },
+    "C085": {
+      "contract": "Min/max/avg vacío",
+      "expected": "Option.none, no 0",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_calculations.py"
+      ],
+      "note": "Oráculos de agregación y barreras de errores."
+    },
+    "C086": {
+      "contract": "División por cero en cálculo de query",
+      "expected": "E de evaluación, diagnóstico; no fila silenciosamente eliminada",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_calculations.py"
+      ],
+      "note": "Oráculos de agregación y barreras de errores."
+    },
+    "C087": {
+      "contract": "Timeout/cancelación con cero matches hasta ese momento",
+      "expected": "I, nunca no_match confirmado",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_execution.py"
+      ],
+      "note": "Presupuesto y truncamiento independientes de cobertura."
+    },
+    "C088": {
+      "contract": "Misma query fría/caliente y mismo modelo",
+      "expected": "Mismos bindings, modalidades y completitud",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_disk_artifacts.py"
+      ],
+      "note": "Recuperación entre procesos e incompletos no guardados como completos."
+    },
+    "C089": {
+      "contract": "Cambio de callee/modelo/archivo nuevo afecta negación",
+      "expected": "Invalidación transitiva, no negativo cacheado viejo",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_libraries.py"
+      ],
+      "note": "Cambios en bibliotecas invalidan planes/resultados; negación/contextos globales completos pendientes."
+    },
+    "C090": {
+      "contract": "Resultado previo parcial reutilizado como completo",
+      "expected": "Falla del motor, prohibido",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_disk_artifacts.py"
+      ],
+      "note": "Recuperación entre procesos e incompletos no guardados como completos."
+    },
+    "C091": {
+      "contract": "Cache 0",
+      "expected": "Sin retención entre queries; resultados semánticos iguales",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_service.py"
+      ],
+      "note": "Cache cero frente a reconstrucción fuente."
+    },
+    "C092": {
+      "contract": "Caché excede presupuesto 500 MB",
+      "expected": "Evicción/no retención; reportar bytes, no degradar semántica",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_cache_pressure.py"
+      ],
+      "note": "Cuota persistente, leases y compactación; RSS/WAL/spill globales pendientes."
+    },
+    "C093": {
+      "contract": "Limit de presentación corta filas",
+      "expected": "results_truncated separado de complete",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_execution.py"
+      ],
+      "note": "Presupuesto y truncamiento independientes de cobertura."
+    },
+    "C094": {
+      "contract": "Evidencia opcional ausente",
+      "expected": "No elimina match obligatorio",
+      "status": "case",
+      "tests": [
+        "tests/kql2/test_inventories.py"
+      ],
+      "note": "Optional no elimina la fila obligatoria."
+    },
+    "C095": {
+      "contract": "Predicado de posibilidad acreditado",
+      "expected": "P de pertenencia al modelo, no ejecución segura",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_project_semantics.py"
+      ],
+      "note": "Enlace global y unknown; capacidades nuevas aún pueden rechazarse en compilación."
+    },
+    "C096": {
+      "contract": "Lenguaje soporta sintaxis pero carece de análisis requerido",
+      "expected": "U/capability_missing explícito, no P por omisión",
+      "status": "partial",
+      "tests": [
+        "tests/kql2/test_project_semantics.py"
+      ],
+      "note": "Enlace global y unknown; capacidades nuevas aún pueden rechazarse en compilación."
+    }
+  }
+}

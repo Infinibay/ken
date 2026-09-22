@@ -1,0 +1,167 @@
+{
+  "ok": true,
+  "question": "Who stores reusable findings?",
+  "hypotheses": [],
+  "status": "candidates",
+  "candidates": [
+    {
+      "symbol": "remember",
+      "path": "src/ken/memory.py",
+      "line": 18,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.85,
+        "band": "strong",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who stores reusable findings?",
+      "documentation": "Store or update a reusable finding.\n\n*anchors* declares what the memory is about \u2014 ``{\"file\": \"src/a.py\"}``,\n``{\"tool\": \"pytest\"}``, and so on (see ``findings_graph.ANCHOR_KINDS``).\nAn anchored finding can be looked up by the thing that provoked it\ninstead of by a query, which is what lets a caller surface it at the\nmoment it becomes relevant rather than hoping someone searches for it.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.85,
+          "explanation": "Documentation similarity 0.351; term coverage 1.000 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "853109a2de666c003cd1a760bb27a4353196cdae2f3306b82f8ec0c1e75ae706",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/memory.py",
+        "qualname": "remember",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "list_findings",
+      "path": "src/ken/memory.py",
+      "line": 185,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.529,
+        "band": "moderate",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who stores reusable findings?",
+      "documentation": "Return recent findings, optionally filtered by tag.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.5126726031303406,
+          "explanation": "Documentation similarity 0.513; term coverage 0.333 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.3333333333333333,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "853109a2de666c003cd1a760bb27a4353196cdae2f3306b82f8ec0c1e75ae706",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/memory.py",
+        "qualname": "list_findings",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "_impl_ken_findings",
+      "path": "src/ken/mcp/server.py",
+      "line": 538,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.503,
+        "band": "moderate",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who stores reusable findings?",
+      "documentation": "List recent saved findings, optionally filtering by exact tag.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.48604777455329895,
+          "explanation": "Documentation similarity 0.486; term coverage 0.333 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.3333333333333333,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "87cce26a6f8f6f1625c3a32378112abda8605cf94af8945de866f981b9150c5c",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/mcp/server.py",
+        "qualname": "_impl_ken_findings",
+        "include": [
+          "source"
+        ]
+      }
+    }
+  ],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 1965,
+    "inspected_symbols": 40,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "issues": [],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

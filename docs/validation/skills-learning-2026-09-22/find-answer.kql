@@ -1,0 +1,12 @@
+language "kql/2";
+module investigation.method_ownership;
+
+query load_without_own_clear {
+  class $type {
+    method $load { name: "load"; }
+    not exists {
+      method $clear { name: "clear"; }
+    }
+  }
+  select $type;
+}

@@ -270,8 +270,10 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    for relation in ['SUBTYPE_OF', 'IMPLEMENTS', 'OVERRIDES', 'RESULT', 'RETURNS_CALL']:
-        assert relation in row['query'], relation
+    for clause in ['subtype($unit, $contract)', 'implements($unit, $contract)',
+                   'overrides($method, $slot)', 'argument $encoder at any',
+                   'return $local_decoded']:
+        assert clause in row['query'], clause
 
 
 @pytest.mark.parametrize('language', LANGUAGES)

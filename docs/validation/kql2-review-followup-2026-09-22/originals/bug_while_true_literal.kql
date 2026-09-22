@@ -1,0 +1,8 @@
+language "kql/2";
+module bugs.infinite_loop;
+query while_true_exact {
+  node $while { kind: "while"; }
+  node $cond { kind: "literal"; }
+  node $body { kind: "block"; }
+  select $while;
+}

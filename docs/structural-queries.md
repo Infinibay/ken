@@ -1,13 +1,51 @@
 # Consultas estructurales de Ken
 
-Esta guía describe KenQL `kenql/1` sobre IR **1.47.0**. La [especificación de diseño](design/structural/README.md)
+Esta guía describe KenQL `kenql/1` sobre IR **1.77.0**. La [especificación de diseño](design/structural/README.md)
 contiene además capacidades futuras; no todas sus variantes están implementadas.
+
+El rediseño independiente [KQL 2](design/kql2/README.md) define la próxima sintaxis
+y sus contratos. Tiene un [backend experimental parcial](design/kql2/implementation-status.md)
+separado: sus ejemplos no se ejecutan con este parser KQL 1. Esta guía sigue
+describiendo exclusivamente KQL 1. Los 33 TOML GoF/modernos activos ya usan
+[el perfil de grafo KQL 2](design/kql2/graph-queries.md); los ejemplos KenQL de
+esta guía conservan compatibilidad con sus IDs publicados.
 
 Para diseñar una búsqueda, empezar por [las construcciones disponibles](#lenguaje-disponible)
 y [la composición mediante operaciones públicas](#operaciones-públicas-reutilizables).
 La [referencia del grafo](structural-ir.md#representation-contract) distingue
 operandos fuente y valores de consulta; [IR y precisión](#ir-y-precisión) explica
 los estados y límites que hay que consultar antes de interpretar un resultado vacío.
+
+## Evidencia de implementación desde IR 1.77
+
+Una declaración no prueba que se ejecute un algoritmo. El catálogo conserva
+`HAS_FIELD`/`HAS_METHOD` para la estructura y filtra la evidencia de implementación:
+
+```kenql
+query explicit_delegation {
+ require $unit HAS_FIELD $dependency;
+ require $unit HAS_METHOD $method;
+ require $method HAS_CALL $call [execution:possible];
+ require $call RECEIVER $dependency;
+ emit $unit, $method, $dependency, $call;
+}
+```
+
+`execution:possible` excluye sufijos demostrablemente inalcanzables por salidas
+incondicionales; no prueba factibilidad ni ejecución. Para buscar código muerto
+se puede usar `call(execution:unreachable)`. Los generadores conservan su contrato
+sintáctico aunque no lleguen a producir elementos.
+
+`STORAGE_WRITE_COUNT`, `INDEXED_WRITE_COUNT`, `BASE_INPUT`, `CAST_VALUE`,
+`TYPE_PARAMETER_OWNER` y los contratos de preservación están documentados con sus
+límites en [IR 1.77](structural-ir.md#catalog-precision-contracts-ir-177).
+Los atributos de hechos son predicados literales: `[owner:$unit]` no vincula un
+rol. Para relacionar entidades se necesita una arista, por ejemplo
+`require $call TYPE_PARAMETER_OWNER $unit;`.
+
+El [reporte del catálogo](structural-validation/catalog-corrections-2026-09-14/README.md)
+distingue oráculos positivos/negativos de TP/TN/FP/FN observados. Un `xfail`
+representa una discrepancia pendiente, nunca una detección correcta.
 
 ## Consultas nombradas
 

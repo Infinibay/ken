@@ -1,0 +1,123 @@
+{
+  "scope": "Same one-operation exact lookup amid 1000/10000 operations; original global attribute IN plus unhinted count versus correlated EXISTS plus explicit physical access; VM instruction counts, not full-repository timings",
+  "runs": [
+    {
+      "operations": 1000,
+      "plans": {
+        "before_count": [
+          "SEARCH f USING PRIMARY KEY (graph_id=?)",
+          "LIST SUBQUERY 2",
+          "COMPOUND QUERY",
+          "LEFT-MOST SUBQUERY",
+          "SEARCH k2_graph_members USING COVERING INDEX k2_graph_member_value (graph_id=? AND key=? AND comparison=?)",
+          "CREATE BLOOM FILTER",
+          "UNION ALL",
+          "SEARCH a USING COVERING INDEX k2_graph_operation_attributes_kind (graph_id=? AND kind=?)",
+          "CREATE BLOOM FILTER"
+        ],
+        "before_read": [
+          "SEARCH s USING PRIMARY KEY (graph_id=? AND term_id=?)",
+          "SEARCH r USING PRIMARY KEY (graph_id=? AND term_id=?)",
+          "SEARCH f USING INDEX k2_graph_fact_forward (graph_id=? AND relation=? AND subject=?)",
+          "LIST SUBQUERY 2",
+          "COMPOUND QUERY",
+          "LEFT-MOST SUBQUERY",
+          "SEARCH k2_graph_members USING COVERING INDEX k2_graph_member_value (graph_id=? AND key=? AND comparison=?)",
+          "CREATE BLOOM FILTER",
+          "UNION ALL",
+          "SEARCH a USING COVERING INDEX k2_graph_operation_attributes_kind (graph_id=? AND kind=?)",
+          "CREATE BLOOM FILTER",
+          "SEARCH o USING PRIMARY KEY (graph_id=? AND term_id=?)"
+        ],
+        "after_count": [
+          "SEARCH f USING INDEX k2_graph_fact_forward (graph_id=? AND relation=? AND subject=?)",
+          "CORRELATED SCALAR SUBQUERY 2",
+          "COMPOUND QUERY",
+          "LEFT-MOST SUBQUERY",
+          "SEARCH k2_graph_members USING COVERING INDEX k2_graph_member_value (graph_id=? AND key=? AND comparison=? AND parent=?)",
+          "UNION ALL",
+          "SEARCH a USING PRIMARY KEY (graph_id=? AND fact_ordinal=?)"
+        ],
+        "after_read": [
+          "SEARCH s USING PRIMARY KEY (graph_id=? AND term_id=?)",
+          "SEARCH r USING PRIMARY KEY (graph_id=? AND term_id=?)",
+          "SEARCH f USING INDEX k2_graph_fact_forward (graph_id=? AND relation=? AND subject=?)",
+          "CORRELATED SCALAR SUBQUERY 2",
+          "COMPOUND QUERY",
+          "LEFT-MOST SUBQUERY",
+          "SEARCH k2_graph_members USING COVERING INDEX k2_graph_member_value (graph_id=? AND key=? AND comparison=? AND parent=?)",
+          "UNION ALL",
+          "SEARCH a USING PRIMARY KEY (graph_id=? AND fact_ordinal=?)",
+          "SEARCH o USING PRIMARY KEY (graph_id=? AND term_id=?)"
+        ]
+      },
+      "before": {
+        "count_vm_steps": 14111,
+        "read_vm_steps": 8121
+      },
+      "after": {
+        "count_vm_steps": 91,
+        "read_vm_steps": 127
+      }
+    },
+    {
+      "operations": 10000,
+      "plans": {
+        "before_count": [
+          "SEARCH f USING PRIMARY KEY (graph_id=?)",
+          "LIST SUBQUERY 2",
+          "COMPOUND QUERY",
+          "LEFT-MOST SUBQUERY",
+          "SEARCH k2_graph_members USING COVERING INDEX k2_graph_member_value (graph_id=? AND key=? AND comparison=?)",
+          "CREATE BLOOM FILTER",
+          "UNION ALL",
+          "SEARCH a USING COVERING INDEX k2_graph_operation_attributes_kind (graph_id=? AND kind=?)",
+          "CREATE BLOOM FILTER"
+        ],
+        "before_read": [
+          "SEARCH s USING PRIMARY KEY (graph_id=? AND term_id=?)",
+          "SEARCH r USING PRIMARY KEY (graph_id=? AND term_id=?)",
+          "SEARCH f USING INDEX k2_graph_fact_forward (graph_id=? AND relation=? AND subject=?)",
+          "LIST SUBQUERY 2",
+          "COMPOUND QUERY",
+          "LEFT-MOST SUBQUERY",
+          "SEARCH k2_graph_members USING COVERING INDEX k2_graph_member_value (graph_id=? AND key=? AND comparison=?)",
+          "CREATE BLOOM FILTER",
+          "UNION ALL",
+          "SEARCH a USING COVERING INDEX k2_graph_operation_attributes_kind (graph_id=? AND kind=?)",
+          "CREATE BLOOM FILTER",
+          "SEARCH o USING PRIMARY KEY (graph_id=? AND term_id=?)"
+        ],
+        "after_count": [
+          "SEARCH f USING INDEX k2_graph_fact_forward (graph_id=? AND relation=? AND subject=?)",
+          "CORRELATED SCALAR SUBQUERY 2",
+          "COMPOUND QUERY",
+          "LEFT-MOST SUBQUERY",
+          "SEARCH k2_graph_members USING COVERING INDEX k2_graph_member_value (graph_id=? AND key=? AND comparison=? AND parent=?)",
+          "UNION ALL",
+          "SEARCH a USING PRIMARY KEY (graph_id=? AND fact_ordinal=?)"
+        ],
+        "after_read": [
+          "SEARCH s USING PRIMARY KEY (graph_id=? AND term_id=?)",
+          "SEARCH r USING PRIMARY KEY (graph_id=? AND term_id=?)",
+          "SEARCH f USING INDEX k2_graph_fact_forward (graph_id=? AND relation=? AND subject=?)",
+          "CORRELATED SCALAR SUBQUERY 2",
+          "COMPOUND QUERY",
+          "LEFT-MOST SUBQUERY",
+          "SEARCH k2_graph_members USING COVERING INDEX k2_graph_member_value (graph_id=? AND key=? AND comparison=? AND parent=?)",
+          "UNION ALL",
+          "SEARCH a USING PRIMARY KEY (graph_id=? AND fact_ordinal=?)",
+          "SEARCH o USING PRIMARY KEY (graph_id=? AND term_id=?)"
+        ]
+      },
+      "before": {
+        "count_vm_steps": 140111,
+        "read_vm_steps": 80121
+      },
+      "after": {
+        "count_vm_steps": 91,
+        "read_vm_steps": 127
+      }
+    }
+  ]
+}

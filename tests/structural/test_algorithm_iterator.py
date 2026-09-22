@@ -1,6 +1,8 @@
 """Iterator protocols are separate from bounded traversal correctness."""
 import pytest
 
+from .contract_support import contract_matches
+
 from ken.structural.frontend import lower_source
 from ken.structural.rules import builtin_rules, execute_rules, named_rule
 from ken.structural.semantic import link_project
@@ -71,14 +73,14 @@ def test_cursor_without_observable_advance_is_rejected(language):
 
 @pytest.mark.parametrize('language', CURSORS)
 @pytest.mark.parametrize('mutation', ['no-progress','unrelated-result'])
-@pytest.mark.xfail(strict=True, reason='Finite-sequence refinement does not prove numeric progress or returned element provenance')
 def test_requested_finite_sequence_contract_rejects_broken_traversal(language, mutation):
     text = instrument(CURSORS[language], language)
     if mutation == 'no-progress':
         text = text.replace('index+1', 'index+0')
     else:
         text = text.replace('return value', 'return 0')
-    assert not detect(text, language)
+    assert contract_matches(instrument(CURSORS[language], language), language, 'iterator.advancing_element')
+    assert not contract_matches(text, language, 'iterator.advancing_element')
 
 
 GENERATORS = {

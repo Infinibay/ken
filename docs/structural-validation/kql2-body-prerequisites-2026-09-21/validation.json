@@ -1,0 +1,33 @@
+{
+  "command": "PYTHONHASHSEED=0 PYTHONPATH=src:. .venv/bin/python -m pytest tests/kql2 tests/structural -o addopts='' -q --tb=short",
+  "exit_code": 0,
+  "passed": 13272,
+  "xfailed": 10,
+  "seconds": 399.25,
+  "new_tests": 70,
+  "typing": {
+    "clean_modules": [
+      "ken.kql2.body_operations",
+      "ken.kql2.source_candidates",
+      "ken.structural.relational",
+      "ken.structural.relational_planning",
+      "ken.structural.relational_profile",
+      "ken.structural_store.graph_index"
+    ],
+    "flags": [
+      "--follow-imports=silent",
+      "--disable-error-code=import-untyped"
+    ],
+    "body": {
+      "before_existing_errors": 389,
+      "after_existing_errors": 383,
+      "new_errors": 0
+    }
+  },
+  "empty_input_followup": {
+    "test": "tests/kql2/test_body_operation_candidates.py::test_prebound_unknown_owner_is_not_pruned_by_operation_inventory",
+    "passed": 1,
+    "seconds": 0.24,
+    "note": "Verified the empty-input guard added during the broad run; other execution paths are unchanged."
+  }
+}

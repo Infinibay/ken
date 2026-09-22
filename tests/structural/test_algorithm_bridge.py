@@ -1,6 +1,8 @@
 """Bridge algorithm flow refinements; nominal hierarchy tests live elsewhere."""
 import pytest
 
+from .contract_support import contract_matches
+
 from ken.structural.rules import SavedRule, builtin_rules, execute_rules
 from .test_refined_bridge import detect, source
 
@@ -84,10 +86,10 @@ def test_field_replacement_makes_return_origin_analysis_unsupported(language):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Injected-backend refinement does not correlate constructor input with stored implementation')
 def test_requested_injected_backend_contract_rejects_ignored_selection(language):
     text = body(language, statements(language))
     text = text.replace('self.driver:Driver=driver', 'self.driver:Driver=First()').replace('this.driver=driver;', 'this.driver=new First();')
     # A fixed-backend Bridge definition can remain valid. This is specifically
     # the still-missing contract that the supplied constructor input is used.
-    assert not refined(text, language)
+    assert contract_matches(body(language, statements(language)), language, 'bridge.injected_returned_primitive')
+    assert not contract_matches(text, language, 'bridge.injected_returned_primitive')

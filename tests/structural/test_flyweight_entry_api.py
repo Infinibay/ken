@@ -268,7 +268,7 @@ def test_variant_declares_every_target_language_as_ready():
     assert row['languages'] == LANGUAGES
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'RECEIVER' in row['query'] and 'MEMBER_OF' in row['query']
+    assert 'receiver: $pool' in row['query'] and 'or_insert_with' in row['query']
     assert 'exactly-once' in row['query_claim']
 
 

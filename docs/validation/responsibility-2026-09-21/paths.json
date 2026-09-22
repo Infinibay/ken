@@ -1,0 +1,167 @@
+{
+  "ok": true,
+  "question": "Who resolves paths and requires them to remain inside the project?",
+  "hypotheses": [],
+  "status": "candidates",
+  "candidates": [
+    {
+      "symbol": "resolve_project_path",
+      "path": "src/ken/_paths.py",
+      "line": 51,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.75,
+        "band": "strong",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who resolves paths and requires them to remain inside the project?",
+      "documentation": "Resolve *path* and require it to remain inside *project_root*.\n\nRelative paths are interpreted from the project root. Absolute paths are\naccepted when they point inside it. Resolving both sides before the\ncontainment check also rejects ``..`` traversal and escapes through\nexisting symbolic links.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.7285714285714285,
+          "explanation": "Documentation similarity 0.625; term coverage 0.857 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.42857142857142855,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "e6af40a5215554d99b9614b89d93732193e8faa027bdf5b40b5cea72de116af1",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/_paths.py",
+        "qualname": "resolve_project_path",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "project_stopwords",
+      "path": "src/ken/nametokens.py",
+      "line": 90,
+      "kind": "function",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.477,
+        "band": "weak",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who resolves paths and requires them to remain inside the project?",
+      "documentation": "Tokens from the project's own name, which appear in nearly every path.\n\nDerived from `project_root.name` alone, so it is invariant for the life of a\nproject \u2014 which is what makes it safe to bake into the stored postings rather\nthan recompute per query.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.4696063995361328,
+          "explanation": "Documentation similarity 0.470; term coverage 0.286 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        },
+        {
+          "reasoner": "name",
+          "direction": "supports",
+          "strength": 0.14285714285714285,
+          "explanation": "The symbol name shares responsibility terms.",
+          "assumption": "The name reflects behavior; a name alone does not prove it."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior.",
+        "The name reflects behavior; a name alone does not prove it."
+      ],
+      "source": {
+        "sha256": "694ae21c1289a69aa6b1a6062db6eaf832ad6639ae015126fcbfb643d78e1c85",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/nametokens.py",
+        "qualname": "project_stopwords",
+        "include": [
+          "source"
+        ]
+      }
+    },
+    {
+      "symbol": "AliasResolver.is_internal_shape",
+      "path": "src/ken/jsresolve.py",
+      "line": 122,
+      "kind": "method",
+      "status": "hypothesis",
+      "confidence": {
+        "score": 0.464,
+        "band": "weak",
+        "calibrated": false,
+        "probability": null,
+        "policy": "responsibility-evidence/1"
+      },
+      "matched_formulation": "Who resolves paths and requires them to remain inside the project?",
+      "documentation": "True if *module* matches a tsconfig path alias or a workspace package\nname \u2014 i.e. it is *meant* to resolve internally, even if the target file\nis missing. Used to tell a resolution gap apart from an external dep.",
+      "evidence": [
+        {
+          "reasoner": "documentation",
+          "direction": "supports",
+          "strength": 0.46365591883659363,
+          "explanation": "Documentation similarity 0.464; term coverage 0.286 (correlated signals, combined by max).",
+          "assumption": "The documentation accurately describes this symbol's current behavior."
+        }
+      ],
+      "assumptions": [
+        "The documentation accurately describes this symbol's current behavior."
+      ],
+      "source": {
+        "sha256": "228919f225dffc74d193d6e24cab7fe093aed4ec7c8d507e722b3079169efd0a",
+        "index_changed": false,
+        "documentation_scope": "full",
+        "behavior_verified": false
+      },
+      "inspect": {
+        "tool": "ken_read",
+        "path": "src/ken/jsresolve.py",
+        "qualname": "AliasResolver.is_internal_shape",
+        "include": [
+          "source"
+        ]
+      }
+    }
+  ],
+  "counterevidence": [],
+  "assessment": {
+    "kind": "heuristic",
+    "calibrated": false,
+    "probability": null,
+    "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+  },
+  "coverage": {
+    "scope": "src/ken",
+    "indexed_symbols": 1965,
+    "inspected_symbols": 40,
+    "candidate_limit": 40,
+    "exhaustive": false,
+    "include_tests": false,
+    "issues": [],
+    "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+  }
+}

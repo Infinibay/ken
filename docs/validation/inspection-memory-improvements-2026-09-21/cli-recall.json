@@ -1,0 +1,30 @@
+{
+  "memories": [
+    {
+      "topic": "inspeccion-bajo-demanda",
+      "conclusion": "En la evaluaci\u00f3n del 21-09-2026 sobre 271 archivos de src, impact para vectors.py::_atomic_write pas\u00f3 de timeout a 30 s a 2,87 s en cach\u00e9 nueva y 1,28 s al repetir; query_view respondi\u00f3 en 10\u201312 s con presupuesto de 30 s. Se adquieren 1 y 5 grafos de archivo, pero a\u00fan se leen todos los imports del alcance. El rendimiento no garantiza cobertura: source_body:unknown y usage_inventory_open permanecen. Trampas: una alternativa de import ausente debe conservar MAY_TARGET; ubicaciones CALL no son nodos CALLABLE. Un watchdog que mata el publisher puede dejar una lease pendiente; no interpretar el reintento fallido como ausencia de llamadas.",
+      "conclusion_complete": true,
+      "kind": "observation",
+      "validity": {
+        "state": "unchanged"
+      },
+      "assumptions": [
+        "Mediciones de esta m\u00e1quina y estos objetivos; no son una estimaci\u00f3n general de rendimiento."
+      ],
+      "sources": [
+        {
+          "path": "docs/validation/inspection-memory-improvements-2026-09-21/README.md",
+          "note": "Resultados, metodolog\u00eda, fuentes de m\u00e9tricas y l\u00edmites."
+        }
+      ],
+      "expand": {
+        "topic": "inspeccion-bajo-demanda",
+        "detail": "full"
+      },
+      "reuse": "consider_if_question_and_assumptions_match"
+    }
+  ],
+  "omitted": 0,
+  "detail": "answer",
+  "validity_scope": "Declared inputs only; the conclusion and assumptions are not independently proved."
+}

@@ -1,3 +1,4 @@
+query_language = "kql/2"
 id = "architecture.batch-work-queue"
 name = "Batch Work Queue"
 description = "Stores supplied work items and activates them from another method before an explicit same-block collection reset."
@@ -5,9 +6,17 @@ collections = ["modern", "architecture"]
 tags = ["web", "batch", "deferred-work"]
 caveat = "Structural batch-work shape; does not prove FIFO, exactly-once delivery, termination, successful execution, atomic draining, alias stability or API identity. One-shot callbacks can share this shape."
 query = '''
-query batch_work_queue {
- match "architecture.batch-work-queue.drain"(unit:$unit,queue:$queue,consume:$consume);
- emit $unit, $queue, $consume;
+language "kql/2";
+module ken.catalog.architecture.batch_work_queue;
+import ken.catalog.architecture.batch_work_queue.drain;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $queue, out GraphTerm $consume) {
+  use ken.catalog.architecture.batch_work_queue.drain.detect(unit: $unit, queue: $queue, consume: $consume);
+}
+
+query results {
+  use detect(unit: $unit, queue: $queue, consume: $consume);
+  select $unit, $queue, $consume;
 }
 '''
 
@@ -16,9 +25,17 @@ id = "stored-batch"
 status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp"]
 query = '''
-query stored_batch {
- match "architecture.batch-work-queue.drain"(unit:$unit,queue:$queue,consume:$consume);
- emit $unit, $queue, $consume;
+language "kql/2";
+module ken.catalog.architecture.batch_work_queue.variants.stored_batch;
+import ken.catalog.architecture.batch_work_queue.drain;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $queue, out GraphTerm $consume) {
+  use ken.catalog.architecture.batch_work_queue.drain.detect(unit: $unit, queue: $queue, consume: $consume);
+}
+
+query results {
+  use detect(unit: $unit, queue: $queue, consume: $consume);
+  select $unit, $queue, $consume;
 }
 '''
 
@@ -28,26 +45,40 @@ status = "ready"
 description = "Expose registration, iteration, item activation and subsequent reset of the same collection field."
 caveat = "Same-block lexical reset evidence, not a runtime consumption or progress guarantee. Clear/Clear calls are API shapes."
 query = '''
-query drain {
- require $unit HAS_FIELD $queue;
- require $unit HAS_METHOD $register;
- require $register HAS_PARAMETER $input;
- parameter(receiver: false) as $input;
- require $register HAS_CALL $insert;
- require $insert INSERTS_INTO $queue;
- require $insert INSERTED_INPUT $input;
- require $unit HAS_METHOD $consume;
- different $register $consume;
- require $consume HAS_OPERATION $iteration;
- require $iteration ITERATION_SOURCE $queue;
- require $iteration ITERATION_BINDING $item [role: value];
- require $iteration ITERATION_INVOKES_VALUE $dispatch;
- require $dispatch RECEIVER $item;
- call(explicit_arguments: 0) as $dispatch;
- require $consume HAS_OPERATION $statement;
- require $statement DISCARDS_RESULT $dispatch;
- require $reset CLEARS_COLLECTION $queue;
- require $reset AFTER_ITERATION $iteration;
- emit $unit, $queue, $register, $input, $consume, $iteration, $item, $dispatch, $reset;
+language "kql/2";
+module ken.catalog.architecture.batch_work_queue.drain;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $queue, out GraphTerm $register, out GraphTerm $input, out GraphTerm $consume, out GraphTerm $iteration, out GraphTerm $item, out Call $dispatch, out GraphTerm $reset) {
+  type $unit {
+    field $queue {}
+    method $register { constructor: false; param $input {} }
+    method $consume { constructor: false; }
+  }
+  where $register != $consume;
+  method $register {
+    body {
+      insert $input into $queue as $local_insert;
+    }
+  }
+  method $consume {
+    body {
+      iterate $queue as $item as $iteration {
+        body {
+          call on $item { discarded: true; } as $dispatch;
+        }
+      }
+    }
+  }
+  method $consume {
+    body {
+      clear $queue after $iteration as $reset;
+    }
+  }
+  where $dispatch.explicit_arguments == 0;
+}
+
+query results {
+  use detect(unit: $unit, queue: $queue, register: $register, input: $input, consume: $consume, iteration: $iteration, item: $item, dispatch: $dispatch, reset: $reset);
+  select $unit, $queue, $register, $input, $consume, $iteration, $item, $dispatch, $reset;
 }
 '''

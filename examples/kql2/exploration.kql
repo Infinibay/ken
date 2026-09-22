@@ -1,0 +1,27 @@
+language "kql/2";
+module syntax_examples;
+
+query returns_with_calls {
+  node $return { kind: "return"; }
+  where exists(CodeNode $call |
+    $call.kind == "call" and contains($return, $call)
+  );
+  select $return.path, $return.line;
+  order by $return.path asc, $return.line asc;
+}
+
+query functions_with_branch_and_return {
+  node $function { kind: "callable"; }
+  where exists(CodeNode $branch |
+    $branch.kind == "if" and contains($function, $branch)
+  );
+  where exists(CodeNode $return |
+    $return.kind == "return" and contains($function, $return)
+  );
+  select $function.path, $function.name, $function.line;
+}
+
+query branches {
+  node $branch { kind: "if"; }
+  select $branch.path, $branch.line;
+}

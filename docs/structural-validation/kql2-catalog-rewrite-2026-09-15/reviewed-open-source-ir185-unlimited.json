@@ -1,0 +1,3505 @@
+{
+  "schema": "ken-reviewed-open-source/1",
+  "ir_version": "1.85.0",
+  "budget": {
+    "max_rows": null,
+    "max_states": null,
+    "max_matches": null,
+    "timeout_ms": null
+  },
+  "labels_sha256": "096103087ecd6b6f8f31c3682f9f8e0c2e02d8df53d2b4bca2fb6a7dd6ebee86",
+  "runner_sha256": "203042fa6a22382481b539fedbe7c46cf7d01d765f17fa6aeab52e7129cd80df",
+  "counts": {
+    "TP": 11,
+    "FP": 1,
+    "TN": 5,
+    "FN": 3,
+    "ambiguous": 2
+  },
+  "results": [
+    {
+      "id": "python-patterns/patterns/structural/composite.py:composite/CompositeGraphic",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/structural/composite.py",
+      "rule": "composite",
+      "entity": "CompositeGraphic",
+      "expected": true,
+      "why": "CompositeGraphic implements Graphic and recursively renders its stored Graphic children.",
+      "files": [
+        {
+          "path": "patterns/structural/composite.py",
+          "sha256": "e2e419ec9ecacc4c8086d8738894a443251dc29fe799d106a9453a243d2ded48"
+        }
+      ],
+      "actual": true,
+      "verdict": "TP",
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "diagnostics": [],
+      "build_ms": 48.28233411535621,
+      "query_ms": 4.37479093670845,
+      "stats": {
+        "states": 419,
+        "rows_examined": 46,
+        "elapsed_ms": 4.356,
+        "dependencies": [
+          "1f887a2c582b59b0b2ed57f8c89dfdc4b2f927cf921137eb6a4a0631c9147912:ken.catalog.composite.variants.algebraic_tree.detect",
+          "1f887a2c582b59b0b2ed57f8c89dfdc4b2f927cf921137eb6a4a0631c9147912:ken.catalog.composite.variants.higher_order_traversal.detect",
+          "1f887a2c582b59b0b2ed57f8c89dfdc4b2f927cf921137eb6a4a0631c9147912:ken.catalog.composite.variants.recursive_contract.detect",
+          "1f887a2c582b59b0b2ed57f8c89dfdc4b2f927cf921137eb6a4a0631c9147912:ken.catalog.composite.variants.recursive_nominal.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "patterns/structural/composite.py::module/CLASS:CompositeGraphic"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "query": "1f887a2c582b59b0b2ed57f8c89dfdc4b2f927cf921137eb6a4a0631c9147912:ken.catalog.composite.variants.recursive_contract.detect",
+              "proof": "",
+              "evidence": [
+                {
+                  "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic",
+                  "relation": "HAS_FIELD",
+                  "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/STORAGE:graphics",
+                  "source": [
+                    "patterns/structural/composite.py:40"
+                  ]
+                },
+                {
+                  "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic",
+                  "relation": "ENTITY",
+                  "object": "CLASS",
+                  "source": [
+                    "patterns/structural/composite.py:38"
+                  ]
+                },
+                {
+                  "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/STORAGE:graphics",
+                  "relation": "ENTITY",
+                  "object": "STORAGE",
+                  "source": [
+                    "patterns/structural/composite.py:40"
+                  ]
+                },
+                {
+                  "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic",
+                  "relation": "SUBTYPE_OF",
+                  "object": "patterns/structural/composite.py::module/CLASS:Graphic",
+                  "source": [
+                    "patterns/structural/composite.py:38"
+                  ]
+                },
+                {
+                  "subject": "patterns/structural/composite.py::module/CLASS:Graphic",
+                  "relation": "ENTITY",
+                  "object": "CLASS",
+                  "source": [
+                    "patterns/structural/composite.py:32"
+                  ]
+                },
+                {
+                  "subject": "patterns/structural/composite.py::module/CLASS:Graphic",
+                  "relation": "HAS_METHOD",
+                  "object": "patterns/structural/composite.py::module/CLASS:Graphic/CALLABLE:render@1262",
+                  "source": [
+                    "patterns/structural/composite.py:34"
+                  ]
+                },
+                {
+                  "subject": "patterns/structural/composite.py::module/CLASS:Graphic/CALLABLE:render@1262",
+                  "relation": "ENTITY",
+                  "object": "CALLABLE",
+                  "source": [
+                    "patterns/structural/composite.py:34"
+                  ]
+                },
+                {
+                  "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:render@1466",
+                  "relation": "OVERRIDES",
+                  "object": "patterns/structural/composite.py::module/CLASS:Graphic/CALLABLE:render@1262",
+                  "source": [
+                    "patterns/structural/composite.py:42"
+                  ]
+                },
+                {
+                  "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:render@1466",
+                  "relation": "ENTITY",
+                  "object": "CALLABLE",
+                  "source": [
+                    "patterns/structural/composite.py:42"
+                  ]
+                },
+                {
+                  "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic",
+                  "relation": "HAS_METHOD",
+                  "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:render@1466",
+                  "source": [
+                    "patterns/structural/composite.py:42"
+                  ]
+                },
+                {
+                  "body_owner": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:render@1466"
+                }
+              ]
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "python-patterns/patterns/structural/composite.py:observer/CompositeGraphic",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/structural/composite.py",
+      "rule": "observer",
+      "entity": "CompositeGraphic",
+      "expected": false,
+      "why": "Rendering children is not event notification; add/remove and iteration alone collide with Observer.",
+      "files": [
+        {
+          "path": "patterns/structural/composite.py",
+          "sha256": "e2e419ec9ecacc4c8086d8738894a443251dc29fe799d106a9453a243d2ded48"
+        }
+      ],
+      "actual": true,
+      "verdict": "FP",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 48.28233411535621,
+      "query_ms": 1.3029580004513264,
+      "stats": {
+        "states": 84,
+        "rows_examined": 31,
+        "elapsed_ms": 1.274,
+        "dependencies": [
+          "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.event_bus.detect",
+          "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.language_event.detect",
+          "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.listener_registry.detect",
+          "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.map_key_registry.detect",
+          "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.registered_listeners.detect",
+          "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.snapshot_registry.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "patterns/structural/composite.py::module/CLASS:CompositeGraphic"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "alternatives": [
+                {
+                  "evidence": [
+                    {
+                      "query": "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.listener_registry.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:add@1564/CALL:1613@1613:1642",
+                          "relation": "INSERTS_INTO",
+                          "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/STORAGE:graphics",
+                          "source": [
+                            "patterns/structural/composite.py:47"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:add@1564/CALL:1613@1613:1642",
+                          "relation": "INSERTED_VALUE",
+                          "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:add@1564/PARAMETER:graphic@1578",
+                          "source": [
+                            "patterns/structural/composite.py:47"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:add@1564",
+                          "relation": "HAS_CALL",
+                          "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:add@1564/CALL:1613@1613:1642",
+                          "source": [
+                            "patterns/structural/composite.py:47"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:add@1564",
+                          "relation": "HAS_PARAMETER",
+                          "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:add@1564/PARAMETER:graphic@1578",
+                          "source": [
+                            "patterns/structural/composite.py:46"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:add@1564/PARAMETER:graphic@1578",
+                          "relation": "ENTITY",
+                          "object": "PARAMETER",
+                          "source": [
+                            "patterns/structural/composite.py:46"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic",
+                          "relation": "HAS_FIELD",
+                          "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/STORAGE:graphics",
+                          "source": [
+                            "patterns/structural/composite.py:40"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic",
+                          "relation": "HAS_METHOD",
+                          "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:add@1564",
+                          "source": [
+                            "patterns/structural/composite.py:46"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:render@1466",
+                          "relation": "ITERATES_CALLS",
+                          "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/STORAGE:graphics",
+                          "source": [
+                            "patterns/structural/composite.py:44"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic",
+                          "relation": "HAS_METHOD",
+                          "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:render@1466",
+                          "source": [
+                            "patterns/structural/composite.py:42"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                },
+                {
+                  "evidence": [
+                    {
+                      "query": "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.registered_listeners.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:add@1564",
+                          "relation": "WRITES_ELEMENT",
+                          "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/STORAGE:graphics",
+                          "source": [
+                            "patterns/structural/composite.py:47"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/STORAGE:graphics",
+                          "relation": "ENTITY",
+                          "object": "STORAGE",
+                          "source": [
+                            "patterns/structural/composite.py:40"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic",
+                          "relation": "HAS_FIELD",
+                          "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/STORAGE:graphics",
+                          "source": [
+                            "patterns/structural/composite.py:40"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic",
+                          "relation": "ENTITY",
+                          "object": "CLASS",
+                          "source": [
+                            "patterns/structural/composite.py:38"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:add@1564",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "patterns/structural/composite.py:46"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic",
+                          "relation": "HAS_METHOD",
+                          "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:add@1564",
+                          "source": [
+                            "patterns/structural/composite.py:46"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:render@1466",
+                          "relation": "ITERATES_CALLS",
+                          "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/STORAGE:graphics",
+                          "source": [
+                            "patterns/structural/composite.py:44"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:render@1466",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "patterns/structural/composite.py:42"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/structural/composite.py::module/CLASS:CompositeGraphic",
+                          "relation": "HAS_METHOD",
+                          "object": "patterns/structural/composite.py::module/CLASS:CompositeGraphic/CALLABLE:render@1466",
+                          "source": [
+                            "patterns/structural/composite.py:42"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                }
+              ],
+              "truncated": false
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "python-patterns/patterns/structural/composite.py:singleton/CompositeGraphic",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/structural/composite.py",
+      "rule": "singleton",
+      "entity": "CompositeGraphic",
+      "expected": false,
+      "why": "No shared accessor or unique stored instance.",
+      "files": [
+        {
+          "path": "patterns/structural/composite.py",
+          "sha256": "e2e419ec9ecacc4c8086d8738894a443251dc29fe799d106a9453a243d2ded48"
+        }
+      ],
+      "actual": false,
+      "verdict": "TN",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 48.28233411535621,
+      "query_ms": 1.1935841757804155,
+      "stats": {
+        "states": 51,
+        "rows_examined": 8,
+        "elapsed_ms": 1.171,
+        "dependencies": [
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.lazy_instance.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.shared_instance.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.variants.eager_shared.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.variants.lazy_guarded.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.variants.module_shared.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.variants.once_primitive.detect"
+        ]
+      },
+      "matches": []
+    },
+    {
+      "id": "python-patterns/patterns/behavioral/observer.py:observer/Subject",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/behavioral/observer.py",
+      "rule": "observer",
+      "entity": "Subject",
+      "expected": true,
+      "why": "Subject attaches and detaches dependents and notify calls update(self); Data.data invokes notify on change.",
+      "files": [
+        {
+          "path": "patterns/behavioral/observer.py",
+          "sha256": "b4557f29fc63a7d8cfaf49be73f22c5be567546478714f9a76d8b917fa553a28"
+        }
+      ],
+      "actual": true,
+      "verdict": "TP",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 14.485500054433942,
+      "query_ms": 0.8887080475687981,
+      "stats": {
+        "states": 84,
+        "rows_examined": 31,
+        "elapsed_ms": 0.873,
+        "dependencies": [
+          "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.event_bus.detect",
+          "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.language_event.detect",
+          "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.listener_registry.detect",
+          "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.map_key_registry.detect",
+          "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.registered_listeners.detect",
+          "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.snapshot_registry.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "patterns/behavioral/observer.py::module/CLASS:Subject"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "alternatives": [
+                {
+                  "evidence": [
+                    {
+                      "query": "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.listener_registry.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:attach@798/CALL:1048@1048:1080",
+                          "relation": "INSERTS_INTO",
+                          "object": "patterns/behavioral/observer.py::module/CLASS:Subject/STORAGE:_observers",
+                          "source": [
+                            "patterns/behavioral/observer.py:45"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:attach@798/CALL:1048@1048:1080",
+                          "relation": "INSERTED_VALUE",
+                          "object": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:attach@798/PARAMETER:observer@815",
+                          "source": [
+                            "patterns/behavioral/observer.py:45"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:attach@798",
+                          "relation": "HAS_CALL",
+                          "object": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:attach@798/CALL:1048@1048:1080",
+                          "source": [
+                            "patterns/behavioral/observer.py:45"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:attach@798",
+                          "relation": "HAS_PARAMETER",
+                          "object": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:attach@798/PARAMETER:observer@815",
+                          "source": [
+                            "patterns/behavioral/observer.py:37"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:attach@798/PARAMETER:observer@815",
+                          "relation": "ENTITY",
+                          "object": "PARAMETER",
+                          "source": [
+                            "patterns/behavioral/observer.py:37"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject",
+                          "relation": "HAS_FIELD",
+                          "object": "patterns/behavioral/observer.py::module/CLASS:Subject/STORAGE:_observers",
+                          "source": [
+                            "patterns/behavioral/observer.py:29"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject",
+                          "relation": "HAS_METHOD",
+                          "object": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:attach@798",
+                          "source": [
+                            "patterns/behavioral/observer.py:37"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:notify@1389",
+                          "relation": "ITERATES_CALLS",
+                          "object": "patterns/behavioral/observer.py::module/CLASS:Subject/STORAGE:_observers",
+                          "source": [
+                            "patterns/behavioral/observer.py:64"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject",
+                          "relation": "HAS_METHOD",
+                          "object": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:notify@1389",
+                          "source": [
+                            "patterns/behavioral/observer.py:59"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                },
+                {
+                  "evidence": [
+                    {
+                      "query": "44833b7c10bc4044fcf89e4258b9afd1bc9434d165adbc630219d0e17f57eb74:ken.catalog.observer.variants.registered_listeners.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:attach@798",
+                          "relation": "WRITES_ELEMENT",
+                          "object": "patterns/behavioral/observer.py::module/CLASS:Subject/STORAGE:_observers",
+                          "source": [
+                            "patterns/behavioral/observer.py:45"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject/STORAGE:_observers",
+                          "relation": "ENTITY",
+                          "object": "STORAGE",
+                          "source": [
+                            "patterns/behavioral/observer.py:29"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject",
+                          "relation": "HAS_FIELD",
+                          "object": "patterns/behavioral/observer.py::module/CLASS:Subject/STORAGE:_observers",
+                          "source": [
+                            "patterns/behavioral/observer.py:29"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject",
+                          "relation": "ENTITY",
+                          "object": "CLASS",
+                          "source": [
+                            "patterns/behavioral/observer.py:28"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:attach@798",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "patterns/behavioral/observer.py:37"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject",
+                          "relation": "HAS_METHOD",
+                          "object": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:attach@798",
+                          "source": [
+                            "patterns/behavioral/observer.py:37"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:notify@1389",
+                          "relation": "ITERATES_CALLS",
+                          "object": "patterns/behavioral/observer.py::module/CLASS:Subject/STORAGE:_observers",
+                          "source": [
+                            "patterns/behavioral/observer.py:64"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:notify@1389",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "patterns/behavioral/observer.py:59"
+                          ]
+                        },
+                        {
+                          "subject": "patterns/behavioral/observer.py::module/CLASS:Subject",
+                          "relation": "HAS_METHOD",
+                          "object": "patterns/behavioral/observer.py::module/CLASS:Subject/CALLABLE:notify@1389",
+                          "source": [
+                            "patterns/behavioral/observer.py:59"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                }
+              ],
+              "truncated": false
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "python-patterns/patterns/behavioral/observer.py:abstract-factory/Subject",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/behavioral/observer.py",
+      "rule": "abstract-factory",
+      "entity": "Subject",
+      "expected": false,
+      "why": "The subject registers existing observers; it does not manufacture product families.",
+      "files": [
+        {
+          "path": "patterns/behavioral/observer.py",
+          "sha256": "b4557f29fc63a7d8cfaf49be73f22c5be567546478714f9a76d8b917fa553a28"
+        }
+      ],
+      "actual": false,
+      "verdict": "TN",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 14.485500054433942,
+      "query_ms": 6.195334019139409,
+      "stats": {
+        "states": 587,
+        "rows_examined": 63,
+        "elapsed_ms": 6.171,
+        "dependencies": [
+          "4bc159970b67fab1bafd914960c3aca2318fade34c76313d9c290569200ee507:ken.catalog.abstract_factory.variants.associated_products.detect",
+          "4bc159970b67fab1bafd914960c3aca2318fade34c76313d9c290569200ee507:ken.catalog.abstract_factory.variants.nominal_families.detect",
+          "4bc159970b67fab1bafd914960c3aca2318fade34c76313d9c290569200ee507:ken.catalog.abstract_factory.variants.structural_families.detect"
+        ]
+      },
+      "matches": []
+    },
+    {
+      "id": "python-patterns/patterns/structural/adapter.py:adapter/Adapter",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/structural/adapter.py",
+      "rule": "adapter",
+      "entity": "Adapter",
+      "expected": true,
+      "why": "__dict__.update installs supplied adapted methods; __getattr__ forwards other operations to obj. Requires dynamic member models.",
+      "files": [
+        {
+          "path": "patterns/structural/adapter.py",
+          "sha256": "ebf797920d47199796eba400fb880f11c9884b82bc05ef7455e750c2c02ae5a4"
+        }
+      ],
+      "actual": false,
+      "verdict": "FN",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 12.42599985562265,
+      "query_ms": 0.42304093949496746,
+      "stats": {
+        "states": 7,
+        "rows_examined": 0,
+        "elapsed_ms": 0.405,
+        "dependencies": [
+          "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.variants.class_adapter.detect",
+          "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.variants.functional_adapter.detect",
+          "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.variants.object_adapter.detect"
+        ]
+      },
+      "matches": []
+    },
+    {
+      "id": "python-patterns/patterns/behavioral/visitor.py:visitor/Visitor",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/behavioral/visitor.py",
+      "rule": "visitor",
+      "entity": "Visitor",
+      "expected": true,
+      "why": "Extrinsic Visitor selects visit_<type> along the node MRO using getattr, with a generic fallback; no accept(self) double dispatch.",
+      "files": [
+        {
+          "path": "patterns/behavioral/visitor.py",
+          "sha256": "60089a0c4838f5ad223f64da400e1bc4ad46d69b012644750f15d07f1778dbdf"
+        }
+      ],
+      "actual": false,
+      "verdict": "FN",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 8.811167208477855,
+      "query_ms": 0.594958895817399,
+      "stats": {
+        "states": 9,
+        "rows_examined": 1,
+        "elapsed_ms": 0.573,
+        "dependencies": [
+          "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.generic_visitor.detect",
+          "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.named_dispatch.detect",
+          "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.overloaded_dispatch.detect"
+        ]
+      },
+      "matches": []
+    },
+    {
+      "id": "python-patterns/patterns/behavioral/mediator.py:mediator/ChatRoom",
+      "repo": "python-patterns",
+      "revision": "47f7390d01f5d69a15fba915fb50e257b13d7864",
+      "url": "https://github.com/faif/python-patterns",
+      "scope": "patterns/behavioral/mediator.py",
+      "rule": "mediator",
+      "entity": "ChatRoom",
+      "expected": false,
+      "why": "The advertised example only formats a string; each User creates its own ChatRoom and no colleague receives the message. An upstream positive label is questionable.",
+      "files": [
+        {
+          "path": "patterns/behavioral/mediator.py",
+          "sha256": "758e9797e0fa907a283dbc68cebda7be0a1e16d1c9230543c9e195f18bf5c549"
+        }
+      ],
+      "actual": false,
+      "verdict": "TN",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 6.169375032186508,
+      "query_ms": 2.480875002220273,
+      "stats": {
+        "states": 459,
+        "rows_examined": 200,
+        "elapsed_ms": 2.465,
+        "dependencies": [
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.broadcast_colleagues.detect",
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.direct_colleagues.detect",
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.message_coordination.detect",
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.registered_colleagues.detect",
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.tag_dispatch.detect"
+        ]
+      },
+      "matches": []
+    },
+    {
+      "id": "cpp-patterns/adapter/ObjectAdapter.cpp:adapter/Adapter",
+      "repo": "cpp-patterns",
+      "revision": "4fae40666a970dc4c7901df54964d6ebcd80ba5c",
+      "url": "https://github.com/JakubVojvoda/design-patterns-cpp",
+      "scope": "adapter/ObjectAdapter.cpp",
+      "rule": "adapter",
+      "entity": "Adapter",
+      "expected": true,
+      "why": "Target.request delegates to retained Adaptee.specificRequest.",
+      "files": [
+        {
+          "path": "adapter/ObjectAdapter.cpp",
+          "sha256": "1fa00d4918b12ba77080c9dd6cfc72189e84e39e73530f01a3e907949b7af225"
+        }
+      ],
+      "actual": true,
+      "verdict": "TP",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 6.640291074290872,
+      "query_ms": 2.1674169693142176,
+      "stats": {
+        "states": 70,
+        "rows_examined": 18,
+        "elapsed_ms": 2.152,
+        "dependencies": [
+          "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.input_conversion.detect",
+          "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.output_conversion.detect",
+          "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.variants.class_adapter.detect",
+          "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.variants.functional_adapter.detect",
+          "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.variants.object_adapter.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "adapter/ObjectAdapter.cpp::module/CLASS:Adapter"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "query": "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.variants.object_adapter.detect",
+              "proof": "",
+              "evidence": [
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Adapter",
+                  "relation": "HAS_FIELD",
+                  "object": "adapter/ObjectAdapter.cpp::module/CLASS:Adapter/STORAGE:adaptee",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:65"
+                  ]
+                },
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Adapter",
+                  "relation": "ENTITY",
+                  "object": "CLASS",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:47"
+                  ]
+                },
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Adapter/STORAGE:adaptee",
+                  "relation": "TYPE",
+                  "object": "adapter/ObjectAdapter.cpp::module/CLASS:Adaptee",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:65"
+                  ]
+                },
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Adaptee",
+                  "relation": "ENTITY",
+                  "object": "CLASS",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:32"
+                  ]
+                },
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Adaptee",
+                  "relation": "HAS_METHOD",
+                  "object": "adapter/ObjectAdapter.cpp::module/CLASS:Adaptee/CALLABLE:specificRequest@551",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:35"
+                  ]
+                },
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Adaptee/CALLABLE:specificRequest@551",
+                  "relation": "ENTITY",
+                  "object": "CALLABLE",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:35"
+                  ]
+                },
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Adapter/STORAGE:adaptee",
+                  "relation": "ENTITY",
+                  "object": "STORAGE",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:65"
+                  ]
+                },
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Adapter",
+                  "relation": "SUBTYPE_OF",
+                  "object": "adapter/ObjectAdapter.cpp::module/CLASS:Target",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:47"
+                  ]
+                },
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Target",
+                  "relation": "ENTITY",
+                  "object": "CLASS",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:17"
+                  ]
+                },
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Adapter/CALLABLE:request@883",
+                  "relation": "OVERRIDES",
+                  "object": "adapter/ObjectAdapter.cpp::module/CLASS:Target/CALLABLE:request@348",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:57"
+                  ]
+                },
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Target/CALLABLE:request@348",
+                  "relation": "ENTITY",
+                  "object": "CALLABLE",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:22"
+                  ]
+                },
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Target",
+                  "relation": "HAS_METHOD",
+                  "object": "adapter/ObjectAdapter.cpp::module/CLASS:Target/CALLABLE:request@348",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:22"
+                  ]
+                },
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Adapter/CALLABLE:request@883",
+                  "relation": "ENTITY",
+                  "object": "CALLABLE",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:57"
+                  ]
+                },
+                {
+                  "subject": "adapter/ObjectAdapter.cpp::module/CLASS:Adapter",
+                  "relation": "HAS_METHOD",
+                  "object": "adapter/ObjectAdapter.cpp::module/CLASS:Adapter/CALLABLE:request@883",
+                  "source": [
+                    "adapter/ObjectAdapter.cpp:57"
+                  ]
+                },
+                {
+                  "body_owner": "adapter/ObjectAdapter.cpp::module/CLASS:Adapter/CALLABLE:request@883"
+                }
+              ]
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "cpp-patterns/adapter/ObjectAdapter.cpp:iterator/Adapter",
+      "repo": "cpp-patterns",
+      "revision": "4fae40666a970dc4c7901df54964d6ebcd80ba5c",
+      "url": "https://github.com/JakubVojvoda/design-patterns-cpp",
+      "scope": "adapter/ObjectAdapter.cpp",
+      "rule": "iterator",
+      "entity": "Adapter",
+      "expected": false,
+      "why": "No iteration or cursor protocol in the adapter.",
+      "files": [
+        {
+          "path": "adapter/ObjectAdapter.cpp",
+          "sha256": "1fa00d4918b12ba77080c9dd6cfc72189e84e39e73530f01a3e907949b7af225"
+        }
+      ],
+      "actual": false,
+      "verdict": "TN",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 6.640291074290872,
+      "query_ms": 1.2266249395906925,
+      "stats": {
+        "states": 18,
+        "rows_examined": 0,
+        "elapsed_ms": 1.2,
+        "dependencies": [
+          "f4148ef568ab8dc99d0970f661dd80f7a449dfdcdb1d7d66cd70e82b7c7ffb7f:ken.catalog.iterator.variants.async_iterator.detect",
+          "f4148ef568ab8dc99d0970f661dd80f7a449dfdcdb1d7d66cd70e82b7c7ffb7f:ken.catalog.iterator.variants.callback_iterator.detect",
+          "f4148ef568ab8dc99d0970f661dd80f7a449dfdcdb1d7d66cd70e82b7c7ffb7f:ken.catalog.iterator.variants.delegated_cursor.detect",
+          "f4148ef568ab8dc99d0970f661dd80f7a449dfdcdb1d7d66cd70e82b7c7ffb7f:ken.catalog.iterator.variants.delegated_generator.detect",
+          "f4148ef568ab8dc99d0970f661dd80f7a449dfdcdb1d7d66cd70e82b7c7ffb7f:ken.catalog.iterator.variants.explicit_cursor.detect",
+          "f4148ef568ab8dc99d0970f661dd80f7a449dfdcdb1d7d66cd70e82b7c7ffb7f:ken.catalog.iterator.variants.external_cursor.detect",
+          "f4148ef568ab8dc99d0970f661dd80f7a449dfdcdb1d7d66cd70e82b7c7ffb7f:ken.catalog.iterator.variants.generator.detect",
+          "f4148ef568ab8dc99d0970f661dd80f7a449dfdcdb1d7d66cd70e82b7c7ffb7f:ken.catalog.iterator.variants.paired_cursor.detect"
+        ]
+      },
+      "matches": []
+    },
+    {
+      "id": "cpp-patterns/command/Command.cpp:command/ConcreteCommand",
+      "repo": "cpp-patterns",
+      "revision": "4fae40666a970dc4c7901df54964d6ebcd80ba5c",
+      "url": "https://github.com/JakubVojvoda/design-patterns-cpp",
+      "scope": "command/Command.cpp",
+      "rule": "command",
+      "entity": "ConcreteCommand",
+      "expected": true,
+      "why": "Invoker retains Command and confirms execute, which invokes the retained Receiver.action.",
+      "files": [
+        {
+          "path": "command/Command.cpp",
+          "sha256": "6772f212af6e320921b85bef8bb085597e4ee6f477e3c06eda0378ef85ba9524"
+        }
+      ],
+      "actual": true,
+      "verdict": "TP",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 9.190124925225973,
+      "query_ms": 3.3739160280674696,
+      "stats": {
+        "states": 356,
+        "rows_examined": 105,
+        "elapsed_ms": 3.346,
+        "dependencies": [
+          "bf9eb148c79dd4ff8d8eec0a15b186d50b29cf1656c4ca78feac51d48484b141:ken.catalog.architecture.batch_work_queue.drain.detect",
+          "bf9eb148c79dd4ff8d8eec0a15b186d50b29cf1656c4ca78feac51d48484b141:ken.catalog.command.retained_dispatch.detect",
+          "bf9eb148c79dd4ff8d8eec0a15b186d50b29cf1656c4ca78feac51d48484b141:ken.catalog.command.variants.command_closure.detect",
+          "bf9eb148c79dd4ff8d8eec0a15b186d50b29cf1656c4ca78feac51d48484b141:ken.catalog.command.variants.command_object.detect",
+          "bf9eb148c79dd4ff8d8eec0a15b186d50b29cf1656c4ca78feac51d48484b141:ken.catalog.command.variants.queued_object.detect",
+          "bf9eb148c79dd4ff8d8eec0a15b186d50b29cf1656c4ca78feac51d48484b141:ken.catalog.command.variants.retained_contract.detect",
+          "bf9eb148c79dd4ff8d8eec0a15b186d50b29cf1656c4ca78feac51d48484b141:ken.catalog.command.variants.retained_object.detect",
+          "bf9eb148c79dd4ff8d8eec0a15b186d50b29cf1656c4ca78feac51d48484b141:ken.catalog.command.variants.stored_closure.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "command/Command.cpp::module/CLASS:ConcreteCommand"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "query": "bf9eb148c79dd4ff8d8eec0a15b186d50b29cf1656c4ca78feac51d48484b141:ken.catalog.command.variants.retained_contract.detect",
+              "proof": "",
+              "evidence": [
+                {
+                  "query": "bf9eb148c79dd4ff8d8eec0a15b186d50b29cf1656c4ca78feac51d48484b141:ken.catalog.command.retained_dispatch.detect",
+                  "proof": "",
+                  "evidence": [
+                    {
+                      "subject": "command/Command.cpp::module/CLASS:Invoker",
+                      "relation": "HAS_FIELD",
+                      "object": "command/Command.cpp::module/CLASS:Invoker/STORAGE:command",
+                      "source": [
+                        "command/Command.cpp:94"
+                      ]
+                    },
+                    {
+                      "subject": "command/Command.cpp::module/CLASS:Invoker/CALLABLE:set@1095",
+                      "relation": "HAS_PARAMETER",
+                      "object": "command/Command.cpp::module/CLASS:Invoker/CALLABLE:set@1095/PARAMETER:c@1105",
+                      "source": [
+                        "command/Command.cpp:79"
+                      ]
+                    },
+                    {
+                      "subject": "command/Command.cpp::module/CLASS:Invoker",
+                      "relation": "HAS_METHOD",
+                      "object": "command/Command.cpp::module/CLASS:Invoker/CALLABLE:set@1095",
+                      "source": [
+                        "command/Command.cpp:79"
+                      ]
+                    },
+                    {
+                      "subject": "command/Command.cpp::module/CLASS:Invoker/CALLABLE:set@1095/PARAMETER:c@1105",
+                      "relation": "ENTITY",
+                      "object": "PARAMETER",
+                      "source": [
+                        "command/Command.cpp:79"
+                      ]
+                    },
+                    {
+                      "subject": "command/Command.cpp::module/CLASS:Invoker/CALLABLE:set@1095/PARAMETER:c@1105",
+                      "relation": "TYPE",
+                      "object": "command/Command.cpp::module/CLASS:Command",
+                      "source": [
+                        "command/Command.cpp:79"
+                      ]
+                    },
+                    {
+                      "subject": "command/Command.cpp::op:1126:1137:assignment_expression",
+                      "relation": "FINAL_FIELD_INPUT",
+                      "object": "command/Command.cpp::module/CLASS:Invoker/CALLABLE:set@1095/PARAMETER:c@1105",
+                      "source": [
+                        "command/Command.cpp:81"
+                      ]
+                    },
+                    {
+                      "subject": "command/Command.cpp::module/CLASS:Invoker/CALLABLE:set@1095",
+                      "relation": "HAS_OPERATION",
+                      "object": "command/Command.cpp::op:1126:1137:assignment_expression",
+                      "source": []
+                    },
+                    {
+                      "subject": "command/Command.cpp::op:1126:1137:assignment_expression",
+                      "relation": "ASSIGNMENT_TARGET",
+                      "object": "command/Command.cpp::module/CLASS:Invoker/STORAGE:command",
+                      "source": [
+                        "command/Command.cpp:81"
+                      ]
+                    },
+                    {
+                      "subject": "command/Command.cpp::module/CLASS:Invoker/CALLABLE:confirm@1148/CALL:1198@1198:1216",
+                      "relation": "RECEIVER",
+                      "object": "command/Command.cpp::module/CLASS:Invoker/STORAGE:command",
+                      "source": [
+                        "command/Command.cpp:88"
+                      ]
+                    },
+                    {
+                      "subject": "command/Command.cpp::module/CLASS:Invoker/CALLABLE:confirm@1148",
+                      "relation": "HAS_CALL",
+                      "object": "command/Command.cpp::module/CLASS:Invoker/CALLABLE:confirm@1148/CALL:1198@1198:1216",
+                      "source": [
+                        "command/Command.cpp:88"
+                      ]
+                    },
+                    {
+                      "subject": "command/Command.cpp::module/CLASS:Invoker",
+                      "relation": "HAS_METHOD",
+                      "object": "command/Command.cpp::module/CLASS:Invoker/CALLABLE:confirm@1148",
+                      "source": [
+                        "command/Command.cpp:84"
+                      ]
+                    },
+                    {
+                      "subject": "command/Command.cpp::module/CLASS:Invoker/CALLABLE:confirm@1148/CALL:1198@1198:1216",
+                      "relation": "RECEIVER_UNREPLACED",
+                      "object": "command/Command.cpp::module/CLASS:Invoker/STORAGE:command",
+                      "source": [
+                        "command/Command.cpp:88"
+                      ]
+                    },
+                    {
+                      "subject": "command/Command.cpp::module/CLASS:Invoker/CALLABLE:confirm@1148/CALL:1198@1198:1216",
+                      "relation": "TARGET",
+                      "object": "command/Command.cpp::module/CLASS:Command/CALLABLE:execute@548",
+                      "source": [
+                        "command/Command.cpp:88"
+                      ]
+                    },
+                    {
+                      "subject": "command/Command.cpp::module/CLASS:Command",
+                      "relation": "HAS_METHOD",
+                      "object": "command/Command.cpp::module/CLASS:Command/CALLABLE:execute@548",
+                      "source": [
+                        "command/Command.cpp:36"
+                      ]
+                    },
+                    {
+                      "subject": "command/Command.cpp::module/CLASS:Command/CALLABLE:execute@548",
+                      "relation": "ENTITY",
+                      "object": "CALLABLE",
+                      "source": [
+                        "command/Command.cpp:36"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:execute@903",
+                  "relation": "OVERRIDES",
+                  "object": "command/Command.cpp::module/CLASS:Command/CALLABLE:execute@548",
+                  "source": [
+                    "command/Command.cpp:61"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand",
+                  "relation": "HAS_METHOD",
+                  "object": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:execute@903",
+                  "source": [
+                    "command/Command.cpp:61"
+                  ]
+                },
+                {
+                  "path": "SUBTYPE_OF",
+                  "nodes": [
+                    "command/Command.cpp::module/CLASS:ConcreteCommand",
+                    "command/Command.cpp::module/CLASS:Command"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:execute@903",
+                  "relation": "ENTITY",
+                  "object": "CALLABLE",
+                  "source": [
+                    "command/Command.cpp:61"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand",
+                  "relation": "HAS_FIELD",
+                  "object": "command/Command.cpp::module/CLASS:ConcreteCommand/STORAGE:receiver",
+                  "source": [
+                    "command/Command.cpp:68"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand/STORAGE:receiver",
+                  "relation": "CONSTRUCTOR_FIELD_INPUT",
+                  "object": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:ConcreteCommand@761/PARAMETER:r@778",
+                  "source": [
+                    "command/Command.cpp:51"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:ConcreteCommand@761",
+                  "relation": "HAS_PARAMETER",
+                  "object": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:ConcreteCommand@761/PARAMETER:r@778",
+                  "source": [
+                    "command/Command.cpp:51"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand",
+                  "relation": "HAS_METHOD",
+                  "object": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:ConcreteCommand@761",
+                  "source": [
+                    "command/Command.cpp:51"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:execute@903",
+                  "relation": "HAS_CALL",
+                  "object": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:execute@903/CALL:926@926:944",
+                  "source": [
+                    "command/Command.cpp:63"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:execute@903/CALL:926@926:944",
+                  "relation": "RECEIVER",
+                  "object": "command/Command.cpp::module/CLASS:ConcreteCommand/STORAGE:receiver",
+                  "source": [
+                    "command/Command.cpp:63"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::op:926:945:expression_statement",
+                  "relation": "DISCARDS_RESULT",
+                  "object": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:execute@903/CALL:926@926:944",
+                  "source": [
+                    "command/Command.cpp:63"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:execute@903",
+                  "relation": "HAS_OPERATION",
+                  "object": "command/Command.cpp::op:926:945:expression_statement",
+                  "source": []
+                }
+              ]
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "cpp-patterns/command/Command.cpp:adapter/ConcreteCommand",
+      "repo": "cpp-patterns",
+      "revision": "4fae40666a970dc4c7901df54964d6ebcd80ba5c",
+      "url": "https://github.com/JakubVojvoda/design-patterns-cpp",
+      "scope": "command/Command.cpp",
+      "rule": "adapter",
+      "entity": "ConcreteCommand",
+      "expected": false,
+      "why": "The primary behavior is encapsulating a deferred request; the different method name alone does not establish adapting an incompatible interface. Overlapping structural interpretations are plausible; excluded from TP/TN/FP/FN rates.",
+      "files": [
+        {
+          "path": "command/Command.cpp",
+          "sha256": "6772f212af6e320921b85bef8bb085597e4ee6f477e3c06eda0378ef85ba9524"
+        }
+      ],
+      "ambiguous": true,
+      "actual": true,
+      "verdict": "ambiguous",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 9.190124925225973,
+      "query_ms": 2.3158330004662275,
+      "stats": {
+        "states": 103,
+        "rows_examined": 34,
+        "elapsed_ms": 2.284,
+        "dependencies": [
+          "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.input_conversion.detect",
+          "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.output_conversion.detect",
+          "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.variants.class_adapter.detect",
+          "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.variants.functional_adapter.detect",
+          "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.variants.object_adapter.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "command/Command.cpp::module/CLASS:ConcreteCommand"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "query": "9be35330bc7953102b7ca0cbf16e04cb990d0e12a9ec6b895df78046804f7072:ken.catalog.adapter.variants.object_adapter.detect",
+              "proof": "",
+              "evidence": [
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand",
+                  "relation": "SUBTYPE_OF",
+                  "object": "command/Command.cpp::module/CLASS:Command",
+                  "source": [
+                    "command/Command.cpp:48"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:Command",
+                  "relation": "ENTITY",
+                  "object": "CLASS",
+                  "source": [
+                    "command/Command.cpp:32"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand",
+                  "relation": "ENTITY",
+                  "object": "CLASS",
+                  "source": [
+                    "command/Command.cpp:48"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand",
+                  "relation": "HAS_FIELD",
+                  "object": "command/Command.cpp::module/CLASS:ConcreteCommand/STORAGE:receiver",
+                  "source": [
+                    "command/Command.cpp:68"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand/STORAGE:receiver",
+                  "relation": "TYPE",
+                  "object": "command/Command.cpp::module/CLASS:Receiver",
+                  "source": [
+                    "command/Command.cpp:68"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:Receiver",
+                  "relation": "ENTITY",
+                  "object": "CLASS",
+                  "source": [
+                    "command/Command.cpp:18"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:Receiver",
+                  "relation": "HAS_METHOD",
+                  "object": "command/Command.cpp::module/CLASS:Receiver/CALLABLE:action@332",
+                  "source": [
+                    "command/Command.cpp:21"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:Receiver/CALLABLE:action@332",
+                  "relation": "ENTITY",
+                  "object": "CALLABLE",
+                  "source": [
+                    "command/Command.cpp:21"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand/STORAGE:receiver",
+                  "relation": "ENTITY",
+                  "object": "STORAGE",
+                  "source": [
+                    "command/Command.cpp:68"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:execute@903",
+                  "relation": "OVERRIDES",
+                  "object": "command/Command.cpp::module/CLASS:Command/CALLABLE:execute@548",
+                  "source": [
+                    "command/Command.cpp:61"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:Command/CALLABLE:execute@548",
+                  "relation": "ENTITY",
+                  "object": "CALLABLE",
+                  "source": [
+                    "command/Command.cpp:36"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:Command",
+                  "relation": "HAS_METHOD",
+                  "object": "command/Command.cpp::module/CLASS:Command/CALLABLE:execute@548",
+                  "source": [
+                    "command/Command.cpp:36"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:execute@903",
+                  "relation": "ENTITY",
+                  "object": "CALLABLE",
+                  "source": [
+                    "command/Command.cpp:61"
+                  ]
+                },
+                {
+                  "subject": "command/Command.cpp::module/CLASS:ConcreteCommand",
+                  "relation": "HAS_METHOD",
+                  "object": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:execute@903",
+                  "source": [
+                    "command/Command.cpp:61"
+                  ]
+                },
+                {
+                  "body_owner": "command/Command.cpp::module/CLASS:ConcreteCommand/CALLABLE:execute@903"
+                }
+              ]
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "cpp-patterns/visitor/Visitor.cpp:visitor/ConcreteElementA",
+      "repo": "cpp-patterns",
+      "revision": "4fae40666a970dc4c7901df54964d6ebcd80ba5c",
+      "url": "https://github.com/JakubVojvoda/design-patterns-cpp",
+      "scope": "visitor/Visitor.cpp",
+      "rule": "visitor",
+      "entity": "ConcreteElementA",
+      "expected": true,
+      "why": "accept passes this to the concrete visitor overload.",
+      "files": [
+        {
+          "path": "visitor/Visitor.cpp",
+          "sha256": "50e6755cc60121baf9d2706b3391debc2daf83a611e2705b480534eda94683e1"
+        }
+      ],
+      "actual": true,
+      "verdict": "TP",
+      "complete": true,
+      "unknown": [
+        "cardinality:open_world"
+      ],
+      "diagnostics": [],
+      "build_ms": 12.373958015814424,
+      "query_ms": 0.8701251354068518,
+      "stats": {
+        "states": 161,
+        "rows_examined": 76,
+        "elapsed_ms": 0.846,
+        "dependencies": [
+          "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.generic_visitor.detect",
+          "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.named_dispatch.detect",
+          "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.overloaded_dispatch.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "query": "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.named_dispatch.detect",
+              "proof": "",
+              "evidence": [
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843/CALL:1883@1883:1912",
+                  "relation": "TARGET",
+                  "object": "visitor/Visitor.cpp::module/CLASS:Visitor/CALLABLE:visitElementA@444",
+                  "source": [
+                    "visitor/Visitor.cpp:96"
+                  ]
+                },
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843",
+                  "relation": "HAS_CALL",
+                  "object": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843/CALL:1883@1883:1912",
+                  "source": [
+                    "visitor/Visitor.cpp:96"
+                  ]
+                },
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA",
+                  "relation": "HAS_METHOD",
+                  "object": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843",
+                  "source": [
+                    "visitor/Visitor.cpp:94"
+                  ]
+                },
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843",
+                  "relation": "HAS_PARAMETER",
+                  "object": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843/PARAMETER:visitor@1856",
+                  "source": [
+                    "visitor/Visitor.cpp:94"
+                  ]
+                },
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843/PARAMETER:visitor@1856",
+                  "relation": "ENTITY",
+                  "object": "PARAMETER",
+                  "source": [
+                    "visitor/Visitor.cpp:94"
+                  ]
+                },
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA",
+                  "relation": "INSTANCE_RECEIVER",
+                  "object": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/THIS",
+                  "source": [
+                    "visitor/Visitor.cpp:96"
+                  ]
+                },
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843/PARAMETER:visitor@1856",
+                  "relation": "TYPE",
+                  "object": "visitor/Visitor.cpp::module/CLASS:Visitor",
+                  "source": [
+                    "visitor/Visitor.cpp:94"
+                  ]
+                },
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843/CALL:1883@1883:1912",
+                  "relation": "RECEIVER",
+                  "object": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843/PARAMETER:visitor@1856",
+                  "source": [
+                    "visitor/Visitor.cpp:96"
+                  ]
+                },
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843/CALL:1883@1883:1912",
+                  "relation": "RECEIVER_UNREPLACED",
+                  "object": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843/PARAMETER:visitor@1856",
+                  "source": [
+                    "visitor/Visitor.cpp:96"
+                  ]
+                },
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843/CALL:1883@1883:1912",
+                  "relation": "ARGUMENT",
+                  "object": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843/CALL:1883@1883:1912/argument/0",
+                  "source": [
+                    "visitor/Visitor.cpp:96"
+                  ]
+                },
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/CALLABLE:accept@1843/CALL:1883@1883:1912/argument/0",
+                  "relation": "VALUE",
+                  "object": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA/THIS",
+                  "source": [
+                    "visitor/Visitor.cpp:96"
+                  ]
+                },
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:Visitor",
+                  "relation": "HAS_METHOD",
+                  "object": "visitor/Visitor.cpp::module/CLASS:Visitor/CALLABLE:visitElementA@444",
+                  "source": [
+                    "visitor/Visitor.cpp:27"
+                  ]
+                },
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:Visitor/CALLABLE:visitElementA@444",
+                  "relation": "HAS_PARAMETER",
+                  "object": "visitor/Visitor.cpp::module/CLASS:Visitor/CALLABLE:visitElementA@444/PARAMETER:element@459",
+                  "source": [
+                    "visitor/Visitor.cpp:27"
+                  ]
+                },
+                {
+                  "subject": "visitor/Visitor.cpp::module/CLASS:Visitor/CALLABLE:visitElementA@444/PARAMETER:element@459",
+                  "relation": "TYPE",
+                  "object": "visitor/Visitor.cpp::module/CLASS:ConcreteElementA",
+                  "source": [
+                    "visitor/Visitor.cpp:27"
+                  ]
+                }
+              ]
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "guru-rust/creational/prototype/:prototype/Circle",
+      "repo": "guru-rust",
+      "revision": "f4a1499d13e8b27fa75e4e8ff9fd9bed645d23ca",
+      "url": "https://github.com/RefactoringGuru/design-patterns-rust",
+      "scope": "creational/prototype/",
+      "rule": "prototype",
+      "entity": "Circle",
+      "expected": true,
+      "why": "Derived Clone creates circle2 from circle1; radius is independently changed on the clone.",
+      "files": [
+        {
+          "path": "creational/prototype/main.rs",
+          "sha256": "866d3072a2a0774fd9e8369c903ee1395092cde2f6df960e42804acf78df7ad2"
+        }
+      ],
+      "actual": true,
+      "verdict": "TP",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 4.509790800511837,
+      "query_ms": 1.4909999445080757,
+      "stats": {
+        "states": 26,
+        "rows_examined": 7,
+        "elapsed_ms": 1.474,
+        "dependencies": [
+          "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.derived_copy.detect",
+          "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.derived_clone.detect",
+          "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.explicit_copy.detect",
+          "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.field_copy.detect",
+          "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.language_copy.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "creational/prototype/main.rs::module/CLASS:Circle"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "query": "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.derived_clone.detect",
+              "proof": "",
+              "evidence": [
+                {
+                  "query": "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.derived_copy.detect",
+                  "proof": "",
+                  "evidence": [
+                    {
+                      "subject": "creational/prototype/main.rs::module/CLASS:Circle",
+                      "relation": "ENTITY",
+                      "object": "CLASS",
+                      "source": [
+                        "creational/prototype/main.rs:2"
+                      ]
+                    },
+                    {
+                      "subject": "creational/prototype/main.rs::module/CLASS:Circle",
+                      "relation": "DERIVE_NAME",
+                      "object": "Clone",
+                      "source": [
+                        "creational/prototype/main.rs:1"
+                      ]
+                    },
+                    {
+                      "subject": "creational/prototype/main.rs::module/CALLABLE:main@89/CALL:236@236:251",
+                      "relation": "RECEIVER",
+                      "object": "creational/prototype/main.rs::module/CALLABLE:main@89/STORAGE:circle1",
+                      "source": [
+                        "creational/prototype/main.rs:16"
+                      ]
+                    },
+                    {
+                      "subject": "creational/prototype/main.rs::module/CALLABLE:main@89/STORAGE:circle1",
+                      "relation": "TYPE",
+                      "object": "creational/prototype/main.rs::module/CLASS:Circle",
+                      "source": []
+                    },
+                    {
+                      "subject": "creational/prototype/main.rs::module/CALLABLE:main@89/CALL:236@236:251",
+                      "relation": "ENTITY",
+                      "object": "CALL",
+                      "source": [
+                        "creational/prototype/main.rs:16"
+                      ]
+                    },
+                    {
+                      "subject": "creational/prototype/main.rs::module/CALLABLE:main@89/CALL:236@236:251",
+                      "relation": "ENTITY",
+                      "object": "CALL",
+                      "source": [
+                        "creational/prototype/main.rs:16"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "guru-rust/creational/prototype/:singleton/Circle",
+      "repo": "guru-rust",
+      "revision": "f4a1499d13e8b27fa75e4e8ff9fd9bed645d23ca",
+      "url": "https://github.com/RefactoringGuru/design-patterns-rust",
+      "scope": "creational/prototype/",
+      "rule": "singleton",
+      "entity": "Circle",
+      "expected": false,
+      "why": "Two explicit independent values are used; there is no shared accessor.",
+      "files": [
+        {
+          "path": "creational/prototype/main.rs",
+          "sha256": "866d3072a2a0774fd9e8369c903ee1395092cde2f6df960e42804acf78df7ad2"
+        }
+      ],
+      "actual": false,
+      "verdict": "TN",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 4.509790800511837,
+      "query_ms": 1.140667125582695,
+      "stats": {
+        "states": 16,
+        "rows_examined": 1,
+        "elapsed_ms": 1.105,
+        "dependencies": [
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.lazy_instance.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.shared_instance.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.variants.eager_shared.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.variants.lazy_guarded.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.variants.module_shared.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.variants.once_primitive.detect"
+        ]
+      },
+      "matches": []
+    },
+    {
+      "id": "guru-rust/behavioral/mediator/mediator-top-down/:mediator/TrainStation",
+      "repo": "guru-rust",
+      "revision": "f4a1499d13e8b27fa75e4e8ff9fd9bed645d23ca",
+      "url": "https://github.com/RefactoringGuru/design-patterns-rust",
+      "scope": "behavioral/mediator/mediator-top-down/",
+      "rule": "mediator",
+      "entity": "TrainStation",
+      "expected": true,
+      "why": "TrainStation coordinates arrivals and departures, queued trains and platform occupancy through the Mediator interface.",
+      "files": [
+        {
+          "path": "behavioral/mediator/mediator-top-down/main.rs",
+          "sha256": "3534f77ac3c82a48e1603b0213d270469722f626f585a525612804cade18baed"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/train_station.rs",
+          "sha256": "31e1ce0ca95d3e4cce8d70afe58e5392a0e1af907dd81b5c8f821aec573ddd02"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/trains/freight_train.rs",
+          "sha256": "c05e26c5107be062a368933214495dbd6ba52369b666e4c9e9d134190195a1c7"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/trains/mod.rs",
+          "sha256": "be86ac6f65285be89918d91f8ab5b106f5e7801a6a4af3b237bd66371d9ac55b"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/trains/passenger_train.rs",
+          "sha256": "55321024a542a54e3d80f06de0f43ac771eddb06437a37b0b750c6750849d909"
+        }
+      ],
+      "actual": false,
+      "verdict": "FN",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 50.77020893804729,
+      "query_ms": 1.6595420893281698,
+      "stats": {
+        "states": 118,
+        "rows_examined": 57,
+        "elapsed_ms": 1.638,
+        "dependencies": [
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.broadcast_colleagues.detect",
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.direct_colleagues.detect",
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.message_coordination.detect",
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.registered_colleagues.detect",
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.tag_dispatch.detect"
+        ]
+      },
+      "matches": []
+    },
+    {
+      "id": "guru-rust/behavioral/mediator/mediator-top-down/:state/TrainStation",
+      "repo": "guru-rust",
+      "revision": "f4a1499d13e8b27fa75e4e8ff9fd9bed645d23ca",
+      "url": "https://github.com/RefactoringGuru/design-patterns-rust",
+      "scope": "behavioral/mediator/mediator-top-down/",
+      "rule": "state",
+      "entity": "TrainStation",
+      "expected": false,
+      "why": "Changing occupancy and collection fields is not the State pattern; no interchangeable state handler or behavioral state dispatch is established. Overlapping structural interpretations are plausible; excluded from TP/TN/FP/FN rates.",
+      "files": [
+        {
+          "path": "behavioral/mediator/mediator-top-down/main.rs",
+          "sha256": "3534f77ac3c82a48e1603b0213d270469722f626f585a525612804cade18baed"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/train_station.rs",
+          "sha256": "31e1ce0ca95d3e4cce8d70afe58e5392a0e1af907dd81b5c8f821aec573ddd02"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/trains/freight_train.rs",
+          "sha256": "c05e26c5107be062a368933214495dbd6ba52369b666e4c9e9d134190195a1c7"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/trains/mod.rs",
+          "sha256": "be86ac6f65285be89918d91f8ab5b106f5e7801a6a4af3b237bd66371d9ac55b"
+        },
+        {
+          "path": "behavioral/mediator/mediator-top-down/trains/passenger_train.rs",
+          "sha256": "55321024a542a54e3d80f06de0f43ac771eddb06437a37b0b750c6750849d909"
+        }
+      ],
+      "ambiguous": true,
+      "actual": true,
+      "verdict": "ambiguous",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 50.77020893804729,
+      "query_ms": 2.1278751082718372,
+      "stats": {
+        "states": 34,
+        "rows_examined": 14,
+        "elapsed_ms": 2.051,
+        "dependencies": [
+          "468e2393429d6287cb1c70f5916cd0778fa7ffaff2ce944a39ee535255c98163:ken.catalog.state.variants.context_transition.detect",
+          "468e2393429d6287cb1c70f5916cd0778fa7ffaff2ce944a39ee535255c98163:ken.catalog.state.variants.state_enum.detect",
+          "468e2393429d6287cb1c70f5916cd0778fa7ffaff2ce944a39ee535255c98163:ken.catalog.state.variants.state_object.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "behavioral/mediator/mediator-top-down/train_station.rs::module/CLASS:TrainStation"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "query": "468e2393429d6287cb1c70f5916cd0778fa7ffaff2ce944a39ee535255c98163:ken.catalog.state.variants.state_enum.detect",
+              "proof": "",
+              "evidence": [
+                {
+                  "subject": "behavioral/mediator/mediator-top-down/train_station.rs::module/CLASS:TrainStation/STORAGE:train_on_platform",
+                  "relation": "GUARDS_WRITE",
+                  "object": "behavioral/mediator/mediator-top-down/train_station.rs::module/CLASS:TrainStation/CALLABLE:notify_about_departure@767",
+                  "source": [
+                    "behavioral/mediator/mediator-top-down/train_station.rs:31"
+                  ]
+                },
+                {
+                  "subject": "behavioral/mediator/mediator-top-down/train_station.rs::module/CLASS:TrainStation",
+                  "relation": "HAS_FIELD",
+                  "object": "behavioral/mediator/mediator-top-down/train_station.rs::module/CLASS:TrainStation/STORAGE:train_on_platform",
+                  "source": [
+                    "behavioral/mediator/mediator-top-down/train_station.rs:15"
+                  ]
+                },
+                {
+                  "subject": "behavioral/mediator/mediator-top-down/train_station.rs::module/CLASS:TrainStation/STORAGE:train_on_platform",
+                  "relation": "ENTITY",
+                  "object": "STORAGE",
+                  "source": [
+                    "behavioral/mediator/mediator-top-down/train_station.rs:15"
+                  ]
+                },
+                {
+                  "subject": "behavioral/mediator/mediator-top-down/train_station.rs::module/CLASS:TrainStation",
+                  "relation": "HAS_METHOD",
+                  "object": "behavioral/mediator/mediator-top-down/train_station.rs::module/CLASS:TrainStation/CALLABLE:notify_about_departure@767",
+                  "source": [
+                    "behavioral/mediator/mediator-top-down/train_station.rs:29"
+                  ]
+                },
+                {
+                  "subject": "behavioral/mediator/mediator-top-down/train_station.rs::module/CLASS:TrainStation/CALLABLE:notify_about_departure@767",
+                  "relation": "ENTITY",
+                  "object": "CALLABLE",
+                  "source": [
+                    "behavioral/mediator/mediator-top-down/train_station.rs:29"
+                  ]
+                }
+              ]
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "java-patterns/interpreter/src/main/java/:interpreter/PlusExpression",
+      "repo": "java-patterns",
+      "revision": "41625d8d354cdf6b6f10a82e29c2392b3efd5d20",
+      "url": "https://github.com/iluwatar/java-design-patterns",
+      "scope": "interpreter/src/main/java/",
+      "rule": "interpreter",
+      "entity": "PlusExpression",
+      "expected": true,
+      "why": "interpret returns the sum of recursive left and right expression results; context is stored in terminal nodes, so no evaluation parameter is needed.",
+      "files": [
+        {
+          "path": "interpreter/src/main/java/com/iluwatar/interpreter/App.java",
+          "sha256": "839e1475d3b802b228339ba8a562d4d8c1dd2ec402fd9b04b21783cc302f0cca"
+        },
+        {
+          "path": "interpreter/src/main/java/com/iluwatar/interpreter/Expression.java",
+          "sha256": "73ee70475eeb9514d3e2d38a1728058787aab078ef26215be8b40d16bf9d363d"
+        },
+        {
+          "path": "interpreter/src/main/java/com/iluwatar/interpreter/MinusExpression.java",
+          "sha256": "086a987f07ca55b0a3a8e98808e0da2e8cd0cb230487b70873fa7aab68fa7d50"
+        },
+        {
+          "path": "interpreter/src/main/java/com/iluwatar/interpreter/MultiplyExpression.java",
+          "sha256": "31b0988fb6f25b0640204741920e3752fc7d534b8c0cd19e8a9ae3231678fe18"
+        },
+        {
+          "path": "interpreter/src/main/java/com/iluwatar/interpreter/NumberExpression.java",
+          "sha256": "799e0d3da4e89759db004488eb55836a83d4036dcf5bc95ddf0856ee96385117"
+        },
+        {
+          "path": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java",
+          "sha256": "0de77344f5b35b9761fd944c8c4fdec11b7b6049181626217fd5643f02701759"
+        }
+      ],
+      "actual": true,
+      "verdict": "TP",
+      "complete": true,
+      "unknown": [
+        "cardinality:open_world"
+      ],
+      "diagnostics": [],
+      "build_ms": 29.975749785080552,
+      "query_ms": 2.9761670157313347,
+      "stats": {
+        "states": 699,
+        "rows_examined": 389,
+        "elapsed_ms": 2.95,
+        "dependencies": [
+          "be14470680555e91639bc40156b9ed4296058be98bbff117674259948f5fd814:ken.catalog.interpreter.variants.context_free_binary.detect",
+          "be14470680555e91639bc40156b9ed4296058be98bbff117674259948f5fd814:ken.catalog.interpreter.variants.expression_objects.detect",
+          "be14470680555e91639bc40156b9ed4296058be98bbff117674259948f5fd814:ken.catalog.interpreter.variants.expression_sum.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "alternatives": [
+                {
+                  "evidence": [
+                    {
+                      "query": "be14470680555e91639bc40156b9ed4296058be98bbff117674259948f5fd814:ken.catalog.interpreter.variants.context_free_binary.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression",
+                          "relation": "SUBTYPE_OF",
+                          "object": "interpreter/src/main/java/com/iluwatar/interpreter/Expression.java::module/CLASS:Expression",
+                          "source": [
+                            "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java:28"
+                          ]
+                        },
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/Expression.java::module/CLASS:Expression",
+                          "relation": "HAS_METHOD",
+                          "object": "interpreter/src/main/java/com/iluwatar/interpreter/Expression.java::module/CLASS:Expression/CALLABLE:interpret@1379",
+                          "source": [
+                            "interpreter/src/main/java/com/iluwatar/interpreter/Expression.java:30"
+                          ]
+                        },
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression",
+                          "relation": "HAS_METHOD",
+                          "object": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression/CALLABLE:interpret@1657",
+                          "source": [
+                            "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java:38"
+                          ]
+                        },
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression/CALLABLE:interpret@1657",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java:38"
+                          ]
+                        },
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression/CALLABLE:interpret@1657",
+                          "relation": "OVERRIDES",
+                          "object": "interpreter/src/main/java/com/iluwatar/interpreter/Expression.java::module/CLASS:Expression/CALLABLE:interpret@1379",
+                          "source": [
+                            "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java:38"
+                          ]
+                        },
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::op:1698:1762:return_statement",
+                          "relation": "RETURN_ORIGIN",
+                          "object": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression/CALLABLE:interpret@1657/VALUE:1705:1761",
+                          "source": [
+                            "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java:40"
+                          ]
+                        },
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression/CALLABLE:interpret@1657",
+                          "relation": "HAS_OPERATION",
+                          "object": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::op:1698:1762:return_statement",
+                          "source": []
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                },
+                {
+                  "evidence": [
+                    {
+                      "query": "be14470680555e91639bc40156b9ed4296058be98bbff117674259948f5fd814:ken.catalog.interpreter.variants.context_free_binary.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression",
+                          "relation": "SUBTYPE_OF",
+                          "object": "interpreter/src/main/java/com/iluwatar/interpreter/Expression.java::module/CLASS:Expression",
+                          "source": [
+                            "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java:28"
+                          ]
+                        },
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/Expression.java::module/CLASS:Expression",
+                          "relation": "HAS_METHOD",
+                          "object": "interpreter/src/main/java/com/iluwatar/interpreter/Expression.java::module/CLASS:Expression/CALLABLE:toString@1415",
+                          "source": [
+                            "interpreter/src/main/java/com/iluwatar/interpreter/Expression.java:32"
+                          ]
+                        },
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression",
+                          "relation": "HAS_METHOD",
+                          "object": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression/CALLABLE:toString@1770",
+                          "source": [
+                            "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java:43"
+                          ]
+                        },
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression/CALLABLE:toString@1770",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java:43"
+                          ]
+                        },
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression/CALLABLE:toString@1770",
+                          "relation": "OVERRIDES",
+                          "object": "interpreter/src/main/java/com/iluwatar/interpreter/Expression.java::module/CLASS:Expression/CALLABLE:toString@1415",
+                          "source": [
+                            "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java:43"
+                          ]
+                        },
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::op:1813:1824:return_statement",
+                          "relation": "RETURN_ORIGIN",
+                          "object": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression/CALLABLE:toString@1770/VALUE:1820:1823",
+                          "source": [
+                            "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java:45"
+                          ]
+                        },
+                        {
+                          "subject": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::module/CLASS:PlusExpression/CALLABLE:toString@1770",
+                          "relation": "HAS_OPERATION",
+                          "object": "interpreter/src/main/java/com/iluwatar/interpreter/PlusExpression.java::op:1813:1824:return_statement",
+                          "source": []
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": [
+                    "cardinality:open_world"
+                  ]
+                }
+              ],
+              "truncated": false
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "java-patterns/mediator/src/main/java/:mediator/PartyImpl",
+      "repo": "java-patterns",
+      "revision": "41625d8d354cdf6b6f10a82e29c2392b3efd5d20",
+      "url": "https://github.com/iluwatar/java-design-patterns",
+      "scope": "mediator/src/main/java/",
+      "rule": "mediator",
+      "entity": "PartyImpl",
+      "expected": true,
+      "why": "PartyImpl distributes an action to members other than its actor and establishes the party back-reference when registering a member.",
+      "files": [
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/Action.java",
+          "sha256": "e18e6862c6297b9505b0561e5b648ab66882328a99c87ba582db7d0cf576e81b"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/App.java",
+          "sha256": "5097cd488dab339483d412e8e88a11415507a1fb0369fa9ada4e884298c63c73"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/Hobbit.java",
+          "sha256": "e9e1f8304db52999f27f352e4856a5fda1a4e7f9a9c302623ccc61fad8d5518a"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/Hunter.java",
+          "sha256": "9fc78a14b8f901f5998be09199537896dff881f22e844b6d60e9908bb6c26851"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/Party.java",
+          "sha256": "c6230669225ca6baef864b44c2e746eeeda483aa5b9326bd1e5aa3eb1c2c7d42"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java",
+          "sha256": "bc91289c13c3ffbf61cb78068f536b0609c5f3cc106276b395fbc3e6e2bc83e8"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/PartyMember.java",
+          "sha256": "aa3e82a653283a5d84c3e52f4b2aac9d43224732f94e02956a7fb64322e1a7c3"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java",
+          "sha256": "d58d6c8acd5815daf217528891a82cf05de231bf59d3c8d89b82e8dc91b381d7"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/Rogue.java",
+          "sha256": "ba3fc9989419de0b95b61c2449afd701b81af43b4e1e51b9ca96fe299baf9742"
+        },
+        {
+          "path": "mediator/src/main/java/com/iluwatar/mediator/Wizard.java",
+          "sha256": "d87109fc27830527ecd6eca3f9de29b0f31d3e1468588b61617aecacc340c3a9"
+        }
+      ],
+      "actual": true,
+      "verdict": "TP",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 25.64366697333753,
+      "query_ms": 2.077958080917597,
+      "stats": {
+        "states": 100,
+        "rows_examined": 44,
+        "elapsed_ms": 2.028,
+        "dependencies": [
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.broadcast_colleagues.detect",
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.direct_colleagues.detect",
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.message_coordination.detect",
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.registered_colleagues.detect",
+          "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.tag_dispatch.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "alternatives": [
+                {
+                  "evidence": [
+                    {
+                      "query": "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.broadcast_colleagues.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:addMember@1739",
+                          "relation": "WRITES_ELEMENT",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/STORAGE:members",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:50"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/STORAGE:members",
+                          "relation": "ENTITY",
+                          "object": "STORAGE",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:33"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl",
+                          "relation": "HAS_FIELD",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/STORAGE:members",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:33"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl",
+                          "relation": "ENTITY",
+                          "object": "CLASS",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:31"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:addMember@1739",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:48"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl",
+                          "relation": "HAS_METHOD",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:addMember@1739",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:48"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:act@1550",
+                          "relation": "ITERATES_CALLS",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/STORAGE:members",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:42"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:act@1550",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:39"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl",
+                          "relation": "HAS_METHOD",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:act@1550",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:39"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase/CALLABLE:act@1743",
+                          "relation": "POSSIBLE_CALL",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:act@1550",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java:50"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase/CALLABLE:act@1743",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java:46"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase",
+                          "relation": "HAS_METHOD",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase/CALLABLE:act@1743",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java:46"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase",
+                          "relation": "ENTITY",
+                          "object": "CLASS",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java:30"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase",
+                          "relation": "HAS_FIELD",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase/STORAGE:party",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java:33"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase/STORAGE:party",
+                          "relation": "ENTITY",
+                          "object": "STORAGE",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java:33"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                },
+                {
+                  "evidence": [
+                    {
+                      "query": "7f5b8a7227f2b2070f159e3d7cf818b5afc99dd718ae0ed7dc4b61a3541ebba5:ken.catalog.mediator.variants.broadcast_colleagues.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:addMember@1739",
+                          "relation": "WRITES_ELEMENT",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/STORAGE:members",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:50"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/STORAGE:members",
+                          "relation": "ENTITY",
+                          "object": "STORAGE",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:33"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl",
+                          "relation": "HAS_FIELD",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/STORAGE:members",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:33"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl",
+                          "relation": "ENTITY",
+                          "object": "CLASS",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:31"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:addMember@1739",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:48"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl",
+                          "relation": "HAS_METHOD",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:addMember@1739",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:48"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:act@1550",
+                          "relation": "ITERATES_CALLS",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/STORAGE:members",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:43"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:act@1550",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:39"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl",
+                          "relation": "HAS_METHOD",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:act@1550",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java:39"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase/CALLABLE:act@1743",
+                          "relation": "POSSIBLE_CALL",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyImpl.java::module/CLASS:PartyImpl/CALLABLE:act@1550",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java:50"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase/CALLABLE:act@1743",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java:46"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase",
+                          "relation": "HAS_METHOD",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase/CALLABLE:act@1743",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java:46"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase",
+                          "relation": "ENTITY",
+                          "object": "CLASS",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java:30"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase",
+                          "relation": "HAS_FIELD",
+                          "object": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase/STORAGE:party",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java:33"
+                          ]
+                        },
+                        {
+                          "subject": "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java::module/CLASS:PartyMemberBase/STORAGE:party",
+                          "relation": "ENTITY",
+                          "object": "STORAGE",
+                          "source": [
+                            "mediator/src/main/java/com/iluwatar/mediator/PartyMemberBase.java:33"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                }
+              ],
+              "truncated": false
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "java-patterns/singleton/src/main/java/:singleton/IvoryTower",
+      "repo": "java-patterns",
+      "revision": "41625d8d354cdf6b6f10a82e29c2392b3efd5d20",
+      "url": "https://github.com/iluwatar/java-design-patterns",
+      "scope": "singleton/src/main/java/",
+      "rule": "singleton",
+      "entity": "IvoryTower",
+      "expected": true,
+      "why": "Private constructor and an eager static instance returned by the accessor.",
+      "files": [
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/App.java",
+          "sha256": "ba97730c56dd0e4debfc31ec11e74c3e843628c8216775dc57d6fbd59bd42246"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/BillPughImplementation.java",
+          "sha256": "d07d94679eb5f261fd2f6c50b3756a9476cf4c6a7675820652f50da2c5a301e4"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/EnumIvoryTower.java",
+          "sha256": "2d297d6255dc9af1595f6c2cba3d1a2b37e04bda3b35afa36e80d461bdb99718"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/InitializingOnDemandHolderIdiom.java",
+          "sha256": "91fef64ab16df9f026c41a44ff624c3cb92d4f109082998988b20bc642d39a72"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java",
+          "sha256": "7ff63a23dd4154851e15feb31c8191253268e8a4dcb569124479363bdbb61c5b"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/ThreadSafeDoubleCheckLocking.java",
+          "sha256": "83e6ee191d2bd6ea44bd2e0c1daa234ba43a93525c5a4a33cf676a1a6e1ba7d2"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/ThreadSafeLazyLoadedIvoryTower.java",
+          "sha256": "319cce21ca36bb6dfc24f638d64ab97189dd911503e9f94e941e91b3b88d4cd2"
+        },
+        {
+          "path": "singleton/src/main/java/com/iluwatar/singleton/package-info.java",
+          "sha256": "3ec90965fe5a8dc44bc150759b5001782106fb5c803ac240443e98d4c47861e0"
+        }
+      ],
+      "actual": true,
+      "verdict": "TP",
+      "complete": true,
+      "unknown": [
+        "source_body:unknown",
+        "source_storage:unknown"
+      ],
+      "diagnostics": [],
+      "build_ms": 27.666208101436496,
+      "query_ms": 8.516666013747454,
+      "stats": {
+        "states": 485,
+        "rows_examined": 94,
+        "elapsed_ms": 8.492,
+        "dependencies": [
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.lazy_instance.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.shared_instance.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.variants.eager_shared.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.variants.lazy_guarded.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.variants.module_shared.detect",
+          "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.variants.once_primitive.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "query": "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.variants.eager_shared.detect",
+              "proof": "",
+              "evidence": [
+                {
+                  "query": "27d9e8556e263d7313cebf5cb9c9ad60b69265bf3c9860be29194532009a5f9e:ken.catalog.singleton.shared_instance.detect",
+                  "proof": "",
+                  "evidence": [
+                    {
+                      "subject": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower/STORAGE:INSTANCE",
+                      "relation": "ENTITY",
+                      "object": "STORAGE",
+                      "source": [
+                        "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java:39"
+                      ]
+                    },
+                    {
+                      "subject": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower",
+                      "relation": "HAS_FIELD",
+                      "object": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower/STORAGE:INSTANCE",
+                      "source": [
+                        "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java:39"
+                      ]
+                    },
+                    {
+                      "subject": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower",
+                      "relation": "ENTITY",
+                      "object": "CLASS",
+                      "source": [
+                        "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java:28"
+                      ]
+                    },
+                    {
+                      "subject": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::op:1765:1792:variable_declarator",
+                      "relation": "source_initializer",
+                      "object": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::op:1776:1792:object_creation_expression"
+                    },
+                    {
+                      "subject": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower",
+                      "relation": "HAS_METHOD",
+                      "object": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower/CALLABLE:getInstance@1913",
+                      "source": [
+                        "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java:46"
+                      ]
+                    },
+                    {
+                      "subject": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower/CALLABLE:getInstance@1913",
+                      "relation": "ENTITY",
+                      "object": "CALLABLE",
+                      "source": [
+                        "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java:46"
+                      ]
+                    },
+                    {
+                      "body_owner": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower/CALLABLE:getInstance@1913"
+                    }
+                  ]
+                },
+                {
+                  "subject": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower",
+                  "relation": "source_quantifier",
+                  "object": "exists",
+                  "declaration": "constructor",
+                  "members": [
+                    "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower/CALLABLE:IvoryTower@1507"
+                  ],
+                  "complete": true,
+                  "constraints": {}
+                },
+                {
+                  "subject": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower",
+                  "relation": "source_quantifier",
+                  "object": "every",
+                  "declaration": "constructor",
+                  "members": [
+                    "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower/CALLABLE:IvoryTower@1507"
+                  ],
+                  "complete": true,
+                  "constraints": {
+                    "visibility": "private"
+                  }
+                },
+                {
+                  "subject": "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java::module/CLASS:IvoryTower",
+                  "relation": "RESOLVED_ALLOCATION_COUNT",
+                  "object": "1",
+                  "source": [
+                    "singleton/src/main/java/com/iluwatar/singleton/IvoryTower.java:28"
+                  ]
+                }
+              ]
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "java-patterns/visitor/src/main/java/:visitor/Commander",
+      "repo": "java-patterns",
+      "revision": "41625d8d354cdf6b6f10a82e29c2392b3efd5d20",
+      "url": "https://github.com/iluwatar/java-design-patterns",
+      "scope": "visitor/src/main/java/",
+      "rule": "visitor",
+      "entity": "Commander",
+      "expected": true,
+      "why": "The commander accepts the visitor, calls its typed visit and traverses the unit hierarchy.",
+      "files": [
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/App.java",
+          "sha256": "52ed3c4d3bb4dbb928944bc5c0f17eda8dd7c113d24d8abdf1e66b019e1680e3"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/Commander.java",
+          "sha256": "771d2aec375d9e9eacd0a9c5748d5ca5296e234d861550207138a4845423efa6"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/CommanderVisitor.java",
+          "sha256": "77a0a9d471e646ae166165aaab8f0f0e9e041a8f5e607c9fc06689f36c7a225f"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/Sergeant.java",
+          "sha256": "d5e717dec69c352d9b9f2b6f32d4e879e6091de2c3d1c908574500d79fea8d59"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/SergeantVisitor.java",
+          "sha256": "54a5f5e5c43eb1a6212a163ed975c9bf5100efef2e14586c9392647ff0115748"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/Soldier.java",
+          "sha256": "b3924682d9c09348791bad468b374aa804ca8afe4bc10bd245756b3415d901bc"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/SoldierVisitor.java",
+          "sha256": "095ef882b5148ac43745db31acc2234dce2073c1b3a5426b1a31177db9a3088d"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/Unit.java",
+          "sha256": "07c0252f7229c02b4703aff78d9911e11567bec4994362711d9a0e0b185d9c1b"
+        },
+        {
+          "path": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java",
+          "sha256": "7dc8b7dd669a4f7c68b10c210fbd352bd5f248c491f1d5f2753a6897164e321b"
+        }
+      ],
+      "actual": true,
+      "verdict": "TP",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 25.536458007991314,
+      "query_ms": 1.4462501276284456,
+      "stats": {
+        "states": 457,
+        "rows_examined": 219,
+        "elapsed_ms": 1.416,
+        "dependencies": [
+          "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.generic_visitor.detect",
+          "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.named_dispatch.detect",
+          "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.overloaded_dispatch.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "alternatives": [
+                {
+                  "evidence": [
+                    {
+                      "query": "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.overloaded_dispatch.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander",
+                          "relation": "INSTANCE_RECEIVER",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/THIS",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:41"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/CALL:1587@1587:1606/argument/0",
+                          "relation": "VALUE",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/THIS",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:41"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/CALL:1587@1587:1606",
+                          "relation": "ARGUMENT",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/CALL:1587@1587:1606/argument/0",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:41"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529",
+                          "relation": "HAS_CALL",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/CALL:1587@1587:1606",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:41"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander",
+                          "relation": "HAS_METHOD",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:39"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529",
+                          "relation": "HAS_PARAMETER",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/PARAMETER:visitor@1560",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:40"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/PARAMETER:visitor@1560",
+                          "relation": "ENTITY",
+                          "object": "PARAMETER",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:40"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/PARAMETER:visitor@1560",
+                          "relation": "TYPE",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:40"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/CALL:1587@1587:1606",
+                          "relation": "RECEIVER",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/PARAMETER:visitor@1560",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:41"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor",
+                          "relation": "HAS_METHOD",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor/CALLABLE:visit@1444",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java:34"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor/CALLABLE:visit@1444",
+                          "relation": "HAS_PARAMETER",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor/CALLABLE:visit@1444/PARAMETER:commander@1455",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java:34"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor/CALLABLE:visit@1444/PARAMETER:commander@1455",
+                          "relation": "TYPE",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java:34"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor/CALLABLE:visit@1444/PARAMETER:commander@1455",
+                          "relation": "ENTITY",
+                          "object": "PARAMETER",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java:34"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                },
+                {
+                  "evidence": [
+                    {
+                      "query": "a870d457b4d72bdca0739949fc278281d2d6ccafc7b1674b420f612e6104c0bb:ken.catalog.visitor.variants.overloaded_dispatch.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander",
+                          "relation": "INSTANCE_RECEIVER",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/THIS",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:42"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/CALL:1587@1587:1606/argument/0",
+                          "relation": "VALUE",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/THIS",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:41"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/CALL:1587@1587:1606",
+                          "relation": "ARGUMENT",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/CALL:1587@1587:1606/argument/0",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:41"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529",
+                          "relation": "HAS_CALL",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/CALL:1587@1587:1606",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:41"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander",
+                          "relation": "HAS_METHOD",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:39"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529",
+                          "relation": "HAS_PARAMETER",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/PARAMETER:visitor@1560",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:40"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/PARAMETER:visitor@1560",
+                          "relation": "ENTITY",
+                          "object": "PARAMETER",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:40"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/PARAMETER:visitor@1560",
+                          "relation": "TYPE",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:40"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/CALL:1587@1587:1606",
+                          "relation": "RECEIVER",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander/CALLABLE:accept@1529/PARAMETER:visitor@1560",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/Commander.java:41"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor",
+                          "relation": "HAS_METHOD",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor/CALLABLE:visit@1444",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java:34"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor/CALLABLE:visit@1444",
+                          "relation": "HAS_PARAMETER",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor/CALLABLE:visit@1444/PARAMETER:commander@1455",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java:34"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor/CALLABLE:visit@1444/PARAMETER:commander@1455",
+                          "relation": "TYPE",
+                          "object": "visitor/src/main/java/com/iluwatar/visitor/Commander.java::module/CLASS:Commander",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java:34"
+                          ]
+                        },
+                        {
+                          "subject": "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java::module/INTERFACE:UnitVisitor/CALLABLE:visit@1444/PARAMETER:commander@1455",
+                          "relation": "ENTITY",
+                          "object": "PARAMETER",
+                          "source": [
+                            "visitor/src/main/java/com/iluwatar/visitor/UnitVisitor.java:34"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                }
+              ],
+              "truncated": false
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "pandovski/Creational/Prototype/java/:prototype/EmployeeRecord",
+      "repo": "pandovski",
+      "revision": "db0dcf0ceade1a84fc5466fc625a50cc1dd066fe",
+      "url": "https://github.com/ZoranPandovski/design-patterns",
+      "scope": "Creational/Prototype/java/",
+      "rule": "prototype",
+      "entity": "EmployeeRecord",
+      "expected": true,
+      "why": "getClone passes all five instance fields to the matching overloaded constructor; this() runs before explicit retention writes. Regression found during this second review.",
+      "files": [
+        {
+          "path": "Creational/Prototype/java/EmployeeRecord.java",
+          "sha256": "afb545aee8f1a0318d9536996857ae0e44a033864eda0811191494266f6ee5c4"
+        },
+        {
+          "path": "Creational/Prototype/java/Prototype.java",
+          "sha256": "4d5422231dd02ef07eac5b704920f71a256f93ced4b008edc7f4fdc44b96426a"
+        },
+        {
+          "path": "Creational/Prototype/java/PrototypeDemo.java",
+          "sha256": "3ee7897a7801562f36d12d6d06d292ffe28a5fcbfc81fc6543df8c3c58e1a429"
+        }
+      ],
+      "actual": true,
+      "verdict": "TP",
+      "complete": true,
+      "unknown": [],
+      "diagnostics": [],
+      "build_ms": 49.20949996449053,
+      "query_ms": 7.548832800239325,
+      "stats": {
+        "states": 1620,
+        "rows_examined": 109,
+        "elapsed_ms": 7.521,
+        "dependencies": [
+          "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.derived_copy.detect",
+          "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.derived_clone.detect",
+          "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.explicit_copy.detect",
+          "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.field_copy.detect",
+          "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.language_copy.detect"
+        ]
+      },
+      "matches": [
+        {
+          "bindings": {
+            "$unit": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord"
+          },
+          "status": "structural_match",
+          "unknown": [],
+          "evidence": [
+            {
+              "alternatives": [
+                {
+                  "evidence": [
+                    {
+                      "query": "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.explicit_copy.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_METHOD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "ENTITY",
+                          "object": "CLASS",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:1"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_FIELD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/STORAGE:id",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:3"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/STORAGE:id",
+                          "relation": "ENTITY",
+                          "object": "STORAGE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:3"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "relation": "HAS_PARAMETER",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:id@490",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:id@490",
+                          "relation": "ENTITY",
+                          "object": "PARAMETER",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "body_owner": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468"
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::op:588:600:assignment_expression",
+                          "relation": "FINAL_MEMBER_INPUT",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:id@490",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:16"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:27"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_METHOD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:27"
+                          ]
+                        },
+                        {
+                          "body_owner": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879"
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                },
+                {
+                  "evidence": [
+                    {
+                      "query": "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.explicit_copy.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_METHOD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "ENTITY",
+                          "object": "CLASS",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:1"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_FIELD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/STORAGE:name",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:4"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/STORAGE:name",
+                          "relation": "ENTITY",
+                          "object": "STORAGE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:4"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "relation": "HAS_PARAMETER",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:name@498",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:name@498",
+                          "relation": "ENTITY",
+                          "object": "PARAMETER",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "body_owner": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468"
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::op:610:626:assignment_expression",
+                          "relation": "FINAL_MEMBER_INPUT",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:name@498",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:17"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:27"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_METHOD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:27"
+                          ]
+                        },
+                        {
+                          "body_owner": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879"
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                },
+                {
+                  "evidence": [
+                    {
+                      "query": "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.explicit_copy.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_METHOD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "ENTITY",
+                          "object": "CLASS",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:1"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_FIELD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/STORAGE:designation",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:4"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/STORAGE:designation",
+                          "relation": "ENTITY",
+                          "object": "STORAGE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:4"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "relation": "HAS_PARAMETER",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:designation@511",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:designation@511",
+                          "relation": "ENTITY",
+                          "object": "PARAMETER",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "body_owner": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468"
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::op:636:666:assignment_expression",
+                          "relation": "FINAL_MEMBER_INPUT",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:designation@511",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:18"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:27"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_METHOD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:27"
+                          ]
+                        },
+                        {
+                          "body_owner": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879"
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                },
+                {
+                  "evidence": [
+                    {
+                      "query": "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.explicit_copy.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_METHOD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "ENTITY",
+                          "object": "CLASS",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:1"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_FIELD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/STORAGE:salary",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:5"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/STORAGE:salary",
+                          "relation": "ENTITY",
+                          "object": "STORAGE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:5"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "relation": "HAS_PARAMETER",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:salary@531",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:salary@531",
+                          "relation": "ENTITY",
+                          "object": "PARAMETER",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "body_owner": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468"
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::op:676:696:assignment_expression",
+                          "relation": "FINAL_MEMBER_INPUT",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:salary@531",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:19"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:27"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_METHOD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:27"
+                          ]
+                        },
+                        {
+                          "body_owner": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879"
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                },
+                {
+                  "evidence": [
+                    {
+                      "query": "b44c3df7e7e2bc9aef3224991f0ea22618ec20267da3ec29bd57aa616d427ffe:ken.catalog.prototype.variants.explicit_copy.detect",
+                      "proof": "",
+                      "evidence": [
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_METHOD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "ENTITY",
+                          "object": "CLASS",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:1"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_FIELD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/STORAGE:address",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:6"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/STORAGE:address",
+                          "relation": "ENTITY",
+                          "object": "STORAGE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:6"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468",
+                          "relation": "HAS_PARAMETER",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:address@546",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:address@546",
+                          "relation": "ENTITY",
+                          "object": "PARAMETER",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:14"
+                          ]
+                        },
+                        {
+                          "body_owner": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468"
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::op:706:728:assignment_expression",
+                          "relation": "FINAL_MEMBER_INPUT",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:EmployeeRecord@468/PARAMETER:address@546",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:20"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879",
+                          "relation": "ENTITY",
+                          "object": "CALLABLE",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:27"
+                          ]
+                        },
+                        {
+                          "subject": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord",
+                          "relation": "HAS_METHOD",
+                          "object": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879",
+                          "source": [
+                            "Creational/Prototype/java/EmployeeRecord.java:27"
+                          ]
+                        },
+                        {
+                          "body_owner": "Creational/Prototype/java/EmployeeRecord.java::module/CLASS:EmployeeRecord/CALLABLE:getClone@879"
+                        }
+                      ]
+                    }
+                  ],
+                  "unknown": []
+                }
+              ],
+              "truncated": false
+            }
+          ],
+          "variant": "default",
+          "evidence_score": 1.0
+        }
+      ]
+    }
+  ]
+}

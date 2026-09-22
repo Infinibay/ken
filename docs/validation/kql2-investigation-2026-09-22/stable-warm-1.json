@@ -1,0 +1,503 @@
+{
+  "language": "kql/2",
+  "query": "missing_close",
+  "columns": [
+    "owner"
+  ],
+  "rows": [
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_architecture@24643"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_blast_radius@23966"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_callgraph@29028"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_changed_context@17679"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_clones@26269"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_cochange@22190"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_file_findings@21463"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_file_neighbors@15725"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_file_outline@15077"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_file_snippets@17915"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_file_symbols@14461"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_find_tests@17008"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_findings@19989"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_forget@19686"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_grep@28240"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_intent_history@27523"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_module_graph@16480"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_profile@25631"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_project_overview@18447"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_recall@20226"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_related_findings@20625"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_remember@18683"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_search_files@12549"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_search_symbols@13381"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_symbol_detail@16097"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_type_hierarchy@30874"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_impl_ken_wiring@30040"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:_select_memories@63616"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:ken_recall@60792"
+    ],
+    [
+      "src/ken/mcp/server.py::module/CALLABLE:ken_who@46045"
+    ]
+  ],
+  "complete": true,
+  "coverage_complete": true,
+  "unknown_candidates": 0,
+  "results_truncated": false,
+  "evidence": [
+    {
+      "row": 0,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:646",
+        "src/ken/mcp/server.py:662"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 1,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:632",
+        "src/ken/mcp/server.py:642"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 2,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:749",
+        "src/ken/mcp/server.py:766"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 3,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:471",
+        "src/ken/mcp/server.py:474"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 4,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:679",
+        "src/ken/mcp/server.py:700"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 5,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:591",
+        "src/ken/mcp/server.py:620"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 6,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:574",
+        "src/ken/mcp/server.py:583"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 7,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:422",
+        "src/ken/mcp/server.py:428"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 8,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:400",
+        "src/ken/mcp/server.py:411"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 9,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:478",
+        "src/ken/mcp/server.py:486"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 10,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:383",
+        "src/ken/mcp/server.py:391"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 11,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:457",
+        "src/ken/mcp/server.py:467"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 12,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:538",
+        "src/ken/mcp/server.py:540"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 13,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:528",
+        "src/ken/mcp/server.py:534"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 14,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:726",
+        "src/ken/mcp/server.py:738"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 15,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:711",
+        "src/ken/mcp/server.py:720"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 16,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:444",
+        "src/ken/mcp/server.py:451"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 17,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:666",
+        "src/ken/mcp/server.py:675"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 18,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:498",
+        "src/ken/mcp/server.py:500"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 19,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:544",
+        "src/ken/mcp/server.py:550"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 20,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:554",
+        "src/ken/mcp/server.py:568"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 21,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:504",
+        "src/ken/mcp/server.py:522"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 22,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:345",
+        "src/ken/mcp/server.py:358"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 23,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:362",
+        "src/ken/mcp/server.py:379"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 24,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:432",
+        "src/ken/mcp/server.py:434"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 25,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:800",
+        "src/ken/mcp/server.py:813"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 26,
+      "sources": [
+        "src/ken/mcp/server.py:323",
+        "src/ken/mcp/server.py:778",
+        "src/ken/mcp/server.py:790"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 27,
+      "sources": [
+        "src/ken/mcp/server.py:1517",
+        "src/ken/mcp/server.py:1526",
+        "src/ken/mcp/server.py:323"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 28,
+      "sources": [
+        "src/ken/mcp/server.py:1460",
+        "src/ken/mcp/server.py:1508",
+        "src/ken/mcp/server.py:1513",
+        "src/ken/mcp/server.py:323"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    },
+    {
+      "row": 29,
+      "sources": [
+        "src/ken/mcp/server.py:1122",
+        "src/ken/mcp/server.py:1154",
+        "src/ken/mcp/server.py:323"
+      ],
+      "relations": [
+        "ENTITY",
+        "HAS_CALL",
+        "TARGET"
+      ]
+    }
+  ],
+  "timing": {
+    "total_ms": 3645.4,
+    "timeout_ms": 15000,
+    "compile_ms": 27.4,
+    "build_ms": 3419.0,
+    "query_ms": 20.4
+  }
+}

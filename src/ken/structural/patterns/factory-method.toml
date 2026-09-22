@@ -4,15 +4,26 @@ name = "Factory Method"
 category = "creational"
 description = "An overriding method chooses a concrete product."
 caveat = "Structural evidence requires review of intent and runtime behavior."
-legacy_query = "require $unit HAS_METHOD $factory\nrequire $factory OVERRIDES $base_factory\nrequire $factory RETURNS_NEW $product\n"
 query = '''
-query factory_method {
- any { match "factory-method#virtual-slot"(creator: $creator, factory: $factory, product: $product, unit: $unit); }
- or { match "factory-method#contract-slot"(creator: $creator, factory: $factory, product: $product, unit: $unit); }
- emit $creator, $factory, $product, $unit;
+language "kql/2";
+module ken.catalog.factory_method;
+import ken.catalog.factory_method.variants.contract_slot;
+import ken.catalog.factory_method.variants.virtual_slot;
+
+pattern detect(out TypeDecl $creator, out Callable $factory, out TypeDecl $product, out TypeDecl $unit) {
+  either {
+    use ken.catalog.factory_method.variants.virtual_slot.detect(creator: $creator, factory: $factory, product: $product, unit: $unit);
+  } or {
+    use ken.catalog.factory_method.variants.contract_slot.detect(creator: $creator, factory: $factory, product: $product, unit: $unit);
+  }
+}
+
+query results {
+  use detect(creator: $creator, factory: $factory, product: $product, unit: $unit);
+  select $creator, $factory, $product, $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[variants]]
@@ -23,15 +34,30 @@ requires = ["override_resolution", "return_flow"]
 graph_requirements = ["El algoritmo usa el slot que reemplaza el creator concreto y el producto retornado satisface su contrato."]
 missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
+query_claim = "A nonconstructor method overrides a slot owned by one of its creator's nominal supertypes and returns a construction. The factory role consistently names the concrete implementation in both variants; client_flow separately relates its overridden slot to a product-consuming call. Runtime dispatch and product contract satisfaction remain outside this signature."
 
 
 query = '''
-query factory_method {
+language "kql/2";
+module ken.catalog.factory_method.variants.virtual_slot;
 
- require $unit HAS_METHOD $factory;
- require $factory OVERRIDES $base_factory;
- require $factory RETURNS_NEW $product;
- emit $unit, creator=$unit, $factory, $product;
+pattern detect(out TypeDecl $unit, out TypeDecl $creator, out Callable $factory, out TypeDecl $product) {
+  type $base { method $slot { constructor: false; static: false; } }
+  type $unit {
+    method $factory {
+      constructor: false;
+      static: false;
+      body { let $created = construct $product {}; return $created; }
+    }
+  }
+  where subtype($unit, $base);
+  where overrides($factory, $slot);
+  bind $creator = $unit;
+}
+
+query results {
+  use detect(unit: $unit, creator: $creator, factory: $factory, product: $product);
+  select $unit, $creator, $factory, $product;
 }
 '''
 [[variants]]
@@ -44,24 +70,32 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-go-rust"
 query_claim = "El cliente recibe por parametro un contrato, invoca en ese parametro un slot que el contrato declara, y un tipo concreto que satisface el contrato (method set en Go, impl de trait en Rust) sobrescribe ese slot y devuelve una construccion nueva. No prueba dispatch dinamico en ejecucion, ni que el cliente reciba realmente esa implementacion, ni la compatibilidad de tipos del producto mas alla de que sea una construccion."
 query = '''
-query factory_contract_slot {
- require $client HAS_PARAMETER $supplied;
- parameter(receiver: false) as $supplied;
- require $client HAS_CALL $creation;
- require $creation RECEIVER $supplied;
- require $creation TARGET $slot;
- callable(constructor: false) as $slot;
- require $contract HAS_METHOD $slot;
- require $implementation OVERRIDES $slot;
- different $implementation $slot;
- require $implementation IN_TYPE $concrete;
- any {
-  require $concrete SUBTYPE_OF $contract;
- } or {
-  require $concrete IMPLEMENTS $contract;
- }
- require $implementation RETURNS_NEW $product;
- emit $concrete, $slot, $client, $contract, unit=$concrete, creator=$concrete, factory=$slot, product=$product;
+language "kql/2";
+module ken.catalog.factory_method.variants.contract_slot;
+
+pattern detect(out TypeDecl $concrete, out Callable $slot, out Callable $client, out TypeDecl $contract, out TypeDecl $unit, out TypeDecl $creator, out Callable $factory, out TypeDecl $product) {
+  type $contract { method $slot { constructor: false; } }
+  type $concrete {
+    method $factory {
+      constructor: false;
+      body { let $created = construct $product {}; return $created; }
+    }
+  }
+  callable $client {
+    parameters { param $supplied { type: nominal($contract); } }
+    body { call $slot { receiver: $supplied; dispatch: possible; }; }
+  }
+  where overrides($factory, $slot);
+  either { where subtype($concrete, $contract); }
+  or { where implements($concrete, $contract); }
+  where $factory != $slot;
+  bind $unit = $concrete;
+  bind $creator = $concrete;
+}
+
+query results {
+  use detect(concrete: $concrete, slot: $slot, client: $client, contract: $contract, unit: $unit, creator: $creator, factory: $factory, product: $product);
+  select $concrete, $slot, $client, $contract, $unit, $creator, $factory, $product;
 }
 '''
 
@@ -71,13 +105,25 @@ status = "ready"
 description = "An overriding factory slot produces the argument consumed by a client call."
 caveat = "Requires a direct argument/result link; local argument reaching definitions and runtime dispatch remain limited."
 query = '''
-query factory_client {
- match "factory-method"(factory:$factory, product:$product);
- require $factory OVERRIDES $slot;
- require $creation TARGET $slot;
- require $creation RESULT $value;
- require $consumer ARGUMENT $argument;
- require $argument VALUE $value;
- emit $factory, $creation, $consumer;
+language "kql/2";
+module ken.catalog.factory_method.client_flow;
+
+import ken.catalog.factory_method;
+pattern detect(out Callable $factory, out Operation $creation, out Operation $consumer) {
+  use ken.catalog.factory_method.detect(factory: $factory);
+  callable $slot {}
+  where overrides($factory, $slot);
+  callable $consume {}
+  callable $client {
+    body {
+      let $product = call $slot { dispatch: possible; } as $creation;
+      call $consume { argument $product at any; } as $consumer;
+    }
+  }
+}
+
+query results {
+  use detect(factory: $factory, creation: $creation, consumer: $consumer);
+  select $factory, $creation, $consumer;
 }
 '''

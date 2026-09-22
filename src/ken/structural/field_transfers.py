@@ -70,6 +70,18 @@ def field_transfers(graph: IR) -> None:
             if not named_receiver and not embedded_receiver:
                 continue
             immediate = operations.get(op.parent or '')
+            if (entity.attrs.get('language') == 'java' and entity.attrs.get('constructor')
+                    and named_receiver and op.role == 'constructor' and immediate is not None
+                    and immediate.native_kind == 'explicit_constructor_invocation'
+                    and immediate.parent in bodies):
+                # A leading this() initializer is not publication of the bare
+                # receiver. Only the subsequent explicit field writes are
+                # summarized; no delegated-constructor field values are assumed.
+                siblings = [o for o in ops if o.parent == immediate.parent]
+                arguments = [o for o in ops if o.parent == immediate.id and o.role == 'arguments']
+                if (siblings and min(siblings, key=lambda o: o.start).id == immediate.id
+                        and len(arguments) == 1 and arguments[0].attrs.get('text') == '()'):
+                    continue
             if named_receiver and immediate is not None and immediate.kind == 'MEMBER':
                 continue
             current = immediate

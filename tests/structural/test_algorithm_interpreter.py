@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import pytest
 
+from .contract_support import contract_matches
+
 from .test_gof_executable import evaluate
 
 LANGUAGES = ('python', 'java', 'typescript')
@@ -118,9 +120,9 @@ def test_sum_interpreter_rejects_missing_context_origin_or_recursion(language, m
 
 @pytest.mark.parametrize('language', LANGUAGES)
 @pytest.mark.parametrize('mutation', ['right-context', 'discard-left', 'discard-both', 'overwrite-result'])
-@pytest.mark.xfail(strict=True, reason='Interpreter signature does not prove every operand context or combine/result consumption; see algorithms/interpreter.md')
 def test_desired_pure_binary_contract_requires_all_contexts_and_result_consumption(language, mutation):
-    assert not evaluate(source(language, mutation), language, 'interpreter')
+    assert contract_matches(source(language), language, 'interpreter.binary_result')
+    assert not contract_matches(source(language, mutation), language, 'interpreter.binary_result')
 
 
 @pytest.mark.parametrize('language', LANGUAGES)

@@ -1,0 +1,6175 @@
+{
+  "backend": "exploration",
+  "repeat": 0,
+  "seconds": 79.9453802080825,
+  "complete": false,
+  "findings": 0,
+  "sha256": "a21c1a26836e3ec28020bbfec05d95a8f85008dff1a7c374c9109553bc416039",
+  "outcomes": {
+    "abstract-factory": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 11194,
+        "rows_examined": 840,
+        "elapsed_ms": 5000.141,
+        "dependencies": [
+          "4bc159970b67fab1bafd914960c3aca2318fade34c76313d9c290569200ee507:ken.catalog.abstract_factory.variants.associated_products.detect",
+          "4bc159970b67fab1bafd914960c3aca2318fade34c76313d9c290569200ee507:ken.catalog.abstract_factory.variants.nominal_families.detect"
+        ],
+        "planning_ms": 0.041,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 11194,
+            "rows_examined": 840,
+            "inclusive_ms": 4998.077500145882,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.019540777429938316,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$first",
+            "object": "$slot1",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 3,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.012417091056704521,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 4,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$first_reader",
+            "object": "$first_slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 5,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 11191,
+            "rows_examined": 840,
+            "inclusive_ms": 4998.003083048388,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 6,
+            "parent": 5,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 280,
+            "states": 282,
+            "rows_examined": 840,
+            "inclusive_ms": 111.98500008322299,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 7,
+            "parent": 5,
+            "calls": 1,
+            "input_rows": 280,
+            "output_rows": 118,
+            "states": 10908,
+            "rows_examined": 0,
+            "inclusive_ms": 4882.877417141572,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "adapter": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 2376,
+        "rows_examined": 244,
+        "elapsed_ms": 1152.241,
+        "dependencies": [
+          "77674789372e4dd75e09150f045917c449a5f6cd79ae529d38a85db15b707ed7:ken.catalog.adapter.variants.class_adapter.detect",
+          "77674789372e4dd75e09150f045917c449a5f6cd79ae529d38a85db15b707ed7:ken.catalog.adapter.variants.functional_adapter.detect",
+          "77674789372e4dd75e09150f045917c449a5f6cd79ae529d38a85db15b707ed7:ken.catalog.adapter.variants.object_adapter.detect"
+        ],
+        "planning_ms": 0.281,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2376,
+            "rows_examined": 244,
+            "inclusive_ms": 1151.992625091225,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.014499993994832039,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$method",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 3,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2373,
+            "rows_examined": 244,
+            "inclusive_ms": 1151.9242499489337,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 4,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 30,
+            "states": 32,
+            "rows_examined": 240,
+            "inclusive_ms": 48.32983296364546,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 5,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 30,
+            "output_rows": 2,
+            "states": 1780,
+            "rows_examined": 0,
+            "inclusive_ms": 490.91404187493026,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 6,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 2,
+            "output_rows": 0,
+            "states": 560,
+            "rows_examined": 4,
+            "inclusive_ms": 612.5465000513941,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 7,
+            "parent": 6,
+            "calls": 2,
+            "input_rows": 2,
+            "output_rows": 2,
+            "states": 4,
+            "rows_examined": 2,
+            "inclusive_ms": 490.4286658857018,
+            "selection": {
+              "reason": "estimated_cardinality",
+              "estimated_rows_per_input": 1,
+              "alternatives": [
+                {
+                  "position": 0,
+                  "estimated_rows_per_input": 1
+                }
+              ]
+            },
+            "relation": "ENTITY",
+            "subject": "$wrapped",
+            "object": "\"CALLABLE\"",
+            "attributes": []
+          },
+          {
+            "operator": "source_body",
+            "index": 8,
+            "parent": 6,
+            "calls": 2,
+            "input_rows": 2,
+            "output_rows": 0,
+            "states": 272,
+            "rows_examined": 0,
+            "inclusive_ms": 75.38549974560738,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 9,
+            "parent": 6,
+            "calls": 2,
+            "input_rows": 2,
+            "output_rows": 2,
+            "states": 4,
+            "rows_examined": 2,
+            "inclusive_ms": 0.02812524326145649,
+            "selection": {
+              "reason": "estimated_cardinality",
+              "estimated_rows_per_input": 1,
+              "alternatives": [
+                {
+                  "position": 0,
+                  "estimated_rows_per_input": 1
+                }
+              ]
+            },
+            "relation": "ENTITY",
+            "subject": "$wrapped",
+            "object": "\"CALLABLE\"",
+            "attributes": []
+          },
+          {
+            "operator": "source_body",
+            "index": 10,
+            "parent": 6,
+            "calls": 2,
+            "input_rows": 2,
+            "output_rows": 0,
+            "states": 278,
+            "rows_examined": 0,
+            "inclusive_ms": 46.29108286462724,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 11,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.01570885069668293,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 12,
+            "parent": 11,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$override",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "bridge": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 352253,
+        "rows_examined": 71919,
+        "elapsed_ms": 2454.541,
+        "dependencies": [
+          "4c7ad6edc82ae4f29cd15a4833166e8dfb9033ee595ffb3cb17c052e1c7f8581:ken.catalog.bridge.variants.generic_composition.detect",
+          "4c7ad6edc82ae4f29cd15a4833166e8dfb9033ee595ffb3cb17c052e1c7f8581:ken.catalog.bridge.variants.refined_composition.detect",
+          "4c7ad6edc82ae4f29cd15a4833166e8dfb9033ee595ffb3cb17c052e1c7f8581:ken.catalog.bridge.variants.runtime_composition.detect"
+        ],
+        "planning_ms": 0.05,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 352253,
+            "rows_examined": 71919,
+            "inclusive_ms": 2454.3530421797186,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 352250,
+            "rows_examined": 71919,
+            "inclusive_ms": 2454.244374996051,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 7991,
+            "states": 7993,
+            "rows_examined": 71919,
+            "inclusive_ms": 265.3957090806216,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 3,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 7991,
+            "output_rows": 1124,
+            "states": 343131,
+            "rows_examined": 0,
+            "inclusive_ms": 2184.10237506032,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 4,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1124,
+            "output_rows": 0,
+            "states": 1125,
+            "rows_examined": 0,
+            "inclusive_ms": 2.827791962772608,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 5,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.032167183235287666,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 6,
+            "parent": 5,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$operation",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 7,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.007708091288805008,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 8,
+            "parent": 7,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "BINDS_TYPE_PARAMETER",
+            "subject": "$unit",
+            "object": "$implementation_parameter",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "builder": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 640204,
+        "rows_examined": 224610,
+        "elapsed_ms": 5000.406,
+        "dependencies": [
+          "f82d03ace4498ab8f6478f9fd64fe5c3a21c757f21c12e1a86a92cbeeeb6330f:ken.catalog.builder.variants.accumulated_state.detect",
+          "f82d03ace4498ab8f6478f9fd64fe5c3a21c757f21c12e1a86a92cbeeeb6330f:ken.catalog.builder.variants.mutable_product.detect"
+        ],
+        "planning_ms": 0.144,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 17,
+            "states": 640204,
+            "rows_examined": 224610,
+            "inclusive_ms": 5000.180125003681,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 17,
+            "states": 785,
+            "rows_examined": 1062,
+            "inclusive_ms": 190.5295408796519,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 118,
+            "states": 120,
+            "rows_examined": 1062,
+            "inclusive_ms": 180.95125001855195,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 3,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 118,
+            "output_rows": 98,
+            "states": 664,
+            "rows_examined": 0,
+            "inclusive_ms": 9.057541843503714,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 4,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 51114,
+            "rows_examined": 14168,
+            "inclusive_ms": 1940.4156249947846,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 5,
+            "parent": 4,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 994,
+            "states": 7316,
+            "rows_examined": 14168,
+            "inclusive_ms": 1687.181584071368,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_body",
+            "index": 6,
+            "parent": 4,
+            "calls": 1,
+            "input_rows": 994,
+            "output_rows": 616,
+            "states": 43180,
+            "rows_examined": 0,
+            "inclusive_ms": 221.7372921295464,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 7,
+            "parent": 4,
+            "calls": 1,
+            "input_rows": 616,
+            "output_rows": 0,
+            "states": 617,
+            "rows_examined": 0,
+            "inclusive_ms": 30.750750098377466,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 8,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 588304,
+            "rows_examined": 209380,
+            "inclusive_ms": 2869.144625030458,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 9,
+            "parent": 8,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 509,
+            "states": 514,
+            "rows_examined": 1018,
+            "inclusive_ms": 112.26795916445553,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 10,
+            "parent": 9,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 42,
+            "states": 44,
+            "rows_examined": 84,
+            "inclusive_ms": 11.570249916985631,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 11,
+            "parent": 9,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 467,
+            "states": 469,
+            "rows_examined": 934,
+            "inclusive_ms": 100.62799998559058,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 12,
+            "parent": 8,
+            "calls": 1,
+            "input_rows": 509,
+            "output_rows": 141197,
+            "states": 16820,
+            "rows_examined": 114170,
+            "inclusive_ms": 637.0502500794828,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 13,
+            "parent": 8,
+            "calls": 1,
+            "input_rows": 141197,
+            "output_rows": 132480,
+            "states": 425032,
+            "rows_examined": 0,
+            "inclusive_ms": 1350.4395000636578,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 14,
+            "parent": 8,
+            "calls": 1,
+            "input_rows": 132480,
+            "output_rows": 121104,
+            "states": 145937,
+            "rows_examined": 94192,
+            "inclusive_ms": 754.7415001317859,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "chain-of-responsibility": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 2353,
+        "rows_examined": 244,
+        "elapsed_ms": 131.143,
+        "dependencies": [
+          "a6d6fda46061c13e68c1486279cbe9ae0ad766771840d80bb782ee9a71f0a1e3:ken.catalog.chain_of_responsibility.variants.linked_handlers.detect",
+          "a6d6fda46061c13e68c1486279cbe9ae0ad766771840d80bb782ee9a71f0a1e3:ken.catalog.chain_of_responsibility.variants.middleware_closures.detect"
+        ],
+        "planning_ms": 0.099,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2353,
+            "rows_examined": 244,
+            "inclusive_ms": 130.94887509942055,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.017208978533744812,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$handle",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 3,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2351,
+            "rows_examined": 244,
+            "inclusive_ms": 130.9097500052303,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 4,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 30,
+            "states": 32,
+            "rows_examined": 240,
+            "inclusive_ms": 59.07095782458782,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 5,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 30,
+            "output_rows": 2,
+            "states": 1780,
+            "rows_examined": 0,
+            "inclusive_ms": 66.68408308178186,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 6,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 2,
+            "output_rows": 0,
+            "states": 538,
+            "rows_examined": 4,
+            "inclusive_ms": 5.023083183914423,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 7,
+            "parent": 6,
+            "calls": 2,
+            "input_rows": 2,
+            "output_rows": 2,
+            "states": 4,
+            "rows_examined": 2,
+            "inclusive_ms": 0.18812413327395916,
+            "selection": {
+              "reason": "estimated_cardinality",
+              "estimated_rows_per_input": 1,
+              "alternatives": [
+                {
+                  "position": 0,
+                  "estimated_rows_per_input": 1
+                }
+              ]
+            },
+            "relation": "ENTITY",
+            "subject": "$unit",
+            "object": "\"CALLABLE\"",
+            "attributes": []
+          },
+          {
+            "operator": "source_body",
+            "index": 8,
+            "parent": 6,
+            "calls": 2,
+            "input_rows": 2,
+            "output_rows": 0,
+            "states": 264,
+            "rows_examined": 0,
+            "inclusive_ms": 4.321292042732239,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 9,
+            "parent": 6,
+            "calls": 2,
+            "input_rows": 2,
+            "output_rows": 2,
+            "states": 4,
+            "rows_examined": 2,
+            "inclusive_ms": 0.01441827043890953,
+            "selection": {
+              "reason": "estimated_cardinality",
+              "estimated_rows_per_input": 1,
+              "alternatives": [
+                {
+                  "position": 0,
+                  "estimated_rows_per_input": 1
+                }
+              ]
+            },
+            "relation": "ENTITY",
+            "subject": "$unit",
+            "object": "\"CALLABLE\"",
+            "attributes": []
+          },
+          {
+            "operator": "source_body",
+            "index": 10,
+            "parent": 6,
+            "calls": 2,
+            "input_rows": 2,
+            "output_rows": 0,
+            "states": 264,
+            "rows_examined": 0,
+            "inclusive_ms": 0.3511242102831602,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "command": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 355722,
+        "rows_examined": 11450,
+        "elapsed_ms": 5000.174,
+        "dependencies": [
+          "5ff7da248bc272e6056f2144f065cc12645b77c6e23849e634a035975a7175e9:ken.catalog.command.variants.command_object.detect"
+        ],
+        "planning_ms": 1.499,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 355722,
+            "rows_examined": 11450,
+            "inclusive_ms": 4999.918750021607,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 10453,
+            "rows_examined": 1326,
+            "inclusive_ms": 204.2832081206143,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 102,
+            "states": 104,
+            "rows_examined": 612,
+            "inclusive_ms": 51.58974998630583,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 3,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 102,
+            "output_rows": 44,
+            "states": 10303,
+            "rows_examined": 714,
+            "inclusive_ms": 149.9264999292791,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 4,
+            "parent": 3,
+            "calls": 102,
+            "input_rows": 102,
+            "output_rows": 102,
+            "states": 306,
+            "rows_examined": 306,
+            "inclusive_ms": 11.069542495533824,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 5,
+            "parent": 3,
+            "calls": 102,
+            "input_rows": 102,
+            "output_rows": 44,
+            "states": 4578,
+            "rows_examined": 0,
+            "inclusive_ms": 94.54791806638241,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 6,
+            "parent": 3,
+            "calls": 102,
+            "input_rows": 102,
+            "output_rows": 102,
+            "states": 306,
+            "rows_examined": 408,
+            "inclusive_ms": 13.948555570095778,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 7,
+            "parent": 3,
+            "calls": 102,
+            "input_rows": 102,
+            "output_rows": 37,
+            "states": 4937,
+            "rows_examined": 0,
+            "inclusive_ms": 17.14083435945213,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 8,
+            "parent": 3,
+            "calls": 37,
+            "input_rows": 37,
+            "output_rows": 0,
+            "states": 74,
+            "rows_examined": 0,
+            "inclusive_ms": 9.019671007990837,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 9,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 44,
+            "output_rows": 0,
+            "states": 45,
+            "rows_examined": 0,
+            "inclusive_ms": 2.5777078699320555,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 10,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 345268,
+            "rows_examined": 10124,
+            "inclusive_ms": 4795.594250084832,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 11,
+            "parent": 10,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 1787,
+            "states": 1789,
+            "rows_examined": 8935,
+            "inclusive_ms": 44.17591611854732,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 12,
+            "parent": 10,
+            "calls": 1,
+            "input_rows": 1787,
+            "output_rows": 691,
+            "states": 64046,
+            "rows_examined": 0,
+            "inclusive_ms": 640.5250830575824,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 13,
+            "parent": 10,
+            "calls": 1,
+            "input_rows": 691,
+            "output_rows": 109178,
+            "states": 850,
+            "rows_examined": 316,
+            "inclusive_ms": 356.47825011983514,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 14,
+            "parent": 10,
+            "calls": 1,
+            "input_rows": 109178,
+            "output_rows": 42842,
+            "states": 267583,
+            "rows_examined": 0,
+            "inclusive_ms": 1612.3933750204742,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 15,
+            "parent": 10,
+            "calls": 1,
+            "input_rows": 42842,
+            "output_rows": 14,
+            "states": 10999,
+            "rows_examined": 873,
+            "inclusive_ms": 2128.8459999486804,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 16,
+            "parent": 15,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 16,
+            "states": 18,
+            "rows_examined": 48,
+            "inclusive_ms": 2.9059580992907286,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 17,
+            "parent": 15,
+            "calls": 1,
+            "input_rows": 16,
+            "output_rows": 14,
+            "states": 141,
+            "rows_examined": 0,
+            "inclusive_ms": 18.398666055873036,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 18,
+            "parent": 15,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 825,
+            "states": 826,
+            "rows_examined": 825,
+            "inclusive_ms": 95.15254199504852,
+            "selection": {
+              "reason": "estimated_cardinality",
+              "estimated_rows_per_input": 825,
+              "alternatives": [
+                {
+                  "position": 0,
+                  "estimated_rows_per_input": 825
+                }
+              ]
+            },
+            "relation": "ENTITY",
+            "subject": "$producer",
+            "object": "\"CALLABLE\"",
+            "attributes": [
+              [
+                "constructor",
+                "literal",
+                "false"
+              ]
+            ]
+          },
+          {
+            "operator": "source_body",
+            "index": 19,
+            "parent": 15,
+            "calls": 1,
+            "input_rows": 825,
+            "output_rows": 26,
+            "states": 10013,
+            "rows_examined": 0,
+            "inclusive_ms": 2012.192458147183,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "composite": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 147278,
+        "rows_examined": 18560,
+        "elapsed_ms": 1799.313,
+        "dependencies": [
+          "e82a15f6189b6c08355675eacbec986456c72f20494e97d042c2ca0affcb8083:ken.catalog.composite.variants.algebraic_tree.detect",
+          "e82a15f6189b6c08355675eacbec986456c72f20494e97d042c2ca0affcb8083:ken.catalog.composite.variants.higher_order_traversal.detect",
+          "e82a15f6189b6c08355675eacbec986456c72f20494e97d042c2ca0affcb8083:ken.catalog.composite.variants.recursive_contract.detect",
+          "e82a15f6189b6c08355675eacbec986456c72f20494e97d042c2ca0affcb8083:ken.catalog.composite.variants.recursive_nominal.detect"
+        ],
+        "planning_ms": 0.078,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 32,
+            "states": 147278,
+            "rows_examined": 18560,
+            "inclusive_ms": 1799.0408749319613,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.018458114936947823,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$operation",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 3,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 16,
+            "states": 70729,
+            "rows_examined": 9280,
+            "inclusive_ms": 962.551707867533,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 4,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 1856,
+            "states": 1858,
+            "rows_examined": 9280,
+            "inclusive_ms": 156.9525410886854,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 5,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1856,
+            "output_rows": 685,
+            "states": 68870,
+            "rows_examined": 0,
+            "inclusive_ms": 795.3945831395686,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 6,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 16,
+            "states": 76544,
+            "rows_examined": 9280,
+            "inclusive_ms": 816.6703749448061,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 7,
+            "parent": 6,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 1856,
+            "states": 1858,
+            "rows_examined": 9280,
+            "inclusive_ms": 137.5546669587493,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 8,
+            "parent": 6,
+            "calls": 1,
+            "input_rows": 1856,
+            "output_rows": 685,
+            "states": 74685,
+            "rows_examined": 0,
+            "inclusive_ms": 667.9645418189466,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 9,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 3,
+            "rows_examined": 0,
+            "inclusive_ms": 19.68249981291592,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 10,
+            "parent": 9,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2,
+            "rows_examined": 0,
+            "inclusive_ms": 19.549832912161946,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "decorator": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 2784,
+        "rows_examined": 416,
+        "elapsed_ms": 481.341,
+        "dependencies": [
+          "54f98830a7bafa80d2a5e3c7043b811ced5d887679fb7532449106037441e021:ken.catalog.decorator.variants.callable_wrapper.Invocation",
+          "54f98830a7bafa80d2a5e3c7043b811ced5d887679fb7532449106037441e021:ken.catalog.decorator.variants.callable_wrapper.detect",
+          "54f98830a7bafa80d2a5e3c7043b811ced5d887679fb7532449106037441e021:ken.catalog.decorator.variants.object_wrapper.detect",
+          "54f98830a7bafa80d2a5e3c7043b811ced5d887679fb7532449106037441e021:ken.catalog.decorator.variants.subclass_addition.detect",
+          "54f98830a7bafa80d2a5e3c7043b811ced5d887679fb7532449106037441e021:ken.catalog.decorator.variants.typed_delegator.detect",
+          "54f98830a7bafa80d2a5e3c7043b811ced5d887679fb7532449106037441e021:ken.catalog.decorator.variants.untyped_delegator.detect"
+        ],
+        "planning_ms": 0.147,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2784,
+            "rows_examined": 416,
+            "inclusive_ms": 481.0291661415249,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 3,
+            "rows_examined": 0,
+            "inclusive_ms": 0.03970903344452381,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2,
+            "rows_examined": 0,
+            "inclusive_ms": 0.02704095095396042,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 3,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.013333046808838844,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 4,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$method",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 5,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$method",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 6,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2777,
+            "rows_examined": 416,
+            "inclusive_ms": 480.8838749304414,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 7,
+            "parent": 6,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 68,
+            "states": 70,
+            "rows_examined": 408,
+            "inclusive_ms": 12.838875176385045,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 8,
+            "parent": 6,
+            "calls": 1,
+            "input_rows": 68,
+            "output_rows": 5,
+            "states": 2407,
+            "rows_examined": 0,
+            "inclusive_ms": 456.43533300608397,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 9,
+            "parent": 6,
+            "calls": 1,
+            "input_rows": 5,
+            "output_rows": 0,
+            "states": 299,
+            "rows_examined": 8,
+            "inclusive_ms": 11.451125144958496,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 10,
+            "parent": 9,
+            "calls": 5,
+            "input_rows": 5,
+            "output_rows": 2,
+            "states": 12,
+            "rows_examined": 6,
+            "inclusive_ms": 1.711792079731822,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 11,
+            "parent": 9,
+            "calls": 1,
+            "input_rows": 2,
+            "output_rows": 0,
+            "states": 282,
+            "rows_examined": 2,
+            "inclusive_ms": 9.596375050023198,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 12,
+            "parent": 11,
+            "calls": 2,
+            "input_rows": 2,
+            "output_rows": 2,
+            "states": 4,
+            "rows_examined": 2,
+            "inclusive_ms": 0.24775019846856594,
+            "selection": {
+              "reason": "estimated_cardinality",
+              "estimated_rows_per_input": 1,
+              "alternatives": [
+                {
+                  "position": 0,
+                  "estimated_rows_per_input": 1
+                }
+              ]
+            },
+            "relation": "ENTITY",
+            "subject": "$unit",
+            "object": "\"CALLABLE\"",
+            "attributes": []
+          },
+          {
+            "operator": "source_body",
+            "index": 13,
+            "parent": 11,
+            "calls": 2,
+            "input_rows": 2,
+            "output_rows": 0,
+            "states": 272,
+            "rows_examined": 0,
+            "inclusive_ms": 5.780958803370595,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 14,
+            "parent": 11,
+            "calls": 2,
+            "input_rows": 2,
+            "output_rows": 0,
+            "states": 4,
+            "rows_examined": 0,
+            "inclusive_ms": 3.329958999529481,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 15,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.004834029823541641,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 16,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.023625092580914497,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 17,
+            "parent": 16,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$method",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 18,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.011125113815069199,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 19,
+            "parent": 18,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$addition",
+            "object": "$method",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "facade": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 380994,
+        "rows_examined": 1099884,
+        "elapsed_ms": 5000.15,
+        "dependencies": [
+          "97f991b684bca407a900aa7702636ae42f4fb05ac067c334b8065415126e6a07:ken.catalog.facade.variants.object_surface.detect"
+        ],
+        "planning_ms": 0.048,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 5,
+            "states": 380994,
+            "rows_examined": 1099884,
+            "inclusive_ms": 4999.938124790788,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 5,
+            "states": 212997,
+            "rows_examined": 91950,
+            "inclusive_ms": 993.1707500945777,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 6130,
+            "states": 6132,
+            "rows_examined": 91950,
+            "inclusive_ms": 303.62295801751316,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 3,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 6130,
+            "output_rows": 2272,
+            "states": 206864,
+            "rows_examined": 0,
+            "inclusive_ms": 656.2086250633001,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 4,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 167996,
+            "rows_examined": 1007934,
+            "inclusive_ms": 4006.7210828419775,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 5,
+            "parent": 4,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 167995,
+            "rows_examined": 1007934,
+            "inclusive_ms": 4006.6549160983413,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 6,
+            "parent": 5,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 70440,
+            "states": 167994,
+            "rows_examined": 1007934,
+            "inclusive_ms": 4006.6409590654075,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 7,
+            "parent": 6,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 70440,
+            "states": 70442,
+            "rows_examined": 422640,
+            "inclusive_ms": 1181.849166052416,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 8,
+            "parent": 6,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 97549,
+            "states": 97551,
+            "rows_examined": 585294,
+            "inclusive_ms": 2823.9784999750555,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "factory-method": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 3,
+        "rows_examined": 0,
+        "elapsed_ms": 0.225,
+        "dependencies": [
+          "e29252f2dd860a1d18038f78ae185e5f0ed93191e6f34bc43827c856f846f5a9:ken.catalog.factory_method.variants.contract_slot.detect",
+          "e29252f2dd860a1d18038f78ae185e5f0ed93191e6f34bc43827c856f846f5a9:ken.catalog.factory_method.variants.virtual_slot.detect"
+        ],
+        "planning_ms": 0.012,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 3,
+            "rows_examined": 0,
+            "inclusive_ms": 0.045042019337415695,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.015374971553683281,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$factory",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 3,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.00795908272266388,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 4,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$factory",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "flyweight": {
+      "complete": true,
+      "unknown": [
+        "parameter_writes:unknown",
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 1077893,
+        "rows_examined": 174972,
+        "elapsed_ms": 4515.572,
+        "dependencies": [
+          "134a73952e6ac9197dabe535b3f32f0acb9b33a0b0e4d5623e3d8b769c81876f:ken.catalog.flyweight.variants.entry_api.detect",
+          "134a73952e6ac9197dabe535b3f32f0acb9b33a0b0e4d5623e3d8b769c81876f:ken.catalog.flyweight.variants.explicit_interning.detect"
+        ],
+        "planning_ms": 0.372,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 14,
+            "states": 1077893,
+            "rows_examined": 174972,
+            "inclusive_ms": 4515.431958949193,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 7,
+            "states": 1067250,
+            "rows_examined": 145810,
+            "inclusive_ms": 4217.373167164624,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 6470,
+            "states": 1067249,
+            "rows_examined": 145810,
+            "inclusive_ms": 4113.585833925754,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 3,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 2083,
+            "states": 2085,
+            "rows_examined": 14581,
+            "inclusive_ms": 103.47829107195139,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_type",
+            "index": 4,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2083,
+            "output_rows": 2083,
+            "states": 6249,
+            "rows_examined": 0,
+            "inclusive_ms": 11.94737502373755,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 5,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2083,
+            "output_rows": 647,
+            "states": 97016,
+            "rows_examined": 0,
+            "inclusive_ms": 439.9387501180172,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 6,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 2083,
+            "states": 2085,
+            "rows_examined": 14581,
+            "inclusive_ms": 49.229167168959975,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_type",
+            "index": 7,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2083,
+            "output_rows": 2083,
+            "states": 6249,
+            "rows_examined": 0,
+            "inclusive_ms": 5.990915931761265,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 8,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2083,
+            "output_rows": 647,
+            "states": 97760,
+            "rows_examined": 0,
+            "inclusive_ms": 346.820583101362,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 9,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 2083,
+            "states": 2085,
+            "rows_examined": 14581,
+            "inclusive_ms": 41.101041017100215,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_type",
+            "index": 10,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2083,
+            "output_rows": 2083,
+            "states": 6249,
+            "rows_examined": 0,
+            "inclusive_ms": 5.605458980426192,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 11,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2083,
+            "output_rows": 647,
+            "states": 97238,
+            "rows_examined": 0,
+            "inclusive_ms": 350.2435840200633,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 12,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 2083,
+            "states": 2085,
+            "rows_examined": 14581,
+            "inclusive_ms": 50.51770806312561,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 13,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2083,
+            "output_rows": 647,
+            "states": 115891,
+            "rows_examined": 0,
+            "inclusive_ms": 553.8049170281738,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 14,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 2083,
+            "states": 2085,
+            "rows_examined": 14581,
+            "inclusive_ms": 44.247542042285204,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 15,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2083,
+            "output_rows": 647,
+            "states": 115861,
+            "rows_examined": 0,
+            "inclusive_ms": 402.4365001823753,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 16,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 2083,
+            "states": 2085,
+            "rows_examined": 14581,
+            "inclusive_ms": 39.549208944663405,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 17,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2083,
+            "output_rows": 647,
+            "states": 100777,
+            "rows_examined": 0,
+            "inclusive_ms": 254.74395812489092,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 18,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 2083,
+            "states": 2085,
+            "rows_examined": 14581,
+            "inclusive_ms": 42.85850003361702,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 19,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2083,
+            "output_rows": 647,
+            "states": 100777,
+            "rows_examined": 0,
+            "inclusive_ms": 353.6501661874354,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 20,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 2083,
+            "states": 2085,
+            "rows_examined": 14581,
+            "inclusive_ms": 46.68708308599889,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 21,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2083,
+            "output_rows": 647,
+            "states": 100777,
+            "rows_examined": 0,
+            "inclusive_ms": 253.71841713786125,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 22,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 2083,
+            "states": 2085,
+            "rows_examined": 14581,
+            "inclusive_ms": 101.37441707774997,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 23,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2083,
+            "output_rows": 647,
+            "states": 100777,
+            "rows_examined": 0,
+            "inclusive_ms": 276.4898750465363,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 24,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 2083,
+            "states": 2085,
+            "rows_examined": 14581,
+            "inclusive_ms": 42.04787500202656,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 25,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2083,
+            "output_rows": 647,
+            "states": 100777,
+            "rows_examined": 0,
+            "inclusive_ms": 287.7968749962747,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 26,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 7,
+            "states": 10642,
+            "rows_examined": 29162,
+            "inclusive_ms": 297.9953330941498,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 27,
+            "parent": 26,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 1294,
+            "states": 10641,
+            "rows_examined": 29162,
+            "inclusive_ms": 277.871459024027,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 28,
+            "parent": 27,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 647,
+            "states": 2085,
+            "rows_examined": 14581,
+            "inclusive_ms": 211.05166687630117,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "source_prefilter": {
+              "owner": "$lookup",
+              "collection": null,
+              "required_relations": [
+                "ENTITY"
+              ],
+              "call_names": [
+                "computeIfAbsent",
+                "GetOrAdd",
+                "try_emplace",
+                "entry"
+              ]
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_body",
+            "index": 29,
+            "parent": 27,
+            "calls": 1,
+            "input_rows": 647,
+            "output_rows": 647,
+            "states": 3235,
+            "rows_examined": 0,
+            "inclusive_ms": 6.688500056043267,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 30,
+            "parent": 27,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 647,
+            "states": 2085,
+            "rows_examined": 14581,
+            "inclusive_ms": 50.38275010883808,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "source_prefilter": {
+              "owner": "$lookup",
+              "collection": null,
+              "required_relations": [
+                "ENTITY"
+              ],
+              "call_names": [
+                "computeIfAbsent",
+                "GetOrAdd",
+                "try_emplace",
+                "entry"
+              ]
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_body",
+            "index": 31,
+            "parent": 27,
+            "calls": 1,
+            "input_rows": 647,
+            "output_rows": 647,
+            "states": 3235,
+            "rows_examined": 0,
+            "inclusive_ms": 8.81045893765986,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "interpreter": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 524208,
+        "rows_examined": 1210720,
+        "elapsed_ms": 5057.397,
+        "dependencies": [
+          "4df2e0cf29652d9781e0eaa76bd1e6a48b7509ed025e76df4cef9a955b682d0e:ken.catalog.interpreter.variants.expression_objects.detect",
+          "4df2e0cf29652d9781e0eaa76bd1e6a48b7509ed025e76df4cef9a955b682d0e:ken.catalog.interpreter.variants.expression_sum.detect"
+        ],
+        "planning_ms": 0.046,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 524208,
+            "rows_examined": 1210720,
+            "inclusive_ms": 4999.828000087291,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.01554214395582676,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$interpret",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 3,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 3,
+            "rows_examined": 0,
+            "inclusive_ms": 18.479041988030076,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 4,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2,
+            "rows_examined": 0,
+            "inclusive_ms": 18.41354207135737,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 5,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 524203,
+            "rows_examined": 1210720,
+            "inclusive_ms": 4981.279124971479,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 6,
+            "parent": 5,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 302680,
+            "states": 302682,
+            "rows_examined": 1210720,
+            "inclusive_ms": 2949.1654578596354,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "count",
+            "index": 7,
+            "parent": 5,
+            "calls": 1,
+            "input_rows": 302680,
+            "output_rows": 221519,
+            "states": 221520,
+            "rows_examined": 0,
+            "inclusive_ms": 2032.0554159116,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 8,
+            "parent": 7,
+            "calls": 221519,
+            "input_rows": 221519,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$evaluate",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "iterator": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 68327,
+        "rows_examined": 3223,
+        "elapsed_ms": 5000.638,
+        "dependencies": [
+          "f040db164ab5c66d10dd7da02836435e4928a5afc19ec9274447288095949f49:ken.catalog.iterator.variants.async_iterator.detect",
+          "f040db164ab5c66d10dd7da02836435e4928a5afc19ec9274447288095949f49:ken.catalog.iterator.variants.delegated_cursor.detect",
+          "f040db164ab5c66d10dd7da02836435e4928a5afc19ec9274447288095949f49:ken.catalog.iterator.variants.delegated_generator.detect",
+          "f040db164ab5c66d10dd7da02836435e4928a5afc19ec9274447288095949f49:ken.catalog.iterator.variants.explicit_cursor.detect",
+          "f040db164ab5c66d10dd7da02836435e4928a5afc19ec9274447288095949f49:ken.catalog.iterator.variants.external_cursor.detect",
+          "f040db164ab5c66d10dd7da02836435e4928a5afc19ec9274447288095949f49:ken.catalog.iterator.variants.generator.detect",
+          "f040db164ab5c66d10dd7da02836435e4928a5afc19ec9274447288095949f49:ken.catalog.iterator.variants.paired_cursor.detect"
+        ],
+        "planning_ms": 4.634,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 68327,
+            "rows_examined": 3223,
+            "inclusive_ms": 4999.789542052895,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 3,
+            "rows_examined": 0,
+            "inclusive_ms": 8.129582973197103,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2,
+            "rows_examined": 0,
+            "inclusive_ms": 8.079250110313296,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 3,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 19,
+            "states": 68323,
+            "rows_examined": 3223,
+            "inclusive_ms": 4991.573292063549,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 4,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 9,
+            "states": 190,
+            "rows_examined": 9,
+            "inclusive_ms": 85.34770901314914,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 5,
+            "parent": 4,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 9,
+            "states": 10,
+            "rows_examined": 9,
+            "inclusive_ms": 3.1096250750124454,
+            "selection": {
+              "reason": "estimated_cardinality",
+              "estimated_rows_per_input": 9,
+              "alternatives": [
+                {
+                  "position": 0,
+                  "estimated_rows_per_input": 9
+                }
+              ]
+            },
+            "relation": "ENTITY",
+            "subject": "$iterator",
+            "object": "\"CALLABLE\"",
+            "attributes": [
+              [
+                "generator",
+                "literal",
+                "true"
+              ],
+              [
+                "context_manager",
+                "literal",
+                "false"
+              ]
+            ]
+          },
+          {
+            "operator": "source_body",
+            "index": 6,
+            "parent": 4,
+            "calls": 1,
+            "input_rows": 9,
+            "output_rows": 10,
+            "states": 179,
+            "rows_examined": 0,
+            "inclusive_ms": 78.91075010411441,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 7,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 6,
+            "states": 186,
+            "rows_examined": 9,
+            "inclusive_ms": 0.8950419723987579,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 8,
+            "parent": 7,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 9,
+            "states": 10,
+            "rows_examined": 9,
+            "inclusive_ms": 0.18987501971423626,
+            "selection": {
+              "reason": "estimated_cardinality",
+              "estimated_rows_per_input": 9,
+              "alternatives": [
+                {
+                  "position": 0,
+                  "estimated_rows_per_input": 9
+                }
+              ]
+            },
+            "relation": "ENTITY",
+            "subject": "$iterator",
+            "object": "\"CALLABLE\"",
+            "attributes": [
+              [
+                "generator",
+                "literal",
+                "true"
+              ],
+              [
+                "context_manager",
+                "literal",
+                "false"
+              ]
+            ]
+          },
+          {
+            "operator": "source_body",
+            "index": 9,
+            "parent": 7,
+            "calls": 1,
+            "input_rows": 9,
+            "output_rows": 6,
+            "states": 175,
+            "rows_examined": 0,
+            "inclusive_ms": 0.622499966993928,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 10,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 3,
+            "rows_examined": 0,
+            "inclusive_ms": 227.76183299720287,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 11,
+            "parent": 10,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2,
+            "rows_examined": 0,
+            "inclusive_ms": 227.72316704504192,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 12,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 3,
+            "rows_examined": 0,
+            "inclusive_ms": 1.8160000909119844,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 13,
+            "parent": 12,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2,
+            "rows_examined": 0,
+            "inclusive_ms": 1.7697920557111502,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 14,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 73,
+            "rows_examined": 80,
+            "inclusive_ms": 17.49133295379579,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 15,
+            "parent": 14,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 10,
+            "states": 12,
+            "rows_examined": 80,
+            "inclusive_ms": 15.637125121429563,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 16,
+            "parent": 14,
+            "calls": 1,
+            "input_rows": 10,
+            "output_rows": 10,
+            "states": 50,
+            "rows_examined": 0,
+            "inclusive_ms": 0.44766697101294994,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 17,
+            "parent": 14,
+            "calls": 1,
+            "input_rows": 10,
+            "output_rows": 0,
+            "states": 10,
+            "rows_examined": 0,
+            "inclusive_ms": 1.2638750486075878,
+            "selection": {
+              "reason": "estimated_cardinality",
+              "estimated_rows_per_input": 0,
+              "alternatives": [
+                {
+                  "position": 0,
+                  "estimated_rows_per_input": 0
+                }
+              ]
+            },
+            "relation": "ADVANCES_ITERATOR",
+            "subject": "$local_advance",
+            "object": "$cursor",
+            "attributes": []
+          },
+          {
+            "operator": "match",
+            "index": 18,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 4,
+            "states": 8412,
+            "rows_examined": 320,
+            "inclusive_ms": 745.6320421770215,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 19,
+            "parent": 18,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 172,
+            "states": 173,
+            "rows_examined": 172,
+            "inclusive_ms": 13.291292125359178,
+            "selection": {
+              "reason": "estimated_cardinality",
+              "estimated_rows_per_input": 172,
+              "alternatives": [
+                {
+                  "position": 0,
+                  "estimated_rows_per_input": 172
+                }
+              ]
+            },
+            "relation": "ENTITY",
+            "subject": "$producer",
+            "object": "\"CALLABLE\"",
+            "attributes": [
+              [
+                "async",
+                "literal",
+                "true"
+              ]
+            ]
+          },
+          {
+            "operator": "source_body",
+            "index": 20,
+            "parent": 18,
+            "calls": 1,
+            "input_rows": 172,
+            "output_rows": 75,
+            "states": 6589,
+            "rows_examined": 0,
+            "inclusive_ms": 699.7964999172837,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 21,
+            "parent": 18,
+            "calls": 1,
+            "input_rows": 75,
+            "output_rows": 37,
+            "states": 113,
+            "rows_examined": 148,
+            "inclusive_ms": 24.97916598804295,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 22,
+            "parent": 18,
+            "calls": 1,
+            "input_rows": 37,
+            "output_rows": 7,
+            "states": 1536,
+            "rows_examined": 0,
+            "inclusive_ms": 6.185499951243401,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 23,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 59455,
+            "rows_examined": 2805,
+            "inclusive_ms": 3912.433500168845,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 24,
+            "parent": 23,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 59454,
+            "rows_examined": 2805,
+            "inclusive_ms": 3912.3669578693807,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 25,
+            "parent": 24,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 935,
+            "states": 937,
+            "rows_examined": 2805,
+            "inclusive_ms": 123.02958313375711,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 26,
+            "parent": 24,
+            "calls": 1,
+            "input_rows": 935,
+            "output_rows": 147,
+            "states": 58516,
+            "rows_examined": 0,
+            "inclusive_ms": 3789.2900409642607,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "mediator": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 805791,
+        "rows_examined": 159998,
+        "elapsed_ms": 5087.657,
+        "dependencies": [
+          "d937c8e4f7f6e2dfde4d2db9a46ac9876743eb5a86836143692f677167a344dd:ken.catalog.mediator.variants.broadcast_colleagues.detect",
+          "d937c8e4f7f6e2dfde4d2db9a46ac9876743eb5a86836143692f677167a344dd:ken.catalog.mediator.variants.direct_colleagues.detect"
+        ],
+        "planning_ms": 0.183,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 5,
+            "states": 805791,
+            "rows_examined": 159998,
+            "inclusive_ms": 5004.187124781311,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 3,
+            "rows_examined": 0,
+            "inclusive_ms": 105.14366603456438,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2,
+            "rows_examined": 0,
+            "inclusive_ms": 105.09374993853271,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 3,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 5,
+            "states": 152180,
+            "rows_examined": 2744,
+            "inclusive_ms": 1006.5799588337541,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 4,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 172,
+            "states": 174,
+            "rows_examined": 2236,
+            "inclusive_ms": 27.12229103781283,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 5,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 172,
+            "output_rows": 130,
+            "states": 7158,
+            "rows_examined": 0,
+            "inclusive_ms": 158.20295782759786,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 6,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 130,
+            "output_rows": 234,
+            "states": 4352,
+            "rows_examined": 0,
+            "inclusive_ms": 14.47958406060934,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 7,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 234,
+            "output_rows": 3368,
+            "states": 362,
+            "rows_examined": 254,
+            "inclusive_ms": 15.544916968792677,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 8,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 3368,
+            "output_rows": 5046,
+            "states": 55543,
+            "rows_examined": 0,
+            "inclusive_ms": 312.5202090013772,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 9,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 5046,
+            "output_rows": 11948,
+            "states": 5174,
+            "rows_examined": 254,
+            "inclusive_ms": 22.211208008229733,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 10,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 11948,
+            "output_rows": 14528,
+            "states": 79416,
+            "rows_examined": 0,
+            "inclusive_ms": 234.29300007410347,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 11,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 653607,
+            "rows_examined": 157254,
+            "inclusive_ms": 3892.3280409071594,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 12,
+            "parent": 11,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 17436,
+            "states": 17438,
+            "rows_examined": 156924,
+            "inclusive_ms": 448.28016706742346,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 13,
+            "parent": 11,
+            "calls": 1,
+            "input_rows": 17436,
+            "output_rows": 6764,
+            "states": 629336,
+            "rows_examined": 0,
+            "inclusive_ms": 1888.5532908607274,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 14,
+            "parent": 11,
+            "calls": 1,
+            "input_rows": 6764,
+            "output_rows": 446424,
+            "states": 6832,
+            "rows_examined": 330,
+            "inclusive_ms": 1552.339707966894,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "memento": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 533718,
+        "rows_examined": 9342,
+        "elapsed_ms": 5012.524,
+        "dependencies": [],
+        "planning_ms": 0.096,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 533718,
+            "rows_examined": 9342,
+            "inclusive_ms": 4999.727916903794,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 533717,
+            "rows_examined": 9342,
+            "inclusive_ms": 4999.71262505278,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 63,
+            "states": 4758,
+            "rows_examined": 345,
+            "inclusive_ms": 1147.5922907702625,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_receiver",
+            "index": 3,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 63,
+            "output_rows": 1184,
+            "states": 1310,
+            "rows_examined": 0,
+            "inclusive_ms": 29.32545798830688,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_type",
+            "index": 4,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1184,
+            "output_rows": 1137,
+            "states": 156955,
+            "rows_examined": 0,
+            "inclusive_ms": 2150.8346658665687,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "fact_join",
+            "index": 5,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1137,
+            "output_rows": 29,
+            "states": 1805,
+            "rows_examined": 62,
+            "inclusive_ms": 4.868041956797242,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_body",
+            "index": 6,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 29,
+            "output_rows": 29,
+            "states": 1267,
+            "rows_examined": 0,
+            "inclusive_ms": 143.5329159721732,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 7,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 29,
+            "output_rows": 51823,
+            "states": 1817,
+            "rows_examined": 8935,
+            "inclusive_ms": 241.51191604323685,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 8,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 51823,
+            "output_rows": 12731,
+            "states": 365804,
+            "rows_examined": 0,
+            "inclusive_ms": 1281.78295888938,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "observer": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 61547,
+        "rows_examined": 27941,
+        "elapsed_ms": 5064.485,
+        "dependencies": [
+          "b41f71634478b46a387dc463d5cb032398640b73c3bf7de952752978c2f07cd0:ken.catalog.observer.variants.listener_registry.detect",
+          "b41f71634478b46a387dc463d5cb032398640b73c3bf7de952752978c2f07cd0:ken.catalog.observer.variants.registered_listeners.detect"
+        ],
+        "planning_ms": 0.099,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 61547,
+            "rows_examined": 27941,
+            "inclusive_ms": 5058.537707896903,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 53610,
+            "rows_examined": 14581,
+            "inclusive_ms": 4637.767165899277,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 1025,
+            "states": 2765,
+            "rows_examined": 14581,
+            "inclusive_ms": 4478.174458257854,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "source_prefilter": {
+              "owner": "$subscribe",
+              "collection": "$listeners",
+              "required_relations": [
+                "INSERTS_INTO",
+                "WRITES_ELEMENT"
+              ]
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_body",
+            "index": 3,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1025,
+            "output_rows": 647,
+            "states": 50196,
+            "rows_examined": 0,
+            "inclusive_ms": 155.16658313572407,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 4,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 647,
+            "output_rows": 0,
+            "states": 648,
+            "rows_examined": 0,
+            "inclusive_ms": 3.7636670749634504,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 5,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 3,
+            "rows_examined": 0,
+            "inclusive_ms": 31.409916002303362,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 6,
+            "parent": 5,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2,
+            "rows_examined": 0,
+            "inclusive_ms": 31.368582975119352,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 7,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 7933,
+            "rows_examined": 13360,
+            "inclusive_ms": 389.281417010352,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 8,
+            "parent": 7,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 736,
+            "states": 1138,
+            "rows_examined": 12496,
+            "inclusive_ms": 39.439292158931494,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "source_prefilter": {
+              "owner": "$register",
+              "collection": "$registry",
+              "required_relations": [
+                "INSERTS_INTO",
+                "WRITES_ELEMENT"
+              ]
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_body",
+            "index": 9,
+            "parent": 7,
+            "calls": 1,
+            "input_rows": 736,
+            "output_rows": 704,
+            "states": 2328,
+            "rows_examined": 0,
+            "inclusive_ms": 2.8020418249070644,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 10,
+            "parent": 7,
+            "calls": 1,
+            "input_rows": 704,
+            "output_rows": 39680,
+            "states": 921,
+            "rows_examined": 864,
+            "inclusive_ms": 276.9410409964621,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 11,
+            "parent": 7,
+            "calls": 1,
+            "input_rows": 39680,
+            "output_rows": 708,
+            "states": 3545,
+            "rows_examined": 0,
+            "inclusive_ms": 69.85933310352266,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "prototype": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 245632,
+        "rows_examined": 9527,
+        "elapsed_ms": 3718.373,
+        "dependencies": [
+          "7b821b666427a6b86573b3e2912a6e2d953fd737f9884f3d85ad75b607365f0b:ken.catalog.prototype.derived_copy.detect",
+          "7b821b666427a6b86573b3e2912a6e2d953fd737f9884f3d85ad75b607365f0b:ken.catalog.prototype.variants.derived_clone.detect",
+          "7b821b666427a6b86573b3e2912a6e2d953fd737f9884f3d85ad75b607365f0b:ken.catalog.prototype.variants.explicit_copy.detect",
+          "7b821b666427a6b86573b3e2912a6e2d953fd737f9884f3d85ad75b607365f0b:ken.catalog.prototype.variants.field_copy.detect",
+          "7b821b666427a6b86573b3e2912a6e2d953fd737f9884f3d85ad75b607365f0b:ken.catalog.prototype.variants.language_copy.detect"
+        ],
+        "planning_ms": 0.157,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 31,
+            "states": 245632,
+            "rows_examined": 9527,
+            "inclusive_ms": 3718.148000072688,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 1,
+            "states": 167720,
+            "rows_examined": 453,
+            "inclusive_ms": 2969.3959578871727,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 61,
+            "states": 4754,
+            "rows_examined": 335,
+            "inclusive_ms": 942.7021241281182,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_receiver",
+            "index": 3,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 61,
+            "output_rows": 1180,
+            "states": 1302,
+            "rows_examined": 0,
+            "inclusive_ms": 2.7186658699065447,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_type",
+            "index": 4,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1180,
+            "output_rows": 1133,
+            "states": 156825,
+            "rows_examined": 0,
+            "inclusive_ms": 1989.7355420980603,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "fact_join",
+            "index": 5,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1133,
+            "output_rows": 25,
+            "states": 1779,
+            "rows_examined": 46,
+            "inclusive_ms": 4.647623980417848,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_body",
+            "index": 6,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 25,
+            "output_rows": 25,
+            "states": 1135,
+            "rows_examined": 0,
+            "inclusive_ms": 8.214334025979042,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 7,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 25,
+            "output_rows": 48,
+            "states": 50,
+            "rows_examined": 72,
+            "inclusive_ms": 2.587040886282921,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 8,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 48,
+            "output_rows": 8,
+            "states": 1874,
+            "rows_examined": 0,
+            "inclusive_ms": 18.557708943262696,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 9,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2,
+            "rows_examined": 0,
+            "inclusive_ms": 0.024541979655623436,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 10,
+            "parent": 9,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.010291114449501038,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 11,
+            "parent": 10,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "DERIVE_NAME",
+            "subject": "$unit",
+            "object": "\"Clone\"",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 12,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 15,
+            "states": 61632,
+            "rows_examined": 7490,
+            "inclusive_ms": 422.424582997337,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 13,
+            "parent": 12,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 1498,
+            "states": 1500,
+            "rows_examined": 7490,
+            "inclusive_ms": 29.93941609747708,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 14,
+            "parent": 12,
+            "calls": 1,
+            "input_rows": 1498,
+            "output_rows": 491,
+            "states": 60131,
+            "rows_examined": 0,
+            "inclusive_ms": 386.41408388502896,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 15,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 15,
+            "states": 16277,
+            "rows_examined": 1584,
+            "inclusive_ms": 326.2127910275012,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 16,
+            "parent": 15,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 3232,
+            "states": 16276,
+            "rows_examined": 1584,
+            "inclusive_ms": 297.9865830857307,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 17,
+            "parent": 16,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2,
+            "rows_examined": 0,
+            "inclusive_ms": 3.2585840672254562,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 18,
+            "parent": 16,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 68,
+            "states": 266,
+            "rows_examined": 792,
+            "inclusive_ms": 14.141707913950086,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "source_prefilter": {
+              "owner": "$witness",
+              "collection": null,
+              "required_relations": [
+                "ENTITY"
+              ],
+              "call_names": [
+                "copy",
+                "deepcopy",
+                "clone",
+                "MemberwiseClone"
+              ]
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_receiver",
+            "index": 19,
+            "parent": 16,
+            "calls": 1,
+            "input_rows": 68,
+            "output_rows": 1686,
+            "states": 1822,
+            "rows_examined": 0,
+            "inclusive_ms": 6.657249061390758,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "source_prefilter": {
+              "owner": "$witness",
+              "collection": null,
+              "required_relations": [
+                "ENTITY"
+              ],
+              "call_names": [
+                "copy",
+                "deepcopy",
+                "clone",
+                "MemberwiseClone"
+              ]
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_body",
+            "index": 20,
+            "parent": 16,
+            "calls": 1,
+            "input_rows": 1686,
+            "output_rows": 1616,
+            "states": 6055,
+            "rows_examined": 0,
+            "inclusive_ms": 251.94512493908405,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 21,
+            "parent": 16,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 68,
+            "states": 266,
+            "rows_examined": 792,
+            "inclusive_ms": 7.967834128066897,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "source_prefilter": {
+              "owner": "$witness",
+              "collection": null,
+              "required_relations": [
+                "ENTITY"
+              ],
+              "call_names": [
+                "copy",
+                "deepcopy",
+                "clone",
+                "MemberwiseClone"
+              ]
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_receiver",
+            "index": 22,
+            "parent": 16,
+            "calls": 1,
+            "input_rows": 68,
+            "output_rows": 1686,
+            "states": 1822,
+            "rows_examined": 0,
+            "inclusive_ms": 3.8153340574353933,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "source_prefilter": {
+              "owner": "$witness",
+              "collection": null,
+              "required_relations": [
+                "ENTITY"
+              ],
+              "call_names": [
+                "copy",
+                "deepcopy",
+                "clone",
+                "MemberwiseClone"
+              ]
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_body",
+            "index": 23,
+            "parent": 16,
+            "calls": 1,
+            "input_rows": 1686,
+            "output_rows": 1616,
+            "states": 6040,
+            "rows_examined": 0,
+            "inclusive_ms": 7.954208180308342,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 24,
+            "parent": 16,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 2,
+            "rows_examined": 0,
+            "inclusive_ms": 1.643874915316701,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "proxy": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 185101,
+        "rows_examined": 17870,
+        "elapsed_ms": 1893.332,
+        "dependencies": [
+          "5c13c2fd8ad3436a118396a4de4df6ab449c3e760810d9321b928d6c23e41a5d:ken.catalog.proxy.variants.guarded_access.detect",
+          "5c13c2fd8ad3436a118396a4de4df6ab449c3e760810d9321b928d6c23e41a5d:ken.catalog.proxy.variants.lazy_subject.detect",
+          "5c13c2fd8ad3436a118396a4de4df6ab449c3e760810d9321b928d6c23e41a5d:ken.catalog.proxy.variants.remote_subject.detect"
+        ],
+        "planning_ms": 0.079,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 185101,
+            "rows_examined": 17870,
+            "inclusive_ms": 1893.083875067532,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.018416903913021088,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$method",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 3,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 185098,
+            "rows_examined": 17870,
+            "inclusive_ms": 1892.9445419926196,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 4,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 1382,
+            "states": 183714,
+            "rows_examined": 17870,
+            "inclusive_ms": 1798.4418750274926,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 5,
+            "parent": 4,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 1787,
+            "states": 1789,
+            "rows_examined": 8935,
+            "inclusive_ms": 27.859124820679426,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 6,
+            "parent": 4,
+            "calls": 1,
+            "input_rows": 1787,
+            "output_rows": 697,
+            "states": 86683,
+            "rows_examined": 0,
+            "inclusive_ms": 907.0543330162764,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 7,
+            "parent": 4,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 1787,
+            "states": 1789,
+            "rows_examined": 8935,
+            "inclusive_ms": 56.54866714030504,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 8,
+            "parent": 4,
+            "calls": 1,
+            "input_rows": 1787,
+            "output_rows": 685,
+            "states": 93452,
+            "rows_examined": 0,
+            "inclusive_ms": 805.8615420013666,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 9,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1382,
+            "output_rows": 0,
+            "states": 1383,
+            "rows_examined": 0,
+            "inclusive_ms": 93.47666706889868,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 10,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.022416934370994568,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 11,
+            "parent": 10,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$method",
+            "object": "$slot",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "singleton": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 167047,
+        "rows_examined": 600778,
+        "elapsed_ms": 5013.817,
+        "dependencies": [
+          "936e33468093eb71ecbb8d20e775f56ffda4ff475ba52b0cf8dcf6d2cee26588:ken.catalog.singleton.lazy_instance.detect",
+          "936e33468093eb71ecbb8d20e775f56ffda4ff475ba52b0cf8dcf6d2cee26588:ken.catalog.singleton.shared_instance.detect",
+          "936e33468093eb71ecbb8d20e775f56ffda4ff475ba52b0cf8dcf6d2cee26588:ken.catalog.singleton.variants.eager_shared.detect",
+          "936e33468093eb71ecbb8d20e775f56ffda4ff475ba52b0cf8dcf6d2cee26588:ken.catalog.singleton.variants.lazy_guarded.detect"
+        ],
+        "planning_ms": 0.077,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 167047,
+            "rows_examined": 600778,
+            "inclusive_ms": 4999.8522500973195,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 10721,
+            "rows_examined": 7305,
+            "inclusive_ms": 628.5497089847922,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 10720,
+            "rows_examined": 7305,
+            "inclusive_ms": 628.5370830446482,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 3,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 2435,
+            "states": 2437,
+            "rows_examined": 7305,
+            "inclusive_ms": 434.6526248846203,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_type",
+            "index": 4,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 2435,
+            "output_rows": 976,
+            "states": 7305,
+            "rows_examined": 0,
+            "inclusive_ms": 154.97662499547005,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 5,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 976,
+            "output_rows": 0,
+            "states": 977,
+            "rows_examined": 0,
+            "inclusive_ms": 36.71849984675646,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 6,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 9778,
+            "rows_examined": 7305,
+            "inclusive_ms": 2803.10120806098,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 7,
+            "parent": 6,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 9777,
+            "rows_examined": 7305,
+            "inclusive_ms": 2803.07975015603,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 8,
+            "parent": 7,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 2435,
+            "states": 2437,
+            "rows_examined": 7305,
+            "inclusive_ms": 289.97820895165205,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_initializer",
+            "index": 9,
+            "parent": 7,
+            "calls": 1,
+            "input_rows": 2435,
+            "output_rows": 0,
+            "states": 7339,
+            "rows_examined": 0,
+            "inclusive_ms": 2511.0330001916736,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 10,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 146547,
+            "rows_examined": 586168,
+            "inclusive_ms": 1568.1152499746531,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 11,
+            "parent": 10,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 146546,
+            "rows_examined": 586168,
+            "inclusive_ms": 1568.0948751978576,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 12,
+            "parent": 11,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 146542,
+            "states": 146545,
+            "rows_examined": 586168,
+            "inclusive_ms": 1568.0592090357095,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "state": {
+      "complete": true,
+      "unknown": [
+        "source_body:unknown"
+      ],
+      "stats": {
+        "states": 524044,
+        "rows_examined": 79902,
+        "elapsed_ms": 2154.419,
+        "dependencies": [
+          "eb7bcb1351ea7fcdaa30a6b1fe00e9da5a17d7cfa5dc90e3f2ad1b8aa5a6201e:ken.catalog.state.variants.context_transition.detect",
+          "eb7bcb1351ea7fcdaa30a6b1fe00e9da5a17d7cfa5dc90e3f2ad1b8aa5a6201e:ken.catalog.state.variants.state_enum.detect",
+          "eb7bcb1351ea7fcdaa30a6b1fe00e9da5a17d7cfa5dc90e3f2ad1b8aa5a6201e:ken.catalog.state.variants.state_object.detect"
+        ],
+        "planning_ms": 0.782,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 15,
+            "states": 524044,
+            "rows_examined": 79902,
+            "inclusive_ms": 2154.2289161588997,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 467180,
+            "rows_examined": 72331,
+            "inclusive_ms": 1891.5006250608712,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 7991,
+            "states": 7993,
+            "rows_examined": 71919,
+            "inclusive_ms": 183.7801248766482,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 3,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 7991,
+            "output_rows": 1124,
+            "states": 343131,
+            "rows_examined": 0,
+            "inclusive_ms": 1014.9988748598844,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 4,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1124,
+            "output_rows": 41689,
+            "states": 1331,
+            "rows_examined": 412,
+            "inclusive_ms": 411.05929110199213,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 5,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 41689,
+            "output_rows": 8706,
+            "states": 106018,
+            "rows_examined": 0,
+            "inclusive_ms": 256.41883397474885,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 6,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 8706,
+            "output_rows": 0,
+            "states": 8706,
+            "rows_examined": 0,
+            "inclusive_ms": 14.101082924753428,
+            "selection": {
+              "reason": "estimated_cardinality",
+              "estimated_rows_per_input": 0,
+              "alternatives": [
+                {
+                  "position": 0,
+                  "estimated_rows_per_input": 0
+                }
+              ]
+            },
+            "relation": "SUBTYPE_OF",
+            "subject": "$concrete",
+            "object": "$contract",
+            "attributes": []
+          },
+          {
+            "operator": "match",
+            "index": 7,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 79,
+            "rows_examined": 81,
+            "inclusive_ms": 20.508874906226993,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 8,
+            "parent": 7,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 9,
+            "states": 11,
+            "rows_examined": 81,
+            "inclusive_ms": 2.9074999038130045,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 9,
+            "parent": 7,
+            "calls": 1,
+            "input_rows": 9,
+            "output_rows": 3,
+            "states": 63,
+            "rows_examined": 0,
+            "inclusive_ms": 16.63204119540751,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 10,
+            "parent": 7,
+            "calls": 1,
+            "input_rows": 3,
+            "output_rows": 0,
+            "states": 4,
+            "rows_examined": 0,
+            "inclusive_ms": 0.7806660141795874,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 11,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 15,
+            "states": 56784,
+            "rows_examined": 7490,
+            "inclusive_ms": 242.13550006970763,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 12,
+            "parent": 11,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 1498,
+            "states": 1500,
+            "rows_examined": 7490,
+            "inclusive_ms": 39.45287503302097,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 13,
+            "parent": 11,
+            "calls": 1,
+            "input_rows": 1498,
+            "output_rows": 491,
+            "states": 54792,
+            "rows_examined": 0,
+            "inclusive_ms": 196.62762503139675,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "different",
+            "index": 14,
+            "parent": 11,
+            "calls": 1,
+            "input_rows": 491,
+            "output_rows": 491,
+            "states": 491,
+            "rows_examined": 0,
+            "inclusive_ms": 0.23645814508199692,
+            "selection": {
+              "reason": "bound_filter",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "strategy": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 574165,
+        "rows_examined": 316033,
+        "elapsed_ms": 5005.393,
+        "dependencies": [
+          "0d5e4a86a4b167729ac80ac77a1f8bfa44ad366fba1f8aa8c5ac835da54c6a8e:ken.catalog.strategy.supplied_policy.detect"
+        ],
+        "planning_ms": 0.122,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 574165,
+            "rows_examined": 316033,
+            "inclusive_ms": 4999.827542109415,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 574164,
+            "rows_examined": 316033,
+            "inclusive_ms": 4999.815083108842,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 450,
+            "states": 216512,
+            "rows_examined": 15982,
+            "inclusive_ms": 3204.7066658269614,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 3,
+            "parent": 2,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 691,
+            "states": 216511,
+            "rows_examined": 15982,
+            "inclusive_ms": 3203.4878749400377,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 4,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 1047,
+            "states": 8403,
+            "rows_examined": 15575,
+            "inclusive_ms": 1126.5101248864084,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_type",
+            "index": 5,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1047,
+            "output_rows": 1047,
+            "states": 3141,
+            "rows_examined": 0,
+            "inclusive_ms": 6.307416828349233,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            },
+            "candidate_rows_pruned": 0
+          },
+          {
+            "operator": "source_body",
+            "index": 6,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1047,
+            "output_rows": 677,
+            "states": 34859,
+            "rows_examined": 0,
+            "inclusive_ms": 153.14433304592967,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 7,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 69,
+            "states": 71,
+            "rows_examined": 345,
+            "inclusive_ms": 3.7777910474687815,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_receiver",
+            "index": 8,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 69,
+            "output_rows": 1196,
+            "states": 1334,
+            "rows_examined": 0,
+            "inclusive_ms": 3.5153748467564583,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_type",
+            "index": 9,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1196,
+            "output_rows": 1149,
+            "states": 156967,
+            "rows_examined": 0,
+            "inclusive_ms": 1880.5619170889258,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 10,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1149,
+            "output_rows": 1954,
+            "states": 1181,
+            "rows_examined": 62,
+            "inclusive_ms": 4.109416157007217,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_type",
+            "index": 11,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1954,
+            "output_rows": 1954,
+            "states": 5862,
+            "rows_examined": 0,
+            "inclusive_ms": 4.871374927461147,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 12,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1954,
+            "output_rows": 14,
+            "states": 4692,
+            "rows_examined": 0,
+            "inclusive_ms": 19.721999997273088,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 13,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 450,
+            "output_rows": 33339,
+            "states": 33790,
+            "rows_examined": 300051,
+            "inclusive_ms": 899.8908749781549,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_body",
+            "index": 14,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 33339,
+            "output_rows": 1609,
+            "states": 323861,
+            "rows_examined": 0,
+            "inclusive_ms": 895.1382078230381,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "template-method": {
+      "complete": false,
+      "unknown": [
+        "budget:timeout_ms"
+      ],
+      "stats": {
+        "states": 259922,
+        "rows_examined": 193239,
+        "elapsed_ms": 5017.076,
+        "dependencies": [
+          "b56ed7d60529ddee7593ff322e049e4030b365486bf769e7c8c78d9ab840d95d:ken.catalog.template_method.variants.trait_default.detect",
+          "b56ed7d60529ddee7593ff322e049e4030b365486bf769e7c8c78d9ab840d95d:ken.catalog.template_method.variants.virtual_skeleton.detect"
+        ],
+        "planning_ms": 12.352,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 259922,
+            "rows_examined": 193239,
+            "inclusive_ms": 4999.841999961063,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.014374963939189911,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$override",
+            "object": "$step",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 3,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.006959075108170509,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 4,
+            "parent": 3,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "OVERRIDES",
+            "subject": "$implementation",
+            "object": "$hook",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 5,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 259919,
+            "rows_examined": 193239,
+            "inclusive_ms": 4999.791165813804,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 6,
+            "parent": 5,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 27455,
+            "states": 27457,
+            "rows_examined": 192185,
+            "inclusive_ms": 490.1587499771267,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "any",
+            "index": 7,
+            "parent": 5,
+            "calls": 1,
+            "input_rows": 27455,
+            "output_rows": 20931,
+            "states": 232461,
+            "rows_examined": 1054,
+            "inclusive_ms": 4509.583540959284,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 8,
+            "parent": 7,
+            "calls": 527,
+            "input_rows": 527,
+            "output_rows": 527,
+            "states": 1054,
+            "rows_examined": 527,
+            "inclusive_ms": 12.46692519634962,
+            "selection": {
+              "reason": "estimated_cardinality",
+              "estimated_rows_per_input": 1,
+              "alternatives": [
+                {
+                  "position": 0,
+                  "estimated_rows_per_input": 1
+                }
+              ]
+            },
+            "relation": "ENTITY",
+            "subject": "$unit",
+            "object": "\"CALLABLE\"",
+            "attributes": []
+          },
+          {
+            "operator": "source_body",
+            "index": 9,
+            "parent": 7,
+            "calls": 527,
+            "input_rows": 527,
+            "output_rows": 224,
+            "states": 45704,
+            "rows_examined": 0,
+            "inclusive_ms": 265.3574589639902,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 10,
+            "parent": 7,
+            "calls": 527,
+            "input_rows": 527,
+            "output_rows": 527,
+            "states": 1054,
+            "rows_examined": 527,
+            "inclusive_ms": 2.9239023569971323,
+            "selection": {
+              "reason": "estimated_cardinality",
+              "estimated_rows_per_input": 1,
+              "alternatives": [
+                {
+                  "position": 0,
+                  "estimated_rows_per_input": 1
+                }
+              ]
+            },
+            "relation": "ENTITY",
+            "subject": "$unit",
+            "object": "\"CALLABLE\"",
+            "attributes": []
+          },
+          {
+            "operator": "source_body",
+            "index": 11,
+            "parent": 7,
+            "calls": 527,
+            "input_rows": 527,
+            "output_rows": 20988,
+            "states": 184122,
+            "rows_examined": 0,
+            "inclusive_ms": 4200.073401909322,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    },
+    "visitor": {
+      "complete": true,
+      "unknown": [],
+      "stats": {
+        "states": 24600,
+        "rows_examined": 4626,
+        "elapsed_ms": 138.616,
+        "dependencies": [
+          "f800b47670e408d669eebf45c6c5e5e847cf7222a31c5b017efc8cb788bef594:ken.catalog.visitor.variants.generic_visitor.detect",
+          "f800b47670e408d669eebf45c6c5e5e847cf7222a31c5b017efc8cb788bef594:ken.catalog.visitor.variants.named_dispatch.detect",
+          "f800b47670e408d669eebf45c6c5e5e847cf7222a31c5b017efc8cb788bef594:ken.catalog.visitor.variants.overloaded_dispatch.detect"
+        ],
+        "planning_ms": 0.089,
+        "operator_profile": [
+          {
+            "operator": "any",
+            "index": 0,
+            "parent": null,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 24600,
+            "rows_examined": 4626,
+            "inclusive_ms": 138.42845894396305,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 1,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 12401,
+            "rows_examined": 2367,
+            "inclusive_ms": 48.99908299557865,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 2,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 263,
+            "states": 265,
+            "rows_examined": 2367,
+            "inclusive_ms": 21.39549981802702,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_receiver",
+            "index": 3,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 263,
+            "output_rows": 5804,
+            "states": 6330,
+            "rows_examined": 0,
+            "inclusive_ms": 17.708792118355632,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 4,
+            "parent": 1,
+            "calls": 1,
+            "input_rows": 5804,
+            "output_rows": 0,
+            "states": 5805,
+            "rows_examined": 0,
+            "inclusive_ms": 9.087958140298724,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 5,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 12197,
+            "rows_examined": 2259,
+            "inclusive_ms": 89.32958310469985,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 6,
+            "parent": 5,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 251,
+            "states": 253,
+            "rows_examined": 2259,
+            "inclusive_ms": 68.6970828101039,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "source_receiver",
+            "index": 7,
+            "parent": 5,
+            "calls": 1,
+            "input_rows": 251,
+            "output_rows": 5720,
+            "states": 6222,
+            "rows_examined": 0,
+            "inclusive_ms": 11.659833835437894,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact_join",
+            "index": 8,
+            "parent": 5,
+            "calls": 1,
+            "input_rows": 5720,
+            "output_rows": 0,
+            "states": 5721,
+            "rows_examined": 0,
+            "inclusive_ms": 8.295374922454357,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "match",
+            "index": 9,
+            "parent": 0,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 1,
+            "rows_examined": 0,
+            "inclusive_ms": 0.018042046576738358,
+            "selection": {
+              "reason": "semantic_barrier",
+              "estimated_rows_per_input": null,
+              "alternatives": []
+            }
+          },
+          {
+            "operator": "fact",
+            "index": 10,
+            "parent": 9,
+            "calls": 1,
+            "input_rows": 1,
+            "output_rows": 0,
+            "states": 0,
+            "rows_examined": 0,
+            "inclusive_ms": 0.0,
+            "relation": "BINDS_TYPE_PARAMETER",
+            "subject": "$local_accept",
+            "object": "$visitor_parameter",
+            "attributes": [],
+            "selection": {
+              "reason": "empty_relation",
+              "estimated_rows_per_input": 0,
+              "alternatives": []
+            }
+          }
+        ]
+      }
+    }
+  },
+  "analysis": {
+    "resolution": {
+      "resolved_calls": 1188,
+      "unresolved_calls": 6261
+    },
+    "files": [
+      "sdk/python/_runtime_setup.py",
+      "sdk/python/examples/01_quickstart_constructor/async.py",
+      "sdk/python/examples/01_quickstart_constructor/sync.py",
+      "sdk/python/examples/02_turn_run/async.py",
+      "sdk/python/examples/02_turn_run/sync.py",
+      "sdk/python/examples/03_turn_stream_events/async.py",
+      "sdk/python/examples/03_turn_stream_events/sync.py",
+      "sdk/python/examples/04_models_and_metadata/async.py",
+      "sdk/python/examples/04_models_and_metadata/sync.py",
+      "sdk/python/examples/05_existing_thread/async.py",
+      "sdk/python/examples/05_existing_thread/sync.py",
+      "sdk/python/examples/06_thread_lifecycle_and_controls/async.py",
+      "sdk/python/examples/06_thread_lifecycle_and_controls/sync.py",
+      "sdk/python/examples/07_image_and_text/async.py",
+      "sdk/python/examples/07_image_and_text/sync.py",
+      "sdk/python/examples/08_local_image_and_text/async.py",
+      "sdk/python/examples/08_local_image_and_text/sync.py",
+      "sdk/python/examples/09_async_parity/sync.py",
+      "sdk/python/examples/10_error_handling_and_retry/async.py",
+      "sdk/python/examples/10_error_handling_and_retry/sync.py",
+      "sdk/python/examples/11_cli_mini_app/async.py",
+      "sdk/python/examples/11_cli_mini_app/sync.py",
+      "sdk/python/examples/12_turn_params_kitchen_sink/async.py",
+      "sdk/python/examples/12_turn_params_kitchen_sink/sync.py",
+      "sdk/python/examples/13_model_select_and_turn_params/async.py",
+      "sdk/python/examples/13_model_select_and_turn_params/sync.py",
+      "sdk/python/examples/14_turn_controls/async.py",
+      "sdk/python/examples/14_turn_controls/sync.py",
+      "sdk/python/examples/15_login_and_account/async.py",
+      "sdk/python/examples/15_login_and_account/sync.py",
+      "sdk/python/examples/16_external_message/async.py",
+      "sdk/python/examples/16_external_message/sync.py",
+      "sdk/python/examples/_bootstrap.py",
+      "sdk/python/release_version.py",
+      "sdk/python/scripts/update_sdk_artifacts.py",
+      "sdk/python/src/openai_codex/__init__.py",
+      "sdk/python/src/openai_codex/_approval_mode.py",
+      "sdk/python/src/openai_codex/_goal.py",
+      "sdk/python/src/openai_codex/_initialize_metadata.py",
+      "sdk/python/src/openai_codex/_inputs.py",
+      "sdk/python/src/openai_codex/_login.py",
+      "sdk/python/src/openai_codex/_message_router.py",
+      "sdk/python/src/openai_codex/_run.py",
+      "sdk/python/src/openai_codex/_runtime_requirements.py",
+      "sdk/python/src/openai_codex/_sandbox.py",
+      "sdk/python/src/openai_codex/_version.py",
+      "sdk/python/src/openai_codex/api.py",
+      "sdk/python/src/openai_codex/async_client.py",
+      "sdk/python/src/openai_codex/client.py",
+      "sdk/python/src/openai_codex/errors.py",
+      "sdk/python/src/openai_codex/generated/__init__.py",
+      "sdk/python/src/openai_codex/generated/notification_registry.py",
+      "sdk/python/src/openai_codex/generated/v2_all.py",
+      "sdk/python/src/openai_codex/models.py",
+      "sdk/python/src/openai_codex/retry.py",
+      "sdk/python/src/openai_codex/types.py",
+      "sdk/python/tests/app_server_harness.py",
+      "sdk/python/tests/app_server_helpers.py",
+      "sdk/python/tests/conftest.py",
+      "sdk/python/tests/installed_sdk_smoke.py",
+      "sdk/python/tests/test_app_server_approvals.py",
+      "sdk/python/tests/test_app_server_goal_operations.py",
+      "sdk/python/tests/test_app_server_inputs.py",
+      "sdk/python/tests/test_app_server_lifecycle.py",
+      "sdk/python/tests/test_app_server_login.py",
+      "sdk/python/tests/test_app_server_run.py",
+      "sdk/python/tests/test_app_server_streaming.py",
+      "sdk/python/tests/test_app_server_turn_controls.py",
+      "sdk/python/tests/test_artifact_workflow_and_binaries.py",
+      "sdk/python/tests/test_async_client_behavior.py",
+      "sdk/python/tests/test_client_rpc_methods.py",
+      "sdk/python/tests/test_contract_generation.py",
+      "sdk/python/tests/test_mcp_conformance_fixtures.py",
+      "sdk/python/tests/test_public_api_runtime_behavior.py",
+      "sdk/typescript/eslint.config.js",
+      "sdk/typescript/jest.config.cjs",
+      "sdk/typescript/samples/basic_streaming.ts",
+      "sdk/typescript/samples/helpers.ts",
+      "sdk/typescript/samples/structured_output.ts",
+      "sdk/typescript/samples/structured_output_zod.ts",
+      "sdk/typescript/src/codex.ts",
+      "sdk/typescript/src/codexOptions.ts",
+      "sdk/typescript/src/events.ts",
+      "sdk/typescript/src/exec.ts",
+      "sdk/typescript/src/index.ts",
+      "sdk/typescript/src/items.ts",
+      "sdk/typescript/src/outputSchemaFile.ts",
+      "sdk/typescript/src/thread.ts",
+      "sdk/typescript/src/threadOptions.ts",
+      "sdk/typescript/src/turnOptions.ts",
+      "sdk/typescript/tests/abort.test.ts",
+      "sdk/typescript/tests/codexExecSpy.ts",
+      "sdk/typescript/tests/exec.test.ts",
+      "sdk/typescript/tests/mcpConformance.test.ts",
+      "sdk/typescript/tests/responsesProxy.ts",
+      "sdk/typescript/tests/run.test.ts",
+      "sdk/typescript/tests/runStreamed.test.ts",
+      "sdk/typescript/tests/setupCodexHome.ts",
+      "sdk/typescript/tests/testCodex.ts",
+      "sdk/typescript/tsup.config.ts"
+    ],
+    "skipped": [],
+    "coverage_complete": true,
+    "diagnostics": [],
+    "cache": {
+      "hits": 1,
+      "misses": 0,
+      "evictions": 0,
+      "enabled": true,
+      "error": null
+    },
+    "graph_key": "755c26fc8e0109bd88110218ea7d7c3d009334d06745b114ac1cdfbf0c93ce2c",
+    "elapsed_ms": 124.91,
+    "query_index": {
+      "backend": "sqlite_columns",
+      "hit": true,
+      "persistent": true,
+      "bytes": 240607232,
+      "entities": 39727,
+      "facts": 837018,
+      "reclaimed_snapshots": 0,
+      "phase_ms": {
+        "manifest": 49.117,
+        "store_open": 36.181,
+        "index_open": 9.268
+      }
+    },
+    "query_cache": {
+      "enabled": false
+    },
+    "pattern_engine": {
+      "backend": "exploration",
+      "semantic_backend": "sqlite_columns",
+      "buckets": {
+        "hits": 180790,
+        "disk_hits": 0,
+        "builds": 527,
+        "fallback": 0,
+        "loaded_rows": 229596,
+        "build_ms": 11557.44003946893
+      }
+    }
+  }
+}

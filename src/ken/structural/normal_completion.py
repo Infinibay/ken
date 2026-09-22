@@ -98,6 +98,18 @@ def normal_completion(graph: IR) -> None:
         return result
 
     for op in graph.operations:
+        if op.native_kind in {'try_statement', 'try_with_resources_statement'}:
+            finalizers = [c for c in children[op.id] if c.native_kind == 'finally_clause']
+            pending = list(finalizers)
+            override = False
+            while pending:
+                current = pending.pop()
+                override |= current.native_kind in ABRUPT | SUSPENSION
+                pending.extend(children[current.id])
+            graph.add(op.id, 'TRY_EXIT_STATUS',
+                      'unsupported' if graph.diagnostics or op.native_kind == 'try_with_resources_statement'
+                      else 'may-override' if override else 'no-explicit-override',
+                      basis='lexical-finalizer-exits/1')
         if op.native_kind in BLOCKS | HANDLERS | {'try_statement', 'if_statement', 'elif_clause'}:
             graph.add(op.id, 'NORMAL_COMPLETION', completion(op),
                       f'{graph.entities[op.owner].path}:{op.line}', basis='statement-normal/1')

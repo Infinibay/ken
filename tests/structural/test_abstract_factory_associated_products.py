@@ -149,4 +149,6 @@ def test_variant_is_ready_for_its_single_declared_language():
     assert row['languages'] == ['rust']
     assert row['status'] == 'ready'
     assert isinstance(row.get('query'), str) and row['query'].strip()
-    assert 'OVERRIDES' in row['query'] and 'SUBTYPE_OF' in row['query']
+    # The variant states the two inherited contracts and the overridden slots in the
+    # KQL 2 vocabulary; the predicates are the contract, not the encoding.
+    assert 'overrides(' in row['query'] and 'subtype(' in row['query']

@@ -2,56 +2,82 @@ schema = "ken-rule/1"
 id = "command"
 name = "Command"
 category = "behavioral"
-description = "A parameterless operation encapsulates a receiver invocation."
-caveat = "A parameterless action with a separate typed invoker, or a stored captured closure. Discarded calls and stateful getters can share the signature; intent and invocation lifecycle remain unproven."
-legacy_query = "require $unit HAS_METHOD $execute\nrequire $unit HAS_FIELD $receiver\nrequire $execute DELEGATES_TO $receiver\ncount =0 $execute HAS_PARAMETER $argument receiver=false\n"
+description = "An operation encapsulates a receiver invocation; retained contracts may accept an execution context."
+caveat = "A retained action with matching explicit call arity, another parameterless action shape, or a stored captured closure. Discarded calls and stateful getters can share the signature; intent and invocation lifecycle remain unproven."
 query = '''
-query command {
- any {
-  match "command#command-object"(unit: $unit);
- } or {
-  match "command#stored-closure"(unit: $unit);
- } or {
-  match "command#retained-object"(unit: $unit);
- }
- or { match "command#queued-object"(unit: $unit); }
- or { match "command#retained-contract"(unit: $unit); }
- or { match "command#command-closure"(unit: $unit); }
- emit $unit;
+language "kql/2";
+module ken.catalog.command;
+import ken.catalog.command.variants.command_closure;
+import ken.catalog.command.variants.command_object;
+import ken.catalog.command.variants.queued_object;
+import ken.catalog.command.variants.retained_contract;
+import ken.catalog.command.variants.retained_object;
+import ken.catalog.command.variants.stored_closure;
+
+pattern detect(out GraphTerm $unit) {
+  either {
+    use ken.catalog.command.variants.command_object.detect(unit: $unit);
+  } or {
+    use ken.catalog.command.variants.stored_closure.detect(unit: $unit);
+  } or {
+    use ken.catalog.command.variants.retained_object.detect(unit: $unit);
+  } or {
+    use ken.catalog.command.variants.queued_object.detect(unit: $unit);
+  } or {
+    use ken.catalog.command.variants.retained_contract.detect(unit: $unit);
+  } or {
+    use ken.catalog.command.variants.command_closure.detect(unit: $unit);
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
-query_language = "kenql/1"
+query_language = "kql/2"
 claim = "structural-signature"
 
 [[operations]]
 id = "retained_dispatch"
 status = "ready"
-description = "An invoker retains an input with a nominal contract and dispatches a zero-argument slot from another method."
+description = "An invoker retains an input with a nominal contract and dispatches a slot with matching explicit arity from another method."
 caveat = "Requires a supported final field transfer or constructor input. Does not prove temporal call order, unchanged runtime fields, dispatch to a particular subtype or Command intent."
 query = '''
-query retained_dispatch {
- require $invoker HAS_FIELD $storage;
- require $invoker HAS_METHOD $setter;
- require $setter HAS_PARAMETER $input;
- parameter(receiver:false) as $input;
- require $input TYPE $contract;
- any {
-  require $setter HAS_OPERATION $write;
-  require $write FINAL_FIELD_INPUT $input;
-  require $write ASSIGNMENT_TARGET $storage;
- } or {
-  callable(constructor:true) as $setter;
-  require $storage CONSTRUCTOR_FIELD_INPUT $input;
- }
- require $invoker HAS_METHOD $invoke;
- different $setter $invoke;
- require $invoke HAS_CALL $dispatch;
- require $dispatch RECEIVER $storage;
- call(explicit_arguments:0) as $dispatch;
- require $dispatch TARGET $slot;
- require $contract HAS_METHOD $slot;
- callable(arity:0) as $slot;
- emit $invoker,$setter,$input,$storage,$invoke,$dispatch,$contract,$slot;
+language "kql/2";
+module ken.catalog.command.retained_dispatch;
+
+pattern detect(out GraphTerm $invoker, out GraphTerm $setter, out GraphTerm $input, out GraphTerm $storage, out GraphTerm $invoke, out Call $dispatch, out GraphTerm $contract, out GraphTerm $slot) {
+  type $contract {
+    method $slot { constructor: false; }
+  }
+  type $invoker {
+    field $storage { }
+    method $invoke {
+      constructor: false;
+      body { call $slot { receiver: $storage; unreplaced: true; } as $dispatch; }
+    }
+    either {
+      method $setter {
+        constructor: false;
+        param $input { type: nominal($contract); reassigned: false; }
+        body { $storage = $input as $write; }
+      }
+      where final_member_input($write, $input);
+    } or {
+      constructor $setter {
+        param $input { type: nominal($contract); reassigned: false; }
+        body { initializer { $storage = $input; } }
+      }
+    }
+  }
+  where $setter != $invoke;
+  where $dispatch.explicit_arguments == $slot.arity;
+}
+
+query results {
+  use detect(invoker: $invoker, setter: $setter, input: $input, storage: $storage, invoke: $invoke, dispatch: $dispatch, contract: $contract, slot: $slot);
+  select $invoker, $setter, $input, $storage, $invoke, $dispatch, $contract, $slot;
 }
 '''
 
@@ -59,24 +85,31 @@ query retained_dispatch {
 id = "retained-contract"
 status = "ready"
 languages = ["python", "typescript", "java", "csharp", "cpp"]
-query_claim = "An invoker retains a nominal contract and later has a separate dispatch method. A corresponding concrete subtype retains a constructor receiver and discards the result of a receiver call in its zero-argument action. Existence of an override does not prove that runtime dispatch selects it; retention and intent are structural evidence."
+query_claim = "An invoker retains a nominal contract and later has a separate dispatch method. A corresponding concrete subtype retains a constructor receiver and discards the result of a receiver call in its action. Existence of an override does not prove that runtime dispatch selects it; retention and intent are structural evidence."
 query = '''
-query retained_contract {
- match "command.retained_dispatch"(invoker:$invoker,contract:$contract,slot:$slot);
- require $unit HAS_METHOD $execute;
- require $execute OVERRIDES $slot;
- path $unit SUBTYPE_OF{1,8} $contract as $conformance;
- callable(constructor:false,arity:0) as $execute;
- require $unit HAS_FIELD $receiver;
- require $receiver CONSTRUCTOR_FIELD_INPUT $receiver_input;
- require $unit HAS_METHOD $constructor;
- require $constructor HAS_PARAMETER $receiver_input;
- require $execute HAS_CALL $work;
- require $work RECEIVER $receiver;
- require $execute HAS_OPERATION $statement;
- require $statement DISCARDS_RESULT $work;
- different $unit $invoker;
- emit $unit;
+language "kql/2";
+module ken.catalog.command.variants.retained_contract;
+import ken.catalog.command.retained_dispatch;
+
+pattern detect(out GraphTerm $unit) {
+  use ken.catalog.command.retained_dispatch.detect(invoker: $local_invoker, contract: $local_contract, slot: $local_slot);
+  type $unit {
+    field $local_receiver {}
+    method $local_execute { constructor: false; }
+    constructor $local_constructor {
+      parameters { param $local_receiver_input {} }
+      body { initializer { $local_receiver = $local_receiver_input; } }
+    }
+  }
+  where subtype($unit, $local_contract);
+  where overrides($local_execute, $local_slot);
+  type $unit { method $local_execute { body { call $local_work { receiver: $local_receiver; discarded: true; }; } } }
+  where $unit != $local_invoker;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -90,33 +123,50 @@ fixtures_status = "source-regression-matrix"
 
 
 query = '''
-query command {
+language "kql/2";
+module ken.catalog.command.variants.command_object;
 
- require $unit HAS_METHOD $execute;
- callable(constructor: false, arity: 0) as $execute;
- require $unit HAS_FIELD $receiver;
- require $receiver TYPE $receiver_type;
- require $execute HAS_CALL $work;
- require $work RECEIVER $receiver;
- any {
-  require $execute HAS_OPERATION $statement;
-  require $statement DISCARDS_RESULT $work;
- } or {
-  require $execute HAS_OPERATION $return;
-  require $return RETURN_ORIGIN $work;
-  require $work TARGET $action;
-  require $receiver_type HAS_METHOD $action;
-  require $receiver_type HAS_FIELD $state;
-  any { require $action WRITES $state; }
-  or { require $action WRITES_ELEMENT $state; }
- }
- require $invoker HAS_PARAMETER $command;
- require $command TYPE $unit;
- require $invoker HAS_CALL $dispatch;
- require $dispatch RECEIVER $command;
- require $dispatch TARGET $execute;
- different $invoker $execute;
- emit $unit;
+pattern detect(out GraphTerm $unit) {
+  type $unit {
+    method $local_execute { constructor: false; arity: 0; }
+    field $local_receiver { type: nominal($local_receiver_type); }
+  }
+  either {
+    type $unit {
+      method $local_execute {
+        body { call $local_action { receiver: $local_receiver; discarded: true; }; }
+      }
+    }
+  } or {
+    type $unit {
+      method $local_execute {
+        body {
+          let $local_result = call $local_action { receiver: $local_receiver; } as $local_work;
+          return $local_result;
+        }
+      }
+    }
+    type $local_receiver_type {
+      method $local_action { constructor: false; }
+      field $local_state {}
+    }
+    either {
+      where writes($local_action, $local_state);
+    } or {
+      where writes_element($local_action, $local_state);
+    }
+  }
+  method $local_invoker {
+    constructor: false;
+    param $local_command { type: nominal($unit); }
+    body { call $local_execute { receiver: $local_command; } as $local_dispatch; }
+  }
+  where $local_invoker != $local_execute;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 [[variants]]
@@ -129,22 +179,35 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix"
 query_claim = "Deferred action shape, not proof of Command intent versus a captured Strategy, temporal ordering, exactly-once execution or unchanged instance fields."
 query = '''
-query stored_closure {
- require $unit HAS_FIELD $action;
- any {
-  require $action ASSIGNED_FROM $closure;
- } or {
-  require $initialization INITIALIZES_FIELD $action;
-  require $initialization STORES_VALUE $closure;
- }
- callable() as $closure;
- require $closure CAPTURES $bound;
- require $closure HAS_CALL $work;
- require $unit HAS_METHOD $invoke;
- require $invoke HAS_CALL $dispatch;
- require $dispatch CALLEE_VALUE $action;
- different $closure $invoke;
- emit $unit;
+language "kql/2";
+module ken.catalog.command.variants.stored_closure;
+
+pattern detect(out GraphTerm $unit) {
+  type $unit {
+    field $action {}
+    method $invoke { constructor: false; body { call $action {} as $dispatch; } }
+  }
+  callable $closure {
+    constructor: false;
+    captures: $bound;
+    body { call $inner { argument $bound at any; } as $use; }
+  }
+  either {
+    type $unit {
+      method $configure { constructor: false; body { $action = $closure as $write; } }
+    }
+  } or {
+    callable $producer {
+      constructor: false;
+      body { let $made = construct $unit { initializer $action from $closure; } as $new; }
+    }
+  }
+  where $closure != $invoke;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 
@@ -154,26 +217,45 @@ status = "ready"
 languages = ["python", "java", "typescript", "csharp"]
 query_claim = "An invoker retains a supplied command object and dispatches its parameterless receiver delegation from another method. Pure calculations may qualify. Stored query objects can share this shape; ordering, alias stability and intent remain unproven."
 query = '''
-query retained_command {
- require $slot ASSIGNED_FROM $command;
- require $setter HAS_PARAMETER $command;
- parameter(receiver: false) as $command;
- require $command TYPE $unit;
- require $invoker HAS_FIELD $slot;
- different $invoker $unit;
- require $invoker HAS_METHOD $setter;
- require $invoker HAS_METHOD $invoke;
- different $setter $invoke;
- require $invoke HAS_CALL $dispatch;
- require $dispatch RECEIVER $slot;
- require $dispatch TARGET $execute;
- require $unit HAS_METHOD $execute;
- callable(constructor: false, arity: 0) as $execute;
- require $unit HAS_FIELD $receiver;
- require $receiver TYPE $receiver_type;
- require $execute HAS_CALL $work;
- require $work RECEIVER $receiver;
- emit $unit;
+language "kql/2";
+module ken.catalog.command.variants.retained_object;
+
+pattern detect(out TypeDecl $unit) {
+  type $receiver_type {
+    method $work { constructor: false; }
+  }
+  type $unit {
+    field $receiver { type: nominal($receiver_type); }
+    method $execute {
+      constructor: false;
+      body {
+        call $work { receiver: $receiver; };
+      }
+    }
+  }
+  type $invoker {
+    field $slot { type: nominal($unit); }
+    method $setter {
+      constructor: false;
+      param $command { type: nominal($unit); }
+      body {
+        $slot = $command as $store;
+      }
+    }
+    method $invoke {
+      constructor: false;
+      body {
+        call $execute { receiver: $slot; };
+      }
+    }
+  }
+  where $invoker != $unit;
+  where $setter != $invoke;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''
 
@@ -187,42 +269,53 @@ missing_capability = "unknown"
 fixtures_status = "source-regression-matrix-eight-languages"
 query_claim = "Una fabrica encola un cierre que captura un payload, y otro metodo recorre esa misma cola invocando cada elemento con un contexto de ejecucion que recibe por parametro. El cierre tiene aridad al menos uno (no se impone aridad cero) y lee el payload capturado, de modo que los datos llegan a la accion. La identidad del cierre encolado se sigue a traves del alias local o del envoltorio de un solo argumento con el que cada lenguaje lo guarda. No prueba orden temporal, ejecucion exactamente una vez, ni FnOnce/move."
 query = '''
-query command_closure {
- require $unit HAS_FIELD $queue;
- require $unit HAS_METHOD $submit;
- callable(constructor: false) as $submit;
- callable(constructor: false) as $run;
- different $run $submit;
- require $unit HAS_METHOD $run;
- require $submit HAS_CALL $insertion;
- require $insertion INSERTS_INTO $queue;
- any {
-  require $insertion INSERTED_VALUE $action;
-  callable(constructor: false) as $action;
- } or {
-  require $insertion INSERTED_VALUE $inserted;
-  callable(constructor: false) as $action;
-  path $action FLOWS_TO{0,2} $inserted as $alias;
- } or {
-  require $insertion INSERTED_VALUE $wrapper;
-  callable(constructor: false) as $action;
-  require $wrapper ARGUMENT $wrapper_argument;
-  require $wrapper_argument VALUE $wrapper_value;
-  require $wrapper_value LOADED_FROM $slot;
-  path $action FLOWS_TO{0,2} $slot as $wrapped;
- }
- require $action CAPTURES $payload;
- require $action READS $payload;
- require $action HAS_PARAMETER $context;
- parameter(receiver: false) as $context;
- require $run ITERATES_CALLS $queue;
- require $run HAS_PARAMETER $execution;
- parameter(receiver: false) as $execution;
- require $run HAS_CALL $dispatch;
- require $dispatch ARGUMENT $argument;
- require $argument VALUE $input;
- require $input LOADED_FROM $execution;
- emit $unit, $queue, $submit, $run, $action;
+language "kql/2";
+module ken.catalog.command.variants.command_closure;
+
+pattern detect(out GraphTerm $unit, out GraphTerm $queue, out GraphTerm $submit, out GraphTerm $run, out GraphTerm $action) {
+  callable $action {
+    constructor: false;
+    captures: $local_payload;
+    parameters { param $local_context {} }
+  }
+  type $unit {
+    field $queue {}
+    method $submit { constructor: false; }
+    method $run { constructor: false; param $local_execution {} }
+  }
+  where $submit != $run;
+  where reads($action, $local_payload);
+  method $submit {
+    body {
+      insert $action into $queue as $local_insertion;
+    }
+  }
+  either {
+    method $run {
+      body {
+        iterate $queue as $local_element {
+          body {
+            call $local_element { argument $local_execution at any; } as $local_dispatch;
+          }
+        }
+      }
+    }
+  } or {
+    method $run {
+      body {
+        iterate $queue as $local_element {
+          body {
+            call on $local_element { argument $local_execution at any; } as $local_dispatch;
+          }
+        }
+      }
+    }
+  }
+}
+
+query results {
+  use detect(unit: $unit, queue: $queue, submit: $submit, run: $run, action: $action);
+  select $unit, $queue, $submit, $run, $action;
 }
 '''
 
@@ -232,34 +325,89 @@ status = "ready"
 languages = ["python", "javascript", "typescript", "java", "csharp"]
 query_claim = "A batch invoker stores supplied commands, invokes a parameterless operation on each element, and lexically resets the same collection. A concrete operation corresponding to the registered contract delegates to a constructor-retained receiver. Untyped registration requires an observed caller supplying the concrete type. Does not prove runtime scheduling, exactly-once execution or exclusive Command intent."
 query = '''
-query queued_object {
- match "architecture.batch-work-queue.drain"(unit:$invoker,input:$input,dispatch:$dispatch);
- require $unit HAS_METHOD $execute;
- callable(constructor: false, arity: 0) as $execute;
- require $unit HAS_FIELD $receiver;
- require $receiver CONSTRUCTOR_FIELD_INPUT $receiver_input;
- require $unit HAS_METHOD $constructor;
- require $constructor HAS_PARAMETER $receiver_input;
- require $execute HAS_CALL $work;
- require $work RECEIVER $receiver;
- different $unit $invoker;
- any {
-  require $input TYPE $contract;
-  path $unit SUBTYPE_OF{0,8} $contract as $contract_path;
-  require $contract HAS_METHOD $slot;
-  callable(arity: 0) as $slot;
-  where $dispatch.name == $slot.name;
-  any { require $execute OVERRIDES $slot; }
-  or { require $contract HAS_METHOD $execute; where $execute.name == $slot.name; }
- } or {
-  parameter(type_state: unknown) as $input;
-  require $usage CALL_BINDING $binding [mode: direct];
-  require $binding BINDING_PARAMETER $input;
-  require $binding BINDING_VALUE $provided;
-  any { require $provided ALLOCATES_TYPE $unit; }
-  or { require $provided TYPE $unit; }
-  where $dispatch.name == $execute.name;
- }
- emit $unit;
+language "kql/2";
+module ken.catalog.command.variants.queued_object;
+import ken.catalog.architecture.batch_work_queue.drain;
+
+pattern detect(out TypeDecl $unit) {
+  use ken.catalog.architecture.batch_work_queue.drain.detect(unit: $local_invoker, register: $local_register, input: $local_input, dispatch: $local_dispatch);
+  type $unit {
+    field $local_receiver {}
+    method $local_execute { constructor: false; arity: 0; }
+    constructor $local_constructor {
+      parameters { param $local_receiver_input {} }
+      body { initializer { $local_receiver = $local_receiver_input; } }
+    }
+    method $local_execute {
+      call $local_work { receiver: $local_receiver; }
+    }
+  }
+  where $unit != $local_invoker;
+  either {
+    param $local_input { type: nominal($local_contract); }
+    type $local_contract { method $local_slot { constructor: false; arity: 0; } }
+    where subtype($unit, $local_contract);
+    where $local_dispatch.name == $local_slot.name;
+    where overrides($local_execute, $local_slot);
+  } or {
+    callable $local_caller {
+      body {
+        let $local_provided = construct $unit {} as $local_creation;
+        call $local_registration { argument $local_provided at any; } as $local_use;
+      }
+    }
+    where $local_registration.name == $local_register.name;
+    where $local_dispatch.name == $local_execute.name;
+  }
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
+}
+'''
+
+[[operations]]
+id = "captured_payload"
+status = "ready"
+description = "A retained command passes a constructor-captured payload to work on its retained receiver."
+caveat = "Explicit source contract; no proof of hidden effects, feasible paths or runtime dispatch."
+query = '''
+language "kql/2";
+module ken.catalog.command.captured_payload;
+import ken.catalog.command.variants.retained_contract;
+import ken.catalog.command.retained_dispatch;
+
+pattern detect(out GraphTerm $unit) {
+  use ken.catalog.command.variants.retained_contract.detect(unit: $unit);
+  use ken.catalog.command.retained_dispatch.detect(contract: $contract, slot: $slot);
+  type $unit {
+    field $receiver {}
+    field $payload {}
+    method $action {
+      constructor: false;
+      body {
+        call $work {
+          receiver: $receiver;
+          unreplaced: true;
+          argument $payload at any;
+        } as $dispatch;
+      }
+    }
+    constructor $initializer {
+      param $receiver_input {}
+      param $payload_input {}
+      body {
+        initializer { $receiver = $receiver_input; $payload = $payload_input; }
+      }
+    }
+  }
+  where overrides($action, $slot);
+  where $payload != $receiver;
+}
+
+query results {
+  use detect(unit: $unit);
+  select $unit;
 }
 '''

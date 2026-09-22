@@ -1,0 +1,1 @@
+language "kql/2"; module review; query uncorrelated_absence {node $handler {kind:"catch";} not exists {node $raised {kind:"throw";} } select $handler.path,$handler.line;}

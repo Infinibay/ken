@@ -1,0 +1,10 @@
+// Hybrid catalog records. Text cells reference words; zero means null.
+// Other cells are signed integers, including semantic attribute references.
+namespace Ken.Exploration;
+table Records {
+  width:uint;
+  words:[string] (required);
+  cells:[long] (required);
+}
+root_type Records;
+file_identifier "KCR1";

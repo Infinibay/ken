@@ -3,6 +3,8 @@ import re
 
 import pytest
 
+from .contract_support import contract_matches
+
 from .test_gof_executable import SOURCES, evaluate
 
 
@@ -68,7 +70,6 @@ def test_broadcast_or_facade_without_coordination_loop_is_not_mediator(language,
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Mediator signature requires distinct colleague types rather than distinct participant instances')
 def test_two_instances_of_one_colleague_type_can_be_mediated(language):
     text = source(language).replace('Second', 'First')
     # Remove duplicate class definition after unifying the type, retain both fields.
@@ -83,7 +84,6 @@ def test_two_instances_of_one_colleague_type_can_be_mediated(language):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Mediator signature does not prove coordinate calls reachable after entry')
 def test_unreachable_coordination_is_not_an_executed_algorithm(language):
     text = source(language)
     if language == 'python':
@@ -96,7 +96,7 @@ def test_unreachable_coordination_is_not_an_executed_algorithm(language):
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
-@pytest.mark.xfail(strict=True, reason='Payload preservation is an optional stronger coordination contract absent from broad Mediator')
 def test_payload_contract_rejects_discarded_event_data(language):
     text = source(language).replace('act(event)', 'act(0)')
-    assert not evaluate(text, language, 'mediator')
+    assert contract_matches(source(language), language, 'mediator.event_delivery')
+    assert not contract_matches(text, language, 'mediator.event_delivery')
