@@ -49,3 +49,25 @@ def test_qualified_identity_in_natural_definition_requests(query):
 
 def test_quoted_name_in_a_usage_question_does_not_force_definition_lookup():
     assert not interpret(SearchRequest("Where is `Client.redirect` called?")).identity
+
+
+@pytest.mark.parametrize('query', [
+    'Find the authentication timeout test covering exhausted retries.',
+    'Show a parameterized integration test for malformed responses.',
+    'Locate the command-line quoting test.',
+    'What integration test covers an empty response?',
+    'Buscá el test de integración que cubre respuestas vacías.',
+])
+def test_requested_test_noun_can_have_descriptive_modifiers(query):
+    assert interpret(SearchRequest(query)).purpose == 'tests'
+
+
+@pytest.mark.parametrize('query', [
+    'Find the function that tests whether a request is valid.',
+    'Show the handler used in test environments.',
+    'Locate the class responsible for test discovery.',
+    'Which function tests a connection?',
+    'Find a way to test input values.',
+])
+def test_modifier_recognition_does_not_turn_test_mentions_into_test_requests(query):
+    assert interpret(SearchRequest(query)).purpose == 'implementation'

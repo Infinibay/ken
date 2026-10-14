@@ -8,6 +8,23 @@ from ken.retrieval.model import SearchRequest
 from ken.search import _identifier_query
 
 
+_TEST_OBJECT = re.compile(
+    r"^¿?(?:which|what|find|show|locate|qué|que|cuál|busca|buscá|muestra|encuentra)\s+"
+    r"(?P<modifiers>(?:[\w-]+\s+){0,8}?)(?:tests?|pruebas?)\b")
+_OBJECT_BOUNDARIES = frozenset((
+    "function method class module file symbol implementation handler helper "
+    "función funcion método metodo clase módulo modulo archivo implementación "
+    "that which where who when whose que "
+    "in of for from with to en de con para por"
+).split())
+
+
+def _requests_test_source(query: str) -> bool:
+    """Recognize the requested noun, including modifiers, before a clause boundary."""
+    match = _TEST_OBJECT.match(query)
+    return bool(match and not (_OBJECT_BOUNDARIES & set(match['modifiers'].split())))
+
+
 @dataclass(frozen=True)
 class QueryIntent:
     purpose: str
@@ -21,10 +38,7 @@ def interpret(request: SearchRequest) -> QueryIntent:
     lower = query.casefold()
     purpose = request.purpose
     if purpose == "auto":
-        if re.search(r"^(?:(?:which|what)\s+(?:unit\s+)?tests?\b|"
-                     r"(?:find|show|locate)\s+(?:(?:the|a|an)\s+)?(?:unit\s+)?tests?\b|"
-                     r"¿?(?:qué|que|cuál)\s+prueba\b|"
-                     r"(?:busca|buscá|muestra|encuentra)\s+(?:(?:la|el|una|un)\s+)?(?:prueba|test)\b)", lower):
+        if _requests_test_source(lower):
             purpose = "tests"
         elif re.search(r"\b(?:example|ejemplo)\b", lower):
             purpose = "usage"
