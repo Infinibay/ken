@@ -9,6 +9,17 @@ from typing import Any
 
 import numpy as np
 
+_MEMORY_LOCK = threading.Lock()
+
+
+def bound_free_cache(runtime: Any) -> None:
+    """Bound retired buffers, without limiting live weights or raising host limits."""
+    budget = 512 * 1024**2
+    with _MEMORY_LOCK:
+        prior = runtime.set_cache_limit(budget)
+        if prior < budget:
+            runtime.set_cache_limit(prior)
+
 
 @lru_cache(maxsize=4)
 def model_snapshot(spec: Any) -> Path:
@@ -27,6 +38,7 @@ def model_tokenizer(spec: Any):
 def load_qwen_core(spec: Any, *, output_tokens: tuple[str, ...] = ()):
     import mlx.core as mx
     from mlx_lm.models.qwen3 import ModelArgs, Qwen3Model
+    bound_free_cache(mx)
     path = model_snapshot(spec)
     config = json.loads((path / "config.json").read_text())
     if config.get("model_type") != "qwen3":
