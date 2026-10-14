@@ -34,6 +34,10 @@ def scope_for_node(source: bytes, node: Node, symbol: ParsedSymbol) -> ParsedSco
         body = value.child_by_field_name("body")
     signature = source[node.start_byte:body.start_byte if body else node.end_byte].decode(
         "utf-8", errors="replace").rstrip()
+    annotations = annotations_for_node(source, node)
+    prefix = [a for a in annotations if a not in signature]
+    if prefix:
+        signature = "\n".join((*prefix, signature))
     comment_owner = node
     while (comment_owner.parent is not None
            and comment_owner.parent.type in ("export_statement", "lexical_declaration",
@@ -55,4 +59,21 @@ def scope_for_node(source: bytes, node: Node, symbol: ParsedSymbol) -> ParsedSco
         [(n.start_point[0] + 1, n.end_point[0] + 1) for n in body.named_children] if body else [])
     executable = next((n for n in body.named_children if "comment" not in n.type), None) if body else None
     scope.implementation_start_line = executable.start_point[0] + 1 if executable else symbol.line_start
+    scope.annotations = annotations
     return scope
+
+
+def annotations_for_node(source: bytes, node: Node) -> tuple[str, ...]:
+    """Read attributes from the declaration and its enclosing compilation scope."""
+    annotations = []
+    current: Node | None = node
+    while current is not None:
+        previous = current.prev_named_sibling
+        while previous is not None:
+            if previous.type in ("attribute_item", "decorator", "annotation"):
+                annotations.append(source[previous.start_byte:previous.end_byte].decode("utf-8"))
+            elif "comment" not in previous.type:
+                break
+            previous = previous.prev_named_sibling
+        current = current.parent
+    return tuple(dict.fromkeys(reversed(annotations)))

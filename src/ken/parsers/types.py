@@ -30,6 +30,7 @@ class ParsedScope:
     owner: str | None = None
     statements: list[tuple[int, int]] = field(default_factory=list)
     implementation_start_line: int | None = None
+    annotations: tuple[str, ...] = ()
 
 
 @dataclass

@@ -6,12 +6,12 @@ import re
 from collections import defaultdict
 from collections.abc import Callable
 from dataclasses import dataclass
-from pathlib import PurePosixPath
 
 from ken.parsers.types import ParsedFile, ParsedScope
 from ken.retrieval.model import EntityKey, Passage, Span
+from ken.retrieval.roles import classify_role
 
-EXTRACTOR_VERSION = 3
+EXTRACTOR_VERSION = 4
 
 
 def lexical_token_count(text: str) -> int:
@@ -27,18 +27,6 @@ class PassagePolicy:
     def __post_init__(self) -> None:
         if self.max_tokens <= 0:
             raise ValueError("max_tokens must be positive")
-
-
-def _role(path: str, name: str | None) -> str:
-    parts = {p.lower() for p in PurePosixPath(path).parts}
-    stem = PurePosixPath(path).stem.lower()
-    if parts & {"tests", "test", "__tests__"} or stem.startswith("test_") or (name or "").startswith("test_"):
-        return "test"
-    if parts & {"examples", "example", "demo", "demos"}:
-        return "example"
-    if parts & {"docs", "doc", "documentation"}:
-        return "documentation"
-    return "definition"
 
 
 def extract_passages(source: bytes, parsed: ParsedFile, *, path: str,
@@ -104,7 +92,8 @@ def extract_passages(source: bytes, parsed: ParsedFile, *, path: str,
             extent = Span(current_scope.symbol.line_start, current_scope.symbol.line_end) if current_scope else Span(1, len(lines))
             split = "oversized_line" if policy.count_tokens(body) > policy.max_tokens else None
             out.append(Passage(entity, Span(start, end), fields, digest, extent,
-                               language, _role(path, entity.qualname), split,
+                               language, classify_role(path, entity.qualname,
+                                   current_scope.annotations if current_scope else ()), split,
                                implementation_start_line=implementation_start))
         start = end + 1
     return out
