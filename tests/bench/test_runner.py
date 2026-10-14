@@ -29,3 +29,25 @@ def test_live_runner_builds_real_index_and_reports_all_cases(tmp_path):
     assert "return 'Authorization'" in first["evidence"][0]["content"]
     assert result["index_stats"]["r"]["passages"] > 0
     assert result["timings_ms"]
+
+
+def test_live_control_encoder_is_shared_by_indexing_and_public_query_only(tmp_path):
+    import numpy as np
+    from ken.bench.runner import run_live
+    from ken.retrieval.profile import EncoderSpec, RetrievalProfile
+    (tmp_path / "auth.py").write_text("def clear_auth():\n    erase_credentials()\n")
+    class Encoder:
+        queries = []
+        def embed_passages(self, texts):
+            return [np.array([1., 0.], dtype=np.float32) for _ in texts]
+        def embed_query(self, query):
+            self.queries.append(query)
+            return np.array([1., 0.], dtype=np.float32)
+    encoder = Encoder()
+    spec = EncoderSpec("control/provided", "a" * 40, "provided")
+    cases = [{"id": "a", "repo_id": "r", "query": "erase credentials",
+              "purpose": "tests", "alternatives": ["unavailable to producer"]}]
+    result = run_live(cases, {"r": tmp_path}, tmp_path / "indexes",
+        profile=RetrievalProfile(spec, spec), encoders={"identity": encoder, "behavior": encoder})
+    assert result["responses"][0]["results"][0]["entity"]["qualname"] == "clear_auth"
+    assert encoder.queries == ["erase credentials"]

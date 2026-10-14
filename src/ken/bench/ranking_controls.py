@@ -72,6 +72,16 @@ def _ordered(matches: list[CodeMatch]) -> list[CodeMatch]:
                                          m.entity.path, m.evidence[0].span.start_line))
 
 
+def prefer_requested_role(request: SearchRequest, matches: list[CodeMatch]) -> list[CodeMatch]:
+    """A categorical purpose control; does not manufacture relevance scores."""
+    intent = interpret(request)
+    if intent.identity or intent.purpose not in ("implementation", "tests"):
+        return list(matches)
+    expected = "test" if intent.purpose == "tests" else "definition"
+    return sorted(matches, key=lambda m: (-m.signals.get("exact", 0),
+        -int(m.evidence[0].role == expected), -m.score, m.entity.path, m.evidence[0].span.start_line))
+
+
 @dataclass(frozen=True)
 class Preference:
     group: str

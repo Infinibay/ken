@@ -35,7 +35,8 @@ def run_cases(cases: Iterable[Record],
 
 
 def run_live(cases: Iterable[Record], roots: Mapping[str, Path], index_directory: Path, *,
-             profile: Any = None, rebuild: bool = True) -> Record:
+             profile: Any = None, rebuild: bool = True,
+             encoders: Mapping[str, Any] | None = None) -> Record:
     """Run the actual engine; keep runtime work out of deterministic grading."""
     from ken.db import connect, init_schema
     from ken.gitignore_filter import iter_files
@@ -62,7 +63,7 @@ def run_live(cases: Iterable[Record], roots: Mapping[str, Path], index_directory
             files = list(iter_files(root))
             item = source_manifest(root, files)
             if rebuild:
-                item.update(asdict(index_project(conn, root, files, profile=profile)))
+                item.update(asdict(index_project(conn, root, files, profile=profile, encoders=encoders)))
             item["passages"] = conn.execute("SELECT COUNT(*) FROM ci_passages").fetchone()[0]
             item["index_ms"] = (time.perf_counter() - start) * 1000
             stats[repo_id] = item
@@ -70,7 +71,7 @@ def run_live(cases: Iterable[Record], roots: Mapping[str, Path], index_directory
             start = time.perf_counter()
             try:
                 return search(connections[repo_id], roots[repo_id], SearchRequest(**request),
-                              profile=profile).to_dict()
+                              profile=profile, encoders=encoders).to_dict()
             finally:
                 timings.append((time.perf_counter() - start) * 1000)
         responses = run_cases(cases, execute)
