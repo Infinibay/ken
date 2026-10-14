@@ -30,3 +30,24 @@ limitaciones del adaptador externo y el control experimental de Ken utilizado.
 Podemos añadir NDCG como diagnóstico complementario sobre conjuntos con
 referencias de relevancia adecuadas. No reemplaza el gate aprobado de al menos
 90% de top1 estricto, ni permite convertir un resultado de top10 en top1.
+
+## Diagnóstico común calculado después de la consulta del usuario
+
+Sobre las mismas 400 consultas y salidas anteriores de Ken-role-v11 y Semble
+nativo normalizado v2, se aplica NDCG binario por archivo. Cada archivo válido
+recibe crédito sólo en su primera aparición; se normaliza por los archivos
+válidos distintos de las referencias originales. No se juzga aquí la función
+ni las anclas visibles. No se cambian las referencias del scorer estricto.
+
+| Métrica de archivo | Ken | Semble |
+|---|---:|---:|
+| NDCG@10 | 0,724404 | 0,688706 |
+| Archivo top1 | 0,6025 | 0,51 |
+| Algún archivo válido entre diez | 0,855 | 0,8575 |
+
+La cobertura de archivo entre los primeros diez es casi igual; Ken ordena
+antes sus archivos válidos. Esto no compara con el 0,854 del otro conjunto de
+1251 consultas, ni mide la aceptación estricta. Recibo completo con hashes y
+400 puntuaciones por motor: `output/development/ken-semble-file-ndcg-400.json`;
+script `experiments/search-engine/score_file_ranking.py`, con cinco ejemplos
+matemáticos verificados antes de calcular resultados.
