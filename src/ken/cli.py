@@ -209,6 +209,10 @@ def _build_parser() -> argparse.ArgumentParser:
 
     p_bench = sub.add_parser("bench", help="evaluate ranker recall on a JSONL dataset")
     p_bench.add_argument("dataset", help="JSONL rows with prompt + expected_files")
+    p_bench.add_argument("--engine", choices=("context", "retrieval"), default="context")
+    p_bench.add_argument("--responses", help="frozen retrieval response JSONL")
+    p_bench.add_argument("--roots", help="JSON mapping repository ids to source roots")
+    p_bench.add_argument("--gate", help="frozen retrieval acceptance policy JSON")
     p_bench.add_argument("--path", default=".", help="project path (default: cwd)")
     p_bench.add_argument(
         "--top", type=_positive_int, default=8, help="ranked files to evaluate"
@@ -555,6 +559,19 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
         return _models_cli(as_json=args.json)
 
     if args.cmd == "bench":
+        if args.engine == "retrieval":
+            if not args.responses or not args.roots:
+                parser.error("retrieval scoring requires --responses and --roots")
+            from ken.bench.retrieval import main as score_retrieval
+            try:
+                return score_retrieval(
+                    Path(args.dataset), roots_path=Path(args.roots),
+                    responses_path=Path(args.responses),
+                    policy_path=Path(args.gate) if args.gate else None,
+                )
+            except (ValueError, OSError) as exc:
+                print(f"error: invalid retrieval evaluation: {exc}", file=sys.stderr)
+                return 2
         return _bench_cli(
             Path(args.path),
             Path(args.dataset),
