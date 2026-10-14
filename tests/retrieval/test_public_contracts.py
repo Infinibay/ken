@@ -82,3 +82,31 @@ def test_preparation_command_builds_profile_used_by_public_search(tmp_path, monk
     found = json.loads(capsys.readouterr().out)
     assert found["profile_version"] == prepared["profile_version"]
     assert found["results"][0]["entity"]["qualname"] == "normalize"
+
+
+def test_real_stdio_mcp_preserves_evidence_response_across_repeated_calls(tmp_path, monkeypatch):
+    import asyncio
+    import sys
+    from mcp import ClientSession
+    from mcp.client.stdio import StdioServerParameters, stdio_client
+    from ken.retrieval.public import find
+    project(tmp_path, monkeypatch)
+    query = "Where is `redirect` defined?"
+    with connect(_paths.db_path(tmp_path)) as conn:
+        expected = find(conn, tmp_path, query)
+    async def exercise():
+        params = StdioServerParameters(command=sys.executable, args=["-m", "ken", "mcp", str(tmp_path)])
+        with (tmp_path / "mcp-stderr.log").open("w") as errlog:
+            async with stdio_client(params, errlog=errlog) as (read, write):
+                async with ClientSession(read, write) as session:
+                    await session.initialize()
+                    for _ in range(2):
+                        result = await session.call_tool("ken_find", {"query": query, "scope": "symbols",
+                            "response_format": "evidence"}, read_timeout_seconds=10)
+                        assert not result.is_error
+                        payload = result.structured_content
+                        if payload is None:
+                            assert len(result.content) == 1 and result.content[0].type == "text"
+                            payload = json.loads(result.content[0].text)
+                        assert payload == expected
+    asyncio.run(exercise())

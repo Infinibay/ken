@@ -83,6 +83,16 @@ torch = [
     "torch>=2.9; sys_platform == 'darwin' and platform_machine == 'arm64'",
 ]
 
+# Optional local evidence ranking on Apple Silicon. Keep the tokenizer/runtime
+# family used by the reproducible retrieval profile, including compatible
+# transitive requirements (newer mlx-lm requires transformers 5.x).
+retrieval-mlx = [
+    "mlx==0.32.3; sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "mlx-lm==0.28.4; sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "transformers==4.57.6",
+    "huggingface-hub>=0.36.2,<1",
+]
+
 [project.scripts]
 ken = "ken.cli:main"
 
