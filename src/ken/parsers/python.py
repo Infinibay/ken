@@ -14,10 +14,12 @@ ERROR nodes scattered around. We just walk and skip what doesn't match.
 
 from __future__ import annotations
 
+import ast
+
 import tree_sitter_python as tspython
 from tree_sitter import Language, Node, Parser
 
-from ken.parsers.types import ParsedFile, ParsedImport, ParsedSymbol
+from ken.parsers.types import ParsedFile, ParsedImport, ParsedScope, ParsedSymbol
 
 # Module-level singleton — Parser objects are mutable but cheap to share.
 # tree-sitter-python ships a pointer to the precompiled grammar.
@@ -30,7 +32,37 @@ def parse_python_file(source: bytes, path_hint: str) -> ParsedFile:  # noqa: ARG
     tree = _PARSER.parse(source)
     out = ParsedFile(docstring=_extract_module_docstring(tree.root_node, source))
     _walk(tree.root_node, source, scope_name="", out=out)
+    existing = {s.line_start: s for s in out.symbols}
+    _collect_scopes(tree.root_node, source, "", None, existing, out)
     return out
+
+
+def _collect_scopes(node: Node, source: bytes, owner: str, parent_kind: str | None,
+                    existing: dict[int, ParsedSymbol], out: ParsedFile) -> None:
+    """Use the same parse tree for full scopes, including lexical closures."""
+    if node.type in ("function_definition", "class_definition"):
+        name = _child_text(node, "name", source)
+        if not name:
+            return
+        qualname = f"{owner}.{name}" if owner else name
+        kind = "class" if node.type == "class_definition" else (
+            "method" if parent_kind == "class" else "function")
+        symbol = existing.get(node.start_point[0] + 1)
+        if symbol is None:
+            symbol = ParsedSymbol(kind, name, qualname, node.start_point[0] + 1,
+                                  node.end_point[0] + 1, _extract_docstring(node, source))
+        body = node.child_by_field_name("body")
+        signature = source[node.start_byte:body.start_byte if body else node.end_byte].decode(
+            "utf-8", errors="replace").rstrip()
+        out.scopes.append(ParsedScope(symbol, signature,
+            _extract_docstring(node, source, full=True), owner or None,
+            [(s.start_point[0] + 1, s.end_point[0] + 1) for s in body.named_children] if body else []))
+        if body is not None:
+            for child in body.named_children:
+                _collect_scopes(child, source, qualname, kind, existing, out)
+        return
+    for child in node.named_children:
+        _collect_scopes(child, source, owner, parent_kind, existing, out)
 
 
 def _walk(node: Node, src: bytes, scope_name: str, out: ParsedFile) -> None:
@@ -122,7 +154,7 @@ def _module_name(node: Node, src: bytes) -> str | None:
     return None
 
 
-def _extract_docstring(node: Node, src: bytes) -> str | None:
+def _extract_docstring(node: Node, src: bytes, *, full: bool = False) -> str | None:
     """Return the first line of the docstring, if the body opens with one.
 
     Python convention: a string-literal expression as the first statement
@@ -142,7 +174,14 @@ def _extract_docstring(node: Node, src: bytes) -> str | None:
         # First named child of the expression statement.
         for inner in stmt.children:
             if inner.type == "string":
-                return _clean_docstring_literal(_node_text(inner, src) or "")
+                raw = _node_text(inner, src) or ""
+                if full:
+                    try:
+                        value = ast.literal_eval(raw)
+                        return value.strip() or None if isinstance(value, str) else None
+                    except (ValueError, SyntaxError):
+                        return None
+                return _clean_docstring_literal(raw)
         return None
     return None
 

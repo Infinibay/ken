@@ -11,6 +11,7 @@ from tree_sitter import Language, Node, Parser
 
 from ken.parsers._helpers import child_text, doc_from_block_comment, node_text
 from ken.parsers.types import ParsedFile, ParsedImport, ParsedSymbol
+from ken.parsers.scopes import enrich_scopes
 
 _LANG_TS = Language(tsts.language_typescript())
 _LANG_TSX = Language(tsts.language_tsx())
@@ -23,6 +24,7 @@ def parse_ts_file(source: bytes, path_hint: str) -> ParsedFile:
     tree = parser.parse(source)
     out = ParsedFile()
     _walk(tree.root_node, source, scope_name="", out=out)
+    enrich_scopes(source, tree.root_node, out)
     return out
 
 

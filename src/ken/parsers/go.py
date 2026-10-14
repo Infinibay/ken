@@ -7,6 +7,7 @@ from tree_sitter import Language, Node, Parser
 
 from ken.parsers._helpers import child_text, doc_from_line_comments, node_text
 from ken.parsers.types import ParsedFile, ParsedImport, ParsedSymbol
+from ken.parsers.scopes import enrich_scopes
 
 _LANG = Language(tsgo.language())
 _PARSER = Parser(_LANG)
@@ -16,6 +17,7 @@ def parse_go_file(source: bytes, path_hint: str) -> ParsedFile:  # noqa: ARG001
     tree = _PARSER.parse(source)
     out = ParsedFile()
     _walk(tree.root_node, source, out)
+    enrich_scopes(source, tree.root_node, out)
     return out
 
 
