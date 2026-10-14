@@ -39,6 +39,10 @@ class StaticEmbeddingControl:
         if loader is None:
             loader = import_module('model2vec').StaticModel.from_pretrained
         self.model = loader(snapshot, normalize=True, force_download=False)
+        # Native mean pooling consumes every returned token id, including PAD.
+        # Tokenizer-wide truncation would also hide overflow from token_count.
+        self.model.tokenizer.no_padding()
+        self.model.tokenizer.no_truncation()
         dtype = str(self.model.embedding.dtype)
         if dtype not in ('float16', 'float32'):
             raise ValueError('control requires native float16 or float32 static weights')
@@ -47,6 +51,7 @@ class StaticEmbeddingControl:
             'artifacts': artifacts, 'dtype': dtype, 'dimension': int(self.model.embedding.shape[1]),
             'runtime': {p: version(p) for p in ('numpy', 'model2vec', 'tokenizers', 'safetensors')},
             'pooling': 'model2vec-native-mean-L2-v1', 'sequence_length': 512,
+            'tokenizer_policy': 'no-padding-no-hidden-truncation-v1',
             'multiprocessing': False, 'batch_size': 1024, 'device': 'cpu',
         }
         revision = hashlib.sha256(json.dumps(self.identity, sort_keys=True).encode()).hexdigest()

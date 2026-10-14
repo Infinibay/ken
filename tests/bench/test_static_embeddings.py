@@ -26,6 +26,7 @@ def fixture(tmp_path):
     def load(path, **kwargs):
         calls.append((path, kwargs))
         return SimpleNamespace(embedding=np.zeros((5, 2), dtype=np.float32),
+            tokenizer=SimpleNamespace(no_padding=lambda: None, no_truncation=lambda: None),
             tokenize=lambda texts, max_length: [[1] * len(texts[0].split())],
             encode=lambda texts, **kw: np.array([[.6, .8] for _ in texts], dtype=np.float32))
     return root, record, load, calls
@@ -76,3 +77,22 @@ def test_registered_cache_blob_symlinks_work_and_relative_traversal_is_rejected(
     record['artifacts']['../blob'] = record['artifacts']['model.safetensors']
     with pytest.raises(ValueError, match='path'):
         StaticEmbeddingControl(root, record, loader=load)
+
+
+def test_control_clears_batch_padding_and_hidden_truncation_before_encoding(tmp_path):
+    root, record, _, _ = fixture(tmp_path)
+    from tokenizers import Tokenizer, models, pre_tokenizers
+    tokenizer = Tokenizer(models.WordLevel({'[UNK]': 0, 'token': 1, 'query': 2, '[PAD]': 3}, unk_token='[UNK]'))
+    tokenizer.pre_tokenizer = pre_tokenizers.Whitespace()
+    tokenizer.enable_padding(pad_id=3, pad_token='[PAD]')
+    tokenizer.enable_truncation(max_length=4)
+    table = np.array([[0., 0.], [1., 0.], [0., 1.], [.5, .5]], dtype=np.float32)
+    def encode(texts, **kwargs):
+        means = [table[e.ids].mean(axis=0) for e in tokenizer.encode_batch(texts, add_special_tokens=False)]
+        return np.array([v / np.linalg.norm(v) for v in means])
+    native = SimpleNamespace(embedding=table, tokenizer=tokenizer, encode=encode,
+        tokenize=lambda texts, max_length: [e.ids for e in tokenizer.encode_batch(texts, add_special_tokens=False)])
+    control = StaticEmbeddingControl(root, record, loader=lambda *a, **kw: native)
+    assert control.token_count('token ' * 1000) == 1000
+    np.testing.assert_array_equal(control.embed_query('query'), control.embed_passages(['query', 'token ' * 20])[0])
+    assert control.identity['tokenizer_policy'] == 'no-padding-no-hidden-truncation-v1'
