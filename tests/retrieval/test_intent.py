@@ -1,8 +1,10 @@
+import pytest
+
+from ken.retrieval.intent import interpret
 from ken.retrieval.model import SearchRequest
 
 
 def test_explicit_identity_instruction_is_distinct_from_behavior():
-    from ken.retrieval.intent import interpret
     for query in ("Show the Version class declaration.", "Mostrame la definición de la clase Marker.",
                   "Find the padStart utility definition."):
         assert interpret(SearchRequest(query)).identity
@@ -10,7 +12,6 @@ def test_explicit_identity_instruction_is_distinct_from_behavior():
 
 
 def test_tests_are_selected_only_from_explicit_query_or_public_purpose():
-    from ken.retrieval.intent import interpret
     assert interpret(SearchRequest("¿Qué prueba comprueba valores vacíos?")).purpose == "tests"
     assert interpret(SearchRequest("Which test checks invalid dates?")).purpose == "tests"
     assert interpret(SearchRequest("Where does validation test the input type?")).purpose == "implementation"
@@ -23,3 +24,15 @@ def test_natural_identity_lookup_needs_no_dense_index(tmp_path):
     with indexed(tmp_path) as conn:
         response = search(conn, tmp_path, SearchRequest("Show the persist_state function definition."))
     assert response.results[0]["entity"]["qualname"] == "persist_state"
+
+
+@pytest.mark.parametrize("query", ["Find the test preserving trailing zeros.",
+    "Show a unit test for redirects.", "Locate tests covering invalid dates.",
+    "Buscá la prueba de credenciales.", "Encuentra el test que cubre fechas inválidas."])
+def test_explicit_test_requests_are_interpreted_in_both_languages(query):
+    assert interpret(SearchRequest(query)).purpose == "tests"
+
+
+def test_behavior_mentioning_a_test_does_not_automatically_request_test_source():
+    assert interpret(SearchRequest("Where does the runner test the exit status?")).purpose == "implementation"
+    assert interpret(SearchRequest("Which test covers dates?", purpose="implementation")).purpose == "implementation"

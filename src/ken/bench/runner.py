@@ -30,10 +30,9 @@ def run_live(cases: Iterable[Record], roots: Mapping[str, Path], index_directory
     """Run the actual engine; keep runtime work out of deterministic grading."""
     from ken.db import connect, init_schema
     from ken.gitignore_filter import iter_files
-    from ken.indexer import index_files
+    from ken.retrieval.indexing import index_project
     from ken.retrieval.model import SearchRequest
     from ken.retrieval.profile import default_profile
-    from ken.retrieval.representations import index_embeddings
     from ken.retrieval.service import search
 
     cases = list(cases)
@@ -58,8 +57,7 @@ def run_live(cases: Iterable[Record], roots: Mapping[str, Path], index_directory
                 manifest.update(hashlib.sha256((root / path).read_bytes()).digest())
             item = {"files": len(files), "source_tree_sha256": manifest.hexdigest()}
             if rebuild:
-                item.update(asdict(index_files(conn, root, files)))
-                index_embeddings(conn, profile)
+                item.update(asdict(index_project(conn, root, files, profile=profile)))
             item["passages"] = conn.execute("SELECT COUNT(*) FROM ci_passages").fetchone()[0]
             item["index_ms"] = (time.perf_counter() - start) * 1000
             stats[repo_id] = item

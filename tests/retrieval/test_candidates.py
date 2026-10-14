@@ -93,3 +93,38 @@ def test_dense_evidence_signals_survive_channel_merge(tmp_path):
         target = next(c for c in candidates if c.entity.qualname == "persist_state")
         assert any("cosine_behavior" in p.signals and "cosine_identity" in p.signals
                    for p in target.passages)
+
+
+def test_same_encoder_query_is_not_recomputed_for_each_view(tmp_path):
+    from ken.retrieval.candidates import retrieve
+    from ken.retrieval.model import SearchRequest
+    from ken.retrieval.representations import index_embeddings
+    class Counted(Encoder):
+        calls = 0
+        def embed_query(self, text):
+            self.calls += 1
+            return super().embed_query(text)
+    encoder = Counted()
+    encoders = {"identity": encoder, "behavior": encoder}
+    with indexed(tmp_path) as conn:
+        index_embeddings(conn, profile(), encoders=encoders)
+        retrieve(conn, tmp_path, SearchRequest("browser state"), profile(), encoders=encoders)
+    assert encoder.calls == 1
+
+
+def test_unchanged_index_reuses_artifacts_without_encoding_or_changing_generation(tmp_path):
+    from ken.retrieval.representations import index_embeddings
+    from ken.retrieval.storage import generation
+    class Counted(Encoder):
+        encoded = 0
+        def embed_passages(self, texts):
+            self.encoded += len(texts)
+            return super().embed_passages(texts)
+    encoder = Counted()
+    encoders = {"identity": encoder, "behavior": encoder}
+    with indexed(tmp_path) as conn:
+        index_embeddings(conn, profile(), encoders=encoders)
+        encoded, before = encoder.encoded, generation(conn)
+        index_embeddings(conn, profile(), encoders=encoders)
+        assert encoder.encoded == encoded
+        assert generation(conn) == before

@@ -21,7 +21,10 @@ def interpret(request: SearchRequest) -> QueryIntent:
     lower = query.casefold()
     purpose = request.purpose
     if purpose == "auto":
-        if re.search(r"^(?:which|what)\s+(?:unit\s+)?tests?\b|^¿?(?:qué|que|cuál)\s+prueba\b", lower):
+        if re.search(r"^(?:(?:which|what)\s+(?:unit\s+)?tests?\b|"
+                     r"(?:find|show|locate)\s+(?:(?:the|a|an)\s+)?(?:unit\s+)?tests?\b|"
+                     r"¿?(?:qué|que|cuál)\s+prueba\b|"
+                     r"(?:busca|buscá|muestra|encuentra)\s+(?:(?:la|el|una|un)\s+)?(?:prueba|test)\b)", lower):
             purpose = "tests"
         elif re.search(r"\b(?:example|ejemplo)\b", lower):
             purpose = "usage"

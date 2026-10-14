@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from collections.abc import Iterable
 from typing import Any
 
 
@@ -68,6 +69,7 @@ class Candidate:
     entity: EntityKey
     passages: list[Passage]
     signals: dict[str, float] = field(default_factory=dict)
+    owned_regions: tuple[Span, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -77,6 +79,17 @@ class CodeMatch:
     evidence: list[Passage]
     source_hash: str
     signals: dict[str, float] = field(default_factory=dict)
+    owned_regions: tuple[Span, ...] = ()
+
+
+def merge_spans(spans: Iterable[Span]) -> tuple[Span, ...]:
+    merged: list[Span] = []
+    for span in sorted(set(spans)):
+        if merged and span.start_line <= merged[-1].end_line + 1:
+            merged[-1] = Span(merged[-1].start_line, max(span.end_line, merged[-1].end_line))
+        else:
+            merged.append(span)
+    return tuple(merged)
 
 
 @dataclass

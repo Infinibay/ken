@@ -14,8 +14,9 @@ import numpy as np
 from ken.retrieval.embedding_store import IndexVersionError, load_vectors, retrieval_snapshot
 from ken.retrieval.lexical import lexical_candidates
 from ken.retrieval.intent import interpret
-from ken.retrieval.model import Candidate, EntityKey, Passage, SearchRequest
-from ken.retrieval.profile import Encoder, RetrievalProfile, default_profile, load_encoder
+from ken.retrieval.indexing import source_policy_key
+from ken.retrieval.model import Candidate, EntityKey, Passage, SearchRequest, merge_spans
+from ken.retrieval.profile import Encoder, EncoderSpec, RetrievalProfile, default_profile, load_encoder
 from ken.retrieval.storage import load_passage_map
 
 
@@ -28,6 +29,21 @@ def _passage_snapshot(conn: sqlite3.Connection, generation: int) -> Mapping[int,
 @lru_cache(maxsize=8)
 def _vector_snapshot(conn: sqlite3.Connection, generation: int, view: str, revision: str):
     return load_vectors(conn, view, revision)
+
+
+@lru_cache(maxsize=4)
+def _region_snapshot(conn: sqlite3.Connection, generation: int):
+    groups = defaultdict(list)
+    for p in _passage_snapshot(conn, generation).values():
+        groups[p.entity].append(p.span)
+    return {entity: merge_spans(spans) for entity, spans in groups.items()}
+
+
+@lru_cache(maxsize=256)
+def _query_vector(spec: EncoderSpec, text: str) -> np.ndarray:
+    vector = np.asarray(load_encoder(spec).embed_query(text), dtype=np.float32)
+    vector.setflags(write=False)
+    return vector
 
 
 def active_profile(conn: sqlite3.Connection) -> RetrievalProfile:
@@ -84,17 +100,33 @@ def retrieve(conn: sqlite3.Connection, root: Path, request: SearchRequest,
         if not passages:
             raise IndexVersionError("no source passages; reindex the project")
         exact = _exact(conn, passages, request)
+        regions = _region_snapshot(conn, snapshot.generation)
+        for candidate in exact:
+            candidate.owned_regions = regions[candidate.entity]
         if len(exact) == 1:
             exact[0].signals["rrf"] = 1.0
             return exact
+        version = conn.execute("SELECT value FROM meta WHERE key='retrieval_representation_version'").fetchone()
+        if not version or version[0] != str(profile.representation_version):
+            raise IndexVersionError("retrieval representation changed; reindex the project")
+        policies = conn.execute("SELECT DISTINCT extractor_version,tokenizer_version,max_tokens "
+                                "FROM ci_retrieval_files").fetchall()
+        if any(tuple(row) != source_policy_key(profile) for row in policies):
+            raise IndexVersionError("source passage policy changed; reindex the project")
         channels = [exact, lexical_candidates(conn, request, profile.candidate_limit)]
+        injected_queries: dict[int, np.ndarray] = {}
         for view in ("identity", "behavior"):
             spec = getattr(profile, view)
-            stored = _vector_snapshot(conn, snapshot.generation, view, spec.key)
+            stored = _vector_snapshot(conn, snapshot.generation, view, profile.vector_revision(view))
             if set(stored.ids) != passages.keys():
                 raise IndexVersionError(f"incomplete {view} vectors; reindex the retrieval profile")
-            encoder = encoders[view] if encoders else load_encoder(spec)
-            query = np.asarray(encoder.embed_query(request.query), dtype=np.float32)
+            if encoders:
+                encoder = encoders[view]
+                if id(encoder) not in injected_queries:
+                    injected_queries[id(encoder)] = np.asarray(encoder.embed_query(request.query), dtype=np.float32)
+                query = injected_queries[id(encoder)]
+            else:
+                query = _query_vector(spec, request.query)
             channels.append(_dense(passages, stored.ids, stored.matrix, query,
                                    view, profile.candidate_limit))
         merged: dict[EntityKey, Candidate] = {}
@@ -117,6 +149,9 @@ def retrieve(conn: sqlite3.Connection, root: Path, request: SearchRequest,
                     else:
                         positions[p.span] = len(combined.passages)
                         combined.passages.append(p)
-        return sorted(merged.values(), key=lambda c: (
+        result = sorted(merged.values(), key=lambda c: (
             -c.signals.get("exact", 0), -c.signals["rrf"], c.entity.path,
             min(p.span.start_line for p in c.passages)))[:profile.candidate_limit]
+        for candidate in result:
+            candidate.owned_regions = regions[candidate.entity]
+        return result

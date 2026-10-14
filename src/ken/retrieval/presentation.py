@@ -1,7 +1,6 @@
 """Expose only source-verified evidence with honest ranges and output budgets."""
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -9,6 +8,7 @@ from typing import Any
 from ken.retrieval.model import CodeMatch, Passage, SearchRequest, SearchResponse
 from ken.retrieval.tokenization import code_tokens
 from ken.retrieval.intent import interpret
+from ken.retrieval.evidence import source_bounds, verified_lines
 
 
 def _window(lines: list[str], passage: Passage, query: set[str], budget: int) -> dict[str, Any]:
@@ -42,30 +42,21 @@ def present(matches: list[CodeMatch], root: Path, request: SearchRequest, *,
             "ranking_score": round(match.score, 8), "source_hash": match.source_hash,
             "evidence": [], "stale": False, "truncated": False,
         }
-        source_path = (root / path).resolve()
         try:
-            if not source_path.is_relative_to(root.resolve()):
-                raise ValueError("source escapes project")
-            source = source_path.read_bytes()
-            if hashlib.sha256(source).hexdigest() != match.source_hash:
-                raise ValueError("source changed")
-            lines = source.decode("utf-8").splitlines()
-            if any(p.span.end_line > len(lines) for p in match.evidence):
-                raise ValueError("invalid source range")
+            lines = verified_lines(root, match)
             ordered = sorted(match.evidence, key=lambda p: (
                 -(p.implementation_start_line is None or p.span.end_line >= p.implementation_start_line
                   or request.purpose == "documentation"),
+                -p.signals.get("joint_evidence", float("-inf")),
                 -p.signals.get("cosine_behavior", -1),
                 -len(query.intersection(code_tokens(p.fields["body"]))),
                 p.span.start_line))
             if intent.identity:
                 ordered.sort(key=lambda p: p.span.start_line)
             best = ordered[0]
-            lower, upper = best.entity_span.start_line, best.entity_span.end_line
-            if best.entity.qualname is None:
-                lower, upper = 1, len(lines)
-            if upper - lower + 1 > 40 and request.purpose != "documentation" and not intent.identity:
-                lower = max(lower, best.implementation_start_line or lower)
+            bounds = source_bounds(match, best, len(lines),
+                implementation=request.purpose != "documentation" and not intent.identity)
+            lower, upper = bounds.start_line, bounds.end_line
             # Context expansion crosses chunk boundaries, never source boundaries.
             # This keeps a try/except or adjacent branches together even if the
             # token budget split their retrieval projections.
@@ -77,6 +68,8 @@ def present(matches: list[CodeMatch], root: Path, request: SearchRequest, *,
                     center = focus
             start = max(lower, min(center - 19, upper - 39))
             end = min(upper, start + 39)
+            if best.signals.get("selected_window"):
+                start, end = best.span.start_line, best.span.end_line
             result["evidence"] = [{"start_line": start, "end_line": end,
                                    "content": "\n".join(lines[start - 1:end])}]
             result["truncated"] = start > best.entity_span.start_line or end < upper

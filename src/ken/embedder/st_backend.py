@@ -175,6 +175,7 @@ class SentenceTransformerEmbedder:
         self.batch_size = batch_size
         self._lock = threading.Lock()
         self._model: SentenceTransformer | None = None
+        self._tokenizer = None
         self._dim = 0
         self.device = "unknown"
         from ken.embedder import prompts_for
@@ -276,6 +277,13 @@ class SentenceTransformerEmbedder:
         return self._model
 
     def token_count(self, text: str) -> int:
+        if self.local_files_only and self.model_path is not None:
+            with self._lock:
+                if self._tokenizer is None:
+                    from transformers import AutoTokenizer
+                    self._tokenizer = AutoTokenizer.from_pretrained(self.model_path,
+                        local_files_only=True, trust_remote_code=False)
+                return len(self._tokenizer.encode(text, add_special_tokens=False))
         model = self._ensure_model()
         return len(model.tokenizer.encode(text, add_special_tokens=False))
 

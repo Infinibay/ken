@@ -29,7 +29,7 @@ class EncoderSpec:
     def __post_init__(self) -> None:
         if not re.fullmatch(r"[a-f0-9]{40}|[a-f0-9]{64}", self.revision):
             raise ValueError("an immutable model revision/hash is required")
-        if self.backend not in ("static", "sentence-transformers", "provided"):
+        if self.backend not in ("static", "sentence-transformers", "provided", "mlx"):
             raise ValueError("unknown encoder backend")
         if self.dtype not in ("float32", "float16", "bfloat16"):
             raise ValueError("unknown encoder dtype")
@@ -43,16 +43,44 @@ class EncoderSpec:
 
 
 @dataclass(frozen=True)
+class JointRanking:
+    model: EncoderSpec
+    candidate_limit: int = 100
+    rank_unit: str = "passage"
+    evidence_results: int = 1
+    max_windows: int = 6
+
+    def __post_init__(self) -> None:
+        if self.rank_unit not in ("entity", "passage"):
+            raise ValueError("unknown relevance unit")
+        if self.candidate_limit <= 0 or self.evidence_results < 0 or self.max_windows <= 0:
+            raise ValueError("invalid relevance/evidence budgets")
+
+
+@dataclass(frozen=True)
 class RetrievalProfile:
     identity: EncoderSpec
     behavior: EncoderSpec
     max_tokens: int = 256
     candidate_limit: int = 100
     rrf_k: int = 60
+    passage_tokenizer: str = "code-lexical-v1"
+    representation_version: int = 2
+    joint: JointRanking | None = None
 
     def __post_init__(self) -> None:
         if self.max_tokens <= 0 or self.candidate_limit <= 0 or self.rrf_k <= 0:
             raise ValueError("positive retrieval budgets required")
+        if self.passage_tokenizer not in ("code-lexical-v1", "behavior-model"):
+            raise ValueError("unknown source passage tokenizer")
+        if self.representation_version != 2:
+            raise ValueError("unsupported representation version; reindex with current profile")
+
+    def vector_revision(self, view: str) -> str:
+        spec = getattr(self, view)
+        projection = {"version": self.representation_version, "view": view}
+        digest = hashlib.sha256(json.dumps(projection, sort_keys=True).encode()).hexdigest()[:16]
+        return spec.key + ":projection-" + digest
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -62,6 +90,10 @@ class RetrievalProfile:
         data = dict(value)
         data["identity"] = EncoderSpec(**data["identity"])
         data["behavior"] = EncoderSpec(**data["behavior"])
+        if data.get("joint") is not None:
+            joint = dict(data["joint"])
+            joint["model"] = EncoderSpec(**joint["model"])
+            data["joint"] = JointRanking(**joint)
         return cls(**data)
 
     @property
@@ -79,6 +111,9 @@ def default_profile() -> RetrievalProfile:
 
 @lru_cache(maxsize=4)
 def load_encoder(spec: EncoderSpec) -> Encoder:
+    if spec.backend == "mlx":
+        from ken.embedder.mlx_backend import MLXEncoder
+        return MLXEncoder(spec)
     if spec.backend == "static":
         from ken.embedder.static_head import StaticHeadEmbedder
         artifact = resources.files("ken.embedder").joinpath(

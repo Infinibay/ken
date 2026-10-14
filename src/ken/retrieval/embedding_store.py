@@ -115,6 +115,35 @@ def load_vectors(conn: sqlite3.Connection, view: str, model_revision: str) -> Ve
     return VectorView(ids, matrix, model_revision)
 
 
+def pending_texts(conn: sqlite3.Connection, view: str, revision: str,
+                   texts: Mapping[int, str]) -> dict[int, str]:
+    current = {row[0]: (row[1], row[2]) for row in conn.execute(
+        "SELECT v.passage_id,e.model_revision,e.text_hash FROM ci_passage_vectors v "
+        "JOIN ci_retrieval_embeddings e ON e.id=v.embedding_id WHERE v.view=?", (view,))}
+    return {pid: text for pid, text in texts.items() if current.get(pid) !=
+            (revision, hashlib.sha256(text.encode()).hexdigest())}
+
+
+def cached_embeddings(conn: sqlite3.Connection, view: str, revision: str,
+                       texts: list[str]) -> dict[str, np.ndarray]:
+    by_hash = {hashlib.sha256(text.encode()).hexdigest(): text for text in texts}
+    hashes = list(by_hash)
+    result = {}
+    for start in range(0, len(hashes), 256):
+        batch = hashes[start:start + 256]
+        rows = conn.execute(
+            "SELECT text_hash,dimension,embedding FROM ci_retrieval_embeddings "
+            "WHERE view=? AND model_revision=? AND text_hash IN (" + ",".join("?" for _ in batch) + ")",
+            (view, revision, *batch),
+        )
+        for digest, dimension, blob in rows:
+            vector = np.frombuffer(blob, dtype=np.float32)
+            if vector.size != dimension or not np.isfinite(vector).all() or float(np.linalg.norm(vector)) <= 0:
+                raise IndexVersionError("invalid cached artifact; rebuild retrieval embeddings")
+            result[by_hash[digest]] = vector
+    return result
+
+
 def reclaim_embeddings(conn: sqlite3.Connection) -> int:
     """Delete unreferenced artifacts; WAL keeps prior readers' versions alive."""
     if not conn.in_transaction:
