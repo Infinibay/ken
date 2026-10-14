@@ -21,3 +21,44 @@ def test_each_language_preserves_signature_and_full_documentation(path, source):
     assert "Preserve the last failure" in scope.documentation
     assert "retry" in scope.signature
     assert scope.statements
+
+
+@pytest.mark.parametrize("path", ["x.js", "x.ts"])
+def test_assigned_and_nested_callables_have_their_own_source_responsibility(path):
+    from pathlib import Path
+    from ken.retrieval.passages import extract_passages
+    source = b'''export default (options, Type) => {
+  const proto = Type.prototype
+  proto.load = function(input) {
+    function normalize(value) {
+      return value.trim()
+    }
+    return normalize(input)
+  }
+  proto.save = (value) => {
+    store(value)
+  }
+}
+'''
+    _, parse = detect_language(Path(path))
+    parsed = parse(source, path)
+    # Retain the compact outline; correct its previously lost lexical owner.
+    assert [s.qualname for s in parsed.symbols] == ["proto.load.normalize"]
+    by_name = {s.symbol.qualname: s for s in parsed.scopes}
+    assert set(by_name) == {"proto.load", "proto.load.normalize", "proto.save"}
+    assert by_name["proto.load.normalize"].owner == "proto.load"
+    assert "proto.save = (value) =>" in by_name["proto.save"].signature
+    assert by_name["proto.load"].implementation_start_line == 4
+    passages = extract_passages(source, parsed, path=path)
+    load = [p for p in passages if p.entity.qualname == "proto.load"]
+    assert load and all("value.trim()" not in p.fields["body"] for p in load)
+    assert any(p.entity.qualname == "proto.load.normalize" and "value.trim()" in p.fields["body"]
+               for p in passages)
+
+
+@pytest.mark.parametrize("path", ["x.js", "x.ts"])
+def test_computed_runtime_target_does_not_invent_a_callable_identity(path):
+    from pathlib import Path
+    _, parse = detect_language(Path(path))
+    parsed = parse(b"target[key] = () => { return 1 }\n", path)
+    assert parsed.scopes == []

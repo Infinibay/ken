@@ -11,7 +11,7 @@ from pathlib import PurePosixPath
 from ken.parsers.types import ParsedFile, ParsedScope
 from ken.retrieval.model import EntityKey, Passage, Span
 
-EXTRACTOR_VERSION = 2
+EXTRACTOR_VERSION = 3
 
 
 def lexical_token_count(text: str) -> int:

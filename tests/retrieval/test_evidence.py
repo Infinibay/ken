@@ -1,6 +1,8 @@
 import hashlib
 from dataclasses import replace
 
+import pytest
+
 from ken.retrieval.model import CodeMatch, EntityKey, Passage, SearchRequest, Span
 from ken.retrieval.presentation import present
 
@@ -38,14 +40,15 @@ def test_evidence_selection_compares_actual_windows_and_keeps_owner_order(tmp_pa
         evidence["start_line"] - 1:evidence["end_line"]])
 
 
-def test_class_evidence_cannot_borrow_code_from_child_scope(tmp_path):
+@pytest.mark.parametrize("kind", ["class", "function"])
+def test_owner_evidence_cannot_borrow_code_from_child_scope(tmp_path, kind):
     from ken.retrieval.evidence import refine_evidence
-    match = source_match(tmp_path, kind="class", regions=(Span(1, 3),))
+    match = source_match(tmp_path, kind=kind, regions=(Span(1, 3),))
     class Judge:
         def score(self, query, documents, *, purpose):
             assert all("remove_credentials" not in doc and "preserve_destination" not in doc for doc in documents)
             return [0.] * len(documents)
-    # A real class candidate's own passage is its declaration, not the child body.
+    # The parent's own declaration is separate from its nested callable body.
     p = replace(match.evidence[0], span=Span(1, 3), fields={"body": "def transform(value):\n    step(value)\n    step(value)"})
     match = replace(match, evidence=[p])
     request = SearchRequest("remove credentials")

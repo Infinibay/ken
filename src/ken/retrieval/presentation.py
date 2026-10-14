@@ -5,21 +5,10 @@ import json
 from pathlib import Path
 from typing import Any
 
-from ken.retrieval.model import CodeMatch, Passage, SearchRequest, SearchResponse
+from ken.retrieval.model import CodeMatch, SearchRequest, SearchResponse
 from ken.retrieval.tokenization import code_tokens
 from ken.retrieval.intent import interpret
 from ken.retrieval.evidence import source_bounds, verified_lines
-
-
-def _window(lines: list[str], passage: Passage, query: set[str], budget: int) -> dict[str, Any]:
-    start, end = passage.span.start_line, passage.span.end_line
-    focus = max(range(start, end + 1),
-                key=lambda line: len(query.intersection(code_tokens(lines[line - 1]))))
-    if end - start + 1 > budget:
-        start = max(start, min(focus - budget // 2, end - budget + 1))
-        end = start + budget - 1
-    return {"start_line": start, "end_line": end,
-            "content": "\n".join(lines[start - 1:end])}
 
 
 def present(matches: list[CodeMatch], root: Path, request: SearchRequest, *,

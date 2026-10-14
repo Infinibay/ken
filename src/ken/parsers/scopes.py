@@ -5,7 +5,7 @@ import re
 
 from tree_sitter import Node
 
-from ken.parsers.types import ParsedFile, ParsedScope
+from ken.parsers.types import ParsedFile, ParsedScope, ParsedSymbol
 
 
 def enrich_scopes(source: bytes, root: Node, parsed: ParsedFile) -> None:
@@ -24,36 +24,35 @@ def enrich_scopes(source: bytes, root: Node, parsed: ParsedFile) -> None:
         definitions = [n for n in nodes if any(tag in n.type for tag in
                        ("declaration", "definition", "_item", "declarator"))]
         node = min(definitions or nodes, key=lambda n: n.end_byte - n.start_byte)
-        body = node.child_by_field_name("body")
-        value = node.child_by_field_name("value")
-        if body is None and value is not None:
-            body = value.child_by_field_name("body")
-        signature = source[node.start_byte:body.start_byte if body else node.end_byte].decode(
-            "utf-8", errors="replace").rstrip()
-        comment_owner = node
-        while (comment_owner.parent is not None
-               and comment_owner.parent.type in ("export_statement", "lexical_declaration",
-                                                  "variable_declaration")):
-            comment_owner = comment_owner.parent
-        comments: list[str] = []
-        previous = comment_owner.prev_named_sibling
-        while previous is not None and "comment" in previous.type:
-            comments.append(source[previous.start_byte:previous.end_byte].decode(
-                "utf-8", errors="replace"))
-            previous = previous.prev_named_sibling
-        documentation = symbol.docstring
-        if comments:
-            text = "\n".join(reversed(comments))
-            text = re.sub(r"/\*+|\*/", "", text)
-            text = "\n".join(re.sub(r"^\s*(?:///|//|\*)\s?", "", line)
-                             for line in text.splitlines()).strip()
-            documentation = text or documentation
-        owner = symbol.qualname.rsplit(".", 1)[0] if "." in symbol.qualname else None
-        parsed.scopes.append(ParsedScope(
-            symbol, signature, documentation, owner,
-            [(n.start_point[0] + 1, n.end_point[0] + 1) for n in body.named_children]
-            if body else [],
-        ))
-        executable = next((n for n in body.named_children if "comment" not in n.type), None) if body else None
-        parsed.scopes[-1].implementation_start_line = (
-            executable.start_point[0] + 1 if executable else symbol.line_start)
+        parsed.scopes.append(scope_for_node(source, node, symbol))
+
+
+def scope_for_node(source: bytes, node: Node, symbol: ParsedSymbol) -> ParsedScope:
+    body = node.child_by_field_name("body")
+    value = node.child_by_field_name("value") or node.child_by_field_name("right")
+    if body is None and value is not None:
+        body = value.child_by_field_name("body")
+    signature = source[node.start_byte:body.start_byte if body else node.end_byte].decode(
+        "utf-8", errors="replace").rstrip()
+    comment_owner = node
+    while (comment_owner.parent is not None
+           and comment_owner.parent.type in ("export_statement", "lexical_declaration",
+                                              "variable_declaration", "expression_statement")):
+        comment_owner = comment_owner.parent
+    comments: list[str] = []
+    previous = comment_owner.prev_named_sibling
+    while previous is not None and "comment" in previous.type:
+        comments.append(source[previous.start_byte:previous.end_byte].decode("utf-8", errors="replace"))
+        previous = previous.prev_named_sibling
+    documentation = symbol.docstring
+    if comments:
+        text = "\n".join(reversed(comments))
+        text = re.sub(r"/\*+|\*/", "", text)
+        text = "\n".join(re.sub(r"^\s*(?:///|//|\*)\s?", "", line) for line in text.splitlines()).strip()
+        documentation = text or documentation
+    owner = symbol.qualname.rsplit(".", 1)[0] if "." in symbol.qualname else None
+    scope = ParsedScope(symbol, signature, documentation, owner,
+        [(n.start_point[0] + 1, n.end_point[0] + 1) for n in body.named_children] if body else [])
+    executable = next((n for n in body.named_children if "comment" not in n.type), None) if body else None
+    scope.implementation_start_line = executable.start_point[0] + 1 if executable else symbol.line_start
+    return scope

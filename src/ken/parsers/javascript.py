@@ -7,7 +7,7 @@ from tree_sitter import Language, Node, Parser
 
 from ken.parsers._helpers import child_text, doc_from_block_comment, node_text
 from ken.parsers.types import ParsedFile, ParsedImport, ParsedSymbol
-from ken.parsers.scopes import enrich_scopes
+from ken.parsers.ecmascript_scopes import enrich_ecmascript_scopes
 
 _LANG = Language(tsjs.language())
 _PARSER = Parser(_LANG)
@@ -17,7 +17,7 @@ def parse_js_file(source: bytes, path_hint: str) -> ParsedFile:  # noqa: ARG001
     tree = _PARSER.parse(source)
     out = ParsedFile()
     _walk(tree.root_node, source, scope_name="", out=out)
-    enrich_scopes(source, tree.root_node, out)
+    enrich_ecmascript_scopes(source, tree.root_node, out)
     return out
 
 
