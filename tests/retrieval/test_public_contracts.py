@@ -59,7 +59,7 @@ def test_unmigrated_project_returns_actionable_state(tmp_path, monkeypatch):
 def test_evidence_schema_is_explicit_and_legacy_is_default():
     from ken.mcp.server import list_tools
     schema = next(t.parameters for t in list_tools() if t.name == "ken_find")
-    assert schema["properties"]["response_format"]["enum"] == ["legacy", "evidence"]
+    assert schema["properties"]["response_format"]["enum"] == ["legacy", "evidence", "compact"]
     assert schema["properties"]["response_format"]["default"] == "legacy"
 
 

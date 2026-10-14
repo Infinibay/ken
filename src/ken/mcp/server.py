@@ -951,7 +951,7 @@ def ken_find(
     full: bool = False,
     query_language: Literal["kenql/1", "kql/2"] = "kenql/1",
     libraries: dict[str, str] | None = None,
-    response_format: Literal["legacy", "evidence"] = "legacy",
+    response_format: Literal["legacy", "evidence", "compact"] = "legacy",
     purpose: Literal["auto", "implementation", "usage", "tests", "documentation"] = "auto",
     max_chars: int = 12000,
 ) -> Any:
@@ -996,19 +996,22 @@ def ken_find(
     profile and returns owners with source-verified snippets, ranges, source
     hashes and explicit truncation. purpose="auto" infers the requested role;
     an explicit purpose overrides it. max_chars bounds the complete JSON response.
+    response_format="compact" returns the same locations and verified code as
+    plain text, with separate ranges for disjoint snippets and no scores or hashes.
     Legacy responses preserve their cosine score and existing shape.
     """
-    if response_format == "evidence":
+    if response_format in ("evidence", "compact"):
         if literal or scope not in ("files", "symbols") or query_language != "kenql/1":
             raise ValueError("evidence responses require nonliteral scope=files or symbols")
         from contextlib import closing
-        from ken.retrieval.public import find
+        from ken.retrieval.public import find, render
         assert _PROJECT_ROOT is not None
         with closing(_conn()) as conn:
-            return find(conn, _PROJECT_ROOT, query, scope=scope, purpose=purpose,
-                        limit=10 if limit is None else limit, max_chars=max_chars, explain=full)
+            response = find(conn, _PROJECT_ROOT, query, scope=scope, purpose=purpose,
+                            limit=10 if limit is None else limit, max_chars=max_chars, explain=full)
+        return render(response) if response_format == "compact" else response
     if purpose != "auto":
-        raise ValueError("purpose requires response_format=evidence")
+        raise ValueError("purpose requires response_format=evidence or compact")
     if query_language == 'kql/2':
         if scope != 'structure' or any((rules, collections, tags, rule_files)):
             raise ValueError('KQL2 requires an inline structural query; TOML migration is separate')

@@ -208,7 +208,8 @@ def _build_parser() -> argparse.ArgumentParser:
     )
 
     for search_parser in (p_search_files, p_search_symbols):
-        search_parser.add_argument("--response-format", choices=("legacy", "evidence"), default="legacy")
+        search_parser.add_argument("--response-format", choices=("legacy", "evidence", "compact"), default="legacy",
+                                   help="compact: locations and verified code as text; evidence: structured results with --json")
         search_parser.add_argument("--purpose", choices=("auto", "implementation", "usage", "tests", "documentation"), default="auto")
         search_parser.add_argument("--max-chars", type=_positive_int, default=12000)
 
@@ -864,7 +865,10 @@ def _search_cli(
     if not db_path.is_file():
         print(f"error: no .ken project at {root}", file=sys.stderr)
         return 1
-    if response_format == "evidence":
+    if response_format in ("evidence", "compact"):
+        if response_format == "compact" and as_json:
+            print("error: compact is text; use --response-format evidence --json for structured output", file=sys.stderr)
+            return 1
         from contextlib import closing
         from ken.retrieval.public import find, render
         with closing(connect(db_path)) as conn:
@@ -872,7 +876,7 @@ def _search_cli(
         print(json.dumps(response, ensure_ascii=False) if as_json else render(response))
         return int(response.get("ok") is False)
     if purpose != "auto":
-        print("error: --purpose requires --response-format evidence", file=sys.stderr)
+        print("error: --purpose requires --response-format evidence or compact", file=sys.stderr)
         return 1
     with connect(db_path) as conn:
         if kind == "files":
@@ -1778,7 +1782,9 @@ def _tools_cli(
         print(f"error: {tool.name} failed: {exc}", file=sys.stderr)
         return 1
 
-    if compact:
+    if kwargs.get("response_format") == "compact" and isinstance(result, str):
+        print(result)
+    elif compact:
         print(json.dumps(result, default=str))
     else:
         print(json.dumps(result, indent=2, default=str))

@@ -26,14 +26,30 @@ def find(conn: sqlite3.Connection, root: Path, query: str, *, scope: str = "symb
 
 
 def render(response: dict[str, Any]) -> str:
+    """Render verified results as compact text without changing the evidence."""
     if response.get("ok") is False:
         return response["error"] + "\n" + response["next_action"]
     blocks = []
     for result in response["results"]:
         entity = result["entity"]
-        title = result["path"] + (" :: " + entity["qualname"] if entity["qualname"] else "")
         evidence = result["evidence"]
+        title = result["path"]
         if evidence:
-            title += " (" + ", ".join(f"{e['start_line']}-{e['end_line']}" for e in evidence) + ")"
-        blocks.append(title + "\n" + "\n".join(e["content"] for e in evidence))
+            title += f":{evidence[0]['start_line']}-{evidence[0]['end_line']}"
+        if entity["qualname"]:
+            title += " :: " + entity["qualname"]
+        if result.get("stale"):
+            title += " [stale]"
+        elif result.get("truncated"):
+            title += " [partial]"
+        parts = [title]
+        for i, fragment in enumerate(evidence):
+            if i:
+                parts.append(f"@{fragment['start_line']}-{fragment['end_line']}")
+            parts.append(fragment["content"])
+        blocks.append("\n".join(parts))
+    if not blocks:
+        blocks.append("No matches.")
+    if response.get("omitted_count"):
+        blocks.append(f"{response['omitted_count']} more results omitted.")
     return "\n\n".join(blocks + response.get("warnings", []))
