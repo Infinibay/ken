@@ -57,6 +57,28 @@ def test_exact_lookup_survives_missing_dense_index(tmp_path):
         assert candidates[0].signals["exact"] == 1
 
 
+def test_exact_qualified_case_is_preserved_before_caseless_fallback(tmp_path):
+    from ken.retrieval.candidates import retrieve, _exact
+    from ken.retrieval.model import SearchRequest
+    from ken.retrieval.storage import load_passage_map
+    (tmp_path / 'names.py').write_text(
+        'class Box:\n    def read(self):\n        return 1\n'
+        'class box:\n    def read(self):\n        return 2\n'
+        'def OtherName():\n    return 3\n')
+    class NoEncoder:
+        def embed_query(self, text):
+            raise AssertionError('unique literal lookup must not encode')
+    with indexed(tmp_path) as conn:
+        index_files(conn, tmp_path, [Path('names.py')])
+        for query, expected in [('Box.read', 'Box.read'), ('box.read', 'box.read'),
+                                ('OTHERNAME', 'OtherName')]:
+            result = retrieve(conn, tmp_path, SearchRequest(query), profile(),
+                encoders={'identity': NoEncoder(), 'behavior': NoEncoder()})
+            assert [c.entity.qualname for c in result] == [expected]
+        ambiguous = _exact(conn, load_passage_map(conn), SearchRequest('BOX.read'))
+        assert {c.entity.qualname for c in ambiguous} == {'Box.read', 'box.read'}
+
+
 def test_duplicate_passages_do_not_consume_entity_budget(tmp_path):
     from ken.retrieval.candidates import retrieve
     from ken.retrieval.model import SearchRequest

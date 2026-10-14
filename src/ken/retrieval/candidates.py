@@ -53,12 +53,18 @@ def _exact(conn: sqlite3.Connection, passages: Mapping[int, Passage],
         return []
     placeholders = ",".join("?" for _ in intent.identifiers)
     rows = conn.execute(
-        "SELECT s.kind,s.qualname,f.path FROM ci_symbols s JOIN ci_files f ON f.id=s.file_id "
+        "SELECT s.name,s.kind,s.qualname,f.path FROM ci_symbols s JOIN ci_files f ON f.id=s.file_id "
         f"WHERE s.name COLLATE NOCASE IN ({placeholders}) OR s.qualname COLLATE NOCASE IN ({placeholders}) "
         "ORDER BY f.path,s.line_start,s.id", (*intent.identifiers, *intent.identifiers),
     ).fetchall()
-    matching = {(r["path"], r["kind"], r["qualname"]) for r in rows
-                if intent.kind is None or r["kind"] == intent.kind}
+    rows = [r for r in rows if intent.kind is None or r["kind"] == intent.kind]
+    matching: set[tuple[str, str, str | None]] = set()
+    for identifier in intent.identifiers:
+        preferred = [r for r in rows if identifier in (r["name"], r["qualname"])]
+        if not preferred:
+            preferred = [r for r in rows if identifier.casefold() in (
+                (r["name"] or "").casefold(), (r["qualname"] or "").casefold())]
+        matching.update((r["path"], r["kind"], r["qualname"]) for r in preferred)
     groups: dict[EntityKey, list[Passage]] = defaultdict(list)
     for p in passages.values():
         if (p.entity.path, p.entity.kind, p.entity.qualname) in matching:
