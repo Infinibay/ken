@@ -143,16 +143,6 @@ def _bm25(conn, query, lang_paths, limit) -> dict:
 
 
 def _safe_terms(query: str) -> list[str]:
-    """Tokenise a query into FTS-safe terms (quote identifiers with . or -)."""
-    raw = query.replace('"', " ").split()
-    out = []
-    for tok in raw:
-        tok = tok.strip()
-        if not tok:
-            continue
-        # Quote tokens containing FTS operator-ish characters.
-        if any(c in tok for c in ".-_"):
-            out.append(f'"{tok}"')
-        else:
-            out.append(tok)
-    return out
+    """Treat every term as text, never as FTS operators or query syntax."""
+    return ['"' + tok.replace('"', '""') + '"'
+            for tok in query.split() if any(c.isalnum() for c in tok)]

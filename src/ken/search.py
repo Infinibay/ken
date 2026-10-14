@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import math
 import sqlite3
 import subprocess
 from collections import Counter, defaultdict, deque
@@ -109,6 +110,7 @@ def search_symbols(
         ).fetchall()
         rows = _filter_live_rows(rows, "file_path", project_root)
         scored = _score_rows(q, rows)
+    scored = _include_exact_symbols(conn, scored, query, q, project_root)
     ranked = _fuse_literal(
         scored,
         _identifier_query(query),
@@ -123,11 +125,55 @@ def search_symbols(
             "line": int(r["line_start"]),
             "line_end": int(r["line_end"]),
             "docstring": r["docstring"],
-            "score": round(float(score), 3),
+            "score": round(float(score), 3) if math.isfinite(score) else None,
             **({"match": _MATCH_LABEL[tier]} if tier else {}),
         }
         for score, r, tier in ranked
     ]
+
+
+def _include_exact_symbols(
+    conn: sqlite3.Connection,
+    scored: list[tuple[float, sqlite3.Row]],
+    query: str,
+    q: np.ndarray,
+    project_root: Path | None,
+) -> list[tuple[float, sqlite3.Row]]:
+    """Identity is its own candidate source, not a filter of dense neighbors."""
+    ident = _identifier_query(query)
+    if ident is None:
+        return scored
+    from ken import vectors
+
+    rows = conn.execute(
+        "SELECT s.kind, s.name, s.qualname, s.line_start, s.line_end, s.docstring, "
+        "s.embedding, s.vec_slot, f.path AS file_path "
+        "FROM ci_symbols s JOIN ci_files f ON f.id = s.file_id "
+        "WHERE s.name = ? COLLATE NOCASE OR s.qualname = ? COLLATE NOCASE "
+        "ORDER BY f.path, s.line_start",
+        (ident, ident),
+    ).fetchall()
+    known = {(r["file_path"], r["line_start"], r["qualname"]) for _, r in scored}
+    root = project_root or vectors.project_root_for(conn)
+    store = None
+    out = list(scored)
+    for row in _filter_live_rows(rows, "file_path", project_root):
+        if (row["file_path"], row["line_start"], row["qualname"]) in known:
+            continue
+        blob = row["embedding"]
+        vec = np.frombuffer(blob, dtype=np.float32) if blob else None
+        if vec is None and row["vec_slot"] is not None and root is not None:
+            try:
+                if store is None:
+                    store = vectors.open_store(conn, root, "ci_symbols", dim=int(q.shape[0]))
+                vec = store.read([int(row["vec_slot"])])[0]
+            except vectors.VectorStoreError:
+                vec = None
+        score = float("-inf")
+        if vec is not None and vec.shape == q.shape:
+            score = float(cosine_against(q, vec.reshape(1, -1))[0])
+        out.append((score, row))
+    return sorted(out, key=lambda item: (-item[0], item[1]["file_path"], item[1]["line_start"]))
 
 
 def file_symbols(
@@ -1032,8 +1078,9 @@ def format_file_hits(hits: list[dict]) -> str:
 def format_symbol_hits(hits: list[dict]) -> str:
     lines: list[str] = []
     for hit in hits:
+        score = f"{hit['score']:.3f}" if hit["score"] is not None else "n/a"
         lines.append(
-            f"{hit['score']:.3f}  {hit['file']}:{hit['line']}  "
+            f"{score}  {hit['file']}:{hit['line']}  "
             f"{hit['kind']} {hit['qualname'] or ''}".rstrip()
         )
         doc = (hit.get("docstring") or "").strip()
