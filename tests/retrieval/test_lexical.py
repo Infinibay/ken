@@ -63,3 +63,21 @@ def test_tokenizer_preserves_identifiers_components_and_negation():
     tokens = code_tokens("no eliminar COOKIE_JAR_CONFLICT; do not clearAuth")
     assert {"no", "not", "cookie_jar_conflict", "cookie", "jar", "conflict",
             "clearauth", "clear", "auth"} <= set(tokens)
+
+
+def test_vectorized_postings_preserve_joint_field_saturation_and_each_field_score():
+    from ken.retrieval.lexical import bm25f_score, score_postings
+    # pid, field, term, tf, field length: two fields share a term in pid 8.
+    rows = [(8, 'identity', 'token', 2, 3), (8, 'body', 'token', 3, 12),
+            (8, 'body', 'other', 1, 12), (9, 'body', 'token', 1, 6)]
+    averages = {'identity': 3., 'body': 6.}
+    scored = score_postings(rows, documents=10, averages=averages)
+    expected_token = bm25f_score({'identity':2,'body':3}, {'identity':3,'body':12},
+                                averages, document_frequency=2, documents=10)
+    expected_other = bm25f_score({'body':1}, {'body':12}, averages, document_frequency=1, documents=10)
+    assert scored[8]['bm25f'] == pytest.approx(expected_token+expected_other)
+    assert scored[8]['bm25_identity'] == pytest.approx(bm25f_score({'identity':2}, {'identity':3},
+        averages, document_frequency=2, documents=10))
+    assert scored[8]['bm25_body'] == pytest.approx(bm25f_score({'body':3}, {'body':12},
+        averages, document_frequency=2, documents=10)+expected_other)
+    assert score_postings([], documents=10, averages=averages) == {}

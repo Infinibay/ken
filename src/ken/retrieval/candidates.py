@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 
 from ken.retrieval.embedding_store import IndexVersionError, load_vectors, retrieval_snapshot
+from ken.retrieval.dense import DenseView
 from ken.retrieval.lexical import lexical_candidates
 from ken.retrieval.intent import interpret
 from ken.retrieval.indexing import source_policy_key
@@ -27,7 +28,7 @@ def _passage_snapshot(conn: sqlite3.Connection, generation: int) -> Mapping[int,
 
 @lru_cache(maxsize=8)
 def _vector_snapshot(conn: sqlite3.Connection, generation: int, view: str, revision: str):
-    return load_vectors(conn, view, revision)
+    return DenseView(_passage_snapshot(conn, generation), load_vectors(conn, view, revision))
 
 
 @lru_cache(maxsize=4)
@@ -66,25 +67,6 @@ def _exact(conn: sqlite3.Connection, passages: Mapping[int, Passage],
             for key, values in groups.items()]
 
 
-def _dense(passages: Mapping[int, Passage], ids: tuple[int, ...], matrix: np.ndarray,
-           query: np.ndarray, view: str, limit: int) -> list[Candidate]:
-    if matrix.ndim != 2 or query.ndim != 1 or matrix.shape[1] != query.size:
-        raise IndexVersionError("query/vector dimensions differ; reindex the retrieval profile")
-    if not np.isfinite(query).all() or float(np.linalg.norm(query)) <= 0:
-        raise ValueError("encoder returned an invalid query vector")
-    scores = matrix @ (query / np.linalg.norm(query))
-    grouped: dict[EntityKey, list[tuple[float, Passage]]] = defaultdict(list)
-    for index in np.argsort(-scores, kind="stable"):
-        p = passages[ids[int(index)]]
-        grouped[p.entity].append((float(scores[index]), p))
-    out = []
-    for entity, pairs in list(grouped.items())[:limit]:
-        evidence = [replace(p, signals={**p.signals, f"cosine_{view}": score})
-                    for score, p in pairs[:4]]
-        out.append(Candidate(entity, evidence, {f"cosine_{view}": pairs[0][0]}))
-    return out
-
-
 def retrieve(conn: sqlite3.Connection, root: Path, request: SearchRequest,
              profile: RetrievalProfile | None = None, *,
              encoders: Mapping[str, Encoder] | None = None) -> list[Candidate]:
@@ -121,8 +103,7 @@ def retrieve(conn: sqlite3.Connection, root: Path, request: SearchRequest,
                 query = injected_queries[id(encoder)]
             else:
                 query = _query_vector(spec, request.query)
-            channels.append(_dense(passages, stored.ids, stored.matrix, query,
-                                   view, profile.candidate_limit))
+            channels.append(stored.search(query, view, profile.candidate_limit))
         merged: dict[EntityKey, Candidate] = {}
         for channel in channels:
             for rank, candidate in enumerate(channel, 1):
