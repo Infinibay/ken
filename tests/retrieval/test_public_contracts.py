@@ -73,6 +73,7 @@ def test_preparation_command_builds_profile_used_by_public_search(tmp_path, monk
     path = tmp_path / "profile.json"
     path.write_text(json.dumps(profile.to_dict()))
     monkeypatch.setattr("ken.retrieval.representations.load_encoder", lambda spec: Encoder())
+    monkeypatch.setattr("ken.retrieval.indexing.load_encoder", lambda spec: Encoder())
     assert main(["retrieval", "index", "--path", str(root), "--profile", str(path), "--json"]) == 0
     prepared = json.loads(capsys.readouterr().out)
     assert prepared["profile_version"] == profile.fingerprint
@@ -125,6 +126,7 @@ def test_old_representation_is_actionable_and_explicit_reindex_upgrades_it(tmp_p
         response = find(conn, tmp_path, "remove credentials")
     assert response["code"] == "retrieval_index_required"
     monkeypatch.setattr("ken.retrieval.representations.load_encoder", lambda spec: Encoder())
+    monkeypatch.setattr("ken.retrieval.indexing.load_encoder", lambda spec: Encoder())
     assert main(["retrieval", "index", "--path", str(tmp_path), "--json"]) == 0
     prepared = json.loads(capsys.readouterr().out)
     assert prepared["profile"]["representation_version"] == 3

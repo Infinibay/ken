@@ -36,7 +36,7 @@ import logging
 import os
 import sqlite3
 import time
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -55,6 +55,8 @@ if TYPE_CHECKING:  # pragma: no cover
     from ken.embedder import Embedder
     from ken.retrieval.model import Passage
     from ken.retrieval.passages import PassagePolicy
+    from ken.retrieval.indexing import PreparedProjection
+    from ken.retrieval.profile import Encoder, RetrievalProfile
 
 logger = logging.getLogger("ken.indexer")
 
@@ -166,6 +168,7 @@ class _Pending:
     passages: list["Passage"] = field(default_factory=list)
     source_sha256: str = ""
     retrieval_policy: "PassagePolicy | None" = None
+    retrieval_projection: "PreparedProjection | None" = None
 
 
 def index_files(
@@ -177,6 +180,8 @@ def index_files(
     on_progress=None,
     embedder: "Embedder | None" = None,
     retrieval_policy: "PassagePolicy | None" = None,
+    retrieval_profile: "RetrievalProfile | None" = None,
+    retrieval_encoders: "Mapping[str, Encoder] | None" = None,
 ) -> IndexStats:
     """Index every relative path in *rels* into *conn*.
 
@@ -188,6 +193,12 @@ def index_files(
     stats = IndexStats()
     t0 = time.monotonic()
     todo = list(rels)
+    from ken.retrieval.indexing import ProjectionIndexer
+    projection = (ProjectionIndexer(conn, retrieval_profile, encoders=retrieval_encoders)
+        if retrieval_profile is not None else
+        ProjectionIndexer.for_active(conn, encoders=retrieval_encoders) if retrieval_policy is None else None)
+    if projection is not None:
+        retrieval_policy = projection.policy
     # Derived from the project directory name alone, so it is the same value at
     # index time and at query time — which is what makes it safe to bake into
     # the stored postings instead of recomputing it on every rank.
@@ -213,6 +224,13 @@ def index_files(
                 events, pool, stopwords, retrieval_policy,
             )
             _embed_pending(pending, embedder, stores)
+            if projection is not None and pending:
+                prepared = projection.prepare([item.passages for item in pending])
+                for item, encoded in zip(pending, prepared, strict=True):
+                    item.retrieval_projection = encoded
+                    if hashlib.sha256((project_root / item.rel).read_bytes()).hexdigest() != item.source_sha256:
+                        from ken.retrieval.embedding_store import IndexVersionError
+                        raise IndexVersionError("source changed while encoding; retry indexing")
             _write_pending(conn, pending, stats, events, stores)
             if stores is not None:
                 # Once per chunk rather than once per file: 128 files' worth of
@@ -633,7 +651,6 @@ def _write_plain(
     conn: sqlite3.Connection, item: _Pending, stores: "_Stores | None" = None
 ) -> None:
     from ken.vectors import immediate
-    from ken.retrieval import storage
 
     with immediate(conn):
         file_id = _upsert_file_row(
@@ -668,15 +685,13 @@ def _write_plain(
                 weight=0.55,
                 vec_slot=intent_slots[pos],
             )
-        storage.replace_file_passages(conn, file_id, item.passages,
-            source_hash=item.source_sha256, policy=item.retrieval_policy)
+        _write_retrieval(conn, file_id, item)
 
 
 def _write_parsed(
     conn: sqlite3.Connection, item: _Pending, stores: "_Stores | None" = None
 ) -> None:
     from ken.vectors import immediate
-    from ken.retrieval import storage
 
     parsed = item.parsed
     with immediate(conn):
@@ -758,8 +773,21 @@ def _write_parsed(
                 "INSERT INTO ci_imports(from_file_id, to_module, line) VALUES (?, ?, ?)",
                 [(file_id, imp.module, imp.line) for imp in parsed.imports],
             )
-        storage.replace_file_passages(conn, file_id, item.passages,
-            source_hash=item.source_sha256, policy=item.retrieval_policy)
+        _write_retrieval(conn, file_id, item)
+
+
+def _write_retrieval(conn: sqlite3.Connection, file_id: int, item: _Pending) -> None:
+    from ken.retrieval import storage
+    from ken.retrieval.embedding_store import reclaim_embeddings
+    retired = []
+    if item.retrieval_projection is not None:
+        retired = [row[0] for row in conn.execute("SELECT DISTINCT v.embedding_id "
+            "FROM ci_passage_vectors v JOIN ci_passages p ON p.id=v.passage_id WHERE p.file_id=?", (file_id,))]
+    passage_ids = storage.replace_file_passages(conn, file_id, item.passages,
+        source_hash=item.source_sha256, policy=item.retrieval_policy)
+    if item.retrieval_projection is not None:
+        item.retrieval_projection.publish(conn, passage_ids)
+        reclaim_embeddings(conn, retired)
 
 
 def _store_vectors(

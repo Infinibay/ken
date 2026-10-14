@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import sqlite3
 from dataclasses import asdict, dataclass
 from functools import lru_cache
 from importlib import resources
@@ -140,6 +141,16 @@ def default_profile() -> RetrievalProfile:
     artifact = resources.files("ken.embedder").joinpath("data/ken__static-qwen3-r512-v2.npz")
     spec = EncoderSpec(model, hashlib.sha256(artifact.read_bytes()).hexdigest())
     return RetrievalProfile(spec, spec)
+
+
+def active_profile(conn: sqlite3.Connection, *, upgrade_for_indexing: bool = False) -> RetrievalProfile:
+    from ken.retrieval.embedding_store import IndexVersionError
+    row = conn.execute("SELECT value FROM meta WHERE key='retrieval_profile'").fetchone()
+    try:
+        return (RetrievalProfile.from_dict(json.loads(row[0]), upgrade_representation=upgrade_for_indexing)
+                if row else default_profile())
+    except (ValueError, TypeError, KeyError) as exc:
+        raise IndexVersionError(f"stored retrieval profile needs reindexing: {exc}") from exc
 
 
 @lru_cache(maxsize=4)

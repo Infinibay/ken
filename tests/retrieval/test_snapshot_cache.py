@@ -29,7 +29,7 @@ def test_warm_query_reuses_immutable_vectors_but_writer_invalidates(tmp_path, mo
         retrieve(conn, tmp_path, SearchRequest("browser state"), profile(), encoders=encoders)
     assert loads == ["identity", "behavior"]
     source.write_text("def cookie():\n    return 'new cookie'\n")
-    index_files(conn, tmp_path, [Path("client.py")])
+    index_files(conn, tmp_path, [Path("client.py")], retrieval_encoders=encoders)
     index_embeddings(conn, profile(), encoders=encoders)
     result = retrieve(conn, tmp_path, SearchRequest("browser state"), profile(), encoders=encoders)
     assert loads == ["identity", "behavior", "identity", "behavior"]

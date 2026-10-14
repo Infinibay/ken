@@ -4,7 +4,7 @@ from __future__ import annotations
 import hashlib
 import sqlite3
 import uuid
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterator, Mapping, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
 
@@ -144,11 +144,16 @@ def cached_embeddings(conn: sqlite3.Connection, view: str, revision: str,
     return result
 
 
-def reclaim_embeddings(conn: sqlite3.Connection) -> int:
+def reclaim_embeddings(conn: sqlite3.Connection, retired: Sequence[int] | None = None) -> int:
     """Delete unreferenced artifacts; WAL keeps prior readers' versions alive."""
     if not conn.in_transaction:
         raise ValueError("reclamation requires a transaction")
-    cur = conn.execute("DELETE FROM ci_retrieval_embeddings WHERE NOT EXISTS "
-                       "(SELECT 1 FROM ci_passage_vectors v "
-                       "WHERE v.embedding_id=ci_retrieval_embeddings.id)")
-    return cur.rowcount
+    sql = ("DELETE FROM ci_retrieval_embeddings WHERE NOT EXISTS "
+           "(SELECT 1 FROM ci_passage_vectors v WHERE v.embedding_id=ci_retrieval_embeddings.id)")
+    if retired is None:
+        return conn.execute(sql).rowcount
+    count = 0
+    for start in range(0, len(retired), 256):
+        batch = retired[start:start + 256]
+        count += conn.execute(sql + " AND id IN (" + ",".join("?" for _ in batch) + ")", batch).rowcount
+    return count

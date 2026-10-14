@@ -20,7 +20,7 @@ def generation(conn: sqlite3.Connection) -> int:
 def replace_file_passages(conn: sqlite3.Connection, file_id: int,
                           passages: list[Passage], generation_id: int | None = None, *,
                           source_hash: str | None = None,
-                          policy: PassagePolicy | None = None) -> None:
+                          policy: PassagePolicy | None = None) -> list[int]:
     """Publish inside the caller's transaction; never commit a partial file."""
     if not conn.in_transaction:
         raise ValueError("passage replacement requires the file transaction")
@@ -28,6 +28,7 @@ def replace_file_passages(conn: sqlite3.Connection, file_id: int,
     symbols = {(r["kind"], r["qualname"], r["line_start"], r["line_end"]): r["id"]
                for r in conn.execute("SELECT * FROM ci_symbols WHERE file_id=?", (file_id,))}
     conn.execute("DELETE FROM ci_passages WHERE file_id=?", (file_id,))
+    ids = []
     for p in passages:
         symbol_id = None
         if p.entity.qualname is not None:
@@ -42,7 +43,10 @@ def replace_file_passages(conn: sqlite3.Connection, file_id: int,
              json.dumps(p.fields, ensure_ascii=False, separators=(",", ":")), p.role, p.split_reason,
              p.implementation_start_line),
         )
+        if cur.lastrowid is None:
+            raise RuntimeError("source passage insert did not return its identity")
         passage_id = cur.lastrowid
+        ids.append(passage_id)
         for name, text in p.fields.items():
             counts = Counter(code_tokens(text))
             conn.execute("INSERT INTO ci_passage_lengths(passage_id,field,length) VALUES (?,?,?)",
@@ -59,6 +63,7 @@ def replace_file_passages(conn: sqlite3.Connection, file_id: int,
         "tokenizer_version=excluded.tokenizer_version,max_tokens=excluded.max_tokens",
         (file_id, digest, EXTRACTOR_VERSION, policy.tokenizer_version, policy.max_tokens),
     )
+    return ids
 
 
 def load_passage_map(conn: sqlite3.Connection, ids: Sequence[int] | None = None) -> dict[int, Passage]:

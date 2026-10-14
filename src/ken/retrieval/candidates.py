@@ -1,7 +1,6 @@
 """Union independent evidence sources, grouping by owner before applying budgets."""
 from __future__ import annotations
 
-import json
 import sqlite3
 from collections import defaultdict
 from collections.abc import Mapping
@@ -16,7 +15,7 @@ from ken.retrieval.lexical import lexical_candidates
 from ken.retrieval.intent import interpret
 from ken.retrieval.indexing import source_policy_key
 from ken.retrieval.model import Candidate, EntityKey, Passage, SearchRequest, merge_spans
-from ken.retrieval.profile import Encoder, EncoderSpec, RetrievalProfile, default_profile, load_encoder
+from ken.retrieval.profile import Encoder, EncoderSpec, RetrievalProfile, active_profile, load_encoder
 from ken.retrieval.storage import load_passage_map
 
 
@@ -44,15 +43,6 @@ def _query_vector(spec: EncoderSpec, text: str) -> np.ndarray:
     vector = np.asarray(load_encoder(spec).embed_query(text), dtype=np.float32)
     vector.setflags(write=False)
     return vector
-
-
-def active_profile(conn: sqlite3.Connection, *, upgrade_for_indexing: bool = False) -> RetrievalProfile:
-    row = conn.execute("SELECT value FROM meta WHERE key='retrieval_profile'").fetchone()
-    try:
-        return (RetrievalProfile.from_dict(json.loads(row[0]), upgrade_representation=upgrade_for_indexing)
-                if row else default_profile())
-    except (ValueError, TypeError, KeyError) as exc:
-        raise IndexVersionError(f"stored retrieval profile needs reindexing: {exc}") from exc
 
 
 def _exact(conn: sqlite3.Connection, passages: Mapping[int, Passage],

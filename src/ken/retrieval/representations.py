@@ -5,6 +5,8 @@ import json
 import sqlite3
 from collections.abc import Mapping
 
+import numpy as np
+
 from ken.retrieval.embedding_store import (IndexVersionError, cached_embeddings, pending_texts,
                                            put_embeddings, reclaim_embeddings, retrieval_snapshot)
 from ken.retrieval.model import Passage
@@ -66,6 +68,19 @@ def bounded_passage_text(passage: Passage, view: str, profile: RetrievalProfile,
     return text
 
 
+def encode_texts(conn: sqlite3.Connection, view: str, revision: str,
+                 texts: list[str], encoder: Encoder) -> dict[str, np.ndarray]:
+    """Reuse content-addressed artifacts and encode each missing text once."""
+    unique = list(dict.fromkeys(texts))
+    by_text = cached_embeddings(conn, view, revision, unique)
+    missing = [text for text in unique if text not in by_text]
+    vectors = encoder.embed_passages(missing) if missing else []
+    if len(vectors) != len(missing):
+        raise ValueError("encoder returned a different number of embeddings")
+    by_text.update(zip(missing, vectors, strict=True))
+    return by_text
+
+
 def index_embeddings(conn: sqlite3.Connection, profile: RetrievalProfile, *,
                      encoders: Mapping[str, Encoder] | None = None) -> None:
     with retrieval_snapshot(conn) as snapshot:
@@ -81,13 +96,7 @@ def index_embeddings(conn: sqlite3.Connection, profile: RetrievalProfile, *,
         texts = pending_texts(conn, view, profile.vector_revision(view), texts)
         if not texts:
             continue
-        unique = list(dict.fromkeys(texts.values()))
-        by_text = cached_embeddings(conn, view, profile.vector_revision(view), unique)
-        missing = [text for text in unique if text not in by_text]
-        vectors = encoder.embed_passages(missing) if missing else []
-        if len(vectors) != len(missing):
-            raise ValueError("encoder returned a different number of embeddings")
-        by_text.update(zip(missing, vectors, strict=True))
+        by_text = encode_texts(conn, view, profile.vector_revision(view), list(texts.values()), encoder)
         prepared[view] = (texts, {pid: by_text[text] for pid, text in texts.items()})
     with immediate(conn):
         if generation(conn) != source_generation:
@@ -101,3 +110,5 @@ def index_embeddings(conn: sqlite3.Connection, profile: RetrievalProfile, *,
             reclaim_embeddings(conn)
         conn.execute("INSERT INTO meta(key,value) VALUES ('retrieval_representation_version',?) "
                      "ON CONFLICT(key) DO UPDATE SET value=excluded.value", (str(profile.representation_version),))
+        conn.execute("INSERT INTO meta(key,value) VALUES ('retrieval_profile_fingerprint',?) "
+                     "ON CONFLICT(key) DO UPDATE SET value=excluded.value", (profile.fingerprint,))
