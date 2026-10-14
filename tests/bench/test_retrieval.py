@@ -125,6 +125,14 @@ def test_gold_metadata_never_enters_search_request():
     assert "alternatives" not in request and "answerable" not in request
 
 
+def test_scorer_does_not_charge_case_identifier_as_engine_output(tmp_path):
+    c = case()
+    c["id"] = "x" * 13000
+    a = answer()
+    a["id"] = c["id"]
+    assert evaluate(tmp_path, [c], [a])["strict_top1"]["hits"] == 1
+
+
 def test_evidence_outside_source_or_budget_is_invalid(tmp_path):
     hit = answer()
     hit["results"][0]["evidence"][0]["end_line"] = 900

@@ -72,7 +72,8 @@ def _score(case: Record, response: Record | None, root: Path) -> tuple[bool, boo
         return False, False, "missing_response"
     if response.get("error") or response.get("ok") is False:
         return False, False, "error"
-    if len(json.dumps(response, ensure_ascii=False, separators=(",", ":"))) > MAX_CHARS:
+    payload = {key: value for key, value in response.items() if key != "id"}
+    if len(json.dumps(payload, ensure_ascii=False, separators=(",", ":"))) > MAX_CHARS:
         return False, False, "output_budget"
     results = response.get("results")
     if not isinstance(results, list) or not results:
@@ -179,6 +180,10 @@ def main(dataset_path: Path, *, roots_path: Path, responses_path: Path,
     report = evaluate(dataset, responses, roots=roots)
     policy = json.loads(policy_path.read_text()) if policy_path else None
     report["dataset_sha256"] = dataset.sha256
-    report["failures"] = check_gate(report, policy) if policy_path else []
+    if policy_path:
+        from ken.bench.protocol import acceptance_failures
+        report["failures"] = check_gate(report, policy) + acceptance_failures(dataset)
+    else:
+        report["failures"] = []
     print(json.dumps(report, ensure_ascii=False, separators=(",", ":")))
     return int(bool(report["failures"]))
