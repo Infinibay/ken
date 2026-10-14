@@ -130,3 +130,56 @@ class MiniLMOnnxControl:
 
     def score(self, query: str, documents: list[str], *, purpose: str) -> list[float]:
         return self.judge.score(query,documents,purpose=purpose)
+
+
+class E5OnnxControl:
+    """Portable official int8 E5 graph, CPU-only; source projection remains explicit."""
+    def __init__(self, snapshot: Path):
+        import json
+        import threading
+        import tokenizers
+        import onnxruntime as ort
+        from tokenizers import Tokenizer
+        if snapshot.name != '614241f622f53c4eeff9890bdc4f31cfecc418b3':
+            raise ValueError('registered E5 revision required')
+        expected = 'dd476dd0c2514e9b9be83aeb3853fac0763e0bdf4a71645407587d77c48a2d88'
+        weight = snapshot/'onnx/model_qint8_avx512_vnni.onnx'
+        if hashlib.sha256(weight.read_bytes()).hexdigest() != expected:
+            raise ValueError('registered E5 graph changed')
+        self.lock = threading.RLock()
+        self.tokenizer = Tokenizer.from_file(str(snapshot/'tokenizer.json'))
+        self.tokenizer.enable_truncation(max_length=512)
+        self.tokenizer.enable_padding(pad_id=self.tokenizer.token_to_id('<pad>'), pad_token='<pad>')
+        options = ort.SessionOptions(); options.intra_op_num_threads=2; options.inter_op_num_threads=1
+        self.session = ort.InferenceSession(str(weight), sess_options=options, providers=['CPUExecutionProvider'])
+        if self.session.get_providers() != ['CPUExecutionProvider']:
+            raise ValueError('CPU-only E5 execution required')
+        self.inputs = {i.name for i in self.session.get_inputs()}
+        digest = hashlib.sha256(json.dumps({'weights':expected,
+            'tokenizer':hashlib.sha256((snapshot/'tokenizer.json').read_bytes()).hexdigest(),
+            'onnxruntime':ort.__version__,'tokenizers':tokenizers.__version__,
+            'prefixes':['query: ','passage: '],'pooling':'masked-mean-L2-v1',
+            'sequence_length':512,'dtype':'float32-output-int8-weights'},sort_keys=True).encode()).hexdigest()
+        self.spec = EncoderSpec('intfloat/multilingual-e5-small-onnx-int8',digest,'provided',batch_size=8)
+
+    def token_count(self, text: str) -> int:
+        from ken.bench.mean_pool import full_token_count
+        return full_token_count(self.tokenizer,text,lock=self.lock)
+
+    def encode(self, texts: list[str], *, prefix: str) -> list[np.ndarray]:
+        from ken.bench.mean_pool import masked_mean
+        result = []
+        for start in range(0,len(texts),8):
+            with self.lock:
+                batch = self.tokenizer.encode_batch([prefix+t for t in texts[start:start+8]])
+            features = {name:np.asarray([getattr(e, {'input_ids':'ids','attention_mask':'attention_mask',
+                'token_type_ids':'type_ids'}[name]) for e in batch],dtype=np.int64) for name in self.inputs}
+            hidden = self.session.run(['last_hidden_state'],features)[0]
+            result.extend(masked_mean(hidden,features['attention_mask']))
+        return result
+
+    def embed_passages(self, texts: list[str]) -> list[np.ndarray]:
+        return self.encode(texts,prefix='passage: ')
+
+    def embed_query(self, text: str) -> np.ndarray:
+        return self.encode([text],prefix='query: ')[0]

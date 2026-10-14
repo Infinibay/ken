@@ -21,7 +21,7 @@ from ken.retrieval.profile import EncoderSpec, RetrievalProfile, default_profile
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", default="static", choices=("static", "e5", "qwen", "potion"))
+    parser.add_argument("--model", default="static", choices=("static", "e5", "qwen", "potion", "e5-onnx"))
     parser.add_argument("--limit", type=int)
     parser.add_argument("--reuse", action="store_true")
     parser.add_argument("--dtype", default="float32", choices=("float32", "float16"))
@@ -39,11 +39,11 @@ def main() -> None:
         (base / "datasets/roots-development.json").read_text()).items()}
     profile = default_profile()
     encoders = None
-    if args.model == "potion":
+    if args.model in ("potion", "e5-onnx"):
         if args.control_model_path is None or args.profile is not None:
-            raise ValueError("Potion control requires --control-model-path and its registered provided profile")
-        from experimental_encoders import PotionControl
-        encoder = PotionControl(args.control_model_path)
+            raise ValueError("CPU control requires --control-model-path and its registered provided profile")
+        from experimental_encoders import PotionControl, E5OnnxControl
+        encoder = (PotionControl if args.model == "potion" else E5OnnxControl)(args.control_model_path)
         encoders = {"identity": encoder, "behavior": encoder}
         profile = RetrievalProfile(encoder.spec, encoder.spec)
     elif args.model != "static":
@@ -77,7 +77,7 @@ def main() -> None:
     source_receipt = base.parents[1] / "SOURCE-MANIFEST.json"
     provenance["source_receipt_sha256"] = verify_frozen_source(base.parents[1]) if source_receipt.is_file() else None
     runtime = {}
-    for package in ("numpy", "mlx", "mlx-lm", "transformers", "huggingface-hub", "torch", "sentence-transformers", "tokenizers", "safetensors", "model2vec"):
+    for package in ("numpy", "mlx", "mlx-lm", "transformers", "huggingface-hub", "torch", "sentence-transformers", "tokenizers", "safetensors", "model2vec", "onnxruntime"):
         try:
             runtime[package] = version(package)
         except PackageNotFoundError:
