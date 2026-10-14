@@ -23,3 +23,19 @@ def test_role_control_never_overrides_exact_identity_or_natural_declaration_requ
     implementation = match("work", "definition", 2.)
     assert prefer_requested_role(SearchRequest("check"), [exact, implementation])[0] == exact
     assert prefer_requested_role(SearchRequest("Show the work function definition."), [exact, implementation]) == [exact, implementation]
+
+
+def test_purpose_allocation_precedes_neural_budget_without_overriding_exact_identity():
+    from ken.bench.ranking_controls import select_requested_role_candidates
+    from tests.retrieval.test_ranking import candidate
+    tests = [candidate('test_'+str(i),'call implementer()',role='test') for i in range(8)]
+    implementation = candidate('implementer','actual operation')
+    for t in tests:t.signals['rrf'] = 2.
+    implementation.signals['rrf'] = 1.
+    pool = [*tests,implementation]
+    chosen = select_requested_role_candidates(SearchRequest('Where is the operation implemented?'),pool,limit=3)
+    assert chosen[0] == implementation
+    assert len(chosen) == 3
+    assert select_requested_role_candidates(SearchRequest('Show the implementer function definition.'),pool,limit=3) == pool[:3]
+    implementation.signals['exact'] = 1.
+    assert select_requested_role_candidates(SearchRequest('Which test covers the operation?'),pool,limit=3)[0] == implementation

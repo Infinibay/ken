@@ -72,14 +72,31 @@ def _ordered(matches: list[CodeMatch]) -> list[CodeMatch]:
                                          m.entity.path, m.evidence[0].span.start_line))
 
 
-def prefer_requested_role(request: SearchRequest, matches: list[CodeMatch]) -> list[CodeMatch]:
-    """A categorical purpose control; does not manufacture relevance scores."""
+def _requested_role(request: SearchRequest) -> str | None:
     intent = interpret(request)
     if intent.identity or intent.purpose not in ("implementation", "tests"):
+        return None
+    return "test" if intent.purpose == "tests" else "definition"
+
+
+def prefer_requested_role(request: SearchRequest, matches: list[CodeMatch]) -> list[CodeMatch]:
+    """A categorical purpose control; does not manufacture relevance scores."""
+    expected = _requested_role(request)
+    if expected is None:
         return list(matches)
-    expected = "test" if intent.purpose == "tests" else "definition"
     return sorted(matches, key=lambda m: (-m.signals.get("exact", 0),
         -int(m.evidence[0].role == expected), -m.score, m.entity.path, m.evidence[0].span.start_line))
+
+
+def select_requested_role_candidates(request: SearchRequest, candidates: list[Candidate], *,
+                                     limit: int) -> list[Candidate]:
+    """Spend the declared neural budget on the requested evidence role first."""
+    if limit <= 0:
+        raise ValueError("positive candidate budget required")
+    expected = _requested_role(request)
+    return sorted(candidates, key=lambda c: (-c.signals.get("exact", 0),
+        -int(expected is not None and c.passages[0].role == expected),
+        -c.signals.get("rrf", 0), c.entity.path, min(p.span.start_line for p in c.passages)))[:limit]
 
 
 @dataclass(frozen=True)
