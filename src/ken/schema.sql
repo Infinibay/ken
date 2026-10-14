@@ -90,6 +90,43 @@ CREATE INDEX IF NOT EXISTS idx_ci_intent_embedding
     ON ci_intent_sources(source_kind)
     WHERE embedding IS NOT NULL;
 
+-- Retrieval projections share the file transaction and canonical symbol identity.
+CREATE TABLE IF NOT EXISTS ci_retrieval_files (
+    file_id INTEGER PRIMARY KEY REFERENCES ci_files(id) ON DELETE CASCADE,
+    source_hash TEXT NOT NULL,
+    extractor_version INTEGER NOT NULL,
+    tokenizer_version TEXT NOT NULL,
+    max_tokens INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS ci_passages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    file_id INTEGER NOT NULL REFERENCES ci_files(id) ON DELETE CASCADE,
+    symbol_id INTEGER REFERENCES ci_symbols(id) ON DELETE SET NULL,
+    line_start INTEGER NOT NULL,
+    line_end INTEGER NOT NULL,
+    fields_json TEXT NOT NULL,
+    role TEXT NOT NULL,
+    split_reason TEXT,
+    CHECK (line_start > 0 AND line_end >= line_start)
+);
+CREATE INDEX IF NOT EXISTS idx_ci_passages_file ON ci_passages(file_id);
+CREATE INDEX IF NOT EXISTS idx_ci_passages_symbol ON ci_passages(symbol_id);
+CREATE TRIGGER IF NOT EXISTS trg_retrieval_generation_insert
+AFTER INSERT ON ci_retrieval_files BEGIN
+  INSERT INTO meta(key,value) VALUES ('retrieval_generation','1')
+  ON CONFLICT(key) DO UPDATE SET value = CAST(value AS INTEGER) + 1;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_retrieval_generation_update
+AFTER UPDATE ON ci_retrieval_files BEGIN
+  INSERT INTO meta(key,value) VALUES ('retrieval_generation','1')
+  ON CONFLICT(key) DO UPDATE SET value = CAST(value AS INTEGER) + 1;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_retrieval_generation_delete
+AFTER DELETE ON ci_retrieval_files BEGIN
+  INSERT INTO meta(key,value) VALUES ('retrieval_generation','1')
+  ON CONFLICT(key) DO UPDATE SET value = CAST(value AS INTEGER) + 1;
+END;
+
 -- ----------------------------------------------------------------------------
 -- Context-rank: sessions, contexts (task descriptions / prompts / tool calls),
 -- interactions (file/symbol touches), and per-session productivity scores.

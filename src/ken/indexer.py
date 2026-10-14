@@ -53,10 +53,11 @@ from ken.parsers import detect_language
 
 if TYPE_CHECKING:  # pragma: no cover
     from ken.embedder import Embedder
+    from ken.retrieval.model import Passage
 
 logger = logging.getLogger("ken.indexer")
 
-PARSER_VERSION = 4
+PARSER_VERSION = 5
 
 
 @dataclass
@@ -161,6 +162,8 @@ class _Pending:
     #: when there is no store to write to, so the common path never pays for
     #: both representations.
     blobs: dict[tuple, bytes] = field(default_factory=dict)
+    passages: list["Passage"] = field(default_factory=list)
+    source_sha256: str = ""
 
 
 def index_files(
@@ -367,6 +370,8 @@ def _prepare_chunk(
         embed_intent_text,
         embed_symbol_text,
     )
+    from ken.parsers.types import ParsedFile
+    from ken.retrieval.passages import extract_passages
 
     pending: list[_Pending] = []
     jobs: list[tuple[str, str, bytes]] = []
@@ -403,7 +408,6 @@ def _prepare_chunk(
                 continue
 
             intent_texts = _plain_text_intents(rel_posix, data)
-            del data
             item = _Pending(
                 rel=rel_posix,
                 language=None,
@@ -412,7 +416,10 @@ def _prepare_chunk(
                 stopwords=stopwords or set(),
                 order=order,
                 intent_texts=intent_texts,
+                passages=extract_passages(data, ParsedFile(), path=rel_posix),
+                source_sha256=hashlib.sha256(data).hexdigest(),
             )
+            del data
             if embedder is not None:
                 stem = Path(rel_posix).stem
                 # A file embedding is a *document*, so it must go through
@@ -458,12 +465,22 @@ def _prepare_chunk(
             )
         )
 
-    for item, parsed in zip(awaiting, _parse_all(jobs, pool)):
+    for item, parsed, job in zip(awaiting, _parse_all(jobs, pool), jobs):
         if parsed is None:
             stats.skipped_io_error += 1
             events.append((item.order, item.rel, "skipped:parse_error"))
             continue
+        # Canonical persistence includes scopes that compact outlines omit.
+        known = {(s.kind, s.qualname, s.line_start) for s in parsed.symbols}
+        for scope in parsed.scopes:
+            s = scope.symbol
+            if (s.kind, s.qualname, s.line_start) not in known:
+                parsed.symbols.append(s)
+                known.add((s.kind, s.qualname, s.line_start))
+        parsed.symbols.sort(key=lambda s: (s.line_start, -s.line_end))
         item.parsed = parsed
+        item.source_sha256 = hashlib.sha256(job[2]).hexdigest()
+        item.passages = extract_passages(job[2], parsed, path=item.rel, language=item.language or "text")
         if embedder is not None:
             for i, s in enumerate(parsed.symbols):
                 item.texts.append(embed_symbol_text(s.kind, s.name, s.docstring))
@@ -607,6 +624,7 @@ def _write_plain(
     conn: sqlite3.Connection, item: _Pending, stores: "_Stores | None" = None
 ) -> None:
     from ken.vectors import immediate
+    from ken.retrieval import storage
 
     with immediate(conn):
         file_id = _upsert_file_row(
@@ -641,12 +659,14 @@ def _write_plain(
                 weight=0.55,
                 vec_slot=intent_slots[pos],
             )
+        storage.replace_file_passages(conn, file_id, item.passages, source_hash=item.source_sha256)
 
 
 def _write_parsed(
     conn: sqlite3.Connection, item: _Pending, stores: "_Stores | None" = None
 ) -> None:
     from ken.vectors import immediate
+    from ken.retrieval import storage
 
     parsed = item.parsed
     with immediate(conn):
@@ -728,6 +748,7 @@ def _write_parsed(
                 "INSERT INTO ci_imports(from_file_id, to_module, line) VALUES (?, ?, ?)",
                 [(file_id, imp.module, imp.line) for imp in parsed.imports],
             )
+        storage.replace_file_passages(conn, file_id, item.passages, source_hash=item.source_sha256)
 
 
 def _store_vectors(
