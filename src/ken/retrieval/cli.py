@@ -34,8 +34,8 @@ def dispatch(args: argparse.Namespace) -> int:
     try:
         with closing(connect(_paths.db_path(root))) as conn:
             init_schema(conn)
-            profile = (RetrievalProfile.from_dict(json.loads(args.profile.read_text()))
-                       if args.profile else active_profile(conn))
+            profile = (RetrievalProfile.from_dict(json.loads(args.profile.read_text()), upgrade_representation=True)
+                       if args.profile else active_profile(conn, upgrade_for_indexing=True))
             started = time.perf_counter()
             stats = index_project(conn, root, iter_files(root), profile=profile)
             result = {"profile_version": profile.fingerprint, "profile": profile.to_dict(),

@@ -13,6 +13,15 @@ from ken.bench.dataset import Record
 from ken.bench.retrieval import request_for_case
 
 
+def source_manifest(root: Path, files: Iterable[Path]) -> Record:
+    paths = sorted(files)
+    manifest = hashlib.sha256()
+    for path in paths:
+        manifest.update(path.as_posix().encode())
+        manifest.update(hashlib.sha256((root / path).read_bytes()).digest())
+    return {"files": len(paths), "source_tree_sha256": manifest.hexdigest()}
+
+
 def run_cases(cases: Iterable[Record],
               execute: Callable[[str, Record], Record]) -> list[Record]:
     responses = []
@@ -51,11 +60,7 @@ def run_live(cases: Iterable[Record], roots: Mapping[str, Path], index_directory
             init_schema(conn)
             start = time.perf_counter()
             files = list(iter_files(root))
-            manifest = hashlib.sha256()
-            for path in sorted(files):
-                manifest.update(path.as_posix().encode())
-                manifest.update(hashlib.sha256((root / path).read_bytes()).digest())
-            item = {"files": len(files), "source_tree_sha256": manifest.hexdigest()}
+            item = source_manifest(root, files)
             if rebuild:
                 item.update(asdict(index_project(conn, root, files, profile=profile)))
             item["passages"] = conn.execute("SELECT COUNT(*) FROM ci_passages").fetchone()[0]

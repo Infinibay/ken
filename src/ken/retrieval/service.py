@@ -31,7 +31,8 @@ def search(conn: sqlite3.Connection, root: Path, request: SearchRequest, *,
                 rerank_limit=ordering.candidate_limit, rank_unit=ordering.rank_unit)
             if ordering.evidence_results:
                 matches = refine_evidence(matches, root, request, judge=judge,
-                    limit=ordering.evidence_results, max_windows=ordering.max_windows)
+                    limit=ordering.evidence_results, max_windows=ordering.max_windows,
+                    max_fragments=ordering.max_fragments)
         else:
             matches = rank_candidates(request, candidates)
         response = present(matches, root, request, profile_version=profile.fingerprint)

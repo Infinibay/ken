@@ -128,3 +128,18 @@ def test_public_search_uses_configured_joint_ranking_and_evidence(tmp_path):
     assert "clear_secrets()" in response["results"][0]["evidence"][0]["content"]
     assert response["profile_version"] == profile.fingerprint
     conn.close()
+
+
+def test_backend_dependency_upgrade_invalidates_vectors_profile_and_token_boundaries(monkeypatch):
+    from ken.retrieval import profile as module
+    from ken.retrieval.indexing import source_policy_key
+    spec = module.EncoderSpec("Qwen/Qwen3-Embedding-0.6B", "a" * 40, "mlx")
+    profile = module.RetrievalProfile(spec, spec, passage_tokenizer="behavior-model")
+    module._backend_runtime.cache_clear()
+    monkeypatch.setattr(module, "_package_version", lambda name: "1.0")
+    previous = (spec.key, profile.vector_revision("behavior"), profile.fingerprint, source_policy_key(profile))
+    module._backend_runtime.cache_clear()
+    monkeypatch.setattr(module, "_package_version", lambda name: "2.0")
+    current = (spec.key, profile.vector_revision("behavior"), profile.fingerprint, source_policy_key(profile))
+    module._backend_runtime.cache_clear()
+    assert all(old != new for old, new in zip(previous, current))

@@ -46,9 +46,13 @@ def _query_vector(spec: EncoderSpec, text: str) -> np.ndarray:
     return vector
 
 
-def active_profile(conn: sqlite3.Connection) -> RetrievalProfile:
+def active_profile(conn: sqlite3.Connection, *, upgrade_for_indexing: bool = False) -> RetrievalProfile:
     row = conn.execute("SELECT value FROM meta WHERE key='retrieval_profile'").fetchone()
-    return RetrievalProfile.from_dict(json.loads(row[0])) if row else default_profile()
+    try:
+        return (RetrievalProfile.from_dict(json.loads(row[0]), upgrade_representation=upgrade_for_indexing)
+                if row else default_profile())
+    except (ValueError, TypeError, KeyError) as exc:
+        raise IndexVersionError(f"stored retrieval profile needs reindexing: {exc}") from exc
 
 
 def _exact(conn: sqlite3.Connection, passages: Mapping[int, Passage],

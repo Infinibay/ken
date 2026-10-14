@@ -99,5 +99,5 @@ def index_embeddings(conn: sqlite3.Connection, profile: RetrievalProfile, *,
                      (json.dumps(profile.to_dict(), sort_keys=True),))
         if prepared:
             reclaim_embeddings(conn)
-        conn.execute("INSERT INTO meta(key,value) VALUES ('retrieval_representation_version','2') "
-                     "ON CONFLICT(key) DO UPDATE SET value=excluded.value")
+        conn.execute("INSERT INTO meta(key,value) VALUES ('retrieval_representation_version',?) "
+                     "ON CONFLICT(key) DO UPDATE SET value=excluded.value", (str(profile.representation_version),))

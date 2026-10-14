@@ -64,3 +64,29 @@ def test_changed_source_never_becomes_new_evidence(tmp_path):
     request = SearchRequest("remove credentials")
     matches = refine_evidence([match], tmp_path, request, judge=Judge())
     assert present(matches, tmp_path, request, profile_version="test").results[0]["stale"]
+
+
+def test_distant_decisive_blocks_use_separate_faithful_fragments_with_one_total_budget(tmp_path):
+    from ken.retrieval.evidence import refine_evidence
+    match = source_match(tmp_path)
+    lines = (tmp_path / "client.py").read_text().splitlines() + ["    step(value)"] * 80
+    lines[60], lines[140] = "    step(value)", "    preserve_destination(value)"
+    source = "\n".join(lines) + "\n"
+    (tmp_path / "client.py").write_text(source)
+    digest = hashlib.sha256(source.encode()).hexdigest()
+    first = replace(match.evidence[0], source_hash=digest, entity_span=Span(1, 160))
+    second = replace(first, span=Span(139, 143), fields={**first.fields, "body": "\n".join(lines[138:143])})
+    match = replace(match, evidence=[first, second], source_hash=digest)
+    class Judge:
+        def score(self, query, documents, *, purpose):
+            return [3. if "remove_credentials(value)" in doc and "preserve_destination(value)" in doc
+                    else -1. for doc in documents]
+    request = SearchRequest("remove credentials while preserving destination")
+    refined = refine_evidence([match], tmp_path, request, judge=Judge())
+    evidence = present(refined, tmp_path, request, profile_version="test").results[0]["evidence"]
+    visible = {n for e in evidence for n in range(e["start_line"], e["end_line"]+1)}
+    assert {31, 141} <= visible
+    assert sum(e["end_line"]-e["start_line"]+1 for e in evidence) <= 40
+    assert len(evidence) == 2
+    for e in evidence:
+        assert e["content"] == "\n".join(lines[e["start_line"]-1:e["end_line"]])

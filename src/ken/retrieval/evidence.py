@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import math
 from dataclasses import replace
+from itertools import combinations
 from pathlib import Path
 
 import numpy as np
@@ -58,19 +59,53 @@ def _windows(match: CodeMatch, lines: list[str], *, purpose: str, limit: int) ->
                 fields={**p.fields, "body": "\n".join(lines[span.start_line-1:span.end_line])}))
     if not proposals:
         return []
+    return sorted(proposals.values(), key=lambda p: (-_utility(match, (p,)), p.span.start_line))[:limit]
+
+
+def _utility(match: CodeMatch, fragments: tuple[Passage, ...]) -> float:
     peak = max(p.signals.get("joint_evidence", 0.) for p in match.evidence)
-    def utility(window: Passage) -> float:
-        # A unit contributes its overlap fraction, not one vote per duplicate.
-        return sum(math.exp(max(-40., p.signals.get("joint_evidence", 0.) - peak)) * max(0,
-                   min(p.span.end_line, window.span.end_line) - max(p.span.start_line, window.span.start_line) + 1)
-                   / (p.span.end_line - p.span.start_line + 1)
-                   for p in {p.span: p for p in match.evidence}.values())
-    return sorted(proposals.values(), key=lambda p: (-utility(p), p.span.start_line))[:limit]
+    # Fragments are nonoverlapping; a retrieval unit contributes its overlap
+    # fraction, never one additional vote per duplicate passage.
+    return sum(math.exp(max(-40., p.signals.get("joint_evidence", 0.) - peak)) * sum(max(0,
+               min(p.span.end_line, w.span.end_line) - max(p.span.start_line, w.span.start_line) + 1)
+               for w in fragments) / (p.span.end_line - p.span.start_line + 1)
+               for p in {p.span: p for p in match.evidence}.values())
+
+
+def _bundles(match: CodeMatch, lines: list[str], *, purpose: str, limit: int,
+             max_fragments: int) -> list[tuple[Passage, ...]]:
+    singles = _windows(match, lines, purpose=purpose, limit=limit)
+    proposals: dict[tuple[Span, ...], tuple[Passage, ...]] = {(p.span,): (p,) for p in singles}
+    distinct = {p.span: p for p in match.evidence}
+    strongest = sorted(distinct.values(), key=lambda p: (
+        -p.signals.get("joint_evidence", 0.), p.span.start_line))[:4]
+    for count in range(2, min(max_fragments, len(strongest)) + 1):
+        for group in combinations(strongest, count):
+            fragments = []
+            for index, p in enumerate(group):
+                bounds = source_bounds(match, p, len(lines), implementation=purpose != "documentation")
+                width = min(40 // count + int(index < 40 % count), bounds.end_line - bounds.start_line + 1)
+                center = (p.span.start_line + p.span.end_line) // 2
+                start = max(bounds.start_line, min(center - width // 2, bounds.end_line - width + 1))
+                span = Span(start, start + width - 1)
+                fragments.append(replace(p, span=span,
+                    fields={**p.fields, "body": "\n".join(lines[span.start_line-1:span.end_line])}))
+            fragments.sort(key=lambda p: p.span.start_line)
+            if any(a.span.end_line >= b.span.start_line for a, b in zip(fragments, fragments[1:])):
+                continue
+            proposals.setdefault(tuple(p.span for p in fragments), tuple(fragments))
+    ordered = sorted(proposals.values(), key=lambda bundle: (-_utility(match, bundle),
+                     len(bundle), tuple(p.span for p in bundle)))
+    # Preserve contiguous options: distributing every budget across fragments
+    # can cut a long, decisive branch even when a full window covers it.
+    reserved = [(p,) for p in singles[:min(2, limit)]]
+    return (reserved + [bundle for bundle in ordered if bundle not in reserved])[:limit]
 
 
 def refine_evidence(matches: list[CodeMatch], root: Path, request: SearchRequest, *,
-                    judge: RelevanceJudge, limit: int = 1, max_windows: int = 6) -> list[CodeMatch]:
-    if limit <= 0 or max_windows <= 0:
+                    judge: RelevanceJudge, limit: int = 1, max_windows: int = 6,
+                    max_fragments: int = 3) -> list[CodeMatch]:
+    if limit <= 0 or max_windows <= 0 or not 1 <= max_fragments <= 4:
         raise ValueError("positive evidence selection budgets required")
     intent = interpret(request)
     if intent.identity:
@@ -84,17 +119,18 @@ def refine_evidence(matches: list[CodeMatch], root: Path, request: SearchRequest
         except (OSError, ValueError, UnicodeError):
             # Presentation owns reporting stale source and retry policy.
             continue
-        windows = _windows(match, lines, purpose=intent.purpose, limit=max_windows)
-        if not windows:
+        bundles = _bundles(match, lines, purpose=intent.purpose, limit=max_windows,
+                            max_fragments=max_fragments)
+        if not bundles:
             continue
         scores = np.asarray(judge.score(request.query, [candidate_document(
-            Candidate(match.entity, [p]), purpose=intent.purpose) for p in windows],
+            Candidate(match.entity, list(bundle)), purpose=intent.purpose) for bundle in bundles],
             purpose=intent.purpose), dtype=np.float64)
-        if scores.shape != (len(windows),) or not np.isfinite(scores).all():
+        if scores.shape != (len(bundles),) or not np.isfinite(scores).all():
             raise ValueError("evidence selector must return one finite score per source window")
-        best = int(np.argmax(scores))
-        evidence = replace(windows[best], signals={**windows[best].signals,
-                           "selected_window": 1., "window_relevance": float(scores[best])})
-        result[index] = replace(match, evidence=[evidence],
+        best = max(range(len(bundles)), key=lambda i: (scores[i], -len(bundles[i])))
+        evidence = [replace(p, signals={**p.signals, "selected_window": 1.,
+                    "window_relevance": float(scores[best])}) for p in bundles[best]]
+        result[index] = replace(match, evidence=evidence,
             signals={**match.signals, "window_relevance": float(scores[best])})
     return result

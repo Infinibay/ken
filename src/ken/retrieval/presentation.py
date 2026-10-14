@@ -73,7 +73,17 @@ def present(matches: list[CodeMatch], root: Path, request: SearchRequest, *,
             result["evidence"] = [{"start_line": start, "end_line": end,
                                    "content": "\n".join(lines[start - 1:end])}]
             result["truncated"] = start > best.entity_span.start_line or end < upper
+            selected = [p for p in match.evidence if p.signals.get("selected_window")]
+            if selected:
+                result["evidence"] = [{"start_line": p.span.start_line, "end_line": p.span.end_line,
+                    "content": "\n".join(lines[p.span.start_line-1:p.span.end_line])}
+                    for p in sorted(selected, key=lambda p: p.span.start_line)]
+                shown = sum(p.span.end_line - p.span.start_line + 1 for p in selected)
+                if shown > 40:
+                    raise ValueError("selected evidence exceeds line budget")
+                result["truncated"] = shown < best.entity_span.end_line - best.entity_span.start_line + 1
         except (OSError, ValueError, UnicodeError) as exc:
+            result["evidence"] = []
             result["stale"] = True
             response.warnings.append(f"{path}: {exc}; reindex source before quoting evidence")
         if request.explain:

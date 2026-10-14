@@ -24,7 +24,7 @@ def passage_policy(profile: RetrievalProfile, *, encoder: Any = None) -> Passage
 def source_policy_key(profile: RetrievalProfile) -> tuple[int, str, int]:
     spec = profile.behavior
     tokenizer = ("code-lexical-v1" if profile.passage_tokenizer == "code-lexical-v1"
-                 else f"{spec.model_id}@{spec.revision}:tokenizer-v1")
+                 else f"{spec.model_id}@{spec.revision}:tokenizer-v1:{spec.tokenizer_revision}")
     return EXTRACTOR_VERSION, tokenizer, profile.max_tokens
 
 

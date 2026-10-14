@@ -110,3 +110,21 @@ def test_real_stdio_mcp_preserves_evidence_response_across_repeated_calls(tmp_pa
                             payload = json.loads(result.content[0].text)
                         assert payload == expected
     asyncio.run(exercise())
+
+
+def test_old_representation_is_actionable_and_explicit_reindex_upgrades_it(tmp_path, monkeypatch, capsys):
+    from ken.cli import main
+    from ken.retrieval.public import find
+    project(tmp_path, monkeypatch)
+    with connect(_paths.db_path(tmp_path)) as conn:
+        row = conn.execute("SELECT value FROM meta WHERE key='retrieval_profile'").fetchone()
+        old = json.loads(row[0])
+        old["representation_version"] = 2
+        conn.execute("UPDATE meta SET value=? WHERE key='retrieval_profile'", (json.dumps(old),))
+    with connect(_paths.db_path(tmp_path)) as conn:
+        response = find(conn, tmp_path, "remove credentials")
+    assert response["code"] == "retrieval_index_required"
+    monkeypatch.setattr("ken.retrieval.representations.load_encoder", lambda spec: Encoder())
+    assert main(["retrieval", "index", "--path", str(tmp_path), "--json"]) == 0
+    prepared = json.loads(capsys.readouterr().out)
+    assert prepared["profile"]["representation_version"] == 3

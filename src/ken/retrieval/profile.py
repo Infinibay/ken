@@ -7,6 +7,7 @@ import re
 from dataclasses import asdict, dataclass
 from functools import lru_cache
 from importlib import resources
+from importlib.metadata import PackageNotFoundError, version
 from typing import Any, Protocol
 
 import numpy as np
@@ -15,6 +16,24 @@ import numpy as np
 class Encoder(Protocol):
     def embed_passages(self, texts: list[str]) -> list[np.ndarray]: ...
     def embed_query(self, text: str) -> np.ndarray: ...
+
+
+def _package_version(name: str) -> str:
+    try:
+        return version(name)
+    except PackageNotFoundError:
+        return "unavailable"
+
+
+@lru_cache(maxsize=4)
+def _backend_runtime(backend: str) -> tuple[tuple[str, str], ...]:
+    packages = {
+        "static": ("numpy", "tokenizers"),
+        "sentence-transformers": ("numpy", "torch", "transformers", "tokenizers", "sentence-transformers", "huggingface-hub"),
+        "mlx": ("numpy", "mlx", "mlx-lm", "transformers", "tokenizers", "huggingface-hub"),
+        "provided": (),
+    }[backend]
+    return tuple((name, _package_version(name)) for name in packages)
 
 
 @dataclass(frozen=True)
@@ -38,8 +57,15 @@ class EncoderSpec:
 
     @property
     def key(self) -> str:
-        options = hashlib.sha256(json.dumps(asdict(self), sort_keys=True).encode()).hexdigest()
+        options = hashlib.sha256(json.dumps({"config": asdict(self),
+            "runtime": _backend_runtime(self.backend)}, sort_keys=True).encode()).hexdigest()
         return self.model_id + "@" + self.revision + ":" + options[:16]
+
+    @property
+    def tokenizer_revision(self) -> str:
+        runtime = tuple(item for item in _backend_runtime(self.backend)
+                        if item[0] in ("transformers", "tokenizers"))
+        return hashlib.sha256(json.dumps(runtime).encode()).hexdigest()[:16]
 
 
 @dataclass(frozen=True)
@@ -49,11 +75,13 @@ class JointRanking:
     rank_unit: str = "passage"
     evidence_results: int = 1
     max_windows: int = 6
+    max_fragments: int = 3
 
     def __post_init__(self) -> None:
         if self.rank_unit not in ("entity", "passage"):
             raise ValueError("unknown relevance unit")
-        if self.candidate_limit <= 0 or self.evidence_results < 0 or self.max_windows <= 0:
+        if (self.candidate_limit <= 0 or self.evidence_results < 0 or self.max_windows <= 0
+                or not 1 <= self.max_fragments <= 4):
             raise ValueError("invalid relevance/evidence budgets")
 
 
@@ -65,7 +93,7 @@ class RetrievalProfile:
     candidate_limit: int = 100
     rrf_k: int = 60
     passage_tokenizer: str = "code-lexical-v1"
-    representation_version: int = 2
+    representation_version: int = 3
     joint: JointRanking | None = None
 
     def __post_init__(self) -> None:
@@ -73,7 +101,7 @@ class RetrievalProfile:
             raise ValueError("positive retrieval budgets required")
         if self.passage_tokenizer not in ("code-lexical-v1", "behavior-model"):
             raise ValueError("unknown source passage tokenizer")
-        if self.representation_version != 2:
+        if self.representation_version != 3:
             raise ValueError("unsupported representation version; reindex with current profile")
 
     def vector_revision(self, view: str) -> str:
@@ -86,8 +114,10 @@ class RetrievalProfile:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, value: dict[str, Any]) -> RetrievalProfile:
+    def from_dict(cls, value: dict[str, Any], *, upgrade_representation: bool = False) -> RetrievalProfile:
         data = dict(value)
+        if upgrade_representation and data.get("representation_version") == 2:
+            data.pop("representation_version")
         data["identity"] = EncoderSpec(**data["identity"])
         data["behavior"] = EncoderSpec(**data["behavior"])
         if data.get("joint") is not None:
@@ -98,7 +128,10 @@ class RetrievalProfile:
 
     @property
     def fingerprint(self) -> str:
-        return hashlib.sha256(json.dumps(self.to_dict(), sort_keys=True).encode()).hexdigest()
+        return hashlib.sha256(json.dumps({"config": self.to_dict(), "runtime": {
+            "identity": _backend_runtime(self.identity.backend),
+            "behavior": _backend_runtime(self.behavior.backend),
+            "joint": _backend_runtime(self.joint.model.backend) if self.joint else ()}}, sort_keys=True).encode()).hexdigest()
 
 
 @lru_cache(maxsize=1)
