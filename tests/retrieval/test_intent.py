@@ -36,3 +36,16 @@ def test_explicit_test_requests_are_interpreted_in_both_languages(query):
 def test_behavior_mentioning_a_test_does_not_automatically_request_test_source():
     assert interpret(SearchRequest("Where does the runner test the exit status?")).purpose == "implementation"
     assert interpret(SearchRequest("Which test covers dates?", purpose="implementation")).purpose == "implementation"
+
+
+@pytest.mark.parametrize("query", ["Where is `Client.redirect` defined?",
+    "¿Dónde está definido `Client.redirect`?", "¿Qué archivo fuente declara `Client.redirect`?",
+    "Where is Client.redirect declared?"])
+def test_qualified_identity_in_natural_definition_requests(query):
+    intent = interpret(SearchRequest(query))
+    assert intent.identity
+    assert intent.identifiers == ("Client.redirect",)
+
+
+def test_quoted_name_in_a_usage_question_does_not_force_definition_lookup():
+    assert not interpret(SearchRequest("Where is `Client.redirect` called?")).identity

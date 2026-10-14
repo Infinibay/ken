@@ -111,3 +111,32 @@ def test_passage_judgments_choose_owner_and_retain_decisive_evidence_score():
     best = max(matches[0].evidence, key=lambda p: p.signals["joint_evidence"])
     assert best.span == Span(5, 7)
     assert matches[0].score == 2
+
+
+def test_many_reviewed_negatives_do_not_give_one_query_extra_training_weight():
+    from ken.retrieval.linear import Preference, fit_ranker
+    first = Preference("train", {"role_match": 1.}, {"role_match": 0.}, query_id="a")
+    second = Preference("train", {"cosine_behavior": .9}, {"cosine_behavior": .1}, query_id="b")
+    control = fit_ranker([first, second], validation_groups=set())
+    repeated = fit_ranker([first] * 10 + [second], validation_groups=set())
+    assert np.allclose(control.weights, repeated.weights, atol=1e-7)
+    assert np.allclose(control.means, repeated.means, atol=1e-7)
+    assert np.allclose(control.scales, repeated.scales, atol=1e-7)
+
+
+def test_joint_calibrator_learns_role_compatibility_without_losing_exact_precedence():
+    from ken.retrieval.linear import JOINT_FEATURES, Preference, fit_ranker
+    from ken.retrieval.ranking import rank_candidates
+    model = fit_ranker([Preference("train", {"joint_relevance": 7., "role_match": 1.},
+        {"joint_relevance": 8., "role_match": 0.}, query_id="q")], validation_groups={"held-out"},
+        features=JOINT_FEATURES)
+    implementation = candidate("lookup", "raise Error")
+    test = candidate("test_lookup", "assert raises(Error)", role="test")
+    class Judge:
+        def score(self, query, documents, *, purpose):
+            return [7., 8.]
+    matches = rank_candidates(SearchRequest("convert missing key to error"), [implementation, test],
+                              judge=Judge(), calibrator=model)
+    assert matches[0].entity == implementation.entity
+    assert matches[0].signals["joint_relevance"] == 7.
+    assert "calibrated_relevance" in matches[0].signals

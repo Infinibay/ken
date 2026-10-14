@@ -31,17 +31,23 @@ def interpret(request: SearchRequest) -> QueryIntent:
         else:
             purpose = "implementation"
     raw = _identifier_query(query)
-    explicit = bool(re.search(r"\b(?:definition|declaration|definición|declaración)\b", lower)
+    explicit = bool(re.search(r"\b(?:definition|declaration|definición|declaración|defined|declared|"
+                              r"defines|declares|definid[oa]|declarad[oa]|declara)\b", lower)
                     or (re.search(r"^(?:show|find|locate|mostrame|muestra|busca)\b", lower)
                         and re.search(r"\b(?:class|clase|function|función|method|método|helper|utility)\b", lower)))
     if raw is not None:
         return QueryIntent(purpose, False, (raw,))
     if not explicit:
         return QueryIntent(purpose)
+    quoted = tuple(identifier for text in re.findall(r"`([^`]+)`", query)
+                   if (identifier := _identifier_query(text)) is not None)
     stop = {"show", "find", "locate", "mostrame", "muestra", "busca", "the", "a", "an", "la", "el",
             "de", "del", "definition", "declaration", "definición", "declaración", "class", "clase",
-            "function", "función", "method", "método", "helper", "utility"}
-    identifiers = tuple(token for token in re.findall(r"[\w$]+(?:[.:]+[\w$]+)*", query)
+            "function", "función", "method", "método", "helper", "utility",
+            "where", "is", "defined", "declared", "defines", "declares", "dónde", "donde",
+            "está", "esta", "definido", "definida", "declarado", "declarada", "declara", "qué", "que",
+            "archivo", "fuente", "source", "file"}
+    identifiers = quoted or tuple(token for token in re.findall(r"[\w$]+(?:[.:]+[\w$]+)*", query)
                         if token.casefold() not in stop)
     kind = "class" if re.search(r"\b(?:class|clase)\b", lower) else None
     return QueryIntent(purpose, True, identifiers, kind)
