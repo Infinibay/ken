@@ -29,6 +29,7 @@ class ParsedScope:
     documentation: str | None = None
     owner: str | None = None
     statements: list[tuple[int, int]] = field(default_factory=list)
+    implementation_start_line: int | None = None
 
 
 @dataclass

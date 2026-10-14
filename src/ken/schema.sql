@@ -107,6 +107,7 @@ CREATE TABLE IF NOT EXISTS ci_passages (
     fields_json TEXT NOT NULL,
     role TEXT NOT NULL,
     split_reason TEXT,
+    implementation_start_line INTEGER,
     CHECK (line_start > 0 AND line_end >= line_start)
 );
 CREATE INDEX IF NOT EXISTS idx_ci_passages_file ON ci_passages(file_id);

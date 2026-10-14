@@ -69,3 +69,17 @@ def test_parser_legacy_symbols_remain_compatible_but_scopes_include_closures():
     parsed = parse_python_file(source, "x.py")
     assert [s.name for s in parsed.symbols] == ["outer"]
     assert [scope.symbol.qualname for scope in parsed.scopes] == ["outer", "outer.inner"]
+
+
+def test_binary_assets_do_not_become_behavior_passages():
+    from ken.parsers.types import ParsedFile
+    from ken.retrieval.passages import extract_passages
+    assert extract_passages(b"PNG\x00\xff\x00image", ParsedFile(), path="logo.png") == []
+
+
+def test_passages_prefer_complete_statements_and_separate_documentation():
+    source = b'def clean(value):\n    """Clean a value."""\n    result = operation(\n        value,\n        strict=True,\n    )\n    return result\n'
+    passages = extract(source, budget=24)
+    assert all(p.implementation_start_line == 3 for p in passages)
+    assert any(p.span.start_line == 3 and p.span.end_line >= 6 for p in passages)
+    assert all(not (p.span.start_line < 3 <= p.span.end_line) for p in passages)

@@ -17,6 +17,21 @@ def indexed(tmp_path):
     return conn
 
 
+def test_unchanged_bytes_reindex_when_tokenizer_or_budget_changes(tmp_path):
+    from ken.retrieval.passages import PassagePolicy
+    from ken.retrieval.storage import generation
+    conn = indexed(tmp_path)
+    before = generation(conn)
+    policy = PassagePolicy(max_tokens=8, tokenizer_version="actual-model-tokenizer-v1")
+    stats = index_files(conn, tmp_path, [Path("auth.py")], retrieval_policy=policy)
+    assert stats.parsed == 1
+    assert generation(conn) > before
+    again = index_files(conn, tmp_path, [Path("auth.py")], retrieval_policy=policy)
+    assert again.unchanged == 1
+    row = conn.execute("SELECT tokenizer_version,max_tokens FROM ci_retrieval_files").fetchone()
+    assert tuple(row) == (policy.tokenizer_version, 8)
+
+
 def test_indexer_persists_passages_and_canonical_nested_identity(tmp_path):
     from ken.retrieval.storage import load_passages
     with indexed(tmp_path) as conn:

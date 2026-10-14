@@ -11,7 +11,7 @@ from pathlib import PurePosixPath
 from ken.parsers.types import ParsedFile, ParsedScope
 from ken.retrieval.model import EntityKey, Passage, Span
 
-EXTRACTOR_VERSION = 1
+EXTRACTOR_VERSION = 2
 
 
 def lexical_token_count(text: str) -> int:
@@ -45,6 +45,8 @@ def extract_passages(source: bytes, parsed: ParsedFile, *, path: str,
                      policy: PassagePolicy | None = None,
                      language: str = "text") -> list[Passage]:
     policy = policy or PassagePolicy()
+    if b"\x00" in source:
+        return []
     lines = source.decode("utf-8", errors="replace").splitlines()
     if not lines:
         return []
@@ -75,12 +77,21 @@ def extract_passages(source: bytes, parsed: ParsedFile, *, path: str,
     start = 1
     while start <= len(lines):
         owner_index = assigned.get(start, -1)
+        owner_scope = scopes[owner_index] if owner_index >= 0 else None
+        implementation_start = owner_scope.implementation_start_line if owner_scope else None
+        statement_ends = {end for _, end in owner_scope.statements} if owner_scope else set()
         end = start
         while end < len(lines) and assigned.get(end + 1, -1) == owner_index:
+            if end + 1 == implementation_start:
+                break
             candidate = "\n".join(lines[start - 1:end + 1])
             if policy.count_tokens(candidate) > policy.max_tokens:
                 break
             end += 1
+        if (end < len(lines) and assigned.get(end + 1, -1) == owner_index
+                and end + 1 != implementation_start):
+            boundary = max((line for line in statement_ends if start <= line <= end), default=end)
+            end = boundary
         body = "\n".join(lines[start - 1:end])
         if body.strip():
             current_scope = scopes[owner_index] if owner_index >= 0 else None
@@ -93,6 +104,7 @@ def extract_passages(source: bytes, parsed: ParsedFile, *, path: str,
             extent = Span(current_scope.symbol.line_start, current_scope.symbol.line_end) if current_scope else Span(1, len(lines))
             split = "oversized_line" if policy.count_tokens(body) > policy.max_tokens else None
             out.append(Passage(entity, Span(start, end), fields, digest, extent,
-                               language, _role(path, entity.qualname), split))
+                               language, _role(path, entity.qualname), split,
+                               implementation_start_line=implementation_start))
         start = end + 1
     return out

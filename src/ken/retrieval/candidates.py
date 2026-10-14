@@ -1,0 +1,122 @@
+"""Union independent evidence sources, grouping by owner before applying budgets."""
+from __future__ import annotations
+
+import json
+import sqlite3
+from collections import defaultdict
+from collections.abc import Mapping
+from dataclasses import replace
+from functools import lru_cache
+from pathlib import Path
+
+import numpy as np
+
+from ken.retrieval.embedding_store import IndexVersionError, load_vectors, retrieval_snapshot
+from ken.retrieval.lexical import lexical_candidates
+from ken.retrieval.intent import interpret
+from ken.retrieval.model import Candidate, EntityKey, Passage, SearchRequest
+from ken.retrieval.profile import Encoder, RetrievalProfile, default_profile, load_encoder
+from ken.retrieval.storage import load_passage_map
+
+
+@lru_cache(maxsize=4)
+def _passage_snapshot(conn: sqlite3.Connection, generation: int) -> Mapping[int, Passage]:
+    # The caller pins the matching WAL generation before entering this cache.
+    return load_passage_map(conn)
+
+
+@lru_cache(maxsize=8)
+def _vector_snapshot(conn: sqlite3.Connection, generation: int, view: str, revision: str):
+    return load_vectors(conn, view, revision)
+
+
+def active_profile(conn: sqlite3.Connection) -> RetrievalProfile:
+    row = conn.execute("SELECT value FROM meta WHERE key='retrieval_profile'").fetchone()
+    return RetrievalProfile.from_dict(json.loads(row[0])) if row else default_profile()
+
+
+def _exact(conn: sqlite3.Connection, passages: Mapping[int, Passage],
+           request: SearchRequest) -> list[Candidate]:
+    intent = interpret(request)
+    if not intent.identifiers:
+        return []
+    placeholders = ",".join("?" for _ in intent.identifiers)
+    rows = conn.execute(
+        "SELECT s.kind,s.qualname,f.path FROM ci_symbols s JOIN ci_files f ON f.id=s.file_id "
+        f"WHERE s.name COLLATE NOCASE IN ({placeholders}) OR s.qualname COLLATE NOCASE IN ({placeholders}) "
+        "ORDER BY f.path,s.line_start,s.id", (*intent.identifiers, *intent.identifiers),
+    ).fetchall()
+    matching = {(r["path"], r["kind"], r["qualname"]) for r in rows
+                if intent.kind is None or r["kind"] == intent.kind}
+    groups: dict[EntityKey, list[Passage]] = defaultdict(list)
+    for p in passages.values():
+        if (p.entity.path, p.entity.kind, p.entity.qualname) in matching:
+            groups[p.entity].append(p)
+    return [Candidate(key, values, {"exact": 1.0})
+            for key, values in groups.items()]
+
+
+def _dense(passages: Mapping[int, Passage], ids: tuple[int, ...], matrix: np.ndarray,
+           query: np.ndarray, view: str, limit: int) -> list[Candidate]:
+    if matrix.ndim != 2 or query.ndim != 1 or matrix.shape[1] != query.size:
+        raise IndexVersionError("query/vector dimensions differ; reindex the retrieval profile")
+    if not np.isfinite(query).all() or float(np.linalg.norm(query)) <= 0:
+        raise ValueError("encoder returned an invalid query vector")
+    scores = matrix @ (query / np.linalg.norm(query))
+    grouped: dict[EntityKey, list[tuple[float, Passage]]] = defaultdict(list)
+    for index in np.argsort(-scores, kind="stable"):
+        p = passages[ids[int(index)]]
+        grouped[p.entity].append((float(scores[index]), p))
+    out = []
+    for entity, pairs in list(grouped.items())[:limit]:
+        evidence = [replace(p, signals={**p.signals, f"cosine_{view}": score})
+                    for score, p in pairs[:4]]
+        out.append(Candidate(entity, evidence, {f"cosine_{view}": pairs[0][0]}))
+    return out
+
+
+def retrieve(conn: sqlite3.Connection, root: Path, request: SearchRequest,
+             profile: RetrievalProfile | None = None, *,
+             encoders: Mapping[str, Encoder] | None = None) -> list[Candidate]:
+    profile = profile or active_profile(conn)
+    with retrieval_snapshot(conn) as snapshot:
+        passages = _passage_snapshot(conn, snapshot.generation)
+        if not passages:
+            raise IndexVersionError("no source passages; reindex the project")
+        exact = _exact(conn, passages, request)
+        if len(exact) == 1:
+            exact[0].signals["rrf"] = 1.0
+            return exact
+        channels = [exact, lexical_candidates(conn, request, profile.candidate_limit)]
+        for view in ("identity", "behavior"):
+            spec = getattr(profile, view)
+            stored = _vector_snapshot(conn, snapshot.generation, view, spec.key)
+            if set(stored.ids) != passages.keys():
+                raise IndexVersionError(f"incomplete {view} vectors; reindex the retrieval profile")
+            encoder = encoders[view] if encoders else load_encoder(spec)
+            query = np.asarray(encoder.embed_query(request.query), dtype=np.float32)
+            channels.append(_dense(passages, stored.ids, stored.matrix, query,
+                                   view, profile.candidate_limit))
+        merged: dict[EntityKey, Candidate] = {}
+        for channel in channels:
+            for rank, candidate in enumerate(channel, 1):
+                entity = candidate.entity
+                if entity not in merged:
+                    merged[entity] = Candidate(entity, [], {"rrf": 0.0})
+                combined = merged[entity]
+                for name, value in candidate.signals.items():
+                    combined.signals[name] = max(value, combined.signals.get(name, float("-inf")))
+                combined.signals["rrf"] += 1 / (profile.rrf_k + rank)
+                positions = {p.span: i for i, p in enumerate(combined.passages)}
+                for p in candidate.passages:
+                    if p.span in positions:
+                        index = positions[p.span]
+                        prior = combined.passages[index]
+                        combined.passages[index] = replace(
+                            prior, signals={**prior.signals, **p.signals})
+                    else:
+                        positions[p.span] = len(combined.passages)
+                        combined.passages.append(p)
+        return sorted(merged.values(), key=lambda c: (
+            -c.signals.get("exact", 0), -c.signals["rrf"], c.entity.path,
+            min(p.span.start_line for p in c.passages)))[:profile.candidate_limit]

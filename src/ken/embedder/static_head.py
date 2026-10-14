@@ -226,3 +226,7 @@ class StaticHeadEmbedder:
 
     def embed_query(self, text: str) -> np.ndarray:
         return self._encode([text])[0]
+
+    def token_count(self, text: str) -> int:
+        self._load()
+        return len(self._tok.encode(text, add_special_tokens=False).ids)

@@ -54,6 +54,7 @@ from ken.parsers import detect_language
 if TYPE_CHECKING:  # pragma: no cover
     from ken.embedder import Embedder
     from ken.retrieval.model import Passage
+    from ken.retrieval.passages import PassagePolicy
 
 logger = logging.getLogger("ken.indexer")
 
@@ -164,6 +165,7 @@ class _Pending:
     blobs: dict[tuple, bytes] = field(default_factory=dict)
     passages: list["Passage"] = field(default_factory=list)
     source_sha256: str = ""
+    retrieval_policy: "PassagePolicy | None" = None
 
 
 def index_files(
@@ -174,6 +176,7 @@ def index_files(
     max_file_bytes: int = 1024 * 1024,
     on_progress=None,
     embedder: "Embedder | None" = None,
+    retrieval_policy: "PassagePolicy | None" = None,
 ) -> IndexStats:
     """Index every relative path in *rels* into *conn*.
 
@@ -207,7 +210,7 @@ def index_files(
             events: list[tuple[int, str, str]] = []
             pending = _prepare_chunk(
                 conn, project_root, chunk, max_file_bytes, embedder, stats,
-                events, pool, stopwords,
+                events, pool, stopwords, retrieval_policy,
             )
             _embed_pending(pending, embedder, stores)
             _write_pending(conn, pending, stats, events, stores)
@@ -352,6 +355,7 @@ def _prepare_chunk(
     events: list[tuple[int, str, str]],
     pool=None,
     stopwords: set[str] | None = None,
+    retrieval_policy: "PassagePolicy | None" = None,
 ) -> list[_Pending]:
     """Read, hash and parse every file in *chunk*; collect the texts to embed.
 
@@ -401,7 +405,8 @@ def _prepare_chunk(
                 continue
             content_hash = _hash(data)
             if _is_unchanged(
-                conn, rel_posix, content_hash, need_embedding=embedder is not None
+                conn, rel_posix, content_hash, need_embedding=embedder is not None,
+                retrieval_policy=retrieval_policy,
             ):
                 stats.unchanged += 1
                 events.append((order, rel_posix, "unchanged"))
@@ -416,8 +421,9 @@ def _prepare_chunk(
                 stopwords=stopwords or set(),
                 order=order,
                 intent_texts=intent_texts,
-                passages=extract_passages(data, ParsedFile(), path=rel_posix),
+                passages=extract_passages(data, ParsedFile(), path=rel_posix, policy=retrieval_policy),
                 source_sha256=hashlib.sha256(data).hexdigest(),
+                retrieval_policy=retrieval_policy,
             )
             del data
             if embedder is not None:
@@ -444,7 +450,8 @@ def _prepare_chunk(
 
         content_hash = _hash(data)
         if _is_unchanged(
-            conn, rel_posix, content_hash, need_embedding=embedder is not None
+            conn, rel_posix, content_hash, need_embedding=embedder is not None,
+            retrieval_policy=retrieval_policy,
         ):
             stats.unchanged += 1
             events.append((order, rel_posix, "unchanged"))
@@ -462,6 +469,7 @@ def _prepare_chunk(
                 mtime_ns=st.st_mtime_ns,
                 stopwords=stopwords or set(),
                 order=order,
+                retrieval_policy=retrieval_policy,
             )
         )
 
@@ -480,7 +488,8 @@ def _prepare_chunk(
         parsed.symbols.sort(key=lambda s: (s.line_start, -s.line_end))
         item.parsed = parsed
         item.source_sha256 = hashlib.sha256(job[2]).hexdigest()
-        item.passages = extract_passages(job[2], parsed, path=item.rel, language=item.language or "text")
+        item.passages = extract_passages(job[2], parsed, path=item.rel,
+            language=item.language or "text", policy=retrieval_policy)
         if embedder is not None:
             for i, s in enumerate(parsed.symbols):
                 item.texts.append(embed_symbol_text(s.kind, s.name, s.docstring))
@@ -659,7 +668,8 @@ def _write_plain(
                 weight=0.55,
                 vec_slot=intent_slots[pos],
             )
-        storage.replace_file_passages(conn, file_id, item.passages, source_hash=item.source_sha256)
+        storage.replace_file_passages(conn, file_id, item.passages,
+            source_hash=item.source_sha256, policy=item.retrieval_policy)
 
 
 def _write_parsed(
@@ -748,7 +758,8 @@ def _write_parsed(
                 "INSERT INTO ci_imports(from_file_id, to_module, line) VALUES (?, ?, ?)",
                 [(file_id, imp.module, imp.line) for imp in parsed.imports],
             )
-        storage.replace_file_passages(conn, file_id, item.passages, source_hash=item.source_sha256)
+        storage.replace_file_passages(conn, file_id, item.passages,
+            source_hash=item.source_sha256, policy=item.retrieval_policy)
 
 
 def _store_vectors(
@@ -867,6 +878,7 @@ def _is_unchanged(
     content_hash: bytes,
     *,
     need_embedding: bool,
+    retrieval_policy: "PassagePolicy | None" = None,
 ) -> bool:
     """A row is unchanged iff hash + parser match.
 
@@ -891,6 +903,15 @@ def _is_unchanged(
     if row["content_hash"] != content_hash or row["parser_version"] != PARSER_VERSION:
         return False
     if need_embedding and not row["has_emb"]:
+        return False
+    from ken.retrieval.passages import EXTRACTOR_VERSION, PassagePolicy
+    policy = retrieval_policy or PassagePolicy()
+    projection = conn.execute(
+        "SELECT r.extractor_version,r.tokenizer_version,r.max_tokens "
+        "FROM ci_retrieval_files r JOIN ci_files f ON f.id=r.file_id WHERE f.path=?", (rel,),
+    ).fetchone()
+    if projection is None or tuple(projection) != (
+            EXTRACTOR_VERSION, policy.tokenizer_version, policy.max_tokens):
         return False
     return True
 

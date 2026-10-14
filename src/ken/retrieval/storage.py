@@ -36,10 +36,11 @@ def replace_file_passages(conn: sqlite3.Connection, file_id: int,
                 raise ValueError(f"passage has no canonical symbol: {p.entity.qualname}")
             symbol_id = symbols[key]
         cur = conn.execute(
-            "INSERT INTO ci_passages(file_id,symbol_id,line_start,line_end,fields_json,role,split_reason) "
-            "VALUES (?,?,?,?,?,?,?)",
+            "INSERT INTO ci_passages(file_id,symbol_id,line_start,line_end,fields_json,role,split_reason,implementation_start_line) "
+            "VALUES (?,?,?,?,?,?,?,?)",
             (file_id, symbol_id, p.span.start_line, p.span.end_line,
-             json.dumps(p.fields, ensure_ascii=False, separators=(",", ":")), p.role, p.split_reason),
+             json.dumps(p.fields, ensure_ascii=False, separators=(",", ":")), p.role, p.split_reason,
+             p.implementation_start_line),
         )
         passage_id = cur.lastrowid
         for name, text in p.fields.items():
@@ -91,7 +92,8 @@ def load_passage_map(conn: sqlite3.Connection, ids: Sequence[int] | None = None)
         span = Span(row["line_start"], row["line_end"])
         identity, extent = symbols.get(row["symbol_id"], (EntityKey(row["path"], "module", None), span))
         out[row["id"]] = Passage(identity, span, json.loads(row["fields_json"]), row["source_hash"],
-                                extent, row["language"] or "text", row["role"], row["split_reason"])
+                                extent, row["language"] or "text", row["role"], row["split_reason"],
+                                implementation_start_line=row["implementation_start_line"])
     return out
 
 

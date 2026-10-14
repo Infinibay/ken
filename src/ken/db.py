@@ -61,6 +61,7 @@ _COLUMN_MIGRATIONS: tuple[tuple[str, str, str], ...] = (
     ("ci_files", "vec_slot", "INTEGER"),
     ("ci_symbols", "vec_slot", "INTEGER"),
     ("ci_intent_sources", "vec_slot", "INTEGER"),
+    ("ci_passages", "implementation_start_line", "INTEGER"),
 )
 
 #: Reclaiming a vector slot has to survive ``ON DELETE CASCADE``: dropping a

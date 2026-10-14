@@ -159,9 +159,20 @@ def _resolve_device() -> str:
 class SentenceTransformerEmbedder:
     """Lazy, GPU-aware wrapper around sentence_transformers.SentenceTransformer."""
 
-    def __init__(self, model_name: str, *, device: str | None = None) -> None:
+    def __init__(self, model_name: str, *, device: str | None = None,
+                 revision: str | None = None, local_files_only: bool = False,
+                 trust_remote_code: bool = True, model_path: str | None = None,
+                 dtype: str | None = None, sequence_length: int | None = None,
+                 batch_size: int | None = None) -> None:
         self.model_name = model_name
         self._device_override = device
+        self.revision = revision
+        self.local_files_only = local_files_only
+        self.trust_remote_code = trust_remote_code
+        self.model_path = model_path
+        self.dtype = dtype
+        self.sequence_length = sequence_length
+        self.batch_size = batch_size
         self._lock = threading.Lock()
         self._model: SentenceTransformer | None = None
         self._dim = 0
@@ -217,15 +228,24 @@ class SentenceTransformerEmbedder:
         # last-token pooling handles either side. Do not "fix" this by copying
         # the model card. (Nor ``attn_implementation="flash_attention_2"``,
         # also from the card: FA2 has no Apple Silicon support at all.)
+        options = {}
+        if self.revision is not None:
+            options["revision"] = self.revision
+        if self.local_files_only:
+            options["local_files_only"] = True
+        if self.dtype is not None:
+            options["model_kwargs"] = {"torch_dtype": self.dtype}
         model = SentenceTransformer(
-            self.model_name, trust_remote_code=True, device=device
+            self.model_path or self.model_name,
+            trust_remote_code=self.trust_remote_code, device=device, **options
         )
         # Bound memory: cap the context so a stray long text can't pad a whole
         # batch to the model's (possibly 32k) default.
         try:
             cur = getattr(model, "max_seq_length", None)
-            if cur is None or cur > _MAX_SEQ:
-                model.max_seq_length = _MAX_SEQ
+            limit = self.sequence_length or _MAX_SEQ
+            if cur is None or cur > limit:
+                model.max_seq_length = limit
         except Exception:  # pragma: no cover - model without the attr
             pass
         return model
@@ -255,10 +275,14 @@ class SentenceTransformerEmbedder:
                 self._dim = int(get_dim())
         return self._model
 
+    def token_count(self, text: str) -> int:
+        model = self._ensure_model()
+        return len(model.tokenizer.encode(text, add_special_tokens=False))
+
     def _run(self, model: "SentenceTransformer", payload: list[str]) -> np.ndarray:
         return model.encode(
             payload,
-            batch_size=_BATCH,
+            batch_size=self.batch_size or _BATCH,
             convert_to_numpy=True,
             normalize_embeddings=True,
             show_progress_bar=False,

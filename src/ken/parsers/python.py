@@ -58,6 +58,15 @@ def _collect_scopes(node: Node, source: bytes, owner: str, parent_kind: str | No
             _extract_docstring(node, source, full=True), owner or None,
             [(s.start_point[0] + 1, s.end_point[0] + 1) for s in body.named_children] if body else []))
         if body is not None:
+            statements = list(body.named_children)
+            if (statements and statements[0].type == "expression_statement"
+                    and statements[0].named_children
+                    and statements[0].named_children[0].type in ("string", "concatenated_string")):
+                statements = statements[1:]
+            executable = next((s for s in statements if s.type != "comment"), None)
+            out.scopes[-1].implementation_start_line = (
+                executable.start_point[0] + 1 if executable else symbol.line_end)
+        if body is not None:
             for child in body.named_children:
                 _collect_scopes(child, source, qualname, kind, existing, out)
         return

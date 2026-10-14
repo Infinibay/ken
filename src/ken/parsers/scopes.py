@@ -54,3 +54,6 @@ def enrich_scopes(source: bytes, root: Node, parsed: ParsedFile) -> None:
             [(n.start_point[0] + 1, n.end_point[0] + 1) for n in body.named_children]
             if body else [],
         ))
+        executable = next((n for n in body.named_children if "comment" not in n.type), None) if body else None
+        parsed.scopes[-1].implementation_start_line = (
+            executable.start_point[0] + 1 if executable else symbol.line_start)

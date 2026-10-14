@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Any
 
 
 @dataclass(frozen=True, order=True)
@@ -41,6 +42,7 @@ class Passage:
     role: str = "definition"
     split_reason: str | None = None
     signals: dict[str, float] = field(default_factory=dict)
+    implementation_start_line: int | None = None
 
 
 @dataclass(frozen=True)
@@ -66,3 +68,27 @@ class Candidate:
     entity: EntityKey
     passages: list[Passage]
     signals: dict[str, float] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class CodeMatch:
+    entity: EntityKey
+    score: float
+    evidence: list[Passage]
+    source_hash: str
+    signals: dict[str, float] = field(default_factory=dict)
+
+
+@dataclass
+class SearchResponse:
+    query: str
+    results: list[dict[str, Any]]
+    profile_version: str
+    warnings: list[str] = field(default_factory=list)
+    truncated: bool = False
+    omitted_count: int = 0
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"query": self.query, "results": self.results,
+                "profile_version": self.profile_version, "warnings": self.warnings,
+                "truncated": self.truncated, "omitted_count": self.omitted_count}
