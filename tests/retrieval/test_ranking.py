@@ -64,7 +64,7 @@ def test_last_real_token_projection_equals_full_vocabulary_logits():
 
 def test_validation_repository_cannot_fit_scaler_or_weights():
     import pytest
-    from ken.retrieval.linear import Preference, fit_ranker
+    from ken.bench.ranking_controls import Preference, fit_ranker
     training = [Preference("train", {"cosine_behavior": .9}, {"cosine_behavior": .1})]
     artifact = fit_ranker(training, validation_groups={"validation"}, regularization=.1)
     assert artifact.training_groups == ("train",)
@@ -74,7 +74,7 @@ def test_validation_repository_cannot_fit_scaler_or_weights():
 
 
 def test_linear_score_trace_reconstructs_rank_and_serializes():
-    from ken.retrieval.linear import LinearRanker, Preference, fit_ranker
+    from ken.bench.ranking_controls import LinearRanker, Preference, fit_ranker
     artifact = fit_ranker([Preference("train", {"cosine_behavior": .9},
                                       {"cosine_behavior": .1})], validation_groups=set(), regularization=.1)
     features = {"cosine_behavior": .8}
@@ -114,7 +114,7 @@ def test_passage_judgments_choose_owner_and_retain_decisive_evidence_score():
 
 
 def test_many_reviewed_negatives_do_not_give_one_query_extra_training_weight():
-    from ken.retrieval.linear import Preference, fit_ranker
+    from ken.bench.ranking_controls import Preference, fit_ranker
     first = Preference("train", {"role_match": 1.}, {"role_match": 0.}, query_id="a")
     second = Preference("train", {"cosine_behavior": .9}, {"cosine_behavior": .1}, query_id="b")
     control = fit_ranker([first, second], validation_groups=set())
@@ -125,7 +125,7 @@ def test_many_reviewed_negatives_do_not_give_one_query_extra_training_weight():
 
 
 def test_joint_calibrator_learns_role_compatibility_without_losing_exact_precedence():
-    from ken.retrieval.linear import JOINT_FEATURES, Preference, fit_ranker
+    from ken.bench.ranking_controls import JOINT_FEATURES, Preference, calibrate, fit_ranker
     from ken.retrieval.ranking import rank_candidates
     model = fit_ranker([Preference("train", {"joint_relevance": 7., "role_match": 1.},
         {"joint_relevance": 8., "role_match": 0.}, query_id="q")], validation_groups={"held-out"},
@@ -135,8 +135,8 @@ def test_joint_calibrator_learns_role_compatibility_without_losing_exact_precede
     class Judge:
         def score(self, query, documents, *, purpose):
             return [7., 8.]
-    matches = rank_candidates(SearchRequest("convert missing key to error"), [implementation, test],
-                              judge=Judge(), calibrator=model)
+    request = SearchRequest("convert missing key to error")
+    matches = calibrate(request, rank_candidates(request, [implementation, test], judge=Judge()), model)
     assert matches[0].entity == implementation.entity
     assert matches[0].signals["joint_relevance"] == 7.
     assert "calibrated_relevance" in matches[0].signals

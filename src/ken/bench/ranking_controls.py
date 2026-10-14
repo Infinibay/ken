@@ -1,4 +1,4 @@
-"""Auditable pairwise relevance, fitted only from independently judged preferences."""
+"""Experimental ranking controls; never part of the production search profile."""
 from __future__ import annotations
 
 import hashlib
@@ -6,12 +6,12 @@ import json
 import math
 from collections import Counter
 from collections.abc import Mapping, Sequence
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 
 import numpy as np
 
 from ken.retrieval.intent import interpret
-from ken.retrieval.model import Candidate, SearchRequest
+from ken.retrieval.model import Candidate, CodeMatch, SearchRequest
 from ken.retrieval.tokenization import code_tokens
 
 FEATURES = ("rrf", "cosine_identity", "cosine_behavior", "bm25f", "bm25_body",
@@ -43,6 +43,33 @@ def candidate_features(request: SearchRequest, candidate: Candidate) -> dict[str
         "joint_missing": float("joint_relevance" not in candidate.signals),
     })
     return features
+
+
+def rank_linear(request: SearchRequest, candidates: list[Candidate],
+                model: LinearRanker) -> list[CodeMatch]:
+    matches = []
+    for candidate in candidates:
+        score = model.score(candidate_features(request, candidate))
+        matches.append(CodeMatch(candidate.entity, score, candidate.passages,
+            candidate.passages[0].source_hash,
+            {**candidate.signals, "linear_relevance": score}, candidate.owned_regions))
+    return _ordered(matches)
+
+
+def calibrate(request: SearchRequest, matches: list[CodeMatch],
+              model: LinearRanker) -> list[CodeMatch]:
+    calibrated = []
+    for match in matches:
+        features = candidate_features(request, Candidate(match.entity, match.evidence, match.signals))
+        score = model.score(features)
+        calibrated.append(replace(match, score=score,
+            signals={**match.signals, "calibrated_relevance": score}))
+    return _ordered(calibrated)
+
+
+def _ordered(matches: list[CodeMatch]) -> list[CodeMatch]:
+    return sorted(matches, key=lambda m: (-m.signals.get("exact", 0), -m.score,
+                                         m.entity.path, m.evidence[0].span.start_line))
 
 
 @dataclass(frozen=True)

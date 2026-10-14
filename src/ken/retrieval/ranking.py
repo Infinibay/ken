@@ -9,7 +9,6 @@ import numpy as np
 
 from ken.retrieval.intent import interpret
 from ken.retrieval.model import Candidate, CodeMatch, EntityKey, Passage, SearchRequest
-from ken.retrieval.linear import LinearRanker, candidate_features
 
 
 class RelevanceJudge(Protocol):
@@ -40,23 +39,20 @@ def candidate_document(candidate: Candidate, *, purpose: str = "implementation")
 
 def rank_candidates(request: SearchRequest, candidates: list[Candidate], *,
                     judge: RelevanceJudge | None = None, rerank_limit: int = 40,
-                    linear: LinearRanker | None = None, rank_unit: str = "entity",
-                    calibrator: LinearRanker | None = None) -> list[CodeMatch]:
-    scores_by_entity = {c.entity: linear.score(candidate_features(request, c))
-                        if linear else c.signals.get("rrf", 0.0) for c in candidates}
+                    rank_unit: str = "entity") -> list[CodeMatch]:
+    scores_by_entity = {c.entity: c.signals.get("rrf", 0.0) for c in candidates}
     ordered = sorted(candidates, key=lambda c: (
         -c.signals.get("exact", 0), -scores_by_entity[c.entity],
         c.entity.path, min(p.span.start_line for p in c.passages)))
     if judge is None or (len(ordered) == 1 and ordered[0].signals.get("exact")):
         return [CodeMatch(c.entity, scores_by_entity[c.entity], c.passages,
-                          c.passages[0].source_hash, {**c.signals,
-                          **({"linear_relevance": scores_by_entity[c.entity]} if linear else {})},
+                          c.passages[0].source_hash, c.signals,
                           c.owned_regions) for c in ordered]
     selected = ordered[:rerank_limit]
     intent = interpret(request)
     purpose = "identity" if intent.identity else intent.purpose
     if rank_unit == "passage":
-        return calibrate(request, _rank_passages(request, selected, judge, purpose), calibrator)
+        return _rank_passages(request, selected, judge, purpose)
     if rank_unit != "entity":
         raise ValueError("unknown joint ranking unit")
     scores = np.asarray(judge.score(request.query, [candidate_document(c, purpose=purpose) for c in selected],
@@ -66,19 +62,6 @@ def rank_candidates(request: SearchRequest, candidates: list[Candidate], *,
     matches = [CodeMatch(c.entity, float(score), c.passages, c.passages[0].source_hash,
                          {**c.signals, "joint_relevance": float(score)}, c.owned_regions)
                for c, score in zip(selected, scores, strict=True)]
-    return calibrate(request, matches, calibrator)
-
-
-def calibrate(request: SearchRequest, matches: list[CodeMatch],
-              model: LinearRanker | None = None) -> list[CodeMatch]:
-    if model is not None:
-        calibrated = []
-        for match in matches:
-            features = candidate_features(request, Candidate(match.entity, match.evidence, match.signals))
-            score = model.score(features)
-            calibrated.append(replace(match, score=score,
-                signals={**match.signals, "calibrated_relevance": score}))
-        matches = calibrated
     return sorted(matches, key=lambda m: (-m.signals.get("exact", 0), -m.score,
                                          m.entity.path, m.evidence[0].span.start_line))
 
