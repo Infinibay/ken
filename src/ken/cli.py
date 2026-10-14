@@ -207,6 +207,11 @@ def _build_parser() -> argparse.ArgumentParser:
         "--json", action="store_true", help="print raw JSON response"
     )
 
+    for search_parser in (p_search_files, p_search_symbols):
+        search_parser.add_argument("--response-format", choices=("legacy", "evidence"), default="legacy")
+        search_parser.add_argument("--purpose", choices=("auto", "implementation", "usage", "tests", "documentation"), default="auto")
+        search_parser.add_argument("--max-chars", type=_positive_int, default=12000)
+
     p_bench = sub.add_parser("bench", help="evaluate ranker recall on a JSONL dataset")
     p_bench.add_argument("dataset", help="JSONL rows with prompt + expected_files")
     p_bench.add_argument("--engine", choices=("context", "retrieval"), default="context")
@@ -447,6 +452,8 @@ def _build_parser() -> argparse.ArgumentParser:
     add_parser(sub)
     from ken.kql2.cli import configure
     configure(sub.add_parser('kql2', help='run a KQL2 query with optional libraries'))
+    from ken.retrieval.cli import configure as configure_retrieval
+    configure_retrieval(sub.add_parser("retrieval", help="prepare a local evidence search profile"))
     return parser
 
 
@@ -459,6 +466,9 @@ def main(argv: list[str] | None = None) -> int:
 
 def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
     """Dispatch an already-parsed command and return its process exit code."""
+    if args.cmd == "retrieval":
+        from ken.retrieval.cli import dispatch as dispatch_retrieval
+        return dispatch_retrieval(args)
     if args.cmd == 'kql2':
         from ken.kql2.cli import dispatch
         return dispatch(args)
@@ -530,6 +540,7 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
             args.limit,
             kind="files",
             as_json=args.json,
+            response_format=args.response_format, purpose=args.purpose, max_chars=args.max_chars,
         )
 
     if args.cmd == "search-symbols":
@@ -539,6 +550,7 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
             args.limit,
             kind="symbols",
             as_json=args.json,
+            response_format=args.response_format, purpose=args.purpose, max_chars=args.max_chars,
         )
 
     if args.cmd == "reembed":
@@ -835,7 +847,8 @@ def _format_rank_stats(resp: dict[str, Any]) -> str:
 
 
 def _search_cli(
-    project_path: Path, query: str, limit: int, *, kind: str, as_json: bool
+    project_path: Path, query: str, limit: int, *, kind: str, as_json: bool,
+    response_format: str = "legacy", purpose: str = "auto", max_chars: int = 12000,
 ) -> int:
     from ken import _paths
     from ken.db import connect
@@ -850,6 +863,16 @@ def _search_cli(
     db_path = _paths.db_path(root)
     if not db_path.is_file():
         print(f"error: no .ken project at {root}", file=sys.stderr)
+        return 1
+    if response_format == "evidence":
+        from contextlib import closing
+        from ken.retrieval.public import find, render
+        with closing(connect(db_path)) as conn:
+            response = find(conn, root, query, scope=kind, purpose=purpose, limit=limit, max_chars=max_chars)
+        print(json.dumps(response, ensure_ascii=False) if as_json else render(response))
+        return int(response.get("ok") is False)
+    if purpose != "auto":
+        print("error: --purpose requires --response-format evidence", file=sys.stderr)
         return 1
     with connect(db_path) as conn:
         if kind == "files":
