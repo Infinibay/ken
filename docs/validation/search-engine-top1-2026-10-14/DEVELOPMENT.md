@@ -12,6 +12,27 @@ preparado. Los 500 ms y el límite fijo de 3–5 s anteriores quedaron reemplaza
 son diagnósticos; no son perfiles elegibles bajo esta condición. Se detuvo la
 medición pesada en curso, preservando sus respuestas y sus fallos.
 
+## Último control completo y límites
+
+Tras corregir el padding/truncado del tokenizer y respetar primero la escritura
+literal de los símbolos, el control completo v15 obtiene **157/400 (39,25%)**
+con preferencia de rol; el servicio público con RRF y el perfil Potion explícito
+obtiene 138/400 (34,50%). La preferencia de rol continúa en la capa de evaluación,
+sin promoverse como default. EN: 107/240; ES: 50/160; implementación: 104/320.
+La regresión separada de nombres cualificados únicos vuelve a 48/48 sin encoder.
+No se ejecutó la reserva de aceptación ni se alcanzó el 90%.
+
+Se probaron seis embeddings estáticos alternativos sobre las mismas 400 consultas:
+ninguno superó al Potion de código en el control común v14. Véase
+`STATIC-EMBEDDINGS.md` para calidad, idiomas, cobertura, CPU, RAM y límites del
+ensayo. Los pesos mayores no aportaron una mejora que justifique adoptarlos.
+
+El NDCG por archivo sobre nuestras 400 consultas es 0,73923 para el control Ken
+v15 y 0,68871 para Semble. Esto no es el benchmark de 1251 consultas de Semble,
+ni el criterio de función/evidencia de aceptación; véase `BENCHMARK-METRICS.md`.
+El archivo correcto aparece primero en 247/400 consultas de Ken frente a 204/400
+de Semble. Las métricas de localización y de evidencia se conservan separadas.
+
 ## Comparación controlada en CPU
 
 Las 400 consultas públicas originales, mismos pasajes de 256 tokens léxicos,
@@ -104,8 +125,9 @@ No se promueve todavía un perfil semántico predeterminado ni una etiqueta de 9
 
 ## Validación y límites pendientes
 
-La última suite enfocada de recuperación y evaluación pasó 160 pruebas; mypy de
-32 módulos pasó sin nuevas supresiones. Una integración anterior pasó 191
+La última suite enfocada de recuperación y evaluación pasó 196 pruebas; mypy de
+354 módulos pasó sin nuevas supresiones. El ajuste de mayúsculas tiene prueba
+RED/GREEN y una mutación que la prueba detecta. Una integración anterior pasó 191
 pruebas de recuperación, evaluación, CLI y MCP. También se verificaron dos
 llamadas stdio persistentes; falta repetirlo con el futuro perfil final de CPU.
 La primera suite completa tuvo 12 fallos de extracción de gramáticas en el

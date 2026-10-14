@@ -51,3 +51,14 @@ antes sus archivos válidos. Esto no compara con el 0,854 del otro conjunto de
 400 puntuaciones por motor: `output/development/ken-semble-file-ndcg-400.json`;
 script `experiments/search-engine/score_file_ranking.py`, con cinco ejemplos
 matemáticos verificados antes de calcular resultados.
+
+## Control posterior v15
+
+Con política de tokenizer corregida y preferencia de escritura literal para
+símbolos, Ken obtiene NDCG de archivo 0,739228, archivo top1 247/400 (61,75%) y
+archivo entre diez 350/400 (87,50%). Semble permanece en 0,688706, 204/400 (51%)
+y 343/400 (85,75%) en las mismas salidas nativas. Se conserva el recibo anterior;
+el nuevo es `output/development/ken-semble-file-ndcg-400-v15.json`.
+El control Ken pasa además top1 estricto en 157/400 (39,25%). Esta cifra no es
+un NDCG, no pertenece al benchmark externo de 1251 consultas y no demuestra
+el 90% aprobado. No se ha promovido el control de rol a configuración pública.
