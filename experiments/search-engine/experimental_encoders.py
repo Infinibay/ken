@@ -168,7 +168,7 @@ class E5OnnxControl:
 
     def encode(self, texts: list[str], *, prefix: str) -> list[np.ndarray]:
         from ken.bench.mean_pool import masked_mean
-        result = []
+        result: list[np.ndarray] = []
         for start in range(0,len(texts),8):
             with self.lock:
                 batch = self.tokenizer.encode_batch([prefix+t for t in texts[start:start+8]])
