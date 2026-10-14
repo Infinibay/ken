@@ -27,8 +27,12 @@ def enrich_scopes(source: bytes, root: Node, parsed: ParsedFile) -> None:
         parsed.scopes.append(scope_for_node(source, node, symbol))
 
 
-def scope_for_node(source: bytes, node: Node, symbol: ParsedSymbol) -> ParsedScope:
-    body = node.child_by_field_name("body")
+def scope_for_node(source: bytes, node: Node, symbol: ParsedSymbol, *,
+                   body: Node | None = None) -> ParsedScope:
+    # A lexical declaration may carry a function inside a declarator. Its
+    # language-specific binding walk already knows the exact callable body.
+    if body is None:
+        body = node.child_by_field_name("body")
     value = node.child_by_field_name("value") or node.child_by_field_name("right")
     if body is None and value is not None:
         body = value.child_by_field_name("body")

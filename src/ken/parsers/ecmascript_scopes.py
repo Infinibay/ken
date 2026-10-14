@@ -56,7 +56,7 @@ def enrich_ecmascript_scopes(source: bytes, root: Node, parsed: ParsedFile) -> N
             else:
                 symbol.qualname = qualname
                 symbol.kind = kind
-            scopes[id(symbol)] = scope_for_node(source, carrier, symbol)
+            scopes[id(symbol)] = scope_for_node(source, carrier, symbol, body=body)
             if body is not None:
                 for child in body.named_children:
                     walk(child, qualname, kind)

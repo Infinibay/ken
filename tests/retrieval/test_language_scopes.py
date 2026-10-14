@@ -62,3 +62,27 @@ def test_computed_runtime_target_does_not_invent_a_callable_identity(path):
     _, parse = detect_language(Path(path))
     parsed = parse(b"target[key] = () => { return 1 }\n", path)
     assert parsed.scopes == []
+
+
+@pytest.mark.parametrize('path', ['x.js', 'x.ts'])
+@pytest.mark.parametrize('declaration', ['const', 'let', 'var', 'export const'])
+def test_assigned_callable_signature_excludes_body_and_records_executable_boundary(path, declaration):
+    from pathlib import Path
+    from ken.retrieval.passages import extract_passages
+    source = (declaration + ''' retry = (value) => {
+  // This comment describes the implementation.
+  const next = value + 1
+  return next
+}
+''').encode()
+    _, parse = detect_language(Path(path))
+    parsed = parse(source, path)
+    scope, = [s for s in parsed.scopes if s.symbol.qualname == 'retry']
+    assert 'retry = (value) =>' in scope.signature
+    assert 'const next' not in scope.signature
+    assert 'return next' not in scope.signature
+    assert scope.implementation_start_line == 3
+    assert scope.statements == [(2, 2), (3, 3), (4, 4)]
+    passages = extract_passages(source, parsed, path=path)
+    assert any(p.span.start_line == 3 for p in passages)
+    assert all('return next' not in p.fields['signature'] for p in passages)
