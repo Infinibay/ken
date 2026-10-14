@@ -41,3 +41,28 @@ class Passage:
     role: str = "definition"
     split_reason: str | None = None
     signals: dict[str, float] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class SearchRequest:
+    query: str
+    target: str = "symbol"
+    purpose: str = "auto"
+    limit: int = 10
+    max_chars: int = 12000
+    explain: bool = False
+
+    def __post_init__(self) -> None:
+        if not self.query.strip() or self.limit <= 0 or self.max_chars <= 0:
+            raise ValueError("query and positive result/output budgets required")
+        if self.target not in ("file", "symbol", "passage"):
+            raise ValueError("unknown search target")
+        if self.purpose not in ("auto", "implementation", "usage", "tests", "documentation"):
+            raise ValueError("unknown search purpose")
+
+
+@dataclass
+class Candidate:
+    entity: EntityKey
+    passages: list[Passage]
+    signals: dict[str, float] = field(default_factory=dict)

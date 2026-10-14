@@ -111,6 +111,36 @@ CREATE TABLE IF NOT EXISTS ci_passages (
 );
 CREATE INDEX IF NOT EXISTS idx_ci_passages_file ON ci_passages(file_id);
 CREATE INDEX IF NOT EXISTS idx_ci_passages_symbol ON ci_passages(symbol_id);
+CREATE TABLE IF NOT EXISTS ci_passage_terms (
+    passage_id INTEGER NOT NULL REFERENCES ci_passages(id) ON DELETE CASCADE,
+    field TEXT NOT NULL,
+    term TEXT NOT NULL,
+    tf INTEGER NOT NULL CHECK (tf > 0),
+    PRIMARY KEY(passage_id,field,term)
+);
+CREATE INDEX IF NOT EXISTS idx_ci_passage_terms_term ON ci_passage_terms(term,passage_id);
+CREATE TABLE IF NOT EXISTS ci_retrieval_embeddings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    view TEXT NOT NULL,
+    model_revision TEXT NOT NULL,
+    text_hash TEXT NOT NULL,
+    dimension INTEGER NOT NULL CHECK (dimension > 0),
+    embedding BLOB NOT NULL,
+    UNIQUE(view,model_revision,text_hash)
+);
+CREATE TABLE IF NOT EXISTS ci_passage_vectors (
+    passage_id INTEGER NOT NULL REFERENCES ci_passages(id) ON DELETE CASCADE,
+    view TEXT NOT NULL,
+    embedding_id INTEGER NOT NULL REFERENCES ci_retrieval_embeddings(id),
+    PRIMARY KEY(passage_id,view)
+);
+CREATE INDEX IF NOT EXISTS idx_ci_passage_vectors_embedding ON ci_passage_vectors(embedding_id);
+CREATE TABLE IF NOT EXISTS ci_passage_lengths (
+    passage_id INTEGER NOT NULL REFERENCES ci_passages(id) ON DELETE CASCADE,
+    field TEXT NOT NULL,
+    length INTEGER NOT NULL CHECK (length >= 0),
+    PRIMARY KEY(passage_id,field)
+);
 CREATE TRIGGER IF NOT EXISTS trg_retrieval_generation_insert
 AFTER INSERT ON ci_retrieval_files BEGIN
   INSERT INTO meta(key,value) VALUES ('retrieval_generation','1')

@@ -4,9 +4,12 @@ from __future__ import annotations
 import hashlib
 import json
 import sqlite3
+from collections import Counter
+from collections.abc import Sequence
 
 from ken.retrieval.model import EntityKey, Passage, Span
 from ken.retrieval.passages import EXTRACTOR_VERSION, PassagePolicy
+from ken.retrieval.tokenization import code_tokens
 
 
 def generation(conn: sqlite3.Connection) -> int:
@@ -32,12 +35,19 @@ def replace_file_passages(conn: sqlite3.Connection, file_id: int,
             if key not in symbols:
                 raise ValueError(f"passage has no canonical symbol: {p.entity.qualname}")
             symbol_id = symbols[key]
-        conn.execute(
+        cur = conn.execute(
             "INSERT INTO ci_passages(file_id,symbol_id,line_start,line_end,fields_json,role,split_reason) "
             "VALUES (?,?,?,?,?,?,?)",
             (file_id, symbol_id, p.span.start_line, p.span.end_line,
              json.dumps(p.fields, ensure_ascii=False, separators=(",", ":")), p.role, p.split_reason),
         )
+        passage_id = cur.lastrowid
+        for name, text in p.fields.items():
+            counts = Counter(code_tokens(text))
+            conn.execute("INSERT INTO ci_passage_lengths(passage_id,field,length) VALUES (?,?,?)",
+                         (passage_id, name, sum(counts.values())))
+            conn.executemany("INSERT INTO ci_passage_terms(passage_id,field,term,tf) VALUES (?,?,?,?)",
+                             [(passage_id, name, term, count) for term, count in counts.items()])
     digest = source_hash or (passages[0].source_hash if passages else hashlib.sha256(b"").hexdigest())
     if any(p.source_hash != digest for p in passages):
         raise ValueError("mixed source generations in passage replacement")
@@ -50,12 +60,24 @@ def replace_file_passages(conn: sqlite3.Connection, file_id: int,
     )
 
 
-def load_passages(conn: sqlite3.Connection, entity: EntityKey | None = None) -> list[Passage]:
+def load_passage_map(conn: sqlite3.Connection, ids: Sequence[int] | None = None) -> dict[int, Passage]:
+    if ids is not None and not ids:
+        return {}
+    sql = ("SELECT p.*, f.path,f.language,r.source_hash FROM ci_passages p "
+           "JOIN ci_files f ON f.id=p.file_id JOIN ci_retrieval_files r ON r.file_id=p.file_id ")
+    params = list(ids) if ids is not None else []
+    if ids is not None:
+        sql += "WHERE p.id IN (" + ",".join("?" for _ in ids) + ") "
+    rows = conn.execute(sql + "ORDER BY p.file_id,p.line_start,p.id", params).fetchall()
+    if not rows:
+        return {}
+    file_ids = sorted({r["file_id"] for r in rows})
     symbols: dict[int, tuple[EntityKey, Span]] = {}
     ordinals: dict[tuple[str, str, str], int] = {}
     for row in conn.execute(
         "SELECT s.*, f.path FROM ci_symbols s JOIN ci_files f ON f.id=s.file_id "
-        "ORDER BY s.file_id,s.line_start,s.id"
+        "WHERE s.file_id IN (" + ",".join("?" for _ in file_ids) + ") "
+        "ORDER BY s.file_id,s.line_start,s.id", file_ids
     ):
         key = (row["path"], row["kind"], row["qualname"])
         ordinal = ordinals.get(key, 0)
@@ -64,16 +86,14 @@ def load_passages(conn: sqlite3.Connection, entity: EntityKey | None = None) -> 
         owner = name.rsplit(".", 1)[0] if "." in name else None
         symbols[row["id"]] = (EntityKey(row["path"], row["kind"], name, owner, ordinal),
                               Span(row["line_start"], row["line_end"]))
-    out: list[Passage] = []
-    for row in conn.execute(
-        "SELECT p.*, f.path,f.language,r.source_hash FROM ci_passages p "
-        "JOIN ci_files f ON f.id=p.file_id JOIN ci_retrieval_files r ON r.file_id=p.file_id "
-        "ORDER BY p.file_id,p.line_start,p.id"
-    ):
+    out: dict[int, Passage] = {}
+    for row in rows:
         span = Span(row["line_start"], row["line_end"])
         identity, extent = symbols.get(row["symbol_id"], (EntityKey(row["path"], "module", None), span))
-        if entity is not None and identity != entity:
-            continue
-        out.append(Passage(identity, span, json.loads(row["fields_json"]), row["source_hash"],
-                           extent, row["language"] or "text", row["role"], row["split_reason"]))
+        out[row["id"]] = Passage(identity, span, json.loads(row["fields_json"]), row["source_hash"],
+                                extent, row["language"] or "text", row["role"], row["split_reason"])
     return out
+
+
+def load_passages(conn: sqlite3.Connection, entity: EntityKey | None = None) -> list[Passage]:
+    return [p for p in load_passage_map(conn).values() if entity is None or p.entity == entity]
