@@ -8,7 +8,7 @@ from typing import Any
 from ken.retrieval.model import CodeMatch, SearchRequest, SearchResponse
 from ken.retrieval.tokenization import code_tokens
 from ken.retrieval.intent import interpret
-from ken.retrieval.evidence import source_bounds, verified_lines
+from ken.retrieval.evidence import entity_extent, source_bounds, verified_lines
 
 
 def present(matches: list[CodeMatch], root: Path, request: SearchRequest, *,
@@ -33,6 +33,8 @@ def present(matches: list[CodeMatch], root: Path, request: SearchRequest, *,
         }
         try:
             lines = verified_lines(root, match)
+            extent = entity_extent(match)
+            result["entity_span"] = extent.to_dict()
             ordered = sorted(match.evidence, key=lambda p: (
                 -(p.implementation_start_line is None or p.span.end_line >= p.implementation_start_line
                   or request.purpose == "documentation"),
@@ -61,7 +63,7 @@ def present(matches: list[CodeMatch], root: Path, request: SearchRequest, *,
                 start, end = best.span.start_line, best.span.end_line
             result["evidence"] = [{"start_line": start, "end_line": end,
                                    "content": "\n".join(lines[start - 1:end])}]
-            result["truncated"] = start > best.entity_span.start_line or end < upper
+            result["truncated"] = start > extent.start_line or end < extent.end_line
             selected = [p for p in match.evidence if p.signals.get("selected_window")]
             if selected:
                 result["evidence"] = [{"start_line": p.span.start_line, "end_line": p.span.end_line,
@@ -70,9 +72,9 @@ def present(matches: list[CodeMatch], root: Path, request: SearchRequest, *,
                 shown = sum(p.span.end_line - p.span.start_line + 1 for p in selected)
                 if shown > 40:
                     raise ValueError("selected evidence exceeds line budget")
-                result["truncated"] = shown < best.entity_span.end_line - best.entity_span.start_line + 1
+                result["truncated"] = shown < extent.end_line - extent.start_line + 1
             if match.signals.get('exact') and not intent.identity and not selected:
-                declaration = first.entity_span.start_line
+                declaration = extent.start_line
                 body = result['evidence'][0]
                 if declaration < body['start_line']:
                     width = min(8,max(1,len(first.fields.get('signature','').split('\n'))),

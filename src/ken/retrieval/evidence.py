@@ -27,6 +27,16 @@ def verified_lines(root: Path, match: CodeMatch) -> list[str]:
     return lines
 
 
+def entity_extent(match: CodeMatch) -> Span:
+    """Enclose known owner metadata, without authorizing evidence in its gaps."""
+    if not match.evidence or any(p.entity != match.entity or p.source_hash != match.source_hash
+                                 for p in match.evidence):
+        raise ValueError("entity extent requires one source owner and version")
+    spans = [s for p in match.evidence for s in (p.entity_span, p.span)]
+    spans.extend(match.owned_regions)
+    return Span(min(s.start_line for s in spans), max(s.end_line for s in spans))
+
+
 def source_bounds(match: CodeMatch, passage: Passage, line_count: int, *,
                   implementation: bool) -> Span:
     lower, upper = passage.entity_span.start_line, passage.entity_span.end_line

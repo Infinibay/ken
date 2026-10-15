@@ -111,3 +111,49 @@ def test_behavior_evidence_does_not_spend_line_budget_on_a_long_docstring(tmp_pa
     first = search(conn, tmp_path, SearchRequest("normalize")).to_dict()["results"][0]
     visible = {line for e in first["evidence"] for line in range(e["start_line"], e["end_line"] + 1)}
     assert {84, 85, 86} <= visible
+
+
+def test_module_extent_uses_complete_known_ownership_beyond_first_chunk(tmp_path):
+    import hashlib
+    from ken.retrieval.model import CodeMatch, EntityKey, Passage, SearchRequest, Span
+    from ken.retrieval.presentation import present
+
+    lines = [f"statement_{i}()" for i in range(1, 68)]
+    source = "\n".join(lines) + "\n"
+    (tmp_path / "scenario.js").write_text(source)
+    entity = EntityKey("scenario.js", "module", None)
+    digest = hashlib.sha256(source.encode()).hexdigest()
+    selected = Passage(entity, Span(1, 40), {"body": "\n".join(lines[:40])},
+        digest, Span(1, 38), signals={"selected_window": 1.})
+    match = CodeMatch(entity, 1., [selected], digest, owned_regions=(Span(1, 67),))
+
+    result = present([match], tmp_path, SearchRequest("execute statements"),
+                     profile_version="test").to_dict()["results"][0]
+
+    assert result["entity_span"] == {"start_line": 1, "end_line": 67}
+    assert result["truncated"]
+    assert result["evidence"] == [{"start_line": 1, "end_line": 40,
+                                   "content": "\n".join(lines[:40])}]
+
+
+def test_known_extent_encloses_disjoint_chunks_without_quoting_the_gap(tmp_path):
+    import hashlib
+    from ken.retrieval.model import CodeMatch, EntityKey, Passage, SearchRequest, Span
+    from ken.retrieval.presentation import present
+
+    lines = [f"line_{i}" for i in range(1, 81)]
+    source = "\n".join(lines) + "\n"
+    (tmp_path / "scenario.txt").write_text(source)
+    entity = EntityKey("scenario.txt", "module", None)
+    digest = hashlib.sha256(source.encode()).hexdigest()
+    passages = [Passage(entity, span, {"body": "\n".join(lines[span.start_line-1:span.end_line])},
+        digest, span, signals={"selected_window": 1.})
+        for span in (Span(1, 20), Span(61, 80))]
+    match = CodeMatch(entity, 1., passages, digest)
+
+    result = present([match], tmp_path, SearchRequest("source statements"),
+                     profile_version="test").to_dict()["results"][0]
+
+    assert result["entity_span"] == {"start_line": 1, "end_line": 80}
+    assert [(p["start_line"], p["end_line"]) for p in result["evidence"]] == [(1, 20), (61, 80)]
+    assert result["truncated"]
