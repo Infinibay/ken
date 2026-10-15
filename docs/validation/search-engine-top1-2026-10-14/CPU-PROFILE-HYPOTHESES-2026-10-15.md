@@ -70,3 +70,28 @@ a plausible cold-load peak contributor, not a measured attribution. Whole-proces
 peak RSS includes asset load/warmup; do not describe it as the model's weight RAM
 or steady-state residency. Profile before considering a trusted read-only owner
 snapshot path with the same registration, immutability and normalization checks.
+
+## Precision and device hypotheses after the padding correction
+
+The original INT8/CoreML probes used wrong pad0 and are diagnostic only. Corrected
+pad50283 probes must precede any new device claim. DynamicQuantizeLinear has a
+scalar per-tensor scale derived from the extrema of its complete input tensor
+(https://onnx.ai/onnx/operators/onnx__DynamicQuantizeLinear.html). Therefore batch
+composition and padded sequence length may affect INT8 approximation even when
+attention masks are correct; this is an inference from operator semantics, not a
+measured explanation of our old score deltas. Compare the same source-free
+pairs/published weights with correct padding across batch1/4 and dynamic/fixed512,
+then compare FP32. Align outputs by pair identity before testing scores/order;
+do not confuse batch permutation with a different ranking. Main benchmark keeps
+its registered4/4/2 batches and cannot be silently changed during execution.
+
+For Apple, CoreML ALL allows compatible CPU/GPU/NeuralEngine devices; a traced
+CoreML partition does not prove that the hardware executed on GPU. CPUAndGPU
+permits GPU but likewise allows CPU. Report the selected backend and measured
+latency rather than asserting GPU hardware attribution without evidence. Fixed
+shapes may improve CoreML execution, but padding/conversion parity and cold
+compilation costs remain separate checks.
+Source: https://onnxruntime.ai/docs/execution-providers/CoreML-ExecutionProvider.html
+No additional corpus arm, threshold, model fit or production selector is adopted
+from these hypotheses. CPU/GPU inference probes wait until the serial CPU corpus
+run and public calibration scoring finish.
