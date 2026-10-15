@@ -88,7 +88,7 @@ class CPUContextEncoder:
         return [self._encode(text) for text in texts]
 
 
-def main() -> None:
+def main(*, expected_count: int | None = 25) -> None:
     parser = argparse.ArgumentParser()
     for name in ('requests', 'index', 'root', 'numeric-model', 'static-registration',
                  'translation-registration', 'context-registration', 'context-index',
@@ -96,10 +96,11 @@ def main() -> None:
         parser.add_argument('--'+name, type=Path, required=True)
     args = parser.parse_args()
     rows = [json.loads(line) for line in args.requests.read_text().splitlines()]
-    if (len(rows) != 25 or any(set(r) != {'id', 'repo_id', 'request'} for r in rows)
+    if (not rows or (expected_count is not None and len(rows) != expected_count)
+            or any(set(r) != {'id', 'repo_id', 'request'} for r in rows)
             or len({r['id'] for r in rows}) != len(rows)
             or len({r['repo_id'] for r in rows}) != 1):
-        raise ValueError('25 unique public requests from one repository required')
+        raise ValueError('the registered nonempty unique public requests from one repository are required')
     args.output.mkdir(parents=True, exist_ok=False)
     engine_root = Path(ken.__file__).resolve().parents[2]
     receipt = verify_frozen_source(engine_root)
@@ -144,7 +145,7 @@ def main() -> None:
     profile = RetrievalProfile(words.spec, words.spec, contextual=ContextualRetrieval(context.spec),
         evidence=EvidenceRanking(model.fingerprint, words.spec, expansion.revision,
                                  feature_version=2, evidence_version=2))
-    metadata = {'scope': 'ALL25 live API + canonical JSON; public source/requests only; CPU; '
+    metadata = {'scope': f'ALL{len(rows)} live API + canonical JSON; public source/requests only; CPU; '
                          'one repo-excluded model; not default/acceptance/final uncontended certificate',
         'engine_root': str(engine_root), 'engine_receipt_sha256': receipt,
         'requests_sha256': sha(args.requests), 'numeric_model_sha256': sha(args.numeric_model),
