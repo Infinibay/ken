@@ -485,3 +485,23 @@ sin cambios preparandofullcontext/vistasALL8. Parent93b/fitter93/93b se retiran
 antes de ejecutarse.93c tampoco se ejecutó: resta revisión de código, completitud
 ALL8, ligaduras reales/propuestas públicas y PRE-FIT471grupos×16. Ningún fit93,
 resultado de calidad nuevo, apertura privada o promoción.
+
+
+Actualización 15/10, fuente y públicos auxiliares completos/parciales:
+-93source terminóALL8:3176ci_files,16790owners,49604passages; full/views y
+ recodificaciones independientes bitexact. PRE-QUERY93cAPTO y públicos93c ya
+ completosALL96/45095filas,0exclusiones. Registro1fb56478aa67e58ac824b7c249e0f347db5fbf0e6ee2b0274c24465727f07b6d.
+- Piloto2 sellado384 y PRE-QUERY94APTO. Freeze94consumer65d758/source93
+ separado4ebee; se están recomputandoALL480públicos. No labels ni fits aún.
+- Revisión prospectiva detectó que fitters93c/94 sobrescribían el dict del
+ índice padre con una rutaaux y fallarían antes de puntuar. Se retiran SIN
+ ejecución; nuevas93d/94b sólo separan ese nombre. Prueba RED/GREEN y revisión
+ independientes cerradasAPTOcódigo, antes de leer casos/ajustar. PRE-FIT pendiente.
+-95catálogoALL16 cerradoAPTO independiente;96loader/proyección/helper cerrados
+ APTOcódigo y39tests verdes. Proyección96source-only completa36194contextos,
+ full/nested literales,611filesfrozen/receiptd0279cd002a743cc2f824aa78fbd44e326487b0e575a1fc53914588a388d3e99.
+ Registrob7d283d924468a8d14833dc66dd94f9709ea1cda060d3e414fd180492f6cf285.
+ Pico161595392B sólo productorfuente. Features96prospectivos276=251intactas+25
+ preparados en código, sin ejecución/querymatrix/labels/fit/políticarespuesta.
+- MejorresultadoAPI sigue286/400estricto71,5%; público76b0,841718 frente a
+ Semble0,854385. No90%, ni nuevo perfilAPI, ni apertura de reserva privada.

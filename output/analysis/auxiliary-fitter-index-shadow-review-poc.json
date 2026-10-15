@@ -1,0 +1,26 @@
+{
+  "scope": "Pure AST-extracted assignment/subscript counterexample only; no file paths opened beyond controller source, no cases/requests/model/controller/fit/gate execution.",
+  "status": "RED_CONFIRMED",
+  "cases": [
+    {
+      "controller": "/private/tmp/ken-auxiliary-ranking-v93c.py",
+      "sha256": "6768b3c4d550cc138fcc8752a87bd759564223d53a169686e52cda94f9d684f5",
+      "initial_dictionary_assignment_line": 37,
+      "path_reassignment_line": 155,
+      "late_subscript_line": 222,
+      "exception_type": "TypeError",
+      "message": "'PosixPath' object is not subscriptable",
+      "red_reproduced_without_execution": true
+    },
+    {
+      "controller": "/private/tmp/ken-auxiliary-ranking-v94.py",
+      "sha256": "051d73ee53be789e1e91df6bd70c6fd0a4a3f12d71e3628ed18b662f4650356b",
+      "initial_dictionary_assignment_line": 37,
+      "path_reassignment_line": 169,
+      "late_subscript_line": 236,
+      "exception_type": "TypeError",
+      "message": "'PosixPath' object is not subscriptable",
+      "red_reproduced_without_execution": true
+    }
+  ]
+}

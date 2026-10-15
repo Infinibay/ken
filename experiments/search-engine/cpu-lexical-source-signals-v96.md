@@ -14,13 +14,20 @@ in source order without duplicating deeper descendants. These are lexical scopes
 never executed operations or certified callees. Canonical primary, owners,
 ordinals, source hashes and scope bytes remain unchanged. Five shape fields are
 availability, log(context lines), log(nested scope count), log(nested bytes) and
-fraction of source lines whose canonical owner differs from the primary. No
-context gives25zeros. Both text fields use the existing fixed10coverage summaries
+fraction of source lines whose canonical owner differs from the primary. Scope
+count includes ALL nested scopes; bytes cover only the direct scopes. Anonymous
+scopes retaining the primary canonical owner do not increase foreign_fraction. No
+context gives25zeros, but the empty document still contributes to N in pool IDF. Both text fields use the existing fixed10coverage summaries
 (exact,stem,mean,min,p25,above50,above70,weighted,mean_cosine,log_words), expanded
-public query, code_terms4096 and original candidate-local IDF/cosine semantics.
+public query, code_terms4096 per field and original candidate-local IDF/cosine
+formula. The all-field IDF vocabulary is the deduplicated union (up to8192), not
+a4096cap; always pass the complete original pool, including absent contexts,
+and the canonical EvidenceReranker.stem_words callback.37natural unique exact
+bypasses retain their original251rows and append25neutral zeros, without ranking
+work; do not choose the bypass from labels.
 
 Same original400queries/pools/source7/251matrices and16held-repository splits.
-No96auxiliary queries:93/94 remain separate controls. New context availability
+No auxiliary training data in this control:93/94 remain separate controls. New context availability
 is a versioned source unit: derive prospective labels with the same canonical
 identity, source hash and ALLanchors of one ORIGINAL alternative, using either
 original owned source or the registered lexical context extent. Preserve old

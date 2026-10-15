@@ -1,0 +1,230 @@
+{
+  "scope": "Synthetic source-only conceptual information-loss probe; no framework execution, actual queries, labels, predictions, embeddings or private contents.",
+  "roles_sha256": "63958cf373ffc47ddb72b93c9eb332aacffa0e0ed9c3d72ebf3eaec0acc4c424",
+  "fixtures": [
+    {
+      "path": "tests/test_service.py",
+      "language": "python",
+      "source_sha256": "b39c119e6a085ae49aeb4f1de752cc22fe784646318ed8e3f755f5d1ec0b4fe1",
+      "synthetic_source": "import pytest\n@pytest.fixture\ndef helper():\n    return 1\n\ndef test_behavior():\n    assert helper() == 1\n",
+      "canonical_owners": [
+        {
+          "entity": {
+            "path": "tests/test_service.py",
+            "kind": "function",
+            "qualname": "helper",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "role": "test",
+          "extent": {
+            "start_line": 3,
+            "end_line": 4
+          },
+          "annotations": [],
+          "signature": "def helper():"
+        },
+        {
+          "entity": {
+            "path": "tests/test_service.py",
+            "kind": "function",
+            "qualname": "test_behavior",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "role": "test",
+          "extent": {
+            "start_line": 6,
+            "end_line": 7
+          },
+          "annotations": [],
+          "signature": "def test_behavior():"
+        }
+      ]
+    },
+    {
+      "path": "client_test.go",
+      "language": "go",
+      "source_sha256": "4fc72da11d0ebccca92ac1defd1379fc5bb054fb38e12fb1d0ab84f618b597b0",
+      "synthetic_source": "package client\nimport \"testing\"\nfunc helper() int { return 1 }\nfunc TestBehavior(t *testing.T) { if helper() != 1 { t.Fatal(\"bad\") } }\n",
+      "canonical_owners": [
+        {
+          "entity": {
+            "path": "client_test.go",
+            "kind": "function",
+            "qualname": "helper",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "role": "test",
+          "extent": {
+            "start_line": 3,
+            "end_line": 3
+          },
+          "annotations": [],
+          "signature": "func helper() int"
+        },
+        {
+          "entity": {
+            "path": "client_test.go",
+            "kind": "function",
+            "qualname": "TestBehavior",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "role": "test",
+          "extent": {
+            "start_line": 4,
+            "end_line": 4
+          },
+          "annotations": [],
+          "signature": "t *testing.T"
+        }
+      ]
+    },
+    {
+      "path": "src/client.rs",
+      "language": "rust",
+      "source_sha256": "fd60b4738b7ab3bf8653889c886a9c0f12fc705c064fb02c36abdaf9de1eda04",
+      "synthetic_source": "fn production() {}\n#[cfg(test)]\nmod support {\n    fn helper() {}\n    #[test]\n    fn behavior() { helper(); }\n}\n",
+      "canonical_owners": [
+        {
+          "entity": {
+            "path": "src/client.rs",
+            "kind": "function",
+            "qualname": "production",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "role": "definition",
+          "extent": {
+            "start_line": 1,
+            "end_line": 1
+          },
+          "annotations": [],
+          "signature": "fn production()"
+        },
+        {
+          "entity": {
+            "path": "src/client.rs",
+            "kind": "function",
+            "qualname": "helper",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "role": "test",
+          "extent": {
+            "start_line": 4,
+            "end_line": 4
+          },
+          "annotations": [
+            "#[cfg(test)]"
+          ],
+          "signature": "#[cfg(test)]\nfn helper()"
+        },
+        {
+          "entity": {
+            "path": "src/client.rs",
+            "kind": "function",
+            "qualname": "behavior",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "role": "test",
+          "extent": {
+            "start_line": 6,
+            "end_line": 6
+          },
+          "annotations": [
+            "#[cfg(test)]",
+            "#[test]"
+          ],
+          "signature": "#[cfg(test)]\n#[test]\nfn behavior()"
+        }
+      ]
+    },
+    {
+      "path": "src/ServiceTest.java",
+      "language": "java",
+      "source_sha256": "a7e88003a2f4724eb4207b14f65488ed64c52ece3dc6cbbc7abfdae366e7c858",
+      "synthetic_source": "import org.junit.jupiter.api.Test;\nclass ServiceTest {\n    int helper() { return 1; }\n    @Test\n    void behavior() { assert helper() == 1; }\n}\n",
+      "canonical_owners": [
+        {
+          "entity": {
+            "path": "src/ServiceTest.java",
+            "kind": "class",
+            "qualname": "ServiceTest",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "role": "definition",
+          "extent": {
+            "start_line": 2,
+            "end_line": 6
+          },
+          "annotations": [],
+          "signature": "class ServiceTest"
+        },
+        {
+          "entity": {
+            "path": "src/ServiceTest.java",
+            "kind": "method",
+            "qualname": "ServiceTest.helper",
+            "owner": "ServiceTest",
+            "definition_ordinal": 0
+          },
+          "role": "definition",
+          "extent": {
+            "start_line": 3,
+            "end_line": 3
+          },
+          "annotations": [],
+          "signature": "int helper()"
+        },
+        {
+          "entity": {
+            "path": "src/ServiceTest.java",
+            "kind": "method",
+            "qualname": "ServiceTest.behavior",
+            "owner": "ServiceTest",
+            "definition_ordinal": 0
+          },
+          "role": "definition",
+          "extent": {
+            "start_line": 4,
+            "end_line": 5
+          },
+          "annotations": [],
+          "signature": "@Test\n    void behavior()"
+        }
+      ]
+    },
+    {
+      "path": "tests/flow.test.ts",
+      "language": "typescript",
+      "source_sha256": "0af188f6064580f560f5a06f76becd19bf09be58f64e7eb75cdb85dd688c81dd",
+      "synthetic_source": "function helper() { return 1; }\nit(\"behavior\", () => { if (helper() !== 1) throw Error(\"bad\"); });\n",
+      "canonical_owners": [
+        {
+          "entity": {
+            "path": "tests/flow.test.ts",
+            "kind": "function",
+            "qualname": "helper",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "role": "test",
+          "extent": {
+            "start_line": 1,
+            "end_line": 1
+          },
+          "annotations": [],
+          "signature": "function helper()"
+        }
+      ]
+    }
+  ],
+  "test_container_helper_and_direct_test_collapsed": true,
+  "existing_enum_changed": false,
+  "loss_not_causal_quality_claim": true
+}

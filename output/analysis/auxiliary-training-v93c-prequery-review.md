@@ -1,0 +1,9 @@
+# Independent pre-query review93c
+
+**PRE-QUERY APTO**, limited to producing ALL96 public pools and unchanged251 features with parent93c `27de73...8bcb` and worker93b `eea1bb...b97d`. The reviewed complete source registration is `11a214102755a07d806e091a3fb00003400f0dfbf6bf2db54f014588fa2dcb78`, under frozen engine receipt `4ebee803...2d`.
+
+After independently auditing ALL8 indices/fullcontexts/views, the reviewer checked receipt1 and seal1 metadata and the original96 public requests. The receipt/archive/seal hash chain matches the prospective controller pins. Request bytes are33337 with SHA`e2cd83...e3ef`; all96 IDs and literal queries are unique, all eight source repositories have12 requests, and each request has exactly query/auto/symbol/10/12000. No extra entity, anchor, path or reference fields exist in the request schema. The first immutable seal attests96 cases,97 alternatives and64EN/32ES; these are metadata counts, not reopened cases.
+
+The sealed curator receipt attests exact literal public projection, absence of gold hints, no model/ranking-based curation and canonical-origin disjointness. Equality to cases and semantic absence of hints remain curator-attested here; the reviewer has not opened cases, evidence, reference snapshots, budget audits or private contents, nor unpacked the archive. Fitter93c must independently compare the public projection after all pools close.
+
+This allows only root's next public-pool preparation step. Case/reference reading remains closed until those pools finish; PRE-FIT still requires review of actual rows, sealed case projection, original eligibility, source bindings and16fold manifests. No fit, controller or marker was executed or created by this reviewer. The companion JSON contains exact bindings and all ID/query hashes without query text.
