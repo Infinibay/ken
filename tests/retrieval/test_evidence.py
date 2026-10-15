@@ -93,3 +93,47 @@ def test_distant_decisive_blocks_use_separate_faithful_fragments_with_one_total_
     assert len(evidence) == 2
     for e in evidence:
         assert e["content"] == "\n".join(lines[e["start_line"]-1:e["end_line"]])
+
+
+def test_source_coverage_uses_the_expanded_query_and_can_split_a_long_passage(tmp_path):
+    from ken.retrieval.source_evidence import refine_source_evidence
+
+    lines = ['def store():', '    validate(cookie)'] + ['    step(value)']*97 + ['    persist(cookie)']
+    source = '\n'.join(lines)+'\n'; (tmp_path/'client.py').write_text(source)
+    match = source_match(tmp_path)
+    # Restore the source after the fixture has written its own example.
+    (tmp_path/'client.py').write_text(source)
+    digest = hashlib.sha256(source.encode()).hexdigest()
+    p = replace(match.evidence[0], span=Span(2,100), entity_span=Span(1,100),
+        source_hash=digest, fields={'body':'\n'.join(lines[1:])})
+    match = replace(match,evidence=[p],source_hash=digest,owned_regions=(Span(1,100),))
+    request = SearchRequest('validar y guardar la cookie')
+    refined = refine_source_evidence([match],tmp_path,request,query='validate and persist cookie',
+                                    stem_words=lambda words: words)
+    evidence = present(refined,tmp_path,request,profile_version='test').results[0]['evidence']
+    visible = {n for e in evidence for n in range(e['start_line'],e['end_line']+1)}
+    assert {2,100} <= visible
+    assert len(evidence) == 2
+    assert sum(e['end_line']-e['start_line']+1 for e in evidence) <= 40
+
+
+def test_unique_exact_name_keeps_the_declaration_visible_for_a_long_function(tmp_path):
+    match = source_match(tmp_path)
+    lines = (tmp_path/'client.py').read_text().splitlines()
+    first = replace(match.evidence[0],span=Span(1,20),fields={'body':'\n'.join(lines[:20])})
+    match = replace(match,evidence=[first,*match.evidence],signals={'exact':1.})
+    response = present([match],tmp_path,SearchRequest('transform'),profile_version='test')
+    assert response.results[0]['evidence'][0]['start_line'] == 1
+
+
+def test_source_coverage_cannot_fill_a_parent_gap_with_child_evidence(tmp_path):
+    from ken.retrieval.source_evidence import refine_source_evidence
+    match = source_match(tmp_path,kind='class',regions=(Span(1,3),))
+    lines = (tmp_path/'client.py').read_text().splitlines()
+    p = replace(match.evidence[0],span=Span(1,3),fields={'body':'\n'.join(lines[:3])})
+    match = replace(match,evidence=[p])
+    request = SearchRequest('remove credentials while preserving destination')
+    refined = refine_source_evidence([match],tmp_path,request,query=request.query,
+                                    stem_words=lambda words:words)
+    evidence = present(refined,tmp_path,request,profile_version='test').results[0]['evidence']
+    assert all(f['end_line'] <= 3 for f in evidence)

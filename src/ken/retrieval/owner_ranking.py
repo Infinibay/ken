@@ -23,21 +23,30 @@ class EvidenceReranker:
         if (expand_query is None) != (expansion_revision is None):
             raise ValueError('query expansion requires its immutable revision')
         self.model, self.encoder = model, encoder
-        self.stem_words = import_module('snowballstemmer').stemmer('english').stemWords
         self.expand_query, self.expansion_revision = expand_query, expansion_revision
+
+    @staticmethod
+    def stem_words(words: list[str]) -> list[str]:
+        # Snowball mutates its current word buffer; never share it across queries.
+        return import_module('snowballstemmer').stemmer('english').stemWords(words)
 
     def validate(self, spec: EvidenceRanking) -> None:
         if (self.model.fingerprint != spec.model_revision or self.encoder.spec != spec.word_model
                 or self.expansion_revision != spec.expansion_revision):
             raise ValueError('owner ranking runtime does not match its pinned profile')
 
-    def rank(self, request: SearchRequest, candidates: Sequence[Candidate],
-             descriptions: Mapping[EntityKey, OwnerDescription]) -> list[CodeMatch]:
-        if len(candidates) == 1 and candidates[0].signals.get('exact'):
-            return rank_candidates(request, list(candidates))
-        expanded = self.expand_query(request.query) if self.expand_query else request.query
+    def prepare_query(self, query: str) -> str:
+        expanded = self.expand_query(query) if self.expand_query else query
         if not isinstance(expanded, str) or not expanded.strip():
             raise ValueError('query expansion must return nonempty text')
+        return expanded
+
+    def rank(self, request: SearchRequest, candidates: Sequence[Candidate],
+             descriptions: Mapping[EntityKey, OwnerDescription], *,
+             expanded_query: str | None = None) -> list[CodeMatch]:
+        if len(candidates) == 1 and candidates[0].signals.get('exact'):
+            return rank_candidates(request, list(candidates))
+        expanded = self.prepare_query(request.query) if expanded_query is None else expanded_query
         matrix = evidence_features(request, candidates, descriptions, encoder=self.encoder,
             stem_words=self.stem_words, expanded_query=expanded)
         scores = self.model.predict(matrix.values)

@@ -71,6 +71,16 @@ def present(matches: list[CodeMatch], root: Path, request: SearchRequest, *,
                 if shown > 40:
                     raise ValueError("selected evidence exceeds line budget")
                 result["truncated"] = shown < best.entity_span.end_line - best.entity_span.start_line + 1
+            if match.signals.get('exact') and not intent.identity:
+                declaration = first.entity_span.start_line
+                body = result['evidence'][0]
+                if declaration < body['start_line']:
+                    width = min(8,max(1,len(first.fields.get('signature','').split('\n'))),
+                                body['start_line']-declaration)
+                    body['end_line'] = min(body['end_line'],body['start_line']+39-width)
+                    body['content'] = '\n'.join(lines[body['start_line']-1:body['end_line']])
+                    result['evidence'].insert(0,{'start_line':declaration,'end_line':declaration+width-1,
+                        'content':'\n'.join(lines[declaration-1:declaration+width-1])})
         except (OSError, ValueError, UnicodeError) as exc:
             result["evidence"] = []
             result["stale"] = True

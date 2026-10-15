@@ -42,6 +42,26 @@ def test_profile_rejects_a_different_word_encoder_with_the_same_numeric_model():
             replace(WORD_MODEL, revision='b'*64)))
 
 
+def test_stemming_keeps_mutable_word_buffers_local_to_concurrent_queries(monkeypatch):
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Barrier
+    from types import SimpleNamespace
+    import ken.retrieval.owner_ranking as module
+
+    barrier = Barrier(2)
+    class StatefulStemmer:
+        def stemWords(self, words):
+            self.current = words
+            barrier.wait(timeout=5)
+            return self.current
+
+    monkeypatch.setattr(module,'import_module',lambda name:
+        SimpleNamespace(stemmer=lambda language:StatefulStemmer()))
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(module.EvidenceReranker.stem_words,[['running'],['waiting']]))
+    assert results == [['running'],['waiting']]
+
+
 def test_ranking_uses_complete_source_and_preserves_input_order_for_score_ties():
     from ken.retrieval.owner_ranking import EvidenceReranker
     from ken.retrieval.description import describe_owner

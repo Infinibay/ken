@@ -74,6 +74,25 @@ def test_single_named_definition_request_preserves_exact_authority(query):
     assert intent.identifiers == ('normalize_names',)
 
 
+@pytest.mark.parametrize('query,name,kind', [
+    ('Show the Payload struct declaration.', 'Payload', 'struct'),
+    ('Find the GridBuffer workspace type declaration.', 'GridBuffer', None),
+    ('Show the Descriptor metadata class declaration.', 'Descriptor', 'class'),
+    ('Mostrame la definición del struct Cursor.', 'Cursor', 'struct'),
+    ('Mostrame la declaración del iterador EntryStream.', 'EntryStream', None),
+    ('Find the CaptureSet struct declaration for string matches.', 'CaptureSet', 'struct'),
+])
+def test_explicit_named_declarations_allow_kind_and_descriptive_modifiers(query,name,kind):
+    intent = interpret(SearchRequest(query))
+    assert intent.identity
+    assert intent.identifiers == (name,)
+    assert intent.kind == kind
+
+
+def test_multiple_named_declarations_do_not_gain_single_target_authority():
+    assert not interpret(SearchRequest('Show the Node class declaration and Edge class declaration.')).identity
+
+
 @pytest.mark.parametrize('query', [
     'Find the authentication timeout test covering exhausted retries.',
     'Show a parameterized integration test for malformed responses.',

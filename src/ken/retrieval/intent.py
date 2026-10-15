@@ -17,6 +17,29 @@ _OBJECT_BOUNDARIES = frozenset((
     "that which where who when whose que "
     "in of for from with to en de con para por"
 ).split())
+_DECLARATION_KINDS = 'class|struct|interface|enum|trait|type|function|method|utility|helper|clase|tipo|iterador|iterator'
+_NAMED_DECLARATION = (
+    re.compile(r'^(?:show|find|locate)\s+(?:the\s+)?(?P<name>`?[\w$]+(?:[.:]+[\w$]+)*`?)\s+'
+        r'(?:(?!(?:that|which|where|for|and|or)\b)[\w-]+\s+){0,2}'
+        rf'(?P<kind>{_DECLARATION_KINDS})\s+(?:definition|declaration)\b', re.I),
+    re.compile(r'\b(?:definición|declaración)\s+(?:de\s+la\s+|del\s+|de\s+)?'
+        rf'(?P<kind>{_DECLARATION_KINDS})\s+(?P<name>`?[\w$]+(?:[.:]+[\w$]+)*`?)',re.I),
+)
+
+
+def _named_declaration(query: str) -> tuple[str, str | None] | None:
+    for pattern in _NAMED_DECLARATION:
+        match = pattern.search(query)
+        if match is None or re.search(r'\b(?:and|or|y|o)\b',query[match.end():],re.I):
+            continue
+        name = _identifier_query(match['name'].strip('`'))
+        if name is None or name.casefold() in _OBJECT_BOUNDARIES:
+            continue
+        kind = match['kind'].casefold()
+        concrete = {'clase':'class', 'class':'class', 'struct':'struct', 'interface':'interface',
+                    'enum':'enum','trait':'trait'}.get(kind)
+        return name,concrete
+    return None
 
 
 def _requests_test_source(query: str) -> bool:
@@ -55,6 +78,9 @@ def interpret(request: SearchRequest) -> QueryIntent:
         return QueryIntent(purpose)
     quoted = tuple(identifier for text in re.findall(r"`([^`]+)`", query)
                    if (identifier := _identifier_query(text)) is not None)
+    named = _named_declaration(query) if len(quoted) <= 1 else None
+    if named is not None:
+        return QueryIntent(purpose,True,(named[0],),named[1])
     stop = {"show", "find", "locate", "mostrame", "muestra", "busca", "the", "a", "an", "la", "el",
             "de", "del", "of", "definition", "declaration", "definición", "declaración", "class", "clase",
             "function", "función", "method", "método", "helper", "utility",

@@ -13,6 +13,7 @@ from ken.retrieval.profile import Encoder, RetrievalProfile
 from ken.retrieval.ranking import RelevanceJudge, rank_candidates
 from ken.retrieval.embedding_store import retrieval_snapshot
 from ken.retrieval.owner_ranking import EvidenceReranker
+from ken.retrieval.source_evidence import refine_source_evidence
 
 
 def search(conn: sqlite3.Connection, root: Path, request: SearchRequest, *,
@@ -31,7 +32,11 @@ def search(conn: sqlite3.Connection, root: Path, request: SearchRequest, *,
                 if owner_ranker is None:
                     raise ValueError('evidence ranking profile requires its pinned owner ranker')
                 owner_ranker.validate(profile.evidence)
-                matches = owner_ranker.rank(request, candidates, owner_descriptions(conn, candidates))
+                expanded = owner_ranker.prepare_query(request.query)
+                matches = owner_ranker.rank(request, candidates, owner_descriptions(conn, candidates),
+                                            expanded_query=expanded)
+                matches = refine_source_evidence(matches, root, request, query=expanded,
+                                                 stem_words=owner_ranker.stem_words)
             elif ordering is not None and not exact:
                 if judge is None:
                     from ken.retrieval.joint_model import load_judge

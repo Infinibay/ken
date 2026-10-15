@@ -98,13 +98,14 @@ class EvidenceRanking:
     expansion_revision: str | None = None
     stemming: str = 'snowball-english-v1'
     feature_version: int = 1
+    evidence_version: int = 1
 
     def __post_init__(self) -> None:
         if not re.fullmatch(r'[a-f0-9]{64}', self.model_revision):
             raise ValueError('an immutable numeric model revision is required')
         if self.expansion_revision is not None and not re.fullmatch(r'[a-f0-9]{64}', self.expansion_revision):
             raise ValueError('an immutable query expansion revision is required')
-        if self.feature_version != 1:
+        if self.feature_version != 1 or self.evidence_version != 1:
             raise ValueError('unsupported ranking feature version')
         if self.stemming != 'snowball-english-v1':
             raise ValueError('unsupported ranking stemming algorithm')
@@ -170,6 +171,7 @@ class RetrievalProfile:
             "joint": _backend_runtime(self.joint.model.backend) if self.joint else ()}
         if self.evidence is not None:
             runtime['evidence'] = tuple((p, _package_version(p)) for p in ('numpy', 'snowballstemmer'))
+            runtime['word_model'] = _backend_runtime(self.evidence.word_model.backend)
         return hashlib.sha256(json.dumps({'config': self.to_dict(), 'runtime': runtime}, sort_keys=True).encode()).hexdigest()
 
 
