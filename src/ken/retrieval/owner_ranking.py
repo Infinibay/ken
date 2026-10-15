@@ -9,7 +9,7 @@ from typing import Any
 
 import numpy as np
 
-from ken.retrieval.contextual_features import CONTEXTUAL_FEATURES, contextual_features
+from ken.retrieval.contextual_features import CONTEXTUAL_FEATURES, SOURCE_VIEW_FEATURES, contextual_features
 from ken.retrieval.description import OwnerDescription
 from ken.retrieval.evidence_features import FEATURES, evidence_features
 from ken.retrieval.model import Candidate, CodeMatch, EntityKey, SearchRequest
@@ -31,7 +31,8 @@ class EvidenceReranker:
     def __init__(self, model: NumericRanker, encoder: RegisteredEncoder, *,
                  expand_query: Callable[[str], str] | None = None,
                  expansion_revision: str | None = None):
-        schemas = (FEATURES, (*FEATURES, *CONTEXTUAL_FEATURES))
+        schemas = (FEATURES, (*FEATURES, *CONTEXTUAL_FEATURES),
+                   (*FEATURES, *CONTEXTUAL_FEATURES, *SOURCE_VIEW_FEATURES))
         if model.features not in schemas:
             raise ValueError('numeric model uses an incompatible source feature schema')
         if (expand_query is None) != (expansion_revision is None):
@@ -68,8 +69,9 @@ class EvidenceReranker:
         expanded = self.prepare_query(request.query) if expanded_query is None else expanded_query
         matrix = evidence_features(request, candidates, descriptions, encoder=self.encoder,
             stem_words=self.stem_words, expanded_query=expanded)
-        values = (np.column_stack((matrix.values, contextual_features(candidates).values))
-                  if self.feature_version == 2 else matrix.values)
+        values = (np.column_stack((matrix.values, contextual_features(candidates,
+            source_views=self.feature_version == 3).values))
+                  if self.feature_version >= 2 else matrix.values)
         scores = self.model.predict(values)
         terms = set(code_tokens(expanded))
         def evidence(candidate: Candidate):

@@ -9,6 +9,7 @@ import numpy as np
 from ken.retrieval.embedding_store import IndexVersionError
 from ken.retrieval.model import Candidate, EntityKey, Passage, merge_spans
 from ken.retrieval.profile import ContextualRetrieval, EncoderSpec, RegisteredEncoder
+from ken.retrieval.source_views import SourceViewSnapshot
 
 
 @dataclass(frozen=True)
@@ -43,6 +44,8 @@ class ContextualScores:
     source: OwnerVectorSnapshot
     original: np.ndarray
     expanded: np.ndarray
+    source_views: SourceViewSnapshot | None = None
+    query_vectors: tuple[np.ndarray, np.ndarray] | None = None
 
     def propose(self, owners: Mapping[EntityKey, Sequence[Passage]], *,
                 limit: int) -> list[Candidate]:
@@ -66,18 +69,32 @@ class ContextualScores:
             a, b = float(self.original[index]), float(self.expanded[index])
             candidate.signals.update(cosine_code_original=a, cosine_code_expanded=b,
                                     cosine_code=max(a, b))
+        if self.source_views is not None:
+            if self.query_vectors is None:
+                raise ValueError('source views require their original query vectors')
+            self.source_views.enrich(candidates, *self.query_vectors)
 
 
 class ContextualRetriever:
-    def __init__(self, encoder: RegisteredEncoder, vectors: OwnerVectorSnapshot):
+    def __init__(self, encoder: RegisteredEncoder, vectors: OwnerVectorSnapshot, *,
+                 source_views: SourceViewSnapshot | None = None):
         if encoder.spec != vectors.model:
             raise ValueError('contextual encoder does not match its pinned source vectors')
         self.encoder, self.vectors = encoder, vectors
+        if source_views is not None and (
+                source_views.query_model != vectors.model
+                or source_views.generation != vectors.generation or source_views.owners != vectors.owners
+                or source_views.source_hashes != vectors.source_hashes
+                or source_views.matrix.shape[1] != vectors.matrix.shape[1]):
+            raise ValueError('source views must match the complete contextual owner source')
+        self.source_views = source_views
 
     def score(self, query: str, expanded: str, owners: Mapping[EntityKey, Sequence[Passage]], *,
               generation: int, policy: ContextualRetrieval) -> ContextualScores:
         if policy.model != self.encoder.spec or policy.projection_version != self.vectors.projection_version:
             raise ValueError('contextual runtime does not match its pinned profile')
+        if policy.view_model != (self.source_views.model if self.source_views else None):
+            raise ValueError('source view runtime does not match its pinned profile')
         if generation != self.vectors.generation:
             raise IndexVersionError('contextual source generation changed; reindex owner vectors')
         if set(owners) != set(self.vectors.owners):
@@ -94,8 +111,13 @@ class ContextualRetriever:
                 raise ValueError('contextual query must have a finite, positive vector of the indexed dimension')
             return vector/norm
 
-        original = self.vectors.matrix @ encode(query)
-        translated = original if expanded == query else self.vectors.matrix @ encode(expanded)
+        query_vector = encode(query)
+        expanded_vector = query_vector if expanded == query else encode(expanded)
+        original = self.vectors.matrix @ query_vector
+        translated = original if expanded == query else self.vectors.matrix @ expanded_vector
         original.setflags(write=False)
         translated.setflags(write=False)
-        return ContextualScores(self.vectors, original, translated)
+        query_vector.setflags(write=False)
+        expanded_vector.setflags(write=False)
+        return ContextualScores(self.vectors, original, translated, self.source_views,
+                                (query_vector, expanded_vector))

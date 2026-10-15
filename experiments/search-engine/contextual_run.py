@@ -94,6 +94,9 @@ def main(*, expected_count: int | None = 25) -> None:
                  'translation-registration', 'context-registration', 'context-index',
                  'context-source-registration', 'output'):
         parser.add_argument('--'+name, type=Path, required=True)
+    for name in ('source-view-index', 'source-view-vectors', 'source-view-registration',
+                 'source-view-model-registration'):
+        parser.add_argument('--'+name, type=Path)
     args = parser.parse_args()
     rows = [json.loads(line) for line in args.requests.read_text().splitlines()]
     if (not rows or (expected_count is not None and len(rows) != expected_count)
@@ -119,6 +122,10 @@ def main(*, expected_count: int | None = 25) -> None:
         return expanded
     ranker = EvidenceReranker(model, words, expand_query=expand_query,
                              expansion_revision=expansion.revision)
+    view_args = (args.source_view_index, args.source_view_vectors, args.source_view_registration,
+                 args.source_view_model_registration)
+    if any(view_args) != all(view_args) or (ranker.feature_version == 3) != all(view_args):
+        raise ValueError('the source-view model requires all of its registered source artifacts')
     context_registration = json.loads(args.context_registration.read_text())
     context = CPUContextEncoder(context_registration)
     prepared = json.loads(args.context_source_registration.read_text())
@@ -141,10 +148,20 @@ def main(*, expected_count: int | None = 25) -> None:
             tuple(EntityKey(**json.loads(r[0])) for r in encoded), tuple(r[1] for r in encoded),
             np.stack([np.frombuffer(r[2], dtype=np.float32) for r in encoded]))
     del encoded
-    runtime = ContextualRetriever(context, vectors)
-    profile = RetrievalProfile(words.spec, words.spec, contextual=ContextualRetrieval(context.spec),
+    views = None
+    view_receipts: dict[str, str] = {}
+    if all(view_args):
+        from source_view_assets import load_source_views
+
+        views, view_receipts = load_source_views(index=args.source_view_index,
+            vectors=args.source_view_vectors, registration=args.source_view_registration,
+            model_registration=args.source_view_model_registration, repo=repo, source=vectors,
+            original_registration=args.context_registration, full_context_index=args.context_index)
+    runtime = ContextualRetriever(context, vectors, source_views=views)
+    profile = RetrievalProfile(words.spec, words.spec, contextual=ContextualRetrieval(context.spec,
+        view_model=views.model if views else None),
         evidence=EvidenceRanking(model.fingerprint, words.spec, expansion.revision,
-                                 feature_version=2, evidence_version=2))
+                                 feature_version=ranker.feature_version, evidence_version=2))
     metadata = {'scope': f'ALL{len(rows)} live API + canonical JSON; public source/requests only; CPU; '
                          'one repo-excluded model; not default/acceptance/final uncontended certificate',
         'engine_root': str(engine_root), 'engine_receipt_sha256': receipt,
@@ -158,6 +175,8 @@ def main(*, expected_count: int | None = 25) -> None:
         'python': sys.version, 'platform': platform.platform(), 'machine': platform.machine(),
         'index': str(args.index), 'root': str(args.root), 'timings': [],
         'indexed_files': conn.execute('SELECT COUNT(*) FROM ci_files').fetchone()[0]}
+    if view_receipts:
+        metadata['source_view_artifacts'] = view_receipts
     (args.output/'registration.json').write_text(json.dumps(metadata, indent=2))
     try:
         encoders = {'identity': words, 'behavior': words}
@@ -186,6 +205,8 @@ def main(*, expected_count: int | None = 25) -> None:
             'torch', 'transformers', 'sentence_transformers') if name in sys.modules)
         if verify_frozen_source(engine_root) != receipt:
             raise ValueError('engine source changed during the run')
+        if any(sha(Path(path)) != digest for path, digest in view_receipts.items()):
+            raise ValueError('mapped source view artifacts changed during the run')
         (args.output/'performance.json').write_text(json.dumps(metadata, indent=2))
         print(json.dumps({'repo': repo, 'queries': len(rows),
                           'peak_rss_native': metadata['peak_rss_native']}), flush=True)
