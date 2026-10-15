@@ -1,0 +1,132 @@
+{
+  "status": "CODE_REVIEW_COMPLETE_WITH_PREFIT_CLOSURE_FINDINGS_NOT_REAL_PREFIT_APTO",
+  "reviewed_utc": "2026-10-15T15:44:15.025074+00:00",
+  "scope": "Static review of draft fitter93 and reviewed caller/helper source only. No fitter execution, auxiliary query/label/receipt-payload read, training, scoring or marker creation. This is separate from the future actual PRE-FIT review.",
+  "controller": {
+    "path": "/private/tmp/ken-auxiliary-ranking-v93.py",
+    "archive_path": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/control-sources-v93/ken-auxiliary-ranking-v93.py",
+    "sha256": "09308981fe1510df6e4c7495c976fb34b22b394fb0ef5d6dfc17bddba6404724",
+    "bytes": 18335,
+    "syntax_ast_parse_only": true
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "priority": 1,
+      "lines": [
+        89,
+        107
+      ],
+      "title": "The auxiliary case SHA is not yet bound to the sealed curator payload",
+      "evidence": "The fitter checks a caller-supplied --aux-cases-sha256, source scope, counts and equality of projected public requests. It does not compare that SHA to a case member/extraction attestation bound to the reviewed curator seal/archive. The complete source registration transitively names source metadata, but no current check links the training-reference file bytes to that sealed payload.",
+      "poc": "Synthetic unchanged request and identical path/source hash: moving the null-entity anchor from line1 to line2 flips eligible_owner labels [1,0] to[0,1]. request_for_case stays identical. A new CLI SHA for the changed references remains self-consistent with the present code checks. No actual auxiliary file was opened or changed.",
+      "impact": "Self-consistency alone cannot establish that the96 training judgments are precisely the independently curated sealed pilot. This is a pre-fit provenance closure gap, not evidence that any current judgment was changed.",
+      "required_closure": "After the source-only review permits the next phase, bind the exact auxiliary cases/public requests to the immutable archive and curator seal through the approved member hashes or a separately reviewed extraction/normalization attestation. Include that binding in the exact reviewed pre-fit manifest. Do not open the sealed payload during the source-only phase."
+    },
+    {
+      "id": "F2",
+      "priority": 2,
+      "lines": [
+        101,
+        132
+      ],
+      "title": "Per-repository request and worker provenance are not checked transitively",
+      "evidence": "The parent records requests_sha256 and worker_registration_sha256 for all8 repos. This fitter checks aggregate candidates/NPZ/copy-index hashes, but never validates those per-repo request hashes, worker receipt hashes, worker features schema/profile/generation/inputs/view_receipts, or exact worker-to-aggregate candidate concatenation. Width251 and qid/index checks do not replace that projection/source chain.",
+      "impact": "The code review can verify the intended worker and frozen251 constants, but the draft alone does not certify that each cached matrix/candidate row was produced by those assets. No mismatch was observed; actual artifacts are not yet reviewed.",
+      "required_closure": "Bind all8 worker receipts and request files; verify their declared outputs against the copied NPZ and aggregate candidate rows, ordered feature schema251 against the parent, and source registration/generation/model/translation/view receipts against the independently reviewed source phase. Retain those hashes in the pre-fit record."
+    },
+    {
+      "id": "F3",
+      "priority": 2,
+      "lines": [
+        117,
+        119
+      ],
+      "title": "Sum of anchor lengths rejects valid overlapping-anchor references",
+      "evidence": "The draft requires sum(end-start+1 for each anchor)<=40. The original validate_case permits overlapping anchors and strict scoring checks the union of visible lines; it does not require anchor intervals to be disjoint.",
+      "poc": {
+        "anchors": [
+          [
+            1,
+            30
+          ],
+          [
+            20,
+            40
+          ]
+        ],
+        "summed_lengths": 51,
+        "unique_required_lines": 40,
+        "one_physical_window": [
+          1,
+          40
+        ]
+      },
+      "impact": "A legitimate reference could fail before preparation/fit even though all its anchors fit the original line budget. This is a conservative false rejection, not relaxed acceptance. Whether the sealed pilot contains such a reference was deliberately not inspected.",
+      "required_closure": "Assess source/bundle feasibility using the union of required lines and the unchanged physical fragment/JSON limits. Do not drop, rewrite or weaken a reference to satisfy the extra sum rule."
+    }
+  ],
+  "confirmed_design": [
+    "The source receipt and immutable public69/66c registrations/matrix/scores are pinned. Original physical6314-file source and64 artifacts plus51 parent bindings are checked. Original167360 rows retain their complete251 feature schema; the first235 feature values and original labels are aligned using qid/index and registered artifacts.",
+    "Independently compared frozen93 feature constants:227 evidence+8 fullcontext+16 sourceview names exactly equal parent69 names251; no90POS or92tie replacement.",
+    "Auxiliary labels are derived only after prepared public pools using the unchanged eligible_owner: original identity semantics, exact source hash and ALL anchors within canonical exclusive regions. No file-only or partial-anchor replacement and no lexical-context-policy change.",
+    "For each held development repo, train=np.flatnonzero(repositories!=held); sizes use the contiguous retained qid groups. Set and count assertions require375 nonheld development groups plus all96 auxiliary groups=471 and exactly15+8 training repositories. Exact/no-positive groups are logged but not filtered. No normalizer or fitted global statistic is introduced.",
+    "Held labels/features may be hashed for provenance, but only X[train], labels[train] and group sizes enter LGBMRanker.fit. Baseline69 scores are kept outside training X. A fresh ranker is instantiated for each of16 folds with unchanged registered69 parameters. The actual row-set/held-perturbation check remains for PRE-FIT artifacts.",
+    "All16 training-row NPZs, feature/label hashes,471 qids and training repos are written before pre_fit_ready. The wait gate binds engine receipt, controller hash and exact pre-fit registration hash. LightGBM fitting occurs only after that gate; review did not execute it.",
+    "Native and exported numeric predictions must be bitexact on all held rows; serialized reload is also checked and160 rounds required. Actual forests/exports cannot be certified before they exist.",
+    "Replay is only the original400 public development requests. Exact authority precedes numeric score, ties preserve canonical pool index, evidence3 completion and original presentation remain. Original400 references/scorer are opened for grading after the fits; baseline286strict/298identity is asserted. Auxiliary cases are never appended to the evaluation denominator.",
+    "CPU-only numerical code, n_jobs1 in registered parameters, no new encoder in fitter; forbidden Torch/transformer imports are checked. Whole-harness RSS is only scope-limited telemetry, not an API resource certificate."
+  ],
+  "synthetic_checks": {
+    "no_auxiliary_artifacts_opened": true,
+    "feature_name_order_equal": 251,
+    "all16_toy_fold_group_counts": [
+      471,
+      471,
+      471,
+      471,
+      471,
+      471,
+      471,
+      471,
+      471,
+      471,
+      471,
+      471,
+      471,
+      471,
+      471,
+      471
+    ],
+    "reference_vs_public_projection_poc": {
+      "original_y": [
+        1,
+        0
+      ],
+      "changed_anchor_y": [
+        0,
+        1
+      ],
+      "public_request_identical": true
+    },
+    "overlapping_anchor_poc": {
+      "sum": 51,
+      "union": 40
+    },
+    "controller_executions": 0,
+    "fit_calls_executed": 0,
+    "markers_written": 0
+  },
+  "limits": [
+    "F1/F2 can be closed through explicit immutable receipts and actual independent PRE-FIT verification; they are not observations of corruption or held-repository leakage. Root has acknowledged those planned closures.",
+    "F3 is a prospective generic counterexample; no claim that it occurs in the still-closed auxiliary pilot.",
+    "Actual source indices/context/views,96 request/target alignment, all16 training sets and gate bindings remain to be reviewed in order after ALL8 source is complete.",
+    "No quality, export-parity, response-budget or resource result is certified by this code-only review. No sealed receipt/tar or private data was parsed."
+  ],
+  "auxiliary_source_progress_only": {
+    "complete": false,
+    "indices": 8,
+    "contexts": 1,
+    "views": 0
+  }
+}

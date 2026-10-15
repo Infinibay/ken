@@ -1,0 +1,448 @@
+{
+  "helper_sha256": "cbac763ea551be45d2a4b8cf463cb7e56ce1416ac76cd40e88e03a92294cb034",
+  "copied_source": "/private/tmp/ken-lexical-context-reviewed-cbac763ea551be45d2a4b8cf463cb7e56ce1416ac76cd40e88e03a92294cb034.py",
+  "core_source": "frozen cpu-auxiliary-training-v93 extractor7",
+  "fixture_count": 25,
+  "results": [
+    {
+      "fixture": "python_nested",
+      "language": "python",
+      "contexts": [
+        {
+          "kind": "function",
+          "qualname": "outer",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "function",
+          "qualname": "outer.child",
+          "owner": "outer",
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "function",
+          "qualname": "unrelated",
+          "owner": null,
+          "definition_ordinal": 0
+        }
+      ],
+      "diagnostics": [],
+      "source_hash": "29ed56bc55d854fc80402e27fbae4023e45d9c7cdcf59b5ded8f16310ce66b56",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "python_rebound",
+      "language": "python",
+      "contexts": [
+        {
+          "kind": "function",
+          "qualname": "outer",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "function",
+          "qualname": "outer.value",
+          "owner": "outer",
+          "definition_ordinal": 0
+        }
+      ],
+      "diagnostics": [],
+      "source_hash": "84acf271464d6558be0143746eaf5fa1adf6df92ae688de3526d644b677e4608",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "python_conditional",
+      "language": "python",
+      "contexts": [
+        {
+          "kind": "function",
+          "qualname": "outer",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "function",
+          "qualname": "outer.value",
+          "owner": "outer",
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "function",
+          "qualname": "outer.value",
+          "owner": "outer",
+          "definition_ordinal": 1
+        }
+      ],
+      "diagnostics": [],
+      "source_hash": "3a99534213ffda81a7cf2eea2ac94c566cf087c7387d7f00629cb4584f8f571d",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "python_local_class",
+      "language": "python",
+      "contexts": [
+        {
+          "kind": "function",
+          "qualname": "outer",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "method",
+          "qualname": "outer.Local.run",
+          "owner": "outer.Local",
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "function",
+          "qualname": "unrelated",
+          "owner": null,
+          "definition_ordinal": 0
+        }
+      ],
+      "diagnostics": [],
+      "source_hash": "ebd38e2aecaa610af4c58e365cdb075956d24658fdcf087664854f0af80999b1",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "python_utf8_crlf",
+      "language": "python",
+      "contexts": [
+        {
+          "kind": "function",
+          "qualname": "outer",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "function",
+          "qualname": "outer.child",
+          "owner": "outer",
+          "definition_ordinal": 0
+        }
+      ],
+      "diagnostics": [],
+      "source_hash": "f26caf13be842cd97653ad6bd5f2cd21853ad293ab48c06fa531d058c86e4902",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "js_named",
+      "language": "javascript",
+      "contexts": [
+        {
+          "kind": "function",
+          "qualname": "outer",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "function",
+          "qualname": "outer.child",
+          "owner": "outer",
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "function",
+          "qualname": "unrelated",
+          "owner": null,
+          "definition_ordinal": 0
+        }
+      ],
+      "diagnostics": [],
+      "source_hash": "22ceca569d42be16acfc36f6811f609ef08d8b742185a50a3e2baa577474ebfe",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "js_single_binding",
+      "language": "javascript",
+      "contexts": [
+        {
+          "kind": "function",
+          "qualname": "outer",
+          "owner": null,
+          "definition_ordinal": 0
+        }
+      ],
+      "diagnostics": [],
+      "source_hash": "94f19c500a563212a9afc2b08137835fce14836120500635e3ebad022814769c",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "js_sibling_initializer",
+      "language": "javascript",
+      "contexts": [],
+      "diagnostics": [
+        "ambiguous_or_partial_line_scope"
+      ],
+      "source_hash": "2366fc13ba14fb8f9e08da69856b869047e232b6f89f0af277c2ddd7eac21ea6",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "js_sibling_initializer_multiline",
+      "language": "javascript",
+      "contexts": [],
+      "diagnostics": [
+        "ambiguous_or_partial_line_scope"
+      ],
+      "source_hash": "3f8baa1dbbc4421d6ce9c77333c660273c9cf37d677374df954d28ed1f87a7fd",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "js_object_destructure_default",
+      "language": "javascript",
+      "contexts": [],
+      "diagnostics": [
+        "ambiguous_or_partial_line_scope"
+      ],
+      "source_hash": "57dde6ef1e9d9a80d0a451b0d61cfe64447af4da6a7fb024456a9b1b11732981",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "js_object_destructure_computed",
+      "language": "javascript",
+      "contexts": [],
+      "diagnostics": [
+        "ambiguous_or_partial_line_scope"
+      ],
+      "source_hash": "1df920dde36c421ef9131e859ec01e69e5e6d0b551fdb4ef54251d604c0190c8",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "js_array_destructure_default",
+      "language": "javascript",
+      "contexts": [],
+      "diagnostics": [
+        "ambiguous_or_partial_line_scope"
+      ],
+      "source_hash": "a764926f8475f0bce412f5520152ffe07f1d84d337cdc03912bc038ecdf150da",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "js_computed_assignment",
+      "language": "javascript",
+      "contexts": [],
+      "diagnostics": [],
+      "source_hash": "bdf80c57112ff56c9a73e3fd3e4c8b3c7b9fabd46ef70eb6e5b81f94e8eb211a",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "js_call_receiver_assignment",
+      "language": "javascript",
+      "contexts": [],
+      "diagnostics": [],
+      "source_hash": "7d27e3b77ce21c0b12cc06d4b37aa2edf9a4d573158d9522202a2c5503ee0e98",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "js_static_assignment",
+      "language": "javascript",
+      "contexts": [],
+      "diagnostics": [
+        "ambiguous_or_partial_line_scope"
+      ],
+      "source_hash": "149f9bc39b20fb9a5d0966e102a611371f7f44767f53ae9a121ba02ff8858707",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "js_same_line_siblings",
+      "language": "javascript",
+      "contexts": [],
+      "diagnostics": [
+        "ambiguous_or_partial_line_scope"
+      ],
+      "source_hash": "8c23248b1fb11e170b87d772a63e38abe4eb9bbd40d17d9b6262bef0fc104be7",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "js_export",
+      "language": "javascript",
+      "contexts": [],
+      "diagnostics": [
+        "ambiguous_or_partial_line_scope"
+      ],
+      "source_hash": "7daa8fe0c6c5ad88a3bcb584e0353770da4af896036399628b59c6e3eb064a86",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "typescript_factory",
+      "language": "typescript",
+      "contexts": [
+        {
+          "kind": "method",
+          "qualname": "Factory.make",
+          "owner": "Factory",
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "function",
+          "qualname": "Factory.make.parse",
+          "owner": "Factory.make",
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "method",
+          "qualname": "Factory.unrelated",
+          "owner": "Factory",
+          "definition_ordinal": 0
+        }
+      ],
+      "diagnostics": [],
+      "source_hash": "c91a0fbba87d851a27d6e6244f2e0a8580633142484ec7d3d2385a0fcee37bf2",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "rust_nested",
+      "language": "rust",
+      "contexts": [
+        {
+          "kind": "function",
+          "qualname": "outer",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "function",
+          "qualname": "unrelated",
+          "owner": null,
+          "definition_ordinal": 0
+        }
+      ],
+      "diagnostics": [],
+      "source_hash": "0354625bb486a3a56be4fb9727c6414ecb153324aee9bdc26bc1fe322f7681a2",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "rust_closure",
+      "language": "rust",
+      "contexts": [
+        {
+          "kind": "function",
+          "qualname": "outer",
+          "owner": null,
+          "definition_ordinal": 0
+        }
+      ],
+      "diagnostics": [],
+      "source_hash": "169deb5bfb2130e8afd6265f349763874ed08120c1c9d6d02f9c51991d4f4afd",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "go_closure",
+      "language": "go",
+      "contexts": [
+        {
+          "kind": "function",
+          "qualname": "outer",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "function",
+          "qualname": "unrelated",
+          "owner": null,
+          "definition_ordinal": 0
+        }
+      ],
+      "diagnostics": [],
+      "source_hash": "b2aabfd988f6b1beaeb91fef87f344138bc766a9b8f23f0b72e17bb015b794f5",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "java_lambda",
+      "language": "java",
+      "contexts": [
+        {
+          "kind": "method",
+          "qualname": "Toy.make",
+          "owner": "Toy",
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "method",
+          "qualname": "Toy.unrelated",
+          "owner": "Toy",
+          "definition_ordinal": 0
+        }
+      ],
+      "diagnostics": [],
+      "source_hash": "60319b0ad1dc417381ed54da72a844d476315478a9fdd0546f06d1cd32ed771d",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "cpp_nested_class",
+      "language": "cpp",
+      "contexts": [
+        {
+          "kind": "function",
+          "qualname": "outer",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        {
+          "kind": "function",
+          "qualname": "unrelated",
+          "owner": null,
+          "definition_ordinal": 0
+        }
+      ],
+      "diagnostics": [],
+      "source_hash": "c536377eb52f90996e480bac9fbcd81b4c8d9824632825cc44e6e08d3f1c72fd",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "c_unavailable",
+      "language": "c",
+      "contexts": [],
+      "diagnostics": [
+        "structural_grammar_unavailable"
+      ],
+      "source_hash": "07e31c947182a3a4430804cbda670c779dde0e385ab4c0eea728c311b6519382",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    },
+    {
+      "fixture": "python_invalid",
+      "language": "python",
+      "contexts": [],
+      "diagnostics": [
+        "syntax_error"
+      ],
+      "source_hash": "e6938fd8f563665fcaefec05805213a62ed5a1fa7a136aa6aad7c16602ca1da8",
+      "physical_text_and_parts_exact": true,
+      "passages_unchanged": true
+    }
+  ],
+  "limits": {
+    "full_passage_field_validation": false,
+    "physical_context_ignores_forged_cached_fields": true,
+    "generation_is_caller_supplied": true,
+    "standalone_js_exports_and_static_assignment": "Conservatively rejected as partial-line scope; no false authority.",
+    "no_execution_or_call_target_claims": true
+  },
+  "executed_controller_or_queries_or_labels": false
+}

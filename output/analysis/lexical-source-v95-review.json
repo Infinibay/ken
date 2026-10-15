@@ -1,0 +1,121 @@
+{
+  "status": "SOURCE_CATALOG_FIDELITY_APTO_WITH_CONSERVATIVE_DIAGNOSTICS_NOT_PROJECTION_OR_FIT_APPROVAL",
+  "reviewed_utc": "2026-10-15T16:07:06.240100+00:00",
+  "blocking_findings": [],
+  "scope": "Independent ALL16 source-only artifact fidelity audit. No query, original judgment/reference, auxiliary pilot payload, private reserve, ranking score or quality metric read; no producer/fit run, implementation edit or marker creation.",
+  "bindings": {
+    "engine_receipt": "13fec1b8eaf9e6d017d72d61c7ddaee61af83a9a9d8776be34354918b5734556",
+    "source_tree_sha256": "e5820305cd8461451caa2da587b1a6da43a169882e927c3c9eb1a35e31e9cec3",
+    "catalog_registration_sha256": "5c5c1d79ca3d4310b80c3dd4f9f1c5936dbf3cb452be8b69fe4919b953781581",
+    "mechanical_review_sha256": "f33a05b072cb44bc5e11c941ea6b54153da1d96f02515163ae66fd2bdb85a82b",
+    "source_controller_sha256": "eff1b6a2bdbb0894cbec36ce27e129b432f8bfadac9d4691e123e60a20fefeea",
+    "helper_sha256": "cbac763ea551be45d2a4b8cf463cb7e56ce1416ac76cd40e88e03a92294cb034",
+    "source_parent_registration_sha256": "17ac3c3c26170f8929b2cc1a21fe9a7e036603452929c73a435a07e88628dd6a",
+    "tracked_frozen_files": 604,
+    "previous600files_byte_identical": true
+  },
+  "verified_counts": {
+    "passages": 124851,
+    "source_checked": 4195,
+    "files": 6314,
+    "callable_owners": 37402,
+    "no_canonical_language_parser": 1944,
+    "contexts": 36194,
+    "parts": 89866,
+    "syntax_scopes": 46483,
+    "no_indexed_passages": 175,
+    "contexts_with_descendant_owned_parts": 939,
+    "owners": 50967
+  },
+  "diagnostics": {
+    "file_statuses": {
+      "source_checked": 4195,
+      "no_canonical_language_parser": 1944,
+      "no_indexed_passages": 175
+    },
+    "diagnostic_files": {
+      "structural_grammar_unavailable": 538,
+      "ambiguous_or_partial_line_scope": 109,
+      "syntax_error": 9
+    },
+    "uncovered_canonical_callables": {
+      "ambiguous_or_partial_line_scope": 371,
+      "syntax_error": 142,
+      "structural_grammar_unavailable": 695
+    },
+    "total_canonical_callables_without_authorized_context": 1208,
+    "note": "File-level unavailable/syntax records and per-entity partial-scope records have different denominators. All remain in the source inventory. Parser ERROR is inability to certify this AST, not proof that source is invalid in its actual compiler/runtime."
+  },
+  "checks": [
+    "All20 registered source inputs,16 raw source indices,16 catalogs and16 inventories match their registered hashes. Frozen receipt and all604tracked bytes verified; the preceding600files remain byte-identical. NonemptyWAL snapshots were absent.",
+    "All6314 physical ci_files match the original66c bytes. All50967 canonical owners and124851 stored passages remain intact. Every stored passage body was compared to the physical line range; detected-parser source files were freshly re-extracted and their canonical passage keys/metadata compared with zero differences (legacy module entity_span chunk metadata is intentionally compared under its existing convention).",
+    "All36194 accepted serialized contexts reproduce from frozen95 helper and index source. A separate AST/byte traversal checks unique primary binding, permitted direct/static carrier, complete physical bounds, exact source parts, current canonical owner on every nonblank line, explicit blank-only ownerNone, and function/type scope ancestry. No sibling initializer, name-prefix or callee-graph expansion is used.",
+    "All89866 parts concatenate to the exact physical source interval, and all46483 syntax scopes match the current AST byte boundaries and nearest function/type parent.939contexts include parts owned by a distinct canonical descendant; those owners/ordinals remain unchanged.",
+    "All per-file zero-context statuses and diagnostic records reproduce exactly. Every one of1208canonical callables without an authorized context is accounted for by an explicit per-entity or file-level diagnostic, rather than silently authorized by an extent.",
+    "A deterministic source-only SHA sample of32contexts (two per repository) is recorded for traceability. No ranking, query or reference was used to select it. All36194contexts, not only that sample, received the physical/AST checks."
+  ],
+  "known_source_witnesses": {
+    "boltons:boltons/iterutils.py:split_iter": {
+      "repo": "boltons",
+      "path": "boltons/iterutils.py",
+      "primary": {
+        "path": "boltons/iterutils.py",
+        "kind": "function",
+        "qualname": "split_iter",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "source_hash": "7fb67f49dc1d895051549b523c2e21161e3c1f4e21590fa7fd09039386d08510",
+      "extent": {
+        "start_line": 121,
+        "end_line": 190
+      },
+      "context_byte_sha256": "ec6bdc60b5fa96536e8e8de48962c8478dd583dace15e7b952f0c8fd9bee4146",
+      "parts": 32,
+      "syntax_scopes": 4,
+      "descendant_owned_parts": 3,
+      "selection_hash": "adeeb1a503d090000a088731cdde0070e849b7f1b30d70962fc935cca69ecf67"
+    },
+    "marked:src/Instance.ts:Marked.parseMarkdown": {
+      "repo": "marked",
+      "path": "src/Instance.ts",
+      "primary": {
+        "path": "src/Instance.ts",
+        "kind": "method",
+        "qualname": "Marked.parseMarkdown",
+        "owner": "Marked",
+        "definition_ordinal": 0
+      },
+      "source_hash": "447d98bdd4c9c52ad2b528dd1e4f18cdc447d919b0c17c0b28530c003e43032e",
+      "extent": {
+        "start_line": 310,
+        "end_line": 382
+      },
+      "context_byte_sha256": "940258edafd6ec9667727d187c26c9fbe592ac672633c59ce36f976c28684e12",
+      "parts": 18,
+      "syntax_scopes": 3,
+      "descendant_owned_parts": 7,
+      "selection_hash": "3f540d349095e9cf27c1aafe01cd64f57b184f6c43ae5e676df77b6d7602f1a7"
+    },
+    "ajv:lib/vocabularies/validation/enum.ts:code": {
+      "available": false,
+      "reason": "ambiguous_or_partial_line_scope",
+      "physical_suffix_after_AST_method": ",",
+      "interpretation": "Conservative rejection; no source authority and no recovery claim."
+    }
+  },
+  "limits": [
+    "Ajv lib/vocabularies/validation/enum.ts method code has no authorized95context: a comma after its AST method produces ambiguous_or_partial_line_scope. Boltons split_iter and Marked.parseMarkdown do have faithful nested-source contexts. Do not claim95recovers all3known examples or alters their eligibility.",
+    "There are695canonical callables in unavailable structural grammars,371ambiguous/partial-line callables and142in source files whose AST containsERROR. Unavailable files include C,Kotlin,HTML,CSS andBash. Retain their original retrieval behavior and diagnostics; no proof of execution, resolved target or invalid reference follows.",
+    "The helper certifies lexical source availability, not semantic behavior, reachability, callback invocation, return resolution or runtime order. Canonical line owners and lexical AST scopes are distinct concepts. Anonymous scopes keep byte identities without invented canonical function keys.",
+    "No source context is yet a query projection or visible evidence policy. It does not change historical owner targets, y=0cases, pools, source bounds, original alternatives, ALL400 or budgets. A future experiment requires explicit projection/evidence version, source authorization shared with targets/presentation, actualCPUAPI replay and unchanged strict scoring.",
+    "Resource figures are source-only per-repository phase sums and producer peak RSS. They exclude model/query serving and are concurrent environment telemetry, not an API latency/RAM certificate. Review runtime is not a performance comparison."
+  ],
+  "source_only_resources": {
+    "sum_repo_phase_ms": 31242.415332992096,
+    "peak_rss_native": 236748800,
+    "no_encoder_query_runtime_claim": true,
+    "serialized_context_jsonl_bytes": 58055079
+  },
+  "artifact_details": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/lexical-source-v95-review-mechanical.json"
+}

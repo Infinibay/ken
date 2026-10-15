@@ -1,0 +1,422 @@
+{
+  "status": "CONCEPTUALLY_VIABLE_WITH_EXPLICIT_VERSIONED_PROVENANCE_CONTRACT_NOT_IMPLEMENTATION_APPROVAL",
+  "reviewed_utc": "2026-10-15T15:27:08.335624+00:00",
+  "scope": "Independent design/fidelity review of canonical exclusive ownership versus lexical implementation context. No engine, labels, scorer, model, source or gate modification. No reserve or auxiliary-pilot queries/references opened.",
+  "inputs": {
+    "dataset_sha256": "e68275872ea3cd14abb7499c4b6a38cc99908a8ce75bd7709a549f392972fc63",
+    "source_owner_eligibility_sha256": "37eab3e4a275b5dd309601afe993f50191bc3895c7ccc707bfb93c35e6345697",
+    "source_passages_sha256": "128394c458cf8aecc1feb1d64f7b756b03656949e422d22adfa74772cd1e3010",
+    "source_evidence_sha256": "7f3c38946768da6df0b16088699bd1e816ef95ab71cc4282680f6b05f2dea62d",
+    "v54c_protocol_sha256": "3264ade7219ffc1c34a2c697cf7e2d02b71ab6ab41f134b4a1c23952031fa06d",
+    "v72_protocol_sha256": "670e0c297e04579ab35e9b6ef76f5f1f831a16271dab87ebe4a22cd96ccbc644"
+  },
+  "findings": [
+    "The three original alternatives are physically valid; exclusive canonical ownership is a stricter representation than the lexical callable that creates/contains nested implementations. The identified missing lines are child-owned source, not absent source or incorrect labels.",
+    "The current eligible_owner predicate is correct for its current input region contract. It does not prove an original reference impossible or semantically wrong. An extent alone is not currently an authorized evidence region.",
+    "A new source-only lexical context projection can recover the missing information while retaining canonical ownership and original acceptance, but flattening child passages onto a parent entity or silently filling existing ownership gaps would violate the current contract."
+  ],
+  "witnesses": [
+    {
+      "id": "development-ajv-07",
+      "path": "/private/tmp/ken-search-development-20261014/repos/ajv/lib/vocabularies/validation/enum.ts",
+      "source_hash": "f62f760dda52c2dbc053ef7b7012aa9db10d3af65e8b1dc5defcaf2ba9c25911",
+      "index_sha256": "6fb013429d25fbdfd24b4b8d2cd795275ab5ea40935db197b98e5de142a4cee5",
+      "generation": "5627",
+      "original_alternative": {
+        "path": "lib/vocabularies/validation/enum.ts",
+        "source_hash": "f62f760dda52c2dbc053ef7b7012aa9db10d3af65e8b1dc5defcaf2ba9c25911",
+        "entity": null,
+        "anchors": [
+          {
+            "start_line": 21,
+            "end_line": 36
+          }
+        ]
+      },
+      "primary_entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "primary_extent": [
+        19,
+        51
+      ],
+      "exclusive_regions": [
+        [
+          19,
+          23
+        ],
+        [
+          25,
+          37
+        ],
+        [
+          51,
+          51
+        ]
+      ],
+      "missing_anchor_lines_under_exclusive_regions": [
+        24
+      ],
+      "descendants": [
+        {
+          "entity": {
+            "kind": "function",
+            "qualname": "code.getEql",
+            "owner": "code",
+            "definition_ordinal": 0
+          },
+          "regions": [
+            [
+              24,
+              24
+            ]
+          ],
+          "extent": [
+            24,
+            24
+          ]
+        },
+        {
+          "entity": {
+            "kind": "function",
+            "qualname": "code.loopEnum",
+            "owner": "code",
+            "definition_ordinal": 0
+          },
+          "regions": [
+            [
+              38,
+              43
+            ]
+          ],
+          "extent": [
+            38,
+            43
+          ]
+        },
+        {
+          "entity": {
+            "kind": "function",
+            "qualname": "code.equalCode",
+            "owner": "code",
+            "definition_ordinal": 0
+          },
+          "regions": [
+            [
+              45,
+              50
+            ]
+          ],
+          "extent": [
+            45,
+            50
+          ]
+        }
+      ],
+      "illustrative_source_windows": [
+        {
+          "start_line": 19,
+          "end_line": 36,
+          "content": "  code(cxt: KeywordCxt) {\n    const {gen, data, $data, schema, schemaCode, it} = cxt\n    if (!$data && schema.length === 0) throw new Error(\"enum must have non-empty array\")\n    const useLoop = schema.length >= it.opts.loopEnum\n    let eql: Name | undefined\n    const getEql = (): Name => (eql ??= useFunc(gen, equal))\n\n    let valid: Code\n    if (useLoop || $data) {\n      valid = gen.let(\"valid\")\n      cxt.block$data(valid, loopEnum)\n    } else {\n      /* istanbul ignore if */\n      if (!Array.isArray(schema)) throw new Error(\"ajv implementation error\")\n      const vSchema = gen.const(\"vSchema\", schemaCode)\n      valid = or(...schema.map((_x: unknown, i: number) => equalCode(vSchema, i)))\n    }\n    cxt.pass(valid)"
+        }
+      ],
+      "illustrative_line_count": 18,
+      "illustrative_source_content_characters": 722,
+      "purpose": "Feasibility witness only, selected during review of the original reference. Not an answer, ranking result, query-time selection rule or quality estimate."
+    },
+    {
+      "id": "development-boltons-01",
+      "path": "/private/tmp/ken-search-development-20261014/repos/boltons/boltons/iterutils.py",
+      "source_hash": "7fb67f49dc1d895051549b523c2e21161e3c1f4e21590fa7fd09039386d08510",
+      "index_sha256": "ab82fbe4b258bd9b4ebf0417c310a32811406c4ea376683b0a5e80a3e1bcff26",
+      "generation": "1351",
+      "original_alternative": {
+        "path": "boltons/iterutils.py",
+        "source_hash": "7fb67f49dc1d895051549b523c2e21161e3c1f4e21590fa7fd09039386d08510",
+        "entity": {
+          "kind": "function",
+          "qualname": "split_iter",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "anchors": [
+          {
+            "start_line": 174,
+            "end_line": 189
+          }
+        ]
+      },
+      "primary_entity": {
+        "kind": "function",
+        "qualname": "split_iter",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "primary_extent": [
+        121,
+        190
+      ],
+      "exclusive_regions": [
+        [
+          121,
+          167
+        ],
+        [
+          169,
+          169
+        ],
+        [
+          171,
+          175
+        ],
+        [
+          177,
+          190
+        ]
+      ],
+      "missing_anchor_lines_under_exclusive_regions": [
+        176
+      ],
+      "descendants": [
+        {
+          "entity": {
+            "kind": "function",
+            "qualname": "split_iter.sep_func",
+            "owner": "split_iter",
+            "definition_ordinal": 0
+          },
+          "regions": [
+            [
+              168,
+              168
+            ]
+          ],
+          "extent": [
+            168,
+            168
+          ]
+        },
+        {
+          "entity": {
+            "kind": "function",
+            "qualname": "split_iter.sep_func",
+            "owner": "split_iter",
+            "definition_ordinal": 1
+          },
+          "regions": [
+            [
+              170,
+              170
+            ]
+          ],
+          "extent": [
+            170,
+            170
+          ]
+        },
+        {
+          "entity": {
+            "kind": "function",
+            "qualname": "split_iter.sep_func",
+            "owner": "split_iter",
+            "definition_ordinal": 2
+          },
+          "regions": [
+            [
+              176,
+              176
+            ]
+          ],
+          "extent": [
+            176,
+            176
+          ]
+        }
+      ],
+      "illustrative_source_windows": [
+        {
+          "start_line": 121,
+          "end_line": 121,
+          "content": "def split_iter(src, sep=None, maxsplit=None):"
+        },
+        {
+          "start_line": 174,
+          "end_line": 189,
+          "content": "    for s in src:\n        if maxsplit is not None and split_count >= maxsplit:\n            def sep_func(x): return False\n        if sep_func(s):\n            if sep is None and not cur_group:\n                # If sep is none, str.split() \"groups\" separators\n                # check the str.split() docs for more info\n                continue\n            split_count += 1\n            yield cur_group\n            cur_group = []\n        else:\n            cur_group.append(s)\n\n    if cur_group or sep is not None:\n        yield cur_group"
+        }
+      ],
+      "illustrative_line_count": 17,
+      "illustrative_source_content_characters": 577,
+      "purpose": "Feasibility witness only, selected during review of the original reference. Not an answer, ranking result, query-time selection rule or quality estimate."
+    },
+    {
+      "id": "development-marked-18",
+      "path": "/private/tmp/ken-search-development-20261014/repos/marked/src/Instance.ts",
+      "source_hash": "447d98bdd4c9c52ad2b528dd1e4f18cdc447d919b0c17c0b28530c003e43032e",
+      "index_sha256": "fdec8e5cffb898e8f7c00e5ff91f6434ff2cbeb321ab5109f5db94ee346d6202",
+      "generation": "6979",
+      "original_alternative": {
+        "path": "src/Instance.ts",
+        "source_hash": "447d98bdd4c9c52ad2b528dd1e4f18cdc447d919b0c17c0b28530c003e43032e",
+        "entity": {
+          "kind": "method",
+          "qualname": "Marked.parseMarkdown",
+          "owner": "Marked",
+          "definition_ordinal": 0
+        },
+        "anchors": [
+          {
+            "start_line": 345,
+            "end_line": 354
+          }
+        ]
+      },
+      "primary_entity": {
+        "kind": "method",
+        "qualname": "Marked.parseMarkdown",
+        "owner": "Marked",
+        "definition_ordinal": 0
+      },
+      "primary_extent": [
+        310,
+        382
+      ],
+      "exclusive_regions": [
+        [
+          310,
+          317
+        ],
+        [
+          380,
+          382
+        ]
+      ],
+      "missing_anchor_lines_under_exclusive_regions": [
+        345,
+        346,
+        347,
+        348,
+        349,
+        350,
+        351,
+        352,
+        353,
+        354
+      ],
+      "descendants": [
+        {
+          "entity": {
+            "kind": "function",
+            "qualname": "Marked.parseMarkdown.parse",
+            "owner": "Marked.parseMarkdown",
+            "definition_ordinal": 0
+          },
+          "regions": [
+            [
+              318,
+              379
+            ]
+          ],
+          "extent": [
+            318,
+            379
+          ]
+        }
+      ],
+      "illustrative_source_windows": [
+        {
+          "start_line": 310,
+          "end_line": 310,
+          "content": "  private parseMarkdown(blockType: boolean) {"
+        },
+        {
+          "start_line": 318,
+          "end_line": 354,
+          "content": "    const parse: overloadedParse = (src: string, options?: MarkedOptions<ParserOutput, RendererOutput> | null): any => {\n      const origOpt = { ...options };\n      const opt = { ...this.defaults, ...origOpt };\n\n      const throwError = this.onError(!!opt.silent, !!opt.async);\n\n      // throw error if an extension set async to true but parse was called with async: false\n      if (this.defaults.async === true && origOpt.async === false) {\n        return throwError(new Error('marked(): The async option was set to true by an extension. Remove async: false from the parse options object to return a Promise.'));\n      }\n\n      // throw error in case of non string input\n      if (typeof src === 'undefined' || src === null) {\n        return throwError(new Error('marked(): input parameter is undefined or null'));\n      }\n      if (typeof src !== 'string') {\n        return throwError(new Error('marked(): input parameter is of type '\n          + Object.prototype.toString.call(src) + ', string expected'));\n      }\n\n      if (opt.hooks) {\n        opt.hooks.options = opt;\n        opt.hooks.block = blockType;\n      }\n\n      if (opt.async) {\n        return (async() => {\n          const processedSrc = opt.hooks ? await opt.hooks.preprocess(src) : src;\n          const lexer = opt.hooks ? await opt.hooks.provideLexer(blockType) : (blockType ? _Lexer.lex : _Lexer.lexInline);\n          const tokens = await lexer(processedSrc, opt);\n          const processedTokens = opt.hooks ? await opt.hooks.processAllTokens(tokens) : tokens;\n          if (opt.walkTokens) {\n            await Promise.all(this.walkTokens(processedTokens, opt.walkTokens));\n          }\n          const parser = opt.hooks ? await opt.hooks.provideParser(blockType) : (blockType ? _Parser.parse : _Parser.parseInline);\n          const html = await parser(processedTokens, opt);\n          return opt.hooks ? await opt.hooks.postprocess(html) : html;"
+        },
+        {
+          "start_line": 381,
+          "end_line": 382,
+          "content": "    return parse;\n  }"
+        }
+      ],
+      "illustrative_line_count": 40,
+      "illustrative_source_content_characters": 1983,
+      "purpose": "Feasibility witness only, selected during review of the original reference. Not an answer, ranking result, query-time selection rule or quality estimate."
+    }
+  ],
+  "responsibilities": {
+    "canonical_owner": "Stable original EntityKey and exclusive source partition; only this concept answers who owns each source segment.",
+    "lexical_context": "A separately versioned, source-only AST enclosure relation tied to path, source hash, generation and exact parent/child identity. It says contains source, never calls or executes it.",
+    "answer_bundle": "One primary answer identity plus visible physical fragments with actual canonical source-owner provenance and a source-only justification path to the primary callable.",
+    "runtime_claim_boundary": "Optional claims such as returned value or invocation need independent, narrowly proved syntax/data-flow evidence; plain lexical containment does not authorize them."
+  },
+  "contract": [
+    "Keep canonical EntityKey, definition ordinals, exclusive regions and existing profile behavior unchanged. The primary result must still match the exact original alternative identity when fixed; entity=null retains only its original identity permission, never an anchor exemption.",
+    "Compute contexts for all source owners before queries or labels. Authorize callable-local context from the actual current source AST, not min/max extent, qualname prefixes, nearest names, embeddings, guessed call targets, or the rejected54/54b resolution edges.",
+    "Bind every context and displayed segment to one path, exact current source hash, index generation and actual canonical entity including ordinal. Record explicit lexical ancestry to the primary callable; preserve the child owner on child source. No reassignment of Passage.entity or widening owned_regions.",
+    "A callable-root context may show nested declarations as nested source. It may not expand upwards to class/module siblings or outwards through calls, imports, inheritance, variables or cross-file links. Missing or ambiguous AST identity/ancestry must fail closed. Same-line scope collisions need byte-aware provenance or an explicit ambiguity result, not a line-range guess.",
+    "Separate the physical displayed fragment from its internal provenance runs. A contiguous physical source window can contain multiple owners only when those runs are disclosed and authorized by lexical context. It remains one verbatim source window; it must not be represented as one exclusively parent-owned Passage.",
+    "Lexical containment alone carries no claim that a helper is used, a branch taken, a callback invoked, effects ordered across bodies, or a closure executed while its factory runs. Preserve branch and function boundaries. Returned/local-use claims require independently witnessed binding/control information, with unknown remaining unknown.",
+    "Use the same context authorization in retrieval text/projections, source-capability target derivation and presentation. Source coverage, existence of a budget-feasible bundle, actual selected visible evidence and semantic/runtime claims remain separate questions. No gold-selected query window or cached oracle response.",
+    "Retain every original alternative, source hash, identity criterion, ALL-anchor requirement, ALL400 denominator, exact authority and CPU boundary. A future target for the new answer unit must be explicitly versioned; do not overwrite historical labels or pretend old exclusive-owner targets already cover it.",
+    "Retain final40 visible lines per result, three visible fragments where that is the policy, and12000 canonicalJSON characters across the final response including provenance. Count header/witness lines and repeated displayed lines. Do not hide extra content in metadata or use uncounted evidence. Validate after trimming; a final missing anchor remains a failure.",
+    "Keep old profile source_bounds/complete_owned_context behavior intact. A new context capability needs explicit version/fingerprint/source provenance, deterministic failure on stale/missing metadata, source-only validation and API replay before any adoption claim."
+  ],
+  "comparison": {
+    "v54c": "Canonical parent/child source cosines and degree are ranking context only. It does not provide a source fragment bundle, returned-callable proof or evidence authorization. Its negative ranking result does not disprove the source representation hypothesis. No54/54b call edges may be revived.",
+    "v72_v74": "Completion stays within exclusive regions and preserves child gaps. For Ajv it necessarily misses24; for boltons176; for Marked345-354. It cannot recover these without a distinct evidence-context policy. This limit is faithful to its stated contract."
+  },
+  "counterexamples": [
+    {
+      "case": "Unused or dead nested helper",
+      "source": "def outer():\n    def unused():\n        erase_all()\n    return 1",
+      "required_behavior": "May identify a lexical descendant; must not state outer executes erase_all or use unused helper body as evidence of an executed path."
+    },
+    {
+      "case": "Returned identifier is rebound",
+      "source": "def factory():\n    def parse(x): return x\n    parse = external\n    return parse",
+      "required_behavior": "Contains the local parse source but no certified return-of-that-local-definition edge. Name matching or lexical enclosure alone cannot resolve it."
+    },
+    {
+      "case": "Conditional repeated definitions",
+      "source": "def outer(flag):\n    if flag:\n        def f(): return 1\n    else:\n        def f(): return 2\n    return f",
+      "required_behavior": "Keep both ordinals and branch provenance; do not join their bodies into one execution trace or choose a target by spelling."
+    },
+    {
+      "case": "Sibling or class/global name confusion",
+      "source": "def helper(): return 1\nclass C:\n    def helper(self): return 2\n    def run(self): return helper()",
+      "required_behavior": "No sibling/class-body expansion or guessed call target. A canonical lexical relation is not a dispatch graph."
+    },
+    {
+      "case": "Closure returned for later invocation",
+      "source": "def factory():\n    def later(): return do_work()\n    return later",
+      "required_behavior": "Source can witness construction/return of a callable when binding is proved; it cannot assert do_work executes during factory."
+    },
+    {
+      "case": "Same-line nested source or malformed extent",
+      "source": "function outer(){ const inner=()=>work(); return inner; }",
+      "required_behavior": "Line enclosure does not identify the exact lexical tree or exclusive source owner. Require byte/AST proof or fail closed; never infer authority from entity_extent."
+    },
+    {
+      "case": "Large valid enclosing callable",
+      "source": "A callable has many nested implementations or a very long physical line.",
+      "required_behavior": "Context availability does not waive40 lines/12000JSON characters, guarantee selected evidence or justify dropping the query from400."
+    }
+  ],
+  "limits": [
+    "Three public cases were independently checked; the reported five current all-zero target queries were not recounted here. This is not a new quality estimate.",
+    "The other composition cases diagnosed in the old audit, including anonymous test callbacks, require their own explicit source-scope representation. No assumption here that every one of the five is solved by named-callable ancestry.",
+    "Illustrative windows were selected during review of known references solely to demonstrate source geometry and line feasibility. They cannot be used as a production selection policy or replayed as search predictions. Full-response JSON budget remains a mandatory actual-renderer check.",
+    "No claim that new source context improves ranking or that a512-token projection will retain these lines. Source representation, encoded projection and visible evidence each need verification."
+  ],
+  "auxiliary_source_snapshot": {
+    "complete": false,
+    "indices": 6,
+    "contexts": 0,
+    "views": 0
+  }
+}

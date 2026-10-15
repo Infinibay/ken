@@ -81,3 +81,26 @@ Documentación primaria: https://docs.scipy.org/doc/scipy/reference/optimize.min
 Los stubs scipy1.18.1.1 y sus tres dependencias de tipos se instalaron sin cambiar
 NumPy2.4.4/SciPy1.18.1 ni pesos del motor. Los dos arreglos88b son genéricos y
 preceden cualquier ajuste de datos reales; el freeze88 original se conserva.
+
+
+El control92 cambia sólo la política de empates de15rangos, no mejora:282/400
+estrictos y294identidad frente a286/298. No adoptar ni afirmar que la definición
+ordinal era un bug. Revisión independiente final conservada.
+
+La nueva hipótesis95 distingue propiedad exclusiva de contexto léxico. Ajv07,
+Boltons01 y Marked18 contienen fuente decisiva en una declaración anidada; ampliar
+owned_regions o rebautizar al hijo como padre falsificaría procedencia. La nueva
+unidad conserva primary y propietarios reales de cada tramo, bytes y ancestry;
+no demuestra llamadas, retorno resuelto ni ejecución. Una declaración con otro
+initializer o un binding destructurado no autoriza fuente lateral sólo porque
+comparta un extent canónico legado. Los contraejemplos independientes dieron
+pruebas RED antes de los arreglos. El helper19tests/mypy limpio sigue source-only,
+sin medición de calidad y pendiente de auditoríaALL16.
+
+La supervisión auxiliar93/94 usa repositorios disjuntos y curación fuente-primero
+sin rankings. El piloto96 ya está sellado; ALL8source se prepara antes de abrir
+queries/labels. El protocolo94 precede cualquier resultado93 y prevé384casos más,
+incluidos128tests; no puede rellenarse con paráfrasis ni sustituirALL400 o reserva.
+La disjunción privada es una certificación opaca del curador, no una lectura de
+identidades o preguntas privadas por root/revisor. Las guardas casos↔sello y
+receipts reales deben cerrarse antes de ajustar, no después de ver calidad.

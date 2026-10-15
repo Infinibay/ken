@@ -1,0 +1,60 @@
+{
+  "helper_sha256": "484d0efcd115c7aee312c1cb05580072b9cc6f7c22a48125e46ce43c6f072300",
+  "source_context_freeze_receipt": "13fec1b8eaf9e6d017d72d61c7ddaee61af83a9a9d8776be34354918b5734556",
+  "fixtures": [
+    {
+      "fixture": "nested",
+      "tested_selections": 14,
+      "context_lines": 4
+    },
+    {
+      "fixture": "unicode_crlf",
+      "tested_selections": 41,
+      "context_lines": 6
+    },
+    {
+      "fixture": "ordinal_branches",
+      "tested_selections": 41,
+      "context_lines": 6
+    },
+    {
+      "fixture": "long",
+      "tested_selections": 6000,
+      "context_lines": 64
+    },
+    {
+      "fixture": "single_huge_line",
+      "tested_selections": 7,
+      "context_lines": 3
+    }
+  ],
+  "total_selections": 6103,
+  "visible_owner_line_checks": 44097,
+  "fault_rejections": {
+    "missing_part": "rejected",
+    "overlapping_part": "rejected",
+    "foreign_path_owner": "rejected",
+    "forged_part_text": "rejected"
+  },
+  "large_physical_line_content_chars": 13042,
+  "caller_contract_demonstrations": {
+    "same_path_owner_forgery_outside_registered_catalog_precondition_is_not_authenticated": true,
+    "global_JSON_budget_not_enforced_by_helper": true,
+    "requires_exact_registered_catalog_loader_and_retrim_call": true
+  },
+  "queries_labels_models_or_producers_used": false,
+  "budget_widening_or_zero_rejected": [
+    {
+      "max_lines": 41
+    },
+    {
+      "max_fragments": 4
+    },
+    {
+      "max_lines": 0
+    },
+    {
+      "max_fragments": 0
+    }
+  ]
+}

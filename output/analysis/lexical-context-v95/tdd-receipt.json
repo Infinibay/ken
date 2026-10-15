@@ -1,0 +1,58 @@
+{
+  "scope": "source-only helper; no quality inference or profile adoption",
+  "red": {
+    "tests": 11,
+    "failure": "ModuleNotFoundError: lexical_context",
+    "implementation_absent": true
+  },
+  "green": {
+    "tests": 13,
+    "failed": 0
+  },
+  "typecheck": {
+    "command": "MYPYPATH=src .venv-model-runtime/bin/python -m mypy experiments/search-engine/lexical_context.py",
+    "files": 1,
+    "errors": 0
+  },
+  "initial_typecheck_attempt": {
+    "errors": 4,
+    "kind": "installed package untyped because MYPYPATH missing",
+    "code_or_suppressions_changed": false
+  },
+  "files": {
+    "experiments/search-engine/lexical_context.py": "cbac763ea551be45d2a4b8cf463cb7e56ce1416ac76cd40e88e03a92294cb034",
+    "experiments/search-engine/test_lexical_context.py": "06177ba0ec6fa072683a7631352f1c5bb17daef4cc66d6ec9edff55a0a5a51a1",
+    "experiments/search-engine/cpu-lexical-context-v95.md": "d7be6cad503bdad5c5adc76f4e194245f22f17f016a847a0fb7107166fabcc1b"
+  },
+  "review_c_fix": {
+    "red_tests": 1,
+    "failure": "ValueError: structural frontend unavailable for c",
+    "change": "explicit unsupported structural grammar diagnostic; no source ownership or parser changes",
+    "green_tests": 14
+  },
+  "review_binding_fix": {
+    "red_tests": 2,
+    "failure": "context of one included unrelated sibling initializer",
+    "change": "only callable or its single direct binding carrier; no other declarators",
+    "green_tests": 16,
+    "mypy_errors": 0
+  },
+  "review_static_binding_fix": {
+    "red_tests": 3,
+    "failure": "destructuring initializer was included in callable context",
+    "change": "static identifier or static member binding only; no destructuring or computed targets",
+    "green_tests": 19,
+    "mypy_errors": 0
+  },
+  "cross_language_examples": {
+    "languages": [
+      "python",
+      "javascript",
+      "typescript",
+      "rust",
+      "go",
+      "java"
+    ],
+    "green_tests": 22
+  }
+}

@@ -1,0 +1,347 @@
+{
+  "scope": "ALL16 source7 lexical callable catalogs before queries/labels; no model/ranking/evidence/fit/quality change",
+  "script_sha256": "eff1b6a2bdbb0894cbec36ce27e129b432f8bfadac9d4691e123e60a20fefeea",
+  "engine_receipt": "13fec1b8eaf9e6d017d72d61c7ddaee61af83a9a9d8776be34354918b5734556",
+  "inputs": {
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/registration.json": "17ac3c3c26170f8929b2cc1a21fe9a7e036603452929c73a435a07e88628dd6a",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/frozen/cpu-lexical-source-v95/experiments/search-engine/datasets/roots-development.json": "19f241e08fe1bbccb66dfd6b789c549d69f96a0bfe572ffc4edd5ff6e7f62c89",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/frozen/cpu-lexical-source-v95/experiments/search-engine/lexical_context.py": "cbac763ea551be45d2a4b8cf463cb7e56ce1416ac76cd40e88e03a92294cb034",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/frozen/cpu-lexical-source-v95/experiments/search-engine/cpu-lexical-context-v95.md": "d7be6cad503bdad5c5adc76f4e194245f22f17f016a847a0fb7107166fabcc1b",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/ajv.db": "6fb013429d25fbdfd24b4b8d2cd795275ab5ea40935db197b98e5de142a4cee5",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/anyhow.db": "5b00971cfb753d65e5880dae34e018b68766a4764264d9be538dc16b0b407be9",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/attrs.db": "e64db6c1fa5be0181c77f712be2155d0971e1bbae6a6da0c15edc766da4afae1",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/bbolt.db": "32272f259d160b5ce2eb382b4c9c7378d5912fc9aba71b0fd1ecea28bd95f9ad",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/boltons.db": "ab82fbe4b258bd9b4ebf0417c310a32811406c4ea376683b0a5e80a3e1bcff26",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/commons-csv.db": "94db4c13852081d229ead981dd7a69c95341e32fa772512fcedb18e04ba73223",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/dayjs.db": "6bc235dbec7f6ae4bc5db41ee22dac4a802a9d475e66b68aea3361100410a16f",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/fsnotify.db": "93a6fa47cb8a04fa2af10c79416ddf47d905c0bf7997b3f801e73221cb23a712",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/junit5.db": "45fa5b1fbd04d272a0f4038d29cdf3407125401ed4fc5484ad10ed35269af94b",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/logrus.db": "957ff45fdaceaab091559aa8921edeeb4cf15e7137b8d414f83da433f8fddb88",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/marked.db": "fdec8e5cffb898e8f7c00e5ff91f6434ff2cbeb321ab5109f5db94ee346d6202",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/packaging.db": "7cb11a67396a2d5ad74d0ed61846cdc268a6e5c87c49e2b04c17d6e6122647b9",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/petgraph.db": "6b865adb18f96ab871a0e9aaef442a584685264be76a5af513dd915c60231181",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/pytest.db": "050a21fcf9c9e6c94826673b9dbc4b7b9ed2b25f0e0b587cbc11dfde9f117544",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/regex.db": "b81447a673e3e2a43872743aee891ae99d9646fe8b925e3e4389ca113d67fe92",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/c-source-reindex-v66c/indices/semver.db": "97339034e939501a52545be090642ce452a4dc12a104219f7fe19322ca2a10bb"
+  },
+  "context_version": 1,
+  "extractor_version": 7,
+  "repos": {
+    "ajv": {
+      "files": 486,
+      "owners": 1631,
+      "generation": 5627,
+      "source_index_sha256": "6fb013429d25fbdfd24b4b8d2cd795275ab5ea40935db197b98e5de142a4cee5",
+      "contexts_sha256": "04b07e0362deb4a5f6cf85bb248a6951ebe6f69b8c945ddcb2499adcc8f09dd8",
+      "inventory_sha256": "0bb8bef25078f9db29c8d1e9be1a71f48f0e4ed5519564d3d23ac9ad25bf9688",
+      "counts": {
+        "syntax_scopes": 1051,
+        "parts": 1373,
+        "contexts": 712,
+        "source_checked": 246,
+        "no_canonical_language_parser": 214,
+        "no_indexed_passages": 26
+      },
+      "diagnostic_reasons": {
+        "structural_grammar_unavailable": 41,
+        "ambiguous_or_partial_line_scope": 184
+      },
+      "ms": 1146.768709004391
+    },
+    "anyhow": {
+      "files": 54,
+      "owners": 338,
+      "generation": 651,
+      "source_index_sha256": "5b00971cfb753d65e5880dae34e018b68766a4764264d9be538dc16b0b407be9",
+      "contexts_sha256": "4e0df035b09677c320432e96aa1454dedcee692b5528b66007694ce26f04aaec",
+      "inventory_sha256": "91832194b88087290d9193b461947e6784d32f1ef40651ed38255345952e87a9",
+      "counts": {
+        "contexts": 233,
+        "no_canonical_language_parser": 17,
+        "syntax_scopes": 364,
+        "parts": 585,
+        "source_checked": 37
+      },
+      "diagnostic_reasons": {
+        "syntax_error": 2
+      },
+      "ms": 235.42091599665582
+    },
+    "attrs": {
+      "files": 141,
+      "owners": 2073,
+      "generation": 1631,
+      "source_index_sha256": "e64db6c1fa5be0181c77f712be2155d0971e1bbae6a6da0c15edc766da4afae1",
+      "contexts_sha256": "f2feaa8769ebd5e9a0e149e592e618c40bfa03c28a73a507efa5018bba141fc0",
+      "inventory_sha256": "505f85fcf4212e48aca8c71b233e86ff00ac146d109eef8b1ed001973e6659c4",
+      "counts": {
+        "contexts": 1237,
+        "no_canonical_language_parser": 66,
+        "syntax_scopes": 1949,
+        "parts": 6628,
+        "source_checked": 67,
+        "no_indexed_passages": 8
+      },
+      "diagnostic_reasons": {
+        "structural_grammar_unavailable": 1
+      },
+      "ms": 756.8604999978561
+    },
+    "bbolt": {
+      "files": 159,
+      "owners": 1262,
+      "generation": 1911,
+      "source_index_sha256": "32272f259d160b5ce2eb382b4c9c7378d5912fc9aba71b0fd1ecea28bd95f9ad",
+      "contexts_sha256": "14afe941ff2c27248cf1de50607464f2be99d13387ad0e5dd7c59ed4ed1048b0",
+      "inventory_sha256": "e0bf78fa652a79d1f7e3e12ecf2ad90edb043283a762e12355d0ef57a7436a42",
+      "counts": {
+        "contexts": 1011,
+        "no_canonical_language_parser": 34,
+        "syntax_scopes": 1571,
+        "parts": 5023,
+        "source_checked": 125
+      },
+      "diagnostic_reasons": {
+        "structural_grammar_unavailable": 3
+      },
+      "ms": 1009.1160419979133
+    },
+    "boltons": {
+      "files": 113,
+      "owners": 1734,
+      "generation": 1351,
+      "source_index_sha256": "ab82fbe4b258bd9b4ebf0417c310a32811406c4ea376683b0a5e80a3e1bcff26",
+      "contexts_sha256": "e54813a996d56881804ce3683a51b6eb6c640c430ee17dc26361b4e93b67664f",
+      "inventory_sha256": "8ae16e4441417f7981cc4b28694338f1bd87f0c0b2be2ad6d95867faa2471ee3",
+      "counts": {
+        "contexts": 1501,
+        "no_canonical_language_parser": 47,
+        "syntax_scopes": 1756,
+        "parts": 4875,
+        "source_checked": 65,
+        "no_indexed_passages": 1
+      },
+      "diagnostic_reasons": {
+        "structural_grammar_unavailable": 1
+      },
+      "ms": 943.5868340078741
+    },
+    "commons-csv": {
+      "files": 122,
+      "owners": 1133,
+      "generation": 1419,
+      "source_index_sha256": "94db4c13852081d229ead981dd7a69c95341e32fa772512fcedb18e04ba73223",
+      "contexts_sha256": "556e33ad632871855698e0296af139fe60213f3c7407041289d74abae8e51ca1",
+      "inventory_sha256": "9a1834d3ab1c73a5552e8998c0e1c6df2b92e7be47d6ba7be319212d5f5342ac",
+      "counts": {
+        "contexts": 948,
+        "no_canonical_language_parser": 58,
+        "syntax_scopes": 1063,
+        "parts": 1700,
+        "source_checked": 58,
+        "no_indexed_passages": 6
+      },
+      "diagnostic_reasons": {
+        "structural_grammar_unavailable": 2
+      },
+      "ms": 710.7019159884658
+    },
+    "dayjs": {
+      "files": 376,
+      "owners": 745,
+      "generation": 4507,
+      "source_index_sha256": "6bc235dbec7f6ae4bc5db41ee22dac4a802a9d475e66b68aea3361100410a16f",
+      "contexts_sha256": "56b5f7b050ceb554976afb17eb94333ca593da83d493e625b306b25b2e33f2c6",
+      "inventory_sha256": "a42eca2ea9cdc2ee5e8ee3fa79390e581f8d6bccaa9f4707f94cbd94779ef09a",
+      "counts": {
+        "contexts": 298,
+        "no_canonical_language_parser": 52,
+        "syntax_scopes": 341,
+        "parts": 425,
+        "source_checked": 323,
+        "no_indexed_passages": 1
+      },
+      "diagnostic_reasons": {
+        "ambiguous_or_partial_line_scope": 13
+      },
+      "ms": 905.3267079871148
+    },
+    "fsnotify": {
+      "files": 122,
+      "owners": 387,
+      "generation": 1467,
+      "source_index_sha256": "93a6fa47cb8a04fa2af10c79416ddf47d905c0bf7997b3f801e73221cb23a712",
+      "contexts_sha256": "275115e642b846a6b825c9e9cf06121b4daf8ed301ab63c0571a23109dd74bf4",
+      "inventory_sha256": "3db5433626b43bd76e0b23c7c5aac324f839434b26520c4fed685b42626afce2",
+      "counts": {
+        "contexts": 232,
+        "no_canonical_language_parser": 83,
+        "syntax_scopes": 355,
+        "parts": 1134,
+        "source_checked": 39
+      },
+      "diagnostic_reasons": {
+        "structural_grammar_unavailable": 1
+      },
+      "ms": 300.7425839896314
+    },
+    "junit5": {
+      "files": 2446,
+      "owners": 21521,
+      "generation": 29107,
+      "source_index_sha256": "45fa5b1fbd04d272a0f4038d29cdf3407125401ed4fc5484ad10ed35269af94b",
+      "contexts_sha256": "400e9f69ccec86999efbc5f8e11e996b9e61f9f6ba5a68bebe1dd1b23c3173b5",
+      "inventory_sha256": "ec0ec68e43bef2349bbb397b44e1469dc6c271937ddd01cf141ff4d725ea7b7a",
+      "counts": {
+        "contexts": 14479,
+        "no_canonical_language_parser": 375,
+        "syntax_scopes": 19148,
+        "parts": 26463,
+        "source_checked": 2040,
+        "no_indexed_passages": 31
+      },
+      "diagnostic_reasons": {
+        "structural_grammar_unavailable": 237,
+        "ambiguous_or_partial_line_scope": 3,
+        "syntax_error": 6
+      },
+      "ms": 10170.972457999596
+    },
+    "logrus": {
+      "files": 64,
+      "owners": 617,
+      "generation": 771,
+      "source_index_sha256": "957ff45fdaceaab091559aa8921edeeb4cf15e7137b8d414f83da433f8fddb88",
+      "contexts_sha256": "18ffd98c20fc27d6ce10ee37d3a576522e28132a6889e07e1179e82bce7e9cf3",
+      "inventory_sha256": "5a7dd601c1ab869d01d316ec5a784c827f288c1fab88ee69a7c54029d3b1a816",
+      "counts": {
+        "contexts": 491,
+        "no_canonical_language_parser": 11,
+        "syntax_scopes": 716,
+        "parts": 1677,
+        "source_checked": 53
+      },
+      "diagnostic_reasons": {},
+      "ms": 390.36537500214763
+    },
+    "marked": {
+      "files": 582,
+      "owners": 1222,
+      "generation": 6979,
+      "source_index_sha256": "fdec8e5cffb898e8f7c00e5ff91f6434ff2cbeb321ab5109f5db94ee346d6202",
+      "contexts_sha256": "b5047722766c9e9aea923408dc2725580e610774d9d7f5e98290e86c287c59e5",
+      "inventory_sha256": "1c37ea5197bb47fe92c986d37324bdcac4f399a3f90d44e958cc3854076c65e7",
+      "counts": {
+        "contexts": 203,
+        "no_canonical_language_parser": 278,
+        "syntax_scopes": 317,
+        "parts": 784,
+        "source_checked": 303,
+        "no_indexed_passages": 1
+      },
+      "diagnostic_reasons": {
+        "ambiguous_or_partial_line_scope": 171,
+        "structural_grammar_unavailable": 243,
+        "syntax_error": 1
+      },
+      "ms": 717.3914589802735
+    },
+    "packaging": {
+      "files": 139,
+      "owners": 2421,
+      "generation": 1543,
+      "source_index_sha256": "7cb11a67396a2d5ad74d0ed61846cdc268a6e5c87c49e2b04c17d6e6122647b9",
+      "contexts_sha256": "dcc2500ea19964004a2f8f1e8cecd2177aa989212e8b510add5801b3f6c95515",
+      "inventory_sha256": "68d4e4dc8f4461f44dfe438e3a1b88477d1b8314fdb50bb50f7212049cf01a8b",
+      "counts": {
+        "contexts": 2021,
+        "no_canonical_language_parser": 47,
+        "syntax_scopes": 2179,
+        "parts": 4869,
+        "source_checked": 76,
+        "no_indexed_passages": 16
+      },
+      "diagnostic_reasons": {
+        "structural_grammar_unavailable": 3
+      },
+      "ms": 1409.2551660141908
+    },
+    "petgraph": {
+      "files": 179,
+      "owners": 2349,
+      "generation": 2079,
+      "source_index_sha256": "6b865adb18f96ab871a0e9aaef442a584685264be76a5af513dd915c60231181",
+      "contexts_sha256": "68243a346d010dd13ec6232fe201012e1f2f1ad11d1f15c47563422f89e1cb50",
+      "inventory_sha256": "e91a5c9e6d5343cec6c2515e1d2477483b9d31566abc9096d0218d002ed29061",
+      "counts": {
+        "contexts": 1937,
+        "no_canonical_language_parser": 31,
+        "no_indexed_passages": 9,
+        "syntax_scopes": 2745,
+        "parts": 5033,
+        "source_checked": 139
+      },
+      "diagnostic_reasons": {},
+      "ms": 1807.7317910210695
+    },
+    "pytest": {
+      "files": 726,
+      "owners": 8075,
+      "generation": 8475,
+      "source_index_sha256": "050a21fcf9c9e6c94826673b9dbc4b7b9ed2b25f0e0b587cbc11dfde9f117544",
+      "contexts_sha256": "9bce4c665be6061160285e5999945ba44e4b921bc496398a78fa669c4885d562",
+      "inventory_sha256": "b7389a0f089ee6b31f27bed097d7d2d06f3f1753c65b1460daaffcad02ed6a2a",
+      "counts": {
+        "contexts": 6566,
+        "no_canonical_language_parser": 429,
+        "syntax_scopes": 7507,
+        "parts": 21340,
+        "source_checked": 267,
+        "no_indexed_passages": 30
+      },
+      "diagnostic_reasons": {
+        "structural_grammar_unavailable": 2
+      },
+      "ms": 4282.9665830067825
+    },
+    "regex": {
+      "files": 451,
+      "owners": 5200,
+      "generation": 5047,
+      "source_index_sha256": "b81447a673e3e2a43872743aee891ae99d9646fe8b925e3e4389ca113d67fe92",
+      "contexts_sha256": "503a5bafe0f45ede754df33685584668e2c6c3e079f586381c0101daa09ca4d7",
+      "inventory_sha256": "a3a669080ef22a4a77e18139823b80f2b2acdb6c9312a5339bf6f072b3f6578f",
+      "counts": {
+        "contexts": 4224,
+        "no_canonical_language_parser": 174,
+        "syntax_scopes": 5270,
+        "parts": 7516,
+        "source_checked": 231,
+        "no_indexed_passages": 46
+      },
+      "diagnostic_reasons": {
+        "structural_grammar_unavailable": 4
+      },
+      "ms": 6139.232167013688
+    },
+    "semver": {
+      "files": 154,
+      "owners": 259,
+      "generation": 1851,
+      "source_index_sha256": "97339034e939501a52545be090642ce452a4dc12a104219f7fe19322ca2a10bb",
+      "contexts_sha256": "b07453b3d35d87bc212c5082be464252bcb902042e6a4c909f3c8fcaca75fc06",
+      "inventory_sha256": "5ae22a1600c2a4c47af6072c00830c2341d4daa11795402fb56bc8324560779f",
+      "counts": {
+        "syntax_scopes": 151,
+        "parts": 441,
+        "contexts": 101,
+        "source_checked": 126,
+        "no_canonical_language_parser": 28
+      },
+      "diagnostic_reasons": {},
+      "ms": 315.97612498444505
+    }
+  },
+  "complete": true,
+  "peak_rss_native": 236748800
+}

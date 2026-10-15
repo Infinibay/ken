@@ -436,3 +436,52 @@ Continuidad posterior: controles88b–92 y curación auxiliar (aceptación intac
 - Mejor API vigente286/400(71,5%) estricto; público76b macroNDCG0,8417179643
  frente a Semble0,8543853796. Ningún90%, reserva intacta/default original sin
  promover. Recursos de arnés concurrente no certifican CPU/RAM del API final.
+
+
+Cierre92 y nuevos controles de fuente/supervisión (sin resultado nuevo API):
+-92 terminó y cerró revisión independiente:282/400estrictos,294identidad;
+ baseline286/298,0missing,ALL400/16folds originales. No pasa+5; se descarta.
+ 6000canales/15columnas recodificados y800respuestas/7016hits físicos revisados.
+ Pico2873999360B pertenece al arnés de fit/replay, no al API.
+-93 usa el piloto independiente sellado96implementación/8repos nuevos/64EN32ES
+ sólo como entrenamiento. ÍndicesALL8 completos; fullcontext y ambas vistas
+ siguen en construcciónCPU antes de abrir auxqueries/refs. Source93b conserva
+ fuente7/251/modelos actuales y todos los400originales. No hay fits93.
+ Revisión de metadatos/procedencia cerrada; la revisión adicional de metadata se
+ emitió después del inicio reversible sólo fuente, antes de consultas/labels.
+ La revisión del draft fitter detectó guardas pendientes de sello/receipts y una
+ suma de anclas solapadas demasiado restrictiva; deben cerrarse antes de PRE-FIT.
+-94 quedó registrado antes de cualquier ajuste/resultado93: agrega384consultas
+ fuente-primero de los mismos8pins,256implementación/128tests/232EN152ES.
+ Combinado previsto480training; no son nuevos casos de aceptación ni se abre
+ contenido parcial. Curación aún en curso, ningún fit94 ni cuota rellenada.
+-95 separa contexto léxico de propiedad exclusiva. Nuevo helper source-only
+ conserva primarycanonical/ordinals, propietario por tramo, SHA/generation y
+ bytes/ancestríaAST. No modifica Passage/owned_regions ni infiere ejecución o
+ targets.19tests y mypy1 pasan; revisión independiente encontró y se corrigieron
+ falta de diagnósticoC, declaradores hermanos y patrones destructurados. Falta
+ cerrar revisión y construir/auditarALL16 antes de probar proyección o evidencia.
+ No hay calidad95, nuevoencoder, cambio de referencias ni API/default nuevo.
+- Las comparaciones vigentes son: dev400archivo Ken345/400(86,25%) y
+ NDCG0,9343641365 vsSemble204/400(51%) y0,6887064072; público1251 Ken913/1251
+ y macroNDCG0,8417179643 vsSemble935/1251 y0,8543853796.71,5%Kenestricto no se
+ compara con51%Semblearchivo. En cada comparación homogénea gana el mismo motor
+ en ambas métricas. Los puestos2–10 explican que esto no sea una regla universal.
+ MejorAPI286/400estricto,90%pendiente/reserva intacta/defaultoriginalsinpromover.
+
+
+95source-only terminóALL16:6314ci_files y50967owners originales verificados,
+36194contextos, fuente/procedencia sin consultas ni labels.22tests léxicos,
+56focales y mypy1 pasan. Freeze604files,600anteriores93byteidénticos,
+receipt13fec1b8eaf9e6d017d72d61c7ddaee61af83a9a9d8776be34354918b5734556.
+Catálogo fuente de58.055.079bytes; suma de fases31,24segundos y pico236.748.800bytes son del
+productor fuente sin modelos, no recursos API ni mejora de precisión. Pendiente
+revisión independiente de todos los artefactos reales antes de otro ensayo.
+
+93c cierra prospectivamente guardas de referencias↔sello,8workerreceipts y unión
+de anclas. Se escribió con hashes/esquema de metadata del piloto1 que entregó el
+curador, sin abrir su payload ni parsear receipt/seal por root. Source93b sigue
+sin cambios preparandofullcontext/vistasALL8. Parent93b/fitter93/93b se retiran
+antes de ejecutarse.93c tampoco se ejecutó: resta revisión de código, completitud
+ALL8, ligaduras reales/propuestas públicas y PRE-FIT471grupos×16. Ningún fit93,
+resultado de calidad nuevo, apertura privada o promoción.
