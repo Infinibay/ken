@@ -56,6 +56,17 @@ class OfficialAdapterTests(unittest.TestCase):
         self.assertEqual(value['per_query'][0]['relevant_ranks'], [1, 1])
         self.assertAlmostEqual(value['macro_repo_ndcg10'], 1/(1+1/math.log2(3)))
 
+    def test_native_ranges_pass_through_exactly_even_for_zero_line_path_targets(self):
+        from benchmarks.data import Target, Task
+        from benchmarks.metrics import target_rank
+        from types import SimpleNamespace
+        task = Task('a', 'python', 'q', (Target('x'),), (), 'semantic')
+        native = SimpleNamespace(chunk=SimpleNamespace(file_path='x', start_line=0, end_line=0))
+        self.assertEqual(target_rank([native], task.relevant[0]), 1)
+        rows = {'semble-0000': {'full_results': [{'chunk': {
+            'file_path': 'x', 'start_line': 0, 'end_line': 0, 'content': ''}}]}}
+        self.assertEqual(evaluate_rows([task], rows)['macro_repo_ndcg10'], 1)
+
 
 if __name__ == '__main__':
     unittest.main()

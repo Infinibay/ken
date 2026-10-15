@@ -29,7 +29,7 @@ def locations(response, *, visible=False):
             span = (row.get('evidence') or [{}])[0] if visible else row['entity_span']
             start, end = span.get('start_line', 0), span.get('end_line', -1)
         # Retain an unmatchable placeholder for a missing range, never compress ranks.
-        if start < 1 or end < start or row.get('stale'):
+        if native is None and (start < 1 or end < start or row.get('stale')):
             path, start, end = '__invalid_returned_range__', 0, 0
         results.append(SimpleNamespace(chunk=SimpleNamespace(
             file_path=path, start_line=start, end_line=end)))
