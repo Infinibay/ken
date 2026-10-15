@@ -1,6 +1,46 @@
 # Ken en el benchmark público completo de Semble
 
-Fecha: 2026-10-14. **Semble conserva la ventaja**: NDCG@10 **0.854385** frente a **0.812770** de la API de archivos del Ken experimental actual. Observando sus diez ubicaciones antes del recorte de presentación, Ken obtiene **0.818562**. El control experimental por propósito alcanza **0.822199** antes del recorte.
+Actualización2026-10-15: **Semble conserva la ventaja**. Su NDCG@10macro es
+**0,854385**, frente a **0,836503** del Ken contextual235CPU (48), que mejora desde
+**0,818955** del control21. En las1251consultas públicas, top1: Ken906/1251
+(72,42%) ySemble935/1251 (74,74%). Las referencias son mayormente dearchivo;
+no equivalen al90%estricto de función y todas sus líneas decisivas visibles.
+
+## Corrida contextual48 completa
+
+| Variante | MacroNDCG@10 | MicroNDCG@10 | Top1 público | Hit@10 |
+|---|---:|---:|---:|---:|
+| Semble original fijado |0,8543853796|0,8546561631|935/1251|98,96%|
+| Ken21 anterior |0,8189553482|0,8192913662|857/1251|96,80%|
+| Ken48 contextual235CPU |0,8365028637|0,8368466502|906/1251|96,72%|
+
+Los63workers48 completaron1251IDsúnicos,exit0 y0errores/faltantes, con índices
+fuente100235owners preparados antes de consultas. El modelo numérico se entrenó
+sólo en16repos de desarrollo disjuntos; no con relevancias de estos63. La
+comparación es pública y adaptativa de investigación, no aceptación ciega.
+Usa el mismo scorer original, mismas consultas/targets y máximo10puestos.
+El perfil conserva fuente5 (incluido el defectoC heredado); el índicecorregido7
+requiere otra corrida real, no una etiqueta nueva sobre vectores anteriores.
+
+El parent48 falló sólo al importar Semble para el cálculo final desde la venv
+API.48b evaluó sus respuestas intactas en la venv Semble instalada y verificó
+hashes de todas las fuentes originales/adapter/scorer. No repitió búsquedas ni
+modificó resultados, referencias o puestos. Ambos recibos y el fallo quedan
+preservados en `output/development/semble-contextual-v48/`.
+
+[Reporte48porconsulta](/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/semble-contextual-v48/report.json),
+[registro48](/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/semble-contextual-v48/registration.json) y
+[recibo48b del scorer](/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/semble-contextual-v48/rescore-registration.json).
+RSS descriptivo394,45–749,48MiB/worker, sin Torch/Transformers importados;
+p95 porrepo160,10–14212,50ms,31/63exceden1s/100ci_files en corrida concurrente.
+No se afirma cumplimiento final de recursos. El checkout original/default no
+fue promovido y la reserva independiente sigue sin abrirse.
+
+## Serie inicial15 (histórica)
+
+En la serie inicial del2026-10-14, Ken archivosAPI obtuvo0,812770, sus ubicaciones
+antes del recorte0,818562 y el control porpropósito0,822199. Las tablas y detalles
+siguientes documentan esa serie, no reemplazan la comparación48 anterior.
 
 Completamos las **1.251 consultas originales, 63 repositorios, 19 lenguajes**, sin consultas faltantes ni errores en ninguno de los motores. La referencia de Semble se volvió a ejecutar localmente y coincide con sus 63 resultados publicados con una diferencia máxima de 2.22e-16. No se ajustó el motor con estos resultados.
 
@@ -85,7 +125,7 @@ Las latencias y tiempos de indexación están conservados, pero la preparación 
 
 ## El objetivo del 90% sigue vigente
 
-**1.462 de 1.496 referencias sólo identifican archivo** y 34 incluyen rango. Para estas últimas basta cualquier solapamiento. El top-1 de la tabla usa ese criterio público. El objetivo aprobado de Ken conserva archivo + entidad o fragmento correctos + TODAS las anclas decisivas visibles, dentro de los presupuestos acordados. El último resultado de desarrollo de ese criterio sigue siendo **157/400 (39.25%)**, separado de este benchmark público. La reserva privada no fue abierta ni utilizada en esta corrida.
+**1.462 de 1.496 referencias sólo identifican archivo** y 34 incluyen rango. Para estas últimas basta cualquier solapamiento. El top-1 de la tabla usa ese criterio público. El objetivo aprobado de Ken conserva archivo + entidad o fragmento correctos + TODAS las anclas decisivas visibles, dentro de los presupuestos acordados. La serie inicial de desarrollo obtuvo157/400 (39,25%); la API validada posterior74b alcanza286/400 (71,5%) sobre fuente7 real, con política3 de evidencia y16modelos251 excluyendo su repo. Ninguna alcanza90%. Estos resultados se mantienen separados del benchmark público. La reserva privada no fue abierta ni utilizada en esta corrida.
 
 ## Evidencia y reproducción
 
