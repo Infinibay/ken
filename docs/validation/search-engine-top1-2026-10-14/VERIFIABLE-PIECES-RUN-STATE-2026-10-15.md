@@ -303,3 +303,30 @@ staticreview preceded an additional tested calibration-gate closure requirement.
 No first-corpus Gold or quality summaries have been opened. Cal60 must also be
 rescored with corrected padding after main CPU workers finish, before thresholds.
 The earlier main/shadow/Gold gate sequence applies to CORRECTED raw judgments.
+
+## Update 2026-10-15T20:55:47.463924+00:00
+
+Corrected CPU serial repeat stillrunning session66031,20/24workers observedclosed;
+no new Gold/quality opened. A public-only continuation waits in session31444
+(/private/tmp/ken-post-padding-v102.py), then runs frozenv102blindinputs, frozen
+identical-opinionreuse and calibrationrescorev99 with correctedv102runtime.
+Outputs expected verifiable-main-blind-v102,verifiable-main-reuse-v102,
+verifiable-calibration-scores-v102; receipt/logs verifiable-post-padding-v102.
+No threshold or principalGold is read by this continuation.
+
+Owncommits ae61ced(adapter/provenance/providerhelpers) and97fb5cf(blindclosure).
+Newclosurehelper frozen verifiable-judgment-seal-v102 manifest
+e59ccf994385dbce524edfd7bb3f91b8c2fd77cd23c7ceed237ac112e8bbfd68.
+Independentreview found/rechecked facetpermutation and read/hashrace issues;
+6tests nowpass including mutation aftervalidation. No criteria changed: exact
+unique facetcoverage matches frozenblind_pass. All39helperboundarytests pass.
+
+Source-free numericalstabilitydiagnosis registeredbeforemainquality/Gold at
+output/frozen/verifiable-stability-correct-padding-v103, manifest
+ea84773a2668ae9995a0c9cf0e1292680c2669946f622ee6a19890c6179abc20.
+Same17Mpublishedrevision INT8vsFP32, correctpad50283, short/capped512,
+batch1/4/permuted/fixed512;2identity/permutationtests pass. NO corpusarm or
+production adoption. Do not execute until main AND publiccal scoring close.
+HostCPUcontention observed during17MAjv and68MAttrs/Boltons; allrawtimes
+preserved, no externalprocesschanged. Details /private/tmp/ken-benchmark-resource-context-v102.txt.
+Do not infer model speedordering from temporallydrifting commonstage.
