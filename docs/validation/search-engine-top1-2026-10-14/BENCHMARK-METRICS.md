@@ -62,3 +62,18 @@ el nuevo es `output/development/ken-semble-file-ndcg-400-v15.json`.
 El control Ken pasa además top1 estricto en 157/400 (39,25%). Esta cifra no es
 un NDCG, no pertenece al benchmark externo de 1251 consultas y no demuestra
 el 90% aprobado. No se ha promovido el control de rol a configuración pública.
+
+## Comparación directa completada en las 1.251 consultas de Semble
+
+La corrida completa posterior reprodujo NDCG@10 0,854385 de Semble, con los
+63 repositorios, revisiones y scopes originales, el scorer sin modificar y
+cero consultas faltantes o errores. Ken API archivos obtiene 0,812770;
+el ranking antes del recorte de presentación obtiene 0,818562. El control
+experimental por propósito llega a 0,822199 antes del recorte. En este
+conjunto Semble conserva la ventaja. El top1 según sus referencias es
+935/1251 (74,74%) para Semble y 859/1251 (68,67%) para Ken API archivos.
+
+Se verificaron 5.004 prefijos para aislar el recorte de presentación. El
+resultado estricto de 157/400 y el objetivo del 90% permanecen separados.
+Informe completo, metodología, controles y recibos:
+[SEMBLE-PUBLIC-BENCHMARK.md](SEMBLE-PUBLIC-BENCHMARK.md).
