@@ -1,0 +1,224 @@
+{
+  "scope": "portable public asset pins only; no weights, sources, queries or Gold",
+  "models": [
+    {
+      "model_id": "cross-encoder/ettin-reranker-17m-v1",
+      "revision": "9e4aa35321a6dd1a43ca313f500c4b4f7cfb5cc6",
+      "license": "apache-2.0",
+      "published_artifacts": {
+        "1_Pooling/config.json": {
+          "bytes": 89,
+          "sha256": "343d502263e29ac81758d9d8f250e52d9420ecc3dfc771303e7d91f56bad5ef2"
+        },
+        "2_Dense/config.json": {
+          "bytes": 228,
+          "sha256": "acea183be3358e74570d01645bf1688fea67bd54cb3043b46c4a898950f43462"
+        },
+        "2_Dense/model.safetensors": {
+          "bytes": 262232,
+          "sha256": "85e9596d9250a871deb159fb5db6979e910b4cf181d05c806733c49bc43d47c8"
+        },
+        "3_LayerNorm/config.json": {
+          "bytes": 24,
+          "sha256": "d0db57df3d6d4cce730fd010f7dadbd6b3ad36277c9e66cb2077ebcbe68f8b75"
+        },
+        "3_LayerNorm/model.safetensors": {
+          "bytes": 2200,
+          "sha256": "de99fa351fb4badb74b56e85fa70b5bbd3fcf4d0e74de79eb749dba1e9e28b4a"
+        },
+        "4_Dense/config.json": {
+          "bytes": 213,
+          "sha256": "b6e9ce4b52d9801d2d2dcc9da7bbcfbb75aae11aefe616af75d1f58f8cc2482b"
+        },
+        "4_Dense/model.safetensors": {
+          "bytes": 1172,
+          "sha256": "654827171b89c76d19d663162243f38d63d1ba812ac1ec9c1b36512f1a8e9ce8"
+        },
+        "README.md": {
+          "bytes": 61550,
+          "sha256": "49ba569c156baeafdbe0ca6c902f0eee796bf8f597e607c4c16c1405f99d1a65"
+        },
+        "config.json": {
+          "bytes": 1657,
+          "sha256": "f83c222e8684701525bfa5e0aaa2371724974dc7fb728174cca02e280feda1ad"
+        },
+        "config_sentence_transformers.json": {
+          "bytes": 257,
+          "sha256": "58704a86e4fe20f511de172ce623498c68991abfa7b330740d642d8e049affb7"
+        },
+        "modules.json": {
+          "bytes": 678,
+          "sha256": "d8394ab6c24cb0fb80229dafb886fac022ff489e757e3e6ed7d69603d5ae5942"
+        },
+        "onnx/model_qint8_arm64.onnx": {
+          "bytes": 17127704,
+          "sha256": "b485f6bf9da93544a6caee44c3170d12db4d5aa35350ea21d1dfd4a8281ed903"
+        },
+        "sentence_bert_config.json": {
+          "bytes": 241,
+          "sha256": "3084164002c0bca01b0259c5327123803fce32e660a57feb93184ffead186fc8"
+        },
+        "tokenizer.json": {
+          "bytes": 3583327,
+          "sha256": "28c5e078e4c52aa37cf0e6de1a212878f3dbd58dd1c70466298efe0b6b86db35"
+        },
+        "tokenizer_config.json": {
+          "bytes": 488,
+          "sha256": "2b85302525d8c528a9e1fbaea2733472bd00d4755eae881441c8c52b90e2d600"
+        }
+      },
+      "assembled_graph_sha256": "9e1908e40ec47a5857e615a63f0dca883f60d6c033341701d8fa658e4397b59f",
+      "assembled_graph_bytes": 17394503,
+      "tokenizer_sha256": "28c5e078e4c52aa37cf0e6de1a212878f3dbd58dd1c70466298efe0b6b86db35",
+      "head": "CLS/Dense/exactGELU/LayerNorm(eps1e-5)/Dense/raw_logits",
+      "hidden": 256,
+      "max_abs_head_delta": 5.7220458984375e-06
+    },
+    {
+      "model_id": "cross-encoder/ettin-reranker-32m-v1",
+      "revision": "b33e5ceb5110773ea9cf5e00c9bedc83a8c2afdd",
+      "license": "apache-2.0",
+      "published_artifacts": {
+        "config.json": {
+          "bytes": 1730,
+          "sha256": "a851a8c90dda8258ab60841d26cd68b69ce2e7950cf26cf7e61c8d30f9487cb9"
+        },
+        "tokenizer.json": {
+          "bytes": 3583327,
+          "sha256": "28c5e078e4c52aa37cf0e6de1a212878f3dbd58dd1c70466298efe0b6b86db35"
+        },
+        "tokenizer_config.json": {
+          "bytes": 488,
+          "sha256": "2b85302525d8c528a9e1fbaea2733472bd00d4755eae881441c8c52b90e2d600"
+        },
+        "README.md": {
+          "bytes": 61552,
+          "sha256": "18d4bbd432e9f6621fa99a90f170635253ca5e7e179f27b1aab23fb81d1f2a55"
+        },
+        "modules.json": {
+          "bytes": 678,
+          "sha256": "d8394ab6c24cb0fb80229dafb886fac022ff489e757e3e6ed7d69603d5ae5942"
+        },
+        "config_sentence_transformers.json": {
+          "bytes": 257,
+          "sha256": "58704a86e4fe20f511de172ce623498c68991abfa7b330740d642d8e049affb7"
+        },
+        "sentence_bert_config.json": {
+          "bytes": 241,
+          "sha256": "3084164002c0bca01b0259c5327123803fce32e660a57feb93184ffead186fc8"
+        },
+        "1_Pooling/config.json": {
+          "bytes": 89,
+          "sha256": "1abc669193fef51cb822e0449ab0094bc3d2dec748248ab9be3337c05b63129a"
+        },
+        "2_Dense/config.json": {
+          "bytes": 228,
+          "sha256": "7b05383c156a6eab3ed8f979fb7377d927f7b74eccb704116cffca12beb781a4"
+        },
+        "2_Dense/model.safetensors": {
+          "bytes": 589912,
+          "sha256": "ae4d8431b8ed8afeda16dd51608c4cb7e0f810724a91423dbbb867c047285000"
+        },
+        "3_LayerNorm/config.json": {
+          "bytes": 24,
+          "sha256": "34c215bb2c779a0f7ee1a80c3b435c4f063e7176a8986c89a6c61c08fcf20692"
+        },
+        "3_LayerNorm/model.safetensors": {
+          "bytes": 3224,
+          "sha256": "3e8b5ae0d2716b538d0cdd8664bef438f20a09a1b79654fc09f19560197d3274"
+        },
+        "4_Dense/config.json": {
+          "bytes": 213,
+          "sha256": "7336df458b11aaeacc6fe0f6eb22273233a77a9ff2c448c11ee04cf20b46086f"
+        },
+        "4_Dense/model.safetensors": {
+          "bytes": 1684,
+          "sha256": "03aa39279659756a52fb02cd569b97f2d1fb0d8036ab74d45c4736f358389e01"
+        },
+        "onnx/model_qint8_arm64.onnx": {
+          "bytes": 32416083,
+          "sha256": "92cdd69ba25685f50b13663f83724d6e8cc77344bb7c0441a26a428564b1c2f6"
+        }
+      },
+      "assembled_graph_sha256": "73618bcdf4f44aea84993227ece3f4726aa38ed58ce8439dc9113a959cc08089",
+      "assembled_graph_bytes": 33012098,
+      "tokenizer_sha256": "28c5e078e4c52aa37cf0e6de1a212878f3dbd58dd1c70466298efe0b6b86db35",
+      "head": "CLS/Dense/exactGELU/LayerNorm(eps1e-5)/Dense/raw_logits",
+      "hidden": 384,
+      "max_abs_head_delta": 9.5367431640625e-07
+    },
+    {
+      "model_id": "cross-encoder/ettin-reranker-68m-v1",
+      "revision": "d166fa88ddde3c42bc3ee92f7df476d941c8204a",
+      "license": "apache-2.0",
+      "published_artifacts": {
+        "config.json": {
+          "bytes": 1946,
+          "sha256": "de2d1d2f63fea40e28850f4b678c8e026ef399a72fbba2b157b391378e48f81a"
+        },
+        "tokenizer.json": {
+          "bytes": 3583327,
+          "sha256": "28c5e078e4c52aa37cf0e6de1a212878f3dbd58dd1c70466298efe0b6b86db35"
+        },
+        "tokenizer_config.json": {
+          "bytes": 488,
+          "sha256": "2b85302525d8c528a9e1fbaea2733472bd00d4755eae881441c8c52b90e2d600"
+        },
+        "README.md": {
+          "bytes": 66854,
+          "sha256": "bdcf7a39e16bd06e5e934dc1545dbef7fd6806b8f1fbed2e5e813ade25885777"
+        },
+        "modules.json": {
+          "bytes": 678,
+          "sha256": "d8394ab6c24cb0fb80229dafb886fac022ff489e757e3e6ed7d69603d5ae5942"
+        },
+        "config_sentence_transformers.json": {
+          "bytes": 257,
+          "sha256": "58704a86e4fe20f511de172ce623498c68991abfa7b330740d642d8e049affb7"
+        },
+        "sentence_bert_config.json": {
+          "bytes": 241,
+          "sha256": "3084164002c0bca01b0259c5327123803fce32e660a57feb93184ffead186fc8"
+        },
+        "1_Pooling/config.json": {
+          "bytes": 89,
+          "sha256": "6147ee30f9df2901f83bc99fbbae3951a64ba3333db85252164c0e849888a67b"
+        },
+        "2_Dense/config.json": {
+          "bytes": 228,
+          "sha256": "b2a82c8f8d4ea4c5b87af1e633f65a5348f44d1c0c7f2de2913d17f9973080b3"
+        },
+        "2_Dense/model.safetensors": {
+          "bytes": 1048664,
+          "sha256": "ee9b8a9186fffb05cea0cd73e2ccfc8a4bf641c075d8f304e5c4e4f5fe0716d0"
+        },
+        "3_LayerNorm/config.json": {
+          "bytes": 24,
+          "sha256": "f3d06c06d736484f4a308c6e27a057c500c109cb372e9a0702bce14afa3952f1"
+        },
+        "3_LayerNorm/model.safetensors": {
+          "bytes": 4248,
+          "sha256": "3906f4be69408f4f370c7bfdc2de6ef825d4d1f4da4f01221d831336c0e3a91a"
+        },
+        "4_Dense/config.json": {
+          "bytes": 213,
+          "sha256": "0025e3b35cee1a6508f38e90524450075319b0b8cc0c34d4dfcbf56af5ca9ba0"
+        },
+        "4_Dense/model.safetensors": {
+          "bytes": 2196,
+          "sha256": "1a391820f020c8fc3efb1da894e1719cfdfb8a6c73d214f34f5b1802bac8b9dd"
+        },
+        "onnx/model_qint8_arm64.onnx": {
+          "bytes": 69276379,
+          "sha256": "9bb96642058588a4bd85204ff0eadc9b673e2a0efa77ac503838ac97e76f7c8d"
+        }
+      },
+      "assembled_graph_sha256": "6ae9538044fc08892a93de45b8573a13ecab074f901a20f07f83fb0c073205cc",
+      "assembled_graph_bytes": 70332682,
+      "tokenizer_sha256": "28c5e078e4c52aa37cf0e6de1a212878f3dbd58dd1c70466298efe0b6b86db35",
+      "head": "CLS/Dense/exactGELU/LayerNorm(eps1e-5)/Dense/raw_logits",
+      "hidden": 512,
+      "max_abs_head_delta": 1.430511474609375e-06
+    }
+  ]
+}
