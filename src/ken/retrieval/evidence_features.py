@@ -24,6 +24,7 @@ BASE_FEATURES = ('rrf', 'cosine_identity', 'cosine_behavior', 'bm25f', 'bm25_bod
 _RAW_FIELDS = ('identity', 'signature', 'documentation', 'body', 'path', 'all')
 _SOURCE_FIELDS = ('identity', 'signature', 'documentation', 'implementation', 'executable',
                   'comments', 'calls', 'returns', 'path', 'all')
+_SHARED_SOURCE_FIELDS = frozenset(_RAW_FIELDS[:-1]).intersection(_SOURCE_FIELDS)
 _STATS = ('exact', 'mean', 'min', 'p25', 'above50', 'above70', 'weighted', 'mean_cosine', 'log_words')
 _EXPANDED_STATS = ('exact', 'stem', *_STATS[1:])
 _KINDS = ('function', 'method', 'class', 'struct', 'interface', 'enum', 'trait', 'type',
@@ -139,7 +140,10 @@ def evidence_features(request: SearchRequest, candidates: Sequence[Candidate],
         source = {f: owner.fields[f] for f in ('identity', 'signature', 'documentation', 'path',
                   'implementation', 'comments', 'executable', 'calls', 'returns')}
         source['all'] = '\n'.join(source.values())
-        source_documents.append({f: code_terms(source[f], limit=4096)
+        # These owner fields have identical input and limit in both views.
+        # The source-wide union keeps its own projection order and limit.
+        source_documents.append({f: raw[f] if f in _SHARED_SOURCE_FIELDS
+                                 else code_terms(source[f], limit=4096)
                                  for f in _SOURCE_FIELDS})
     raw_coverage = _coverage(request.query, raw_documents, _RAW_FIELDS, encoder=encoder)
     expanded = expanded_query if expanded_query is not None else request.query
