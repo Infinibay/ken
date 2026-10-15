@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import replace
+from functools import lru_cache
 from importlib import import_module
 
 import numpy as np
@@ -15,6 +16,14 @@ from ken.retrieval.numeric_ranker import NumericRanker
 from ken.retrieval.profile import RegisteredEncoder, EvidenceRanking
 from ken.retrieval.ranking import rank_candidates
 from ken.retrieval.tokenization import code_tokens
+
+
+def _stem_one(word: str) -> str:
+    # Snowball mutates its current word buffer; each miss owns its stemmer.
+    return import_module('snowballstemmer').stemmer('english').stemWord(word)
+
+
+_stem_word = lru_cache(maxsize=32768)(_stem_one)
 
 
 class EvidenceReranker:
@@ -32,8 +41,7 @@ class EvidenceReranker:
 
     @staticmethod
     def stem_words(words: list[str]) -> list[str]:
-        # Snowball mutates its current word buffer; never share it across queries.
-        return import_module('snowballstemmer').stemmer('english').stemWords(words)
+        return [_stem_word(word) if len(word) <= 128 else _stem_one(word) for word in words]
 
     def validate(self, spec: EvidenceRanking) -> None:
         if (self.model.fingerprint != spec.model_revision or self.encoder.spec != spec.word_model
