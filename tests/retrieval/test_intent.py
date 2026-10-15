@@ -93,6 +93,28 @@ def test_multiple_named_declarations_do_not_gain_single_target_authority():
     assert not interpret(SearchRequest('Show the Node class declaration and Edge class declaration.')).identity
 
 
+@pytest.mark.parametrize('query,name,kind', [
+    ('Show the public Message struct declaration for incoming packets.', 'Message', 'struct'),
+    ('Find the ResourceGuard cleanup-context class.', 'ResourceGuard', 'class'),
+    ('Show the Event log-record struct.', 'Event', 'struct'),
+    ('Mostrame la clase LookupFailure para errores al recorrer datos.', 'LookupFailure', 'class'),
+])
+def test_named_targets_keep_modifiers_separate_from_the_identifier(query, name, kind):
+    intent = interpret(SearchRequest(query))
+    assert intent.identity
+    assert intent.identifiers == (name,)
+    assert intent.kind == kind
+
+
+@pytest.mark.parametrize('query', [
+    'Find the login validation helper.',
+    'Show the Error handling function.',
+    'Mostrame la clase que valida las entradas.',
+])
+def test_descriptive_modifiers_do_not_create_a_named_target(query):
+    assert not interpret(SearchRequest(query)).identity
+
+
 @pytest.mark.parametrize('query', [
     'Find the authentication timeout test covering exhausted retries.',
     'Show a parameterized integration test for malformed responses.',

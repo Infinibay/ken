@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 
 from ken.retrieval.intent import interpret
-from ken.retrieval.model import Candidate, CodeMatch, Passage, SearchRequest, Span
+from ken.retrieval.model import Candidate, CodeMatch, Passage, SearchRequest, Span, merge_spans
 from ken.retrieval.ranking import RelevanceJudge, candidate_document
 
 
@@ -34,8 +34,9 @@ def source_bounds(match: CodeMatch, passage: Passage, line_count: int, *,
         lower, upper = 1, line_count
     # Adjacent chunks merge into one owned region. Nested callable bodies are
     # gaps, including within functions: expanding across them borrows evidence.
-    if match.owned_regions:
-        region = next((r for r in match.owned_regions
+    regions = match.owned_regions or merge_spans(p.span for p in match.evidence if p.entity == match.entity)
+    if regions:
+        region = next((r for r in regions
                        if r.start_line <= passage.span.start_line <= r.end_line), passage.span)
         lower, upper = region.start_line, region.end_line
     if implementation and upper - lower + 1 > 40:

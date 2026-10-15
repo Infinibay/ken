@@ -18,22 +18,37 @@ _OBJECT_BOUNDARIES = frozenset((
     "in of for from with to en de con para por"
 ).split())
 _DECLARATION_KINDS = 'class|struct|interface|enum|trait|type|function|method|utility|helper|clase|tipo|iterador|iterator'
+_NATIVE_MODIFIERS = 'public|private|protected|abstract|sealed|final|static|async'
 _NAMED_DECLARATION = (
-    re.compile(r'^(?:show|find|locate)\s+(?:the\s+)?(?P<name>`?[\w$]+(?:[.:]+[\w$]+)*`?)\s+'
+    re.compile(r'^(?:show|find|locate)\s+(?:the\s+)?'
+        rf'(?:(?:{_NATIVE_MODIFIERS})\s+)*(?P<name>`?[\w$]+(?:[.:]+[\w$]+)*`?)\s+'
         r'(?:(?!(?:that|which|where|for|and|or)\b)[\w-]+\s+){0,2}'
         rf'(?P<kind>{_DECLARATION_KINDS})\s+(?:definition|declaration)\b', re.I),
     re.compile(r'\b(?:definición|declaración)\s+(?:de\s+la\s+|del\s+|de\s+)?'
         rf'(?P<kind>{_DECLARATION_KINDS})\s+(?P<name>`?[\w$]+(?:[.:]+[\w$]+)*`?)',re.I),
 )
+_NAMED_OBJECT = (
+    re.compile(r'^(?:show|find|locate)\s+(?:the\s+)?'
+        rf'(?:(?:{_NATIVE_MODIFIERS})\s+)*(?P<name>`?[\w$]+(?:[.:]+[\w$]+)*`?)\s+'
+        rf'(?:[\w]+-[\w-]+\s+){{0,2}}(?P<kind>{_DECLARATION_KINDS})[.!?]*$',re.I),
+    re.compile(r'^(?:mostrame|muestra|busca|buscá|encuentra)\s+(?:(?:el|la)\s+)?'
+        rf'(?P<kind>{_DECLARATION_KINDS})\s+(?P<name>`?[\w$]+(?:[.:]+[\w$]+)*`?)'
+        r'(?=\s+(?:para|que)\b|[.!?]*$)',re.I),
+)
 
 
 def _named_declaration(query: str) -> tuple[str, str | None] | None:
-    for pattern in _NAMED_DECLARATION:
+    for pattern in (*_NAMED_DECLARATION, *_NAMED_OBJECT):
         match = pattern.search(query)
         if match is None or re.search(r'\b(?:and|or|y|o)\b',query[match.end():],re.I):
             continue
         name = _identifier_query(match['name'].strip('`'))
         if name is None or name.casefold() in _OBJECT_BOUNDARIES:
+            continue
+        # Without an explicit declaration noun, descriptive prose needs a
+        # visible code identifier (quoted, qualified, snake_case or capitals).
+        if pattern in _NAMED_OBJECT and not (match['name'].startswith('`')
+                or not name.islower() or any(c in name for c in '_.:')):
             continue
         kind = match['kind'].casefold()
         concrete = {'clase':'class', 'class':'class', 'struct':'struct', 'interface':'interface',
@@ -70,8 +85,8 @@ def interpret(request: SearchRequest) -> QueryIntent:
     raw = _identifier_query(query)
     explicit = bool(re.search(r"\b(?:definition|declaration|definición|declaración|defined|declared|"
                               r"defines|declares|definid[oa]|declarad[oa]|declara)\b", lower)
-                    or (re.search(r"^(?:show|find|locate|mostrame|muestra|busca)\b", lower)
-                        and re.search(r"\b(?:class|clase|function|función|method|método|helper|utility)\b", lower)))
+                    or (re.search(r"^(?:show|find|locate|mostrame|muestra|busca|buscá|encuentra)\b", lower)
+                        and re.search(rf"\b(?:{_DECLARATION_KINDS}|función|método)\b", lower)))
     if raw is not None:
         return QueryIntent(purpose, False, (raw,))
     if not explicit:

@@ -22,7 +22,9 @@ def source_match(tmp_path, *, kind="function", regions=()):
 
 def test_evidence_selection_compares_actual_windows_and_keeps_owner_order(tmp_path):
     from ken.retrieval.evidence import refine_evidence
-    match = source_match(tmp_path)
+    # Expansion between retrieved chunks needs the source index's complete
+    # ownership proof. The fixture's function has no nested declarations.
+    match = source_match(tmp_path, regions=(Span(1, 80),))
     class Judge:
         def score(self, query, documents, *, purpose):
             assert purpose == "implementation"
