@@ -54,3 +54,9 @@ def test_invalid_geometry_cannot_silently_become_missing_evidence():
         interaction_statistics(query, np.ones((1, 3), dtype=np.int8), np.ones(1))
     with pytest.raises(ValueError):
         interaction_statistics(query, np.ones((1, 2), dtype=np.int8), np.zeros(1))
+
+
+@pytest.mark.parametrize('magnitude,dtype', [(1e30, np.float32), (1e300, np.float64)])
+def test_projection_rejects_finite_inputs_outside_safe_float32_norm_range(magnitude, dtype):
+    with pytest.raises(ValueError):
+        project_tokens(np.full((1, 768), magnitude, dtype=dtype))

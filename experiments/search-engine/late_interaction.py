@@ -19,11 +19,18 @@ def projection_matrix() -> np.ndarray:
 
 def project_tokens(raw: np.ndarray) -> np.ndarray:
     """A fixed, label-independent projection is shared by source and query."""
-    if raw.ndim != 2 or raw.shape[1] != 768 or not np.isfinite(raw).all():
+    if (raw.ndim != 2 or raw.shape[1] != 768 or raw.dtype.kind not in 'fiu'
+            or not np.isfinite(raw).all()):
         raise ValueError('finite768-dimensional token rows required')
+    # For this scaled sign matrix, ||project(row)|| <= 768*max(abs(row)).
+    # Leave a factor of two before squaring in the float32 norm; reject before
+    # a wider input can overflow on cast. Ordinary encoder rows are unchanged.
+    safe_component = np.sqrt(float(np.finfo(np.float32).max))/(2*768)
+    if np.any(raw > safe_component) or np.any(raw < -safe_component):
+        raise ValueError('token components exceed the safe float32 projection range')
     values = np.asarray(raw, dtype=np.float32) @ projection_matrix()
     norms = np.linalg.norm(values, axis=1, keepdims=True)
-    if np.any(norms <= 1e-9):
+    if not np.isfinite(norms).all() or np.any(norms <= 1e-9):
         raise ValueError('contextual token projection produced a zero row')
     return values/norms
 
