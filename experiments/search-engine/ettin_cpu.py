@@ -25,6 +25,22 @@ def cpu_options():
     return options
 
 
+def registered_padding(tokenizer, upstream, *, length=None):
+    root=Path(upstream['root']);configs={}
+    for name in ('config.json','tokenizer_config.json'):
+        expected=upstream['artifacts'][name]
+        expected=expected['sha256'] if isinstance(expected,dict) else expected
+        if sha(root/name)!=expected:raise ValueError('published padding configuration changed')
+        configs[name]=json.loads((root/name).read_text())
+    token=configs['tokenizer_config.json']['pad_token']
+    if isinstance(token,dict):token=token['content']
+    token_id=configs['config.json']['pad_token_id']
+    side=configs['tokenizer_config.json'].get('padding_side','right')
+    if type(token_id) is not int or tokenizer.token_to_id(token)!=token_id or side!='right':
+        raise ValueError('unsupported/inconsistent published padding')
+    tokenizer.enable_padding(pad_id=token_id,pad_token=token,direction=side,length=length)
+
+
 def validate_head(w,hidden):
     expected={'dense':(hidden,hidden),'norm_weight':(hidden,),'norm_bias':(hidden,),
               'out':(1,hidden),'out_bias':(1,)}
@@ -70,8 +86,15 @@ def assemble(upstream,output):
     for name,record in upstream['artifacts'].items():
         expected=record['sha256'] if isinstance(record,dict) else record
         if sha(root/name)!=expected: raise ValueError('upstream artifact changed: '+name)
+    encoder_path=root/'onnx/model_qint8_arm64.onnx'
+    precision='int8'
+    if 'encoder' in upstream:
+        registered=upstream['encoder'];encoder_path=Path(registered['path'])
+        if registered['precision']!='fp32' or sha(encoder_path)!=registered['sha256']:
+            raise ValueError('unsupported/changed registered encoder override')
+        precision='fp32'
     w,hidden=load_head(root)
-    model=onnx.load(root/'onnx/model_qint8_arm64.onnx')
+    model=onnx.load(encoder_path)
     if len(model.graph.output)!=1 or model.opset_import[0].version!=18:
         raise ValueError('unexpected upstream ONNX output/opset')
     token_output=model.graph.output[0].name;prefix='ken_published_head/'
@@ -95,16 +118,17 @@ def assemble(upstream,output):
     model.graph.output.append(h.make_tensor_value_info(logits,T.FLOAT,['batch_size',1]))
     onnx.checker.check_model(model)
     graph=output/'model-reranker-int8.onnx';onnx.save(model,graph);del model
-    # Reference compares the same published INT8 encoder + independent NumPy head.
+    # Reference compares the same registered encoder + independent NumPy head.
     # These are synthetic, source/label-free strings, never benchmark requests.
     tokenizer=Tokenizer.from_file(str(root/'tokenizer.json'))
-    tokenizer.enable_padding();tokenizer.enable_truncation(max_length=512,strategy='only_second')
+    registered_padding(tokenizer,upstream)
+    tokenizer.enable_truncation(max_length=512,strategy='only_second')
     encoded=tokenizer.encode_batch([('find a value','class Cache: store values by key'),
         ('parse input','function read(data) { return data; }'),
         ('validate fields','Checks attributes. '+'if value is None: return False\n'*80)])
     feeds={'input_ids':np.array([e.ids for e in encoded],np.int64),
            'attention_mask':np.array([e.attention_mask for e in encoded],np.int64)}
-    encoder=ort.InferenceSession(str(root/'onnx/model_qint8_arm64.onnx'),
+    encoder=ort.InferenceSession(str(encoder_path),
         sess_options=cpu_options(),providers=['CPUExecutionProvider'])
     tokens=encoder.run([token_output],feeds)[0];expected=numpy_head(tokens[:,0,:],w);del encoder
     merged=ort.InferenceSession(str(graph),sess_options=cpu_options(),providers=['CPUExecutionProvider'])
@@ -116,7 +140,8 @@ def assemble(upstream,output):
         'tokenizer_sha256':sha(root/'tokenizer.json'),'output_name':logits,
         'hidden':hidden,'head':'CLS/Dense/exactGELU/LayerNorm(eps1e-5)/Dense/raw_logits',
         'max_abs_delta_numpy_head':delta,'probe_tokens':[len(e.ids) for e in encoded],
-        'scope':'head parity only, not FP32-backbone parity or retrieval quality',
+        'encoder_precision':precision,'padding':tokenizer.padding,
+        'scope':'head parity only, not upstream-backbone parity or retrieval quality',
         'script_sha256':sha(__file__),'provider':merged.get_providers(),
         'heavy_imports':[m for m in ('torch','transformers','sentence_transformers') if m in sys.modules]}
     if record['provider']!=['CPUExecutionProvider'] or record['heavy_imports']:
@@ -137,7 +162,7 @@ class CPUReranker:
         self.output=self.session.get_outputs()[0].name
         self.tokenizer=Tokenizer.from_file(registration['tokenizer'])
         self.tokenizer.enable_truncation(max_length=512,strategy='only_second')
-        self.tokenizer.enable_padding()
+        registered_padding(self.tokenizer,registration['upstream'])
 
     def score(self,query,texts):
         scores=[];truncated=0;token_ms=0;inference_ms=0;tokens=[]
@@ -154,7 +179,8 @@ class CPUReranker:
             if not np.isfinite(result).all():raise ValueError('nonfinite reranker score')
             scores.extend(float(x) for x in result)
         return scores,{'token_ms':token_ms,'inference_ms':inference_ms,
-                       'truncated_documents':truncated,'pair_tokens':tokens}
+                       'truncated_documents':truncated,'pair_tokens':tokens,
+                       'pad_id':self.tokenizer.padding['pad_id']}
 
 
 if __name__=='__main__':

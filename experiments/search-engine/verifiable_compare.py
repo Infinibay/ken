@@ -19,6 +19,7 @@ def main():
     p.add_argument('--public-cases',type=Path,required=True)
     p.add_argument('--source-metadata',type=Path,required=True)
     p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--reuse-baseline',type=Path)
     p.add_argument('--preflight',action='store_true');args=p.parse_args()
     w=args.workspace.resolve();frozen=w/'output/frozen/cpu-rank-consensus-v97b'
     args.output.mkdir(parents=True,exist_ok=False)
@@ -63,8 +64,27 @@ def main():
     source=w/'output/analysis/c-source-reindex-v66c'
     source_reg=json.loads((source/'registration.json').read_text())
     repos=sorted({c['repo_id'] for c in cases})
-    # Baseline for ALL cases closes before any neural comparison.
+    # A previously closed byte-exact baseline may be reused for an adapter-only
+    # correction. Its original timing and provenance remain explicitly labeled.
     schedule=[('baseline',r) for r in repos]
+    if args.reuse_baseline:
+        prior=json.loads((args.reuse_baseline/'registration.json').read_text())
+        if (prior.get('status')!='ALL outputs closed without Gold or quality grading'
+            or prior['public_cases_sha256']!=metadata['public_cases_sha256']
+            or prior['engine_manifest_sha256']!=engine_receipt):
+            raise ValueError('incompatible closed baseline')
+        for path,value in prior['source_files'].items():
+            if sha(path)!=value:raise ValueError('prior baseline control changed')
+        for repo in repos:
+            out=args.output/'baseline'/repo;out.mkdir(parents=True,exist_ok=False)
+            for name,value in prior['closed_workers']['baseline'][repo].items():
+                src=args.reuse_baseline/'baseline'/repo/name
+                if sha(src)!=value:raise ValueError('prior baseline output changed')
+                shutil.copyfile(src,out/name)
+        metadata['baseline_reuse']={'source_comparison_sha256':sha(args.reuse_baseline/'registration.json'),
+            'scope':'unchanged baseline answers/pools and ORIGINAL timing reused; no new baseline timing claimed'}
+        schedule=[]
+        (args.output/'registration.json').write_text(json.dumps(metadata,indent=2))
     for i,repo in enumerate(repos):
         sizes=['17m','32m','68m'];sizes=sizes[i%3:]+sizes[:i%3]
         schedule.extend((size,repo) for size in sizes)

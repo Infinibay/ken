@@ -148,3 +148,158 @@ speedups; model inference itself is separately timed. Preserve original timings
 and investigate measurement stability before claiming causal end-to-end overhead.
 Originalbaseline RSS maxima~1.41GiB on2446fileJUnit; others~0.62–0.94GiB.
 All numbers here are resource observations, never new utility percentages.
+
+
+## User clarification 2026-10-15T19:53:19.812942+00:00 — optional automatic acceleration
+
+CPU is the mandatory usable fallback and the platform on which latency must meet
+the user budget. GPU is allowed and should be used when available AND faster.
+Normal runtime should detect usable providers/devices, compare representative
+whole scoring latency including transfers/initialization separately, cache the
+choice per model/runtime/device, and fall back safely to CPU. Do not assume
+accelerator availability implies lower latency for ten small pairs. Preserve
+explicit device overrides. The active comparison remains CPU-only by design to
+verify the minimum requirement; it does not prohibit optional production GPU.
+The user reference remains roughly1s per100repository files, earlier3–5s response
+expectation, modest RAM; no new hard numerical cap is invented from the letterX.
+Quality gates Recall10>=95% and jointtop1>=90% stay unchanged.
+
+
+## Update20:14UTC — ALL800 closed, blind345review running, no Gold/quality read
+
+Actual comparison session9396closed0. Registration output/development/verifiable-pieces-v98/
+registration.json SHA2ca7cfb34540543f17b8fa28619dc363e13c9c192f066b95473038836c92b482.
+All200baseline and200each17/32/68 outputs closed, all exactsharedpool checks pass.
+CPU primary p50/p95ms: baseline2501/11820(variablefirst3repos),17M1373/2459,
+32M1650/2661,68M2497/3633. Rerankonlyp50/p95ms205/246,479/566,1370/1580.
+MaximumwholeprocessRSSMiB1448baseline,1521/1587/1689neural; includesload/warmup.
+Of1988neuralpairs permodel,470documents truncated to512tokens. Not quality evidence.
+
+Performance-only repeat session37164closed0 at output/development/
+verifiable-baseline-timing-repeat-v99. ALL200answers/pools byte-exact vsoriginal;
+repeatp50/p95/max1152/2217/3662ms,peak1456MiB. Preserve original and repeat; cannot
+attribute temporal common-stage change to a model speedup or subtract percentiles.
+
+Publiccal60 sourcevalid via CSv2+MF; serialcalmodelscore session90686closed0 at
+output/development/verifiable-calibration-scores-v99b. No labels used in scoring.
+All60blind judgments sealed942dfc7a…79fe4. Eachcurator audited their owncalGold
+AFTER bothjudgmentseals, rootreceivedaggregateonly. Gate file
+output/development/verifiable-calibration-judgments-v99b/CALIBRATION-GATE.json
+SHAdd9e03aed53c71d6e896109b875affa28639cbdcbb06d68bcf5aeb24f4563dc3:
+60/60passagreement,0/40falseaccept,0falsereject. OrdinalR/S differences remain
+limitation, no calibrationjudgment changed. Generalclarification frozenbeforemain
+at output/frozen/verifiable-calibration-auth-v99/verifiable-judge-clarification-v99.md
+SHAa4b0bf97785b41bb8f194366a1b4e7ba8f0a73bed98f0cef0700f487a55d09f1.
+
+Primaryblindsourceauth finished: output/development/verifiable-main-blind-v98.
+800answers deduplicate to345visiblequery/cardpairs: class-symbol163,
+module-file182. Receiptfile pins CS3ecf751910abda90367ac32b6275cb3fdf15cd0b261c73c175a7af2d7cb76d6d,
+MF69957cce241e9597fec8322522d8c036afb7ba2cc1628d4fc5190a62b52fd1d0.
+ExistingreviewerB judgesCS; curatorA judgesMF, onlycurrentrow, no sources/Gold,
+model/score/mapping. Outputs output/development/verifiable-main-judgments-v98/
+{class-symbol,module-file}.jsonl. Lateststatus80CS/140MF, notsealedyet. Rootnever
+reads mainoutcome summaries before closure and has opened NO newprincipalGold,
+NO calibrationGold, NO oldprivate acceptance reserve. No new utility percentage.
+
+After345initialjudgments close: verify exactIDs+cites, sealoriginalprincipalstatus
+'ALL principal blind judgments closed before Gold' with original inputreceiptSHA,
+judgmentfilepins andcalibration_gate_passedtrue. Onlythen open separatecalGold
+(paths askcurators, no broadtmpsearch) to run frozenv99verifiable_shadow.py.
+It compares reject→neural and reject→preserveKenorder, all200denominator.
+Generate shadow extras with frozenv99verifiable_shadow_blind.py, de-dup against
+345sealedvisibleinputs, crosscuratorsjudge NEWpairs only. Sealcombinedstatus
+'ALL primary and shadow blind judgments closed before principal Gold' with all
+judgmentfilepins, principal_input_receipt_sha256,shadow_input_receipt_sha256,
+principal_judgment_seal_sha256. OnlyAFTERFINALseal openprincipalGold and run frozen
+v98verifiable_report.py using ORIGINAL345judgmentseal (extraIDs forbidden there),
+then frozenv99verifiable_shadow_report.py with finalcombinedseal andprimaryreport.
+Preserveoriginalscores; anyunlistedsemantic alternative needs independentsource
+audit uniformlyapplied toALLarms with the sameliteralquery/type/owner criteria.
+No90claim unlesscorrectpiece+visibleR2S2/allfacets/source andRecall10>=95%gatespass.
+
+## Optional accelerator investigation; CPU requirement clarified by human
+
+NewDEVICE-REQUIREMENTS-2026-10-15.md and kenmemory
+search-engine-device-requirements-20261015 recordCPUmandatoryfastfallback,
+GPUoptionalautochoosefaster, not CPU-onlyproduct. Existingembedder alreadyhas
+autoGPUpriority/fallbacktests; future reranker mustreusepolicy, add measuredchoice.
+BenchmarkforcedCPU unchanged. ORT1.25.1availableCoreML/Azure/CPU onhost.
+
+Source-freesynthetic provider probes only, nevercorpus/Gold. Frozen
+output/frozen/verifiable-provider-probe-v99 control5b6378ed…569d; trials
+output/development/verifiable-provider-probe-v99 first failed nativeTMPdir.
+Secondv99b withTMPDIR=/private/tmp/ken-coreml-probe-v99 failed Library/Caches/python
+sandbox. Single17escalatedv99c(auto-approved) gotpastcache butCoreML rejected
+unbounded dimensions. Noauto-reviewrejection; no pendingpermission. Nativecache
+outsideworkspace is incidentalCoreML requirement, userGPUrequestauthorizestrial.
+
+Shape-only17MINT8probe frozen output/frozen/verifiable-fixed-provider-v100,
+controlba1d9a400f53e5098aeeccb933c1cd356f38cb2c748fb12fd3f5fff01e97c8ab.
+Executedwithescalation(auto-approved), session62811closed0. Derivedsameweight4x512
+graphpadsfinalbatch withvalidduplicates andtrimsscores;2boundarytests pass.
+Results output/development/verifiable-fixed-provider-v100/report.json:
+CoreMLactuallyexecutes153events+357CPUevents. Short/longmicrotimes459/464ms vs
+originaldynamicCPU12.4/226.9ms. StaticCPU247/257ms. PaddingCPUshortchangeslogits
+max0.8369(long0.0), CoreMLvsdynamicCPUshort0.732/long0.245 andrankdiffers.
+NoGPUdefaultpromotion. Causeofpaddingeffectnotyetisolated; dynamicquantization
+is ahypothesis. Kenmemorysearch-ettin-padding-coreml-probe-20261015has evidence.
+Do not claim APIlatency or200quality from thesesynthetics.
+
+Currentadditionaldiagnosis: download samepublished17MFP32encoder (notlargermodel)
+to output/models/ettin-17m-fp32-source-v101/encoder.onnx. DefaultDNSblocked before
+filecreation; retryexecsession62661running withnetworkescalationautoapproved.
+Publicrevision9e4aa35321a6dd1a43ca313f500c4b4f7cfb5cc6, SHA256
+2a375ccea150a4df925a47884b510eeb4bd6227ca6fffdbbc62ca2284bfe6211;
+o source/query sent. PurposeONLYsource-free precision/padding/provider diagnosis;
+no additionalcorpusarmregistered/requiredyet. Attachsamepublishedhead and verify
+NumPyheadparity before runtimeprobes; do notmutate frozenINT8assets ormaincontrol.
+Officialdocs readCoreML EP and make-dynamic-shape-fixed helpers; linksincontrols.
+
+Currentownedcommit0aac155 afterb9d9ddb/79834e8. Pendingownnewhelpers/reporting/docs
+are ignored/untracked until explicitgitadd-f; neverstageall.26boundarytests pass
+(20primary/auth/shadow+4devicechoice+2padding), no productioncoreedits. Foreigndirty
+README/src/tests andolderrootdocs untouched. GPU/FP32research mustnot delay
+sealingblindmain or leakGold. No newsubagent; existingtwo remaincuration/reviewonly.
+
+## Correction20:35UTC — wrong padding ID discovered; controlled repeat v102
+
+The experimental adapter used Tokenizer.enable_padding() default ID0 instead of
+published [PAD]=50283. ALL3 pinned model configs/tokenizers agree on50283. This
+is an adapter defect; the original neural ranking/calibration/device observations
+are retained only as diagnostics, not valid model-comparison headlines. Common
+baseline outputs do not call this adapter and remain valid. No main Gold or
+quality aggregate was read before discovering or correcting this defect.
+
+registered_padding now validates SHA-pinned upstream config/tokenizer_config,
+checks token->ID and right-padding, and explicitly applies ID50283 in runtime
+and assembly.2new tests reproduce default-ID/stale-pin failure and pass after
+correction;28previous+padding boundary tests passed. Optional FP32 encoder
+assembly override is recorded but inactive for all3 principal model records.
+Frozen v102 CONTROL-MANIFEST SHA2f2a09ecfd6570274e353608da672727e9fe702d37bcb7e824acec40bafc28f4,
+16files. Compared with v98,12producer files identical,2modified plus2additions.
+Original v98/v99/v100 snapshots untouched. New serial ALL200x3 rerun started
+20:23:21UTC, session66031, output/development/verifiable-pieces-v102. Reuses
+unchanged baseline answers/pools/original timing explicitly; neural workers
+recompute complete pipeline and assert byte-exact sharedpool/card/expansion.
+This does not claim a new baseline timing measurement. Separate prior registered
+baseline timing repeat remains valid and preserved.
+
+Independent static technical review receipt
+/private/tmp/ken-verifiable-pieces-benchmark-20261015/technical-review-v102/static-review-receipt.json
+SHAaa8b159037a9e0b0d3a583b783b98af1d60bae4673d5ed2eb937897c45e890aa.
+No blockers for active records;16freeze/24originalcontrol/24reusedworker pins
+match. Review ran no inference or tests and did not inspect corpus outcomes/Gold.
+
+ALL345original blind opinions closed and literal citations/schema checked:
+CS163 SHA b38846b307d5eecfc74ebcf45e42423a4747a0c5c65775f5bb5de93d5e42f5be;
+MF182 SHA11de23d4f76815c773b12459bd35f3118882a89ee3b1a6db82779d5aaf09c671.
+Original principal seal ALL-PRINCIPAL-BLIND-CLOSED.json SHA
+6659909b3d4f91c067728d3cd4b431ef2e964c22e7e980a51313aaf1ff9d2ea8.
+No opinion changed from model feedback. Corrected outputs require new blindinput
+anonymization; reuse only full canonical-byte-identical visible inputs. Newpairs
+crossreviewed by same existing independent curators, then corrected rawseal.
+Helper+3tests separately frozen at output/frozen/verifiable-blind-reuse-v102;
+staticreview preceded an additional tested calibration-gate closure requirement.
+No first-corpus Gold or quality summaries have been opened. Cal60 must also be
+rescored with corrected padding after main CPU workers finish, before thresholds.
+The earlier main/shadow/Gold gate sequence applies to CORRECTED raw judgments.
