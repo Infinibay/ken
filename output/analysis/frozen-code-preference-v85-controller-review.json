@@ -1,0 +1,67 @@
+{
+  "scope": "Independent85 controller code and pinned source/asset guard review; no actual eligibility labels, corpus fit, quality, references/private reserve, edits or marker writes.",
+  "status": "stopped_before_complete_source_and_first_fit",
+  "pre_fit_approved": false,
+  "engine_receipt": "cd99b9080a19e229d937bdeabe644a07a4899f911a80b922dee7ebf4b7f5a941",
+  "frozen_tree": "c7386bd1092daecdd260587197a24ba0ea78bfcde146a1800717035f14327bf0",
+  "frozen_files": 578,
+  "collector_sha256": "d23fb35cd6aa56420bc68a3b43d8c55ece8c8154253ef35167ab991c9888ed84",
+  "fitter_sha256": "ac0a11ee4fc508185f66f95dc18be81cfd73ea4a506d9a54cc2d4759e65f568d",
+  "physical_source_files_checked": 6314,
+  "source_bindings": 64,
+  "expected_parent_bindings": 51,
+  "selection_call_proofs": [
+    {
+      "controller": "collector",
+      "line": 169,
+      "expression": "training_indices(eligibility[original_rows], [item.signals.get('rrf', 0.0) for item in pool], max_negatives=20)",
+      "no_69scores_or_prefix_or_cache_selection": true
+    },
+    {
+      "controller": "fitter",
+      "line": 92,
+      "expression": "training_indices(original['y'][original_rows], [candidate.signals.get('rrf', 0.0) for candidate in pool], max_negatives=20)",
+      "no_69scores_or_prefix_or_cache_selection": true
+    }
+  ],
+  "evaluation_phase_first_and_only_y_access_in_training_branch": true,
+  "all16_synthetic_held_NaN_accumulation_invariant": [
+    "ajv",
+    "anyhow",
+    "attrs",
+    "bbolt",
+    "boltons",
+    "commons-csv",
+    "dayjs",
+    "fsnotify",
+    "junit5",
+    "logrus",
+    "marked",
+    "packaging",
+    "petgraph",
+    "pytest",
+    "regex",
+    "semver"
+  ],
+  "gate_all_three_fields_checked_without_marker": true,
+  "all_optimization_calls_after_marker": true,
+  "head_files_observed": 0,
+  "source_complete_at_snapshot": false,
+  "source_phases_at_snapshot": {},
+  "remaining": [
+    "Exhaustive actual evaluation/training row identities and original-RRF eligibility selections after seal.",
+    "Actual query/document hashes against bound expanded queries/source text and seal payload equality.",
+    "Unit/zero vectors, cache overlaps/key invariance, deterministic CPU pair recodes.",
+    "Actual per-repo moment files/query IDs and held label/score perturbations with no real head fit."
+  ],
+  "limits": [
+    "Fitter validates entity/source identity, document-hash length and overlaps but does not independently recompute query/document hashes or compare seal payload; the review attestation must close those actual-data checks before approval.",
+    "Synthetic NaN accumulation proves the extracted actual fold function ignores held moments; it is not yet an artifact audit of real pre-fit rows/moments.",
+    "No PRE-FIT marker created or actual ridge head fitted by reviewer."
+  ],
+  "root_reported_uncommitted_evaluation_queries": 75,
+  "completed_source_phases": 0,
+  "observed_head_files": 0,
+  "quality_results": null,
+  "prior_attempt_preserved": true
+}

@@ -1,0 +1,51 @@
+{
+  "scope": "Independent85 helper/protocol-only review with synthetic arrays and generic label-free code text; no corpus preparation, development gold/quality, model fitting on data, private reserve, source edits or marker writes.",
+  "protocol_sha256": "a6414c39e06bb447e71fc588edbd0ff0c09a89f45ceab87ddae66bf094644ab7",
+  "helpers_sha256": {
+    "frozen_code_pairs.py": "8b413f13fe18796c2f456b34efa9d99bec2129778eaff2568028deb92132426f",
+    "pair_preferences.py": "429a01461c26322fb5d71e21ab75906a21ab0df624657680a0d361f865e5eb4b"
+  },
+  "synthetic_independent_closed_form_cases": 64,
+  "max_moment_absolute_error": 2.220446049250313e-16,
+  "max_lstsq_weight_absolute_error": 6.661338147750939e-16,
+  "multiquery_different_PN_equal_weight_reference_exact_tolerance": true,
+  "ridge1_bound_weight_norm_sqrt_training_queries_derived": true,
+  "stable_RRF_selection_all_positives_preserved": true,
+  "live_single_CPU42session_shared": true,
+  "original_tokenizer_and_singletext_vectors_unchanged": true,
+  "generic_joint_pairs_existing_vectors_bit_exact_after_union_reorder": true,
+  "full_query_prefix_tokens_preserved": true,
+  "only_second512_float64_normalization_float32_shape": true,
+  "original_generic_finite_weight_score_overflow_reproduced_then_fixed": true,
+  "current_score_overflow_fails_closed": true,
+  "producer_fitter_cache_bindings_repo_exclusion": "not yet available; no prefit approval",
+  "limits": [
+    "Helper math cannot prove untrained origin of supplied retrieval_rrf, source/query/model binding, prefix sealing, cache key integrity or whole-repo exclusion. These remain producer/fitter review responsibilities.",
+    "Existing CodeRank is a retrieval model; pair encoding is a new registered experimental projection, not author-validated pair relevance or behavior evidence.",
+    "No actual85 source/features/folds/model export or ALL400 score result reviewed; no API/default/resource/private claim."
+  ],
+  "status": "design_and_helpers_reviewed_not_prefit_acceptance",
+  "pre_fit_approved": false,
+  "tests": {
+    "original_pytest": 27,
+    "current_pytest": 28,
+    "current_mypy_files": 2
+  },
+  "findings": [
+    {
+      "priority": 2,
+      "scope": "original helper extreme finite head values",
+      "issue": "Finite F64max weights could yield infinite score on a unit row.",
+      "disposition": "Root added finite-score rejection; independent POC now rejects. No85 source or fit had started."
+    }
+  ],
+  "future_prefit_requirements": [
+    "Exact expected source66c/69/42 model/request/expanded/pool/row bindings and distinct pair policy.",
+    "Seal all400 label-free evaluation prefixes before eligibility reads.",
+    "Training positives/negatives from original eligibility and untrained RRF only; never69 scores or evaluation-prefix membership.",
+    "Training-only cache extension preserves every sealed vector byte and complete query/document/model identity.",
+    "Every head sums only its15 whole training repos in stable order; held label/score perturbations leave rows/moments/head unchanged.",
+    "All400 evaluation IDs retained; training-only skips registered."
+  ],
+  "no_marker_written": true
+}

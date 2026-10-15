@@ -1,0 +1,93 @@
+{
+  "scope": "Independent82 mathematics/source/features/folds/all-response replay; no labels read, no tuning/implementation/private reserve. Report judgments mechanically recounted, not fresh gold adjudication.",
+  "engine_receipt": "5d8b91aee1f64cf5335d829ecd5c47ed6151689854e83318a9c29b65db1dc637",
+  "source_owners": 50967,
+  "owner_bearing_source_files": 6139,
+  "all_index_files": 6314,
+  "source_coordinate_payload_bytes": 6523776,
+  "source_coordinates_all_rederived_bit_exact": true,
+  "coordinate_min": -0.35875839652567654,
+  "coordinate_max": 0.381435455745866,
+  "same_fixed16_axes80": true,
+  "same_source7_implementation69_vectors": true,
+  "source_complete_before_query_feature_reads_by_controlflow": true,
+  "all167360_parent267_bit_exact": true,
+  "all400_extra48_math_exact": true,
+  "neutral_singletons": 37,
+  "current_fixed_helper_vs_frozen_all_nonexact_rows_bit_exact": 167323,
+  "prefit_bindings": 68,
+  "models": {
+    "baseline251": {
+      "models": 16,
+      "rows_bit_exact": 167360,
+      "whole_held_repo_excluded": true
+    },
+    "semantic_agreement315": {
+      "models": 16,
+      "rows_bit_exact": 167360,
+      "whole_held_repo_excluded": true
+    }
+  },
+  "responses": {
+    "baseline251": {
+      "full_responses_replayed_exact": 400,
+      "reported_strict_recounted": 286,
+      "reported_identity_recounted": 298,
+      "original_evaluator_in_preserved_controller": true
+    },
+    "semantic_agreement315": {
+      "full_responses_replayed_exact": 400,
+      "reported_strict_recounted": 281,
+      "reported_identity_recounted": 294,
+      "original_evaluator_in_preserved_controller": true
+    }
+  },
+  "max_evidence_lines": 40,
+  "max_JSON_chars": 12000,
+  "native_export_limit": "All saved numeric scores recomputed; native boosters not persisted; immutable trainer asserts heldfold native/numeric bit equality before output.",
+  "frozen_integer_guard_defect": {
+    "reproduced_min_signed_integer_types": [
+      "int8",
+      "int16",
+      "int32",
+      "int64"
+    ],
+    "impact_on_actual_float64_control": "none observed; every actual coordinate and extra column verified",
+    "current_fix_rejects_all_four": true
+  },
+  "gate": {
+    "baseline": 286,
+    "required_gain": 5,
+    "observed": 281,
+    "met": false
+  },
+  "limits": [
+    "Adaptive prepared development control, not untouched private acceptance or API/default adoption.",
+    "Signed similarities/products/differences do not certify behavior, binding, absence, negation or runtime.",
+    "Payload count is not end-to-end resource certification."
+  ],
+  "status": "valid_float64_prepared_control_negative_gate_not_met",
+  "blocking_findings": [],
+  "findings": [
+    {
+      "priority": 2,
+      "file": "experiments/search-engine/semantic_agreement.py",
+      "scope": "frozen82 generic input validation",
+      "issue": "np.abs of minimum signed integers overflows before range comparison; coordinates outside [-1,1] can be accepted.",
+      "witnesses": [
+        "int8(-128)",
+        "int16(-32768)",
+        "int32(-2147483648)",
+        "int64(-9223372036854775808)"
+      ],
+      "disposition": "Root fixed current helper by converting to float64 before abs; freeze82 unchanged. Every actual float64 source/feature row verified; no observed effect on82 results."
+    }
+  ],
+  "tests": {
+    "original_focused": 29,
+    "current_fixed_focused": 34,
+    "original_mypy_files": 2,
+    "current_fixed_mypy_files": 1
+  },
+  "no_new_run_claim_for_current_fix": true
+}

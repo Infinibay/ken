@@ -1,0 +1,5314 @@
+{
+  "status": "source_prefix_mapping_and_counts_verified",
+  "scope": "Independent all400 physical source/ownership/projection/token-offset audit of exposed original development references; no regrading/causal claim/fit/inference/private reserve or source/result edits.",
+  "report_sha256": "f72567a66e7acf863ee92e9cff6bd32bdd0c0a238e0be89ee47d64eeddf115f9",
+  "controller_sha256": "453b0d63b363565e4e685a6f79e7c232ab6eb8ba6bb32c6cc557d0fc1c11f6f8",
+  "engine_receipt": "4f44d3303cae3033f11672848ed022e95b70bb7877c956d10f9c23487897c335",
+  "bound_files": 171,
+  "checks": {
+    "owner_projections": 397,
+    "physical_anchor_lines": 4347,
+    "queries": 400
+  },
+  "all_original_alternatives_and_null_owner_enumerations_exact": true,
+  "all_physical_bodies_and_gaps_match_saved_implementation": true,
+  "all_token_offsets_and_per_owner_classifications_exact": true,
+  "summary": {
+    "all": {
+      "total": 400,
+      "has_complete_anchor_prefix": 325,
+      "has_owned_anchors_but_no_complete_prefix": 15,
+      "no_owner_complete_anchor_implementation": 60
+    },
+    "strict_hits": {
+      "total": 286,
+      "has_complete_anchor_prefix": 230,
+      "has_owned_anchors_but_no_complete_prefix": 9,
+      "no_owner_complete_anchor_implementation": 47
+    },
+    "wrong_identity": {
+      "total": 102,
+      "has_complete_anchor_prefix": 87,
+      "has_owned_anchors_but_no_complete_prefix": 5,
+      "no_owner_complete_anchor_implementation": 10
+    },
+    "missing_visible_anchor": {
+      "total": 12,
+      "has_complete_anchor_prefix": 8,
+      "has_owned_anchors_but_no_complete_prefix": 1,
+      "no_owner_complete_anchor_implementation": 3
+    }
+  },
+  "wrong_identity_implementation": {
+    "total": 90,
+    "has_complete_anchor_prefix": 79,
+    "has_owned_anchors_but_no_complete_prefix": 4,
+    "no_owner_complete_anchor_implementation": 7
+  },
+  "wrong_identity_strata": {
+    "identity/en": {
+      "total": 3,
+      "has_complete_anchor_prefix": 2,
+      "has_owned_anchors_but_no_complete_prefix": 0,
+      "no_owner_complete_anchor_implementation": 1
+    },
+    "identity/es": {
+      "total": 1,
+      "has_complete_anchor_prefix": 0,
+      "has_owned_anchors_but_no_complete_prefix": 0,
+      "no_owner_complete_anchor_implementation": 1
+    },
+    "implementation/en": {
+      "total": 57,
+      "has_complete_anchor_prefix": 53,
+      "has_owned_anchors_but_no_complete_prefix": 2,
+      "no_owner_complete_anchor_implementation": 2
+    },
+    "implementation/es": {
+      "total": 33,
+      "has_complete_anchor_prefix": 26,
+      "has_owned_anchors_but_no_complete_prefix": 2,
+      "no_owner_complete_anchor_implementation": 5
+    },
+    "tests/en": {
+      "total": 3,
+      "has_complete_anchor_prefix": 3,
+      "has_owned_anchors_but_no_complete_prefix": 0,
+      "no_owner_complete_anchor_implementation": 0
+    },
+    "tests/es": {
+      "total": 5,
+      "has_complete_anchor_prefix": 3,
+      "has_owned_anchors_but_no_complete_prefix": 1,
+      "no_owner_complete_anchor_implementation": 1
+    }
+  },
+  "blank_anchor_lines_beyond_prefix": [
+    {
+      "id": "development-bbolt-16",
+      "path": "tx.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Tx.Commit",
+        "owner": "Tx",
+        "definition_ordinal": 0
+      },
+      "blank_beyond_lines": [
+        273,
+        276
+      ]
+    },
+    {
+      "id": "development-petgraph-16",
+      "path": "crates/petgraph/src/algo/astar.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "astar",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "blank_beyond_lines": [
+        142,
+        156
+      ]
+    },
+    {
+      "id": "development-semver-07",
+      "path": "functions/coerce.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "coerce",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "blank_beyond_lines": [
+        59
+      ]
+    },
+    {
+      "id": "development-semver-09",
+      "path": "classes/range.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "Range.parseRange",
+        "owner": "Range",
+        "definition_ordinal": 0
+      },
+      "blank_beyond_lines": [
+        167
+      ]
+    }
+  ],
+  "classification_changes_if_blank_lines_vacuously_visible": [],
+  "limits": [
+    "The mapper covers physical lines in OwnerDescription.implementation (the body), while the actual implementation projection also has a synthetic identity/signature header. Missing mapped declaration lines may already be represented by that same view header, and documentation may exist in contract/fullowner. Thus60 missing-body-anchor cases do not prove missing text from the implementation input or the index;47 are already strict hits.",
+    "Full decisive lines inside the prefix are neither semantic understanding nor a causal demonstration of ordering failure; lines outside it do not establish that more windows improve ranking.",
+    "The registered tokenizer lowercases and normalizes text; this test maps physical source character endpoints into the truncated projection, not lossless reproduction of every source character as tokens.",
+    "Gaps and missing declaration/documentation remain explicit; null alternatives enumerate same-file owners individually and do not compose distinct owners.",
+    "Whitespace-only anchored lines are counted by their endpoint as in the protocol; none changes a full-owner classification if treated vacuously visible.",
+    "This diagnostic uses development references and outcomes after existing controls. It is not a label-free producer, held-out estimate or achievable-accuracy upper bound."
+  ],
+  "owner_witnesses": [
+    {
+      "id": "development-ajv-01",
+      "path": "lib/vocabularies/validation/limitLength.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-02",
+      "path": "lib/vocabularies/validation/limitNumber.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-03",
+      "path": "lib/vocabularies/validation/multipleOf.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-04",
+      "path": "lib/vocabularies/validation/pattern.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-05",
+      "path": "lib/vocabularies/validation/required.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-06",
+      "path": "lib/vocabularies/validation/uniqueItems.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "code.loopN",
+        "owner": "code",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-08",
+      "path": "lib/vocabularies/validation/const.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-09",
+      "path": "lib/vocabularies/applicator/additionalProperties.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "code.additionalPropertyCode",
+        "owner": "code",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-10",
+      "path": "lib/vocabularies/applicator/oneOf.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "code.validateOneOf",
+        "owner": "code",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-11",
+      "path": "lib/vocabularies/applicator/not.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-12",
+      "path": "lib/vocabularies/applicator/if.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-13",
+      "path": "lib/vocabularies/applicator/allOf.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-14",
+      "path": "lib/vocabularies/applicator/properties.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-15",
+      "path": "lib/vocabularies/applicator/contains.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-16",
+      "path": "lib/vocabularies/format/format.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "code.validate$DataFormat.invalidFmt",
+        "owner": "code.validate$DataFormat",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-17",
+      "path": "lib/vocabularies/discriminator/index.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-18",
+      "path": "lib/vocabularies/unevaluated/unevaluatedProperties.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-19",
+      "path": "lib/vocabularies/validation/limitContains.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-20",
+      "path": "lib/vocabularies/applicator/dependencies.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "validatePropertyDeps",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-21",
+      "path": "lib/core.ts",
+      "entity": {
+        "kind": "class",
+        "qualname": "Ajv",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-22",
+      "path": "lib/compile/index.ts",
+      "entity": {
+        "kind": "class",
+        "qualname": "SchemaEnv",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-23",
+      "path": "lib/compile/codegen/index.ts",
+      "entity": {
+        "kind": "class",
+        "qualname": "CodeGen",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-24",
+      "path": "spec/options/removeAdditional.spec.ts",
+      "entity": {
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-ajv-25",
+      "path": "spec/options/unicodeRegExp.spec.ts",
+      "entity": {
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-01",
+      "path": "src/context.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Result.context",
+        "owner": "Result",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-02",
+      "path": "src/context.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Result.with_context",
+        "owner": "Result",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-03",
+      "path": "src/context.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Option.context",
+        "owner": "Option",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-04",
+      "path": "src/context.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Option.with_context",
+        "owner": "Option",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-05",
+      "path": "src/chain.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Chain.next",
+        "owner": "Chain",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-06",
+      "path": "src/chain.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Chain.size_hint",
+        "owner": "Chain",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-07",
+      "path": "src/chain.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Chain.next_back",
+        "owner": "Chain",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-08",
+      "path": "src/chain.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Chain.len",
+        "owner": "Chain",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-09",
+      "path": "src/error.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Error.context",
+        "owner": "Error",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-10",
+      "path": "src/error.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Error.root_cause",
+        "owner": "Error",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-11",
+      "path": "src/error.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Error.downcast",
+        "owner": "Error",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-12",
+      "path": "src/error.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Error.downcast_ref",
+        "owner": "Error",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-13",
+      "path": "src/error.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Error.downcast_mut",
+        "owner": "Error",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-14",
+      "path": "src/error.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Error.into_boxed_dyn_error",
+        "owner": "Error",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-15",
+      "path": "src/error.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Error.reallocate_into_boxed_dyn_error_without_backtrace",
+        "owner": "Error",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-16",
+      "path": "src/error.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "object_downcast",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-17",
+      "path": "src/error.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "context_downcast",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-18",
+      "path": "src/error.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "context_chain_downcast",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-19",
+      "path": "src/fmt.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "ErrorImpl.display",
+        "owner": "ErrorImpl",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-20",
+      "path": "src/fmt.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Indented.write_str",
+        "owner": "Indented",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-21",
+      "path": "src/lib.rs",
+      "entity": {
+        "kind": "struct",
+        "qualname": "Error",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-22",
+      "path": "src/lib.rs",
+      "entity": {
+        "kind": "struct",
+        "qualname": "Chain",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-23",
+      "path": "src/fmt.rs",
+      "entity": {
+        "kind": "struct",
+        "qualname": "Indented",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-24",
+      "path": "tests/test_context.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "test_downcast_ref",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-anyhow-25",
+      "path": "tests/test_context.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "test_root_cause",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-01",
+      "path": "src/attr/validators.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "disabled",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-02",
+      "path": "src/attr/validators.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "_InstanceOfValidator.__call__",
+        "owner": "_InstanceOfValidator",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-03",
+      "path": "src/attr/validators.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "_MatchesReValidator.__call__",
+        "owner": "_MatchesReValidator",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-04",
+      "path": "src/attr/validators.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "_OptionalValidator.__call__",
+        "owner": "_OptionalValidator",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-05",
+      "path": "src/attr/validators.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "_InValidator.__call__",
+        "owner": "_InValidator",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-06",
+      "path": "src/attr/validators.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "_IsCallableValidator.__call__",
+        "owner": "_IsCallableValidator",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-07",
+      "path": "src/attr/validators.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "_DeepIterable.__call__",
+        "owner": "_DeepIterable",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-08",
+      "path": "src/attr/validators.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "_DeepMapping.__call__",
+        "owner": "_DeepMapping",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-09",
+      "path": "src/attr/validators.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "_NumberValidator.__call__",
+        "owner": "_NumberValidator",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-10",
+      "path": "src/attr/validators.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "_NotValidator.__call__",
+        "owner": "_NotValidator",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-11",
+      "path": "src/attr/validators.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "_OrValidator.__call__",
+        "owner": "_OrValidator",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-12",
+      "path": "src/attr/validators.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "matches_re",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-13",
+      "path": "src/attr/converters.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "optional.optional_converter",
+        "owner": "optional",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-14",
+      "path": "src/attr/converters.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "default_if_none",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-15",
+      "path": "src/attr/converters.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "to_bool",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-16",
+      "path": "src/attr/setters.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "pipe.wrapped_pipe",
+        "owner": "pipe",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-17",
+      "path": "src/attr/setters.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "frozen",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-18",
+      "path": "src/attr/setters.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "validate",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-19",
+      "path": "src/attr/setters.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "convert",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-20",
+      "path": "src/attr/validators.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "deep_iterable",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-21",
+      "path": "src/attr/_make.py",
+      "entity": {
+        "kind": "class",
+        "qualname": "Attribute",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-22",
+      "path": "src/attr/_make.py",
+      "entity": {
+        "kind": "class",
+        "qualname": "Factory",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-23",
+      "path": "src/attr/_make.py",
+      "entity": {
+        "kind": "class",
+        "qualname": "Converter",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-24",
+      "path": "tests/test_validators.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "TestDisableValidators.test_disabled_ctx_with_errors",
+        "owner": "TestDisableValidators",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-attrs-25",
+      "path": "tests/test_converters.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "TestToBool.test_unhashable",
+        "owner": "TestToBool",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-01",
+      "path": "db.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "DB.Update",
+        "owner": "DB",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-02",
+      "path": "db.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "DB.View",
+        "owner": "DB",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-03",
+      "path": "db.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "DB.Batch",
+        "owner": "DB",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-04",
+      "path": "db.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "DB.beginRWTx",
+        "owner": "DB",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-05",
+      "path": "db.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "DB.allocate",
+        "owner": "DB",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-06",
+      "path": "db.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "DB.meta",
+        "owner": "DB",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-07",
+      "path": "bucket.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Bucket.Put",
+        "owner": "Bucket",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-08",
+      "path": "bucket.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Bucket.Get",
+        "owner": "Bucket",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-09",
+      "path": "bucket.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Bucket.CreateBucket",
+        "owner": "Bucket",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-10",
+      "path": "bucket.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Bucket.DeleteBucket",
+        "owner": "Bucket",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-11",
+      "path": "cursor.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Cursor.Seek",
+        "owner": "Cursor",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-12",
+      "path": "cursor.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Cursor.Delete",
+        "owner": "Cursor",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-13",
+      "path": "bucket.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Bucket.NextSequence",
+        "owner": "Bucket",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-14",
+      "path": "bucket.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Bucket.ForEach",
+        "owner": "Bucket",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-15",
+      "path": "cursor.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Cursor.next",
+        "owner": "Cursor",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-16",
+      "path": "tx.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Tx.Commit",
+        "owner": "Tx",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 14
+    },
+    {
+      "id": "development-bbolt-17",
+      "path": "tx.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Tx.Rollback",
+        "owner": "Tx",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-18",
+      "path": "db.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "DB.mmapSize",
+        "owner": "DB",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-19",
+      "path": "db.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "safelyCall",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-20",
+      "path": "db.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "DB.grow",
+        "owner": "DB",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-21",
+      "path": "db.go",
+      "entity": {
+        "kind": "struct",
+        "qualname": "DB",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 1
+    },
+    {
+      "id": "development-bbolt-22",
+      "path": "bucket.go",
+      "entity": {
+        "kind": "struct",
+        "qualname": "Bucket",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-23",
+      "path": "tx.go",
+      "entity": {
+        "kind": "struct",
+        "qualname": "Tx",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-24",
+      "path": "bucket_test.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "TestBucket_Put_ReadOnly",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-bbolt-25",
+      "path": "tx_test.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "TestTx_OnCommit_Rollback",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-01",
+      "path": "boltons/iterutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "split_iter",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-02",
+      "path": "boltons/iterutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "chunked_iter",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-03",
+      "path": "boltons/iterutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "windowed_iter",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-04",
+      "path": "boltons/iterutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "bucketize",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-05",
+      "path": "boltons/iterutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "unique_iter",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-06",
+      "path": "boltons/iterutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "remap",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 11
+    },
+    {
+      "id": "development-boltons-07",
+      "path": "boltons/iterutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "get_path",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-08",
+      "path": "boltons/strutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "slugify",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-09",
+      "path": "boltons/strutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "ordinalize",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-10",
+      "path": "boltons/strutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "singularize",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-11",
+      "path": "boltons/strutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "asciify",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-12",
+      "path": "boltons/strutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "args2sh",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-13",
+      "path": "boltons/strutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "parse_int_list",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-14",
+      "path": "boltons/strutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "format_int_list",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-15",
+      "path": "boltons/timeutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "parse_timedelta",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-16",
+      "path": "boltons/timeutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "decimal_relative_time",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-17",
+      "path": "boltons/timeutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "daterange",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-18",
+      "path": "boltons/fileutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "mkdir_p",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-19",
+      "path": "boltons/fileutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "iter_find_files",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-20",
+      "path": "boltons/fileutils.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "AtomicSaver.__exit__",
+        "owner": "AtomicSaver",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-21",
+      "path": "boltons/fileutils.py",
+      "entity": {
+        "kind": "class",
+        "qualname": "FilePerms",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-22",
+      "path": "boltons/fileutils.py",
+      "entity": {
+        "kind": "class",
+        "qualname": "AtomicSaver",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-23",
+      "path": "boltons/iterutils.py",
+      "entity": {
+        "kind": "class",
+        "qualname": "PathAccessError",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-24",
+      "path": "tests/test_strutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "test_args2sh_sep",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-boltons-25",
+      "path": "tests/test_fileutils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "test_atomicsaver_pathlike",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-01",
+      "path": "src/main/java/org/apache/commons/csv/Lexer.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "Lexer.appendNextEscapedCharacterToToken",
+        "owner": "Lexer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-02",
+      "path": "src/main/java/org/apache/commons/csv/Lexer.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "Lexer.isDelimiter",
+        "owner": "Lexer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-03",
+      "path": "src/main/java/org/apache/commons/csv/Lexer.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "Lexer.nextToken",
+        "owner": "Lexer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-04",
+      "path": "src/main/java/org/apache/commons/csv/Lexer.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "Lexer.parseEncapsulatedToken",
+        "owner": "Lexer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-05",
+      "path": "src/main/java/org/apache/commons/csv/Lexer.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "Lexer.parseSimpleToken",
+        "owner": "Lexer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-06",
+      "path": "src/main/java/org/apache/commons/csv/Lexer.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "Lexer.readEscape",
+        "owner": "Lexer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-07",
+      "path": "src/main/java/org/apache/commons/csv/Lexer.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "Lexer.readEndOfLine",
+        "owner": "Lexer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-08",
+      "path": "src/main/java/org/apache/commons/csv/CSVParser.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "CSVParser.addRecordValue",
+        "owner": "CSVParser",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-09",
+      "path": "src/main/java/org/apache/commons/csv/CSVParser.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "CSVParser.createHeaders",
+        "owner": "CSVParser",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 13
+    },
+    {
+      "id": "development-commons-csv-10",
+      "path": "src/main/java/org/apache/commons/csv/CSVParser.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "CSVParser.handleNull",
+        "owner": "CSVParser",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-11",
+      "path": "src/main/java/org/apache/commons/csv/CSVParser.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "CSVParser.nextRecord",
+        "owner": "CSVParser",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-12",
+      "path": "src/main/java/org/apache/commons/csv/CSVRecord.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "CSVRecord.get",
+        "owner": "CSVRecord",
+        "definition_ordinal": 2
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-13",
+      "path": "src/main/java/org/apache/commons/csv/CSVPrinter.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "CSVPrinter.printComment",
+        "owner": "CSVPrinter",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-14",
+      "path": "src/main/java/org/apache/commons/csv/CSVPrinter.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "CSVPrinter.printRecord",
+        "owner": "CSVPrinter",
+        "definition_ordinal": 2
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-15",
+      "path": "src/main/java/org/apache/commons/csv/CSVPrinter.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "CSVPrinter.printRecords",
+        "owner": "CSVPrinter",
+        "definition_ordinal": 3
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-16",
+      "path": "src/main/java/org/apache/commons/csv/ExtendedBufferedReader.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "ExtendedBufferedReader.getEncodedCharLength",
+        "owner": "ExtendedBufferedReader",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-17",
+      "path": "src/main/java/org/apache/commons/csv/ExtendedBufferedReader.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "ExtendedBufferedReader.read",
+        "owner": "ExtendedBufferedReader",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-18",
+      "path": "src/main/java/org/apache/commons/csv/ExtendedBufferedReader.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "ExtendedBufferedReader.read",
+        "owner": "ExtendedBufferedReader",
+        "definition_ordinal": 1
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-19",
+      "path": "src/main/java/org/apache/commons/csv/ExtendedBufferedReader.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "ExtendedBufferedReader.reset",
+        "owner": "ExtendedBufferedReader",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-20",
+      "path": "src/main/java/org/apache/commons/csv/CSVFormat.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "CSVFormat.validate",
+        "owner": "CSVFormat",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-21",
+      "path": "src/main/java/org/apache/commons/csv/CSVParser.java",
+      "entity": {
+        "kind": "class",
+        "qualname": "CSVParser",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-22",
+      "path": "src/main/java/org/apache/commons/csv/CSVPrinter.java",
+      "entity": {
+        "kind": "class",
+        "qualname": "CSVPrinter",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-23",
+      "path": "src/main/java/org/apache/commons/csv/CSVFormat.java",
+      "entity": {
+        "kind": "class",
+        "qualname": "CSVFormat",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-24",
+      "path": "src/test/java/org/apache/commons/csv/CSVParserTest.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "CSVParserTest.testDuplicateHeadersNotAllowed",
+        "owner": "CSVParserTest",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-commons-csv-25",
+      "path": "src/test/java/org/apache/commons/csv/CSVParserTest.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "CSVParserTest.testEscapedNullStringIsAValue",
+        "owner": "CSVParserTest",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-01",
+      "path": "src/index.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "parseLocale",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-02",
+      "path": "src/index.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "dayjs",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-03",
+      "path": "src/index.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "parseDate",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-04",
+      "path": "src/index.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "Dayjs.isSame",
+        "owner": "Dayjs",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-05",
+      "path": "src/index.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "Dayjs.startOf",
+        "owner": "Dayjs",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-06",
+      "path": "src/index.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "Dayjs.$set",
+        "owner": "Dayjs",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-07",
+      "path": "src/index.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "Dayjs.add",
+        "owner": "Dayjs",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-08",
+      "path": "src/index.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "Dayjs.format",
+        "owner": "Dayjs",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-09",
+      "path": "src/index.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "Dayjs.utcOffset",
+        "owner": "Dayjs",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 3,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-10",
+      "path": "src/index.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "Dayjs.diff",
+        "owner": "Dayjs",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-11",
+      "path": "src/index.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "Dayjs.toJSON",
+        "owner": "Dayjs",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-12",
+      "path": "src/index.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "dayjs.extend",
+        "owner": "dayjs",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-13",
+      "path": "src/utils.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "monthDiff",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-14",
+      "path": "src/utils.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "prettyUnit",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-15",
+      "path": "src/plugin/weekOfYear/index.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "proto.week",
+        "owner": "proto",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-16",
+      "path": "src/plugin/isBetween/index.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "c.prototype.isBetween",
+        "owner": "c.prototype",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-17",
+      "path": "src/plugin/utc/index.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "proto.utcOffset",
+        "owner": "proto",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-18",
+      "path": "src/plugin/timezone/index.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "tzOffset",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-19",
+      "path": "src/plugin/timezone/index.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "fixOffset",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-20",
+      "path": "src/plugin/relativeTime/index.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "proto.fromToBase",
+        "owner": "proto",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-21",
+      "path": "src/index.js",
+      "entity": {
+        "kind": "class",
+        "qualname": "Dayjs",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-22",
+      "path": "src/utils.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "padStart",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-23",
+      "path": "src/utils.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "padZoneStr",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-24",
+      "path": "test/plugin/isBetween.test.js",
+      "entity": {
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-dayjs-25",
+      "path": "test/display.test.js",
+      "entity": {
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 3
+    },
+    {
+      "id": "development-fsnotify-01",
+      "path": "fsnotify.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "NewBufferedWatcher",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-02",
+      "path": "fsnotify.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Op.String",
+        "owner": "Op",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-03",
+      "path": "fsnotify.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "recursivePath",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-04",
+      "path": "fsnotify.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "hasPathPrefix",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-05",
+      "path": "fsnotify.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "getOptions",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-06",
+      "path": "shared.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "shared.sendEvent",
+        "owner": "shared",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-07",
+      "path": "shared.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "shared.sendError",
+        "owner": "shared",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-08",
+      "path": "shared.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "shared.close",
+        "owner": "shared",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-09",
+      "path": "backend_inotify.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "watches.removePath",
+        "owner": "watches",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-10",
+      "path": "backend_inotify.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "watches.updatePath",
+        "owner": "watches",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-11",
+      "path": "backend_inotify.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "inotify.Close",
+        "owner": "inotify",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-12",
+      "path": "backend_inotify.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "inotify.AddWith",
+        "owner": "inotify",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-13",
+      "path": "backend_inotify.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "inotify.register",
+        "owner": "inotify",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-14",
+      "path": "backend_inotify.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "inotify.newEvent",
+        "owner": "inotify",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 7
+    },
+    {
+      "id": "development-fsnotify-15",
+      "path": "backend_inotify.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "inotify.handleEvent",
+        "owner": "inotify",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-16",
+      "path": "backend_kqueue.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "watches.listPaths",
+        "owner": "watches",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-17",
+      "path": "backend_kqueue.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "kqueue.addWatch",
+        "owner": "kqueue",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-18",
+      "path": "backend_kqueue.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "kqueue.newEvent",
+        "owner": "kqueue",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-19",
+      "path": "backend_kqueue.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "kqueue.watchDirectoryFiles",
+        "owner": "kqueue",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-20",
+      "path": "backend_windows.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "readDirChangesW.AddWith",
+        "owner": "readDirChangesW",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-21",
+      "path": "fsnotify.go",
+      "entity": {
+        "kind": "struct",
+        "qualname": "Watcher",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-22",
+      "path": "fsnotify.go",
+      "entity": {
+        "kind": "struct",
+        "qualname": "Event",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-23",
+      "path": "fsnotify.go",
+      "entity": {
+        "kind": "type",
+        "qualname": "Op",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-24",
+      "path": "fsnotify_test.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "TestClose",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-fsnotify-25",
+      "path": "fsnotify_test.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "TestOpHas",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-01",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/ReflectionUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "ReflectionUtils.isAssignableTo",
+        "owner": "ReflectionUtils",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-02",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/ReflectionUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "ReflectionUtils.isAssignableTo",
+        "owner": "ReflectionUtils",
+        "definition_ordinal": 1
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-03",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/ReflectionUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "ReflectionUtils.newInstance",
+        "owner": "ReflectionUtils",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-04",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/ReflectionUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "ReflectionUtils.newInstance",
+        "owner": "ReflectionUtils",
+        "definition_ordinal": 1
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-05",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/ReflectionUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "ReflectionUtils.invokeMethod",
+        "owner": "ReflectionUtils",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-06",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/ReflectionUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "ReflectionUtils.tryToLoadClass",
+        "owner": "ReflectionUtils",
+        "definition_ordinal": 1
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-07",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/ReflectionUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "ReflectionUtils.streamFields",
+        "owner": "ReflectionUtils",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-08",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/ReflectionUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "ReflectionUtils.findAllMethodsInHierarchy",
+        "owner": "ReflectionUtils",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-09",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/StringUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "StringUtils.isBlank",
+        "owner": "StringUtils",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-10",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/StringUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "StringUtils.containsIsoControlCharacter",
+        "owner": "StringUtils",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-11",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/StringUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "StringUtils.defaultToString",
+        "owner": "StringUtils",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-12",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/StringUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "StringUtils.replaceWhitespaceCharacters",
+        "owner": "StringUtils",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-13",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/AnnotationUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "AnnotationUtils.findAnnotation",
+        "owner": "AnnotationUtils",
+        "definition_ordinal": 3
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-14",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/AnnotationUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "AnnotationUtils.findAnnotation",
+        "owner": "AnnotationUtils",
+        "definition_ordinal": 4
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-15",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/AnnotationUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "AnnotationUtils.findRepeatableAnnotations",
+        "owner": "AnnotationUtils",
+        "definition_ordinal": 2
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-16",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/AnnotationUtils.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "AnnotationUtils.findRepeatableAnnotations",
+        "owner": "AnnotationUtils",
+        "definition_ordinal": 4
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-17",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/function/Try.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "Try.of",
+        "owner": "Try",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-18",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/function/Try.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "Try.Success.andThen",
+        "owner": "Try.Success",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-19",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/function/Try.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "Try.Failure.orElse",
+        "owner": "Try.Failure",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-20",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/function/Try.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "Try.Failure.getOrThrow",
+        "owner": "Try.Failure",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-21",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/ReflectionUtils.java",
+      "entity": {
+        "kind": "class",
+        "qualname": "ReflectionUtils",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-22",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/StringUtils.java",
+      "entity": {
+        "kind": "class",
+        "qualname": "StringUtils",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-23",
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/function/Try.java",
+      "entity": {
+        "kind": "class",
+        "qualname": "Try",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-24",
+      "path": "platform-tests/src/test/java/org/junit/platform/commons/util/StringUtilsTests.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "StringUtilsTests.replaceWhitespaces",
+        "owner": "StringUtilsTests",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-junit5-25",
+      "path": "platform-tests/src/test/java/org/junit/platform/commons/function/TryTests.java",
+      "entity": {
+        "kind": "method",
+        "qualname": "TryTests.failedTriesCanBeTransformed",
+        "owner": "TryTests",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-01",
+      "path": "entry.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Entry.WithFields",
+        "owner": "Entry",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-02",
+      "path": "entry.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Entry.addField",
+        "owner": "Entry",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-03",
+      "path": "entry.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "getPackageName",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-04",
+      "path": "entry.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "getCaller",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-05",
+      "path": "entry.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Entry.log",
+        "owner": "Entry",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-06",
+      "path": "entry.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Entry.fireHooks",
+        "owner": "Entry",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-07",
+      "path": "entry.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Entry.write",
+        "owner": "Entry",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-08",
+      "path": "entry.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "sprint",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-09",
+      "path": "formatter.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "prefixFieldClashes",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-10",
+      "path": "hooks.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "LevelHooks.Add",
+        "owner": "LevelHooks",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-11",
+      "path": "hooks.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "LevelHooks.Fire",
+        "owner": "LevelHooks",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-12",
+      "path": "alt_exit.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "runHandler",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-13",
+      "path": "logger.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Logger.Exit",
+        "owner": "Logger",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-14",
+      "path": "alt_exit.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "DeferExitHandler",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-15",
+      "path": "json_formatter.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "JSONFormatter.Format",
+        "owner": "JSONFormatter",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-16",
+      "path": "json_formatter.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "JSONFormatter.Format",
+        "owner": "JSONFormatter",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-17",
+      "path": "text_formatter.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "TextFormatter.Format",
+        "owner": "TextFormatter",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-18",
+      "path": "text_formatter.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "TextFormatter.isColored",
+        "owner": "TextFormatter",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-19",
+      "path": "text_formatter.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "TextFormatter.appendValue",
+        "owner": "TextFormatter",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-20",
+      "path": "logger.go",
+      "entity": {
+        "kind": "method",
+        "qualname": "Logger.LogFn",
+        "owner": "Logger",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-21",
+      "path": "entry.go",
+      "entity": {
+        "kind": "struct",
+        "qualname": "Entry",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-22",
+      "path": "logger.go",
+      "entity": {
+        "kind": "struct",
+        "qualname": "Logger",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-23",
+      "path": "json_formatter.go",
+      "entity": {
+        "kind": "struct",
+        "qualname": "JSONFormatter",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-24",
+      "path": "json_formatter_test.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "TestJSONDisableHTMLEscape",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-logrus-25",
+      "path": "entry_test.go",
+      "entity": {
+        "kind": "function",
+        "qualname": "TestEntryDerivationPreservesCaller",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-01",
+      "path": "src/helpers.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "escapeHtmlEntities",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-02",
+      "path": "src/helpers.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "decodeNumericCharacterReferences",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-03",
+      "path": "src/helpers.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "cleanUrl",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-04",
+      "path": "src/helpers.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "splitCells",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-05",
+      "path": "src/helpers.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "rtrim",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-06",
+      "path": "src/helpers.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "trimTrailingBlankLines",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-07",
+      "path": "src/helpers.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "normalizeLabel",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-08",
+      "path": "src/helpers.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "findClosingBracket",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-09",
+      "path": "src/helpers.ts",
+      "entity": {
+        "kind": "function",
+        "qualname": "expandTabs",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-10",
+      "path": "src/Renderer.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "_Renderer.code",
+        "owner": "_Renderer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-11",
+      "path": "src/Renderer.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "_Renderer.list",
+        "owner": "_Renderer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-12",
+      "path": "src/Renderer.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "_Renderer.tablecell",
+        "owner": "_Renderer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-13",
+      "path": "src/Renderer.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "_Renderer.link",
+        "owner": "_Renderer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-14",
+      "path": "src/Renderer.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "_Renderer.image",
+        "owner": "_Renderer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-15",
+      "path": "src/Lexer.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "_Lexer.lex",
+        "owner": "_Lexer",
+        "definition_ordinal": 1
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-16",
+      "path": "src/Lexer.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "_Lexer.infiniteLoopError",
+        "owner": "_Lexer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-17",
+      "path": "src/Instance.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "Marked.walkTokens",
+        "owner": "Marked",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-18",
+      "path": "src/Instance.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "Marked.parseMarkdown",
+        "owner": "Marked",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 10,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-19",
+      "path": "src/Instance.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "Marked.onError",
+        "owner": "Marked",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-20",
+      "path": "src/Hooks.ts",
+      "entity": {
+        "kind": "method",
+        "qualname": "_Hooks.provideLexer",
+        "owner": "_Hooks",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-21",
+      "path": "src/Lexer.ts",
+      "entity": {
+        "kind": "class",
+        "qualname": "_Lexer",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-22",
+      "path": "src/Parser.ts",
+      "entity": {
+        "kind": "class",
+        "qualname": "_Parser",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-marked-23",
+      "path": "src/Instance.ts",
+      "entity": {
+        "kind": "class",
+        "qualname": "Marked",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-01",
+      "path": "src/packaging/utils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "canonicalize_name",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-02",
+      "path": "src/packaging/utils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "canonicalize_version",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-03",
+      "path": "src/packaging/utils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "parse_wheel_filename",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 5
+    },
+    {
+      "id": "development-packaging-04",
+      "path": "src/packaging/utils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "parse_sdist_filename",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-05",
+      "path": "src/packaging/requirements.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "Requirement.__init__",
+        "owner": "Requirement",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-06",
+      "path": "src/packaging/requirements.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "Requirement._iter_parts",
+        "owner": "Requirement",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-07",
+      "path": "src/packaging/requirements.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "Requirement.__eq__",
+        "owner": "Requirement",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-08",
+      "path": "src/packaging/markers.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "_eval_op",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-09",
+      "path": "src/packaging/markers.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "_normalize",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-10",
+      "path": "src/packaging/markers.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "_lookup_environment",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-11",
+      "path": "src/packaging/markers.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "_evaluate_markers",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-12",
+      "path": "src/packaging/markers.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "_format_full_version",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-13",
+      "path": "src/packaging/markers.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "Marker.evaluate",
+        "owner": "Marker",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-14",
+      "path": "src/packaging/markers.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "_pep440_python_full_version",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-15",
+      "path": "src/packaging/tags.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "parse_tag",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-16",
+      "path": "src/packaging/tags.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "_abi3_applies",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-17",
+      "path": "src/packaging/tags.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "_cpython_abis",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 3
+    },
+    {
+      "id": "development-packaging-18",
+      "path": "src/packaging/tags.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "cpython_tags",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 7
+    },
+    {
+      "id": "development-packaging-19",
+      "path": "src/packaging/tags.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "_mac_binary_formats",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-20",
+      "path": "src/packaging/tags.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "_linux_platforms",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-21",
+      "path": "src/packaging/version.py",
+      "entity": {
+        "kind": "class",
+        "qualname": "Version",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-22",
+      "path": "src/packaging/requirements.py",
+      "entity": {
+        "kind": "class",
+        "qualname": "Requirement",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-23",
+      "path": "src/packaging/markers.py",
+      "entity": {
+        "kind": "class",
+        "qualname": "Marker",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-24",
+      "path": "tests/test_utils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "test_canonicalize_version_no_strip_trailing_zero",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-packaging-25",
+      "path": "tests/test_utils.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "test_parse_wheel_unsorted_tags_invalid_with_validate",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-01",
+      "path": "crates/petgraph/src/unionfind.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "UnionFind.new",
+        "owner": "UnionFind",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-02",
+      "path": "crates/petgraph/src/unionfind.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "UnionFind.new_set",
+        "owner": "UnionFind",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-03",
+      "path": "crates/petgraph/src/unionfind.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "UnionFind.try_find",
+        "owner": "UnionFind",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-04",
+      "path": "crates/petgraph/src/unionfind.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "UnionFind.find_mut_recursive",
+        "owner": "UnionFind",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-05",
+      "path": "crates/petgraph/src/unionfind.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "UnionFind.try_equiv",
+        "owner": "UnionFind",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-06",
+      "path": "crates/petgraph/src/unionfind.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "UnionFind.try_union",
+        "owner": "UnionFind",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-07",
+      "path": "crates/petgraph/src/unionfind.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "UnionFind.into_labeling",
+        "owner": "UnionFind",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-08",
+      "path": "crates/petgraph/src/algo/mod.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "connected_components",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-09",
+      "path": "crates/petgraph/src/algo/mod.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "is_cyclic_undirected",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-10",
+      "path": "crates/petgraph/src/algo/mod.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "toposort",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-11",
+      "path": "crates/petgraph/src/algo/mod.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "is_cyclic_directed",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-12",
+      "path": "crates/petgraph/src/algo/mod.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "with_dfs",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-13",
+      "path": "crates/petgraph/src/algo/mod.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "has_path_connecting",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-14",
+      "path": "crates/petgraph/src/algo/mod.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "condensation",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-15",
+      "path": "crates/petgraph/src/algo/mod.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "is_bipartite_undirected",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-16",
+      "path": "crates/petgraph/src/algo/astar.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "astar",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 23
+    },
+    {
+      "id": "development-petgraph-17",
+      "path": "crates/petgraph/src/algo/astar.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "PathTracker.reconstruct_path_to",
+        "owner": "PathTracker",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-18",
+      "path": "crates/petgraph/src/algo/dijkstra.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "with_dynamic_goal",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-19",
+      "path": "crates/petgraph/src/algo/min_spanning_tree.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "min_spanning_tree",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-20",
+      "path": "crates/petgraph/src/algo/min_spanning_tree.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "MinSpanningTree.next",
+        "owner": "MinSpanningTree",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-21",
+      "path": "crates/petgraph/src/unionfind.rs",
+      "entity": {
+        "kind": "struct",
+        "qualname": "UnionFind",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-22",
+      "path": "crates/petgraph/src/algo/mod.rs",
+      "entity": {
+        "kind": "struct",
+        "qualname": "DfsSpace",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-23",
+      "path": "crates/petgraph/src/algo/min_spanning_tree.rs",
+      "entity": {
+        "kind": "struct",
+        "qualname": "MinSpanningTree",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 4,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-petgraph-24",
+      "path": "crates/petgraph/tests/unionfind.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "uf_test_checked",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 2
+    },
+    {
+      "id": "development-petgraph-25",
+      "path": "crates/petgraph/tests/unionfind.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "labeling",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-01",
+      "path": "src/_pytest/monkeypatch.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "MonkeyPatch.context",
+        "owner": "MonkeyPatch",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-02",
+      "path": "src/_pytest/monkeypatch.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "MonkeyPatch.setattr",
+        "owner": "MonkeyPatch",
+        "definition_ordinal": 2
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-03",
+      "path": "src/_pytest/monkeypatch.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "MonkeyPatch.delattr",
+        "owner": "MonkeyPatch",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-04",
+      "path": "src/_pytest/monkeypatch.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "MonkeyPatch.setitem",
+        "owner": "MonkeyPatch",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-05",
+      "path": "src/_pytest/monkeypatch.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "MonkeyPatch.delitem",
+        "owner": "MonkeyPatch",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-06",
+      "path": "src/_pytest/monkeypatch.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "MonkeyPatch.setenv",
+        "owner": "MonkeyPatch",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-07",
+      "path": "src/_pytest/monkeypatch.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "MonkeyPatch.syspath_prepend",
+        "owner": "MonkeyPatch",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-08",
+      "path": "src/_pytest/monkeypatch.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "MonkeyPatch.chdir",
+        "owner": "MonkeyPatch",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-09",
+      "path": "src/_pytest/monkeypatch.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "MonkeyPatch.undo",
+        "owner": "MonkeyPatch",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-10",
+      "path": "src/_pytest/tmpdir.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "TempPathFactory.mktemp",
+        "owner": "TempPathFactory",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-11",
+      "path": "src/_pytest/tmpdir.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "TempPathFactory.getbasetemp",
+        "owner": "TempPathFactory",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-12",
+      "path": "src/_pytest/fixtures.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "FixtureDef.execute",
+        "owner": "FixtureDef",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-13",
+      "path": "src/_pytest/python.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "IdMaker._resolve_ids",
+        "owner": "IdMaker",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-14",
+      "path": "src/_pytest/python.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "IdMaker._idval",
+        "owner": "IdMaker",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-15",
+      "path": "src/_pytest/python.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "IdMaker._idval_from_hook",
+        "owner": "IdMaker",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-16",
+      "path": "src/_pytest/python.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "IdMaker._idval_from_value",
+        "owner": "IdMaker",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-17",
+      "path": "src/_pytest/mark/expression.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "Expression.compile",
+        "owner": "Expression",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-18",
+      "path": "src/_pytest/mark/expression.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "Expression.evaluate",
+        "owner": "Expression",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-19",
+      "path": "src/_pytest/recwarn.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "WarningsRecorder.pop",
+        "owner": "WarningsRecorder",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-20",
+      "path": "src/_pytest/recwarn.py",
+      "entity": {
+        "kind": "method",
+        "qualname": "WarningsChecker.__exit__",
+        "owner": "WarningsChecker",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-21",
+      "path": "src/_pytest/monkeypatch.py",
+      "entity": {
+        "kind": "class",
+        "qualname": "MonkeyPatch",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-22",
+      "path": "src/_pytest/tmpdir.py",
+      "entity": {
+        "kind": "class",
+        "qualname": "TempPathFactory",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-23",
+      "path": "src/_pytest/python.py",
+      "entity": {
+        "kind": "class",
+        "qualname": "IdMaker",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-24",
+      "path": "testing/test_monkeypatch.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "test_setenv_prepend",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-pytest-25",
+      "path": "testing/test_monkeypatch.py",
+      "entity": {
+        "kind": "function",
+        "qualname": "test_context",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-01",
+      "path": "src/regex/string.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Regex.replacen",
+        "owner": "Regex",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-02",
+      "path": "src/regex/string.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Regex.captures_read_at",
+        "owner": "Regex",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-03",
+      "path": "src/regex/string.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Captures.extract",
+        "owner": "Captures",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-04",
+      "path": "src/regex/string.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "NoExpand.replace_append",
+        "owner": "NoExpand",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-05",
+      "path": "src/builders.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Builder.new",
+        "owner": "Builder",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-06",
+      "path": "src/builders.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Builder.build_one_string",
+        "owner": "Builder",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-07",
+      "path": "src/builders.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Builder.build_one_bytes",
+        "owner": "Builder",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-08",
+      "path": "src/builders.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Builder.build_many_string",
+        "owner": "Builder",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-09",
+      "path": "regex-syntax/src/utf8.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Utf8Sequence.reverse",
+        "owner": "Utf8Sequence",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-10",
+      "path": "regex-syntax/src/utf8.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Utf8Sequence.matches",
+        "owner": "Utf8Sequence",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-11",
+      "path": "regex-syntax/src/utf8.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Utf8Sequences.reset",
+        "owner": "Utf8Sequences",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-12",
+      "path": "regex-syntax/src/utf8.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "Utf8Sequences.next",
+        "owner": "Utf8Sequences",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-13",
+      "path": "regex-syntax/src/utf8.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "ScalarRange.split",
+        "owner": "ScalarRange",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-14",
+      "path": "regex-syntax/src/utf8.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "ScalarRange.as_ascii",
+        "owner": "ScalarRange",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-15",
+      "path": "regex-syntax/src/utf8.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "ScalarRange.encode",
+        "owner": "ScalarRange",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-16",
+      "path": "regex-syntax/src/hir/interval.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "IntervalSet.push",
+        "owner": "IntervalSet",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-17",
+      "path": "regex-syntax/src/hir/interval.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "IntervalSet.union",
+        "owner": "IntervalSet",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-18",
+      "path": "regex-syntax/src/hir/interval.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "IntervalSet.intersect",
+        "owner": "IntervalSet",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-19",
+      "path": "regex-syntax/src/hir/interval.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "IntervalSet.symmetric_difference",
+        "owner": "IntervalSet",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-20",
+      "path": "regex-syntax/src/hir/interval.rs",
+      "entity": {
+        "kind": "method",
+        "qualname": "IntervalSet.is_canonical",
+        "owner": "IntervalSet",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-21",
+      "path": "src/regex/string.rs",
+      "entity": {
+        "kind": "struct",
+        "qualname": "Regex",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-22",
+      "path": "src/regex/string.rs",
+      "entity": {
+        "kind": "struct",
+        "qualname": "Captures",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-23",
+      "path": "regex-syntax/src/utf8.rs",
+      "entity": {
+        "kind": "struct",
+        "qualname": "Utf8Sequences",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-24",
+      "path": "regex-syntax/src/utf8.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "single_codepoint_one_sequence",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-regex-25",
+      "path": "regex-syntax/src/utf8.rs",
+      "entity": {
+        "kind": "function",
+        "qualname": "reverse",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-01",
+      "path": "classes/semver.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "SemVer.constructor",
+        "owner": "SemVer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-02",
+      "path": "classes/semver.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "SemVer.compare",
+        "owner": "SemVer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-03",
+      "path": "classes/semver.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "SemVer.compareMain",
+        "owner": "SemVer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-04",
+      "path": "classes/semver.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "SemVer.comparePre",
+        "owner": "SemVer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-05",
+      "path": "classes/semver.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "SemVer.compareBuild",
+        "owner": "SemVer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-06",
+      "path": "classes/semver.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "SemVer.inc",
+        "owner": "SemVer",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-07",
+      "path": "functions/coerce.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "coerce",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 5
+    },
+    {
+      "id": "development-semver-08",
+      "path": "ranges/min-version.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "minVersion",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-09",
+      "path": "classes/range.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "Range.parseRange",
+        "owner": "Range",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 15
+    },
+    {
+      "id": "development-semver-10",
+      "path": "classes/range.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "Range.intersects",
+        "owner": "Range",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-11",
+      "path": "classes/range.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "Range.test",
+        "owner": "Range",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-12",
+      "path": "classes/range.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "testSet",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-13",
+      "path": "ranges/subset.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "subset",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-14",
+      "path": "ranges/outside.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "outside",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 7
+    },
+    {
+      "id": "development-semver-15",
+      "path": "ranges/simplify.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "module.exports",
+        "owner": "module",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-16",
+      "path": "ranges/max-satisfying.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "maxSatisfying",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-17",
+      "path": "ranges/min-satisfying.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "minSatisfying",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-18",
+      "path": "functions/diff.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "diff",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-19",
+      "path": "functions/cmp.js",
+      "entity": {
+        "kind": "function",
+        "qualname": "cmp",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-20",
+      "path": "internal/lrucache.js",
+      "entity": {
+        "kind": "method",
+        "qualname": "LRUCache.get",
+        "owner": "LRUCache",
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-21",
+      "path": "classes/semver.js",
+      "entity": {
+        "kind": "class",
+        "qualname": "SemVer",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-22",
+      "path": "classes/range.js",
+      "entity": {
+        "kind": "class",
+        "qualname": "Range",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-23",
+      "path": "classes/comparator.js",
+      "entity": {
+        "kind": "class",
+        "qualname": "Comparator",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 1,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-24",
+      "path": "test/functions/coerce.js",
+      "entity": {
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": true,
+      "missing_count": 0,
+      "beyond_count": 0
+    },
+    {
+      "id": "development-semver-25",
+      "path": "test/ranges/simplify.js",
+      "entity": {
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "complete_prefix": false,
+      "missing_count": 0,
+      "beyond_count": 3
+    }
+  ]
+}

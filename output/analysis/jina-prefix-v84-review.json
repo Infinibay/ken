@@ -1,0 +1,94 @@
+{
+  "scope": "Independent84 asset/source/ALL7260 pair-logit/order/full1200response review; no labels/gold alternatives, fitting/tuning/implementation/private reserve. Report judgments mechanically recounted.",
+  "engine_receipt": "fa53a7cf5c2932355dc511e4d64c58b2afafffb5acb68eb3858faae8ab201a38",
+  "official_pinned_asset_revision": "aca45de6945b5dc6399abcd2a9c55ded5dc9111f",
+  "graph_sha256": "5fa8508528828b4ad9bc97c97b6e020984e3b745fbcb53f0a907e68704f8a18a",
+  "graph_bytes": 33424854,
+  "onnx_INT8_initializer_elements": 9605377,
+  "onnx_UINT8_initializer_elements": 23446274,
+  "MatMulInteger_operations": 26,
+  "only_CPU_provider": true,
+  "physical_source_files": 6314,
+  "parent_bindings": 51,
+  "all_selected_prefix20_and_source69tail_exact": true,
+  "independent_direct_ORT_pair_logits_bit_exact": 7260,
+  "all_pairs_complete_query_tokens_preserved_only_second": 7260,
+  "neutral_exact_bypasses": 37,
+  "all_full_responses_replayed_exact": 1200,
+  "readouts": {
+    "baseline": {
+      "strict": {
+        "hits": 286,
+        "total": 400,
+        "rate": 0.715
+      },
+      "identity": {
+        "hits": 298,
+        "total": 400,
+        "rate": 0.745
+      },
+      "all400_exact_response_replay": true
+    },
+    "raw": {
+      "strict": {
+        "hits": 176,
+        "total": 400,
+        "rate": 0.44
+      },
+      "identity": {
+        "hits": 191,
+        "total": 400,
+        "rate": 0.4775
+      },
+      "all400_exact_response_replay": true
+    },
+    "equal_rrf60": {
+      "strict": {
+        "hits": 252,
+        "total": 400,
+        "rate": 0.63
+      },
+      "identity": {
+        "hits": 264,
+        "total": 400,
+        "rate": 0.66
+      },
+      "all400_exact_response_replay": true
+    }
+  },
+  "max_evidence_lines": 40,
+  "max_JSON_chars": 12000,
+  "torch_transformers_runtime_imports": [],
+  "observed_resources": {
+    "pair_ms_mean": 326.5079536426492,
+    "pair_ms_p50": 337.15312501590233,
+    "pair_ms_p95": 576.3947333442047,
+    "pair_ms_max": 720.1087499852292,
+    "harness_peak_rss_native_bytes": 2854289408,
+    "scope": "saved producer pair-only timer excludes source69, document lookup and rendering; RSS includes complete400 pools/source catalogs; concurrent diagnostic, not final API or causal certificate"
+  },
+  "limits": [
+    "No new model training; source69 prefix selection is OOF16 disjoint repository fits; new comparator has no development fit.",
+    "Quantized graph is official registered artifact; no claim of native-FP32 equivalence or code-specialized behavior.",
+    "Official downloader and local pinned artifacts reviewed; independent web pinned-model/API fetch was unavailable, so no independent online LFS-digest attestation claimed.",
+    "Adaptive prepared development control; two preregistered readouts of one logit set, no parameter sweep, API/default/private acceptance."
+  ],
+  "status": "valid_prepared_control_both_readouts_negative_gate_not_met",
+  "blocking_findings": [],
+  "claim_corrections": [
+    {
+      "scope": "quantization terminology",
+      "detail": "Official 8-bit quantized graph has signed INT8 matrix initializers and UINT8 embedding tables/zero-points; not every weight is signed INT8. This does not invalidate the registered graph or results."
+    }
+  ],
+  "gate": {
+    "baseline_strict": 286,
+    "required_gain": 5,
+    "raw_strict": 176,
+    "equal_rrf60_strict": 252,
+    "met": false
+  },
+  "incorporation": "not approved",
+  "original_controller_owner_bearing_physical_file_checks": 6139,
+  "independent_all_indexed_physical_file_checks": 6314
+}

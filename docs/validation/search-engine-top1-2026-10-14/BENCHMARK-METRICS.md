@@ -1,5 +1,29 @@
 # Qué significa el NDCG de Semble
 
+Estado actual, 15 de octubre: hay dos conjuntos distintos. Sobre los 400 casos
+de desarrollo, las respuestas intactas de API81 dan archivo top1 345/400
+(86,25%) y NDCG@10 por archivo 0,9343641364861627. Las respuestas nativas
+normalizadas de Semble dan 204/400 (51%) y 0,6887064071598579. El top1 estricto
+de Ken en esos mismos casos es 286/400 (71,5%): exige además entidad o fragmento
+admitido y todas las líneas decisivas visibles. El 51% nunca fue esa métrica.
+
+En las 1251 consultas públicas de Semble, el último resultado completo de Ken
+es NDCG@10 macro 0,8365028636773735 y top1 906/1251 (72,42%). Semble conserva
+0,8543853795900258 y 935/1251 (74,74%). Por lo tanto no hay una contradicción:
+Ken gana el diagnóstico de archivo de nuestros casos de desarrollo y pierde
+la comparación pública externa. Los 400 casos están expuestos al proceso de
+investigación; no sustituyen la reserva intacta ni demuestran generalización.
+También difiere la versión: el resultado público corresponde al perfil48
+(fuente5,235 señales); los400 actuales usan API81 (fuente7,251 señales y
+política3 de evidencia). La repetición pública76b de esta base está pendiente;
+no se trasladan los resultados de un perfil a otro sin ejecutarlo completo.
+
+Los cálculos actuales de archivo sobre400 conservan los hashes de dataset,
+respuestas y script en `output/development/ken-semble-file-ndcg-400-v81.json`
+y `output/analysis/file-only-top1-v81-diagnostic.json`. No se repitieron búsquedas
+ni se alteraron las referencias o el scorer estricto. Las secciones siguientes
+conservan la explicación y las mediciones históricas de perfiles anteriores.
+
 El 0,854 publicado por Semble es NDCG@10 sobre su propio benchmark, no una
 proporción de primeros resultados correctos. Su scorer usa relevancia binaria,
 ponderación `1/log2(rango+1)` y normaliza por el orden ideal. Con una sola

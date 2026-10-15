@@ -214,8 +214,10 @@ incluyen el uso público de search con251features y bypass exacto. Core5módulos
 mypy limpio; el worker experimental conserva2import-untyped preexistentes
 ORT/tokenizers, sin supresiones ni cambios de criterios.
 
-73 evalúa dos modelos generales de pares4,4M/22,7M, ONNXCPU de4,52/23,20MB.
-Tiny ya completó16repos/400features;Mini y los3controles259/259/267 siguen en curso.
+73 evaluó dos modelos generales de pares4,4M/22,7M, ONNXCPU de4,52/23,20MB.
+ALL400 y16folds: Tiny259=281strict/295identidad, Mini259=280/294 y juntos267=282/297
+con política2.73b conserva exactamente esos modelos y recompone política3:
+282/295,281/294 y283/297. Todos inferiores al control286; no incorporar.
 75 prepara adaptación Tiny4,386,049parámetros enCPU con3epochs fijos y16folds
 excluyendo todo el repo.75 completó sólo el baseline pretrained400 y se detuvo
 intencionalmente antes del primer fit: revisión encontró falta de binding esperado
@@ -224,9 +226,13 @@ fueron independientemente correctos.75b añade SHA esperado66c/69/72c y ties69�
 falló antes de ajustar porque el checkpoint oficial tiene un buffer no persistente
 position_ids extra.75c verifica ese buffer canónico y los41tensores persistentes
 exactos, hash/freeze/cache y16probes porrepo bitidénticos. La revisión independiente
-pre-fit75c pasó sin bloqueos; ajuste fijo de16folds ahora en curso.75/75b conservan
-0folds y sus fallos. Parámetros/modelos/grupos/criterios iguales;7tests/mypy del
-sampler. Todavía sin calidad adaptada ni adopción.
+pre-fit75c pasó sin bloqueos. Los16ajustes fijos concluyeron: pretrained raw156/400,
+pretrained RRF221, adaptado raw155 y adaptado RRF219, todos con política3.
+77 limita los mismos rerankers al prefijo20 de69: pretrained167/400, adaptado173.
+Revisión independiente cerrada de75c/77: respuestas completas,5370grupos excluidos,
+16modelos frescos, paridad nativa/ONNX y14520pares de77 exactos. No incorporar.
+75/75b conservan0folds y sus fallos. Parámetros/modelos/grupos/criterios iguales;
+7tests/mypy del sampler. El coste medido en preparación no certifica recursosAPI.
 
 76 repite la comparación pública actual7/251/evidencia3 sobre1251/63pins. Reindexado
 real y fullcontext+vistas fuente completas antes de consultas públicas; un251modelo
@@ -234,7 +240,104 @@ fijo entrenado sólo en16reposdev disjuntos ya está exportado con igualdad nati
 en167360filas. El adapter de investigación exige corpus explícito completo para63
 y conserva compatibilidad16;19tests focales+8core y mypy1 verdes. Fuentes en curso,
 API espera preparación completa y revisión antes de consultas. Sin resultado aún.
+La revisión76 encontró una guardia de binding esperado ausente en el controlador,
+aunque sus bytes actuales eran correctos.76b la exige antes de leer consultas y
+usa la misma fuente76/modelo/freeze; el proceso76original queda sin liberar.
+
+78 completó la vista de implementación propia sin cabecera sintética con el mismo
+encoderCPU: todos16repos fuente antes de consultas, un único control259=281/400
+estricto y294identidad. Revisión independiente cerrada de50967implementaciones,
+6314fuentes y36recodificaciones; inferior286, no incorporar.
+
+80 añade16coordenadas semánticas genéricas de consulta, fijadas antes de ajustes,
+sin encoder adicional. Preparado ALL400/16folds:288strict/301identidad frente a
+286/298. Revisión independiente cerrada. Son sólo2aciertos adicionales,
+inferiores al gate previo de5 para integrar: no hay cambio de API ni adopción.
+
+81 elimina tokenización duplicada de identidad/firma/doc/ruta; mantiene source-all
+con su propio orden y límite4096.399tests amplios,5focales y mypy1 verdes. El perfil
+de la misma consulta real conserva respuesta completa y reduce code_terms6647→4875;
+tiempos instrumentados/concurrentes no prueban aceleración causal. La API ALL400
+con los mismos16modelos terminó con286/298,16workers0 y SHA completo idéntico74b.
+Mediana760,12ms,p951578,09ms,max3094,08ms,RSS1339883520bytes; con contención.
+Revisión independiente final cerrada,16perfiles/400respuestas exactos; no se
+atribuye ganancia de calidad. Commitdc1ca72, sin promoción al default original.
+
+82 conserva los16ejes fijos80 y proyecta cada owner de69 antes de consultas;
+añade48coordenadas/productos/diferencias al mismo267parent. Un único control315,
+sin otro modelo ni otra inferencia. ALL400=281/294, inferior286. Revisión cerrada
+de todas las50967coordenadas/167360filas/800respuestas. El guard de rango entero
+del freeze82 tenía un overflowP2; los datos float64 reales no lo activan. Actual
+corregido con4POCs RED/GREEN,34tests y todos167323pares no-bypass byteidénticos
+entre ambos helpers; no se reescribe el freeze ni se le atribuye otra medición.
+
+83 cambia únicamente el foco LambdaRank5→1 en las mismas251entradas:278strict/
+291identidad. Revisión independiente completa cerrada;5no era un bug demostrado.
+Se conserva el control original y no se cambia el objetivo de producción.
+
+84 JinaTiny33M/4capas, grafo oficialint8 de33424854bytes, CPU2hilos y prefijo20
+de69: raw176strict/191identidad; RRF60igual252/264, baseline286/298. ALL400 y7260
+pares reales, sinTorch/Transformers/Python remoto, revisión final pendiente.
+Tampoco pasa el gate de5aciertos adicionales: no añadir otro modelo al runtime.
+
+76 tiene63índices/contextos completos revisados antes de consultas públicas:
+12074archivos,99508owners,261091pasajes,99295textos/vectores y140recodificaciones
+CPU exactas. Falta completar/revisar las63vistas y el loader real antes de abrir
+76b. No se adjudica NDCG nuevo mientras esa comparación no termina.
 
 Faltan90% estricto y sus estratos, superar Semble en su métrica original, la
 aceptación ciega, el perfil final CLI/MCP y la validación aislada de CPU/RAM.
 Ninguno se declara resuelto por estas pruebas de desarrollo.
+
+Actualización de continuidad (85b):
+- Las revisiones independientes finales73b,78,80,81,82,83 y84 están cerradas.
+  Los valores anteriores se conservan.84 recodificó sus7260pares por ORT de forma
+  exacta; ninguno de estos controles supera el gate de integración de5aciertos.
+-85 se detuvo por su conjunto de trabajo innecesariamente grande, después de75
+  consultas de evaluación y antes de completar fases, entrenar heads o puntuar.
+  Los controladores, freeze, logs y ABORTED-BEFORE-TRAINING.json se conservan.
+-85b reinicia la MISMA hipótesis: grafo CodeRank42 congelado compartido, atención
+  conjunta consulta/código, head lineal768 con ridge1 y16folds que excluyen un
+  repositorio completo. No añade un encoder ni ajusta sus pesos. La evaluación
+  se sella completa antes de abrir elegibilidad para preparar entrenamiento;
+  las negativas se eligen con RRF original, nunca con scores69 entrenados.
+- Se restauran pools por repositorio y sólo se retienen textos de consulta de la
+  segunda lectura del catálogo. Los400casos y16repos siguen completos.47tests
+  focales y mypy3 pasan; revisión diferencial independiente de todos los pools
+  reales pendiente. El fitter ahora recomputa hashes de textos y compara el
+  contenido del sello además de sus digests. PRE-FIT sigue cerrado.
+- Freeze85b:580archivos, tree44f062243572678f566d344f47c334642223746c7cb529586896eaedc4c9c8eb,
+  receipt4f44d3303cae3033f11672848ed022e95b70bb7877c956d10f9c23487897c335.
+  Preparación en curso, sin resultado85b de calidad. Las primeras50consultas
+  se procesaron; el pico parcial del productor es1479393280bytes y NO certifica
+  recursos del API ni demuestra ahorro causal frente a otra corrida.
+-76 completó32/63vistas al último control, con63índices/contextos ya revisados.
+ 76b permanece cerrado hasta completar y revisar todas las vistas y loader.
+ El benchmark público vigente sigue siendo48, sin NDCG nuevo atribuido.
+
+Diagnósticos posteriores, sin cambio de ranking ni criterios:
+- Comparación de archivo sobre los400 originales (API81 intacta): Ken345/400
+  (86,25%), NDCG@10 de archivo0,9343641364861627 y hit10 399/400. Semble nativo
+  normalizado conserva204/400 (51%),0,6887064071598579 y343/400. Revisión
+  independiente ALL400 y fórmula separada exactas. Estos son diagnósticos de
+  archivo; el estricto de Ken sigue286/400 y el público1251 sigue por debajo.
+-86 ejecutó cuatro procesos CPU frescos default/off/off/default para el arena
+  de memoria de ONNX. ALL545 textos de consulta+32fuentes69, unidades exactas a
+  sus cachés y raw/unidades/token IDs/masks exactos en las4corridas. No hay
+  beneficio consistente de RAM:794296320/816906240/854589440/864206848bytes de
+  pico; p95 combinado query/source29,47/33,23/31,42/28,27ms. Se descarta cambiar
+  el asignador. Revisión cerrada, con límite documentado: los assets se hashean
+  físicamente en prepare, no otra vez en cada worker/final. Bytes actuales y
+  resultados correctos, sin evidencia de corrupción. No es medición API.
+- La carga scoped de pools limita su propio conjunto de trabajo, pero el arnés
+  conserva validaciones transitorias de catálogo completo en
+  validate_replay_parent. No se describe todo el arnés como memoria de un repo.
+-87 diagnostica disponibilidad de líneas originales dentro del prefijo de la
+  vista implementation69, sin encoder, ajuste ni nuevo score. Entre90 errores
+  de identidad con propósito implementación,79 tienen todas las anclas en ese
+  prefijo;4 tienen anclas propias más allá y7 no las tienen completas dentro
+  de implementation. Esta última categoría puede incluir declaraciones/docs
+  disponibles en signature/contract; NO prueba ausencia del índice. En total,
+ 47aciertos estrictos ya caen en esa categoría. El truncado no queda demostrado
+  como causa principal y no justifica otra preparación masiva por sí solo.
+  Revisión independiente87 pendiente. Se conservan400 filas originales.

@@ -1,0 +1,63 @@
+{
+  "scope": "Independent83 every numeric score/fold and full response replay from public requests; no gold alternatives/labels, implementation/tuning/private reserve. Report judgments recounted, not new adjudication.",
+  "engine_receipt": "f0b33268d57981f02e5443611fd7afc2c6a982d2156ce456d77816f86e23b7f6",
+  "binding_count": 51,
+  "all167360_rows_exact_parent_and_order_by_qid": true,
+  "models": {
+    "baseline251": {
+      "models": 16,
+      "rows_bit_exact": 167360,
+      "whole_held_repo_excluded": true
+    },
+    "top1_lambda251": {
+      "models": 16,
+      "rows_bit_exact": 167360,
+      "whole_held_repo_excluded": true
+    }
+  },
+  "responses": {
+    "baseline251": {
+      "full_responses_replayed_exact": 400,
+      "reported_strict_recounted": 286,
+      "reported_identity_recounted": 298,
+      "original_evaluator_in_preserved_controller": true
+    },
+    "top1_lambda251": {
+      "full_responses_replayed_exact": 400,
+      "reported_strict_recounted": 278,
+      "reported_identity_recounted": 291,
+      "original_evaluator_in_preserved_controller": true
+    }
+  },
+  "maximum_evidence_lines": 40,
+  "maximum_JSON_chars": 12000,
+  "same_original_parameters": false,
+  "only_parameter_delta_truncation5to1": true,
+  "native_export_limit": "Native boosters not persisted; immutable trainer asserts exact held-fold native/numeric predictions. Independent review recomputes all saved numeric scores.",
+  "no_held_repo_validation_early_stopping_or_selection_in_controller": true,
+  "original_policy3_40lines12000chars_400denominator": true,
+  "limits": [
+    "Prepared adaptive development control only; no API/default/private adoption or causal resource claim.",
+    "Original scoring reports recounted without reading gold; unchanged evaluator source/control flow verified."
+  ],
+  "status": "valid_single_parameter_control_negative_gate_not_met",
+  "blocking_findings": [],
+  "installed_lightgbm": "4.6.0",
+  "control_delta": {
+    "lambdarank_truncation_level": [
+      5,
+      1
+    ]
+  },
+  "official_primary_sources": [
+    "https://lightgbm.readthedocs.io/en/v4.6.0/Parameters.html#lambdarank_truncation_level",
+    "https://raw.githubusercontent.com/microsoft/LightGBM/v4.6.0/src/objective/rank_objective.hpp"
+  ],
+  "gate": {
+    "baseline": 286,
+    "required_gain": 5,
+    "observed": 278,
+    "met": false
+  },
+  "incorporation": "not approved"
+}
