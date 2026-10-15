@@ -49,8 +49,22 @@ def scope_for_node(source: bytes, node: Node, symbol: ParsedSymbol, *,
         comment_owner = comment_owner.parent
     comments: list[str] = []
     previous = comment_owner.prev_named_sibling
-    while previous is not None and "comment" in previous.type:
-        comments.append(source[previous.start_byte:previous.end_byte].decode("utf-8", errors="replace"))
+    while previous is not None:
+        if "comment" in previous.type:
+            if any(c.type == 'inner_doc_comment_marker' for c in previous.named_children):
+                break  # Rust inner docs describe the enclosing module/type.
+            prior = previous.prev_named_sibling
+            if (prior is not None and 'comment' not in prior.type
+                    and prior.type != 'attribute_item'
+                    and not any(c.type == 'outer_doc_comment_marker' for c in previous.named_children)
+                    and prior.end_point[0] == previous.start_point[0]):
+                break  # A trailing comment describes the preceding item.
+            comments.append(source[previous.start_byte:previous.end_byte].decode(
+                "utf-8", errors="replace").rstrip("\r\n"))
+        elif previous.type != "attribute_item":
+            break
+        # Rust attributes annotate this declaration and may be interleaved
+        # with its doc comments. Attribute values are not comment text.
         previous = previous.prev_named_sibling
     documentation = symbol.docstring
     if comments:

@@ -33,3 +33,23 @@ errors/missing as failures. Reevaluate the paired existing235 baseline through
 the same renderer (v45 baseline already277/400). This only tests contribution of
 recovered documentation to source features; it does not establish new contextual
 encoding, changed candidate selection, an API result, default or acceptance.
+
+Review correction v47b: the initial preserved v47 control exposed two attribution
+edges. A Rust comment with inner_doc_comment_marker belongs to its enclosing
+module/type and stops declaration-doc collection. A trailing comment on the same
+line as a preceding non-comment/non-attribute item belongs to that item; stop
+before collecting it for the next declaration. Keep legitimate outer block docs
+on the declaration's own line. Three new RED cases plus the positive inline
+control verify this. Rebuild ALL source documentation into a new47b artifact and
+repeat the unchanged fixed-pool control; retain47 as superseded for attribution.
+
+Final attribution refinement v47c: outer_doc_comment_marker is authoritative
+even when the doc starts on the previous item's final row. Outer docs are
+attributes of the next item; apply the trailing-comment stop only to ordinary
+comments. Two additional RED fixtures cover line and block forms after a prior
+item. This follows the [Rust Reference](https://doc.rust-lang.org/reference/comments.html)
+distinction between outer and inner doc attributes. Rebuild all source docs and
+features once more in47c; if every235-feature row and label is byte-identical to
+47b, that is an input-identity proof allowing its fixed fitted models to be
+reused, otherwise fit the same registered16fold control anew. Retain all prior
+attempts and their known attribution limits, with no changes to gold or scoring.

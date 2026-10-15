@@ -11,7 +11,7 @@ from ken.parsers.types import ParsedFile, ParsedScope
 from ken.retrieval.model import EntityKey, Passage, Span
 from ken.retrieval.roles import classify_role
 
-EXTRACTOR_VERSION = 5
+EXTRACTOR_VERSION = 6
 
 
 def lexical_token_count(text: str) -> int:
