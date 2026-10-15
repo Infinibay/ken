@@ -78,8 +78,10 @@ def main():
         raise ValueError('scorer must be imported from the registered Semble checkout')
     tasks = load_tasks(load_repo_specs())  # ALL specs, never available_repo_specs filtering.
     outputs = {}
+    input_hashes = {}
     for engine in ('ken', 'semble'):
         for path in sorted((args.run/engine).glob('*/responses.json')):
+            input_hashes[path.relative_to(args.run).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
             for row in json.loads(path.read_text()):
                 for mode, response in row['modes'].items():
                     target = outputs.setdefault(mode, {})
@@ -98,6 +100,7 @@ def main():
     sources += sorted((args.tool_root/'benchmarks/annotations').glob('*.json'))
     report = {'protocol': 'semble-public-protocol-v1', 'queries': len(tasks),
         'adapter_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        'response_sha256': input_hashes,
         'source_hashes': {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
         'native_unit': reports, 'visible_prefix_overlap': visible}
     args.output.write_text(json.dumps(report, indent=2))
