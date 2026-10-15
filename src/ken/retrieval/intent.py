@@ -56,12 +56,17 @@ def interpret(request: SearchRequest) -> QueryIntent:
     quoted = tuple(identifier for text in re.findall(r"`([^`]+)`", query)
                    if (identifier := _identifier_query(text)) is not None)
     stop = {"show", "find", "locate", "mostrame", "muestra", "busca", "the", "a", "an", "la", "el",
-            "de", "del", "definition", "declaration", "definición", "declaración", "class", "clase",
+            "de", "del", "of", "definition", "declaration", "definición", "declaración", "class", "clase",
             "function", "función", "method", "método", "helper", "utility",
             "where", "is", "defined", "declared", "defines", "declares", "dónde", "donde",
             "está", "esta", "definido", "definida", "declarado", "declarada", "declara", "qué", "que",
             "archivo", "fuente", "source", "file"}
     identifiers = quoted or tuple(token for token in re.findall(r"[\w$]+(?:[.:]+[\w$]+)*", query)
                         if token.casefold() not in stop)
+    # An instruction to find a function can still describe behavior. Treating
+    # every remaining prose word as a name grants an accidental symbol match
+    # authority to bypass retrieval. Only an unambiguous named target does so.
+    if len(identifiers) != 1:
+        return QueryIntent(purpose)
     kind = "class" if re.search(r"\b(?:class|clase)\b", lower) else None
     return QueryIntent(purpose, True, identifiers, kind)

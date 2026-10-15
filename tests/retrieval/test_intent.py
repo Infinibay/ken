@@ -52,6 +52,29 @@ def test_quoted_name_in_a_usage_question_does_not_force_definition_lookup():
 
 
 @pytest.mark.parametrize('query', [
+    'Find the function that tests whether a request is valid.',
+    'Show the class responsible for matching redirects.',
+    'Locate the helper that raises Error after invalid input.',
+    'Buscá la función que convierte nombres y evita colisiones.',
+])
+def test_descriptive_requests_do_not_treat_prose_words_as_exact_symbol_names(query):
+    intent = interpret(SearchRequest(query))
+    assert not intent.identity
+    assert intent.identifiers == ()
+
+
+@pytest.mark.parametrize('query', [
+    'Show the definition of function normalize_names.',
+    'Show the normalize_names function.',
+    '¿Dónde está definida la función normalize_names?',
+])
+def test_single_named_definition_request_preserves_exact_authority(query):
+    intent = interpret(SearchRequest(query))
+    assert intent.identity
+    assert intent.identifiers == ('normalize_names',)
+
+
+@pytest.mark.parametrize('query', [
     'Find the authentication timeout test covering exhausted retries.',
     'Show a parameterized integration test for malformed responses.',
     'Locate the command-line quoting test.',
