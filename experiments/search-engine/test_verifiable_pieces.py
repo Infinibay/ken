@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 
 from ken.retrieval.model import EntityKey, Passage, Span, CodeMatch
-from verifiable_pieces import SourceCatalog, piece_pool, validate_card, card_text
+from verifiable_pieces import SourceCatalog, piece_pool, validate_card, card_text, excerpt_owners
 from ettin_cpu import numpy_head, validate_head
 
 
@@ -48,7 +48,7 @@ class PieceCards(unittest.TestCase):
         cards = piece_pool(self.matches,'class','store values by key',self.catalog)
         self.assertEqual(len(cards),1)
         self.assertEqual(cards[0]['unit']['entity'],self.cls.to_dict())
-        self.assertTrue(any(e['entity']==self.method.to_dict() for e in cards[0]['excerpts']))
+        self.assertTrue(any(self.method in excerpt_owners(e) for e in cards[0]['excerpts']))
         validate_card(cards[0],self.catalog)
 
     def test_symbol_module_file_are_distinct(self):

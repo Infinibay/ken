@@ -15,7 +15,7 @@ from ken.retrieval.model import EntityKey
 from ken.structural.frontend import LANGUAGES, lower_source
 from ken.structural.semantic import link_project
 
-from verifiable_pieces import EvidenceCardBuilder, SYMBOL_KINDS, entity_id, terms, validate_card
+from verifiable_pieces import EvidenceCardBuilder, SYMBOL_KINDS, entity_id, excerpt_owners, terms, validate_card
 
 
 @dataclass(frozen=True)
@@ -87,7 +87,7 @@ class LocalCallEvidence:
     @staticmethod
     def visible(card,edge):
         lines={n for e in card['excerpts'] if 'dependency' not in e and
-               e['path']==edge.caller.path and e['entity']==edge.caller.to_dict()
+               edge.caller in excerpt_owners(e)
                for n in range(e['start_line'],e['end_line']+1)}
         return set(range(edge.start_line,edge.end_line+1))<=lines
 
@@ -108,8 +108,7 @@ def enrich_card(card,query,catalog,dependencies):
     validate_card(card,catalog,dependencies=dependencies)
     result=deepcopy(card);builder=EvidenceCardBuilder(result,catalog)
     if not builder.remaining_lines or not builder.remaining_excerpts:return result
-    callers={EntityKey(path=e['path'],**e['entity']) for e in card['excerpts']
-             if e['entity'] is not None and 'dependency' not in e}
+    callers={key for e in card['excerpts'] if 'dependency' not in e for key in excerpt_owners(e)}
     edges=[edge for key in callers for edge in dependencies.for_owner(key)
            if dependencies.visible(card,edge)]
     q=terms(query)

@@ -52,6 +52,7 @@ class SourceCatalog:
     def __init__(self,root,owners):
         self.root=Path(root).resolve()
         self.owners=dict(owners)
+        self._extents={};self._scopes={}
         self.by_path=defaultdict(list)
         self.lines={}; self.hashes={}
         for key,passages in owners.items():
@@ -68,10 +69,7 @@ class SourceCatalog:
         for path,keys in self.by_path.items():
             classes=[k for k in keys if k.kind=='class']
             for key in keys:
-                own=self.extent(key)
-                candidates=[k for k in classes if k!=key and self.extent(k)[0]<=own[0]
-                    and own[1]<=self.extent(k)[1] and key.qualname and k.qualname
-                    and key.qualname.startswith(k.qualname+'.')]
+                candidates=[k for k in classes if self.encloses(k,key)]
                 if candidates:
                     candidates.sort(key=lambda k:(self.extent(k)[1]-self.extent(k)[0],entity_id(k)))
                     if len(candidates)>1 and self.extent(candidates[0])==self.extent(candidates[1]):
@@ -79,8 +77,33 @@ class SourceCatalog:
                     self.classes[key]=candidates[0]
 
     def extent(self,key):
-        return (min(p.entity_span.start_line for p in self.owners[key]),
-                max(p.entity_span.end_line for p in self.owners[key]))
+        if key not in self._extents:
+            self._extents[key]=(min(p.entity_span.start_line for p in self.owners[key]),
+                                max(p.entity_span.end_line for p in self.owners[key]))
+        return self._extents[key]
+
+    def encloses(self,outer,inner):
+        return bool(outer!=inner and outer.path==inner.path and outer.qualname and inner.qualname
+            and inner.qualname.startswith(outer.qualname+'.')
+            and self.extent(outer)[0]<=self.extent(inner)[0]<=self.extent(inner)[1]<=self.extent(outer)[1])
+
+    def scope_members(self,key):
+        """Known descendants that account for every nonblank line in the scope."""
+        if key not in self._scopes:
+            descendants=tuple(sorted((k for k in self.by_path[key.path] if self.encloses(key,k)),key=entity_id))
+            covered={n for member in (key,*descendants)
+                     for a,b in self.owned_ranges(member) for n in range(a,b+1)}
+            a,b=self.extent(key)
+            self._scopes[key]=(descendants if all(n in covered or not self.lines[key.path][n-1].strip()
+                               for n in range(a,b+1)) else None)
+        return self._scopes[key]
+
+    def enclosing_callable(self,key):
+        candidates=[k for k in self.by_path[key.path] if k.kind in {'function','method'} and self.encloses(k,key)]
+        order=lambda k:(self.extent(k)[1]-self.extent(k)[0],-len(k.qualname or ''))
+        candidates.sort(key=lambda k:(order(k),entity_id(k)))
+        if not candidates or len(candidates)>1 and order(candidates[0])==order(candidates[1]):return None
+        return candidates[0]
 
     def owned_ranges(self,key,*,implementation=False):
         """Contiguous owned source, independent of retrieval fragment boundaries."""
@@ -145,6 +168,29 @@ def _complete_owned_card(primary,card,catalog):
     if len(canonical(complete))>MAX_CHARS: return None
     validate_card(complete,catalog,check_disk=False)
     return complete
+
+
+def _complete_scope_card(primary,card,catalog):
+    if primary.kind not in {'class','function','method'}:return None
+    a,b=catalog.extent(primary)
+    if b-a+1>MAX_LINES:return None
+    members=catalog.scope_members(primary)
+    if not members:return None
+    excerpt={'role':'definition','path':primary.path,'start_line':a,'end_line':b,
+        'source_hash':catalog.hashes[primary.path],'entity':primary.to_dict(),
+        'scope':'lexical_container','included_entities':[key.to_dict() for key in members],
+        'content':'\n'.join(catalog.lines[primary.path][a-1:b])}
+    truncated=card['unit']['target_kind'] in {'file','module'} and (a,b)!=(1,len(catalog.lines[primary.path]))
+    complete={**card,'excerpts':[excerpt],'truncated':truncated}
+    if len(canonical(complete))>MAX_CHARS:return None
+    validate_card(complete,catalog,check_disk=False)
+    return complete
+
+
+def excerpt_owners(excerpt):
+    entities=[excerpt['entity']] if excerpt['entity'] is not None else []
+    if excerpt.get('scope')=='lexical_container':entities+=excerpt['included_entities']
+    return tuple(EntityKey(path=excerpt['path'],**entity) for entity in entities)
 
 
 class EvidenceCardBuilder:
@@ -213,6 +259,9 @@ def _card(primary,kind,supporting,query,catalog):
     card={'unit':{'target_kind':kind,'path':path,'entity':entity,
                   'module_name':module_name(path) if kind=='module' else None},
           'source_hash':catalog.hashes[path],'excerpts':[],'truncated':False}
+    if isinstance(primary,EntityKey):
+        complete=_complete_scope_card(primary,card,catalog)
+        if complete is not None:return complete
     if kind=='symbol':
         complete=_complete_owned_card(primary,card,catalog)
         if complete is not None: return complete
@@ -225,6 +274,12 @@ def _card(primary,kind,supporting,query,catalog):
     rest=sorted((k for k in members if k not in preferred),
                 key=lambda k:(-_source_fit(catalog,k,query),entity_id(k)))
     ranked=preferred+rest
+    if kind in {'module','file'} and ranked:
+        enclosing=catalog.enclosing_callable(ranked[0])
+        for candidate in (enclosing,ranked[0]):
+            if candidate is not None:
+                complete=_complete_scope_card(candidate,card,catalog)
+                if complete is not None:return complete
     builder=EvidenceCardBuilder(card,catalog)
     if isinstance(primary,EntityKey):
         first=min(catalog.owners[primary],key=lambda p:p.span.start_line)
@@ -291,8 +346,16 @@ def validate_card(card,catalog,*,check_disk=True,dependencies=None):
         elif kind in {'class','symbol'} and key!=primary and not (
                 kind=='class' and catalog.classes.get(key)==primary):
             raise ValueError('unrelated owner cannot support primary piece')
-        owned={n for p in catalog.owners[key] for n in range(p.span.start_line,p.span.end_line+1)}
-        if not set(range(a,b+1))<=owned: raise ValueError('excerpt crosses source ownership')
+        if e.get('scope')=='lexical_container':
+            members=catalog.scope_members(key)
+            if (not members or (a,b)!=catalog.extent(key)
+                    or e.get('included_entities')!=[k.to_dict() for k in members]):
+                raise ValueError('invalid lexical scope attribution')
+        elif 'scope' in e or 'included_entities' in e:
+            raise ValueError('invalid lexical scope mode')
+        else:
+            owned={n for p in catalog.owners[key] for n in range(p.span.start_line,p.span.end_line+1)}
+            if not set(range(a,b+1))<=owned: raise ValueError('excerpt crosses source ownership')
         if e['content']!='\n'.join(catalog.lines[path][a-1:b]): raise ValueError('fabricated excerpt')
         count+=b-a+1
     if count>MAX_LINES or len(card['excerpts'])>MAX_EXCERPTS or len(canonical(card))>MAX_CHARS:
