@@ -71,7 +71,7 @@ def present(matches: list[CodeMatch], root: Path, request: SearchRequest, *,
                 if shown > 40:
                     raise ValueError("selected evidence exceeds line budget")
                 result["truncated"] = shown < best.entity_span.end_line - best.entity_span.start_line + 1
-            if match.signals.get('exact') and not intent.identity:
+            if match.signals.get('exact') and not intent.identity and not selected:
                 declaration = first.entity_span.start_line
                 body = result['evidence'][0]
                 if declaration < body['start_line']:

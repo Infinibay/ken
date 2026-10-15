@@ -137,3 +137,17 @@ def test_source_coverage_cannot_fill_a_parent_gap_with_child_evidence(tmp_path):
                                     stem_words=lambda words:words)
     evidence = present(refined,tmp_path,request,profile_version='test').results[0]['evidence']
     assert all(f['end_line'] <= 3 for f in evidence)
+
+
+def test_exact_identity_respects_a_preselected_fragments_total_budget(tmp_path):
+    lines = ['def store(', '    value,', '):']+['    step(value)']*97
+    source = '\n'.join(lines)+'\n'; (tmp_path/'client.py').write_text(source)
+    entity = EntityKey('client.py','function','store')
+    digest = hashlib.sha256(source.encode()).hexdigest()
+    evidence = [Passage(entity,span,{'body':'\n'.join(lines[span.start_line-1:span.end_line]),
+        'signature':'\n'.join(lines[:3])},digest,Span(1,100),signals={'selected_window':1.})
+        for span in (Span(10,29),Span(80,99))]
+    match = CodeMatch(entity,1.,evidence,digest,{'exact':1.})
+    result = present([match],tmp_path,SearchRequest('store'),profile_version='test').results[0]
+    assert not result['stale']
+    assert sum(p['end_line']-p['start_line']+1 for p in result['evidence']) == 40
