@@ -12,7 +12,8 @@ from ken.retrieval.candidates import owner_passages
 from ken.retrieval.query_expansion import LocalQueryExpansion
 from ettin_cpu import CPUReranker,sha
 from verifiable_guard import verify_source_preparation
-from verifiable_pieces import SourceCatalog,card_text,digest,validate_card
+from verifiable_pieces import SourceCatalog,card_text,digest
+from verifiable_source_auth import authenticate_card
 
 
 def rows(path):return [json.loads(x) for x in Path(path).read_text().splitlines()]
@@ -38,7 +39,7 @@ def main():
         for row in cards:
             case=bycase[row['case_id']]
             if case['repo_id']==repo:
-                validate_card(row['card'],catalog)
+                authenticate_card(row['card'],catalog)
                 if row['card']['unit']['target_kind']!=case['target_kind']:
                     raise ValueError('calibration card kind differs from public request')
         conn.close()
