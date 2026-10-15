@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Sequence
 from dataclasses import replace
 from pathlib import Path
 
@@ -9,6 +10,7 @@ from ken.db import connect, init_schema
 from ken.retrieval.model import Candidate, CodeMatch, EntityKey, merge_spans
 from ken.retrieval.storage import load_passage_map
 from ken.parsers import detect_language
+from ken.parsers.types import ParsedScope
 from ken.retrieval.model import SearchRequest
 from ken.retrieval.candidates import _exact
 from ken.retrieval.roles import classify_role
@@ -16,15 +18,34 @@ from ken.retrieval.roles import classify_role
 
 def load_pools(folder: Path, cases: dict, *, roots: dict[str, Path] | None = None,
                refresh_metadata: bool = False, refresh_exact: bool = False,
-               refresh_roles: bool = False) -> dict[str, list[Candidate]]:
-    rows = [json.loads(line) for line in (folder / "candidates.jsonl").read_text().splitlines()]
+               refresh_roles: bool = False,
+               repositories: Sequence[str] | None = None) -> dict[str, list[Candidate]]:
+    """Restore all pools, or explicitly bound working memory to selected repositories."""
+    selected = None
+    if repositories is not None:
+        if (not isinstance(repositories, Sequence)
+                or isinstance(repositories, (str, bytes)) or not repositories
+                or any(not isinstance(repo, str) or not repo for repo in repositories)
+                or len(set(repositories)) != len(repositories)):
+            raise ValueError("repositories must be nonempty, distinct repository names")
+        selected = set(repositories)
+    rows, seen = [], set()
+    with (folder / "candidates.jsonl").open() as stream:
+        for line in stream:
+            row = json.loads(line)
+            repo = cases[row["id"]]["repo_id"]
+            seen.add(repo)
+            if selected is None or repo in selected:
+                rows.append(row)
+    if selected is not None and not selected <= seen:
+        raise ValueError("repository scope contains names absent from candidate pools")
     result = {}
-    for repo in sorted({cases[row["id"]]["repo_id"] for row in rows}):
+    for repo in sorted(seen if selected is None else selected):
         conn = connect(folder / "indices" / (repo + ".db"))
         init_schema(conn)
         passages = load_passage_map(conn)
         if (refresh_metadata or refresh_roles) and roots is not None:
-            parsed = {}
+            parsed: dict[str, dict[tuple[str, str | None, int, int], ParsedScope]] = {}
             for pid, passage in passages.items():
                 path = passage.entity.path
                 if path not in parsed:
