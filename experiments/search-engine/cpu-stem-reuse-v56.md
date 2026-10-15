@@ -24,3 +24,16 @@ original277strict/290identity, zero discarded/error queries. Keep startup/index
 preparation separate, p50/p95/max and peak worker RSS for every repo. Concurrent
 measurements are descriptive, not the final uncontended latency/RAM certificate.
 No private acceptance read, criterion/threshold/denominator/budget changes.
+
+Full-suite compatibility refinement56b:
+The original concurrent-buffer test injects the public batch stemWords interface.
+Preserve that test and interface. A cache miss now calls stemWords([word])[0] on
+its private stemmer and keys reuse by the actual factory plus word, so swapping
+an injected/reloaded implementation cannot return another factory's result.
+A new RED probe against freeze56 demonstrates that stale-factory reuse; it passes
+with the refinement. No existing assertion, barrier or test was removed/relaxed.
+The revised full parser/retrieval/bench suite contains357 passing tests.
+
+Freeze56b keeps the same source5/control assets and overlays only this factory-
+aware batch calculation and protocol. Repeat ALL400 actual API/full byte parity;
+retain56's prior original output/benchmark claims separately until56b completes.

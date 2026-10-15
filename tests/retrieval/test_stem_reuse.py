@@ -15,20 +15,20 @@ def test_stem_reuse_is_bounded_and_does_not_share_mutable_buffers(monkeypatch):
     module._stem_word.cache_clear()
     original = importlib.import_module
     stems = []
+    library = original('snowballstemmer')
+    class Counted:
+        @staticmethod
+        def stemmer(language):
+            stemmer = library.stemmer(language)
+            class Instance:
+                @staticmethod
+                def stemWords(words):
+                    stems.extend(words)
+                    return stemmer.stemWords(words)
+            return Instance()
     def counted(name):
-        result = original(name)
         if name != 'snowballstemmer':
-            return result
-        class Counted:
-            @staticmethod
-            def stemmer(language):
-                stemmer = result.stemmer(language)
-                class Instance:
-                    @staticmethod
-                    def stemWord(word):
-                        stems.append(word)
-                        return stemmer.stemWord(word)
-                return Instance()
+            return original(name)
         return Counted()
     monkeypatch.setattr(module, 'import_module', counted)
     first = module.EvidenceReranker.stem_words(['running', 'running', 'cats'])
@@ -52,3 +52,18 @@ def test_concurrent_stemming_uses_independent_mutable_stemmer_state():
     expected = [snowballstemmer.stemmer('english').stemWords(words) for words in groups]
     with ThreadPoolExecutor(max_workers=8) as pool:
         assert list(pool.map(EvidenceReranker.stem_words, groups)) == expected
+
+
+def test_replacing_the_stemmer_factory_cannot_reuse_another_implementations_cache(monkeypatch):
+    from types import SimpleNamespace
+    import ken.retrieval.owner_ranking as module
+    module._stem_word.cache_clear()
+    words = ['transformationprobe']
+    original = module.EvidenceReranker.stem_words(words)
+    replacement = SimpleNamespace(stemmer=lambda language: SimpleNamespace(
+        stemWords=lambda values: ['replacement:'+value for value in values],
+        stemWord=lambda value: 'replacement:'+value))
+    with monkeypatch.context() as context:
+        context.setattr(module, 'import_module', lambda name: replacement)
+        assert module.EvidenceReranker.stem_words(words) == ['replacement:transformationprobe']
+    assert module.EvidenceReranker.stem_words(words) == original
