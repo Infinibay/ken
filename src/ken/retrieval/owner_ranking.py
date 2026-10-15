@@ -62,7 +62,7 @@ class EvidenceReranker:
     def rank(self, request: SearchRequest, candidates: Sequence[Candidate],
              descriptions: Mapping[EntityKey, OwnerDescription], *,
              expanded_query: str | None = None, evidence_version: int = 1) -> list[CodeMatch]:
-        if evidence_version not in (1, 2):
+        if evidence_version not in (1, 2, 3):
             raise ValueError('unsupported source evidence policy')
         if len(candidates) == 1 and candidates[0].signals.get('exact'):
             return rank_candidates(request, list(candidates))
@@ -75,7 +75,7 @@ class EvidenceReranker:
         scores = self.model.predict(values)
         terms = set(code_tokens(expanded))
         def evidence(candidate: Candidate):
-            if evidence_version == 2:
+            if evidence_version >= 2:
                 return candidate.passages
             # Retrieval chunks propose an owner; every verified owned region
             # used for its score is also eligible to support its visible answer.

@@ -90,6 +90,7 @@ class CPUContextEncoder:
 
 def main(*, expected_count: int | None = 25) -> None:
     parser = argparse.ArgumentParser()
+    parser.add_argument('--evidence-version', type=int, choices=(2, 3), default=2)
     for name in ('requests', 'index', 'root', 'numeric-model', 'static-registration',
                  'translation-registration', 'context-registration', 'context-index',
                  'context-source-registration', 'output'):
@@ -161,7 +162,8 @@ def main(*, expected_count: int | None = 25) -> None:
     profile = RetrievalProfile(words.spec, words.spec, contextual=ContextualRetrieval(context.spec,
         view_model=views.model if views else None),
         evidence=EvidenceRanking(model.fingerprint, words.spec, expansion.revision,
-                                 feature_version=ranker.feature_version, evidence_version=2))
+                                 feature_version=ranker.feature_version,
+                                 evidence_version=args.evidence_version))
     metadata = {'scope': f'ALL{len(rows)} live API + canonical JSON; public source/requests only; CPU; '
                          'one repo-excluded model; not default/acceptance/final uncontended certificate',
         'engine_root': str(engine_root), 'engine_receipt_sha256': receipt,

@@ -9,6 +9,7 @@ from ken.retrieval.model import CodeMatch, SearchRequest, SearchResponse
 from ken.retrieval.tokenization import code_tokens
 from ken.retrieval.intent import interpret
 from ken.retrieval.evidence import entity_extent, source_bounds, verified_lines
+from ken.retrieval.result_selection import displayed_matches
 
 
 def present(matches: list[CodeMatch], root: Path, request: SearchRequest, *,
@@ -16,14 +17,8 @@ def present(matches: list[CodeMatch], root: Path, request: SearchRequest, *,
     response = SearchResponse(request.query, [], profile_version)
     query = set(code_tokens(request.query))
     intent = interpret(request)
-    seen_files: set[str] = set()
-    for match in matches:
+    for _, match in displayed_matches(matches, request):
         path = match.entity.path
-        if request.target == "file" and path in seen_files:
-            continue
-        if len(response.results) >= request.limit:
-            break
-        seen_files.add(path)
         first = match.evidence[0]
         result: dict[str, Any] = {
             "path": path, "language": first.language, "entity": match.entity.to_dict(),

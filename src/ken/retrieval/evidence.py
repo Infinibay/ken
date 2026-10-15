@@ -12,6 +12,7 @@ import numpy as np
 from ken.retrieval.intent import interpret
 from ken.retrieval.model import Candidate, CodeMatch, Passage, SearchRequest, Span, merge_spans
 from ken.retrieval.ranking import RelevanceJudge, candidate_document
+from ken.retrieval.result_selection import displayed_matches
 
 
 def verified_lines(root: Path, match: CodeMatch) -> list[str]:
@@ -52,6 +53,41 @@ def source_bounds(match: CodeMatch, passage: Passage, line_count: int, *,
     if implementation and upper - lower + 1 > 40:
         lower = min(upper, max(lower, passage.implementation_start_line or lower))
     return Span(lower, upper)
+
+
+def complete_owned_context(match: CodeMatch, root: Path) -> CodeMatch:
+    """Expose a complete small responsibility while retaining every owner gap."""
+    if not match.owned_regions:
+        return match
+    entity_extent(match)
+    lines = verified_lines(root, match)
+    template = match.evidence[0]
+    regions = merge_spans(source_bounds(match, replace(template, span=region), len(lines),
+        implementation=True) for region in match.owned_regions)
+    if (not regions or len(regions) > 3
+            or sum(r.end_line-r.start_line+1 for r in regions) > 40):
+        return match
+    if any(r.end_line > len(lines) for r in regions):
+        raise ValueError('owned source region exceeds current source')
+    evidence = [replace(template, span=region,
+        fields={**template.fields, 'body': '\n'.join(lines[region.start_line-1:region.end_line])},
+        signals={**template.signals, 'selected_window': 1.}) for region in regions]
+    return replace(match, evidence=evidence)
+
+
+def complete_evidence(matches: list[CodeMatch], root: Path, request: SearchRequest) -> list[CodeMatch]:
+    intent = interpret(request)
+    if intent.identity or intent.purpose == 'documentation':
+        return matches
+    result = list(matches)
+    for index, match in displayed_matches(matches, request):
+        if match.signals.get('exact'):
+            continue
+        try:
+            result[index] = complete_owned_context(match, root)
+        except (OSError, ValueError, UnicodeError):
+            continue  # Presentation owns reporting stale source and retry policy.
+    return result
 
 
 def _windows(match: CodeMatch, lines: list[str], *, purpose: str, limit: int) -> list[Passage]:

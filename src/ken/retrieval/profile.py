@@ -105,7 +105,7 @@ class EvidenceRanking:
             raise ValueError('an immutable numeric model revision is required')
         if self.expansion_revision is not None and not re.fullmatch(r'[a-f0-9]{64}', self.expansion_revision):
             raise ValueError('an immutable query expansion revision is required')
-        if self.feature_version not in (1, 2, 3) or self.evidence_version not in (1, 2):
+        if self.feature_version not in (1, 2, 3) or self.evidence_version not in (1, 2, 3):
             raise ValueError('unsupported ranking feature version')
         if self.stemming != 'snowball-english-v1':
             raise ValueError('unsupported ranking stemming algorithm')

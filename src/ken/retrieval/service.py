@@ -9,7 +9,7 @@ from ken.retrieval.candidates import active_profile, retrieve, retrieve_contextu
 from ken.retrieval.contextual import ContextualRetriever
 from ken.retrieval.model import SearchRequest, SearchResponse
 from ken.retrieval.presentation import present
-from ken.retrieval.evidence import refine_evidence
+from ken.retrieval.evidence import complete_evidence, refine_evidence
 from ken.retrieval.profile import Encoder, RetrievalProfile
 from ken.retrieval.ranking import RelevanceJudge, rank_candidates
 from ken.retrieval.embedding_store import retrieval_snapshot
@@ -62,6 +62,8 @@ def search(conn: sqlite3.Connection, root: Path, request: SearchRequest, *,
                         max_fragments=ordering.max_fragments)
             else:
                 matches = rank_candidates(request, candidates)
+            if profile.evidence is not None and profile.evidence.evidence_version == 3:
+                matches = complete_evidence(matches, root, request)
         response = present(matches, root, request, profile_version=profile.fingerprint)
         if not any(r["stale"] for r in response.results):
             return response
