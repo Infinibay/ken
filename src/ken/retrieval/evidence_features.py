@@ -14,7 +14,7 @@ from ken.retrieval.description import OwnerDescription
 from ken.retrieval.intent import interpret
 from ken.retrieval.model import Candidate, EntityKey, SearchRequest
 from ken.retrieval.profile import Encoder
-from ken.retrieval.tokenization import code_tokens
+from ken.retrieval.tokenization import code_terms, code_tokens
 
 FEATURE_VERSION = 1
 _TERM_BLOCK_SIZE = 4096
@@ -70,7 +70,7 @@ def base_features(request: SearchRequest, candidate: Candidate) -> dict[str, flo
 def _coverage(query: str, documents: list[dict[str, list[str]]], fields: Sequence[str], *,
               encoder: Encoder, stem_words: Callable[[list[str]], list[str]] | None = None
               ) -> list[dict[str, float]]:
-    words = list(dict.fromkeys(code_tokens(query)))[:128]
+    words = code_terms(query, limit=128)
     vocabulary = sorted(set(words) | {w for d in documents for ws in d.values() for w in ws})
     lookup = {word: i for i, word in enumerate(vocabulary)}
     all_words = [set(d['all']) for d in documents]
@@ -130,7 +130,7 @@ def evidence_features(request: SearchRequest, candidates: Sequence[Candidate],
     raw_documents = []
     source_documents = []
     for owner in owners:
-        raw = {f: list(dict.fromkeys(code_tokens(owner.fields[f])))[:4096] for f in _RAW_FIELDS[:-1]}
+        raw = {f: code_terms(owner.fields[f], limit=4096) for f in _RAW_FIELDS[:-1]}
         raw['all'] = list(dict.fromkeys(w for f in _RAW_FIELDS[:-1] for w in raw[f]))
         raw_documents.append(raw)
         # Keep the original projection order explicit: limits cannot depend on
@@ -138,7 +138,7 @@ def evidence_features(request: SearchRequest, candidates: Sequence[Candidate],
         source = {f: owner.fields[f] for f in ('identity', 'signature', 'documentation', 'path',
                   'implementation', 'comments', 'executable', 'calls', 'returns')}
         source['all'] = '\n'.join(source.values())
-        source_documents.append({f: list(dict.fromkeys(code_tokens(source[f])))[:4096]
+        source_documents.append({f: code_terms(source[f], limit=4096)
                                  for f in _SOURCE_FIELDS})
     raw_coverage = _coverage(request.query, raw_documents, _RAW_FIELDS, encoder=encoder)
     expanded = expanded_query if expanded_query is not None else request.query

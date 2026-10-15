@@ -1,4 +1,5 @@
 from ken.retrieval.tokenization import code_tokens
+import pytest
 
 
 def test_identifier_tokens_keep_order_repetitions_and_unicode_normalization():
@@ -36,3 +37,34 @@ def test_large_identifier_is_not_retained_in_the_reuse_cache():
     assert code_tokens(long_word)
     assert module._identifier_tokens.cache_info().currsize == 0
     assert module._identifier_tokens.cache_info().maxsize == 16384
+
+
+@pytest.mark.parametrize('limit', [None, 0, 1, 3, 128, 4096])
+def test_code_terms_are_exactly_the_first_distinct_occurrence_tokens(limit):
+    from ken.retrieval.tokenization import code_terms
+
+    text = 'HTTPServer.get_status get_status café Ｃａｃｈｅ HTTPServer.get_status ' * 50
+    expected = list(dict.fromkeys(code_tokens(text)))
+    assert code_terms(text, limit=limit) == (expected if limit is None else expected[:limit])
+
+
+def test_code_terms_skip_repeated_raw_words_before_decomposition(monkeypatch):
+    import ken.retrieval.tokenization as module
+
+    calls = []
+    original = module._identifier_tokens
+
+    def counted(raw):
+        calls.append(raw)
+        return original(raw)
+
+    monkeypatch.setattr(module, '_identifier_tokens', counted)
+    assert module.code_terms('TermsProfile.first TermsProfile.first otherValue ' * 100)
+    assert calls == ['TermsProfile.first', 'otherValue']
+
+
+def test_code_terms_rejects_negative_limits():
+    from ken.retrieval.tokenization import code_terms
+
+    with pytest.raises(ValueError, match='nonnegative'):
+        code_terms('read', limit=-1)
