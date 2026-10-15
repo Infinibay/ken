@@ -1,3 +1,23 @@
+# Estado actual — piezas verificables
+
+ActualizadoUTC: 2026-10-15T22:48:54.266205+00:00.
+
+Último resultado conjunto cerrado: v11193/200=46,5%, identidad168/200=84%,
+Recall10197/200=98,5%. v10989/200=44,5%; v10580/200=40%; v10276/200=38%.
+Control de identidad, NO conjunto:68M FP32 v110RRF50 175/200=87,5%; v112prefijo3
+raw175/200=87,5%,RRF50 174/200=87%, conservando todos los10candidatos.
+CPU completa v111 mediana1,109s/p952,211s/pico1,543GB; sin reranker neuronal.
+CPU v112 sólo reranker mediana0,962s/p950,991s/pico0,724GB; no total Ken.
+
+Código nuevo guardado en11ca6e3 y5874192; e864b57ya fue verificado en GitHubmain.
+44tests nuevos/enfocados pasan; mutación de visibilidad detectada y restaurada.
+Ver informe VERIFIABLE-CONTEXT-AND-PRECISION-V105-V112.md y MANIFEST del respaldo.
+No release, tags ni cambios de default. Original checkout sucio sigue intacto.
+Privada v104:200casos curados, nunca abiertos por implementador; no ejecutar hasta
+congelar una nueva versión. El objetivo90% conjunto sigue pendiente.
+
+## Notas históricas de preparación (superadas por el estado de arriba)
+
 # Verifiable pieces CPU comparison — running state
 
 Updated18:55UTC. The user authorizes the new benchmark and17/32/68M comparison.
