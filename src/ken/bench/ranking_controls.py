@@ -12,33 +12,14 @@ import numpy as np
 
 from ken.retrieval.intent import interpret
 from ken.retrieval.model import Candidate, CodeMatch, SearchRequest
-from ken.retrieval.tokenization import code_tokens
+from ken.retrieval.evidence_features import BASE_FEATURES as FEATURES, base_features
 
-FEATURES = ("rrf", "cosine_identity", "cosine_behavior", "bm25f", "bm25_body",
-    "bm25_documentation", "bm25_identity", "bm25_signature", "bm25_path", "role_match",
-    "class", "module", "log_lines", "name_overlap", "body_overlap")
 JOINT_FEATURES = ("joint_relevance", "joint_missing", "role_match", "class", "module", "log_lines")
 
 
 def candidate_features(request: SearchRequest, candidate: Candidate) -> dict[str, float]:
-    features = {name: float(candidate.signals.get(name, 0)) for name in FEATURES[:9]}
-    for name in FEATURES[3:9]:
-        features[name] = math.log1p(max(0, features[name]))
-    intent = interpret(request)
-    role = candidate.passages[0].role
-    expected = {"implementation": "definition", "tests": "test", "usage": "example",
-                "documentation": "documentation"}[intent.purpose]
-    query = set(code_tokens(request.query))
-    name_tokens = set(code_tokens(candidate.entity.qualname or ""))
+    features = base_features(request, candidate)
     features.update({
-        "role_match": float(role == expected),
-        "class": float(candidate.entity.kind == "class"),
-        "module": float(candidate.entity.qualname is None),
-        "log_lines": math.log1p(max(p.entity_span.end_line - p.entity_span.start_line + 1
-                                   for p in candidate.passages)),
-        "name_overlap": len(query & name_tokens) / max(1, len(query)),
-        "body_overlap": max(len(query & set(code_tokens(p.fields["body"]))) / max(1, len(query))
-                            for p in candidate.passages),
         "joint_relevance": candidate.signals.get("joint_relevance", 0.),
         "joint_missing": float("joint_relevance" not in candidate.signals),
     })
