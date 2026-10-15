@@ -97,14 +97,15 @@ def _coverage(query: str, documents: list[dict[str, list[str]]], fields: Sequenc
                 peaks[index] = np.maximum(peaks[index], similarities[:, local].max(axis=1))
     stems = dict(zip(vocabulary, stem_words(vocabulary), strict=True)) if stem_words else {}
     query_stems = {stems[w] for w in words} if stems else set()
+    coverage_by_field = alignment.summarize_maxima(peaks,
+        present=np.asarray([bool(len(ids)) for ids in memberships], dtype=bool))
     rows = []
     for document_index, document in enumerate(documents):
         row: dict[str, float] = {}
         for field_index, field in enumerate(fields):
             terms = document[field]
             index = document_index * len(fields) + field_index
-            coverage = alignment.summarize(peaks[index, :, None] if terms
-                                           else np.empty((len(words), 0)))
+            coverage = coverage_by_field[index]
             mean = sums[index]/len(terms) if terms else np.zeros(len(sentence))
             norm = np.linalg.norm(mean)
             values = (len(set(words) & set(terms))/max(1, len(words)), coverage.mean,

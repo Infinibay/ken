@@ -45,6 +45,30 @@ class TermAlignment:
         if not similarities.size:
             return TermCoverage()
         peaks = similarities.max(axis=1)
-        return TermCoverage(float(peaks.mean()), float(peaks.min()),
-            float(np.quantile(peaks, .25)), float(np.mean(peaks >= .5)),
-            float(np.mean(peaks >= .7)), float(peaks @ self.weights / max(1e-9, self.weights.sum())))
+        return self.summarize_maxima(peaks[None, :], present=np.array([True]))[0]
+
+    def summarize_maxima(self, maxima: np.ndarray, *, present: np.ndarray
+                         ) -> tuple[TermCoverage, ...]:
+        """Summarize many source views after their best term matches are known.
+
+        Rows are source views and columns are query terms. Empty views remain
+        distinct from measured zeros; their unfilled maxima may be nonfinite.
+        """
+        if (maxima.ndim != 2 or maxima.shape[1] != len(self.weights)
+                or present.shape != (len(maxima),) or present.dtype != np.bool_
+                or not np.isfinite(maxima[present]).all()):
+            raise ValueError('aligned finite active maxima and boolean source presence required')
+        rows = [TermCoverage()] * len(maxima)
+        if not len(self.weights) or not present.any():
+            return tuple(rows)
+        active = maxima[present]
+        denominator = max(1e-9, self.weights.sum())
+        # Keep the original one-row dot reduction: a matrix-vector BLAS call
+        # may choose a different floating-point accumulation order.
+        weighted = (peak @ self.weights / denominator for peak in active)
+        summaries = zip(active.mean(axis=1), active.min(axis=1),
+            np.quantile(active, .25, axis=1), np.mean(active >= .5, axis=1),
+            np.mean(active >= .7, axis=1), weighted, strict=True)
+        for index, values in zip(np.flatnonzero(present), summaries, strict=True):
+            rows[index] = TermCoverage(*(float(value) for value in values))
+        return tuple(rows)
