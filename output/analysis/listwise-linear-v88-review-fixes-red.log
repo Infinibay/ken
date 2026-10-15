@@ -1,0 +1,52 @@
+...........FF                                                            [100%]
+=================================== FAILURES ===================================
+_____ test_finite_features_cannot_produce_an_infinite_prepared_normalizer ______
+
+    def test_finite_features_cannot_produce_an_infinite_prepared_normalizer():
+>       with pytest.raises(ValueError,match='normalization'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+experiments/search-engine/test_listwise_linear.py:102: Failed
+____________ test_valid_unsigned_group_offsets_match_signed_offsets ____________
+
+    def test_valid_unsigned_group_offsets_match_signed_offsets():
+        args=(np.array([.2]),np.array([[1.],[0.],[2.],[0.]]),np.array([1.,0.,1.,0.]))
+        signed=listwise_objective(*args,np.array([0,2],dtype=np.int64))
+>       unsigned=listwise_objective(*args,np.array([0,2],dtype=np.uint64))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+experiments/search-engine/test_listwise_linear.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+weights = array([0.2])
+values = array([[1.],
+       [0.],
+       [2.],
+       [0.]])
+targets = array([1., 0., 1., 0.]), starts = array([0, 2], dtype=uint64)
+regularization = 1.0
+
+    def listwise_objective(weights: object, values: object, targets: object, starts: object,
+                           regularization: float=1.) -> tuple[float,np.ndarray]:
+        w,x,y=_real(weights),_real(values),_real(targets)
+        offsets=np.asarray(starts)
+        if (w.ndim!=1 or x.ndim!=2 or x.shape[1]!=len(w) or not len(w)
+                or y.shape!=(len(x),) or offsets.ndim!=1 or offsets.dtype.kind not in 'iu'
+                or not len(offsets) or offsets[0]!=0 or offsets[-1]>=len(x)
+                or np.any(offsets[1:]<=offsets[:-1]) or np.any(y<0)
+                or not np.isfinite(regularization) or regularization<=0
+>               or not np.allclose(np.add.reduceat(y,offsets),1.,rtol=0,atol=1e-12)):
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               TypeError: Cannot cast array data from dtype('uint64') to dtype('int64') according to the rule 'safe'
+
+experiments/search-engine/listwise_linear.py:112: TypeError
+=============================== warnings summary ===============================
+experiments/search-engine/test_listwise_linear.py::test_finite_features_cannot_produce_an_infinite_prepared_normalizer
+  /Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/experiments/search-engine/listwise_linear.py:135: RuntimeWarning: overflow encountered in square
+    variance=np.mean([np.mean((x-means)**2,axis=0) for x in arrays],axis=0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED experiments/search-engine/test_listwise_linear.py::test_finite_features_cannot_produce_an_infinite_prepared_normalizer
+FAILED experiments/search-engine/test_listwise_linear.py::test_valid_unsigned_group_offsets_match_signed_offsets

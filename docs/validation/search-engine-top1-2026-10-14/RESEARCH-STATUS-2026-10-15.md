@@ -341,3 +341,38 @@ Diagnósticos posteriores, sin cambio de ranking ni criterios:
  47aciertos estrictos ya caen en esa categoría. El truncado no queda demostrado
   como causa principal y no justifica otra preparación masiva por sí solo.
   Revisión independiente87 pendiente. Se conservan400 filas originales.
+
+
+Continuidad13:35UTC (prevalece sobre los estados pendientes históricos):
+-85b terminó y su revisión independiente cerró: baseline286estrictos/298identidad,
+  head conjunto raw91/94 y RRF198/210, ALL400 originales. Ninguna variante pasa
+  el gate+5.16heads/residuales/7260logits/1200respuestas completos reproducidos;
+  no se incorpora el head. Productor pico2318368768B y fitter1872068608B son
+  recursos de arnés concurrente, no API. La paridad del baseline con81 es de
+  orden/evidencia; profile y37scores exact-bypass difieren, no paridad de bytes.
+-76b recibió APTO independiente PUBLIC76b_PREQUERY_APTO tras completar63repos:
+ 12074archivos,99508owners,261091pasajes,199016unidades de vistas/197707vectores,
+  188recodificaciones CPU de vistas+140fullcontext exactas y252assets ligados.
+  Root abrió solamente76b tras revalidar todas las ligaduras/freeze;76 original
+  permanece retirado con gate cerrado. La ejecución API1251/63 está en marcha;
+  no hay todavía un nuevo NDCG completo ni certificado final CPU/RAM.
+-88 plantea una sola pérdida convexa por consulta sobre los251features actuales,
+  ridge1,16folds que excluyen repos enteros, sin encoder adicional ni variantes
+  de parámetros. Preparó16normalizadores pero una revisión genérica encontró
+  dos bordes de validación numérica. Se conserva abortado ANTES de cualquier
+  fit/head/score.88b sólo corrige overflow de normalización y offsets uint64;
+  mantiene objetivo, selectores, fuentes,400casos, referencias y aceptación.
+ 13tests del helper y76focales pasan; mypy del helper pasa sin suppressions.
+  Un intento de mypy sobre6helpers encontró18 imports sin tipos transitivos en
+  contextual_run/source_view_assets; no eran errores del helper corregido y no
+  se cambió configuración para ocultarlos.88b freeze586archivos,
+  tree4931a3ba8f13ad386d667e7e27b0868ffb22bf8bdf918e95e4b95e92ee2c6e2f,
+  receiptba6e660786f6627fd0af8b31d10a63b714255abb27f411f5cbd95e460ed87387.
+  Preparación16normalizadores terminada y gate de ajuste cerrado, pendiente
+  revisión independiente de esta versión exacta. No resultado nuevo de calidad.
+- Mejor actual API permanece286/400(71,5%) estricto,298identidad. Los345/400
+  archivo y NDCG0,9343641364861627 se comparan con204/400 y0,6887064071598579
+  de Semble en esos mismos400; la comparación pública1251 vigente sigue48:
+  Ken0,8365028636773735 vsSemble0,8543853795900258,906vs935top1.
+- La reserva privada continúa sin abrir, no hay promoción al checkout original
+  ni afirmación de90% o de superar el benchmark público.

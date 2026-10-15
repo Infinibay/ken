@@ -29,8 +29,16 @@ def load_source_views(*, index: Path, vectors: Path, registration: Path,
     prepared = json.loads(registration.read_text())
     model = json.loads(model_registration.read_text())
     original_model = json.loads(original_registration.read_text())
-    if (len(prepared['source_repos']) != 16
-            or prepared['model_registration_sha256'] != receipts[str(model_registration)]
+    if 'repositories' in prepared:
+        repositories = prepared['repositories']
+        if (not isinstance(repositories, list) or not repositories
+                or any(not isinstance(name, str) or not name for name in repositories)
+                or len(set(repositories)) != len(repositories)
+                or set(repositories) != set(prepared['source_repos'])):
+            raise ValueError('incomplete or invalid registered repository scope')
+    elif len(prepared['source_repos']) != 16:
+        raise ValueError('incomplete legacy16 source view model registration')
+    if (prepared['model_registration_sha256'] != receipts[str(model_registration)]
             or prepared['original_model_registration_sha256'] != sha(original_registration)
             or EncoderSpec(**original_model['spec']) != source.model):
         raise ValueError('incomplete or changed source view model registration')

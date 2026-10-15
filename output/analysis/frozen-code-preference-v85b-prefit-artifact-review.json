@@ -1,0 +1,1043 @@
+{
+  "status": "prefit_artifacts_verified",
+  "scope": "Independent85b complete source, selections, exact row bindings, cache, moments and isolation; numerical original eligibility read only after complete400 sealed evaluation; no original reference alternatives, quality, actual head fit, implementation/private reserve or marker writes.",
+  "engine_receipt": "4f44d3303cae3033f11672848ed022e95b70bb7877c956d10f9c23487897c335",
+  "source_registration_sha256": "3601b283610e942fc76cef9234f04b4389321d1b1d79378f7a7c8c2a81674553",
+  "fitter_script_sha256": "59481fe1d72e68cf08bf9e96c155518b3aaf3b6a8affaf252a8d70d56ffe00a6",
+  "physical_source_files": 6314,
+  "source_queries": 400,
+  "seal_payload_exact_final_manifest": true,
+  "row_checks": {
+    "evaluation_unit_rows": 7260,
+    "evaluation_metadata_rows": 7297,
+    "exact_zero_rows": 37,
+    "cache_duplicate_rows_exact": 4603,
+    "training_unit_rows": 7518,
+    "training_metadata_rows": 7518
+  },
+  "new_cache_keys_by_phase": {
+    "evaluation": 7248,
+    "training": 2927
+  },
+  "unique_cache_keys": 10175,
+  "all_actual_query_document_source_entity_metadata_exact": true,
+  "all_original_eligibility_RRF_selections_exact": true,
+  "all16_repository_moments_and_queryids_bitexact": true,
+  "actual_selector_held_label_and_nan69_score_perturbations": 6000,
+  "held_checks": [
+    {
+      "repo": "ajv",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 336
+    },
+    {
+      "repo": "anyhow",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 334
+    },
+    {
+      "repo": "attrs",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 334
+    },
+    {
+      "repo": "bbolt",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 335
+    },
+    {
+      "repo": "boltons",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 337
+    },
+    {
+      "repo": "commons-csv",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 336
+    },
+    {
+      "repo": "dayjs",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 335
+    },
+    {
+      "repo": "fsnotify",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 336
+    },
+    {
+      "repo": "junit5",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 334
+    },
+    {
+      "repo": "logrus",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 336
+    },
+    {
+      "repo": "marked",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 339
+    },
+    {
+      "repo": "packaging",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 336
+    },
+    {
+      "repo": "petgraph",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 336
+    },
+    {
+      "repo": "pytest",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 336
+    },
+    {
+      "repo": "regex",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 334
+    },
+    {
+      "repo": "semver",
+      "held_nan_moments_ignored_exact": true,
+      "training_queries": 336
+    }
+  ],
+  "head_invariance": "Identical source-selected training vectors and identical15-repo C,b imply the same unique ridge1 solution. The reviewer did not fit an actual head before approval.",
+  "CPU_bitexact_recode_probes": [
+    {
+      "repo": "ajv",
+      "phase": "evaluation",
+      "qid": "development-ajv-05",
+      "row": 82,
+      "entity": {
+        "path": "lib/vocabularies/applicator/patternProperties.ts",
+        "kind": "method",
+        "qualname": "code",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "ajv",
+      "phase": "evaluation",
+      "qid": "development-ajv-03",
+      "row": 43,
+      "entity": {
+        "path": "docs/options.md",
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "anyhow",
+      "phase": "evaluation",
+      "qid": "development-anyhow-10",
+      "row": 643,
+      "entity": {
+        "path": "src/fmt.rs",
+        "kind": "method",
+        "qualname": "ErrorImpl.debug",
+        "owner": "ErrorImpl",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "anyhow",
+      "phase": "evaluation",
+      "qid": "development-anyhow-11",
+      "row": 677,
+      "entity": {
+        "path": "src/error.rs",
+        "kind": "method",
+        "qualname": "Error.drop",
+        "owner": "Error",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "attrs",
+      "phase": "evaluation",
+      "qid": "development-attrs-23",
+      "row": 1373,
+      "entity": {
+        "path": "src/attr/__init__.pyi",
+        "kind": "method",
+        "qualname": "Converter.__init__",
+        "owner": "Converter",
+        "definition_ordinal": 3
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "attrs",
+      "phase": "evaluation",
+      "qid": "development-attrs-12",
+      "row": 1173,
+      "entity": {
+        "path": "tests/test_pattern_matching.py",
+        "kind": "method",
+        "qualname": "TestPatternMatching.test_simple_match_case",
+        "owner": "TestPatternMatching",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "bbolt",
+      "phase": "evaluation",
+      "qid": "development-bbolt-25",
+      "row": 1876,
+      "entity": {
+        "path": "tx.go",
+        "kind": "method",
+        "qualname": "Tx.Rollback",
+        "owner": "Tx",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "bbolt",
+      "phase": "evaluation",
+      "qid": "development-bbolt-04",
+      "row": 1501,
+      "entity": {
+        "path": "doc.go",
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "boltons",
+      "phase": "evaluation",
+      "qid": "development-boltons-08",
+      "row": 2040,
+      "entity": {
+        "path": "boltons/iterutils.py",
+        "kind": "function",
+        "qualname": "split_iter",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "boltons",
+      "phase": "evaluation",
+      "qid": "development-boltons-19",
+      "row": 2256,
+      "entity": {
+        "path": "CHANGELOG.md",
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "commons-csv",
+      "phase": "evaluation",
+      "qid": "development-commons-csv-10",
+      "row": 2523,
+      "entity": {
+        "path": "src/test/java/org/apache/commons/csv/CSVPrinterTest.java",
+        "kind": "method",
+        "qualname": "CSVPrinterTest.testDelimiterEscaped",
+        "owner": "CSVPrinterTest",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "commons-csv",
+      "phase": "evaluation",
+      "qid": "development-commons-csv-10",
+      "row": 2526,
+      "entity": {
+        "path": "src/test/java/org/apache/commons/csv/CSVFormatTest.java",
+        "kind": "method",
+        "qualname": "CSVFormatTest.testEqualsNullString",
+        "owner": "CSVFormatTest",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "dayjs",
+      "phase": "evaluation",
+      "qid": "development-dayjs-09",
+      "row": 2949,
+      "entity": {
+        "path": "src/locale/sk.js",
+        "kind": "function",
+        "qualname": "translate",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "dayjs",
+      "phase": "evaluation",
+      "qid": "development-dayjs-20",
+      "row": 3171,
+      "entity": {
+        "path": "src/locale/en-tt.js",
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "fsnotify",
+      "phase": "evaluation",
+      "qid": "development-fsnotify-08",
+      "row": 3384,
+      "entity": {
+        "path": "CHANGELOG.md",
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "fsnotify",
+      "phase": "evaluation",
+      "qid": "development-fsnotify-13",
+      "row": 3474,
+      "entity": {
+        "path": "backend_inotify.go",
+        "kind": "method",
+        "qualname": "inotify.register",
+        "owner": "inotify",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "junit5",
+      "phase": "evaluation",
+      "qid": "development-junit5-09",
+      "row": 3846,
+      "entity": {
+        "path": "documentation/src/test/java/example/ParameterizedTestDemo.java",
+        "kind": "method",
+        "qualname": "ParameterizedTestDemo.NullAndEmptySource_1.nullEmptyAndBlankStrings",
+        "owner": "ParameterizedTestDemo.NullAndEmptySource_1",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "junit5",
+      "phase": "evaluation",
+      "qid": "development-junit5-14",
+      "row": 3938,
+      "entity": {
+        "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/support/SearchOption.java",
+        "kind": "enum",
+        "qualname": "SearchOption",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "logrus",
+      "phase": "evaluation",
+      "qid": "development-logrus-15",
+      "row": 4444,
+      "entity": {
+        "path": "json_formatter.go",
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "logrus",
+      "phase": "evaluation",
+      "qid": "development-logrus-11",
+      "row": 4374,
+      "entity": {
+        "path": "hook_test.go",
+        "kind": "method",
+        "qualname": "ModifyHook.Levels",
+        "owner": "ModifyHook",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "marked",
+      "phase": "evaluation",
+      "qid": "development-marked-11",
+      "row": 4811,
+      "entity": {
+        "path": "src/Instance.ts",
+        "kind": "method",
+        "qualname": "Marked.use",
+        "owner": "Marked",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "marked",
+      "phase": "evaluation",
+      "qid": "development-marked-18",
+      "row": 4942,
+      "entity": {
+        "path": "src/Hooks.ts",
+        "kind": "class",
+        "qualname": "_Hooks",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "packaging",
+      "phase": "evaluation",
+      "qid": "development-packaging-05",
+      "row": 5142,
+      "entity": {
+        "path": "tests/test_requirements.py",
+        "kind": "method",
+        "qualname": "TestRequirementParsing.test_valid_marker",
+        "owner": "TestRequirementParsing",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "packaging",
+      "phase": "evaluation",
+      "qid": "development-packaging-18",
+      "row": 5400,
+      "entity": {
+        "path": "tests/test_tags.py",
+        "kind": "method",
+        "qualname": "TestCPythonTags.test_python_version_defaults",
+        "owner": "TestCPythonTags",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "petgraph",
+      "phase": "evaluation",
+      "qid": "development-petgraph-19",
+      "row": 5856,
+      "entity": {
+        "path": "crates/petgraph/benches/min_spanning_tree.rs",
+        "kind": "function",
+        "qualname": "min_spanning_tree_kruskal_petersen_undir_bench",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "petgraph",
+      "phase": "evaluation",
+      "qid": "development-petgraph-08",
+      "row": 5635,
+      "entity": {
+        "path": "crates/petgraph/tests/graph.rs",
+        "kind": "function",
+        "qualname": "connected_comp",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "pytest",
+      "phase": "evaluation",
+      "qid": "development-pytest-14",
+      "row": 6208,
+      "entity": {
+        "path": "src/_pytest/config/argparsing.py",
+        "kind": "method",
+        "qualname": "Parser.addini",
+        "owner": "Parser",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "pytest",
+      "phase": "evaluation",
+      "qid": "development-pytest-09",
+      "row": 6097,
+      "entity": {
+        "path": "doc/en/how-to/monkeypatch.rst",
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "regex",
+      "phase": "evaluation",
+      "qid": "development-regex-08",
+      "row": 6532,
+      "entity": {
+        "path": "regex-lite/src/lib.rs",
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "regex",
+      "phase": "evaluation",
+      "qid": "development-regex-07",
+      "row": 6500,
+      "entity": {
+        "path": "src/regex/bytes.rs",
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "semver",
+      "phase": "evaluation",
+      "qid": "development-semver-20",
+      "row": 7242,
+      "entity": {
+        "path": "classes/range.js",
+        "kind": "function",
+        "qualname": "replaceCaret",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "semver",
+      "phase": "evaluation",
+      "qid": "development-semver-20",
+      "row": 7246,
+      "entity": {
+        "path": "internal/lrucache.js",
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "ajv",
+      "phase": "training",
+      "qid": "development-ajv-17",
+      "row": 329,
+      "entity": {
+        "path": "lib/vocabularies/discriminator/index.ts",
+        "kind": "function",
+        "qualname": "code.getMapping.addMappings",
+        "owner": "code.getMapping",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "ajv",
+      "phase": "training",
+      "qid": "development-ajv-06",
+      "row": 118,
+      "entity": {
+        "path": "spec/extras/$data/uniqueItems.json",
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "anyhow",
+      "phase": "training",
+      "qid": "development-anyhow-11",
+      "row": 684,
+      "entity": {
+        "path": "src/error.rs",
+        "kind": "method",
+        "qualname": "Error.drop",
+        "owner": "Error",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "anyhow",
+      "phase": "training",
+      "qid": "development-anyhow-22",
+      "row": 906,
+      "entity": {
+        "path": "src/chain.rs",
+        "kind": "enum",
+        "qualname": "ChainState",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "attrs",
+      "phase": "training",
+      "qid": "development-attrs-12",
+      "row": 1197,
+      "entity": {
+        "path": "src/attr/validators.py",
+        "kind": "function",
+        "qualname": "matches_re",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "attrs",
+      "phase": "training",
+      "qid": "development-attrs-08",
+      "row": 1113,
+      "entity": {
+        "path": "src/attr/validators.py",
+        "kind": "method",
+        "qualname": "_DeepMapping.__call__",
+        "owner": "_DeepMapping",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "bbolt",
+      "phase": "training",
+      "qid": "development-bbolt-12",
+      "row": 1717,
+      "entity": {
+        "path": "cursor.go",
+        "kind": "method",
+        "qualname": "Cursor.Prev",
+        "owner": "Cursor",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "bbolt",
+      "phase": "training",
+      "qid": "development-bbolt-10",
+      "row": 1672,
+      "entity": {
+        "path": "tx_check.go",
+        "kind": "method",
+        "qualname": "Tx.recursivelyCheckBucket",
+        "owner": "Tx",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "boltons",
+      "phase": "training",
+      "qid": "development-boltons-18",
+      "row": 2308,
+      "entity": {
+        "path": "boltons/pathutils.py",
+        "kind": "function",
+        "qualname": "shrinkuser",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "boltons",
+      "phase": "training",
+      "qid": "development-boltons-24",
+      "row": 2366,
+      "entity": {
+        "path": "tests/test_funcutils_fb.py",
+        "kind": "function",
+        "qualname": "test_wraps_injected.inject_misc_argument",
+        "owner": "test_wraps_injected",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "commons-csv",
+      "phase": "training",
+      "qid": "development-commons-csv-09",
+      "row": 2563,
+      "entity": {
+        "path": "src/test/java/org/apache/commons/csv/CSVDuplicateHeaderTest.java",
+        "kind": "method",
+        "qualname": "CSVDuplicateHeaderTest.duplicateHeaderAllowsMissingColumnsNamesData",
+        "owner": "CSVDuplicateHeaderTest",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "commons-csv",
+      "phase": "training",
+      "qid": "development-commons-csv-07",
+      "row": 2539,
+      "entity": {
+        "path": "src/test/java/org/apache/commons/csv/CSVParserTest.java",
+        "kind": "method",
+        "qualname": "CSVParserTest.testGetRecordNumberWithCRLF",
+        "owner": "CSVParserTest",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "dayjs",
+      "phase": "training",
+      "qid": "development-dayjs-15",
+      "row": 3158,
+      "entity": {
+        "path": "src/plugin/isoWeek/index.js",
+        "kind": "function",
+        "qualname": "proto.isoWeek",
+        "owner": "proto",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "dayjs",
+      "phase": "training",
+      "qid": "development-dayjs-16",
+      "row": 3188,
+      "entity": {
+        "path": "src/locale/cs.js",
+        "kind": "function",
+        "qualname": "translate",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "fsnotify",
+      "phase": "training",
+      "qid": "development-fsnotify-16",
+      "row": 3655,
+      "entity": {
+        "path": "backend_kqueue.go",
+        "kind": "method",
+        "qualname": "kqueue.WatchList",
+        "owner": "kqueue",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "fsnotify",
+      "phase": "training",
+      "qid": "development-fsnotify-16",
+      "row": 3656,
+      "entity": {
+        "path": "backend_kqueue.go",
+        "kind": "method",
+        "qualname": "kqueue.state",
+        "owner": "kqueue",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "junit5",
+      "phase": "training",
+      "qid": "development-junit5-13",
+      "row": 4057,
+      "entity": {
+        "path": "platform-tests/src/test/java/org/junit/platform/commons/util/AnnotationUtilsTests.java",
+        "kind": "method",
+        "qualname": "AnnotationUtilsTests.findPublicAnnotatedFieldsForDirectlyAnnotatedFieldsInClassAndInterface",
+        "owner": "AnnotationUtilsTests",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "junit5",
+      "phase": "training",
+      "qid": "development-junit5-25",
+      "row": 4293,
+      "entity": {
+        "path": "jupiter-tests/src/test/java/org/junit/jupiter/api/AssumptionsTests.java",
+        "kind": "method",
+        "qualname": "AssumptionsTests.assumingThatWithFailingExecutable",
+        "owner": "AssumptionsTests",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "logrus",
+      "phase": "training",
+      "qid": "development-logrus-24",
+      "row": 4737,
+      "entity": {
+        "path": "json_formatter_test.go",
+        "kind": "function",
+        "qualname": "TestFieldClashWithLevel",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "logrus",
+      "phase": "training",
+      "qid": "development-logrus-04",
+      "row": 4384,
+      "entity": {
+        "path": "logger.go",
+        "kind": "method",
+        "qualname": "Logger.Exit",
+        "owner": "Logger",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "marked",
+      "phase": "training",
+      "qid": "development-marked-06",
+      "row": 4872,
+      "entity": {
+        "path": "src/helpers.ts",
+        "kind": "function",
+        "qualname": "trimTrailingBlankLines",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "marked",
+      "phase": "training",
+      "qid": "development-marked-14",
+      "row": 5060,
+      "entity": {
+        "path": "src/Tokenizer.ts",
+        "kind": "method",
+        "qualname": "_Tokenizer.tag",
+        "owner": "_Tokenizer",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "packaging",
+      "phase": "training",
+      "qid": "development-packaging-07",
+      "row": 5307,
+      "entity": {
+        "path": "tests/test_markers.py",
+        "kind": "method",
+        "qualname": "TestMarker.test_extra_str_normalization",
+        "owner": "TestMarker",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "packaging",
+      "phase": "training",
+      "qid": "development-packaging-14",
+      "row": 5451,
+      "entity": {
+        "path": "tests/property/strategies.py",
+        "kind": "function",
+        "qualname": "versions_with_local",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "petgraph",
+      "phase": "training",
+      "qid": "development-petgraph-12",
+      "row": 5875,
+      "entity": {
+        "path": "crates/petgraph/src/visit/dfsvisit.rs",
+        "kind": "function",
+        "qualname": "depth_first_search",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "petgraph",
+      "phase": "training",
+      "qid": "development-petgraph-05",
+      "row": 5724,
+      "entity": {
+        "path": "crates/petgraph/src/data.rs",
+        "kind": "enum",
+        "qualname": "Element",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "pytest",
+      "phase": "training",
+      "qid": "development-pytest-11",
+      "row": 6315,
+      "entity": {
+        "path": "src/_pytest/legacypath.py",
+        "kind": "method",
+        "qualname": "LegacyTmpdirPlugin.tmpdir",
+        "owner": "LegacyTmpdirPlugin",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "pytest",
+      "phase": "training",
+      "qid": "development-pytest-02",
+      "row": 6115,
+      "entity": {
+        "path": "testing/test_monkeypatch.py",
+        "kind": "class",
+        "qualname": "test_undo_inherited_non_data_descriptor_on_instance.Sample",
+        "owner": "test_undo_inherited_non_data_descriptor_on_instance",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "regex",
+      "phase": "training",
+      "qid": "development-regex-17",
+      "row": 6892,
+      "entity": {
+        "path": "regex-syntax/src/hir/interval.rs",
+        "kind": "method",
+        "qualname": "IntervalSet.eq",
+        "owner": "IntervalSet",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "regex",
+      "phase": "training",
+      "qid": "development-regex-21",
+      "row": 6987,
+      "entity": {
+        "path": "src/regex/string.rs",
+        "kind": "module",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "semver",
+      "phase": "training",
+      "qid": "development-semver-06",
+      "row": 7169,
+      "entity": {
+        "path": "classes/semver.js",
+        "kind": "method",
+        "qualname": "SemVer.constructor",
+        "owner": "SemVer",
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    },
+    {
+      "repo": "semver",
+      "phase": "training",
+      "qid": "development-semver-02",
+      "row": 7090,
+      "entity": {
+        "path": "functions/prerelease.js",
+        "kind": "function",
+        "qualname": "prerelease",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "CPU_bit_exact": true
+    }
+  ],
+  "head_files_observed": 0,
+  "acceptance_marker_written": false,
+  "limits": [
+    "All source metadata, choices, saved overlaps and moments checked exhaustively; independent CPU joint recodes sampled deterministically.",
+    "This is pre-fit aptness only; fitted exports, ALL400 readouts, strict quality and API/resource behavior remain future checks.",
+    "Pool/source text objects are reviewed one repository at a time; phase arrays and small numerical aggregate/cache references remain live."
+  ],
+  "review_decision": "PRE-FIT APTO",
+  "approval_binding_fields": {
+    "engine_receipt": "4f44d3303cae3033f11672848ed022e95b70bb7877c956d10f9c23487897c335",
+    "source_registration_sha256": "3601b283610e942fc76cef9234f04b4389321d1b1d79378f7a7c8c2a81674553",
+    "fitter_script_sha256": "59481fe1d72e68cf08bf9e96c155518b3aaf3b6a8affaf252a8d70d56ffe00a6"
+  },
+  "source_phases": {
+    "evaluation": {
+      "queries": 400,
+      "rows": 7297,
+      "pairs_sha256": "e3eae17913547e16741a7df107da6aa7bbce1ff84c28750275ccfecfe712b90e",
+      "encoded_new": 7248
+    },
+    "training": {
+      "queries": 400,
+      "rows": 7518,
+      "pairs_sha256": "32e0ecdcdc032dd7d3ec13fa2cc34a42487eb6603956aceeac77dfe3a05133f6",
+      "encoded_new": 2927
+    }
+  },
+  "source_bindings_reverified_at_close": true,
+  "training_groups": 358,
+  "training_skips": {
+    "exact_bypass": 37,
+    "no_positive": 5,
+    "no_negative": 0
+  },
+  "fitter_prefit_registration_sha256": "1375679257ee07f24e5f2358836cfdfafd3632a60d27bca722735205a629b7c4"
+}

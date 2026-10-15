@@ -69,3 +69,15 @@ como destino, pero sus autores desaconsejan tareas que requieren programación.
 No se descargaron pesos ni se atribuye calidad de búsqueda a sus benchmarks.
 El entrenamiento de un head pequeño sobre evidencia code/query conjunta85b
 sigue separado de la hipótesis de incorporar otro generador.
+
+
+88b aísla el ordenador matemático con las representaciones251 actuales. La
+pérdida softmax de listas usa igual peso por consulta y masa uniforme entre sus
+positivos originales; ridge1 garantiza solución única. Se excluye el repositorio
+retenido ANTES de estadísticas y optimización. Un único dot251 exportado evita
+otro encoder en ejecución. La convergencia y residuo se verifican además de la
+bandera success de L-BFGS-B; no se aflojan tras ver resultados.
+Documentación primaria: https://docs.scipy.org/doc/scipy/reference/optimize.minimize-lbfgsb.html
+Los stubs scipy1.18.1.1 y sus tres dependencias de tipos se instalaron sin cambiar
+NumPy2.4.4/SciPy1.18.1 ni pesos del motor. Los dos arreglos88b son genéricos y
+preceden cualquier ajuste de datos reales; el freeze88 original se conserva.
