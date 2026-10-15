@@ -25,3 +25,13 @@ def test_export_refuses_split_semantics_the_runtime_cannot_preserve(extra):
             'tree_info': [{'tree_structure': split}]}
     with pytest.raises(ValueError, match='split'):
         export_numeric_ranker(dump, features=['coverage'])
+
+
+def test_export_refuses_linear_leaves_instead_of_discarding_their_coefficients():
+    from ken.bench.numeric_export import export_numeric_ranker
+
+    dump = {'num_class': 1, 'average_output': False, 'feature_names': ['Column_0'],
+            'tree_info': [{'tree_structure': {'leaf_value': 1., 'leaf_const': 1.,
+                'leaf_features': [0], 'leaf_coeff': [2.]}}]}
+    with pytest.raises(ValueError, match='linear'):
+        export_numeric_ranker(dump, features=['coverage'])

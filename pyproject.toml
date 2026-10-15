@@ -33,6 +33,8 @@ dependencies = [
     # CPU; same model infinidev runs in production.
     "fastembed>=0.5",
     "numpy>=1.26",
+    # Small CPU-only morphological normalization for source feature ranking.
+    "snowballstemmer==3.0.1",
     # Persistent syntax vectors for the KQL2 exploration backend.
     "flatbuffers>=25.12.19",
     # MCP SDK — exposes ken's tools to Claude Code over stdio.

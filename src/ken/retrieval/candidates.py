@@ -18,6 +18,7 @@ from ken.retrieval.indexing import source_policy_key
 from ken.retrieval.model import Candidate, EntityKey, Passage, SearchRequest, merge_spans
 from ken.retrieval.profile import Encoder, EncoderSpec, RetrievalProfile, active_profile, load_encoder
 from ken.retrieval.storage import load_passage_map
+from ken.retrieval.description import OwnerDescription, describe_owner
 
 
 @lru_cache(maxsize=4)
@@ -37,6 +38,26 @@ def _region_snapshot(conn: sqlite3.Connection, generation: int):
     for p in _passage_snapshot(conn, generation).values():
         groups[p.entity].append(p.span)
     return {entity: merge_spans(spans) for entity, spans in groups.items()}
+
+
+@lru_cache(maxsize=4)
+def _owner_snapshot(conn: sqlite3.Connection, generation: int):
+    groups: dict[EntityKey, list[Passage]] = defaultdict(list)
+    for passage in _passage_snapshot(conn, generation).values():
+        groups[passage.entity].append(passage)
+    return {entity: tuple(passages) for entity, passages in groups.items()}
+
+
+def owner_descriptions(conn: sqlite3.Connection, candidates: list[Candidate]) -> dict[EntityKey, OwnerDescription]:
+    """Describe selected owners completely within the caller's source generation."""
+    with retrieval_snapshot(conn) as snapshot:
+        owners = _owner_snapshot(conn, snapshot.generation)
+        if any(c.entity not in owners or not c.passages for c in candidates):
+            raise IndexVersionError('owner changed before ranking; retry retrieval')
+        result = {c.entity: describe_owner(owners[c.entity]) for c in candidates}
+        if any(result[c.entity].source_hash != c.passages[0].source_hash for c in candidates):
+            raise IndexVersionError('source changed before owner ranking; retry retrieval')
+        return result
 
 
 @lru_cache(maxsize=256)

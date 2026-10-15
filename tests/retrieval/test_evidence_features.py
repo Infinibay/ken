@@ -1,6 +1,7 @@
 import hashlib
 
 import numpy as np
+import pytest
 
 from ken.retrieval.description import describe_owner
 from ken.retrieval.model import Candidate, EntityKey, Passage, SearchRequest, Span
@@ -50,3 +51,21 @@ def test_empty_pool_has_a_stable_feature_schema_without_loading_an_encoder():
     features = evidence_features(SearchRequest('something'), [], {},
         encoder=Forbidden(), stem_words=lambda words: words)
     assert features.values.shape == (0, len(features.names))
+
+
+def test_source_alignment_bounds_vector_batches_without_dropping_late_terms(monkeypatch):
+    import ken.retrieval.evidence_features as module
+
+    class LimitedEncoder(Encoder):
+        def embed_passages(self, texts):
+            assert len(texts) <= 8, 'alignment must stream the vocabulary'
+            return super().embed_passages(texts)
+
+    monkeypatch.setattr(module, '_TERM_BLOCK_SIZE', 8, raising=False)
+    terms = ['source'+chr(97+i//26)+chr(97+i%26) for i in range(64)]
+    documents = [{'body': terms, 'all': terms}]
+    query = terms[-1]
+    rows = module._coverage(query, documents, ('body','all'), encoder=LimitedEncoder())
+    assert rows[0]['body_exact'] == 1.
+    assert rows[0]['body_mean'] == pytest.approx(1., abs=1e-6)
+    assert rows[0]['body_log_words'] == pytest.approx(np.log1p(64))

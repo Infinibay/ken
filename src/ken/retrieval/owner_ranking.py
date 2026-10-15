@@ -1,0 +1,57 @@
+"""Order canonical owners using pinned numeric models and source coverage."""
+from __future__ import annotations
+
+from collections.abc import Callable, Mapping, Sequence
+from dataclasses import replace
+from importlib import import_module
+
+from ken.retrieval.description import OwnerDescription
+from ken.retrieval.evidence_features import FEATURES, evidence_features
+from ken.retrieval.model import Candidate, CodeMatch, EntityKey, SearchRequest
+from ken.retrieval.numeric_ranker import NumericRanker
+from ken.retrieval.profile import RegisteredEncoder, EvidenceRanking
+from ken.retrieval.ranking import rank_candidates
+from ken.retrieval.tokenization import code_tokens
+
+
+class EvidenceReranker:
+    def __init__(self, model: NumericRanker, encoder: RegisteredEncoder, *,
+                 expand_query: Callable[[str], str] | None = None,
+                 expansion_revision: str | None = None):
+        if model.features != FEATURES:
+            raise ValueError('numeric model uses an incompatible source feature schema')
+        if (expand_query is None) != (expansion_revision is None):
+            raise ValueError('query expansion requires its immutable revision')
+        self.model, self.encoder = model, encoder
+        self.stem_words = import_module('snowballstemmer').stemmer('english').stemWords
+        self.expand_query, self.expansion_revision = expand_query, expansion_revision
+
+    def validate(self, spec: EvidenceRanking) -> None:
+        if (self.model.fingerprint != spec.model_revision or self.encoder.spec != spec.word_model
+                or self.expansion_revision != spec.expansion_revision):
+            raise ValueError('owner ranking runtime does not match its pinned profile')
+
+    def rank(self, request: SearchRequest, candidates: Sequence[Candidate],
+             descriptions: Mapping[EntityKey, OwnerDescription]) -> list[CodeMatch]:
+        if len(candidates) == 1 and candidates[0].signals.get('exact'):
+            return rank_candidates(request, list(candidates))
+        expanded = self.expand_query(request.query) if self.expand_query else request.query
+        if not isinstance(expanded, str) or not expanded.strip():
+            raise ValueError('query expansion must return nonempty text')
+        matrix = evidence_features(request, candidates, descriptions, encoder=self.encoder,
+            stem_words=self.stem_words, expanded_query=expanded)
+        scores = self.model.predict(matrix.values)
+        terms = set(code_tokens(expanded))
+        def evidence(candidate: Candidate):
+            # Retrieval chunks propose an owner; every verified owned region
+            # used for its score is also eligible to support its visible answer.
+            retrieved = {p.span: p.signals for p in candidate.passages}
+            return [replace(p, signals={**retrieved.get(p.span, p.signals),
+                'joint_evidence': len(terms & set(code_tokens(p.fields['body']))) / max(1, len(terms))})
+                for p in descriptions[candidate.entity].passages]
+        matches = [CodeMatch(c.entity, float(score), evidence(c), c.passages[0].source_hash,
+            {**c.signals, 'evidence_relevance': float(score)}, c.owned_regions)
+            for c, score in zip(candidates, scores, strict=True)]
+        # Stable ties preserve the proposal order rather than adding another
+        # source-name prior that was absent from the trained ranking contract.
+        return sorted(matches, key=lambda m: (-m.signals.get('exact', 0), -m.score))

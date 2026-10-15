@@ -19,6 +19,10 @@ class Encoder(Protocol):
     def embed_query(self, text: str) -> np.ndarray: ...
 
 
+class RegisteredEncoder(Encoder, Protocol):
+    spec: EncoderSpec
+
+
 def _package_version(name: str) -> str:
     try:
         return version(name)
@@ -87,6 +91,26 @@ class JointRanking:
 
 
 @dataclass(frozen=True)
+class EvidenceRanking:
+    """Immutable identity of a fitted owner ranker and optional query expansion."""
+    model_revision: str
+    word_model: EncoderSpec
+    expansion_revision: str | None = None
+    stemming: str = 'snowball-english-v1'
+    feature_version: int = 1
+
+    def __post_init__(self) -> None:
+        if not re.fullmatch(r'[a-f0-9]{64}', self.model_revision):
+            raise ValueError('an immutable numeric model revision is required')
+        if self.expansion_revision is not None and not re.fullmatch(r'[a-f0-9]{64}', self.expansion_revision):
+            raise ValueError('an immutable query expansion revision is required')
+        if self.feature_version != 1:
+            raise ValueError('unsupported ranking feature version')
+        if self.stemming != 'snowball-english-v1':
+            raise ValueError('unsupported ranking stemming algorithm')
+
+
+@dataclass(frozen=True)
 class RetrievalProfile:
     identity: EncoderSpec
     behavior: EncoderSpec
@@ -96,6 +120,7 @@ class RetrievalProfile:
     passage_tokenizer: str = "code-lexical-v1"
     representation_version: int = 3
     joint: JointRanking | None = None
+    evidence: EvidenceRanking | None = None
 
     def __post_init__(self) -> None:
         if self.max_tokens <= 0 or self.candidate_limit <= 0 or self.rrf_k <= 0:
@@ -104,6 +129,8 @@ class RetrievalProfile:
             raise ValueError("unknown source passage tokenizer")
         if self.representation_version != 3:
             raise ValueError("unsupported representation version; reindex with current profile")
+        if self.joint is not None and self.evidence is not None:
+            raise ValueError('choose one owner ranking profile')
 
     def vector_revision(self, view: str) -> str:
         spec = getattr(self, view)
@@ -112,7 +139,11 @@ class RetrievalProfile:
         return spec.key + ":projection-" + digest
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        data = asdict(self)
+        if self.evidence is None:
+            # Existing profiles and vector receipts retain their exact identity.
+            data.pop('evidence')
+        return data
 
     @classmethod
     def from_dict(cls, value: dict[str, Any], *, upgrade_representation: bool = False) -> RetrievalProfile:
@@ -125,14 +156,21 @@ class RetrievalProfile:
             joint = dict(data["joint"])
             joint["model"] = EncoderSpec(**joint["model"])
             data["joint"] = JointRanking(**joint)
+        if data.get('evidence') is not None:
+            evidence = dict(data['evidence'])
+            evidence['word_model'] = EncoderSpec(**evidence['word_model'])
+            data['evidence'] = EvidenceRanking(**evidence)
         return cls(**data)
 
     @property
     def fingerprint(self) -> str:
-        return hashlib.sha256(json.dumps({"config": self.to_dict(), "runtime": {
+        runtime = {
             "identity": _backend_runtime(self.identity.backend),
             "behavior": _backend_runtime(self.behavior.backend),
-            "joint": _backend_runtime(self.joint.model.backend) if self.joint else ()}}, sort_keys=True).encode()).hexdigest()
+            "joint": _backend_runtime(self.joint.model.backend) if self.joint else ()}
+        if self.evidence is not None:
+            runtime['evidence'] = tuple((p, _package_version(p)) for p in ('numpy', 'snowballstemmer'))
+        return hashlib.sha256(json.dumps({'config': self.to_dict(), 'runtime': runtime}, sort_keys=True).encode()).hexdigest()
 
 
 @lru_cache(maxsize=1)

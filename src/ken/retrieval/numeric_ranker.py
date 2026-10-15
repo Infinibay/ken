@@ -2,6 +2,9 @@
 from __future__ import annotations
 
 import math
+import hashlib
+import json
+from functools import cached_property
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
@@ -50,6 +53,11 @@ class _Tree:
 class NumericRanker:
     features: tuple[str, ...]
     _trees: tuple[_Tree, ...]
+
+    @cached_property
+    def fingerprint(self) -> str:
+        canonical = json.dumps(self.to_dict(), sort_keys=True, separators=(',', ':'), ensure_ascii=False)
+        return hashlib.sha256(canonical.encode()).hexdigest()
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> NumericRanker:

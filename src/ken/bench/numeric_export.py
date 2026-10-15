@@ -15,6 +15,8 @@ def export_numeric_ranker(dump: Mapping[str, Any], *, features: Sequence[str]) -
 
     def convert(node: Mapping[str, Any]) -> dict[str, Any]:
         if 'leaf_value' in node:
+            if any(key in node for key in ('leaf_const', 'leaf_features', 'leaf_coeff')):
+                raise ValueError('linear ranking leaves are not supported')
             # LightGBM leaf values already include the learning rate.
             return {'value': node['leaf_value']}
         if node.get('decision_type') != '<=' or node.get('missing_type') not in ('None', 'NaN'):

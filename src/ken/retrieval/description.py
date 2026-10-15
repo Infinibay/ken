@@ -23,6 +23,7 @@ class OwnerDescription:
     executable_lines: int
     comment_lines: int
     regions: int
+    passages: tuple[Passage, ...]
 
 
 def describe_owner(passages: Sequence[Passage]) -> OwnerDescription:
@@ -55,4 +56,4 @@ def describe_owner(passages: Sequence[Passage]) -> OwnerDescription:
                   returns='\n'.join(line for line in executable if _RETURN.search(line)))
     return OwnerDescription(first.entity, first.source_hash, fields,
         sum(p.span.end_line - p.span.start_line + 1 for p in ordered), len(implementation),
-        len(executable), len(comments), len(ordered))
+        len(executable), len(comments), len(ordered), tuple(ordered))

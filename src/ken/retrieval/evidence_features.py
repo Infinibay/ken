@@ -17,6 +17,7 @@ from ken.retrieval.profile import Encoder
 from ken.retrieval.tokenization import code_tokens
 
 FEATURE_VERSION = 1
+_TERM_BLOCK_SIZE = 4096
 BASE_FEATURES = ('rrf', 'cosine_identity', 'cosine_behavior', 'bm25f', 'bm25_body',
     'bm25_documentation', 'bm25_identity', 'bm25_signature', 'bm25_path', 'role_match',
     'class', 'module', 'log_lines', 'name_overlap', 'body_overlap')
@@ -71,24 +72,40 @@ def _coverage(query: str, documents: list[dict[str, list[str]]], fields: Sequenc
               ) -> list[dict[str, float]]:
     words = list(dict.fromkeys(code_tokens(query)))[:128]
     vocabulary = sorted(set(words) | {w for d in documents for ws in d.values() for w in ws})
-    vectors = np.asarray(encoder.embed_passages(vocabulary), dtype=np.float32)
     lookup = {word: i for i, word in enumerate(vocabulary)}
-    query_ids = [lookup[w] for w in words]
     all_words = [set(d['all']) for d in documents]
     weights = np.array([math.log1p(len(documents)/(1+sum(w in d for d in all_words))) for w in words])
-    alignment = TermAlignment(vectors[query_ids], weights)
-    similarities = alignment.similarities(vectors)
-    sentence = encoder.embed_query(query)
+    sentence = np.asarray(encoder.embed_query(query), dtype=np.float32)
+    query_vectors = (np.asarray(encoder.embed_passages(words), dtype=np.float32) if words
+                     else np.empty((0, len(sentence)), dtype=np.float32))
+    alignment = TermAlignment(query_vectors, weights)
+    # Memory depends on a vector block and field summaries, never on the
+    # product of the whole candidate vocabulary and the query length.
+    memberships = [np.asarray(sorted(lookup[w] for w in d[f]), dtype=np.int64)
+                   for d in documents for f in fields]
+    sums = np.zeros((len(memberships), len(sentence)), dtype=np.float64)
+    peaks = np.full((len(memberships), len(words)), -np.inf, dtype=np.float32)
+    for offset in range(0, len(vocabulary), _TERM_BLOCK_SIZE):
+        block = vocabulary[offset:offset+_TERM_BLOCK_SIZE]
+        vectors = np.asarray(encoder.embed_passages(block), dtype=np.float32)
+        similarities = alignment.similarities(vectors)
+        for index, ids in enumerate(memberships):
+            lower, upper = np.searchsorted(ids, (offset, offset+len(block)))
+            local = ids[lower:upper]-offset
+            if len(local):
+                sums[index] += vectors[local].sum(axis=0, dtype=np.float64)
+                peaks[index] = np.maximum(peaks[index], similarities[:, local].max(axis=1))
     stems = dict(zip(vocabulary, stem_words(vocabulary), strict=True)) if stem_words else {}
     query_stems = {stems[w] for w in words} if stems else set()
     rows = []
-    for document in documents:
+    for document_index, document in enumerate(documents):
         row: dict[str, float] = {}
-        for field in fields:
+        for field_index, field in enumerate(fields):
             terms = document[field]
-            ids = [lookup[w] for w in terms]
-            coverage = alignment.summarize(similarities[:, ids])
-            mean = vectors[ids].mean(axis=0) if ids else np.zeros(vectors.shape[1])
+            index = document_index * len(fields) + field_index
+            coverage = alignment.summarize(peaks[index, :, None] if terms
+                                           else np.empty((len(words), 0)))
+            mean = sums[index]/len(terms) if terms else np.zeros(len(sentence))
             norm = np.linalg.norm(mean)
             values = (len(set(words) & set(terms))/max(1, len(words)), coverage.mean,
                 coverage.minimum, coverage.quartile, coverage.above50, coverage.above70,
