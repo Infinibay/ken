@@ -105,10 +105,25 @@ class EvidenceRanking:
             raise ValueError('an immutable numeric model revision is required')
         if self.expansion_revision is not None and not re.fullmatch(r'[a-f0-9]{64}', self.expansion_revision):
             raise ValueError('an immutable query expansion revision is required')
-        if self.feature_version != 1 or self.evidence_version != 1:
+        if self.feature_version not in (1, 2) or self.evidence_version not in (1, 2):
             raise ValueError('unsupported ranking feature version')
         if self.stemming != 'snowball-english-v1':
             raise ValueError('unsupported ranking stemming algorithm')
+
+
+@dataclass(frozen=True)
+class ContextualRetrieval:
+    """One pinned contextual proposal family alongside original/expanded static search."""
+    model: EncoderSpec
+    channel_limit: int = 300
+    broad_limit: int = 1200
+    projection_version: int = 1
+
+    def __post_init__(self) -> None:
+        if self.channel_limit <= 0 or self.broad_limit < self.channel_limit:
+            raise ValueError('positive, consistent contextual proposal budgets required')
+        if self.projection_version != 1:
+            raise ValueError('unsupported contextual source projection')
 
 
 @dataclass(frozen=True)
@@ -122,6 +137,7 @@ class RetrievalProfile:
     representation_version: int = 3
     joint: JointRanking | None = None
     evidence: EvidenceRanking | None = None
+    contextual: ContextualRetrieval | None = None
 
     def __post_init__(self) -> None:
         if self.max_tokens <= 0 or self.candidate_limit <= 0 or self.rrf_k <= 0:
@@ -132,6 +148,9 @@ class RetrievalProfile:
             raise ValueError("unsupported representation version; reindex with current profile")
         if self.joint is not None and self.evidence is not None:
             raise ValueError('choose one owner ranking profile')
+        contextual_features = self.evidence is not None and self.evidence.feature_version == 2
+        if contextual_features != (self.contextual is not None):
+            raise ValueError('contextual retrieval and its pinned ranking features are required together')
 
     def vector_revision(self, view: str) -> str:
         spec = getattr(self, view)
@@ -144,6 +163,8 @@ class RetrievalProfile:
         if self.evidence is None:
             # Existing profiles and vector receipts retain their exact identity.
             data.pop('evidence')
+        if self.contextual is None:
+            data.pop('contextual')
         return data
 
     @classmethod
@@ -161,6 +182,10 @@ class RetrievalProfile:
             evidence = dict(data['evidence'])
             evidence['word_model'] = EncoderSpec(**evidence['word_model'])
             data['evidence'] = EvidenceRanking(**evidence)
+        if data.get('contextual') is not None:
+            contextual = dict(data['contextual'])
+            contextual['model'] = EncoderSpec(**contextual['model'])
+            data['contextual'] = ContextualRetrieval(**contextual)
         return cls(**data)
 
     @property
@@ -172,6 +197,9 @@ class RetrievalProfile:
         if self.evidence is not None:
             runtime['evidence'] = tuple((p, _package_version(p)) for p in ('numpy', 'snowballstemmer'))
             runtime['word_model'] = _backend_runtime(self.evidence.word_model.backend)
+        if self.contextual is not None:
+            runtime['contextual'] = tuple((p, _package_version(p)) for p in ('numpy', 'tokenizers', 'onnxruntime'))
+            runtime['contextual_model'] = _backend_runtime(self.contextual.model.backend)
         return hashlib.sha256(json.dumps({'config': self.to_dict(), 'runtime': runtime}, sort_keys=True).encode()).hexdigest()
 
 

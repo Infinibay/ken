@@ -5,6 +5,9 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import replace
 from importlib import import_module
 
+import numpy as np
+
+from ken.retrieval.contextual_features import CONTEXTUAL_FEATURES, contextual_features
 from ken.retrieval.description import OwnerDescription
 from ken.retrieval.evidence_features import FEATURES, evidence_features
 from ken.retrieval.model import Candidate, CodeMatch, EntityKey, SearchRequest
@@ -18,11 +21,13 @@ class EvidenceReranker:
     def __init__(self, model: NumericRanker, encoder: RegisteredEncoder, *,
                  expand_query: Callable[[str], str] | None = None,
                  expansion_revision: str | None = None):
-        if model.features != FEATURES:
+        schemas = (FEATURES, (*FEATURES, *CONTEXTUAL_FEATURES))
+        if model.features not in schemas:
             raise ValueError('numeric model uses an incompatible source feature schema')
         if (expand_query is None) != (expansion_revision is None):
             raise ValueError('query expansion requires its immutable revision')
         self.model, self.encoder = model, encoder
+        self.feature_version = schemas.index(model.features) + 1
         self.expand_query, self.expansion_revision = expand_query, expansion_revision
 
     @staticmethod
@@ -32,7 +37,8 @@ class EvidenceReranker:
 
     def validate(self, spec: EvidenceRanking) -> None:
         if (self.model.fingerprint != spec.model_revision or self.encoder.spec != spec.word_model
-                or self.expansion_revision != spec.expansion_revision):
+                or self.expansion_revision != spec.expansion_revision
+                or self.feature_version != spec.feature_version):
             raise ValueError('owner ranking runtime does not match its pinned profile')
 
     def prepare_query(self, query: str) -> str:
@@ -43,15 +49,21 @@ class EvidenceReranker:
 
     def rank(self, request: SearchRequest, candidates: Sequence[Candidate],
              descriptions: Mapping[EntityKey, OwnerDescription], *,
-             expanded_query: str | None = None) -> list[CodeMatch]:
+             expanded_query: str | None = None, evidence_version: int = 1) -> list[CodeMatch]:
+        if evidence_version not in (1, 2):
+            raise ValueError('unsupported source evidence policy')
         if len(candidates) == 1 and candidates[0].signals.get('exact'):
             return rank_candidates(request, list(candidates))
         expanded = self.prepare_query(request.query) if expanded_query is None else expanded_query
         matrix = evidence_features(request, candidates, descriptions, encoder=self.encoder,
             stem_words=self.stem_words, expanded_query=expanded)
-        scores = self.model.predict(matrix.values)
+        values = (np.column_stack((matrix.values, contextual_features(candidates).values))
+                  if self.feature_version == 2 else matrix.values)
+        scores = self.model.predict(values)
         terms = set(code_tokens(expanded))
         def evidence(candidate: Candidate):
+            if evidence_version == 2:
+                return candidate.passages
             # Retrieval chunks propose an owner; every verified owned region
             # used for its score is also eligible to support its visible answer.
             retrieved = {p.span: p.signals for p in candidate.passages}

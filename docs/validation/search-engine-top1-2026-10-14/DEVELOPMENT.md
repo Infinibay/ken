@@ -12,7 +12,52 @@ preparado. Los 500 ms y el límite fijo de 3–5 s anteriores quedaron reemplaza
 son diagnósticos; no son perfiles elegibles bajo esta condición. Se detuvo la
 medición pesada en curso, preservando sus respuestas y sus fallos.
 
-## Último control completo y límites
+## Última medición de la API: v42
+
+La API experimental obtiene **277/400 (69,25%) de top‑1 estricto**, frente a
+233/400 (58,25%) en v24: 44 aciertos adicionales, 11 puntos porcentuales. Conserva
+las 400 consultas originales, todas las anclas decisivas, los límites de salida
+y la evaluación de archivo y propietario. No hubo consultas omitidas ni errores
+de los 16 procesos. La identidad sola obtiene 290/400 (72,50%).
+
+Cada repositorio se evalúa con un modelo numérico entrenado excluyendo todo ese
+repositorio. El servicio ejecuta la expansión local y los encoders en CPU en
+cada consulta, sobre índices preparados con todo el código fuente. El resultado
+coincide exactamente con el control preparado v38b. Por estrato: EN 169/240
+(70,42%), ES 108/160 (67,50%), implementación 213/320 (66,56%), identidad 44/48
+y pruebas 20/32. La media por repositorio también es 69,25%.
+
+La combinación incorpora propuestas contextuales de código y conserva sus
+scores originales y expandidos para el ranking; no envía código ni consultas a
+inferencia externa. Las propuestas estáticas y contextuales contienen un
+propietario con toda la evidencia necesaria entre los primeros100 en 392/400
+consultas (98%). Esa cobertura es un límite de disponibilidad, no precisión.
+La revisión independiente de los123 fallos distingue110 de ordenamiento con
+propietario elegible disponible,8 de selección del fragmento y5 de partición o
+delegación de la representación actual.
+
+El costo todavía requiere trabajo. En esta corrida concurrente, los p95 por
+repositorio van de 1,00 a 6,87 segundos; el pico RSS del proceso principal va de
+556 a 1129 MiB. Algunos repositorios exceden la referencia de1 segundo por100
+archivos. Son observaciones de la API con JSON completo, no un certificado de
+rendimiento aislado. Los tiempos de carga e indexado se registran por separado.
+
+Recibos y respuestas: `output/development/cpu-contextual-v42-loo/`. Fuente
+congelada: `output/frozen/cpu-contextual-api-v42`, árbol
+`2b27765bff2517ef7ddc804b389edc14286b901fd6f00fff33282311478c5235`.
+Los modelos numéricos de235 características y las ocho señales nuevas fueron
+reproducidos por revisión independiente; 270 pruebas de recuperación/evaluación
+y el chequeo de tipos de seis módulos pasan. Cuarenta consultas reales verifican
+igualdad bit a bit entre el adaptador contextual usado por la API y los vectores
+de consulta del control preparado.
+
+**Todavía no se alcanzó el90%, no se abrió la reserva privada y no se promovió
+el perfil al checkout principal.** La última comparación completa en las1251
+consultas públicas de Semble sigue siendo Ken v21 NDCG@10 macro0,818955 frente
+a Semble0,854385; v42 aún debe medirse allí. No se puede afirmar que superamos
+a Semble con esta mejora en el corpus estricto de400 consultas.
+
+## Controles históricos y límites
 
 Tras corregir el padding/truncado del tokenizer y respetar primero la escritura
 literal de los símbolos, el control completo v15 obtiene **157/400 (39,25%)**

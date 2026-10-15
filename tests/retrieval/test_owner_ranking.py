@@ -146,3 +146,38 @@ def test_public_search_dispatches_pinned_evidence_model_and_rejects_a_mismatch(t
         # Exact identity continues to work even when the optional ranker is absent.
         exact = search(conn, tmp_path, SearchRequest('persist_state'), profile=configured)
         assert exact.results[0]['entity']['qualname'] == 'persist_state'
+
+
+def test_contextual_ranker_pins_its_feature_schema_and_uses_requested_source_policy():
+    from ken.retrieval.contextual_features import CONTEXTUAL_FEATURES
+    from ken.retrieval.description import describe_owner
+    from ken.retrieval.owner_ranking import EvidenceReranker
+    from ken.retrieval.profile import EvidenceRanking
+    from tests.retrieval.test_evidence_features import Encoder
+
+    names = (*FEATURES, *CONTEXTUAL_FEATURES)
+    model = NumericRanker.from_dict({'schema': 1, 'features': names, 'trees': [{
+        'feature': names.index('code_original_raw'), 'threshold': .6,
+        'left': {'value': 0.}, 'right': {'value': 1.}}]})
+    first = candidate('mentions', .3, 'persist(durable, cookie)')
+    second = candidate('stores', .1, 'begin_transaction()')
+    for c, value in [(first, .1), (second, .9)]:
+        c.signals.update(cosine_code_original=value, cosine_code_expanded=value)
+    last = replace(second.passages[0], span=Span(50, 51),
+        fields={**second.passages[0].fields, 'body': 'persist(durable, cookie)'})
+    descriptions = {c.entity: describe_owner(c.passages) for c in [first, second]}
+    descriptions[second.entity] = describe_owner([*second.passages, last])
+    encoder = Encoder(); encoder.spec = WORD_MODEL
+    ranker = EvidenceReranker(model, encoder)
+    spec = EvidenceRanking(model.fingerprint, WORD_MODEL, feature_version=2, evidence_version=2)
+    ranker.validate(spec)
+    with pytest.raises(ValueError, match='pinned'):
+        ranker.validate(replace(spec, feature_version=1))
+
+    matches = ranker.rank(SearchRequest('persist durable cookie'), [first, second],
+                          descriptions, evidence_version=2)
+    assert matches[0].entity == second.entity
+    assert [p.span for p in matches[0].evidence] == [second.passages[0].span]
+    complete = ranker.rank(SearchRequest('persist durable cookie'), [first, second],
+                           descriptions, evidence_version=1)
+    assert {p.span for p in complete[0].evidence} == {second.passages[0].span, last.span}
