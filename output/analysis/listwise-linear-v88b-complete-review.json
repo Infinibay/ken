@@ -1,0 +1,278 @@
+{
+  "status": "completed_negative_control_verified;fixed_gate_not_met",
+  "scope": "Independent final88b exported head/objective/gradient, all800 response replay and unchanged strict scorer. No optimizer, fits, source/reference/model/marker changes or private reserve access.",
+  "engine_receipt": "ba6e660786f6627fd0af8b31d10a63b714255abb27f411f5cbd95e460ed87387",
+  "ranking_registration_sha256": "5cbba7859ff65df3d7a9c901da5b734acc4038ad8145ae28b439dbc57ffb363d",
+  "controller_sha256": "5ffb5c5df97f61a50cad46af9e850ada4ef72d8a7b3d122e5233f8004562c50b",
+  "unchanged_marker_sha256": "94db7c122808fd40c35e625818cc0ca491b9964e4824efad1268809471929500",
+  "physical_source_files": 6314,
+  "parent_bindings": 51,
+  "source_bindings": 64,
+  "all167360x251_row_target_bindings_exact": true,
+  "training_queries": 358,
+  "exact_training_skips": 37,
+  "no_positive_training_skips": 5,
+  "all16_saved_weights_loss_gradients_export_scores_verified": true,
+  "folds": [
+    {
+      "held_out": "ajv",
+      "training_queries": 336,
+      "training_rows": 154196,
+      "iterations": 663,
+      "evaluations": 719,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 165.86491018700283,
+      "independent_max_abs_gradient": 1.745327407798314e-05,
+      "strong_convex_suboptimality_upper_bound": 8.341544537790955e-10,
+      "saved_model_sha256": "804f723f162e7fbbbaa031a7f301780aa7754ad4eb01c3f44f53f6e79e22eb5a",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "anyhow",
+      "training_queries": 334,
+      "training_rows": 157182,
+      "iterations": 646,
+      "evaluations": 708,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 168.438998737745,
+      "independent_max_abs_gradient": 6.974537811621495e-06,
+      "strong_convex_suboptimality_upper_bound": 2.1351614931644497e-10,
+      "saved_model_sha256": "fe119e084a2c6568c34b78ab0ddb99281565500b8acaa5dbae42c641ebe3e399",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "attrs",
+      "training_queries": 334,
+      "training_rows": 153584,
+      "iterations": 628,
+      "evaluations": 676,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 171.84558857513375,
+      "independent_max_abs_gradient": 9.275242381256987e-06,
+      "strong_convex_suboptimality_upper_bound": 3.586783928573308e-10,
+      "saved_model_sha256": "6a250ebd395767754a80882851d115554f58a6f97d8195d67b6a78b1841711c9",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "bbolt",
+      "training_queries": 335,
+      "training_rows": 154648,
+      "iterations": 656,
+      "evaluations": 723,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 173.00618786000666,
+      "independent_max_abs_gradient": 1.882811110043292e-05,
+      "strong_convex_suboptimality_upper_bound": 1.344254785191966e-09,
+      "saved_model_sha256": "bbf616962956175bf1f6a8109139626fbd85231f4151562a6d3d75ac168acc51",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "boltons",
+      "training_queries": 337,
+      "training_rows": 153930,
+      "iterations": 666,
+      "evaluations": 717,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 177.71449281825488,
+      "independent_max_abs_gradient": 2.8989232388809683e-05,
+      "strong_convex_suboptimality_upper_bound": 4.008650520375307e-09,
+      "saved_model_sha256": "abca364583d347ade87228d8f7ec1e2e7dea6e396b245c5f2f90f9609b0ced37",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "commons-csv",
+      "training_queries": 336,
+      "training_rows": 154750,
+      "iterations": 669,
+      "evaluations": 732,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 165.24494254921174,
+      "independent_max_abs_gradient": 5.68460545746774e-06,
+      "strong_convex_suboptimality_upper_bound": 1.5091116551547796e-10,
+      "saved_model_sha256": "207e4453f8082f6f657d1fb0988627b25dfbcd0855decc96a526c1413031883b",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "dayjs",
+      "training_queries": 335,
+      "training_rows": 155165,
+      "iterations": 646,
+      "evaluations": 688,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 174.41468280988624,
+      "independent_max_abs_gradient": 1.57685411297237e-05,
+      "strong_convex_suboptimality_upper_bound": 9.244063682162678e-10,
+      "saved_model_sha256": "97da3db90d2e2851bd42a158ce7ee09cb0f5a19b0035638940e003283753763b",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "fsnotify",
+      "training_queries": 336,
+      "training_rows": 157484,
+      "iterations": 662,
+      "evaluations": 720,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 165.66783416541574,
+      "independent_max_abs_gradient": 6.4979692246947e-06,
+      "strong_convex_suboptimality_upper_bound": 1.7477138894310414e-10,
+      "saved_model_sha256": "34df23c1db69a14af7e007782b7ff1a18e3a8fefcb3ef5b287ebed1ba21ada33",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "junit5",
+      "training_queries": 334,
+      "training_rows": 150472,
+      "iterations": 645,
+      "evaluations": 701,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 164.8956172971702,
+      "independent_max_abs_gradient": 9.872286840462152e-06,
+      "strong_convex_suboptimality_upper_bound": 3.3356727728094907e-10,
+      "saved_model_sha256": "994652c79d7fa56e428b7a247ae5aca89e2c11de1f9522a9a35e904790b14f7f",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "logrus",
+      "training_queries": 336,
+      "training_rows": 156036,
+      "iterations": 623,
+      "evaluations": 676,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 171.6768488335218,
+      "independent_max_abs_gradient": 1.208223991691626e-05,
+      "strong_convex_suboptimality_upper_bound": 5.799107912226949e-10,
+      "saved_model_sha256": "37fc0e0fd1616d38de38adcc9003e5d29c54b28b4869d1f8ae6f9f2482c4bdf3",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "marked",
+      "training_queries": 339,
+      "training_rows": 156115,
+      "iterations": 654,
+      "evaluations": 710,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 183.14425566736992,
+      "independent_max_abs_gradient": 9.792382982098946e-06,
+      "strong_convex_suboptimality_upper_bound": 4.391963253470229e-10,
+      "saved_model_sha256": "e9b7bb8cc99577a53913fb44a7e10f4a46a58ad543f962e8e59669697b43addd",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "packaging",
+      "training_queries": 336,
+      "training_rows": 154055,
+      "iterations": 628,
+      "evaluations": 687,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 166.1949074550982,
+      "independent_max_abs_gradient": 3.221468990544096e-05,
+      "strong_convex_suboptimality_upper_bound": 4.523447461560681e-09,
+      "saved_model_sha256": "5178ad1d9499a35e75741221f10339b7328f7d19bd65b6b62ef4cfdbbd535c0d",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "petgraph",
+      "training_queries": 336,
+      "training_rows": 153205,
+      "iterations": 649,
+      "evaluations": 701,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 168.18611485569423,
+      "independent_max_abs_gradient": 5.649393810397418e-06,
+      "strong_convex_suboptimality_upper_bound": 1.7369573704944828e-10,
+      "saved_model_sha256": "87e3e1603a4cdc3aa0d590af30dcfa56ab335e0530e7ac065bd9f5e7bfb7923f",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "pytest",
+      "training_queries": 336,
+      "training_rows": 152852,
+      "iterations": 629,
+      "evaluations": 676,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 169.5095260385886,
+      "independent_max_abs_gradient": 2.5307612050884387e-05,
+      "strong_convex_suboptimality_upper_bound": 1.8014876900796643e-09,
+      "saved_model_sha256": "eb3ad04a891944e361c09d8a50d40f8049d1da6dcf6ac0ea9daf51c5ca710472",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "regex",
+      "training_queries": 334,
+      "training_rows": 152234,
+      "iterations": 644,
+      "evaluations": 700,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 157.56385895909412,
+      "independent_max_abs_gradient": 3.204881993812414e-05,
+      "strong_convex_suboptimality_upper_bound": 3.455876641335001e-09,
+      "saved_model_sha256": "bed9b93f0a799c5d3e5e5cfb34f5e6d04148bfa605787d38fed955eb1e5faeba",
+      "raw_payload_bytes": 6024
+    },
+    {
+      "held_out": "semver",
+      "training_queries": 336,
+      "training_rows": 159317,
+      "iterations": 640,
+      "evaluations": 695,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "independent_loss": 173.45974191155406,
+      "independent_max_abs_gradient": 6.258006588340248e-05,
+      "strong_convex_suboptimality_upper_bound": 9.257749163349932e-09,
+      "saved_model_sha256": "92eeac2a321a13949d00f6e8a3d33bd3c1ea4f876d7db71ce9887c937cd3d80d",
+      "raw_payload_bytes": 6024
+    }
+  ],
+  "all800_full_response_objects_exact": 800,
+  "all_visible_hits_source_and40line_budgets_verified": 7000,
+  "maximum_JSON_characters": 12000,
+  "maximum_evidence_lines": 40,
+  "postbudget_result_count_changes_linear_vs_baseline": 104,
+  "original_scorer_equal74b": true,
+  "all400_original_scorer_reports_exact": true,
+  "baseline_API81_owner_order_evidence_and_nonexact_scores_exact": true,
+  "baseline_API81_metadata_differences": {
+    "profile_version": 400,
+    "exact_score": 37
+  },
+  "results": {
+    "baseline": {
+      "strict": {
+        "hits": 286,
+        "total": 400,
+        "rate": 0.715
+      },
+      "identity": {
+        "hits": 298,
+        "total": 400,
+        "rate": 0.745
+      },
+      "missing": []
+    },
+    "linear": {
+      "strict": {
+        "hits": 274,
+        "total": 400,
+        "rate": 0.685
+      },
+      "identity": {
+        "hits": 285,
+        "total": 400,
+        "rate": 0.7125
+      },
+      "missing": []
+    }
+  },
+  "response_sha256": {
+    "baseline": "889626f6c3c08ec650283e9faff63baf9519d821d820fa3d9f0481be67e2c944",
+    "linear": "66925520437ce185776c824b0c0d477cf25ce6137d9f24dd9f6c6720783673a9"
+  },
+  "observed_whole_harness_peak_rss_native_bytes": 2521055232,
+  "no_optimizer_imported_or_run_by_reviewer": true,
+  "limits": [
+    "Observed convergence applies to the fixed finite251 training matrix and registered ridge1 objective; no new optimizer settings or ranking variants were selected.",
+    "The 16 exported heads have 96384 raw float64 bytes in total; metadata and existing retrieval/feature/encoder assets are additional.",
+    "Harness RSS includes feature matrices, optimizer, replay and scoring; it is not live search API memory or latency.",
+    "All400 original strict queries remain graded including37 exact and5 no-positive training skips;274/400 is negative against baseline286 and fixed+5 gate."
+  ]
+}

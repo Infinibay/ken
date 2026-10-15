@@ -8,15 +8,14 @@ de Ken en esos mismos casos es 286/400 (71,5%): exige además entidad o fragment
 admitido y todas las líneas decisivas visibles. El 51% nunca fue esa métrica.
 
 En las 1251 consultas públicas de Semble, el último resultado completo de Ken
-es NDCG@10 macro 0,8365028636773735 y top1 906/1251 (72,42%). Semble conserva
+es76b: NDCG@10 macro 0,8417179643305033 y top1 913/1251 (72,98%). Semble conserva
 0,8543853795900258 y 935/1251 (74,74%). Por lo tanto no hay una contradicción:
 Ken gana el diagnóstico de archivo de nuestros casos de desarrollo y pierde
 la comparación pública externa. Los 400 casos están expuestos al proceso de
 investigación; no sustituyen la reserva intacta ni demuestran generalización.
-También difiere la versión: el resultado público corresponde al perfil48
-(fuente5,235 señales); los400 actuales usan API81 (fuente7,251 señales y
-política3 de evidencia). La repetición pública76b de esta base está pendiente;
-no se trasladan los resultados de un perfil a otro sin ejecutarlo completo.
+La ejecución pública76b ya completó fuente7,251 señales y política3 de
+evidencia sobre sus 1251 consultas. Reemplaza al resultado público anterior48
+(fuente5,235 señales); no se trasladaron cifras entre versiones sin ejecutarlas.
 
 Los cálculos actuales de archivo sobre400 conservan los hashes de dataset,
 respuestas y script en `output/development/ken-semble-file-ndcg-400-v81.json`
@@ -44,16 +43,43 @@ formateador muestra al agente. Consultas y referencias fueron generadas y
 revisadas por un LLM según su documentación. Esto evalúa descubrimiento de
 código y ranking; no demuestra función precisa y toda evidencia visible en top1.
 
-Ken todavía no tiene un resultado comparable sobre ese benchmark completo.
-Nuestro 37,75% histórico de top1 estricto no se puede comparar directamente
-con su 0,854. La comparación común ya ejecutada usa nuestras mismas 400
-consultas y las salidas de ambos motores: archivo top1 60,25% vs 51%; archivo
-y todas las anclas visibles 37,75% vs 16,25%. Véase `SEMBLE-400.md` para las
-limitaciones del adaptador externo y el control experimental de Ken utilizado.
+En la comparación inicial, anterior a las ejecuciones públicas completas, Ken
+tenía 37,75% de top1 estricto. Esa cifra histórica tampoco era comparable con
+el 0,854 de Semble. El diagnóstico común de archivo inicial sobre400 era
+60,25% vs51%; archivo y todas las anclas visibles era37,75% vs16,25%.
+Esos resultados antiguos, incluidos los límites del adaptador externo,
+se conservan en `SEMBLE-400.md`; no reemplazan la tabla vigente siguiente.
 
 Podemos añadir NDCG como diagnóstico complementario sobre conjuntos con
 referencias de relevancia adecuadas. No reemplaza el gate aprobado de al menos
 90% de top1 estricto, ni permite convertir un resultado de top10 en top1.
+
+Comparación pública76b cerrada por revisión independiente ALL1251/63: cero
+errores, faltantes o respuestas vacías; scorer oficial y3753 cálculos por ID
+exactos. El resultado anterior48 era0,8365028636773735/906top1.76b mejora0,0052151
+puntos macro pero aún queda0,0126674 debajo de Semble. No atribuir ese delta a
+una sola señal: cambian fuentes, vistas, perfil y evidencia.1217consultas sólo
+piden archivo;34 incluyen algún rango y basta solaparlo. Tres top1 de rango
+reciben crédito por entity_span más amplio que los fragmentos mostrados, según
+la regla oficial intacta. Esto no satisface nuestra aceptación ALLanclas.
+
+| Conjunto y métrica vigente | Ken | Semble |
+|---|---:|---:|
+| 400desarrollo: archivo top1 |345/400(86,25%)|204/400(51%)|
+| 400desarrollo: NDCG@10 de archivo |0,934364|0,688706|
+| 1251públicas: NDCG@10 macro original |0,841718|0,854385|
+| 1251públicas: top1 original archivo/rango |913/1251(72,98%)|935/1251(74,74%)|
+
+El estricto vigente de Ken es286/400(71,5%), sin90% ni aceptación privada abierta.
+NDCG mide también las posiciones2–10: incluso con mismas consultas, ganar top1
+no garantiza ganar NDCG. Por ejemplo, con una referencia por consulta,70aciertos
+primeros y30fuera de10 dan top1/NDCG0,70;60primeros y40segundos dan top10,60 pero
+NDCG0,60+0,40/log2(3)=0,8524. No convertir NDCG en porcentaje de top1.
+
+Recibos vigentes: output/analysis/semble-source7-views-v76b-scoring-review.json,
+...-mechanical-review.json y ...-complete-review.json; diagnóstico400 en
+output/analysis/file-ranking-v81-diagnostic-review.json. Los apartados posteriores
+se conservan como historia y sus versiones antiguas no reemplazan estas cifras.
 
 ## Diagnóstico común calculado después de la consulta del usuario
 

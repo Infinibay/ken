@@ -1,0 +1,174 @@
+{
+  "status": "conditional_raw_owner_learning_gap_diagnostic_verified",
+  "scope": "Independent91 bindings/ALL5728rows/formulas/conditional denominators only, using existing89saved scores and y/qid/repo. No query text, references, source tuning, model training, private reserve or marker writes.",
+  "diagnostic_report_sha256": "c605c11f499627fe5992ed5f2f91bb777f0d43afe8ea9abc92da4e6df79d03c7",
+  "verified89_registration_sha256": "c94bca32b4f613e53ad3f7535d334e71cec5eb424d8ab0456d8b2a3c7101b48a",
+  "rows_sha256": "ceb6d828f75c65a4d91d87ad8cf9e616119ce66ea15e9ebaf48bb1cce655d844",
+  "all5728_occurrence_records_exact": true,
+  "all16_saved_training_score_rows_memberships_and_exclusions_exact": true,
+  "summary": {
+    "training": {
+      "query_occurrences": 5370,
+      "unique_queries": 358,
+      "raw_owner_top1_hits": 5370,
+      "raw_owner_top1_rate": 1.0,
+      "positive_probability_percentiles": {
+        "min": 0.6901515712399272,
+        "p25": 0.9565114597665886,
+        "p50": 0.978097844229864,
+        "p75": 0.9938748055224647,
+        "max": 0.9999841104255839
+      },
+      "margin_percentiles": {
+        "min": 1.6733235611063888,
+        "p25": 3.7301028851118145,
+        "p50": 4.483917495969952,
+        "p75": 5.894339478724795,
+        "max": 13.676276345203297
+      }
+    },
+    "held": {
+      "query_occurrences": 358,
+      "unique_queries": 358,
+      "raw_owner_top1_hits": 235,
+      "raw_owner_top1_rate": 0.6564245810055865,
+      "positive_probability_percentiles": {
+        "min": 1.4534251663970821e-05,
+        "p25": 0.18125566326535053,
+        "p50": 0.7681438065970936,
+        "p75": 0.9728086738477256,
+        "max": 0.9999806625648046
+      },
+      "margin_percentiles": {
+        "min": -10.831489026170113,
+        "p25": -1.040344812253616,
+        "p50": 1.627568085310477,
+        "p75": 4.385856542574067,
+        "max": 13.248469876707835
+      }
+    }
+  },
+  "folds": [
+    {
+      "held_out": "ajv",
+      "training_queries": 336,
+      "held_queries": 22,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "anyhow",
+      "training_queries": 334,
+      "held_queries": 24,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "attrs",
+      "training_queries": 334,
+      "held_queries": 24,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "bbolt",
+      "training_queries": 335,
+      "held_queries": 23,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "boltons",
+      "training_queries": 337,
+      "held_queries": 21,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "commons-csv",
+      "training_queries": 336,
+      "held_queries": 22,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "dayjs",
+      "training_queries": 335,
+      "held_queries": 23,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "fsnotify",
+      "training_queries": 336,
+      "held_queries": 22,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "junit5",
+      "training_queries": 334,
+      "held_queries": 24,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "logrus",
+      "training_queries": 336,
+      "held_queries": 22,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "marked",
+      "training_queries": 339,
+      "held_queries": 19,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "packaging",
+      "training_queries": 336,
+      "held_queries": 22,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "petgraph",
+      "training_queries": 336,
+      "held_queries": 22,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "pytest",
+      "training_queries": 336,
+      "held_queries": 22,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "regex",
+      "training_queries": 334,
+      "held_queries": 24,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    },
+    {
+      "held_out": "semver",
+      "training_queries": 336,
+      "held_queries": 22,
+      "all_training_npz_rows_expected_and_whole_repo_excluded": true
+    }
+  ],
+  "multiplicity_by_query": {
+    "training": {
+      "15": 358
+    },
+    "held": {
+      "1": 358
+    }
+  },
+  "queries_with_max_score_ties": {
+    "training": 0,
+    "held": 0
+  },
+  "original_strict89_remains": {
+    "hits": 265,
+    "total": 400,
+    "rate": 0.6625
+  },
+  "limits": [
+    "The5370training occurrences are15repeated fitted-head evaluations of358queries, not5370independentqueries or cross-validation held results. Every eligiblequery occurs once in held358.",
+    "Raw top1 uses the first maximum original-pool index, without exact authority, evidence selection, JSONbudget, or faithful visible-anchor scoring. Eligibility is original whole-owner y, not new semantic adjudication.",
+    "Excluding37exact and5no-positive queries is appropriate only for this conditional358 diagnostic; strict acceptance remains ALL400,265hits.",
+    "Softmax probabilities and positive-minus-best-negative margins are within each saved list; they are not calibrated probabilities across queries/models and do not predict API acceptance.",
+    "Training100% and held235/358 show a gap on these fixed data. They do not identify a causal mechanism, prove optimizer/globalminimum quality, or establish transfer to arbitrary repositories/private reserve.",
+    "The diagnostic script checks native/export file hashes, not fresh native inference. Exact native-prefix/export/train/held prediction parity was independently established in choice-trees-v89-complete-review for the same registration."
+  ]
+}

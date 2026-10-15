@@ -376,3 +376,63 @@ Continuidad13:35UTC (prevalece sobre los estados pendientes históricos):
   Ken0,8365028636773735 vsSemble0,8543853795900258,906vs935top1.
 - La reserva privada continúa sin abrir, no hay promoción al checkout original
   ni afirmación de90% o de superar el benchmark público.
+
+
+Cierre público76b y control88b:
+-76b ALL1251/63 verificado con scorer original y3753 cálculos independientes:
+  macro0,8417179643305033,micro0,8423448654161679,top1913/1251,hit10=0,96882494;
+  Semble0,8543853795900258/0,8546561630661982/935. Cero missing/error/empty/exits.
+  Revisados7453hits contrafuente/owner/extent y presupuestos. Las34consultas con
+  rango usan solapamiento, no ALLlíneas visibles;3top1 de rango acreditan sólo
+  por entity_span fuera de losfragmentos visibles. Se preserva scorer original.
+  Recursos concurrentes: p50490,12ms,p951752,03ms,p9911842ms,max13637ms,
+  RSS901038080B. No certificado aislado ni comparación causal con timing nativo
+  de Semble (mediana de5corridas guardadas de un protocolo previo).
+-88b terminó16fitsCPU, todos convergentes congradiente<=1e-4/exportexacto;
+  baseline286/298 y lineal274/285, ALL400/0missing. No pasa+5: se descarta.
+  Revisión final independiente en curso. No nueva calidad API ni default.
+-89 define una única CE por consulta con los mismos raw251features/160árboles,
+  sin otroencoder.14tests y27combinados pasan/mypy1. Freeze589archivos,
+  tree8ace0730586ffc0a19d4faffca3265d348d14de7265f0439bd34bf075256fbe3,
+  receipt5ab6da502c32b858383bec48b06e37b571ef7a74d4e2ae405ffff9f1755273c2.
+ 16normalizadores/manifests preparados y0fits,espera PRE-FIT independiente.
+  Texto literal del protocolo se envió en la misma llamada que devolvió primer
+  resultado88b; no hay adaptación de parámetros a esa calidad ni entrenamiento89.
+
+
+Continuidad posterior: controles88b–92 y curación auxiliar (aceptación intacta):
+-88b y89 terminaron y cerraron revisión independiente completa. Lineal251:
+ 274/400estrictos,285identidad. CE por consulta con160árboles:265/400,278identidad.
+ Baseline286/298 reproducido,0missing,ALL400/16repos. Ninguno pasa+5; no adopción.
+ Los 16 normalizadores de89 sólo preparan su pérdida original; no hubo HPO.
+-90 añade33señales de verbos VB* a las251, reutilizando cobertura semántica
+ existente sobre executable/calls/returns. POS fijo NLTK3.9.2/JSON MIT oficial,
+ sin reglas hechas con respuestas ni modelo pesado adicional. Matriz completa
+ 167360x33recodificada independientemente y16fits375grupos/160árboles revisados.
+ Resultado283/400estrictos y295identidad; baseline286/298,0missing. Se descarta.
+ 40testsfocales y mypy4 pasan. POS diagnóstico: coldimport+modelo3490,958ms,
+ p95tagging0,425212ms,proceso206553088B. No es recursos API ni costo incremental.
+ Arnés de ajuste90pico3023306752B; no se incorpora NLTK al runtime del motor.
+-91 mide únicamente listas numéricas ya guardadas de89, sin nuevos fits,
+ lecturas de consultas/referencias ni cambios de aceptación. Entrenamiento:
+ 5370/5370ocurrencias(358consultas repetidas15veces); repos retenidos235/358.
+ Son argmax crudos de grupos entrenables, sin exactauthority ni evidencia
+ visible; no son la métrica ALL400, que para89permanece265/400. El gap observado
+ justifica investigar transferencia, no demuestra una causa única. Revisión
+ independiente5728filas y fórmulas exactas cerrada.
+-92 prueba un único tratamiento de empates sobre15rangos de251: reciprocal
+ del rango promedio empatado, canal constante neutro0. Otros236features y
+ 37bypasses naturales exactos intactos. El rango ordinal anterior es una
+ definición válida; esto no se presenta como bug universal ni mejora probada.
+ Helper9tests/mypy1 y propiedades independientes1806vectores/116715valores
+ pasan. Freeze599archivos/receipt dc63117ba6e8ab49e53db5781ccc7b96ab8253e0a70817ab56b1bbab47573d8c.
+ Preparación167360x251/6000canales/16folds completa; gate PRE-FIT cerrado hasta
+ revisión independiente exacta. No resultado de calidad92 todavía.
+- Curador autorizado prepara piloto96consultas auxiliares/8repos nuevos,
+ 64EN32ES, fuente primero y sin rankings/modelos para elegirlas. Contrasta
+ metadatos de disjunción16dev/63públicos/12reserva sin abrir preguntas ni
+ referencias privadas. Uso previsto sólo entrenamiento adicional; no sustituye
+ los400casos originales ni la reserva. Root no lee el piloto hasta sellado.
+- Mejor API vigente286/400(71,5%) estricto; público76b macroNDCG0,8417179643
+ frente a Semble0,8543853796. Ningún90%, reserva intacta/default original sin
+ promover. Recursos de arnés concurrente no certifican CPU/RAM del API final.
