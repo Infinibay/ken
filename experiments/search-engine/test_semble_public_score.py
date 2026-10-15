@@ -37,6 +37,25 @@ class OfficialAdapterTests(unittest.TestCase):
         self.assertEqual(result['macro_repo_ndcg10'], .5)
         self.assertAlmostEqual(result['micro_query_ndcg10'], 2/3)
 
+    def test_official_span_overlap_can_pass_when_visible_fragment_misses(self):
+        from benchmarks.data import Target, Task
+        tasks = [Task('a', 'python', 'q', (Target('x', 140, 145),), (), 'semantic')]
+        rows = {'semble-0000': {'results': [{'path': 'x',
+            'entity_span': {'start_line': 1, 'end_line': 180},
+            'evidence': [{'start_line': 100, 'end_line': 110}]}]}}
+        self.assertEqual(evaluate_rows(tasks, rows)['macro_repo_ndcg10'], 1)
+        self.assertEqual(evaluate_rows(tasks, rows, visible=True)['macro_repo_ndcg10'], 0)
+
+    def test_two_targets_sharing_one_chunk_do_not_manufacture_two_rank_slots(self):
+        from benchmarks.data import Target, Task
+        tasks = [Task('a', 'python', 'q', (Target('x', 5, 10),),
+                      (Target('x', 90, 95),), 'semantic')]
+        rows = {'semble-0000': {'full_results': [{'chunk': {
+            'file_path': 'x', 'start_line': 1, 'end_line': 100, 'content': 'source'}}]}}
+        value = evaluate_rows(tasks, rows)
+        self.assertEqual(value['per_query'][0]['relevant_ranks'], [1, 1])
+        self.assertAlmostEqual(value['macro_repo_ndcg10'], 1/(1+1/math.log2(3)))
+
 
 if __name__ == '__main__':
     unittest.main()

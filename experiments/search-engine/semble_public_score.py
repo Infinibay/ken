@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import inspect
 import json
 from collections import defaultdict
 from pathlib import Path
@@ -73,6 +74,8 @@ def main():
     parser.add_argument('--tool-root', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
+    if Path(inspect.getfile(ndcg_at_k)).resolve() != (args.tool_root/'benchmarks/metrics.py').resolve():
+        raise ValueError('scorer must be imported from the registered Semble checkout')
     tasks = load_tasks(load_repo_specs())  # ALL specs, never available_repo_specs filtering.
     outputs = {}
     for engine in ('ken', 'semble'):
@@ -84,6 +87,9 @@ def main():
                         raise ValueError('duplicate query response')
                     target[row['id']] = response
     expected = {f'semble-{i:04d}' for i in range(len(tasks))}
+    if set(outputs) != {'ken-symbol-api', 'ken-file-api', 'ken-symbol-role',
+                        'ken-file-role', 'semble-native'}:
+        raise ValueError('all registered comparison modes required')
     if any(set(rows)-expected for rows in outputs.values()):
         raise ValueError('unexpected query IDs')
     reports = {mode: evaluate_rows(tasks, rows) for mode, rows in outputs.items()}
@@ -91,6 +97,7 @@ def main():
     sources = [args.tool_root/'benchmarks'/name for name in ('data.py', 'metrics.py', 'repos.json')]
     sources += sorted((args.tool_root/'benchmarks/annotations').glob('*.json'))
     report = {'protocol': 'semble-public-protocol-v1', 'queries': len(tasks),
+        'adapter_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'source_hashes': {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
         'native_unit': reports, 'visible_prefix_overlap': visible}
     args.output.write_text(json.dumps(report, indent=2))

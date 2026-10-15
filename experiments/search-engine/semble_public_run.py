@@ -38,15 +38,19 @@ def export(args):
     args.output.mkdir(parents=True, exist_ok=False)
     (args.output/'requests').mkdir()
     rows = []
+    verified = {}
     for i, task in enumerate(tasks):
         spec = specs[task.repo]
         checkout = args.repo_root/task.repo
         root = checkout/spec.benchmark_root if spec.benchmark_root else checkout
-        head = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
-        if head != spec.revision:
-            raise ValueError('wrong corpus revision')
-        if subprocess.check_output(['git', '-C', str(root), 'status', '--porcelain'], text=True):
-            raise ValueError('dirty benchmark repository')
+        if task.repo not in verified:
+            head = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
+            if head != spec.revision:
+                raise ValueError('wrong corpus revision')
+            if subprocess.check_output(['git', '-C', str(root), 'status', '--porcelain'], text=True):
+                raise ValueError('dirty benchmark repository')
+            verified[task.repo] = head
+        head = verified[task.repo]
         rows.append({'id': f'semble-{i:04d}', 'repo_id': task.repo, 'repo_commit': head,
                      'query': task.query, 'root': str(root.resolve())})
     (args.output/'requests.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in rows))
@@ -69,9 +73,10 @@ def request_rows(path):
         raise ValueError('unique public-only requests required')
     if len({r['root'] for r in rows}) != 1:
         raise ValueError('one repository per isolated worker')
-    for r in rows:
-        if subprocess.check_output(['git', '-C', r['root'], 'rev-parse', 'HEAD'], text=True).strip() != r['repo_commit']:
-            raise ValueError('source revision changed')
+    if len({r['repo_commit'] for r in rows}) != 1:
+        raise ValueError('one revision per isolated worker')
+    if subprocess.check_output(['git', '-C', rows[0]['root'], 'rev-parse', 'HEAD'], text=True).strip() != rows[0]['repo_commit']:
+        raise ValueError('source revision changed')
     return rows
 
 
