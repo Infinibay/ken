@@ -20,7 +20,11 @@ def main():
     p.add_argument('--source-metadata',type=Path,required=True)
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--reuse-baseline',type=Path)
+    p.add_argument('--baseline-only',action='store_true')
     p.add_argument('--preflight',action='store_true');args=p.parse_args()
+    if args.baseline_only and args.reuse_baseline:
+        p.error('--baseline-only regenerates cards and cannot reuse an earlier baseline')
+    arms=('baseline',) if args.baseline_only else ('baseline','17m','32m','68m')
     w=args.workspace.resolve();frozen=w/'output/frozen/cpu-rank-consensus-v97b'
     args.output.mkdir(parents=True,exist_ok=False)
     scripts=Path(__file__).parent
@@ -28,7 +32,7 @@ def main():
         'verifiable_pieces.py','ettin_cpu.py','cpu-verifiable-pieces-v98.md',
         'contextual_run.py','source_view_assets.py','verifiable_catalog.py','test_verifiable_pieces.py',
         'verifiable_guard.py','verifiable_grading.py','verifiable_blind_inputs.py',
-        'verifiable_report.py','test_verifiable_grading.py')]
+        'verifiable_report.py','test_verifiable_grading.py','test_verifiable_owned_definitions.py')]
     source_files += [w/'output/models/ettin-all-onnx-v98'/size/'assembly.json'
                      for size in ('17m','32m','68m')]
     source_files += [w/'output/analysis/verifiable-pieces-catalog-v98/receipt.json',
@@ -53,10 +57,10 @@ def main():
             assert Counter(c['language'] for c in rows)=={'en':30,'es':20}
             assert Counter(c['query_style'] for c in rows)=={'behavior':40,'qualified_lookup':10}
     engine_receipt=sha(frozen/'SOURCE-MANIFEST.json')
-    metadata={'scope':'public-only ALL cases baseline+Ettin17/32/68, serial full prepared pipeline',
+    metadata={'scope':'public-only ALL cases selected arms, serial full prepared pipeline',
         'public_cases_sha256':sha(args.public_cases),'source_metadata_sha256':sha(args.source_metadata/'manifest.json'),
         'engine_manifest_sha256':engine_receipt,'preparation':preparation,
-        'source_files':pins,'preflight':args.preflight,'runs':[]}
+        'source_files':pins,'preflight':args.preflight,'arms':arms,'runs':[]}
     (args.output/'registration.json').write_text(json.dumps(metadata,indent=2))
     environment=dict(os.environ,PYTHONPATH=str(frozen/'src')+os.pathsep+str(scripts.resolve()),
         TOKENIZERS_PARALLELISM='false',HF_HUB_OFFLINE='1',OMP_NUM_THREADS='1',
@@ -86,6 +90,7 @@ def main():
         schedule=[]
         (args.output/'registration.json').write_text(json.dumps(metadata,indent=2))
     for i,repo in enumerate(repos):
+        if args.baseline_only:break
         sizes=['17m','32m','68m'];sizes=sizes[i%3:]+sizes[:i%3]
         schedule.extend((size,repo) for size in sizes)
     for arm,repo in schedule:
@@ -119,7 +124,7 @@ def main():
         for suffix in ('','-wal','-shm'):
             path=Path(str(index)+suffix)
             if path.exists():path.unlink()
-    for arm in ('baseline','17m','32m','68m'):
+    for arm in arms:
         rows=[];timings=[];resources=[]
         for repo in repos:
             out=args.output/arm/repo
@@ -131,10 +136,10 @@ def main():
         path=args.output/arm/'answers.jsonl';path.write_text(''.join(json.dumps(r,ensure_ascii=False)+'\n' for r in rows))
         (args.output/arm/'performance.json').write_text(json.dumps({'timings':timings,'processes':resources},indent=2))
     metadata['closed']={arm:{'answers_sha256':sha(args.output/arm/'answers.jsonl'),
-        'performance_sha256':sha(args.output/arm/'performance.json')} for arm in ('baseline','17m','32m','68m')}
+        'performance_sha256':sha(args.output/arm/'performance.json')} for arm in arms}
     metadata['closed_workers']={arm:{repo:{name:sha(args.output/arm/repo/name)
         for name in ('answers.jsonl','pools.jsonl','performance.json')} for repo in repos}
-        for arm in ('baseline','17m','32m','68m')}
+        for arm in arms}
     metadata['status']='ALL outputs closed without Gold or quality grading'
     (args.output/'registration.json').write_text(json.dumps(metadata,indent=2))
 

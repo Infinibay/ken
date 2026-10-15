@@ -20,7 +20,7 @@ def main():
         raise ValueError('all model outputs must close before principal blind input')
     cases={c['id']:c for c in map(json.loads,a.public_cases.read_text().splitlines())}
     if sha(a.public_cases)!=reg['public_cases_sha256']:raise ValueError('public cases changed')
-    arms=('baseline','17m','32m','68m');answers={}
+    arms=tuple(reg['closed']);answers={}
     for arm in arms:
         path=a.comparison/arm/'answers.jsonl'
         if sha(path)!=reg['closed'][arm]['answers_sha256']:raise ValueError('answers changed')

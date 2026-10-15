@@ -61,7 +61,7 @@ def main():
         if gold[qid]['public_case_sha256']!=digest(case):raise ValueError('Gold public-row hash mismatch')
     mapping={(r['arm'],r['id']):r for r in read_rows(a.blind_inputs/'mapping.jsonl')}
     results={};all_rows={}
-    for arm in ('baseline','17m','32m','68m'):
+    for arm in comparison['closed']:
         answers={r['id']:r for r in read_rows(a.comparison/arm/'answers.jsonl')}
         if sha(a.comparison/arm/'answers.jsonl')!=comparison['closed'][arm]['answers_sha256']:
             raise ValueError('answers changed')
@@ -109,7 +109,7 @@ def main():
                                   and result['overall']['joint']['rate']>=.9)
         results[arm]=result
         (a.output/(arm+'-rows.jsonl')).write_text(''.join(json.dumps(r,ensure_ascii=False)+'\n' for r in rows))
-    for arm in ('17m','32m','68m'):
+    for arm in (name for name in results if name!='baseline'):
         results[arm]['versus_baseline']={k:cluster_difference(all_rows[arm],all_rows['baseline'],key=k)
                                       for k in ('identity','joint')}
     report={'protocol':'cpu-verifiable-pieces-v98','queries':len(cases),'arms':results,

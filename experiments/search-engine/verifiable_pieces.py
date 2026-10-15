@@ -82,6 +82,22 @@ class SourceCatalog:
         return (min(p.entity_span.start_line for p in self.owners[key]),
                 max(p.entity_span.end_line for p in self.owners[key]))
 
+    def owned_ranges(self,key,*,implementation=False):
+        """Contiguous owned source, independent of retrieval fragment boundaries."""
+        intervals=[]
+        for p in self.owners[key]:
+            start=p.span.start_line
+            if implementation and p.implementation_start_line:
+                start=max(start,p.implementation_start_line)
+            if start<=p.span.end_line:
+                intervals.append((start,p.span.end_line))
+        merged=[]
+        for start,end in sorted(intervals):
+            if merged and start<=merged[-1][1]+1:
+                merged[-1]=(merged[-1][0],max(end,merged[-1][1]))
+            else: merged.append((start,end))
+        return merged
+
     def source_inventory(self):
         return [{'path':k.path,'entity':k.to_dict(),'source_hash':self.hashes[k.path],
             'extent':self.extent(k),'owned_ranges':[[p.span.start_line,p.span.end_line]
@@ -98,12 +114,7 @@ class SourceCatalog:
 
 def _window(catalog,key,query,n,*,implementation=False):
     q=terms(query); options=[]
-    for p in catalog.owners[key]:
-        start=p.span.start_line
-        if implementation and p.implementation_start_line:
-            start=max(start,p.implementation_start_line)
-        end=p.span.end_line
-        if start>end: continue
+    for start,end in catalog.owned_ranges(key,implementation=implementation):
         lines=catalog.lines[key.path]
         # Source-only, query-conditioned window. No expected facets or ranker score.
         width=min(n,end-start+1)
@@ -122,12 +133,29 @@ def _source_fit(catalog,key,query):
               +' '+(key.qualname or ''))) for p in catalog.owners[key]),default=0)
 
 
+def _complete_owned_card(primary,card,catalog):
+    ranges=catalog.owned_ranges(primary)
+    if (not ranges or len(ranges)>MAX_EXCERPTS
+            or sum(end-start+1 for start,end in ranges)>MAX_LINES):
+        return None
+    excerpts=[{'role':'definition','path':primary.path,'start_line':start,'end_line':end,
+        'source_hash':catalog.hashes[primary.path],'entity':primary.to_dict(),
+        'content':'\n'.join(catalog.lines[primary.path][start-1:end])} for start,end in ranges]
+    complete={**card,'excerpts':excerpts,'truncated':ranges!=[catalog.extent(primary)]}
+    if len(canonical(complete))>MAX_CHARS: return None
+    validate_card(complete,catalog,check_disk=False)
+    return complete
+
+
 def _card(primary,kind,supporting,query,catalog):
     path=primary.path if isinstance(primary,EntityKey) else primary
     entity=primary.to_dict() if isinstance(primary,EntityKey) else None
     card={'unit':{'target_kind':kind,'path':path,'entity':entity,
                   'module_name':module_name(path) if kind=='module' else None},
           'source_hash':catalog.hashes[path],'excerpts':[],'truncated':False}
+    if kind=='symbol':
+        complete=_complete_owned_card(primary,card,catalog)
+        if complete is not None: return complete
     if isinstance(primary,EntityKey):
         members=[k for k in catalog.by_path[path] if k==primary or
                  (kind=='class' and catalog.classes.get(k)==primary)]
