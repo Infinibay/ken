@@ -7,6 +7,7 @@ from pathlib import Path
 
 from ken.retrieval.candidates import owner_passages
 from verifiable_pieces import SourceCatalog,canonical,digest,validate_card
+from verifiable_dependencies import LocalCallEvidence
 from ettin_cpu import sha
 
 
@@ -32,11 +33,12 @@ def main():
         index=a.workspace/'output/analysis/c-source-reindex-v66c/indices'/(repo+'.db')
         conn=sqlite3.connect(f'file:{index}?mode=ro',uri=True);conn.row_factory=sqlite3.Row
         catalog=SourceCatalog(roots[repo],owner_passages(conn))
+        dependencies=LocalCallEvidence(catalog) if reg.get('local_call_evidence') else None
         for qid,case in cases.items():
             if case['repo_id']!=repo:continue
             for arm in arms:
                 answer=answers[arm][qid];card=answer['card']
-                if card:validate_card(card,catalog)
+                if card:validate_card(card,catalog,dependencies=dependencies)
                 # Identical visible query/card gets one judgment shared by every arm.
                 body={k:case[k] for k in ('query','target_kind','language','facets')}
                 body['card']=card

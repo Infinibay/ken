@@ -147,6 +147,66 @@ def _complete_owned_card(primary,card,catalog):
     return complete
 
 
+class EvidenceCardBuilder:
+    """Pack literal owned source under the shared response budget."""
+    def __init__(self,card,catalog):
+        self.card=card
+        self.catalog=catalog
+        self.used={(e['path'],n) for e in card['excerpts']
+                   for n in range(e['start_line'],e['end_line']+1)}
+
+    @property
+    def remaining_lines(self):
+        return MAX_LINES-sum(e['end_line']-e['start_line']+1 for e in self.card['excerpts'])
+
+    @property
+    def remaining_excerpts(self): return MAX_EXCERPTS-len(self.card['excerpts'])
+
+    def add(self,role,proposal,*,dependency=None):
+        if proposal is None: return
+        key,a,b=proposal
+        runs=[];run=None
+        for line in range(a,b+1):
+            if (key.path,line) in self.used:
+                if run: runs.append(run);run=None
+            elif run: run[1]=line
+            else: run=[line,line]
+        if run:runs.append(run)
+        for a,b in runs:
+            if not self.remaining_lines or not self.remaining_excerpts:
+                self.card['truncated']=True;break
+            b=min(b,a+self.remaining_lines-1)
+            excerpt={'role':role,'path':key.path,'start_line':a,'end_line':b,
+                'source_hash':self.catalog.hashes[key.path],'entity':key.to_dict(),
+                'content':'\n'.join(self.catalog.lines[key.path][a-1:b])}
+            if dependency is not None:excerpt['dependency']=dependency
+            self.card['excerpts'].append(excerpt)
+            while len(canonical(self.card))>MAX_CHARS and excerpt['end_line']>=a:
+                excerpt['end_line']-=1;self.card['truncated']=True
+                excerpt['content']='\n'.join(self.catalog.lines[key.path][a-1:excerpt['end_line']])
+            if excerpt['end_line']<a:
+                self.card['excerpts'].pop();continue
+            self.used.update((key.path,n) for n in range(a,excerpt['end_line']+1))
+
+    def definition(self,key,query,*,dependency=None):
+        """Prefer complete ownership; spend remaining capacity on a long body."""
+        ranges=self.catalog.owned_ranges(key)
+        needed=sum((key.path,n) not in self.used for a,b in ranges for n in range(a,b+1))
+        if needed<=self.remaining_lines and len(ranges)<=self.remaining_excerpts:
+            for a,b in ranges:self.add('definition',(key,a,b),dependency=dependency)
+            return
+        self.card['truncated']=True
+        if not self.remaining_lines or not self.remaining_excerpts:return
+        first=min(self.catalog.owners[key],key=lambda p:p.span.start_line)
+        a=first.span.start_line;b=min(first.span.end_line,a+11)
+        if first.implementation_start_line and first.implementation_start_line>a:
+            b=min(b,first.implementation_start_line-1)
+        if self.remaining_excerpts>1:self.add('declaration',(key,a,b),dependency=dependency)
+        if self.remaining_lines and self.remaining_excerpts:
+            self.add('implementation',_window(self.catalog,key,query,self.remaining_lines,
+                                               implementation=True),dependency=dependency)
+
+
 def _card(primary,kind,supporting,query,catalog):
     path=primary.path if isinstance(primary,EntityKey) else primary
     entity=primary.to_dict() if isinstance(primary,EntityKey) else None
@@ -165,67 +225,25 @@ def _card(primary,kind,supporting,query,catalog):
     rest=sorted((k for k in members if k not in preferred),
                 key=lambda k:(-_source_fit(catalog,k,query),entity_id(k)))
     ranked=preferred+rest
-    proposals=[]
+    builder=EvidenceCardBuilder(card,catalog)
     if isinstance(primary,EntityKey):
         first=min(catalog.owners[primary],key=lambda p:p.span.start_line)
         a=first.span.start_line;b=min(first.span.end_line,a+11)
         if first.implementation_start_line and first.implementation_start_line>a:
             b=min(b,first.implementation_start_line-1)
-        proposals.append(('declaration',(primary,a,b)))
-    else:
-        module=next((k for k in members if k.kind=='module' and k.qualname is None),None)
-        if module:
-            proposals.append(('documentation',_window(catalog,module,query,12)))
+        builder.add('declaration',(primary,a,b))
     selected=[]
     for key in ranked:
         # Primary declaration already shown; child implementation has independent provenance.
         if kind=='class' and key==primary and len(ranked)>1: continue
         selected.append(key)
         if len(selected)==2: break
-    for n,key in enumerate(selected):
-        proposals.append(('implementation',_window(catalog,key,query,36 if n==0 else 16,
-                                                     implementation=True)))
-    # A separate source documentation passage when implementation starts after a docstring.
-    if len(proposals)<MAX_EXCERPTS and selected:
-        key=selected[0]
-        docs=[p for p in catalog.owners[key] if p.fields.get('documentation','').strip()]
-        if docs:
-            p=max(docs,key=lambda p:len(terms(query)&terms(p.fields['documentation'])))
-            b=min(p.span.end_line,p.span.start_line+11)
-            if p.implementation_start_line and p.implementation_start_line>p.span.start_line:
-                b=min(b,p.implementation_start_line-1)
-            proposals.append(('documentation',(key,p.span.start_line,b)))
-    used=set(); count=0
-    for role,proposal in proposals:
-        if proposal is None or len(card['excerpts'])>=MAX_EXCERPTS: continue
-        key,a,b=proposal
-        # Only contiguous, genuinely new physical lines; no fabricated ellipsis.
-        runs=[];run=None
-        for line in range(a,b+1):
-            if line in used:
-                if run: runs.append(run);run=None
-            elif run: run[1]=line
-            else: run=[line,line]
-        if run:runs.append(run)
-        for a,b in runs:
-            if count>=MAX_LINES or len(card['excerpts'])>=MAX_EXCERPTS:
-                card['truncated']=True;break
-            b=min(b,a+MAX_LINES-count-1)
-            e={'role':role,'path':path,'start_line':a,'end_line':b,
-               'source_hash':catalog.hashes[path],'entity':key.to_dict(),
-               'content':'\n'.join(catalog.lines[path][a-1:b])}
-            card['excerpts'].append(e)
-            while len(canonical(card))>MAX_CHARS and e['end_line']>=e['start_line']:
-                e['end_line']-=1;card['truncated']=True
-                e['content']='\n'.join(catalog.lines[path][a-1:e['end_line']])
-            if e['end_line']<a:
-                card['excerpts'].pop();continue
-            used.update(range(a,e['end_line']+1));count+=e['end_line']-a+1
+    for key in selected:builder.definition(key,query)
     if isinstance(primary,EntityKey):
         a,b=catalog.extent(primary)
-        expected=set(range(a,b+1))
-    else: expected=set(range(1,len(catalog.lines[path])+1))
-    card['truncated'] |= not expected<=used
+        expected={(path,n) for n in range(a,b+1)}
+    else: expected={(path,n) for n in range(1,len(catalog.lines[path])+1)}
+    card['truncated'] |= not expected<=builder.used
     # Setting truncated can only shorten false -> true by one character.
     validate_card(card,catalog,check_disk=False)
     return card
@@ -241,7 +259,9 @@ def piece_pool(matches,kind,query,catalog,limit=20):
             for primary,supporting in list(groups.items())[:limit]]
 
 
-def validate_card(card,catalog,*,check_disk=True):
+def validate_card(card,catalog,*,check_disk=True,dependencies=None):
+    if dependencies is not None and dependencies.catalog is not catalog:
+        raise ValueError('dependency resolver uses a different source catalog')
     unit=card['unit'];path=unit['path'];kind=unit['target_kind']
     if path not in catalog.hashes or card['source_hash']!=catalog.hashes[path]:
         raise ValueError('unknown/stale card source')
@@ -265,7 +285,10 @@ def validate_card(card,catalog,*,check_disk=True):
         if (e['path']!=path or e['source_hash']!=card['source_hash'] or key not in catalog.owners
                 or not 1<=a<=b<=len(catalog.lines[path])):
             raise ValueError('invalid excerpt provenance')
-        if kind in {'class','symbol'} and key!=primary and not (
+        if 'dependency' in e:
+            if dependencies is None:raise ValueError('dependency resolver required')
+            dependencies.validate(card,e,key)
+        elif kind in {'class','symbol'} and key!=primary and not (
                 kind=='class' and catalog.classes.get(key)==primary):
             raise ValueError('unrelated owner cannot support primary piece')
         owned={n for p in catalog.owners[key] for n in range(p.span.start_line,p.span.end_line+1)}

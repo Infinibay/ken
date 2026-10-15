@@ -21,6 +21,7 @@ def main():
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--reuse-baseline',type=Path)
     p.add_argument('--baseline-only',action='store_true')
+    p.add_argument('--local-call-evidence',action='store_true')
     p.add_argument('--preflight',action='store_true');args=p.parse_args()
     if args.baseline_only and args.reuse_baseline:
         p.error('--baseline-only regenerates cards and cannot reuse an earlier baseline')
@@ -32,7 +33,9 @@ def main():
         'verifiable_pieces.py','ettin_cpu.py','cpu-verifiable-pieces-v98.md',
         'contextual_run.py','source_view_assets.py','verifiable_catalog.py','test_verifiable_pieces.py',
         'verifiable_guard.py','verifiable_grading.py','verifiable_blind_inputs.py',
-        'verifiable_report.py','test_verifiable_grading.py','test_verifiable_owned_definitions.py')]
+        'verifiable_report.py','test_verifiable_grading.py','test_verifiable_owned_definitions.py',
+        'test_verifiable_evidence_budget.py','verifiable_dependencies.py',
+        'test_verifiable_dependencies.py')]
     source_files += [w/'output/models/ettin-all-onnx-v98'/size/'assembly.json'
                      for size in ('17m','32m','68m')]
     source_files += [w/'output/analysis/verifiable-pieces-catalog-v98/receipt.json',
@@ -60,7 +63,8 @@ def main():
     metadata={'scope':'public-only ALL cases selected arms, serial full prepared pipeline',
         'public_cases_sha256':sha(args.public_cases),'source_metadata_sha256':sha(args.source_metadata/'manifest.json'),
         'engine_manifest_sha256':engine_receipt,'preparation':preparation,
-        'source_files':pins,'preflight':args.preflight,'arms':arms,'runs':[]}
+        'source_files':pins,'preflight':args.preflight,'arms':arms,'runs':[],
+        'local_call_evidence':args.local_call_evidence}
     (args.output/'registration.json').write_text(json.dumps(metadata,indent=2))
     environment=dict(os.environ,PYTHONPATH=str(frozen/'src')+os.pathsep+str(scripts.resolve()),
         TOKENIZERS_PARALLELISM='false',HF_HUB_OFFLINE='1',OMP_NUM_THREADS='1',
@@ -75,6 +79,7 @@ def main():
         prior=json.loads((args.reuse_baseline/'registration.json').read_text())
         if (prior.get('status')!='ALL outputs closed without Gold or quality grading'
             or prior['public_cases_sha256']!=metadata['public_cases_sha256']
+            or prior.get('local_call_evidence',False)!=args.local_call_evidence
             or prior['engine_manifest_sha256']!=engine_receipt):
             raise ValueError('incompatible closed baseline')
         for path,value in prior['source_files'].items():
@@ -108,6 +113,7 @@ def main():
             '--requests',str(requestfile),'--root',roots[repo],'--index',str(index),
             '--output',str(out),'--source-metadata',str(args.source_metadata),
             '--catalog-receipt',str(w/'output/analysis/verifiable-pieces-catalog-v98/receipt.json')]
+        if args.local_call_evidence:command+=['--local-call-evidence']
         if arm!='baseline':command+=['--model',str(w/'output/models/ettin-all-onnx-v98'/arm/'assembly.json'),
             '--expected-pools',str(args.output/'baseline'/repo/'pools.jsonl')]
         start=time.perf_counter()

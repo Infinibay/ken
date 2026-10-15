@@ -29,6 +29,7 @@ from ken.retrieval.profile import ContextualRetrieval,EvidenceRanking,RetrievalP
 from contextual_run import CPUContextEncoder
 from source_view_assets import load_source_views
 from verifiable_pieces import SourceCatalog,piece_pool,card_text,canonical,digest
+from verifiable_dependencies import LocalCallEvidence,enrich_card
 from ettin_cpu import CPUReranker,sha
 
 
@@ -97,6 +98,7 @@ def main():
     for name in ('workspace','requests','root','index','output','catalog-receipt','source-metadata'):
         p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--model',type=Path);p.add_argument('--expected-pools',type=Path)
+    p.add_argument('--local-call-evidence',action='store_true')
     args=p.parse_args();args.output.mkdir(parents=True,exist_ok=False)
     # Controller and direct callers both verify the ALL-source gate before requests.
     from verifiable_guard import verify_source_preparation
@@ -111,6 +113,7 @@ def main():
     if bool(args.model)!=bool(expected):raise ValueError('neural arm requires sealed baseline pools')
     started=time.perf_counter()
     runtime=PreparedKen(args.workspace,repo,args.root,args.index)
+    dependencies=LocalCallEvidence(runtime.catalog) if args.local_call_evidence else None
     inventory=runtime.catalog.source_inventory()
     catalog_receipt=json.loads(args.catalog_receipt.read_text())
     inventory_bytes=''.join(canonical(r)+'\n' for r in inventory).encode()
@@ -147,8 +150,13 @@ def main():
                     scores,neural=model.score(expanded,[card_text(c) for c in cards[:10]])
                     order=order[:10]
                     order=sorted(order,key=lambda i:(-scores[i],i))
+                card=cards[order[0]] if order else None
+                if dependencies is not None:
+                    enrich_started=time.perf_counter()
+                    card=enrich_card(card,expanded,runtime.catalog,dependencies)
+                    neural['local_call_evidence_ms']=(time.perf_counter()-enrich_started)*1000
                 answer={'id':case['id'],'pool_sha256':pool_hash,
-                        'card':cards[order[0]] if order else None,'top_index':order[0] if order else None}
+                        'card':card,'top_index':order[0] if order else None}
                 serialized=canonical(answer)
                 # Includes common retrieval/card preparation, model tokenization/inference,
                 # selection and canonical answer serialization; excludes diagnostic pool dump.

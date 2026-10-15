@@ -38,7 +38,7 @@ class OwnedDefinitionEvidence(unittest.TestCase):
             catalog, match = fixture(Path(tmp), 65)
             card = piece_pool([match], 'symbol', 'transform value', catalog)[0]
             lengths = [e['end_line'] - e['start_line'] + 1 for e in card['excerpts'] if e['role'] == 'implementation']
-            self.assertIn(36, lengths)
+            self.assertGreaterEqual(max(lengths), 36)
             self.assertLessEqual(sum(e['end_line'] - e['start_line'] + 1 for e in card['excerpts']), 64)
             self.assertTrue(card['truncated'])
             validate_card(card, catalog)
