@@ -53,3 +53,9 @@ latency/RAM, no lowered criteria. If it fails, report failure and keep reserve
 status consumed before any further development.
 
 Feature-schema checkpoint before any new development fitting: CALIBRATION_FEATURES has34columns; FULL_FEATURES adds262existing source columns (296total). Exact definitions in experiments/search-engine/score_calibration.py, SHA256 4e6eb5dd419e5a234c9b5abac99020ed8522eb5c77ca35ad240aa15d5643ff3f. Numerical alignment/finite/stable-tie tests first failed10/10 with missing calibration_features, then all10passed. Frozen145source and original actual public MCP order remain guarded by observer.
+
+Training weights are nonnegative per-row weights with complete query groups,
+normalized to equal aggregate query weight per requested type. LightGBM's
+[official LGBMRanker API](https://lightgbm.readthedocs.io/en/stable/pythonapi/lightgbm.LGBMRanker.html)
+documents sample_weight and contiguous group sizes. This is a ranking model:
+its raw scores are not calibrated relevance probabilities or certainty estimates.

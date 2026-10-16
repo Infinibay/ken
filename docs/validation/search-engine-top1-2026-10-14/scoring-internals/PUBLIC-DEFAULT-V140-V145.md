@@ -166,3 +166,122 @@ A source-free CoreML probe with the measured dynamic Ettin graph failed even
 outside the filesystem sandbox: unbounded dimensions/shape compilation error.
 The measured default remains CPU-only. Provider availability does not establish
 usable acceleration. No optional-GPU speedup or automatic selection is claimed.
+
+## Local integration and validation checkpoint v147
+
+Main dea7035816c59ba976e5d495542ede63c215a06e was pushed and ls-remote verified,
+without tags/releases. Original checkout advanced from6286d910 todea7035 via
+guarded three-way update, retaining61foreign changed tracked files,754untracked
+backups and all foreign source/features. Six conflicts reconciled and211merged
+preview tests passed. Original now63dirty tracked paths (some former untracked
+constraints/plans became tracked); staging remains empty. Raw backups, candidate
+resolutions, per-file hashes and rollback snapshot are in
+/Users/andres/Projects/ken/output/local-main-update-2026-10-16-v147. No foreign
+working content was committed or uploaded. No reset/stash. Local .venv installed
+missing declared CPU packages/model2vec0.9.0/onnx1.20.1/CT2 4.8.3/SPM0.2.1; HF
+normalized from1.14.0 to required0.36.2. Frozen model runtime remains pinned.
+Actual default-model/models now print Potion as default. Already running MCP
+processes still require restart to load new modules; no restart was claimed.
+
+Current complete clean suite:14902passed,10preexisting xfail,544.27sec;
+/private/tmp/ken-best-default-suite-v147.log. Mypy356source files clean.
+Additional12feature/training-boundary tests passed after first red runs.
+The frozen145public observer closed all200old cases, preserving every actual MCP
+unit order exactly; no exact bypass in that dataset. Source calibration schema
+SHA4e6eb5dd419e5a234c9b5abac99020ed8522eb5c77ca35ad240aa15d5643ff3f.
+Capture registration SHA677145fa81167a15fd24a3c22d76c5c338fb5107af8656ebc4169ecd1b965964
+at research/output/development/score-calibration-v147/old200-capture.
+No calibration models fitted yet; new exposed symbol200and fresh reserve200
+are still independently curating. Prospective protocol is
+docs/design/requested-piece-calibration-2026-10-16.md; fixed34or296features,
+original fixed LambdaRank recipe, repo-excluded development; unchanged top10.
+Independent88.5%result remains the latest unseen quality, and fails90%.
+
+## New development and guard review — continuation v147
+
+New exposed symbol200 curated independently:48source files/8repos,120EN80ES,
+160behavior40qualified lookup,130runtime/API+70test/support; all<128partition,
+zero375excluded-file overlap. v1andsealedsource receipts are preserved at
+research/experiments/search-engine/datasets/symbol-development-20261016.
+Independent review read all200queries/witnesses and14extra source contexts.
+Gold primary identities/alternatives/ranges/hashes/quotas were valid;041strict
+mode and060structural-ref wording needed precision. No ranking/quality was read.
+
+v2directory symbol-development-20261016-v2 changes exactly those2wordings and
+corresponding facets/requests/rationales; every identity/alternative/range/hash
+and ordering/quota remains unchanged. Seal28fb14ea30cd757d3fdbb73fbeea93ef435ed6bd36482da30d2cc4489cf1afe2;
+public SHA b90ce15d819b1da2e38b5d11e79f21d2f3550c3582cfdc532a6df3c45bda80f5;
+exposedGold SHA7f9293b9eb69da668ecd337f4902b0a00f99cddd22e9806b6334d5b1583c021d.
+Independent v2review APPROVED receipt e6a2452f27641f8d3d81e9565a4f0a7d36a6c323d0ce4796297b4c755dcfb91c
+at research/output/analysis/symbol-development-reference-review-20261016-v2.json.
+The v1feature capture closed but is NOT fitted or graded. A complete fresh200
+observation run of v2is running, same frozen145source. v2lock
+7095562ff9d6ede4227c2781f53d1bb410e67866bc4d6c4c92305f87cbe2f64b.
+Queue output/analysis/queue-calibration-fit-v147.py waits full closure then writes
+fit-manifest.json and runs the fixed A34/B296 development LORO/pooled fit.
+Logs /private/tmp/ken-calibration-observe-symbols200-v2-v147.log and
+/private/tmp/ken-calibration-fit-queue-v147.log. Do not modify fit code while queued.
+No reserve labels are inputs. Fresh private reserve200primary files uses>=128,
+50/type,120EN80ES,160behavior40lookup and is still in cross-review. Parent has not
+opened its payloads; only curator paths/seals. Draftseal5ce1b548cf60c2d078dbf1fa002fae6b9b7f5891658d83bc912675c21734b206.
+
+Fresh single-arm scorer preserves immutable identity evaluator/denominators and
+adds protected-reference boundary before ALLpreflight reads (resolve+dev/inode),
+canonical DTO validation, per-type quotas, actual producer/launcher hashes,
+strict default/source policy and closed public source/resources. Independent
+review first found17defects; all reproduced red then26tests passed. Corrected
+source200c9d19b6a0c139c17b454a49108f77f5082e79db540b8f8d17f85890459cb3.
+Second independent review APPROVED:26tests+13probes,39instrumented preflights,
+36rejects/3valid,0Goldopenattempts. Receipt
+research/output/analysis/fresh-public-piece-score-review-20261016.json
+SHA58c529cb49d9532d94999f3cec197c33e6be470613af8e88beb1052f2dcc5663.
+Code approval does not waive actual freeze/closure/preflight or authorize scoring.
+
+Local normal HFandKen model caches were populated from the same verified public
+assets without uploads or index changes. Actual original .venv normal defaults
+passed a synthetic source-free probe:256static dimensions,768context,neural score
+5.957465648651123, CPUproviders both, noTorch/transformers imports. Receipt
+research/output/analysis/normal-local-model-cache-v147.json. Installed package
+compatibility check99packages passes. Wheel built locally only; packaged model
+imports/fingerprints verified. No release/tag/version bump.
+
+
+## Closed calibration and source diagnosis — v147/v148
+
+Both400public observations closed before fitting. New-symbol v2 registration
+SHA e0d6d94e93fb839148744e57c608a22e07923d1a468591914b8ff656215270b8.
+Original observer200 has exact order parity with actual public MCP145200.
+Fixed A34/B296 fitting completed in separate CPU training environment after an
+initial missing-LightGBM import failure (both receipts retained). No runtime
+LightGBM dependency was added. A LORO359/400:original194/200top1,197top10;
+new symbols165/200top1,193top10. B357/400:original192,new165; same Recall.
+A was selected by prospective overall rule but FAILS required180/200new-symbol
+gate. Pooled388/400(original197,new191) is TRAINING REUSE, not validation;
+model0d458f7e2878382dd1766d64c43ff3ff05e1c7eb8ffaaeee4c51aaa2b8a98fce
+is NOT integrated. No private reserve evaluation is authorized by these results.
+Exposed source/capture/models/labels/receipts are gzipped with manifest in
+output/checkpoints/score-calibration-development-v147; private reserve excluded.
+
+New exposed-symbol native/piece/neural/final:129/129/169/144top1; calibration165.
+Original170/191/168/191; calibration194. This isolates ranking from7new and3old
+missing-positive pools, which cannot be repaired by permuting existing top10.
+Inspection of exposed failures found request_tests==0 even for explicit test
+requests because piece_features compares unresolved request.purpose=='tests'
+while public callers pass auto. interpret is the authoritative owner of purpose.
+In addition regression/regresión and Localiza test requests are not recognized
+by its requested-noun parser; many failing tests are therefore treated as runtime
+implementation. Keep those fixes separate in controlled measurements. The new
+suite intentionally has70test/support cases and130runtime/API, not equivalent
+to the previous balanced private200. No query-specific paths or Gold rules may
+enter the engine. Other remaining errors confuse adjacent functions, nested
+helper versus owning test, negation and overloads; intent alone will not solve all.
+
+Fresh reserve v2 source-only wording revision independently conforms:200units,
+437ranges unchanged, three precisions, receipt c1c2886a75c96ec5d25a27ee71df1f5296f1d87cbf704281739c953ab9d28cd4.
+Private Gold remains unopened by implementer. Scorer FG5/FG6 first reproduced
+red3/3, then fixed canonical duplicates using immutable identity_hit and reject
+resource aggregate overflow/nonfinite values. Corrected wrapper SHA
+c7df72f16485aa3529b3c80c0558178ac3b90a07ad5c3fd4999032a3c63cd419;
+independent re-audit e8bef006df1e573aaf7a71f7498a811ac2dde136a84920f2c67d7271a9986ca4,
+56tests,23synthetic probes plus valid control, zero reference open attempts.
+Actual final engine freeze/complete capture/preflight review still required.
