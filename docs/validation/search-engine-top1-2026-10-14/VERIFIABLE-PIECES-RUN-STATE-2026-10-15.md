@@ -9,8 +9,9 @@ raw175/200=87,5%,RRF50 174/200=87%, conservando todos los10candidatos.
 CPU completa v116 mediana1,219s/p952,363s/pico1,531GB; sin reranker neuronal.
 CPU v112 sólo reranker mediana0,962s/p950,991s/pico0,724GB; no total Ken.
 
-Checkpointf0e18240c3292c882e59cc9155fc0331c14f35c7 verificado en GitHubmain;
-8fcd2d0 preserva v114 localmente, pendiente de push junto al nuevo diagnóstico.
+Checkpoint de implementación0435c55c5f255cfa68eb5a2b875e22cc07529250 verificado
+en GitHubmain; incluye8fcd2d0(v114),bb1f36cf(trazas),4d11b631(composiciónv116)
+y respaldo683archivos/593gzip/104968967bytes, todos descomprimidos y hashverificados.
 v116gana2/pierde0 respecto av114;22tarjetas nuevas revisadas independientemente,
 178opiniones reutilizadas sólo con entrada visible idéntica. Ver VERIFIABLE-SCOPE-COMPOSITION-V116.md.
 Diagnóstico nativo v120:200trazas cerradas y101764scores+orden reproducidos;
