@@ -1,0 +1,3160 @@
+{
+  "scope": "Exposed development, descriptive grouping, not causal or independent validation",
+  "source_captures": [
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/public-qualified-locator-v172-symbols"
+  ],
+  "totals": {
+    "queries": 200,
+    "public_top1": 159,
+    "raw_top1": 169,
+    "recall10": 195,
+    "fusion_loss": 18,
+    "fusion_gain": 8
+  },
+  "public_miss_categories": {
+    "different_file": 14,
+    "same_file_other_operation": 17,
+    "test_entry_vs_other": 5,
+    "missing": 5
+  },
+  "misses": [
+    {
+      "id": "symdev-20261016-055",
+      "repo_id": "ajv",
+      "query": "For a nontrivial JTD elements schema, which keyword entry handles nullable data and emits array-element validation or a type error depending on whether the value is an array?",
+      "category": "different_file",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": null,
+          "qualname": "code"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/jtd/enum.ts",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": null,
+          "qualname": "code"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/jtd/elements.ts",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": null,
+          "qualname": "code"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/jtd/elements.ts",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": null,
+            "qualname": "code"
+          },
+          "module_name": null,
+          "path": "lib/vocabularies/jtd/elements.ts",
+          "source_hash": "54c00bc71c6bc0f5055c49fa0b6803db07832e5f77aadb1e55e5e045b3a4ad33",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "a55ae1c6b7d9ac0e9053e71da407efe41b3156cc0db7091bcd20a9d8897844dd",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [
+          "JTD"
+        ],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "54c00bc71c6bc0f5055c49fa0b6803db07832e5f77aadb1e55e5e045b3a4ad33",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [
+          "JTD"
+        ],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-156",
+      "repo_id": "boltons",
+      "query": "Where are segmented-list slices compared with builtin slices over empty and short lists, mixed bounds and positive or negative strides, with a zero stride required to fail?",
+      "category": "different_file",
+      "correct_public_rank": 4,
+      "correct_raw_rank": 4,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_iset_slice_agreement"
+        },
+        "module_name": null,
+        "path": "tests/test_setutils.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_iset_slice_agreement"
+        },
+        "module_name": null,
+        "path": "tests/test_setutils.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_barrellist_slicing_matches_list"
+        },
+        "module_name": null,
+        "path": "tests/test_listutils.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "test_barrellist_slicing_matches_list"
+          },
+          "module_name": null,
+          "path": "tests/test_listutils.py",
+          "source_hash": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "645ec71bf7f955c4b9ed478e55b3aacd509dd35e0d78b33cb31ce30f26281613",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-118",
+      "repo_id": "junit5",
+      "query": "Localiza la búsqueda de una opción que rechaza una clave vacía y devuelve el primer valor no nulo entre proveedores en su orden, o null si ninguno la define.",
+      "category": "different_file",
+      "correct_public_rank": 3,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 1,
+          "kind": "method",
+          "owner": "NamespaceAwareStore",
+          "qualname": "NamespaceAwareStore.getOrComputeIfAbsent"
+        },
+        "module_name": null,
+        "path": "junit-jupiter-engine/src/main/java/org/junit/jupiter/engine/execution/NamespaceAwareStore.java",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "LauncherConfigurationParameters",
+          "qualname": "LauncherConfigurationParameters.getProperty"
+        },
+        "module_name": null,
+        "path": "junit-platform-launcher/src/main/java/org/junit/platform/launcher/core/LauncherConfigurationParameters.java",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "LauncherConfigurationParameters",
+          "qualname": "LauncherConfigurationParameters.getProperty"
+        },
+        "module_name": null,
+        "path": "junit-platform-launcher/src/main/java/org/junit/platform/launcher/core/LauncherConfigurationParameters.java",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "LauncherConfigurationParameters",
+            "qualname": "LauncherConfigurationParameters.getProperty"
+          },
+          "module_name": null,
+          "path": "junit-platform-launcher/src/main/java/org/junit/platform/launcher/core/LauncherConfigurationParameters.java",
+          "source_hash": "47a31a6d5e04dcfff1cc0237a7bde64b53ad5721975181c674ef7e6ed943caf7",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "b05b62d6f59fbd1d3a96af33653fbc8bd10191d4bd4c0810ac381d4ccd915d39",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "47a31a6d5e04dcfff1cc0237a7bde64b53ad5721975181c674ef7e6ed943caf7",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-025",
+      "repo_id": "pytest",
+      "query": "¿Qué función interpreta marcadores de explicaciones anidadas para producir líneas con where o and, mantiene una pila de sangrías y adjunta el texto de cierre a su explicación padre?",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 4,
+      "correct_raw_rank": 4,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "format_explanation"
+        },
+        "module_name": null,
+        "path": "src/_pytest/assertion/util.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "format_explanation"
+        },
+        "module_name": null,
+        "path": "src/_pytest/assertion/util.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "_format_lines"
+        },
+        "module_name": null,
+        "path": "src/_pytest/assertion/util.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "_format_lines"
+          },
+          "module_name": null,
+          "path": "src/_pytest/assertion/util.py",
+          "source_hash": "35716698af7d75a3e72fe024f96e25e6e0578b0ba0bac0734b3a5b5607536c73",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "35716698af7d75a3e72fe024f96e25e6e0578b0ba0bac0734b3a5b5607536c73",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "35716698af7d75a3e72fe024f96e25e6e0578b0ba0bac0734b3a5b5607536c73",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-198",
+      "repo_id": "commons-csv",
+      "query": "¿Dónde se comprueba que convertir a mapa un registro CSV sin encabezados devuelve un mapa existente pero vacío, aunque el registro sí contiene valores?",
+      "category": "test_entry_vs_other",
+      "correct_public_rank": 3,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "CSVRecord",
+          "qualname": "CSVRecord.isConsistent"
+        },
+        "module_name": null,
+        "path": "src/main/java/org/apache/commons/csv/CSVRecord.java",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "CSVRecordTest",
+          "qualname": "CSVRecordTest.testToMapWithNoHeader"
+        },
+        "module_name": null,
+        "path": "src/test/java/org/apache/commons/csv/CSVRecordTest.java",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "CSVRecordTest",
+          "qualname": "CSVRecordTest.testToMapWithNoHeader"
+        },
+        "module_name": null,
+        "path": "src/test/java/org/apache/commons/csv/CSVRecordTest.java",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "CSVRecordTest",
+            "qualname": "CSVRecordTest.testToMapWithNoHeader"
+          },
+          "module_name": null,
+          "path": "src/test/java/org/apache/commons/csv/CSVRecordTest.java",
+          "source_hash": "d98eb2b3205d2e9ec661347a63b1f82819631e4ab71c8832be124a7d933a0c74",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "8dfbc84f3340dd4992e49de0e6c8b28dcc23333fd9126e3dec6b977968ddaa1e",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [
+          "CSV"
+        ],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "d98eb2b3205d2e9ec661347a63b1f82819631e4ab71c8832be124a7d933a0c74",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [
+          "CSV"
+        ],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-044",
+      "repo_id": "ajv",
+      "query": "Locate the dependency-keyword entry that separates its schema into two groups, then invokes property-dependency validation before schema-dependency validation.",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 3,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "splitDependencies"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/applicator/dependencies.ts",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": null,
+          "qualname": "code"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/applicator/dependencies.ts",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": null,
+          "qualname": "code"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/applicator/dependencies.ts",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": null,
+            "qualname": "code"
+          },
+          "module_name": null,
+          "path": "lib/vocabularies/applicator/dependencies.ts",
+          "source_hash": "d2e648e8fe45621558c8f14ff5684954a91f6d800d1b2bf3d90f43941c84df65",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "d2e648e8fe45621558c8f14ff5684954a91f6d800d1b2bf3d90f43941c84df65",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "d2e648e8fe45621558c8f14ff5684954a91f6d800d1b2bf3d90f43941c84df65",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-018",
+      "repo_id": "pytest",
+      "query": "Which parser layer builds boolean AND nodes from unary-sized operands while accepting repeated conjunction tokens?",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 2,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "expr"
+        },
+        "module_name": null,
+        "path": "src/_pytest/mark/expression.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "expr"
+        },
+        "module_name": null,
+        "path": "src/_pytest/mark/expression.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "and_expr"
+        },
+        "module_name": null,
+        "path": "src/_pytest/mark/expression.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "and_expr"
+          },
+          "module_name": null,
+          "path": "src/_pytest/mark/expression.py",
+          "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [
+          "AND"
+        ],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [
+          "AND"
+        ],
+        "coverage": {
+          "owned": 1.0,
+          "scope": 1.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-002",
+      "repo_id": "pytest",
+      "query": "Find the attribute lookup that adds the object type and dotted location to a missing-attribute error while retaining the original exception as its cause.",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 3,
+      "correct_raw_rank": 3,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 2,
+          "kind": "method",
+          "owner": "MonkeyPatch",
+          "qualname": "MonkeyPatch.setattr"
+        },
+        "module_name": null,
+        "path": "src/_pytest/monkeypatch.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 2,
+          "kind": "method",
+          "owner": "MonkeyPatch",
+          "qualname": "MonkeyPatch.setattr"
+        },
+        "module_name": null,
+        "path": "src/_pytest/monkeypatch.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "annotated_getattr"
+        },
+        "module_name": null,
+        "path": "src/_pytest/monkeypatch.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "annotated_getattr"
+          },
+          "module_name": null,
+          "path": "src/_pytest/monkeypatch.py",
+          "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-100",
+      "repo_id": "junit5",
+      "query": "Find acquisition of a resource lock that uses the fork-join managed-blocking mechanism and returns the resource-lock object after acquisition.",
+      "category": "different_file",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "CompositeLock",
+          "qualname": "CompositeLock.acquire"
+        },
+        "module_name": null,
+        "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/CompositeLock.java",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "SingleLock",
+          "qualname": "SingleLock.acquire"
+        },
+        "module_name": null,
+        "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/SingleLock.java",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "SingleLock",
+          "qualname": "SingleLock.acquire"
+        },
+        "module_name": null,
+        "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/SingleLock.java",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "SingleLock",
+            "qualname": "SingleLock.acquire"
+          },
+          "module_name": null,
+          "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/SingleLock.java",
+          "source_hash": "5d88d3798f6c66675bbd5157ca9bdabcd627ae1e3542316daa812258eb1086a2",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "4c7e42beeb65ec6e942076ed04e030e66bd6e6addd803debe488556c48d146b4",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "5d88d3798f6c66675bbd5157ca9bdabcd627ae1e3542316daa812258eb1086a2",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-137",
+      "repo_id": "packaging",
+      "query": "Find the regression that offers an incompatible future-Python wheel alongside a source distribution and checks that ordinary selection falls back to the source distribution.",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 3,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_missing_sdist_fallback"
+        },
+        "module_name": null,
+        "path": "tests/test_pylock_select.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_sdist_fallback"
+        },
+        "module_name": null,
+        "path": "tests/test_pylock_select.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_sdist_fallback"
+        },
+        "module_name": null,
+        "path": "tests/test_pylock_select.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "test_sdist_fallback"
+          },
+          "module_name": null,
+          "path": "tests/test_pylock_select.py",
+          "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-173",
+      "repo_id": "attrs",
+      "query": "¿Qué regresión de la API define por defecto construye una herencia en diamante y comprueba que la resolución de un atributo coincide con la del método sobrescrito en la misma rama?",
+      "category": "missing",
+      "correct_public_rank": null,
+      "correct_raw_rank": null,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "TestAnnotations",
+          "qualname": "TestAnnotations.test_inheritance"
+        },
+        "module_name": null,
+        "path": "tests/test_annotations.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "TestDetermineAttribEqOrder",
+          "qualname": "TestDetermineAttribEqOrder.test_order_mirrors_eq_by_default"
+        },
+        "module_name": null,
+        "path": "tests/test_make.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": null,
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "TestNextGen",
+            "qualname": "TestNextGen.test_mro_ng"
+          },
+          "module_name": null,
+          "path": "tests/test_next_gen.py",
+          "source_hash": "43fc68b75b530cabaf0de3ce8df4ef87d23bce0d63f8acfb561fffc2ddc6d4fe",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "d2ec51d825e182d320edb5e0ca59ccdfa07711508025cf495203b4d4227ae990",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [
+          "API"
+        ],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": null
+    },
+    {
+      "id": "symdev-20261016-109",
+      "repo_id": "junit5",
+      "query": "¿Dónde se reúnen los resolutores que soportan un parámetro, se rechazan tanto la ausencia como la competencia de varios y se valida el tipo del valor obtenido del único resolutor?",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 4,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "ParameterResolutionUtils",
+          "qualname": "ParameterResolutionUtils.validateResolvedType"
+        },
+        "module_name": null,
+        "path": "junit-jupiter-engine/src/main/java/org/junit/jupiter/engine/execution/ParameterResolutionUtils.java",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "ParameterResolutionUtilsTests",
+          "qualname": "ParameterResolutionUtilsTests.reportIfThereAreMultipleParameterResolversThatSupportTheParameter"
+        },
+        "module_name": null,
+        "path": "jupiter-tests/src/test/java/org/junit/jupiter/engine/execution/ParameterResolutionUtilsTests.java",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "ParameterResolutionUtils",
+          "qualname": "ParameterResolutionUtils.resolveParameter"
+        },
+        "module_name": null,
+        "path": "junit-jupiter-engine/src/main/java/org/junit/jupiter/engine/execution/ParameterResolutionUtils.java",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "ParameterResolutionUtils",
+            "qualname": "ParameterResolutionUtils.resolveParameter"
+          },
+          "module_name": null,
+          "path": "junit-jupiter-engine/src/main/java/org/junit/jupiter/engine/execution/ParameterResolutionUtils.java",
+          "source_hash": "def8ca390b431e7cf0d1cf6220ea83ff62f5f81ae964e875f5c08e948675c7b5",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "def8ca390b431e7cf0d1cf6220ea83ff62f5f81ae964e875f5c08e948675c7b5",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "def8ca390b431e7cf0d1cf6220ea83ff62f5f81ae964e875f5c08e948675c7b5",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-067",
+      "repo_id": "ajv",
+      "query": "¿Dónde se elige igualdad profunda para un valor constante procedente de datos o de un objeto y desigualdad estricta para los demás valores de esquema?",
+      "category": "different_file",
+      "correct_public_rank": 4,
+      "correct_raw_rank": 4,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": "compileConstant",
+          "qualname": "compileConstant.isDeepEqual"
+        },
+        "module_name": null,
+        "path": "spec/keyword.spec.ts",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "compileConstant"
+        },
+        "module_name": null,
+        "path": "spec/keyword.spec.ts",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": null,
+          "qualname": "code"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/validation/const.ts",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": null,
+            "qualname": "code"
+          },
+          "module_name": null,
+          "path": "lib/vocabularies/validation/const.ts",
+          "source_hash": "9dc3c40d6260158b2ee34dadadbc0e738cad939fc725cc1d2f5120bd43768ed5",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "0e21ae585d7169a0db28a4a7d5bab05c0298b34c219814e5554936bce771eb30",
+        "test_entry": false,
+        "test_helper": true,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "9dc3c40d6260158b2ee34dadadbc0e738cad939fc725cc1d2f5120bd43768ed5",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-157",
+      "repo_id": "boltons",
+      "query": "Which regression manually divides a list into fixed-size internal segments, deletes ranges crossing those boundaries and compares both contents and length with a builtin reference?",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_barrel_list_delete_to_end"
+        },
+        "module_name": null,
+        "path": "tests/test_listutils.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_barrellist_delete_across_multiple_barrels"
+        },
+        "module_name": null,
+        "path": "tests/test_listutils.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_barrellist_delete_across_multiple_barrels"
+        },
+        "module_name": null,
+        "path": "tests/test_listutils.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "test_barrellist_delete_across_multiple_barrels"
+          },
+          "module_name": null,
+          "path": "tests/test_listutils.py",
+          "source_hash": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-003",
+      "repo_id": "pytest",
+      "query": "Which helper rejects a replacement target without a dotted absolute import string, then separates the final attribute and optionally checks that it exists?",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 3,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "MonkeyPatch",
+          "qualname": "MonkeyPatch.delattr"
+        },
+        "module_name": null,
+        "path": "src/_pytest/monkeypatch.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "MonkeyPatch",
+          "qualname": "MonkeyPatch.delattr"
+        },
+        "module_name": null,
+        "path": "src/_pytest/monkeypatch.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "derive_importpath"
+        },
+        "module_name": null,
+        "path": "src/_pytest/monkeypatch.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "derive_importpath"
+          },
+          "module_name": null,
+          "path": "src/_pytest/monkeypatch.py",
+          "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-195",
+      "repo_id": "commons-csv",
+      "query": "Find the chunked-reader regression that peeks several characters into an array and then reads those same characters, demonstrating that peeking did not consume them.",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "ExtendedBufferedReaderTest",
+          "qualname": "ExtendedBufferedReaderTest.testPeekArrayPastEndOfChunkedReader"
+        },
+        "module_name": null,
+        "path": "src/test/java/org/apache/commons/csv/ExtendedBufferedReaderTest.java",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "ExtendedBufferedReaderTest",
+          "qualname": "ExtendedBufferedReaderTest.testReadAndPeekArrayFromChunkedReader"
+        },
+        "module_name": null,
+        "path": "src/test/java/org/apache/commons/csv/ExtendedBufferedReaderTest.java",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "ExtendedBufferedReaderTest",
+          "qualname": "ExtendedBufferedReaderTest.testReadAndPeekArrayFromChunkedReader"
+        },
+        "module_name": null,
+        "path": "src/test/java/org/apache/commons/csv/ExtendedBufferedReaderTest.java",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "ExtendedBufferedReaderTest",
+            "qualname": "ExtendedBufferedReaderTest.testReadAndPeekArrayFromChunkedReader"
+          },
+          "module_name": null,
+          "path": "src/test/java/org/apache/commons/csv/ExtendedBufferedReaderTest.java",
+          "source_hash": "5a7a001228200b5a0d9b8ec1ea22afa95efc229a9e001af0abc1733b96442a8a",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "5a7a001228200b5a0d9b8ec1ea22afa95efc229a9e001af0abc1733b96442a8a",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "5a7a001228200b5a0d9b8ec1ea22afa95efc229a9e001af0abc1733b96442a8a",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-196",
+      "repo_id": "commons-csv",
+      "query": "¿Qué regresión de lectura por bloques solicita más caracteres de los que quedan, comprueba el conteo y contenido parciales y exige EOF en la siguiente lectura?",
+      "category": "different_file",
+      "correct_public_rank": 5,
+      "correct_raw_rank": 3,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "LexerTest",
+          "qualname": "LexerTest.testPartialMultiCharacterDelimiterAtEOFAfterMismatch"
+        },
+        "module_name": null,
+        "path": "src/test/java/org/apache/commons/csv/LexerTest.java",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "CSVParserTest",
+          "qualname": "CSVParserTest.testPartialMultiCharacterDelimiterAtEOF"
+        },
+        "module_name": null,
+        "path": "src/test/java/org/apache/commons/csv/CSVParserTest.java",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "ExtendedBufferedReaderTest",
+          "qualname": "ExtendedBufferedReaderTest.testReadArrayPastEndOfChunkedReader"
+        },
+        "module_name": null,
+        "path": "src/test/java/org/apache/commons/csv/ExtendedBufferedReaderTest.java",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "ExtendedBufferedReaderTest",
+            "qualname": "ExtendedBufferedReaderTest.testReadArrayPastEndOfChunkedReader"
+          },
+          "module_name": null,
+          "path": "src/test/java/org/apache/commons/csv/ExtendedBufferedReaderTest.java",
+          "source_hash": "5a7a001228200b5a0d9b8ec1ea22afa95efc229a9e001af0abc1733b96442a8a",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "b4d533f40c3b5453148d92af98a518807af416d4f763ab9354ec9d1b6993d1c3",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [
+          "EOF"
+        ],
+        "coverage": {
+          "owned": 1.0,
+          "scope": 1.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "5a7a001228200b5a0d9b8ec1ea22afa95efc229a9e001af0abc1733b96442a8a",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [
+          "EOF"
+        ],
+        "coverage": {
+          "owned": 1.0,
+          "scope": 1.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-142",
+      "repo_id": "packaging",
+      "query": "Localiza la prueba que solicita un grupo de dependencias con otra capitalización junto a dos grupos inexistentes y verifica que el diagnóstico mencione únicamente estos últimos.",
+      "category": "missing",
+      "correct_public_rank": null,
+      "correct_raw_rank": null,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_no_such_group_name"
+        },
+        "module_name": null,
+        "path": "tests/test_dependency_groups.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_lookup_does_not_trigger_cyclic_include"
+        },
+        "module_name": null,
+        "path": "tests/test_dependency_groups.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": null,
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "test_unknown_groups"
+          },
+          "module_name": null,
+          "path": "tests/test_pylock_select.py",
+          "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "e391a8d9569f5421ce7e40bc54d471bd778173ad0b6d9df60c98fb4c9de6eebb",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": null
+    },
+    {
+      "id": "symdev-20261016-169",
+      "repo_id": "attrs",
+      "query": "Which initialization regression has a pre-init hook create an auxiliary value and a post-init hook add the initialized field to it, checking that both hooks run in the intended order?",
+      "category": "test_entry_vs_other",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "TestAttributes.test_pre_post_init_order.C",
+          "qualname": "TestAttributes.test_pre_post_init_order.C.__attrs_post_init__"
+        },
+        "module_name": null,
+        "path": "tests/test_make.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "TestAttributes",
+          "qualname": "TestAttributes.test_pre_post_init_order"
+        },
+        "module_name": null,
+        "path": "tests/test_make.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "TestAttributes",
+          "qualname": "TestAttributes.test_pre_post_init_order"
+        },
+        "module_name": null,
+        "path": "tests/test_make.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "TestAttributes",
+            "qualname": "TestAttributes.test_pre_post_init_order"
+          },
+          "module_name": null,
+          "path": "tests/test_make.py",
+          "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+        "test_entry": false,
+        "test_helper": true,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-113",
+      "repo_id": "junit5",
+      "query": "¿Dónde se selecciona un constructor fábrica a partir de los candidatos reflectivos y se rechaza silenciosamente la búsqueda si el número de candidatos no es exactamente uno?",
+      "category": "missing",
+      "correct_public_rank": null,
+      "correct_raw_rank": null,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "MethodArgumentsProvider",
+          "qualname": "MethodArgumentsProvider.findFactoryMethodBySimpleName"
+        },
+        "module_name": null,
+        "path": "junit-jupiter-params/src/main/java/org/junit/jupiter/params/provider/MethodArgumentsProvider.java",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "MethodArgumentsProvider",
+          "qualname": "MethodArgumentsProvider.findFactoryMethodBySimpleName"
+        },
+        "module_name": null,
+        "path": "junit-jupiter-params/src/main/java/org/junit/jupiter/params/provider/MethodArgumentsProvider.java",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": null,
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "FallbackStringToObjectConverter",
+            "qualname": "FallbackStringToObjectConverter.findFactoryConstructor"
+          },
+          "module_name": null,
+          "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/support/conversion/FallbackStringToObjectConverter.java",
+          "source_hash": "4c96e7057c557f661e016fe11b402b5750c7688e678d6fcdf72d84b62c2e0a1b",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "a725eb1fa6dd1a8e3790dad7357d6da796cae9eecd916321d099a2f6cc441fe7",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": null
+    },
+    {
+      "id": "symdev-20261016-184",
+      "repo_id": "marked",
+      "query": "Where does an inline-lexer test helper preload the lexer link table, collect inline tokens into a fresh array and compare that array with the expected tokens?",
+      "category": "different_file",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "_Lexer",
+          "qualname": "_Lexer.inlineTokens"
+        },
+        "module_name": null,
+        "path": "src/Lexer.ts",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "expectInlineTokens"
+        },
+        "module_name": null,
+        "path": "test/unit/Lexer.test.js",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "expectInlineTokens"
+        },
+        "module_name": null,
+        "path": "test/unit/Lexer.test.js",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "expectInlineTokens"
+          },
+          "module_name": null,
+          "path": "test/unit/Lexer.test.js",
+          "source_hash": "6b445ee37ebb2291bba433cab394d044dbd8448e16c97f45f4107ca0ac9460a3",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "b5eb902be97285efdc71663b3ae16afe5621b90a4f4ea6a1e95bee863ae7d79c",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "6b445ee37ebb2291bba433cab394d044dbd8448e16c97f45f4107ca0ac9460a3",
+        "test_entry": false,
+        "test_helper": true,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-146",
+      "repo_id": "packaging",
+      "query": "Localiza la regresión que configura la captura sólo de KeyError y demuestra que un ValueError diferente escapa con su mensaje original.",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 4,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_error_collector_collect"
+        },
+        "module_name": null,
+        "path": "tests/test_errors.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_error_collector_collect"
+        },
+        "module_name": null,
+        "path": "tests/test_errors.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_error_collector_collect_unmatched_exception"
+        },
+        "module_name": null,
+        "path": "tests/test_errors.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "test_error_collector_collect_unmatched_exception"
+          },
+          "module_name": null,
+          "path": "tests/test_errors.py",
+          "source_hash": "f5ca1dc0df6deaa9d3e625f2732c7beaa9f24d630cf1c1d54c96f00fa7c63cda",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "f5ca1dc0df6deaa9d3e625f2732c7beaa9f24d630cf1c1d54c96f00fa7c63cda",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [
+          "KeyError",
+          "ValueError"
+        ],
+        "coverage": {
+          "owned": 1.0,
+          "scope": 1.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "f5ca1dc0df6deaa9d3e625f2732c7beaa9f24d630cf1c1d54c96f00fa7c63cda",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [
+          "KeyError",
+          "ValueError"
+        ],
+        "coverage": {
+          "owned": 1.0,
+          "scope": 1.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-053",
+      "repo_id": "ajv",
+      "query": "Where does generated dynamic-anchor dispatch use the runtime anchor validator when available and fall back to the current validator otherwise?",
+      "category": "different_file",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 2,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "dynamicAnchor"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/dynamic/dynamicAnchor.ts",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "dynamicAnchor"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/dynamic/dynamicAnchor.ts",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": "dynamicRef",
+          "qualname": "dynamicRef._dynamicRef"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/dynamic/dynamicRef.ts",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": "dynamicRef",
+            "qualname": "dynamicRef._dynamicRef"
+          },
+          "module_name": null,
+          "path": "lib/vocabularies/dynamic/dynamicRef.ts",
+          "source_hash": "92884e9923f4053155e5c1f13d5e176c17b47f0db65616bf031a4bb93faf969d",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "bc8bb7636e8fff1add5d8c36577978f357731c2877fd4d4c59b620d6a8af1d8f",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "92884e9923f4053155e5c1f13d5e176c17b47f0db65616bf031a4bb93faf969d",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-102",
+      "repo_id": "junit5",
+      "query": "Where does the managed blocker avoid blocking by returning an existing acquisition flag or updating it with the result of a nonblocking lock attempt?",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 3,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "SingleLock.SingleLockManagedBlocker",
+          "qualname": "SingleLock.SingleLockManagedBlocker.block"
+        },
+        "module_name": null,
+        "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/SingleLock.java",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "SingleLock.SingleLockManagedBlocker",
+          "qualname": "SingleLock.SingleLockManagedBlocker.block"
+        },
+        "module_name": null,
+        "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/SingleLock.java",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "SingleLock.SingleLockManagedBlocker",
+          "qualname": "SingleLock.SingleLockManagedBlocker.isReleasable"
+        },
+        "module_name": null,
+        "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/SingleLock.java",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "SingleLock.SingleLockManagedBlocker",
+            "qualname": "SingleLock.SingleLockManagedBlocker.isReleasable"
+          },
+          "module_name": null,
+          "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/SingleLock.java",
+          "source_hash": "5d88d3798f6c66675bbd5157ca9bdabcd627ae1e3542316daa812258eb1086a2",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "5d88d3798f6c66675bbd5157ca9bdabcd627ae1e3542316daa812258eb1086a2",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "5d88d3798f6c66675bbd5157ca9bdabcd627ae1e3542316daa812258eb1086a2",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-172",
+      "repo_id": "attrs",
+      "query": "Which regression shows that a keyword-only field excluded from initialization keeps its default and does not prevent a later ordinary field from receiving a positional argument?",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 5,
+      "correct_raw_rank": 8,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "TestKeywordOnlyAttributes",
+          "qualname": "TestKeywordOnlyAttributes.test_init_false_attribute_after_keyword_attribute"
+        },
+        "module_name": null,
+        "path": "tests/test_make.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "TestKeywordOnlyAttributes",
+          "qualname": "TestKeywordOnlyAttributes.test_init_false_attribute_after_keyword_attribute"
+        },
+        "module_name": null,
+        "path": "tests/test_make.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "TestKeywordOnlyAttributes",
+          "qualname": "TestKeywordOnlyAttributes.test_ignores_kw_only_when_init_is_false"
+        },
+        "module_name": null,
+        "path": "tests/test_make.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "TestKeywordOnlyAttributes",
+            "qualname": "TestKeywordOnlyAttributes.test_ignores_kw_only_when_init_is_false"
+          },
+          "module_name": null,
+          "path": "tests/test_make.py",
+          "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-071",
+      "repo_id": "ajv",
+      "query": "¿Dónde se genera el rechazo por longitud de un arreglo eligiendo mayor que para el límite máximo y menor que para el mínimo, con soporte del valor de esquema tomado de datos?",
+      "category": "different_file",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": null,
+          "qualname": "message"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/validation/limitLength.ts",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": null,
+          "qualname": "code"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/validation/limitItems.ts",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": null,
+          "qualname": "code"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/validation/limitItems.ts",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": null,
+            "qualname": "code"
+          },
+          "module_name": null,
+          "path": "lib/vocabularies/validation/limitItems.ts",
+          "source_hash": "32098cc56bcd9ff44bfa83b1015a3bc2bb7d2f8f7eecb3113929df732faa8176",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "72afbaaa2718abe23156d8bb4af09fdc98a12054fe3c559b82e22718dbedb7de",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "32098cc56bcd9ff44bfa83b1015a3bc2bb7d2f8f7eecb3113929df732faa8176",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-042",
+      "repo_id": "ajv",
+      "query": "Find generation of the array-tail check that marks items evaluated, limits total length for a false schema, and validates extra elements only for a nontrivial object schema.",
+      "category": "different_file",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 2,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": null,
+          "qualname": "code"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/unevaluated/unevaluatedItems.ts",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": null,
+          "qualname": "code"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/unevaluated/unevaluatedItems.ts",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "validateAdditionalItems"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/applicator/additionalItems.ts",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "validateAdditionalItems"
+          },
+          "module_name": null,
+          "path": "lib/vocabularies/applicator/additionalItems.ts",
+          "source_hash": "0593c60f31db5cea9022a353e56fd3066a8dac4e35607affb4e556d4d84c3f2a",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "c19c3d3e0b290171f674d3dbacc52d946f9e4325f2223355a055e741c5dbbbb2",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "0593c60f31db5cea9022a353e56fd3066a8dac4e35607affb4e556d4d84c3f2a",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-017",
+      "repo_id": "pytest",
+      "query": "Find the parser layer that repeatedly combines conjunction-sized operands into left-associated boolean OR nodes.",
+      "category": "different_file",
+      "correct_public_rank": 4,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "AssertionRewriter",
+          "qualname": "AssertionRewriter.visit_BoolOp"
+        },
+        "module_name": null,
+        "path": "src/_pytest/assertion/rewrite.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "expr"
+        },
+        "module_name": null,
+        "path": "src/_pytest/mark/expression.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "expr"
+        },
+        "module_name": null,
+        "path": "src/_pytest/mark/expression.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "expr"
+          },
+          "module_name": null,
+          "path": "src/_pytest/mark/expression.py",
+          "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "8adcd82d1c4af72e99491666428e0f7fd0eea09fb305b2dfa5994b65691285d8",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [
+          "OR"
+        ],
+        "coverage": {
+          "owned": 1.0,
+          "scope": 1.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [
+          "OR"
+        ],
+        "coverage": {
+          "owned": 1.0,
+          "scope": 1.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-160",
+      "repo_id": "boltons",
+      "query": "¿Dónde se comprueba que varias representaciones vacías de una secuencia de bits producen cadenas, listas y bytes vacíos y conservan su identidad de valor al reconstruirse desde esas conversiones?",
+      "category": "test_entry_vs_other",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "Bits",
+          "qualname": "Bits.__init__"
+        },
+        "module_name": null,
+        "path": "boltons/mathutils.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_empty_bits_conversions"
+        },
+        "module_name": null,
+        "path": "tests/test_mathutils.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_empty_bits_conversions"
+        },
+        "module_name": null,
+        "path": "tests/test_mathutils.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "test_empty_bits_conversions"
+          },
+          "module_name": null,
+          "path": "tests/test_mathutils.py",
+          "source_hash": "4ebade6be193eec32db47e6f329816e335bf7d462acbe4874b4b811699a9df32",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "c4f32563bb0a9281d5b7a3770c661e5a3ae3c6c3ae2644f5ff0a608edce2d5e6",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "4ebade6be193eec32db47e6f329816e335bf7d462acbe4874b4b811699a9df32",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-088",
+      "repo_id": "junit5",
+      "query": "Which internal split decision creates a single-part result when no separator index was found, otherwise returns the prefix and suffix after the entire separator length?",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 1,
+          "kind": "method",
+          "owner": "StringUtils",
+          "qualname": "StringUtils.splitIntoTwo"
+        },
+        "module_name": null,
+        "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/StringUtils.java",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 2,
+          "kind": "method",
+          "owner": "StringUtils",
+          "qualname": "StringUtils.splitIntoTwo"
+        },
+        "module_name": null,
+        "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/StringUtils.java",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 2,
+          "kind": "method",
+          "owner": "StringUtils",
+          "qualname": "StringUtils.splitIntoTwo"
+        },
+        "module_name": null,
+        "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/StringUtils.java",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 2,
+            "kind": "method",
+            "owner": "StringUtils",
+            "qualname": "StringUtils.splitIntoTwo"
+          },
+          "module_name": null,
+          "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/StringUtils.java",
+          "source_hash": "706caaa9703f5e9a48803bb205854ec80f2f747a31785a1535928bbdbe7ccd04",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "706caaa9703f5e9a48803bb205854ec80f2f747a31785a1535928bbdbe7ccd04",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "706caaa9703f5e9a48803bb205854ec80f2f747a31785a1535928bbdbe7ccd04",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-008",
+      "repo_id": "pytest",
+      "query": "Which patch operation remembers whether a mapping key was absent before assigning its temporary value and appends that state to the item undo stack?",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 6,
+      "correct_raw_rank": 7,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "MonkeyPatch",
+          "qualname": "MonkeyPatch.undo"
+        },
+        "module_name": null,
+        "path": "src/_pytest/monkeypatch.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_failed_setitem"
+        },
+        "module_name": null,
+        "path": "testing/test_monkeypatch.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "MonkeyPatch",
+          "qualname": "MonkeyPatch.setitem"
+        },
+        "module_name": null,
+        "path": "src/_pytest/monkeypatch.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "MonkeyPatch",
+            "qualname": "MonkeyPatch.setitem"
+          },
+          "module_name": null,
+          "path": "src/_pytest/monkeypatch.py",
+          "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-185",
+      "repo_id": "marked",
+      "query": "Find the CLI process-double factory that accumulates stdout and stderr, remembers stdin event callbacks by event name and records an exit code without terminating the test process.",
+      "category": "different_file",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "main"
+        },
+        "module_name": null,
+        "path": "bin/main.js",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "createMocks"
+        },
+        "module_name": null,
+        "path": "test/unit/bin.test.js",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "createMocks"
+        },
+        "module_name": null,
+        "path": "test/unit/bin.test.js",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "createMocks"
+          },
+          "module_name": null,
+          "path": "test/unit/bin.test.js",
+          "source_hash": "780f9d3663f4ee91cdc83fda5480029376a89c7f38bf6ec0c7c16520cbd96ab0",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "545be57052de24ea974168a657f0c025ab15fce9e5600d51da6aea943ef6b166",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [
+          "CLI"
+        ],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "780f9d3663f4ee91cdc83fda5480029376a89c7f38bf6ec0c7c16520cbd96ab0",
+        "test_entry": false,
+        "test_helper": true,
+        "refs": [
+          "CLI"
+        ],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-174",
+      "repo_id": "attrs",
+      "query": "Localiza la prueba que, sin configurar on_setattr, asigna una cadena a un campo entero y verifica su conversión, y luego rechaza otra cadena cuyo entero queda por debajo del umbral del validador.",
+      "category": "missing",
+      "correct_public_rank": null,
+      "correct_raw_rank": null,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "TestSetAttr",
+          "qualname": "TestSetAttr.test_no_validator_no_converter"
+        },
+        "module_name": null,
+        "path": "tests/test_setattr.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "TestSetAttr",
+          "qualname": "TestSetAttr.test_no_validator_no_converter"
+        },
+        "module_name": null,
+        "path": "tests/test_setattr.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": null,
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "TestNextGen",
+            "qualname": "TestNextGen.test_converts_and_validates_by_default"
+          },
+          "module_name": null,
+          "path": "tests/test_next_gen.py",
+          "source_hash": "43fc68b75b530cabaf0de3ce8df4ef87d23bce0d63f8acfb561fffc2ddc6d4fe",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "cf1d675f6b4aca6d40e78bfeb0dc67c7bb3b30328df4434de66744907de9d06f",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [
+          "on_setattr"
+        ],
+        "coverage": {
+          "owned": 1.0,
+          "scope": 1.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": null
+    },
+    {
+      "id": "symdev-20261016-152",
+      "repo_id": "boltons",
+      "query": "Find the sorting regression that starts from descending values, forces a list into multiple internal segments through a middle removal, and checks the sorted first and last elements.",
+      "category": "test_entry_vs_other",
+      "correct_public_rank": 5,
+      "correct_raw_rank": 2,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "soft_sorted"
+        },
+        "module_name": null,
+        "path": "boltons/iterutils.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "soft_sorted"
+        },
+        "module_name": null,
+        "path": "boltons/iterutils.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_sort_barrel_list"
+        },
+        "module_name": null,
+        "path": "tests/test_listutils.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "test_sort_barrel_list"
+          },
+          "module_name": null,
+          "path": "tests/test_listutils.py",
+          "source_hash": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "7fb67f49dc1d895051549b523c2e21161e3c1f4e21590fa7fd09039386d08510",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-001",
+      "repo_id": "pytest",
+      "query": "Where is a dotted import walked by trying attributes before importing missing submodules, while other import errors are wrapped when the final token of their message differs from the attempted module name?",
+      "category": "different_file",
+      "correct_public_rank": 4,
+      "correct_raw_rank": 2,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "_import_module_using_spec"
+        },
+        "module_name": null,
+        "path": "src/_pytest/pathlib.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "_import_module_using_spec"
+        },
+        "module_name": null,
+        "path": "src/_pytest/pathlib.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "resolve"
+        },
+        "module_name": null,
+        "path": "src/_pytest/monkeypatch.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "resolve"
+          },
+          "module_name": null,
+          "path": "src/_pytest/monkeypatch.py",
+          "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "514a634ce07ff8f773e5951b47cd321e18699b8616ec8cc3a5bf6978615e3655",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-168",
+      "repo_id": "attrs",
+      "query": "Where is a wrapped converter tested with access to the field definition, including an Attribute type assertion and multiplication using that field metadata?",
+      "category": "test_entry_vs_other",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 2,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": "TestConverter.test_converter_wrapped_takes_field",
+          "qualname": "TestConverter.test_converter_wrapped_takes_field.converter_with_field"
+        },
+        "module_name": null,
+        "path": "tests/test_make.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": "TestConverter.test_converter_wrapped_takes_field",
+          "qualname": "TestConverter.test_converter_wrapped_takes_field.converter_with_field"
+        },
+        "module_name": null,
+        "path": "tests/test_make.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "TestConverter",
+          "qualname": "TestConverter.test_converter_wrapped_takes_field"
+        },
+        "module_name": null,
+        "path": "tests/test_make.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "method",
+            "owner": "TestConverter",
+            "qualname": "TestConverter.test_converter_wrapped_takes_field"
+          },
+          "module_name": null,
+          "path": "tests/test_make.py",
+          "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+        "test_entry": false,
+        "test_helper": true,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-043",
+      "repo_id": "ajv",
+      "query": "Where is the generated loop restricted to indices after a tuple prefix, with an early break after a failed additional element unless all-errors mode is enabled?",
+      "category": "different_file",
+      "correct_public_rank": 4,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "KeywordCxt",
+          "qualname": "KeywordCxt.fail"
+        },
+        "module_name": null,
+        "path": "lib/compile/validate/index.ts",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": "validateAdditionalItems",
+          "qualname": "validateAdditionalItems.validateItems"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/applicator/additionalItems.ts",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": "validateAdditionalItems",
+          "qualname": "validateAdditionalItems.validateItems"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/applicator/additionalItems.ts",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": "validateAdditionalItems",
+            "qualname": "validateAdditionalItems.validateItems"
+          },
+          "module_name": null,
+          "path": "lib/vocabularies/applicator/additionalItems.ts",
+          "source_hash": "0593c60f31db5cea9022a353e56fd3066a8dac4e35607affb4e556d4d84c3f2a",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "841338dea0ff90d44bde71f0651879edad186fd50d7bb6d03243b0085e557c48",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "0593c60f31db5cea9022a353e56fd3066a8dac4e35607affb4e556d4d84c3f2a",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-014",
+      "repo_id": "pytest",
+      "query": "Which token-consumption method advances only for a matching non-end token, leaves end-of-input in place, and optionally reports a required-token mismatch?",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 3,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "Scanner",
+          "qualname": "Scanner.lex"
+        },
+        "module_name": null,
+        "path": "src/_pytest/mark/expression.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "Scanner",
+          "qualname": "Scanner.lex"
+        },
+        "module_name": null,
+        "path": "src/_pytest/mark/expression.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 2,
+          "kind": "method",
+          "owner": "Scanner",
+          "qualname": "Scanner.accept"
+        },
+        "module_name": null,
+        "path": "src/_pytest/mark/expression.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 2,
+            "kind": "method",
+            "owner": "Scanner",
+            "qualname": "Scanner.accept"
+          },
+          "module_name": null,
+          "path": "src/_pytest/mark/expression.py",
+          "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+        "test_entry": false,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-151",
+      "repo_id": "boltons",
+      "query": "Which regression runs a seeded mix of thousands of indexed pops, tail pops, insertions and reads against both a segmented list and a builtin list, checking length after each operation and final contents?",
+      "category": "missing",
+      "correct_public_rank": null,
+      "correct_raw_rank": null,
+      "fusion_lost_raw_hit": false,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_barrel_list_pop_after_tail_drained"
+        },
+        "module_name": null,
+        "path": "tests/test_listutils.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "_multi_sublist_bl"
+        },
+        "module_name": null,
+        "path": "tests/test_listutils.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": null,
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "test_barrel_list_matches_list"
+          },
+          "module_name": null,
+          "path": "tests/test_listutils.py",
+          "source_hash": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": null
+    },
+    {
+      "id": "symdev-20261016-132",
+      "repo_id": "packaging",
+      "query": "Find the regression showing that an empty package lock with no environment restrictions validates and yields an empty selection rather than rejecting the host environment.",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_lock_no_matching_env"
+        },
+        "module_name": null,
+        "path": "tests/test_pylock_select.py",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_lock_without_environments"
+        },
+        "module_name": null,
+        "path": "tests/test_pylock_select.py",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_lock_without_environments"
+        },
+        "module_name": null,
+        "path": "tests/test_pylock_select.py",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "test_lock_without_environments"
+          },
+          "module_name": null,
+          "path": "tests/test_pylock_select.py",
+          "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+        "test_entry": true,
+        "test_helper": false,
+        "refs": [],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    },
+    {
+      "id": "symdev-20261016-187",
+      "repo_id": "marked",
+      "query": "Localiza la fábrica de una prueba de CLI real que opcionalmente construye una tubería para stdin, añade argumentos al ejecutable y compara el HTML de stdout y el texto de stderr tras esperar el subproceso.",
+      "category": "same_file_other_operation",
+      "correct_public_rank": 2,
+      "correct_raw_rank": 1,
+      "fusion_lost_raw_hit": true,
+      "winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "testInput"
+        },
+        "module_name": null,
+        "path": "test/unit/bin.test.js",
+        "target_kind": "symbol"
+      },
+      "raw_winner": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "execMarked"
+        },
+        "module_name": null,
+        "path": "test/unit/bin.test.js",
+        "target_kind": "symbol"
+      },
+      "acceptable_present": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "execMarked"
+        },
+        "module_name": null,
+        "path": "test/unit/bin.test.js",
+        "target_kind": "symbol"
+      },
+      "expected": [
+        {
+          "entity": {
+            "definition_ordinal": 0,
+            "kind": "function",
+            "owner": null,
+            "qualname": "execMarked"
+          },
+          "module_name": null,
+          "path": "test/unit/bin.test.js",
+          "source_hash": "780f9d3663f4ee91cdc83fda5480029376a89c7f38bf6ec0c7c16520cbd96ab0",
+          "target_kind": "symbol"
+        }
+      ],
+      "winner_cues": {
+        "source_hash": "780f9d3663f4ee91cdc83fda5480029376a89c7f38bf6ec0c7c16520cbd96ab0",
+        "test_entry": false,
+        "test_helper": true,
+        "refs": [
+          "CLI",
+          "HTML"
+        ],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      },
+      "correct_cues": {
+        "source_hash": "780f9d3663f4ee91cdc83fda5480029376a89c7f38bf6ec0c7c16520cbd96ab0",
+        "test_entry": false,
+        "test_helper": true,
+        "refs": [
+          "CLI",
+          "HTML"
+        ],
+        "coverage": {
+          "owned": 0.0,
+          "scope": 0.0,
+          "identity": 0.0
+        }
+      }
+    }
+  ]
+}

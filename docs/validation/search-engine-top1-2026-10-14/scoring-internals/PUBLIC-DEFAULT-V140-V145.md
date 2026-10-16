@@ -561,3 +561,16 @@ capture source. Actual global CLIwho and fresh MCPwho show numbered implementati
 fullJSON retains source hash, and scalar calculator defaults to one line. Potion
 default unchanged. Receipts atcompact-output-2026-10-16-best-default/installed-v179.json.
 Attached oldMCPprocess not restarted; reconnect required. No release/tag/upload.
+
+
+## Retomar ranking: diagnóstico completo y controles181–184 rechazados
+
+Public172nuevo159/195, raw169/195. ALL200diagnostic41misses:17same-file otheroperation,14otherfile,5test-entryvsother,5missing. Fusionloses18rawhits/gains8=>net−10;unionoracle177only, forbiddenruntime. No alternatequerylabel/denominator. Originalactual191/197unchanged.
+
+T1clause-min-CodeRank90new/165old; T2twelveCLSresidual161/189. U1clause68Mmean156/186; U2fourlogitstatsresidual166/190. Vfixedsourcepurpose164/190; Wownedcode164/188,equalmean170/190. All197/195samepools, exactlookupbypasskept, old150nonsymbolsunchanged. Allrejected,no productchange. Latercontrolled3200orders/outcomes and16fold exclusions verified; it doesnot repair original grader __file__ receipt absence. Captureshavecontemporaneousorigins;fitlaunchesPYTHONPATHfrozen172explicit.
+
+Tobserverp50/p9559.18/86.51ms;U3057.55/5480.01ms;W772.18/1367.90ms. NOTcompleteAPI/no causalRAMclaims. Detaildocs/validation/search-ranking-diagnostics-2026-10-16-v181-v184. Archive172gz/2007291bytes manifest a637dcfe23ce48ec624a6bcdb0c86c431ba13ac25c5b05cc212954df02d06cdd.
+
+Next186INPROGRESS:same68Mexternaldomainadaptation,NOlargermodel/inferenceTorch. CorrectedCSNcurated-c12ktrain/3kval repositorydisjoint;589/145queryrepos,829/199allcandidate repos. All8evalbasenames/forks+normalizedcloneguard excluded, not proof about allmodifiedversions. PublicsnapshotrootsNO.git; guard2593codefiles/26rawfallbacks. Review24pairs weakdocumentarylabels/contextlimits;2invalidPython,3residualdocs and386easyterminalcollisions fixed beforetraining. Reviewc5dbd9d498f44905fbc99b9f8b504bb4c9956f7488c0e15c7cf0bfa74ce961193. InitialCPUtorch/ONNXparity andMPSprobe pass;12tailinitializer mapsunambiguous.
+
+Train186fixedoneepoch final2blocks/head4,722,177of68,408,321params, AdamW5e-5, softmax queryloss;externalvalidationALL3000, train10968fit512. No400labelsfit, no sweep/checkpointchoicefrom400, no reserveopens. Traininglocalresearch/output/development/code-domain-adaptation-v186;producer/protocol in output/analysis. Check session/progress before startinganotherjob. Require real MCP CPU/RAM and old>=180/197,new>=180/195 beforepromotion. ReserveCLOSEDregardless, independent177/198historical. No release.

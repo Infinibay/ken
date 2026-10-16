@@ -13,6 +13,8 @@ de comportamiento nuevas119/160. Última aceptación independiente, frozen145:
 Controles H/J/K/L/N/P/Q/R/MLP/S rechazados y costes/causas en
 [registro público](PUBLIC-DEFAULT-V140-V145.md) y
 [captura completa v172](../../qualified-source-locator-2026-10-16/README.md).
+Los controles181–184 tampoco alcanzaron90: mejor170/195en desarrollo nuevo,
+191/197actualoriginal sin cambios. [Diagnóstico completo y controles](../../search-ranking-diagnostics-2026-10-16-v181-v184/README.md).
 La combinación predeterminada conserva PotionCode16Mv2, contexto CodeRank INT8,
 Ettin68M CPU y fusión fija; los controles rechazados no se activan. El comando
 global uv-tool usa un wheel local noeditable; no se hizo release.
