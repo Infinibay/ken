@@ -10,7 +10,7 @@ import numpy as np
 
 from ken.retrieval.description import OwnerDescription
 from ken.retrieval.evidence_features import FeatureMatrix, _coverage, _STATS, _EXPANDED_STATS
-from ken.retrieval.intent import requested_piece_kind, requested_piece_path
+from ken.retrieval.intent import interpret, requested_piece_kind, requested_piece_path
 from ken.retrieval.model import CodeMatch, EntityKey, SearchRequest
 from ken.retrieval.numeric_ranker import NumericRanker
 from ken.retrieval.profile import Encoder
@@ -75,6 +75,7 @@ def piece_features(request: SearchRequest, pieces: Sequence[PieceCandidate], *,
                    expanded_query: str | None = None) -> FeatureMatrix:
     """Describe units directly; native owner score remains one bounded prior."""
     kind = requested_piece_kind(request)
+    purpose = interpret(request).purpose
     if any(piece.kind != kind for piece in pieces):
         raise ValueError('piece candidates differ from requested kind')
     if not pieces:
@@ -107,7 +108,7 @@ def piece_features(request: SearchRequest, pieces: Sequence[PieceCandidate], *,
             documentation_fraction=1-executable/max(1, owned),
             test_path=float(any(p in {'test', 'tests', 'typing_tests', 'platform-tests', 'spec', 'specs'} for p in parts)),
             data_file=float(PurePosixPath(piece.path).suffix in {'.json', '.yaml', '.yml', '.toml'}),
-            request_tests=float(request.purpose=='tests'), request_documentation=float(request.purpose=='documentation'))
+            request_tests=float(purpose=='tests'), request_documentation=float(purpose=='documentation'))
         row.update({f'request_{k}': float(kind==k) for k in _KINDS})
         row.update({f'declaration_kind_{k}': float(root is not None and root.entity.kind==k) for k in _DECLARATIONS})
         row.update({'original_'+name: value for name,value in raw.items()})

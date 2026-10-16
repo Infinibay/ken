@@ -95,3 +95,16 @@ def test_named_file_keeps_identity_priority_over_piece_forest_score():
     ranked=PieceReranker(model, Encoder(), stem_words=lambda words:words).rank(
         SearchRequest('Find api/Rules.java and show its declaration.',piece_kind='file'), candidates)
     assert ranked[0].piece.path=='api/Rules.java'
+
+
+@pytest.mark.parametrize('search_request,expected', [
+    (SearchRequest('Which test checks invalid input?',piece_kind='class'),1.),
+    (SearchRequest('Which method checks invalid input?',piece_kind='class'),0.),
+    (SearchRequest('Which test checks invalid input?',piece_kind='class',purpose='implementation'),0.),
+    (SearchRequest('Find input validation.',piece_kind='class',purpose='tests'),1.),
+])
+def test_piece_features_use_resolved_public_request_purpose(search_request,expected):
+    from ken.retrieval.piece_ranking import piece_features
+    from tests.retrieval.test_evidence_features import Encoder
+    matrix=piece_features(search_request,[piece('Reader',1.)],encoder=Encoder(),stem_words=lambda words:words)
+    assert matrix.values[0,matrix.names.index('request_tests')]==expected
