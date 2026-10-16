@@ -385,3 +385,62 @@ original/output/uv-tool-best-default-install-v161.json. Existing connected MCP
 process was NOT restarted; new processes use new package. No claim that already
 loaded modules changed. Original checkout main updated to dce44 preserving63
 foreign dirty tracked paths, empty staging, prior751untracked inventory backed up.
+
+
+## Rejected representation and decision controls — v162–v166
+
+All controls use exposed development references only. Fresh balanced acceptance
+reserve remains private and unevaluated. Complete current public API baseline is
+original191/200 top1,197/200 Recall10 and new SYMBOL-ONLY150/200,195/200. The
+raw neural readout on those ten candidates is original189/new169; it is a
+different policy, not an API result. Neither cohort proves independent90%.
+
+P162b tree-sitter query-selected source syntax, same68M/512tokens: new155,
+old188. Equal mean with original neural logits:166/190. Unsupported languages
+fall back to original evidence; initial failed162capture is retained ungraded.
+Q164 contextual word MaxSim from existing CodeRankEmbed INT8 token output:
+new154/old190; fixed residual six-statistic head162/192. No new model or graph
+weights. Per-real-encode token0 equals sentence_embedding; separate public
+embed_query parity was tested on a synthetic input only. Observer timings exclude
+query encoding; they are not API latency measurements. Both P/Q rejected.
+
+R165c query-role TFIDF character classifier:168new/189old; adding explicit
+reference coverage constraints:165/189. Classifier181/250 correct. This arm omits
+the three explicit flags used in prior K(Potion) control, so it does not isolate
+TFIDF versus Potion. Earlier failed serialization/missing docs-field attempts
+remain archived. Final docs value comes from the named reference_docs column.
+All current P/Q/R preserve392/400 total Recall10. No control reaches180new.
+
+V166 fixed512→24ReLU→1 head uses the LEGACY pool(193new Recall10,32symbol pools
+different from current), standardized train-only features and repository holdout.
+Training1700/1701 correct are correlated occurrences across folds, not1701distinct
+queries. Every one of eight fits hits iteration300, with warnings retained.
+Held-out new137/old184 top1,390/400 Recall10: strong overfit counterevidence.
+Do not present the result as a converged optimum or proof against all nonlinear
+models. No head, syntax view or contextual MaxSim code enters production.
+
+Independent reference/scorer review reconstructed all3200orders/outcomes across
+eight readouts and400queries, every stratum,2500current and2500legacy matrix-row
+identities,24whole-repository holdouts and425physical source hashes. No blocking
+measurement defect. Receipt SHA1e248efeb7383bdfebc6d0e7cdc96cc52f359b8463bb8fb12fd25ac297dab95f.
+R transitive intent/roles imports were not pinned in the original controller;
+matching frozen155source was attested late from recorded invocation, reproduced
+independently, and remains explicitly a late provenance limit. Do not relabel it
+a contemporaneous receipt. Full independent report is in the archive below.
+
+Durable archive output/checkpoints/representation-controls-v162-v166 includes
+165gz files,5756182compressed bytes and manifest SHA
+709dd4bf69088a981b078177166c98d3e60bc026a07d6336972ff6116cd9a17e.
+It preserves initial failures, retries, producer/helper bytes, measurements and
+audit without private acceptance payloads. Every compressed file was decompressed
+and matched its recorded source SHA before copying to the clean worktree.
+
+Next bounded CPU candidate v168/v169: reuse immutable native short-term vectors
+in an8MiB-accounted/8192entry per-encoder LRU. Only model2vec_backend.py changes;
+no weights, scoring, query intent or evidence policy changes. Five real tiny-model
+tests pass and mutation isolation test rejects return-by-reference. Actual Potion
+vocabulary, mixed batches, duplicates, reverse ordering and eviction are bit-exact
+against native encoding. Full suite, original200public MCP capture and resource
+comparison are IN PROGRESS; candidate is not promoted or installed yet. See
+docs/design/static-vector-cache-2026-10-16-v168.md. Never infer whole-search speedup
+from the static-encoding component. New reserve remains closed.
