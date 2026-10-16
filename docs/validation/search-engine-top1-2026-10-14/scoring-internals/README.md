@@ -21,8 +21,15 @@ global uv-tool usa un wheel local noeditable; no se hizo release.
 
 Adaptación externa A186 del mismo modelo de 68M cerrada: 2768→2799/3000 en validación
 externa de 4 candidatos; no es la métrica de Ken. Tail final y ONNX CPU equivalente
-guardados. A189 público de 400 consultas sigue en curso: el default y sus porcentajes de arriba
-siguen vigentes. [Receta, artefactos, incidentes y validación pendiente](../../external-code-adaptation-2026-10-16-v185-v188/README.md).
+guardados. A189 público de 400 consultas está cerrado y rechazado: crudo 165/167,
+RRF 193/159 y política por tipo 189/167 (original/nuevo, de 200 cada una).
+[Receta e incidentes](../../external-code-adaptation-2026-10-16-v185-v188/README.md).
+B191, cuerpo completo, y B192, contexto léxico/auxiliares, tampoco superan los
+169 aciertos nuevos del reranker crudo. D193, con 1.024/2.048 tokens, evita 74
+recortes y admite 238 ampliaciones; conserva 169 nuevos con ranking crudo y
+159 con RRF y tarjetas originales. Con contexto y RRF baja a 158. No se activan.
+La selección de fuente limita antes del tokenizer; el modelo admite 7.999 tokens.
+[Resultados cerrados, controles y CPU](../../source-context-and-token-budgets-2026-10-16-v189-v193/README.md).
 Revisión independiente de 26 fallos raw recuperables: 13 núcleos visibles,
 9 necesitan contexto externo y 4 pierden lógica al armar el card; ningún card
 correcto se trunca a 512 tokens. Referencias intactas; no prueba causalidad.

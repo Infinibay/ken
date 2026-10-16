@@ -1,6 +1,7 @@
 # Adaptación externa del reranker de 68M y exportación CPU, v185–v188
 
-El experimento está cerrado y guardado; la captura pública A189 sigue en curso.
+La adaptación y su captura pública A189 están cerradas: el candidato se rechazó.
+[Resultados A189 y controles posteriores](../source-context-and-token-budgets-2026-10-16-v189-v193/README.md).
 **El motor instalado sigue en 191/197 (original) y 159/195 (nuevo). No se acredita 90%
 nuevo, no se cambia el default y la reserva permanece cerrada. Sin release.**
 
@@ -60,8 +61,9 @@ Esto prueba equivalencia numérica de esos inputs, no calidad de búsqueda.
 
 El entrenamiento usó MPS local. La inferencia exportada usa CPUExecutionProvider.
 El verificador que mantiene Torch y ONNX juntos llegó a 2.361.180.160 bytes; **eso
-no es el RSS del motor**. Falta la medición completa MCP normal del candidato
-antes de cualquier promoción. Que coincida el grafo no acredita latencia/RAM.
+no es el RSS del motor**. No se promovió el candidato porque falló calidad. Su captura
+API tuvo outliers de latencia conservados; no hay aprobación de coste MCP.
+Que coincida el grafo no acredita latencia/RAM.
 
 ## Incidentes preservados y comprobaciones
 
@@ -83,12 +85,12 @@ fixture NumPy no contiguo y un comando de tests sin PYTHONPATH; corregidos sin
 cambiar la receta. Las tres pruebas previas del wrapper verifican equivalencia
 del modelo original, padding y máscara de parámetros entrenables. Un smoke de
 46consultas en8repositorios reproduce exactamente los órdenes MCP originales
-usando la API diagnóstica que hará la captura; incluye las cuatro piezas.
+usando la API diagnóstica que hizo la captura; incluye las cuatro piezas.
 
-## Siguiente validación, fijada antes de puntuar
+## Validación pública A189, fijada antes de puntuar
 
-Se capturan 400 consultas completas, manteniendo exactamente los candidatos,
-locators cualificados, fuentes y modelos nativos. Se informan tres variantes:
+Se capturaron 400 consultas completas, manteniendo exactamente los candidatos,
+locators cualificados, fuentes y modelos nativos. Se informaron tres variantes:
 raw adaptado; RRF(.5,60)adaptado; y raw para símbolos con esa RRF para agregados.
 La tercera política se registró antes de existir el tail final: la supervisión
 externa identifica funciones, mientras el bosque de piezas aporta evidencia
@@ -99,6 +101,13 @@ No se promedian cohortes para superar el umbral. Se cierran TODAS las prediccion
 antes de puntuar referencias expuestas. Si ninguna pasa, el candidato no se
 activa; los fallos pueden informar otra hipótesis. La reserva sigue cerrada
 incluso si una pasa. Todo esto es desarrollo expuesto.
+
+A189 cerró con crudo 165/167, RRF 193/159 y crudo para símbolos con RRF para
+agregados 189/167 (original/nuevo, sobre 200 cada una), con 197/195 top‑10.
+Ninguna alcanza 180 aciertos nuevos.
+La mejora externa no transfirió: se conserva el modelo publicado. El archivo
+inmutable de abajo sigue sin incluir A189; los resultados están en el
+[archivo posterior](../source-context-and-token-budgets-2026-10-16-v189-v193/README.md).
 
 La [revisión fuente de los26fallos anteriores](SOURCE-CARD-VISIBILITY.md)
 encuentra 13 núcleos visibles, 9 contextos externos y 4 pérdidas materiales previas al

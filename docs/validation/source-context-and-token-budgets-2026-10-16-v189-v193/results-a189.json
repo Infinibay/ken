@@ -1,0 +1,362 @@
+{
+  "A186_raw": {
+    "total": {
+      "queries": 400,
+      "top1": 332,
+      "recall10": 392
+    },
+    "cohort": {
+      "new_symbol200": {
+        "queries": 200,
+        "top1": 167,
+        "recall10": 195
+      },
+      "original200": {
+        "queries": 200,
+        "top1": 165,
+        "recall10": 197
+      }
+    },
+    "target_kind": {
+      "class": {
+        "queries": 50,
+        "top1": 47,
+        "recall10": 50
+      },
+      "file": {
+        "queries": 50,
+        "top1": 38,
+        "recall10": 48
+      },
+      "module": {
+        "queries": 50,
+        "top1": 37,
+        "recall10": 49
+      },
+      "symbol": {
+        "queries": 250,
+        "top1": 210,
+        "recall10": 245
+      }
+    },
+    "repo_id": {
+      "ajv": {
+        "queries": 67,
+        "top1": 60,
+        "recall10": 66
+      },
+      "attrs": {
+        "queries": 38,
+        "top1": 26,
+        "recall10": 36
+      },
+      "boltons": {
+        "queries": 55,
+        "top1": 45,
+        "recall10": 54
+      },
+      "commons-csv": {
+        "queries": 23,
+        "top1": 20,
+        "recall10": 23
+      },
+      "junit5": {
+        "queries": 72,
+        "top1": 63,
+        "recall10": 70
+      },
+      "marked": {
+        "queries": 29,
+        "top1": 27,
+        "recall10": 29
+      },
+      "packaging": {
+        "queries": 42,
+        "top1": 35,
+        "recall10": 41
+      },
+      "pytest": {
+        "queries": 74,
+        "top1": 56,
+        "recall10": 73
+      }
+    },
+    "language": {
+      "en": {
+        "queries": 240,
+        "top1": 199,
+        "recall10": 237
+      },
+      "es": {
+        "queries": 160,
+        "top1": 133,
+        "recall10": 155
+      }
+    },
+    "query_kind": {
+      "behavior": {
+        "queries": 320,
+        "top1": 256,
+        "recall10": 312
+      },
+      "qualified_lookup": {
+        "queries": 80,
+        "top1": 76,
+        "recall10": 80
+      }
+    },
+    "strict_public_gate": false,
+    "counts": {
+      "original200": {
+        "top1": 165,
+        "recall10": 197,
+        "queries": 200
+      },
+      "new_symbol200": {
+        "top1": 167,
+        "recall10": 195,
+        "queries": 200
+      }
+    }
+  },
+  "A186_fusion": {
+    "total": {
+      "queries": 400,
+      "top1": 352,
+      "recall10": 392
+    },
+    "cohort": {
+      "new_symbol200": {
+        "queries": 200,
+        "top1": 159,
+        "recall10": 195
+      },
+      "original200": {
+        "queries": 200,
+        "top1": 193,
+        "recall10": 197
+      }
+    },
+    "target_kind": {
+      "class": {
+        "queries": 50,
+        "top1": 49,
+        "recall10": 50
+      },
+      "file": {
+        "queries": 50,
+        "top1": 48,
+        "recall10": 48
+      },
+      "module": {
+        "queries": 50,
+        "top1": 49,
+        "recall10": 49
+      },
+      "symbol": {
+        "queries": 250,
+        "top1": 206,
+        "recall10": 245
+      }
+    },
+    "repo_id": {
+      "ajv": {
+        "queries": 67,
+        "top1": 59,
+        "recall10": 66
+      },
+      "attrs": {
+        "queries": 38,
+        "top1": 32,
+        "recall10": 36
+      },
+      "boltons": {
+        "queries": 55,
+        "top1": 49,
+        "recall10": 54
+      },
+      "commons-csv": {
+        "queries": 23,
+        "top1": 19,
+        "recall10": 23
+      },
+      "junit5": {
+        "queries": 72,
+        "top1": 64,
+        "recall10": 70
+      },
+      "marked": {
+        "queries": 29,
+        "top1": 26,
+        "recall10": 29
+      },
+      "packaging": {
+        "queries": 42,
+        "top1": 37,
+        "recall10": 41
+      },
+      "pytest": {
+        "queries": 74,
+        "top1": 66,
+        "recall10": 73
+      }
+    },
+    "language": {
+      "en": {
+        "queries": 240,
+        "top1": 208,
+        "recall10": 237
+      },
+      "es": {
+        "queries": 160,
+        "top1": 144,
+        "recall10": 155
+      }
+    },
+    "query_kind": {
+      "behavior": {
+        "queries": 320,
+        "top1": 272,
+        "recall10": 312
+      },
+      "qualified_lookup": {
+        "queries": 80,
+        "top1": 80,
+        "recall10": 80
+      }
+    },
+    "strict_public_gate": false,
+    "counts": {
+      "original200": {
+        "top1": 193,
+        "recall10": 197,
+        "queries": 200
+      },
+      "new_symbol200": {
+        "top1": 159,
+        "recall10": 195,
+        "queries": 200
+      }
+    }
+  },
+  "A186_piece_owned": {
+    "total": {
+      "queries": 400,
+      "top1": 356,
+      "recall10": 392
+    },
+    "cohort": {
+      "new_symbol200": {
+        "queries": 200,
+        "top1": 167,
+        "recall10": 195
+      },
+      "original200": {
+        "queries": 200,
+        "top1": 189,
+        "recall10": 197
+      }
+    },
+    "target_kind": {
+      "class": {
+        "queries": 50,
+        "top1": 49,
+        "recall10": 50
+      },
+      "file": {
+        "queries": 50,
+        "top1": 48,
+        "recall10": 48
+      },
+      "module": {
+        "queries": 50,
+        "top1": 49,
+        "recall10": 49
+      },
+      "symbol": {
+        "queries": 250,
+        "top1": 210,
+        "recall10": 245
+      }
+    },
+    "repo_id": {
+      "ajv": {
+        "queries": 67,
+        "top1": 61,
+        "recall10": 66
+      },
+      "attrs": {
+        "queries": 38,
+        "top1": 32,
+        "recall10": 36
+      },
+      "boltons": {
+        "queries": 55,
+        "top1": 50,
+        "recall10": 54
+      },
+      "commons-csv": {
+        "queries": 23,
+        "top1": 21,
+        "recall10": 23
+      },
+      "junit5": {
+        "queries": 72,
+        "top1": 65,
+        "recall10": 70
+      },
+      "marked": {
+        "queries": 29,
+        "top1": 28,
+        "recall10": 29
+      },
+      "packaging": {
+        "queries": 42,
+        "top1": 37,
+        "recall10": 41
+      },
+      "pytest": {
+        "queries": 74,
+        "top1": 62,
+        "recall10": 73
+      }
+    },
+    "language": {
+      "en": {
+        "queries": 240,
+        "top1": 210,
+        "recall10": 237
+      },
+      "es": {
+        "queries": 160,
+        "top1": 146,
+        "recall10": 155
+      }
+    },
+    "query_kind": {
+      "behavior": {
+        "queries": 320,
+        "top1": 278,
+        "recall10": 312
+      },
+      "qualified_lookup": {
+        "queries": 80,
+        "top1": 78,
+        "recall10": 80
+      }
+    },
+    "strict_public_gate": false,
+    "counts": {
+      "original200": {
+        "top1": 189,
+        "recall10": 197,
+        "queries": 200
+      },
+      "new_symbol200": {
+        "top1": 167,
+        "recall10": 195,
+        "queries": 200
+      }
+    }
+  }
+}
