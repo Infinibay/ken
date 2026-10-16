@@ -333,3 +333,55 @@ Require original>=180/197 andnew>=180/200before untouched reserve. Actual source
 observer and fitting queue are in research/output/analysis/*native-symbol*v152.py,
 captures output/development/native-symbol-evidence-v152; protocol
  docs/design/native-symbol-ranking-2026-10-16-v152.md. Never change frozen145source.
+
+
+## Actual current public default and rejected decision controls — v152–v161
+
+Current main dce44af3ea42c3aefa3b98820778a5adb28c87ec, full public MCP CPU capture
+closed before exposed-reference grading. Original200:191top1/197Recall10, all200
+orders exactly unchanged vs145. p50=2416.468666ms,p95=3696.395611ms,max4323.960417ms,
+peak1997455360B. New exposed SYMBOL-ONLY stress200:150top1/195Recall10, vs prior
+144/193; p50=1810.390292ms,p95=2825.564237ms,max3312.231ms,peak1921433600B. These
+are different cohorts. Original95.5% is NOT independent generalization. Latest
+independent balanced200 on frozen145 remains177/198(88.5%,99%), FAIL90. Fresh
+balanced reserve200 remains private and unevaluated. CPU optimization is ~20x
+on the tiny forest component, not whole search: original p50~1.3%lower,p95~1.8%
+higher vs145; do not claim an end-to-end speedup from microbenchmarks.
+
+H1/H2native-symbol100controls: new149/150top1,old190. First100native symbols
+contain every250symbol correct identity; H2top10can retrieve195new/197old, but
+ranking still fails180. J1/J2joint512CLS linear heads: new169/168,old189. Both
+underfit even training; J3/J4corrected L2=1/N instead of1 give169new/190old,
+no improvement. Original published68M graph gets a second output only; every
+2500original logit exact, no initializer change. Kquery-only role posterior
+gets171new/190old, classifier219/250; fails180. No head promoted. Archive
+output/checkpoints/public-default-and-head-controls-v152-v157 contains275gz
+(21462047B), manifest7b15446415d96b2af0e27aca7867500b23dc9e639e24c4c33d38ab2c6d882369.
+
+Current-query document-prior subtraction L1: new153/old186 versus raw neural
+169/189. Rejected. The prospective optional L2joint-delta head was NOT fitted
+because its improvement gate failed. Merely adding missing candidates cannot
+reach180:169raw hits+5missing<=174. Old24present neural misses have ZERO correct
+inputs reaching512tokens; three wrong winners hit cap. Increasing token budget
+does not address those24. These are scoped diagnostics, not a universal claim.
+
+N1 source test-entry/helper roles, critical reference coverage and query-vector
+interactions: new156/old190; N2 adds query-aligned operational lexical cues:
+new157/old190. Current392/400Recall preserved. Same fixed query-balanced residual
+linear LORO, all400cases retained. FAIL new180; neither integrated. Source role
+conventions and lexical operation cues are not proofs of behavior. Role ORACLE
+(diagnostic with exposed labels, forbidden at runtime) on current250symbol
+pools: raw169new/44old; perfect file-role filtering176new/45old; refined entry/
+helper/runtime role177new/45old. Therefore even perfect role alone fails180.
+
+Installed user's actual global uv-tool CLI from current dce44 local wheel,
+noneditable, version stays0.17.0; no PyPI upload/release/tag. Saved prior public
+installed package and receipt before replacement. Wheel25213483B, SHA
+5d07e5bc32864c263353fd8c46592fcf9aacefbce93ca68fa3a9f60050bca406. Actual global
+ken default-model reports PotionCode16Mv2 built-in. Normal-cache, offline,
+source-free verification:256static dimensions,768context,neural5.957465648651123,
+CPU both providers, noTorch/transformers,72packages compatible. Install receipt
+original/output/uv-tool-best-default-install-v161.json. Existing connected MCP
+process was NOT restarted; new processes use new package. No claim that already
+loaded modules changed. Original checkout main updated to dce44 preserving63
+foreign dirty tracked paths, empty staging, prior751untracked inventory backed up.

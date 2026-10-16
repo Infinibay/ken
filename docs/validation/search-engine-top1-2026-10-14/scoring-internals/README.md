@@ -4,6 +4,13 @@ Este documento conserva el análisis de scoring, sus números y sus límites. Se
 lee primero al retomar la investigación; no hace falta reconstruir el debug.
 Fecha de trabajo del usuario: 15 de octubre de 2026.
 
+Estado al16 de octubre: main dce44, motor público CPU y salida compacta por defecto.
+200originales expuestas191/197(95,5%/98,5%); nueva batería expuesta200sólo símbolos
+150/195(75%/97,5%). Última aceptación independiente, frozen145:177/198(88,5%/99%),
+NO cumple90. Reserva nueva cerrada. No mezclar estos porcentajes. Controles
+H/J/K/L/N rechazados y costes actuales en [registro público](PUBLIC-DEFAULT-V140-V145.md).
+El comando global uv-tool ya usa el wheel local de main, noeditable, sin release.
+
 ## Objetivo y snapshots que no se deben mezclar
 
 El usuario exige al menos 90% de **pieza correcta en top1**: clase, módulo,
