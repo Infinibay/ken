@@ -85,7 +85,7 @@ def main():
       '| Caso | Tipo | Estado | Evidencia |','|---|---|---|---|']
     complete=[];counts={'remaining':0,'piece_numeric_pairs':0,'unchanged_symbols':0,'outside_top10':0}
     with (OUT/'piece-pair-feature-values.csv').open('w',newline='') as stream:
-        writer=csv.writer(stream);writer.writerow(['case','feature_index','feature','selected','acceptable','difference','first_divergent_tree_margin'])
+        writer=csv.writer(stream,lineterminator='\n');writer.writerow(['case','feature_index','feature','selected','acceptable','difference','first_divergent_tree_margin'])
         for qid,old in original.items():
             answer=answers[qid];accepted=old['acceptable_units']
             if identity_hit({'unit':answer['units'][0]},accepted):continue

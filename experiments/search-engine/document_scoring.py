@@ -172,7 +172,7 @@ def main():
         'Snapshot cerrado v120:32fallos;29con aceptable en top10. Cada ficha contiene251valores por candidato, el margen atribuido de todos los árboles, señales crudas y la identidad del owner que representa a la pieza.',
         '', '| Caso | Tipo | Posición aceptable | Margen elegido-aceptable | Ficha |','|---|---|---:|---:|---|']
     with (OUT/'pair-feature-values.csv').open('w',newline='') as stream:
-        writer=csv.writer(stream);writer.writerow(['case','kind','acceptable_rank','feature_index','feature','selected','acceptable','difference','first_divergent_tree_margin'])
+        writer=csv.writer(stream,lineterminator='\n');writer.writerow(['case','kind','acceptable_rank','feature_index','feature','selected','acceptable','difference','first_divergent_tree_margin'])
         for row in failures:
             pair=row['comparison'];numeric=pair['numeric'];model=models[row['repo_id']]
             actual=model.explain_pair(pair['left']['feature_values'],pair['right']['feature_values'])
