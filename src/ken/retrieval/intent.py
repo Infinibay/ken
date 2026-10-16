@@ -95,9 +95,25 @@ def _named_declaration(query: str) -> tuple[str, str | None] | None:
 
 
 def _requests_test_source(query: str) -> bool:
-    """Recognize the requested noun, including modifiers, before a clause boundary."""
-    match = _TEST_OBJECT.match(query)
-    return bool(match and not (_OBJECT_BOUNDARIES & set(match['modifiers'].split())))
+    """Read the requested test object, including support and passive questions."""
+    object_query = re.sub(r'^where\s+(?:is|are)\s+', 'find ', query)
+    for phrase in (query, object_query):
+        match = _TEST_OBJECT.match(phrase)
+        if (match and not phrase[match.end():].startswith('-')
+                and not (_OBJECT_BOUNDARIES & set(match['modifiers'].split()))):
+            return True
+    support = re.match(r'^where\s+(?:does|do)\s+(?P<object>(?:[\w-]+\s+){0,8})'
+                       r'test\s+(?:helpers?|fixtures?|factories|builders?|utilities)\b', query)
+    if support and not (_OBJECT_BOUNDARIES & set(support['object'].split())):
+        return True
+    passive = re.match(r'^where\s+(?:is|are)\s+(?P<object>(?:[\w-]+\s+){1,8})'
+                       r'tested\s+(?:with|against|using|by|for|when|on)\b', query)
+    if passive and not (_OBJECT_BOUNDARIES & set(passive['object'].split())):
+        return True
+    prefix = re.split(r'\b(?:that|which|where|whose)\b', object_query, maxsplit=1)[0]
+    return bool(re.match(r'^(?:find|show|locate)\s+', object_query)
+                and re.search(r'\b[\w]+-double\s+(?:factory|helper|fixture|builder)\b', prefix)
+                and re.search(r'\btest(?:s|ing)?\b', query))
 
 
 @dataclass(frozen=True)

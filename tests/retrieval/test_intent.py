@@ -157,3 +157,41 @@ def test_regressions_and_spanish_locate_request_test_source(query):
 ])
 def test_regression_mentions_do_not_replace_the_requested_implementation(query):
     assert interpret(SearchRequest(query)).purpose == 'implementation'
+
+
+@pytest.mark.parametrize('query', [
+    'Where does a packet test helper construct the expected output?',
+    'Where is an encoded value tested with a custom decoder?',
+    'Where are malformed addresses tested against valid examples?',
+    'Find a socket-double factory that collects messages for the test process.',
+    'Which regression verifies constructor order?',
+    'Find the retry tests that stop on failure.',
+])
+def test_passive_test_and_support_requests(query):
+    assert interpret(SearchRequest(query)).purpose == 'tests'
+
+
+@pytest.mark.parametrize('query', [
+    'Where does a function call test helpers before running?',
+    'Where is the tested flag read by the parser?',
+    'Which helper dispatches tests to a worker?',
+    'Where does the protocol double the receive buffer?',
+    'Find a process factory that passes a test argument to a production process.',
+    'Find a mock class declaration.',
+    'Where is a function tested with examples documented?',
+])
+def test_support_mentions_do_not_replace_the_requested_object(query):
+    assert interpret(SearchRequest(query)).purpose == 'implementation'
+
+
+def test_explicit_purpose_overrides_inferred_passive_tests():
+    query = 'Where is an encoded value tested with a custom decoder?'
+    assert interpret(SearchRequest(query, purpose='implementation')).purpose == 'implementation'
+
+
+@pytest.mark.parametrize('query', [
+    'Where does an empty test-run expression become a constant?',
+    'Where is a test-selection expression compiled?',
+])
+def test_test_prefixed_input_objects_are_not_test_source_requests(query):
+    assert interpret(SearchRequest(query)).purpose == 'implementation'
