@@ -4,7 +4,26 @@ Este documento conserva el análisis de scoring, sus números y sus límites. Se
 lee primero al retomar la investigación; no hace falta reconstruir el debug.
 Fecha de trabajo del usuario: 15 de octubre de 2026.
 
-Estado al16 de octubre: motor público CPU y salida compacta por defecto.
+Actualización vigente,16de octubre: por instrucción humana se prioriza **inglés**,
+120consultas originales y120nuevas con metadata fija; se exigen>=108aciertos
+estrictos en CADA cohorte. Español queda diferido. Fuente actualcccea45b,
+corrección de intención201: **113/120 y95/120 top1**,118/120 y119/120 top10.
+No alcanza90%en las nuevas. Las400consultas siguen siendo desarrollo expuesto;
+la reserva permanece cerrada. [Prueba MCP400, suite y CPU](../../requested-test-role-2026-10-16-v201/README.md).
+Desde1a71e4e2 el cliente conserva1024tokens por defecto (2048configurable), con
+los mismos modelos. MCP201:p95inglés3,22s CPU y pico2,14GB de servidor completo.
+
+[Debug inglés y controles196–206](../../english-scoring-2026-10-16-v196-v206/README.md)
+conserva las251entradas y caminos completos del bosque en33casos, la captura
+nueva196que reproduce scores/MCP, los6empates RRF y todos los controles rechazados.
+Las trazas son de195, antes de cambiar las6consultas de intención201. No reutilizar
+sin verificar versiones los vectores152: fallaron el guard de igualdad exacta.
+Las ganancias aisladas no se suman sin medir su combinación;206falló antes de
+producirla porque MCP normal no incluye signals. Ningún control nuevo llegó90%.
+La revisión203halló una consulta Ajv con dos implementaciones correctas; sus
+referencias fijas no se cambiaron para aumentar las cifras.
+
+Estado histórico hasta v193, anterior a201: motor público CPU y salida compacta por defecto.
 Cache estático ef211af y corrección aislada de identidad v172 verificados en MCP:
 200originales expuestas191/197(95,5%/98,5%); nueva batería expuesta200sólo símbolos
 159/195(79,5%/97,5%), antes150/195. Los40locators explícitos ya aciertan; consultas
