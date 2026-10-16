@@ -18,6 +18,7 @@ class Symbol:
     calls: tuple[tuple[str, int], ...] = ()
     refreshed: bool = False
     doc_scope: str = "full"
+    implementation_line: int = 0
 
 
 @dataclass(frozen=True)

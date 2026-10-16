@@ -211,3 +211,82 @@ def test_trailing_empty_source_line_keeps_its_number():
     text = render_compact({"path": "a.py", "start_line": 8, "end_line": 9, "content": "run()\n"})
     assert "a.py:8-9" in text and "8 | run()\n9 | " in text
     assert "partial" not in text
+
+
+def test_compact_answers_omit_operational_echo_but_keep_reusable_check_id():
+    from ken.presentation import render_compact
+    check = render_compact({'status': 'not_applicable', 'run_id': 'receipt-42',
+        'scope': 'project', 'selection': '.', 'created_at': '2026-10-16',
+        'claim': 'Selected source contracts only; not proof of runtime behavior.'}, tool_name='ken_check')
+    assert 'not_applicable' in check and 'receipt-42' in check
+    assert 'created_at' not in check and 'selection' not in check and 'claim:' not in check
+    calculation = render_compact({'status': 'calculated', 'expression': '(1/3 + 1/6) * 6',
+        'exact': '3', 'method': 'rational-arithmetic/1', 'stored_as_premise': False}, tool_name='ken_calculate')
+    assert '(1/3 + 1/6) * 6 = 3' in calculation
+    assert 'method:' not in calculation and 'stored_as_premise' not in calculation
+
+
+def test_recalled_conclusion_preserves_validity_and_assumptions_without_expand_echo():
+    from ken.presentation import render_compact
+    value = {'memories': [{'topic': 'settings-reader', 'conclusion': 'Reader delegates to settings.get_value.',
+        'conclusion_complete': True, 'kind': 'note', 'validity': {'state': 'stale', 'issues': ['reader.py']},
+        'assumptions': ['Production uses this entrypoint.'],
+        'expand': {'topic': 'settings-reader', 'detail': 'full'}, 'reuse': 'review_inputs_before_reusing'}],
+        'omitted': 0, 'detail': 'answer', 'validity_scope': 'Declared inputs only.'}
+    before = copy.deepcopy(value)
+    text = render_compact(value, tool_name='ken_recall')
+    assert 'Reader delegates' in text and 'stale' in text and 'reader.py' in text
+    assert 'Production uses' in text
+    assert 'conclusion_complete' not in text and 'expand:' not in text and 'detail:' not in text
+    assert 'omitted: 0' not in text and value == before
+
+
+def test_related_neighbors_focus_on_paths_instead_of_repeating_module_flags():
+    from ken.presentation import render_compact
+    value = {'path': 'reader.py', 'imports': [{'path': 'settings.py', 'module': 'settings', 'internal': True, 'line': 1}],
+        'imported_by': [{'path': 'tests/test_reader.py', 'module': 'reader', 'language': 'python'}],
+        'tests': [{'path': 'tests/test_reader.py', 'reason': 'imports target; named for target'}],
+        'neighbors': [{'path': 'settings.py'}, {'path': 'tests/test_reader.py'}]}
+    before = copy.deepcopy(value)
+    text = render_compact(value, tool_name='ken_related')
+    assert 'settings.py' in text and 'tests/test_reader.py' in text
+    assert 'internal:' not in text and 'language:' not in text and 'module:' not in text
+    assert text.count('settings.py') == 1
+    assert value == before
+
+
+def test_structural_compact_omits_timing_but_retains_incomplete_query():
+    from ken.presentation import render_compact
+    value = {'columns': ['owner'], 'rows': [['Reader']], 'complete': False,
+        'coverage_complete': False, 'unknown_candidates': 2, 'results_truncated': True,
+        'timing': {'total_ms': 44.4, 'compile_ms': 9.6}, 'error': 'timeout'}
+    text = render_compact(value)
+    assert 'Reader' in text and 'complete: false' in text and 'coverage_complete: false' in text
+    assert 'unknown_candidates: 2' in text and 'results_truncated: true' in text and 'timeout' in text
+    assert 'timing:' not in text and 'compile_ms:' not in text
+    assert 'compile_ms:' in render_compact(value, diagnostics=True)
+
+
+def test_compact_keeps_nondefault_proof_scope_and_reasoning_world():
+    from ken.presentation import render_compact
+    report = {'status': 'pass', 'run_id': 'historical-check', 'scope': 'changes',
+              'selection': 'src/payments', 'created_at': '2026-10-16'}
+    text = render_compact(report, tool_name='ken_check')
+    assert 'changes' in text and 'src/payments' in text
+    reasoning = {'status': 'supported', 'context': 'staging-assumptions', 'world': 'without-cache',
+                 'revision': 4, 'answers': [], 'sources': {}}
+    text = render_compact(reasoning, tool_name='ken_reason')
+    assert 'staging-assumptions' in text and 'without-cache' in text
+
+
+def test_who_reuses_code_already_shown_without_hiding_candidate_identity():
+    from ken.presentation import render_compact
+    value = {'status': 'candidates', 'candidates': [
+        {'path': 'settings.py', 'line': 4, 'symbol': 'get_value', 'kind': 'function',
+         'snippets': [{'start_line': 4, 'end_line': 6, 'content': 'def get_value(key):\n    """Read settings."""\n    return VALUES[key]'}]},
+        {'path': 'settings.py', 'line': 1, 'kind': 'module',
+         'snippets': [{'start_line': 1, 'end_line': 6, 'content': '"""Settings module."""\nVALUES = {}\n\ndef get_value(key):\n    """Read settings."""\n    return VALUES[key]'}]}]}
+    text = render_compact(value, tool_name='ken_who')
+    assert ':: get_value' in text and '(module)' in text
+    assert text.count('6 |     return VALUES[key]') == 1
+    assert 'settings.py:4-6' in text and 'above' in text.lower()

@@ -532,3 +532,23 @@ failed and corrected observer preserved, no installed bytes changed. Wheel SHA
 Source-free probe peak1132855296B is not wholeAPI peak. Receipts in qualified-source
 validation folder, actual fixture example appended to EXAMPLES. Attached oldMCP
 process not restarted; new sessions load new wheel. No release/tag/version bump.
+
+
+## Default output context v178: verification code, no scoring change
+
+User found ken_whoonly exposed a symbol/docstring, insufficient to judge a
+candidate. Responsibility service now attaches selected live snapshot source
+AFTERranking.16physical lines/4000characters per candidate; Python body-start
+metadata skips long docstrings; classes can quote relevant members; module code
+extends beyond module documentation. Identical source lines are shown once with
+explicit references, while every candidate keeps its identity. Full/JSON retain
+diagnostic data. Counterevidence/conditions/ambiguity/source failures survive.
+Other compact views remove repeated metadata, keeping restricted scopes, alternate
+worlds, stale/unknown memory and incomplete search. statusJSON inventory unchanged.
+
+Full14958passed/10preexisting xfail1408.55s, mypy357clean.421package-file pins and
+21actual CLI/MCP output examples verified. No retrieval/embedding/ranking weights,
+features, neural cards or benchmark criteria changed; NO new accuracy or resource
+claim. Independent177/198 and fresh closed reserve remain historical acceptance
+status. Review and rawcaptures atcompact-output-2026-10-16-best-default; evidence
+archiveuseful-default-output-v17845gz131472B, manifest9da38e6e526e720ddbc29bd77ca25b35f8f9f22d3a4216fed14fa1e9818ff922.

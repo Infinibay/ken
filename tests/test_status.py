@@ -82,12 +82,13 @@ def test_status_prints_index_memory_and_daemon_counts(monkeypatch, capsys, tmp_p
     assert rc == 0
     assert "files indexed : 1 (1 embedded)" in out
     assert "symbols       : 1 (1 embedded)" in out
-    assert "sessions      : 1 total, 1 active, 1 scored" in out
-    assert "contexts      : 1 (1 prompts, 1 embedded)" in out
-    assert "interactions  : 1" in out
-    assert "findings      : 1 (1 embedded)" in out
-    assert "doc intents   : 1 (1 embedded)" in out
-    assert "rank signals  : index=yes, embeddings=ready, predictive=yes, findings=yes" in out
+    # Inventory stays available in JSON; default text focuses on index health.
+    assert status_report(root)["counts"] == {
+        "files": 1, "files_embedded": 1, "symbols": 1, "symbols_embedded": 1,
+        "sessions": 1, "active_sessions": 1, "contexts": 1, "prompt_contexts": 1,
+        "prompt_contexts_embedded": 1, "interactions": 1, "session_scores": 1,
+        "findings": 1, "findings_embedded": 1, "intent_sources": 1, "intent_sources_embedded": 1,
+    }
     assert "embedding cov : 2/2 (100.0%)" in out
     assert "daemon        : running (sessions=1, idle=2.5s)" in out
 
@@ -147,10 +148,9 @@ def test_status_rank_signals_show_missing_history(monkeypatch, capsys, tmp_path)
     rc = show_status(root)
 
     assert rc == 0
-    assert (
-        "rank signals  : index=empty, embeddings=none, predictive=no, findings=no"
-        in capsys.readouterr().out
-    )
+    assert "files indexed : 0 (0 embedded)" in capsys.readouterr().out
+    assert status_report(root)["rank_signals"] == {
+        "index": "empty", "embeddings": "none", "predictive": "no", "findings": "no"}
 
 
 def test_status_prints_recommendations(monkeypatch, capsys, tmp_path):
@@ -162,7 +162,7 @@ def test_status_prints_recommendations(monkeypatch, capsys, tmp_path):
     out = capsys.readouterr().out
     assert rc == 0
     assert "recommendation: run `ken install .`" in out
-    assert "recommendation: let hooks run through a few real turns" in out
+    assert "let hooks run through a few real turns" not in out
 
 
 def test_status_recommends_tool_hook_check_when_prompts_have_no_interactions(
@@ -221,7 +221,7 @@ def test_status_reports_partial_embedding_coverage(monkeypatch, capsys, tmp_path
 
     out = capsys.readouterr().out
     assert rc == 0
-    assert "rank signals  : index=yes, embeddings=partial(2/4)" in out
+    assert status_report(root)["rank_signals"]["embeddings"] == "partial(2/4)"
     assert "embedding cov : 2/4 (50.0%)" in out
     assert "embeddings are partial" in out
 
@@ -279,3 +279,19 @@ def test_status_json_reports_missing_project(capsys, tmp_path):
     out = json.loads(capsys.readouterr().out)
     assert out["ok"] is False
     assert "no ken project" in out["error"]
+
+
+def test_default_status_omits_internal_inventory_but_json_retains_it(monkeypatch, capsys, tmp_path):
+    root = _installed_project(tmp_path)
+    monkeypatch.setattr('ken.daemon.client.health', lambda _root: None)
+    assert show_status(root) == 0
+    text = capsys.readouterr().out
+    assert 'files indexed' in text and 'symbols' in text and 'stopped' in text
+    assert 'project_id' not in text and 'db ' not in text
+    assert 'sessions ' not in text and 'contexts ' not in text and 'interactions ' not in text
+    assert 'seed context history' not in text and 'few real turns' not in text
+    assert 'run `ken install .' in text
+    assert show_status(root, as_json=True) == 0
+    data = json.loads(capsys.readouterr().out)
+    assert data['project_id'] == 'proj-status' and 'db' in data
+    assert data['counts']['sessions'] == 0 and data['counts']['interactions'] == 0

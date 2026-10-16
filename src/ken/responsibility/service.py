@@ -112,7 +112,7 @@ def who(
         )
         for i, symbol in enumerate(live)
     ]
-    return present(
+    result = present(
         question,
         candidates,
         limit=limit,
@@ -123,3 +123,12 @@ def who(
         issues=issues,
         hypotheses=formulations[1:],
     )
+
+    # Ranking is complete. Quote only the selected owners from their assessed
+    # snapshots; source presentation never feeds the heuristic scores.
+    for candidate in [*result["candidates"], *result["counterevidence"]]:
+        try:
+            candidate.update(reader.preview(candidate))
+        except (OSError, ValueError, UnicodeError, LookupError) as exc:
+            candidate["preview_unavailable"] = str(exc)
+    return result

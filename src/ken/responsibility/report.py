@@ -38,6 +38,9 @@ def _candidate(candidate: dict[str, Any], question: str) -> dict[str, Any]:
     if out["symbol"] == out["path"] and out["kind"] == "module":
         del out["symbol"]
     out["score"] = candidate["confidence"]["score"]
+    for key in ("end_line", "snippets", "truncated", "preview_unavailable"):
+        if key in candidate:
+            out[key] = candidate[key]
     documentation = candidate["documentation"]
     if documentation:
         # The most relevant sentence is more useful than a generic first line

@@ -47,7 +47,8 @@ def search_previews(hits: list[dict[str, Any]], root: Path, *, lines: int = 8) -
 
 
 _DIAGNOSTICS = {"score", "ranking_score", "source_hash", "profile_version", "indexed_at",
-                "sha256", "content_hash", "fingerprint", "model_fingerprint"}
+                "sha256", "content_hash", "fingerprint", "model_fingerprint",
+                "timing", "elapsed_ms"}
 _LOCATION = {"path", "file_path", "file", "line", "line_start", "start_line", "line_end", "end_line"}
 _IDENTITY = {"name", "qualname", "label", "kind"}
 

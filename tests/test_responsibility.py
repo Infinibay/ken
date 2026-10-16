@@ -512,3 +512,98 @@ def test_compact_reports_unavailable_source_without_dumping_diagnostics(project)
     assert result["status"] == "unknown"
     assert result["uninspected_candidates"] == 1
     assert "coverage" not in result
+
+
+def test_who_default_gives_numbered_implementation_without_another_read(project):
+    root, conn, add = project
+    add('reader.py', 'def read_setting(key):\n    """Read stored application settings."""\n    return values[key]\n')
+    tool = next(t for t in server.list_tools() if t.name == 'ken_who')
+    result = server.ken_who('Who reads stored application settings?', verify=False)
+    first = result['candidates'][0]
+    assert first['snippets'] == [{'start_line': 1, 'end_line': 3,
+        'content': 'def read_setting(key):\n    """Read stored application settings."""\n    return values[key]'}]
+    text = tool.fn('Who reads stored application settings?', verify=False)
+    assert 'reader.py:1-3 :: read_setting' in text
+    assert '3 |     return values[key]' in text
+    assert 'score_kind' not in text and 'heuristic_not_probability' not in text
+
+
+def test_who_large_class_shows_relevant_method_instead_of_only_long_docstring(project):
+    root, conn, add = project
+    source = ('class Reader:\n    """Read stored application settings.\n' +
+              '    General public API documentation.\n' * 25 + '    """\n' +
+              ''.join(f'    def unrelated_{i}(self):\n        return {i}\n' for i in range(20)) +
+              '    def read_setting(self, key):\n        return settings.get_value(key)\n')
+    add('reader.py', source)
+    result = who(conn, root, 'Who reads stored application settings?')
+    first = result['candidates'][0]
+    assert first['symbol'] == 'Reader'
+    snippets = first['snippets']
+    shown = '\n'.join(s['content'] for s in snippets)
+    assert 'class Reader:' in shown and 'return settings.get_value(key)' in shown
+    assert sum(s['end_line'] - s['start_line'] + 1 for s in snippets) <= 16
+    assert first['truncated'] is True
+    lines = source.splitlines()
+    for s in snippets:
+        assert s['content'] == '\n'.join(lines[s['start_line']-1:s['end_line']])
+
+
+def test_who_code_quotes_current_snapshot_even_when_index_is_stale(project):
+    root, conn, add = project
+    add('reader.py', 'def read_setting(key):\n    """Read stored settings."""\n    return 11\n')
+    (root / 'reader.py').write_text('def read_setting(key):\n    """Read stored settings."""\n    return 99\n')
+    first = who(conn, root, 'Who reads stored settings?')['candidates'][0]
+    assert first['source']['index_changed'] is True
+    shown = '\n'.join(s['content'] for s in first['snippets'])
+    assert 'return 99' in shown and 'return 11' not in shown
+
+
+def test_who_counterevidence_also_carries_code_for_independent_inspection(project):
+    root, conn, add = project
+    add('reader.py', 'def read_setting(key):\n    """Does not read stored settings."""\n    raise NotImplementedError(key)\n')
+    tool = next(t for t in server.list_tools() if t.name == 'ken_who')
+    text = tool.fn('Who reads stored settings?', verify=False)
+    assert 'NotImplementedError(key)' in text and 'counterevidence' in text.lower()
+    assert 'not proof of absence' in text
+
+
+
+def test_who_preview_honors_python_source_encoding(project):
+    root, conn, add = project
+    source = '# coding: latin-1\ndef read_setting():\n    """Read stored settings."""\n    return "café"\n'
+    add('reader.py', source)
+    (root / 'reader.py').write_bytes(source.encode('latin-1'))
+    first = who(conn, root, 'Who reads stored settings?')['candidates'][0]
+    assert 'return "café"' in '\n'.join(s['content'] for s in first['snippets'])
+    assert first['source']['index_changed'] is True
+
+
+def test_who_preview_skips_oversized_lines_without_cutting_source_or_losing_return(project):
+    root, conn, add = project
+    source = ('def read_setting(key):\n    """Read stored settings."""\n' +
+              '    values = {"data": "' + 'x' * 10000 + '"}\n    return values[key]\n')
+    add('reader.py', source)
+    first = who(conn, root, 'Who reads stored settings?')['candidates'][0]
+    snippets = first['snippets']
+    assert sum(len(s['content']) + 1 for s in snippets) <= 4000
+    assert any('return values[key]' in s['content'] for s in snippets)
+    assert first['truncated'] is True
+    lines = source.splitlines()
+    for s in snippets:
+        assert s['content'] == '\n'.join(lines[s['start_line']-1:s['end_line']])
+
+
+
+def test_source_preview_failure_never_changes_candidate_scores_or_order(project, monkeypatch):
+    from ken.responsibility.source import SourceReader
+    root, conn, add = project
+    add('a.py', 'def read_setting():\n    """Read stored settings."""\n    return 1\n')
+    add('b.py', 'def another_reader():\n    """Read stored settings."""\n    return 2\n')
+    with_code = who(conn, root, 'Who reads stored settings?')
+    def unavailable(self, candidate):
+        raise ValueError('Preview unavailable; read this symbol directly.')
+    monkeypatch.setattr(SourceReader, 'preview', unavailable)
+    without_code = who(conn, root, 'Who reads stored settings?')
+    identity_and_score = lambda result: [(c['path'], c['symbol'], c['confidence']) for c in result['candidates']]
+    assert identity_and_score(without_code) == identity_and_score(with_code)
+    assert all('Preview unavailable' in c['preview_unavailable'] for c in without_code['candidates'])

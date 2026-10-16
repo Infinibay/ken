@@ -87,34 +87,17 @@ def status_report(start: Path) -> dict:
 
 def _print_report(report: dict) -> None:
     print(f"project_root  : {report['project_root']}")
-    print(f"project_id    : {report['project_id']}")
-    print(f"db            : {report['db']['path']}  ({report['db']['size']})")
     if not report.get("installed"):
         print("(no DB yet — run `ken install .`)")
         return
     counts = report["counts"]
     print(f"files indexed : {counts['files']} ({counts['files_embedded']} embedded)")
     print(f"symbols       : {counts['symbols']} ({counts['symbols_embedded']} embedded)")
-    print(
-        f"sessions      : {counts['sessions']} total, {counts['active_sessions']} active, "
-        f"{counts['session_scores']} scored"
-    )
-    print(
-        f"contexts      : {counts['contexts']} "
-        f"({counts['prompt_contexts']} prompts, {counts['prompt_contexts_embedded']} embedded)"
-    )
-    print(f"interactions  : {counts['interactions']}")
-    print(f"findings      : {counts['findings']} ({counts['findings_embedded']} embedded)")
-    print(
-        f"doc intents   : {counts['intent_sources']} "
-        f"({counts['intent_sources_embedded']} embedded)"
-    )
     index_health = report.get("index_health")
     if index_health and index_health["stale_files"]:
         sample = ", ".join(index_health["sample"])
         suffix = f" ({sample})" if sample else ""
         print(f"index health  : {index_health['stale_files']} stale files{suffix}")
-    print(f"rank signals  : {_rank_signal_summary_from_dict(report['rank_signals'])}")
     coverage = report.get("embedding_coverage")
     if coverage and coverage["total"] > 0:
         print(
@@ -123,7 +106,8 @@ def _print_report(report: dict) -> None:
             f"({coverage['percent']:.1f}%)"
         )
     for rec in report.get("recommendations", []):
-        print(f"recommendation: {rec}")
+        if not rec.startswith(("submit at least", "let hooks run", "save reusable")):
+            print(f"recommendation: {rec}")
     daemon = report["daemon"]
     if not daemon["running"]:
         print("daemon        : stopped")
