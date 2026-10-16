@@ -5,7 +5,7 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import replace
 from functools import lru_cache
 from importlib import import_module
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 import numpy as np
 
@@ -17,6 +17,9 @@ from ken.retrieval.numeric_ranker import NumericRanker
 from ken.retrieval.profile import RegisteredEncoder, EvidenceRanking
 from ken.retrieval.ranking import rank_candidates
 from ken.retrieval.tokenization import code_tokens
+
+if TYPE_CHECKING:
+    from ken.retrieval.ranking_trace import RankingTrace
 
 
 def _stem_one(word: str, factory: Callable[[str], Any]) -> str:
@@ -61,11 +64,18 @@ class EvidenceReranker:
 
     def rank(self, request: SearchRequest, candidates: Sequence[Candidate],
              descriptions: Mapping[EntityKey, OwnerDescription], *,
-             expanded_query: str | None = None, evidence_version: int = 1) -> list[CodeMatch]:
+             expanded_query: str | None = None, evidence_version: int = 1,
+             trace: RankingTrace | None = None) -> list[CodeMatch]:
         if evidence_version not in (1, 2, 3):
             raise ValueError('unsupported source evidence policy')
         if len(candidates) == 1 and candidates[0].signals.get('exact'):
-            return rank_candidates(request, list(candidates))
+            matches = rank_candidates(request, list(candidates))
+            if trace is not None:
+                trace.record(model=self.model, query=request.query, expanded=request.query,
+                             candidates=candidates, matches=matches, values=None,
+                             feature_version=self.feature_version, evidence_version=evidence_version,
+                             policy='unique_exact')
+            return matches
         expanded = self.prepare_query(request.query) if expanded_query is None else expanded_query
         matrix = evidence_features(request, candidates, descriptions, encoder=self.encoder,
             stem_words=self.stem_words, expanded_query=expanded)
@@ -88,4 +98,9 @@ class EvidenceReranker:
             for c, score in zip(candidates, scores, strict=True)]
         # Stable ties preserve the proposal order rather than adding another
         # source-name prior that was absent from the trained ranking contract.
-        return sorted(matches, key=lambda m: (-m.signals.get('exact', 0), -m.score))
+        ranked = sorted(matches, key=lambda m: (-m.signals.get('exact', 0), -m.score))
+        if trace is not None:
+            trace.record(model=self.model, query=request.query, expanded=expanded,
+                         candidates=candidates, matches=ranked, values=values,
+                         feature_version=self.feature_version, evidence_version=evidence_version)
+        return ranked
