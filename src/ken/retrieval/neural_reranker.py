@@ -54,11 +54,14 @@ class ONNXReranker:
     """Preserve raw logits and document order; fusion owns the final ordering."""
 
     def __init__(self, prepare: Callable[[], RerankerAssets], *, batch_size: int = 1,
-                 intra_op_threads: int = 4) -> None:
+                 intra_op_threads: int = 4, max_tokens: int = 1024) -> None:
         if type(batch_size) is not int or batch_size < 1:
             raise ValueError('positive integer batch size required')
         if type(intra_op_threads) is not int or intra_op_threads < 1:
             raise ValueError('positive integer CPU thread budget required')
+        if type(max_tokens) is not int or max_tokens < 1:
+            raise ValueError('positive integer token budget required')
+        self._max_tokens = max_tokens
         self._prepare, self.batch_size = prepare, batch_size
         self._threads = intra_op_threads
         self._session: Any = None
@@ -77,9 +80,12 @@ class ONNXReranker:
             assets.verify()
             Tokenizer = import_module('tokenizers').Tokenizer
             tokenizer = Tokenizer.from_file(str(assets.tokenizer))
-            tokenizer.enable_truncation(max_length=512, strategy='only_second')
             config = json.loads(assets.config.read_bytes())
             token_config = json.loads(assets.tokenizer_config.read_bytes())
+            for limit in (config.get('max_position_embeddings'), token_config.get('model_max_length')):
+                if limit is not None and (type(limit) is not int or limit < 1 or self._max_tokens > limit):
+                    raise ValueError('token budget exceeds or conflicts with declared model limit')
+            tokenizer.enable_truncation(max_length=self._max_tokens, strategy='only_second')
             token = token_config['pad_token']
             if isinstance(token, dict):
                 token = token['content']
@@ -118,7 +124,7 @@ class ONNXReranker:
             return scores, details
         self._load()
         special = self._tokenizer.num_special_tokens_to_add(True)
-        if len(query) > 65536 or len(self._query_tokenizer.encode(query, add_special_tokens=False).ids) > 512-special-1:
+        if len(query) > 65536 or len(self._query_tokenizer.encode(query, add_special_tokens=False).ids) > self._max_tokens-special-1:
             raise ValueError('query is too long for reranking; shorten the search question')
         for start in range(0, len(texts), self.batch_size):
             batch = texts[start:start+self.batch_size]

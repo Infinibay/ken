@@ -115,7 +115,7 @@ def prepare_reranker(definition: Mapping[str, Any], destination: Path, *, source
 
 
 def default_reranker(*, cache_root: Path | None = None, cache_dir: Path | None = None,
-                     local_files_only: bool = False) -> ONNXReranker:
+                     local_files_only: bool = False, max_tokens: int = 1024) -> ONNXReranker:
     """The measured68M FP32 model, prepared lazily on its first nonempty pool."""
     import hashlib
     import os
@@ -126,4 +126,4 @@ def default_reranker(*, cache_root: Path | None = None, cache_dir: Path | None =
         cache_root = Path(os.environ.get('KEN_CACHE_DIR', str(Path.home()/'.cache'/'ken'))).expanduser()
     root = cache_root/'models'/'ettin'/recipe/definition['source']['revision']
     return ONNXReranker(lambda: prepare_reranker(definition, root,
-        cache_dir=cache_dir, local_files_only=local_files_only))
+        cache_dir=cache_dir, local_files_only=local_files_only), max_tokens=max_tokens)

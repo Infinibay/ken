@@ -52,7 +52,7 @@ def test_empty_pool_never_prepares_or_loads_a_model():
 
 def test_document_truncation_stays_within512_and_preserves_query(registered_reranker):
     from ken.retrieval.neural_reranker import ONNXReranker,RerankerAssets
-    runtime=ONNXReranker(lambda:RerankerAssets.from_registration(registered_reranker))
+    runtime=ONNXReranker(lambda:RerankerAssets.from_registration(registered_reranker),max_tokens=512)
     scores,details=runtime.score('x',['x '*1000])
     assert scores==[535.]
     assert details['pair_tokens']==[512]
@@ -104,3 +104,52 @@ def test_model_must_return_one_score_per_document(registered_reranker):
     save(model,path);registered_reranker['graph_sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
     with pytest.raises(ValueError,match='one finite score'):
         ONNXReranker(lambda:RerankerAssets.from_registration(registered_reranker)).score('x',['y'])
+
+
+def test_default_budget_keeps_a_document_larger_than512_complete(registered_reranker):
+    from ken.retrieval.neural_reranker import ONNXReranker, RerankerAssets
+    runtime = ONNXReranker(lambda: RerankerAssets.from_registration(registered_reranker))
+    scores, details = runtime.score('x', ['x ' * 1000])
+    assert scores == [1027.]
+    assert details['pair_tokens'] == [1004]
+    assert details['truncated_documents'] == 0
+
+
+def test_custom_budget_controls_both_document_and_query_capacity(registered_reranker):
+    from ken.retrieval.neural_reranker import ONNXReranker, RerankerAssets
+    runtime = ONNXReranker(lambda: RerankerAssets.from_registration(registered_reranker), max_tokens=2048)
+    scores, details = runtime.score('x', ['x ' * 2000])
+    assert scores == [2027.] and details['pair_tokens'] == [2004]
+    scores, details = runtime.score('x ' * 2000, ['y'])
+    assert scores == [2028.] and details['pair_tokens'] == [2004]
+    with pytest.raises(ValueError, match='query.*long|shorten'):
+        runtime.score('x ' * 2048, ['y'])
+
+
+@pytest.mark.parametrize('value', [0, -1, 1.5, True])
+def test_invalid_token_budget_fails_without_preparing_assets(value):
+    from ken.retrieval.neural_reranker import ONNXReranker
+    def unavailable():
+        raise AssertionError('invalid budget cannot prepare assets')
+    with pytest.raises(ValueError, match='token budget'):
+        ONNXReranker(unavailable, max_tokens=value)
+
+
+@pytest.mark.parametrize('filename,field', [('config.json', 'max_position_embeddings'),
+                                           ('tokenizer_config.json', 'model_max_length')])
+def test_declared_model_limit_cannot_be_exceeded(registered_reranker, filename, field):
+    from pathlib import Path
+    from ken.retrieval.neural_reranker import ONNXReranker, RerankerAssets
+    path = Path(registered_reranker['upstream']['root']) / filename
+    config = json.loads(path.read_text())
+    config[field] = 768
+    path.write_text(json.dumps(config))
+    registered_reranker['upstream']['artifacts'][filename]['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+    with pytest.raises(ValueError, match='token budget.*model|model.*limit'):
+        ONNXReranker(lambda: RerankerAssets.from_registration(registered_reranker)).score('x', ['y'])
+
+
+def test_default_factory_forwards_budget_validation_before_asset_resolution():
+    from ken.retrieval.neural_assets import default_reranker
+    with pytest.raises(ValueError, match='token budget'):
+        default_reranker(max_tokens=True)
