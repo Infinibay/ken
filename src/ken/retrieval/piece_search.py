@@ -14,6 +14,7 @@ from ken.retrieval.piece_cards import build_piece_cards, canonical, card_text, v
 from ken.retrieval.piece_catalog import SourceCatalog, module_name
 from ken.retrieval.piece_ranking import PieceReranker
 from ken.retrieval.reranker_fusion import fused_reranker_order
+from ken.retrieval.symbol_ranking import SymbolRanker, SYMBOL_POLICY
 
 
 def _unit(kind: str, path: str, entity: EntityKey | None) -> dict[str, Any]:
@@ -26,6 +27,7 @@ class PieceSearch:
     def __init__(self, catalog: SourceCatalog, ranker: PieceReranker, neural: ONNXReranker):
         self.catalog, self.ranker, self.neural = catalog, ranker, neural
         self.descriptions: dict[EntityKey, OwnerDescription] = {}
+        self.symbols = SymbolRanker(catalog, neural, self.descriptions)
 
     def search(self, request: SearchRequest, matches: Sequence[CodeMatch], *,
                expanded_query: str, profile_version: str, exact: bool = False) -> SearchResponse:
@@ -37,7 +39,15 @@ class PieceSearch:
         existing = [identities[canonical(_unit(m.piece.kind, m.piece.path, m.piece.entity))] for m in ranked]
         scores, details = (([0.] * len(existing), {}) if exact else
             self.neural.score(expanded_query, [card_text(cards[i]) for i in existing]))
-        order = [existing[i] for i in (range(len(existing)) if exact else fused_reranker_order(scores))]
+        symbols = None
+        if exact:
+            local_order = list(range(len(existing)))
+        elif kind == 'symbol':
+            symbols = self.symbols.rank(request, [cards[i] for i in existing], expanded_query, scores)
+            local_order = symbols.order
+        else:
+            local_order = fused_reranker_order(scores)
+        order = [existing[i] for i in local_order]
         named_path = requested_piece_path(request)
         if named_path:
             order.sort(key=lambda i: cards[i]['unit']['path'] != named_path)
@@ -54,6 +64,12 @@ class PieceSearch:
                 result['signals'] = {'native_piece_rank': i+1, 'piece_rank': j+1,
                     'piece_score': ranked[j].score, 'neural_score': scores[j],
                     'reranker': details}
+                if symbols is not None:
+                    result['signals']['symbol_ranking'] = {
+                        'policy': SYMBOL_POLICY, 'code_view_used': symbols.code_view_used[j],
+                        'code_score': symbols.code_scores[j], 'mean_score': symbols.mean_scores[j],
+                        'source_operations': sorted(symbols.witnesses[j]),
+                        'additional_reranker': symbols.additional_inference}
         return response
 
 

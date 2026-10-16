@@ -114,6 +114,11 @@ class ONNXReranker:
         self._load()
         return tuple(self._session.get_providers())
 
+    def pair_fits(self, query: str, text: str) -> bool:
+        """Check complete pair capacity without truncation or model inference."""
+        self._load()
+        return len(self._query_tokenizer.encode(query, text).ids) <= self._max_tokens
+
     def score(self, query: str, texts: Sequence[str]) -> tuple[list[float], dict[str, Any]]:
         if len(texts) > 10:
             raise ValueError('reranking is limited to the native top10')

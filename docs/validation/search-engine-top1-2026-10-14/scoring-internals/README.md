@@ -4,14 +4,33 @@ Este documento conserva el análisis de scoring, sus números y sus límites. Se
 lee primero al retomar la investigación; no hace falta reconstruir el debug.
 Fecha de trabajo del usuario: 15 de octubre de 2026.
 
-Actualización vigente,16de octubre: por instrucción humana se prioriza **inglés**,
-120consultas originales y120nuevas con metadata fija; se exigen>=108aciertos
-estrictos en CADA cohorte. Español queda diferido. Fuente actualcccea45b,
-corrección de intención201: **113/120 y95/120 top1**,118/120 y119/120 top10.
-No alcanza90%en las nuevas. Las400consultas siguen siendo desarrollo expuesto;
-la reserva permanece cerrada. [Prueba MCP400, suite y CPU](../../requested-test-role-2026-10-16-v201/README.md).
-Desde1a71e4e2 el cliente conserva1024tokens por defecto (2048configurable), con
-los mismos modelos. MCP201:p95inglés3,22s CPU y pico2,14GB de servidor completo.
+Actualización vigente,16de octubre, **V214 confirmado por MCP real**: inglés,
+120consultas originales y120nuevas con metadata y referencias fijas; se exigen
+>=108aciertos estrictos en CADA cohorte. Resultado **110/120 (91,67%) y108/120
+(90%) top1**,118/120 y119/120 top10, sin cambiar ningún pool nativo. Se cerraron
+las400respuestas antes del Gold; todos los240órdenes ingleses coinciden con el
+replay213. Las400consultas son desarrollo expuesto; **la reserva sigue cerrada**.
+No demuestra90%en consultas nuevas independientes ni constituye un resultado
+nuevo en el benchmark de Semble. [Captura, fuentes, suite y CPU](../../bounded-symbol-ranking-2026-10-16-v214/README.md).
+
+El cambio aplica sólo a símbolos noexactos: media igual de logits del card
+original y de una segunda vista ejecutable completa del mismo owner, con el
+mismo68M publicado y1024tokens. La segunda vista entra entera si cabe en64líneas,
+12000caracteres y1024tokens por par; si no, conserva el score original. Siguen
+preferencias estables de relaciones sintácticas solicitadas, caso de test y
+operadores explícitos, y finalmente la ruta pedida. No descarta candidatos ni
+reentrena pesos. Clase/módulo/archivo conservan RRF. Las relaciones son evidencia
+local de sintaxis, no ejecución probada ni resolución interprocedural.
+[Controles aislados y fallidos207–213](../../english-symbol-relations-2026-10-16-v207-v213/README.md).
+
+CPU214,servidor completo,índice preparado: mediana inglés2,419s,p953,734s,
+máximo4,885s,picoRSS2003845120bytes (2,00GB). Todas las observaciones y outliers
+se conservan; preparación y warmup se informan aparte.14998pruebas pasan,
+10xfailprevios,mypy360archivos; sin importsTorch. La referencia aproximada de
+1s/100archivos sigue sin cumplirse en varios repositorios pequeños; no declararla
+resuelta. Configuración: PotionCode16Mv2,CodeRankINT8,Ettin68M/1024 (2048opcional).
+201anterior daba113/120 y95/120 con los mismos118/119top10; su recibo sigue intacto.
+[MCP201](../../requested-test-role-2026-10-16-v201/README.md). Sin release.
 
 [Debug inglés y controles196–206](../../english-scoring-2026-10-16-v196-v206/README.md)
 conserva las251entradas y caminos completos del bosque en33casos, la captura
