@@ -79,3 +79,14 @@ from c3bb. Archive45gz/131472B, manifest
 9da38e6e526e720ddbc29bd77ca25b35f8f9f22d3a4216fed14fa1e9818ff922.
 Full actual raw text is in captures.json; Markdown strips only trailing spaces
 from otherwise blank numbered source lines to keep the diff clean.
+
+
+Installation closure: source86faea08ff29b8dd26a024d8744280fdb8a601f0pushed to main
+and fast-forwarded locally with63foreign dirty tracked files byte preserved,
+zero incoming overlap and empty staging. Actual global uv-tool is a noneditable
+local wheel, still0.17.0; all421installed package files match captured source.
+All72packages are compatible, same71dependency pins. CLIwho default and explicit
+fullJSON verified; a NEW MCP server from the installed global package returns
+numbered Reader code and scalar calculation text. PotionCode16Mv2 remains the
+default. See installed-v179.json and verification script. Existing connected MCP
+process was not restarted; reconnect it to load the update. No release/tag/upload.

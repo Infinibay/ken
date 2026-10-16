@@ -1,0 +1,36 @@
+{
+  "status": "VERIFIED_GLOBAL_NONEDITABLE_PACKAGE_AND_ACTUAL_DEFAULT_CLI_MCP",
+  "source_commit": "86faea08ff29b8dd26a024d8744280fdb8a601f0",
+  "package_file": "/Users/andres/.local/share/uv/tools/ken-rank/lib/python3.12/site-packages/ken/__init__.py",
+  "package_version": "0.17.0",
+  "verified_package_files": 421,
+  "source_receipt_sha256": "6dab28b1bfdad889d34a8ac8cbce8085947e97e3506653084bb81c2b51aa3882",
+  "direct_url": {
+    "url": "file:///private/tmp/ken-useful-output-v178-dist/ken_rank-0.17.0-py3-none-any.whl",
+    "archive_info": {}
+  },
+  "wheel_bytes": 25218276,
+  "wheel_sha256": "e5a49b6a23622cc89e90d52fe2939849d4950e4d0eee9b3feed39df2b89d9ee0",
+  "default_model_output": "default model for new projects: minishlab/potion-code-16M-v2\n  source: ken built-in default (no override set)\n  set one with:  ken default-model <model>\n",
+  "cli_who": "Candidates:\n\nreader.py:3-8 :: Reader (class)\n3 | class Reader:\n4 |     \"\"\"Read stored application settings.\"\"\"\n5 | \n6 |     def read_value(self, key):\n7 |         \"\"\"Return the stored value for a setting key.\"\"\"\n8 |         return get_value(key)\n\nreader.py:6 :: Reader.read_value\nAlso shown above: reader.py:6-8.\n\nVerification: Call verification incomplete.\n",
+  "new_global_mcp": [
+    {
+      "tool": "ken_who",
+      "arguments": {
+        "question": "Who reads stored application settings?",
+        "path": "reader.py"
+      },
+      "output": "Candidates:\n\nreader.py:3-8 :: Reader (class)\n3 | class Reader:\n4 |     \"\"\"Read stored application settings.\"\"\"\n5 | \n6 |     def read_value(self, key):\n7 |         \"\"\"Return the stored value for a setting key.\"\"\"\n8 |         return get_value(key)\n\nreader.py:6 :: Reader.read_value\nAlso shown above: reader.py:6-8.\n\nVerification: Call verification incomplete."
+    },
+    {
+      "tool": "ken_calculate",
+      "arguments": {
+        "expression": "(1/3 + 1/6) * 6"
+      },
+      "output": "(1/3 + 1/6) * 6 = 3"
+    }
+  ],
+  "no_release_or_tag": true,
+  "existing_mcp_process_restarted": false,
+  "scope": "Installed output proof only; no accuracy/latency claim or private benchmark inputs."
+}

@@ -552,3 +552,12 @@ features, neural cards or benchmark criteria changed; NO new accuracy or resourc
 claim. Independent177/198 and fresh closed reserve remain historical acceptance
 status. Review and rawcaptures atcompact-output-2026-10-16-best-default; evidence
 archiveuseful-default-output-v17845gz131472B, manifest9da38e6e526e720ddbc29bd77ca25b35f8f9f22d3a4216fed14fa1e9818ff922.
+
+
+Output integration v179: main/source86faea0published, root fast-forwarded without
+touching63foreign tracked edits. Global noneditable wheel same0.17.0installed
+with71unchanged dependency pins/72compatiblepackages;421files match final output
+capture source. Actual global CLIwho and fresh MCPwho show numbered implementation;
+fullJSON retains source hash, and scalar calculator defaults to one line. Potion
+default unchanged. Receipts atcompact-output-2026-10-16-best-default/installed-v179.json.
+Attached oldMCPprocess not restarted; reconnect required. No release/tag/upload.
