@@ -1,0 +1,20 @@
+{
+  "scope": "Local machine warmed interpreter performance,10source-free candidate rows, not a CI timing test or full search latency",
+  "source_sha256": "4ae736455314ceda6643d40bc6b2a7be1e527c12e8203ba87843e3e94db2f5d8",
+  "results": [
+    {
+      "role": "native",
+      "rows": 10,
+      "median_ms": 2.952834009192884,
+      "warm_budget_ms": 20.0,
+      "pass": true
+    },
+    {
+      "role": "piece",
+      "rows": 10,
+      "median_ms": 1.2850420316681266,
+      "warm_budget_ms": 20.0,
+      "pass": true
+    }
+  ]
+}

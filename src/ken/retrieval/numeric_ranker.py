@@ -63,6 +63,66 @@ class _Tree:
 
 
 @dataclass(frozen=True)
+class _ArrayForest:
+    """Traverse small batches across all trees with bounded NumPy scratch space."""
+    roots: np.ndarray
+    features: np.ndarray
+    thresholds: np.ndarray
+    left: np.ndarray
+    right: np.ndarray
+    values: np.ndarray
+
+    @classmethod
+    def compile(cls, trees: tuple[_Tree, ...]) -> _ArrayForest:
+        features: list[int] = []
+        thresholds: list[float] = []
+        left: list[int] = []
+        right: list[int] = []
+        values: list[float] = []
+
+        def add(node: _Tree) -> int:
+            index = len(features)
+            features.append(node.feature if node.value is None else -1)
+            thresholds.append(node.threshold)
+            left.append(index)
+            right.append(index)
+            values.append(node.value if node.value is not None else 0.)
+            if node.value is None:
+                assert node.left is not None and node.right is not None
+                left[index], right[index] = add(node.left), add(node.right)
+            return index
+
+        roots = np.array([add(tree) for tree in trees], dtype=np.intp)
+        arrays = (roots, np.asarray(features, dtype=np.intp), np.asarray(thresholds),
+                  np.asarray(left, dtype=np.intp), np.asarray(right, dtype=np.intp),
+                  np.asarray(values))
+        for array in arrays:
+            array.setflags(write=False)
+        return cls(*arrays)
+
+    def predict(self, matrix: np.ndarray) -> np.ndarray:
+        result = np.empty(len(matrix), dtype=np.float64)
+        for start in range(0, len(matrix), 32):
+            batch = matrix[start:start+32]
+            rows = np.arange(len(batch))[:, None]
+            positions = np.tile(self.roots, (len(batch), 1))
+            while True:
+                features = self.features[positions]
+                active = features >= 0
+                if not active.any():
+                    break
+                choose_left = batch[rows, np.maximum(features, 0)] <= self.thresholds[positions]
+                positions = np.where(active,
+                    np.where(choose_left, self.left[positions], self.right[positions]), positions)
+            leaves = np.empty((len(batch), len(self.roots)+1), dtype=np.float64)
+            leaves[:, 0] = 0.
+            leaves[:, 1:] = self.values[positions]
+            # Keep sequential tree addition exactly, including cancellation.
+            result[start:start+len(batch)] = np.cumsum(leaves, axis=1)[:, -1]
+        return result
+
+
+@dataclass(frozen=True)
 class NumericRanker:
     features: tuple[str, ...]
     _trees: tuple[_Tree, ...]
@@ -122,12 +182,18 @@ class NumericRanker:
                 'attribution': 'Tree leaf differences grouped by first divergent split; '
                                'interaction accounting, not isolated causal feature effects or SHAP.'}
 
+    @cached_property
+    def _small_batch(self) -> _ArrayForest:
+        return _ArrayForest.compile(self._trees)
+
     def predict(self, matrix: np.ndarray) -> np.ndarray:
         matrix = np.asarray(matrix, dtype=np.float64)
         if matrix.ndim != 2 or matrix.shape[1] != len(self.features):
             raise ValueError('ranking feature schema mismatch')
         if not np.isfinite(matrix).all():
             raise ValueError('finite ranking features required')
+        if 0 < len(matrix) <= 128:
+            return self._small_batch.predict(matrix)
         result = np.zeros(len(matrix), dtype=np.float64)
         for tree in self._trees:
             pending = [(tree, np.arange(len(matrix)))]
