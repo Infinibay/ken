@@ -1,0 +1,657 @@
+{
+  "summary": {
+    "closed_cases": 18,
+    "returned_document_mappings_verified": 160,
+    "faithful_visible_fragments_verified": 250,
+    "official_metric_mismatches": 0,
+    "response_compact_string_used_by_scorer": false,
+    "official_hit1": 3,
+    "official_hit10": 9,
+    "byte_equal_hit1": 3,
+    "byte_equal_hit10": 9,
+    "normalized_equal_hit1": 3,
+    "normalized_equal_hit10": 9,
+    "complete_callable_AST_overlap_hit1": 2,
+    "complete_callable_AST_overlap_hit10": 9,
+    "callable_overlap_is_only_diagnostic_not_equivalence_or_official_score": true,
+    "errors": 2,
+    "official_collector_sha256": "809518297a9933f323d097886e0c935416187f7099c81ad3baf39164b3ce3126",
+    "original_report_sha256": "b46ae4aa7ded74ace5c35e51e98df6f42c0d444bdff8cfa27c4ac24bdbc145c0",
+    "audit_script_sha256": "f3f35df1a4677937823e0a4f98df1131d0965f418806879dce420beda813c4a0",
+    "engine_modified": false,
+    "reserve": "CLOSED"
+  },
+  "rows": [
+    {
+      "id": "c01c84e520de7ee5d30da352",
+      "repo": "mwaskom__seaborn",
+      "level": "LEVEL-2",
+      "query_id": "mwaskom__seaborn-3069",
+      "title": "Nominal scale should be drawn the same way as categorical scales",
+      "query_chars": 1188,
+      "error": null,
+      "results": 10,
+      "gold_documents": 3,
+      "hit1": 0,
+      "hit10": 0,
+      "ndcg10": 0.0,
+      "byte_equal_relevant_ranks": [],
+      "normalized_equal_relevant_ranks": [],
+      "complete_callable_AST_overlap_ranks": [],
+      "top1_id": "07dbd3a0-fdba-43ae-ae0f-3c1478d02d31",
+      "top1_header": "The way things currently work, you can either set up the matplotlib figure yourself, or you can use a figure-level function, but you can't do both at the same time.",
+      "expected_headers": [
+        "for var in variables:",
+        "import io",
+        "def _finalize_figure(self, p: Plot) -> None:"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-2/SWE-bench_Verified/mwaskom__seaborn"
+    },
+    {
+      "id": "b85647e9a03184fc4ae9f5e9",
+      "repo": "mwaskom__seaborn",
+      "level": "LEVEL-2",
+      "query_id": "mwaskom__seaborn-3187",
+      "title": "Wrong legend values of large ranges",
+      "query_chars": 1438,
+      "error": null,
+      "results": 10,
+      "gold_documents": 2,
+      "hit1": 1,
+      "hit10": 1,
+      "ndcg10": 0.6131471927654584,
+      "byte_equal_relevant_ranks": [
+        1
+      ],
+      "normalized_equal_relevant_ranks": [
+        1
+      ],
+      "complete_callable_AST_overlap_ranks": [
+        1
+      ],
+      "top1_id": "ac4cf0df-165f-4187-8106-66a6bc8a29f8",
+      "top1_header": "def locator_to_legend_entries(locator, limits, dtype):",
+      "expected_headers": [
+        "def locator_to_legend_entries(locator, limits, dtype):",
+        "@dataclass"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-2/SWE-bench_Verified/mwaskom__seaborn"
+    },
+    {
+      "id": "4bad0434905c87d589e891d8",
+      "repo": "pallets__flask",
+      "level": "LEVEL-2",
+      "query_id": "pallets__flask-5014",
+      "title": "Require a non-empty name for Blueprints",
+      "query_chars": 195,
+      "error": null,
+      "results": 10,
+      "gold_documents": 1,
+      "hit1": 0,
+      "hit10": 0,
+      "ndcg10": 0.0,
+      "byte_equal_relevant_ranks": [],
+      "normalized_equal_relevant_ranks": [],
+      "complete_callable_AST_overlap_ranks": [],
+      "top1_id": "8af6ea82-d492-48c4-b7ac-8b82a66e175c",
+      "top1_header": "def test_dotted_name_not_allowed(app, client):",
+      "expected_headers": [
+        "def __init__("
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-2/SWE-bench_Verified/pallets__flask"
+    },
+    {
+      "id": "b68f82b04cd311531bce29b8",
+      "repo": "psf__requests",
+      "level": "LEVEL-2",
+      "query_id": "psf__requests-1142",
+      "title": "requests.get is ALWAYS sending content length",
+      "query_chars": 381,
+      "error": null,
+      "results": 10,
+      "gold_documents": 3,
+      "hit1": 1,
+      "hit10": 1,
+      "ndcg10": 0.46927872602275644,
+      "byte_equal_relevant_ranks": [
+        1
+      ],
+      "normalized_equal_relevant_ranks": [
+        1
+      ],
+      "complete_callable_AST_overlap_ranks": [
+        1
+      ],
+      "top1_id": "c35c37d5-d2d3-486e-8160-572270650e00",
+      "top1_header": "def prepare_content_length(self, body):",
+      "expected_headers": [
+        "def prepare_body(self, data, files):",
+        "def prepare_auth(self, auth):",
+        "def prepare_content_length(self, body):"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-2/SWE-bench_Verified/psf__requests"
+    },
+    {
+      "id": "3dbd533c2620ab9c26620738",
+      "repo": "psf__requests",
+      "level": "LEVEL-2",
+      "query_id": "psf__requests-1724",
+      "title": "Unicode method names cause UnicodeDecodeError for some requests in Python 2.7.2",
+      "query_chars": 7476,
+      "error": "ValueError: query is too long for reranking; shorten the search question",
+      "results": 0,
+      "gold_documents": 2,
+      "hit1": 0,
+      "hit10": 0,
+      "ndcg10": 0.0,
+      "byte_equal_relevant_ranks": [],
+      "normalized_equal_relevant_ranks": [],
+      "complete_callable_AST_overlap_ranks": [],
+      "top1_id": null,
+      "top1_header": null,
+      "expected_headers": [
+        "import os",
+        "def request(self, method, url,"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-2/SWE-bench_Verified/psf__requests"
+    },
+    {
+      "id": "6141b222077f7f9b54473c03",
+      "repo": "psf__requests",
+      "level": "LEVEL-2",
+      "query_id": "psf__requests-1766",
+      "title": "quote qop options in Digest Auth",
+      "query_chars": 897,
+      "error": null,
+      "results": 10,
+      "gold_documents": 1,
+      "hit1": 0,
+      "hit10": 1,
+      "ndcg10": 0.6309297535714575,
+      "byte_equal_relevant_ranks": [
+        2
+      ],
+      "normalized_equal_relevant_ranks": [
+        2
+      ],
+      "complete_callable_AST_overlap_ranks": [
+        2
+      ],
+      "top1_id": "55196e94-65cb-4afb-ad0f-9385d0bc0e8c",
+      "top1_header": "def options(url, **kwargs):",
+      "expected_headers": [
+        "def build_digest_header(self, method, url):"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-2/SWE-bench_Verified/psf__requests"
+    },
+    {
+      "id": "a28cc7abf7774989e37941c2",
+      "repo": "psf__requests",
+      "level": "LEVEL-2",
+      "query_id": "psf__requests-1921",
+      "title": "Removing a default header of a session",
+      "query_chars": 708,
+      "error": null,
+      "results": 10,
+      "gold_documents": 1,
+      "hit1": 0,
+      "hit10": 0,
+      "ndcg10": 0.0,
+      "byte_equal_relevant_ranks": [],
+      "normalized_equal_relevant_ranks": [],
+      "complete_callable_AST_overlap_ranks": [],
+      "top1_id": "1cbd8a32-30c6-406b-87e4-6ebb458372e3",
+      "top1_header": "def test_header_remove_is_case_insensitive(self):",
+      "expected_headers": [
+        "def merge_setting(request_setting, session_setting, dict_class=OrderedDict):"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-2/SWE-bench_Verified/psf__requests"
+    },
+    {
+      "id": "167d3690dec276cb1a54a463",
+      "repo": "psf__requests",
+      "level": "LEVEL-2",
+      "query_id": "psf__requests-2317",
+      "title": "method = builtin_str(method) problem",
+      "query_chars": 841,
+      "error": null,
+      "results": 10,
+      "gold_documents": 2,
+      "hit1": 0,
+      "hit10": 0,
+      "ndcg10": 0.0,
+      "byte_equal_relevant_ranks": [],
+      "normalized_equal_relevant_ranks": [],
+      "complete_callable_AST_overlap_ranks": [],
+      "top1_id": "a525ddeb-9293-4800-8470-f08ec6926fc6",
+      "top1_header": ".. _faq:",
+      "expected_headers": [
+        "import os",
+        "def request(self, method, url,"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-2/SWE-bench_Verified/psf__requests"
+    },
+    {
+      "id": "4d9d8eade6cceb18909995b8",
+      "repo": "psf__requests",
+      "level": "LEVEL-2",
+      "query_id": "psf__requests-2931",
+      "title": "Request with binary payload fails due to calling to_native_string",
+      "query_chars": 271,
+      "error": null,
+      "results": 10,
+      "gold_documents": 2,
+      "hit1": 0,
+      "hit10": 1,
+      "ndcg10": 0.44130740935663865,
+      "byte_equal_relevant_ranks": [
+        4,
+        10
+      ],
+      "normalized_equal_relevant_ranks": [
+        4,
+        10
+      ],
+      "complete_callable_AST_overlap_ranks": [
+        4,
+        10
+      ],
+      "top1_id": "d5da719c-5bc3-4414-9718-8c246fd8e2b5",
+      "top1_header": "def test_unicode_header_name(self, httpbin):",
+      "expected_headers": [
+        "def prepare_url(self, url, params):",
+        "class RequestEncodingMixin(object):"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-2/SWE-bench_Verified/psf__requests"
+    },
+    {
+      "id": "e263b22259f8d3e18724d66b",
+      "repo": "psf__requests",
+      "level": "LEVEL-2",
+      "query_id": "psf__requests-5414",
+      "title": "Getting http://.example.com raises UnicodeError",
+      "query_chars": 1428,
+      "error": null,
+      "results": 10,
+      "gold_documents": 1,
+      "hit1": 0,
+      "hit10": 0,
+      "ndcg10": 0.0,
+      "byte_equal_relevant_ranks": [],
+      "normalized_equal_relevant_ranks": [],
+      "complete_callable_AST_overlap_ranks": [],
+      "top1_id": "a699fbae-8be4-4568-9ecb-69c65117c942",
+      "top1_header": "      import requests",
+      "expected_headers": [
+        "def prepare_url(self, url, params):"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-2/SWE-bench_Verified/psf__requests"
+    },
+    {
+      "id": "7df47f5e27deea4d284f0a20",
+      "repo": "psf__requests",
+      "level": "LEVEL-2",
+      "query_id": "psf__requests-6028",
+      "title": "Proxy authentication bug",
+      "query_chars": 1268,
+      "error": null,
+      "results": 10,
+      "gold_documents": 1,
+      "hit1": 0,
+      "hit10": 0,
+      "ndcg10": 0.0,
+      "byte_equal_relevant_ranks": [],
+      "normalized_equal_relevant_ranks": [],
+      "complete_callable_AST_overlap_ranks": [],
+      "top1_id": "5495d40b-f0cc-4b66-8afc-350ed26b1ec9",
+      "top1_header": "-   Assorted urllib3 fixes.",
+      "expected_headers": [
+        "def prepend_scheme_if_needed(url, new_scheme):"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-2/SWE-bench_Verified/psf__requests"
+    },
+    {
+      "id": "a2cdeabc18c87bc53977916f",
+      "repo": "mwaskom__seaborn",
+      "level": "LEVEL-3",
+      "query_id": "mwaskom__seaborn-3069",
+      "title": "Nominal scale should be drawn the same way as categorical scales",
+      "query_chars": 1188,
+      "error": null,
+      "results": 10,
+      "gold_documents": 33,
+      "hit1": 0,
+      "hit10": 1,
+      "ndcg10": 0.17630010660342912,
+      "byte_equal_relevant_ranks": [
+        3,
+        9
+      ],
+      "normalized_equal_relevant_ranks": [
+        3,
+        9
+      ],
+      "complete_callable_AST_overlap_ranks": [
+        9
+      ],
+      "top1_id": "9216bf22-ea9c-40ca-bd0f-0e05d9bbdd52",
+      "top1_header": "The way things currently work, you can either set up the matplotlib figure yourself, or you can use a figure-level function, but you can't do both at the same time.",
+      "expected_headers": [
+        "def _setup_figure(self, p: Plot, common: PlotData, layers: list[Layer]) -> None:",
+        "def _adjust_cat_axis(self, ax, axis):",
+        "for sub_vars, sub_data in self.iter_data(\"hue\", from_comp_data=True):",
+        "                # Keep coordinates at the front of the variables dict",
+        "@dataclass",
+        "def __init__(self, pyplot: bool, theme: dict[str, Any]):",
+        "if fill is None:",
+        "def __init__(",
+        "def lineplot(self, ax, kws):",
+        "def _generate_pairings(",
+        "                structure[\"col\"] = list(order)",
+        "def plot_swarms(",
+        "subplot_spec = p._subplot_spec.copy()",
+        "import io",
+        "def _finalize_figure(self, p: Plot) -> None:",
+        "@dataclass",
+        "for var in variables:",
+        "def _nested_offsets(self, width, dodge):",
+        "@dataclass",
+        "        Copy of self with new tick configuration.",
+        "    def _plot(self, pyplot: bool = False) -> Plotter:",
+        "def _plot_layer(self, p: Plot, layer: Layer) -> None:",
+        "    @property",
+        "                transformed_data.append(empty_series)",
+        "\"\"\"",
+        "for sub_vars, _ in self.iter_data(\"hue\", reverse=True):",
+        "def _get_scale(",
+        "class PseudoAxis:",
+        "def _setup_scales(",
+        "class Scale:",
+        "def plot_univariate_ecdf(self, estimate_kws, legend, **plot_kws):",
+        "@build_plot_signature",
+        "import re"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-3/SWE-bench_Verified/mwaskom__seaborn"
+    },
+    {
+      "id": "18d1b18027b44e1e0024c642",
+      "repo": "pallets__flask",
+      "level": "LEVEL-3",
+      "query_id": "pallets__flask-5014",
+      "title": "Require a non-empty name for Blueprints",
+      "query_chars": 195,
+      "error": null,
+      "results": 10,
+      "gold_documents": 21,
+      "hit1": 1,
+      "hit10": 1,
+      "ndcg10": 0.6816808362189437,
+      "byte_equal_relevant_ranks": [
+        1,
+        2,
+        4,
+        5,
+        7,
+        8
+      ],
+      "normalized_equal_relevant_ranks": [
+        1,
+        2,
+        4,
+        5,
+        7,
+        8
+      ],
+      "complete_callable_AST_overlap_ranks": [
+        2,
+        4,
+        7,
+        8
+      ],
+      "top1_id": "00b4c2fd-67f1-40d8-891d-297f41e7f198",
+      "top1_header": "\"\"\"Called by :meth:`Flask.register_blueprint` to register all",
+      "expected_headers": [
+        "\"\"\"Called by :meth:`Flask.register_blueprint` to register all",
+        "class Blueprint(Scaffold):",
+        "\"\"\"Represents a blueprint, a collection of routes and other",
+        "def _check_setup_finished(self, f_name: str) -> None:",
+        "super().__init__(",
+        "def test_self_registration(app, client) -> None:",
+        "def __init__(",
+        "if self.cli.commands:",
+        "def __init__(",
+        "self.import_name = import_name",
+        "                     function name will be used.",
+        "#: A data structure of functions to call to pass extra context",
+        "\"\"\"Common behavior shared between :class:`~flask.Flask` and",
+        "import os",
+        "def register(self, app: \"Flask\", options: dict) -> None:",
+        "def test_unique_blueprint_names(app, client) -> None:",
+        "class BlueprintSetupState:",
+        "    @setupmethod",
+        "def test_dotted_name_not_allowed(app, client):",
+        "class Scaffold:",
+        "    @setupmethod"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-3/SWE-bench_Verified/pallets__flask"
+    },
+    {
+      "id": "b0daddfebebfd70b6fd3b88a",
+      "repo": "psf__requests",
+      "level": "LEVEL-3",
+      "query_id": "psf__requests-1142",
+      "title": "requests.get is ALWAYS sending content length",
+      "query_chars": 381,
+      "error": null,
+      "results": 10,
+      "gold_documents": 9,
+      "hit1": 0,
+      "hit10": 1,
+      "ndcg10": 0.1012286082123002,
+      "byte_equal_relevant_ranks": [
+        4
+      ],
+      "normalized_equal_relevant_ranks": [
+        4
+      ],
+      "complete_callable_AST_overlap_ranks": [
+        4
+      ],
+      "top1_id": "87b9e82c-b980-40e9-9d67-6864675f9cd0",
+      "top1_header": "By default, ``verify`` is set to True. Option ``verify`` only applies to host certs.",
+      "expected_headers": [
+        "class Request(RequestHooksMixin):",
+        "def prepare_body(self, data, files):",
+        "def prepare_headers(self, headers):",
+        "class RequestEncodingMixin(object):",
+        "def prepare_content_length(self, body):",
+        "def __init__(self):",
+        "def prepare_auth(self, auth):",
+        "class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):",
+        "import collections"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-3/SWE-bench_Verified/psf__requests"
+    },
+    {
+      "id": "2384d187ffe6bef53b594d5e",
+      "repo": "psf__requests",
+      "level": "LEVEL-3",
+      "query_id": "psf__requests-1724",
+      "title": "Unicode method names cause UnicodeDecodeError for some requests in Python 2.7.2",
+      "query_chars": 7476,
+      "error": "ValueError: query is too long for reranking; shorten the search question",
+      "results": 0,
+      "gold_documents": 24,
+      "hit1": 0,
+      "hit10": 0,
+      "ndcg10": 0.0,
+      "byte_equal_relevant_ranks": [],
+      "normalized_equal_relevant_ranks": [],
+      "complete_callable_AST_overlap_ranks": [],
+      "top1_id": null,
+      "top1_header": null,
+      "expected_headers": [
+        "class Request(RequestHooksMixin):",
+        "class SessionRedirectMixin(object):",
+        "def copy(self):",
+        "def prepare_headers(self, headers):",
+        "from .packages import charade as chardet",
+        "def test_unicode_header_name(self):",
+        "def test_unicode_multipart_post_fieldnames(self):",
+        "def __init__(self):",
+        "def test_unicode_multipart_post(self):",
+        "def _make_request(self, conn, method, url, timeout=_Default,",
+        "def request(self, method, url,",
+        "def send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None):",
+        "def prepare_content_length(self, body):",
+        "# -------",
+        "def prepare_method(self, method):",
+        "import os",
+        "def test_header_keys_are_native(self):",
+        "def to_native_string(string, encoding='ascii'):",
+        "def prepare(self, method=None, url=None, headers=None, files=None,",
+        "try:",
+        "def prepare_request(self, request):",
+        "def urlopen(self, method, url, body=None, headers=None, retries=3,",
+        "\"\"\"",
+        "import collections"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-3/SWE-bench_Verified/psf__requests"
+    },
+    {
+      "id": "c2c41cd386b5f9620904a1a9",
+      "repo": "psf__requests",
+      "level": "LEVEL-3",
+      "query_id": "psf__requests-1766",
+      "title": "quote qop options in Digest Auth",
+      "query_chars": 897,
+      "error": null,
+      "results": 10,
+      "gold_documents": 8,
+      "hit1": 0,
+      "hit10": 1,
+      "ndcg10": 0.21078558563971428,
+      "byte_equal_relevant_ranks": [
+        3,
+        7
+      ],
+      "normalized_equal_relevant_ranks": [
+        3,
+        7
+      ],
+      "complete_callable_AST_overlap_ranks": [
+        3,
+        7
+      ],
+      "top1_id": "99160011-1c1a-47b4-9527-ab5fa76a6d6f",
+      "top1_header": "def options(self, url, **kwargs):",
+      "expected_headers": [
+        "def __init__(self, username, password):",
+        "def __call__(self, r):",
+        "def build_digest_header(self, method, url):",
+        "def test_DIGEST_HTTP_200_OK_GET(self):",
+        "\"\"\"Attaches HTTP Digest Authentication to the given Request object.\"\"\"",
+        "class HTTPDigestAuth(AuthBase):",
+        "def test_DIGEST_AUTH_RETURNS_COOKIE(self):",
+        "def handle_401(self, r, **kwargs):"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-3/SWE-bench_Verified/psf__requests"
+    },
+    {
+      "id": "9861419fe3296c2d46bfd895",
+      "repo": "psf__requests",
+      "level": "LEVEL-3",
+      "query_id": "psf__requests-1921",
+      "title": "Removing a default header of a session",
+      "query_chars": 708,
+      "error": null,
+      "results": 10,
+      "gold_documents": 9,
+      "hit1": 0,
+      "hit10": 1,
+      "ndcg10": 0.14829723057014912,
+      "byte_equal_relevant_ranks": [
+        2
+      ],
+      "normalized_equal_relevant_ranks": [
+        2
+      ],
+      "complete_callable_AST_overlap_ranks": [
+        2
+      ],
+      "top1_id": "6b2e0067-cf98-4226-b0c6-827147a9b07a",
+      "top1_header": ".. _advanced:",
+      "expected_headers": [
+        "def request(self, method, url,",
+        "class Request(RequestHooksMixin):",
+        "def __init__(self):",
+        "def post(self, url, data=None, **kwargs):",
+        "def prepare_headers(self, headers):",
+        "def test_header_remove_is_case_insensitive(self):",
+        "def merge_setting(request_setting, session_setting, dict_class=OrderedDict):",
+        "def prepare_request(self, request):",
+        "def prepare(self, method=None, url=None, headers=None, files=None,"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-3/SWE-bench_Verified/psf__requests"
+    },
+    {
+      "id": "e80ab5c810f43f67875aba92",
+      "repo": "psf__requests",
+      "level": "LEVEL-3",
+      "query_id": "psf__requests-6028",
+      "title": "Proxy authentication bug",
+      "query_chars": 1268,
+      "error": null,
+      "results": 10,
+      "gold_documents": 37,
+      "hit1": 0,
+      "hit10": 0,
+      "ndcg10": 0.0,
+      "byte_equal_relevant_ranks": [],
+      "normalized_equal_relevant_ranks": [],
+      "complete_callable_AST_overlap_ranks": [],
+      "top1_id": "ea98498b-5830-43b6-b506-72c8cbc0d143",
+      "top1_header": "  This applies even if pyOpenSSL is installed via the",
+      "expected_headers": [
+        "# Moved outside of function to avoid recompile every call",
+        "import os.path",
+        "class BaseAdapter(object):",
+        "def init_poolmanager(self, connections, maxsize, block=DEFAULT_POOLBLOCK, **pool_kwargs):",
+        "from ._internal_utils import to_native_string",
+        "def prepare_request(self, request):",
+        "def parse_dict_header(value):",
+        "def resolve_redirects(self, resp, req, stream=False, timeout=None,",
+        "import os",
+        "def request(self, method, url,",
+        "def request_url(self, request, proxies):",
+        "try:",
+        "# -------",
+        "class HTTPAdapter(BaseAdapter):",
+        "def prepend_scheme_if_needed(url, new_scheme):",
+        "\"\"\"Sends PreparedRequest object. Returns Response object.",
+        "def should_strip_auth(self, old_url, new_url):",
+        "def __init__(self, pool_connections=DEFAULT_POOLSIZE,",
+        "def parse_list_header(value):",
+        "while url:",
+        "def proxy_headers(self, proxy):",
+        "\"\"\"A Requests session.",
+        "def send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None):",
+        "def rebuild_auth(self, prepared_request, response):",
+        "def merge_environment_settings(self, url, proxies, stream, verify, cert):",
+        "def urldefragauth(url):",
+        "def __init__(self):",
+        "def get_environ_proxies(url, no_proxy=None):",
+        "def rebuild_proxies(self, prepared_request, proxies):",
+        "def resolve_proxies(request, proxies, trust_env=True):",
+        "def proxy_manager_for(self, proxy, **proxy_kwargs):",
+        "def select_proxy(url, proxies):",
+        "def get_auth_from_url(url):",
+        "def get_connection(self, url, proxies=None):",
+        "def should_bypass_proxies(url, no_proxy):",
+        "def send(self, request, **kwargs):",
+        "def merge_setting(request_setting, session_setting, dict_class=OrderedDict):"
+      ],
+      "raw_source": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-core-v222/core-raw/data/LEVEL-3/SWE-bench_Verified/psf__requests"
+    }
+  ]
+}
