@@ -155,3 +155,10 @@ ensayos neuronales pausados por el usuario. La prioridad sigue siendo Ken.
 4. Versionar sólo cambios propios, respaldar modelos/feature receipts/controles,
    verificar tests y subir explícitamente a GitHub main. No incorporar archivos
    ajenos ni snapshots viejos v118/v119 con payload extranjero.
+
+
+## Active follow-up 16 October — CPU and independent tests
+
+Read CPU-V133-V134.md first. Original200 remains180/197 with identical full orders. v134 batch1/4neural threads: p502.518s,p953.863s,peak2.001GB. Two independent curators are finishing new200; no parent access yet, no model selection on these questions. Generic public-only caller/scorer in experiments/search-engine/unseen_piece_*; parity OLD200 session25131, output/development/unseen-cpu-validation-v135/parity-optimized. Source/runtime selection already pinned in variant-selection.json. Do not read private Gold or v104.
+
+User added ALL CLI/MCP defaults compact text plus examples of every output. Clean attached worktree /Users/andres/.codex/worktrees/compact-default-output/ken at basee8419b9 avoids foreign cli.py/server.py dirty changes. Presentation work lives ONLY there, not in this research clone. Plan docs/superpowers/plans/2026-10-16-compact-output.md. Shared pure renderer+public registration adapter keep internal domain calls raw; default output_format compact, json opt-in. Search legacy remains same ranking; preview8live source lines clearly labeled. Test stdio subprocesses must explicitly pass absolute PYTHONPATH because SDK drops it from inherited env. Initial19baseline tests and88affected tests pass. Full suite/typecheck running with THIS research .venv because original .venv lacks snowballstemmer/optional dependencies. Preserve all existing foreign edits in both original/research checkouts; no release.

@@ -91,7 +91,8 @@ def main():
     args.output.mkdir(parents=True, exist_ok=False)
     if args.repo is None:
         registration = {'scope': 'ALL200 exposed-development complete prepared CPU pipeline, repository-excluded piece forests; not private acceptance or public default',
-            'policy': 'Fresh native retrieval and v102 compact source cards; v126 requested-piece forest on native top10; fresh existing68M FP32 on those same10; RRF60 equal weights0.5; explicit requested path priority; same pool membership; no filtering, retraining, reference access, score reuse or parameter selection.',
+            'policy': 'Single change from v133: neural intra-op CPU budget2 to4; keep batch1, tokens512, FP32 weights, candidates, forests and RRF60 weight0.5. Context encoder/translation remain CPU2 threads; fresh complete search, no Gold or score reuse.',
+            'runtime_policy': {'batch_size': 1, 'intra_op_threads': 4, 'pair_limit': 512},
             'source_receipt': source_receipt, 'preparation': preparation, 'input_pins': pins,
             'timing_scope': 'Native retrieval, compact cards, actual trace projection, piece features/forest, fresh tokenization/inference, fixed fusion, source validation and answer serialization; prepared asset loading/warmup separate; diagnostic output excluded.',
             'status': 'registered before fresh queries; no Gold', 'closed': {}}
@@ -128,7 +129,7 @@ def main():
     started = time.perf_counter()
     runtime = PreparedKen(w, repo, roots[repo], w / 'output/analysis/c-source-reindex-v66c/indices' / (repo + '.db'))
     ranker = PieceReranker(numeric, runtime.words, stem_words=runtime.ranker.stem_words)
-    neural = CPUReranker(neural_registration)
+    neural = CPUReranker(neural_registration,batch_size=1,intra_op_threads=4)
     load_ms = (time.perf_counter() - started) * 1000
     inventory_bytes = ''.join(canonical(r) + '\n' for r in runtime.catalog.source_inventory()).encode()
     import hashlib

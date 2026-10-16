@@ -20,8 +20,10 @@ def sha(path):
     with Path(path).open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 
 
-def cpu_options():
-    options=ort.SessionOptions();options.intra_op_num_threads=2;options.inter_op_num_threads=1
+def cpu_options(*,intra_op_threads=2):
+    if type(intra_op_threads) is not int or intra_op_threads < 1:
+        raise ValueError('explicit positive CPU thread budget required')
+    options=ort.SessionOptions();options.intra_op_num_threads=intra_op_threads;options.inter_op_num_threads=1
     return options
 
 
@@ -151,12 +153,16 @@ def assemble(upstream,output):
 
 
 class CPUReranker:
-    def __init__(self,registration):
+    def __init__(self,registration,*,batch_size=4,intra_op_threads=2):
+        if type(batch_size) is not int or batch_size < 1:
+            raise ValueError('batch size must be a positive integer')
+        self.batch_size=batch_size
+        options=cpu_options(intra_op_threads=intra_op_threads)
         self.registration=registration
         for path,expected in ((registration['graph'],registration['graph_sha256']),
                               (registration['tokenizer'],registration['tokenizer_sha256'])):
             if sha(path)!=expected: raise ValueError('model runtime asset changed')
-        self.session=ort.InferenceSession(registration['graph'],sess_options=cpu_options(),
+        self.session=ort.InferenceSession(registration['graph'],sess_options=options,
                                          providers=['CPUExecutionProvider'])
         if self.session.get_providers()!=['CPUExecutionProvider']: raise ValueError('CPU required')
         self.output=self.session.get_outputs()[0].name
@@ -166,9 +172,9 @@ class CPUReranker:
 
     def score(self,query,texts):
         scores=[];truncated=0;token_ms=0;inference_ms=0;tokens=[]
-        for start in range(0,len(texts),4):
+        for start in range(0,len(texts),self.batch_size):
             before=time.perf_counter()
-            encoded=self.tokenizer.encode_batch([(query,x) for x in texts[start:start+4]])
+            encoded=self.tokenizer.encode_batch([(query,x) for x in texts[start:start+self.batch_size]])
             truncated+=sum(bool(e.overflowing) for e in encoded)
             tokens.extend(sum(e.attention_mask) for e in encoded)
             feeds={'input_ids':np.array([e.ids for e in encoded],np.int64),
