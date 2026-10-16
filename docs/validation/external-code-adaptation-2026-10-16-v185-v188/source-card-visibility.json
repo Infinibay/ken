@@ -1,0 +1,2827 @@
+{
+  "schema": "independent-reference-card-visibility-v190-v1",
+  "status": "ALL26_REVIEWED_SOURCE_CARD_TOKEN_BINDINGS_PASS",
+  "reviewed_at_utc": "2026-10-16T14:48:11.199135+00:00",
+  "selection": {
+    "all_new_queries": 200,
+    "raw_top1_hits": 169,
+    "raw_top1_misses": 31,
+    "missing_from_top10": 5,
+    "reviewed_recoverable_misses": 26,
+    "reviewed_ids": [
+      "symdev-20261016-001",
+      "symdev-20261016-002",
+      "symdev-20261016-003",
+      "symdev-20261016-008",
+      "symdev-20261016-014",
+      "symdev-20261016-015",
+      "symdev-20261016-018",
+      "symdev-20261016-025",
+      "symdev-20261016-042",
+      "symdev-20261016-047",
+      "symdev-20261016-053",
+      "symdev-20261016-067",
+      "symdev-20261016-070",
+      "symdev-20261016-093",
+      "symdev-20261016-098",
+      "symdev-20261016-102",
+      "symdev-20261016-109",
+      "symdev-20261016-115",
+      "symdev-20261016-134",
+      "symdev-20261016-140",
+      "symdev-20261016-146",
+      "symdev-20261016-152",
+      "symdev-20261016-156",
+      "symdev-20261016-168",
+      "symdev-20261016-172",
+      "symdev-20261016-196"
+    ],
+    "absent_ids_not_reviewed": [
+      "symdev-20261016-113",
+      "symdev-20261016-142",
+      "symdev-20261016-151",
+      "symdev-20261016-173",
+      "symdev-20261016-174"
+    ]
+  },
+  "mechanical": {
+    "original_card_hashes_checked_v158": 260,
+    "correct_cards_control_token_hashes_checked_v158": 26,
+    "tokenizer": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/models/portable-public-prepared-v143/models/ettin/5aaa7ed84370f351ef99445d8e12a29932f450fca4a0c5a57e1d95e53c4968e7/d166fa88ddde3c42bc3ee92f7df476d941c8204a/tokenizer.json",
+    "tokenizer_sha256": "28c5e078e4c52aa37cf0e6de1a212878f3dbd58dd1c70466298efe0b6b86db35",
+    "tokenizer_config": {
+      "max_length": 512,
+      "strategy": "only_second",
+      "pad_id": 50283,
+      "padding_side": "right"
+    },
+    "models_or_sessions_loaded": false,
+    "weights_opened": false,
+    "private_acceptance_or_reserve_read": false,
+    "pair_tokens_min": 123,
+    "pair_tokens_max": 471,
+    "correct_card_tokenizer_truncations": 0,
+    "original_card_builder": "Frozen public-default-cpu-v155 SourceCatalog/build_card/card_text, matching original158 input hashes; no syntax-view text substituted",
+    "input_hash_scope": "ALL260 candidate card strings of the26 selected queries; ALL26 correct-card document-token control hashes match158"
+  },
+  "semantic_summary": {
+    "reviewed": 26,
+    "visible_core_operations": 13,
+    "partially_visible_query_operations": 11,
+    "decisive_operations_absent_despite_related_doc": 2,
+    "material_pre_tokenization_card_projection_gaps": 4,
+    "partial_cases_requiring_source_outside_card": 9,
+    "definite_reference_errors_found": 0,
+    "labels_or_alternatives_changed": 0
+  },
+  "visibility_definitions": {
+    "VISIBLE": "The decisive owner-side algorithm/conditions or standard API operation are visible. This is static source inspection; imported/callee runtime correctness is not proved. Supplemental source context is cited where it confirms a binding, without claiming that context entered the input.",
+    "PARTIAL": "Some requested operations/conditions are visible but a decisive clause requires an omitted lexical child, owner passage or custom helper/binding/fixture outside the card. A visible invocation is recorded as delegation, not silently treated as the full hidden implementation.",
+    "ABSENT": "The decisive assertions/implementation asked for are absent from the actual card. A relevant name/docstring may remain; this status concerns those operations, not the literal absence of all related text."
+  },
+  "conclusions": [
+    "All26 correct cards fit the original only_second512 encoding in full:123–471 pair tokens. None of these26 failures is explained by tokenizer prefix truncation.",
+    "Four selected queries lose material source logic before tokenization through child ownership or card passage selection. The loss is observed information availability, not proof that it caused their final rank.",
+    "Nine partial cases need off-card custom helper/binding/fixture context for a full literal reading. They are distinct from tokenizer truncation and from a confirmed wrong reference.",
+    "The remaining13 show the core requested operations in the input and still lose to another owner. Visibility alone therefore does not establish the model ranking cause.",
+    "All26 references remain source-grounded on this reading. No labels, acceptable identities, source ranges or denominator were altered; no exhaustive search for additional alternatives was undertaken."
+  ],
+  "scope_limits": [
+    "This is an error-conditioned review of26/200 exposed development queries;5 missing-top10 queries were counted but not inspected. It does not estimate a population error rate or acceptance quality.",
+    "The frozen original card source and tokenizer were used. Source-syntax162 supplies original unit order and captured expanded queries; its syntax-enhanced texts were not substituted for original card_text.",
+    "Operation visibility is diagnostic only, not a new acceptance gate and not historical ALL-anchors scoring. Source witness ranges provide rationale rather than a mandatory exact snippet.",
+    "No model weights, ONNX session, A186 outputs, private acceptance labels or reserve payloads were opened. No inference, fit, engine benchmark, producer edit or per-ID improvement was performed.",
+    "The audit cannot prove which available tokens a trained model used; it offers no causal certification and does not change the fixed A186 recipe."
+  ],
+  "reviews": [
+    {
+      "id": "symdev-20261016-001",
+      "repo_id": "pytest",
+      "query": "Where is a dotted import walked by trying attributes before importing missing submodules, while other import errors are wrapped when the final token of their message differs from the attempted module name?",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "src/_pytest/monkeypatch.py",
+        "entity": {
+          "kind": "function",
+          "qualname": "resolve",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "_import_module_using_spec"
+        },
+        "module_name": null,
+        "path": "src/_pytest/pathlib.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 2,
+      "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+      "owner_extent": [
+        65,
+        90
+      ],
+      "owned_ranges": [
+        [
+          65,
+          90
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 65,
+          "end_line": 66,
+          "entity": {
+            "kind": "function",
+            "qualname": "resolve",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 67,
+          "end_line": 90,
+          "entity": {
+            "kind": "function",
+            "qualname": "resolve",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "a4613aca1498b4911d294a7cdfb241c9352d20be395ec862d15f4b18bb26f022",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "906aa7bd6a8c75a5831204bef585103fd55dbd8efe013c7a308c8e781345641a",
+      "token_counts": {
+        "pair_tokens": 284,
+        "query_tokens": 35,
+        "doc_tokens": 246,
+        "full_pair_tokens": 284
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "VISIBLE",
+      "missing_information_category": "NONE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "getattr antes de importar, y comparación del último token del ImportError con used, están literales. No hace falta completar una operación decisiva desde el nombre del símbolo.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "src/_pytest/monkeypatch.py",
+          "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+          "start_line": 73,
+          "end_line": 78,
+          "quote": "        try:\n            found = getattr(found, part)\n        except AttributeError:\n            pass\n        else:\n            continue",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "primary_source_operation",
+          "path": "src/_pytest/monkeypatch.py",
+          "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+          "start_line": 82,
+          "end_line": 88,
+          "quote": "            importlib.import_module(used)\n        except ImportError as ex:\n            expected = str(ex).split()[-1]\n            if expected == used:\n                raise\n            else:\n                raise ImportError(f\"import error in {used}: {ex}\") from ex",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Where is a dotted import walked by trying attributes before importing missing submodules, while other import errors are wrapped when the final token of their message differs from the attempted module name?",
+      "visible_card_text": "symbol src/_pytest/monkeypatch.py resolve\ndeclaration resolve lines 65-66:\ndef resolve(name: str) -> object:\n    # Simplified from zope.dottedname.\nimplementation resolve lines 67-90:\n    parts = name.split(\".\")\n\n    used = parts.pop(0)\n    found: object = importlib.import_module(used)\n    for part in parts:\n        used += \".\" + part\n        try:\n            found = getattr(found, part)\n        except AttributeError:\n            pass\n        else:\n            continue\n        # We use explicit un-nesting of the handling block in order\n        # to avoid nested exceptions.\n        try:\n            importlib.import_module(used)\n        except ImportError as ex:\n            expected = str(ex).split()[-1]\n            if expected == used:\n                raise\n            else:\n                raise ImportError(f\"import error in {used}: {ex}\") from ex\n        found = annotated_getattr(found, part, used)\n    return found"
+    },
+    {
+      "id": "symdev-20261016-002",
+      "repo_id": "pytest",
+      "query": "Find the attribute lookup that adds the object type and dotted location to a missing-attribute error while retaining the original exception as its cause.",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "src/_pytest/monkeypatch.py",
+        "entity": {
+          "kind": "function",
+          "qualname": "annotated_getattr",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 2,
+          "kind": "method",
+          "owner": "MonkeyPatch",
+          "qualname": "MonkeyPatch.setattr"
+        },
+        "module_name": null,
+        "path": "src/_pytest/monkeypatch.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 3,
+      "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+      "owner_extent": [
+        93,
+        100
+      ],
+      "owned_ranges": [
+        [
+          93,
+          100
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 93,
+          "end_line": 93,
+          "entity": {
+            "kind": "function",
+            "qualname": "annotated_getattr",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 94,
+          "end_line": 100,
+          "entity": {
+            "kind": "function",
+            "qualname": "annotated_getattr",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "10ff38acf820c87f7be6b8e3a2f5a118218998e8c2df3cea882c2287c5a77dc4",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "ce268f552359cc30e5c95e984d9d9d81ccea7d969086ab4a7740f70d7231f2e4",
+      "token_counts": {
+        "pair_tokens": 157,
+        "query_tokens": 27,
+        "doc_tokens": 127,
+        "full_pair_tokens": 157
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "VISIBLE",
+      "missing_information_category": "NONE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "Se ven getattr, AttributeError con tipo/ubicación y el encadenamiento from e. Todo el núcleo de la consulta entra en la tarjeta.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "src/_pytest/monkeypatch.py",
+          "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+          "start_line": 94,
+          "end_line": 100,
+          "quote": "    try:\n        obj = getattr(obj, name)\n    except AttributeError as e:\n        raise AttributeError(\n            f\"{type(obj).__name__!r} object at {ann} has no attribute {name!r}\"\n        ) from e\n    return obj",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Find the attribute lookup that adds the object type and dotted location to a missing-attribute error while retaining the original exception as its cause.",
+      "visible_card_text": "symbol src/_pytest/monkeypatch.py annotated_getattr\ndeclaration annotated_getattr lines 93-93:\ndef annotated_getattr(obj: object, name: str, ann: str) -> object:\nimplementation annotated_getattr lines 94-100:\n    try:\n        obj = getattr(obj, name)\n    except AttributeError as e:\n        raise AttributeError(\n            f\"{type(obj).__name__!r} object at {ann} has no attribute {name!r}\"\n        ) from e\n    return obj"
+    },
+    {
+      "id": "symdev-20261016-003",
+      "repo_id": "pytest",
+      "query": "Which helper rejects a replacement target without a dotted absolute import string, then separates the final attribute and optionally checks that it exists?",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "src/_pytest/monkeypatch.py",
+        "entity": {
+          "kind": "function",
+          "qualname": "derive_importpath",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "MonkeyPatch",
+          "qualname": "MonkeyPatch.delattr"
+        },
+        "module_name": null,
+        "path": "src/_pytest/monkeypatch.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 3,
+      "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+      "owner_extent": [
+        103,
+        110
+      ],
+      "owned_ranges": [
+        [
+          103,
+          110
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 103,
+          "end_line": 103,
+          "entity": {
+            "kind": "function",
+            "qualname": "derive_importpath",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 104,
+          "end_line": 110,
+          "entity": {
+            "kind": "function",
+            "qualname": "derive_importpath",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "77d75837596480ace1695722ddd3b682fda9b7727e11bdebef96562d747ac898",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "9be2aee220345d11bedfa951e2f312c03398bce092aeee4744c8b2ba02823065",
+      "token_counts": {
+        "pair_tokens": 186,
+        "query_tokens": 25,
+        "doc_tokens": 158,
+        "full_pair_tokens": 186
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "PARTIAL",
+      "missing_information_category": "OFF_CARD_LOCAL_HELPER_CONTEXT",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "La guarda string/dot, rsplit final y condición raising están visibles. Que annotated_getattr efectivamente compruebe existencia sólo se acredita con el helper93–100, ausente de esta tarjeta; la referencia sigue coherente en fuente.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "src/_pytest/monkeypatch.py",
+          "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+          "start_line": 104,
+          "end_line": 110,
+          "quote": "    if not isinstance(import_path, str) or \".\" not in import_path:\n        raise TypeError(f\"must be absolute import path string, not {import_path!r}\")\n    module, attr = import_path.rsplit(\".\", 1)\n    target = resolve(module)\n    if raising:\n        annotated_getattr(target, attr, ann=module)\n    return attr, target",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "src/_pytest/monkeypatch.py",
+          "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+          "start_line": 93,
+          "end_line": 100,
+          "quote": "def annotated_getattr(obj: object, name: str, ann: str) -> object:\n    try:\n        obj = getattr(obj, name)\n    except AttributeError as e:\n        raise AttributeError(\n            f\"{type(obj).__name__!r} object at {ann} has no attribute {name!r}\"\n        ) from e\n    return obj",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Which helper rejects a replacement target without a dotted absolute import string, then separates the final attribute and optionally checks that it exists?",
+      "visible_card_text": "symbol src/_pytest/monkeypatch.py derive_importpath\ndeclaration derive_importpath lines 103-103:\ndef derive_importpath(import_path: str, raising: bool) -> tuple[str, object]:\nimplementation derive_importpath lines 104-110:\n    if not isinstance(import_path, str) or \".\" not in import_path:\n        raise TypeError(f\"must be absolute import path string, not {import_path!r}\")\n    module, attr = import_path.rsplit(\".\", 1)\n    target = resolve(module)\n    if raising:\n        annotated_getattr(target, attr, ann=module)\n    return attr, target"
+    },
+    {
+      "id": "symdev-20261016-008",
+      "repo_id": "pytest",
+      "query": "Which patch operation remembers whether a mapping key was absent before assigning its temporary value and appends that state to the item undo stack?",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "src/_pytest/monkeypatch.py",
+        "entity": {
+          "kind": "method",
+          "qualname": "MonkeyPatch.setitem",
+          "owner": "MonkeyPatch",
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_failed_setitem"
+        },
+        "module_name": null,
+        "path": "testing/test_monkeypatch.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 7,
+      "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+      "owner_extent": [
+        312,
+        317
+      ],
+      "owned_ranges": [
+        [
+          312,
+          317
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 312,
+          "end_line": 313,
+          "entity": {
+            "kind": "method",
+            "qualname": "MonkeyPatch.setitem",
+            "owner": "MonkeyPatch",
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 314,
+          "end_line": 317,
+          "entity": {
+            "kind": "method",
+            "qualname": "MonkeyPatch.setitem",
+            "owner": "MonkeyPatch",
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "d3484be1ff40a00b18094183a6985174624963f359a650dc78b1d333bdf4a04c",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "eba67504175cbf478d66445d6639459b16c87b7c3461cf5ff95c0ca63456995e",
+      "token_counts": {
+        "pair_tokens": 183,
+        "query_tokens": 26,
+        "doc_tokens": 154,
+        "full_pair_tokens": 183
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "VISIBLE",
+      "missing_information_category": "NONE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "Se ve el fallback NOTSET, la asignación temporal y el append de (dic,name,oldval) a _setitem. No hay pérdida de esas operaciones.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "src/_pytest/monkeypatch.py",
+          "source_hash": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+          "start_line": 314,
+          "end_line": 317,
+          "quote": "        oldval = dic.get(name, NOTSET)\n        # Not all Mapping types support indexing, but MutableMapping doesn't support TypedDict\n        dic[name] = value  # type: ignore[index]\n        self._setitem.append((dic, name, oldval))",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Which patch operation remembers whether a mapping key was absent before assigning its temporary value and appends that state to the item undo stack?",
+      "visible_card_text": "symbol src/_pytest/monkeypatch.py MonkeyPatch.setitem\ndeclaration MonkeyPatch.setitem lines 312-313:\n    def setitem(self, dic: Mapping[K, V], name: K, value: V) -> None:\n        \"\"\"Set dictionary entry ``name`` to value.\"\"\"\nimplementation MonkeyPatch.setitem lines 314-317:\n        oldval = dic.get(name, NOTSET)\n        # Not all Mapping types support indexing, but MutableMapping doesn't support TypedDict\n        dic[name] = value  # type: ignore[index]\n        self._setitem.append((dic, name, oldval))"
+    },
+    {
+      "id": "symdev-20261016-014",
+      "repo_id": "pytest",
+      "query": "Which token-consumption method advances only for a matching non-end token, leaves end-of-input in place, and optionally reports a required-token mismatch?",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "src/_pytest/mark/expression.py",
+        "entity": {
+          "kind": "method",
+          "qualname": "Scanner.accept",
+          "owner": "Scanner",
+          "definition_ordinal": 2
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "Scanner",
+          "qualname": "Scanner.lex"
+        },
+        "module_name": null,
+        "path": "src/_pytest/mark/expression.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 3,
+      "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+      "owner_extent": [
+        141,
+        149
+      ],
+      "owned_ranges": [
+        [
+          141,
+          149
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 141,
+          "end_line": 141,
+          "entity": {
+            "kind": "method",
+            "qualname": "Scanner.accept",
+            "owner": "Scanner",
+            "definition_ordinal": 2
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 142,
+          "end_line": 149,
+          "entity": {
+            "kind": "method",
+            "qualname": "Scanner.accept",
+            "owner": "Scanner",
+            "definition_ordinal": 2
+          }
+        }
+      ],
+      "card_text_sha256": "4082f748947759c5f5573b3040c50c414e7c67644c20ff15cd6f1e00ca13a63b",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "1fb167609ca139e5d0a686f208f542a4ca0c84176b110be5aa8016232d63fe1e",
+      "token_counts": {
+        "pair_tokens": 165,
+        "query_tokens": 34,
+        "doc_tokens": 128,
+        "full_pair_tokens": 165
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "PARTIAL",
+      "missing_information_category": "OFF_CARD_LOCAL_HELPER_CONTEXT",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "Match, avance salvo EOF y condición reject están visibles. El reporte concreto de error depende de self.reject, cuyo cuerpo no entra aquí. Esa delegación no vuelve errónea la referencia.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "src/_pytest/mark/expression.py",
+          "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+          "start_line": 142,
+          "end_line": 149,
+          "quote": "        if self.current.type is type:\n            token = self.current\n            if token.type is not TokenType.EOF:\n                self.current = next(self.tokens)\n            return token\n        if reject:\n            self.reject((type,))\n        return None",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "src/_pytest/mark/expression.py",
+          "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+          "start_line": 151,
+          "end_line": 158,
+          "quote": "    def reject(self, expected: Sequence[TokenType]) -> NoReturn:\n        raise SyntaxError(\n            \"expected {}; got {}\".format(\n                \" OR \".join(type.value for type in expected),\n                self.current.type.value,\n            ),\n            (FILE_NAME, 1, self.current.pos + 1, self.input),\n        )",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Which token-consumption method advances only for a matching non-end token, leaves end-of-input in place, and optionally reports a required-token mismatch?",
+      "visible_card_text": "symbol src/_pytest/mark/expression.py Scanner.accept\ndeclaration Scanner.accept lines 141-141:\n    def accept(self, type: TokenType, *, reject: bool = False) -> Token | None:\nimplementation Scanner.accept lines 142-149:\n        if self.current.type is type:\n            token = self.current\n            if token.type is not TokenType.EOF:\n                self.current = next(self.tokens)\n            return token\n        if reject:\n            self.reject((type,))\n        return None"
+    },
+    {
+      "id": "symdev-20261016-015",
+      "repo_id": "pytest",
+      "query": "Find the syntax-error builder that lists acceptable token descriptions and reports the current unexpected token with a one-based column in the original expression.",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "src/_pytest/mark/expression.py",
+        "entity": {
+          "kind": "method",
+          "qualname": "Scanner.reject",
+          "owner": "Scanner",
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_syntax_errors"
+        },
+        "module_name": null,
+        "path": "testing/test_mark_expression.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 2,
+      "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+      "owner_extent": [
+        151,
+        158
+      ],
+      "owned_ranges": [
+        [
+          151,
+          158
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 151,
+          "end_line": 151,
+          "entity": {
+            "kind": "method",
+            "qualname": "Scanner.reject",
+            "owner": "Scanner",
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 152,
+          "end_line": 158,
+          "entity": {
+            "kind": "method",
+            "qualname": "Scanner.reject",
+            "owner": "Scanner",
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "dae38d63c4688b5c98597237a58dedbb9ef58c293c7866cc47c395bf827687f5",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "5e9555dea1abd9961eae2221dc11049fd014c30f05e7c3d61b2a7dc557578dd2",
+      "token_counts": {
+        "pair_tokens": 157,
+        "query_tokens": 28,
+        "doc_tokens": 126,
+        "full_pair_tokens": 157
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "VISIBLE",
+      "missing_information_category": "NONE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "La unión OR de descripciones y la tupla de SyntaxError con pos+1 y self.input están completas.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "src/_pytest/mark/expression.py",
+          "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+          "start_line": 152,
+          "end_line": 158,
+          "quote": "        raise SyntaxError(\n            \"expected {}; got {}\".format(\n                \" OR \".join(type.value for type in expected),\n                self.current.type.value,\n            ),\n            (FILE_NAME, 1, self.current.pos + 1, self.input),\n        )",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Find the syntax-error builder that lists acceptable token descriptions and reports the current unexpected token with a one-based column in the original expression.",
+      "visible_card_text": "symbol src/_pytest/mark/expression.py Scanner.reject\ndeclaration Scanner.reject lines 151-151:\n    def reject(self, expected: Sequence[TokenType]) -> NoReturn:\nimplementation Scanner.reject lines 152-158:\n        raise SyntaxError(\n            \"expected {}; got {}\".format(\n                \" OR \".join(type.value for type in expected),\n                self.current.type.value,\n            ),\n            (FILE_NAME, 1, self.current.pos + 1, self.input),\n        )"
+    },
+    {
+      "id": "symdev-20261016-018",
+      "repo_id": "pytest",
+      "query": "Which parser layer builds boolean AND nodes from unary-sized operands while accepting repeated conjunction tokens?",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "src/_pytest/mark/expression.py",
+        "entity": {
+          "kind": "function",
+          "qualname": "and_expr",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "expr"
+        },
+        "module_name": null,
+        "path": "src/_pytest/mark/expression.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 2,
+      "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+      "owner_extent": [
+        184,
+        189
+      ],
+      "owned_ranges": [
+        [
+          184,
+          189
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 184,
+          "end_line": 184,
+          "entity": {
+            "kind": "function",
+            "qualname": "and_expr",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 185,
+          "end_line": 189,
+          "entity": {
+            "kind": "function",
+            "qualname": "and_expr",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "7d9d0e22796effcdb19f4f9f987f77c777f08bbb65e4067d4e34ecf252e81bf6",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "57d9359580df51bcdf319291eb705078cd6ffbdefb8c32680cc6ce33d9dda04c",
+      "token_counts": {
+        "pair_tokens": 130,
+        "query_tokens": 20,
+        "doc_tokens": 107,
+        "full_pair_tokens": 130
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "PARTIAL",
+      "missing_information_category": "OFF_CARD_LOCAL_HELPER_CONTEXT",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "Loop AND y creación de ast.BoolOp(ast.And()) están completos. El tamaño gramatical/unario de not_expr depende del helper192–210, fuera de la tarjeta.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "src/_pytest/mark/expression.py",
+          "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+          "start_line": 185,
+          "end_line": 189,
+          "quote": "    ret = not_expr(s)\n    while s.accept(TokenType.AND):\n        rhs = not_expr(s)\n        ret = ast.BoolOp(ast.And(), [ret, rhs])\n    return ret",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "src/_pytest/mark/expression.py",
+          "source_hash": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+          "start_line": 192,
+          "end_line": 210,
+          "quote": "def not_expr(s: Scanner) -> ast.expr:\n    if s.accept(TokenType.NOT):\n        return ast.UnaryOp(ast.Not(), not_expr(s))\n    if s.accept(TokenType.LPAREN):\n        ret = expr(s)\n        s.accept(TokenType.RPAREN, reject=True)\n        return ret\n    ident = s.accept(TokenType.IDENT)\n    if ident:\n        s.idents.add(ident.value)\n        name = ast.Name(IDENT_PREFIX + ident.value, ast.Load())\n        if s.accept(TokenType.LPAREN):\n            ret = ast.Call(func=name, args=[], keywords=all_kwargs(s))\n            s.accept(TokenType.RPAREN, reject=True)\n        else:\n            ret = name\n        return ret\n\n    s.reject((TokenType.NOT, TokenType.LPAREN, TokenType.IDENT))",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Which parser layer builds boolean AND nodes from unary-sized operands while accepting repeated conjunction tokens?",
+      "visible_card_text": "symbol src/_pytest/mark/expression.py and_expr\ndeclaration and_expr lines 184-184:\ndef and_expr(s: Scanner) -> ast.expr:\nimplementation and_expr lines 185-189:\n    ret = not_expr(s)\n    while s.accept(TokenType.AND):\n        rhs = not_expr(s)\n        ret = ast.BoolOp(ast.And(), [ret, rhs])\n    return ret"
+    },
+    {
+      "id": "symdev-20261016-025",
+      "repo_id": "pytest",
+      "query": "¿Qué función interpreta marcadores de explicaciones anidadas para producir líneas con where o and, mantiene una pila de sangrías y adjunta el texto de cierre a su explicación padre?",
+      "language": "es",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "src/_pytest/assertion/util.py",
+        "entity": {
+          "kind": "function",
+          "qualname": "_format_lines",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "format_explanation"
+        },
+        "module_name": null,
+        "path": "src/_pytest/assertion/util.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 4,
+      "source_hash": "35716698af7d75a3e72fe024f96e25e6e0578b0ba0bac0734b3a5b5607536c73",
+      "owner_extent": [
+        73,
+        105
+      ],
+      "owned_ranges": [
+        [
+          73,
+          105
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 73,
+          "end_line": 81,
+          "entity": {
+            "kind": "function",
+            "qualname": "_format_lines",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 82,
+          "end_line": 105,
+          "entity": {
+            "kind": "function",
+            "qualname": "_format_lines",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "63cc15b9b2cbf0cb69e543a59539d1fb845e4a7eb41076b01a905bbc6c80f847",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "35ec01a30b0559a1d295b17a68c3f91dacb17a22dbce36ab7104019183e31b22",
+      "token_counts": {
+        "pair_tokens": 410,
+        "query_tokens": 32,
+        "doc_tokens": 375,
+        "full_pair_tokens": 410
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "VISIBLE",
+      "missing_information_category": "NONE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "Marcadores de apertura/cierre, where/and, stack/stackcnt y adjunción al padre están literales dentro del card.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "src/_pytest/assertion/util.py",
+          "source_hash": "35716698af7d75a3e72fe024f96e25e6e0578b0ba0bac0734b3a5b5607536c73",
+          "start_line": 85,
+          "end_line": 99,
+          "quote": "    for line in lines[1:]:\n        if line.startswith(\"{\"):\n            if stackcnt[-1]:\n                s = \"and   \"\n            else:\n                s = \"where \"\n            stack.append(len(result))\n            stackcnt[-1] += 1\n            stackcnt.append(0)\n            result.append(\" +\" + \"  \" * (len(stack) - 1) + s + line[1:])\n        elif line.startswith(\"}\"):\n            stack.pop()\n            stackcnt.pop()\n            result[stack[-1]] += line[1:]\n        else:",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "What function interprets nested explanations markers to produce lines with where or and, keeps a pile of indentations and attaches the closing text to your parent explanation?",
+      "visible_card_text": "symbol src/_pytest/assertion/util.py _format_lines\ndeclaration _format_lines lines 73-81:\ndef _format_lines(lines: Sequence[str]) -> list[str]:\n    \"\"\"Format the individual lines.\n\n    This will replace the '{', '}' and '~' characters of our mini formatting\n    language with the proper 'where ...', 'and ...' and ' + ...' text, taking\n    care of indentation along the way.\n\n    Return a list of formatted lines.\n    \"\"\"\nimplementation _format_lines lines 82-105:\n    result = list(lines[:1])\n    stack = [0]\n    stackcnt = [0]\n    for line in lines[1:]:\n        if line.startswith(\"{\"):\n            if stackcnt[-1]:\n                s = \"and   \"\n            else:\n                s = \"where \"\n            stack.append(len(result))\n            stackcnt[-1] += 1\n            stackcnt.append(0)\n            result.append(\" +\" + \"  \" * (len(stack) - 1) + s + line[1:])\n        elif line.startswith(\"}\"):\n            stack.pop()\n            stackcnt.pop()\n            result[stack[-1]] += line[1:]\n        else:\n            assert line[0] in [\"~\", \">\"]\n            stack[-1] += 1\n            indent = len(stack) if line.startswith(\"~\") else len(stack) - 1\n            result.append(\"  \" * indent + line[1:])\n    assert len(stack) == 1\n    return result"
+    },
+    {
+      "id": "symdev-20261016-042",
+      "repo_id": "ajv",
+      "query": "Find generation of the array-tail check that marks items evaluated, limits total length for a false schema, and validates extra elements only for a nontrivial object schema.",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "lib/vocabularies/applicator/additionalItems.ts",
+        "entity": {
+          "kind": "function",
+          "qualname": "validateAdditionalItems",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": null,
+          "qualname": "code"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/unevaluated/unevaluatedItems.ts",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 2,
+      "source_hash": "0593c60f31db5cea9022a353e56fd3066a8dac4e35607affb4e556d4d84c3f2a",
+      "owner_extent": [
+        35,
+        54
+      ],
+      "owned_ranges": [
+        [
+          35,
+          47
+        ],
+        [
+          54,
+          54
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 35,
+          "end_line": 35,
+          "entity": {
+            "kind": "function",
+            "qualname": "validateAdditionalItems",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 36,
+          "end_line": 47,
+          "entity": {
+            "kind": "function",
+            "qualname": "validateAdditionalItems",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "13851f16864e4768dc0d3ce6b9be62fc20522973d01df7c3c7768f2cd5c36b9d",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "839e414c667b7e36d0ba579b050a171f99d1632314f73966582bad377adedeaa",
+      "token_counts": {
+        "pair_tokens": 261,
+        "query_tokens": 33,
+        "doc_tokens": 225,
+        "full_pair_tokens": 261
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "PARTIAL",
+      "missing_information_category": "LEXICAL_CHILD_EXCLUDED_BEFORE_TOKENIZATION",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "Se ven it.items=true, límite de longitud para false y guarda de objeto no trivial. El loop de cola, subschema por índice y corte al fallar viven en validateItems48–53, excluido como dueño hijo. No es pérdida por512.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "lib/vocabularies/applicator/additionalItems.ts",
+          "source_hash": "0593c60f31db5cea9022a353e56fd3066a8dac4e35607affb4e556d4d84c3f2a",
+          "start_line": 37,
+          "end_line": 45,
+          "quote": "  it.items = true\n  const len = gen.const(\"len\", _`${data}.length`)\n  if (schema === false) {\n    cxt.setParams({len: items.length})\n    cxt.pass(_`${len} <= ${items.length}`)\n  } else if (typeof schema == \"object\" && !alwaysValidSchema(it, schema)) {\n    const valid = gen.var(\"valid\", _`${len} <= ${items.length}`) // TODO var\n    gen.if(not(valid), () => validateItems(valid))\n    cxt.ok(valid)",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "primary_source_operation",
+          "path": "lib/vocabularies/applicator/additionalItems.ts",
+          "source_hash": "0593c60f31db5cea9022a353e56fd3066a8dac4e35607affb4e556d4d84c3f2a",
+          "start_line": 48,
+          "end_line": 53,
+          "quote": "  function validateItems(valid: Name): void {\n    gen.forRange(\"i\", items.length, len, (i) => {\n      cxt.subschema({keyword, dataProp: i, dataPropType: Type.Num}, valid)\n      if (!it.allErrors) gen.if(not(valid), () => gen.break())\n    })\n  }",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Find generation of the array-tail check that marks items evaluated, limits total length for a false schema, and validates extra elements only for a nontrivial object schema.",
+      "visible_card_text": "symbol lib/vocabularies/applicator/additionalItems.ts validateAdditionalItems\ndeclaration validateAdditionalItems lines 35-35:\nexport function validateAdditionalItems(cxt: KeywordCxt, items: AnySchema[]): void {\nimplementation validateAdditionalItems lines 36-47:\n  const {gen, schema, data, keyword, it} = cxt\n  it.items = true\n  const len = gen.const(\"len\", _`${data}.length`)\n  if (schema === false) {\n    cxt.setParams({len: items.length})\n    cxt.pass(_`${len} <= ${items.length}`)\n  } else if (typeof schema == \"object\" && !alwaysValidSchema(it, schema)) {\n    const valid = gen.var(\"valid\", _`${len} <= ${items.length}`) // TODO var\n    gen.if(not(valid), () => validateItems(valid))\n    cxt.ok(valid)\n  }\n"
+    },
+    {
+      "id": "symdev-20261016-047",
+      "repo_id": "ajv",
+      "query": "Which generator applies a dependency subschema only when its triggering object property exists, skips schemas that are always valid, and merges evaluated information only through a valid subschema?",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "lib/vocabularies/applicator/dependencies.ts",
+        "entity": {
+          "kind": "function",
+          "qualname": "validateSchemaDeps",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": "code",
+          "qualname": "code.validateOneOf"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/applicator/oneOf.ts",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 2,
+      "source_hash": "d2e648e8fe45621558c8f14ff5684954a91f6d800d1b2bf3d90f43941c84df65",
+      "owner_extent": [
+        95,
+        110
+      ],
+      "owned_ranges": [
+        [
+          95,
+          110
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 95,
+          "end_line": 95,
+          "entity": {
+            "kind": "function",
+            "qualname": "validateSchemaDeps",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 96,
+          "end_line": 110,
+          "entity": {
+            "kind": "function",
+            "qualname": "validateSchemaDeps",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "48d42e9de933de46aeb12e05c68cf6d0046df7a871d0a1af197d92fc27e823bc",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "bf8f2769adb1372db4adc335975eea867267d2b5664a0b0853ef8d030a71017e",
+      "token_counts": {
+        "pair_tokens": 273,
+        "query_tokens": 36,
+        "doc_tokens": 234,
+        "full_pair_tokens": 273
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "PARTIAL",
+      "missing_information_category": "OFF_CARD_LOCAL_HELPER_CONTEXT",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "El caller muestra skip alwaysValidSchema, guarda propertyInData, subschema y mergeValidEvaluated(schCxt,valid). La condición real de presencia y el gen.if(valid) de la fusión requieren los helpers fuera del card.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "lib/vocabularies/applicator/dependencies.ts",
+          "source_hash": "d2e648e8fe45621558c8f14ff5684954a91f6d800d1b2bf3d90f43941c84df65",
+          "start_line": 99,
+          "end_line": 107,
+          "quote": "    if (alwaysValidSchema(it, schemaDeps[prop] as AnySchema)) continue\n    gen.if(\n      propertyInData(gen, data, prop, it.opts.ownProperties),\n      () => {\n        const schCxt = cxt.subschema({keyword, schemaProp: prop}, valid)\n        cxt.mergeValidEvaluated(schCxt, valid)\n      },\n      () => gen.var(valid, true) // TODO var\n    )",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "lib/vocabularies/code.ts",
+          "source_hash": "f4bf46f24e44512addfc8b34e8ef1cd6320025236839e176deb59ee8b20c7ee7",
+          "start_line": 45,
+          "end_line": 53,
+          "quote": "export function propertyInData(\n  gen: CodeGen,\n  data: Name,\n  property: Name | string,\n  ownProperties?: boolean\n): Code {\n  const cond = _`${data}${getProperty(property)} !== undefined`\n  return ownProperties ? _`${cond} && ${isOwnProperty(gen, data, property)}` : cond\n}",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "lib/compile/validate/index.ts",
+          "source_hash": "841338dea0ff90d44bde71f0651879edad186fd50d7bb6d03243b0085e557c48",
+          "start_line": 515,
+          "end_line": 520,
+          "quote": "  mergeValidEvaluated(schemaCxt: SchemaCxt, valid: Name): boolean | void {\n    const {it, gen} = this\n    if (it.opts.unevaluated && (it.props !== true || it.items !== true)) {\n      gen.if(valid, () => this.mergeEvaluated(schemaCxt, Name))\n      return true\n    }",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Which generator applies a dependency subschema only when its triggering object property exists, skips schemas that are always valid, and merges evaluated information only through a valid subschema?",
+      "visible_card_text": "symbol lib/vocabularies/applicator/dependencies.ts validateSchemaDeps\ndeclaration validateSchemaDeps lines 95-95:\nexport function validateSchemaDeps(cxt: KeywordCxt, schemaDeps: SchemaMap = cxt.schema): void {\nimplementation validateSchemaDeps lines 96-110:\n  const {gen, data, keyword, it} = cxt\n  const valid = gen.name(\"valid\")\n  for (const prop in schemaDeps) {\n    if (alwaysValidSchema(it, schemaDeps[prop] as AnySchema)) continue\n    gen.if(\n      propertyInData(gen, data, prop, it.opts.ownProperties),\n      () => {\n        const schCxt = cxt.subschema({keyword, schemaProp: prop}, valid)\n        cxt.mergeValidEvaluated(schCxt, valid)\n      },\n      () => gen.var(valid, true) // TODO var\n    )\n    cxt.ok(valid)\n  }\n}"
+    },
+    {
+      "id": "symdev-20261016-053",
+      "repo_id": "ajv",
+      "query": "Where does generated dynamic-anchor dispatch use the runtime anchor validator when available and fall back to the current validator otherwise?",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "lib/vocabularies/dynamic/dynamicRef.ts",
+        "entity": {
+          "kind": "function",
+          "qualname": "dynamicRef._dynamicRef",
+          "owner": "dynamicRef",
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "dynamicAnchor"
+        },
+        "module_name": null,
+        "path": "lib/vocabularies/dynamic/dynamicAnchor.ts",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 2,
+      "source_hash": "92884e9923f4053155e5c1f13d5e176c17b47f0db65616bf031a4bb93faf969d",
+      "owner_extent": [
+        25,
+        38
+      ],
+      "owned_ranges": [
+        [
+          25,
+          38
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 25,
+          "end_line": 31,
+          "entity": {
+            "kind": "function",
+            "qualname": "dynamicRef._dynamicRef",
+            "owner": "dynamicRef",
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 32,
+          "end_line": 38,
+          "entity": {
+            "kind": "function",
+            "qualname": "dynamicRef._dynamicRef",
+            "owner": "dynamicRef",
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "a8278e8704e141bb0ac57fb83d65005babd07ac48e88d5177ba543916a28f2d9",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "d381d8e1c7c9440914d74a7e9f7d1a23b16976b0310eef651460253f794802b1",
+      "token_counts": {
+        "pair_tokens": 314,
+        "query_tokens": 25,
+        "doc_tokens": 286,
+        "full_pair_tokens": 314
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "VISIBLE",
+      "missing_information_category": "NONE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "Está completa la elección entre v del anchor runtime e it.validateName, incluida la rama sin anchor raíz. La observación es de dispatch/generación estática, no ejecución del validador.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "lib/vocabularies/dynamic/dynamicRef.ts",
+          "source_hash": "92884e9923f4053155e5c1f13d5e176c17b47f0db65616bf031a4bb93faf969d",
+          "start_line": 32,
+          "end_line": 38,
+          "quote": "    if (it.schemaEnv.root.dynamicAnchors[anchor]) {\n      const v = gen.let(\"_v\", _`${N.dynamicAnchors}${getProperty(anchor)}`)\n      gen.if(v, _callRef(v, valid), _callRef(it.validateName, valid))\n    } else {\n      _callRef(it.validateName, valid)()\n    }\n  }",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Where does generated dynamic-anchor dispatch use the runtime anchor validator when available and fall back to the current validator otherwise?",
+      "visible_card_text": "symbol lib/vocabularies/dynamic/dynamicRef.ts dynamicRef._dynamicRef\ndeclaration dynamicRef._dynamicRef lines 25-31:\n  function _dynamicRef(valid?: Name): void {\n    // TODO the assumption here is that `recursiveRef: #` always points to the root\n    // of the schema object, which is not correct, because there may be $id that\n    // makes # point to it, and the target schema may not contain dynamic/recursiveAnchor.\n    // Because of that 2 tests in recursiveRef.json fail.\n    // This is a similar problem to #815 (`$id` doesn't alter resolution scope for `{ \"$ref\": \"#\" }`).\n    // (This problem is not tested in JSON-Schema-Test-Suite)\nimplementation dynamicRef._dynamicRef lines 32-38:\n    if (it.schemaEnv.root.dynamicAnchors[anchor]) {\n      const v = gen.let(\"_v\", _`${N.dynamicAnchors}${getProperty(anchor)}`)\n      gen.if(v, _callRef(v, valid), _callRef(it.validateName, valid))\n    } else {\n      _callRef(it.validateName, valid)()\n    }\n  }"
+    },
+    {
+      "id": "symdev-20261016-067",
+      "repo_id": "ajv",
+      "query": "¿Dónde se elige igualdad profunda para un valor constante procedente de datos o de un objeto y desigualdad estricta para los demás valores de esquema?",
+      "language": "es",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "lib/vocabularies/validation/const.ts",
+        "entity": {
+          "kind": "method",
+          "qualname": "code",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "compileConstant"
+        },
+        "module_name": null,
+        "path": "spec/keyword.spec.ts",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 4,
+      "source_hash": "9dc3c40d6260158b2ee34dadadbc0e738cad939fc725cc1d2f5120bd43768ed5",
+      "owner_extent": [
+        18,
+        25
+      ],
+      "owned_ranges": [
+        [
+          18,
+          25
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 18,
+          "end_line": 18,
+          "entity": {
+            "kind": "method",
+            "qualname": "code",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 19,
+          "end_line": 25,
+          "entity": {
+            "kind": "method",
+            "qualname": "code",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "3e1d5d199b1d42aa902df1adc1c2a2bbb9e0bee614b42dba202da0a394a97ea2",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "576ec0a860df1b216b8170f301255f4be1bdaf61cab909826297a43fe47c30d1",
+      "token_counts": {
+        "pair_tokens": 160,
+        "query_tokens": 23,
+        "doc_tokens": 134,
+        "full_pair_tokens": 160
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "PARTIAL",
+      "missing_information_category": "OFF_CARD_BINDING_CONTEXT",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "La condición $data/objeto y !== están visibles. Que equal represente igualdad profunda depende del import de const.ts y del reexport fast-deep-equal de runtime/equal.ts, no incluidos.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "lib/vocabularies/validation/const.ts",
+          "source_hash": "9dc3c40d6260158b2ee34dadadbc0e738cad939fc725cc1d2f5120bd43768ed5",
+          "start_line": 20,
+          "end_line": 23,
+          "quote": "    if ($data || (schema && typeof schema == \"object\")) {\n      cxt.fail$data(_`!${useFunc(gen, equal)}(${data}, ${schemaCode})`)\n    } else {\n      cxt.fail(_`${schema} !== ${data}`)",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "lib/vocabularies/validation/const.ts",
+          "source_hash": "9dc3c40d6260158b2ee34dadadbc0e738cad939fc725cc1d2f5120bd43768ed5",
+          "start_line": 5,
+          "end_line": 5,
+          "quote": "import equal from \"../../runtime/equal\"",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "lib/runtime/equal.ts",
+          "source_hash": "013de4ec7e4006015ef49ec787737636dc048a913aad0922295fc8b0eb15aa10",
+          "start_line": 1,
+          "end_line": 7,
+          "quote": "// https://github.com/ajv-validator/ajv/issues/889\nimport * as equal from \"fast-deep-equal\"\n\ntype Equal = typeof equal & {code: string}\n;(equal as Equal).code = 'require(\"ajv/dist/runtime/equal\").default'\n\nexport default equal as Equal",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Where is deep equality chosen for a constant value from data or an object and strict inequality for the other schema values?",
+      "visible_card_text": "symbol lib/vocabularies/validation/const.ts code\ndeclaration code lines 18-18:\n  code(cxt: KeywordCxt) {\nimplementation code lines 19-25:\n    const {gen, data, $data, schemaCode, schema} = cxt\n    if ($data || (schema && typeof schema == \"object\")) {\n      cxt.fail$data(_`!${useFunc(gen, equal)}(${data}, ${schemaCode})`)\n    } else {\n      cxt.fail(_`${schema} !== ${data}`)\n    }\n  },"
+    },
+    {
+      "id": "symdev-20261016-070",
+      "repo_id": "ajv",
+      "query": "Busca la comparación de un candidato de enumeración que usa igualdad profunda para objetos no nulos y comparación estricta para primitivos y null.",
+      "language": "es",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "lib/vocabularies/validation/enum.ts",
+        "entity": {
+          "kind": "function",
+          "qualname": "code.equalCode",
+          "owner": "code",
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "compileConstant"
+        },
+        "module_name": null,
+        "path": "spec/keyword.spec.ts",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 2,
+      "source_hash": "f62f760dda52c2dbc053ef7b7012aa9db10d3af65e8b1dc5defcaf2ba9c25911",
+      "owner_extent": [
+        45,
+        50
+      ],
+      "owned_ranges": [
+        [
+          45,
+          50
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 45,
+          "end_line": 45,
+          "entity": {
+            "kind": "function",
+            "qualname": "code.equalCode",
+            "owner": "code",
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 46,
+          "end_line": 50,
+          "entity": {
+            "kind": "function",
+            "qualname": "code.equalCode",
+            "owner": "code",
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "d4da3af76a9f30a5b212f0cb192cf1b5d8d48d4935209a508c311387827dcb6b",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "eeb63aba605b6981de7d446d95be088d95541f24c40f3ad5606603524526bf5b",
+      "token_counts": {
+        "pair_tokens": 148,
+        "query_tokens": 26,
+        "doc_tokens": 119,
+        "full_pair_tokens": 148
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "PARTIAL",
+      "missing_information_category": "OFF_CARD_ENCLOSING_BINDING_CONTEXT",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "El test typeof sch/object/no-null y === son visibles. La conexión getEql→useFunc(gen,equal) está en la función exterior24; el import/reexport que acredita igualdad profunda también queda fuera.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "lib/vocabularies/validation/enum.ts",
+          "source_hash": "f62f760dda52c2dbc053ef7b7012aa9db10d3af65e8b1dc5defcaf2ba9c25911",
+          "start_line": 46,
+          "end_line": 49,
+          "quote": "      const sch = schema[i]\n      return typeof sch === \"object\" && sch !== null\n        ? _`${getEql()}(${data}, ${vSchema}[${i}])`\n        : _`${data} === ${sch}`",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "lib/vocabularies/validation/enum.ts",
+          "source_hash": "f62f760dda52c2dbc053ef7b7012aa9db10d3af65e8b1dc5defcaf2ba9c25911",
+          "start_line": 24,
+          "end_line": 24,
+          "quote": "    const getEql = (): Name => (eql ??= useFunc(gen, equal))",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "lib/vocabularies/validation/enum.ts",
+          "source_hash": "f62f760dda52c2dbc053ef7b7012aa9db10d3af65e8b1dc5defcaf2ba9c25911",
+          "start_line": 5,
+          "end_line": 5,
+          "quote": "import equal from \"../../runtime/equal\"",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "lib/runtime/equal.ts",
+          "source_hash": "013de4ec7e4006015ef49ec787737636dc048a913aad0922295fc8b0eb15aa10",
+          "start_line": 1,
+          "end_line": 7,
+          "quote": "// https://github.com/ajv-validator/ajv/issues/889\nimport * as equal from \"fast-deep-equal\"\n\ntype Equal = typeof equal & {code: string}\n;(equal as Equal).code = 'require(\"ajv/dist/runtime/equal\").default'\n\nexport default equal as Equal",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "It seeks the comparison of a listing candidate who uses deep equality for non-null objects and strict comparison for primitives and null.",
+      "visible_card_text": "symbol lib/vocabularies/validation/enum.ts code.equalCode\ndeclaration code.equalCode lines 45-45:\n    function equalCode(vSchema: Name, i: number): Code {\nimplementation code.equalCode lines 46-50:\n      const sch = schema[i]\n      return typeof sch === \"object\" && sch !== null\n        ? _`${getEql()}(${data}, ${vSchema}[${i}])`\n        : _`${data} === ${sch}`\n    }"
+    },
+    {
+      "id": "symdev-20261016-093",
+      "repo_id": "junit5",
+      "query": "Find resource closure that atomically switches an open flag so the underlying close delegate is invoked at most once.",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/CloseablePath.java",
+        "entity": {
+          "kind": "method",
+          "qualname": "CloseablePath.close",
+          "owner": "CloseablePath",
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "ResourceAutoClosingTests.CloseableResource",
+          "qualname": "ResourceAutoClosingTests.CloseableResource.close"
+        },
+        "module_name": null,
+        "path": "jupiter-tests/src/test/java/org/junit/jupiter/engine/descriptor/ResourceAutoClosingTests.java",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 4,
+      "source_hash": "bb3bc3ad55b328a114ffc0a6077a57f0b63073cbd5778ddc0709616915a365bf",
+      "owner_extent": [
+        106,
+        111
+      ],
+      "owned_ranges": [
+        [
+          106,
+          111
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 106,
+          "end_line": 107,
+          "entity": {
+            "kind": "method",
+            "qualname": "CloseablePath.close",
+            "owner": "CloseablePath",
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 108,
+          "end_line": 111,
+          "entity": {
+            "kind": "method",
+            "qualname": "CloseablePath.close",
+            "owner": "CloseablePath",
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "f8bff566f559034b72f8deed33dbe205a928c222beaf4c0a0c4c459772d4c12b",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "d93f41376adcc552d891153688d5c0d67c334efd48dd54ee40362f53e93c0658",
+      "token_counts": {
+        "pair_tokens": 123,
+        "query_tokens": 21,
+        "doc_tokens": 99,
+        "full_pair_tokens": 123
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "VISIBLE",
+      "missing_information_category": "NONE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "El compareAndSet(false,true) que guarda delegate.close se ve completo. La declaración AtomicBoolean47, revisada como contexto de tipo, no está en el card; no se afirma una prueba runtime de concurrencia.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/CloseablePath.java",
+          "source_hash": "bb3bc3ad55b328a114ffc0a6077a57f0b63073cbd5778ddc0709616915a365bf",
+          "start_line": 108,
+          "end_line": 110,
+          "quote": "\t\tif (closed.compareAndSet(false, true)) {\n\t\t\tdelegate.close();\n\t\t}",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/CloseablePath.java",
+          "source_hash": "bb3bc3ad55b328a114ffc0a6077a57f0b63073cbd5778ddc0709616915a365bf",
+          "start_line": 47,
+          "end_line": 47,
+          "quote": "\tprivate final AtomicBoolean closed = new AtomicBoolean();",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Find resource closure that atomically switches an open flag so the underlying close delegate is invoked at most once.",
+      "visible_card_text": "symbol junit-platform-commons/src/main/java/org/junit/platform/commons/util/CloseablePath.java CloseablePath.close\ndeclaration CloseablePath.close lines 106-107:\n\t@Override\n\tpublic void close() throws IOException {\nimplementation CloseablePath.close lines 108-111:\n\t\tif (closed.compareAndSet(false, true)) {\n\t\t\tdelegate.close();\n\t\t}\n\t}"
+    },
+    {
+      "id": "symdev-20261016-098",
+      "repo_id": "junit5",
+      "query": "Which single-resource factory reuses the prebuilt global read or global read-write lock and creates an ordinary lock only for other resources?",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/LockManager.java",
+        "entity": {
+          "kind": "method",
+          "qualname": "LockManager.toSingleLock",
+          "owner": "LockManager",
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "ResourceLockTests",
+          "qualname": "ResourceLockTests.readOnlySingleLocks"
+        },
+        "module_name": null,
+        "path": "platform-tests/src/test/java/org/junit/platform/engine/support/hierarchical/ResourceLockTests.java",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 2,
+      "source_hash": "1097fe3993a7454dfc5a30f29a3419841ee02eac3c99f254703f807fd617e86b",
+      "owner_extent": [
+        79,
+        87
+      ],
+      "owned_ranges": [
+        [
+          79,
+          87
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 79,
+          "end_line": 79,
+          "entity": {
+            "kind": "method",
+            "qualname": "LockManager.toSingleLock",
+            "owner": "LockManager",
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 80,
+          "end_line": 87,
+          "entity": {
+            "kind": "method",
+            "qualname": "LockManager.toSingleLock",
+            "owner": "LockManager",
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "8bf1ac6fad16b0d2081cab772e0ab935810c677d0454a5d874c4e36d77284016",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "9790c0be37416562b8024bdd9d4d1542d04f7f769ac5e45e7e791e26c64293ae",
+      "token_counts": {
+        "pair_tokens": 180,
+        "query_tokens": 28,
+        "doc_tokens": 149,
+        "full_pair_tokens": 180
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "VISIBLE",
+      "missing_information_category": "NONE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "Las dos comparaciones retornan campos compartidos y sólo el caso restante hace new SingleLock. El constructor39–41 confirma en fuente que esos campos están preconstruidos; el patrón de selección está entero en el card.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/LockManager.java",
+          "source_hash": "1097fe3993a7454dfc5a30f29a3419841ee02eac3c99f254703f807fd617e86b",
+          "start_line": 80,
+          "end_line": 86,
+          "quote": "\t\tif (GLOBAL_READ.equals(resource)) {\n\t\t\treturn globalReadLock;\n\t\t}\n\t\tif (GLOBAL_READ_WRITE.equals(resource)) {\n\t\t\treturn globalReadWriteLock;\n\t\t}\n\t\treturn new SingleLock(resource, toLock(resource));",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/LockManager.java",
+          "source_hash": "1097fe3993a7454dfc5a30f29a3419841ee02eac3c99f254703f807fd617e86b",
+          "start_line": 39,
+          "end_line": 41,
+          "quote": "\tLockManager() {\n\t\tglobalReadLock = new SingleLock(GLOBAL_READ, toLock(GLOBAL_READ));\n\t\tglobalReadWriteLock = new SingleLock(GLOBAL_READ_WRITE, toLock(GLOBAL_READ_WRITE));",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Which single-resource factory reuses the prebuilt global read or global read-write lock and creates an ordinary lock only for other resources?",
+      "visible_card_text": "symbol junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/LockManager.java LockManager.toSingleLock\ndeclaration LockManager.toSingleLock lines 79-79:\n\tprivate SingleLock toSingleLock(ExclusiveResource resource) {\nimplementation LockManager.toSingleLock lines 80-87:\n\t\tif (GLOBAL_READ.equals(resource)) {\n\t\t\treturn globalReadLock;\n\t\t}\n\t\tif (GLOBAL_READ_WRITE.equals(resource)) {\n\t\t\treturn globalReadWriteLock;\n\t\t}\n\t\treturn new SingleLock(resource, toLock(resource));\n\t}"
+    },
+    {
+      "id": "symdev-20261016-102",
+      "repo_id": "junit5",
+      "query": "Where does the managed blocker avoid blocking by returning an existing acquisition flag or updating it with the result of a nonblocking lock attempt?",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/SingleLock.java",
+        "entity": {
+          "kind": "method",
+          "qualname": "SingleLock.SingleLockManagedBlocker.isReleasable",
+          "owner": "SingleLock.SingleLockManagedBlocker",
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "SingleLock.SingleLockManagedBlocker",
+          "qualname": "SingleLock.SingleLockManagedBlocker.block"
+        },
+        "module_name": null,
+        "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/SingleLock.java",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 3,
+      "source_hash": "5d88d3798f6c66675bbd5157ca9bdabcd627ae1e3542316daa812258eb1086a2",
+      "owner_extent": [
+        85,
+        88
+      ],
+      "owned_ranges": [
+        [
+          85,
+          88
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 85,
+          "end_line": 86,
+          "entity": {
+            "kind": "method",
+            "qualname": "SingleLock.SingleLockManagedBlocker.isReleasable",
+            "owner": "SingleLock.SingleLockManagedBlocker",
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 87,
+          "end_line": 88,
+          "entity": {
+            "kind": "method",
+            "qualname": "SingleLock.SingleLockManagedBlocker.isReleasable",
+            "owner": "SingleLock.SingleLockManagedBlocker",
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "743d3312a0eb495ef8caa8c1adf8fd7adf744caa09bf3e6a6cbdee863f0a58d5",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "7b4cd6deebe627ac7a2a3a0a0c42a483c11d0f38dd3b36668485720ec46d222e",
+      "token_counts": {
+        "pair_tokens": 157,
+        "query_tokens": 26,
+        "doc_tokens": 128,
+        "full_pair_tokens": 157
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "VISIBLE",
+      "missing_information_category": "NONE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "La expresión acquired || (acquired=tryLock()) conserva tanto el short circuit como la actualización del intento no bloqueante. Es una observación del API/patrón, no medición de ejecución.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/SingleLock.java",
+          "source_hash": "5d88d3798f6c66675bbd5157ca9bdabcd627ae1e3542316daa812258eb1086a2",
+          "start_line": 87,
+          "end_line": 87,
+          "quote": "\t\t\treturn this.acquired || (this.acquired = SingleLock.this.lock.tryLock());",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Where does the managed blocker avoid blocking by returning an existing acquisition flag or updating it with the result of a nonblocking lock attempt?",
+      "visible_card_text": "symbol junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/SingleLock.java SingleLock.SingleLockManagedBlocker.isReleasable\ndeclaration SingleLock.SingleLockManagedBlocker.isReleasable lines 85-86:\n\t\t@Override\n\t\tpublic boolean isReleasable() {\nimplementation SingleLock.SingleLockManagedBlocker.isReleasable lines 87-88:\n\t\t\treturn this.acquired || (this.acquired = SingleLock.this.lock.tryLock());\n\t\t}"
+    },
+    {
+      "id": "symdev-20261016-109",
+      "repo_id": "junit5",
+      "query": "¿Dónde se reúnen los resolutores que soportan un parámetro, se rechazan tanto la ausencia como la competencia de varios y se valida el tipo del valor obtenido del único resolutor?",
+      "language": "es",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "junit-jupiter-engine/src/main/java/org/junit/jupiter/engine/execution/ParameterResolutionUtils.java",
+        "entity": {
+          "kind": "method",
+          "qualname": "ParameterResolutionUtils.resolveParameter",
+          "owner": "ParameterResolutionUtils",
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "ParameterResolutionUtilsTests",
+          "qualname": "ParameterResolutionUtilsTests.reportIfThereAreMultipleParameterResolversThatSupportTheParameter"
+        },
+        "module_name": null,
+        "path": "jupiter-tests/src/test/java/org/junit/jupiter/engine/execution/ParameterResolutionUtilsTests.java",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 4,
+      "source_hash": "def8ca390b431e7cf0d1cf6220ea83ff62f5f81ae964e875f5c08e948675c7b5",
+      "owner_extent": [
+        123,
+        176
+      ],
+      "owned_ranges": [
+        [
+          123,
+          176
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 123,
+          "end_line": 125,
+          "entity": {
+            "kind": "method",
+            "qualname": "ParameterResolutionUtils.resolveParameter",
+            "owner": "ParameterResolutionUtils",
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 126,
+          "end_line": 154,
+          "entity": {
+            "kind": "method",
+            "qualname": "ParameterResolutionUtils.resolveParameter",
+            "owner": "ParameterResolutionUtils",
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "dc2a93d376a315aa04f6f3fc056a41474150ec149fa30e9ecf0ba9bd913f5818",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "43c639b0be3e19e72e468cc2629c800d111108a16d6979c3b866bb35b3b29825",
+      "token_counts": {
+        "pair_tokens": 471,
+        "query_tokens": 32,
+        "doc_tokens": 436,
+        "full_pair_tokens": 471
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "PARTIAL",
+      "missing_information_category": "OFF_CARD_LOCAL_HELPER_CONTEXT",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "Filtrado de supportsParameter, cardinalidades cero/múltiple y llamada validateResolvedType están visibles hasta151. La comprobación de asignabilidad y null/primitive está en178–202. El tail155–176 omitido no contiene el núcleo de selección preguntado; el detalle de tipos es contexto del helper.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "junit-jupiter-engine/src/main/java/org/junit/jupiter/engine/execution/ParameterResolutionUtils.java",
+          "source_hash": "def8ca390b431e7cf0d1cf6220ea83ff62f5f81ae964e875f5c08e948675c7b5",
+          "start_line": 128,
+          "end_line": 151,
+          "quote": "\t\t\tList<ParameterResolver> matchingResolvers = extensionRegistry.stream(ParameterResolver.class)\n\t\t\t\t\t.filter(resolver -> resolver.supportsParameter(parameterContext, extensionContext.get(resolver)))\n\t\t\t\t\t.toList();\n\t\t\t// @formatter:on\n\n\t\t\tif (matchingResolvers.isEmpty()) {\n\t\t\t\tthrow new ParameterResolutionException(\n\t\t\t\t\t\"No ParameterResolver registered for parameter [%s] in %s [%s].\".formatted(\n\t\t\t\t\t\tparameterContext.getParameter(), asLabel(executable), executable.toGenericString()));\n\t\t\t}\n\n\t\t\tif (matchingResolvers.size() > 1) {\n\t\t\t\t// @formatter:off\n\t\t\t\tString resolvers = matchingResolvers.stream()\n\t\t\t\t\t\t.map(StringUtils::defaultToString)\n\t\t\t\t\t\t.collect(joining(\", \"));\n\t\t\t\t// @formatter:on\n\t\t\t\tthrow new ParameterResolutionException(\n\t\t\t\t\t\"Discovered multiple competing ParameterResolvers for parameter [%s] in %s [%s]: %s\".formatted(\n\t\t\t\t\t\tparameterContext.getParameter(), asLabel(executable), executable.toGenericString(), resolvers));\n\t\t\t}\n\n\t\t\tParameterResolver resolver = matchingResolvers.get(0);\n\t\t\tObject value = resolver.resolveParameter(parameterContext, extensionContext.get(resolver));",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "junit-jupiter-engine/src/main/java/org/junit/jupiter/engine/execution/ParameterResolutionUtils.java",
+          "source_hash": "def8ca390b431e7cf0d1cf6220ea83ff62f5f81ae964e875f5c08e948675c7b5",
+          "start_line": 178,
+          "end_line": 202,
+          "quote": "\tprivate static void validateResolvedType(Parameter parameter, @Nullable Object value, Executable executable,\n\t\t\tParameterResolver resolver) {\n\n\t\tClass<?> type = parameter.getType();\n\n\t\t// Note: null is permissible as a resolved value but only for non-primitive types.\n\t\tif (!isAssignableTo(value, type)) {\n\t\t\tString message;\n\t\t\tif (value == null && type.isPrimitive()) {\n\t\t\t\tmessage = \"\"\"\n\t\t\t\t\t\tParameterResolver [%s] resolved a null value for parameter [%s] \\\n\t\t\t\t\t\tin %s [%s], but a primitive of type [%s] is required.\"\"\".formatted(\n\t\t\t\t\tresolver.getClass().getName(), parameter, asLabel(executable), executable.toGenericString(),\n\t\t\t\t\ttype.getName());\n\t\t\t}\n\t\t\telse {\n\t\t\t\tmessage = \"\"\"\n\t\t\t\t\t\tParameterResolver [%s] resolved a value of type [%s] for parameter [%s] \\\n\t\t\t\t\t\tin %s [%s], but a value assignment compatible with [%s] is required.\"\"\".formatted(\n\t\t\t\t\tresolver.getClass().getName(), (value != null ? value.getClass().getTypeName() : null), parameter,\n\t\t\t\t\tasLabel(executable), executable.toGenericString(), type.getTypeName());\n\t\t\t}\n\n\t\t\tthrow new ParameterResolutionException(message);\n\t\t}",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Where do the resolutionors that support a parameter meet, the absence and competence of several are rejected and the type of value obtained from the sole resolution is validated?",
+      "visible_card_text": "symbol junit-jupiter-engine/src/main/java/org/junit/jupiter/engine/execution/ParameterResolutionUtils.java ParameterResolutionUtils.resolveParameter\ndeclaration ParameterResolutionUtils.resolveParameter lines 123-125:\n\tprivate static @Nullable Object resolveParameter(ParameterContext parameterContext, Executable executable,\n\t\t\tExtensionContextSupplier extensionContext, ExtensionRegistry extensionRegistry) {\n\nimplementation ParameterResolutionUtils.resolveParameter lines 126-154:\n\t\ttry {\n\t\t\t// @formatter:off\n\t\t\tList<ParameterResolver> matchingResolvers = extensionRegistry.stream(ParameterResolver.class)\n\t\t\t\t\t.filter(resolver -> resolver.supportsParameter(parameterContext, extensionContext.get(resolver)))\n\t\t\t\t\t.toList();\n\t\t\t// @formatter:on\n\n\t\t\tif (matchingResolvers.isEmpty()) {\n\t\t\t\tthrow new ParameterResolutionException(\n\t\t\t\t\t\"No ParameterResolver registered for parameter [%s] in %s [%s].\".formatted(\n\t\t\t\t\t\tparameterContext.getParameter(), asLabel(executable), executable.toGenericString()));\n\t\t\t}\n\n\t\t\tif (matchingResolvers.size() > 1) {\n\t\t\t\t// @formatter:off\n\t\t\t\tString resolvers = matchingResolvers.stream()\n\t\t\t\t\t\t.map(StringUtils::defaultToString)\n\t\t\t\t\t\t.collect(joining(\", \"));\n\t\t\t\t// @formatter:on\n\t\t\t\tthrow new ParameterResolutionException(\n\t\t\t\t\t\"Discovered multiple competing ParameterResolvers for parameter [%s] in %s [%s]: %s\".formatted(\n\t\t\t\t\t\tparameterContext.getParameter(), asLabel(executable), executable.toGenericString(), resolvers));\n\t\t\t}\n\n\t\t\tParameterResolver resolver = matchingResolvers.get(0);\n\t\t\tObject value = resolver.resolveParameter(parameterContext, extensionContext.get(resolver));\n\t\t\tvalidateResolvedType(parameterContext.getParameter(), value, executable, resolver);\n\n\t\t\tlogger.trace("
+    },
+    {
+      "id": "symdev-20261016-115",
+      "repo_id": "junit5",
+      "query": "¿Qué operación de conversión obtiene la función fábrica cacheada, rechaza el centinela que indica que no hay conversión y aplica al final el texto fuente a esa función?",
+      "language": "es",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/support/conversion/FallbackStringToObjectConverter.java",
+        "entity": {
+          "kind": "method",
+          "qualname": "FallbackStringToObjectConverter.convert",
+          "owner": "FallbackStringToObjectConverter",
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "FallbackStringToObjectConverter",
+          "qualname": "FallbackStringToObjectConverter.findFactoryExecutable"
+        },
+        "module_name": null,
+        "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/support/conversion/FallbackStringToObjectConverter.java",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 3,
+      "source_hash": "4c96e7057c557f661e016fe11b402b5750c7688e678d6fcdf72d84b62c2e0a1b",
+      "owner_extent": [
+        93,
+        101
+      ],
+      "owned_ranges": [
+        [
+          93,
+          101
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 93,
+          "end_line": 95,
+          "entity": {
+            "kind": "method",
+            "qualname": "FallbackStringToObjectConverter.convert",
+            "owner": "FallbackStringToObjectConverter",
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 96,
+          "end_line": 101,
+          "entity": {
+            "kind": "method",
+            "qualname": "FallbackStringToObjectConverter.convert",
+            "owner": "FallbackStringToObjectConverter",
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "5c6bc5632d5803e5010bc74e6bb6de2c9d5214423e7ce04ed601758bcc903cc0",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "b3d5a7f4a838fae9840609c7f86e331279417255c19c8f3fd698918b1c2b38aa",
+      "token_counts": {
+        "pair_tokens": 212,
+        "query_tokens": 32,
+        "doc_tokens": 177,
+        "full_pair_tokens": 212
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "PARTIAL",
+      "missing_information_category": "OFF_CARD_LOCAL_HELPER_CONTEXT",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "La prueba contra NULL_EXECUTABLE y apply(source) están visibles. La característica cacheada sólo se acredita con factoryExecutableCache.computeIfAbsent en103–108, que no forma parte del card.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/support/conversion/FallbackStringToObjectConverter.java",
+          "source_hash": "4c96e7057c557f661e016fe11b402b5750c7688e678d6fcdf72d84b62c2e0a1b",
+          "start_line": 96,
+          "end_line": 100,
+          "quote": "\t\tFunction<String, @Nullable Object> executable = findFactoryExecutable(targetType);\n\t\tPreconditions.condition(executable != NULL_EXECUTABLE,\n\t\t\t\"Illegal state: convert() must not be called if canConvert() returned false\");\n\n\t\treturn executable.apply(source);",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/support/conversion/FallbackStringToObjectConverter.java",
+          "source_hash": "4c96e7057c557f661e016fe11b402b5750c7688e678d6fcdf72d84b62c2e0a1b",
+          "start_line": 103,
+          "end_line": 108,
+          "quote": "\tprivate static Function<String, @Nullable Object> findFactoryExecutable(Class<?> targetType) {\n\t\treturn factoryExecutableCache.computeIfAbsent(targetType, type -> {\n\t\t\t// First, search for exact String argument matches.\n\t\t\tvar factory = findFactoryMethodExecutable(type, String.class, INCLUDE_DEPRECATED);\n\t\t\tif (factory != null) {\n\t\t\t\treturn factory;",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "What conversion operation gets the factory function cached, rejects the sentry that indicates that there is no conversion and applies the source text to that function at the end?",
+      "visible_card_text": "symbol junit-platform-commons/src/main/java/org/junit/platform/commons/support/conversion/FallbackStringToObjectConverter.java FallbackStringToObjectConverter.convert\ndeclaration FallbackStringToObjectConverter.convert lines 93-95:\n\t@Override\n\t@SuppressWarnings(\"ReferenceEquality\")\n\tpublic @Nullable Object convert(String source, Class<?> targetType) throws Exception {\nimplementation FallbackStringToObjectConverter.convert lines 96-101:\n\t\tFunction<String, @Nullable Object> executable = findFactoryExecutable(targetType);\n\t\tPreconditions.condition(executable != NULL_EXECUTABLE,\n\t\t\t\"Illegal state: convert() must not be called if canConvert() returned false\");\n\n\t\treturn executable.apply(source);\n\t}"
+    },
+    {
+      "id": "symdev-20261016-134",
+      "repo_id": "packaging",
+      "query": "Find the selection regression where an individual directory package has an incompatible Python requirement and the error must identify that package rather than only the lock.",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "tests/test_pylock_select.py",
+        "entity": {
+          "kind": "function",
+          "qualname": "test_package_require_python_mismatch",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "Pylock",
+          "qualname": "Pylock.select"
+        },
+        "module_name": null,
+        "path": "src/packaging/pylock.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 2,
+      "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+      "owner_extent": [
+        136,
+        162
+      ],
+      "owned_ranges": [
+        [
+          136,
+          162
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 136,
+          "end_line": 136,
+          "entity": {
+            "kind": "function",
+            "qualname": "test_package_require_python_mismatch",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 137,
+          "end_line": 162,
+          "entity": {
+            "kind": "function",
+            "qualname": "test_package_require_python_mismatch",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "f42b5a545901ab567e2282fccc473e8f67041dbee50499d8cff6bf4029764132",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "78e89b3ff7f1e230ce4aaa007b22caf079d553447cc2ffff9e14bc81bdab688f",
+      "token_counts": {
+        "pair_tokens": 308,
+        "query_tokens": 27,
+        "doc_tokens": 278,
+        "full_pair_tokens": 308
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "PARTIAL",
+      "missing_information_category": "OFF_CARD_FIXTURE_VALUE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "Se ven requires_python==3.14.*, el directorio y la regex que exige package foo. La versión3.12 real del entorno se fija en _py312_linux41–59; el nombre de la variable en la tarjeta no prueba ese valor.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "tests/test_pylock_select.py",
+          "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+          "start_line": 143,
+          "end_line": 159,
+          "quote": "                version=Version(\"1.0\"),\n                requires_python=SpecifierSet(\"==3.14.*\"),\n                directory=PackageDirectory(path=\".\"),\n            ),\n        ],\n    )\n    pylock.validate()\n    with pytest.raises(\n        PylockSelectError,\n        match=(\n            r\"provided environment does not satisfy the Python version requirement \"\n            r\".* for package 'foo'\"\n        ),\n    ):\n        list(\n            pylock.select(\n                tags=_py312_linux.tags,",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "tests/test_pylock_select.py",
+          "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+          "start_line": 41,
+          "end_line": 59,
+          "quote": "_py312_linux = Platform(\n    tags=[\n        Tag(\"cp312\", \"cp312\", \"manylinux_2_17_x86_64\"),\n        Tag(\"py3\", \"none\", \"any\"),\n    ],\n    environment={\n        \"implementation_name\": \"cpython\",\n        \"implementation_version\": \"3.12.12\",\n        \"os_name\": \"posix\",\n        \"platform_machine\": \"x86_64\",\n        \"platform_release\": \"6.8.0-100-generic\",\n        \"platform_system\": \"Linux\",\n        \"platform_version\": \"#100-Ubuntu SMP PREEMPT_DYNAMIC\",\n        \"python_full_version\": \"3.12.12\",\n        \"platform_python_implementation\": \"CPython\",\n        \"python_version\": \"3.12\",\n        \"sys_platform\": \"linux\",\n    },\n)",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Find the selection regression where an individual directory package has an incompatible Python requirement and the error must identify that package rather than only the lock.",
+      "visible_card_text": "symbol tests/test_pylock_select.py test_package_require_python_mismatch\ndeclaration test_package_require_python_mismatch lines 136-136:\ndef test_package_require_python_mismatch() -> None:\nimplementation test_package_require_python_mismatch lines 137-162:\n    pylock = Pylock(\n        lock_version=Version(\"1.0\"),\n        created_by=\"some_tool\",\n        packages=[\n            Package(\n                name=cast(\"NormalizedName\", \"foo\"),\n                version=Version(\"1.0\"),\n                requires_python=SpecifierSet(\"==3.14.*\"),\n                directory=PackageDirectory(path=\".\"),\n            ),\n        ],\n    )\n    pylock.validate()\n    with pytest.raises(\n        PylockSelectError,\n        match=(\n            r\"provided environment does not satisfy the Python version requirement \"\n            r\".* for package 'foo'\"\n        ),\n    ):\n        list(\n            pylock.select(\n                tags=_py312_linux.tags,\n                environment=_py312_linux.environment,\n            )\n        )"
+    },
+    {
+      "id": "symdev-20261016-140",
+      "repo_id": "packaging",
+      "query": "Find the parametrized selection regression that records package names passed to a source-preference callback and checks both the selected distribution class and whether that callback was invoked.",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "tests/test_pylock_select.py",
+        "entity": {
+          "kind": "function",
+          "qualname": "test_prefer_sdist_predicate",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "Pylock",
+          "qualname": "Pylock.select"
+        },
+        "module_name": null,
+        "path": "src/packaging/pylock.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 3,
+      "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+      "owner_extent": [
+        409,
+        435
+      ],
+      "owned_ranges": [
+        [
+          409,
+          417
+        ],
+        [
+          421,
+          435
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 409,
+          "end_line": 415,
+          "entity": {
+            "kind": "function",
+            "qualname": "test_prefer_sdist_predicate",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 421,
+          "end_line": 435,
+          "entity": {
+            "kind": "function",
+            "qualname": "test_prefer_sdist_predicate",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "22561f22885f3467e5cc88ea2ac1d03038ac1922f474dbf0fc46fe96e9580acb",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "b5b0321d49dda0465a01264745a299224fe23dce82473307b48de94ef3c45147",
+      "token_counts": {
+        "pair_tokens": 292,
+        "query_tokens": 32,
+        "doc_tokens": 257,
+        "full_pair_tokens": 292
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "PARTIAL",
+      "missing_information_category": "LEXICAL_CHILD_AND_CARD_WINDOW_SELECTION",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "La selección, isinstance y assert names están visibles. La inicialización names416 y el callback que lo registra418–420 faltan; también el parametrizado392–408 está antes del extent canónico. La fuente sí confirma todo; no es etiqueta incorrecta ni truncation512.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "tests/test_pylock_select.py",
+          "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+          "start_line": 429,
+          "end_line": 435,
+          "quote": "            prefer_sdist_predicate=predicate,\n        )\n    )\n\n    assert len(selected) == 1\n    assert isinstance(selected[0][1], expected_type)\n    assert names == ([\"foo\"] if called else [])",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "primary_source_operation",
+          "path": "tests/test_pylock_select.py",
+          "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+          "start_line": 416,
+          "end_line": 420,
+          "quote": "    names: list[NormalizedName] = []\n\n    def predicate(name: NormalizedName) -> bool:\n        names.append(name)\n        return prefer_sdist",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        },
+        {
+          "role": "source_context_not_assumed_visible",
+          "path": "tests/test_pylock_select.py",
+          "source_hash": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+          "start_line": 392,
+          "end_line": 408,
+          "quote": "@pytest.mark.parametrize(\n    (\"wheel_python_tag\", \"include_sdist\", \"prefer_sdist\", \"expected_type\", \"called\"),\n    [\n        (\"py3\", True, False, PackageWheel, True),\n        (\"py3\", True, True, PackageSdist, True),\n        (\"py5\", True, True, PackageSdist, True),\n        (\"py3\", False, True, PackageWheel, False),\n        (None, True, False, PackageSdist, True),\n    ],\n    ids=[\n        \"compatible-wheel-predicate-false\",\n        \"sdist-predicate-true\",\n        \"sdist-predicate-true-incompatible-wheel\",\n        \"compatible-wheel-no-sdist\",\n        \"sdist-only-predicate-false\",\n    ],\n)",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Find the parametrized selection regression that records package names passed to a source-preference callback and checks both the selected distribution class and whether that callback was invoked.",
+      "visible_card_text": "symbol tests/test_pylock_select.py test_prefer_sdist_predicate\ndeclaration test_prefer_sdist_predicate lines 409-415:\ndef test_prefer_sdist_predicate(\n    wheel_python_tag: str | None,\n    include_sdist: bool,\n    prefer_sdist: bool,\n    expected_type: type[object],\n    called: bool,\n) -> None:\nimplementation test_prefer_sdist_predicate lines 421-435:\n\n    selected = list(\n        _pylock_with_wheel_and_sdist(\n            wheel_python_tag=wheel_python_tag,\n            include_sdist=include_sdist,\n        ).select(\n            tags=_py312_linux.tags,\n            environment=_py312_linux.environment,\n            prefer_sdist_predicate=predicate,\n        )\n    )\n\n    assert len(selected) == 1\n    assert isinstance(selected[0][1], expected_type)\n    assert names == ([\"foo\"] if called else [])"
+    },
+    {
+      "id": "symdev-20261016-146",
+      "repo_id": "packaging",
+      "query": "Localiza la regresión que configura la captura sólo de KeyError y demuestra que un ValueError diferente escapa con su mensaje original.",
+      "language": "es",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "tests/test_errors.py",
+        "entity": {
+          "kind": "function",
+          "qualname": "test_error_collector_collect_unmatched_exception",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_error_collector_collect"
+        },
+        "module_name": null,
+        "path": "tests/test_errors.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 4,
+      "source_hash": "f5ca1dc0df6deaa9d3e625f2732c7beaa9f24d630cf1c1d54c96f00fa7c63cda",
+      "owner_extent": [
+        100,
+        110
+      ],
+      "owned_ranges": [
+        [
+          100,
+          110
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 100,
+          "end_line": 100,
+          "entity": {
+            "kind": "function",
+            "qualname": "test_error_collector_collect_unmatched_exception",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 101,
+          "end_line": 110,
+          "entity": {
+            "kind": "function",
+            "qualname": "test_error_collector_collect_unmatched_exception",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "8cbd4b60b434f21d83778555225d54a0b57799a0c1f2a71abd4d0c6156840f3c",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "23a15f9cd4cba589eed69665d36286fb98a75552590bb56714e9f3ea6f223759",
+      "token_counts": {
+        "pair_tokens": 201,
+        "query_tokens": 26,
+        "doc_tokens": 172,
+        "full_pair_tokens": 201
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "VISIBLE",
+      "missing_information_category": "NONE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "collect(KeyError), raise ValueError, pytest.raises con mensaje y el assert del mensaje original están juntos. La regresión se puede identificar por las aserciones literales.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "tests/test_errors.py",
+          "source_hash": "f5ca1dc0df6deaa9d3e625f2732c7beaa9f24d630cf1c1d54c96f00fa7c63cda",
+          "start_line": 103,
+          "end_line": 110,
+          "quote": "    # Now test that other exceptions are not collected\n    with (\n        pytest.raises(ValueError, match=\"a value error\") as exc_info,\n        collector.collect(KeyError),\n    ):\n        raise ValueError(\"a value error\")\n\n    assert str(exc_info.value) == \"a value error\"",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Locates the regression that sets up the capture of KeyError only and shows that a different ValueError escapes with its original message.",
+      "visible_card_text": "symbol tests/test_errors.py test_error_collector_collect_unmatched_exception\ndeclaration test_error_collector_collect_unmatched_exception lines 100-100:\ndef test_error_collector_collect_unmatched_exception() -> None:\nimplementation test_error_collector_collect_unmatched_exception lines 101-110:\n    collector = packaging.errors._ErrorCollector()\n\n    # Now test that other exceptions are not collected\n    with (\n        pytest.raises(ValueError, match=\"a value error\") as exc_info,\n        collector.collect(KeyError),\n    ):\n        raise ValueError(\"a value error\")\n\n    assert str(exc_info.value) == \"a value error\""
+    },
+    {
+      "id": "symdev-20261016-152",
+      "repo_id": "boltons",
+      "query": "Find the sorting regression that starts from descending values, forces a list into multiple internal segments through a middle removal, and checks the sorted first and last elements.",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "tests/test_listutils.py",
+        "entity": {
+          "kind": "function",
+          "qualname": "test_sort_barrel_list",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "soft_sorted"
+        },
+        "module_name": null,
+        "path": "boltons/iterutils.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 2,
+      "source_hash": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+      "owner_extent": [
+        65,
+        71
+      ],
+      "owned_ranges": [
+        [
+          65,
+          71
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 65,
+          "end_line": 65,
+          "entity": {
+            "kind": "function",
+            "qualname": "test_sort_barrel_list",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 66,
+          "end_line": 71,
+          "entity": {
+            "kind": "function",
+            "qualname": "test_sort_barrel_list",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "fccdf410c6e956188b45c39b2cb2142650156af407f152d559264d80a22cf557",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "5dfbb8c218a999508c349f7b624c69dc1e14c370970db0a96e18851e4fe6ad8c",
+      "token_counts": {
+        "pair_tokens": 153,
+        "query_tokens": 31,
+        "doc_tokens": 119,
+        "full_pair_tokens": 153
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "VISIBLE",
+      "missing_information_category": "NONE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "Construcción descendente, pop central, len(lists)>1, sort y ambos extremos están completos.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "tests/test_listutils.py",
+          "source_hash": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+          "start_line": 66,
+          "end_line": 71,
+          "quote": "    bl = BarrelList(reversed(range(100000)))\n    bl.pop(50000)\n    assert len(bl.lists) > 1\n    bl.sort()\n    assert bl[0] == 0\n    assert bl[-1] == 99999",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Find the sorting regression that starts from descending values, forces a list into multiple internal segments through a middle removal, and checks the sorted first and last elements.",
+      "visible_card_text": "symbol tests/test_listutils.py test_sort_barrel_list\ndeclaration test_sort_barrel_list lines 65-65:\ndef test_sort_barrel_list():\nimplementation test_sort_barrel_list lines 66-71:\n    bl = BarrelList(reversed(range(100000)))\n    bl.pop(50000)\n    assert len(bl.lists) > 1\n    bl.sort()\n    assert bl[0] == 0\n    assert bl[-1] == 99999"
+    },
+    {
+      "id": "symdev-20261016-156",
+      "repo_id": "boltons",
+      "query": "Where are segmented-list slices compared with builtin slices over empty and short lists, mixed bounds and positive or negative strides, with a zero stride required to fail?",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "tests/test_listutils.py",
+        "entity": {
+          "kind": "function",
+          "qualname": "test_barrellist_slicing_matches_list",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": null,
+          "qualname": "test_iset_slice_agreement"
+        },
+        "module_name": null,
+        "path": "tests/test_setutils.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 4,
+      "source_hash": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+      "owner_extent": [
+        209,
+        222
+      ],
+      "owned_ranges": [
+        [
+          209,
+          222
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 209,
+          "end_line": 209,
+          "entity": {
+            "kind": "function",
+            "qualname": "test_barrellist_slicing_matches_list",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 210,
+          "end_line": 222,
+          "entity": {
+            "kind": "function",
+            "qualname": "test_barrellist_slicing_matches_list",
+            "owner": null,
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "a6283a2e7fb622699ade049b3cefb858c4637f5f43949056cc58182b3b46eba3",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "2e9c5a8e17968b40b9f78be3245a3b6fc9fb1de2fd729fa13d91d3866ea8ad6a",
+      "token_counts": {
+        "pair_tokens": 269,
+        "query_tokens": 33,
+        "doc_tokens": 233,
+        "full_pair_tokens": 269
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "VISIBLE",
+      "missing_information_category": "NONE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "Tamaños0/1/8, producto de bounds/strides de ambos signos, comparación builtin y ValueError para stride0 están todos visibles.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "tests/test_listutils.py",
+          "source_hash": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+          "start_line": 213,
+          "end_line": 222,
+          "quote": "    for size in (0, 1, 8):\n        reference = list(range(size))\n        value = BarrelList(reference)\n        for start, stop, step in itertools.product(\n            (None, -20, -2, 0, 2, 20), (None, -20, -2, 0, 2, 20), (None, -3, -1, 1, 2)\n        ):\n            key = slice(start, stop, step)\n            assert list(value[key]) == reference[key], key\n        with pytest.raises(ValueError):\n            value[::0]",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Where are segmented-list slices compared with builtin slices over empty and short lists, mixed bounds and positive or negative strides, with a zero stride required to fail?",
+      "visible_card_text": "symbol tests/test_listutils.py test_barrellist_slicing_matches_list\ndeclaration test_barrellist_slicing_matches_list lines 209-209:\ndef test_barrellist_slicing_matches_list():\nimplementation test_barrellist_slicing_matches_list lines 210-222:\n    import itertools\n    import pytest\n\n    for size in (0, 1, 8):\n        reference = list(range(size))\n        value = BarrelList(reference)\n        for start, stop, step in itertools.product(\n            (None, -20, -2, 0, 2, 20), (None, -20, -2, 0, 2, 20), (None, -3, -1, 1, 2)\n        ):\n            key = slice(start, stop, step)\n            assert list(value[key]) == reference[key], key\n        with pytest.raises(ValueError):\n            value[::0]"
+    },
+    {
+      "id": "symdev-20261016-168",
+      "repo_id": "attrs",
+      "query": "Where is a wrapped converter tested with access to the field definition, including an Attribute type assertion and multiplication using that field metadata?",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "tests/test_make.py",
+        "entity": {
+          "kind": "method",
+          "qualname": "TestConverter.test_converter_wrapped_takes_field",
+          "owner": "TestConverter",
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "function",
+          "owner": "TestConverter.test_converter_wrapped_takes_field",
+          "qualname": "TestConverter.test_converter_wrapped_takes_field.converter_with_field"
+        },
+        "module_name": null,
+        "path": "tests/test_make.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 2,
+      "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+      "owner_extent": [
+        1746,
+        1765
+      ],
+      "owned_ranges": [
+        [
+          1746,
+          1751
+        ],
+        [
+          1755,
+          1756
+        ],
+        [
+          1764,
+          1765
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 1746,
+          "end_line": 1751,
+          "entity": {
+            "kind": "method",
+            "qualname": "TestConverter.test_converter_wrapped_takes_field",
+            "owner": "TestConverter",
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 1755,
+          "end_line": 1756,
+          "entity": {
+            "kind": "method",
+            "qualname": "TestConverter.test_converter_wrapped_takes_field",
+            "owner": "TestConverter",
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "22b1d56bf490c2779968a3743567ae12f375259f94a00a84843f3a984ee95cc7",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "1777a5cfedf4c77b7e132f528c88be1f65094c712a22a6e608d2f184c0d089ad",
+      "token_counts": {
+        "pair_tokens": 164,
+        "query_tokens": 25,
+        "doc_tokens": 136,
+        "full_pair_tokens": 164
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "ABSENT",
+      "missing_information_category": "LEXICAL_CHILD_EXCLUSION_AND_CARD_WINDOW_SELECTION",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "El card sólo aporta doc de takes_field y @attr.define. Faltan la aserción Attribute, multiplicación por metadata, montaje Converter(takes_field=True) y resultado84. El código decisivo es fuente real del test y scopes hijos, pero no está en el input del modelo.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "tests/test_make.py",
+          "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+          "start_line": 1747,
+          "end_line": 1750,
+          "quote": "        \"\"\"\n        When wrapped and passed `takes_field`, the converter receives the field\n        definition -- and the return value is used as the field's value.\n        \"\"\"",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "primary_source_operation",
+          "path": "tests/test_make.py",
+          "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+          "start_line": 1752,
+          "end_line": 1754,
+          "quote": "        def converter_with_field(v, field):\n            assert isinstance(field, attr.Attribute)\n            return v * field.metadata[\"x\"]",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        },
+        {
+          "role": "primary_source_operation",
+          "path": "tests/test_make.py",
+          "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+          "start_line": 1757,
+          "end_line": 1765,
+          "quote": "        class C:\n            x: int = attr.field(\n                converter=attr.Converter(\n                    converter_with_field, takes_field=True\n                ),\n                metadata={\"x\": 42},\n            )\n\n        assert 84 == C(2).x",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Where is a wrapped converter tested with access to the field definition, including an Attribute type assertion and multiplication using that field metadata?",
+      "visible_card_text": "symbol tests/test_make.py TestConverter.test_converter_wrapped_takes_field\ndeclaration TestConverter.test_converter_wrapped_takes_field lines 1746-1751:\n    def test_converter_wrapped_takes_field(self):\n        \"\"\"\n        When wrapped and passed `takes_field`, the converter receives the field\n        definition -- and the return value is used as the field's value.\n        \"\"\"\n\nimplementation TestConverter.test_converter_wrapped_takes_field lines 1755-1756:\n\n        @attr.define"
+    },
+    {
+      "id": "symdev-20261016-172",
+      "repo_id": "attrs",
+      "query": "Which regression shows that a keyword-only field excluded from initialization keeps its default and does not prevent a later ordinary field from receiving a positional argument?",
+      "language": "en",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "tests/test_make.py",
+        "entity": {
+          "kind": "method",
+          "qualname": "TestKeywordOnlyAttributes.test_ignores_kw_only_when_init_is_false",
+          "owner": "TestKeywordOnlyAttributes",
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "TestKeywordOnlyAttributes",
+          "qualname": "TestKeywordOnlyAttributes.test_init_false_attribute_after_keyword_attribute"
+        },
+        "module_name": null,
+        "path": "tests/test_make.py",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 8,
+      "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+      "owner_extent": [
+        1042,
+        1055
+      ],
+      "owned_ranges": [
+        [
+          1042,
+          1047
+        ],
+        [
+          1051,
+          1055
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 1042,
+          "end_line": 1046,
+          "entity": {
+            "kind": "method",
+            "qualname": "TestKeywordOnlyAttributes.test_ignores_kw_only_when_init_is_false",
+            "owner": "TestKeywordOnlyAttributes",
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 1047,
+          "end_line": 1047,
+          "entity": {
+            "kind": "method",
+            "qualname": "TestKeywordOnlyAttributes.test_ignores_kw_only_when_init_is_false",
+            "owner": "TestKeywordOnlyAttributes",
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "a78bcb9fedcb0781b781f49a71a4cb776357e7af8c0325e0a1fdadd89159f3a8",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "8a39e5a7d10eeb903ce50b13cf4a6fffc6d7dbd1e9cd8df9550d7d8b4ca99ed5",
+      "token_counts": {
+        "pair_tokens": 184,
+        "query_tokens": 29,
+        "doc_tokens": 152,
+        "full_pair_tokens": 184
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "ABSENT",
+      "missing_information_category": "LEXICAL_CHILD_EXCLUSION_AND_CARD_WINDOW_SELECTION",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "La documentación no-op y @attr.s son visibles. No aparecen la definición init=False/default0/kw_only=True, C(1), ni las aserciones x0/y1. Algunas aserciones son de propiedad del método exterior pero el selector elige otro pasaje; otras líneas pertenecen al hijo C.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "tests/test_make.py",
+          "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+          "start_line": 1043,
+          "end_line": 1045,
+          "quote": "        \"\"\"\n        Specifying ``kw_only=True`` when ``init=False`` is essentially a no-op.\n        \"\"\"",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        },
+        {
+          "role": "primary_source_operation",
+          "path": "tests/test_make.py",
+          "source_hash": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+          "start_line": 1048,
+          "end_line": 1055,
+          "quote": "        class C:\n            x = attr.ib(init=False, default=0, kw_only=True)\n            y = attr.ib()\n\n        c = C(1)\n\n        assert c.x == 0\n        assert c.y == 1",
+          "original_card_coverage": "none",
+          "within_512_document": "none"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "Which regression shows that a keyword-only field excluded from initialization keeps its default and does not prevent a later ordinary field from receiving a positional argument?",
+      "visible_card_text": "symbol tests/test_make.py TestKeywordOnlyAttributes.test_ignores_kw_only_when_init_is_false\ndeclaration TestKeywordOnlyAttributes.test_ignores_kw_only_when_init_is_false lines 1042-1046:\n    def test_ignores_kw_only_when_init_is_false(self):\n        \"\"\"\n        Specifying ``kw_only=True`` when ``init=False`` is essentially a no-op.\n        \"\"\"\n\nimplementation TestKeywordOnlyAttributes.test_ignores_kw_only_when_init_is_false lines 1047-1047:\n        @attr.s"
+    },
+    {
+      "id": "symdev-20261016-196",
+      "repo_id": "commons-csv",
+      "query": "¿Qué regresión de lectura por bloques solicita más caracteres de los que quedan, comprueba el conteo y contenido parciales y exige EOF en la siguiente lectura?",
+      "language": "es",
+      "correct_unit": {
+        "target_kind": "symbol",
+        "path": "src/test/java/org/apache/commons/csv/ExtendedBufferedReaderTest.java",
+        "entity": {
+          "kind": "method",
+          "qualname": "ExtendedBufferedReaderTest.testReadArrayPastEndOfChunkedReader",
+          "owner": "ExtendedBufferedReaderTest",
+          "definition_ordinal": 0
+        },
+        "module_name": null
+      },
+      "wrong_top1": {
+        "entity": {
+          "definition_ordinal": 0,
+          "kind": "method",
+          "owner": "CSVParserTest",
+          "qualname": "CSVParserTest.testPartialMultiCharacterDelimiterAtEOF"
+        },
+        "module_name": null,
+        "path": "src/test/java/org/apache/commons/csv/CSVParserTest.java",
+        "target_kind": "symbol"
+      },
+      "correct_raw_rank": 3,
+      "source_hash": "5a7a001228200b5a0d9b8ec1ea22afa95efc229a9e001af0abc1733b96442a8a",
+      "owner_extent": [
+        80,
+        89
+      ],
+      "owned_ranges": [
+        [
+          80,
+          89
+        ]
+      ],
+      "card_excerpts": [
+        {
+          "role": "declaration",
+          "start_line": 80,
+          "end_line": 81,
+          "entity": {
+            "kind": "method",
+            "qualname": "ExtendedBufferedReaderTest.testReadArrayPastEndOfChunkedReader",
+            "owner": "ExtendedBufferedReaderTest",
+            "definition_ordinal": 0
+          }
+        },
+        {
+          "role": "implementation",
+          "start_line": 82,
+          "end_line": 89,
+          "entity": {
+            "kind": "method",
+            "qualname": "ExtendedBufferedReaderTest.testReadArrayPastEndOfChunkedReader",
+            "owner": "ExtendedBufferedReaderTest",
+            "definition_ordinal": 0
+          }
+        }
+      ],
+      "card_text_sha256": "b0c1e20ebe014a4878028f975182a67ef14241525120f34862310424c3ebf134",
+      "original_card_hash_v158_verified": true,
+      "document_control_token_hash_v158_verified": "e6e50e71f7c4ee8ce38abcb27e207386533c88f476ec2fb40077540786f9805c",
+      "token_counts": {
+        "pair_tokens": 229,
+        "query_tokens": 28,
+        "doc_tokens": 198,
+        "full_pair_tokens": 229
+      },
+      "tokenizer_truncated": false,
+      "operation_visibility": "VISIBLE",
+      "missing_information_category": "NONE",
+      "reference_review": "SOURCE_GROUNDED_NO_DEFINITE_REFERENCE_ERROR_FOUND",
+      "reference_identity_changed": false,
+      "semantic_rationale": "Se ve el fixture ab, petición de4, conteo2, contenido a/b y EOF siguiente. La referencia de regresión es coherente con esas aserciones.",
+      "citations": [
+        {
+          "role": "primary_source_operation",
+          "path": "src/test/java/org/apache/commons/csv/ExtendedBufferedReaderTest.java",
+          "source_hash": "5a7a001228200b5a0d9b8ec1ea22afa95efc229a9e001af0abc1733b96442a8a",
+          "start_line": 82,
+          "end_line": 88,
+          "quote": "        try (ExtendedBufferedReader br = new ExtendedBufferedReader(new ChunkedReader(\"ab\"))) {\n            final char[] read = new char[4];\n            assertEquals(2, br.read(read, 0, 4));\n            assertEquals('a', read[0]);\n            assertEquals('b', read[1]);\n            assertEquals(EOF, br.read(read, 0, 4));\n        }",
+          "original_card_coverage": "all",
+          "within_512_document": "all"
+        }
+      ],
+      "expanded_query_used_for_actual_input": "What regression of block reading requires more characters than the remaining ones, checks the partial count and content and requires EOF in the next reading?",
+      "visible_card_text": "symbol src/test/java/org/apache/commons/csv/ExtendedBufferedReaderTest.java ExtendedBufferedReaderTest.testReadArrayPastEndOfChunkedReader\ndeclaration ExtendedBufferedReaderTest.testReadArrayPastEndOfChunkedReader lines 80-81:\n    @Test\n    void testReadArrayPastEndOfChunkedReader() throws Exception {\nimplementation ExtendedBufferedReaderTest.testReadArrayPastEndOfChunkedReader lines 82-89:\n        try (ExtendedBufferedReader br = new ExtendedBufferedReader(new ChunkedReader(\"ab\"))) {\n            final char[] read = new char[4];\n            assertEquals(2, br.read(read, 0, 4));\n            assertEquals('a', read[0]);\n            assertEquals('b', read[1]);\n            assertEquals(EOF, br.read(read, 0, 4));\n        }\n    }"
+    }
+  ],
+  "bindings": {
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/score-calibration-v147/fit-manifest.json": "265eb308278097df5f828533209b8d9cda4d14c63d1bb3a3d7dceb03fd3dc31f",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/experiments/search-engine/datasets/symbol-development-20261016-v2/cases.jsonl": "b90ce15d819b1da2e38b5d11e79f21d2f3550c3582cfdc532a6df3c45bda80f5",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/experiments/search-engine/datasets/symbol-development-20261016-v2/gold.jsonl": "7f9293b9eb69da668ecd337f4902b0a00f99cddd22e9806b6334d5b1583c021d",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/locator-composition-v173/S1_raw_current-orders.jsonl": "75bcef8ddd73c9d7419fbd5a341df1c80fce8b7c2049098d1675dd8baaccaf35",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/locator-composition-v173/S1_raw_current-outcomes.jsonl": "6785480aff33003162d842eec41827830af3c592073db70f024b0f5a72055b73",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/locator-composition-v173/registration.json": "a53f09d6f8c4691077c025acbcf45c1559bd7cd4d3a8f096541fc0e4fb698583",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/locator-composition-v173/summary.json": "1d86f5e32d8e0d71a685fa5765a54d534daa70ee1ed8a4d8a6c975e0eacf8dc3",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/source-syntax-evidence-v162b/registration.json": "6617acfa51f90b0d3e6425c04d9bf1917f4d55f173f841a1f5c8ac7be7244793",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/current-document-prior-v158/registration.json": "af10688ad72a4fbe2641058413aa780d91475dad8a651d0696e437235471be62",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/source-syntax-evidence-v162b/ajv/observations.jsonl": "7fbf0e6e77e4054222e4959776c342cc093e952cd7467cb399828c80f92f423a",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/source-syntax-evidence-v162b/attrs/observations.jsonl": "db339267f47695f6a9754f4dc00279c0aff86ee60c4fc9dc7084ea91a7b59454",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/source-syntax-evidence-v162b/boltons/observations.jsonl": "b4e70d125c7b492bb930698a3dc0eb0cc2507c1d9370d877114017ea418afa35",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/source-syntax-evidence-v162b/commons-csv/observations.jsonl": "c39803873b46a8da54873fdf96402ca40037925d442d9f0275accb0fb742c23f",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/source-syntax-evidence-v162b/junit5/observations.jsonl": "3cfad59b5efac7417bc237c7dd21b0881ef46428ba942a8d586452907a0d354e",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/source-syntax-evidence-v162b/marked/observations.jsonl": "6fa899d781e52e561dfe2b30bae87a4ba16db84ac90d14396b81f0c8e350d063",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/source-syntax-evidence-v162b/packaging/observations.jsonl": "c472ccb1b95e290e16e1641e12291d5620ce57eeb7389d561730125ed4e62907",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/source-syntax-evidence-v162b/pytest/observations.jsonl": "fc42d7f16953261f3c6ea283b76b3c628a5b0110c6458818ed64bf8b7b57f9c0",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/current-document-prior-v158/ajv/observations.jsonl": "5bedc770f2fe6cf120b7a99e1e6e149ffc38495a575195da5dc4ed38e9bf3e5e",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/current-document-prior-v158/attrs/observations.jsonl": "63fe3c4c082e079dcaef03fb8aa620bd0e65ddc903546685f97b56f11559fa31",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/current-document-prior-v158/boltons/observations.jsonl": "aaaea47946a87b5d0971446ec0339fe4e43f55966ecd94f6fbdbc47c777649f2",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/current-document-prior-v158/commons-csv/observations.jsonl": "59288f8951a56a4ad219a011cca35bef6aebb685bbc562496dfd411f3b78a700",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/current-document-prior-v158/junit5/observations.jsonl": "32ba0c6088ec2a09a46c0c9c9ec0c3d00ef5fc42b73c0fca418bec2f44521a30",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/current-document-prior-v158/marked/observations.jsonl": "392ed8933677b5e1c5cd0c2365b0036df90944e008bf2e2b2989a049d6ac37d4",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/current-document-prior-v158/packaging/observations.jsonl": "422f07fea6358302bfbc630b99eddb14cad9d3d40f4e0ddcdc6a13e8775d2c99",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/current-document-prior-v158/pytest/observations.jsonl": "460cee2a82bb394300f27fc0178709f5a421226510381e27e85f4acd79f1eec3",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/frozen/public-default-cpu-v155/SOURCE-MANIFEST.json": "28a2aa518fa300f99885d6c6fcd27e41b090fba3370e91228fb590ca10bde1ce",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/frozen/public-default-cpu-v155/src/ken/retrieval/piece_catalog.py": "b1a6f57193384c015928cfa50a19d89c82777c87bbba7bd9294c1c0f91acb74e",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/frozen/public-default-cpu-v155/src/ken/retrieval/piece_cards.py": "e5ce0e20413307ef47fa2849abef88297fb73258f87e93aa4422bdab80617b88",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/frozen/public-default-cpu-v155/src/ken/retrieval/candidates.py": "da86e39f6876c35b51d797537a5f67e43eea32be602c7deaa9920d035b92f695",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/frozen/public-default-cpu-v155/src/ken/retrieval/model.py": "2c9b6ed65ad170c3e3637c558424c0da81a83d5146b66bd547bfe11d650bc81f",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/frozen/public-default-cpu-v155/src/ken/embedder/data/ettin-68m-fp32.json": "8967138122550d4aad2ad534cef1d3a1da0d6b19ecc8734fd9607c8079f3c3c3",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/models/portable-public-prepared-v143/models/ettin/5aaa7ed84370f351ef99445d8e12a29932f450fca4a0c5a57e1d95e53c4968e7/d166fa88ddde3c42bc3ee92f7df476d941c8204a/tokenizer.json": "28c5e078e4c52aa37cf0e6de1a212878f3dbd58dd1c70466298efe0b6b86db35",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/models/portable-public-prepared-v143/models/ettin/5aaa7ed84370f351ef99445d8e12a29932f450fca4a0c5a57e1d95e53c4968e7/d166fa88ddde3c42bc3ee92f7df476d941c8204a/config.json": "de2d1d2f63fea40e28850f4b678c8e026ef399a72fbba2b157b391378e48f81a",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/models/portable-public-prepared-v143/models/ettin/5aaa7ed84370f351ef99445d8e12a29932f450fca4a0c5a57e1d95e53c4968e7/d166fa88ddde3c42bc3ee92f7df476d941c8204a/tokenizer_config.json": "2b85302525d8c528a9e1fbaea2733472bd00d4755eae881441c8c52b90e2d600",
+    "/private/tmp/ken-public-default-v143/repos/ajv/lib/vocabularies/applicator/additionalItems.ts": "0593c60f31db5cea9022a353e56fd3066a8dac4e35607affb4e556d4d84c3f2a",
+    "/private/tmp/ken-public-default-v143/repos/ajv/lib/vocabularies/applicator/dependencies.ts": "d2e648e8fe45621558c8f14ff5684954a91f6d800d1b2bf3d90f43941c84df65",
+    "/private/tmp/ken-public-default-v143/repos/ajv/lib/vocabularies/dynamic/dynamicRef.ts": "92884e9923f4053155e5c1f13d5e176c17b47f0db65616bf031a4bb93faf969d",
+    "/private/tmp/ken-public-default-v143/repos/ajv/lib/vocabularies/validation/const.ts": "9dc3c40d6260158b2ee34dadadbc0e738cad939fc725cc1d2f5120bd43768ed5",
+    "/private/tmp/ken-public-default-v143/repos/ajv/lib/vocabularies/validation/enum.ts": "f62f760dda52c2dbc053ef7b7012aa9db10d3af65e8b1dc5defcaf2ba9c25911",
+    "/private/tmp/ken-public-default-v143/repos/attrs/tests/test_make.py": "530eb721a0ba49ad9ec1263b6327df668a03927832d473d0a3f078308aa06988",
+    "/private/tmp/ken-public-default-v143/repos/boltons/tests/test_listutils.py": "0ea3c4bc202e5b2d486b6ffd0eb1275661516b0c3a6be8d48e1256991d67c8f9",
+    "/private/tmp/ken-public-default-v143/repos/commons-csv/src/test/java/org/apache/commons/csv/ExtendedBufferedReaderTest.java": "5a7a001228200b5a0d9b8ec1ea22afa95efc229a9e001af0abc1733b96442a8a",
+    "/private/tmp/ken-public-default-v143/repos/junit5/junit-platform-commons/src/main/java/org/junit/platform/commons/util/CloseablePath.java": "bb3bc3ad55b328a114ffc0a6077a57f0b63073cbd5778ddc0709616915a365bf",
+    "/private/tmp/ken-public-default-v143/repos/junit5/junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/LockManager.java": "1097fe3993a7454dfc5a30f29a3419841ee02eac3c99f254703f807fd617e86b",
+    "/private/tmp/ken-public-default-v143/repos/junit5/junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/SingleLock.java": "5d88d3798f6c66675bbd5157ca9bdabcd627ae1e3542316daa812258eb1086a2",
+    "/private/tmp/ken-public-default-v143/repos/junit5/junit-jupiter-engine/src/main/java/org/junit/jupiter/engine/execution/ParameterResolutionUtils.java": "def8ca390b431e7cf0d1cf6220ea83ff62f5f81ae964e875f5c08e948675c7b5",
+    "/private/tmp/ken-public-default-v143/repos/junit5/junit-platform-commons/src/main/java/org/junit/platform/commons/support/conversion/FallbackStringToObjectConverter.java": "4c96e7057c557f661e016fe11b402b5750c7688e678d6fcdf72d84b62c2e0a1b",
+    "/private/tmp/ken-public-default-v143/repos/packaging/tests/test_pylock_select.py": "b8d13cd6530004412af7190ceb6d39a129c506fe436c1ad2de1c441115762424",
+    "/private/tmp/ken-public-default-v143/repos/packaging/tests/test_errors.py": "f5ca1dc0df6deaa9d3e625f2732c7beaa9f24d630cf1c1d54c96f00fa7c63cda",
+    "/private/tmp/ken-public-default-v143/repos/pytest/src/_pytest/monkeypatch.py": "4e9fcbb78e492e24db6ce88ab76e155194119716ff051be93f854b9b9d51468a",
+    "/private/tmp/ken-public-default-v143/repos/pytest/src/_pytest/mark/expression.py": "472cdd6e3e9ce34739732d4e5b5f05c654aab9a791855d8d67cee42ce0d39f05",
+    "/private/tmp/ken-public-default-v143/repos/pytest/src/_pytest/assertion/util.py": "35716698af7d75a3e72fe024f96e25e6e0578b0ba0bac0734b3a5b5607536c73",
+    "/private/tmp/ken-public-default-v143/repos/ajv/lib/vocabularies/code.ts": "f4bf46f24e44512addfc8b34e8ef1cd6320025236839e176deb59ee8b20c7ee7",
+    "/private/tmp/ken-public-default-v143/repos/ajv/lib/compile/validate/index.ts": "841338dea0ff90d44bde71f0651879edad186fd50d7bb6d03243b0085e557c48",
+    "/private/tmp/ken-public-default-v143/repos/ajv/lib/runtime/equal.ts": "013de4ec7e4006015ef49ec787737636dc048a913aad0922295fc8b0eb15aa10"
+  },
+  "audit_artifacts": {
+    "reconstruction_script": "/private/tmp/ken-reference-card-visibility-v190/prepare_audit.py",
+    "reconstruction_script_sha256": "8e14b6d8b134d1ee9579f7fad878d8e03dd72613c79a4bcf74dfa60b300d58f0",
+    "authenticated_packet": "/private/tmp/ken-reference-card-visibility-v190/authenticated-cards-and-visibility.json",
+    "authenticated_packet_sha256": "7c64e1c5c501916895df1473d7b567939f0331b3f6d1d47a78e904404b7ab412",
+    "semantic_report_builder": "/private/tmp/ken-reference-card-visibility-v190/write_review.py"
+  },
+  "safety": {
+    "private_reserve_or_acceptance_gold_read": false,
+    "only_gold_read": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/experiments/search-engine/datasets/symbol-development-20261016-v2/gold.jsonl",
+    "models_weights_or_sessions_loaded": false,
+    "A186_recipe_or_results_inspected": false,
+    "labels_source_engine_producers_modified": false
+  }
+}

@@ -19,6 +19,14 @@ La combinación predeterminada conserva PotionCode16Mv2, contexto CodeRank INT8,
 Ettin68M CPU y fusión fija; los controles rechazados no se activan. El comando
 global uv-tool usa un wheel local noeditable; no se hizo release.
 
+Adaptación externa A186 del mismo modelo de 68M cerrada: 2768→2799/3000 en validación
+externa de 4 candidatos; no es la métrica de Ken. Tail final y ONNX CPU equivalente
+guardados. A189 público de 400 consultas sigue en curso: el default y sus porcentajes de arriba
+siguen vigentes. [Receta, artefactos, incidentes y validación pendiente](../../external-code-adaptation-2026-10-16-v185-v188/README.md).
+Revisión independiente de 26 fallos raw recuperables: 13 núcleos visibles,
+9 necesitan contexto externo y 4 pierden lógica al armar el card; ningún card
+correcto se trunca a 512 tokens. Referencias intactas; no prueba causalidad.
+
 ## Objetivo y snapshots que no se deben mezclar
 
 El usuario exige al menos 90% de **pieza correcta en top1**: clase, módulo,
