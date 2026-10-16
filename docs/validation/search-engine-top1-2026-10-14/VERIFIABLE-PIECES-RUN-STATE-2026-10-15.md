@@ -1,5 +1,12 @@
 # Estado actual — piezas verificables
 
+Actualización explícita del usuario,2026-10-15: el objetivo principal es>=90%
+top1 con la pieza correcta; la suficiencia de evidencia retornada queda como
+métrica separada. Identidad nativa actual168/200=84%,Recall10197/200=98,5%.
+Los protocolos históricos sellados conservan su definición conjunta. Ver
+RANKING-CAUSES-V121.md para las causas observadas y el control de una sola señal:
+igualarrrf_rank gana4/pierde15 y baja a157/200; no se adopta.
+
 ActualizadoUTC: 2026-10-16T00:05:00+00:00.
 
 Último resultado conjunto cerrado: v116102/200=51%, identidad168/200=84%,
