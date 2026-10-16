@@ -1,0 +1,531 @@
+{
+  "scope": "EXPOSED development controls only; private reserve excluded; no controls promoted.",
+  "results": "A165new/194old; purpose165, regression164;Dcontext165/194;E1owned163/196;E2scope166/196;Gsymbol-only296168/189. All fail new180gate. Neural standalone old169,newowned164,newscope164; combined neural winner oracle174.",
+  "files": {
+    "output/development/score-calibration-v148-purpose-only/ajv.json": {
+      "sha256": "de09f846e709a2014ac3186920bca90a0da9aa2a0683cbb5ca6049e3ddae5bae",
+      "bytes": 198939,
+      "gzip_bytes": 34867
+    },
+    "output/development/score-calibration-v148-purpose-only/attrs.json": {
+      "sha256": "c2779ce31a1284a3a90efb43bb6428aec9fb686553159e2ad97ff52861b24091",
+      "bytes": 200628,
+      "gzip_bytes": 35980
+    },
+    "output/development/score-calibration-v148-purpose-only/boltons.json": {
+      "sha256": "eba6b18b7a9f754d6a071fd2573ce4e26b0acabb376489c0f480f4c642bc792e",
+      "bytes": 197401,
+      "gzip_bytes": 35379
+    },
+    "output/development/score-calibration-v148-purpose-only/commons-csv.json": {
+      "sha256": "71fd2c296793d7256868809abd85ff1611c01fb4ff51a325e390b16ac42940ea",
+      "bytes": 201370,
+      "gzip_bytes": 36388
+    },
+    "output/development/score-calibration-v148-purpose-only/folds.json": {
+      "sha256": "9b546fd7e1b0c34bde7106f2d93c0c73f44bdf8a0e75819c79cfed58246b8149",
+      "bytes": 3250,
+      "gzip_bytes": 715
+    },
+    "output/development/score-calibration-v148-purpose-only/junit5.json": {
+      "sha256": "ee6386592b6539cd2e1adefd4b1b887fa5bf337cceeb1098e30ecbb98781c341",
+      "bytes": 199952,
+      "gzip_bytes": 34835
+    },
+    "output/development/score-calibration-v148-purpose-only/marked.json": {
+      "sha256": "46a8af4fa0092ad98c49a89320e10d998ca500e2a2ffe562c372556cd9bffd37",
+      "bytes": 200978,
+      "gzip_bytes": 36891
+    },
+    "output/development/score-calibration-v148-purpose-only/orders.jsonl": {
+      "sha256": "20bfbb473a783c1a5a5dbcebd2bb6f090d0a875adf9b54d2247cacd3f11f0cf8",
+      "bytes": 786613,
+      "gzip_bytes": 44884
+    },
+    "output/development/score-calibration-v148-purpose-only/outcomes.jsonl": {
+      "sha256": "d7b7151e4c744359a329ce9f8ba942f2516534d9e779695e1b6e40ccec507a4c",
+      "bytes": 69798,
+      "gzip_bytes": 2007
+    },
+    "output/development/score-calibration-v148-purpose-only/packaging.json": {
+      "sha256": "e496911805784f4400caf22c158788b6ce529568edf7b660c682498b80879c56",
+      "bytes": 199149,
+      "gzip_bytes": 35240
+    },
+    "output/development/score-calibration-v148-purpose-only/pytest.json": {
+      "sha256": "35c4b8a1d9e8c57a9d2a47ca4615dbbcd2a770973948a9eed662a1b8a97d7c55",
+      "bytes": 195987,
+      "gzip_bytes": 34324
+    },
+    "output/development/score-calibration-v148-purpose-only/registration.json": {
+      "sha256": "ca79196d9e3d92022f936556b66098c639f4ecb6efa3ed9a3d232b9bbfd46733",
+      "bytes": 654,
+      "gzip_bytes": 440
+    },
+    "output/development/score-calibration-v148-purpose-only/summary.json": {
+      "sha256": "528649aaa57ceea2f079fb3489c11c659d6292aa593c56abb10ab6806917a645",
+      "bytes": 1734,
+      "gzip_bytes": 422
+    },
+    "output/development/score-calibration-v148-regression-intent/ajv.json": {
+      "sha256": "c194d99eb683e69307a7b817a4cdc6419a752e7638a0b0a6113a2f83008ac019",
+      "bytes": 199657,
+      "gzip_bytes": 35386
+    },
+    "output/development/score-calibration-v148-regression-intent/attrs.json": {
+      "sha256": "8ff41b77735349fc4309dd55b6a3ad8fc9cacba51bfea76ff6dbf33514d51940",
+      "bytes": 200566,
+      "gzip_bytes": 36890
+    },
+    "output/development/score-calibration-v148-regression-intent/boltons.json": {
+      "sha256": "44f64e1f3fd22d44f7c1ddc80f65dae9e833e913df953b90d35ccc9968c007d3",
+      "bytes": 197417,
+      "gzip_bytes": 35372
+    },
+    "output/development/score-calibration-v148-regression-intent/commons-csv.json": {
+      "sha256": "8d6f6b6be7638aa6d17c1585b31dbed4e14f7e9112702f912118092210c01982",
+      "bytes": 201630,
+      "gzip_bytes": 36754
+    },
+    "output/development/score-calibration-v148-regression-intent/folds.json": {
+      "sha256": "05023c54ff8d81cd2729294dbfbf6471ab7f602f8d298a8a01b53943b7bff248",
+      "bytes": 3250,
+      "gzip_bytes": 714
+    },
+    "output/development/score-calibration-v148-regression-intent/junit5.json": {
+      "sha256": "9729e41c662c637d5f22f137c9ccabb24c4f8d5681c839759040205ae885bc19",
+      "bytes": 200026,
+      "gzip_bytes": 35183
+    },
+    "output/development/score-calibration-v148-regression-intent/marked.json": {
+      "sha256": "736614c0517aee0d16835c71d03d55d3a24d27041fc981d892b4952c42648f78",
+      "bytes": 201682,
+      "gzip_bytes": 36721
+    },
+    "output/development/score-calibration-v148-regression-intent/orders.jsonl": {
+      "sha256": "46d735f8f1f24176f6f72bbe6410cc39841acd0119f5e7449d3276eca2c22ff9",
+      "bytes": 786613,
+      "gzip_bytes": 44926
+    },
+    "output/development/score-calibration-v148-regression-intent/outcomes.jsonl": {
+      "sha256": "d2001dd5fcc35201bb43bf0ec506bf24386b9033088676251b1d62b99f2a8c28",
+      "bytes": 69799,
+      "gzip_bytes": 2014
+    },
+    "output/development/score-calibration-v148-regression-intent/packaging.json": {
+      "sha256": "228067f97eefcc11c027dc287ae8133afeb00f4807ea0f04089f15035fdcd1d9",
+      "bytes": 198639,
+      "gzip_bytes": 34991
+    },
+    "output/development/score-calibration-v148-regression-intent/pytest.json": {
+      "sha256": "fb9fb841c814470c6d6eb97b871a7f15c1aa8a1e2ec057ba6d5b7fe05e9b6ed8",
+      "bytes": 195311,
+      "gzip_bytes": 34600
+    },
+    "output/development/score-calibration-v148-regression-intent/registration.json": {
+      "sha256": "b1bfe8d4bbeb17b5d0193dc472d2231bc438a767301fd95968a40e94bdb2e258",
+      "bytes": 654,
+      "gzip_bytes": 441
+    },
+    "output/development/score-calibration-v148-regression-intent/summary.json": {
+      "sha256": "f18e9bb0338d56a33e2484af2dad000f4ec81be71ca4568b653bf8fab3ea237c",
+      "bytes": 1734,
+      "gzip_bytes": 423
+    },
+    "output/development/ranking-evidence-v149/ajv/observations.jsonl": {
+      "sha256": "3b7520c2bc092e4bde268d1b4b2b95b9ce6d2558e09f43ecb81648898fd93c0b",
+      "bytes": 322307,
+      "gzip_bytes": 66860
+    },
+    "output/development/ranking-evidence-v149/ajv/summary.json": {
+      "sha256": "43d5da85db60c9176559fb88440a9cf4f80161d274b7866a37b30976feec2e95",
+      "bytes": 225,
+      "gzip_bytes": 188
+    },
+    "output/development/ranking-evidence-v149/ajv.log": {
+      "sha256": "1e39f8ee30d33fc921e6d39850c26c09864b9f1884c8cbe3f37eedbfc4a704e1",
+      "bytes": 2946,
+      "gzip_bytes": 263
+    },
+    "output/development/ranking-evidence-v149/attrs/observations.jsonl": {
+      "sha256": "99f1d5d8ff822049195e37e0ae43e32eaacb414d1193f19a1b279930d8ab20b2",
+      "bytes": 170918,
+      "gzip_bytes": 41728
+    },
+    "output/development/ranking-evidence-v149/attrs/summary.json": {
+      "sha256": "58f6a09f9b66950f666e28a0a336fd0586938ecdc8c81373c8ddfedad30fbebf",
+      "bytes": 227,
+      "gzip_bytes": 189
+    },
+    "output/development/ranking-evidence-v149/attrs.log": {
+      "sha256": "b5256183124ae0b6de1f00e65e4bb26d6a3b4585fd59365aa2d4fc8d686fa942",
+      "bytes": 1594,
+      "gzip_bytes": 187
+    },
+    "output/development/ranking-evidence-v149/boltons/observations.jsonl": {
+      "sha256": "9b4d18aca54bf8ce543ff0b27056da7a8b67157e6d463e63210599ba862d988e",
+      "bytes": 217422,
+      "gzip_bytes": 45754
+    },
+    "output/development/ranking-evidence-v149/boltons/summary.json": {
+      "sha256": "3e7487a6592c9d6c478c1929c3a0dd11d948ea48d2ec53b65062b8c86ed07e9c",
+      "bytes": 229,
+      "gzip_bytes": 191
+    },
+    "output/development/ranking-evidence-v149/boltons.log": {
+      "sha256": "d3ebeac503d8ae53c946c306c7466ae6b46858020d5666e354c7b6f0592608d2",
+      "bytes": 2240,
+      "gzip_bytes": 221
+    },
+    "output/development/ranking-evidence-v149/commons-csv/observations.jsonl": {
+      "sha256": "fc446b76c71e71803eb073c414847f6e5245fd6e3a5d3d6d98971e293a139dff",
+      "bytes": 120937,
+      "gzip_bytes": 23544
+    },
+    "output/development/ranking-evidence-v149/commons-csv/summary.json": {
+      "sha256": "1178958d0417a13ee67b7da0b10198abdbde147aca5944541f9e185cc53a8178",
+      "bytes": 233,
+      "gzip_bytes": 194
+    },
+    "output/development/ranking-evidence-v149/commons-csv.log": {
+      "sha256": "ed3ba34b36732a9f5a8553257d801db5c8bd6365d0a727117fd56cfd6633e48b",
+      "bytes": 974,
+      "gzip_bytes": 148
+    },
+    "output/development/ranking-evidence-v149/fit.log": {
+      "sha256": "5f26b8590f34742694de94135be0e30986a9846fb112217c61a320428873bb5a",
+      "bytes": 668,
+      "gzip_bytes": 182
+    },
+    "output/development/ranking-evidence-v149/junit5/observations.jsonl": {
+      "sha256": "b6932606412ce53061834f4cbe515f751386d48b10cbd92ebe9936fab3db7ed6",
+      "bytes": 443618,
+      "gzip_bytes": 84365
+    },
+    "output/development/ranking-evidence-v149/junit5/summary.json": {
+      "sha256": "ea8b00a25a630a94c5e1e9b3e0a4c93e0079dc8608e163d3d84166d9ab996845",
+      "bytes": 228,
+      "gzip_bytes": 190
+    },
+    "output/development/ranking-evidence-v149/junit5.log": {
+      "sha256": "d445a4622017447403b387f63786579488392283852033e7fb614c4700d6163c",
+      "bytes": 3236,
+      "gzip_bytes": 272
+    },
+    "output/development/ranking-evidence-v149/marked/observations.jsonl": {
+      "sha256": "21c3dd20db7c4a2dda62190692c2e37aab4b7cc86e8989c0104a19a3b4c1e9cc",
+      "bytes": 123034,
+      "gzip_bytes": 25073
+    },
+    "output/development/ranking-evidence-v149/marked/summary.json": {
+      "sha256": "6aa132fbe069db9d3fe2c4c4de2259fbcc3cae472a244e57bef34589e6fe2206",
+      "bytes": 228,
+      "gzip_bytes": 191
+    },
+    "output/development/ranking-evidence-v149/marked.log": {
+      "sha256": "7671230682e455f73582c2fe77e19ac6f7a36f7386c2118bcc1c3a5377c4eb01",
+      "bytes": 1202,
+      "gzip_bytes": 163
+    },
+    "output/development/ranking-evidence-v149/neural-stage-diagnostics.json": {
+      "sha256": "7b3f7965f07bfac2a0562d7847f80e1ed1a5f44a4ca356ee699d12a255799cf8",
+      "bytes": 256,
+      "gzip_bytes": 134
+    },
+    "output/development/ranking-evidence-v149/neural-stage-diagnostics.jsonl": {
+      "sha256": "160de3e5e865df1a3f979ca03eb0604c4f2df3f412578bc1632ed0ee387b991e",
+      "bytes": 45346,
+      "gzip_bytes": 1565
+    },
+    "output/development/ranking-evidence-v149/packaging/observations.jsonl": {
+      "sha256": "f159963289ca710fe9d371302673f09bed9a202606edaefd3a60bc5f8f2d8144",
+      "bytes": 197321,
+      "gzip_bytes": 39177
+    },
+    "output/development/ranking-evidence-v149/packaging/summary.json": {
+      "sha256": "46a8bba87510d636f95b503bc06abcb38723f1b6e2251ef2011bfdbe62bb96ec",
+      "bytes": 231,
+      "gzip_bytes": 191
+    },
+    "output/development/ranking-evidence-v149/packaging.log": {
+      "sha256": "33788e237eb951ff5a90682f762e56c6fb628edf3fc4520e2fdace823362ded2",
+      "bytes": 1796,
+      "gzip_bytes": 194
+    },
+    "output/development/ranking-evidence-v149/pytest/observations.jsonl": {
+      "sha256": "b73d3c49889d6aadc334153fdcccca09aa1aa4af06b8c15dbc23568a9f592a03",
+      "bytes": 345535,
+      "gzip_bytes": 75936
+    },
+    "output/development/ranking-evidence-v149/pytest/summary.json": {
+      "sha256": "3200c56b05718381418b94c19a25caa01b652e96c12ca0c275fc6110e1666731",
+      "bytes": 228,
+      "gzip_bytes": 190
+    },
+    "output/development/ranking-evidence-v149/pytest.log": {
+      "sha256": "5f11bd321034969b75dacf50205fb82a843c58ed7940caa9b327bb195d63df9c",
+      "bytes": 3212,
+      "gzip_bytes": 281
+    },
+    "output/development/ranking-evidence-v149/registration.json": {
+      "sha256": "2b5e7e982aca6f37db7ae0b860b43f3dd0f41378860eb7bd991af6f4203725fb",
+      "bytes": 2222,
+      "gzip_bytes": 1164
+    },
+    "output/development/ranking-evidence-fit-v149/D_context42-ajv.json": {
+      "sha256": "eaa052b7f6e27068d28c7baddd68609f5113a57e7c708ef483988f0462012231",
+      "bytes": 205185,
+      "gzip_bytes": 37131
+    },
+    "output/development/ranking-evidence-fit-v149/D_context42-attrs.json": {
+      "sha256": "fafc52bb49b37decbeb942d044274c5e153ed5d7f4fad78cc4b6c54a117beafa",
+      "bytes": 207656,
+      "gzip_bytes": 38762
+    },
+    "output/development/ranking-evidence-fit-v149/D_context42-boltons.json": {
+      "sha256": "965117220c77a115c6779a062c9d5ed3e4222fe1e757fedf9fbc1f580c253d1a",
+      "bytes": 202562,
+      "gzip_bytes": 37294
+    },
+    "output/development/ranking-evidence-fit-v149/D_context42-commons-csv.json": {
+      "sha256": "edc1198ec2d6ed35d030c57708e6750b9949657decb1a5f4946fb026f6d59b37",
+      "bytes": 207216,
+      "gzip_bytes": 39049
+    },
+    "output/development/ranking-evidence-fit-v149/D_context42-junit5.json": {
+      "sha256": "6c80a2bc9f97b16b47ed6771cfcefc79b13b21ca9da3027755ff0a5869aec836",
+      "bytes": 207635,
+      "gzip_bytes": 37793
+    },
+    "output/development/ranking-evidence-fit-v149/D_context42-marked.json": {
+      "sha256": "b5a92c1408666cb9e1c00935746d2c8eff6dfffac5dfadd8a58ad608b88d951e",
+      "bytes": 205686,
+      "gzip_bytes": 38283
+    },
+    "output/development/ranking-evidence-fit-v149/D_context42-orders.jsonl": {
+      "sha256": "8335cb3c356e6f1253f590af080ab74d9af276fd17704223f4d8e756189f355a",
+      "bytes": 786613,
+      "gzip_bytes": 44972
+    },
+    "output/development/ranking-evidence-fit-v149/D_context42-outcomes.jsonl": {
+      "sha256": "ef2b1ee256d209c9f399806046afa21e4c145bc0ce4a3265a48201d1df231807",
+      "bytes": 69798,
+      "gzip_bytes": 2009
+    },
+    "output/development/ranking-evidence-fit-v149/D_context42-packaging.json": {
+      "sha256": "9213f8b7c916f8a416e8cef88450b49b948271f9566592565d26960d102190c2",
+      "bytes": 205981,
+      "gzip_bytes": 38243
+    },
+    "output/development/ranking-evidence-fit-v149/D_context42-pytest.json": {
+      "sha256": "91b8a7546ae75cfe74b1ada95264ab198701f6df4e5e6c440dbb662addbb417f",
+      "bytes": 201696,
+      "gzip_bytes": 36943
+    },
+    "output/development/ranking-evidence-fit-v149/E1_owned7-ajv.json": {
+      "sha256": "47a52ede704e78a3f08e6b4da8b9944a7ca435c3d0dd4badc2101c649cce3c98",
+      "bytes": 199831,
+      "gzip_bytes": 35131
+    },
+    "output/development/ranking-evidence-fit-v149/E1_owned7-attrs.json": {
+      "sha256": "b6c78e40124969cb875f7b0b11c92a5b0f393f668528fde2b4f00bee7b14af6f",
+      "bytes": 202060,
+      "gzip_bytes": 36342
+    },
+    "output/development/ranking-evidence-fit-v149/E1_owned7-boltons.json": {
+      "sha256": "56ea14334c292adcafb1fa16db1c3b8c066573320f7b5fd10fcd653e608797e9",
+      "bytes": 196613,
+      "gzip_bytes": 35096
+    },
+    "output/development/ranking-evidence-fit-v149/E1_owned7-commons-csv.json": {
+      "sha256": "57ff43d5030d53701ba70fd13177c02481c5b4f715a64c8369983bf506f781d4",
+      "bytes": 203081,
+      "gzip_bytes": 36964
+    },
+    "output/development/ranking-evidence-fit-v149/E1_owned7-junit5.json": {
+      "sha256": "723c78bdf256511384238488ca8f67af68f0a9c05d51c5e42cbaf9bb96548fbd",
+      "bytes": 200457,
+      "gzip_bytes": 35672
+    },
+    "output/development/ranking-evidence-fit-v149/E1_owned7-marked.json": {
+      "sha256": "ec1a3fb0ecc5ce6eb5351b5c6e0f86e35ad9385bfd71fa32d71bd3b4f4b20e01",
+      "bytes": 201199,
+      "gzip_bytes": 37057
+    },
+    "output/development/ranking-evidence-fit-v149/E1_owned7-orders.jsonl": {
+      "sha256": "08cf4715e1805dc52e15f758c975e01bd7f689cdfadf749e522788edf4308fc6",
+      "bytes": 786613,
+      "gzip_bytes": 44798
+    },
+    "output/development/ranking-evidence-fit-v149/E1_owned7-outcomes.jsonl": {
+      "sha256": "5bb5bd92a65aa069c584d3b7074442229b5ce446ef6e5fe4b67d688ecda8afcd",
+      "bytes": 69798,
+      "gzip_bytes": 2001
+    },
+    "output/development/ranking-evidence-fit-v149/E1_owned7-packaging.json": {
+      "sha256": "eb91dc95b67c88a62d8ccd2e9f05cb599ae21db0f463edbf9d6ab49cd4a47202",
+      "bytes": 199653,
+      "gzip_bytes": 36315
+    },
+    "output/development/ranking-evidence-fit-v149/E1_owned7-pytest.json": {
+      "sha256": "cc9dad5f26a447ae06dbc26443c6f9987cbcfd76abac1589941bc509dd38bcd8",
+      "bytes": 198077,
+      "gzip_bytes": 34665
+    },
+    "output/development/ranking-evidence-fit-v149/E2_scope7-ajv.json": {
+      "sha256": "d60d5ed0d5e02c1b56d02159fa5e372635fcf722afac6cb7e632042363e7ba50",
+      "bytes": 199179,
+      "gzip_bytes": 34916
+    },
+    "output/development/ranking-evidence-fit-v149/E2_scope7-attrs.json": {
+      "sha256": "46142d9f67da4aedf5720035cd1971887f94fca03783b62dcd3d961d5ecf21e7",
+      "bytes": 201043,
+      "gzip_bytes": 35796
+    },
+    "output/development/ranking-evidence-fit-v149/E2_scope7-boltons.json": {
+      "sha256": "a1b829c07f8428d7c06651faefd5d20fe3fe38458690a61b7095498e2033073b",
+      "bytes": 199828,
+      "gzip_bytes": 35081
+    },
+    "output/development/ranking-evidence-fit-v149/E2_scope7-commons-csv.json": {
+      "sha256": "e107dcd3dcce1c2a3ed0eb6500e14f44fb75727926dae1388a54f03ccd9306b1",
+      "bytes": 204833,
+      "gzip_bytes": 37118
+    },
+    "output/development/ranking-evidence-fit-v149/E2_scope7-junit5.json": {
+      "sha256": "72278c23094a3019799786ea05fa0337e55f1032e1c215d0466f438d88db00fa",
+      "bytes": 199076,
+      "gzip_bytes": 35943
+    },
+    "output/development/ranking-evidence-fit-v149/E2_scope7-marked.json": {
+      "sha256": "d61dce29dbb72eb14b087b3678182072e5ae835572fd1aecf4b565ed2563fd56",
+      "bytes": 202632,
+      "gzip_bytes": 36396
+    },
+    "output/development/ranking-evidence-fit-v149/E2_scope7-orders.jsonl": {
+      "sha256": "7f4c7b02b5e2058025af4f596e1590422b733edb93f97e27300f2e7f64dfb454",
+      "bytes": 786613,
+      "gzip_bytes": 44820
+    },
+    "output/development/ranking-evidence-fit-v149/E2_scope7-outcomes.jsonl": {
+      "sha256": "29eec512aa9301b998bf288e5684d4ae852b178345cc66b1c41ae279167fe4fd",
+      "bytes": 69795,
+      "gzip_bytes": 2002
+    },
+    "output/development/ranking-evidence-fit-v149/E2_scope7-packaging.json": {
+      "sha256": "d2e9427d2d6b4ad775244c400e8d6d676cf344f4a9a10230bd2c27a02c37adf3",
+      "bytes": 200936,
+      "gzip_bytes": 35204
+    },
+    "output/development/ranking-evidence-fit-v149/E2_scope7-pytest.json": {
+      "sha256": "8175219cc571afbdfe5aa9b6a9c887ede68af5342e162b737a87028b122126c9",
+      "bytes": 196594,
+      "gzip_bytes": 34060
+    },
+    "output/development/ranking-evidence-fit-v149/registration.json": {
+      "sha256": "5604daead7abc561304a6c6ac927726be7f317a0e973dc9eabb0e06d282257db",
+      "bytes": 12491,
+      "gzip_bytes": 1941
+    },
+    "output/development/ranking-evidence-fit-v149/summary.json": {
+      "sha256": "b6ec40e09fe5c39984671b96833813f58ba241fbc2c45aa3fd1c98bc4d64384a",
+      "bytes": 5818,
+      "gzip_bytes": 536
+    },
+    "output/development/symbol-specialisation-v151/ajv.json": {
+      "sha256": "3191eed8fdb913d388dae7d915e4977d00a661d08b4a5676234621ca2fb3d53d",
+      "bytes": 201632,
+      "gzip_bytes": 37350
+    },
+    "output/development/symbol-specialisation-v151/attrs.json": {
+      "sha256": "0a44cb6e3de7bbe9f7bfb9e8921af26ce1a2d474c51990c0b4049904262cc405",
+      "bytes": 208120,
+      "gzip_bytes": 38735
+    },
+    "output/development/symbol-specialisation-v151/boltons.json": {
+      "sha256": "a9ed91faf77688b59b3c3a2fbbc8eb1a8fb14ca02882cdf654a8f483cc2980b7",
+      "bytes": 201671,
+      "gzip_bytes": 37230
+    },
+    "output/development/symbol-specialisation-v151/commons-csv.json": {
+      "sha256": "2036704d4c6b51cf45fa7736979bfce3bbe4ce1479fe0016dca8957d55bdafa5",
+      "bytes": 211990,
+      "gzip_bytes": 39264
+    },
+    "output/development/symbol-specialisation-v151/folds.json": {
+      "sha256": "da2f029405364a82ce509a715c5c6ccc27c5cb4cc023512a351a9230e4a2aab4",
+      "bytes": 2794,
+      "gzip_bytes": 646
+    },
+    "output/development/symbol-specialisation-v151/junit5.json": {
+      "sha256": "6d36d436a52b15cdb32c77180c62e7b14b5b2faf129f1476f5155d07ddfb8648",
+      "bytes": 191608,
+      "gzip_bytes": 35580
+    },
+    "output/development/symbol-specialisation-v151/marked.json": {
+      "sha256": "633524d7f6ff231a37294a7b62cec02cb77b7aaede6c753450df4be17499d072",
+      "bytes": 211023,
+      "gzip_bytes": 39886
+    },
+    "output/development/symbol-specialisation-v151/orders.jsonl": {
+      "sha256": "99730f473338f175cdbf030efe6a5deadf03c18092913cfe666967026c0ef68c",
+      "bytes": 786613,
+      "gzip_bytes": 44843
+    },
+    "output/development/symbol-specialisation-v151/outcomes.jsonl": {
+      "sha256": "d1bedc2e94e1cda2b620bac35e643990428a994e998b3696687a923ef58cf580",
+      "bytes": 69800,
+      "gzip_bytes": 2018
+    },
+    "output/development/symbol-specialisation-v151/packaging.json": {
+      "sha256": "9f42c4d1cec7f366702f1988c45918572e13d1440f88fce3082f0e3ff36a576c",
+      "bytes": 205951,
+      "gzip_bytes": 39206
+    },
+    "output/development/symbol-specialisation-v151/pytest.json": {
+      "sha256": "96d2fa932f415bdee7c9edfb00ec089120498c60c3ec589d22b320e9ba139d0c",
+      "bytes": 199033,
+      "gzip_bytes": 36200
+    },
+    "output/development/symbol-specialisation-v151/registration.json": {
+      "sha256": "44dcd2fcb7c652c8c2f2e1e3bcda55576ecf3b8118e72c464839e933e3fc946a",
+      "bytes": 774,
+      "gzip_bytes": 512
+    },
+    "output/development/symbol-specialisation-v151/summary.json": {
+      "sha256": "7741f714a31aba312a03c9813fdfcd1f2db183a2b32d62edb4144a23ed5a9ffa",
+      "bytes": 1733,
+      "gzip_bytes": 420
+    },
+    "output/analysis/evaluate-resolved-purpose-v148.py": {
+      "sha256": "db9693b21548e2a4c6f5e0bd5cfe414ae9ad370d46768b68b857e28095b893f4",
+      "bytes": 4141,
+      "gzip_bytes": 1763
+    },
+    "output/analysis/capture-ranking-evidence-v149.py": {
+      "sha256": "a84b2590aa93a26152f1c4a964440f21c693670ff73473d5bd29f3d745ffc100",
+      "bytes": 5093,
+      "gzip_bytes": 2241
+    },
+    "output/analysis/fit-ranking-evidence-v149.py": {
+      "sha256": "5a451c95044eb19c122edff6f4375ef09f16446974751ecd31c5527f59dfb187",
+      "bytes": 6242,
+      "gzip_bytes": 2560
+    },
+    "output/analysis/diagnose-ranking-evidence-v149.py": {
+      "sha256": "e876d7f4ff7207a8a4ed1d2ea7ef89966853f048dc060b74464a96db5a5bcabd",
+      "bytes": 1803,
+      "gzip_bytes": 861
+    },
+    "output/analysis/role-partition-diagnostic-v148.py": {
+      "sha256": "aeeff71b1186240188ba80231dcb9fdb87c2d44d8b8ff0854131c0f4636a0c83",
+      "bytes": 1842,
+      "gzip_bytes": 914
+    },
+    "output/analysis/evaluate-symbol-specialisation-v151.py": {
+      "sha256": "7b0856af8f18a0e819bfd06da713391ae7e7126245d6de3068c202b28ea5256f",
+      "bytes": 4349,
+      "gzip_bytes": 1877
+    }
+  }
+}

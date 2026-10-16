@@ -285,3 +285,51 @@ c7df72f16485aa3529b3c80c0558178ac3b90a07ad5c3fd4999032a3c63cd419;
 independent re-audit e8bef006df1e573aaf7a71f7498a811ac2dde136a84920f2c67d7271a9986ca4,
 56tests,23synthetic probes plus valid control, zero reference open attempts.
 Actual final engine freeze/complete capture/preflight review still required.
+
+## Source controls and CPU execution — v148–v152
+
+Published checkpoint b8cab4fc0c510c3f50cd06d5206cb3580b1f59db preserves v147
+controls, exposed data and failure with no private reserve payload. Frozen public
+145 remains latest independent observed quality:177/200top1 FAIL90,198Recall.
+
+All400exposed controls closed. Resolving original purpose only:194old/165new;
+recognizing regression/Localiza in those same fixed score observations:194/164.
+Do not confuse those feature-only controls with a new full engine query run.
+D adding42existing full/contract/implementation contextual score statistics:
+194/165. E1compact complete-owned neural score statistics:196/163. E2authenticated
+lexical definition score statistics:196/166. Both neural input views retain68M,
+512tokens and CPU, with no new pretrained models. All retain390/400top10; every
+case retained. Standalone neural new200old169,owned164,scope164; oracle among
+three neural winners174. Native/neural existing-winner oracle176. Symbol-only
+training of source296gives original189/new168; also FAIL prospective180new.
+No A/B/C/D/E/G model is promoted or called a90%validation. Archive105gz/2455961B,
+manifest6aca2c5b80f63b0682637ea3f6bb0b15b665aa4834f6b8318ee03be2e6e20b85
+at output/checkpoints/source-ranking-controls-v149-v151. New reserve remains
+private and unevaluated. Its reviewed v2source/identity seals are unchanged.
+
+A NumPy forest interpreter prototype exposed Python per-tree overhead on small
+batches. New bounded compiled traversal is selected only for1–128rows; above128
+keep existing traversal (1200row vector prototype regressed232→360ms). Sequential
+leaf addition, features, weights, thresholds and model fingerprints unchanged.
+Source-free warm10row native55.042→2.953ms andpiece25.559→1.285ms; these are NOT
+end-to-end search times. Actual3988piece scores across400queries byte-exact.
+All200original purpose/piece/numeric trace replay has0final-order changes (7auto
+purpose feature changes;0purpose parser changes). Thus original191/197retained
+in replay. This does not revalidate independent200with changed query intent.
+Full current suite14918passed,10preexisting xfail, exit0; mypy356clean. Test log
+SHA b2078994b25a2995e92626b1ed97d33ce6cee6baa8cc5faabc8ca7b8c9e272d5;
+threshold<=to<mutation rejected and restored exactly. See
+../search-cpu-forest-2026-10-16 from validation root (README and JSON/log controls).
+No release/tag. Correctness and resource certification of a final improved profile
+still require actual complete public CPU captures.
+
+Next prospective source-ranking control v152 captures first100eligible symbols
+from actual frozen145owner feature matrix through trace, all250exposed symbols
+(old50,new200), no labels during capture and no final-response/latency claims.
+251source features plus7native statistics, second fixed arm adds2test-purpose/role
+flags. Same fixed recipe, LORO, all queries including missing positives retained;
+compare same-native10 and top10from100 explicitly. Other150old requests unchanged.
+Require original>=180/197 andnew>=180/200before untouched reserve. Actual source
+observer and fitting queue are in research/output/analysis/*native-symbol*v152.py,
+captures output/development/native-symbol-evidence-v152; protocol
+ docs/design/native-symbol-ranking-2026-10-16-v152.md. Never change frozen145source.
