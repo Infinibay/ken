@@ -36,7 +36,8 @@ def _load_cpu_runtime(root: Path) -> tuple[Any, Any, Any]:
 class LocalQueryExpansion:
     """Query text chooses the language path; no labels or remote service enter it."""
     def __init__(self, root: Path, registration: Mapping[str, Any], *,
-                 load_runtime: Callable[[Path], tuple[Any, Any, Any]] = _load_cpu_runtime):
+                 load_runtime: Callable[[Path], tuple[Any, Any, Any]] = _load_cpu_runtime,
+                 prepare_artifacts: Callable[[], None] | None = None):
         self.root = root.resolve()
         artifacts = {name: dict(registration['artifacts'][name]) for name in REQUIRED_ARTIFACTS}
         self.identity = {'model_id': registration['model_id'], 'revision': registration['revision'],
@@ -47,6 +48,7 @@ class LocalQueryExpansion:
         self.revision = hashlib.sha256(json.dumps(self.identity, sort_keys=True).encode()).hexdigest()
         self._artifacts = artifacts
         self._load_runtime = load_runtime
+        self._prepare_artifacts = prepare_artifacts
         self._runtime: tuple[Any, Any, Any] | None = None
         self._lock = threading.Lock()
 
@@ -54,6 +56,8 @@ class LocalQueryExpansion:
         if self._runtime is None:
             with self._lock:
                 if self._runtime is None:
+                    if self._prepare_artifacts is not None:
+                        self._prepare_artifacts()
                     for name, expected in self._artifacts.items():
                         path = self.root/name
                         if not path.is_file() or path.stat().st_size != expected['bytes']:

@@ -1,0 +1,61 @@
+{
+  "source": {
+    "model_id": "Prukario/opus-mt-es-en-ct2-int8",
+    "revision": "ad91ad1697ea1761111ff4c179400796d085b347",
+    "license": "cc-by-4.0",
+    "artifacts": {
+      "model.bin": {
+        "bytes": 79567635,
+        "sha256": "44c5adc2c680f27c14c991e5ab7f74f38b41597153f7123bc8f6455f09a3b38b"
+      },
+      "config.json": {
+        "bytes": 233,
+        "sha256": "72901fbd8abd89fb5cf4a388f26fc681f5c4c58a1e1a88b30b879f107270e7ee"
+      },
+      "shared_vocabulary.json": {
+        "bytes": 1341137,
+        "sha256": "5d57da3a8899ca0a45f085eff04c41553d784a981544702996001911b9dd0af1"
+      },
+      "source.spm": {
+        "bytes": 825924,
+        "sha256": "e236ee6d866b635c0142114f8647f39831f9d92534aa2aad75c942f6a78ad0e3"
+      },
+      "target.spm": {
+        "bytes": 801636,
+        "sha256": "4dd547c24816a335e7b0b2e63376a8f1b3cbfc671eda5ab808dd44fdadaa8791"
+      }
+    }
+  },
+  "derived": {
+    "model_id": "Helsinki-NLP/opus-mt-es-en",
+    "revision": "c96e2c5399ebfae4fc43d9669556b9afa74bb69d",
+    "artifacts": {
+      "model.bin": {
+        "bytes": 79567635,
+        "sha256": "44c5adc2c680f27c14c991e5ab7f74f38b41597153f7123bc8f6455f09a3b38b"
+      },
+      "config.json": {
+        "bytes": 223,
+        "sha256": "8f6496adfc930cbfecbe8281112197705c488fab47d34b4829b06d7f478909af"
+      },
+      "shared_vocabulary.json": {
+        "bytes": 1276136,
+        "sha256": "040e48c9d00734f48506e052695837720bd1f6aa01c70636cde83038362baf19"
+      },
+      "source.spm": {
+        "bytes": 825924,
+        "sha256": "e236ee6d866b635c0142114f8647f39831f9d92534aa2aad75c942f6a78ad0e3"
+      },
+      "target.spm": {
+        "bytes": 801636,
+        "sha256": "4dd547c24816a335e7b0b2e63376a8f1b3cbfc671eda5ab808dd44fdadaa8791"
+      }
+    }
+  },
+  "recipe": "json-indent2-ascii-config-newline-v1",
+  "attribution": [
+    "https://huggingface.co/Prukario/opus-mt-es-en-ct2-int8",
+    "https://huggingface.co/Helsinki-NLP/opus-mt-es-en"
+  ],
+  "scope": "Exact model/SPM bytes; JSON normalization reproduces measured converted CT2 artifacts. No Torch or conversion of neural weights."
+}

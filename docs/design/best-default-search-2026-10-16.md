@@ -81,3 +81,50 @@ Additional200 uses the same8repos, not new-repository generalization; source fil
 are disjoint from175opaque principal/calibration exclusions. v104 remains unopened
 and its overlap is not verified. A90% observed sample is not a95% confidence
 population lower bound of90%. No acceptance thresholds are reduced.
+
+## Integration checkpoint: a047e09
+
+Compact CLI/MCP presentation and public examples are published. The portable
+Potion backend is published and its single-change replay136 returned identical
+cards/units/pool hashes and orders on all200original queries:180top1/197top10.
+Global model/profile recommendations remain unchanged until the complete public
+runtime is ready. Private references for the new200 remain closed.
+
+ContextEncoder and exact portable CT2 preparation are implemented with real
+small-model/filesystem tests, not yet activated in public search. Frozen137 and
+138 represent these changes separately, with complete original200 replays queued
+after frozen132/134finish their public-only new200 captures. No new quality
+feedback is available to choose production policy.
+
+The same measured CT2 model.bin and source/target SPM files are publicly hosted
+at Prukario/opus-mt-es-en-ct2-int8@ad91ad1697ea1761111ff4c179400796d085b347.
+Configuration and vocabulary have identical JSON values; indent2/ensure_ascii
+normalization reproduces the exact measured files. This avoids runtime Torch,
+conversion of neural weights, or publishing new model weights. Source:
+https://huggingface.co/Prukario/opus-mt-es-en-ct2-int8/blob/ad91ad1697ea1761111ff4c179400796d085b347/model.bin.
+
+## Prospective production numeric-model portfolio
+
+Validation-only repository-excluded folds cannot be selected by a repository's
+name in normal search. Two generic candidates may be evaluated and chosen on
+original exposed development only, before any new200Gold scoring:
+
+1. Refit the original fixed training recipe on its complete original development
+   inputs, with the existing feature schema/hyperparameters and no new labels.
+2. Form a fixed equal-weight mean of all registered validated numeric forests. Use16native folds and8piece folds, as recorded in the source registries. Scale
+   each leaf by the reciprocal of its role's model count and concatenate trees; runtime remains the existing additive
+   NumPy forest. Native and piece models are aggregated independently. There is
+   no per-repository model choice, learned weighting, private-case lookup or HPO.
+
+Record exact source-model/training hashes, feature schemas and chosen model
+fingerprints. Scores on original200 are development evidence, including any
+training reuse; independent new200 is reported separately after the final public
+arm is frozen and closed. Do not transfer the existing90%fold result to either
+unmeasured generic candidate. Further development after independent feedback
+requires preserving that cohort's status as exposed feedback and a new untouched
+acceptance cohort; never quietly reuse it as fresh acceptance.
+
+Portfolio clarification before generation/any new Gold: the native69registry has
+16folds, while piece126has8. Use all16native folds and all8piece folds, rather
+than limiting the native model to the8evaluation repos. This is a metadata-driven
+correction to the initial fold-count assumption, not quality-feedback selection.
