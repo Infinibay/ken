@@ -19,12 +19,53 @@ como condición del acierto. Esa suficiencia se informa aparte. Se conservan las
 | v124 | Bosque de piezas completas, también aplicado a símbolos | 172/200, 86% | 197/200 | CV excluyendo cada repositorio; gana7, pierde3 |
 | v125 | Aplicar la nueva etapa sólo a clase/módulo/archivo | 174/200, 87% | 197/200 | Mismos modelos; gana7, pierde1 frente a nativo |
 | v126 | Respetar una ruta solicitada explícitamente | 175/200, 87,5% | 197/200 | Misma CV; gana7, pierde0 frente a nativo |
+| v127 | Agregar hechos léxicos de declaraciones y contratos | 175/200, 87,5% | 197/200 | Sin mejora; se retiraron las señales y su coste |
+| v128 | Cambiar sólo truncation5 por truncation1 en LambdaRank | 174/200, 87% | 197/200 | Rechazado; se mantiene truncation5 |
+| v131 | Aprender un residuo sobre native_to_best | 173/200, 86,5% | 197/200 | Rechazado; no usar sus JSON como modelos v126 |
+| v129 | Combinar v126 con los scores históricos68M, primeros3 | 177/200, 88,5% | 197/200 | Simulación de órdenes; no inferencia nueva |
+| v130 | Misma combinación, primeros10 | 180/200, 90% | 197/200 | Simulación; requiere replay completo para confirmar |
 
 v126 es un candidato experimental, **no el default publicado ni una certificación
 privada**. Faltan cinco aciertos netos para180/200. Todavía falta integrar y medir
 la nueva etapa en la búsqueda completa. No se equipara el coste de esa etapa con
 la latencia total. Los controles Ettin68M también llegaron históricamente a175/200,
 pero son otro motor y otras mediciones: v126 no usa un cross-encoder de reranking.
+La simulación v130 alcanza el objetivo numérico combinando las mejoras de Ken
+con el reranker existente; no autoriza declarar que la búsqueda completa ya lo
+alcanzó. v132 está registrado para comprobarlo con inferencia nueva en CPU.
+
+## Fusión con el reranker: fórmula y límites
+
+Son dos órdenes sobre las **mismas diez piezas**: primero el ranking de Ken
+v126; luego el orden descendente de logits del 68M. Se calcula
+`F(i) = (1-w)/(60+r_Ken(i)) + w/(60+r_neural(i))`, con posiciones desde1 y
+`w=0.5`. Los empates conservan el orden de Ken. Una ruta pedida explícitamente
+mantiene prioridad. No es una media de logits ni una probabilidad de relevancia.
+
+En los archivos históricos, `fp32_rrf50` significa **peso neuronal0.5**; el50
+no es la constante de rango, que sigue siendo60. `fp32_rrf25` usa peso0.25.
+La fuente original de esta decisión es `verifiable_precision.precision_orders`
+del snapshot v110; la implementación equivalente nueva es
+`src/ken/retrieval/reranker_fusion.py`. No confundir esta fusión final con el RRF
+de canales de recuperación ni con la señal `rrf_rank` del bosque de owners.
+
+v130 reutiliza scores ya cerrados de v110 para las tarjetas compactas v102 y
+los reordena sobre el nuevo orden de piezas. Frente a v126 gana7 consultas y
+pierde2, saldo+5. Son class47, module45, symbol45 y file43, de50 cada tipo.
+Eso sugiere complementariedad; no demuestra que el modelo entienda las causas
+de los fallos ni que usar las tarjetas actuales dé los mismos resultados.
+El texto de política de su productor conserva una frase «remaining7» del
+ensayo prefijo3; el código efectivo usa `[:10]`, comprobado en las200 órdenes.
+Se conserva ese registro original y se deja aquí la aclaración.
+
+El replay v132 vuelve a recuperar los candidatos y a construir las tarjetas
+compactas desde las fuentes reales, valida su digest contra v102, aplica el
+bosque v126 real y valida su orden contra el control cerrado, y vuelve a
+ejecutar ONNX68M con CPUExecutionProvider. Incluye esas comprobaciones, la
+proyección de la traza, el modelo y la serialización en el tiempo por consulta.
+No sustituye resultados por las referencias: sólo compara después de producirlos.
+Gold no se abre hasta cerrar ALL200. Los resultados, si se confirman, seguirán
+siendo desarrollo expuesto; no aceptación privada ni default de la herramienta.
 
 ## Recorrido del ranking nativo
 
@@ -110,6 +151,9 @@ en cada árbol. Si sus hojas son `L_t` y `R_t`, el margen es
 `sum(L_t-R_t)+residuo_de_acumulación`. Cada diferencia se agrupa bajo la primera
 rama donde los caminos divergen. Es una contabilidad exacta del bosque, **no un
 efecto causal aislado, un peso lineal ni SHAP**. Las ramas completas se guardan.
+Una señal con el mismo valor en ambos candidatos puede decidir una rama común
+y condicionar cómo se usan las demás. Que su margen agrupado sea cero no significa
+que el bosque no la use. Esto importa especialmente para el tipo de pieza pedido.
 
 Ejemplo vp-mf-047: elegido -0.586761 frente a aceptable -1.093991; margen
 0.507230. `rrf_rank`=0.5 frente a0.020408 contribuye+1.670859 en esa contabilidad;

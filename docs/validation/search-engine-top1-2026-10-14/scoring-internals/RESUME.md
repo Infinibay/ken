@@ -18,8 +18,9 @@ parten de v120 limpio y sólo overlays propios; no copiar el árbol sucio entero
 
 **Trampa de Git:** origin del clon propio es el checkout LOCAL, no GitHub.
 Publicar sólo con URL explícita `https://github.com/Infinibay/ken.git` y verificar
-`git ls-remote ... refs/heads/main`. Último checkpoint publicado antes de este
-trabajo:93eb910c2aac3ac974f6aee590e68bb042f463c6. No tags/release.
+`git ls-remote ... refs/heads/main`. Último checkpoint publicado y verificado:
+147ae3c6169a73b21e9c165ea55b226af8ef8292. Incluye documentación y valores
+completos del scoring nativo y del modelo de piezas v126. No tags/release.
 
 ## Cambios nuevos propios en curso
 
@@ -90,15 +91,39 @@ antes de leer consultas/Gold. Usar DYLD anterior; inferencia NumericRanker no
 requiere LightGBM/OpenMP. Parámetros fijos:160árboles,15hojas,min_child40,
 lambda2,learning_rate.08,truncation5,un hilo,seed42. No hubo HPO.
 
-## Siguiente hipótesis, todavía sin implementar
+## Controles posteriores y trabajo en curso
+
+- v127 (hechos de declaración/contrato):175/200, sin mejora frente a v126.
+  Prototipo conservado en snapshot; fuente viva retirada. No añadir su coste.
+- v128 (truncation1):174/200; rechazado. Se mantiene truncation5.
+- v131 (aprendizaje residual):173/200; rechazado. Sus modelos exportan sólo
+  el residuo: requieren sumar el prior y NO se pueden servir como los de v126.
+  El controlador vivo fue restaurado a la política v126 antes del nuevo replay.
+- v129/v130 combinan orden v126 con scores68M históricos de las mismas piezas.
+  Prefijo3 da177/200; prefijo10 da180/200. Son simulaciones de orden, no nueva
+  inferencia. Ambos conservan197/200 top10. Fórmula exacta y límites en README.
+- v132 repite el pipeline completo en CPU: recuperación nueva, tarjetas compactas
+  v102 regeneradas, bosque v126, inferencia68M FP32 nueva y RRF60 peso0.5.
+  Productor `experiments/search-engine/piece_complete_run.py`; snapshot
+  `output/frozen/piece-complete-cpu-v132`, recibo
+  3121eef43c19283275f06f0a7703446e31a02630e5179f14f313bcaee1503a18.
+  Salida `output/development/piece-complete-cpu-v132`. Gold sólo después de que
+  el estado sea `ALL200 complete CPU outputs closed without Gold`.
+
+El modelo68M es el ya medido; no se buscó otro. No afirmar90% real ni sus costes
+hasta cerrar y verificar ese replay. Modelo150M sigue sin ejecutarse.
+
+## Hipótesis investigada, sin mejora observada
 
 Los siguientes pasos deben usar un solo cambio por ensayo. Los fallos restantes
 incluyen declaración de anotación/interfaz frente a consumidor, benchmark frente
 a implementación y contratos que el tokenizer no expresa (p.ej.return'' pierde
 la noción de cadena vacía; transient pierde la equivalencia con no serializado).
-Investigar hechos sintácticos/declaraciones y condiciones de comportamiento
-como información explícita, sin listas de rutas, nombres del benchmark o reglas
-por ID. Validar extracción con ejemplos ajenos al corpus; luego ALL200.
+v127 investigó hechos sintácticos y condiciones de comportamiento explícitas,
+sin listas de rutas, nombres del benchmark o reglas por ID; las pruebas con
+ejemplos ajenos al corpus pasaron, pero ALL200 no mejoró. Eso no prueba que esos
+hechos sean inútiles en general: sólo que esta extracción y este bosque no
+añadieron aciertos sobre175/200.
 
 No hay un modelo mayor nuevo en prueba:150M descargado/preparado pero no ejecutado;
 ensayos neuronales pausados por el usuario. La prioridad sigue siendo Ken.
