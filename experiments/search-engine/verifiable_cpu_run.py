@@ -81,7 +81,7 @@ class PreparedKen:
 
     def pool(self,case,*,trace=None):
         request=SearchRequest(case['query'],target='file' if case['target_kind'] in {'module','file'}
-                              else 'symbol',limit=20,max_chars=12000)
+                              else 'symbol',limit=20,max_chars=12000,piece_kind=case['target_kind'])
         with retrieval_snapshot(self.conn):
             self.ranker.validate(self.profile.evidence)
             candidates,expanded=retrieve_contextual(self.conn,self.root,request,self.profile,
