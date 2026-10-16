@@ -212,6 +212,7 @@ def _build_parser() -> argparse.ArgumentParser:
                                    help="compact: locations and verified code as text; evidence: structured results with --json")
         search_parser.add_argument("--purpose", choices=("auto", "implementation", "usage", "tests", "documentation"), default="auto")
         search_parser.add_argument("--max-chars", type=_positive_int, default=12000)
+        search_parser.add_argument("--piece-kind", choices=("auto", "class", "module", "symbol", "file"), default="auto")
 
     p_bench = sub.add_parser("bench", help="evaluate ranker recall on a JSONL dataset")
     p_bench.add_argument("dataset", help="JSONL rows with prompt + expected_files")
@@ -542,7 +543,7 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
             args.limit,
             kind="files",
             as_json=args.json,
-            response_format=args.response_format, purpose=args.purpose, max_chars=args.max_chars,
+            response_format=args.response_format, purpose=args.purpose, max_chars=args.max_chars, piece_kind=args.piece_kind,
         )
 
     if args.cmd == "search-symbols":
@@ -552,7 +553,7 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
             args.limit,
             kind="symbols",
             as_json=args.json,
-            response_format=args.response_format, purpose=args.purpose, max_chars=args.max_chars,
+            response_format=args.response_format, purpose=args.purpose, max_chars=args.max_chars, piece_kind=args.piece_kind,
         )
 
     if args.cmd == "reembed":
@@ -852,7 +853,7 @@ def _format_rank_stats(resp: dict[str, Any]) -> str:
 
 def _search_cli(
     project_path: Path, query: str, limit: int, *, kind: str, as_json: bool,
-    response_format: str = "auto", purpose: str = "auto", max_chars: int = 12000,
+    response_format: str = "auto", purpose: str = "auto", max_chars: int = 12000, piece_kind: str = "auto",
 ) -> int:
     from ken import _paths
     from ken.db import connect
@@ -867,6 +868,20 @@ def _search_cli(
     db_path = _paths.db_path(root)
     if not db_path.is_file():
         print(f"error: no .ken project at {root}", file=sys.stderr)
+        return 1
+    if response_format == "compact" and as_json:
+        print("error: compact is text; use --response-format evidence --json for structured output", file=sys.stderr)
+        return 1
+    if response_format in ("auto", "compact"):
+        from contextlib import closing
+        from ken.retrieval.public import find_best, render
+        with closing(connect(db_path)) as conn:
+            response = find_best(conn, root, query, scope=kind, purpose=purpose, limit=limit,
+                                 max_chars=max_chars, piece_kind=piece_kind)
+        print(json.dumps(response, ensure_ascii=False) if as_json else render(response))
+        return int(response.get("ok") is False)
+    if piece_kind != "auto":
+        print("error: --piece-kind requires the default or compact response mode", file=sys.stderr)
         return 1
     if response_format in ("evidence", "compact"):
         if response_format == "compact" and as_json:

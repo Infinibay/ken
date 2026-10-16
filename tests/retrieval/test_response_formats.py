@@ -21,8 +21,8 @@ def test_compact_text_preserves_disjoint_ranges_source_order_and_truncation():
     data = response(); before = copy.deepcopy(data)
     text = render(data)
     assert text == ('src/client.py:12-13 :: Client.redirect [partial]\n'
-                    '    prepare()\n    send()\n'
-                    '@42-42\n    return response\n\n'
+                    '12 |     prepare()\n13 |     send()\n'
+                    '@42-42\n42 |     return response\n\n'
                     '2 more results omitted.')
     assert data == before
     assert 'ranking_score' not in text and 'opaque-revision' not in text and 'a'*64 not in text

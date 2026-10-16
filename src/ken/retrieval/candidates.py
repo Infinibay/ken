@@ -103,6 +103,16 @@ def _exact(conn: sqlite3.Connection, passages: Mapping[int, Passage],
             for key, values in groups.items()]
 
 
+def exact_candidates(conn: sqlite3.Connection, request: SearchRequest) -> list[Candidate]:
+    """Canonical exact source matches, available without any embedding model."""
+    with retrieval_snapshot(conn) as snapshot:
+        result = _exact(conn, _passage_snapshot(conn, snapshot.generation), request)
+        regions = _region_snapshot(conn, snapshot.generation)
+        for candidate in result:
+            candidate.owned_regions = regions[candidate.entity]
+        return result
+
+
 def retrieve(conn: sqlite3.Connection, root: Path, request: SearchRequest,
              profile: RetrievalProfile | None = None, *,
              encoders: Mapping[str, Encoder] | None = None) -> list[Candidate]:

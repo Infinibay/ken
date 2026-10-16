@@ -143,7 +143,7 @@ def test_direct_search_default_is_compact_and_json_preserves_native(project, cap
     assert "a.py:1-2 :: run" in text and "2 |     return 42" in text
     assert "score" not in text
     assert main(["search-symbols", "run", "--path", str(project), "--json"]) == 0
-    assert json.loads(capsys.readouterr().out)[0]["qualname"] == "run"
+    assert json.loads(capsys.readouterr().out)["results"][0]["entity"]["qualname"] == "run"
 
 
 def test_analysis_cli_defaults_are_text_with_json_opt_in(capsys):

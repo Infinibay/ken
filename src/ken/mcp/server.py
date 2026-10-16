@@ -957,6 +957,7 @@ def ken_find(
     response_format: Literal["auto", "legacy", "evidence", "compact"] = "auto",
     purpose: Literal["auto", "implementation", "usage", "tests", "documentation"] = "auto",
     max_chars: int = 12000,
+    piece_kind: Literal["auto", "class", "module", "symbol", "file"] = "auto",
 ) -> Any:
     """Find code by meaning, text, structure, design patterns, or bug signatures.
 
@@ -995,6 +996,8 @@ def ken_find(
     versioned query. *libraries* maps module names to KQL2 source text; results
     retain coverage and budget status. Saved TOML selectors still use KQL1.
 
+    Files/symbols use the complete best search configuration by default.
+    piece_kind="auto" infers class/module/symbol/file; an explicit value overrides it.
     For files/symbols, response_format="evidence" uses the prepared retrieval
     profile and returns owners with source-verified snippets, ranges, source
     hashes and explicit truncation. purpose="auto" infers the requested role;
@@ -1003,6 +1006,19 @@ def ken_find(
     plain text, with separate ranges for disjoint snippets and no scores or hashes.
     Legacy responses preserve their cosine score and existing shape.
     """
+    if response_format in ("auto", "compact") and scope in ("files", "symbols"):
+        if literal or query_language != "kenql/1":
+            raise ValueError("semantic search requires nonliteral scope=files or symbols")
+        from contextlib import closing
+        from ken.retrieval.public import find_best, render
+        from ken.retrieval.connections import project_connection
+        assert _PROJECT_ROOT is not None
+        with project_connection(_PROJECT_ROOT) as conn:
+            response = find_best(conn, _PROJECT_ROOT, query, scope=scope, purpose=purpose,
+                limit=10 if limit is None else limit, max_chars=max_chars, explain=full, piece_kind=piece_kind)
+        return render(response, diagnostics=full) if response_format == "compact" else response
+    if piece_kind != "auto":
+        raise ValueError("piece_kind requires the default or compact files/symbols search")
     if response_format in ("evidence", "compact"):
         if literal or scope not in ("files", "symbols") or query_language != "kenql/1":
             raise ValueError("evidence responses require nonliteral scope=files or symbols")

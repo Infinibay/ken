@@ -92,6 +92,11 @@ class Model2VecEmbedder:
         return self._encoder
 
     @property
+    def registered(self) -> RegisteredStaticEncoder:
+        """Verified pooling/runtime identity for the source-feature rankers."""
+        return self._load()
+
+    @property
     def dim(self) -> int:
         return self._load().dim
 

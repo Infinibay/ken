@@ -21,6 +21,9 @@ def present_tool(fn: Callable[..., Any], *, root: Callable[[], Path | None]) -> 
     def present(result: Any, output_format: str, kwargs: dict[str, Any]) -> Any:
         if output_format == "json" or kwargs.get("response_format") in {"evidence", "legacy"}:
             return result
+        if fn.__name__ == "ken_find" and isinstance(result, dict) and "profile_version" in result:
+            from ken.retrieval.public import render
+            return render(result, diagnostics=bool(kwargs.get("full")))
         project = root()
         if fn.__name__ == "ken_find" and kwargs.get("scope", "files") in {"files", "symbols"} and isinstance(result, list) and project is not None:
             result = search_previews(result, project)

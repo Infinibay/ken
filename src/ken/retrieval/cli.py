@@ -16,6 +16,9 @@ def configure(parser: argparse.ArgumentParser) -> None:
     index.add_argument("--path", default=".")
     index.add_argument("--profile", type=Path, help="immutable retrieval profile JSON; otherwise reuse active profile")
     index.add_argument("--json", action="store_true")
+    prepare = sub.add_parser("prepare", help="prepare the best complete CPU search configuration")
+    prepare.add_argument("--path", default=".")
+    prepare.add_argument("--json", action="store_true")
 
 
 def dispatch(args: argparse.Namespace) -> int:
@@ -34,6 +37,17 @@ def dispatch(args: argparse.Namespace) -> int:
     try:
         with closing(connect(_paths.db_path(root))) as conn:
             init_schema(conn)
+            if args.retrieval_command == "prepare":
+                from ken.indexer import index_files
+                from ken.retrieval.passages import PassagePolicy
+                from ken.retrieval.best_search import prepare_best
+                index_files(conn, root, iter_files(root), retrieval_policy=PassagePolicy())
+                best_result = prepare_best(conn, root)
+                if not _paths.meta_path(root).exists():
+                    _paths.meta_path(root).write_text("{}", encoding="utf-8")
+                print(json.dumps(best_result, ensure_ascii=False) if args.json else
+                      f"Prepared best search: {best_result['indexed_files']} files, {best_result['owners']} owners.")
+                return 0
             profile = (RetrievalProfile.from_dict(json.loads(args.profile.read_text()), upgrade_representation=True)
                        if args.profile else active_profile(conn, upgrade_for_indexing=True))
             started = time.perf_counter()
@@ -43,7 +57,7 @@ def dispatch(args: argparse.Namespace) -> int:
                       "elapsed_ms": (time.perf_counter() - started) * 1000}
         if not _paths.meta_path(root).exists():
             _paths.meta_path(root).write_text("{}", encoding="utf-8")
-    except (ValueError, OSError, ImportError) as exc:
+    except (ValueError, OSError, ImportError, RuntimeError) as exc:
         print(f"error: retrieval preparation failed: {exc}", file=sys.stderr)
         return 1
     print(json.dumps(result, ensure_ascii=False) if args.json else

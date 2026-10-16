@@ -198,17 +198,16 @@ def test_a_truncated_artifact_is_rejected(tmp_path, monkeypatch):
         emb.embed_passages(["alfa"])
 
 
-def test_recommended_model_prefers_the_table_only_when_present(tmp_path, monkeypatch):
-    """Naming a table ken cannot find would break a fresh install, so the
-    preference is conditional on the file existing."""
+def test_recommended_model_uses_measured_potion_independently_of_legacy_table(tmp_path, monkeypatch):
+    """New projects use the measured portable encoder, with explicit preparation."""
     monkeypatch.setenv("KEN_CONFIG_DIR", str(tmp_path / "cfg"))  # no user default
     monkeypatch.setenv("KEN_STATIC_HEAD", str(tmp_path / "absent.npz"))
     assert not artifact_available(STATIC_MODEL)
-    assert recommended_model() != STATIC_MODEL
+    assert recommended_model() == "minishlab/potion-code-16M-v2"
 
     monkeypatch.setenv("KEN_STATIC_HEAD", str(_artifact(tmp_path)))
     assert artifact_available(STATIC_MODEL)
-    assert recommended_model() == STATIC_MODEL
+    assert recommended_model() == "minishlab/potion-code-16M-v2"
 
 
 def test_user_default_still_wins_over_the_table(tmp_path, monkeypatch):

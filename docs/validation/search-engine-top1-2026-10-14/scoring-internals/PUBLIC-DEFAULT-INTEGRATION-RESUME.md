@@ -166,3 +166,15 @@ Regenerate all12MCP/CLI examples after full integration. Current committed
 examples document presentation-only oldstatic default. User wants examples of
 every output, final concise examples plus catalog link. Commit/push main, no
 release/tags, keep foreign original work. Do not end with partial completion.
+
+
+## Resume override after v140–v145 integration
+
+Read PUBLIC-DEFAULT-V140-V145.md first. Main published5307f83; current clean
+worktree now has a complete portable public pipeline (not yet checkpoint pushed
+at time of this paragraph). Generic model means selected only on old200gave
+182/197then191/197; actual default realMCP original200confirmed191/197. Additional
+production200is now capturing with its predeclared lock; Gold still closed.
+Both old controls remain closed/ungraded. See current journal for source/code
+receipts, resource figures, tests and remaining tasks. Never infer95.5%unseen
+accuracy from development191/200.

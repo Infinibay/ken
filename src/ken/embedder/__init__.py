@@ -167,27 +167,12 @@ def set_user_default_model(model: str | None) -> Path:
 
 
 def recommended_model() -> str:
-    """The default model a fresh project should use.
+    """Measured CPU static encoder for new projects; user overrides still win.
 
-    Priority: the user's configured default, then the static table if its
-    artifact is present, then the fastembed default.
-
-    ``STATIC_MODEL`` is the best default ken has by a distance — 97% of a Qwen
-    teacher's recall on held-out code across fourteen languages, at roughly ten
-    thousand texts a second on one CPU thread and with no extra dependency — and
-    since it ships inside the wheel the middle step normally succeeds. The
-    condition is kept anyway: the table is a 23 MB data file, and an install
-    that stripped it (a repackager, a partial checkout, a vendored subset)
-    should quietly fall back rather than fail on a missing path.
+    Existing project pins retain their model/dimension. Best semantic retrieval
+    prepares its own source views rather than mixing incompatible legacy vectors.
     """
-    configured = get_user_default_model()
-    if configured:
-        return configured
-    from ken.embedder.static_head import artifact_available
-
-    if artifact_available(STATIC_MODEL):
-        return STATIC_MODEL
-    return RECOMMENDED_MODEL
+    return get_user_default_model() or "minishlab/potion-code-16M-v2"
 
 
 class Embedder(Protocol):

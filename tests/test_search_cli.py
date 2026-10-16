@@ -540,7 +540,7 @@ def test_search_files_cli_prints_hits(monkeypatch, capsys, tmp_path):
     root = _project(tmp_path)
     monkeypatch.setattr("ken.search.get_embedder", lambda: FakeEmbedder())
 
-    rc = main(["search-files", "--path", str(root), "parser"])
+    rc = main(["search-files", "--path", str(root), "--response-format", "legacy", "parser"])
 
     assert rc == 0
     assert "src/parser.py" in capsys.readouterr().out
@@ -550,7 +550,7 @@ def test_search_symbols_cli_prints_json(monkeypatch, capsys, tmp_path):
     root = _project(tmp_path)
     monkeypatch.setattr("ken.search.get_embedder", lambda: FakeEmbedder())
 
-    rc = main(["search-symbols", "--path", str(root), "--json", "symbol"])
+    rc = main(["search-symbols", "--path", str(root), "--response-format", "legacy", "--json", "symbol"])
 
     assert rc == 0
     assert '"qualname": "parse_symbol"' in capsys.readouterr().out
