@@ -46,30 +46,16 @@ EMBEDDING_DIM = 384
 #
 # LEGACY_MODEL is what ken shipped as the default before multilingual
 # support: an English-only model that collapses on non-English prompts.
-# RECOMMENDED_MODEL is the current default for *new* projects — a
-# multilingual model (50+ languages) that is a true fastembed drop-in:
-# same 384 dims as the legacy default (the DB does not grow) and faster.
+# RECOMMENDED_MODEL remains an explicitly selectable multilingual fastembed
+# option. New projects default to the measured Model2Vec code table; existing
+# projects retain their stored model/dimension until explicitly reembedded.
 LEGACY_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-# The built-in recommendation. A user can override it for *new* projects with
-# `ken default-model <name>` (stored in the user config); see recommended_model().
 RECOMMENDED_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+POTION_MODEL = "minishlab/potion-code-16M-v2"
 
-# The fitted static table (see ``ken.embedder.static_head``). Preferred over
-# RECOMMENDED_MODEL for new projects whenever its artifact is present: it
-# encodes orders of magnitude faster, adds no dependency, and on 4 351 held-out
-# queries across fourteen languages it reaches recall@10 0.708 against the Qwen
-# teacher's 0.728 — 97% of a model that is fifty times its size. It is not
-# unconditional only because the table is a file that has to get onto the
-# machine somehow; see ``recommended_model``.
-#
-# The version is in the name because the table *is* the model, and the two
-# versions differ in what they were shown rather than in how they work. v1 was
-# fitted on ~13 000 texts from one workspace: it scored 0.627 on the in-domain
-# fixture set that selected it and 0.281 on held-out code, because 21% of the
-# tokens there had no row of their own and collapsed into 256 shared hash
-# buckets. v2 is fitted on 964 475 texts balanced across sixteen languages and
-# leaves 1.6% uncovered. A cached v1 is not upgraded in place; it is simply no
-# longer the name ken looks for.
+# Keep the earlier bundled fitted table available for explicit profiles and
+# existing pins. Its historical benchmark is separate from requested-piece
+# identity measured by the complete default search pipeline.
 STATIC_MODEL = "ken/static-qwen3-r512-v2"
 
 META_EMBED_MODEL = "embed_model"
@@ -172,7 +158,7 @@ def recommended_model() -> str:
     Existing project pins retain their model/dimension. Best semantic retrieval
     prepares its own source views rather than mixing incompatible legacy vectors.
     """
-    return get_user_default_model() or "minishlab/potion-code-16M-v2"
+    return get_user_default_model() or POTION_MODEL
 
 
 class Embedder(Protocol):
@@ -217,11 +203,11 @@ STATIC_PREFIX = "ken/static-"
 
 def is_static_model(model: str) -> bool:
     """Whether *model* is a static table rather than a network to run."""
-    return model.startswith(STATIC_PREFIX) or model == "minishlab/potion-code-16M-v2"
+    return model.startswith(STATIC_PREFIX) or model == POTION_MODEL
 
 
 def _build_backend(model: str) -> Embedder:
-    if model == "minishlab/potion-code-16M-v2":
+    if model == POTION_MODEL:
         from ken.embedder.model2vec_backend import Model2VecEmbedder, potion_assets
         return Model2VecEmbedder(potion_assets())
     if is_static_model(model):

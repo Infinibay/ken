@@ -110,3 +110,59 @@ https://onnxruntime.ai/docs/execution-providers/CoreML-ExecutionProvider.html.
 4.Fix stale CLI default-model --clear label/model listing comments to report the
 actual recommended Potion; recommendation itself is already correct. Do not alter
 ranking policy while the independent capture is running.
+
+## Independent validation result — final override, 16 October 2026
+
+All three arms closed before any private labels were opened. The independent
+curator graded once after a second scorer review and final closure preflight.
+This supersedes every earlier statement that the additional200 is ungraded.
+
+| Arm | Top1 /200 | Recall@10 /200 |
+| --- | ---: | ---: |
+| Frozen CPU132 baseline | 170 (85%) | 197 (98.5%) |
+| Frozen CPU134 optimized | 170 (85%) | 197 (98.5%) |
+| Actual public default145 | **177 (88.5%)** | **198 (99%)** |
+
+The public default **fails the requested90%** on this independent cohort.
+Original exposed development remains191/200(95.5%),197/200(98.5%); it must not be
+reported as unseen accuracy. Production macro-repository top1 is89.6143%.
+Type top1/top10, denominator50 each: class45/50, symbol38/48,
+module46/50, file48/50. EN109/120, ES68/80; behavior140/160, lookup37/40.
+Query-level Wilson95% interval for177/200: [.833352831,.922136268]; no population
+or unseen-repository guarantee. All cohorts use the same8repositories.
+
+CPU production p502536.035ms,p953736.551ms,max4528.116ms; process peak
+1941946368bytes(1.809GiB). Per-query child CPU is unavailable; process-total CPU
+1411229.685ms includes setup,warmup and sampled compact calls. Do not compare it
+as per-query CPU. CPU134 p502491.546ms,p953788.345ms,peak1930936320bytes.
+
+Receipts in research/output/development/public-default-v145-additional:
+- scoring-lock.json SHA c155b4bfbe7cf6cc9ab2d5243ba8700f68c92286946f5d5ea554f75995724cc6
+- independent-grade/summary.json SHA 274ae2aaf4d3b8ef2aed17fc22244f1eae77d5c500336d76617d196d9cc98997
+- independent-grade/EXECUTION-RECEIPT.json SHA ff825d91350e045729537f923b16e486c7477b0f2f974989725c8f76690f1d04
+Corrected scorer review fd73e4e31ec345ffc438f829990f07b67c1cd2f81e2c0f0ab6583d62b3878536;
+final preflight review b4a2ee8343ec0938501b5404ad2496d54f6f468bbe4f00ddd0ca4bcb7cdb2be5.
+The implementer received aggregates only, not per-case labels or failure IDs.
+The cohort is consumed feedback from this point; do not tune and call it fresh.
+
+Next controlled work: diagnose symbol ranking on exposed development, curate
+200 new exposed symbol questions, and independently curate a fresh balanced200
+acceptance set. Before curation, source-file partition was fixed as first byte
+of SHA256(UTF8(repo_id+'\\0'+relative_POSIX_path)): development<128, reserve>=128.
+Both exclude175original primary files and200consumed primary files using the
+same opaque HMAC inventory (union375, no overlap), SHA
+eb3620928d327514091dccbb07699c7ad33775bcd46ba7a0bad6b467d0667724.
+No acceptance threshold, reference or denominator has been reduced.
+
+Published main ef7f0ef9562a7e7b31ddf451d17b27866acc1621 contains the complete
+portable default. Own remaining label cleanup does not alter model values.
+Actual all12MCP plus7CLI examples were regenerated in
+../compact-output-2026-10-16-best-default/EXAMPLES.md (from validation root).
+Original checkout still contains foreign uncommitted work and is not updated;
+read-only three-way merge candidates and full dirty backups are in
+/Users/andres/Projects/ken/output/local-main-update-2026-10-16. Never reset/stash.
+
+A source-free CoreML probe with the measured dynamic Ettin graph failed even
+outside the filesystem sandbox: unbounded dimensions/shape compilation error.
+The measured default remains CPU-only. Provider availability does not establish
+usable acceleration. No optional-GPU speedup or automatic selection is claimed.

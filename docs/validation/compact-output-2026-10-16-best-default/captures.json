@@ -1,0 +1,217 @@
+[
+  {
+    "transport": "MCP",
+    "tool": "ken_find",
+    "arguments": {
+      "query": "Reader.read_value",
+      "scope": "symbols"
+    },
+    "output": "reader.py:6-8 :: Reader.read_value\n6 |     def read_value(self, key):\n7 |         \"\"\"Return the stored value for a setting key.\"\"\"\n8 |         return get_value(key)"
+  },
+  {
+    "transport": "MCP",
+    "tool": "ken_read",
+    "arguments": {
+      "path": "reader.py",
+      "include": [
+        "source"
+      ],
+      "qualname": "Reader.read_value"
+    },
+    "output": "reader.py:6-8 :: Reader.read_value\n6 |     def read_value(self, key):\n7 |         \"\"\"Return the stored value for a setting key.\"\"\"\n8 |         return get_value(key)"
+  },
+  {
+    "transport": "MCP",
+    "tool": "ken_related",
+    "arguments": {
+      "target": "reader.py",
+      "relation": "neighbors"
+    },
+    "output": "reader.py\nimports:\n  settings.py:1-1\n  module: settings\n  internal: true\nimported_by:\n  tests/test_reader.py:1-1\n  language: python\n  module: reader\ntests:\n  tests/test_reader.py\n  reason: imports target; named for target\nneighbors:\n  settings.py\n  tests/test_reader.py"
+  },
+  {
+    "transport": "MCP",
+    "tool": "ken_rank",
+    "arguments": {
+      "scope": "project"
+    },
+    "output": "files: 3\nlanguages:\n  python: 3\ntop_dirs:\n  tests\n  files: 1\nlargest_symbol_files:\n  reader.py\n  symbols: 2\n  tests/test_reader.py\n  symbols: 1\n  settings.py\n  symbols: 1"
+  },
+  {
+    "transport": "MCP",
+    "tool": "ken_rule",
+    "arguments": {
+      "action": "list"
+    },
+    "output": "No results."
+  },
+  {
+    "transport": "MCP",
+    "tool": "ken_check",
+    "arguments": {},
+    "output": "run_id: 65e8f5ca3aa44ab2ab8bc3ea7b2af521\nstatus: not_applicable\nscope: project\nselection: .\ncreated_at: 2026-10-16T06:26:58.830649+00:00\nclaim: Selected source contracts only; not proof of runtime behavior or absence of all bugs."
+  },
+  {
+    "transport": "MCP",
+    "tool": "ken_who",
+    "arguments": {
+      "question": "Who reads stored application settings?"
+    },
+    "output": "status: candidates\nscore_kind: heuristic_not_probability\ncandidates:\n  reader.py:3-3 (class)\n  symbol: Reader\n  evidence: Read stored application settings.\n  verification:\n    evidence.returned_calls: unknown_candidates=1; reason=usage_inventory_open\n  settings.py:4-4 (function)\n  symbol: get_value\n  evidence: Read a stored setting.\n  verification:\n    evidence.returned_calls: unknown_candidates=1; reason=usage_inventory_open\n  settings.py:1-1 (module)\n  evidence: Store and retrieve application settings.\n  verification:\n    evidence.returned_calls: unknown_candidates=1; reason=usage_inventory_open\nverification:\n  coverage.usages: unknown_candidates=1; reason=usage_inventory_open"
+  },
+  {
+    "transport": "MCP",
+    "tool": "ken_remember",
+    "arguments": {
+      "topic": "settings-reader",
+      "content": "Reader.read_value delegates lookup to settings.get_value.",
+      "anchor_file": "reader.py"
+    },
+    "output": "topic: settings-reader\nanchors: 1"
+  },
+  {
+    "transport": "MCP",
+    "tool": "ken_recall",
+    "arguments": {
+      "topic": "settings-reader",
+      "detail": "answer"
+    },
+    "output": "memories:\n  topic: settings-reader\n  conclusion: Reader.read_value delegates lookup to settings.get_value.\n  conclusion_complete: true\n  kind: note\n  validity:\n    state: untracked\n  expand:\n    topic: settings-reader\n    detail: full\n  reuse: review_inputs_before_reusing\nomitted: 0\ndetail: answer\nvalidity_scope: Declared inputs only; the conclusion and assumptions are not independently proved."
+  },
+  {
+    "transport": "MCP",
+    "tool": "ken_reason_record",
+    "arguments": {
+      "source": "demo-doc",
+      "facts": [
+        {
+          "predicate": "reads",
+          "subject": "Reader",
+          "object": "settings"
+        }
+      ],
+      "evidence": "reader.py class docstring"
+    },
+    "output": "changed: true\nrevision: 1\nupdate: append_delta"
+  },
+  {
+    "transport": "MCP",
+    "tool": "ken_reason",
+    "arguments": {
+      "question": "Who reads settings?",
+      "goal": {
+        "predicate": "reads",
+        "subject": "?answer",
+        "object": "settings"
+      }
+    },
+    "output": "status: supported\nanswers:\n  fact:\n    predicate: reads\n    subject: Reader\n    object: settings\n    negative: false\n    scope: present\n  binding:\n    ?answer: Reader\n  premise_sources:\n    demo-doc\nanswers_truncated: false\ncontext: main\nrevision: 1\nworld: base\nquery:\n  predicate: reads\n  subject: ?answer\n  object: settings\n  negative: false\n  scope: present\nsemantics: Conditional on supplied premises, interpretations and scope; not verified world truth.\nsources:\n  demo-doc: reader.py class docstring\nanswer: Hay apoyo en las premisas para la consulta.\nquestion: Who reads settings?\nsearch:\n  pending: 0\n  complete: true\n  resumable: false"
+  },
+  {
+    "transport": "MCP",
+    "tool": "ken_calculate",
+    "arguments": {
+      "expression": "(1/3 + 1/6) * 6"
+    },
+    "output": "status: calculated\nexpression: (1/3 + 1/6) * 6\nexact: 3\nmethod: rational-arithmetic/1\nstored_as_premise: false"
+  },
+  {
+    "transport": "CLI",
+    "argv": [
+      "search-symbols",
+      "Reader.read_value",
+      "--path",
+      "/private/tmp/ken-output-demo-_2xptiit"
+    ],
+    "exit_code": 0,
+    "output": "reader.py:6-8 :: Reader.read_value\n6 |     def read_value(self, key):\n7 |         \"\"\"Return the stored value for a setting key.\"\"\"\n8 |         return get_value(key)\n",
+    "stderr": ""
+  },
+  {
+    "transport": "CLI",
+    "argv": [
+      "search-files",
+      "reader",
+      "--path",
+      "/private/tmp/ken-output-demo-_2xptiit"
+    ],
+    "exit_code": 0,
+    "output": "reader.py:1-2 (file) [partial]\n1 | from settings import get_value\n2 | \n@8-8\n8 |         return get_value(key)\n@3-5\n3 | class Reader:\n4 |     \"\"\"Read stored application settings.\"\"\"\n5 | \n",
+    "stderr": ""
+  },
+  {
+    "transport": "CLI",
+    "argv": [
+      "status",
+      "/private/tmp/ken-output-demo-_2xptiit"
+    ],
+    "exit_code": 0,
+    "output": "project_root  : /private/tmp/ken-output-demo-_2xptiit\nproject_id    : compact-output-demo\ndb            : /private/tmp/ken-output-demo-_2xptiit/.ken/ken.db  (4KiB)\nfiles indexed : 3 (3 embedded)\nsymbols       : 4 (4 embedded)\nsessions      : 0 total, 0 active, 0 scored\ncontexts      : 0 (0 prompts, 0 embedded)\ninteractions  : 0\nfindings      : 1 (1 embedded)\ndoc intents   : 4 (4 embedded)\nrank signals  : index=yes, embeddings=ready, predictive=no, findings=yes\nembedding cov : 7/7 (100.0%)\nrecommendation: submit at least one prompt through a hooked agent to seed context history\nrecommendation: let hooks run through a few real turns to build predictive history\ndaemon        : stopped\n",
+    "stderr": ""
+  },
+  {
+    "transport": "CLI",
+    "argv": [
+      "kql2",
+      "/private/tmp/ken-output-demo-_2xptiit/readers.kql",
+      "--root",
+      "/private/tmp/ken-output-demo-_2xptiit",
+      "--cache-mb",
+      "0"
+    ],
+    "exit_code": 0,
+    "output": "row 1:\n  column_1: Reader\nlanguage: kql/2\nquery: readers\ncomplete: true\ncoverage_complete: true\nunknown_candidates: 0\nresults_truncated: false\ntiming:\n  total_ms: 44.4\n  compile_ms: 9.6\n  build_ms: 16.1\n  query_ms: 0.2\n",
+    "stderr": ""
+  },
+  {
+    "transport": "CLI",
+    "argv": [
+      "structural",
+      "search",
+      "--path",
+      "/private/tmp/ken-output-demo-_2xptiit",
+      "--query",
+      "method(name: /^read_value$/) as $m;",
+      "--cache-mb",
+      "0"
+    ],
+    "exit_code": 0,
+    "output": "matches:\n  reader.py:6-6\n  bindings:\n    $m: reader.py::module/CLASS:Reader/CALLABLE:read_value@95\n  confidence: 1.0\ncount: 1\ncomplete: true\nanalysis:\n  files: 3\n  skipped: 0\n  coverage_complete: true\n  elapsed_ms: 8.902\nnote: Structural evidence consistent with an idiom; not proof of intent.\n",
+    "stderr": ""
+  },
+  {
+    "transport": "CLI",
+    "argv": [
+      "tools",
+      "--path",
+      "/private/tmp/ken-output-demo-_2xptiit",
+      "read",
+      "reader.py",
+      "--include",
+      "source",
+      "--qualname",
+      "Reader.read_value"
+    ],
+    "exit_code": 0,
+    "output": "reader.py:6-8 :: Reader.read_value\n6 |     def read_value(self, key):\n7 |         \"\"\"Return the stored value for a setting key.\"\"\"\n8 |         return get_value(key)\n",
+    "stderr": ""
+  },
+  {
+    "transport": "CLI",
+    "argv": [
+      "tools",
+      "--path",
+      "/private/tmp/ken-output-demo-_2xptiit",
+      "--json",
+      "read",
+      "reader.py",
+      "--include",
+      "source",
+      "--qualname",
+      "Reader.read_value"
+    ],
+    "exit_code": 0,
+    "output": "{\n  \"ok\": true,\n  \"path\": \"reader.py\",\n  \"source\": {\n    \"ok\": true,\n    \"path\": \"reader.py\",\n    \"snippets\": [\n      {\n        \"label\": \"Reader.read_value\",\n        \"line\": 6,\n        \"line_end\": 8,\n        \"code\": \"6:     def read_value(self, key):\\n7:         \\\"\\\"\\\"Return the stored value for a setting key.\\\"\\\"\\\"\\n8:         return get_value(key)\"\n      }\n    ]\n  }\n}\n",
+    "stderr": ""
+  }
+]

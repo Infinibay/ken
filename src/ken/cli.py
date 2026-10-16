@@ -190,7 +190,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p_search_files.add_argument(
         "--path", default=".", help="project path (default: cwd)"
     )
-    p_search_files.add_argument("-n", "--limit", type=int, default=8)
+    p_search_files.add_argument("-n", "--limit", type=int, default=10)
     p_search_files.add_argument(
         "--json", action="store_true", help="print raw JSON response"
     )
@@ -1292,7 +1292,7 @@ def _default_model_cli(*, model: str | None, clear: bool) -> int:
     if clear:
         path = set_user_default_model(None)
         print("cleared; new projects will use ken's built-in default:")
-        print(f"  {RECOMMENDED_MODEL}")
+        print(f"  {recommended_model()}")
         print(f"(config: {path})")
         return 0
 
@@ -1396,6 +1396,12 @@ def _models_cli(*, as_json: bool) -> int:
     print(f"  {'dim':>4} {'MB':>6}  model")
     for name, dim, mb, desc in _TORCH_MODELS:
         print(f"  {dim:>4} {mb:>6}  {name}   [{desc}]")
+
+    from ken.embedder import POTION_MODEL
+    tag = "   ← default" if default == POTION_MODEL else ""
+    print("\nModel2Vec static code embeddings — CPU, public pinned assets:\n")
+    print(f"  {'dim':>4} {'MB':>6}  model")
+    print(f"  {256:>4} {32:>6}  {POTION_MODEL}{tag}")
 
     # The static table is its own category: no network to run, no extra
     # dependency, and it is only usable when its artifact is on the machine —
