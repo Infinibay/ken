@@ -12,6 +12,7 @@ import resource
 import sqlite3
 import sys
 import time
+from contextlib import nullcontext
 from pathlib import Path
 
 import numpy as np
@@ -78,7 +79,7 @@ class PreparedKen:
         self.catalog=SourceCatalog(root,owner_passages(self.conn))
         self.indexed_files=self.conn.execute('SELECT COUNT(*) FROM ci_files').fetchone()[0]
 
-    def pool(self,case):
+    def pool(self,case,*,trace=None):
         request=SearchRequest(case['query'],target='file' if case['target_kind'] in {'module','file'}
                               else 'symbol',limit=20,max_chars=12000)
         with retrieval_snapshot(self.conn):
@@ -86,8 +87,9 @@ class PreparedKen:
             candidates,expanded=retrieve_contextual(self.conn,self.root,request,self.profile,
                 runtime=self.runtime,expand_query=self.ranker.prepare_query,
                 encoders={'identity':self.words,'behavior':self.words})
+            diagnostics={'trace':trace} if trace is not None else {}
             matches=self.ranker.rank(request,candidates,owner_descriptions(self.conn,candidates),
-                expanded_query=expanded,evidence_version=3)
+                expanded_query=expanded,evidence_version=3,**diagnostics)
         cards=piece_pool(matches,case['target_kind'],expanded,self.catalog)
         exact=len(candidates)==1 and bool(candidates[0].signals.get('exact'))
         return cards,expanded,exact,len(candidates)
@@ -99,6 +101,7 @@ def main():
         p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--model',type=Path);p.add_argument('--expected-pools',type=Path)
     p.add_argument('--local-call-evidence',action='store_true')
+    p.add_argument('--capture-ranking',action='store_true')
     args=p.parse_args();args.output.mkdir(parents=True,exist_ok=False)
     # Controller and direct callers both verify the ALL-source gate before requests.
     from verifiable_guard import verify_source_preparation
@@ -110,7 +113,12 @@ def main():
     if Path(prepared_roots[repo]).resolve()!=args.root.resolve():raise ValueError('root differs from preparation')
     receipt=verify_frozen_source(engine)
     expected={r['id']:r for r in map(json.loads,args.expected_pools.read_text().splitlines())} if args.expected_pools else None
-    if bool(args.model)!=bool(expected):raise ValueError('neural arm requires sealed baseline pools')
+    if args.capture_ranking and args.model:raise ValueError('ranking trace is a native-only diagnostic')
+    if bool(args.model or args.capture_ranking)!=bool(expected):
+        raise ValueError('neural/diagnostic arm requires sealed baseline pools')
+    if args.capture_ranking:
+        from ken.retrieval.ranking_trace import RankingTrace
+        from ranking_diagnostics import piece_order
     started=time.perf_counter()
     runtime=PreparedKen(args.workspace,repo,args.root,args.index)
     dependencies=LocalCallEvidence(runtime.catalog) if args.local_call_evidence else None
@@ -137,10 +145,13 @@ def main():
         'machine':platform.machine(),'platform':platform.platform(),'python':sys.version,
         'profile':runtime.profile.to_dict(),'timings':[]}
     try:
-        with (args.output/'answers.jsonl').open('w') as answers,(args.output/'pools.jsonl').open('w') as pools:
+        with ((args.output/'answers.jsonl').open('w') as answers,
+              (args.output/'pools.jsonl').open('w') as pools,
+              ((args.output/'ranking-traces.jsonl').open('w') if args.capture_ranking else nullcontext()) as trace_output):
             for case in cases:
                 started=time.perf_counter()
-                cards,expanded,exact,count=runtime.pool(case)
+                trace=RankingTrace(request_id=case['id']) if args.capture_ranking else None
+                cards,expanded,exact,count=runtime.pool(case,trace=trace)
                 pool_ms=(time.perf_counter()-started)*1000
                 pool_hash=digest({'cards':cards,'expanded':expanded,'exact':exact})
                 if expected and expected[case['id']]['pool_sha256']!=pool_hash:
@@ -168,12 +179,25 @@ def main():
                 pools.write(canonical({'id':case['id'],'pool_sha256':pool_hash,'expanded':expanded,
                     'exact':exact,'cards':cards} if not model else {'id':case['id'],
                     'pool_sha256':pool_hash,'order':order,'scores':scores})+'\n');pools.flush()
+                if trace_output is not None:
+                    before_export=time.perf_counter()
+                    diagnostic=trace.to_dict(include_query=True)
+                    pieces=piece_order(diagnostic['owners'],case['target_kind'],runtime.catalog)
+                    if [p['unit'] for p in pieces[:20]]!=[c['unit'] for c in cards]:
+                        raise ValueError('observed owner grouping differs from actual returned pieces')
+                    diagnostic.update(id=case['id'],target_kind=case['target_kind'],
+                                      pool_sha256=pool_hash,pieces=pieces)
+                    trace_output.write(canonical(diagnostic)+'\n');trace_output.flush()
+                    record['timings'][-1]['trace_export_ms']=(time.perf_counter()-before_export)*1000
         record['peak_rss_native']=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         record['rss_unit']='bytes' if sys.platform=='darwin' else 'KiB'
         record['heavy_imports']=[m for m in ('torch','transformers','sentence_transformers') if m in sys.modules]
         if record['heavy_imports'] or verify_frozen_source(engine)!=receipt:raise ValueError('runtime/source policy failed')
         if any(sha(path)!=value for path,value in runtime.view_receipts.items()):raise ValueError('source views changed')
         record['answers_sha256']=sha(args.output/'answers.jsonl');record['pools_sha256']=sha(args.output/'pools.jsonl')
+        if args.capture_ranking:
+            record['ranking_trace_sha256']=sha(args.output/'ranking-traces.jsonl')
+            record['ranking_trace_scope']='Actual native feature matrix/order; full piece projection; no Gold; export excluded from query ms'
         (args.output/'performance.json').write_text(json.dumps(record,indent=2))
         print(json.dumps({'repo':repo,'queries':len(cases),'peak_rss_native':record['peak_rss_native'],
             'p50_ms':float(np.median([x['ms'] for x in record['timings']]))}),flush=True)

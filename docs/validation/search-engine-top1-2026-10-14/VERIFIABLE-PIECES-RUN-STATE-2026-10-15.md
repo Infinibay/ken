@@ -1,20 +1,26 @@
 # Estado actual — piezas verificables
 
-ActualizadoUTC: 2026-10-15T23:25:00+00:00.
+ActualizadoUTC: 2026-10-16T00:05:00+00:00.
 
-Último resultado conjunto cerrado: v114100/200=50%, identidad168/200=84%,
+Último resultado conjunto cerrado: v116102/200=51%, identidad168/200=84%,
 Recall10197/200=98,5%. v11193/200=46,5%;v10989/200=44,5%;v10580/200=40%;v10276/200=38%.
 Control de identidad, NO conjunto:68M FP32 v110RRF50 175/200=87,5%; v112prefijo3
 raw175/200=87,5%,RRF50 174/200=87%, conservando todos los10candidatos.
-CPU completa v114 mediana1,150s/p952,481s/pico1,536GB; sin reranker neuronal.
+CPU completa v116 mediana1,219s/p952,363s/pico1,531GB; sin reranker neuronal.
 CPU v112 sólo reranker mediana0,962s/p950,991s/pico0,724GB; no total Ken.
 
-Checkpointf0e18240c3292c882e59cc9155fc0331c14f35c7 verificado en GitHubmain.
-48tests enfocados v114 pasan; mutaciones de visibilidad/atribución detectadas y restauradas.
-v114gana8/pierde1 respecto av111,29tarjetas nuevas revisadas independientemente;
-ver VERIFIABLE-LEXICAL-SCOPES-V114.md, informe V105-V112 y MANIFEST de respaldo.
-Control LateOn-Code-edge17M FP32 v115 en curso sobre mismos200/top10 v102;
-todavía sin porcentaje cerrado ni cambio de modelo/default.
+Checkpointf0e18240c3292c882e59cc9155fc0331c14f35c7 verificado en GitHubmain;
+8fcd2d0 preserva v114 localmente, pendiente de push junto al nuevo diagnóstico.
+v116gana2/pierde0 respecto av114;22tarjetas nuevas revisadas independientemente,
+178opiniones reutilizadas sólo con entrada visible idéntica. Ver VERIFIABLE-SCOPE-COMPOSITION-V116.md.
+Diagnóstico nativo v120:200trazas cerradas y101764scores+orden reproducidos;
+29/32errores top1 tienen la pieza correcta en top10. Exportación limpia de Git más
+cambios propios; los8archivos de trazas coinciden byte a byte con v118.267tests
+retrieval+36enfocados pasan y mypy337fuentes limpio. Ver NATIVE-RANKING-DIAGNOSTICS-V120.md.
+Control LateOn-Code-edge17M FP32 v115 cerrado:raw149/200=74,5%,RRF50 168/200=84%,
+RRF25 169/200=84,5% (4ganancias/3pérdidas,intervalocluster[-.018519,.035299]).
+Sólo reranker:mediana1,688s/p955,670s/pico0,345GB. No mejora confirmada.
+Nuevos ensayos neuronales pausados por pedido del usuario.150M preparado sin ejecutar.
 No release, tags ni cambios de default. Original checkout sucio sigue intacto.
 Privada v104:200casos curados, nunca abiertos por implementador; no ejecutar hasta
 congelar una nueva versión. El objetivo90% conjunto sigue pendiente.
