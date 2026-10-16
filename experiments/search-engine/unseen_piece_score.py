@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import numpy as np
+import verifiable_grading
 from verifiable_grading import identity_hit, wilson, cluster_difference
 
 
@@ -33,6 +34,15 @@ def aggregate(outcomes):
         for name, key in (('top1', 'identity'), ('recall10', 'recall10'))}}
 
 
+def validate_returned_units(answer):
+    """Public answer-shape invariants require no reference access."""
+    card, units = answer['card'], answer['units']
+    if len(units) > 10 or len({json.dumps(u, sort_keys=True, allow_nan=False) for u in units}) != len(units):
+        raise ValueError('top10 contains too many or duplicate pieces')
+    if card is not None and (not units or card['unit'] != units[0]):
+        raise ValueError('top1 answer disagrees with its returned order')
+
+
 def evaluate_identity(cases, answers, references):
     case_map, answer_map, gold = map(unique, (cases, answers, references))
     if not case_map or set(case_map) != set(answer_map) or set(case_map) != set(gold):
@@ -43,10 +53,7 @@ def evaluate_identity(cases, answers, references):
         accepted = gold[qid]['acceptable_units']
         if not accepted or any(u['target_kind'] != case['target_kind'] for u in accepted):
             raise ValueError('reference kind disagrees with the requested piece')
-        if len(units) > 10 or len({json.dumps(u, sort_keys=True) for u in units}) != len(units):
-            raise ValueError('top10 contains too many or duplicate pieces')
-        if card is not None and (not units or card['unit'] != units[0]):
-            raise ValueError('top1 answer disagrees with its returned order')
+        validate_returned_units(answer)
         outcomes.append({'id': qid, 'repo_id': case['repo_id'], 'target_kind': case['target_kind'],
             'language': case.get('language', 'unspecified'),
             'query_style': case.get('query_style', 'unspecified'),
@@ -84,6 +91,9 @@ def load_closed(path):
         memory.append(perf['peak_rss_native'] * (1 if perf['rss_unit'] == 'bytes' else 1024))
     if not answers or len(times) != len(answers):
         raise ValueError('complete answer and timing rows required')
+    timing_ids = [row['id'] for row in times]
+    if len(set(timing_ids)) != len(timing_ids) or set(timing_ids) != set(unique(answers)):
+        raise ValueError('timing rows must match every answer ID exactly')
     runtime = {'p50_ms': float(np.median([r['ms'] for r in times])),
         'p95_ms': float(np.quantile([r['ms'] for r in times], .95)),
         'max_ms': max(r['ms'] for r in times), 'peak_rss_bytes': max(memory),
@@ -102,6 +112,16 @@ def main():
     if baseline['lock_sha256'] != sha(args.lock) or candidate['lock_sha256'] != sha(args.lock):
         raise ValueError('runs do not share the prelocked evaluation')
     lock = json.loads(args.lock.read_text())
+    if lock['scorer_sha256'] != sha(__file__):
+        raise ValueError('scorer changed after lock')
+    if lock['grading_sha256'] != sha(verifiable_grading.__file__):
+        raise ValueError('grading dependency changed after lock')
+    if args.baseline.resolve() == args.candidate.resolve():
+        raise ValueError('baseline and candidate must be distinct captures')
+    for registration, role in ((baseline, 'baseline'), (candidate, 'optimized')):
+        if (registration['variant'] != role
+                or registration['variant_policy'] != lock['variants'][role]):
+            raise ValueError('capture variant differs from its predeclared role/policy')
     cases = rows(lock['public_cases'])
     if len(cases) != lock['queries']:
         raise ValueError('query count differs from lock')
@@ -109,9 +129,14 @@ def main():
         if sha(path) != expected:
             raise ValueError('prelocked public input changed')
     base_map, new_map = unique(base_answers), unique(new_answers)
-    if set(base_map) != set(new_map):
-        raise ValueError('run query sets differ')
+    case_map = unique(cases)
+    if not case_map or set(base_map) != set(case_map) or set(new_map) != set(case_map):
+        raise ValueError('both captures must contain the full public query set before Gold access')
     for qid in base_map:
+        for answer in (base_map[qid], new_map[qid]):
+            validate_returned_units(answer)
+            if any(answer[key] != case_map[qid][key] for key in ('repo_id', 'target_kind')):
+                raise ValueError('answer request metadata differs from the public query')
         if base_map[qid]['native_units'] != new_map[qid]['native_units']:
             raise ValueError('runtime optimization changed initial top10 membership/order')
         if base_map[qid]['pool_sha256'] != new_map[qid]['pool_sha256']:
