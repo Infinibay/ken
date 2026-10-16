@@ -18,9 +18,13 @@ parten de v120 limpio y sólo overlays propios; no copiar el árbol sucio entero
 
 **Trampa de Git:** origin del clon propio es el checkout LOCAL, no GitHub.
 Publicar sólo con URL explícita `https://github.com/Infinibay/ken.git` y verificar
-`git ls-remote ... refs/heads/main`. Último checkpoint publicado y verificado:
-147ae3c6169a73b21e9c165ea55b226af8ef8292. Incluye documentación y valores
+`git ls-remote ... refs/heads/main`. Checkpoint publicado y verificado antes
+del cierre v132:
+b28438bf881f6d4b8f94a8b4c865b6a8736daa01. Incluye documentación y valores
 completos del scoring nativo y del modelo de piezas v126. No tags/release.
+El cierre v132 añade cd5c59e (fusión verificada),15b9214 (replay y respaldo)
+y el commit de documentación que contiene este archivo; comprobar GitHub main
+antes de afirmar publicado un nuevo checkpoint.
 
 ## Cambios nuevos propios en curso
 
@@ -107,11 +111,26 @@ lambda2,learning_rate.08,truncation5,un hilo,seed42. No hubo HPO.
   Productor `experiments/search-engine/piece_complete_run.py`; snapshot
   `output/frozen/piece-complete-cpu-v132`, recibo
   3121eef43c19283275f06f0a7703446e31a02630e5179f14f313bcaee1503a18.
-  Salida `output/development/piece-complete-cpu-v132`. Gold sólo después de que
-  el estado sea `ALL200 complete CPU outputs closed without Gold`.
+  Salida `output/development/piece-complete-cpu-v132`, ya cerrada ALL200 sin Gold;
+  luego informe `piece-complete-cpu-report-v132`:180/200,197/200. Mediana4.162s,
+  p955.334s,pico1.976GB. Confirmados los200 órdenes de la simulación. Ver
+  COMPLETE-CPU-V132.md y fusion-v132/INDEX.md para los20 fallos y todos los valores.
 
-El modelo68M es el ya medido; no se buscó otro. No afirmar90% real ni sus costes
-hasta cerrar y verificar ese replay. Modelo150M sigue sin ejecutarse.
+El modelo68M es el ya medido; no se buscó otro.90% confirmado sólo en estas200
+consultas de desarrollo, con repo excluido y fuente validada. No afirmar90%
+privado ni rendimiento resuelto: el p95 por100 archivos supera1s en attrs,
+boltons,commons-csv,packaging. Modelo150M sigue sin ejecutarse.
+
+Siguiente trabajo: perfilar y reducir el coste del pipeline conservando estos
+órdenes y comprobar de nuevo ALL200. La inferencia68M domina (mediana3.083s),
+frente a1.035s de etapa nativa y0.098s de piezas. No sumar percentiles ni cambiar
+modelos/criterios para disfrazar una mejora.294 tests retrieval y mypy339 fuentes
+pasaron después del replay; el nuevo helper RRF tiene12 pruebas y una mutación
+de no finitos detectada por las tres pruebas correspondientes.
+Respaldo:output/checkpoints/piece-controls-v132;135 archivos en127 gzip,
+2627881 bytes. MANIFEST SHA1e94c7d5737ce7e543e93fe1cb461921592e7b153c204bc297a000193e0dde76;
+todos los payloads se descomprimieron y verificaron. Complementa los respaldos
+v120 y v126; no duplica sus grandes trazas ni incluye payload de reserva privada.
 
 ## Hipótesis investigada, sin mejora observada
 

@@ -1,5 +1,13 @@
 # Estado actual — piezas verificables
 
+v132 confirma **180/200=90% de pieza correcta top1** y197/200 top10 en las mismas
+consultas de desarrollo. Búsqueda nueva +bosque de piezas v126 +inferencia68M FP32
+nueva +RRF60 peso0.5; todo CPU. Tipos:47/45/45/43 de50. Mediana4.162s,p955.334s,
+pico1.976GB. La referencia1s/100 archivos todavía se supera en cuatro repositorios
+pequeños; no es default público, aceptación privada ni rendimiento resuelto.
+Recibos, causas y todos los valores están en scoring-internals/COMPLETE-CPU-V132.md
+y fusion-v132/INDEX.md.294 tests retrieval y mypy339 fuentes pasan.
+
 Candidato nuevo v126:175/200=87,5% de identidad top1,197/200=98,5% top10;
 CV excluyendo el repositorio evaluado. Siete ganancias y cero pérdidas frente al
 nativo168. No es default publicado ni aceptación privada; falta integración y
@@ -14,7 +22,7 @@ Los protocolos históricos sellados conservan su definición conjunta. Ver
 RANKING-CAUSES-V121.md para las causas observadas y el control de una sola señal:
 igualarrrf_rank gana4/pierde15 y baja a157/200; no se adopta.
 
-ActualizadoUTC: 2026-10-16T00:05:00+00:00.
+ActualizadoUTC: 2026-10-16T01:24:06+00:00.
 
 Último resultado conjunto cerrado: v116102/200=51%, identidad168/200=84%,
 Recall10197/200=98,5%. v11193/200=46,5%;v10989/200=44,5%;v10580/200=40%;v10276/200=38%.

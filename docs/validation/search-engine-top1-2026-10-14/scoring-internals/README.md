@@ -24,15 +24,14 @@ como condición del acierto. Esa suficiencia se informa aparte. Se conservan las
 | v131 | Aprender un residuo sobre native_to_best | 173/200, 86,5% | 197/200 | Rechazado; no usar sus JSON como modelos v126 |
 | v129 | Combinar v126 con los scores históricos68M, primeros3 | 177/200, 88,5% | 197/200 | Simulación de órdenes; no inferencia nueva |
 | v130 | Misma combinación, primeros10 | 180/200, 90% | 197/200 | Simulación; requiere replay completo para confirmar |
+| v132 | Repetir la búsqueda y la inferencia completas en CPU | 180/200, 90% | 197/200 | Confirmado en ALL200; p95 total5,334s, pico1,976GB |
 
-v126 es un candidato experimental, **no el default publicado ni una certificación
-privada**. Faltan cinco aciertos netos para180/200. Todavía falta integrar y medir
-la nueva etapa en la búsqueda completa. No se equipara el coste de esa etapa con
-la latencia total. Los controles Ettin68M también llegaron históricamente a175/200,
-pero son otro motor y otras mediciones: v126 no usa un cross-encoder de reranking.
-La simulación v130 alcanza el objetivo numérico combinando las mejoras de Ken
-con el reranker existente; no autoriza declarar que la búsqueda completa ya lo
-alcanzó. v132 está registrado para comprobarlo con inferencia nueva en CPU.
+v126 por sí solo llega a175/200; v132 confirma180/200 combinándolo con el68M
+existente y la fusión fija. Ambos son candidatos experimentales, **no el default
+publicado ni una certificación privada**. El tiempo por100 archivos todavía
+supera la referencia del usuario en cuatro repositorios pequeños. Ver el
+[resultado completo, costes y límites](COMPLETE-CPU-V132.md). No equiparar la
+inferencia sola con la latencia total ni el desarrollo expuesto con aceptación.
 
 ## Fusión con el reranker: fórmula y límites
 
@@ -64,8 +63,9 @@ bosque v126 real y valida su orden contra el control cerrado, y vuelve a
 ejecutar ONNX68M con CPUExecutionProvider. Incluye esas comprobaciones, la
 proyección de la traza, el modelo y la serialización en el tiempo por consulta.
 No sustituye resultados por las referencias: sólo compara después de producirlos.
-Gold no se abre hasta cerrar ALL200. Los resultados, si se confirman, seguirán
-siendo desarrollo expuesto; no aceptación privada ni default de la herramienta.
+Gold no se abrió hasta cerrar ALL200. Confirmó180/200 y los mismos órdenes que
+la simulación, con inferencia nueva. Sigue siendo desarrollo expuesto; no
+aceptación privada ni default de la herramienta.
 
 ## Recorrido del ranking nativo
 
@@ -230,7 +230,11 @@ v116 nativo completo preparado: mediana1218.642ms, p952362.571ms,
 máximo3603.967ms, pico1531346944bytes. La nueva extracción de señales de piezas,
 medida separadamente: mediana80.280ms, p95266.594ms y pico394657792bytes en ese
 proceso de extracción; **no sumar p95 ni picos** para afirmar el coste completo.
-Falta el replay completo del nuevo pipeline con modelo cargado y fuente validada.
+Esos tiempos de extracción no eran el coste completo. El replay con fuente
+validada quedó cubierto para la composición v132:mediana4162.126ms,
+p955334.297ms,pico1975648256bytes. La referencia de1s/100 archivos no se cumple
+en los cuatro repositorios pequeños; la tabla y las mediciones completas están
+en COMPLETE-CPU-V132.md. No declarar resueltos los recursos por alcanzar90%.
 
 Todo esto es desarrollo expuesto. Se conservan las reservas privadas cerradas,
 los criterios vigentes, los recibos y las pérdidas de cada control. Ninguna cifra
