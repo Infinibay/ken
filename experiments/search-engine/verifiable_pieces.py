@@ -208,6 +208,21 @@ class EvidenceCardBuilder:
     @property
     def remaining_excerpts(self): return MAX_EXCERPTS-len(self.card['excerpts'])
 
+    def scope(self,key):
+        """Append a complete attributed scope atomically when capacity permits."""
+        complete=_complete_scope_card(key,self.card,self.catalog)
+        if complete is None:return False
+        excerpt=complete['excerpts'][0]
+        coordinates={(key.path,n) for n in range(excerpt['start_line'],excerpt['end_line']+1)}
+        if coordinates<=self.used:return True
+        if (coordinates&self.used or len(coordinates)>self.remaining_lines
+                or not self.remaining_excerpts):return False
+        combined={**self.card,'excerpts':[*self.card['excerpts'],excerpt]}
+        if len(canonical(combined))>MAX_CHARS:return False
+        self.card['excerpts'].append(excerpt)
+        self.used.update(coordinates)
+        return True
+
     def add(self,role,proposal,*,dependency=None):
         if proposal is None: return
         key,a,b=proposal
@@ -236,6 +251,7 @@ class EvidenceCardBuilder:
 
     def definition(self,key,query,*,dependency=None):
         """Prefer complete ownership; spend remaining capacity on a long body."""
+        if dependency is None and self.scope(key):return
         ranges=self.catalog.owned_ranges(key)
         needed=sum((key.path,n) not in self.used for a,b in ranges for n in range(a,b+1))
         if needed<=self.remaining_lines and len(ranges)<=self.remaining_excerpts:
@@ -274,12 +290,6 @@ def _card(primary,kind,supporting,query,catalog):
     rest=sorted((k for k in members if k not in preferred),
                 key=lambda k:(-_source_fit(catalog,k,query),entity_id(k)))
     ranked=preferred+rest
-    if kind in {'module','file'} and ranked:
-        enclosing=catalog.enclosing_callable(ranked[0])
-        for candidate in (enclosing,ranked[0]):
-            if candidate is not None:
-                complete=_complete_scope_card(candidate,card,catalog)
-                if complete is not None:return complete
     builder=EvidenceCardBuilder(card,catalog)
     if isinstance(primary,EntityKey):
         first=min(catalog.owners[primary],key=lambda p:p.span.start_line)
@@ -289,6 +299,12 @@ def _card(primary,kind,supporting,query,catalog):
         builder.add('declaration',(primary,a,b))
     selected=[]
     for key in ranked:
+        if kind in {'module','file'}:
+            enclosing=catalog.enclosing_callable(key)
+            if enclosing is not None and _complete_scope_card(enclosing,card,catalog) is not None:
+                key=enclosing
+            if any(key==chosen or catalog.encloses(chosen,key) or catalog.encloses(key,chosen)
+                   for chosen in selected):continue
         # Primary declaration already shown; child implementation has independent provenance.
         if kind=='class' and key==primary and len(ranked)>1: continue
         selected.append(key)

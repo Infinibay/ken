@@ -36,7 +36,8 @@ def main():
         'verifiable_report.py','test_verifiable_grading.py','test_verifiable_owned_definitions.py',
         'test_verifiable_evidence_budget.py','verifiable_dependencies.py',
         'test_verifiable_dependencies.py','test_verifiable_scope_evidence.py',
-        'verifiable-lexical-scope-v114.md')]
+        'verifiable-lexical-scope-v114.md','test_verifiable_scope_composition.py',
+        'verifiable-scope-composition-v116.md')]
     source_files += [w/'output/models/ettin-all-onnx-v98'/size/'assembly.json'
                      for size in ('17m','32m','68m')]
     source_files += [w/'output/analysis/verifiable-pieces-catalog-v98/receipt.json',
