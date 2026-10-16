@@ -87,3 +87,30 @@ archive and independent reference/scorer review are recorded in
 [checkpoint.json](checkpoint.json). It preserves source patches, producer bytes,
 closures, all400actual responses/resources, projection controls and initial
 failures. Private acceptance reference payloads are excluded.
+
+
+Installed defaults verified after commit11b0fd625999bc72cb613bfc94883e649e26b19e:
+the global uv-tool is a noneditable local wheel, version remains0.17.0. All421
+installed package files match the actual MCP freeze; the422nd frozen input is
+pyproject.toml, project metadata rather than an installed package file. Initial
+verifier wrongly tried to locate it inside site-packages and stopped; preserved
+initial script, corrected verifier passes without changing installed bytes.
+All72installed distributions are compatible and the71dependency versions stay
+pinned. Actual global default-model reports minishlab/potion-code-16M-v2 built-in
+with no override. Static256/context768dimensions and neural score5.957465648651123
+match earlier source-free proof; both sessions CPU, no Torch/transformers.
+
+The selected configuration remains PotionCode16Mv2 static plus CodeRankEmbed
+INT8 context/contract/implementation, local ES→EN translation, measured native
+and piece forests, Ettin68M FP32 top10/512tokens/batch1/CPU4threads and fixed RRF.
+Rejected development readouts are not enabled as defaults. Full/default output
+stays compact and numbered; JSON/debug are explicit options. Existing per-user
+overrides remain explicit choices. All CLI/MCP examples are in
+../compact-output-2026-10-16-best-default/EXAMPLES.md.
+
+Wheel25215460bytes, SHA1b79bb0e52318e373c34b9149b92820b16846e6bf0b3dadb88d3d16ec8d9832c.
+Source-free runtime probe peak1132855296B is not the complete indexed-API peak.
+Main original checkout fast-forwarded with63foreign dirty tracked paths byte
+preserved, zero incoming overlap, staging empty. Receipts and verification scripts
+are adjacent. The already connected MCP process was not restarted; a newly
+started process loads the installed code. No release/tag/PyPI upload.

@@ -519,3 +519,16 @@ Archive output/checkpoints/qualified-locator-v172-v174 and checkpoint.json retai
 all400MCP responses, closures, source patch, exact replay/composition records,
 review, red/green/mutation, completed suite/types and partial interrupted runs.
 No release/tag/version bump; no private acceptance payload in archive.
+
+
+Global integration v176 closed: origin/main and original checkout11b0fd6verified;
+63foreign dirty tracked files preserved, zero overlap, empty staging. Noneditable
+global wheel11b0fd6installed with unchanged71dependency pins/72compatiblepackages;
+all421package files byte-match MCPfreeze172. Potion default/nooverride, CPU both
+sessions/noTorch and exact global qualified lookup compact/JSON verified. Source
+receipt422ndfile is pyproject.toml, not inside wheel; initial verifier assumption
+failed and corrected observer preserved, no installed bytes changed. Wheel SHA
+1b79bb0e52318e373c34b9149b92820b16846e6bf0b3dadb88d3d16ec8d9832c,25215460B.
+Source-free probe peak1132855296B is not wholeAPI peak. Receipts in qualified-source
+validation folder, actual fixture example appended to EXAMPLES. Attached oldMCP
+process not restarted; new sessions load new wheel. No release/tag/version bump.

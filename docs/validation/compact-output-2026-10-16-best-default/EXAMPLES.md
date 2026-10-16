@@ -311,3 +311,21 @@ reader.py:6-8 :: Reader.read_value
   }
 }
 ```
+
+
+## Qualified lookup: installed global CLI, source commit11b0fd6
+
+Command: `ken tools --path /private/tmp/ken-output-demo-_2xptiit find 'Locate the definition of reader::Reader.read_value.' --scope symbols`
+
+Actual default output from the noneditable local wheel:
+
+```text
+reader.py:6-8 :: Reader.read_value
+6 |     def read_value(self, key):
+7 |         """Return the stored value for a setting key."""
+8 |         return get_value(key)
+```
+
+`--output-format json` returns the same piece with source hash/extent/evidence;
+its profile is `best-exact-source-v1`, a model-free exact source lookup. This
+fixture demonstrates output and installation, not general retrieval quality.
