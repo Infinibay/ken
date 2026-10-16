@@ -135,3 +135,25 @@ def test_requested_test_noun_can_have_descriptive_modifiers(query):
 ])
 def test_modifier_recognition_does_not_turn_test_mentions_into_test_requests(query):
     assert interpret(SearchRequest(query)).purpose == 'implementation'
+
+
+@pytest.mark.parametrize('query', [
+    'Find the encoding regression that checks malformed input.',
+    'Which parser regression covers a missing closing bracket?',
+    'What regression checks failed authorization?',
+    'Localiza la prueba que conserva los tipos de excepción.',
+    'Localiza la regresión de lectura con un bloque incompleto.',
+    '¿Qué regresión comprueba una herencia en diamante?',
+])
+def test_regressions_and_spanish_locate_request_test_source(query):
+    assert interpret(SearchRequest(query)).purpose == 'tests'
+
+
+@pytest.mark.parametrize('query', [
+    'Find the function that prevents a regression in parsing.',
+    'Which method runs regression tests?',
+    'Where does validation test a regular expression?',
+    'Localiza la función que comprueba los argumentos.',
+])
+def test_regression_mentions_do_not_replace_the_requested_implementation(query):
+    assert interpret(SearchRequest(query)).purpose == 'implementation'

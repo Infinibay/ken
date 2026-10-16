@@ -9,8 +9,8 @@ from ken.search import _identifier_query
 
 
 _TEST_OBJECT = re.compile(
-    r"^¿?(?:which|what|find|show|locate|qué|que|cuál|busca|buscá|muestra|encuentra)\s+"
-    r"(?P<modifiers>(?:[\w-]+\s+){0,8}?)(?:tests?|pruebas?)\b")
+    r"^¿?(?:which|what|find|show|locate|qué|que|cuál|busca|buscá|muestra|encuentra|localiza)\s+"
+    r"(?P<modifiers>(?:[\w-]+\s+){0,8}?)(?:tests?|pruebas?|regressions?|regresi[oó]n(?:es)?)\b")
 _OBJECT_BOUNDARIES = frozenset((
     "function method class module file symbol implementation handler helper "
     "función funcion método metodo clase módulo modulo archivo implementación "
