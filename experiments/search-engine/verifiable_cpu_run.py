@@ -79,7 +79,7 @@ class PreparedKen:
         self.catalog=SourceCatalog(root,owner_passages(self.conn))
         self.indexed_files=self.conn.execute('SELECT COUNT(*) FROM ci_files').fetchone()[0]
 
-    def pool(self,case,*,trace=None):
+    def pool(self,case,*,trace=None,card_builder=piece_pool):
         request=SearchRequest(case['query'],target='file' if case['target_kind'] in {'module','file'}
                               else 'symbol',limit=20,max_chars=12000,piece_kind=case['target_kind'])
         with retrieval_snapshot(self.conn):
@@ -90,7 +90,7 @@ class PreparedKen:
             diagnostics={'trace':trace} if trace is not None else {}
             matches=self.ranker.rank(request,candidates,owner_descriptions(self.conn,candidates),
                 expanded_query=expanded,evidence_version=3,**diagnostics)
-        cards=piece_pool(matches,case['target_kind'],expanded,self.catalog)
+        cards=card_builder(matches,case['target_kind'],expanded,self.catalog)
         exact=len(candidates)==1 and bool(candidates[0].signals.get('exact'))
         return cards,expanded,exact,len(candidates)
 
