@@ -444,3 +444,29 @@ against native encoding. Full suite, original200public MCP capture and resource
 comparison are IN PROGRESS; candidate is not promoted or installed yet. See
 docs/design/static-vector-cache-2026-10-16-v168.md. Never infer whole-search speedup
 from the static-encoding component. New reserve remains closed.
+
+
+## Static-term cache v168/v169: closed lossless CPU control
+
+Completed14923tests/10preexisting xfail, clean-path mypy356. Full original200public
+MCP responses (entire decoded DTO, not only identities) EXACTLY equal155; retains
+191/197. No reference labels reopened. Actual Potion varied batches/eviction bit
+exact, immutable-copy mutation rejected. Keep bounded8MiB-accounted/8192entry
+cache with no relevance/math/profile change. Original mixed-cohort API medians
+2416.469→2355.978ms,p953696.396→3698.542ms,max4323.960→4813.169ms,RSSpeak
+1997455360→2012807168B. Historical separate runs, no causal speedup/RSS delta
+claim. Small-repo1s/100files and lower whole-process~2GB RAM remain unresolved.
+New200not rerun; do not relabel150/195 as newly measured. Independent177/198
+unchanged; fresh reserve remains closed. Full report at
+docs/validation/static-term-cache-2026-10-16/README.md. Archive76gz/506904bytes,
+manifest7603ad80031f7645469940c7d37b78d883d78f25a95075caaec5b8fbad4b93d6.
+
+Separate next bug diagnosis: all9failed qualified lookups in exposed new200use
+namespace::qualified_symbol, which native _identifier_query rejects. Slashes are
+also rejected. Exact intent may lose the string entirely or pass an unmatchable
+SQL name. Thus another semantically related symbol can win despite an explicit
+complete identity. SourceLocator parser/matcher correction is staged separately,
+not part of cache169 or its test/capture evidence. Must preserve namespace AND
+complete member and avoid granting identity to behavior/caller references. No
+query-ID/name hardcoding. Tests first reproduce model loading for a unique
+qualified lookup. Does not promise90% alone. Keep acceptance gate unchanged.

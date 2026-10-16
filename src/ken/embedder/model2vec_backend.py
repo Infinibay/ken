@@ -4,16 +4,30 @@ from __future__ import annotations
 import hashlib
 import json
 import threading
+from collections import OrderedDict
 from importlib import resources
 from importlib import import_module
 from importlib.metadata import version
 from pathlib import Path
-from typing import Any, Callable, Mapping
+from typing import Any, Callable, Mapping, cast
 
 import numpy as np
 
 from ken.model_assets import ModelAssets
 from ken.retrieval.profile import EncoderSpec
+
+
+_TERM_CACHE_BYTES = 8 * 1024 * 1024
+_TERM_CACHE_ENTRIES = 8192
+_TERM_CACHE_OVERHEAD = 256
+
+
+def _cacheable_term(text: str) -> bool:
+    return bool(text) and len(text) <= 128 and not any(char.isspace() for char in text)
+
+
+def _term_size(text: str, vector: np.ndarray) -> int:
+    return vector.nbytes + len(text.encode('utf-8')) + _TERM_CACHE_OVERHEAD
 
 
 class RegisteredStaticEncoder:
@@ -49,6 +63,9 @@ class RegisteredStaticEncoder:
         }
         revision = hashlib.sha256(json.dumps(self.identity, sort_keys=True).encode()).hexdigest()
         self.spec = EncoderSpec(registration['model_id'], revision, 'provided', dtype=dtype)
+        self._term_vectors: OrderedDict[str, np.ndarray] = OrderedDict()
+        self._term_bytes = 0
+        self._term_lock = threading.Lock()
 
     def token_count(self, text: str) -> int:
         return len(self.model.tokenize([text], max_length=None)[0])
@@ -56,9 +73,42 @@ class RegisteredStaticEncoder:
     def embed_passages(self, texts: list[str]) -> list[np.ndarray]:
         if not texts:
             return []
-        vectors = self.model.encode(texts, max_length=self.spec.sequence_length,
-            use_multiprocessing=False, batch_size=1024)
-        return [np.asarray(v, dtype=np.float32) for v in vectors]
+        # The registered pooling is text-independent. Cache only short lexical
+        # inputs; source passages and sentences must not accumulate here.
+        result: list[np.ndarray | None] = [None] * len(texts)
+        missing: list[int] = []
+        with self._term_lock:
+            for i, text in enumerate(texts):
+                cached = self._term_vectors.get(text) if _cacheable_term(text) else None
+                if cached is None:
+                    missing.append(i)
+                else:
+                    self._term_vectors.move_to_end(text)
+                    result[i] = cached.copy()
+        if missing:
+            vectors = self.model.encode([texts[i] for i in missing],
+                max_length=self.spec.sequence_length, use_multiprocessing=False, batch_size=1024)
+            with self._term_lock:
+                for i, vector in zip(missing, vectors, strict=True):
+                    value = np.asarray(vector, dtype=np.float32)
+                    result[i] = value
+                    text = texts[i]
+                    if not _cacheable_term(text):
+                        continue
+                    size = _term_size(text, value)
+                    if size > _TERM_CACHE_BYTES or _TERM_CACHE_ENTRIES < 1:
+                        continue
+                    previous = self._term_vectors.pop(text, None)
+                    if previous is not None:
+                        self._term_bytes -= _term_size(text, previous)
+                    stored = value.copy()
+                    stored.setflags(write=False)
+                    self._term_vectors[text] = stored
+                    self._term_bytes += size
+                    while self._term_bytes > _TERM_CACHE_BYTES or len(self._term_vectors) > _TERM_CACHE_ENTRIES:
+                        key, evicted = self._term_vectors.popitem(last=False)
+                        self._term_bytes -= _term_size(key, evicted)
+        return cast(list[np.ndarray], result)
 
     def embed_query(self, text: str) -> np.ndarray:
         return self.embed_passages([text])[0]

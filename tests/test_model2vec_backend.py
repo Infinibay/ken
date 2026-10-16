@@ -153,3 +153,69 @@ def test_same_size_weight_corruption_is_rejected_before_encoding(registered_mode
     weights.write_bytes(data)
     with pytest.raises(ValueError, match='artifact'):
         RegisteredStaticEncoder(snapshot, record)
+
+
+def _record_native_encoding(encoder, monkeypatch):
+    calls = []
+    native = encoder.model.encode
+    def record(texts, **kwargs):
+        calls.append(list(texts))
+        return native(texts, **kwargs)
+    monkeypatch.setattr(encoder.model, 'encode', record)
+    return calls
+
+
+def test_short_static_terms_reuse_native_vectors_without_batch_or_order_changes(registered_model, monkeypatch):
+    from ken.embedder.model2vec_backend import RegisteredStaticEncoder
+    encoder = RegisteredStaticEncoder(*registered_model)
+    calls = _record_native_encoding(encoder, monkeypatch)
+    encoder.embed_passages(['red', 'blue'])
+    result = encoder.embed_passages(['blue', 'red', 'blue'])
+    np.testing.assert_array_equal(result, [[0., 1.], [1., 0.], [0., 1.]])
+    assert len(calls) == 1
+
+
+def test_cached_vectors_cannot_be_mutated_by_a_caller(registered_model, monkeypatch):
+    from ken.embedder.model2vec_backend import RegisteredStaticEncoder
+    encoder = RegisteredStaticEncoder(*registered_model)
+    calls = _record_native_encoding(encoder, monkeypatch)
+    encoder.embed_query('red')[0] = 123.
+    result = encoder.embed_passages(['red', 'red'])
+    result[0][0] = -1.
+    np.testing.assert_array_equal(result[1], [1., 0.])
+    np.testing.assert_array_equal(encoder.embed_query('red'), [1., 0.])
+    assert len(calls) == 1
+
+
+def test_static_cache_bypasses_sentences_large_identifiers_and_empty_text(registered_model, monkeypatch):
+    from ken.embedder.model2vec_backend import RegisteredStaticEncoder
+    encoder = RegisteredStaticEncoder(*registered_model)
+    calls = _record_native_encoding(encoder, monkeypatch)
+    texts = ['red blue', 'x' * 129, '', 'red']
+    first = encoder.embed_passages(texts)
+    second = encoder.embed_passages(texts)
+    np.testing.assert_array_equal(first, second)
+    assert calls == [texts, texts[:3]]
+
+
+def test_static_cache_byte_bound_only_changes_recomputation(registered_model, monkeypatch):
+    import ken.embedder.model2vec_backend as module
+    monkeypatch.setattr(module, '_TERM_CACHE_BYTES', 300, raising=False)
+    encoder = module.RegisteredStaticEncoder(*registered_model)
+    calls = _record_native_encoding(encoder, monkeypatch)
+    encoder.embed_query('red')
+    encoder.embed_query('blue')
+    np.testing.assert_array_equal(encoder.embed_query('blue'), [0., 1.])
+    np.testing.assert_array_equal(encoder.embed_query('red'), [1., 0.])
+    assert len(calls) == 3
+
+
+def test_static_cache_entry_bound_is_independent_of_vector_dimension(registered_model, monkeypatch):
+    import ken.embedder.model2vec_backend as module
+    monkeypatch.setattr(module, '_TERM_CACHE_ENTRIES', 2, raising=False)
+    encoder = module.RegisteredStaticEncoder(*registered_model)
+    calls = _record_native_encoding(encoder, monkeypatch)
+    encoder.embed_passages(['red', 'blue', 'unknown'])
+    np.testing.assert_array_equal(encoder.embed_query('blue'), [0., 1.])
+    np.testing.assert_array_equal(encoder.embed_query('red'), [1., 0.])
+    assert len(calls) == 2
