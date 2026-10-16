@@ -1,0 +1,49 @@
+{
+  "before": "8ce6b00c3a653e2effa46ec02b7acedd4c100501",
+  "after": "85d30b45ebbe1bc041b82ef5f7f156a915145322",
+  "incoming": 42,
+  "foreign_tracked": 63,
+  "byte_identical_nonoverlap": 57,
+  "three_way_preserved_overlap": [
+    {
+      "path": "README.md",
+      "before_sha256": "70c5069bb1e13606a26771e106d122cf943e22583d4997c13201f7b399372765",
+      "after_sha256": "fc7f97b91f2f4d77b23e0c9cd1605bc586f2b86615afbf90059530bd903d257a",
+      "resolution": "clean git three-way merge"
+    },
+    {
+      "path": "src/ken/cli.py",
+      "before_sha256": "331a1b46a9bc3a99f5e711e9637ccd42493ba603bc4c801e7764899c7d3f41c3",
+      "after_sha256": "c9dab0031d46ec451637a49a56f1169c6655161bc01f749e521e077f64b079ce",
+      "resolution": "clean git three-way merge"
+    },
+    {
+      "path": "src/ken/mcp/server.py",
+      "before_sha256": "fb8a8ca4ca368512b5c0950c5b682219eb9014e2999efd391d4b7f07e3490fd2",
+      "after_sha256": "b89b972bf6a858b50673e059ecb3b3d597f3ddcc17048f9eb8121f5e02decf02",
+      "resolution": "clean git three-way merge"
+    },
+    {
+      "path": "src/ken/skills/bundled/ken-find-code-patterns/SKILL.md",
+      "before_sha256": "6edfbe165a95d8b97111dadab67f8c9ecd9e42ee599e4642f4f55d64b31b39eb",
+      "after_sha256": "c182bfa31692b972523edcba2a1bf345cc777ecce65e15ae33c48f3e2e90cc9e",
+      "resolution": "Preserve every foreign byte; insert the exact single incoming English paragraph after the foreign heading. Removing that one insertion reproduces foreign bytes exactly."
+    },
+    {
+      "path": "src/ken/skills/bundled/ken-investigate-bug/SKILL.md",
+      "before_sha256": "20200783766b240f43386177d195df49ff6a4c62a469eb611b64f4085351cc0d",
+      "after_sha256": "2cf6fb4625003d166eb3c26a0bf72e04353dab3d4bb86b6ebbf9e5d326b3eee9",
+      "resolution": "clean git three-way merge"
+    },
+    {
+      "path": "src/ken/skills/bundled/ken-prevent-regressions/SKILL.md",
+      "before_sha256": "2fce48d7856b184c362a5f91a0b097487695c074d2425ab40c13d2500a3e0367",
+      "after_sha256": "9becff446613a8df11f61857e9e306a98cd4238846bac8607704eb74a96e07e6",
+      "resolution": "clean git three-way merge"
+    }
+  ],
+  "backup": "/private/tmp/ken-guidance-original-backup-v216",
+  "foreign_staged": false,
+  "file_modes_preserved": true,
+  "staging_empty": true
+}
