@@ -1,5 +1,12 @@
 # Estado actual — piezas verificables
 
+Candidato nuevo v126:175/200=87,5% de identidad top1,197/200=98,5% top10;
+CV excluyendo el repositorio evaluado. Siete ganancias y cero pérdidas frente al
+nativo168. No es default publicado ni aceptación privada; falta integración y
+medición completa. Tipos:clase47/50,módulo45/50,símbolo43/50,archivo40/50.
+La investigación, todos los valores y los pasos para retomar están en
+[scoring-internals/README.md](scoring-internals/README.md) y RESUME.md.
+
 Actualización explícita del usuario,2026-10-15: el objetivo principal es>=90%
 top1 con la pieza correcta; la suficiencia de evidencia retornada queda como
 métrica separada. Identidad nativa actual168/200=84%,Recall10197/200=98,5%.
