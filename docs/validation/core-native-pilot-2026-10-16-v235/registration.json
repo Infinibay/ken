@@ -1,0 +1,30 @@
+{
+  "engine": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/frozen/bounded-symbol-ranking-v214",
+  "engine_manifest_sha256": "b9e86b7fe4e7a405f94c47a1f157b97765eed97f3581f356f927d738e0f79079",
+  "engine_commit": "8ce6b00c3a653e2effa46ec02b7acedd4c100501",
+  "original_requests_sha256": "f4e54a7cf8e06bc59e23b1832a51f97639bd22137f2e8068da8fa59737b221c8",
+  "original_sources_sha256": "86a314a0b5631b05355d8a153182207ad3a154d93a4a768a575909635e20cfe5",
+  "native_requests_sha256": "eb0d1f0f693dbc799a6fadfa61826d6809c5f940e0fdeed9219a8b1d09ceced6",
+  "archive_manifest_sha256": "61038bbca3a3d94fa813364305f95eeab8a3b1375965c31329e955a6ae2a0c5c",
+  "unique_queries": 11,
+  "level_cases": 18,
+  "routes": {
+    "symbols": {
+      "scope": "symbols",
+      "piece_kind": "symbol"
+    },
+    "files": {
+      "scope": "files",
+      "piece_kind": "file"
+    }
+  },
+  "query_text": "Exact original CORE public bug report, unchanged across routes",
+  "latency": "One warmup with fixed unrelated query, then first original query per fresh route process; preparation and warmup separate; all errors retained",
+  "grading": "L2 responsible preexisting code unit independently curated; L3 CORE positive context units/fragments. Exact source identity OR full specific anchor in faithful returned evidence; file-only separate. Native slots, no rescue or dedup.",
+  "hardware": "CPUExecutionProvider only; one native revision at a time",
+  "concurrency": "RepoQA and Semble existing background captures may compete; timings not isolated",
+  "reserve": "CLOSED",
+  "release": false,
+  "engine_frozen": true,
+  "code_executed_from_donors": false
+}

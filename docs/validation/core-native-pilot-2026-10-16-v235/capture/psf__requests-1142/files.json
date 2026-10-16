@@ -1,0 +1,308 @@
+{
+  "id": "psf__requests-1142",
+  "query": "requests.get is ALWAYS sending content length\nHi,\n\nIt seems like that request.get always adds 'content-length' header to the request.\nI think that the right behavior is not to add this header automatically in GET requests or add the possibility to not send it.\n\nFor example http://amazon.com returns 503 for every get request that contains 'content-length' header.\n\nThanks,\n\nOren\n\n",
+  "results": [
+    {
+      "path": "docs/user/quickstart.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 416
+      },
+      "evidence": [
+        {
+          "start_line": 146,
+          "end_line": 157,
+          "content": "    <requests.packages.urllib3.response.HTTPResponse object at 0x101194810>\n    >>> r.raw.read(10)\n    '\\x1f\\x8b\\x08\\x00\\x00\\x00\\x00\\x00\\x00\\x03'\n\n\nCustom Headers\n--------------\n\nIf you'd like to add HTTP headers to a request, simply pass in a ``dict`` to the\n``headers`` parameter.\n\nFor example, we didn't specify our content-type in the previous example::"
+        },
+        {
+          "start_line": 134,
+          "end_line": 137,
+          "content": "In case the JSON decoding fails, ``r.json`` raises an exception.\n\n\nRaw Response Content"
+        }
+      ],
+      "source_hash": "28443a3092c20efaece1e604014d05c24a84590ab39defd0c2e543d222cf6e4d",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/models.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 657
+      },
+      "evidence": [
+        {
+          "start_line": 10,
+          "end_line": 21,
+          "content": "import collections\nimport logging\n\nfrom io import BytesIO\nfrom .hooks import default_hooks\nfrom .structures import CaseInsensitiveDict\nfrom .status_codes import codes\n\nfrom .auth import HTTPBasicAuth\nfrom .cookies import cookiejar_from_dict, get_cookie_header\nfrom .packages.urllib3.filepost import encode_multipart_formdata\nfrom .exceptions import HTTPError, RequestException, MissingSchema, InvalidURL"
+        },
+        {
+          "start_line": 389,
+          "end_line": 392,
+          "content": "        self.headers['Content-Length'] = '0'\n        if hasattr(body, 'seek') and hasattr(body, 'tell'):\n            body.seek(0, 2)\n            self.headers['Content-Length'] = str(body.tell())"
+        }
+      ],
+      "source_hash": "d9214453d8c7844deb50d985c79b89a30bacab6b3ffbd4079bcb81f7709da0b3",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "docs/user/advanced.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 505
+      },
+      "evidence": [
+        {
+          "start_line": 136,
+          "end_line": 147,
+          "content": "Excellent news — thanks to urllib3, keep-alive is 100% automatic within a session! Any requests that you make within a session will automatically reuse the appropriate connection!\n\nNote that connections are only released back to the pool for reuse once all body data has been read; be sure to either set ``stream`` to ``False`` or read the ``content`` property of the ``Response`` object.\n\n\nStreaming Uploads\n-----------------\n\nRequests supports streaming uploads, which allow you to send large streams or files without reading them into memory. To stream and upload, simply provide a file-like object for your body::\n\n    with open('massive-body') as f:\n        requests.post('http://some.url/streamed', data=f)"
+        },
+        {
+          "start_line": 463,
+          "end_line": 466,
+          "content": "    >>> r = requests.delete(url=url, auth=auth)\n    >>> r.status_code\n    204\n    >>> r.headers['status']"
+        }
+      ],
+      "source_hash": "4f370658d4bee6bb34092c3604c29a979d94b3b0c89556c6ae5af3444d327f7e",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/packages/urllib3/response.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 214
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "# urllib3/response.py\n# Copyright 2008-2012 Andrey Petrov and contributors (see CONTRIBUTORS.txt)\n#\n# This module is part of urllib3 and is released under\n# the MIT License: http://www.opensource.org/licenses/mit-license.php\n\nimport gzip\nimport logging\nimport zlib\n\nfrom io import BytesIO\n"
+        },
+        {
+          "start_line": 142,
+          "end_line": 145,
+          "content": "\n        try:\n            if amt is None:\n                # cStringIO doesn't like amt=None"
+        }
+      ],
+      "source_hash": "0a626483bc44ea7e83d0e11ec6d999d3f5d19b2ae746375a316a64a014d1fdbb",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/packages/urllib3/request.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 142
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "# urllib3/request.py\n# Copyright 2008-2012 Andrey Petrov and contributors (see CONTRIBUTORS.txt)\n#\n# This module is part of urllib3 and is released under\n# the MIT License: http://www.opensource.org/licenses/mit-license.php\n\ntry:\n    from urllib.parse import urlencode\nexcept ImportError:\n    from urllib import urlencode\n\nfrom .filepost import encode_multipart_formdata"
+        },
+        {
+          "start_line": 128,
+          "end_line": 131,
+          "content": "        if encode_multipart:\n            body, content_type = encode_multipart_formdata(fields or {},\n                                    boundary=multipart_boundary)\n        else:"
+        }
+      ],
+      "source_hash": "46db4080c6c479914f076f30459ef85d739e65d3371e5e75b7672d26d9974309",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/adapters.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 221
+      },
+      "evidence": [
+        {
+          "start_line": 6,
+          "end_line": 17,
+          "content": "\nThis module contains the transport adapters that Requests uses to define\nand maintain connections.\n\"\"\"\n\nimport socket\n\nfrom .models import Response\nfrom .packages.urllib3.poolmanager import PoolManager, ProxyManager\nfrom .packages.urllib3.response import HTTPResponse\nfrom .compat import urlparse, basestring, urldefrag\nfrom .utils import (DEFAULT_CA_BUNDLE_PATH, get_encoding_from_headers,"
+        },
+        {
+          "start_line": 158,
+          "end_line": 161,
+          "content": "\n        try:\n            if not chunked:\n                resp = conn.urlopen("
+        }
+      ],
+      "source_hash": "0025468f820b19769978c3c92557799b5786f3754d413719d3802f70b7d82d4e",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/utils.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 582
+      },
+      "evidence": [
+        {
+          "start_line": 14,
+          "end_line": 25,
+          "content": "import os\nimport platform\nimport re\nimport sys\nimport zlib\nfrom netrc import netrc, NetrcParseError\n\nfrom . import __version__\nfrom . import certs\nfrom .compat import parse_http_list as _parse_list_header\nfrom .compat import quote, urlparse, bytes, str, OrderedDict, urlunparse\nfrom .cookies import RequestsCookieJar, cookiejar_from_dict"
+        },
+        {
+          "start_line": 329,
+          "end_line": 332,
+          "content": "    tried_encodings = []\n\n    # Try charset from content-type\n    encoding = get_encoding_from_headers(r.headers)"
+        }
+      ],
+      "source_hash": "597c666540191122c765efba7fd98f8198c1a6be47728c662170dead1d006e18",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/packages/urllib3/connectionpool.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 579
+      },
+      "evidence": [
+        {
+          "start_line": 33,
+          "end_line": 44,
+          "content": "        from http.client import HTTPSConnection\n    except ImportError:\n        from httplib import HTTPSConnection\n\n    import ssl\n    BaseSSLError = ssl.SSLError\n\nexcept (ImportError, AttributeError): # Platform-specific: No SSL.\n    pass\n\n\nfrom .request import RequestMethods"
+        },
+        {
+          "start_line": 392,
+          "end_line": 395,
+          "content": "        if headers is None:\n            headers = self.headers\n\n        if retries < 0:"
+        }
+      ],
+      "source_hash": "5d1016746d549cb47d13ef0fafb16ce839ac59021a8ad6d52b4b00b1c39846ba",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/cookies.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 373
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "# -*- coding: utf-8 -*-\n\n\"\"\"\nCompatibility code to be able to use `cookielib.CookieJar` with requests.\n\nrequests.utils imports from here, so be careful with imports.\n\"\"\"\n\nimport collections\nfrom .compat import cookielib, urlparse, Morsel\n\ntry:"
+        },
+        {
+          "start_line": 110,
+          "end_line": 112,
+          "content": "    r = MockRequest(request)\n    jar.add_cookie_header(r)\n    return r.get_new_headers().get('Cookie')"
+        },
+        {
+          "start_line": 60,
+          "end_line": 60,
+          "content": "        raise NotImplementedError(\"Cookie headers should be added with add_unredirected_header()\")"
+        }
+      ],
+      "source_hash": "90814db35dd0ed96a5b0fd7d5b87708821e233c9d6c0f0c13f7d2479d599c1d6",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/auth.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 172
+      },
+      "evidence": [
+        {
+          "start_line": 7,
+          "end_line": 18,
+          "content": "This module contains the authentication handlers for Requests.\n\"\"\"\n\nimport os\nimport time\nimport hashlib\nimport logging\n\nfrom base64 import b64encode\n\nfrom .compat import urlparse, str\nfrom .utils import parse_dict_header"
+        },
+        {
+          "start_line": 147,
+          "end_line": 150,
+          "content": "        num_401_calls = r.request.hooks['response'].count(self.handle_401)\n        s_auth = r.headers.get('www-authenticate', '')\n\n        if 'digest' in s_auth.lower() and num_401_calls < 2:"
+        }
+      ],
+      "source_hash": "c0c8212d0b7497720f46d801d7b604ba6b9e90ea68df68a24211ccfb1b5a8333",
+      "stale": false,
+      "truncated": true
+    }
+  ],
+  "profile_version": "f189f081de7021005c2399fd13658fc620b8873293967b1a471a4c8142573a13",
+  "warnings": [],
+  "truncated": true,
+  "omitted_count": 0,
+  "compact": "docs/user/quickstart.rst:146-157 (file) [partial]\n146 |     <requests.packages.urllib3.response.HTTPResponse object at 0x101194810>\n147 |     >>> r.raw.read(10)\n148 |     '\\x1f\\x8b\\x08\\x00\\x00\\x00\\x00\\x00\\x00\\x03'\n149 | \n150 | \n151 | Custom Headers\n152 | --------------\n153 | \n154 | If you'd like to add HTTP headers to a request, simply pass in a ``dict`` to the\n155 | ``headers`` parameter.\n156 | \n157 | For example, we didn't specify our content-type in the previous example::\n@134-137\n134 | In case the JSON decoding fails, ``r.json`` raises an exception.\n135 | \n136 | \n137 | Raw Response Content\n\nrequests/models.py:10-21 (file) [partial]\n10 | import collections\n11 | import logging\n12 | \n13 | from io import BytesIO\n14 | from .hooks import default_hooks\n15 | from .structures import CaseInsensitiveDict\n16 | from .status_codes import codes\n17 | \n18 | from .auth import HTTPBasicAuth\n19 | from .cookies import cookiejar_from_dict, get_cookie_header\n20 | from .packages.urllib3.filepost import encode_multipart_formdata\n21 | from .exceptions import HTTPError, RequestException, MissingSchema, InvalidURL\n@389-392\n389 |         self.headers['Content-Length'] = '0'\n390 |         if hasattr(body, 'seek') and hasattr(body, 'tell'):\n391 |             body.seek(0, 2)\n392 |             self.headers['Content-Length'] = str(body.tell())\n\ndocs/user/advanced.rst:136-147 (file) [partial]\n136 | Excellent news — thanks to urllib3, keep-alive is 100% automatic within a session! Any requests that you make within a session will automatically reuse the appropriate connection!\n137 | \n138 | Note that connections are only released back to the pool for reuse once all body data has been read; be sure to either set ``stream`` to ``False`` or read the ``content`` property of the ``Response`` object.\n139 | \n140 | \n141 | Streaming Uploads\n142 | -----------------\n143 | \n144 | Requests supports streaming uploads, which allow you to send large streams or files without reading them into memory. To stream and upload, simply provide a file-like object for your body::\n145 | \n146 |     with open('massive-body') as f:\n147 |         requests.post('http://some.url/streamed', data=f)\n@463-466\n463 |     >>> r = requests.delete(url=url, auth=auth)\n464 |     >>> r.status_code\n465 |     204\n466 |     >>> r.headers['status']\n\nrequests/packages/urllib3/response.py:1-12 (file) [partial]\n1 | # urllib3/response.py\n2 | # Copyright 2008-2012 Andrey Petrov and contributors (see CONTRIBUTORS.txt)\n3 | #\n4 | # This module is part of urllib3 and is released under\n5 | # the MIT License: http://www.opensource.org/licenses/mit-license.php\n6 | \n7 | import gzip\n8 | import logging\n9 | import zlib\n10 | \n11 | from io import BytesIO\n12 | \n@142-145\n142 | \n143 |         try:\n144 |             if amt is None:\n145 |                 # cStringIO doesn't like amt=None\n\nrequests/packages/urllib3/request.py:1-12 (file) [partial]\n1 | # urllib3/request.py\n2 | # Copyright 2008-2012 Andrey Petrov and contributors (see CONTRIBUTORS.txt)\n3 | #\n4 | # This module is part of urllib3 and is released under\n5 | # the MIT License: http://www.opensource.org/licenses/mit-license.php\n6 | \n7 | try:\n8 |     from urllib.parse import urlencode\n9 | except ImportError:\n10 |     from urllib import urlencode\n11 | \n12 | from .filepost import encode_multipart_formdata\n@128-131\n128 |         if encode_multipart:\n129 |             body, content_type = encode_multipart_formdata(fields or {},\n130 |                                     boundary=multipart_boundary)\n131 |         else:\n\nrequests/adapters.py:6-17 (file) [partial]\n6 | \n7 | This module contains the transport adapters that Requests uses to define\n8 | and maintain connections.\n9 | \"\"\"\n10 | \n11 | import socket\n12 | \n13 | from .models import Response\n14 | from .packages.urllib3.poolmanager import PoolManager, ProxyManager\n15 | from .packages.urllib3.response import HTTPResponse\n16 | from .compat import urlparse, basestring, urldefrag\n17 | from .utils import (DEFAULT_CA_BUNDLE_PATH, get_encoding_from_headers,\n@158-161\n158 | \n159 |         try:\n160 |             if not chunked:\n161 |                 resp = conn.urlopen(\n\nrequests/utils.py:14-25 (file) [partial]\n14 | import os\n15 | import platform\n16 | import re\n17 | import sys\n18 | import zlib\n19 | from netrc import netrc, NetrcParseError\n20 | \n21 | from . import __version__\n22 | from . import certs\n23 | from .compat import parse_http_list as _parse_list_header\n24 | from .compat import quote, urlparse, bytes, str, OrderedDict, urlunparse\n25 | from .cookies import RequestsCookieJar, cookiejar_from_dict\n@329-332\n329 |     tried_encodings = []\n330 | \n331 |     # Try charset from content-type\n332 |     encoding = get_encoding_from_headers(r.headers)\n\nrequests/packages/urllib3/connectionpool.py:33-44 (file) [partial]\n33 |         from http.client import HTTPSConnection\n34 |     except ImportError:\n35 |         from httplib import HTTPSConnection\n36 | \n37 |     import ssl\n38 |     BaseSSLError = ssl.SSLError\n39 | \n40 | except (ImportError, AttributeError): # Platform-specific: No SSL.\n41 |     pass\n42 | \n43 | \n44 | from .request import RequestMethods\n@392-395\n392 |         if headers is None:\n393 |             headers = self.headers\n394 | \n395 |         if retries < 0:\n\nrequests/cookies.py:1-12 (file) [partial]\n1 | # -*- coding: utf-8 -*-\n2 | \n3 | \"\"\"\n4 | Compatibility code to be able to use `cookielib.CookieJar` with requests.\n5 | \n6 | requests.utils imports from here, so be careful with imports.\n7 | \"\"\"\n8 | \n9 | import collections\n10 | from .compat import cookielib, urlparse, Morsel\n11 | \n12 | try:\n@110-112\n110 |     r = MockRequest(request)\n111 |     jar.add_cookie_header(r)\n112 |     return r.get_new_headers().get('Cookie')\n@60-60\n60 |         raise NotImplementedError(\"Cookie headers should be added with add_unredirected_header()\")\n\nrequests/auth.py:7-18 (file) [partial]\n7 | This module contains the authentication handlers for Requests.\n8 | \"\"\"\n9 | \n10 | import os\n11 | import time\n12 | import hashlib\n13 | import logging\n14 | \n15 | from base64 import b64encode\n16 | \n17 | from .compat import urlparse, str\n18 | from .utils import parse_dict_header\n@147-150\n147 |         num_401_calls = r.request.hooks['response'].count(self.handle_401)\n148 |         s_auth = r.headers.get('www-authenticate', '')\n149 | \n150 |         if 'digest' in s_auth.lower() and num_401_calls < 2:",
+  "elapsed_ms": 4062.643500044942,
+  "cpu_ms": 11931.017
+}

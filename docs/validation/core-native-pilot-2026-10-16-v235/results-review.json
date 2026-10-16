@@ -1,0 +1,2033 @@
+{
+  "schema": "independent-core-native-results-review-v235/v1",
+  "status": "PASS_CLOSED_NATIVE_PILOT_WITH_SCOPE_LIMITS",
+  "blocking_findings": [],
+  "created_utc": "2026-10-16T23:36:44.234435+00:00",
+  "review_scope": "Closed nativeV235 results, references, literal snapshot bytes and registered measurement metadata only. Independent reconstruction used a new stdlib audit script; no engine, model, original grader, fitting, producer or marker was executed or modified.",
+  "input_sha256": {
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/core-native-v235/capture/closure.json": "8455944266110f55e25d5606537846475e393b6e3da570d70bdb0f97dd403994",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/core-native-v235/grading-invocation.json": "571a4f0d697961afab835b3ef2d2d9c0a88345bce22adfd28cd8004844979285",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/core-native-v235/report-v235.json": "885e61e7a86d4c9ea4869e5be802c157b9f61e87f47d122f8021af747e3c28e7",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/core-native-v235/native-requests.json": "eb0d1f0f693dbc799a6fadfa61826d6809c5f940e0fdeed9219a8b1d09ceced6",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/core-native-v235/README.md": "fc68c046256dc913ee4a56535c428d0c96b61ef6388bccd3d3a9ae59c7fcc032",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/core-native-v235/failure-analysis.md": "b6ba7543e85c8cc1db4949f261ae2dc596d303266776ca89bc738360c7879483",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/core-native-v235/final-integrity-audit.json": "35ffc57b049b14df8de0d263c14a50e5504f81bebee973a24fa8497e451bab69",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/core-native-references-v235.json": "4e854dd5744a0c94ccc0c938fc6c18968b7f3b5c564e39386e1296e5a05bbbb0",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/core-native-references-v235-receipt.json": "909495a7d0a592f90d1cbabdfc6b1f31eacf8eb1c9095ebfc6cfeead94ad23aa",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/core-native-grader-review-v235.json": "3b3849db8efcfb4cf6d9d8eac1db29d05ad8431d5e4f94ef5914568552797b51"
+  },
+  "closure_and_integrity": {
+    "closed_revision_groups": 11,
+    "fixed_routes": 2,
+    "physical_route_requests": 22,
+    "successful_route_requests": 20,
+    "original_level_cases_per_route": 18,
+    "level2_cases_per_route": 11,
+    "level3_cases_per_route": 7,
+    "case_route_records_reconstructed": 36,
+    "closure_file_pins_verified": 121,
+    "result_slots_authenticated": 200,
+    "snapshot_files_used_by_results": 106,
+    "all_sources_rehashed_after_capture": 1812,
+    "all_source_bytes_rehashed_after_capture": 31254005,
+    "indexed_file_occurrences": 1808,
+    "not_indexed_file_occurrences": 4,
+    "not_indexed_files": "Two Flask environment fixtures and two occurrences of a Requests artwork file; none is a target file.",
+    "all_target_files_indexed": true,
+    "all_ownership_records_match_public_source_pins": true,
+    "all_capture_cleanup_records_preserve_source_and_only_remove_owned_index": true,
+    "cpu_only_provenance_records_verified": 22,
+    "all_provenance_reranker_tokens": 1024,
+    "all_heavy_imports_lists_empty": true,
+    "reviewed_grader_pins_match_report": true,
+    "invocation_records_normal_python_debug_true": true,
+    "all_structured_evidence_literal_and_in_source_bounds": true,
+    "all_structured_evidence_lines_visible_in_compact_in_order": true,
+    "maximum_compact_output_characters": 7971,
+    "maximum_result_evidence_lines_observed": 16,
+    "maximum_result_excerpts_observed": 4,
+    "independent_metrics_match_every_report_case_and_aggregate": true,
+    "false_piece_credit_or_source_validation_anomalies": []
+  },
+  "reconstructed_metrics": {
+    "symbols": {
+      "LEVEL-2": {
+        "piece": {
+          "cases": 11,
+          "top1_hits": 6,
+          "top10_hits": 7,
+          "top1": 0.5454545454545454,
+          "top10": 0.6363636363636364
+        },
+        "file": {
+          "cases": 11,
+          "top1_hits": 6,
+          "top10_hits": 9,
+          "top1": 0.5454545454545454,
+          "top10": 0.8181818181818182
+        }
+      },
+      "LEVEL-3": {
+        "piece": {
+          "cases": 7,
+          "top1_hits": 3,
+          "top10_hits": 5,
+          "top1": 0.42857142857142855,
+          "top10": 0.7142857142857143
+        },
+        "file": {
+          "cases": 7,
+          "top1_hits": 4,
+          "top10_hits": 5,
+          "top1": 0.5714285714285714,
+          "top10": 0.7142857142857143
+        }
+      },
+      "combined_descriptive_only": {
+        "piece": {
+          "cases": 18,
+          "top1_hits": 9,
+          "top10_hits": 12,
+          "top1": 0.5,
+          "top10": 0.6666666666666666
+        },
+        "file": {
+          "cases": 18,
+          "top1_hits": 10,
+          "top10_hits": 14,
+          "top1": 0.5555555555555556,
+          "top10": 0.7777777777777778
+        }
+      }
+    },
+    "files": {
+      "LEVEL-2": {
+        "piece": {
+          "cases": 11,
+          "top1_hits": 0,
+          "top10_hits": 1,
+          "top1": 0.0,
+          "top10": 0.09090909090909091
+        },
+        "file": {
+          "cases": 11,
+          "top1_hits": 2,
+          "top10_hits": 8,
+          "top1": 0.18181818181818182,
+          "top10": 0.7272727272727273
+        }
+      },
+      "LEVEL-3": {
+        "piece": {
+          "cases": 7,
+          "top1_hits": 0,
+          "top10_hits": 0,
+          "top1": 0.0,
+          "top10": 0.0
+        },
+        "file": {
+          "cases": 7,
+          "top1_hits": 3,
+          "top10_hits": 5,
+          "top1": 0.42857142857142855,
+          "top10": 0.7142857142857143
+        }
+      },
+      "combined_descriptive_only": {
+        "piece": {
+          "cases": 18,
+          "top1_hits": 0,
+          "top10_hits": 1,
+          "top1": 0.0,
+          "top10": 0.05555555555555555
+        },
+        "file": {
+          "cases": 18,
+          "top1_hits": 5,
+          "top10_hits": 13,
+          "top1": 0.2777777777777778,
+          "top10": 0.7222222222222222
+        }
+      }
+    }
+  },
+  "case_by_case_reconstruction": [
+    {
+      "route": "symbols",
+      "id": "c01c84e520de7ee5d30da352",
+      "query_id": "mwaskom__seaborn-3069",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 6
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "a2cdeabc18c87bc53977916f",
+      "query_id": "mwaskom__seaborn-3069",
+      "level": "LEVEL-3",
+      "error": null,
+      "piece_hits": [
+        {
+          "rank": 6,
+          "path": "seaborn/_core/plot.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "Plotter._setup_scales",
+            "owner": "Plotter",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 1170,
+            "end_line": 1288
+          },
+          "target_kind": "method",
+          "target_qualname": "Plotter._setup_scales",
+          "target_extent": [
+            1170,
+            1288
+          ],
+          "reasons": [
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        },
+        {
+          "rank": 7,
+          "path": "seaborn/categorical.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "_CategoricalPlotterNew._adjust_cat_axis",
+            "owner": "_CategoricalPlotterNew",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 195,
+            "end_line": 224
+          },
+          "target_kind": "method",
+          "target_qualname": "_CategoricalPlotterNew._adjust_cat_axis",
+          "target_extent": [
+            195,
+            224
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 195,
+                "end_line": 202
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        },
+        {
+          "rank": 10,
+          "path": "seaborn/categorical.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "_CategoricalPlotterNew.__init__",
+            "owner": "_CategoricalPlotterNew",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 56,
+            "end_line": 119
+          },
+          "target_kind": "method",
+          "target_qualname": "_CategoricalPlotterNew.__init__",
+          "target_extent": [
+            56,
+            119
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 56,
+                "end_line": 63
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        }
+      ],
+      "piece": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 6
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "b85647e9a03184fc4ae9f5e9",
+      "query_id": "mwaskom__seaborn-3187",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [
+        {
+          "rank": 1,
+          "path": "seaborn/utils.py",
+          "returned_entity": {
+            "kind": "function",
+            "qualname": "locator_to_legend_entries",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 687,
+            "end_line": 710
+          },
+          "target_kind": "function",
+          "target_qualname": "locator_to_legend_entries",
+          "target_extent": [
+            687,
+            710
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 1,
+              "anchor": {
+                "start_line": 698,
+                "end_line": 710
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        }
+      ],
+      "piece": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "4bad0434905c87d589e891d8",
+      "query_id": "pallets__flask-5014",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [
+        {
+          "rank": 1,
+          "path": "src/flask/blueprints.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "Blueprint.__init__",
+            "owner": "Blueprint",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 172,
+            "end_line": 206
+          },
+          "target_kind": "method",
+          "target_qualname": "Blueprint.__init__",
+          "target_extent": [
+            172,
+            206
+          ],
+          "reasons": [
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        }
+      ],
+      "piece": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "18d1b18027b44e1e0024c642",
+      "query_id": "pallets__flask-5014",
+      "level": "LEVEL-3",
+      "error": null,
+      "piece_hits": [
+        {
+          "rank": 1,
+          "path": "src/flask/blueprints.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "Blueprint.__init__",
+            "owner": "Blueprint",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 172,
+            "end_line": 206
+          },
+          "target_kind": "method",
+          "target_qualname": "Blueprint.__init__",
+          "target_extent": [
+            172,
+            206
+          ],
+          "reasons": [
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        },
+        {
+          "rank": 2,
+          "path": "tests/test_blueprints.py",
+          "returned_entity": {
+            "kind": "function",
+            "qualname": "test_unique_blueprint_names",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 996,
+            "end_line": 1010
+          },
+          "target_kind": "function",
+          "target_qualname": "test_unique_blueprint_names",
+          "target_extent": [
+            996,
+            1010
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 996,
+                "end_line": 1003
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        },
+        {
+          "rank": 4,
+          "path": "tests/test_blueprints.py",
+          "returned_entity": {
+            "kind": "function",
+            "qualname": "test_dotted_name_not_allowed",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 254,
+            "end_line": 256
+          },
+          "target_kind": "function",
+          "target_qualname": "test_dotted_name_not_allowed",
+          "target_extent": [
+            254,
+            256
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 254,
+                "end_line": 256
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        },
+        {
+          "rank": 5,
+          "path": "src/flask/blueprints.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "Blueprint.register_blueprint",
+            "owner": "Blueprint",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 251,
+            "end_line": 266
+          },
+          "target_kind": "method",
+          "target_qualname": "Blueprint.register_blueprint",
+          "target_extent": [
+            251,
+            266
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 251,
+                "end_line": 258
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        },
+        {
+          "rank": 6,
+          "path": "src/flask/blueprints.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "Blueprint.register",
+            "owner": "Blueprint",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 268,
+            "end_line": 402
+          },
+          "target_kind": "method",
+          "target_qualname": "Blueprint.register",
+          "target_extent": [
+            268,
+            402
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 268,
+                "end_line": 275
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        },
+        {
+          "rank": 10,
+          "path": "src/flask/blueprints.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "Blueprint._check_setup_finished",
+            "owner": "Blueprint",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 208,
+            "end_line": 216
+          },
+          "target_kind": "method",
+          "target_qualname": "Blueprint._check_setup_finished",
+          "target_extent": [
+            208,
+            216
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 208,
+                "end_line": 215
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        }
+      ],
+      "piece": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "b68f82b04cd311531bce29b8",
+      "query_id": "psf__requests-1142",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [
+        {
+          "rank": 1,
+          "path": "requests/models.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "PreparedRequest.prepare_content_length",
+            "owner": "PreparedRequest",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 388,
+            "end_line": 395
+          },
+          "target_kind": "method",
+          "target_qualname": "PreparedRequest.prepare_content_length",
+          "target_extent": [
+            388,
+            395
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 388,
+                "end_line": 395
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        }
+      ],
+      "piece": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "b0daddfebebfd70b6fd3b88a",
+      "query_id": "psf__requests-1142",
+      "level": "LEVEL-3",
+      "error": null,
+      "piece_hits": [
+        {
+          "rank": 1,
+          "path": "requests/models.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "PreparedRequest.prepare_content_length",
+            "owner": "PreparedRequest",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 388,
+            "end_line": 395
+          },
+          "target_kind": "method",
+          "target_qualname": "PreparedRequest.prepare_content_length",
+          "target_extent": [
+            388,
+            395
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 388,
+                "end_line": 395
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        }
+      ],
+      "piece": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "3dbd533c2620ab9c26620738",
+      "query_id": "psf__requests-1724",
+      "level": "LEVEL-2",
+      "error": "ValueError: query is too long for reranking; shorten the search question",
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "2384d187ffe6bef53b594d5e",
+      "query_id": "psf__requests-1724",
+      "level": "LEVEL-3",
+      "error": "ValueError: query is too long for reranking; shorten the search question",
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "6141b222077f7f9b54473c03",
+      "query_id": "psf__requests-1766",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [
+        {
+          "rank": 1,
+          "path": "requests/auth.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "HTTPDigestAuth.build_digest_header",
+            "owner": "HTTPDigestAuth",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 68,
+            "end_line": 149
+          },
+          "target_kind": "method",
+          "target_qualname": "HTTPDigestAuth.build_digest_header",
+          "target_extent": [
+            68,
+            149
+          ],
+          "reasons": [
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        }
+      ],
+      "piece": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "c2c41cd386b5f9620904a1a9",
+      "query_id": "psf__requests-1766",
+      "level": "LEVEL-3",
+      "error": null,
+      "piece_hits": [
+        {
+          "rank": 1,
+          "path": "requests/auth.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "HTTPDigestAuth.build_digest_header",
+            "owner": "HTTPDigestAuth",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 68,
+            "end_line": 149
+          },
+          "target_kind": "method",
+          "target_qualname": "HTTPDigestAuth.build_digest_header",
+          "target_extent": [
+            68,
+            149
+          ],
+          "reasons": [
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        },
+        {
+          "rank": 3,
+          "path": "requests/auth.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "HTTPDigestAuth.__call__",
+            "owner": "HTTPDigestAuth",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 185,
+            "end_line": 194
+          },
+          "target_kind": "method",
+          "target_qualname": "HTTPDigestAuth.__call__",
+          "target_extent": [
+            185,
+            194
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 185,
+                "end_line": 192
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        },
+        {
+          "rank": 9,
+          "path": "requests/auth.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "HTTPDigestAuth.handle_401",
+            "owner": "HTTPDigestAuth",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 151,
+            "end_line": 183
+          },
+          "target_kind": "method",
+          "target_qualname": "HTTPDigestAuth.handle_401",
+          "target_extent": [
+            151,
+            183
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 151,
+                "end_line": 158
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        }
+      ],
+      "piece": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "a28cc7abf7774989e37941c2",
+      "query_id": "psf__requests-1921",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 3
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "9861419fe3296c2d46bfd895",
+      "query_id": "psf__requests-1921",
+      "level": "LEVEL-3",
+      "error": null,
+      "piece_hits": [
+        {
+          "rank": 2,
+          "path": "test_requests.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "RequestsTestCase.test_header_remove_is_case_insensitive",
+            "owner": "RequestsTestCase",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 800,
+            "end_line": 805
+          },
+          "target_kind": "method",
+          "target_qualname": "RequestsTestCase.test_header_remove_is_case_insensitive",
+          "target_extent": [
+            800,
+            805
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 800,
+                "end_line": 805
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        },
+        {
+          "rank": 3,
+          "path": "requests/sessions.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "Session.__init__",
+            "owner": "Session",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 203,
+            "end_line": 252
+          },
+          "target_kind": "method",
+          "target_qualname": "Session.__init__",
+          "target_extent": [
+            203,
+            252
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 203,
+                "end_line": 210
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        },
+        {
+          "rank": 4,
+          "path": "requests/sessions.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "Session.request",
+            "owner": "Session",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 299,
+            "end_line": 393
+          },
+          "target_kind": "method",
+          "target_qualname": "Session.request",
+          "target_extent": [
+            299,
+            393
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 299,
+                "end_line": 306
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        }
+      ],
+      "piece": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 2
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 2
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "167d3690dec276cb1a54a463",
+      "query_id": "psf__requests-2317",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [
+        {
+          "rank": 1,
+          "path": "requests/sessions.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "Session.request",
+            "owner": "Session",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 378,
+            "end_line": 459
+          },
+          "target_kind": "method",
+          "target_qualname": "Session.request",
+          "target_extent": [
+            378,
+            459
+          ],
+          "reasons": [
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        }
+      ],
+      "piece": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "4d9d8eade6cceb18909995b8",
+      "query_id": "psf__requests-2931",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [
+        {
+          "rank": 2,
+          "path": "requests/models.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "RequestEncodingMixin._encode_params",
+            "owner": "RequestEncodingMixin",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 75,
+            "end_line": 99
+          },
+          "target_kind": "method",
+          "target_qualname": "RequestEncodingMixin._encode_params",
+          "target_extent": [
+            75,
+            99
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 0,
+              "anchor": {
+                "start_line": 83,
+                "end_line": 86
+              }
+            },
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        }
+      ],
+      "piece": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 2
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 2
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "e263b22259f8d3e18724d66b",
+      "query_id": "psf__requests-5414",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [
+        {
+          "rank": 1,
+          "path": "requests/models.py",
+          "returned_entity": {
+            "kind": "method",
+            "qualname": "PreparedRequest.prepare_url",
+            "owner": "PreparedRequest",
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 360,
+            "end_line": 444
+          },
+          "target_kind": "method",
+          "target_qualname": "PreparedRequest.prepare_url",
+          "target_extent": [
+            360,
+            444
+          ],
+          "reasons": [
+            {
+              "method": "exact_native_symbol_identity"
+            }
+          ]
+        }
+      ],
+      "piece": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "7df47f5e27deea4d284f0a20",
+      "query_id": "psf__requests-6028",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      }
+    },
+    {
+      "route": "symbols",
+      "id": "e80ab5c810f43f67875aba92",
+      "query_id": "psf__requests-6028",
+      "level": "LEVEL-3",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      }
+    },
+    {
+      "route": "files",
+      "id": "c01c84e520de7ee5d30da352",
+      "query_id": "mwaskom__seaborn-3069",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 8
+      }
+    },
+    {
+      "route": "files",
+      "id": "a2cdeabc18c87bc53977916f",
+      "query_id": "mwaskom__seaborn-3069",
+      "level": "LEVEL-3",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "files",
+      "id": "b85647e9a03184fc4ae9f5e9",
+      "query_id": "mwaskom__seaborn-3187",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 3
+      }
+    },
+    {
+      "route": "files",
+      "id": "4bad0434905c87d589e891d8",
+      "query_id": "pallets__flask-5014",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 4
+      }
+    },
+    {
+      "route": "files",
+      "id": "18d1b18027b44e1e0024c642",
+      "query_id": "pallets__flask-5014",
+      "level": "LEVEL-3",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 2
+      }
+    },
+    {
+      "route": "files",
+      "id": "b68f82b04cd311531bce29b8",
+      "query_id": "psf__requests-1142",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 2
+      }
+    },
+    {
+      "route": "files",
+      "id": "b0daddfebebfd70b6fd3b88a",
+      "query_id": "psf__requests-1142",
+      "level": "LEVEL-3",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 2
+      }
+    },
+    {
+      "route": "files",
+      "id": "3dbd533c2620ab9c26620738",
+      "query_id": "psf__requests-1724",
+      "level": "LEVEL-2",
+      "error": "ValueError: query is too long for reranking; shorten the search question",
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      }
+    },
+    {
+      "route": "files",
+      "id": "2384d187ffe6bef53b594d5e",
+      "query_id": "psf__requests-1724",
+      "level": "LEVEL-3",
+      "error": "ValueError: query is too long for reranking; shorten the search question",
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      }
+    },
+    {
+      "route": "files",
+      "id": "6141b222077f7f9b54473c03",
+      "query_id": "psf__requests-1766",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "files",
+      "id": "c2c41cd386b5f9620904a1a9",
+      "query_id": "psf__requests-1766",
+      "level": "LEVEL-3",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "files",
+      "id": "a28cc7abf7774989e37941c2",
+      "query_id": "psf__requests-1921",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "files",
+      "id": "9861419fe3296c2d46bfd895",
+      "query_id": "psf__requests-1921",
+      "level": "LEVEL-3",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 1,
+        "hit10": 1,
+        "first_relevant_rank": 1
+      }
+    },
+    {
+      "route": "files",
+      "id": "167d3690dec276cb1a54a463",
+      "query_id": "psf__requests-2317",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      }
+    },
+    {
+      "route": "files",
+      "id": "4d9d8eade6cceb18909995b8",
+      "query_id": "psf__requests-2931",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [
+        {
+          "rank": 4,
+          "path": "requests/models.py",
+          "returned_entity": {
+            "kind": "file",
+            "qualname": null,
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "returned_extent": {
+            "start_line": 1,
+            "end_line": 848
+          },
+          "target_kind": "method",
+          "target_qualname": "RequestEncodingMixin._encode_params",
+          "target_extent": [
+            75,
+            99
+          ],
+          "reasons": [
+            {
+              "method": "complete_faithful_anchor",
+              "excerpt_index": 1,
+              "anchor": {
+                "start_line": 83,
+                "end_line": 86
+              }
+            }
+          ]
+        }
+      ],
+      "piece": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 4
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 4
+      }
+    },
+    {
+      "route": "files",
+      "id": "e263b22259f8d3e18724d66b",
+      "query_id": "psf__requests-5414",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 1,
+        "first_relevant_rank": 4
+      }
+    },
+    {
+      "route": "files",
+      "id": "7df47f5e27deea4d284f0a20",
+      "query_id": "psf__requests-6028",
+      "level": "LEVEL-2",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      }
+    },
+    {
+      "route": "files",
+      "id": "e80ab5c810f43f67875aba92",
+      "query_id": "psf__requests-6028",
+      "level": "LEVEL-3",
+      "error": null,
+      "piece_hits": [],
+      "piece": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      },
+      "file": {
+        "hit1": 0,
+        "hit10": 0,
+        "first_relevant_rank": null
+      }
+    }
+  ],
+  "errors": [
+    {
+      "route": "symbols",
+      "query_id": "psf__requests-1724",
+      "error": "ValueError: query is too long for reranking; shorten the search question",
+      "affected_case_ids": [
+        "3dbd533c2620ab9c26620738",
+        "2384d187ffe6bef53b594d5e"
+      ]
+    },
+    {
+      "route": "files",
+      "query_id": "psf__requests-1724",
+      "error": "ValueError: query is too long for reranking; shorten the search question",
+      "affected_case_ids": [
+        "3dbd533c2620ab9c26620738",
+        "2384d187ffe6bef53b594d5e"
+      ]
+    }
+  ],
+  "error_interpretation": "One7476-character physical issue (Requests1724) fails in each route with the original query-too-long ValueError and empty results. Its L2 and L3 cases remain misses: two route errors produce four case-route misses, without removing any denominator.",
+  "file_route_level2_anchor_review": {
+    "correct_file_cases_in_top10": 8,
+    "complete_anchor": 1,
+    "partial_anchor": 2,
+    "anchor_absent": 5,
+    "complete_anchor_case_query_id": "psf__requests-2931",
+    "interpretation": "Every matching file result is explicitly kind=file with a file-wide extent. The extent does not claim a callable identity. All eight show12 introduction/import lines plus four lines elsewhere; only one includes the complete presealed anchor. The seven secondary piece misses are explained by visible geometry, not stale hashes, hidden deduplication or an omitted case. Partial snippets can be relevant; this metric does not assert zero useful code.",
+    "cases": [
+      {
+        "case_id": "c01c84e520de7ee5d30da352",
+        "query_id": "mwaskom__seaborn-3069",
+        "native_rank": 8,
+        "path": "seaborn/_core/plot.py",
+        "source_sha256": "dbe0647014d50d4feec05721be08f771f100a3e9c9db3f7404c515be921608f6",
+        "returned_kind": "file",
+        "returned_entity_span": {
+          "start_line": 1,
+          "end_line": 1649
+        },
+        "target_qualname": "Plotter._finalize_figure",
+        "target_extent": [
+          1628,
+          1649
+        ],
+        "target_anchor": {
+          "start_line": 1630,
+          "end_line": 1645
+        },
+        "visible_evidence_ranges": [
+          [
+            36,
+            47
+          ],
+          [
+            1215,
+            1218
+          ]
+        ],
+        "visible_body_excerpt": {
+          "start_line": 1215,
+          "end_line": 1218,
+          "content": "            var_df = pd.concat(parts, ignore_index=True)\n\n            prop = PROPERTIES[prop_key]\n            scale = self._get_scale(p, scale_key, prop, var_df[var])"
+        },
+        "anchor_visibility": "absent",
+        "visible_anchor_lines": 0,
+        "required_anchor_lines": 16,
+        "piece_credit": false,
+        "observation": "Imports and a scale-setup call are visible, not Plotter._finalize_figure or its final-axis anchor."
+      },
+      {
+        "case_id": "b85647e9a03184fc4ae9f5e9",
+        "query_id": "mwaskom__seaborn-3187",
+        "native_rank": 3,
+        "path": "seaborn/utils.py",
+        "source_sha256": "98ab6b2b0bfd91f2ed8158ef8b4b673f993373b4dc832662e1bcb017ed81a625",
+        "returned_kind": "file",
+        "returned_entity_span": {
+          "start_line": 1,
+          "end_line": 872
+        },
+        "target_qualname": "locator_to_legend_entries",
+        "target_extent": [
+          687,
+          710
+        ],
+        "target_anchor": {
+          "start_line": 698,
+          "end_line": 710
+        },
+        "visible_evidence_ranges": [
+          [
+            10,
+            21
+          ],
+          [
+            697,
+            700
+          ]
+        ],
+        "visible_body_excerpt": {
+          "start_line": 697,
+          "end_line": 700,
+          "content": "\n    if isinstance(locator, mpl.ticker.LogLocator):\n        formatter = mpl.ticker.LogFormatter()\n    else:"
+        },
+        "anchor_visibility": "partial",
+        "visible_anchor_lines": 3,
+        "required_anchor_lines": 13,
+        "piece_credit": false,
+        "observation": "The formatter conditional begins at lines698–700, but the rest of the presealed698–710 anchor is missing. This is partial relevant code, not a wrong file."
+      },
+      {
+        "case_id": "4bad0434905c87d589e891d8",
+        "query_id": "pallets__flask-5014",
+        "native_rank": 4,
+        "path": "src/flask/blueprints.py",
+        "source_sha256": "9d296c3a0dffffbafd59ef15290a6d4c2061a470f3ad2b00709388d35d1dddc0",
+        "returned_kind": "file",
+        "returned_entity_span": {
+          "start_line": 1,
+          "end_line": 621
+        },
+        "target_qualname": "Blueprint.__init__",
+        "target_extent": [
+          172,
+          206
+        ],
+        "target_anchor": {
+          "start_line": 193,
+          "end_line": 197
+        },
+        "visible_evidence_ranges": [
+          [
+            7,
+            18
+          ],
+          [
+            209,
+            212
+          ]
+        ],
+        "visible_body_excerpt": {
+          "start_line": 209,
+          "end_line": 212,
+          "content": "        if self._got_registered_once:\n            raise AssertionError(\n                f\"The setup method '{f_name}' can no longer be called on the blueprint\"\n                f\" '{self.name}'. It has already been registered at least once, any\""
+        },
+        "anchor_visibility": "absent",
+        "visible_anchor_lines": 0,
+        "required_anchor_lines": 5,
+        "piece_credit": false,
+        "observation": "Imports and a setup-method guard at209–212 are visible; the constructor anchor193–197 is absent."
+      },
+      {
+        "case_id": "b68f82b04cd311531bce29b8",
+        "query_id": "psf__requests-1142",
+        "native_rank": 2,
+        "path": "requests/models.py",
+        "source_sha256": "d9214453d8c7844deb50d985c79b89a30bacab6b3ffbd4079bcb81f7709da0b3",
+        "returned_kind": "file",
+        "returned_entity_span": {
+          "start_line": 1,
+          "end_line": 657
+        },
+        "target_qualname": "PreparedRequest.prepare_content_length",
+        "target_extent": [
+          388,
+          395
+        ],
+        "target_anchor": {
+          "start_line": 388,
+          "end_line": 395
+        },
+        "visible_evidence_ranges": [
+          [
+            10,
+            21
+          ],
+          [
+            389,
+            392
+          ]
+        ],
+        "visible_body_excerpt": {
+          "start_line": 389,
+          "end_line": 392,
+          "content": "        self.headers['Content-Length'] = '0'\n        if hasattr(body, 'seek') and hasattr(body, 'tell'):\n            body.seek(0, 2)\n            self.headers['Content-Length'] = str(body.tell())"
+        },
+        "anchor_visibility": "partial",
+        "visible_anchor_lines": 4,
+        "required_anchor_lines": 8,
+        "piece_credit": false,
+        "observation": "Four interior lines of prepare_content_length are visible, but the complete presealed388–395 function anchor is not."
+      },
+      {
+        "case_id": "6141b222077f7f9b54473c03",
+        "query_id": "psf__requests-1766",
+        "native_rank": 1,
+        "path": "requests/auth.py",
+        "source_sha256": "e9ac12db8dfb81a4abe59e5e3b1764e01fe1f04dbdc5f57dc7deb7a47695087c",
+        "returned_kind": "file",
+        "returned_entity_span": {
+          "start_line": 1,
+          "end_line": 194
+        },
+        "target_qualname": "HTTPDigestAuth.build_digest_header",
+        "target_extent": [
+          68,
+          149
+        ],
+        "target_anchor": {
+          "start_line": 138,
+          "end_line": 149
+        },
+        "visible_evidence_ranges": [
+          [
+            1,
+            12
+          ],
+          [
+            124,
+            127
+          ]
+        ],
+        "visible_body_excerpt": {
+          "start_line": 124,
+          "end_line": 127,
+          "content": "        if _algorithm == 'MD5-SESS':\n            HA1 = hash_utf8('%s:%s:%s' % (HA1, nonce, cnonce))\n\n        if qop is None:"
+        },
+        "anchor_visibility": "absent",
+        "visible_anchor_lines": 0,
+        "required_anchor_lines": 12,
+        "piece_credit": false,
+        "observation": "The MD5-SESS/qop branch at124–127 is visible inside the responsible method, but the header-construction anchor138–149 is absent."
+      },
+      {
+        "case_id": "a28cc7abf7774989e37941c2",
+        "query_id": "psf__requests-1921",
+        "native_rank": 1,
+        "path": "requests/sessions.py",
+        "source_sha256": "32e30eadf91367b3aefb90e8541cf3fc20d3d950a16828c0101f4232d36a78a9",
+        "returned_kind": "file",
+        "returned_entity_span": {
+          "start_line": 1,
+          "end_line": 569
+        },
+        "target_qualname": "merge_setting",
+        "target_extent": [
+          34,
+          62
+        ],
+        "target_anchor": {
+          "start_line": 54,
+          "end_line": 62
+        },
+        "visible_evidence_ranges": [
+          [
+            19,
+            30
+          ],
+          [
+            208,
+            211
+          ]
+        ],
+        "visible_body_excerpt": {
+          "start_line": 208,
+          "end_line": 211,
+          "content": "        self.headers = default_headers()\n\n        #: Default Authentication tuple or object to attach to\n        #: :class:`Request <Request>`."
+        },
+        "anchor_visibility": "absent",
+        "visible_anchor_lines": 0,
+        "required_anchor_lines": 9,
+        "piece_credit": false,
+        "observation": "Imports and Session initialization are visible; merge_setting and its54–62 merge/removal anchor are absent."
+      },
+      {
+        "case_id": "4d9d8eade6cceb18909995b8",
+        "query_id": "psf__requests-2931",
+        "native_rank": 4,
+        "path": "requests/models.py",
+        "source_sha256": "a57e766a29b120c372e3bd236c80db1b2d696d96593cddb38c4fe150c41285ed",
+        "returned_kind": "file",
+        "returned_entity_span": {
+          "start_line": 1,
+          "end_line": 848
+        },
+        "target_qualname": "RequestEncodingMixin._encode_params",
+        "target_extent": [
+          75,
+          99
+        ],
+        "target_anchor": {
+          "start_line": 83,
+          "end_line": 86
+        },
+        "visible_evidence_ranges": [
+          [
+            19,
+            30
+          ],
+          [
+            83,
+            86
+          ]
+        ],
+        "visible_body_excerpt": {
+          "start_line": 83,
+          "end_line": 86,
+          "content": "        if isinstance(data, (str, bytes)):\n            return to_native_string(data)\n        elif hasattr(data, 'read'):\n            return data"
+        },
+        "anchor_visibility": "complete",
+        "visible_anchor_lines": 4,
+        "required_anchor_lines": 4,
+        "piece_credit": true,
+        "observation": "The visible83–86 excerpt fully contains the presealed binary/stream-handling anchor. This is the one file-route piece hit."
+      },
+      {
+        "case_id": "e263b22259f8d3e18724d66b",
+        "query_id": "psf__requests-5414",
+        "native_rank": 4,
+        "path": "requests/models.py",
+        "source_sha256": "c51202c76971a02910dd004688a4586ee1973ae3c354bf856a2c4575ebd1a888",
+        "returned_kind": "file",
+        "returned_entity_span": {
+          "start_line": 1,
+          "end_line": 973
+        },
+        "target_qualname": "PreparedRequest.prepare_url",
+        "target_extent": [
+          360,
+          444
+        ],
+        "target_anchor": {
+          "start_line": 397,
+          "end_line": 407
+        },
+        "visible_evidence_ranges": [
+          [
+            9,
+            20
+          ],
+          [
+            367,
+            370
+          ]
+        ],
+        "visible_body_excerpt": {
+          "start_line": 367,
+          "end_line": 370,
+          "content": "        if isinstance(url, bytes):\n            url = url.decode('utf8')\n        else:\n            url = unicode(url) if is_py2 else str(url)"
+        },
+        "anchor_visibility": "absent",
+        "visible_anchor_lines": 0,
+        "required_anchor_lines": 11,
+        "piece_credit": false,
+        "observation": "The method’s URL type-conversion prefix is visible, but the later397–407 URL-host handling anchor is absent."
+      }
+    ]
+  },
+  "resources": {
+    "route_measurements": {
+      "symbols": {
+        "all_requests": {
+          "measurements": 11,
+          "unique_queries": 11,
+          "p50_ms": 5434.264792012982,
+          "p95_ms": 9221.354770998005,
+          "max_ms": 10635.44791698223
+        },
+        "successful_requests": {
+          "measurements": 10,
+          "unique_queries": 10,
+          "p50_ms": 6075.206042005448,
+          "p95_ms": 9362.764085596424,
+          "max_ms": 10635.44791698223
+        },
+        "query_errors": 1,
+        "query_process_peak_rss_bytes": 1271283712,
+        "warmup_ms": [
+          7268.729666946456,
+          6552.809542044997,
+          6465.805209008977,
+          5858.528291981202,
+          5068.165124976076,
+          5177.101790963206,
+          5208.214374957606,
+          4929.509375011548,
+          5033.352459024172,
+          4640.234833990689,
+          4191.835124976933
+        ],
+        "successful_accumulated_process_cpu_time_p95_ms": 29589.566549999992,
+        "process_peak_rss_GiB": 1.1839752197265625
+      },
+      "files": {
+        "all_requests": {
+          "measurements": 11,
+          "unique_queries": 11,
+          "p50_ms": 4567.565250035841,
+          "p95_ms": 7836.540249991231,
+          "max_ms": 8713.556749979034
+        },
+        "successful_requests": {
+          "measurements": 10,
+          "unique_queries": 10,
+          "p50_ms": 4875.775375025114,
+          "p95_ms": 7924.241899990009,
+          "max_ms": 8713.556749979034
+        },
+        "query_errors": 1,
+        "query_process_peak_rss_bytes": 1274855424,
+        "warmup_ms": [
+          6601.0287089738995,
+          6911.60954197403,
+          4931.734542013146,
+          5892.791374993976,
+          5246.872749994509,
+          5499.740791972727,
+          5453.5714170197025,
+          5010.521417018026,
+          5147.846458014101,
+          4801.403207995463,
+          4864.518957969267
+        ],
+        "successful_accumulated_process_cpu_time_p95_ms": 23342.340249999997,
+        "process_peak_rss_GiB": 1.1873016357421875
+      }
+    },
+    "preparation": {
+      "latency": {
+        "measurements": 11,
+        "unique_queries": 11,
+        "p50_ms": 76017.54575001542,
+        "p95_ms": 364954.3449789926,
+        "max_ms": 505044.31383300107
+      },
+      "total_ms": 1296575.8230410283,
+      "peak_rss_bytes": 1777401856,
+      "max_owned_index_bytes": 81530882,
+      "peak_rss_GiB": 1.65533447265625,
+      "total_minutes": 21.609597050683806
+    },
+    "measurement_scope": "Prepared-index elapsed wall time after a separate fixed warmup;11 measurements/route,10 successful/route. No duplication of latency samples for questions occurring in both levels. RSS is process high-water memory including loaded models and warmup; it is not incremental search allocation or whole-machine memory. Preparation is separate. Concurrent external jobs and a sample of ten successful searches prevent a standalone performance certification.",
+    "cpu_time_distinction": "Successful wall-time p95 is9362.764ms(symbols) and7924.242ms(files). Accumulated process CPU-time p95 is29589.567ms and23342.340ms, respectively; these must not be confused.",
+    "cache_size_bytes_reported_not_remeasured": 225392205
+  },
+  "conclusion_review": {
+    "README_and_failure_analysis_status": "PASS_AFTER_MINOR_WORDING_PRECISIONS",
+    "resolved_wording": [
+      "505.04s is total first preparation including a cold source-context build, not isolated context-build time.",
+      "The79 prior independent checks include source/hash/AST checks and synthetic probes; they are not all synthetic fixtures.",
+      "Latency is explicitly elapsed wall time on CPU; accumulated process CPU time is separate."
+    ],
+    "accepted_conclusions": [
+      "L2symbol results are six first, one at rank2, three completed misses from final10 and one error. Only a final-list availability limit is established; no unobserved retrieval/reranking elimination stage is assigned.",
+      "L3symbol results are three first and two more within10, and concern original positive context rather than implementation responsibility. A positive test/import context is not proof of implementing a fix.",
+      "Files-route primary file hit rates and its conservative secondary complete-anchor piece metric remain distinct. Five of ten completed top1file destinations are documentation/notebooks/history, as stated.",
+      "The two routes were fixed in advance and neither is selected by Gold. Native slots, errors and the prespecified source/identity/anchor criteria are retained.",
+      "This is a small exposed public native pilot:11issues/three repositories and18correlated level cases. Native corpus and derived relevance units differ from the original opaque CORE protocol. There is no comparable percentage-point gain, official CORE NDCG, repository-held-out claim, private acceptance result or90percent certification."
+    ]
+  },
+  "limits": [
+    "Exact callable identity intentionally does not require visible body sufficiency. This audit did not introduce a new utility gate or relax the fixed piece criterion.",
+    "The single-excerpt whole-anchor rule remains conservative. No union-of-excerpts rescue or posthoc label/anchor adjustment was applied.",
+    "Actual source-index placement before the final10 is unobserved. The audit cannot attribute misses to a specific retrieval, aggregation, neural or truncation stage.",
+    "This review verifies all121 closed-file hashes, all1812 current physical source hashes, report rows and recorded CPU/RSS measurements. It does not independently observe every historical process access, scheduler event, hardware counter or unrecorded external action.",
+    "The425 engine files were independently checked in the pre-output grader review; current report/provenance pins agree, and final-integrity-audit separately attests a final recheck. No engine body was inspected or executed in this results review.",
+    "No old opaque-pilot artifact was reopened to regrade or recertify its hash; its preservation is recorded by the parent final integrity audit. No other benchmark or reserve was read.",
+    "The reported reusable-cache disk size was not independently remeasured; search/preparation RSS, latency and index-size records were independently recomputed from the permitted closed metadata."
+  ],
+  "review_artifacts": {
+    "/private/tmp/ken-core-native-grader-review-v235/results_audit.py": "1d44a0909e8e787108b1b4f9c8acb4b752e7374db38a051520598e888108c5ce",
+    "/private/tmp/ken-core-native-grader-review-v235/results-audit-data.json": "93c00b862a6b2d8ed06e432f970eb75d7a22e8ecdaf6db23da22d514b10af18a",
+    "/private/tmp/ken-core-native-grader-review-v235/results-audit-stdout.jsonl": "df518b0166913b4f969e6a39467f88392080f91181b93a87f1c638ee5b106cf3",
+    "/private/tmp/ken-core-native-grader-review-v235/closed-source-metadata-audit.json": "8c45ba940d9f55bf974fb0f9e868a7bc7ae8517d6370fc41fbcb91bf1be2b0d8",
+    "/private/tmp/ken-core-native-grader-review-v235/compact-validation.json": "9146e5b76ee91ae39fec5f8aa186046d8597b3ec646a53f4baedf93000273026"
+  },
+  "engine_harness_sources_queries_references_results_modified": false,
+  "engine_models_fits_producers_or_markers_executed": false,
+  "other_benchmarks_read": false,
+  "private_reserve_read": false,
+  "reserve": "CLOSED",
+  "release_approval": false
+}

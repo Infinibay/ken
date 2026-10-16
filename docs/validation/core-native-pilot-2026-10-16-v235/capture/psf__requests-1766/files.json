@@ -1,0 +1,323 @@
+{
+  "id": "psf__requests-1766",
+  "query": "quote qop options in Digest Auth\nBased on RFC2617 (http://tools.ietf.org/html/rfc2617), the value of\n'qop-options' directive should be quoted with double quotes:\n\n```\nqop-options\n     This directive is optional, but is made so only for backward\n     compatibility with RFC 2069 [6]; it SHOULD be used by all\n     implementations compliant with this version of the Digest\n     scheme. If present, it is a quoted string of one or more\n     tokens indicating the \"quality of protection\" values supported by\n     the server.  The value \"auth\" indicates authentication; the\n     value \"auth-int\" indicates authentication with\n     integrity protection; see the\n```\n\ncurl comamnd-line tool also appends these quotes. You can see this\nby `curl -v --digest --user user:passwd http://example.com/digest-auth`.\nUnfortunately, some minor server-side implementations seem to be sensitive\non this difference.\n\n",
+  "results": [
+    {
+      "path": "requests/auth.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 194
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "# -*- coding: utf-8 -*-\n\n\"\"\"\nrequests.auth\n~~~~~~~~~~~~~\n\nThis module contains the authentication handlers for Requests.\n\"\"\"\n\nimport os\nimport re\nimport time"
+        },
+        {
+          "start_line": 124,
+          "end_line": 127,
+          "content": "        if _algorithm == 'MD5-SESS':\n            HA1 = hash_utf8('%s:%s:%s' % (HA1, nonce, cnonce))\n\n        if qop is None:"
+        }
+      ],
+      "source_hash": "e9ac12db8dfb81a4abe59e5e3b1764e01fe1f04dbdc5f57dc7deb7a47695087c",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/utils.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 583
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "# -*- coding: utf-8 -*-\n\n\"\"\"\nrequests.utils\n~~~~~~~~~~~~~~\n\nThis module provides utility functions that are used within Requests\nthat are also useful for external consumption.\n\n\"\"\"\n\nimport cgi"
+        },
+        {
+          "start_line": 405,
+          "end_line": 405,
+          "content": "    return quote(unquote_unreserved(uri), safe=\"!#$%&'()*+,/:;=?@[]~\")"
+        },
+        {
+          "start_line": 231,
+          "end_line": 233,
+          "content": "    if value and value[0] == value[-1] == '\"':\n        # this is not the real unquoting, but fixing this so that the\n        # RFC is met will result in bugs with internet explorer and"
+        }
+      ],
+      "source_hash": "05074b3de586a44fa1c267a8aa2b177a1e3a724bdb1b7d5c6e490fe54fbc9d35",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "docs/user/advanced.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 628
+      },
+      "evidence": [
+        {
+          "start_line": 361,
+          "end_line": 372,
+          "content": "Requests is intended to be compliant with all relevant specifications and\nRFCs where that compliance will not cause difficulties for users. This\nattention to the specification can lead to some behaviour that may seem\nunusual to those not familiar with the relevant specification.\n\nEncodings\n^^^^^^^^^\n\nWhen you receive a response, Requests makes a guess at the encoding to use for\ndecoding the response when you call the ``Response.text`` method. Requests\nwill first check for an encoding in the HTTP header, and if none is present,\nwill use `charade <http://pypi.python.org/pypi/charade>`_ to attempt to guess"
+        },
+        {
+          "start_line": 359,
+          "end_line": 360,
+          "content": "----------\n"
+        },
+        {
+          "start_line": 373,
+          "end_line": 374,
+          "content": "the encoding.\n"
+        }
+      ],
+      "source_hash": "340156ab873fc49e70125661a0a153de30da3aa0aa3522a97186b59f844f29aa",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "HISTORY.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 721
+      },
+      "evidence": [
+        {
+          "start_line": 55,
+          "end_line": 66,
+          "content": "- Better handling of streaming downloads.\n- Retrieve environment proxies from more locations.\n- Minor cookies fixes.\n- Improved redirect behaviour.\n- Improved streaming behaviour, particularly for compressed data.\n- Miscellaneous small Python 3 text encoding bugs.\n- ``.netrc`` no longer overrides explicit auth.\n- Cookies set by hooks are now correctly persisted on Sessions.\n- Fix problem with cookies that specify port numbers in their host field.\n- ``BytesIO`` can be used to perform streaming uploads.\n- More generous parsing of the ``no_proxy`` environment variable.\n- Non-string objects can be passed in data values alongside files."
+        },
+        {
+          "start_line": 45,
+          "end_line": 48,
+          "content": "- HTTP 226 reason added (``\"im_used\"``).\n\n**Bugfixes:**\n"
+        }
+      ],
+      "source_hash": "f3eddda8b106baaae6addf324d2b8d7ab1cfd87efa6f6a9e22e2b5cd1a456551",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "docs/user/authentication.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 128
+      },
+      "evidence": [
+        {
+          "start_line": 24,
+          "end_line": 35,
+          "content": "\nIn fact, HTTP Basic Auth is so common that Requests provides a handy shorthand\nfor using it::\n\n    >>> requests.get('https://api.github.com/user', auth=('user', 'pass'))\n    <Response [200]>\n\nProviding the credentials in a tuple like this is exactly the same as the\n``HTTPBasicAuth`` example above.\n\n\nnetrc Authentication"
+        },
+        {
+          "start_line": 67,
+          "end_line": 70,
+          "content": "    >>> url = 'https://api.twitter.com/1.1/account/verify_credentials.json'\n    >>> auth = OAuth1('YOUR_APP_KEY', 'YOUR_APP_SECRET',\n                      'USER_OAUTH_TOKEN', 'USER_OAUTH_TOKEN_SECRET')\n"
+        }
+      ],
+      "source_hash": "9161a54d57f8b91a153543b43468e29089230def4ba420e887a50ca05984c61a",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/api.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 120
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "# -*- coding: utf-8 -*-\n\n\"\"\"\nrequests.api\n~~~~~~~~~~~~\n\nThis module implements the Requests API.\n\n:copyright: (c) 2012 by Kenneth Reitz.\n:license: Apache2, see LICENSE for more details.\n\n\"\"\""
+        },
+        {
+          "start_line": 65,
+          "end_line": 66,
+          "content": "    kwargs.setdefault('allow_redirects', True)\n    return request('options', url, **kwargs)"
+        },
+        {
+          "start_line": 43,
+          "end_line": 44,
+          "content": "    session = sessions.Session()\n    return session.request(method=method, url=url, **kwargs)"
+        }
+      ],
+      "source_hash": "46295d2e64e1951dc134523a0b76d2d5bbf15791bae5e84256b0469181de8c3b",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "test_requests.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 914
+      },
+      "evidence": [
+        {
+          "start_line": 15,
+          "end_line": 26,
+          "content": "from requests.adapters import HTTPAdapter\nfrom requests.compat import str, cookielib, getproxies, urljoin, urlparse\nfrom requests.cookies import cookiejar_from_dict\nfrom requests.exceptions import InvalidURL, MissingSchema\nfrom requests.structures import CaseInsensitiveDict\n\ntry:\n    import StringIO\nexcept ImportError:\n    import io as StringIO\n\nHTTPBIN = os.environ.get('HTTPBIN_URL', 'http://httpbin.org/')"
+        },
+        {
+          "start_line": 309,
+          "end_line": 312,
+          "content": "        auth = HTTPDigestAuth('user', 'wrongpass')\n        url = httpbin('digest-auth', 'auth', 'user', 'pass')\n\n        r = requests.get(url, auth=auth)"
+        }
+      ],
+      "source_hash": "2c482f0ad0b1c5e7465a95bcf19cab5834c3dca3c4c8b755c2dd990bdaac34cd",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "docs/user/quickstart.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 430
+      },
+      "evidence": [
+        {
+          "start_line": 48,
+          "end_line": 59,
+          "content": "    >>> r = requests.head(\"http://httpbin.org/get\")\n    >>> r = requests.options(\"http://httpbin.org/get\")\n\nThat's all well and good, but it's also only the start of what Requests can\ndo.\n\n\nPassing Parameters In URLs\n--------------------------\n\nYou often want to send some sort of data in the URL's query string. If\nyou were constructing the URL by hand, this data would be given as key/value"
+        },
+        {
+          "start_line": 39,
+          "end_line": 42,
+          "content": "example, this is how you make an HTTP POST request::\n\n    >>> r = requests.post(\"http://httpbin.org/post\")\n"
+        }
+      ],
+      "source_hash": "ac23ee111b31fba94398038fd8d5a6bcbd354221a6e9ff4c910f010ba137701a",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/sessions.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 537
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "# -*- coding: utf-8 -*-\n\n\"\"\"\nrequests.session\n~~~~~~~~~~~~~~~~\n\nThis module provides a Session object to manage and persist settings across\nrequests (cookies, auth, proxies).\n\n\"\"\"\nimport os\nfrom collections import Mapping"
+        },
+        {
+          "start_line": 388,
+          "end_line": 389,
+          "content": "        kwargs.setdefault('allow_redirects', True)\n        return self.request('OPTIONS', url, **kwargs)"
+        },
+        {
+          "start_line": 337,
+          "end_line": 338,
+          "content": "        # Gather clues from the surrounding environment.\n        if self.trust_env:"
+        }
+      ],
+      "source_hash": "7519189c53263cb28b294dc79e42e6a0a9ce9290fc4c538b544e640867866b0e",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/packages/urllib3/connectionpool.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 681
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "# urllib3/connectionpool.py\n# Copyright 2008-2013 Andrey Petrov and contributors (see CONTRIBUTORS.txt)\n#\n# This module is part of urllib3 and is released under\n# the MIT License: http://www.opensource.org/licenses/mit-license.php\n\nimport errno\nimport logging\n\nfrom socket import error as SocketError, timeout as SocketTimeout\nimport socket\n"
+        },
+        {
+          "start_line": 449,
+          "end_line": 452,
+          "content": "        if headers is None:\n            headers = self.headers\n\n        if retries < 0:"
+        }
+      ],
+      "source_hash": "e6dbd6ca7568bc5c08c3b6a78edef53d44b1ff513ed12b54fbc9e067604e2900",
+      "stale": false,
+      "truncated": true
+    }
+  ],
+  "profile_version": "f189f081de7021005c2399fd13658fc620b8873293967b1a471a4c8142573a13",
+  "warnings": [],
+  "truncated": true,
+  "omitted_count": 0,
+  "compact": "requests/auth.py:1-12 (file) [partial]\n1 | # -*- coding: utf-8 -*-\n2 | \n3 | \"\"\"\n4 | requests.auth\n5 | ~~~~~~~~~~~~~\n6 | \n7 | This module contains the authentication handlers for Requests.\n8 | \"\"\"\n9 | \n10 | import os\n11 | import re\n12 | import time\n@124-127\n124 |         if _algorithm == 'MD5-SESS':\n125 |             HA1 = hash_utf8('%s:%s:%s' % (HA1, nonce, cnonce))\n126 | \n127 |         if qop is None:\n\nrequests/utils.py:1-12 (file) [partial]\n1 | # -*- coding: utf-8 -*-\n2 | \n3 | \"\"\"\n4 | requests.utils\n5 | ~~~~~~~~~~~~~~\n6 | \n7 | This module provides utility functions that are used within Requests\n8 | that are also useful for external consumption.\n9 | \n10 | \"\"\"\n11 | \n12 | import cgi\n@405-405\n405 |     return quote(unquote_unreserved(uri), safe=\"!#$%&'()*+,/:;=?@[]~\")\n@231-233\n231 |     if value and value[0] == value[-1] == '\"':\n232 |         # this is not the real unquoting, but fixing this so that the\n233 |         # RFC is met will result in bugs with internet explorer and\n\ndocs/user/advanced.rst:361-372 (file) [partial]\n361 | Requests is intended to be compliant with all relevant specifications and\n362 | RFCs where that compliance will not cause difficulties for users. This\n363 | attention to the specification can lead to some behaviour that may seem\n364 | unusual to those not familiar with the relevant specification.\n365 | \n366 | Encodings\n367 | ^^^^^^^^^\n368 | \n369 | When you receive a response, Requests makes a guess at the encoding to use for\n370 | decoding the response when you call the ``Response.text`` method. Requests\n371 | will first check for an encoding in the HTTP header, and if none is present,\n372 | will use `charade <http://pypi.python.org/pypi/charade>`_ to attempt to guess\n@359-360\n359 | ----------\n360 | \n@373-374\n373 | the encoding.\n374 | \n\nHISTORY.rst:55-66 (file) [partial]\n55 | - Better handling of streaming downloads.\n56 | - Retrieve environment proxies from more locations.\n57 | - Minor cookies fixes.\n58 | - Improved redirect behaviour.\n59 | - Improved streaming behaviour, particularly for compressed data.\n60 | - Miscellaneous small Python 3 text encoding bugs.\n61 | - ``.netrc`` no longer overrides explicit auth.\n62 | - Cookies set by hooks are now correctly persisted on Sessions.\n63 | - Fix problem with cookies that specify port numbers in their host field.\n64 | - ``BytesIO`` can be used to perform streaming uploads.\n65 | - More generous parsing of the ``no_proxy`` environment variable.\n66 | - Non-string objects can be passed in data values alongside files.\n@45-48\n45 | - HTTP 226 reason added (``\"im_used\"``).\n46 | \n47 | **Bugfixes:**\n48 | \n\ndocs/user/authentication.rst:24-35 (file) [partial]\n24 | \n25 | In fact, HTTP Basic Auth is so common that Requests provides a handy shorthand\n26 | for using it::\n27 | \n28 |     >>> requests.get('https://api.github.com/user', auth=('user', 'pass'))\n29 |     <Response [200]>\n30 | \n31 | Providing the credentials in a tuple like this is exactly the same as the\n32 | ``HTTPBasicAuth`` example above.\n33 | \n34 | \n35 | netrc Authentication\n@67-70\n67 |     >>> url = 'https://api.twitter.com/1.1/account/verify_credentials.json'\n68 |     >>> auth = OAuth1('YOUR_APP_KEY', 'YOUR_APP_SECRET',\n69 |                       'USER_OAUTH_TOKEN', 'USER_OAUTH_TOKEN_SECRET')\n70 | \n\nrequests/api.py:1-12 (file) [partial]\n1 | # -*- coding: utf-8 -*-\n2 | \n3 | \"\"\"\n4 | requests.api\n5 | ~~~~~~~~~~~~\n6 | \n7 | This module implements the Requests API.\n8 | \n9 | :copyright: (c) 2012 by Kenneth Reitz.\n10 | :license: Apache2, see LICENSE for more details.\n11 | \n12 | \"\"\"\n@65-66\n65 |     kwargs.setdefault('allow_redirects', True)\n66 |     return request('options', url, **kwargs)\n@43-44\n43 |     session = sessions.Session()\n44 |     return session.request(method=method, url=url, **kwargs)\n\ntest_requests.py:15-26 (file) [partial]\n15 | from requests.adapters import HTTPAdapter\n16 | from requests.compat import str, cookielib, getproxies, urljoin, urlparse\n17 | from requests.cookies import cookiejar_from_dict\n18 | from requests.exceptions import InvalidURL, MissingSchema\n19 | from requests.structures import CaseInsensitiveDict\n20 | \n21 | try:\n22 |     import StringIO\n23 | except ImportError:\n24 |     import io as StringIO\n25 | \n26 | HTTPBIN = os.environ.get('HTTPBIN_URL', 'http://httpbin.org/')\n@309-312\n309 |         auth = HTTPDigestAuth('user', 'wrongpass')\n310 |         url = httpbin('digest-auth', 'auth', 'user', 'pass')\n311 | \n312 |         r = requests.get(url, auth=auth)\n\ndocs/user/quickstart.rst:48-59 (file) [partial]\n48 |     >>> r = requests.head(\"http://httpbin.org/get\")\n49 |     >>> r = requests.options(\"http://httpbin.org/get\")\n50 | \n51 | That's all well and good, but it's also only the start of what Requests can\n52 | do.\n53 | \n54 | \n55 | Passing Parameters In URLs\n56 | --------------------------\n57 | \n58 | You often want to send some sort of data in the URL's query string. If\n59 | you were constructing the URL by hand, this data would be given as key/value\n@39-42\n39 | example, this is how you make an HTTP POST request::\n40 | \n41 |     >>> r = requests.post(\"http://httpbin.org/post\")\n42 | \n\nrequests/sessions.py:1-12 (file) [partial]\n1 | # -*- coding: utf-8 -*-\n2 | \n3 | \"\"\"\n4 | requests.session\n5 | ~~~~~~~~~~~~~~~~\n6 | \n7 | This module provides a Session object to manage and persist settings across\n8 | requests (cookies, auth, proxies).\n9 | \n10 | \"\"\"\n11 | import os\n12 | from collections import Mapping\n@388-389\n388 |         kwargs.setdefault('allow_redirects', True)\n389 |         return self.request('OPTIONS', url, **kwargs)\n@337-338\n337 |         # Gather clues from the surrounding environment.\n338 |         if self.trust_env:\n\nrequests/packages/urllib3/connectionpool.py:1-12 (file) [partial]\n1 | # urllib3/connectionpool.py\n2 | # Copyright 2008-2013 Andrey Petrov and contributors (see CONTRIBUTORS.txt)\n3 | #\n4 | # This module is part of urllib3 and is released under\n5 | # the MIT License: http://www.opensource.org/licenses/mit-license.php\n6 | \n7 | import errno\n8 | import logging\n9 | \n10 | from socket import error as SocketError, timeout as SocketTimeout\n11 | import socket\n12 | \n@449-452\n449 |         if headers is None:\n450 |             headers = self.headers\n451 | \n452 |         if retries < 0:",
+  "elapsed_ms": 4567.565250035841,
+  "cpu_ms": 13280.027
+}

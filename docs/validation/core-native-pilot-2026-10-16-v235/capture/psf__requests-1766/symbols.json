@@ -1,0 +1,263 @@
+{
+  "id": "psf__requests-1766",
+  "query": "quote qop options in Digest Auth\nBased on RFC2617 (http://tools.ietf.org/html/rfc2617), the value of\n'qop-options' directive should be quoted with double quotes:\n\n```\nqop-options\n     This directive is optional, but is made so only for backward\n     compatibility with RFC 2069 [6]; it SHOULD be used by all\n     implementations compliant with this version of the Digest\n     scheme. If present, it is a quoted string of one or more\n     tokens indicating the \"quality of protection\" values supported by\n     the server.  The value \"auth\" indicates authentication; the\n     value \"auth-int\" indicates authentication with\n     integrity protection; see the\n```\n\ncurl comamnd-line tool also appends these quotes. You can see this\nby `curl -v --digest --user user:passwd http://example.com/digest-auth`.\nUnfortunately, some minor server-side implementations seem to be sensitive\non this difference.\n\n",
+  "results": [
+    {
+      "path": "requests/auth.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "HTTPDigestAuth.build_digest_header",
+        "owner": "HTTPDigestAuth",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 68,
+        "end_line": 149
+      },
+      "evidence": [
+        {
+          "start_line": 68,
+          "end_line": 69,
+          "content": "    def build_digest_header(self, method, url):\n"
+        },
+        {
+          "start_line": 124,
+          "end_line": 137,
+          "content": "        if _algorithm == 'MD5-SESS':\n            HA1 = hash_utf8('%s:%s:%s' % (HA1, nonce, cnonce))\n\n        if qop is None:\n            respdig = KD(HA1, \"%s:%s\" % (nonce, HA2))\n        elif qop == 'auth' or 'auth' in qop.split(','):\n            respdig = KD(HA1, noncebit)\n        else:\n            # XXX handle auth-int.\n            return None\n\n        self.last_nonce = nonce\n\n        # XXX should the partial digests be encoded too?"
+        }
+      ],
+      "source_hash": "e9ac12db8dfb81a4abe59e5e3b1764e01fe1f04dbdc5f57dc7deb7a47695087c",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/utils.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "function",
+        "qualname": "requote_uri",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 396,
+        "end_line": 405
+      },
+      "evidence": [
+        {
+          "start_line": 396,
+          "end_line": 405,
+          "content": "def requote_uri(uri):\n    \"\"\"Re-quote the given URI.\n\n    This function passes the given URI through an unquote/quote cycle to\n    ensure that it is fully and consistently quoted.\n    \"\"\"\n    # Unquote only the unreserved characters\n    # Then quote only illegal characters (do not quote reserved, unreserved,\n    # or '%')\n    return quote(unquote_unreserved(uri), safe=\"!#$%&'()*+,/:;=?@[]~\")"
+        }
+      ],
+      "source_hash": "05074b3de586a44fa1c267a8aa2b177a1e3a724bdb1b7d5c6e490fe54fbc9d35",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "requests/auth.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "HTTPDigestAuth.__call__",
+        "owner": "HTTPDigestAuth",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 185,
+        "end_line": 194
+      },
+      "evidence": [
+        {
+          "start_line": 185,
+          "end_line": 194,
+          "content": "    def __call__(self, r):\n        # If we have a saved nonce, skip the 401\n        if self.last_nonce:\n            r.headers['Authorization'] = self.build_digest_header(r.method, r.url)\n        try:\n            self.pos = r.body.tell()\n        except AttributeError:\n            pass\n        r.register_hook('response', self.handle_401)\n        return r"
+        }
+      ],
+      "source_hash": "e9ac12db8dfb81a4abe59e5e3b1764e01fe1f04dbdc5f57dc7deb7a47695087c",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "requests/auth.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "function",
+        "qualname": "_basic_auth_str",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 27,
+        "end_line": 30
+      },
+      "evidence": [
+        {
+          "start_line": 27,
+          "end_line": 30,
+          "content": "def _basic_auth_str(username, password):\n    \"\"\"Returns a Basic Auth string.\"\"\"\n\n    return 'Basic ' + b64encode(('%s:%s' % (username, password)).encode('latin1')).strip().decode('latin1')"
+        }
+      ],
+      "source_hash": "e9ac12db8dfb81a4abe59e5e3b1764e01fe1f04dbdc5f57dc7deb7a47695087c",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "requests/auth.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "function",
+        "qualname": "HTTPDigestAuth.build_digest_header.sha_utf8",
+        "owner": "HTTPDigestAuth.build_digest_header",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 88,
+        "end_line": 91
+      },
+      "evidence": [
+        {
+          "start_line": 88,
+          "end_line": 91,
+          "content": "            def sha_utf8(x):\n                if isinstance(x, str):\n                    x = x.encode('utf-8')\n                return hashlib.sha1(x).hexdigest()"
+        }
+      ],
+      "source_hash": "e9ac12db8dfb81a4abe59e5e3b1764e01fe1f04dbdc5f57dc7deb7a47695087c",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "requests/sessions.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "Session.options",
+        "owner": "Session",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 381,
+        "end_line": 389
+      },
+      "evidence": [
+        {
+          "start_line": 381,
+          "end_line": 389,
+          "content": "    def options(self, url, **kwargs):\n        \"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        \"\"\"\n\n        kwargs.setdefault('allow_redirects', True)\n        return self.request('OPTIONS', url, **kwargs)"
+        }
+      ],
+      "source_hash": "7519189c53263cb28b294dc79e42e6a0a9ce9290fc4c538b544e640867866b0e",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "requests/api.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "function",
+        "qualname": "options",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 58,
+        "end_line": 66
+      },
+      "evidence": [
+        {
+          "start_line": 58,
+          "end_line": 66,
+          "content": "def options(url, **kwargs):\n    \"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\n    :param url: URL for the new :class:`Request` object.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n    \"\"\"\n\n    kwargs.setdefault('allow_redirects', True)\n    return request('options', url, **kwargs)"
+        }
+      ],
+      "source_hash": "46295d2e64e1951dc134523a0b76d2d5bbf15791bae5e84256b0469181de8c3b",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "test_requests.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "RequestsTestCase.test_DIGESTAUTH_WRONG_HTTP_401_GET",
+        "owner": "RequestsTestCase",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 307,
+        "end_line": 321
+      },
+      "evidence": [
+        {
+          "start_line": 307,
+          "end_line": 321,
+          "content": "    def test_DIGESTAUTH_WRONG_HTTP_401_GET(self):\n\n        auth = HTTPDigestAuth('user', 'wrongpass')\n        url = httpbin('digest-auth', 'auth', 'user', 'pass')\n\n        r = requests.get(url, auth=auth)\n        assert r.status_code == 401\n\n        r = requests.get(url)\n        assert r.status_code == 401\n\n        s = requests.session()\n        s.auth = auth\n        r = s.get(url)\n        assert r.status_code == 401"
+        }
+      ],
+      "source_hash": "2c482f0ad0b1c5e7465a95bcf19cab5834c3dca3c4c8b755c2dd990bdaac34cd",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "requests/auth.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "HTTPDigestAuth.handle_401",
+        "owner": "HTTPDigestAuth",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 151,
+        "end_line": 183
+      },
+      "evidence": [
+        {
+          "start_line": 151,
+          "end_line": 166,
+          "content": "    def handle_401(self, r, **kwargs):\n        \"\"\"Takes the given response and tries digest-auth, if needed.\"\"\"\n\n        if self.pos is not None:\n            # Rewind the file position indicator of the body to where\n            # it was to resend the request.\n            r.request.body.seek(self.pos)\n        num_401_calls = getattr(self, 'num_401_calls', 1)\n        s_auth = r.headers.get('www-authenticate', '')\n\n        if 'digest' in s_auth.lower() and num_401_calls < 2:\n\n            setattr(self, 'num_401_calls', num_401_calls + 1)\n            pat = re.compile(r'digest ', flags=re.IGNORECASE)\n            self.chal = parse_dict_header(pat.sub('', s_auth, count=1))\n"
+        }
+      ],
+      "source_hash": "e9ac12db8dfb81a4abe59e5e3b1764e01fe1f04dbdc5f57dc7deb7a47695087c",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/packages/urllib3/connectionpool.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "HTTPConnectionPool.urlopen",
+        "owner": "HTTPConnectionPool",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 380,
+        "end_line": 557
+      },
+      "evidence": [
+        {
+          "start_line": 380,
+          "end_line": 391,
+          "content": "    def urlopen(self, method, url, body=None, headers=None, retries=3,\n                redirect=True, assert_same_host=True, timeout=_Default,\n                pool_timeout=None, release_conn=None, **response_kw):\n        \"\"\"\n        Get a connection from the pool and perform an HTTP request. This is the\n        lowest level call for making a request, so you'll need to specify all\n        the raw details.\n\n        .. note::\n\n           More commonly, it's appropriate to use a convenience method provided\n           by :class:`.RequestMethods`, such as :meth:`request`."
+        },
+        {
+          "start_line": 449,
+          "end_line": 452,
+          "content": "        if headers is None:\n            headers = self.headers\n\n        if retries < 0:"
+        }
+      ],
+      "source_hash": "e6dbd6ca7568bc5c08c3b6a78edef53d44b1ff513ed12b54fbc9e067604e2900",
+      "stale": false,
+      "truncated": true
+    }
+  ],
+  "profile_version": "f189f081de7021005c2399fd13658fc620b8873293967b1a471a4c8142573a13",
+  "warnings": [],
+  "truncated": true,
+  "omitted_count": 0,
+  "compact": "requests/auth.py:68-69 :: HTTPDigestAuth.build_digest_header [partial]\n68 |     def build_digest_header(self, method, url):\n69 | \n@124-137\n124 |         if _algorithm == 'MD5-SESS':\n125 |             HA1 = hash_utf8('%s:%s:%s' % (HA1, nonce, cnonce))\n126 | \n127 |         if qop is None:\n128 |             respdig = KD(HA1, \"%s:%s\" % (nonce, HA2))\n129 |         elif qop == 'auth' or 'auth' in qop.split(','):\n130 |             respdig = KD(HA1, noncebit)\n131 |         else:\n132 |             # XXX handle auth-int.\n133 |             return None\n134 | \n135 |         self.last_nonce = nonce\n136 | \n137 |         # XXX should the partial digests be encoded too?\n\nrequests/utils.py:396-405 :: requote_uri\n396 | def requote_uri(uri):\n397 |     \"\"\"Re-quote the given URI.\n398 | \n399 |     This function passes the given URI through an unquote/quote cycle to\n400 |     ensure that it is fully and consistently quoted.\n401 |     \"\"\"\n402 |     # Unquote only the unreserved characters\n403 |     # Then quote only illegal characters (do not quote reserved, unreserved,\n404 |     # or '%')\n405 |     return quote(unquote_unreserved(uri), safe=\"!#$%&'()*+,/:;=?@[]~\")\n\nrequests/auth.py:185-194 :: HTTPDigestAuth.__call__\n185 |     def __call__(self, r):\n186 |         # If we have a saved nonce, skip the 401\n187 |         if self.last_nonce:\n188 |             r.headers['Authorization'] = self.build_digest_header(r.method, r.url)\n189 |         try:\n190 |             self.pos = r.body.tell()\n191 |         except AttributeError:\n192 |             pass\n193 |         r.register_hook('response', self.handle_401)\n194 |         return r\n\nrequests/auth.py:27-30 :: _basic_auth_str\n27 | def _basic_auth_str(username, password):\n28 |     \"\"\"Returns a Basic Auth string.\"\"\"\n29 | \n30 |     return 'Basic ' + b64encode(('%s:%s' % (username, password)).encode('latin1')).strip().decode('latin1')\n\nrequests/auth.py:88-91 :: HTTPDigestAuth.build_digest_header.sha_utf8\n88 |             def sha_utf8(x):\n89 |                 if isinstance(x, str):\n90 |                     x = x.encode('utf-8')\n91 |                 return hashlib.sha1(x).hexdigest()\n\nrequests/sessions.py:381-389 :: Session.options\n381 |     def options(self, url, **kwargs):\n382 |         \"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n383 | \n384 |         :param url: URL for the new :class:`Request` object.\n385 |         :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n386 |         \"\"\"\n387 | \n388 |         kwargs.setdefault('allow_redirects', True)\n389 |         return self.request('OPTIONS', url, **kwargs)\n\nrequests/api.py:58-66 :: options\n58 | def options(url, **kwargs):\n59 |     \"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n60 | \n61 |     :param url: URL for the new :class:`Request` object.\n62 |     :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n63 |     \"\"\"\n64 | \n65 |     kwargs.setdefault('allow_redirects', True)\n66 |     return request('options', url, **kwargs)\n\ntest_requests.py:307-321 :: RequestsTestCase.test_DIGESTAUTH_WRONG_HTTP_401_GET\n307 |     def test_DIGESTAUTH_WRONG_HTTP_401_GET(self):\n308 | \n309 |         auth = HTTPDigestAuth('user', 'wrongpass')\n310 |         url = httpbin('digest-auth', 'auth', 'user', 'pass')\n311 | \n312 |         r = requests.get(url, auth=auth)\n313 |         assert r.status_code == 401\n314 | \n315 |         r = requests.get(url)\n316 |         assert r.status_code == 401\n317 | \n318 |         s = requests.session()\n319 |         s.auth = auth\n320 |         r = s.get(url)\n321 |         assert r.status_code == 401\n\nrequests/auth.py:151-166 :: HTTPDigestAuth.handle_401 [partial]\n151 |     def handle_401(self, r, **kwargs):\n152 |         \"\"\"Takes the given response and tries digest-auth, if needed.\"\"\"\n153 | \n154 |         if self.pos is not None:\n155 |             # Rewind the file position indicator of the body to where\n156 |             # it was to resend the request.\n157 |             r.request.body.seek(self.pos)\n158 |         num_401_calls = getattr(self, 'num_401_calls', 1)\n159 |         s_auth = r.headers.get('www-authenticate', '')\n160 | \n161 |         if 'digest' in s_auth.lower() and num_401_calls < 2:\n162 | \n163 |             setattr(self, 'num_401_calls', num_401_calls + 1)\n164 |             pat = re.compile(r'digest ', flags=re.IGNORECASE)\n165 |             self.chal = parse_dict_header(pat.sub('', s_auth, count=1))\n166 | \n\nrequests/packages/urllib3/connectionpool.py:380-391 :: HTTPConnectionPool.urlopen [partial]\n380 |     def urlopen(self, method, url, body=None, headers=None, retries=3,\n381 |                 redirect=True, assert_same_host=True, timeout=_Default,\n382 |                 pool_timeout=None, release_conn=None, **response_kw):\n383 |         \"\"\"\n384 |         Get a connection from the pool and perform an HTTP request. This is the\n385 |         lowest level call for making a request, so you'll need to specify all\n386 |         the raw details.\n387 | \n388 |         .. note::\n389 | \n390 |            More commonly, it's appropriate to use a convenience method provided\n391 |            by :class:`.RequestMethods`, such as :meth:`request`.\n@449-452\n449 |         if headers is None:\n450 |             headers = self.headers\n451 | \n452 |         if retries < 0:",
+  "elapsed_ms": 5434.264792012982,
+  "cpu_ms": 17072.524999999998
+}

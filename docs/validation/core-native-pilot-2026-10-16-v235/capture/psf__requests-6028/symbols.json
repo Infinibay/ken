@@ -1,0 +1,263 @@
+{
+  "id": "psf__requests-6028",
+  "query": "Proxy authentication bug\n<!-- Summary. -->\r\n\r\nWhen using proxies in python 3.8.12, I get an error 407. Using any other version of python works fine. I am assuming it could be to do with this https://docs.python.org/3/whatsnew/3.8.html#notable-changes-in-python-3-8-12.\r\n\r\n<!-- What you expected. -->\r\n\r\nI should get a status of 200.\r\n\r\n<!-- What happened instead. -->\r\n\r\nI get a status code of 407.\r\n\r\n```python\r\nimport requests\r\n\r\n\r\nr = requests.get('https://example.org/', proxies=proxies) # You will need a proxy to test with, I am using a paid service.\r\nprint(r.status_code)\r\n\r\n```\r\n\r\n## System Information\r\n\r\n```json\r\n{\r\n  \"chardet\": {\r\n    \"version\": null\r\n  },\r\n  \"charset_normalizer\": {\r\n    \"version\": \"2.0.9\"\r\n  },\r\n  \"cryptography\": {\r\n    \"version\": \"\"\r\n  },\r\n  \"idna\": {\r\n    \"version\": \"3.3\"\r\n  },\r\n  \"implementation\": {\r\n    \"name\": \"CPython\",\r\n    \"version\": \"3.8.12\"\r\n  },\r\n  \"platform\": {\r\n    \"release\": \"5.13.0-7620-generic\",\r\n    \"system\": \"Linux\"\r\n  },\r\n  \"pyOpenSSL\": {\r\n    \"openssl_version\": \"\",\r\n    \"version\": null\r\n  },\r\n  \"requests\": {\r\n    \"version\": \"2.27.0\"\r\n  },\r\n  \"system_ssl\": {\r\n    \"version\": \"101010cf\"\r\n  },\r\n  \"urllib3\": {\r\n    \"version\": \"1.26.7\"\r\n  },\r\n  \"using_charset_normalizer\": true,\r\n  \"using_pyopenssl\": false\r\n}\r\n```\n",
+  "results": [
+    {
+      "path": "tests/test_requests.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "TestRequests.test_proxy_auth",
+        "owner": "TestRequests",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1889,
+        "end_line": 1892
+      },
+      "evidence": [
+        {
+          "start_line": 1889,
+          "end_line": 1892,
+          "content": "    def test_proxy_auth(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"http://user:pass@httpbin.org\")\n        assert headers == {'Proxy-Authorization': 'Basic dXNlcjpwYXNz'}"
+        }
+      ],
+      "source_hash": "34a857d3ce6eb50653a07ca4855dc08cbc9ecbf6f7b3757b9c5397963f818887",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "tests/test_requests.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "TestRequests.test_proxy_auth_empty_pass",
+        "owner": "TestRequests",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1894,
+        "end_line": 1897
+      },
+      "evidence": [
+        {
+          "start_line": 1894,
+          "end_line": 1897,
+          "content": "    def test_proxy_auth_empty_pass(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"http://user:@httpbin.org\")\n        assert headers == {'Proxy-Authorization': 'Basic dXNlcjo='}"
+        }
+      ],
+      "source_hash": "34a857d3ce6eb50653a07ca4855dc08cbc9ecbf6f7b3757b9c5397963f818887",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "requests/auth.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "HTTPProxyAuth.__call__",
+        "owner": "HTTPProxyAuth",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 103,
+        "end_line": 105
+      },
+      "evidence": [
+        {
+          "start_line": 103,
+          "end_line": 105,
+          "content": "    def __call__(self, r):\n        r.headers['Proxy-Authorization'] = _basic_auth_str(self.username, self.password)\n        return r"
+        }
+      ],
+      "source_hash": "38ca092152b244bcbd4c7afdd72f2bc72b19b9c9703c1f8ad57835cc1a265214",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "requests/help.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "function",
+        "qualname": "info",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 68,
+        "end_line": 126
+      },
+      "evidence": [
+        {
+          "start_line": 68,
+          "end_line": 83,
+          "content": "def info():\n    \"\"\"Generate information for a bug report.\"\"\"\n    try:\n        platform_info = {\n            'system': platform.system(),\n            'release': platform.release(),\n        }\n    except IOError:\n        platform_info = {\n            'system': 'Unknown',\n            'release': 'Unknown',\n        }\n\n    implementation_info = _implementation()\n    urllib3_info = {'version': urllib3.__version__}\n    charset_normalizer_info = {'version': None}"
+        }
+      ],
+      "source_hash": "cb03cdb2c3e886b721fd0feae3f24b24cd73d9b3f44e2ac7900f509e8385d2c6",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "tests/test_requests.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "TestRequests.test_proxy_error",
+        "owner": "TestRequests",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 541,
+        "end_line": 544
+      },
+      "evidence": [
+        {
+          "start_line": 541,
+          "end_line": 544,
+          "content": "    def test_proxy_error(self):\n        # any proxy related error (address resolution, no route to host, etc) should result in a ProxyError\n        with pytest.raises(ProxyError):\n            requests.get('http://localhost:1', proxies={'http': 'non-resolvable-address'})"
+        }
+      ],
+      "source_hash": "34a857d3ce6eb50653a07ca4855dc08cbc9ecbf6f7b3757b9c5397963f818887",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "tests/test_requests.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "TestRequests.test_long_authinfo_in_url",
+        "owner": "TestRequests",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1513,
+        "end_line": 1520
+      },
+      "evidence": [
+        {
+          "start_line": 1513,
+          "end_line": 1520,
+          "content": "    def test_long_authinfo_in_url(self):\n        url = 'http://{}:{}@{}:9000/path?query#frag'.format(\n            'E8A3BE87-9E3F-4620-8858-95478E385B5B',\n            'EA770032-DA4D-4D84-8CE9-29C6D910BF1E',\n            'exactly-------------sixty-----------three------------characters',\n        )\n        r = requests.Request('GET', url).prepare()\n        assert r.url == url"
+        }
+      ],
+      "source_hash": "34a857d3ce6eb50653a07ca4855dc08cbc9ecbf6f7b3757b9c5397963f818887",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "tests/test_requests.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "TestRequests.test_proxy_error_on_bad_url",
+        "owner": "TestRequests",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 546,
+        "end_line": 557
+      },
+      "evidence": [
+        {
+          "start_line": 546,
+          "end_line": 557,
+          "content": "    def test_proxy_error_on_bad_url(self, httpbin, httpbin_secure):\n        with pytest.raises(InvalidProxyURL):\n            requests.get(httpbin_secure(), proxies={'https': 'http:/badproxyurl:3128'})\n\n        with pytest.raises(InvalidProxyURL):\n            requests.get(httpbin(), proxies={'http': 'http://:8080'})\n\n        with pytest.raises(InvalidProxyURL):\n            requests.get(httpbin_secure(), proxies={'https': 'https://'})\n\n        with pytest.raises(InvalidProxyURL):\n            requests.get(httpbin(), proxies={'http': 'http:///example.com:8080'})"
+        }
+      ],
+      "source_hash": "34a857d3ce6eb50653a07ca4855dc08cbc9ecbf6f7b3757b9c5397963f818887",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "tests/test_requests.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "TestRequests.test_links",
+        "owner": "TestRequests",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1073,
+        "end_line": 1095
+      },
+      "evidence": [
+        {
+          "start_line": 1073,
+          "end_line": 1073,
+          "content": "    def test_links(self):"
+        },
+        {
+          "start_line": 1075,
+          "end_line": 1089,
+          "content": "        r.headers = {\n            'cache-control': 'public, max-age=60, s-maxage=60',\n            'connection': 'keep-alive',\n            'content-encoding': 'gzip',\n            'content-type': 'application/json; charset=utf-8',\n            'date': 'Sat, 26 Jan 2013 16:47:56 GMT',\n            'etag': '\"6ff6a73c0e446c1f61614769e3ceb778\"',\n            'last-modified': 'Sat, 26 Jan 2013 16:22:39 GMT',\n            'link': ('<https://api.github.com/users/kennethreitz/repos?'\n                     'page=2&per_page=10>; rel=\"next\", <https://api.github.'\n                     'com/users/kennethreitz/repos?page=7&per_page=10>; '\n                     ' rel=\"last\"'),\n            'server': 'GitHub.com',\n            'status': '200 OK',\n            'vary': 'Accept',"
+        }
+      ],
+      "source_hash": "34a857d3ce6eb50653a07ca4855dc08cbc9ecbf6f7b3757b9c5397963f818887",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/__init__.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "function",
+        "qualname": "check_compatibility",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 57,
+        "end_line": 85
+      },
+      "evidence": [
+        {
+          "start_line": 57,
+          "end_line": 57,
+          "content": "def check_compatibility(urllib3_version, chardet_version, charset_normalizer_version):"
+        },
+        {
+          "start_line": 74,
+          "end_line": 85,
+          "content": "    if chardet_version:\n        major, minor, patch = chardet_version.split('.')[:3]\n        major, minor, patch = int(major), int(minor), int(patch)\n        # chardet_version >= 3.0.2, < 5.0.0\n        assert (3, 0, 2) <= (major, minor, patch) < (5, 0, 0)\n    elif charset_normalizer_version:\n        major, minor, patch = charset_normalizer_version.split('.')[:3]\n        major, minor, patch = int(major), int(minor), int(patch)\n        # charset_normalizer >= 2.0.0 < 3.0.0\n        assert (2, 0, 0) <= (major, minor, patch) < (3, 0, 0)\n    else:\n        raise Exception(\"You need either charset_normalizer or chardet installed\")"
+        }
+      ],
+      "source_hash": "060341ac062bdc3751583b64735230a12ada541073d7bd7673f797e06f21f9a9",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/help.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "function",
+        "qualname": "_implementation",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 35,
+        "end_line": 65
+      },
+      "evidence": [
+        {
+          "start_line": 35,
+          "end_line": 50,
+          "content": "def _implementation():\n    \"\"\"Return a dict with the Python implementation and version.\n\n    Provide both the name and the version of the Python implementation\n    currently running. For example, on CPython 2.7.5 it will return\n    {'name': 'CPython', 'version': '2.7.5'}.\n\n    This function works best on CPython and PyPy: in particular, it probably\n    doesn't work for Jython or IronPython. Future investigation should be done\n    to work out the correct shape of the code for those platforms.\n    \"\"\"\n    implementation = platform.python_implementation()\n\n    if implementation == 'CPython':\n        implementation_version = platform.python_version()\n    elif implementation == 'PyPy':"
+        }
+      ],
+      "source_hash": "cb03cdb2c3e886b721fd0feae3f24b24cd73d9b3f44e2ac7900f509e8385d2c6",
+      "stale": false,
+      "truncated": true
+    }
+  ],
+  "profile_version": "f189f081de7021005c2399fd13658fc620b8873293967b1a471a4c8142573a13",
+  "warnings": [],
+  "truncated": true,
+  "omitted_count": 0,
+  "compact": "tests/test_requests.py:1889-1892 :: TestRequests.test_proxy_auth\n1889 |     def test_proxy_auth(self):\n1890 |         adapter = HTTPAdapter()\n1891 |         headers = adapter.proxy_headers(\"http://user:pass@httpbin.org\")\n1892 |         assert headers == {'Proxy-Authorization': 'Basic dXNlcjpwYXNz'}\n\ntests/test_requests.py:1894-1897 :: TestRequests.test_proxy_auth_empty_pass\n1894 |     def test_proxy_auth_empty_pass(self):\n1895 |         adapter = HTTPAdapter()\n1896 |         headers = adapter.proxy_headers(\"http://user:@httpbin.org\")\n1897 |         assert headers == {'Proxy-Authorization': 'Basic dXNlcjo='}\n\nrequests/auth.py:103-105 :: HTTPProxyAuth.__call__\n103 |     def __call__(self, r):\n104 |         r.headers['Proxy-Authorization'] = _basic_auth_str(self.username, self.password)\n105 |         return r\n\nrequests/help.py:68-83 :: info [partial]\n68 | def info():\n69 |     \"\"\"Generate information for a bug report.\"\"\"\n70 |     try:\n71 |         platform_info = {\n72 |             'system': platform.system(),\n73 |             'release': platform.release(),\n74 |         }\n75 |     except IOError:\n76 |         platform_info = {\n77 |             'system': 'Unknown',\n78 |             'release': 'Unknown',\n79 |         }\n80 | \n81 |     implementation_info = _implementation()\n82 |     urllib3_info = {'version': urllib3.__version__}\n83 |     charset_normalizer_info = {'version': None}\n\ntests/test_requests.py:541-544 :: TestRequests.test_proxy_error\n541 |     def test_proxy_error(self):\n542 |         # any proxy related error (address resolution, no route to host, etc) should result in a ProxyError\n543 |         with pytest.raises(ProxyError):\n544 |             requests.get('http://localhost:1', proxies={'http': 'non-resolvable-address'})\n\ntests/test_requests.py:1513-1520 :: TestRequests.test_long_authinfo_in_url\n1513 |     def test_long_authinfo_in_url(self):\n1514 |         url = 'http://{}:{}@{}:9000/path?query#frag'.format(\n1515 |             'E8A3BE87-9E3F-4620-8858-95478E385B5B',\n1516 |             'EA770032-DA4D-4D84-8CE9-29C6D910BF1E',\n1517 |             'exactly-------------sixty-----------three------------characters',\n1518 |         )\n1519 |         r = requests.Request('GET', url).prepare()\n1520 |         assert r.url == url\n\ntests/test_requests.py:546-557 :: TestRequests.test_proxy_error_on_bad_url\n546 |     def test_proxy_error_on_bad_url(self, httpbin, httpbin_secure):\n547 |         with pytest.raises(InvalidProxyURL):\n548 |             requests.get(httpbin_secure(), proxies={'https': 'http:/badproxyurl:3128'})\n549 | \n550 |         with pytest.raises(InvalidProxyURL):\n551 |             requests.get(httpbin(), proxies={'http': 'http://:8080'})\n552 | \n553 |         with pytest.raises(InvalidProxyURL):\n554 |             requests.get(httpbin_secure(), proxies={'https': 'https://'})\n555 | \n556 |         with pytest.raises(InvalidProxyURL):\n557 |             requests.get(httpbin(), proxies={'http': 'http:///example.com:8080'})\n\ntests/test_requests.py:1073-1073 :: TestRequests.test_links [partial]\n1073 |     def test_links(self):\n@1075-1089\n1075 |         r.headers = {\n1076 |             'cache-control': 'public, max-age=60, s-maxage=60',\n1077 |             'connection': 'keep-alive',\n1078 |             'content-encoding': 'gzip',\n1079 |             'content-type': 'application/json; charset=utf-8',\n1080 |             'date': 'Sat, 26 Jan 2013 16:47:56 GMT',\n1081 |             'etag': '\"6ff6a73c0e446c1f61614769e3ceb778\"',\n1082 |             'last-modified': 'Sat, 26 Jan 2013 16:22:39 GMT',\n1083 |             'link': ('<https://api.github.com/users/kennethreitz/repos?'\n1084 |                      'page=2&per_page=10>; rel=\"next\", <https://api.github.'\n1085 |                      'com/users/kennethreitz/repos?page=7&per_page=10>; '\n1086 |                      ' rel=\"last\"'),\n1087 |             'server': 'GitHub.com',\n1088 |             'status': '200 OK',\n1089 |             'vary': 'Accept',\n\nrequests/__init__.py:57-57 :: check_compatibility [partial]\n57 | def check_compatibility(urllib3_version, chardet_version, charset_normalizer_version):\n@74-85\n74 |     if chardet_version:\n75 |         major, minor, patch = chardet_version.split('.')[:3]\n76 |         major, minor, patch = int(major), int(minor), int(patch)\n77 |         # chardet_version >= 3.0.2, < 5.0.0\n78 |         assert (3, 0, 2) <= (major, minor, patch) < (5, 0, 0)\n79 |     elif charset_normalizer_version:\n80 |         major, minor, patch = charset_normalizer_version.split('.')[:3]\n81 |         major, minor, patch = int(major), int(minor), int(patch)\n82 |         # charset_normalizer >= 2.0.0 < 3.0.0\n83 |         assert (2, 0, 0) <= (major, minor, patch) < (3, 0, 0)\n84 |     else:\n85 |         raise Exception(\"You need either charset_normalizer or chardet installed\")\n\nrequests/help.py:35-50 :: _implementation [partial]\n35 | def _implementation():\n36 |     \"\"\"Return a dict with the Python implementation and version.\n37 | \n38 |     Provide both the name and the version of the Python implementation\n39 |     currently running. For example, on CPython 2.7.5 it will return\n40 |     {'name': 'CPython', 'version': '2.7.5'}.\n41 | \n42 |     This function works best on CPython and PyPy: in particular, it probably\n43 |     doesn't work for Jython or IronPython. Future investigation should be done\n44 |     to work out the correct shape of the code for those platforms.\n45 |     \"\"\"\n46 |     implementation = platform.python_implementation()\n47 | \n48 |     if implementation == 'CPython':\n49 |         implementation_version = platform.python_version()\n50 |     elif implementation == 'PyPy':",
+  "elapsed_ms": 7266.187458997592,
+  "cpu_ms": 24281.389000000003
+}

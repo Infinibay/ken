@@ -1,0 +1,106 @@
+{
+  "schema": "independent-core-native-grader-review-v235/v1",
+  "status": "PASS_AFTER_INTEGRITY_AMENDMENT",
+  "blocking_findings": [],
+  "created_utc": "2026-10-16T23:17:02.223069+00:00",
+  "scope": "Independent evaluator/reference-contract review only. No real native capture, prediction or score was opened; no engine, model, benchmark or grading of the real capture was executed. The scorer main was invoked only against generated synthetic fixtures.",
+  "source_directory": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/core-native-grade-v235/source",
+  "reviewed_source_sha256": {
+    "grade_native_v235.py": "7675c613df7365651bba3ec7a167d1afddc524e12346e9b258836c2cf20b13bf",
+    "native_sources_v235.py": "1ca8dfb58257be9d29c9366ea6d56905f0b3e0cc5a1606cf5d9bb60da38af897",
+    "test_native_grading_v235.py": "bf09e0bdb83fce8d1033cdc43b2421d1c9ffee9077963e052597bf3a41939aaa",
+    "public_benchmarks_v222.py": "d1ff983c46f260520275d222d2fe605f283ce606c10297531f0d7ecde26109d8",
+    "native_grading_v235.py": "fe8dd6379108f0edf0883d2ea571dbfa9dcf71f4032ad2ccab1a762d7f32c39a",
+    "native_units_v235.py": "0e298df94aa898e2be35e50710d6902dd553246fd98a9b342d10fe893bf733f8",
+    "register_native_v235.py": "409fe1ec3f6b229793113748188d1aea91a3b2b90686f4790502109c85418df2"
+  },
+  "input_sha256": {
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/core-native-v235/grader-registration.json": "f11a69f8b5a21f7e91ebf015908ca7fa4fff142a78f75027864900f1446bc966",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/core-native-v235/grader-integrity-amendment-v235.json": "0c3ce775a1d6dc35fb3db72c90d0187af33ee69a3f2f9dd2136f053076160016",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/core-native-v235/registration.json": "68285d530a5e1e57b6335fdd14068d1d9866822e8e528d978a2969d30f716d75",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/core-native-v235/native-requests.json": "eb0d1f0f693dbc799a6fadfa61826d6809c5f940e0fdeed9219a8b1d09ceced6",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/core-native-references-v235.json": "4e854dd5744a0c94ccc0c938fc6c18968b7f3b5c564e39386e1296e5a05bbbb0",
+    "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/analysis/core-native-references-v235-receipt.json": "909495a7d0a592f90d1cbabdfc6b1f31eacf8eb1c9095ebfc6cfeead94ad23aa"
+  },
+  "resolved_findings": [
+    {
+      "id": "EVIDENCE_CONTENT_REQUIRED",
+      "initial_status": "BLOCKING",
+      "status": "RESOLVED",
+      "original_failure": "A same-source evidence record containing only start/end coordinates could earn complete-anchor credit without presenting any source text.",
+      "correction": "validate_result rejects every evidence item whose content is not a string; each accepted string must equal the physical source lines, normalized only with splitlines/join.",
+      "independent_red_green": "Exact-SHA reconstruction of original native_grading_v235.py accepts coordinate-only evidence. Amended validator rejects it. Null, numeric and forged contents also reject."
+    },
+    {
+      "id": "CLOSURE_MUST_COVER_CONSUMED_OUTPUTS",
+      "initial_status": "BLOCKING",
+      "status": "RESOLVED",
+      "original_failure": "An empty manifest, or a nonempty manifest pinning an unrelated file, could satisfy closure without binding consumed result files.",
+      "correction": "verify_capture rejects empty response_pins and any required path absent from the manifest. main enumerates every preparation and registered symbols/files response, plus every existing provenance file, before reading response content.",
+      "independent_red_green": "Exact-SHA original guard accepts both empty and unrelated-only manifests. Amended guard rejects both required cases; changed pinned bytes are rejected by the sibling test."
+    }
+  ],
+  "verification": {
+    "available_sibling_tests": {
+      "passed": 6,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=output/analysis/core-native-grade-v235/source .venv/bin/python -m pytest -q --confcutdir=output/analysis/core-native-grade-v235/source -o cache_dir=/private/tmp/ken-core-native-grader-review-v235/pytest-cache output/analysis/core-native-grade-v235/source/test_native_grading_v235.py",
+      "exit_code": 0
+    },
+    "independent_checks_passed": 79,
+    "exact_historical_guard_sha256": "7fe47f15deeec4831f0a2bc7068f4c40a8264a9b438169b535f122a989b54d81",
+    "independent_red_green_regressions": 3,
+    "source_files_rehashed": 1812,
+    "frozen_engine_files_hashed_without_import": 425,
+    "native_targets_revalidated": 141,
+    "target_kinds": {
+      "method": 82,
+      "fragment": 41,
+      "function": 18
+    },
+    "complete_lexical_qualnames_revalidated": 100,
+    "all_targets_have_one_anchor": true,
+    "synthetic_scorer_integration": "11 synthetic queries / 18 cases / fixed symbols and files routes, with source-only fake snapshots, a fake manifest and synthetic responses. It retained 36 route-case records, L2=11/L3=7 per route, errors/empty targets as misses, rank2 as rank2 and a rank11 candidate outside top10. It separated path-only credit from piece credit and refused overwriting a closed report.",
+    "real_capture_access_guard": "Independent audit used an open-audit hook that rejects every file beneath the real capture directory.",
+    "ken_or_model_imports_during_independent_audit": false,
+    "artifacts": {
+      "/private/tmp/ken-core-native-grader-review-v235/audit.py": "ace1a58c9a8c235dfa9b90df62b248f841a3e765f3a1c87c2fec3683f7633c43",
+      "/private/tmp/ken-core-native-grader-review-v235/audit-results.json": "80354a87b74f0c31465353f76269326a39ae4436b4bfe4730755a54087e8cb64",
+      "/private/tmp/ken-core-native-grader-review-v235/audit-stdout.json": "59ded01227bdb1064a578aa42c0880bc299a752736bf5601e4d4b29cd49d6a3c",
+      "/private/tmp/ken-core-native-grader-review-v235/audit-stderr.log": "62b13771af6588a00f31f110907ae76c97362bf14a51811e691127399ca6dad2",
+      "/private/tmp/ken-core-native-grader-review-v235/native-grading-original-reconstructed.py": "7fe47f15deeec4831f0a2bc7068f4c40a8264a9b438169b535f122a989b54d81"
+    },
+    "synthetic_grader_main_successful_runs": 1,
+    "synthetic_grader_main_overwrite_rejections": 1
+  },
+  "contract_findings": [
+    "The sealed 18 case IDs, query hashes and source revisions are unchanged: 11 LEVEL-2 responsibility cases and 7 LEVEL-3 context cases across 11 physical queries. The scorer does not omit empty or unresolved target sets.",
+    "Both routes are fixed in source registration and evaluated independently. References do not choose which route or result slot to score. Native top10 positions remain intact without deduplication, backfilling or an oracle route choice.",
+    "A file hit requires matching path, physical source SHA and stale exactly false. A native piece hit additionally requires the exact canonical kind/qualname/end and a start in the recorded decorator-to-definition interval, or a complete specific anchor in a faithful visible excerpt. Matching a file or unrelated member alone earns no piece hit.",
+    "For exact callable identity, visible evidence is deliberately not an additional gate. The 41 fragment targets require specific faithful anchor evidence; their containing class or module metadata is not an alternative identity shortcut.",
+    "LEVEL-2 implementation responsibility and LEVEL-3 contextual relevance are reported separately. The combined table is explicitly descriptive and official_core_metric is false. This is not original CORE NDCG, private acceptance or evidence of 90 percent generalization.",
+    "Integrity failures stop grading rather than silently dropping cases. Synthetic empty-error responses remain misses within both original level denominators.",
+    "Capture contents are read only after closure and consumed-path pin validation. Reference/source metadata is intentionally read earlier, as this public pre-output reference review requires; no claim that public labels remained unread until closure is made."
+  ],
+  "limitations": [
+    "One faithful excerpt must individually contain the complete anchor. Adjacent or disjoint excerpts are not unioned; this conservative, previously fixed rule can cause false negatives but does not add false positives. All current targets have one anchor; arbitrary future multi-anchor references would need an explicit policy review.",
+    "The low-level correct_piece predicate assumes validate_result has already established literal evidence. main enforces that ordering; the predicate is not a standalone authentication API.",
+    "validate_targets checks the AST leaf plus exact definition bounds and decorator start. Full lexical qualification for all 100 sealed callable targets was independently revalidated in this review; the generic helper alone is not a proof of a future unreviewed qualname hierarchy.",
+    "Many main integrity checks are Python assertions. Run the reviewed grader in ordinary Python with __debug__ true, without -O or PYTHONOPTIMIZE. The independent tests and probes used that runtime.",
+    "The reviewed main does not itself load the grader registration/amendment to assert its own code hashes. The invoker must preserve/revalidate this receipt and the amendment source pins; the report subsequently records actual producer hashes.",
+    "Provenance files that exist are pinned and validated; missing provenance is not fabricated as a zero resource value. No real capture closure, real runtime resources, returned evidence or final scores were inspected or certified here.",
+    "The parent attests that the amendment and its tests preceded any native prediction inspection. This review verifies the preserved before/after hash chain and records that attestation, rather than claiming independent observation of all external reads.",
+    "The underlying public CORE pilot was already exposed and L3 includes contextual imports/tests. Source references were sealed before native output review, not claimed to predate engine execution. No reference was changed during evaluator review."
+  ],
+  "temporal_provenance": {
+    "original_registration_preserved": true,
+    "integrity_amendment_separate": true,
+    "amendment_declares_predictions_unread": true,
+    "native_predictions_read_by_reviewer": false
+  },
+  "engine_or_harness_modified_by_reviewer": false,
+  "producer_fit_or_marker_executed_or_created": false,
+  "references_queries_or_original_results_modified": false,
+  "reserve": "CLOSED",
+  "release_approval": false,
+  "real_capture_or_benchmark_grading_executed_by_reviewer": false
+}

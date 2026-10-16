@@ -1,0 +1,308 @@
+{
+  "id": "psf__requests-1921",
+  "query": "Removing a default header of a session\n[The docs](http://docs.python-requests.org/en/latest/user/advanced/#session-objects) say that you can prevent sending a session header by setting the headers value to None in the method's arguments. You would expect (as [discussed on IRC](https://botbot.me/freenode/python-requests/msg/10788170/)) that this would work for session's default headers, too:\n\n``` python\nsession = requests.Session()\n# Do not send Accept-Encoding\nsession.headers['Accept-Encoding'] = None\n```\n\nWhat happens is that \"None\"  gets sent as the value of header.\n\n```\nAccept-Encoding: None\n```\n\nFor the reference, here is a way that works:\n\n``` python\ndel session.headers['Accept-Encoding']\n```\n\n",
+  "results": [
+    {
+      "path": "requests/sessions.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 569
+      },
+      "evidence": [
+        {
+          "start_line": 19,
+          "end_line": 30,
+          "content": "from .hooks import default_hooks, dispatch_hook\nfrom .utils import to_key_val_list, default_headers, to_native_string\nfrom .exceptions import TooManyRedirects, InvalidSchema\nfrom .structures import CaseInsensitiveDict\n\nfrom .adapters import HTTPAdapter\n\nfrom .utils import requote_uri, get_environ_proxies, get_netrc_auth\n\nfrom .status_codes import codes\n\n# formerly defined here, reexposed here for backward compatibility"
+        },
+        {
+          "start_line": 208,
+          "end_line": 211,
+          "content": "        self.headers = default_headers()\n\n        #: Default Authentication tuple or object to attach to\n        #: :class:`Request <Request>`."
+        }
+      ],
+      "source_hash": "32e30eadf91367b3aefb90e8541cf3fc20d3d950a16828c0101f4232d36a78a9",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "docs/user/advanced.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 682
+      },
+      "evidence": [
+        {
+          "start_line": 391,
+          "end_line": 402,
+          "content": "When you receive a response, Requests makes a guess at the encoding to\nuse for decoding the response when you access the :attr:`Response.text\n<requests.Response.text>` attribute. Requests will first check for an\nencoding in the HTTP header, and if none is present, will use `chardet\n<http://pypi.python.org/pypi/chardet>`_ to attempt to guess the encoding.\n\nThe only time Requests will not do this is if no explicit charset\nis present in the HTTP headers **and** the ``Content-Type``\nheader contains ``text``. In this situation, `RFC 2616\n<http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7.1>`_ specifies\nthat the default charset must be ``ISO-8859-1``. Requests follows the\nspecification in this case. If you require a different encoding, you can"
+        },
+        {
+          "start_line": 383,
+          "end_line": 386,
+          "content": "Requests is intended to be compliant with all relevant specifications and\nRFCs where that compliance will not cause difficulties for users. This\nattention to the specification can lead to some behaviour that may seem\nunusual to those not familiar with the relevant specification."
+        }
+      ],
+      "source_hash": "5eb89c59647744ae4d54646886b059d9e95c14afc5aefddb905eb9bd4b0e38a9",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/packages/urllib3/util.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 648
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "# urllib3/util.py\n# Copyright 2008-2013 Andrey Petrov and contributors (see CONTRIBUTORS.txt)\n#\n# This module is part of urllib3 and is released under\n# the MIT License: http://www.opensource.org/licenses/mit-license.php\n\n\nfrom base64 import b64encode\nfrom binascii import hexlify, unhexlify\nfrom collections import namedtuple\nfrom hashlib import md5, sha1\nfrom socket import error as SocketError, _GLOBAL_DEFAULT_TIMEOUT"
+        },
+        {
+          "start_line": 461,
+          "end_line": 464,
+          "content": "    headers = {}\n    if accept_encoding:\n        if isinstance(accept_encoding, str):\n            pass"
+        }
+      ],
+      "source_hash": "87ca3f11220369c7292d62062af1ce80f0d4fe67c71061408ddf766c0c8db676",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "HISTORY.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 780
+      },
+      "evidence": [
+        {
+          "start_line": 153,
+          "end_line": 164,
+          "content": "  arguments specified by the user when making a request so hooks can make a\n  secondary request with the same parameters. This is especially necessary for\n  authentication handler authors\n- certifi support was removed\n- Fixed bug where using OAuth 1 with body ``signature_type`` sent no data\n- Major proxy work thanks to @Lukasa including parsing of proxy authentication\n  from the proxy url\n- Fix DigestAuth handling too many 401s\n- Update vendored urllib3 to include SSL bug fixes\n- Allow keyword arguments to be passed to ``json.loads()`` via the\n  ``Response.json()`` method\n- Don't send ``Content-Length`` header by default on ``GET`` or ``HEAD``"
+        },
+        {
+          "start_line": 149,
+          "end_line": 152,
+          "content": "++++++++++++++++++\n\n- Fixed cookies on sessions and on requests\n- Significantly change how hooks are dispatched - hooks now receive all the"
+        }
+      ],
+      "source_hash": "241974d3f1fc22a8439a440bfa388f0e231f85e9a08370d56a23cdcee5c6c874",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/utils.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 663
+      },
+      "evidence": [
+        {
+          "start_line": 25,
+          "end_line": 36,
+          "content": "from .compat import parse_http_list as _parse_list_header\nfrom .compat import (quote, urlparse, bytes, str, OrderedDict, unquote, is_py2,\n                     builtin_str, getproxies, proxy_bypass)\nfrom .cookies import RequestsCookieJar, cookiejar_from_dict\nfrom .structures import CaseInsensitiveDict\nfrom .exceptions import MissingSchema, InvalidURL\n\n_hush_pyflakes = (RequestsCookieJar,)\n\nNETRC_FILES = ('.netrc', '_netrc')\n\nDEFAULT_CA_BUNDLE_PATH = certs.where()"
+        },
+        {
+          "start_line": 549,
+          "end_line": 552,
+          "content": "    return CaseInsensitiveDict({\n        'User-Agent': default_user_agent(),\n        'Accept-Encoding': ', '.join(('gzip', 'deflate', 'compress')),\n        'Accept': '*/*'"
+        }
+      ],
+      "source_hash": "c38f1858cb796264436c06185e957437dba5f89ad3c54c9176c8515236d3fd0f",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/api.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 120
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "# -*- coding: utf-8 -*-\n\n\"\"\"\nrequests.api\n~~~~~~~~~~~~\n\nThis module implements the Requests API.\n\n:copyright: (c) 2012 by Kenneth Reitz.\n:license: Apache2, see LICENSE for more details.\n\n\"\"\""
+        },
+        {
+          "start_line": 43,
+          "end_line": 44,
+          "content": "    session = sessions.Session()\n    return session.request(method=method, url=url, **kwargs)"
+        },
+        {
+          "start_line": 76,
+          "end_line": 77,
+          "content": "    kwargs.setdefault('allow_redirects', False)\n    return request('head', url, **kwargs)"
+        }
+      ],
+      "source_hash": "46295d2e64e1951dc134523a0b76d2d5bbf15791bae5e84256b0469181de8c3b",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "test_requests.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 1175
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "#!/usr/bin/env python\n# -*- coding: utf-8 -*-\n\n\"\"\"Tests for Requests.\"\"\"\n\nfrom __future__ import division\nimport json\nimport os\nimport pickle\nimport unittest\n\nimport requests"
+        },
+        {
+          "start_line": 802,
+          "end_line": 805,
+          "content": "        s = requests.Session()\n        s.headers['foo'] = 'bar'\n        r = s.get(httpbin('get'), headers={'FOO': None})\n        assert 'foo' not in r.request.headers"
+        }
+      ],
+      "source_hash": "37ef77c0f9c3bddee646e2e3fd496e1a114daf6e8b05d3e47897ebc2e0d7630e",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "docs/user/quickstart.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 441
+      },
+      "evidence": [
+        {
+          "start_line": 63,
+          "end_line": 74,
+          "content": "``key1=value1`` and ``key2=value2`` to ``httpbin.org/get``, you would use the\nfollowing code::\n\n    >>> payload = {'key1': 'value1', 'key2': 'value2'}\n    >>> r = requests.get(\"http://httpbin.org/get\", params=payload)\n\nYou can see that the URL has been correctly encoded by printing the URL::\n\n    >>> print(r.url)\n    http://httpbin.org/get?key2=value2&key1=value1\n\nNote that any dictionary key whose value is ``None`` will not be added to the"
+        },
+        {
+          "start_line": 262,
+          "end_line": 265,
+          "content": "        \"file\": \"some,data,to,send\\\\nanother,row,to,send\\\\n\"\n      },\n      ...\n    }"
+        }
+      ],
+      "source_hash": "a0b3110df2489919c30ebb216bf59a767c1aabd80ca9736fb07b83f07d94ecf7",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "docs/api.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 265
+      },
+      "evidence": [
+        {
+          "start_line": 127,
+          "end_line": 138,
+          "content": "      r.json()   # This *call* raises an exception if JSON decoding fails\n\n* The ``Session`` API has changed. Sessions objects no longer take parameters.\n  ``Session`` is also now capitalized, but it can still be\n  instantiated with a lowercase ``session`` for backwards compatibility.\n\n  ::\n\n      s = requests.Session()    # formerly, session took parameters\n      s.auth = auth\n      s.headers.update(headers)\n      r = s.get('http://httpbin.org/headers')"
+        },
+        {
+          "start_line": 104,
+          "end_line": 107,
+          "content": ".. autoclass:: requests.Session\n   :inherited-members:\n\n.. autoclass:: requests.adapters.HTTPAdapter"
+        }
+      ],
+      "source_hash": "754f7d7bc0d876a11be7ac0bb3eff54197eba46125714c80f809c292074a153c",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/adapters.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 396
+      },
+      "evidence": [
+        {
+          "start_line": 7,
+          "end_line": 18,
+          "content": "This module contains the transport adapters that Requests uses to define\nand maintain connections.\n\"\"\"\n\nimport socket\n\nfrom .models import Response\nfrom .packages.urllib3.poolmanager import PoolManager, proxy_from_url\nfrom .packages.urllib3.response import HTTPResponse\nfrom .packages.urllib3.util import Timeout as TimeoutSauce\nfrom .compat import urlparse, basestring, urldefrag, unquote\nfrom .utils import (DEFAULT_CA_BUNDLE_PATH, get_encoding_from_headers,"
+        },
+        {
+          "start_line": 317,
+          "end_line": 320,
+          "content": "\n        try:\n            if not chunked:\n                resp = conn.urlopen("
+        }
+      ],
+      "source_hash": "4002f9ad2c04ceeaece4fe2ac23148cc74086de515f0eb1498a06f796e2bf899",
+      "stale": false,
+      "truncated": true
+    }
+  ],
+  "profile_version": "f189f081de7021005c2399fd13658fc620b8873293967b1a471a4c8142573a13",
+  "warnings": [],
+  "truncated": true,
+  "omitted_count": 0,
+  "compact": "requests/sessions.py:19-30 (file) [partial]\n19 | from .hooks import default_hooks, dispatch_hook\n20 | from .utils import to_key_val_list, default_headers, to_native_string\n21 | from .exceptions import TooManyRedirects, InvalidSchema\n22 | from .structures import CaseInsensitiveDict\n23 | \n24 | from .adapters import HTTPAdapter\n25 | \n26 | from .utils import requote_uri, get_environ_proxies, get_netrc_auth\n27 | \n28 | from .status_codes import codes\n29 | \n30 | # formerly defined here, reexposed here for backward compatibility\n@208-211\n208 |         self.headers = default_headers()\n209 | \n210 |         #: Default Authentication tuple or object to attach to\n211 |         #: :class:`Request <Request>`.\n\ndocs/user/advanced.rst:391-402 (file) [partial]\n391 | When you receive a response, Requests makes a guess at the encoding to\n392 | use for decoding the response when you access the :attr:`Response.text\n393 | <requests.Response.text>` attribute. Requests will first check for an\n394 | encoding in the HTTP header, and if none is present, will use `chardet\n395 | <http://pypi.python.org/pypi/chardet>`_ to attempt to guess the encoding.\n396 | \n397 | The only time Requests will not do this is if no explicit charset\n398 | is present in the HTTP headers **and** the ``Content-Type``\n399 | header contains ``text``. In this situation, `RFC 2616\n400 | <http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7.1>`_ specifies\n401 | that the default charset must be ``ISO-8859-1``. Requests follows the\n402 | specification in this case. If you require a different encoding, you can\n@383-386\n383 | Requests is intended to be compliant with all relevant specifications and\n384 | RFCs where that compliance will not cause difficulties for users. This\n385 | attention to the specification can lead to some behaviour that may seem\n386 | unusual to those not familiar with the relevant specification.\n\nrequests/packages/urllib3/util.py:1-12 (file) [partial]\n1 | # urllib3/util.py\n2 | # Copyright 2008-2013 Andrey Petrov and contributors (see CONTRIBUTORS.txt)\n3 | #\n4 | # This module is part of urllib3 and is released under\n5 | # the MIT License: http://www.opensource.org/licenses/mit-license.php\n6 | \n7 | \n8 | from base64 import b64encode\n9 | from binascii import hexlify, unhexlify\n10 | from collections import namedtuple\n11 | from hashlib import md5, sha1\n12 | from socket import error as SocketError, _GLOBAL_DEFAULT_TIMEOUT\n@461-464\n461 |     headers = {}\n462 |     if accept_encoding:\n463 |         if isinstance(accept_encoding, str):\n464 |             pass\n\nHISTORY.rst:153-164 (file) [partial]\n153 |   arguments specified by the user when making a request so hooks can make a\n154 |   secondary request with the same parameters. This is especially necessary for\n155 |   authentication handler authors\n156 | - certifi support was removed\n157 | - Fixed bug where using OAuth 1 with body ``signature_type`` sent no data\n158 | - Major proxy work thanks to @Lukasa including parsing of proxy authentication\n159 |   from the proxy url\n160 | - Fix DigestAuth handling too many 401s\n161 | - Update vendored urllib3 to include SSL bug fixes\n162 | - Allow keyword arguments to be passed to ``json.loads()`` via the\n163 |   ``Response.json()`` method\n164 | - Don't send ``Content-Length`` header by default on ``GET`` or ``HEAD``\n@149-152\n149 | ++++++++++++++++++\n150 | \n151 | - Fixed cookies on sessions and on requests\n152 | - Significantly change how hooks are dispatched - hooks now receive all the\n\nrequests/utils.py:25-36 (file) [partial]\n25 | from .compat import parse_http_list as _parse_list_header\n26 | from .compat import (quote, urlparse, bytes, str, OrderedDict, unquote, is_py2,\n27 |                      builtin_str, getproxies, proxy_bypass)\n28 | from .cookies import RequestsCookieJar, cookiejar_from_dict\n29 | from .structures import CaseInsensitiveDict\n30 | from .exceptions import MissingSchema, InvalidURL\n31 | \n32 | _hush_pyflakes = (RequestsCookieJar,)\n33 | \n34 | NETRC_FILES = ('.netrc', '_netrc')\n35 | \n36 | DEFAULT_CA_BUNDLE_PATH = certs.where()\n@549-552\n549 |     return CaseInsensitiveDict({\n550 |         'User-Agent': default_user_agent(),\n551 |         'Accept-Encoding': ', '.join(('gzip', 'deflate', 'compress')),\n552 |         'Accept': '*/*'\n\nrequests/api.py:1-12 (file) [partial]\n1 | # -*- coding: utf-8 -*-\n2 | \n3 | \"\"\"\n4 | requests.api\n5 | ~~~~~~~~~~~~\n6 | \n7 | This module implements the Requests API.\n8 | \n9 | :copyright: (c) 2012 by Kenneth Reitz.\n10 | :license: Apache2, see LICENSE for more details.\n11 | \n12 | \"\"\"\n@43-44\n43 |     session = sessions.Session()\n44 |     return session.request(method=method, url=url, **kwargs)\n@76-77\n76 |     kwargs.setdefault('allow_redirects', False)\n77 |     return request('head', url, **kwargs)\n\ntest_requests.py:1-12 (file) [partial]\n1 | #!/usr/bin/env python\n2 | # -*- coding: utf-8 -*-\n3 | \n4 | \"\"\"Tests for Requests.\"\"\"\n5 | \n6 | from __future__ import division\n7 | import json\n8 | import os\n9 | import pickle\n10 | import unittest\n11 | \n12 | import requests\n@802-805\n802 |         s = requests.Session()\n803 |         s.headers['foo'] = 'bar'\n804 |         r = s.get(httpbin('get'), headers={'FOO': None})\n805 |         assert 'foo' not in r.request.headers\n\ndocs/user/quickstart.rst:63-74 (file) [partial]\n63 | ``key1=value1`` and ``key2=value2`` to ``httpbin.org/get``, you would use the\n64 | following code::\n65 | \n66 |     >>> payload = {'key1': 'value1', 'key2': 'value2'}\n67 |     >>> r = requests.get(\"http://httpbin.org/get\", params=payload)\n68 | \n69 | You can see that the URL has been correctly encoded by printing the URL::\n70 | \n71 |     >>> print(r.url)\n72 |     http://httpbin.org/get?key2=value2&key1=value1\n73 | \n74 | Note that any dictionary key whose value is ``None`` will not be added to the\n@262-265\n262 |         \"file\": \"some,data,to,send\\\\nanother,row,to,send\\\\n\"\n263 |       },\n264 |       ...\n265 |     }\n\ndocs/api.rst:127-138 (file) [partial]\n127 |       r.json()   # This *call* raises an exception if JSON decoding fails\n128 | \n129 | * The ``Session`` API has changed. Sessions objects no longer take parameters.\n130 |   ``Session`` is also now capitalized, but it can still be\n131 |   instantiated with a lowercase ``session`` for backwards compatibility.\n132 | \n133 |   ::\n134 | \n135 |       s = requests.Session()    # formerly, session took parameters\n136 |       s.auth = auth\n137 |       s.headers.update(headers)\n138 |       r = s.get('http://httpbin.org/headers')\n@104-107\n104 | .. autoclass:: requests.Session\n105 |    :inherited-members:\n106 | \n107 | .. autoclass:: requests.adapters.HTTPAdapter\n\nrequests/adapters.py:7-18 (file) [partial]\n7 | This module contains the transport adapters that Requests uses to define\n8 | and maintain connections.\n9 | \"\"\"\n10 | \n11 | import socket\n12 | \n13 | from .models import Response\n14 | from .packages.urllib3.poolmanager import PoolManager, proxy_from_url\n15 | from .packages.urllib3.response import HTTPResponse\n16 | from .packages.urllib3.util import Timeout as TimeoutSauce\n17 | from .compat import urlparse, basestring, urldefrag, unquote\n18 | from .utils import (DEFAULT_CA_BUNDLE_PATH, get_encoding_from_headers,\n@317-320\n317 | \n318 |         try:\n319 |             if not chunked:\n320 |                 resp = conn.urlopen(",
+  "elapsed_ms": 3950.501792016439,
+  "cpu_ms": 12009.057999999999
+}

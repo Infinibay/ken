@@ -1,0 +1,298 @@
+{
+  "id": "mwaskom__seaborn-3187",
+  "query": "Wrong legend values of large ranges\nAs of 0.12.1, legends describing large numbers that were created using `ScalarFormatter` with an offset are formatted without their multiplicative offset value. An example:\r\n```python\r\nimport seaborn as sns\r\nimport seaborn.objects as so\r\n\r\npenguins = sns.load_dataset(\"Penguins\")\r\npenguins[\"body_mass_mg\"] = penguins[\"body_mass_g\"]*1000\r\n(\r\n    so.Plot(\r\n        penguins, x=\"bill_length_mm\", y=\"bill_depth_mm\",\r\n        color=\"species\", pointsize=\"body_mass_mg\",\r\n    )\r\n    .add(so.Dot())\r\n)\r\n```\r\nThe code creates the following plot:\r\n![image](https://user-images.githubusercontent.com/13831112/205512305-778966db-f8d8-43f3-a2c0-5e5ce95bae39.png)\r\nwhich is wrong because `body_mass_mg` is in the order of 1E6. The issue also reproduces if you create the mentioned plot using `scatterplot`.\r\n \r\nI believe the issue stems from not using the offset value of the `ScalarFormatter` used to generate the tick labels:\r\nhttps://github.com/mwaskom/seaborn/blob/ba786bc14eb255f6b4fb7619c8210c5a8016a26f/seaborn/_core/scales.py#L377-L382\r\nExamining the code of `ScalarFormatter` suggests the issue also depends on the following rcParam settings:\r\n`mpl.rcParams['axes.formatter.useoffset']`\r\n`mpl.rcParams['axes.formatter.offset_threshold']`\r\nHowever, I did not test it. \r\n\r\nThe offset value can be safely retrieved from all formatters and based on that it can be used to create the legend title and/or labels.\n",
+  "results": [
+    {
+      "path": "doc/_tutorial/objects_interface.ipynb",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 1079
+      },
+      "evidence": [
+        {
+          "start_line": 120,
+          "end_line": 131,
+          "content": "   \"cell_type\": \"code\",\n   \"execution_count\": null,\n   \"id\": \"6267e411-1f75-461e-a189-ead4452b2ec6\",\n   \"metadata\": {},\n   \"outputs\": [],\n   \"source\": [\n    \"(\\n\",\n    \"    so.Plot(\\n\",\n    \"        penguins, x=\\\"bill_length_mm\\\", y=\\\"bill_depth_mm\\\",\\n\",\n    \"        color=\\\"species\\\", pointsize=\\\"body_mass_g\\\",\\n\",\n    \"    )\\n\",\n    \"    .add(so.Dot())\\n\","
+        },
+        {
+          "start_line": 140,
+          "end_line": 143,
+          "content": "    \"While this basic functionality is not novel, an important difference from the function API is that properties are mapped using the same parameter names that would set them directly (instead of having `hue` vs. `color`, etc.). What matters is *where* the property is defined: passing a value when you initialize :class:`Dot` will set it directly, whereas assigning a variable when you set up the :class:`Plot` will *map* the corresponding data.\\n\",\n    \"\\n\",\n    \"Beyond this difference, the objects interface also allows a much wider range of mark properties to be mapped:\"\n   ]"
+        }
+      ],
+      "source_hash": "b22ae2f4a376f8fe434e0b8ed1c3fe01f97f29a1578b888ba6b5efb804992ddb",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "doc/_docstrings/objects.Plot.scale.ipynb",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 316
+      },
+      "evidence": [
+        {
+          "start_line": 123,
+          "end_line": 134,
+          "content": "    \"The scale objects also offer an interface for configuring the location of the scale ticks (including in the legend) and the formatting of the tick labels:\"\n   ]\n  },\n  {\n   \"cell_type\": \"code\",\n   \"execution_count\": null,\n   \"id\": \"cfaa426a-1a97-4b6f-91b6-ee378eabf194\",\n   \"metadata\": {},\n   \"outputs\": [],\n   \"source\": [\n    \"(\\n\",\n    \"    p1.add(so.Dots(), color=\\\"price\\\")\\n\","
+        },
+        {
+          "start_line": 62,
+          "end_line": 65,
+          "content": "    \"The scale's range can alternatively be specified as a tuple of min/max values:\"\n   ]\n  },\n  {"
+        }
+      ],
+      "source_hash": "22256596db208e0a4e2d9db5de11b27ef01e78567f3353a8d0dccc632d7f7d34",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "seaborn/utils.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 872
+      },
+      "evidence": [
+        {
+          "start_line": 10,
+          "end_line": 21,
+          "content": "import numpy as np\nimport pandas as pd\nimport matplotlib as mpl\nfrom matplotlib.colors import to_rgb\nimport matplotlib.pyplot as plt\nfrom matplotlib.cbook import normalize_kwargs\n\nfrom .external.version import Version\nfrom .external.appdirs import user_cache_dir\n\n__all__ = [\"desaturate\", \"saturate\", \"set_hls_values\", \"move_legend\",\n           \"despine\", \"get_dataset_names\", \"get_data_home\", \"load_dataset\"]"
+        },
+        {
+          "start_line": 697,
+          "end_line": 700,
+          "content": "\n    if isinstance(locator, mpl.ticker.LogLocator):\n        formatter = mpl.ticker.LogFormatter()\n    else:"
+        }
+      ],
+      "source_hash": "98ab6b2b0bfd91f2ed8158ef8b4b673f993373b4dc832662e1bcb017ed81a625",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "doc/faq.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 381
+      },
+      "evidence": [
+        {
+          "start_line": 212,
+          "end_line": 221,
+          "content": "~~~~~~~~~~~~~~~~~~~~~~~~~\n\n*When applying a semantic mapping to a plot, seaborn will automatically create a legend and add it to the figure. But the automatic choice of legend position is not always ideal.*\n\nWith seaborn v0.11.2 or later, use the :func:`move_legend` function.\n\nOn older versions, a common pattern was to call `ax.legend(loc=...)` after plotting. While this appears to move the legend, it actually *replaces* it with a new one, using any labeled artists that happen to be attached to the axes. This does `not consistently work <https://github.com/mwaskom/seaborn/issues/2280>`_ across plot types. And it does not propagate the legend title or positioning tweaks that are used to format a multi-variable legend.\n\nThe :func:`move_legend` function is actually more powerful than its name suggests, and it can also be used to modify other `legend parameters <https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html>`_ (font size, handle length, etc.) after plotting.\n"
+        }
+      ],
+      "source_hash": "7914963f1512c6cc3ee22616d7097f46c0af6bfef1dbe58ff46a598c0581368f",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "tests/test_categorical.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 3496
+      },
+      "evidence": [
+        {
+          "start_line": 22,
+          "end_line": 33,
+          "content": "from seaborn.external.version import Version\nfrom seaborn._oldcore import categorical_order\nfrom seaborn.axisgrid import FacetGrid\nfrom seaborn.categorical import (\n    _CategoricalPlotterNew,\n    Beeswarm,\n    catplot,\n    pointplot,\n    stripplot,\n    swarmplot,\n)\nfrom seaborn.palettes import color_palette"
+        },
+        {
+          "start_line": 2036,
+          "end_line": 2038,
+          "content": "        ax = self.func(data=long_df, x=\"y\", y=\"a\", hue=\"z\")\n        vals = [float(t.get_text()) for t in ax.legend_.texts]\n        assert (vals[1] - vals[0]) == pytest.approx(vals[2] - vals[1])"
+        },
+        {
+          "start_line": 2080,
+          "end_line": 2080,
+          "content": "        y = [1, 2, 3, 4]"
+        }
+      ],
+      "source_hash": "eff6adc1d519f4d71527306b838bea1248acaf964eeb1a6eea3ebcad38d6ed22",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "examples/multiple_regression.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 21
+      },
+      "evidence": [
+        {
+          "start_line": 5,
+          "end_line": 16,
+          "content": "_thumb: .45, .45\n\"\"\"\nimport seaborn as sns\nsns.set_theme()\n\n# Load the penguins dataset\npenguins = sns.load_dataset(\"penguins\")\n\n# Plot sepal width as a function of sepal_length across days\ng = sns.lmplot(\n    data=penguins,\n    x=\"bill_length_mm\", y=\"bill_depth_mm\", hue=\"species\","
+        },
+        {
+          "start_line": 1,
+          "end_line": 4,
+          "content": "\"\"\"\nMultiple linear regression\n==========================\n"
+        }
+      ],
+      "source_hash": "92cd3c7e75f5176c833a45debb213c883fce5d5b79acd4e7bcbc8be8d844f1d8",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "doc/_tutorial/color_palettes.ipynb",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 1004
+      },
+      "evidence": [
+        {
+          "start_line": 427,
+          "end_line": 438,
+          "content": "    \"Many people find the moderated hues of the default ``\\\"deep\\\"`` palette to be aesthetically pleasing, but they are also less distinct. As a result, they may be more difficult to discriminate in some contexts, which is something to keep in mind when making publication graphics. `This comparison <https://gist.github.com/mwaskom/b35f6ebc2d4b340b4f64a4e28e778486>`_ can be helpful for estimating how the seaborn color palettes perform when simulating different forms of colorblindess.\"\n   ]\n  },\n  {\n   \"cell_type\": \"raw\",\n   \"metadata\": {},\n   \"source\": [\n    \"Using circular color systems\\n\",\n    \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~\\n\",\n    \"\\n\",\n    \"When you have an arbitrary number of categories, the easiest approach to finding unique hues is to draw evenly-spaced colors in a circular color space (one where the hue changes while keeping the brightness and saturation constant). This is what most seaborn functions default to when they need to use more colors than are currently set in the default color cycle.\\n\",\n    \"\\n\","
+        },
+        {
+          "start_line": 969,
+          "end_line": 972,
+          "content": "    \"sns.color_palette(\\\"coolwarm\\\", as_cmap=True)\"\n   ]\n  },\n  {"
+        }
+      ],
+      "source_hash": "746f3c4d521171d101237b73e469256dec701db11ef043a10a0c381c5bb78039",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "seaborn/_core/plot.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 1670
+      },
+      "evidence": [
+        {
+          "start_line": 17,
+          "end_line": 28,
+          "content": "import pandas as pd\nfrom pandas import DataFrame, Series, Index\nimport matplotlib as mpl\nfrom matplotlib.axes import Axes\nfrom matplotlib.artist import Artist\nfrom matplotlib.figure import Figure\n\nfrom seaborn._marks.base import Mark\nfrom seaborn._stats.base import Stat\nfrom seaborn._core.data import PlotData\nfrom seaborn._core.moves import Move\nfrom seaborn._core.scales import Scale, Nominal"
+        },
+        {
+          "start_line": 1548,
+          "end_line": 1551,
+          "content": "        if data.frame.empty and data.frames:\n            legend_vars: list[str] = []\n            for frame in data.frames.values():\n                frame_vars = frame.columns.intersection(list(scales))"
+        }
+      ],
+      "source_hash": "b5b46a0f5dc65ab7ac31fb7f4aad818cb96618a34bd12410dda24fc3a00e0a65",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "tests/test_relational.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 1865
+      },
+      "evidence": [
+        {
+          "start_line": 3,
+          "end_line": 14,
+          "content": "\nimport numpy as np\nimport matplotlib as mpl\nimport matplotlib.pyplot as plt\nfrom matplotlib.colors import same_color, to_rgba\n\nimport pytest\nfrom numpy.testing import assert_array_equal, assert_array_almost_equal\n\nfrom seaborn.external.version import Version\nfrom seaborn.palettes import color_palette\nfrom seaborn._oldcore import categorical_order"
+        },
+        {
+          "start_line": 1726,
+          "end_line": 1729,
+          "content": "        x = np.arange(0, 20, 2)\n        f, axs = plt.subplots(1, 2, sharex=True, sharey=True)\n\n        slc = 5"
+        }
+      ],
+      "source_hash": "1ab738fa5ada56c4fc24bd3458d9bec9b4c06f5d2b0bafdbb459cafd0757125d",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "tests/test_utils.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 575
+      },
+      "evidence": [
+        {
+          "start_line": 17,
+          "end_line": 22,
+          "content": "from pandas.testing import (\n    assert_series_equal,\n    assert_frame_equal,\n)\n\nfrom seaborn import utils, rcmod"
+        }
+      ],
+      "source_hash": "2ce1a73d3a477fb4639af3f3a634b4af6a014821452f03f2f93f28ff6c867d0f",
+      "stale": false,
+      "truncated": true
+    }
+  ],
+  "profile_version": "f189f081de7021005c2399fd13658fc620b8873293967b1a471a4c8142573a13",
+  "warnings": [],
+  "truncated": true,
+  "omitted_count": 0,
+  "compact": "doc/_tutorial/objects_interface.ipynb:120-131 (file) [partial]\n120 |    \"cell_type\": \"code\",\n121 |    \"execution_count\": null,\n122 |    \"id\": \"6267e411-1f75-461e-a189-ead4452b2ec6\",\n123 |    \"metadata\": {},\n124 |    \"outputs\": [],\n125 |    \"source\": [\n126 |     \"(\\n\",\n127 |     \"    so.Plot(\\n\",\n128 |     \"        penguins, x=\\\"bill_length_mm\\\", y=\\\"bill_depth_mm\\\",\\n\",\n129 |     \"        color=\\\"species\\\", pointsize=\\\"body_mass_g\\\",\\n\",\n130 |     \"    )\\n\",\n131 |     \"    .add(so.Dot())\\n\",\n@140-143\n140 |     \"While this basic functionality is not novel, an important difference from the function API is that properties are mapped using the same parameter names that would set them directly (instead of having `hue` vs. `color`, etc.). What matters is *where* the property is defined: passing a value when you initialize :class:`Dot` will set it directly, whereas assigning a variable when you set up the :class:`Plot` will *map* the corresponding data.\\n\",\n141 |     \"\\n\",\n142 |     \"Beyond this difference, the objects interface also allows a much wider range of mark properties to be mapped:\"\n143 |    ]\n\ndoc/_docstrings/objects.Plot.scale.ipynb:123-134 (file) [partial]\n123 |     \"The scale objects also offer an interface for configuring the location of the scale ticks (including in the legend) and the formatting of the tick labels:\"\n124 |    ]\n125 |   },\n126 |   {\n127 |    \"cell_type\": \"code\",\n128 |    \"execution_count\": null,\n129 |    \"id\": \"cfaa426a-1a97-4b6f-91b6-ee378eabf194\",\n130 |    \"metadata\": {},\n131 |    \"outputs\": [],\n132 |    \"source\": [\n133 |     \"(\\n\",\n134 |     \"    p1.add(so.Dots(), color=\\\"price\\\")\\n\",\n@62-65\n62 |     \"The scale's range can alternatively be specified as a tuple of min/max values:\"\n63 |    ]\n64 |   },\n65 |   {\n\nseaborn/utils.py:10-21 (file) [partial]\n10 | import numpy as np\n11 | import pandas as pd\n12 | import matplotlib as mpl\n13 | from matplotlib.colors import to_rgb\n14 | import matplotlib.pyplot as plt\n15 | from matplotlib.cbook import normalize_kwargs\n16 | \n17 | from .external.version import Version\n18 | from .external.appdirs import user_cache_dir\n19 | \n20 | __all__ = [\"desaturate\", \"saturate\", \"set_hls_values\", \"move_legend\",\n21 |            \"despine\", \"get_dataset_names\", \"get_data_home\", \"load_dataset\"]\n@697-700\n697 | \n698 |     if isinstance(locator, mpl.ticker.LogLocator):\n699 |         formatter = mpl.ticker.LogFormatter()\n700 |     else:\n\ndoc/faq.rst:212-221 (file) [partial]\n212 | ~~~~~~~~~~~~~~~~~~~~~~~~~\n213 | \n214 | *When applying a semantic mapping to a plot, seaborn will automatically create a legend and add it to the figure. But the automatic choice of legend position is not always ideal.*\n215 | \n216 | With seaborn v0.11.2 or later, use the :func:`move_legend` function.\n217 | \n218 | On older versions, a common pattern was to call `ax.legend(loc=...)` after plotting. While this appears to move the legend, it actually *replaces* it with a new one, using any labeled artists that happen to be attached to the axes. This does `not consistently work <https://github.com/mwaskom/seaborn/issues/2280>`_ across plot types. And it does not propagate the legend title or positioning tweaks that are used to format a multi-variable legend.\n219 | \n220 | The :func:`move_legend` function is actually more powerful than its name suggests, and it can also be used to modify other `legend parameters <https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html>`_ (font size, handle length, etc.) after plotting.\n221 | \n\ntests/test_categorical.py:22-33 (file) [partial]\n22 | from seaborn.external.version import Version\n23 | from seaborn._oldcore import categorical_order\n24 | from seaborn.axisgrid import FacetGrid\n25 | from seaborn.categorical import (\n26 |     _CategoricalPlotterNew,\n27 |     Beeswarm,\n28 |     catplot,\n29 |     pointplot,\n30 |     stripplot,\n31 |     swarmplot,\n32 | )\n33 | from seaborn.palettes import color_palette\n@2036-2038\n2036 |         ax = self.func(data=long_df, x=\"y\", y=\"a\", hue=\"z\")\n2037 |         vals = [float(t.get_text()) for t in ax.legend_.texts]\n2038 |         assert (vals[1] - vals[0]) == pytest.approx(vals[2] - vals[1])\n@2080-2080\n2080 |         y = [1, 2, 3, 4]\n\nexamples/multiple_regression.py:5-16 (file) [partial]\n5 | _thumb: .45, .45\n6 | \"\"\"\n7 | import seaborn as sns\n8 | sns.set_theme()\n9 | \n10 | # Load the penguins dataset\n11 | penguins = sns.load_dataset(\"penguins\")\n12 | \n13 | # Plot sepal width as a function of sepal_length across days\n14 | g = sns.lmplot(\n15 |     data=penguins,\n16 |     x=\"bill_length_mm\", y=\"bill_depth_mm\", hue=\"species\",\n@1-4\n1 | \"\"\"\n2 | Multiple linear regression\n3 | ==========================\n4 | \n\ndoc/_tutorial/color_palettes.ipynb:427-438 (file) [partial]\n427 |     \"Many people find the moderated hues of the default ``\\\"deep\\\"`` palette to be aesthetically pleasing, but they are also less distinct. As a result, they may be more difficult to discriminate in some contexts, which is something to keep in mind when making publication graphics. `This comparison <https://gist.github.com/mwaskom/b35f6ebc2d4b340b4f64a4e28e778486>`_ can be helpful for estimating how the seaborn color palettes perform when simulating different forms of colorblindess.\"\n428 |    ]\n429 |   },\n430 |   {\n431 |    \"cell_type\": \"raw\",\n432 |    \"metadata\": {},\n433 |    \"source\": [\n434 |     \"Using circular color systems\\n\",\n435 |     \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~\\n\",\n436 |     \"\\n\",\n437 |     \"When you have an arbitrary number of categories, the easiest approach to finding unique hues is to draw evenly-spaced colors in a circular color space (one where the hue changes while keeping the brightness and saturation constant). This is what most seaborn functions default to when they need to use more colors than are currently set in the default color cycle.\\n\",\n438 |     \"\\n\",\n@969-972\n969 |     \"sns.color_palette(\\\"coolwarm\\\", as_cmap=True)\"\n970 |    ]\n971 |   },\n972 |   {\n\nseaborn/_core/plot.py:17-28 (file) [partial]\n17 | import pandas as pd\n18 | from pandas import DataFrame, Series, Index\n19 | import matplotlib as mpl\n20 | from matplotlib.axes import Axes\n21 | from matplotlib.artist import Artist\n22 | from matplotlib.figure import Figure\n23 | \n24 | from seaborn._marks.base import Mark\n25 | from seaborn._stats.base import Stat\n26 | from seaborn._core.data import PlotData\n27 | from seaborn._core.moves import Move\n28 | from seaborn._core.scales import Scale, Nominal\n@1548-1551\n1548 |         if data.frame.empty and data.frames:\n1549 |             legend_vars: list[str] = []\n1550 |             for frame in data.frames.values():\n1551 |                 frame_vars = frame.columns.intersection(list(scales))\n\ntests/test_relational.py:3-14 (file) [partial]\n3 | \n4 | import numpy as np\n5 | import matplotlib as mpl\n6 | import matplotlib.pyplot as plt\n7 | from matplotlib.colors import same_color, to_rgba\n8 | \n9 | import pytest\n10 | from numpy.testing import assert_array_equal, assert_array_almost_equal\n11 | \n12 | from seaborn.external.version import Version\n13 | from seaborn.palettes import color_palette\n14 | from seaborn._oldcore import categorical_order\n@1726-1729\n1726 |         x = np.arange(0, 20, 2)\n1727 |         f, axs = plt.subplots(1, 2, sharex=True, sharey=True)\n1728 | \n1729 |         slc = 5\n\ntests/test_utils.py:17-22 (file) [partial]\n17 | from pandas.testing import (\n18 |     assert_series_equal,\n19 |     assert_frame_equal,\n20 | )\n21 | \n22 | from seaborn import utils, rcmod",
+  "elapsed_ms": 8713.556749979034,
+  "cpu_ms": 24947.235999999997
+}

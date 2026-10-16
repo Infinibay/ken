@@ -1,0 +1,313 @@
+{
+  "id": "psf__requests-2931",
+  "query": "Request with binary payload fails due to calling to_native_string\nIntroduced with https://github.com/kennethreitz/requests/issues/2844\n\n```\nimport requests\nrequests.put(\"http://httpbin.org/put\", data=u\"ööö\".encode(\"utf-8\"))\n```\n\nThis works with 2.8.1, but not with 2.9.\n\n",
+  "results": [
+    {
+      "path": "requests/api.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 145
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "# -*- coding: utf-8 -*-\n\n\"\"\"\nrequests.api\n~~~~~~~~~~~~\n\nThis module implements the Requests API.\n\n:copyright: (c) 2012 by Kenneth Reitz.\n:license: Apache2, see LICENSE for more details.\n\n\"\"\""
+        },
+        {
+          "start_line": 120,
+          "end_line": 120,
+          "content": "    return request('put', url, data=data, **kwargs)"
+        },
+        {
+          "start_line": 52,
+          "end_line": 53,
+          "content": "    with sessions.Session() as session:\n        return session.request(method=method, url=url, **kwargs)"
+        },
+        {
+          "start_line": 110,
+          "end_line": 110,
+          "content": "def put(url, data=None, **kwargs):"
+        }
+      ],
+      "source_hash": "99966d1f2c11d2a99ed414ad8fb7ca0241dda60ff714c7436b006cbd65787a1d",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "test_requests.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 1741
+      },
+      "evidence": [
+        {
+          "start_line": 23,
+          "end_line": 34,
+          "content": "from requests.cookies import cookiejar_from_dict, morsel_to_cookie\nfrom requests.exceptions import (ConnectionError, ConnectTimeout,\n                                 InvalidSchema, InvalidURL, MissingSchema,\n                                 ReadTimeout, Timeout, RetryError)\nfrom requests.models import PreparedRequest\nfrom requests.structures import CaseInsensitiveDict\nfrom requests.sessions import SessionRedirectMixin\nfrom requests.models import urlencode\nfrom requests.hooks import default_hooks\n\ntry:\n    import StringIO"
+        },
+        {
+          "start_line": 519,
+          "end_line": 522,
+          "content": "        requests.put(\n            httpbin('put'),\n            headers={str('Content-Type'): 'application/octet-stream'},\n            data='\\xff')  # compat.str is unicode."
+        }
+      ],
+      "source_hash": "f25af022ba9778f2fed1f00d26d3a378b8bac5bcfe65a041941d33a607842740",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/utils.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 717
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "# -*- coding: utf-8 -*-\n\n\"\"\"\nrequests.utils\n~~~~~~~~~~~~~~\n\nThis module provides utility functions that are used within Requests\nthat are also useful for external consumption.\n\n\"\"\"\n\nimport cgi"
+        },
+        {
+          "start_line": 692,
+          "end_line": 695,
+          "content": "    out = None\n\n    if isinstance(string, builtin_str):\n        out = string"
+        }
+      ],
+      "source_hash": "f7e9abd57fe977e7d24bd4dc40c8c21c723c39058de4bd1d5b0d36b8bf9698cd",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/models.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 848
+      },
+      "evidence": [
+        {
+          "start_line": 19,
+          "end_line": 30,
+          "content": "from .packages.urllib3.fields import RequestField\nfrom .packages.urllib3.filepost import encode_multipart_formdata\nfrom .packages.urllib3.util import parse_url\nfrom .packages.urllib3.exceptions import (\n    DecodeError, ReadTimeoutError, ProtocolError, LocationParseError)\nfrom .exceptions import (\n    HTTPError, MissingSchema, InvalidURL, ChunkedEncodingError,\n    ContentDecodingError, ConnectionError, StreamConsumedError)\nfrom .utils import (\n    guess_filename, get_auth_from_url, requote_uri,\n    stream_decode_response_unicode, to_key_val_list, parse_header_links,\n    iter_slices, guess_json_utf, super_len, to_native_string)"
+        },
+        {
+          "start_line": 83,
+          "end_line": 86,
+          "content": "        if isinstance(data, (str, bytes)):\n            return to_native_string(data)\n        elif hasattr(data, 'read'):\n            return data"
+        }
+      ],
+      "source_hash": "a57e766a29b120c372e3bd236c80db1b2d696d96593cddb38c4fe150c41285ed",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "docs/user/quickstart.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 493
+      },
+      "evidence": [
+        {
+          "start_line": 79,
+          "end_line": 94,
+          "content": "    >>> r = requests.get(\"http://httpbin.org/get\", params=payload)\n    >>> print(r.url)\n    http://httpbin.org/get?key1=value1&key2=value2&key2=value3\n\nResponse Content\n----------------\n\nWe can read the content of the server's response. Consider the GitHub timeline\nagain::\n\n    >>> import requests\n    >>> r = requests.get('https://api.github.com/events')\n    >>> r.text\n    u'[{\"repository\":{\"open_issues\":0,\"url\":\"https://github.com/...\n\nRequests will automatically decode content from the server. Most unicode"
+        }
+      ],
+      "source_hash": "3b8853917cacd7a9c5fc04253f766f3b5aa4bf7a927df0e06164b61f1ab4d77c",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/packages/urllib3/request.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 151
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "from __future__ import absolute_import\ntry:\n    from urllib.parse import urlencode\nexcept ImportError:\n    from urllib import urlencode\n\nfrom .filepost import encode_multipart_formdata\n\n\n__all__ = ['RequestMethods']\n\n"
+        },
+        {
+          "start_line": 130,
+          "end_line": 133,
+          "content": "        if headers is None:\n            headers = self.headers\n\n        extra_kw = {'headers': {}}"
+        }
+      ],
+      "source_hash": "8c44fb3af0371528f10010511a10b231d3ef33d5ee240e9d7fd8118642622626",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "docs/api.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 267
+      },
+      "evidence": [
+        {
+          "start_line": 188,
+          "end_line": 199,
+          "content": "      # you will see the REQUEST, including HEADERS and DATA, and RESPONSE with HEADERS but without DATA.\n      # the only thing missing will be the response.body which is not logged.\n      import httplib\n      httplib.HTTPConnection.debuglevel = 1\n\n      logging.basicConfig() # you need to initialize logging, otherwise you will not see anything from requests\n      logging.getLogger().setLevel(logging.DEBUG)\n      requests_log = logging.getLogger(\"requests.packages.urllib3\")\n      requests_log.setLevel(logging.DEBUG)\n      requests_log.propagate = True\n\n      requests.get('http://httpbin.org/headers')"
+        },
+        {
+          "start_line": 173,
+          "end_line": 176,
+          "content": "      r = requests.get('https://github.com/timeline.json', stream=True)\n      for chunk in r.iter_content(8192):\n          ...\n"
+        }
+      ],
+      "source_hash": "0f8e911fd7fa5b473c29f12eb371636ef05406557bec0f1b73923e767b342dd7",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "HISTORY.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 1113
+      },
+      "evidence": [
+        {
+          "start_line": 638,
+          "end_line": 649,
+          "content": "- Allow passing a file or file-like object as data.\n- Allow hooks to return responses that indicate errors.\n- Fix Response.text and Response.json for body-less responses.\n\n0.13.0 (2012-05-29)\n+++++++++++++++++++\n\n- Removal of Requests.async in favor of `grequests <https://github.com/kennethreitz/grequests>`_\n- Allow disabling of cookie persistence.\n- New implementation of safe_mode\n- cookies.get now supports default argument\n- Session cookies not saved when Session.request is called with return_response=False"
+        },
+        {
+          "start_line": 139,
+          "end_line": 142,
+          "content": "  `BugFuzz <https://bugfuzz.com>`_. This affects all versions of requests from\n  v2.1.0 to v2.5.3 (inclusive on both ends).\n\n- Fix error when requests is an ``install_requires`` dependency and ``python"
+        }
+      ],
+      "source_hash": "e0a4ae9c1c366051fd2f14cf2bb0fd99655d6a0cf35045f3ff73dd03e55d8241",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/__init__.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 83
+      },
+      "evidence": [
+        {
+          "start_line": 14,
+          "end_line": 25,
+          "content": "\n   >>> import requests\n   >>> r = requests.get('https://www.python.org')\n   >>> r.status_code\n   200\n   >>> 'Python is a programming language' in r.content\n   True\n\n... or POST:\n\n   >>> payload = dict(key1='value1', key2='value2')\n   >>> r = requests.post('http://httpbin.org/post', data=payload)"
+        },
+        {
+          "start_line": 1,
+          "end_line": 4,
+          "content": "# -*- coding: utf-8 -*-\n\n#   __\n#  /__)  _  _     _   _ _/   _"
+        }
+      ],
+      "source_hash": "19b3a7931b235961e8da52d061eb7bc7f079b2dfa66085eb345647c826ed35dc",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "requests/packages/urllib3/packages/six.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 385
+      },
+      "evidence": [
+        {
+          "start_line": 15,
+          "end_line": 26,
+          "content": "#THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS\n#FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR\n#COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER\n#IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN\n#CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\nimport operator\nimport sys\nimport types\n\n__author__ = \"Benjamin Peterson <benjamin@python.org>\""
+        },
+        {
+          "start_line": 278,
+          "end_line": 278,
+          "content": "        return s.encode(\"latin-1\")"
+        },
+        {
+          "start_line": 11,
+          "end_line": 13,
+          "content": "\n#The above copyright notice and this permission notice shall be included in all\n#copies or substantial portions of the Software."
+        }
+      ],
+      "source_hash": "53eacef9606b152f0fc4779a99297aa242828ea3c5d7c3618996f4a8f67aed73",
+      "stale": false,
+      "truncated": true
+    }
+  ],
+  "profile_version": "f189f081de7021005c2399fd13658fc620b8873293967b1a471a4c8142573a13",
+  "warnings": [],
+  "truncated": true,
+  "omitted_count": 0,
+  "compact": "requests/api.py:1-12 (file) [partial]\n1 | # -*- coding: utf-8 -*-\n2 | \n3 | \"\"\"\n4 | requests.api\n5 | ~~~~~~~~~~~~\n6 | \n7 | This module implements the Requests API.\n8 | \n9 | :copyright: (c) 2012 by Kenneth Reitz.\n10 | :license: Apache2, see LICENSE for more details.\n11 | \n12 | \"\"\"\n@120-120\n120 |     return request('put', url, data=data, **kwargs)\n@52-53\n52 |     with sessions.Session() as session:\n53 |         return session.request(method=method, url=url, **kwargs)\n@110-110\n110 | def put(url, data=None, **kwargs):\n\ntest_requests.py:23-34 (file) [partial]\n23 | from requests.cookies import cookiejar_from_dict, morsel_to_cookie\n24 | from requests.exceptions import (ConnectionError, ConnectTimeout,\n25 |                                  InvalidSchema, InvalidURL, MissingSchema,\n26 |                                  ReadTimeout, Timeout, RetryError)\n27 | from requests.models import PreparedRequest\n28 | from requests.structures import CaseInsensitiveDict\n29 | from requests.sessions import SessionRedirectMixin\n30 | from requests.models import urlencode\n31 | from requests.hooks import default_hooks\n32 | \n33 | try:\n34 |     import StringIO\n@519-522\n519 |         requests.put(\n520 |             httpbin('put'),\n521 |             headers={str('Content-Type'): 'application/octet-stream'},\n522 |             data='\\xff')  # compat.str is unicode.\n\nrequests/utils.py:1-12 (file) [partial]\n1 | # -*- coding: utf-8 -*-\n2 | \n3 | \"\"\"\n4 | requests.utils\n5 | ~~~~~~~~~~~~~~\n6 | \n7 | This module provides utility functions that are used within Requests\n8 | that are also useful for external consumption.\n9 | \n10 | \"\"\"\n11 | \n12 | import cgi\n@692-695\n692 |     out = None\n693 | \n694 |     if isinstance(string, builtin_str):\n695 |         out = string\n\nrequests/models.py:19-30 (file) [partial]\n19 | from .packages.urllib3.fields import RequestField\n20 | from .packages.urllib3.filepost import encode_multipart_formdata\n21 | from .packages.urllib3.util import parse_url\n22 | from .packages.urllib3.exceptions import (\n23 |     DecodeError, ReadTimeoutError, ProtocolError, LocationParseError)\n24 | from .exceptions import (\n25 |     HTTPError, MissingSchema, InvalidURL, ChunkedEncodingError,\n26 |     ContentDecodingError, ConnectionError, StreamConsumedError)\n27 | from .utils import (\n28 |     guess_filename, get_auth_from_url, requote_uri,\n29 |     stream_decode_response_unicode, to_key_val_list, parse_header_links,\n30 |     iter_slices, guess_json_utf, super_len, to_native_string)\n@83-86\n83 |         if isinstance(data, (str, bytes)):\n84 |             return to_native_string(data)\n85 |         elif hasattr(data, 'read'):\n86 |             return data\n\ndocs/user/quickstart.rst:79-94 (file) [partial]\n79 |     >>> r = requests.get(\"http://httpbin.org/get\", params=payload)\n80 |     >>> print(r.url)\n81 |     http://httpbin.org/get?key1=value1&key2=value2&key2=value3\n82 | \n83 | Response Content\n84 | ----------------\n85 | \n86 | We can read the content of the server's response. Consider the GitHub timeline\n87 | again::\n88 | \n89 |     >>> import requests\n90 |     >>> r = requests.get('https://api.github.com/events')\n91 |     >>> r.text\n92 |     u'[{\"repository\":{\"open_issues\":0,\"url\":\"https://github.com/...\n93 | \n94 | Requests will automatically decode content from the server. Most unicode\n\nrequests/packages/urllib3/request.py:1-12 (file) [partial]\n1 | from __future__ import absolute_import\n2 | try:\n3 |     from urllib.parse import urlencode\n4 | except ImportError:\n5 |     from urllib import urlencode\n6 | \n7 | from .filepost import encode_multipart_formdata\n8 | \n9 | \n10 | __all__ = ['RequestMethods']\n11 | \n12 | \n@130-133\n130 |         if headers is None:\n131 |             headers = self.headers\n132 | \n133 |         extra_kw = {'headers': {}}\n\ndocs/api.rst:188-199 (file) [partial]\n188 |       # you will see the REQUEST, including HEADERS and DATA, and RESPONSE with HEADERS but without DATA.\n189 |       # the only thing missing will be the response.body which is not logged.\n190 |       import httplib\n191 |       httplib.HTTPConnection.debuglevel = 1\n192 | \n193 |       logging.basicConfig() # you need to initialize logging, otherwise you will not see anything from requests\n194 |       logging.getLogger().setLevel(logging.DEBUG)\n195 |       requests_log = logging.getLogger(\"requests.packages.urllib3\")\n196 |       requests_log.setLevel(logging.DEBUG)\n197 |       requests_log.propagate = True\n198 | \n199 |       requests.get('http://httpbin.org/headers')\n@173-176\n173 |       r = requests.get('https://github.com/timeline.json', stream=True)\n174 |       for chunk in r.iter_content(8192):\n175 |           ...\n176 | \n\nHISTORY.rst:638-649 (file) [partial]\n638 | - Allow passing a file or file-like object as data.\n639 | - Allow hooks to return responses that indicate errors.\n640 | - Fix Response.text and Response.json for body-less responses.\n641 | \n642 | 0.13.0 (2012-05-29)\n643 | +++++++++++++++++++\n644 | \n645 | - Removal of Requests.async in favor of `grequests <https://github.com/kennethreitz/grequests>`_\n646 | - Allow disabling of cookie persistence.\n647 | - New implementation of safe_mode\n648 | - cookies.get now supports default argument\n649 | - Session cookies not saved when Session.request is called with return_response=False\n@139-142\n139 |   `BugFuzz <https://bugfuzz.com>`_. This affects all versions of requests from\n140 |   v2.1.0 to v2.5.3 (inclusive on both ends).\n141 | \n142 | - Fix error when requests is an ``install_requires`` dependency and ``python\n\nrequests/__init__.py:14-25 (file) [partial]\n14 | \n15 |    >>> import requests\n16 |    >>> r = requests.get('https://www.python.org')\n17 |    >>> r.status_code\n18 |    200\n19 |    >>> 'Python is a programming language' in r.content\n20 |    True\n21 | \n22 | ... or POST:\n23 | \n24 |    >>> payload = dict(key1='value1', key2='value2')\n25 |    >>> r = requests.post('http://httpbin.org/post', data=payload)\n@1-4\n1 | # -*- coding: utf-8 -*-\n2 | \n3 | #   __\n4 | #  /__)  _  _     _   _ _/   _\n\nrequests/packages/urllib3/packages/six.py:15-26 (file) [partial]\n15 | #THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n16 | #IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS\n17 | #FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR\n18 | #COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER\n19 | #IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN\n20 | #CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n21 | \n22 | import operator\n23 | import sys\n24 | import types\n25 | \n26 | __author__ = \"Benjamin Peterson <benjamin@python.org>\"\n@278-278\n278 |         return s.encode(\"latin-1\")\n@11-13\n11 | \n12 | #The above copyright notice and this permission notice shall be included in all\n13 | #copies or substantial portions of the Software.",
+  "elapsed_ms": 3504.564625036437,
+  "cpu_ms": 9489.259000000002
+}

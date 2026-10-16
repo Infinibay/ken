@@ -1,0 +1,268 @@
+{
+  "id": "mwaskom__seaborn-3187",
+  "query": "Wrong legend values of large ranges\nAs of 0.12.1, legends describing large numbers that were created using `ScalarFormatter` with an offset are formatted without their multiplicative offset value. An example:\r\n```python\r\nimport seaborn as sns\r\nimport seaborn.objects as so\r\n\r\npenguins = sns.load_dataset(\"Penguins\")\r\npenguins[\"body_mass_mg\"] = penguins[\"body_mass_g\"]*1000\r\n(\r\n    so.Plot(\r\n        penguins, x=\"bill_length_mm\", y=\"bill_depth_mm\",\r\n        color=\"species\", pointsize=\"body_mass_mg\",\r\n    )\r\n    .add(so.Dot())\r\n)\r\n```\r\nThe code creates the following plot:\r\n![image](https://user-images.githubusercontent.com/13831112/205512305-778966db-f8d8-43f3-a2c0-5e5ce95bae39.png)\r\nwhich is wrong because `body_mass_mg` is in the order of 1E6. The issue also reproduces if you create the mentioned plot using `scatterplot`.\r\n \r\nI believe the issue stems from not using the offset value of the `ScalarFormatter` used to generate the tick labels:\r\nhttps://github.com/mwaskom/seaborn/blob/ba786bc14eb255f6b4fb7619c8210c5a8016a26f/seaborn/_core/scales.py#L377-L382\r\nExamining the code of `ScalarFormatter` suggests the issue also depends on the following rcParam settings:\r\n`mpl.rcParams['axes.formatter.useoffset']`\r\n`mpl.rcParams['axes.formatter.offset_threshold']`\r\nHowever, I did not test it. \r\n\r\nThe offset value can be safely retrieved from all formatters and based on that it can be used to create the legend title and/or labels.\n",
+  "results": [
+    {
+      "path": "seaborn/utils.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "function",
+        "qualname": "locator_to_legend_entries",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 687,
+        "end_line": 710
+      },
+      "evidence": [
+        {
+          "start_line": 687,
+          "end_line": 688,
+          "content": "def locator_to_legend_entries(locator, limits, dtype):\n    \"\"\"Return levels and formatted levels for brief numeric legends.\"\"\""
+        },
+        {
+          "start_line": 697,
+          "end_line": 710,
+          "content": "\n    if isinstance(locator, mpl.ticker.LogLocator):\n        formatter = mpl.ticker.LogFormatter()\n    else:\n        formatter = mpl.ticker.ScalarFormatter()\n    formatter.axis = dummy_axis()\n\n    # TODO: The following two lines should be replaced\n    # once pinned matplotlib>=3.1.0 with:\n    # formatted_levels = formatter.format_ticks(raw_levels)\n    formatter.set_locs(raw_levels)\n    formatted_levels = [formatter(x) for x in raw_levels]\n\n    return raw_levels, formatted_levels"
+        }
+      ],
+      "source_hash": "98ab6b2b0bfd91f2ed8158ef8b4b673f993373b4dc832662e1bcb017ed81a625",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "tests/test_relational.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "TestScatterPlotter.test_size_norm_extrapolation",
+        "owner": "TestScatterPlotter",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1723,
+        "end_line": 1755
+      },
+      "evidence": [
+        {
+          "start_line": 1723,
+          "end_line": 1738,
+          "content": "    def test_size_norm_extrapolation(self):\n\n        # https://github.com/mwaskom/seaborn/issues/2539\n        x = np.arange(0, 20, 2)\n        f, axs = plt.subplots(1, 2, sharex=True, sharey=True)\n\n        slc = 5\n        kws = dict(sizes=(50, 200), size_norm=(0, x.max()), legend=\"brief\")\n\n        scatterplot(x=x, y=x, size=x, ax=axs[0], **kws)\n        scatterplot(x=x[:slc], y=x[:slc], size=x[:slc], ax=axs[1], **kws)\n\n        assert np.allclose(\n            axs[0].collections[0].get_sizes()[:slc],\n            axs[1].collections[0].get_sizes()\n        )"
+        }
+      ],
+      "source_hash": "1ab738fa5ada56c4fc24bd3458d9bec9b4c06f5d2b0bafdbb459cafd0757125d",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "tests/test_relational.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "TestLinePlotter.test_legend_data",
+        "owner": "TestLinePlotter",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 687,
+        "end_line": 879
+      },
+      "evidence": [
+        {
+          "start_line": 687,
+          "end_line": 688,
+          "content": "    def test_legend_data(self, long_df):\n"
+        },
+        {
+          "start_line": 822,
+          "end_line": 835,
+          "content": "        assert len(labels) < len(p._size_map.levels)\n\n        ax.clear()\n        p.legend = \"bad_value\"\n        with pytest.raises(ValueError):\n            p.add_legend_data(ax)\n\n        ax.clear()\n        p = _LinePlotter(\n            variables=dict(x=x, y=y, hue=z + 1),\n            legend=\"brief\"\n        )\n        p.map_hue(norm=mpl.colors.LogNorm()),\n        p.add_legend_data(ax)"
+        }
+      ],
+      "source_hash": "1ab738fa5ada56c4fc24bd3458d9bec9b4c06f5d2b0bafdbb459cafd0757125d",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "tests/test_relational.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "TestScatterPlotter.test_legend_data",
+        "owner": "TestScatterPlotter",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1351,
+        "end_line": 1525
+      },
+      "evidence": [
+        {
+          "start_line": 1351,
+          "end_line": 1366,
+          "content": "    def test_legend_data(self, long_df):\n\n        m = mpl.markers.MarkerStyle(\"o\")\n        default_mark = m.get_path().transformed(m.get_transform())\n\n        m = mpl.markers.MarkerStyle(\"\")\n        null = m.get_path().transformed(m.get_transform())\n\n        f, ax = plt.subplots()\n\n        p = _ScatterPlotter(\n            data=long_df,\n            variables=dict(x=\"x\", y=\"y\"),\n            legend=\"full\",\n        )\n        p.add_legend_data(ax)"
+        }
+      ],
+      "source_hash": "1ab738fa5ada56c4fc24bd3458d9bec9b4c06f5d2b0bafdbb459cafd0757125d",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "seaborn/_core/plot.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "Plotter._update_legend_contents",
+        "owner": "Plotter",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1540,
+        "end_line": 1586
+      },
+      "evidence": [
+        {
+          "start_line": 1540,
+          "end_line": 1555,
+          "content": "    def _update_legend_contents(\n        self,\n        p: Plot,\n        mark: Mark,\n        data: PlotData,\n        scales: dict[str, Scale],\n    ) -> None:\n        \"\"\"Add legend artists / labels for one layer in the plot.\"\"\"\n        if data.frame.empty and data.frames:\n            legend_vars: list[str] = []\n            for frame in data.frames.values():\n                frame_vars = frame.columns.intersection(list(scales))\n                legend_vars.extend(v for v in frame_vars if v not in legend_vars)\n        else:\n            legend_vars = list(data.frame.columns.intersection(list(scales)))\n"
+        }
+      ],
+      "source_hash": "b5b46a0f5dc65ab7ac31fb7f4aad818cb96618a34bd12410dda24fc3a00e0a65",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "tests/_core/test_plot.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "TestPlotting.test_labels_legend",
+        "owner": "TestPlotting",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1210,
+        "end_line": 1220
+      },
+      "evidence": [
+        {
+          "start_line": 1210,
+          "end_line": 1220,
+          "content": "    def test_labels_legend(self, long_df):\n\n        m = MockMark()\n\n        label = \"A\"\n        p = Plot(long_df, x=\"x\", y=\"y\", color=\"a\").add(m).label(color=label).plot()\n        assert p._figure.legends[0].get_title().get_text() == label\n\n        func = str.capitalize\n        p = Plot(long_df, x=\"x\", y=\"y\", color=\"a\").add(m).label(color=func).plot()\n        assert p._figure.legends[0].get_title().get_text() == label"
+        }
+      ],
+      "source_hash": "1dd64356238b0ade3f11dfd48ed2331a3d522eff2e3e52361549c498fed75bf0",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "tests/test_categorical.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "SharedScatterTests.test_legend_numeric",
+        "owner": "SharedScatterTests",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 2034,
+        "end_line": 2038
+      },
+      "evidence": [
+        {
+          "start_line": 2034,
+          "end_line": 2038,
+          "content": "    def test_legend_numeric(self, long_df):\n\n        ax = self.func(data=long_df, x=\"y\", y=\"a\", hue=\"z\")\n        vals = [float(t.get_text()) for t in ax.legend_.texts]\n        assert (vals[1] - vals[0]) == pytest.approx(vals[2] - vals[1])"
+        }
+      ],
+      "source_hash": "eff6adc1d519f4d71527306b838bea1248acaf964eeb1a6eea3ebcad38d6ed22",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "tests/_core/test_plot.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "TestLegend.test_multi_layer_different_artists.MockMark2._legend_artist",
+        "owner": "TestLegend.test_multi_layer_different_artists.MockMark2",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1996,
+        "end_line": 1997
+      },
+      "evidence": [
+        {
+          "start_line": 1996,
+          "end_line": 1997,
+          "content": "            def _legend_artist(self, variables, value, scales):\n                return mpl.patches.Patch()"
+        }
+      ],
+      "source_hash": "1dd64356238b0ade3f11dfd48ed2331a3d522eff2e3e52361549c498fed75bf0",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "seaborn/_core/plot.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "Plotter._make_legend",
+        "owner": "Plotter",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1588,
+        "end_line": 1635
+      },
+      "evidence": [
+        {
+          "start_line": 1588,
+          "end_line": 1592,
+          "content": "    def _make_legend(self, p: Plot) -> None:\n        \"\"\"Create the legend artist(s) and add onto the figure.\"\"\"\n        # Combine artists representing same information across layers\n        # Input list has an entry for each distinct variable in each layer\n        # Output dict has an entry for each distinct variable"
+        },
+        {
+          "start_line": 1615,
+          "end_line": 1625,
+          "content": "        for (name, _), (handles, labels) in merged_contents.items():\n\n            legend = mpl.legend.Legend(\n                self._figure,\n                handles,\n                labels,\n                title=name,\n                loc=loc,\n                bbox_to_anchor=(.98, .55),\n            )\n"
+        }
+      ],
+      "source_hash": "b5b46a0f5dc65ab7ac31fb7f4aad818cb96618a34bd12410dda24fc3a00e0a65",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "tests/test_utils.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "function",
+        "qualname": "test_locator_to_legend_entries",
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 306,
+        "end_line": 335
+      },
+      "evidence": [
+        {
+          "start_line": 306,
+          "end_line": 321,
+          "content": "def test_locator_to_legend_entries():\n\n    locator = mpl.ticker.MaxNLocator(nbins=3)\n    limits = (0.09, 0.4)\n    levels, str_levels = utils.locator_to_legend_entries(\n        locator, limits, float\n    )\n    assert str_levels == [\"0.15\", \"0.30\"]\n\n    limits = (0.8, 0.9)\n    levels, str_levels = utils.locator_to_legend_entries(\n        locator, limits, float\n    )\n    assert str_levels == [\"0.80\", \"0.84\", \"0.88\"]\n\n    limits = (1, 6)"
+        }
+      ],
+      "source_hash": "2ce1a73d3a477fb4639af3f3a634b4af6a014821452f03f2f93f28ff6c867d0f",
+      "stale": false,
+      "truncated": true
+    }
+  ],
+  "profile_version": "f189f081de7021005c2399fd13658fc620b8873293967b1a471a4c8142573a13",
+  "warnings": [],
+  "truncated": true,
+  "omitted_count": 0,
+  "compact": "seaborn/utils.py:687-688 :: locator_to_legend_entries [partial]\n687 | def locator_to_legend_entries(locator, limits, dtype):\n688 |     \"\"\"Return levels and formatted levels for brief numeric legends.\"\"\"\n@697-710\n697 | \n698 |     if isinstance(locator, mpl.ticker.LogLocator):\n699 |         formatter = mpl.ticker.LogFormatter()\n700 |     else:\n701 |         formatter = mpl.ticker.ScalarFormatter()\n702 |     formatter.axis = dummy_axis()\n703 | \n704 |     # TODO: The following two lines should be replaced\n705 |     # once pinned matplotlib>=3.1.0 with:\n706 |     # formatted_levels = formatter.format_ticks(raw_levels)\n707 |     formatter.set_locs(raw_levels)\n708 |     formatted_levels = [formatter(x) for x in raw_levels]\n709 | \n710 |     return raw_levels, formatted_levels\n\ntests/test_relational.py:1723-1738 :: TestScatterPlotter.test_size_norm_extrapolation [partial]\n1723 |     def test_size_norm_extrapolation(self):\n1724 | \n1725 |         # https://github.com/mwaskom/seaborn/issues/2539\n1726 |         x = np.arange(0, 20, 2)\n1727 |         f, axs = plt.subplots(1, 2, sharex=True, sharey=True)\n1728 | \n1729 |         slc = 5\n1730 |         kws = dict(sizes=(50, 200), size_norm=(0, x.max()), legend=\"brief\")\n1731 | \n1732 |         scatterplot(x=x, y=x, size=x, ax=axs[0], **kws)\n1733 |         scatterplot(x=x[:slc], y=x[:slc], size=x[:slc], ax=axs[1], **kws)\n1734 | \n1735 |         assert np.allclose(\n1736 |             axs[0].collections[0].get_sizes()[:slc],\n1737 |             axs[1].collections[0].get_sizes()\n1738 |         )\n\ntests/test_relational.py:687-688 :: TestLinePlotter.test_legend_data [partial]\n687 |     def test_legend_data(self, long_df):\n688 | \n@822-835\n822 |         assert len(labels) < len(p._size_map.levels)\n823 | \n824 |         ax.clear()\n825 |         p.legend = \"bad_value\"\n826 |         with pytest.raises(ValueError):\n827 |             p.add_legend_data(ax)\n828 | \n829 |         ax.clear()\n830 |         p = _LinePlotter(\n831 |             variables=dict(x=x, y=y, hue=z + 1),\n832 |             legend=\"brief\"\n833 |         )\n834 |         p.map_hue(norm=mpl.colors.LogNorm()),\n835 |         p.add_legend_data(ax)\n\ntests/test_relational.py:1351-1366 :: TestScatterPlotter.test_legend_data [partial]\n1351 |     def test_legend_data(self, long_df):\n1352 | \n1353 |         m = mpl.markers.MarkerStyle(\"o\")\n1354 |         default_mark = m.get_path().transformed(m.get_transform())\n1355 | \n1356 |         m = mpl.markers.MarkerStyle(\"\")\n1357 |         null = m.get_path().transformed(m.get_transform())\n1358 | \n1359 |         f, ax = plt.subplots()\n1360 | \n1361 |         p = _ScatterPlotter(\n1362 |             data=long_df,\n1363 |             variables=dict(x=\"x\", y=\"y\"),\n1364 |             legend=\"full\",\n1365 |         )\n1366 |         p.add_legend_data(ax)\n\nseaborn/_core/plot.py:1540-1555 :: Plotter._update_legend_contents [partial]\n1540 |     def _update_legend_contents(\n1541 |         self,\n1542 |         p: Plot,\n1543 |         mark: Mark,\n1544 |         data: PlotData,\n1545 |         scales: dict[str, Scale],\n1546 |     ) -> None:\n1547 |         \"\"\"Add legend artists / labels for one layer in the plot.\"\"\"\n1548 |         if data.frame.empty and data.frames:\n1549 |             legend_vars: list[str] = []\n1550 |             for frame in data.frames.values():\n1551 |                 frame_vars = frame.columns.intersection(list(scales))\n1552 |                 legend_vars.extend(v for v in frame_vars if v not in legend_vars)\n1553 |         else:\n1554 |             legend_vars = list(data.frame.columns.intersection(list(scales)))\n1555 | \n\ntests/_core/test_plot.py:1210-1220 :: TestPlotting.test_labels_legend\n1210 |     def test_labels_legend(self, long_df):\n1211 | \n1212 |         m = MockMark()\n1213 | \n1214 |         label = \"A\"\n1215 |         p = Plot(long_df, x=\"x\", y=\"y\", color=\"a\").add(m).label(color=label).plot()\n1216 |         assert p._figure.legends[0].get_title().get_text() == label\n1217 | \n1218 |         func = str.capitalize\n1219 |         p = Plot(long_df, x=\"x\", y=\"y\", color=\"a\").add(m).label(color=func).plot()\n1220 |         assert p._figure.legends[0].get_title().get_text() == label\n\ntests/test_categorical.py:2034-2038 :: SharedScatterTests.test_legend_numeric\n2034 |     def test_legend_numeric(self, long_df):\n2035 | \n2036 |         ax = self.func(data=long_df, x=\"y\", y=\"a\", hue=\"z\")\n2037 |         vals = [float(t.get_text()) for t in ax.legend_.texts]\n2038 |         assert (vals[1] - vals[0]) == pytest.approx(vals[2] - vals[1])\n\ntests/_core/test_plot.py:1996-1997 :: TestLegend.test_multi_layer_different_artists.MockMark2._legend_artist\n1996 |             def _legend_artist(self, variables, value, scales):\n1997 |                 return mpl.patches.Patch()\n\nseaborn/_core/plot.py:1588-1592 :: Plotter._make_legend [partial]\n1588 |     def _make_legend(self, p: Plot) -> None:\n1589 |         \"\"\"Create the legend artist(s) and add onto the figure.\"\"\"\n1590 |         # Combine artists representing same information across layers\n1591 |         # Input list has an entry for each distinct variable in each layer\n1592 |         # Output dict has an entry for each distinct variable\n@1615-1625\n1615 |         for (name, _), (handles, labels) in merged_contents.items():\n1616 | \n1617 |             legend = mpl.legend.Legend(\n1618 |                 self._figure,\n1619 |                 handles,\n1620 |                 labels,\n1621 |                 title=name,\n1622 |                 loc=loc,\n1623 |                 bbox_to_anchor=(.98, .55),\n1624 |             )\n1625 | \n\ntests/test_utils.py:306-321 :: test_locator_to_legend_entries [partial]\n306 | def test_locator_to_legend_entries():\n307 | \n308 |     locator = mpl.ticker.MaxNLocator(nbins=3)\n309 |     limits = (0.09, 0.4)\n310 |     levels, str_levels = utils.locator_to_legend_entries(\n311 |         locator, limits, float\n312 |     )\n313 |     assert str_levels == [\"0.15\", \"0.30\"]\n314 | \n315 |     limits = (0.8, 0.9)\n316 |     levels, str_levels = utils.locator_to_legend_entries(\n317 |         locator, limits, float\n318 |     )\n319 |     assert str_levels == [\"0.80\", \"0.84\", \"0.88\"]\n320 | \n321 |     limits = (1, 6)",
+  "elapsed_ms": 10635.44791698223,
+  "cpu_ms": 32615.150999999998
+}

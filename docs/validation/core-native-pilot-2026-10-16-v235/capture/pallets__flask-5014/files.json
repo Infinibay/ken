@@ -1,0 +1,303 @@
+{
+  "id": "pallets__flask-5014",
+  "query": "Require a non-empty name for Blueprints\nThings do not work correctly if a Blueprint is given an empty name (e.g. #4944).\r\nIt would be helpful if a `ValueError` was raised when trying to do that.\n",
+  "results": [
+    {
+      "path": "src/flask/wrappers.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 171
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 12,
+          "content": "import typing as t\n\nfrom werkzeug.exceptions import BadRequest\nfrom werkzeug.wrappers import Request as RequestBase\nfrom werkzeug.wrappers import Response as ResponseBase\n\nfrom . import json\nfrom .globals import current_app\nfrom .helpers import _split_blueprint_path\n\nif t.TYPE_CHECKING:  # pragma: no cover\n    from werkzeug.routing import Rule"
+        },
+        {
+          "start_line": 87,
+          "end_line": 90,
+          "content": "        endpoint = self.endpoint\n\n        if endpoint is not None and \".\" in endpoint:\n            return endpoint.rpartition(\".\")[0]"
+        }
+      ],
+      "source_hash": "7a5ded9f52e049457478d1a060c8ca2024f923ba862606e9221bdc8b89ebc10f",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "tests/test_blueprints.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 1048
+      },
+      "evidence": [
+        {
+          "start_line": 1,
+          "end_line": 7,
+          "content": "import pytest\nfrom jinja2 import TemplateNotFound\nfrom werkzeug.http import parse_cache_control_header\n\nimport flask\n\n"
+        },
+        {
+          "start_line": 255,
+          "end_line": 256,
+          "content": "    with pytest.raises(ValueError):\n        flask.Blueprint(\"app.ui\", __name__)"
+        },
+        {
+          "start_line": 997,
+          "end_line": 1003,
+          "content": "    bp = flask.Blueprint(\"bp\", __name__)\n    bp2 = flask.Blueprint(\"bp\", __name__)\n\n    app.register_blueprint(bp)\n\n    with pytest.raises(ValueError):\n        app.register_blueprint(bp)  # same bp, same name, error"
+        }
+      ],
+      "source_hash": "804b98bbb71ccce566ab78a15cb141793ebbaee3c1b3bb591d9dab04c9940f4a",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "CHANGES.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 1464
+      },
+      "evidence": [
+        {
+          "start_line": 346,
+          "end_line": 361,
+          "content": "-   Show an error when a blueprint name contains a dot. The ``.`` has\n    special meaning, it is used to separate (nested) blueprint names and\n    the endpoint name. :issue:`4041`\n-   Combine URL prefixes when nesting blueprints that were created with\n    a ``url_prefix`` value. :issue:`4037`\n-   Revert a change to the order that URL matching was done. The\n    URL is again matched after the session is loaded, so the session is\n    available in custom URL converters. :issue:`4053`\n-   Re-add deprecated ``Config.from_json``, which was accidentally\n    removed early. :issue:`4078`\n-   Improve typing for some functions using ``Callable`` in their type\n    signatures, focusing on decorator factories. :issue:`4060`\n-   Nested blueprints are registered with their dotted name. This allows\n    different blueprints with the same name to be nested at different\n    locations. :issue:`4069`\n-   ``register_blueprint`` takes a ``name`` option to change the"
+        }
+      ],
+      "source_hash": "d48be7a6bea42e9aec3810f1031694d06fc3ac44d474bea60051d8d0d1caa7a0",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "src/flask/blueprints.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 621
+      },
+      "evidence": [
+        {
+          "start_line": 7,
+          "end_line": 18,
+          "content": "from .scaffold import _endpoint_from_view_func\nfrom .scaffold import _sentinel\nfrom .scaffold import Scaffold\nfrom .scaffold import setupmethod\n\nif t.TYPE_CHECKING:  # pragma: no cover\n    from .app import Flask\n\nDeferredSetupFunction = t.Callable[[\"BlueprintSetupState\"], t.Callable]\nT_after_request = t.TypeVar(\"T_after_request\", bound=ft.AfterRequestCallable)\nT_before_request = t.TypeVar(\"T_before_request\", bound=ft.BeforeRequestCallable)\nT_error_handler = t.TypeVar(\"T_error_handler\", bound=ft.ErrorHandlerCallable)"
+        },
+        {
+          "start_line": 209,
+          "end_line": 212,
+          "content": "        if self._got_registered_once:\n            raise AssertionError(\n                f\"The setup method '{f_name}' can no longer be called on the blueprint\"\n                f\" '{self.name}'. It has already been registered at least once, any\""
+        }
+      ],
+      "source_hash": "9d296c3a0dffffbafd59ef15290a6d4c2061a470f3ad2b00709388d35d1dddc0",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "src/flask/app.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 2228
+      },
+      "evidence": [
+        {
+          "start_line": 61,
+          "end_line": 72,
+          "content": "from .signals import got_request_exception\nfrom .signals import request_finished\nfrom .signals import request_started\nfrom .signals import request_tearing_down\nfrom .templating import DispatchingJinjaLoader\nfrom .templating import Environment\nfrom .wrappers import Request\nfrom .wrappers import Response\n\nif t.TYPE_CHECKING:  # pragma: no cover\n    import typing_extensions as te\n    from .blueprints import Blueprint"
+        },
+        {
+          "start_line": 1649,
+          "end_line": 1652,
+          "content": "        req_ctx = _cv_request.get(None)\n\n        if req_ctx is not None:\n            url_adapter = req_ctx.url_adapter"
+        }
+      ],
+      "source_hash": "d439102c7658f90f896556c557df89501f2c98ad498d6317453f10ef58508710",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "tests/test_cli.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 678
+      },
+      "evidence": [
+        {
+          "start_line": 144,
+          "end_line": 155,
+          "content": "            test_path,\n            \"cliapp.inner1\",\n        ),\n        (\n            test_path / \"cliapp\" / \"inner1\" / \"inner2\",\n            test_path,\n            \"cliapp.inner1.inner2\",\n        ),\n        # dotted name\n        (\"test.a.b\", cwd, \"test.a.b\"),\n        (test_path / \"cliapp.app\", test_path, \"cliapp.app\"),\n        # not a Python file, will be caught during import"
+        },
+        {
+          "start_line": 674,
+          "end_line": 677,
+          "content": "    bp = Blueprint(\"blue\", __name__, cli_group=\"blue\")\n    app.register_blueprint(bp)\n\n    result = app.test_cli_runner().invoke(args=[\"blue\", \"--help\"])"
+        }
+      ],
+      "source_hash": "8be854106ba28dc85ec6e95cde140d7910ba236569efe3bd6327f951860cdbc4",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "docs/errorhandling.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 523
+      },
+      "evidence": [
+        {
+          "start_line": 391,
+          "end_line": 402,
+          "content": "Blueprint Error Handlers\n------------------------\n\nIn :doc:`/blueprints`, most error handlers will work as expected.\nHowever, there is a caveat concerning handlers for 404 and 405\nexceptions. These error handlers are only invoked from an appropriate\n``raise`` statement or a call to ``abort`` in another of the blueprint's\nview functions; they are not invoked by, e.g., an invalid URL access.\n\nThis is because the blueprint does not \"own\" a certain URL space, so\nthe application instance has no way of knowing which blueprint error\nhandler it should run if given an invalid URL. If you would like to"
+        },
+        {
+          "start_line": 372,
+          "end_line": 375,
+          "content": "        return app\n\nWhen using :doc:`/blueprints`:\n"
+        }
+      ],
+      "source_hash": "641f43eade9c2e34c1a8809b6bbf8183ef2e40f07e9224129c744d170b213981",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "docs/blueprints.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 315
+      },
+      "evidence": [
+        {
+          "start_line": 73,
+          "end_line": 84,
+          "content": "        except TemplateNotFound:\n            abort(404)\n\nWhen you bind a function with the help of the ``@simple_page.route``\ndecorator, the blueprint will record the intention of registering the\nfunction ``show`` on the application when it's later registered.\nAdditionally it will prefix the endpoint of the function with the\nname of the blueprint which was given to the :class:`Blueprint`\nconstructor (in this case also ``simple_page``). The blueprint's name\ndoes not modify the URL, only the endpoint.\n\nRegistering Blueprints"
+        },
+        {
+          "start_line": 280,
+          "end_line": 283,
+          "content": "This will link to ``admin.index`` for instance in case the current request\nwas dispatched to any other admin blueprint endpoint.\n\n"
+        }
+      ],
+      "source_hash": "0efbff2912d81e24df4e1d9400657a153cbbfe93c9d3035a6e51ae6ba2d34734",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "docs/config.rst",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 721
+      },
+      "evidence": [
+        {
+          "start_line": 654,
+          "end_line": 665,
+          "content": "With Flask 0.8 a new attribute was introduced:\n:attr:`Flask.instance_path`.  It refers to a new concept called the\n“instance folder”.  The instance folder is designed to not be under\nversion control and be deployment specific.  It's the perfect place to\ndrop things that either change at runtime or configuration files.\n\nYou can either explicitly provide the path of the instance folder when\ncreating the Flask application or you can let Flask autodetect the\ninstance folder.  For explicit configuration use the `instance_path`\nparameter::\n\n    app = Flask(__name__, instance_path='/path/to/instance/folder')"
+        },
+        {
+          "start_line": 198,
+          "end_line": 201,
+          "content": "    data with Flask. Some web servers, such as Apache, recognize this and serve\n    the data more efficiently. This only makes sense when using such a server.\n\n    Default: ``False``"
+        }
+      ],
+      "source_hash": "e064c784e0b69c06f16727cfea552e1dd28345ffeae30815b61992913b634ace",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "src/flask/cli.py",
+      "piece_kind": "file",
+      "entity": {
+        "kind": "file",
+        "qualname": null,
+        "owner": null,
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1,
+        "end_line": 1054
+      },
+      "evidence": [
+        {
+          "start_line": 400,
+          "end_line": 411,
+          "content": "\n\n# This option is eager so the app will be available if --help is given.\n# --help is also eager, so --app must be before it in the param list.\n# no_args_is_help bypasses eager processing, so this option must be\n# processed manually in that case to ensure FLASK_APP gets picked up.\n_app_option = click.Option(\n    [\"-A\", \"--app\"],\n    metavar=\"IMPORT\",\n    help=(\n        \"The Flask application or factory function to load, in the form 'module:name'.\"\n        \" Module can be a dotted import or file path. Name is not required if it is\""
+        },
+        {
+          "start_line": 58,
+          "end_line": 61,
+          "content": "    for attr_name in (\"create_app\", \"make_app\"):\n        app_factory = getattr(module, attr_name, None)\n\n        if inspect.isfunction(app_factory):"
+        }
+      ],
+      "source_hash": "a4b9a758e6defc6e3f640150761ee4830a8f3314579b8a1485a51206924c7aae",
+      "stale": false,
+      "truncated": true
+    }
+  ],
+  "profile_version": "f189f081de7021005c2399fd13658fc620b8873293967b1a471a4c8142573a13",
+  "warnings": [],
+  "truncated": true,
+  "omitted_count": 0,
+  "compact": "src/flask/wrappers.py:1-12 (file) [partial]\n1 | import typing as t\n2 | \n3 | from werkzeug.exceptions import BadRequest\n4 | from werkzeug.wrappers import Request as RequestBase\n5 | from werkzeug.wrappers import Response as ResponseBase\n6 | \n7 | from . import json\n8 | from .globals import current_app\n9 | from .helpers import _split_blueprint_path\n10 | \n11 | if t.TYPE_CHECKING:  # pragma: no cover\n12 |     from werkzeug.routing import Rule\n@87-90\n87 |         endpoint = self.endpoint\n88 | \n89 |         if endpoint is not None and \".\" in endpoint:\n90 |             return endpoint.rpartition(\".\")[0]\n\ntests/test_blueprints.py:1-7 (file) [partial]\n1 | import pytest\n2 | from jinja2 import TemplateNotFound\n3 | from werkzeug.http import parse_cache_control_header\n4 | \n5 | import flask\n6 | \n7 | \n@255-256\n255 |     with pytest.raises(ValueError):\n256 |         flask.Blueprint(\"app.ui\", __name__)\n@997-1003\n997 |     bp = flask.Blueprint(\"bp\", __name__)\n998 |     bp2 = flask.Blueprint(\"bp\", __name__)\n999 | \n1000 |     app.register_blueprint(bp)\n1001 | \n1002 |     with pytest.raises(ValueError):\n1003 |         app.register_blueprint(bp)  # same bp, same name, error\n\nCHANGES.rst:346-361 (file) [partial]\n346 | -   Show an error when a blueprint name contains a dot. The ``.`` has\n347 |     special meaning, it is used to separate (nested) blueprint names and\n348 |     the endpoint name. :issue:`4041`\n349 | -   Combine URL prefixes when nesting blueprints that were created with\n350 |     a ``url_prefix`` value. :issue:`4037`\n351 | -   Revert a change to the order that URL matching was done. The\n352 |     URL is again matched after the session is loaded, so the session is\n353 |     available in custom URL converters. :issue:`4053`\n354 | -   Re-add deprecated ``Config.from_json``, which was accidentally\n355 |     removed early. :issue:`4078`\n356 | -   Improve typing for some functions using ``Callable`` in their type\n357 |     signatures, focusing on decorator factories. :issue:`4060`\n358 | -   Nested blueprints are registered with their dotted name. This allows\n359 |     different blueprints with the same name to be nested at different\n360 |     locations. :issue:`4069`\n361 | -   ``register_blueprint`` takes a ``name`` option to change the\n\nsrc/flask/blueprints.py:7-18 (file) [partial]\n7 | from .scaffold import _endpoint_from_view_func\n8 | from .scaffold import _sentinel\n9 | from .scaffold import Scaffold\n10 | from .scaffold import setupmethod\n11 | \n12 | if t.TYPE_CHECKING:  # pragma: no cover\n13 |     from .app import Flask\n14 | \n15 | DeferredSetupFunction = t.Callable[[\"BlueprintSetupState\"], t.Callable]\n16 | T_after_request = t.TypeVar(\"T_after_request\", bound=ft.AfterRequestCallable)\n17 | T_before_request = t.TypeVar(\"T_before_request\", bound=ft.BeforeRequestCallable)\n18 | T_error_handler = t.TypeVar(\"T_error_handler\", bound=ft.ErrorHandlerCallable)\n@209-212\n209 |         if self._got_registered_once:\n210 |             raise AssertionError(\n211 |                 f\"The setup method '{f_name}' can no longer be called on the blueprint\"\n212 |                 f\" '{self.name}'. It has already been registered at least once, any\"\n\nsrc/flask/app.py:61-72 (file) [partial]\n61 | from .signals import got_request_exception\n62 | from .signals import request_finished\n63 | from .signals import request_started\n64 | from .signals import request_tearing_down\n65 | from .templating import DispatchingJinjaLoader\n66 | from .templating import Environment\n67 | from .wrappers import Request\n68 | from .wrappers import Response\n69 | \n70 | if t.TYPE_CHECKING:  # pragma: no cover\n71 |     import typing_extensions as te\n72 |     from .blueprints import Blueprint\n@1649-1652\n1649 |         req_ctx = _cv_request.get(None)\n1650 | \n1651 |         if req_ctx is not None:\n1652 |             url_adapter = req_ctx.url_adapter\n\ntests/test_cli.py:144-155 (file) [partial]\n144 |             test_path,\n145 |             \"cliapp.inner1\",\n146 |         ),\n147 |         (\n148 |             test_path / \"cliapp\" / \"inner1\" / \"inner2\",\n149 |             test_path,\n150 |             \"cliapp.inner1.inner2\",\n151 |         ),\n152 |         # dotted name\n153 |         (\"test.a.b\", cwd, \"test.a.b\"),\n154 |         (test_path / \"cliapp.app\", test_path, \"cliapp.app\"),\n155 |         # not a Python file, will be caught during import\n@674-677\n674 |     bp = Blueprint(\"blue\", __name__, cli_group=\"blue\")\n675 |     app.register_blueprint(bp)\n676 | \n677 |     result = app.test_cli_runner().invoke(args=[\"blue\", \"--help\"])\n\ndocs/errorhandling.rst:391-402 (file) [partial]\n391 | Blueprint Error Handlers\n392 | ------------------------\n393 | \n394 | In :doc:`/blueprints`, most error handlers will work as expected.\n395 | However, there is a caveat concerning handlers for 404 and 405\n396 | exceptions. These error handlers are only invoked from an appropriate\n397 | ``raise`` statement or a call to ``abort`` in another of the blueprint's\n398 | view functions; they are not invoked by, e.g., an invalid URL access.\n399 | \n400 | This is because the blueprint does not \"own\" a certain URL space, so\n401 | the application instance has no way of knowing which blueprint error\n402 | handler it should run if given an invalid URL. If you would like to\n@372-375\n372 |         return app\n373 | \n374 | When using :doc:`/blueprints`:\n375 | \n\ndocs/blueprints.rst:73-84 (file) [partial]\n73 |         except TemplateNotFound:\n74 |             abort(404)\n75 | \n76 | When you bind a function with the help of the ``@simple_page.route``\n77 | decorator, the blueprint will record the intention of registering the\n78 | function ``show`` on the application when it's later registered.\n79 | Additionally it will prefix the endpoint of the function with the\n80 | name of the blueprint which was given to the :class:`Blueprint`\n81 | constructor (in this case also ``simple_page``). The blueprint's name\n82 | does not modify the URL, only the endpoint.\n83 | \n84 | Registering Blueprints\n@280-283\n280 | This will link to ``admin.index`` for instance in case the current request\n281 | was dispatched to any other admin blueprint endpoint.\n282 | \n283 | \n\ndocs/config.rst:654-665 (file) [partial]\n654 | With Flask 0.8 a new attribute was introduced:\n655 | :attr:`Flask.instance_path`.  It refers to a new concept called the\n656 | “instance folder”.  The instance folder is designed to not be under\n657 | version control and be deployment specific.  It's the perfect place to\n658 | drop things that either change at runtime or configuration files.\n659 | \n660 | You can either explicitly provide the path of the instance folder when\n661 | creating the Flask application or you can let Flask autodetect the\n662 | instance folder.  For explicit configuration use the `instance_path`\n663 | parameter::\n664 | \n665 |     app = Flask(__name__, instance_path='/path/to/instance/folder')\n@198-201\n198 |     data with Flask. Some web servers, such as Apache, recognize this and serve\n199 |     the data more efficiently. This only makes sense when using such a server.\n200 | \n201 |     Default: ``False``\n\nsrc/flask/cli.py:400-411 (file) [partial]\n400 | \n401 | \n402 | # This option is eager so the app will be available if --help is given.\n403 | # --help is also eager, so --app must be before it in the param list.\n404 | # no_args_is_help bypasses eager processing, so this option must be\n405 | # processed manually in that case to ensure FLASK_APP gets picked up.\n406 | _app_option = click.Option(\n407 |     [\"-A\", \"--app\"],\n408 |     metavar=\"IMPORT\",\n409 |     help=(\n410 |         \"The Flask application or factory function to load, in the form 'module:name'.\"\n411 |         \" Module can be a dotted import or file path. Name is not required if it is\"\n@58-61\n58 |     for attr_name in (\"create_app\", \"make_app\"):\n59 |         app_factory = getattr(module, attr_name, None)\n60 | \n61 |         if inspect.isfunction(app_factory):",
+  "elapsed_ms": 3234.282042016275,
+  "cpu_ms": 9545.897000000003
+}

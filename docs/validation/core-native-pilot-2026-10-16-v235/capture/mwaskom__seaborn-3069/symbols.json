@@ -1,0 +1,263 @@
+{
+  "id": "mwaskom__seaborn-3069",
+  "query": "Nominal scale should be drawn the same way as categorical scales\nThree distinctive things happen on the categorical axis in seaborn's categorical plots:\r\n\r\n1. The scale is drawn to +/- 0.5 from the first and last tick, rather than using the normal margin logic\r\n2. A grid is not shown, even when it otherwise would be with the active style\r\n3. If on the y axis, the axis is inverted\r\n\r\nIt probably makes sense to have `so.Nominal` scales (including inferred ones) do this too. Some comments on implementation:\r\n\r\n1. This is actually trickier than you'd think; I may have posted an issue over in matplotlib about this at one point, or just discussed on their gitter. I believe the suggested approach is to add an invisible artist with sticky edges and set the margin to 0. Feels like a hack! I might have looked into setting the sticky edges _on the spine artist_ at one point?\r\n\r\n2. Probably straightforward to do in `Plotter._finalize_figure`. Always a good idea? How do we defer to the theme if the user wants to force a grid? Should the grid be something that is set in the scale object itself\r\n\r\n3. Probably straightforward to implement but I am not exactly sure where would be best.\n",
+  "results": [
+    {
+      "path": "seaborn/_core/scales.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "Nominal._setup",
+        "owner": "Nominal",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 149,
+        "end_line": 228
+      },
+      "evidence": [
+        {
+          "start_line": 149,
+          "end_line": 164,
+          "content": "    def _setup(\n        self, data: Series, prop: Property, axis: Axis | None = None,\n    ) -> Scale:\n\n        new = copy(self)\n        if new._tick_params is None:\n            new = new.tick()\n        if new._label_params is None:\n            new = new.label()\n\n        # TODO flexibility over format() which isn't great for numbers / dates\n        stringify = np.vectorize(format)\n\n        units_seed = categorical_order(data, new.order)\n\n        # TODO move to Nominal._get_scale?"
+        }
+      ],
+      "source_hash": "c9ee2edf7290d1315d562ad6f89659749c4068d78d31d0f2f5fd97d58e72e6d5",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "seaborn/_core/properties.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "Color.infer_scale",
+        "owner": "Color",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 567,
+        "end_line": 607
+      },
+      "evidence": [
+        {
+          "start_line": 567,
+          "end_line": 582,
+          "content": "    def infer_scale(self, arg: Any, data: Series) -> Scale:\n        # TODO when inferring Continuous without data, verify type\n\n        # TODO need to rethink the variable type system\n        # (e.g. boolean, ordered categories as Ordinal, etc)..\n        var_type = variable_type(data, boolean_type=\"categorical\")\n\n        if isinstance(arg, (dict, list)):\n            return Nominal(arg)\n\n        if isinstance(arg, tuple):\n            if var_type == \"categorical\":\n                # TODO It seems reasonable to allow a gradient mapping for nominal\n                # scale but it also feels \"technically\" wrong. Should this infer\n                # Ordinal with categorical data and, if so, verify orderedness?\n                return Nominal(arg)"
+        }
+      ],
+      "source_hash": "50b694732caaf72ecf4b7d402f32b00da9b338c00a8d178344d2864710e8118f",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "seaborn/_core/properties.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "Fill.infer_scale",
+        "owner": "Fill",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 725,
+        "end_line": 728
+      },
+      "evidence": [
+        {
+          "start_line": 725,
+          "end_line": 728,
+          "content": "    def infer_scale(self, arg: Any, data: Series) -> Scale:\n        \"\"\"Given data and a scaling argument, initialize appropriate scale class.\"\"\"\n        # TODO infer Boolean where possible?\n        return Nominal(arg)"
+        }
+      ],
+      "source_hash": "50b694732caaf72ecf4b7d402f32b00da9b338c00a8d178344d2864710e8118f",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "seaborn/categorical.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "function",
+        "qualname": "_CategoricalPlotterNew.plot_swarms.draw",
+        "owner": "_CategoricalPlotterNew.plot_swarms",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 375,
+        "end_line": 395
+      },
+      "evidence": [
+        {
+          "start_line": 375,
+          "end_line": 390,
+          "content": "                def draw(points, renderer, *, center=center):\n\n                    beeswarm(points, center)\n\n                    if self.orient == \"h\":\n                        scalex = False\n                        scaley = ax.get_autoscaley_on()\n                    else:\n                        scalex = ax.get_autoscalex_on()\n                        scaley = False\n\n                    # This prevents us from undoing the nice categorical axis limits\n                    # set in _adjust_cat_axis, because that method currently leave\n                    # the autoscale flag in its original setting. It may be better\n                    # to disable autoscaling there to avoid needing to do this.\n                    fixed_scale = self.var_types[self.cat_axis] == \"categorical\""
+        }
+      ],
+      "source_hash": "c21b43f1e6a00c718983924f3372e4fa87e8abfb9537688131027d949b5e29f8",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "seaborn/_core/properties.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "ObjectProperty.infer_scale",
+        "owner": "ObjectProperty",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 338,
+        "end_line": 339
+      },
+      "evidence": [
+        {
+          "start_line": 338,
+          "end_line": 339,
+          "content": "    def infer_scale(self, arg: Any, data: Series) -> Nominal:\n        return Nominal(arg)"
+        }
+      ],
+      "source_hash": "50b694732caaf72ecf4b7d402f32b00da9b338c00a8d178344d2864710e8118f",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "seaborn/_core/plot.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "Plotter._setup_scales",
+        "owner": "Plotter",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1170,
+        "end_line": 1288
+      },
+      "evidence": [
+        {
+          "start_line": 1170,
+          "end_line": 1176,
+          "content": "    def _setup_scales(\n        self, p: Plot,\n        common: PlotData,\n        layers: list[Layer],\n        variables: list[str] | None = None,\n    ) -> None:\n"
+        },
+        {
+          "start_line": 1215,
+          "end_line": 1223,
+          "content": "            var_df = pd.concat(parts, ignore_index=True)\n\n            prop = PROPERTIES[prop_key]\n            scale = self._get_scale(p, scale_key, prop, var_df[var])\n\n            if scale_key not in p._variables:\n                # TODO this implies that the variable was added by the stat\n                # It allows downstream orientation inference to work properly.\n                # But it feels rather hacky, so ideally revisit."
+        }
+      ],
+      "source_hash": "dbe0647014d50d4feec05721be08f771f100a3e9c9db3f7404c515be921608f6",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "seaborn/categorical.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "_CategoricalPlotterNew._adjust_cat_axis",
+        "owner": "_CategoricalPlotterNew",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 195,
+        "end_line": 224
+      },
+      "evidence": [
+        {
+          "start_line": 195,
+          "end_line": 210,
+          "content": "    def _adjust_cat_axis(self, ax, axis):\n        \"\"\"Set ticks and limits for a categorical variable.\"\"\"\n        # Note: in theory, this could happen in _attach for all categorical axes\n        # But two reasons not to do that:\n        # - If it happens before plotting, autoscaling messes up the plot limits\n        # - It would change existing plots from other seaborn functions\n        if self.var_types[axis] != \"categorical\":\n            return\n\n        # If both x/y data are empty, the correct way to set up the plot is\n        # somewhat undefined; because we don't add null category data to the plot in\n        # this case we don't *have* a categorical axis (yet), so best to just bail.\n        if self.plot_data[axis].empty:\n            return\n\n        # We can infer the total number of categories (including those from previous"
+        }
+      ],
+      "source_hash": "c21b43f1e6a00c718983924f3372e4fa87e8abfb9537688131027d949b5e29f8",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "seaborn/_core/scales.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "PseudoAxis.get_scale",
+        "owner": "PseudoAxis",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 870,
+        "end_line": 876
+      },
+      "evidence": [
+        {
+          "start_line": 870,
+          "end_line": 876,
+          "content": "    def get_scale(self):\n        # Note that matplotlib actually returns a string here!\n        # (e.g., with a log scale, axis.get_scale() returns \"log\")\n        # Currently we just hit it with minor ticks where it checks for\n        # scale == \"log\". I'm not sure how you'd actually use log-scale\n        # minor \"ticks\" in a legend context, so this is fine....\n        return self.scale"
+        }
+      ],
+      "source_hash": "c9ee2edf7290d1315d562ad6f89659749c4068d78d31d0f2f5fd97d58e72e6d5",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "seaborn/_oldcore.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "VectorPlotter.scale_categorical",
+        "owner": "VectorPlotter",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 1359,
+        "end_line": 1450
+      },
+      "evidence": [
+        {
+          "start_line": 1359,
+          "end_line": 1370,
+          "content": "    def scale_categorical(self, axis, order=None, formatter=None):\n        \"\"\"\n        Enforce categorical (fixed-scale) rules for the data on given axis.\n\n        Parameters\n        ----------\n        axis : \"x\" or \"y\"\n            Axis of the plot to operate on.\n        order : list\n            Order that unique values should appear in.\n        formatter : callable\n            Function mapping values to a string representation."
+        },
+        {
+          "start_line": 1401,
+          "end_line": 1404,
+          "content": "        _check_argument(\"axis\", [\"x\", \"y\"], axis)\n\n        # Categorical plots can be \"univariate\" in which case they get an anonymous\n        # category label on the opposite axis."
+        }
+      ],
+      "source_hash": "0b98770b39c19456512a27d7af32dcb14114a66af481023f98eb33e872e44294",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "seaborn/categorical.py",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "_CategoricalPlotterNew.__init__",
+        "owner": "_CategoricalPlotterNew",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 56,
+        "end_line": 119
+      },
+      "evidence": [
+        {
+          "start_line": 56,
+          "end_line": 71,
+          "content": "    def __init__(\n        self,\n        data=None,\n        variables={},\n        order=None,\n        orient=None,\n        require_numeric=False,\n        legend=\"auto\",\n    ):\n\n        super().__init__(data=data, variables=variables)\n\n        # This method takes care of some bookkeeping that is necessary because the\n        # original categorical plots (prior to the 2021 refactor) had some rules that\n        # don't fit exactly into the logic of _core. It may be wise to have a second\n        # round of refactoring that moves the logic deeper, but this will keep things"
+        }
+      ],
+      "source_hash": "c21b43f1e6a00c718983924f3372e4fa87e8abfb9537688131027d949b5e29f8",
+      "stale": false,
+      "truncated": true
+    }
+  ],
+  "profile_version": "f189f081de7021005c2399fd13658fc620b8873293967b1a471a4c8142573a13",
+  "warnings": [],
+  "truncated": true,
+  "omitted_count": 0,
+  "compact": "seaborn/_core/scales.py:149-164 :: Nominal._setup [partial]\n149 |     def _setup(\n150 |         self, data: Series, prop: Property, axis: Axis | None = None,\n151 |     ) -> Scale:\n152 | \n153 |         new = copy(self)\n154 |         if new._tick_params is None:\n155 |             new = new.tick()\n156 |         if new._label_params is None:\n157 |             new = new.label()\n158 | \n159 |         # TODO flexibility over format() which isn't great for numbers / dates\n160 |         stringify = np.vectorize(format)\n161 | \n162 |         units_seed = categorical_order(data, new.order)\n163 | \n164 |         # TODO move to Nominal._get_scale?\n\nseaborn/_core/properties.py:567-582 :: Color.infer_scale [partial]\n567 |     def infer_scale(self, arg: Any, data: Series) -> Scale:\n568 |         # TODO when inferring Continuous without data, verify type\n569 | \n570 |         # TODO need to rethink the variable type system\n571 |         # (e.g. boolean, ordered categories as Ordinal, etc)..\n572 |         var_type = variable_type(data, boolean_type=\"categorical\")\n573 | \n574 |         if isinstance(arg, (dict, list)):\n575 |             return Nominal(arg)\n576 | \n577 |         if isinstance(arg, tuple):\n578 |             if var_type == \"categorical\":\n579 |                 # TODO It seems reasonable to allow a gradient mapping for nominal\n580 |                 # scale but it also feels \"technically\" wrong. Should this infer\n581 |                 # Ordinal with categorical data and, if so, verify orderedness?\n582 |                 return Nominal(arg)\n\nseaborn/_core/properties.py:725-728 :: Fill.infer_scale\n725 |     def infer_scale(self, arg: Any, data: Series) -> Scale:\n726 |         \"\"\"Given data and a scaling argument, initialize appropriate scale class.\"\"\"\n727 |         # TODO infer Boolean where possible?\n728 |         return Nominal(arg)\n\nseaborn/categorical.py:375-390 :: _CategoricalPlotterNew.plot_swarms.draw [partial]\n375 |                 def draw(points, renderer, *, center=center):\n376 | \n377 |                     beeswarm(points, center)\n378 | \n379 |                     if self.orient == \"h\":\n380 |                         scalex = False\n381 |                         scaley = ax.get_autoscaley_on()\n382 |                     else:\n383 |                         scalex = ax.get_autoscalex_on()\n384 |                         scaley = False\n385 | \n386 |                     # This prevents us from undoing the nice categorical axis limits\n387 |                     # set in _adjust_cat_axis, because that method currently leave\n388 |                     # the autoscale flag in its original setting. It may be better\n389 |                     # to disable autoscaling there to avoid needing to do this.\n390 |                     fixed_scale = self.var_types[self.cat_axis] == \"categorical\"\n\nseaborn/_core/properties.py:338-339 :: ObjectProperty.infer_scale\n338 |     def infer_scale(self, arg: Any, data: Series) -> Nominal:\n339 |         return Nominal(arg)\n\nseaborn/_core/plot.py:1170-1176 :: Plotter._setup_scales [partial]\n1170 |     def _setup_scales(\n1171 |         self, p: Plot,\n1172 |         common: PlotData,\n1173 |         layers: list[Layer],\n1174 |         variables: list[str] | None = None,\n1175 |     ) -> None:\n1176 | \n@1215-1223\n1215 |             var_df = pd.concat(parts, ignore_index=True)\n1216 | \n1217 |             prop = PROPERTIES[prop_key]\n1218 |             scale = self._get_scale(p, scale_key, prop, var_df[var])\n1219 | \n1220 |             if scale_key not in p._variables:\n1221 |                 # TODO this implies that the variable was added by the stat\n1222 |                 # It allows downstream orientation inference to work properly.\n1223 |                 # But it feels rather hacky, so ideally revisit.\n\nseaborn/categorical.py:195-210 :: _CategoricalPlotterNew._adjust_cat_axis [partial]\n195 |     def _adjust_cat_axis(self, ax, axis):\n196 |         \"\"\"Set ticks and limits for a categorical variable.\"\"\"\n197 |         # Note: in theory, this could happen in _attach for all categorical axes\n198 |         # But two reasons not to do that:\n199 |         # - If it happens before plotting, autoscaling messes up the plot limits\n200 |         # - It would change existing plots from other seaborn functions\n201 |         if self.var_types[axis] != \"categorical\":\n202 |             return\n203 | \n204 |         # If both x/y data are empty, the correct way to set up the plot is\n205 |         # somewhat undefined; because we don't add null category data to the plot in\n206 |         # this case we don't *have* a categorical axis (yet), so best to just bail.\n207 |         if self.plot_data[axis].empty:\n208 |             return\n209 | \n210 |         # We can infer the total number of categories (including those from previous\n\nseaborn/_core/scales.py:870-876 :: PseudoAxis.get_scale\n870 |     def get_scale(self):\n871 |         # Note that matplotlib actually returns a string here!\n872 |         # (e.g., with a log scale, axis.get_scale() returns \"log\")\n873 |         # Currently we just hit it with minor ticks where it checks for\n874 |         # scale == \"log\". I'm not sure how you'd actually use log-scale\n875 |         # minor \"ticks\" in a legend context, so this is fine....\n876 |         return self.scale\n\nseaborn/_oldcore.py:1359-1370 :: VectorPlotter.scale_categorical [partial]\n1359 |     def scale_categorical(self, axis, order=None, formatter=None):\n1360 |         \"\"\"\n1361 |         Enforce categorical (fixed-scale) rules for the data on given axis.\n1362 | \n1363 |         Parameters\n1364 |         ----------\n1365 |         axis : \"x\" or \"y\"\n1366 |             Axis of the plot to operate on.\n1367 |         order : list\n1368 |             Order that unique values should appear in.\n1369 |         formatter : callable\n1370 |             Function mapping values to a string representation.\n@1401-1404\n1401 |         _check_argument(\"axis\", [\"x\", \"y\"], axis)\n1402 | \n1403 |         # Categorical plots can be \"univariate\" in which case they get an anonymous\n1404 |         # category label on the opposite axis.\n\nseaborn/categorical.py:56-71 :: _CategoricalPlotterNew.__init__ [partial]\n56 |     def __init__(\n57 |         self,\n58 |         data=None,\n59 |         variables={},\n60 |         order=None,\n61 |         orient=None,\n62 |         require_numeric=False,\n63 |         legend=\"auto\",\n64 |     ):\n65 | \n66 |         super().__init__(data=data, variables=variables)\n67 | \n68 |         # This method takes care of some bookkeeping that is necessary because the\n69 |         # original categorical plots (prior to the 2021 refactor) had some rules that\n70 |         # don't fit exactly into the logic of _core. It may be wise to have a second\n71 |         # round of refactoring that moves the logic deeper, but this will keep things",
+  "elapsed_ms": 7807.26162501378,
+  "cpu_ms": 22425.298999999995
+}
