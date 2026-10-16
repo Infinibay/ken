@@ -265,6 +265,7 @@ def test_cli_profile_exposes_backend_and_operator_costs(tmp_path, capsys):
             "--pattern",
             "singleton",
             "--profile",
+            "--json",
         ]
     )
     dispatch(args)

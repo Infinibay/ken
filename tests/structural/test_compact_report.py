@@ -19,7 +19,7 @@ SOURCE = PYTHON["builder"]
 
 def _cli(tmp_path, capsys, *extra):
     (tmp_path / "builder.py").write_text(SOURCE, encoding="utf-8")
-    assert main(["structural", "patterns", "--path", str(tmp_path), "--cache-mb", "0", *extra]) == 0
+    assert main(["structural", "patterns", "--json", "--path", str(tmp_path), "--cache-mb", "0", *extra]) == 0
     return json.loads(capsys.readouterr().out)
 
 
@@ -64,7 +64,7 @@ def test_mcp_structural_scopes_are_compact_unless_full_is_asked(tmp_path, monkey
 
 def test_structure_matches_keep_bindings_and_drop_evidence(tmp_path, capsys):
     (tmp_path / "a.py").write_text("class A:\n    def run(self):\n        return 1\n", encoding="utf-8")
-    assert main(["structural", "search", "--path", str(tmp_path), "--cache-mb", "0",
+    assert main(["structural", "search", "--json", "--path", str(tmp_path), "--cache-mb", "0",
                  "--query", 'method(name: /^run$/) as $m;']) == 0
     result = json.loads(capsys.readouterr().out)
     assert result["matches"] and result["matches"][0]["bindings"]
@@ -73,7 +73,7 @@ def test_structure_matches_keep_bindings_and_drop_evidence(tmp_path, capsys):
 
 def test_bug_findings_keep_their_message_and_severity(tmp_path, capsys):
     (tmp_path / "a.py").write_text("def bad(values=[]):\n    return values\n", encoding="utf-8")
-    assert main(["structural", "bugs", "--path", str(tmp_path), "--cache-mb", "0"]) == 0
+    assert main(["structural", "bugs", "--json", "--path", str(tmp_path), "--cache-mb", "0"]) == 0
     result = json.loads(capsys.readouterr().out)
     assert result["findings"]
     finding = result["findings"][0]

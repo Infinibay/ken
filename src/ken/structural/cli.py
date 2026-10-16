@@ -7,6 +7,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from ken.presentation import render_compact
+
 from . import report, service
 from .catalog import catalog
 from .query import QueryBudget
@@ -17,6 +19,7 @@ def add_parser(subparsers) -> None:
     commands = parser.add_subparsers(dest="structural_command", required=True)
     for name in ("ir", "search", "patterns", "bugs", "catalog", "rules", "save-rule"):
         p = commands.add_parser(name)
+        p.add_argument("--json", action="store_true", help="print native result data as JSON")
         p.add_argument("--path", default=".", help="project root")
         p.add_argument("--scope", default=".", help="file or directory within the project")
         p.add_argument("--cache-mb", type=float, default=None, help="cache cap in MB; 0 disables; default 500")
@@ -74,7 +77,7 @@ def add_parser(subparsers) -> None:
             p.add_argument("--profile", action="store_true", help="report operator costs and bypass cached results")
         if name == "ir":
             p.add_argument("--view", choices=["source", "query", "instructions"], default="query", help="source facts, KenQL graph or instruction IR")
-            p.add_argument("--format", choices=["json", "text"], default="json", help="text is available for the instruction view")
+            p.add_argument("--format", choices=["compact", "json", "text"], default="compact", help="compact text by default; json preserves native IR")
             p.add_argument("--symbol", default="", help="restrict entities/operations to a named symbol")
 
 
@@ -123,7 +126,7 @@ def dispatch(args: argparse.Namespace) -> int:
             program = lower_instructions(graph)
             if args.symbol:
                 program.functions = [f for f in program.functions if f.name == args.symbol]
-            if args.format == 'text':
+            if args.format != 'json' and not args.json:
                 print(program.format(), end='')
             else:
                 print(json.dumps({'ok': True, 'ir': program.to_dict(), 'analysis': analysis}, indent=2, ensure_ascii=False))
@@ -139,7 +142,9 @@ def dispatch(args: argparse.Namespace) -> int:
             data["operations"] = [v for v in data["operations"] if v["owner"] in selected]
             data["facts"] = [v for v in data["facts"] if v["subject"] in selected or v["object"] in selected]
         result = {"ok": True, "ir": data, "analysis": analysis}
-    print(json.dumps(result, indent=2, ensure_ascii=False))
+    as_json = getattr(args, "json", False) or getattr(args, "format", "compact") == "json"
+    print(json.dumps(result, indent=2, ensure_ascii=False) if as_json else
+          render_compact(result, diagnostics=bool(getattr(args, "full", False) or getattr(args, "profile", False))))
     incomplete = result.get("incomplete") or {}
     if incomplete:
         # Not on stdout: the JSON stays machine-readable and the warning still

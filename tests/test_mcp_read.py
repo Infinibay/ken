@@ -53,6 +53,7 @@ def test_cli_uses_same_default_source_budget(project, capsys):
                 "tools",
                 "--path",
                 str(project),
+                "--json",
                 "read",
                 "example.py",
                 "--include",

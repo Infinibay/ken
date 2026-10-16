@@ -208,7 +208,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
 
     for search_parser in (p_search_files, p_search_symbols):
-        search_parser.add_argument("--response-format", choices=("legacy", "evidence", "compact"), default="legacy",
+        search_parser.add_argument("--response-format", choices=("auto", "legacy", "evidence", "compact"), default="auto",
                                    help="compact: locations and verified code as text; evidence: structured results with --json")
         search_parser.add_argument("--purpose", choices=("auto", "implementation", "usage", "tests", "documentation"), default="auto")
         search_parser.add_argument("--max-chars", type=_positive_int, default=12000)
@@ -418,7 +418,7 @@ def _build_parser() -> argparse.ArgumentParser:
             "Run any tool the ken MCP server exposes, without an agent.\n\n"
             "  ken tools                     list available tools\n"
             "  ken tools <name> --help       show a tool's parameters\n"
-            "  ken tools <name> [ARGS...]    run the tool and print JSON\n\n"
+            "  ken tools <name> [ARGS...]    run the tool and print compact text\n\n"
             "The <name> may be given with or without the 'ken_' prefix "
             "(e.g. 'find' or 'ken_find'). Required parameters are positional; "
             "optional ones are --flags mirroring the tool's schema."
@@ -429,8 +429,9 @@ def _build_parser() -> argparse.ArgumentParser:
     p_tools.add_argument(
         "--list", action="store_true", help="list available tools and exit"
     )
+    p_tools.add_argument("--json", action="store_true", help="print native result as JSON")
     p_tools.add_argument(
-        "--compact", action="store_true", help="print result as single-line JSON"
+        "--compact", action="store_true", help="legacy alias for single-line JSON; compact text is already the default"
     )
     p_tools.add_argument(
         "tool", nargs="?", help="tool name (with or without the ken_ prefix)"
@@ -669,6 +670,7 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
             args.tool_args,
             list_only=args.list,
             compact=args.compact,
+            as_json=args.json,
         )
 
     if args.cmd == "uninstall":
@@ -828,7 +830,8 @@ def _print_daemon_response(
         if stats:
             print(_format_rank_stats(resp), file=sys.stderr)
     else:
-        print(json.dumps(resp, indent=2))
+        from ken.presentation import render_compact
+        print(render_compact(resp, diagnostics=True))
     return 0
 
 
@@ -849,7 +852,7 @@ def _format_rank_stats(resp: dict[str, Any]) -> str:
 
 def _search_cli(
     project_path: Path, query: str, limit: int, *, kind: str, as_json: bool,
-    response_format: str = "legacy", purpose: str = "auto", max_chars: int = 12000,
+    response_format: str = "auto", purpose: str = "auto", max_chars: int = 12000,
 ) -> int:
     from ken import _paths
     from ken.db import connect
@@ -887,8 +890,11 @@ def _search_cli(
             rendered = format_symbol_hits(hits)
     if as_json:
         print(json.dumps(hits, indent=2))
-    elif rendered:
+    elif response_format == "legacy":
         print(rendered)
+    else:
+        from ken.presentation import render_compact, search_previews
+        print(render_compact(search_previews(hits, root)))
     return 0
 
 
@@ -1728,6 +1734,7 @@ def _tools_cli(
     *,
     list_only: bool,
     compact: bool,
+    as_json: bool = False,
 ) -> int:
     """Dispatch `ken tools ...` — a thin CLI over the MCP tool registry.
 
@@ -1771,6 +1778,8 @@ def _tools_cli(
         print(f"error: no .ken project at {root}", file=sys.stderr)
         return 1
     mcp_server._PROJECT_ROOT = root
+    if compact or as_json:
+        kwargs["output_format"] = "json"
 
     try:
         result = tool.fn(**kwargs)
@@ -1782,7 +1791,7 @@ def _tools_cli(
         print(f"error: {tool.name} failed: {exc}", file=sys.stderr)
         return 1
 
-    if kwargs.get("response_format") == "compact" and isinstance(result, str):
+    if isinstance(result, str) and not compact:
         print(result)
     elif compact:
         print(json.dumps(result, default=str))

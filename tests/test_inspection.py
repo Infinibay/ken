@@ -1,6 +1,7 @@
 """Public source inspection: imports, identities, consumers and honest boundaries."""
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -314,7 +315,7 @@ def test_mcp_cli_share_compact_and_full_contract(project, monkeypatch, capsys):
     assert (
         main(
             [
-                "tools",
+                "tools", "--json",
                 "--path",
                 str(project),
                 "related",
@@ -468,7 +469,8 @@ def test_live_mcp_publishes_and_executes_inspection_modes(project):
 
     async def scenario():
         parameters = StdioServerParameters(
-            command=sys.executable, args=["-m", "ken", "mcp", str(project)]
+            command=sys.executable, args=["-m", "ken", "mcp", str(project)],
+            env={"PYTHONPATH": str(Path(server.__file__).resolve().parents[2])}
         )
         async with stdio_client(parameters) as (read, write):
             async with ClientSession(read, write) as session:
@@ -481,7 +483,7 @@ def test_live_mcp_publishes_and_executes_inspection_modes(project):
                 recall = next(t for t in tools.tools if t.name == "ken_recall")
                 assert "answer" in recall.input_schema["properties"]["detail"]["enum"]
                 remembered = await session.call_tool(
-                    "ken_recall", {"topic": "missing", "detail": "answer"}
+                    "ken_recall", {"topic": "missing", "detail": "answer", "output_format": "json"}
                 )
                 assert not remembered.is_error, remembered
                 value = json.loads(remembered.content[0].text)
@@ -493,7 +495,7 @@ def test_live_mcp_publishes_and_executes_inspection_modes(project):
                 ):
                     result = await session.call_tool(
                         "ken_related",
-                        {"target": "storage.py::save", "relation": relation, **extra},
+                        {"target": "storage.py::save", "relation": relation, "output_format": "json", **extra},
                     )
                     assert not result.is_error, result
                     value = json.loads(result.content[0].text)

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from pathlib import Path
 import json
 import sys
 
@@ -74,7 +75,7 @@ def test_generated_stdio_command_discovers_and_calls_ken(tmp_path):
             command=config["command"],
             args=config["args"],
             cwd=config["cwd"],
-            env={"HF_HUB_OFFLINE": "1"},
+            env={"HF_HUB_OFFLINE": "1", "PYTHONPATH": str(Path(__file__).resolve().parents[1] / "src")},
         )
         async with (
             stdio_client(params, errlog=errlog) as (read, write),
@@ -96,6 +97,7 @@ def test_generated_stdio_command_discovers_and_calls_ken(tmp_path):
                         "query": "CACHE_DIR",
                         "scope": "text",
                         "literal": True,
+                        "output_format": "json",
                     },
                 )
             ).model_dump(by_alias=True)

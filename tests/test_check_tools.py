@@ -3,6 +3,7 @@
 import asyncio
 import json
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -28,14 +29,14 @@ def test_cli_accepts_complete_rule_objects_and_shares_mcp_contract(
     tools_project, capsys
 ):
     root, definition = tools_project
-    assert main(["tools", "--path", str(root), "rule", "--action", "list"]) == 0
+    assert main(["tools", "--json", "--path", str(root), "rule", "--action", "list"]) == 0
     listed = json.loads(capsys.readouterr().out)
     assert listed == server.ken_rule()
     other = definition | {"id": "other.return-id"}
     assert (
         main(
             [
-                "tools",
+                "tools", "--json",
                 "--path",
                 str(root),
                 "rule",
@@ -52,7 +53,7 @@ def test_cli_accepts_complete_rule_objects_and_shares_mcp_contract(
     assert (
         main(
             [
-                "tools",
+                "tools", "--json",
                 "--path",
                 str(root),
                 "check",
@@ -162,7 +163,7 @@ def test_real_stdio_publishes_and_runs_check_rule_find_related_and_memory(
             command=sys.executable,
             args=["-m", "ken", "mcp", str(root)],
             cwd=str(root),
-            env={"HF_HUB_OFFLINE": "1"},
+            env={"HF_HUB_OFFLINE": "1", "PYTHONPATH": str(Path(server.__file__).resolve().parents[2])},
         )
         async with stdio_client(params) as (read, write):
             async with ClientSession(read, write, read_timeout_seconds=30) as session:
@@ -177,7 +178,7 @@ def test_real_stdio_publishes_and_runs_check_rule_find_related_and_memory(
                 )
 
                 async def call(name, args):
-                    result = (await session.call_tool(name, args)).model_dump(
+                    result = (await session.call_tool(name, args | {"output_format": "json"})).model_dump(
                         by_alias=True
                     )
                     assert not result.get("isError"), result

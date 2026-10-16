@@ -111,6 +111,6 @@ def test_module_cli(tmp_path):
     (tmp_path/'a.py').write_text(SOURCE)
     query_file=tmp_path/'q.kql'
     query_file.write_text(QUERY)
-    process=subprocess.run([sys.executable,'-m','ken.kql2',str(query_file),'--root',str(tmp_path),'--cache-mb','0'],capture_output=True,text=True)
+    process=subprocess.run([sys.executable,'-m','ken.kql2','--json',str(query_file),'--root',str(tmp_path),'--cache-mb','0'],capture_output=True,text=True)
     assert process.returncode==0,process.stderr
     assert json.loads(process.stdout)['rows']==[['Worker','task']]

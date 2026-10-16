@@ -117,7 +117,7 @@ def test_explain_cli_prints_json(monkeypatch, capsys, tmp_path):
 
     monkeypatch.setattr("ken.daemon.client.post", fake_post)
 
-    rc = main(["explain", "--path", str(tmp_path), "why", "cli.py"])
+    rc = main(["explain", "--path", str(tmp_path), "--json", "why", "cli.py"])
 
     assert rc == 0
     out = capsys.readouterr().out

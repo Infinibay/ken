@@ -70,7 +70,7 @@ def test_the_cli_defaults_to_no_ceiling(tmp_path, capsys):
     parser = argparse.ArgumentParser()
     commands = parser.add_subparsers(dest='cmd')
     add_parser(commands)
-    args = parser.parse_args(['structural', 'patterns', '--path', str(tmp_path), '--cache-mb', '0'])
+    args = parser.parse_args(['structural', 'patterns', '--json', '--path', str(tmp_path), '--cache-mb', '0'])
     assert (args.limit, args.timeout_ms, args.max_states, args.max_rows) == (None,) * 4
     assert dispatch(args) == 0
     captured = capsys.readouterr()
@@ -83,7 +83,7 @@ def test_the_cli_exposes_the_budgets_and_warns_on_stderr(tmp_path, capsys):
     parser = argparse.ArgumentParser()
     commands = parser.add_subparsers(dest='cmd')
     add_parser(commands)
-    args = parser.parse_args(['structural', 'patterns', '--path', str(tmp_path), '--cache-mb', '0',
+    args = parser.parse_args(['structural', 'patterns', '--json', '--path', str(tmp_path), '--cache-mb', '0',
                               '--pattern', 'factory-method', '--max-states', '1', '--max-rows', '1'])
     assert dispatch(args) == 0
     captured = capsys.readouterr()

@@ -1,5 +1,6 @@
 import copy
 import json
+from pathlib import Path
 
 import pytest
 
@@ -84,7 +85,8 @@ def test_persistent_mcp_serves_compact_as_plain_text(tmp_path,monkeypatch):
     with connect(_paths.db_path(tmp_path)) as conn:
         expected=render(find(conn,tmp_path,query))
     async def exercise():
-        params=StdioServerParameters(command=sys.executable,args=['-m','ken','mcp',str(tmp_path)])
+        params=StdioServerParameters(command=sys.executable,args=['-m','ken','mcp',str(tmp_path)],
+                                     env={'PYTHONPATH': str(Path(__file__).resolve().parents[2] / 'src')})
         with (tmp_path/'mcp-compact-stderr.log').open('w') as errlog:
             async with stdio_client(params,errlog=errlog) as (read,write):
                 async with ClientSession(read,write) as session:

@@ -78,7 +78,7 @@ def test_cli_and_mcp_find_documented_responsibility_with_evidence(project, capsy
     assert (
         main(
             [
-                "tools",
+                "tools", "--json",
                 "--path",
                 str(root),
                 "who",
@@ -97,7 +97,7 @@ def test_proposed_translation_is_explicit_and_cli_list_reaches_tool(project, cap
     assert (
         main(
             [
-                "tools",
+                "tools", "--json",
                 "--path",
                 str(root),
                 "who",
@@ -363,7 +363,7 @@ def test_each_documentation_owner_is_found_without_using_findings(
     assert (
         main(
             [
-                "tools",
+                "tools", "--json",
                 "--path",
                 str(root),
                 "who",
@@ -455,7 +455,7 @@ def test_default_is_compact_and_full_preserves_diagnostic_contract(project, caps
     )
     assert len(json.dumps(compact)) < len(json.dumps(detailed)) / 2
     for flags, expected in [([], compact), (["--full"], detailed)]:
-        assert main(["tools", "--path", str(root), "who", question, *flags]) == 0
+        assert main(["tools", "--json", "--path", str(root), "who", question, *flags]) == 0
         assert json.loads(capsys.readouterr().out) == expected
 
 

@@ -64,7 +64,7 @@ def test_tools_no_name_lists_tools(capsys, tmp_path):
 def test_tools_runs_tool_and_prints_json(capsys, tmp_path):
     root = _project(tmp_path)
 
-    rc = main(["tools", "--path", str(root), "read", "src/parser.py"])
+    rc = main(["tools", "--path", str(root), "--json", "read", "src/parser.py"])
 
     assert rc == 0
     payload = json.loads(capsys.readouterr().out)
@@ -92,7 +92,7 @@ def test_tools_boolean_flag_toggles_schema_default(capsys, tmp_path):
     rc = main(
         [
             "tools", "--path", str(root),
-            "find", "parse_symbol", "--scope", "text", "--literal",
+            "find", "parse_symbol", "--scope", "text", "--literal", "--output-format", "json",
         ]
     )
 

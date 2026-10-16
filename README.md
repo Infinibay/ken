@@ -439,7 +439,7 @@ handed to whoever next touches the same thing — no query needed:
 whatever the tool reports). Set as many as apply; the memory fires on any.
 ```
 
-The shell commands (`ken rank`, `ken search-files`, `ken search-symbols`, and `ken explain`) expose the same ideas for humans or agents without MCP, and `ken tools <name>` runs any MCP tool directly (see [Run MCP tools from the shell](#run-mcp-tools-from-the-shell)). For assistants with MCP available, the MCP tools are the preferred path because they return structured results and feed ken's local task memory.
+The shell commands (`ken rank`, `ken search-files`, `ken search-symbols`, and `ken explain`) expose the same ideas for humans or agents without MCP, and `ken tools <name>` runs any MCP tool directly (see [Run MCP tools from the shell](#run-mcp-tools-from-the-shell)). For assistants with MCP available, the MCP tools are the preferred path because they return compact, actionable text by default and feed ken's local task memory. Use `output_format="json"` for native structured results.
 
 ## Use ken directly
 
@@ -485,7 +485,7 @@ ken tools read src/ken/search.py --include symbols imports
 ken tools who "Who stores reusable findings?" --path src/ken
 ```
 
-The tool name may be given with or without the `ken_` prefix (`find` or `ken_find`). Required parameters are positional in schema order — `ken_related` takes `target` then `relation`. Results print as JSON; `--compact` prints a single line and `--path /repo` points at another checkout, and both flags come *before* the tool name.
+The tool name may be given with or without the `ken_` prefix (`find` or `ken_find`). Required parameters are positional in schema order — `ken_related` takes `target` then `relation`. Results print as compact text with locations and numbered source by default. `ken tools --json read ...` or `--output-format json` after the tool name requests native JSON. The older global `--compact` keeps its single-line JSON meaning. `--path /repo` before the tool name selects another checkout. See [all output examples](docs/validation/compact-output-2026-10-16/EXAMPLES.md).
 
 `ken_who` answers responsibility questions with ranked symbol hypotheses, current
 documentation, evidence from names and call expressions, and explicit assumptions.

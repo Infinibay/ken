@@ -1,5 +1,15 @@
 # Restricciones de calidad
 
+## Autorización vigente — 16 de octubre
+
+El usuario pide por defecto la mejor configuración completa medida en CLI y MCP,
+además de presentación compacta y ejemplos de todos los outputs. Autoriza integrar
+el default; se mantienen >=90% top1 de pieza, top10 nativo197/200 y recursos CPU/RAM,
+validación del camino público real y compatibilidad de índices. No release ni tags.
+La prohibición de promoción de secciones históricas deja de impedir esta integración;
+los resultados sellados conservan sus políticas y no certifican automáticamente
+el nuevo default. Ver docs/design/best-default-search-2026-10-16.md.
+
 ## Aclaración vigente del usuario — 15 de octubre
 
 El usuario retiró el requisito de suficiencia del contexto retornado como condición

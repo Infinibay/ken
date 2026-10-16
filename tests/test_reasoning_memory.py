@@ -198,7 +198,7 @@ def test_cli_decodes_goal_and_premise_objects(tmp_path, capsys):
     from ken.cli import main
     (tmp_path / '.ken').mkdir()
     (tmp_path / '.ken/meta.json').write_text('{}')
-    prefix = ['tools', '--path', str(tmp_path)]
+    prefix = ['tools', '--json', '--path', str(tmp_path)]
     assert main(prefix + ['reason_record', 's', '--facts', json.dumps(a('p'))]) == 0
     assert json.loads(capsys.readouterr().out)['changed']
     assert main(prefix + ['reason', 'P?', '--goal', json.dumps(a('p'))]) == 0

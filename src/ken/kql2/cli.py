@@ -7,8 +7,11 @@ import json
 import sys
 from pathlib import Path
 
+from ken.presentation import render_compact
+
 
 def configure(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--json", action="store_true", help="print the complete result as JSON")
     parser.add_argument("query_file", type=Path, nargs="?")
     parser.add_argument("--explain", action="store_true", help="Validate and explain the query without scanning project files")
     parser.add_argument("--capabilities", action="store_true", help="List backend capabilities and syntax properties without scanning files")
@@ -45,11 +48,15 @@ def dispatch(args: argparse.Namespace) -> int:
     from .service import search
     from .syntax import parse
 
+    def emit(value):
+        print(json.dumps(value, ensure_ascii=False, indent=2) if getattr(args, "json", False)
+              else render_compact(value, diagnostics=bool(args.profile or args.explain)))
+
     try:
         if getattr(args, "capabilities", False):
             from .explanation import capabilities
 
-            print(json.dumps(capabilities(), indent=2))
+            emit(capabilities())
             return 0
         if args.query_file is None:
             raise ValueError("a query file is required unless --capabilities is selected")
@@ -63,8 +70,8 @@ def dispatch(args: argparse.Namespace) -> int:
         if getattr(args, "explain", False):
             from .explanation import explain
 
-            print(json.dumps(explain(args.query_file.read_text(), query_name=args.query,
-                                     backend=args.backend, libraries=libraries), indent=2))
+            emit(explain(args.query_file.read_text(), query_name=args.query,
+                         backend=args.backend, libraries=libraries))
             return 0
         result = search(
             args.root,
@@ -82,7 +89,9 @@ def dispatch(args: argparse.Namespace) -> int:
             cache_directory=getattr(args, "cache_directory", None),
         )
     except (ValueError, OSError) as exc:
-        print(json.dumps({"error": str(exc)}), file=sys.stderr)
+        print(json.dumps({"error": str(exc)}) if getattr(args, "json", False)
+              else f"error: {exc}", file=sys.stderr)
         return 2
-    print(json.dumps(result, ensure_ascii=False, indent=2))
+    from ken.checks.report import query_view
+    emit(result if getattr(args, "json", False) or args.profile else query_view(result))
     return 0 if result["complete"] else 3

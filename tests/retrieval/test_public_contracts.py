@@ -56,11 +56,11 @@ def test_unmigrated_project_returns_actionable_state(tmp_path, monkeypatch):
     assert "ken retrieval index" in response["next_action"]
 
 
-def test_evidence_schema_is_explicit_and_legacy_is_default():
+def test_evidence_schema_is_explicit_and_auto_preserves_engine_selection():
     from ken.mcp.server import list_tools
     schema = next(t.parameters for t in list_tools() if t.name == "ken_find")
-    assert schema["properties"]["response_format"]["enum"] == ["legacy", "evidence", "compact"]
-    assert schema["properties"]["response_format"]["default"] == "legacy"
+    assert schema["properties"]["response_format"]["enum"] == ["auto", "legacy", "evidence", "compact"]
+    assert schema["properties"]["response_format"]["default"] == "auto"
 
 
 def test_preparation_command_builds_profile_used_by_public_search(tmp_path, monkeypatch, capsys):
@@ -96,7 +96,7 @@ def test_real_stdio_mcp_preserves_evidence_response_across_repeated_calls(tmp_pa
     with connect(_paths.db_path(tmp_path)) as conn:
         expected = find(conn, tmp_path, query)
     async def exercise():
-        params = StdioServerParameters(command=sys.executable, args=["-m", "ken", "mcp", str(tmp_path)])
+        params = StdioServerParameters(command=sys.executable, args=["-m", "ken", "mcp", str(tmp_path)], env={"PYTHONPATH": str(Path(__file__).resolve().parents[2] / "src")})
         with (tmp_path / "mcp-stderr.log").open("w") as errlog:
             async with stdio_client(params, errlog=errlog) as (read, write):
                 async with ClientSession(read, write) as session:

@@ -24,7 +24,7 @@ def test_shipped_contract_validates_and_detects_a_regression(tmp_path, capsys):
     capsys.readouterr()
 
     def call(*args):
-        assert main(["tools", "--path", str(tmp_path), *args]) == 0
+        assert main(["tools", "--json", "--path", str(tmp_path), *args]) == 0
         return json.loads(capsys.readouterr().out)
 
     call("rule", "--action", "create", "--definition", json.dumps(definition))
@@ -165,7 +165,7 @@ def test_violation_contract_rejects_bad_code_beside_a_good_example(tmp_path, cap
     capsys.readouterr()
 
     def call(*args):
-        assert main(["tools", "--path", str(tmp_path), *args]) == 0
+        assert main(["tools", "--json", "--path", str(tmp_path), *args]) == 0
         return json.loads(capsys.readouterr().out)
 
     call("rule", "--action", "create", "--definition", json.dumps(definition))

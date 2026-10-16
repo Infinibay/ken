@@ -191,8 +191,11 @@ def _register(fn: Callable[..., Any]) -> Callable[..., Any]:
 
 def ken_tool(fn: Callable[..., Any]) -> Callable[..., Any]:
     """Register ``fn`` as both an MCP tool and a CLI-passthrough tool."""
-    mcp.add_tool(fn)
-    _register(fn)
+    from ken.mcp.presentation import present_tool
+
+    public = present_tool(fn, root=lambda: _PROJECT_ROOT)
+    mcp.add_tool(public, structured_output=False)
+    _register(public)
     return fn
 
 
@@ -951,7 +954,7 @@ def ken_find(
     full: bool = False,
     query_language: Literal["kenql/1", "kql/2"] = "kenql/1",
     libraries: dict[str, str] | None = None,
-    response_format: Literal["legacy", "evidence", "compact"] = "legacy",
+    response_format: Literal["auto", "legacy", "evidence", "compact"] = "auto",
     purpose: Literal["auto", "implementation", "usage", "tests", "documentation"] = "auto",
     max_chars: int = 12000,
 ) -> Any:

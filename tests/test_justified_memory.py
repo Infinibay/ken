@@ -313,7 +313,7 @@ def test_public_mcp_and_cli_use_existing_tools(project, monkeypatch, capsys):
     assert (
         main(
             [
-                "tools",
+                "tools", "--json",
                 "--path",
                 str(root),
                 "remember",
@@ -330,7 +330,7 @@ def test_public_mcp_and_cli_use_existing_tools(project, monkeypatch, capsys):
     assert (
         main(
             [
-                "tools",
+                "tools", "--json",
                 "--path",
                 str(root),
                 "recall",

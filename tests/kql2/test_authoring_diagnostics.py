@@ -119,6 +119,7 @@ def test_capabilities_and_explain_do_not_acquire_a_project(tmp_path, capsys):
         main(
             [
                 "kql2",
+                "--json",
                 str(source),
                 "--root",
                 str(tmp_path / "missing"),
@@ -131,7 +132,7 @@ def test_capabilities_and_explain_do_not_acquire_a_project(tmp_path, capsys):
     )
     result = json.loads(capsys.readouterr().out)
     assert result["executed"] is False and "disconnected_captures" in codes(result)
-    assert main(["kql2", "--capabilities"]) == 0
+    assert main(["kql2", "--json", "--capabilities"]) == 0
     matrix = json.loads(capsys.readouterr().out)["backends"]
     assert matrix["indexed"]["body"] and not matrix["exploration"]["body"]
     assert matrix["exploration"]["properties"]["text"] == "String"
