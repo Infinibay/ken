@@ -1,0 +1,752 @@
+{
+  "original200": {
+    "scope": "EXPOSED development only, all200actual MCP public default; no independent validation",
+    "quality": {
+      "queries": 200,
+      "top1": {
+        "count": 191,
+        "rate": 0.955,
+        "wilson_query_level95": [
+          0.9167032959981803,
+          0.976147456998507
+        ]
+      },
+      "recall10": {
+        "count": 197,
+        "rate": 0.985,
+        "wilson_query_level95": [
+          0.9568342712073097,
+          0.9948857622067417
+        ]
+      },
+      "strata": {
+        "target_kind": {
+          "class": {
+            "queries": 50,
+            "top1": {
+              "count": 49,
+              "rate": 0.98,
+              "wilson_query_level95": [
+                0.8950455641036219,
+                0.9964607407283539
+              ]
+            },
+            "recall10": {
+              "count": 50,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.9286524008666414,
+                1.0
+              ]
+            }
+          },
+          "file": {
+            "queries": 50,
+            "top1": {
+              "count": 48,
+              "rate": 0.96,
+              "wilson_query_level95": [
+                0.8653990931249297,
+                0.9889611156723802
+              ]
+            },
+            "recall10": {
+              "count": 48,
+              "rate": 0.96,
+              "wilson_query_level95": [
+                0.8653990931249297,
+                0.9889611156723802
+              ]
+            }
+          },
+          "module": {
+            "queries": 50,
+            "top1": {
+              "count": 48,
+              "rate": 0.96,
+              "wilson_query_level95": [
+                0.8653990931249297,
+                0.9889611156723802
+              ]
+            },
+            "recall10": {
+              "count": 49,
+              "rate": 0.98,
+              "wilson_query_level95": [
+                0.8950455641036219,
+                0.9964607407283539
+              ]
+            }
+          },
+          "symbol": {
+            "queries": 50,
+            "top1": {
+              "count": 46,
+              "rate": 0.92,
+              "wilson_query_level95": [
+                0.8116175308165717,
+                0.968450485911407
+              ]
+            },
+            "recall10": {
+              "count": 50,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.9286524008666414,
+                1.0
+              ]
+            }
+          }
+        },
+        "language": {
+          "en": {
+            "queries": 120,
+            "top1": {
+              "count": 113,
+              "rate": 0.9416666666666667,
+              "wilson_query_level95": [
+                0.8844740796636988,
+                0.9714589899997798
+              ]
+            },
+            "recall10": {
+              "count": 118,
+              "rate": 0.9833333333333333,
+              "wilson_query_level95": [
+                0.941264037027841,
+                0.9954174354340789
+              ]
+            }
+          },
+          "es": {
+            "queries": 80,
+            "top1": {
+              "count": 78,
+              "rate": 0.975,
+              "wilson_query_level95": [
+                0.9133556701442198,
+                0.9931171067970292
+              ]
+            },
+            "recall10": {
+              "count": 79,
+              "rate": 0.9875,
+              "wilson_query_level95": [
+                0.9325372992233133,
+                0.9977900244795476
+              ]
+            }
+          }
+        },
+        "query_style": {
+          "behavior": {
+            "queries": 160,
+            "top1": {
+              "count": 151,
+              "rate": 0.94375,
+              "wilson_query_level95": [
+                0.8965638035410534,
+                0.9701276982442358
+              ]
+            },
+            "recall10": {
+              "count": 157,
+              "rate": 0.98125,
+              "wilson_query_level95": [
+                0.9463298879006856,
+                0.9936031492467405
+              ]
+            }
+          },
+          "qualified_lookup": {
+            "queries": 40,
+            "top1": {
+              "count": 40,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.9123783988027135,
+                1.0000000000000002
+              ]
+            },
+            "recall10": {
+              "count": 40,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.9123783988027135,
+                1.0000000000000002
+              ]
+            }
+          }
+        },
+        "repo_id": {
+          "ajv": {
+            "queries": 27,
+            "top1": {
+              "count": 26,
+              "rate": 0.9629629629629629,
+              "wilson_query_level95": [
+                0.8171653406642414,
+                0.9934318540192149
+              ]
+            },
+            "recall10": {
+              "count": 26,
+              "rate": 0.9629629629629629,
+              "wilson_query_level95": [
+                0.8171653406642414,
+                0.9934318540192149
+              ]
+            }
+          },
+          "attrs": {
+            "queries": 23,
+            "top1": {
+              "count": 21,
+              "rate": 0.9130434782608695,
+              "wilson_query_level95": [
+                0.7320401892425634,
+                0.9758199955157796
+              ]
+            },
+            "recall10": {
+              "count": 23,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.8568833815495731,
+                1.0
+              ]
+            }
+          },
+          "boltons": {
+            "queries": 40,
+            "top1": {
+              "count": 38,
+              "rate": 0.95,
+              "wilson_query_level95": [
+                0.8349612263085903,
+                0.9861793326138516
+              ]
+            },
+            "recall10": {
+              "count": 40,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.9123783988027135,
+                1.0000000000000002
+              ]
+            }
+          },
+          "commons-csv": {
+            "queries": 13,
+            "top1": {
+              "count": 12,
+              "rate": 0.9230769230769231,
+              "wilson_query_level95": [
+                0.6668604907890041,
+                0.9862895787574435
+              ]
+            },
+            "recall10": {
+              "count": 13,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.7719046276458016,
+                0.9999999999999999
+              ]
+            }
+          },
+          "junit5": {
+            "queries": 22,
+            "top1": {
+              "count": 21,
+              "rate": 0.9545454545454546,
+              "wilson_query_level95": [
+                0.7820195416134267,
+                0.991930572378736
+              ]
+            },
+            "recall10": {
+              "count": 21,
+              "rate": 0.9545454545454546,
+              "wilson_query_level95": [
+                0.7820195416134267,
+                0.991930572378736
+              ]
+            }
+          },
+          "marked": {
+            "queries": 19,
+            "top1": {
+              "count": 19,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.8318207759473837,
+                1.0
+              ]
+            },
+            "recall10": {
+              "count": 19,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.8318207759473837,
+                1.0
+              ]
+            }
+          },
+          "packaging": {
+            "queries": 22,
+            "top1": {
+              "count": 21,
+              "rate": 0.9545454545454546,
+              "wilson_query_level95": [
+                0.7820195416134267,
+                0.991930572378736
+              ]
+            },
+            "recall10": {
+              "count": 22,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.8513451253913791,
+                1.0
+              ]
+            }
+          },
+          "pytest": {
+            "queries": 34,
+            "top1": {
+              "count": 33,
+              "rate": 0.9705882352941176,
+              "wilson_query_level95": [
+                0.8508442670731406,
+                0.9947890937237309
+              ]
+            },
+            "recall10": {
+              "count": 33,
+              "rate": 0.9705882352941176,
+              "wilson_query_level95": [
+                0.8508442670731406,
+                0.9947890937237309
+              ]
+            }
+          }
+        }
+      },
+      "macro_repo_top1": 0.9535953135857228,
+      "observed_floors": {
+        "top1_at_least90_percent": true,
+        "recall10_at_least98_5_percent": true
+      }
+    },
+    "cpu": {
+      "p50_ms": 2340.075062471442,
+      "p95_ms": 3646.425001739408,
+      "max_ms": 4788.266332994681,
+      "peak_rss_bytes": 2102460416,
+      "server_cpu_total_ms": 1358621.422,
+      "per_query_cpu_ms": null,
+      "per_repo": {
+        "ajv": {
+          "p50_ms": 2054.014042019844,
+          "p95_ms": 2689.5467212132644,
+          "peak_rss_bytes": 1406156800,
+          "files": 486
+        },
+        "attrs": {
+          "p50_ms": 2218.7783339759335,
+          "p95_ms": 2650.998837512452,
+          "peak_rss_bytes": 1283227648,
+          "files": 141
+        },
+        "boltons": {
+          "p50_ms": 2318.756416469114,
+          "p95_ms": 2746.6168142243987,
+          "peak_rss_bytes": 1425686528,
+          "files": 113
+        },
+        "commons-csv": {
+          "p50_ms": 1979.9425420351326,
+          "p95_ms": 2716.5522586088628,
+          "peak_rss_bytes": 1351450624,
+          "files": 122
+        },
+        "junit5": {
+          "p50_ms": 2767.8863540058956,
+          "p95_ms": 3643.4603954898193,
+          "peak_rss_bytes": 2102460416,
+          "files": 2446
+        },
+        "marked": {
+          "p50_ms": 2220.4325000056997,
+          "p95_ms": 2840.9671416622587,
+          "peak_rss_bytes": 1370914816,
+          "files": 582
+        },
+        "packaging": {
+          "p50_ms": 2500.8036664803512,
+          "p95_ms": 2969.0541381190997,
+          "peak_rss_bytes": 1409122304,
+          "files": 139
+        },
+        "pytest": {
+          "p50_ms": 3070.2778334962204,
+          "p95_ms": 4103.065164820873,
+          "peak_rss_bytes": 1567326208,
+          "files": 726
+        }
+      }
+    },
+    "capture_registration_sha256": "01e6011256b097cad773518cf3510585b2c681b2858f997d141e03d39603fda6",
+    "source_receipt": "3f56b5848be8fcb44ce6006b754a6cbfb6d609c872521437be5ceeefd6b36197",
+    "scorer_sha256": "1e0ce5489ca7d8e5a3c93dc6868127e50083268b8de7c00b71a16f89b2cfdfba",
+    "identity_evaluator_sha256": "d306ba0096e0d2daa49183b7ec06f9000f50d6753d019f7649e8438e31a649bb",
+    "orders_identical_to_public145": 200
+  },
+  "new_symbol200": {
+    "scope": "EXPOSED development only, all200actual MCP public default; no independent validation",
+    "quality": {
+      "queries": 200,
+      "top1": {
+        "count": 159,
+        "rate": 0.795,
+        "wilson_query_level95": [
+          0.7337430194757748,
+          0.8451382379616379
+        ]
+      },
+      "recall10": {
+        "count": 195,
+        "rate": 0.975,
+        "wilson_query_level95": [
+          0.942821659593358,
+          0.9892752803482386
+        ]
+      },
+      "strata": {
+        "target_kind": {
+          "symbol": {
+            "queries": 200,
+            "top1": {
+              "count": 159,
+              "rate": 0.795,
+              "wilson_query_level95": [
+                0.7337430194757748,
+                0.8451382379616379
+              ]
+            },
+            "recall10": {
+              "count": 195,
+              "rate": 0.975,
+              "wilson_query_level95": [
+                0.942821659593358,
+                0.9892752803482386
+              ]
+            }
+          }
+        },
+        "language": {
+          "en": {
+            "queries": 120,
+            "top1": {
+              "count": 93,
+              "rate": 0.775,
+              "wilson_query_level95": [
+                0.6924310051535484,
+                0.8405084533161647
+              ]
+            },
+            "recall10": {
+              "count": 119,
+              "rate": 0.9916666666666667,
+              "wilson_query_level95": [
+                0.9543037087549505,
+                0.998527444266658
+              ]
+            }
+          },
+          "es": {
+            "queries": 80,
+            "top1": {
+              "count": 66,
+              "rate": 0.825,
+              "wilson_query_level95": [
+                0.7274245802116865,
+                0.8927936355902206
+              ]
+            },
+            "recall10": {
+              "count": 76,
+              "rate": 0.95,
+              "wilson_query_level95": [
+                0.8783772379535698,
+                0.9803864454644556
+              ]
+            }
+          }
+        },
+        "query_style": {
+          "behavior": {
+            "queries": 160,
+            "top1": {
+              "count": 119,
+              "rate": 0.74375,
+              "wilson_query_level95": [
+                0.6709441826005733,
+                0.8051257972533179
+              ]
+            },
+            "recall10": {
+              "count": 155,
+              "rate": 0.96875,
+              "wilson_query_level95": [
+                0.9289397087143583,
+                0.9865794833123556
+              ]
+            }
+          },
+          "qualified_lookup": {
+            "queries": 40,
+            "top1": {
+              "count": 40,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.9123783988027135,
+                1.0000000000000002
+              ]
+            },
+            "recall10": {
+              "count": 40,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.9123783988027135,
+                1.0000000000000002
+              ]
+            }
+          }
+        },
+        "repo_id": {
+          "ajv": {
+            "queries": 40,
+            "top1": {
+              "count": 33,
+              "rate": 0.825,
+              "wilson_query_level95": [
+                0.6805000966821229,
+                0.9125458625396408
+              ]
+            },
+            "recall10": {
+              "count": 40,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.9123783988027135,
+                1.0000000000000002
+              ]
+            }
+          },
+          "attrs": {
+            "queries": 15,
+            "top1": {
+              "count": 10,
+              "rate": 0.6666666666666666,
+              "wilson_query_level95": [
+                0.41713547738519774,
+                0.8482367556028526
+              ]
+            },
+            "recall10": {
+              "count": 13,
+              "rate": 0.8666666666666667,
+              "wilson_query_level95": [
+                0.6211801716767764,
+                0.9626387408969346
+              ]
+            }
+          },
+          "boltons": {
+            "queries": 15,
+            "top1": {
+              "count": 10,
+              "rate": 0.6666666666666666,
+              "wilson_query_level95": [
+                0.41713547738519774,
+                0.8482367556028526
+              ]
+            },
+            "recall10": {
+              "count": 14,
+              "rate": 0.9333333333333333,
+              "wilson_query_level95": [
+                0.7018347012621998,
+                0.9881331045067315
+              ]
+            }
+          },
+          "commons-csv": {
+            "queries": 10,
+            "top1": {
+              "count": 7,
+              "rate": 0.7,
+              "wilson_query_level95": [
+                0.39677814746114537,
+                0.8922087325936989
+              ]
+            },
+            "recall10": {
+              "count": 10,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.7224672001371107,
+                0.9999999999999999
+              ]
+            }
+          },
+          "junit5": {
+            "queries": 50,
+            "top1": {
+              "count": 44,
+              "rate": 0.88,
+              "wilson_query_level95": [
+                0.7619518261679701,
+                0.9438239984906773
+              ]
+            },
+            "recall10": {
+              "count": 49,
+              "rate": 0.98,
+              "wilson_query_level95": [
+                0.8950455641036219,
+                0.9964607407283539
+              ]
+            }
+          },
+          "marked": {
+            "queries": 10,
+            "top1": {
+              "count": 7,
+              "rate": 0.7,
+              "wilson_query_level95": [
+                0.39677814746114537,
+                0.8922087325936989
+              ]
+            },
+            "recall10": {
+              "count": 10,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.7224672001371107,
+                0.9999999999999999
+              ]
+            }
+          },
+          "packaging": {
+            "queries": 20,
+            "top1": {
+              "count": 16,
+              "rate": 0.8,
+              "wilson_query_level95": [
+                0.5839825677481064,
+                0.919342337420202
+              ]
+            },
+            "recall10": {
+              "count": 19,
+              "rate": 0.95,
+              "wilson_query_level95": [
+                0.763868806553258,
+                0.9911185511992047
+              ]
+            }
+          },
+          "pytest": {
+            "queries": 40,
+            "top1": {
+              "count": 32,
+              "rate": 0.8,
+              "wilson_query_level95": [
+                0.652426936536005,
+                0.895000102745623
+              ]
+            },
+            "recall10": {
+              "count": 40,
+              "rate": 1.0,
+              "wilson_query_level95": [
+                0.9123783988027135,
+                1.0000000000000002
+              ]
+            }
+          }
+        }
+      },
+      "macro_repo_top1": 0.7547916666666667,
+      "observed_floors": {
+        "top1_at_least90_percent": false,
+        "recall10_at_least98_5_percent": false
+      }
+    },
+    "cpu": {
+      "p50_ms": 1658.3741455106065,
+      "p95_ms": 2876.602952103712,
+      "max_ms": 3543.413874984253,
+      "peak_rss_bytes": 1928626176,
+      "server_cpu_total_ms": 830882.978,
+      "per_query_cpu_ms": null,
+      "per_repo": {
+        "ajv": {
+          "p50_ms": 1464.7121665184386,
+          "p95_ms": 2025.660212815273,
+          "peak_rss_bytes": 1362886656,
+          "files": 486
+        },
+        "attrs": {
+          "p50_ms": 1274.043791985605,
+          "p95_ms": 2238.5002502065618,
+          "peak_rss_bytes": 1226080256,
+          "files": 141
+        },
+        "boltons": {
+          "p50_ms": 1636.4244999713264,
+          "p95_ms": 2237.8497749858066,
+          "peak_rss_bytes": 1314783232,
+          "files": 113
+        },
+        "commons-csv": {
+          "p50_ms": 1478.6174169857986,
+          "p95_ms": 1984.3987873697185,
+          "peak_rss_bytes": 1331314688,
+          "files": 122
+        },
+        "junit5": {
+          "p50_ms": 1569.825957994908,
+          "p95_ms": 2634.8342748562573,
+          "peak_rss_bytes": 1928626176,
+          "files": 2446
+        },
+        "marked": {
+          "p50_ms": 1885.7858960109297,
+          "p95_ms": 2361.5709668316413,
+          "peak_rss_bytes": 1338769408,
+          "files": 582
+        },
+        "packaging": {
+          "p50_ms": 1686.1628955230117,
+          "p95_ms": 2252.279291913146,
+          "peak_rss_bytes": 1422524416,
+          "files": 139
+        },
+        "pytest": {
+          "p50_ms": 2189.3874585221056,
+          "p95_ms": 3378.055420529563,
+          "peak_rss_bytes": 1572175872,
+          "files": 726
+        }
+      }
+    },
+    "capture_registration_sha256": "c0287b006a478d891424e207e4aa44b3800486c3168511d51ee45b8da9eeefa9",
+    "source_receipt": "3f56b5848be8fcb44ce6006b754a6cbfb6d609c872521437be5ceeefd6b36197",
+    "scorer_sha256": "1e0ce5489ca7d8e5a3c93dc6868127e50083268b8de7c00b71a16f89b2cfdfba",
+    "identity_evaluator_sha256": "d306ba0096e0d2daa49183b7ec06f9000f50d6753d019f7649e8438e31a649bb"
+  }
+}

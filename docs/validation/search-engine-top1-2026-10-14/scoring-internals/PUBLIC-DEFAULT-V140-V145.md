@@ -470,3 +470,52 @@ not part of cache169 or its test/capture evidence. Must preserve namespace AND
 complete member and avoid granting identity to behavior/caller references. No
 query-ID/name hardcoding. Tests first reproduce model loading for a unique
 qualified lookup. Does not promise90% alone. Keep acceptance gate unchanged.
+
+
+## Qualified source identity v172 and rejected compositions v173
+
+Isolated namespace::Qualified.member handling, before ordinary name interpretation,
+now keeps exact namespace AND complete symbol. Only a complete lookup gains
+authority; prose callers/behavior and multiple targets remain semantic. Unique
+exact source uses existing model-free response. No learned weights, scoring
+features, evidence policy or model changes. Java namespace matches physical
+package directory; no package-declaration proof. Full suite14944passed/10xfail,
+525.38s,exit0; mypy357clean; namespace-bypass mutation rejected/restored.
+
+Actual public MCP400 closed before both exposed-reference accesses. Original200
+191top1/197Recall10, all200orders exactly equal145; new SYMBOL-ONLY200159/195,
++9top1 from150/195, all40qualified lookups correct. New behavior119/160 remains
+weak; lookup repair does not improve semantic ordering. Original class49,module48,
+file48,symbol46 of50. Independent balanced frozen145still177/198, FAIL90; fresh
+reserve CLOSED. Require original>=180/197 andnew>=180 before touching reserve.
+
+CPU actual original p502340.075,p953646.425,max4788.266ms,peak2102460416B;
+new p501658.374,p952876.603,max3543.414ms,peak1928626176B. Historical separate
+runs, not causal speedup/RAM delta. Small original113–141file repo medians
+1.98–2.32s still exceed1s/100files. Whole-process~2GB remains a limitation.
+
+Exact-only172projection independently reconstructed; original diagnostic lacked
+contemporaneous __file__ receipts. NEW later replay172b verifies73imports under
+freeze172 and byte-identical400observations, no models, without claiming to
+repair original historical provenance. Actual MCP measurements are separate.
+Reviewer supplement verifies400outcomes,3628results and5686literal citations.
+
+Two fixed post-hoc compositions, no refit, both rejected. S1raw neural+exact:
+original189/197,new169/195 (rawNNalready40/40lookups, zero improvement). S2old
+query-role+exact:190/197,new172/193, one gain. S2 LEGACY pool differs in32queries
+from current195pool; do not call difference an isolated role effect. No more
+arithmetic weight sweeps under this protocol and no experimental policy promoted.
+
+Source-pair diagnostic174retains all31rawNNmisses,26correct in ten/five missing.
+Examples OR expr vs AND and_expr, lock assertions vs actual global-lock factory,
+documented setter vs annotated_getattr error construction with original cause.
+These suggest role/condition discrimination gaps, not proven neural causality.
+Raw behavior129/160 vs native/neural fusion119/160: final fusion costs10net new
+behavior hits, but raw189original vs default191; a switch still fails180new.
+
+Full report docs/validation/qualified-source-locator-2026-10-16/README.md;
+summary.json contains all strata, CPU per repo and immutable source/scorer pins.
+Archive output/checkpoints/qualified-locator-v172-v174 and checkpoint.json retain
+all400MCP responses, closures, source patch, exact replay/composition records,
+review, red/green/mutation, completed suite/types and partial interrupted runs.
+No release/tag/version bump; no private acceptance payload in archive.

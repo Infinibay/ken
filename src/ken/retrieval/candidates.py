@@ -15,6 +15,7 @@ from ken.retrieval.embedding_store import IndexVersionError, load_vectors, retri
 from ken.retrieval.dense import DenseView
 from ken.retrieval.lexical import lexical_candidates
 from ken.retrieval.intent import interpret
+from ken.retrieval.source_locator import symbol_locator
 from ken.retrieval.indexing import source_policy_key
 from ken.retrieval.model import Candidate, EntityKey, Passage, SearchRequest, merge_spans
 from ken.retrieval.profile import Encoder, EncoderSpec, RetrievalProfile, active_profile, load_encoder
@@ -76,11 +77,11 @@ def _query_vector(spec: EncoderSpec, text: str) -> np.ndarray:
     return vector
 
 
-def _exact(conn: sqlite3.Connection, passages: Mapping[int, Passage],
-           request: SearchRequest) -> list[Candidate]:
+def _named_symbols(conn: sqlite3.Connection, request: SearchRequest) -> set[tuple[str, str, str | None]]:
+    """Resolve ordinary indexed names with the established case/kind preference."""
     intent = interpret(request)
     if not intent.identifiers:
-        return []
+        return set()
     placeholders = ",".join("?" for _ in intent.identifiers)
     rows = conn.execute(
         "SELECT s.name,s.kind,s.qualname,f.path FROM ci_symbols s JOIN ci_files f ON f.id=s.file_id "
@@ -95,6 +96,19 @@ def _exact(conn: sqlite3.Connection, passages: Mapping[int, Passage],
             preferred = [r for r in rows if identifier.casefold() in (
                 (r["name"] or "").casefold(), (r["qualname"] or "").casefold())]
         matching.update((r["path"], r["kind"], r["qualname"]) for r in preferred)
+    return matching
+
+
+def _exact(conn: sqlite3.Connection, passages: Mapping[int, Passage],
+           request: SearchRequest) -> list[Candidate]:
+    locator = symbol_locator(request.query)
+    if locator is None:
+        matching = _named_symbols(conn, request)
+    else:
+        matching = {(p.entity.path, p.entity.kind, p.entity.qualname)
+                    for p in passages.values() if locator.matches(p.entity)}
+    if not matching:
+        return []
     groups: dict[EntityKey, list[Passage]] = defaultdict(list)
     for p in passages.values():
         if (p.entity.path, p.entity.kind, p.entity.qualname) in matching:
