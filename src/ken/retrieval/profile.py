@@ -34,6 +34,7 @@ def _package_version(name: str) -> str:
 def _backend_runtime(backend: str) -> tuple[tuple[str, str], ...]:
     packages = {
         "static": ("numpy", "tokenizers"),
+        "model2vec": ("numpy", "model2vec", "tokenizers", "safetensors"),
         "sentence-transformers": ("numpy", "torch", "transformers", "tokenizers", "sentence-transformers", "huggingface-hub"),
         "mlx": ("numpy", "mlx", "mlx-lm", "transformers", "tokenizers", "huggingface-hub"),
         "provided": (),
@@ -53,7 +54,7 @@ class EncoderSpec:
     def __post_init__(self) -> None:
         if not re.fullmatch(r"[a-f0-9]{40}|[a-f0-9]{64}", self.revision):
             raise ValueError("an immutable model revision/hash is required")
-        if self.backend not in ("static", "sentence-transformers", "provided", "mlx"):
+        if self.backend not in ("static", "model2vec", "sentence-transformers", "provided", "mlx"):
             raise ValueError("unknown encoder backend")
         if self.dtype not in ("float32", "float16", "bfloat16"):
             raise ValueError("unknown encoder dtype")
@@ -215,6 +216,15 @@ class RetrievalProfile:
         return hashlib.sha256(json.dumps({'config': self.to_dict(), 'runtime': runtime}, sort_keys=True).encode()).hexdigest()
 
 
+def potion_profile() -> RetrievalProfile:
+    """Portable static profile; full search also requires its ranking resources."""
+    from ken.embedder.model2vec_backend import potion_assets
+    assets = potion_assets()
+    spec = EncoderSpec(assets.model_id, assets.fingerprint, "model2vec", dtype="float16",
+                       sequence_length=512, batch_size=1024)
+    return RetrievalProfile(spec, spec)
+
+
 @lru_cache(maxsize=1)
 def default_profile() -> RetrievalProfile:
     model = "ken/static-qwen3-r512-v2"
@@ -235,6 +245,11 @@ def active_profile(conn: sqlite3.Connection, *, upgrade_for_indexing: bool = Fal
 
 @lru_cache(maxsize=4)
 def load_encoder(spec: EncoderSpec) -> Encoder:
+    if spec.backend == "model2vec":
+        from ken.embedder.model2vec_backend import Model2VecEmbedder, potion_assets
+        if spec != potion_profile().behavior:
+            raise ValueError("model2vec encoder must match its registered pinned profile")
+        return Model2VecEmbedder(potion_assets())
     if spec.backend == "mlx":
         from ken.embedder.mlx_backend import MLXEncoder
         return MLXEncoder(spec)

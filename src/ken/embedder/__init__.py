@@ -232,10 +232,13 @@ STATIC_PREFIX = "ken/static-"
 
 def is_static_model(model: str) -> bool:
     """Whether *model* is a static table rather than a network to run."""
-    return model.startswith(STATIC_PREFIX)
+    return model.startswith(STATIC_PREFIX) or model == "minishlab/potion-code-16M-v2"
 
 
 def _build_backend(model: str) -> Embedder:
+    if model == "minishlab/potion-code-16M-v2":
+        from ken.embedder.model2vec_backend import Model2VecEmbedder, potion_assets
+        return Model2VecEmbedder(potion_assets())
     if is_static_model(model):
         from ken.embedder.static_head import StaticHeadEmbedder
 

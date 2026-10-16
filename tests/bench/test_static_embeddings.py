@@ -10,7 +10,7 @@ from ken.bench.static_embeddings import StaticEmbeddingControl
 
 @pytest.fixture(autouse=True)
 def isolated_optional_runtime(monkeypatch):
-    monkeypatch.setattr('ken.bench.static_embeddings.version', lambda name: 'test-version')
+    monkeypatch.setattr('ken.embedder.model2vec_backend.version', lambda name: 'test-version')
 
 
 def fixture(tmp_path):
