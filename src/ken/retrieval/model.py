@@ -54,6 +54,7 @@ class SearchRequest:
     limit: int = 10
     max_chars: int = 12000
     explain: bool = False
+    piece_kind: str | None = None
 
     def __post_init__(self) -> None:
         if not self.query.strip() or self.limit <= 0 or self.max_chars <= 0:
@@ -62,6 +63,8 @@ class SearchRequest:
             raise ValueError("unknown search target")
         if self.purpose not in ("auto", "implementation", "usage", "tests", "documentation"):
             raise ValueError("unknown search purpose")
+        if self.piece_kind not in (None, "class", "module", "symbol", "file"):
+            raise ValueError("unknown requested piece kind")
 
 
 @dataclass

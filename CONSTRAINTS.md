@@ -1,5 +1,19 @@
 # Restricciones de calidad
 
+## Aclaración vigente del usuario — 15 de octubre
+
+El usuario retiró el requisito de suficiencia del contexto retornado como condición
+del acierto: exige >=90% de **pieza solicitada correcta en top1** (clase, módulo,
+símbolo o archivo). La suficiencia se informa por separado. Las definiciones y
+resultados históricos de los protocolos sellados no se reescriben. Se mantiene
+Recall10>=95%; en las200 consultas actuales se preservará además la pertenencia
+del top10 nativo (197/200), con cambios de orden dentro de esa lista. Se medirán
+tiempo completo y pico RSS en CPU, sin depender de GPU ni modelos pesados.
+Las reservas privadas permanecen cerradas mientras se ajusta en desarrollo.
+
+Las secciones siguientes documentan contratos históricos; esta aclaración prevalece
+en la métrica primaria del trabajo actual y no certifica un resultado alcanzado.
+
 2026-10-14. Alcance numérico: mejora del engine de búsqueda descrita en [el diseño](docs/superpowers/specs/2026-10-14-search-engine-top1-design.md). Estado: contrato aprobado por el usuario; verificadores y motor en implementación. Este documento no certifica que Ken alcance actualmente sus objetivos.
 
 ## Piso de trabajo

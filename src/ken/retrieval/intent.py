@@ -36,6 +36,43 @@ _NAMED_OBJECT = (
         r'(?=\s+(?:para|que)\b|[.!?]*$)',re.I),
 )
 
+_PIECE_NOUN = re.compile(r'\b(class|clase|module|módulo|modulo|file|archivo|'
+                         r'function|función|funcion|method|método|metodo|symbol|símbolo)\b', re.I)
+
+
+def requested_piece_kind(request: SearchRequest) -> str:
+    """Retain a requested unit without granting exact-name lookup authority."""
+    if request.piece_kind is not None:
+        return request.piece_kind
+    if request.target == 'file':
+        return 'file'
+    # Only the first requested noun before a relative clause is informative.
+    # A function that uses a class still requests a function.
+    # Initial "which" is a question word, not a clause boundary.
+    question = re.sub(r'^(?:which|what|qué|que|cuál|cual)\s+', '', request.query.casefold().lstrip('¿'))
+    prefix = re.split(r'\b(?:that|which|que)\b', question, maxsplit=1)
+    match = _PIECE_NOUN.search(' '.join(prefix[0].split()[:10]))
+    if match is None:
+        return 'symbol'
+    noun = match[0]
+    if noun in {'class', 'clase'}:
+        return 'class'
+    if noun in {'module', 'módulo', 'modulo'}:
+        return 'module'
+    if noun in {'file', 'archivo'}:
+        return 'file'
+    return 'symbol'
+
+
+def requested_piece_path(request: SearchRequest) -> str | None:
+    """Recognize an explicitly named path, not one mentioned in a clause."""
+    match = re.match(r'^(?:find|show|locate|open|mostrame|muestra|busca|buscá|encuentra)\s+'
+                     r'(?P<path>`[^`]+`|"[^"]+"|[^\s,;]+)', request.query.strip(), re.I)
+    if match is None:
+        return None
+    path = match['path'].rstrip('.?!:').strip('`"').rstrip('.?!:')
+    return path if '/' in path and not any(p == '..' for p in path.split('/')) else None
+
 
 def _named_declaration(query: str) -> tuple[str, str | None] | None:
     for pattern in (*_NAMED_DECLARATION, *_NAMED_OBJECT):

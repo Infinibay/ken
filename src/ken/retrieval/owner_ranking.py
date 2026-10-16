@@ -16,6 +16,7 @@ from ken.retrieval.model import Candidate, CodeMatch, EntityKey, SearchRequest
 from ken.retrieval.numeric_ranker import NumericRanker
 from ken.retrieval.profile import RegisteredEncoder, EvidenceRanking
 from ken.retrieval.ranking import rank_candidates
+from ken.retrieval.intent import requested_piece_kind
 from ken.retrieval.tokenization import code_tokens
 
 if TYPE_CHECKING:
@@ -74,7 +75,7 @@ class EvidenceReranker:
                 trace.record(model=self.model, query=request.query, expanded=request.query,
                              candidates=candidates, matches=matches, values=None,
                              feature_version=self.feature_version, evidence_version=evidence_version,
-                             policy='unique_exact')
+                             policy='unique_exact', piece_kind=requested_piece_kind(request))
             return matches
         expanded = self.prepare_query(request.query) if expanded_query is None else expanded_query
         matrix = evidence_features(request, candidates, descriptions, encoder=self.encoder,
@@ -102,5 +103,6 @@ class EvidenceReranker:
         if trace is not None:
             trace.record(model=self.model, query=request.query, expanded=expanded,
                          candidates=candidates, matches=ranked, values=values,
-                         feature_version=self.feature_version, evidence_version=evidence_version)
+                         feature_version=self.feature_version, evidence_version=evidence_version,
+                         piece_kind=requested_piece_kind(request))
         return ranked

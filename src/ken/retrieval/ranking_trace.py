@@ -61,6 +61,8 @@ class RankingTrace:
                   'feature_version', 'evidence_version', 'policy', 'feature_names',
                   'owners', 'query_sha256', 'expanded_query_sha256')
         result._data = deepcopy({name: data[name] for name in fields})
+        if 'requested_piece_kind' in data:
+            result._data['requested_piece_kind'] = data['requested_piece_kind']
         result._attempt, result._index = data['attempt'], index
         result._values, result._model = values, model if values is not None else None
         for name, attribute, pin in (('query', '_query', 'query_sha256'),
@@ -74,7 +76,8 @@ class RankingTrace:
     def record(self, *, model: NumericRanker, query: str, expanded: str,
                candidates: Sequence[Candidate], matches: Sequence[CodeMatch],
                values: np.ndarray | None, feature_version: int, evidence_version: int,
-               policy: str = 'exact_priority_then_model_score_then_proposal_order') -> None:
+               policy: str = 'exact_priority_then_model_score_then_proposal_order',
+               piece_kind: str | None = None) -> None:
         """Observe one completed ranking; replace a prior attempt's snapshot."""
         self._attempt += 1
         self._query, self._expanded = query, expanded
@@ -92,6 +95,7 @@ class RankingTrace:
         self._data = {'schema': 1, 'request_id': self.request_id, 'attempt': self._attempt,
                       'entry_point': 'retrieval.owner_ranking', 'model_fingerprint': model.fingerprint,
                       'feature_version': feature_version, 'evidence_version': evidence_version,
+                      'requested_piece_kind': piece_kind,
                       'policy': policy, 'feature_names': list(model.features), 'owners': owners,
                       'query_sha256': hashlib.sha256(query.encode()).hexdigest(),
                       'expanded_query_sha256': hashlib.sha256(expanded.encode()).hexdigest()}
