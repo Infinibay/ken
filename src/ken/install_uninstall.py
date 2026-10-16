@@ -141,6 +141,8 @@ def uninstall(project_path: Path, *, keep_db: bool) -> int:
                 print(f"[codex] {CODEX_CONFIG_FILE} now empty — deleted")
 
     _uninstall_opencode(root)
+    from ken.project_instructions import remove_instructions
+    remove_instructions(root)
 
     if keep_db:
         print(f"[db] keeping .ken/ ({_paths.db_path(root)})")

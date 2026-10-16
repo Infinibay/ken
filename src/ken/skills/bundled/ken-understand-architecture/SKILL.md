@@ -5,6 +5,12 @@ description: Explain how a request crosses modules and responsibilities in a Ken
 
 # Explain responsibilities along one real path
 
+For natural-language code discovery with `ken_find` or `ken_who`, write the
+query in **English**, translating the user's intent yourself. Keep identifiers,
+paths, quoted source, literal searches, regexes and KQL unchanged. Reply to the
+user in their preferred language. Memory lookups keep exact stored topic keys
+and use the language of the saved finding when appropriate.
+
 Choose an entry and an observable outcome: “How does the rebuild command update
 the manifest?” A useful architecture answer shows who makes each decision and
 what crosses each boundary. Examples below use MCP tool-call notation.

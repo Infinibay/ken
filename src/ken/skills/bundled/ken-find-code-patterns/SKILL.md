@@ -5,6 +5,12 @@ description: Find implementations, conventions, or bug hypotheses by code relati
 
 # Turn a code question into a relationship
 
+For natural-language code discovery with `ken_find` or `ken_who`, write the
+query in **English**, translating the user's intent yourself. Keep identifiers,
+paths, quoted source, literal searches, regexes and KQL unchanged. Reply to the
+user in their preferred language. Memory lookups keep exact stored topic keys
+and use the language of the saved finding when appropriate.
+
 KQL2 describes the condition that makes code relevant: who owns a call, which
 implementation it invokes, where its result goes, or how operations relate.
 Use it to replace repeated manual checks across text-search results. It can

@@ -109,6 +109,11 @@ def _build_parser() -> argparse.ArgumentParser:
         "(for external hosts that drive the daemon directly)",
     )
 
+    p_install.add_argument(
+        "--agents-md", action=argparse.BooleanOptionalAction, default=None,
+        help="add/update Ken's managed AGENTS.md instructions; default: ask in a terminal",
+    )
+
     p_reinstall = sub.add_parser(
         "reinstall",
         help="reinstall ken from this checkout and re-apply project wiring",
@@ -502,6 +507,7 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
             embed=args.embed,
             embed_limit=args.embed_limit,
             no_wire=args.no_wire,
+            agents_md=args.agents_md,
         )
         return 0
 

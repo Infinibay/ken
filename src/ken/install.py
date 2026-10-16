@@ -103,6 +103,7 @@ def install(
     embed: bool = False,
     embed_limit: int | None = None,
     no_wire: bool = False,
+    agents_md: bool | None = None,
 ) -> InstallResult:
     """Install ken into *project_path*.  Prints progress to stdout.
 
@@ -288,6 +289,10 @@ def install(
             )
     finally:
         conn.close()
+
+    if not no_wire:
+        from ken.project_instructions import configure_instructions
+        configure_instructions(root, choice=agents_md, claude=install_claude, verbose=verbose)
 
     if verbose:
         print()

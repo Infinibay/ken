@@ -5,6 +5,12 @@ description: Preserve a demonstrated source-level invariant with a validated KQL
 
 # Build a contract that rejects the actual regression
 
+For natural-language code discovery with `ken_find` or `ken_who`, write the
+query in **English**, translating the user's intent yourself. Keep identifiers,
+paths, quoted source, literal searches, regexes and KQL unchanged. Reply to the
+user in their preferred language. Memory lookups keep exact stored topic keys
+and use the language of the saved finding when appropriate.
+
 Begin with the failure and the property that would expose it. Compare the broken
 source with its corrected form: which relationship changed? It may be ownership,
 the returned value, a resolved target, supported operation order or scoped absence.

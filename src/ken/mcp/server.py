@@ -961,6 +961,12 @@ def ken_find(
 ) -> Any:
     """Find code by meaning, text, structure, design patterns, or bug signatures.
 
+    Write natural-language code-search queries in English; translate the user's
+    intent yourself and reply in their preferred language. Preserve identifiers,
+    paths, quoted source, literal text, regexes and KQL exactly. State whether
+    the requested piece is a class, module, function or file; use piece_kind
+    when known. Distinguish a test case from a helper used by tests.
+
     *scope* picks what is searched:
 
     * ``files``   — semantic match over per-file embeddings.
@@ -1173,6 +1179,10 @@ def ken_who(
 ) -> dict:
     """Who is responsible? Find modules, classes, methods and functions by documentation.
 
+    Write the natural-language question in English, translating the user's
+    intent yourself. Preserve exact identifiers, paths and quoted source;
+    reply to the user in their preferred language.
+
     Combines documentation, name and call-site reasoners, with counterevidence
     and explicit assumptions. Confidence is an uncalibrated ranking score, NOT
     a probability or proof that code implements the documented behavior.
@@ -1374,6 +1384,11 @@ def ken_rank(
     """What matters right now — ken's own answer, not a search. Scopes:
     session (the work in progress), changes (the git diff), project
     (orientation), architecture (subsystems and cycles).
+
+    For a natural-language query override, use English and preserve exact
+    identifiers, paths and quoted source. Leave query empty to reuse the current
+    session; this guidance does not require rewriting stored session context.
+    Reply to the user in their preferred language.
 
     This is the ranker: several channels fused into one ordering, including
     what this session has touched and how recently, what sessions like it

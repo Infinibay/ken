@@ -47,7 +47,11 @@ def test_force_codex_replaces_invalid_hooks_json(tmp_path):
     assert "SessionStart" in hooks["hooks"]
 
 
-def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path):
+@pytest.mark.parametrize("instruction_flags, expected_instructions", [
+    ([], None), (["--agents-md"], True), (["--no-agents-md"], False),
+])
+def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path,
+                                                 instruction_flags, expected_instructions):
     calls = []
 
     def fake_install(
@@ -61,6 +65,7 @@ def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path):
         embed,
         embed_limit,
         no_wire,
+        agents_md,
     ):
         calls.append(
             (
@@ -73,6 +78,7 @@ def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path):
                 embed,
                 embed_limit,
                 no_wire,
+                agents_md,
             )
         )
 
@@ -89,12 +95,13 @@ def test_install_cli_passes_agent_and_embed_flags(monkeypatch, tmp_path):
             "--embed-limit",
             "7",
             "--no-wire",
+            *instruction_flags,
             str(tmp_path),
         ]
     )
 
     assert rc == 0
-    assert calls == [(tmp_path, False, True, True, True, False, True, 7, True)]
+    assert calls == [(tmp_path, False, True, True, True, False, True, 7, True, expected_instructions)]
 
 
 def test_install_cli_rejects_embed_limit_without_embed(tmp_path):

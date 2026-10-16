@@ -5,6 +5,12 @@ description: Plan the affected callers, compatibility steps, and validation for 
 
 # Turn a proposed change into a bounded plan
 
+For natural-language code discovery with `ken_find` or `ken_who`, write the
+query in **English**, translating the user's intent yourself. Keep identifiers,
+paths, quoted source, literal searches, regexes and KQL unchanged. Reply to the
+user in their preferred language. Memory lookups keep exact stored topic keys
+and use the language of the saved finding when appropriate.
+
 State the old contract and the desired contract first. Investigate the consumers
 that distinguish them. Ken's relationships answer different questions; choose
 the one needed for the current uncertainty. Examples below are MCP calls.

@@ -5,6 +5,12 @@ description: Find a compatible existing implementation and a valid way to call i
 
 # Reuse a behavior with the right contract
 
+For natural-language code discovery with `ken_find` or `ken_who`, write the
+query in **English**, translating the user's intent yourself. Keep identifiers,
+paths, quoted source, literal searches, regexes and KQL unchanged. Reply to the
+user in their preferred language. Memory lookups keep exact stored topic keys
+and use the language of the saved finding when appropriate.
+
 Write down what the caller needs before searching: input, output, failure
 behavior, and important effects. Then answer two separate questions: does the
 candidate satisfy that contract, and how can this caller access it? Examples

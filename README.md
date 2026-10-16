@@ -346,53 +346,55 @@ Segment files are preallocated and sparse, so a space holding a few thousand vec
 
 ## Tell the assistant to use ken
 
-ken works through hooks automatically, but assistants behave better when your project instructions tell them *when* to reach for ken and, just as importantly, to write back what they learn. The MCP server already describes all six tools to the assistant, so the block below deliberately carries only what a tool description cannot: where to start, when to stop, and what to record. Add it to the agent instruction file for the tool you use: `AGENTS.md` for Codex, `CLAUDE.md` for Claude Code, or both. OpenCode reads the same `AGENTS.md` from the project root.
+Ken's MCP tools describe their inputs and return compact code locations and
+source by default. Project instructions explain when to search, when to read,
+and which findings to preserve. Use English for natural-language code searches;
+the assistant can translate your request and answer in your preferred language.
+
+Interactive installation offers to add the following guidance to `AGENTS.md`:
+
+```text
+$ ken install . --embed
+...
+Append Ken instructions to AGENTS.md? [Y/n]:
+```
+
+Press Enter to accept, or `n` to skip. For scripts, use `--agents-md` or
+`--no-agents-md`; without a terminal, installation does not prompt or add project
+instructions unless explicitly requested. `--no-wire` also skips instructions.
+The managed section preserves existing project content, avoids duplicate blocks,
+and preserves local edits. Uninstall removes only unchanged sections Ken owns.
+
+When installing Claude Code integration, Ken also adds `@AGENTS.md` to
+`CLAUDE.md` when needed, preserving existing instructions. This keeps the shared
+guidance visible when that file takes precedence over `AGENTS.md` in Claude Code.
+
+You can also add the recommended guidance yourself:
 
 ```md
 ## Code intelligence: ken
 
-**A `<context-rank>` block in the prompt is ken's ranked guess for this
-request**: `Files:` best first, then `Symbols:`, then `Notes:` — finding
-*topics*, which `ken_recall(topic="…")` reads. If it names what you need,
-open that and skip searching. If a listed file turns out to be irrelevant,
-`ken_remember(path, action="dismiss", reason=…)` — the ranker's only
-negative signal, and only while the block is still in front of you. Thin or
-missing? `ken_rank(verbose=2)`, or `ken_find(task, scope="intent")` for the
-files that work like this one actually landed in.
+Use Ken to locate code and reuse project findings. If a `<context-rank>` block
+already names the relevant file, read it before searching again.
 
-**Start with one `ken_find`, not with `rg` or a guessed path.** The scope is
-the whole decision:
+Write natural-language code-search queries in **English**, translating the
+user's intent yourself. Keep identifiers, paths, quoted source, regexes and
+KQL unchanged. Reply to the user in their preferred language.
 
-- an exact string or identifier (`MY_ENV_VAR`, `os.path`) → `scope="text", literal=true`
-- which file does X → `scope="files"`
-- which function or class does X → `scope="symbols"`
-- how a route, CLI command or env var reaches its handler → `scope="wiring"`
+Start with one focused `ken_find(query=..., scope=...)`: `symbols` for a
+function or class, `files` for a file or module, `wiring` for an entry point,
+and `text` with `literal=true` for exact source. State the requested piece;
+use `piece_kind="class"`, `"module"`, `"symbol"` or `"file"` when known.
+Use `purpose="tests"` for tests and distinguish test cases from test helpers.
 
-Then read what it named — `ken_read(path)` for the outline, plus
-`include=["source"]` and a *qualname* for one symbol's body. ken narrows
-where to look; it does not replace reading the code.
+Read the returned code to verify a match. Compact results are the default;
+use `ken_read` for more source and `full=true` only when debugging a ranking.
+After two unhelpful searches, read the likeliest file or use a literal search.
 
-**Stop rules.** If two ken calls have not narrowed it, open the likeliest
-file and read — a third will not help. If ken returns nothing, use `rg`: it
-searches the index, so a file created minutes ago may not be in it yet. A
-question you can already answer from context needs no call at all.
-
-**Before editing a file you have not read this session**, `ken_recall(path=…)`
-— what earlier sessions learned there. If the change is not local:
-`ken_related(path, relation="blast_radius")` for what it breaks,
-`relation="cochange"` for what moves with it that imports do not show, and
-`ken_find(path, scope="tests")` for its tests.
-
-**Write back what cost you real effort** — a root cause, a constraint the
-code does not state, a trap you fell into: `ken_remember(topic, content)`.
-Not what the code already says plainly. Re-using a topic overwrites it.
-
-**Anchor it, or it only fires if someone searches.** An anchored memory is
-handed to whoever next touches the same thing — no query needed:
-`ken_remember(topic, content, anchor_file="src/db/service.py")`, or
-`anchor_symbol` for one function, `anchor_tool="pytest"` for a command,
-`anchor_error="database is locked"` for a message (matched as a substring of
-whatever the tool reports). Set as many as apply; the memory fires on any.
+Before editing an unfamiliar file, check `ken_recall(path=...)`. For a shared
+change, inspect `ken_related(..., relation="blast_radius")` and its tests.
+Save non-obvious findings with `ken_remember`, anchored to the relevant file
+or symbol; include evidence, assumptions and a recheck step for conclusions.
 ```
 
 The shell commands (`ken rank`, `ken search-files`, `ken search-symbols`, and `ken explain`) expose the same ideas for humans or agents without MCP, and `ken tools <name>` runs any MCP tool directly (see [Run MCP tools from the shell](#run-mcp-tools-from-the-shell)). For assistants with MCP available, the MCP tools are the preferred path because they return compact, actionable text by default and feed ken's local task memory. Use `output_format="json"` for native structured results.

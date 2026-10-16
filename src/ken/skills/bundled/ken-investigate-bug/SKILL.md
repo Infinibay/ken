@@ -5,6 +5,12 @@ description: Trace a concrete programming failure from its symptom through produ
 
 # Explain a failure and verify the repair
 
+For natural-language code discovery with `ken_find` or `ken_who`, write the
+query in **English**, translating the user's intent yourself. Keep identifiers,
+paths, quoted source, literal searches, regexes and KQL unchanged. Reply to the
+user in their preferred language. Memory lookups keep exact stored topic keys
+and use the language of the saved finding when appropriate.
+
 Start with the observable mismatch: input, expected result, actual result, and
 an error or failing test if available. Use Ken to choose the next boundary to
 inspect. End with a reproduced cause and a test of the corrected behavior.

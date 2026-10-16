@@ -5,6 +5,12 @@ description: Find where a behavior is implemented or an entry point is handled i
 
 # Find the code that actually does the work
 
+For natural-language code discovery with `ken_find` or `ken_who`, write the
+query in **English**, translating the user's intent yourself. Keep identifiers,
+paths, quoted source, literal searches, regexes and KQL unchanged. Reply to the
+user in their preferred language. Memory lookups keep exact stored topic keys
+and use the language of the saved finding when appropriate.
+
 The answer is a declaration plus source evidence that it performs the requested
 behavior. A documentation match gets you to a candidate; reading its delegation
 gets you to the implementation.

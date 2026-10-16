@@ -5,6 +5,12 @@ description: Resume an earlier programming investigation using saved conclusions
 
 # Continue from supported conclusions
 
+For natural-language code discovery with `ken_find` or `ken_who`, write the
+query in **English**, translating the user's intent yourself. Keep identifiers,
+paths, quoted source, literal searches, regexes and KQL unchanged. Reply to the
+user in their preferred language. Memory lookups keep exact stored topic keys
+and use the language of the saved finding when appropriate.
+
 Retrieve the most specific relevant memory: a topic from context, a known file,
 or an actual error. Examples below are MCP calls. Exact-topic answer retrieval
 checks declared inputs without rerunning the earlier KQL investigation.
