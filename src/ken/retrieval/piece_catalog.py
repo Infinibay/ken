@@ -9,7 +9,8 @@ from pathlib import Path
 
 from ken.retrieval.model import EntityKey, Passage, Span, merge_spans
 
-SYMBOL_KINDS = frozenset({'function', 'method', 'const', 'constant'})
+CALLABLE_KINDS = frozenset({'function', 'method', 'constructor', 'destructor'})
+SYMBOL_KINDS = CALLABLE_KINDS | {'const', 'constant'}
 
 
 def entity_id(key: EntityKey) -> str:
@@ -91,7 +92,7 @@ class SourceCatalog:
         return self._scopes[key]
 
     def enclosing_callable(self, key: EntityKey) -> EntityKey | None:
-        candidates = [k for k in self.by_path[key.path] if k.kind in {'function','method'} and self.encloses(k, key)]
+        candidates = [k for k in self.by_path[key.path] if k.kind in CALLABLE_KINDS and self.encloses(k, key)]
         def order(k: EntityKey) -> tuple[int, int]:
             return self.extent(k)[1]-self.extent(k)[0], -len(k.qualname or '')
         candidates.sort(key=lambda k: (order(k), entity_id(k)))

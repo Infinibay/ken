@@ -34,3 +34,23 @@ def test_file_module_and_symbol_units_have_their_own_identity(source_owners):
     pieces=assemble_pieces(matches,'symbol',catalog,{})
     assert [p.entity for p in pieces]==keys
     assert all(len(p.members)==1 for p in pieces)
+
+
+def test_cpp_constructors_and_destructors_compete_as_native_symbol_pieces(tmp_path):
+    from collections import defaultdict
+    from ken.parsers.cpp import parse_cpp_file
+    from ken.retrieval.passages import extract_passages
+    from ken.retrieval.piece_catalog import SourceCatalog
+    from ken.retrieval.piece_candidates import assemble_pieces
+    source = b"class Reader {\npublic:\n  Reader() {}\n  ~Reader() {}\n  int read() { return 1; }\n};\n"
+    path = "reader.hpp"
+    (tmp_path / path).write_bytes(source)
+    owners = defaultdict(list)
+    for passage in extract_passages(source, parse_cpp_file(source, path), path=path, language="cpp"):
+        owners[passage.entity].append(passage)
+    catalog = SourceCatalog(tmp_path, owners)
+    keys = [key for key in owners if key.kind in {"constructor", "destructor", "method"}]
+    matches = [CodeMatch(key, 3-i, owners[key], owners[key][0].source_hash) for i, key in enumerate(keys)]
+    pieces = assemble_pieces(matches, "symbol", catalog, {})
+    assert {piece.entity.kind for piece in pieces} == {"constructor", "destructor", "method"}
+    assert [piece.entity for piece in pieces] == keys
