@@ -588,3 +588,18 @@ def test_progress_is_reported_in_walk_order(project):
     )
     assert [r for r, _ in seen] == ["a.py", "big.py", "c.py"]
     assert seen[1][1] == "skipped:too_large"
+
+
+def test_legacy_rust_index_is_reparsed_when_new_trait_owners_are_available(project):
+    root, conn = project
+    path = Path("source.rs")
+    (root / path).write_text("trait Provider { fn ready(&self) -> bool { true } }\n")
+    index_files(conn, root, [path])
+    # A genuine prior-version index has the trait but no default method.
+    conn.execute("DELETE FROM ci_symbols WHERE qualname='Provider.ready'")
+    conn.execute("UPDATE ci_files SET parser_version=8 WHERE path='source.rs'")
+    conn.commit()
+    stats = index_files(conn, root, [path])
+    assert stats.parsed == 1
+    row = conn.execute("SELECT kind FROM ci_symbols WHERE qualname='Provider.ready'").fetchone()
+    assert row is not None and row["kind"] == "method"

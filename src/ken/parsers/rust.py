@@ -21,33 +21,40 @@ def parse_rust_file(source: bytes, path_hint: str) -> ParsedFile:  # noqa: ARG00
     return out
 
 
-def _walk(node: Node, src: bytes, scope_name: str, out: ParsedFile) -> None:
+def _walk(node: Node, src: bytes, scope_name: str, out: ParsedFile, *,
+          in_type: bool = False) -> None:
     for child in node.children:
         kind = child.type
         if kind == "function_item":
-            _emit_function(child, src, scope_name, out)
+            _emit_function(child, src, scope_name, out, is_method=in_type)
         elif kind == "struct_item":
             _emit_type(child, src, "struct", scope_name, out)
         elif kind == "enum_item":
             _emit_type(child, src, "enum", scope_name, out)
         elif kind == "trait_item":
             _emit_type(child, src, "trait", scope_name, out)
+            name = child_text(child, "name", src)
+            body = child.child_by_field_name("body")
+            if name and body is not None:
+                owner = f"{scope_name}.{name}" if scope_name else name
+                _walk(body, src, owner, out, in_type=True)
         elif kind == "impl_item":
             _emit_impl(child, src, out)
         elif kind == "use_declaration":
             _emit_use(child, src, out)
         elif child.is_named:
-            _walk(child, src, scope_name, out)
+            _walk(child, src, scope_name, out, in_type=in_type)
 
 
-def _emit_function(node: Node, src: bytes, scope: str, out: ParsedFile) -> None:
+def _emit_function(node: Node, src: bytes, scope: str, out: ParsedFile, *,
+                   is_method: bool) -> None:
     name = child_text(node, "name", src)
     if not name:
         return
     qual = f"{scope}.{name}" if scope else name
     out.symbols.append(
         ParsedSymbol(
-            kind="method" if scope else "function",
+            kind="method" if is_method else "function",
             name=name,
             qualname=qual,
             line_start=node.start_point[0] + 1,
@@ -55,6 +62,9 @@ def _emit_function(node: Node, src: bytes, scope: str, out: ParsedFile) -> None:
             docstring=doc_from_line_comments(node, src, prefix="///"),
         )
     )
+    body = node.child_by_field_name("body")
+    if body is not None:
+        _walk(body, src, qual, out)
 
 
 def _emit_type(node: Node, src: bytes, kind: str, scope: str, out: ParsedFile) -> None:
@@ -92,7 +102,7 @@ def _emit_impl(node: Node, src: bytes, out: ParsedFile) -> None:
         return
     for ch in body.children:
         if ch.type == "function_item":
-            _emit_function(ch, src, bare, out)
+            _emit_function(ch, src, bare, out, is_method=True)
 
 
 def _emit_use(node: Node, src: bytes, out: ParsedFile) -> None:

@@ -54,3 +54,50 @@ use serde::{Serialize, Deserialize};
     # First import passes through, the grouped one should be recorded with its prefix.
     assert any("std::collections::HashMap" in m for m in modules)
     assert any("serde" in m for m in modules)
+
+
+def test_trait_default_method_has_canonical_owner_and_scope(parse_rust):
+    source = """trait DataSource {
+    /// Read a ready item.
+    fn poll(&self) -> bool {
+        self.ready()
+    }
+    fn ready(&self) -> bool;
+}
+"""
+    parsed = parse_rust(source)
+    method = next((s for s in parsed.symbols if s.qualname == "DataSource.poll"), None)
+    assert method is not None
+    assert (method.kind, method.line_start, method.line_end) == ("method", 3, 5)
+    scope = next(s for s in parsed.scopes if s.symbol == method)
+    assert scope.owner == "DataSource"
+    assert "Read a ready item." in scope.documentation
+    assert scope.signature == "fn poll(&self) -> bool"
+    assert scope.implementation_start_line == 4
+
+
+def test_nested_function_is_a_callable_with_its_lexical_owner(parse_rust):
+    parsed = parse_rust("""fn outer() {
+    fn local(value: u32) -> u32 { value + 1 }
+    local(1);
+}
+""")
+    local = next((s for s in parsed.symbols if s.qualname == "outer.local"), None)
+    assert local is not None
+    assert (local.kind, local.line_start, local.line_end) == ("function", 2, 2)
+    assert next(s for s in parsed.scopes if s.symbol == local).owner == "outer"
+
+
+def test_local_function_in_impl_method_is_not_a_method(parse_rust):
+    parsed = parse_rust("""struct Agent;
+impl Agent {
+    fn run(&self) {
+        fn local() {}
+        local();
+    }
+}
+""")
+    symbols = {s.qualname: s for s in parsed.symbols}
+    assert "Agent.run.local" in symbols
+    assert symbols["Agent.run"].kind == "method"
+    assert symbols["Agent.run.local"].kind == "function"
