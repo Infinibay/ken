@@ -1,0 +1,58 @@
+"""Archive closed scores and code-free observations; keep raw code/caches local."""
+from pathlib import Path
+import gzip, json, shutil, sys
+sys.path.insert(0, '/private/tmp/ken-semble-benchmark-current-v219')
+from run import OUT, OLD, CLEAN, sha, verify, write
+from original_adapter import locations
+
+verify()
+dest=CLEAN/'docs/validation/semble-embedding-comparison-2026-10-17-v323'
+dest.mkdir(parents=True,exist_ok=False)
+names=['PROTOCOL.md','UTF8-FINDINGS.md','registration.json','model-registrations.json',
+       'sources.json','requests.jsonl','preflight.json','summary.json','report.json',
+       'audit.json','verification.json','mutation.json','adapter-smoke.json']
+for name in names:shutil.copy2(OUT/name,dest/name)
+shutil.copy2(OUT/'REPORT.md',dest/'README.md')
+shutil.copy2(OUT/'engine/SOURCE-MANIFEST.json',dest/'engine-source-manifest.json')
+shutil.copy2(OUT/'capture/closure.json',dest/'capture-closure.json')
+shutil.copy2(OLD/'semble-closure.json',dest/'historical-semble-closure.json')
+shutil.copy2(OLD/'ken-files-current/closure.json',dest/'historical-ken-closure.json')
+shutil.copy2(OUT.parents[2]/'output/analysis/embedding-language-coverage-v322/export-parity.json',dest/'muninn-export-parity-v322.json')
+(dest/'scripts').mkdir()
+for name in ['run.py','prefill.py','encoders.py','preflight.py','grade.py','original_adapter.py','audit.py','archive.py']:
+    shutil.copy2(OUT/name,dest/'scripts'/(name+'.txt'))
+sources=json.loads((OUT/'sources.json').read_text());new=[];historical=[];provenance=[];preparations=[]
+def observation(arm,repo,row):
+    return {'arm':arm,'repo':repo,'id':row['id'],'error':bool(row.get('error')),
+        'results':[{'path':r.chunk.file_path,'entity_span':{'start_line':r.chunk.start_line,'end_line':r.chunk.end_line}}
+                   for r in locations(row)]}
+for repo in sources:
+    folder=OUT/'capture'/repo
+    prep={'repo':repo,'setup':json.loads((folder/'setup.json').read_text()),'arms':{}}
+    for arm in ['baseline','jina','muninn']:
+        for row in json.loads((folder/arm/'responses.json').read_text()):
+            ob=observation(arm,repo,row)
+            ob.update({k:row[k] for k in ['elapsed_ms','cpu_ms']})
+            new.append(ob)
+        provenance.append(json.loads((folder/arm/'provenance.json').read_text()))
+        prep['arms'][arm]=json.loads((folder/arm/'prefill.json').read_text())
+    preparations.append(prep)
+    for arm,sub,mode in [('semble-0.7.0-historical-v219','semble','semble-native'),
+                         ('ken-8ce6b00-historical-v219','ken-files-current','ken-files-current')]:
+        for row in json.loads((OLD/sub/repo/'responses.json').read_text()):
+            historical.append(observation(arm,repo,{'id':row['id'],**row['modes'][mode]}))
+for name,rows in [('query-observations.jsonl.gz',new),('historical-quality-observations.jsonl.gz',historical)]:
+    data=''.join(json.dumps(r,ensure_ascii=False,separators=(',',':'))+'\n' for r in rows).encode()
+    (dest/name).write_bytes(gzip.compress(data,mtime=0))
+write(dest/'worker-provenance.json',provenance)
+write(dest/'preparation-observations.json',preparations)
+write(dest/'observation-projection.json',{'derived_after_primary_grading':True,'new_rows':len(new),
+    'historical_rows':len(historical),'rule':'Preserve each effective native scorer location/rank and error presence; new rows also preserve exact elapsed_ms/cpu_ms. Omit all code, snippets and model vectors.',
+    'historical_timing_excluded':True,'primary_report_sha256':sha(OUT/'report.json'),
+    'capture_closure_sha256':sha(OUT/'capture/closure.json'),'reserve':'CLOSED'})
+write(dest/'independent-review.json',{'reviewer':'/root/embedding_protocol_review','scope':'Read-only review of closed public results; no models/private reserve',
+    'producer_pins_verified':8,'scorer_pins_verified':66,'capture_pins_verified':1333,
+    'engine_files_verified':431,'responses_verified':3753,'numerical_discrepancies':0,'blockers':0,
+    'constraints':['No strict-function claim','No isolated UTF8 causal ablation','No matched historical Semble cost','No cold index speedup','Retain Jina Hit10 tradeoff and cache asymmetry']})
+print(dest)
+print('bytes',sum(p.stat().st_size for p in dest.rglob('*') if p.is_file()))

@@ -1,0 +1,242 @@
+"""Controlled public Semble capture: no annotations enter API workers."""
+from pathlib import Path
+from collections import Counter
+import hashlib, importlib.metadata, json, os, platform, resource, shutil, sqlite3, subprocess, sys, time, traceback
+OUT = Path(__file__).resolve().parent
+BASE = OUT.parents[2]
+OLD = BASE / 'output/development/semble-current-comparison-v219'
+CLEAN = Path('/Users/andres/.codex/worktrees/compact-default-output/ken')
+
+
+def sha(p):
+    with Path(p).open('rb') as f:
+        return hashlib.file_digest(f, 'sha256').hexdigest()
+
+
+def write(p, value):
+    p = Path(p); p.parent.mkdir(parents=True, exist_ok=True)
+    tmp = p.with_suffix('.tmp')
+    tmp.write_text(json.dumps(value, indent=2, ensure_ascii=False)+'\n')
+    tmp.replace(p)
+
+
+def backup(a, b):
+    b.parent.mkdir(parents=True, exist_ok=True)
+    with sqlite3.connect('file:'+str(a)+'?mode=ro', uri=True) as x, sqlite3.connect(b) as y:
+        x.backup(y)
+
+
+def environment():
+    return os.environ | {'PYTHONPATH':str(OUT/'engine/src'), 'PYTHONDONTWRITEBYTECODE':'1',
+        'HF_HUB_OFFLINE':'1', 'HF_HUB_CACHE':str(BASE/'output/models/portable-public-hub-v143'),
+        'KEN_CACHE_DIR':str(BASE/'output/models/portable-public-prepared-v143'), 'KEN_INDEX_WORKERS':'0',
+        'OPENBLAS_NUM_THREADS':'1','VECLIB_MAXIMUM_THREADS':'1','OMP_NUM_THREADS':'1'}
+
+
+def register():
+    assert subprocess.check_output(['git','status','--porcelain'],cwd=CLEAN)==b''
+    requests = [json.loads(l) for l in (OLD/'requests.jsonl').read_text().splitlines()]
+    assert len(requests)==1251 and len({r['id'] for r in requests})==1251
+    assert sha(OLD/'requests.jsonl')=='c8ccb7efc678ccb97b5a03442047ee630b1e225d6009682584d0ffc6f14aca53'
+    shutil.copy2(OLD/'requests.jsonl', OUT/'requests.jsonl')
+    engine=OUT/'engine';engine.mkdir(exist_ok=False);pins={}
+    template=BASE/'output/analysis/embedding-language-coverage-v322/engine/SOURCE-MANIFEST.json'
+    for name in json.loads(template.read_text())['files']:
+        target=engine/name;target.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(CLEAN/name,target);pins[name]=sha(target)
+    write(engine/'SOURCE-MANIFEST.json', {'commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=CLEAN,text=True).strip(),'files':pins})
+    sources={}
+    for repo in sorted({r['repo_id'] for r in requests}):
+        group=[r for r in requests if r['repo_id']==repo];root=Path(group[0]['root'])
+        assert len({(r['root'],r['repo_commit']) for r in group})==1
+        assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()==group[0]['repo_commit']
+        assert not subprocess.check_output(['git','diff','HEAD','--name-only'],cwd=root).strip()
+        with sqlite3.connect('file:'+str(root/'.ken/ken.db')+'?mode=ro',uri=True) as c:
+            paths=[r[0] for r in c.execute('SELECT path FROM ci_files ORDER BY path')]
+        sourcepins={p:sha(root/p) for p in paths}
+        previous=OLD/'ken-files-current'/repo/'indexed-source.json'
+        if previous.exists():assert json.loads(previous.read_text())==sourcepins
+        cache=root/'.ken/search-context/vectors.db'
+        sources[repo]={'original_root':str(root),'repo_commit':group[0]['repo_commit'],'source_pins':sourcepins,
+            'input_db_sha256':sha(root/'.ken/ken.db'), 'cache_sha256':sha(cache) if cache.exists() else None}
+    assert len(sources)==63
+    write(OUT/'sources.json',sources)
+    modelregs={}
+    for arm,run in [('jina','v320'),('muninn','v322')]:
+        r=json.loads((BASE/f'output/analysis/embedding-language-coverage-{run}/registration.json').read_text())
+        modelregs[arm]={k:r[k] for k in ['model_root','model_artifacts','policy',arm+'_revision']}
+        for n,d in r['model_artifacts'].items():assert sha(Path(r['model_root'])/n)==d
+    write(OUT/'model-registrations.json',modelregs)
+    oldreg=json.loads((OLD/'registration.json').read_text())
+    for p,d in oldreg['source_pins'].items():assert sha(p)==d
+    write(OUT/'registration.json',{'queries':1251,'repos':63,'arms':['baseline','jina','muninn'],
+        'requests_sha256':sha(OUT/'requests.jsonl'),'sources_sha256':sha(OUT/'sources.json'),
+        'engine_manifest_sha256':sha(engine/'SOURCE-MANIFEST.json'),
+        'producer_pins':{n:sha(OUT/n) for n in ['run.py','prefill.py','encoders.py','PROTOCOL.md','preflight.py','grade.py','original_adapter.py','adapter-smoke.json']},
+        'model_registrations_sha256':sha(OUT/'model-registrations.json'),
+        'scorer_source_pins':oldreg['source_pins'],
+        'runtime':{d.metadata['Name']:d.version for d in importlib.metadata.distributions()},
+        'hardware':{'platform':platform.platform(),'machine':platform.machine(),'cpu_count':os.cpu_count()},
+        'reserve':'CLOSED','release':False,'exposure':'Public previously evaluated benchmark, not blind acceptance'})
+    print('REGISTERED',sha(OUT/'registration.json'),flush=True)
+
+
+def verify():
+    reg=json.loads((OUT/'registration.json').read_text())
+    for name,d in reg['producer_pins'].items():assert sha(OUT/name)==d,name
+    for name,key in [('requests.jsonl','requests_sha256'),('sources.json','sources_sha256'),('model-registrations.json','model_registrations_sha256'),('engine/SOURCE-MANIFEST.json','engine_manifest_sha256')]:assert sha(OUT/name)==reg[key],name
+    for n,d in json.loads((OUT/'engine/SOURCE-MANIFEST.json').read_text())['files'].items():assert sha(OUT/'engine'/n)==d,n
+    return reg
+
+
+def root_for(repo, source):
+    return OUT/'projects'/repo/Path(source['original_root']).name
+
+
+def usage():
+    u=resource.getrusage(resource.RUSAGE_SELF)
+    return {'peak_rss_native':u.ru_maxrss,'rss_unit':'bytes' if sys.platform=='darwin' else 'KiB',
+            'process_cpu_ms':(u.ru_utime+u.ru_stime)*1000}
+
+
+def setup(repo):
+    verify()
+    from ken.db import connect, init_schema
+    from ken.retrieval.indexing import index_project
+    from ken.retrieval.profile import potion_profile
+    from ken.retrieval.best_resources import default_resources
+    from dataclasses import asdict
+    source=json.loads((OUT/'sources.json').read_text())[repo]
+    original=Path(source['original_root']);root=root_for(repo,source)
+    root.mkdir(parents=True,exist_ok=False)
+    write(OUT/'capture'/repo/'ownership.json',{'owned_root':str(root),'original_read_only':str(original),'reserve':'CLOSED'})
+    for n,d in source['source_pins'].items():
+        assert sha(original/n)==d
+        target=root/n;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(original/n,target)
+    assert sha(original/'.ken/ken.db')==source['input_db_sha256']
+    backup(original/'.ken/ken.db',root/'.ken/ken.db')
+    if (original/'.ken/vectors').is_dir():shutil.copytree(original/'.ken/vectors',root/'.ken/vectors')
+    if source['cache_sha256']:
+        assert sha(original/'.ken/search-context/vectors.db')==source['cache_sha256']
+        backup(original/'.ken/search-context/vectors.db',root/'.ken/search-context/vectors.db')
+    started=time.perf_counter();resources=default_resources()
+    with connect(root/'.ken/ken.db') as conn:
+        init_schema(conn)
+        stats=index_project(conn,root,[Path(n) for n in source['source_pins']],profile=potion_profile(),
+                            encoders={'identity':resources.words,'behavior':resources.words})
+        from ken.retrieval.piece_catalog import SourceCatalog
+        from ken.retrieval.candidates import owner_passages
+        catalog=SourceCatalog(root,owner_passages(conn))
+        actual={r[0] for r in conn.execute('SELECT path FROM ci_files')}
+        assert actual==set(source['source_pins'])
+        policies=conn.execute('SELECT DISTINCT extractor_version FROM ci_retrieval_files').fetchall()
+        assert [tuple(x) for x in policies]==[(8,)]
+        write(OUT/'capture'/repo/'setup.json',{'complete':True,'source_files':len(actual),'owners':len(catalog.owners),
+            'source_paths_with_passages':len(catalog.by_path),'index_ms':(time.perf_counter()-started)*1000,
+            'stats':asdict(stats),'extractor_version':8,**usage()})
+    print('SETUP',repo,flush=True)
+
+
+def worker(repo,arm):
+    reg=verify()
+    import ken
+    assert Path(ken.__file__).resolve().parents[2]==OUT/'engine'
+    from encoders import resources_for
+    from ken.retrieval.public import find_best, render
+    from ken.retrieval.connections import project_connection
+    from ken.retrieval.best_search import _projection
+    from ken.retrieval.piece_catalog import SourceCatalog
+    from ken.retrieval.candidates import owner_passages
+    from prefill import prefill
+    from ken.retrieval.profile import RetrievalProfile
+    source=json.loads((OUT/'sources.json').read_text())[repo];root=root_for(repo,source)
+    requests=[json.loads(l) for l in (OUT/'requests.jsonl').read_text().splitlines() if json.loads(l)['repo_id']==repo]
+    folder=OUT/'capture'/repo/arm;folder.mkdir(parents=True,exist_ok=False)
+    started=time.perf_counter();resources=resources_for(arm,json.loads((OUT/'model-registrations.json').read_text()))
+    responses=[]
+    with project_connection(root) as conn:
+        _projection(conn,root,resources)
+        catalog=SourceCatalog(root,owner_passages(conn))
+        prefetched=prefill(catalog,resources.context,root/'.ken/search-context',lambda d:write(folder/'prefill-progress.json',d))
+        write(folder/'prefill.json',prefetched)
+        warm=find_best(conn,root,'find code that prepares a value',scope='files',limit=10,max_chars=12000)
+        assert warm.get('ok') is not False,warm
+        render(warm);json.dumps(warm,ensure_ascii=False,separators=(',',':'))
+        preparation_ms=(time.perf_counter()-started)*1000
+        for request in requests:
+            before=resource.getrusage(resource.RUSAGE_SELF);started=time.perf_counter()
+            try:
+                value=find_best(conn,root,request['query'],scope='files',piece_kind='auto',purpose='auto',limit=10,max_chars=12000)
+                assert value.get('ok') is not False,value
+                assert len(value['results'])<=10 and not any(r.get('stale') for r in value['results'])
+                assert value['profile_version'] in (resources.profile.fingerprint,'best-exact-source-v1')
+                compact=render(value);json.dumps(value,ensure_ascii=False,separators=(',',':'))
+            except Exception as exc:
+                value={'results':[],'error':f'{type(exc).__name__}: {exc}'};compact=value['error']
+                traceback.print_exc()
+            elapsed_ms=(time.perf_counter()-started)*1000;after=resource.getrusage(resource.RUSAGE_SELF)
+            responses.append({'id':request['id'],**value,'compact':compact,'elapsed_ms':elapsed_ms,
+                'cpu_ms':((after.ru_utime+after.ru_stime)-(before.ru_utime+before.ru_stime))*1000})
+            write(folder/'query-progress.json',{'captured':len(responses),'queries':len(requests)})
+        for n,d in source['source_pins'].items():assert sha(root/n)==d
+        providers=list(resources.context.providers);neuralproviders=list(resources.neural.providers)
+        assert providers==neuralproviders==['CPUExecutionProvider'] and resources.neural._max_tokens==1024
+        assert not any(n in sys.modules for n in ['torch','transformers','sentence_transformers'])
+        profile=resources.profile.to_dict();assert RetrievalProfile.from_dict(profile).fingerprint==resources.profile.fingerprint
+        write(folder/'responses.json',responses)
+        write(folder/'provenance.json',{'complete':True,'repo':repo,'arm':arm,'queries':len(requests),
+            'source_files':len(source['source_pins']),'owners':len(catalog.owners),'profile':profile,
+            'profile_fingerprint':resources.profile.fingerprint,'context_model':resources.context.spec.key,
+            'static_model':resources.words.spec.key,'providers':providers,'reranker_providers':neuralproviders,
+            'reranker_tokens':1024,'preparation_and_warmup_ms':preparation_ms,'source_pins_sha256':sha(OUT/'sources.json'),
+            'engine_manifest_sha256':reg['engine_manifest_sha256'],'heavy_imports':[],**usage()})
+    print('CLOSED',repo,arm,len(responses),flush=True)
+
+
+def failure_rows(repo,arm,message):
+    folder=OUT/'capture'/repo/arm;folder.mkdir(parents=True,exist_ok=True)
+    # Preserve individual successful calls if a post-capture check failed; mark the worker invalid.
+    if (folder/'responses.json').exists():shutil.copy2(folder/'responses.json',folder/'unvalidated-responses.json')
+    rows=[{'id':r['id'],'results':[],'error':message} for r in map(json.loads,(OUT/'requests.jsonl').read_text().splitlines()) if r['repo_id']==repo]
+    write(folder/'responses.json',rows);write(folder/'failure.json',{'error':message,'queries':len(rows)})
+
+
+def run():
+    reg=verify();(OUT/'capture').mkdir(exist_ok=False);sources=json.loads((OUT/'sources.json').read_text());completed=0
+    # Verify the formerly failing repository first, without looking at quality labels.
+    for position,repo in enumerate(['zig',*sorted(set(sources)-{'zig'})]):
+        folder=OUT/'capture'/repo;folder.mkdir()
+        with (folder/'setup.log').open('w') as log:
+            status=subprocess.run([sys.executable,str(Path(__file__)),'setup',repo],env=environment(),stdout=log,stderr=subprocess.STDOUT).returncode
+        offset=position%3
+        order=reg['arms'][offset:]+reg['arms'][:offset]
+        for arm in order:
+            started=time.perf_counter()
+            if status:
+                failure_rows(repo,arm,f'Source setup failed exit{status}; original setup.log retained')
+                code=status
+            else:
+                with (folder/(arm+'.log')).open('w') as log:
+                    code=subprocess.run([sys.executable,str(Path(__file__)),'worker',repo,arm],env=environment(),stdout=log,stderr=subprocess.STDOUT).returncode
+                if code:failure_rows(repo,arm,f'Worker exit{code}; original log retained')
+            completed+=1
+            progress={'closed_workers':completed,'total_workers':189,'repo':repo,'arm':arm,'exit':code,'elapsed_s':time.perf_counter()-started}
+            write(OUT/'capture/progress.json',progress);print(json.dumps(progress),flush=True)
+        root=root_for(repo,sources[repo])
+        if root.exists():
+            # This exact scratch root was created and recorded by setup(), never an original repo.
+            assert root.is_relative_to(OUT/'projects')
+            cache=root/'.ken/search-context/vectors.db'
+            if cache.exists():
+                target=OUT/'source-caches'/f'{repo}.db';backup(cache,target)
+                write(folder/'cache.json',{'path':str(target),'sha256':sha(target),'bytes':target.stat().st_size,'source_only':True})
+            shutil.rmtree(root)
+    verify()
+    pins={str(p.relative_to(OUT/'capture')):sha(p) for p in (OUT/'capture').rglob('*') if p.is_file()}
+    write(OUT/'capture/closure.json',{'outputs_closed':True,'workers':189,'queries_per_arm':1251,'pins':pins,
+        'registration_sha256':sha(OUT/'registration.json'),'reserve':'CLOSED','grade_read':False})
+    print('CAPTURE_CLOSED',flush=True)
+
+
+if __name__=='__main__':
+    {'register':register,'run':run,'setup':lambda:setup(sys.argv[2]),'worker':lambda:worker(sys.argv[2],sys.argv[3])}[sys.argv[1]]()

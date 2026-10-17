@@ -1,0 +1,82 @@
+{
+  "model": "brokkai/Muninn-small",
+  "revision": "5868553640ac37d851fa813b4e27f85a8630cea1",
+  "precision": "FP32 from original BF16 weights",
+  "provider": [
+    "CPUExecutionProvider"
+  ],
+  "pooling": "Native CLS, include_prompt=true; retrieval L2",
+  "max_tokens": 512,
+  "query_prefix": "Given a GitHub issue, retrieve code that must be changed to fix it.\nQuery: ",
+  "document_prefix": "Passage: Code chunk from repository.\n",
+  "rows": [
+    {
+      "prompt": "document",
+      "tokens": 11,
+      "native_wrapper_bitwise_equal": true,
+      "raw_tokenizer_ids_equal": true,
+      "cosine": 1.0,
+      "max_abs_error": 1.9073486328125e-06
+    },
+    {
+      "prompt": "query",
+      "tokens": 32,
+      "native_wrapper_bitwise_equal": true,
+      "raw_tokenizer_ids_equal": true,
+      "cosine": 1.0000001192092896,
+      "max_abs_error": 1.9073486328125e-06
+    },
+    {
+      "prompt": "document",
+      "tokens": 34,
+      "native_wrapper_bitwise_equal": true,
+      "raw_tokenizer_ids_equal": true,
+      "cosine": 1.0,
+      "max_abs_error": 1.9669532775878906e-06
+    },
+    {
+      "prompt": "document",
+      "tokens": 26,
+      "native_wrapper_bitwise_equal": true,
+      "raw_tokenizer_ids_equal": true,
+      "cosine": 1.0000001192092896,
+      "max_abs_error": 1.9073486328125e-06
+    },
+    {
+      "prompt": "document",
+      "tokens": 512,
+      "native_wrapper_bitwise_equal": true,
+      "raw_tokenizer_ids_equal": true,
+      "cosine": 1.0,
+      "max_abs_error": 1.9073486328125e-06
+    },
+    {
+      "prompt": "document",
+      "tokens": 31,
+      "native_wrapper_bitwise_equal": true,
+      "raw_tokenizer_ids_equal": true,
+      "cosine": 1.0,
+      "max_abs_error": 3.814697265625e-06
+    }
+  ],
+  "artifacts": {
+    "model.safetensors": "7b17872c36e5f535e4a80fef137db1f058b46b8305d5b57ba981deeb4e72374f",
+    "tokenizer_config.json": "cbea6a0ec8bf4a66475f458a359223ec17f1ac36b2f5797036a76140daa065de",
+    "config.json": "7ca40b49d3cc261936fb87663926e4d6b08b7a042501412abb2d096204e9927d",
+    "config_sentence_transformers.json": "7b321b3274eaa441c038dee2ccb06847644eb21b87d037124edb3730f42decef",
+    "tokenizer.json": "bb637767e8dfb8044597df6c58243bff2e592ae9e3b310c0bbdb8591f6ac543d",
+    "README.md": "f584fb2f181673d8e21f62cd4055f372594e5cf17efdce844334941aa4d33b40",
+    "sentence_bert_config.json": "3084164002c0bca01b0259c5327123803fce32e660a57feb93184ffead186fc8",
+    "modules.json": "e4068aab8a95663636c4c28044a95eafdb6492387397ec8283d8f8b31078d645",
+    "1_Pooling/config.json": "1abc669193fef51cb822e0449ab0094bc3d2dec748248ab9be3337c05b63129a",
+    "onnx/model.onnx": "5fabe052c1b286614fd263d1bc19b97cd61919e469490228972f82b8c467163c"
+  },
+  "runtime": {
+    "torch": "2.14.0",
+    "transformers": "5.3.0",
+    "sentence_transformers": "5.5.1",
+    "onnxruntime": "1.25.1"
+  },
+  "benchmark_inputs_used": false,
+  "reserve": "CLOSED"
+}

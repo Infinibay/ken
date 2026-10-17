@@ -1,0 +1,938 @@
+{
+  "primary_report_sha256": "3877c712b989143ce90e75260caecda157c6d8106018a0a007de20b336e17cec",
+  "descriptive_posthoc": true,
+  "by_language": {
+    "baseline": {
+      "bash": {
+        "queries": 60,
+        "top1": 44,
+        "hit10": 58,
+        "ndcg10": 0.86103085094465
+      },
+      "c": {
+        "queries": 60,
+        "top1": 36,
+        "hit10": 60,
+        "ndcg10": 0.7913761039098107
+      },
+      "cpp": {
+        "queries": 60,
+        "top1": 45,
+        "hit10": 60,
+        "ndcg10": 0.8743709303742961
+      },
+      "csharp": {
+        "queries": 60,
+        "top1": 43,
+        "hit10": 59,
+        "ndcg10": 0.8322955762645978
+      },
+      "elixir": {
+        "queries": 58,
+        "top1": 46,
+        "hit10": 58,
+        "ndcg10": 0.9091580811918374
+      },
+      "go": {
+        "queries": 58,
+        "top1": 44,
+        "hit10": 56,
+        "ndcg10": 0.8453283627917224
+      },
+      "haskell": {
+        "queries": 60,
+        "top1": 38,
+        "hit10": 58,
+        "ndcg10": 0.8184514101355729
+      },
+      "java": {
+        "queries": 61,
+        "top1": 48,
+        "hit10": 58,
+        "ndcg10": 0.8583474640174112
+      },
+      "javascript": {
+        "queries": 60,
+        "top1": 57,
+        "hit10": 60,
+        "ndcg10": 0.9692350372911459
+      },
+      "kotlin": {
+        "queries": 60,
+        "top1": 47,
+        "hit10": 60,
+        "ndcg10": 0.8658310303373101
+      },
+      "lua": {
+        "queries": 60,
+        "top1": 49,
+        "hit10": 56,
+        "ndcg10": 0.8685472595231488
+      },
+      "php": {
+        "queries": 60,
+        "top1": 44,
+        "hit10": 59,
+        "ndcg10": 0.8216247060760627
+      },
+      "python": {
+        "queries": 184,
+        "top1": 143,
+        "hit10": 183,
+        "ndcg10": 0.8661947616536697
+      },
+      "ruby": {
+        "queries": 58,
+        "top1": 43,
+        "hit10": 57,
+        "ndcg10": 0.8588299302043984
+      },
+      "rust": {
+        "queries": 60,
+        "top1": 38,
+        "hit10": 55,
+        "ndcg10": 0.7715013832569013
+      },
+      "scala": {
+        "queries": 59,
+        "top1": 49,
+        "hit10": 57,
+        "ndcg10": 0.9014736550880889
+      },
+      "swift": {
+        "queries": 53,
+        "top1": 38,
+        "hit10": 52,
+        "ndcg10": 0.829865734846863
+      },
+      "typescript": {
+        "queries": 60,
+        "top1": 35,
+        "hit10": 57,
+        "ndcg10": 0.7452405806419811
+      },
+      "zig": {
+        "queries": 60,
+        "top1": 36,
+        "hit10": 58,
+        "ndcg10": 0.7980733808884921
+      }
+    },
+    "jina": {
+      "bash": {
+        "queries": 60,
+        "top1": 47,
+        "hit10": 58,
+        "ndcg10": 0.8835881039850118
+      },
+      "c": {
+        "queries": 60,
+        "top1": 34,
+        "hit10": 60,
+        "ndcg10": 0.784981235754688
+      },
+      "cpp": {
+        "queries": 60,
+        "top1": 40,
+        "hit10": 60,
+        "ndcg10": 0.8403673907889557
+      },
+      "csharp": {
+        "queries": 60,
+        "top1": 42,
+        "hit10": 59,
+        "ndcg10": 0.8452503217959552
+      },
+      "elixir": {
+        "queries": 58,
+        "top1": 42,
+        "hit10": 58,
+        "ndcg10": 0.8831258826651898
+      },
+      "go": {
+        "queries": 58,
+        "top1": 43,
+        "hit10": 57,
+        "ndcg10": 0.8488700034949799
+      },
+      "haskell": {
+        "queries": 60,
+        "top1": 37,
+        "hit10": 58,
+        "ndcg10": 0.8047630371147744
+      },
+      "java": {
+        "queries": 61,
+        "top1": 47,
+        "hit10": 58,
+        "ndcg10": 0.8560163559196209
+      },
+      "javascript": {
+        "queries": 60,
+        "top1": 56,
+        "hit10": 60,
+        "ndcg10": 0.9592904942991513
+      },
+      "kotlin": {
+        "queries": 60,
+        "top1": 40,
+        "hit10": 60,
+        "ndcg10": 0.8337341978645308
+      },
+      "lua": {
+        "queries": 60,
+        "top1": 47,
+        "hit10": 56,
+        "ndcg10": 0.8576313961581372
+      },
+      "php": {
+        "queries": 60,
+        "top1": 44,
+        "hit10": 60,
+        "ndcg10": 0.8408705986962072
+      },
+      "python": {
+        "queries": 184,
+        "top1": 140,
+        "hit10": 183,
+        "ndcg10": 0.8604946100632359
+      },
+      "ruby": {
+        "queries": 58,
+        "top1": 47,
+        "hit10": 57,
+        "ndcg10": 0.881985657254508
+      },
+      "rust": {
+        "queries": 60,
+        "top1": 31,
+        "hit10": 55,
+        "ndcg10": 0.718060977373634
+      },
+      "scala": {
+        "queries": 59,
+        "top1": 48,
+        "hit10": 57,
+        "ndcg10": 0.8958744393372571
+      },
+      "swift": {
+        "queries": 53,
+        "top1": 40,
+        "hit10": 52,
+        "ndcg10": 0.8419656097117927
+      },
+      "typescript": {
+        "queries": 60,
+        "top1": 36,
+        "hit10": 58,
+        "ndcg10": 0.7569703937943527
+      },
+      "zig": {
+        "queries": 60,
+        "top1": 37,
+        "hit10": 58,
+        "ndcg10": 0.8083997330865782
+      }
+    },
+    "muninn": {
+      "bash": {
+        "queries": 60,
+        "top1": 46,
+        "hit10": 58,
+        "ndcg10": 0.8768424552952998
+      },
+      "c": {
+        "queries": 60,
+        "top1": 35,
+        "hit10": 60,
+        "ndcg10": 0.7990408253912409
+      },
+      "cpp": {
+        "queries": 60,
+        "top1": 36,
+        "hit10": 59,
+        "ndcg10": 0.7944935638679644
+      },
+      "csharp": {
+        "queries": 60,
+        "top1": 44,
+        "hit10": 58,
+        "ndcg10": 0.8338194644947462
+      },
+      "elixir": {
+        "queries": 58,
+        "top1": 41,
+        "hit10": 58,
+        "ndcg10": 0.8779249499945475
+      },
+      "go": {
+        "queries": 58,
+        "top1": 46,
+        "hit10": 57,
+        "ndcg10": 0.8737361331804531
+      },
+      "haskell": {
+        "queries": 60,
+        "top1": 36,
+        "hit10": 56,
+        "ndcg10": 0.7826246992559326
+      },
+      "java": {
+        "queries": 61,
+        "top1": 47,
+        "hit10": 59,
+        "ndcg10": 0.8530155542536457
+      },
+      "javascript": {
+        "queries": 60,
+        "top1": 54,
+        "hit10": 60,
+        "ndcg10": 0.9500878564852823
+      },
+      "kotlin": {
+        "queries": 60,
+        "top1": 44,
+        "hit10": 59,
+        "ndcg10": 0.8492996200936992
+      },
+      "lua": {
+        "queries": 60,
+        "top1": 49,
+        "hit10": 56,
+        "ndcg10": 0.8683506757958196
+      },
+      "php": {
+        "queries": 60,
+        "top1": 43,
+        "hit10": 59,
+        "ndcg10": 0.818521265214979
+      },
+      "python": {
+        "queries": 184,
+        "top1": 144,
+        "hit10": 182,
+        "ndcg10": 0.8686030876610518
+      },
+      "ruby": {
+        "queries": 58,
+        "top1": 45,
+        "hit10": 57,
+        "ndcg10": 0.881825750213842
+      },
+      "rust": {
+        "queries": 60,
+        "top1": 35,
+        "hit10": 55,
+        "ndcg10": 0.7515654381121522
+      },
+      "scala": {
+        "queries": 59,
+        "top1": 47,
+        "hit10": 58,
+        "ndcg10": 0.8969823009172769
+      },
+      "swift": {
+        "queries": 53,
+        "top1": 38,
+        "hit10": 51,
+        "ndcg10": 0.8250659606646683
+      },
+      "typescript": {
+        "queries": 60,
+        "top1": 35,
+        "hit10": 57,
+        "ndcg10": 0.7447551206319154
+      },
+      "zig": {
+        "queries": 60,
+        "top1": 36,
+        "hit10": 58,
+        "ndcg10": 0.7968094065906751
+      }
+    },
+    "semble-0.7.0-historical-v219": {
+      "bash": {
+        "queries": 60,
+        "top1": 44,
+        "hit10": 57,
+        "ndcg10": 0.8400057590217215
+      },
+      "c": {
+        "queries": 60,
+        "top1": 31,
+        "hit10": 59,
+        "ndcg10": 0.7266456044178309
+      },
+      "cpp": {
+        "queries": 60,
+        "top1": 47,
+        "hit10": 60,
+        "ndcg10": 0.9032773270875566
+      },
+      "csharp": {
+        "queries": 60,
+        "top1": 45,
+        "hit10": 59,
+        "ndcg10": 0.8559385785128114
+      },
+      "elixir": {
+        "queries": 58,
+        "top1": 46,
+        "hit10": 58,
+        "ndcg10": 0.9142890539545638
+      },
+      "go": {
+        "queries": 58,
+        "top1": 48,
+        "hit10": 58,
+        "ndcg10": 0.9035891630791217
+      },
+      "haskell": {
+        "queries": 60,
+        "top1": 32,
+        "hit10": 58,
+        "ndcg10": 0.7574314696457916
+      },
+      "java": {
+        "queries": 61,
+        "top1": 42,
+        "hit10": 58,
+        "ndcg10": 0.8011351545272812
+      },
+      "javascript": {
+        "queries": 60,
+        "top1": 49,
+        "hit10": 59,
+        "ndcg10": 0.89488334261674
+      },
+      "kotlin": {
+        "queries": 60,
+        "top1": 40,
+        "hit10": 60,
+        "ndcg10": 0.806900124156392
+      },
+      "lua": {
+        "queries": 60,
+        "top1": 43,
+        "hit10": 60,
+        "ndcg10": 0.8398361625191944
+      },
+      "php": {
+        "queries": 60,
+        "top1": 45,
+        "hit10": 60,
+        "ndcg10": 0.8554710418879412
+      },
+      "python": {
+        "queries": 184,
+        "top1": 149,
+        "hit10": 183,
+        "ndcg10": 0.8737653536325315
+      },
+      "ruby": {
+        "queries": 58,
+        "top1": 50,
+        "hit10": 58,
+        "ndcg10": 0.9132789145520878
+      },
+      "rust": {
+        "queries": 60,
+        "top1": 45,
+        "hit10": 59,
+        "ndcg10": 0.858124876574559
+      },
+      "scala": {
+        "queries": 59,
+        "top1": 53,
+        "hit10": 57,
+        "ndcg10": 0.9228921741665917
+      },
+      "swift": {
+        "queries": 53,
+        "top1": 40,
+        "hit10": 52,
+        "ndcg10": 0.846059228731974
+      },
+      "typescript": {
+        "queries": 60,
+        "top1": 30,
+        "hit10": 60,
+        "ndcg10": 0.7339187832360904
+      },
+      "zig": {
+        "queries": 60,
+        "top1": 47,
+        "hit10": 59,
+        "ndcg10": 0.8908255575840123
+      }
+    }
+  },
+  "paired_vs_current_baseline": {
+    "jina": {
+      "top1": {
+        "wins": 66,
+        "losses": 91,
+        "ties": 1094
+      },
+      "hit10": {
+        "wins": 6,
+        "losses": 3,
+        "ties": 1242
+      },
+      "ndcg10": {
+        "wins": 163,
+        "losses": 164,
+        "ties": 924
+      }
+    },
+    "muninn": {
+      "top1": {
+        "wins": 65,
+        "losses": 87,
+        "ties": 1099
+      },
+      "hit10": {
+        "wins": 5,
+        "losses": 9,
+        "ties": 1237
+      },
+      "ndcg10": {
+        "wins": 162,
+        "losses": 165,
+        "ties": 924
+      }
+    },
+    "semble-0.7.0-historical-v219": {
+      "top1": {
+        "wins": 165,
+        "losses": 162,
+        "ties": 924
+      },
+      "hit10": {
+        "wins": 24,
+        "losses": 11,
+        "ties": 1216
+      },
+      "ndcg10": {
+        "wins": 259,
+        "losses": 258,
+        "ties": 734
+      }
+    }
+  },
+  "runtime": {
+    "baseline": {
+      "workers": 63,
+      "model_keys": [
+        "mrsladoje/CodeRankEmbed-onnx-int8@aed8c3a8ed338b26f9fd61c5cb6798687d5700dae60fe71dfc2be4e6356512ed:31a1d853b639570e"
+      ],
+      "static_model_keys": [
+        "minishlab/potion-code-16M-v2@568ca47373c277017539c40cd217005826ed5e8ec9d59d59d009d38ecb3669c1:39dc854015001348"
+      ],
+      "empty_results": 8,
+      "all_cpu": true,
+      "reranker_tokens": 1024,
+      "torch_transformers_imports": false
+    },
+    "jina": {
+      "workers": 63,
+      "model_keys": [
+        "jinaai/jina-embeddings-v2-base-code@ab5a12cb98afe72ce3f659ef2339ad0cdd5f045d814f109158b71221980e613b:16cfb6cbe7a55522"
+      ],
+      "static_model_keys": [
+        "minishlab/potion-code-16M-v2@568ca47373c277017539c40cd217005826ed5e8ec9d59d59d009d38ecb3669c1:39dc854015001348"
+      ],
+      "empty_results": 8,
+      "all_cpu": true,
+      "reranker_tokens": 1024,
+      "torch_transformers_imports": false
+    },
+    "muninn": {
+      "workers": 63,
+      "model_keys": [
+        "brokkai/Muninn-small@0c4baa8a0351bae8b686dce04aa7247f0a5ff9caadffd7d1fc10e42dcd19daed:34a9ae496051a9a8"
+      ],
+      "static_model_keys": [
+        "minishlab/potion-code-16M-v2@568ca47373c277017539c40cd217005826ed5e8ec9d59d59d009d38ecb3669c1:39dc854015001348"
+      ],
+      "empty_results": 8,
+      "all_cpu": true,
+      "reranker_tokens": 1024,
+      "torch_transformers_imports": false
+    }
+  },
+  "longest_queries": {
+    "baseline": [
+      {
+        "wall_ms": 14705.75187500799,
+        "id": "semble-1201",
+        "repo": "zig",
+        "source_files": 669
+      },
+      {
+        "wall_ms": 14235.691874986514,
+        "id": "semble-1209",
+        "repo": "zig",
+        "source_files": 669
+      },
+      {
+        "wall_ms": 14225.368540966883,
+        "id": "semble-1193",
+        "repo": "zig",
+        "source_files": 669
+      },
+      {
+        "wall_ms": 14131.158750038594,
+        "id": "semble-1205",
+        "repo": "zig",
+        "source_files": 669
+      },
+      {
+        "wall_ms": 13903.952665976249,
+        "id": "semble-1203",
+        "repo": "zig",
+        "source_files": 669
+      }
+    ],
+    "jina": [
+      {
+        "wall_ms": 14015.837167040445,
+        "id": "semble-1191",
+        "repo": "zig",
+        "source_files": 669
+      },
+      {
+        "wall_ms": 13943.66499996977,
+        "id": "semble-1208",
+        "repo": "zig",
+        "source_files": 669
+      },
+      {
+        "wall_ms": 13829.694374988321,
+        "id": "semble-1205",
+        "repo": "zig",
+        "source_files": 669
+      },
+      {
+        "wall_ms": 13816.603417042643,
+        "id": "semble-1209",
+        "repo": "zig",
+        "source_files": 669
+      },
+      {
+        "wall_ms": 13796.060042048339,
+        "id": "semble-1210",
+        "repo": "zig",
+        "source_files": 669
+      }
+    ],
+    "muninn": [
+      {
+        "wall_ms": 14302.845750004053,
+        "id": "semble-1194",
+        "repo": "zig",
+        "source_files": 669
+      },
+      {
+        "wall_ms": 14231.694999965839,
+        "id": "semble-1191",
+        "repo": "zig",
+        "source_files": 669
+      },
+      {
+        "wall_ms": 14128.530999994837,
+        "id": "semble-1209",
+        "repo": "zig",
+        "source_files": 669
+      },
+      {
+        "wall_ms": 13938.537250040099,
+        "id": "semble-1193",
+        "repo": "zig",
+        "source_files": 669
+      },
+      {
+        "wall_ms": 13912.833083013538,
+        "id": "semble-1205",
+        "repo": "zig",
+        "source_files": 669
+      }
+    ]
+  },
+  "annotation_targets": {
+    "total": 1496,
+    "with_span": 34
+  },
+  "baseline_miss_partition": {
+    "wrong_top1_gold_in_top10": 298,
+    "gold_beyond_top10": 30
+  },
+  "historical_ken": {
+    "source": "V219 Ken8ce6b00, posthoc; multiple engine changes, not an isolated UTF8 ablation",
+    "metrics": {
+      "queries": 1251,
+      "repos": 63,
+      "missing": 0,
+      "errors": 20,
+      "macro_repo_ndcg10": 0.8365156584348045,
+      "micro_query_ndcg10": 0.8370126267785403,
+      "target_top1": 0.7290167865707434,
+      "target_hit10": 0.9608313349320543
+    },
+    "by_repo_count_delta": {
+      "abseil-cpp": {
+        "top1": 3,
+        "hit10": 0
+      },
+      "aeson": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "aiohttp": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "alamofire": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "axios": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "axum": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "bash-it": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "bats-core": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "cats": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "chi": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "circe": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "click": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "cobra": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "commons-lang": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "curl": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "dapper": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "ecto": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "exposed": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "express": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "fastapi": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "flask": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "fmtlib": {
+        "top1": -2,
+        "hit10": 0
+      },
+      "gin": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "gson": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "guzzle": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "http4s": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "httpx": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "jackson-databind": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "kotlinx-coroutines": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "ktor": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "laravel-framework": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "lazy.nvim": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "libuv": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "messagepack-csharp": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "mini.nvim": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "model2vec": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "monolog": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "newtonsoft-json": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "nlohmann-json": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "nvm": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "pandoc": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "phoenix": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "plug": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "pydantic": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "rack": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "rails": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "redis": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "redux": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "requests": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "serde": {
+        "top1": 1,
+        "hit10": 0
+      },
+      "sinatra": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "snapkit": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "starlette": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "telescope.nvim": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "tokio": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "trpc": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "vapor": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "vitest": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "xmonad": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "zig": {
+        "top1": 9,
+        "hit10": 19
+      },
+      "zig-clap": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "zls": {
+        "top1": 0,
+        "hit10": 0
+      },
+      "zod": {
+        "top1": 0,
+        "hit10": 0
+      }
+    }
+  },
+  "reserve": "CLOSED"
+}

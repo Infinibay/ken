@@ -1,0 +1,189 @@
+{
+  "metrics": {
+    "baseline": {
+      "queries": 1251,
+      "repos": 63,
+      "missing": 0,
+      "errors": 0,
+      "macro_repo_ndcg10": 0.8479705073459188,
+      "micro_query_ndcg10": 0.8485498846746268,
+      "target_top1": 0.7378097521982414,
+      "target_hit10": 0.9760191846522782,
+      "top1_count": 923,
+      "top10_count": 1221
+    },
+    "jina": {
+      "queries": 1251,
+      "repos": 63,
+      "missing": 0,
+      "errors": 0,
+      "macro_repo_ndcg10": 0.8438126629073753,
+      "micro_query_ndcg10": 0.8438642506467828,
+      "target_top1": 0.7178257394084733,
+      "target_hit10": 0.9784172661870504,
+      "top1_count": 898,
+      "top10_count": 1224
+    },
+    "muninn": {
+      "queries": 1251,
+      "repos": 63,
+      "missing": 0,
+      "errors": 0,
+      "macro_repo_ndcg10": 0.8410074931136379,
+      "micro_query_ndcg10": 0.8419042593275682,
+      "target_top1": 0.7202238209432454,
+      "target_hit10": 0.9728217426059153,
+      "top1_count": 901,
+      "top10_count": 1217
+    },
+    "semble-0.7.0-historical-v219": {
+      "queries": 1251,
+      "repos": 63,
+      "missing": 0,
+      "errors": 0,
+      "macro_repo_ndcg10": 0.8512232951672887,
+      "micro_query_ndcg10": 0.8514280400965522,
+      "target_top1": 0.7402078337330136,
+      "target_hit10": 0.9864108713029577,
+      "top1_count": 926,
+      "top10_count": 1234
+    }
+  },
+  "costs": {
+    "baseline": {
+      "timed_attempts": 1251,
+      "successful_timed_queries": 1251,
+      "untimed_failure_queries": 0,
+      "timed_error_queries": 0,
+      "wall_all_attempts_ms": {
+        "p50": 1970.2484579756856,
+        "p95": 4222.183541482082,
+        "max": 14705.75187500799
+      },
+      "wall_ms": {
+        "p50": 1970.2484579756856,
+        "p95": 4222.183541482082,
+        "max": 14705.75187500799
+      },
+      "cpu_ms": {
+        "p50": 6023.197999999994,
+        "p95": 10460.453999999983,
+        "max": 22106.515000000058
+      },
+      "query_process_peak_rss_GiB": {
+        "p50": 1.1411285400390625,
+        "p95": 1.4477325439453124,
+        "max": 1.7591705322265625
+      },
+      "setup_process_peak_rss_GiB": {
+        "p50": 0.1869964599609375,
+        "p95": 0.26558685302734375,
+        "max": 0.311248779296875
+      },
+      "prepare_and_warmup_ms_by_repo": {
+        "p50": 5637.18224997865,
+        "p95": 40287.76597860269,
+        "max": 675038.0397079862
+      },
+      "static_index_ms_by_repo_shared_between_arms": {
+        "p50": 7921.024125011172,
+        "p95": 117335.07343750096,
+        "max": 245348.20970799774
+      },
+      "new_context_source_vectors": 34998,
+      "reused_context_source_vectors": 234151,
+      "source_prefill_wall_s_total": 961.5038900820655,
+      "rss_qualifier": "Whole worker high-water mark includes source preparation/model load/warmup; bytes on macOS, all nonconcurrent CPU."
+    },
+    "jina": {
+      "timed_attempts": 1251,
+      "successful_timed_queries": 1251,
+      "untimed_failure_queries": 0,
+      "timed_error_queries": 0,
+      "wall_all_attempts_ms": {
+        "p50": 1991.3965000305325,
+        "p95": 3840.57002098416,
+        "max": 14015.837167040445
+      },
+      "wall_ms": {
+        "p50": 1991.3965000305325,
+        "p95": 3840.57002098416,
+        "max": 14015.837167040445
+      },
+      "cpu_ms": {
+        "p50": 6065.462000000025,
+        "p95": 10408.523999999987,
+        "max": 21389.892999999916
+      },
+      "query_process_peak_rss_GiB": {
+        "p50": 1.3988800048828125,
+        "p95": 1.7088150024414062,
+        "max": 2.105010986328125
+      },
+      "setup_process_peak_rss_GiB": {
+        "p50": 0.1869964599609375,
+        "p95": 0.26558685302734375,
+        "max": 0.311248779296875
+      },
+      "prepare_and_warmup_ms_by_repo": {
+        "p50": 40801.97516694898,
+        "p95": 548453.6009337052,
+        "max": 883261.7723339936
+      },
+      "static_index_ms_by_repo_shared_between_arms": {
+        "p50": 7921.024125011172,
+        "p95": 117335.07343750096,
+        "max": 245348.20970799774
+      },
+      "new_context_source_vectors": 269149,
+      "reused_context_source_vectors": 0,
+      "source_prefill_wall_s_total": 6463.946160205989,
+      "rss_qualifier": "Whole worker high-water mark includes source preparation/model load/warmup; bytes on macOS, all nonconcurrent CPU."
+    },
+    "muninn": {
+      "timed_attempts": 1251,
+      "successful_timed_queries": 1251,
+      "untimed_failure_queries": 0,
+      "timed_error_queries": 0,
+      "wall_all_attempts_ms": {
+        "p50": 2015.3321250109002,
+        "p95": 4006.4225209935103,
+        "max": 14302.845750004053
+      },
+      "wall_ms": {
+        "p50": 2015.3321250109002,
+        "p95": 4006.4225209935103,
+        "max": 14302.845750004053
+      },
+      "cpu_ms": {
+        "p50": 6133.923999999994,
+        "p95": 10613.676000000054,
+        "max": 21765.140999999858
+      },
+      "query_process_peak_rss_GiB": {
+        "p50": 1.31304931640625,
+        "p95": 1.6128067016601562,
+        "max": 1.8830413818359375
+      },
+      "setup_process_peak_rss_GiB": {
+        "p50": 0.1869964599609375,
+        "p95": 0.26558685302734375,
+        "max": 0.311248779296875
+      },
+      "prepare_and_warmup_ms_by_repo": {
+        "p50": 37225.85566696944,
+        "p95": 509206.484245887,
+        "max": 842579.0007910109
+      },
+      "static_index_ms_by_repo_shared_between_arms": {
+        "p50": 7921.024125011172,
+        "p95": 117335.07343750096,
+        "max": 245348.20970799774
+      },
+      "new_context_source_vectors": 269149,
+      "reused_context_source_vectors": 0,
+      "source_prefill_wall_s_total": 5979.768495336931,
+      "rss_qualifier": "Whole worker high-water mark includes source preparation/model load/warmup; bytes on macOS, all nonconcurrent CPU."
+    }
+  }
+}

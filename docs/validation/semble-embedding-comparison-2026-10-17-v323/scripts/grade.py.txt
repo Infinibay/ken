@@ -1,0 +1,64 @@
+"""Only grade after label-free capture preflight closes the entire comparison."""
+from collections import defaultdict
+import json,sys
+sys.path.insert(0,"/private/tmp/ken-semble-benchmark-current-v219")
+from run import OUT, OLD, sha, write, verify
+reg=verify();pre=json.loads((OUT/'preflight.json').read_text())
+assert pre['complete'] and pre['queries_per_arm']=={a:1251 for a in reg['arms']}
+assert pre['closure_sha256']==sha(OUT/'capture/closure.json')
+for n,d in reg['scorer_source_pins'].items():assert sha(n)==d
+from original_adapter import evaluate_rows
+from benchmarks.data import load_tasks, load_repo_specs
+from benchmarks.metrics import target_rank,ndcg_at_k
+import inspect, numpy as np
+assert inspect.getfile(ndcg_at_k)=='/private/tmp/ken-semble-benchmark-current-v219/benchmarks/metrics.py'
+tasks=load_tasks(load_repo_specs());assert len(tasks)==1251 and len({t.repo for t in tasks})==63
+requests=[json.loads(l) for l in (OUT/'requests.jsonl').read_text().splitlines()]
+for task,request in zip(tasks,requests,strict=True):assert task.repo==request['repo_id'] and task.query==request['query']
+reports={};costs={};rows_by_arm={}
+def dist(xs):
+    return {k:float(np.percentile(xs,p)) for k,p in [('p50',50),('p95',95),('max',100)]} if xs else None
+for arm in reg['arms']:
+    rows={};provs=[];setups=[];prefills=[]
+    for repo in sorted({t.repo for t in tasks}):
+        folder=OUT/'capture'/repo/arm
+        for row in json.loads((folder/'responses.json').read_text()):
+            assert row['id'] not in rows;rows[row['id']]=row
+        if (folder/'provenance.json').exists():provs.append(json.loads((folder/'provenance.json').read_text()))
+        setup=folder.parent/'setup.json'
+        if setup.exists():setups.append(json.loads(setup.read_text()))
+        if (folder/'prefill.json').exists():prefills.append(json.loads((folder/'prefill.json').read_text()))
+    rows_by_arm[arm]=rows;reports[arm]=evaluate_rows(tasks,rows)
+    attempts=[r for r in rows.values() if 'elapsed_ms' in r]
+    timed=[r for r in attempts if not r.get('error')]
+    costs[arm]={'timed_attempts':len(attempts),'successful_timed_queries':len(timed),
+        'untimed_failure_queries':1251-len(attempts),'timed_error_queries':len(attempts)-len(timed),
+        'wall_all_attempts_ms':dist([r['elapsed_ms'] for r in attempts]),
+        'wall_ms':dist([r['elapsed_ms'] for r in timed]),'cpu_ms':dist([r['cpu_ms'] for r in timed]),
+        'query_process_peak_rss_GiB':dist([p['peak_rss_native']/2**30 for p in provs]),
+        'setup_process_peak_rss_GiB':dist([p['peak_rss_native']/2**30 for p in setups]),
+        'prepare_and_warmup_ms_by_repo':dist([p['preparation_and_warmup_ms'] for p in provs]),
+        'static_index_ms_by_repo_shared_between_arms':dist([p['index_ms'] for p in setups]),
+        'new_context_source_vectors':sum(p['new_vectors'] for p in prefills),
+        'reused_context_source_vectors':sum(p['reused'] for p in prefills),
+        'source_prefill_wall_s_total':sum(p['elapsed_ms'] for p in prefills)/1000,
+        'rss_qualifier':'Whole worker high-water mark includes source preparation/model load/warmup; bytes on macOS, all nonconcurrent CPU.'}
+# Historical quality reference only; independently recompute using the exact same original scorer.
+oldclosure=json.loads((OLD/'semble-closure.json').read_text())
+for n,d in oldclosure['response_pins'].items():assert sha(OLD/n)==d
+oldrows={}
+for p in (OLD/'semble').glob('*/responses.json'):
+    for r in json.loads(p.read_text()):
+        assert r['id'] not in oldrows;oldrows[r['id']]=r['modes']['semble-native']
+assert len(oldrows)==1251
+reports['semble-0.7.0-historical-v219']=evaluate_rows(tasks,oldrows)
+write(OUT/'report.json',{'reports':reports,'costs':costs,'preflight_sha256':sha(OUT/'preflight.json'),
+    'registration_sha256':sha(OUT/'registration.json'),'adapter_sha256':sha(OUT/'original_adapter.py'),
+    'historical_semble_timing_not_matched':True,'reserve':'CLOSED','release':False})
+summary={}
+for arm,r in reports.items():
+    summary[arm]={k:v for k,v in r.items() if not k.startswith('by_') and k!='per_query'}
+    summary[arm]['top1_count']=sum(x['top1'] for x in r['per_query'])
+    summary[arm]['top10_count']=sum(x['hit10'] for x in r['per_query'])
+write(OUT/'summary.json',{'metrics':summary,'costs':costs})
+print(json.dumps(summary,indent=2))

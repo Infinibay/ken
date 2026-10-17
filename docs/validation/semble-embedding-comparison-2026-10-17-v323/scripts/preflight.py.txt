@@ -1,0 +1,46 @@
+"""Label-free closure and protocol audit. Run before loading annotations."""
+from pathlib import Path
+from collections import Counter
+import json, sys
+from run import OUT, sha, write, verify
+reg=verify();closure=json.loads((OUT/'capture/closure.json').read_text())
+assert closure['registration_sha256']==sha(OUT/'registration.json')
+assert closure['outputs_closed'] and closure['workers']==189 and closure['queries_per_arm']==1251
+for n,d in closure['pins'].items():assert sha(OUT/'capture'/n)==d,n
+requests=[json.loads(l) for l in (OUT/'requests.jsonl').read_text().splitlines()]
+expected={r['id']:r for r in requests};assert len(expected)==1251
+sources=json.loads((OUT/'sources.json').read_text());counts={};failures=[];profiles={}
+from ken.retrieval.profile import RetrievalProfile
+for arm in reg['arms']:
+    seen=[]
+    for repo in sources:
+        folder=OUT/'capture'/repo/arm;rows=json.loads((folder/'responses.json').read_text())
+        ids={r['id'] for r in rows};assert len(rows)==len(ids)
+        assert ids=={r['id'] for r in requests if r['repo_id']==repo}
+        if (folder/'failure.json').exists():
+            assert all(r.get('error') for r in rows);failures.append({'repo':repo,'arm':arm,'queries':len(rows)})
+        else:
+            p=json.loads((folder/'provenance.json').read_text())
+            assert p['engine_manifest_sha256']==reg['engine_manifest_sha256'] and p['complete']
+            assert p['providers']==p['reranker_providers']==['CPUExecutionProvider']
+            assert p['reranker_tokens']==1024 and not p['heavy_imports']
+            profile=RetrievalProfile.from_dict(p['profile']);assert profile.fingerprint==p['profile_fingerprint']
+            profiles.setdefault(arm,set()).add(profile.fingerprint)
+            assert p['source_files']==len(sources[repo]['source_pins'])
+            for row in rows:
+                assert len(row['results'])<=10
+                if not row.get('error'):
+                    assert row['query']==expected[row['id']]['query']
+                    assert row['profile_version'] in (p['profile_fingerprint'],'best-exact-source-v1')
+                    for unit in row['results']:
+                        assert unit['path'] in sources[repo]['source_pins']
+                        assert not unit.get('stale')
+        seen.extend(r['id'] for r in rows)
+    assert Counter(seen)==Counter(expected.keys())
+    assert len(profiles.get(arm,set()))<=1
+    counts[arm]=len(seen)
+assert all(count==1251 for count in counts.values())
+write(OUT/'preflight.json',{'complete':True,'queries_per_arm':counts,'workers':189,'failure_workers':failures,
+    'profiles':{k:sorted(v) for k,v in profiles.items()},'registration_sha256':sha(OUT/'registration.json'),
+    'closure_sha256':sha(OUT/'capture/closure.json'),'grader_not_run':True,'reserve':'CLOSED'})
+print(json.dumps({'preflight':True,'counts':counts,'failure_workers':len(failures)}))

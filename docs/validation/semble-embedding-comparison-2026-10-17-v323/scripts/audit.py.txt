@@ -1,0 +1,62 @@
+"""Post-closure descriptive audit; never changes registered primary grading."""
+from collections import Counter, defaultdict
+import json, sys
+from pathlib import Path
+sys.path.insert(0, '/private/tmp/ken-semble-benchmark-current-v219')
+from run import OUT, OLD, sha, verify, write
+from original_adapter import evaluate_rows
+from benchmarks.data import load_tasks, load_repo_specs
+reg=verify()
+assert json.loads((OUT/'preflight.json').read_text())['complete']
+report=json.loads((OUT/'report.json').read_text())
+sources=json.loads((OUT/'sources.json').read_text())
+tasks=load_tasks(load_repo_specs())
+task_by_id={f'semble-{i:04d}':t for i,t in enumerate(tasks)}
+by_arm={a:{q['id']:q for q in r['per_query']} for a,r in report['reports'].items()}
+summary=json.loads((OUT/'summary.json').read_text())
+for a,rows in by_arm.items():
+ assert set(rows)==set(task_by_id)
+ assert sum(q['top1'] for q in rows.values())==summary['metrics'][a]['top1_count']
+ assert sum(q['hit10'] for q in rows.values())==summary['metrics'][a]['top10_count']
+langs={}
+for a,rows in by_arm.items():
+ groups=defaultdict(list)
+ for ident,q in rows.items():groups[task_by_id[ident].language].append(q)
+ langs[a]={lang:{'queries':len(qs),'top1':sum(q['top1'] for q in qs),'hit10':sum(q['hit10'] for q in qs),'ndcg10':sum(q['ndcg10'] for q in qs)/len(qs)} for lang,qs in sorted(groups.items())}
+paired={}
+base=by_arm['baseline']
+for a,rows in by_arm.items():
+ if a=='baseline':continue
+ paired[a]={m:{'wins':sum(rows[i][m]>base[i][m] for i in base),'losses':sum(rows[i][m]<base[i][m] for i in base),'ties':sum(rows[i][m]==base[i][m] for i in base)} for m in ['top1','hit10','ndcg10']}
+runtime={};longest={};buckets={}
+for a in reg['arms']:
+ provs=[];responses=[];empty=0
+ for repo in sources:
+  folder=OUT/'capture'/repo/a
+  p=json.loads((folder/'provenance.json').read_text());provs.append(p)
+  rs=json.loads((folder/'responses.json').read_text())
+  empty+=sum(not r['results'] for r in rs)
+  for r in rs:responses.append((r['elapsed_ms'],r['id'],repo,len(sources[repo]['source_pins'])))
+ assert len({p['context_model'] for p in provs})==1
+ assert len({p['static_model'] for p in provs})==1
+ assert all(p['providers']==p['reranker_providers']==['CPUExecutionProvider'] and p['reranker_tokens']==1024 and not p['heavy_imports'] for p in provs)
+ runtime[a]={'workers':len(provs),'model_keys':sorted({p['context_model'] for p in provs}),'static_model_keys':sorted({p['static_model'] for p in provs}),'empty_results':empty,'all_cpu':True,'reranker_tokens':1024,'torch_transformers_imports':False}
+ longest[a]=[{'wall_ms':v,'id':i,'repo':r,'source_files':n} for v,i,r,n in sorted(responses,reverse=True)[:5]]
+ for repo in sources:
+  owners=[json.loads((OUT/'capture'/repo/x/'provenance.json').read_text())['owners'] for x in reg['arms']]
+  assert len(set(owners))==1
+# Historical Ken is a separately dated, posthoc comparison, not a fourth new arm.
+oldclosure=json.loads((OLD/'ken-files-current/closure.json').read_text())
+for n,d in oldclosure['pins'].items():assert sha(OLD/n)==d
+oldrows={}
+for p in (OLD/'ken-files-current').glob('*/responses.json'):
+ for r in json.loads(p.read_text()):
+  assert r['id'] not in oldrows;oldrows[r['id']]=r['modes']['ken-files-current']
+assert len(oldrows)==1251
+# Preserve the registered historical public mode from its capture envelope.
+old=evaluate_rows(tasks,oldrows)
+current=report['reports']['baseline']
+old_by={q['id']:q for q in old['per_query']}
+historical={'source':'V219 Ken8ce6b00, posthoc; multiple engine changes, not an isolated UTF8 ablation','metrics':{k:v for k,v in old.items() if k not in ['per_query'] and not k.startswith('by_')},'by_repo_count_delta':{repo:{m:sum(current_q[m]-old_by[current_q['id']][m] for current_q in current['per_query'] if current_q['repo']==repo) for m in ['top1','hit10']} for repo in sources}}
+write(OUT/'audit.json',{'primary_report_sha256':sha(OUT/'report.json'),'descriptive_posthoc':True,'by_language':langs,'paired_vs_current_baseline':paired,'runtime':runtime,'longest_queries':longest,'annotation_targets':{'total':sum(len(t.all_relevant) for t in tasks),'with_span':sum(g.has_span for t in tasks for g in t.all_relevant)},'baseline_miss_partition':{'wrong_top1_gold_in_top10':sum(not q['top1'] and q['hit10'] for q in base.values()),'gold_beyond_top10':sum(not q['hit10'] for q in base.values())},'historical_ken':historical,'reserve':'CLOSED'})
+print(json.dumps({'partition':json.loads((OUT/'audit.json').read_text())['baseline_miss_partition'],'runtime':runtime,'annotation_targets':json.loads((OUT/'audit.json').read_text())['annotation_targets'],'historical_ken':historical['metrics'],'historical_zig_delta':historical['by_repo_count_delta']['zig'],'cpp_rust':{a:{k:v for k,v in ls.items() if k in ['cpp','rust']} for a,ls in langs.items()}},indent=2))
