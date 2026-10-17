@@ -60,7 +60,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 logger = logging.getLogger("ken.indexer")
 
-PARSER_VERSION = 9
+PARSER_VERSION = 10
 
 
 @dataclass
@@ -458,7 +458,6 @@ def _prepare_chunk(
             pending.append(item)
             continue
 
-        language, _parser_fn = lang_match
         try:
             data = abs_path.read_bytes()
         except OSError:
@@ -466,6 +465,7 @@ def _prepare_chunk(
             events.append((order, rel_posix, "skipped:io_error"))
             continue
 
+        language, _parser_fn = detect_language(rel, source=data)
         content_hash = _hash(data)
         if _is_unchanged(
             conn, rel_posix, content_hash, need_embedding=embedder is not None,

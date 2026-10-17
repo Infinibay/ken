@@ -91,7 +91,7 @@ class Imports:
                 from ken.parsers import detect_language
                 from ken.indexer import _resolve_import_target
 
-                parser = detect_language(Path(path))
+                parser = detect_language(Path(path), source=data)
                 if parser is None:
                     raise ValueError("unsupported import discovery")
                 for item in parser[1](data, path).imports:

@@ -188,7 +188,7 @@ def _calls(body):
 
 
 def _other(data: bytes, path: str, digest: str) -> dict[tuple[str, str], Symbol]:
-    detected = detect_language(Path(path))
+    detected = detect_language(Path(path), source=data)
     if detected is None:
         raise ValueError("unsupported source language")
     parsed = detected[1](data, path)

@@ -603,3 +603,27 @@ def test_legacy_rust_index_is_reparsed_when_new_trait_owners_are_available(proje
     assert stats.parsed == 1
     row = conn.execute("SELECT kind FROM ci_symbols WHERE qualname='Provider.ready'").fetchone()
     assert row is not None and row["kind"] == "method"
+
+
+def test_cpp_header_language_reaches_serial_parser_and_database(project, monkeypatch):
+    root, conn = project
+    monkeypatch.setenv("KEN_INDEX_WORKERS", "0")
+    (root / "api.h").write_text("#ifndef API_HEADER\n#define API_HEADER\nnamespace sample { class Reader { public: int read() { return 1; } }; }\n#endif\n")
+    stats = index_files(conn, root, [Path("api.h")])
+    assert stats.parsed == 1
+    assert conn.execute("SELECT language FROM ci_files WHERE path='api.h'").fetchone()[0] == "cpp"
+    assert conn.execute("SELECT kind FROM ci_symbols WHERE qualname='sample.Reader.read'").fetchone()[0] == "method"
+
+
+def test_cpp_header_reindexes_unchanged_source_after_parser_upgrade(project, monkeypatch):
+    root, conn = project
+    monkeypatch.setenv("KEN_INDEX_WORKERS", "0")
+    (root / "api.h").write_text("class Reader { public: int read() { return 1; } };\n")
+    index_files(conn, root, [Path("api.h")])
+    with conn:
+        conn.execute("DELETE FROM ci_symbols")
+        conn.execute("UPDATE ci_files SET parser_version=9,language='c'")
+    stats = index_files(conn, root, [Path("api.h")])
+    assert stats.parsed == 1
+    assert conn.execute("SELECT language FROM ci_files").fetchone()[0] == "cpp"
+    assert conn.execute("SELECT kind FROM ci_symbols WHERE qualname='Reader.read'").fetchone()[0] == "method"

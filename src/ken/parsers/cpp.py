@@ -47,6 +47,26 @@ _DECLARATOR_WRAPPERS = {
 }
 
 
+_CPP_SYNTAX = frozenset({
+    "class_specifier", "namespace_definition", "namespace_alias_definition",
+    "template_declaration", "alias_declaration", "using_declaration",
+    "friend_declaration", "access_specifier", "reference_declarator",
+    "qualified_identifier", "scoped_type_identifier", "lambda_expression",
+    "new_expression", "delete_expression",
+})
+
+
+def has_cpp_syntax(source: bytes) -> bool:
+    """Resolve ambiguous headers from syntax, excluding comments and literals."""
+    pending = [_PARSER.parse(source).root_node]
+    while pending:
+        node = pending.pop()
+        if node.type in _CPP_SYNTAX:
+            return True
+        pending.extend(node.named_children)
+    return False
+
+
 def parse_cpp_file(source: bytes, path_hint: str) -> ParsedFile:  # noqa: ARG001
     tree = _PARSER.parse(source)
     out = ParsedFile()

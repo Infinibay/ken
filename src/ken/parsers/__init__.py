@@ -109,8 +109,18 @@ LANGUAGE_BY_EXT: dict[str, tuple[str, ParserFn]] = {
 }
 
 
-def detect_language(path: Path) -> tuple[str, ParserFn] | None:
-    return LANGUAGE_BY_EXT.get(path.suffix.lower())
+def detect_language(path: Path, *, source: bytes | None = None) -> tuple[str, ParserFn] | None:
+    """Use extensions first; .h needs source syntax to distinguish C from C++."""
+    extension = path.suffix.lower()
+    if extension == ".h" and source is not None:
+        try:
+            from ken.parsers.cpp import has_cpp_syntax
+        except Exception:  # optional grammar availability must not disable C
+            pass
+        else:
+            if has_cpp_syntax(source):
+                return "cpp", parse_cpp_file
+    return LANGUAGE_BY_EXT.get(extension)
 
 
 __all__ = ["LANGUAGE_BY_EXT", "ParsedFile", "detect_language"]
