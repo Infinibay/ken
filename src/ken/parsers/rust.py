@@ -23,7 +23,9 @@ def parse_rust_file(source: bytes, path_hint: str) -> ParsedFile:  # noqa: ARG00
 
 def _walk(node: Node, src: bytes, scope_name: str, out: ParsedFile, *,
           in_type: bool = False) -> None:
-    for child in node.children:
+    pending = list(reversed(node.children))
+    while pending:
+        child = pending.pop()
         kind = child.type
         if kind == "function_item":
             _emit_function(child, src, scope_name, out, is_method=in_type)
@@ -43,7 +45,7 @@ def _walk(node: Node, src: bytes, scope_name: str, out: ParsedFile, *,
         elif kind == "use_declaration":
             _emit_use(child, src, out)
         elif child.is_named:
-            _walk(child, src, scope_name, out, in_type=in_type)
+            pending.extend(reversed(child.children))
 
 
 def _emit_function(node: Node, src: bytes, scope: str, out: ParsedFile, *,

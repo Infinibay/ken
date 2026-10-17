@@ -168,11 +168,13 @@ def _emit_function(
 
 def _walk_local_types(node: Node, src: bytes, scope: _Scope, out: ParsedFile) -> None:
     """Find local types while excluding callable-looking macro/control blocks."""
-    if node.type in _TYPE_SPECIFIERS:
-        _emit_type(node, src, _TYPE_SPECIFIERS[node.type], scope, out, doc_node=node)
-    elif node.type not in {"function_definition", "lambda_expression"}:
-        for child in node.named_children:
-            _walk_local_types(child, src, scope, out)
+    pending = [node]
+    while pending:
+        current = pending.pop()
+        if current.type in _TYPE_SPECIFIERS:
+            _emit_type(current, src, _TYPE_SPECIFIERS[current.type], scope, out, doc_node=current)
+        elif current.type not in {"function_definition", "lambda_expression"}:
+            pending.extend(reversed(current.named_children))
 
 
 def _recover_namespace(node: Node, src: bytes, scope: _Scope, out: ParsedFile) -> None:

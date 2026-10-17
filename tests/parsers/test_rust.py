@@ -101,3 +101,10 @@ impl Agent {
     assert "Agent.run.local" in symbols
     assert symbols["Agent.run"].kind == "method"
     assert symbols["Agent.run.local"].kind == "function"
+
+
+def test_local_function_discovery_handles_deep_expressions(parse_rust):
+    expression = " + ".join(["value"] * 1500)
+    source = "fn total(value: i64) -> i64 {\n  fn local() -> i64 { 1 }\n  " + expression + "\n}\n"
+    parsed = parse_rust(source)
+    assert {symbol.qualname for symbol in parsed.symbols} == {"total", "total.local"}

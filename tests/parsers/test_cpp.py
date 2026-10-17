@@ -149,3 +149,10 @@ class Outer {
     assert [(s.kind, s.qualname, s.line_start, s.line_end) for s in friends] == [
         ("function", "sample.swap", 4, 4),
     ]
+
+
+def test_local_type_discovery_handles_deep_expressions(parse_cpp):
+    expression = " + ".join(["value"] * 1500)
+    source = "int total(int value) {\n  struct Local { Local() {} };\n  return " + expression + ";\n}\n"
+    parsed = parse_cpp(source)
+    assert {symbol.qualname for symbol in parsed.symbols} == {"total", "total.Local", "total.Local.Local"}
