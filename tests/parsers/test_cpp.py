@@ -113,3 +113,39 @@ LIBRARY_NAMESPACE_END
     assert [(s.kind, s.qualname, s.line_start, s.line_end) for s in parsed.symbols] == [
         ("function", "utility.read", 3, 5),
     ]
+
+
+def test_local_types_have_callable_owners_without_fake_nested_functions(parse_cpp):
+    parsed = parse_cpp("""namespace sample {
+void run() {
+  if (true) {
+    struct Local {
+      Local() {}
+      int read() { return 1; }
+    };
+  }
+  LIBRARY_FOREACH(index) { use(index); }
+  try { work(); } catch (...) { recover(); }
+}
+}
+""")
+    by_qual = {symbol.qualname: symbol for symbol in parsed.symbols}
+    assert set(by_qual) == {"sample.run", "sample.run.Local", "sample.run.Local.Local", "sample.run.Local.read"}
+    constructor = by_qual["sample.run.Local.Local"]
+    assert (constructor.kind, constructor.line_start, constructor.line_end) == ("constructor", 5, 5)
+    assert by_qual["sample.run.Local.read"].kind == "method"
+
+
+def test_friend_function_belongs_to_enclosing_namespace_even_in_nested_types(parse_cpp):
+    parsed = parse_cpp("""namespace sample {
+class Outer {
+  class Inner {
+    friend void swap(Inner& left, Inner& right) { left.read(right); }
+  };
+};
+}
+""")
+    friends = [symbol for symbol in parsed.symbols if symbol.name == "swap"]
+    assert [(s.kind, s.qualname, s.line_start, s.line_end) for s in friends] == [
+        ("function", "sample.swap", 4, 4),
+    ]

@@ -24,6 +24,8 @@ Grammar shape worth knowing:
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from tree_sitter import Node, Parser
 from tree_sitter_language_pack import get_language
 
@@ -67,77 +69,105 @@ def has_cpp_syntax(source: bytes) -> bool:
     return False
 
 
+@dataclass(frozen=True)
+class _Scope:
+    """Lexical owner and enclosing namespace are distinct for local/friend code."""
+    qualname: str = ""
+    namespace: str = ""
+    in_type: bool = False
+
+    def qualify(self, name: str) -> str:
+        return f"{self.qualname}.{name}" if self.qualname and name else (name or self.qualname)
+
+
 def parse_cpp_file(source: bytes, path_hint: str) -> ParsedFile:  # noqa: ARG001
     tree = _PARSER.parse(source)
     out = ParsedFile()
-    _walk(tree.root_node, source, scope="", in_type=False, out=out)
+    _walk(tree.root_node, source, _Scope(), out)
     return out
 
 
-def _walk(node: Node, src: bytes, scope: str, in_type: bool, out: ParsedFile) -> None:
+def _walk(node: Node, src: bytes, scope: _Scope, out: ParsedFile) -> None:
     for child in node.children:
-        _dispatch(child, src, scope, in_type, out)
+        _dispatch(child, src, scope, out)
 
 
 def _dispatch(
-    child: Node, src: bytes, scope: str, in_type: bool, out: ParsedFile
+    child: Node, src: bytes, scope: _Scope, out: ParsedFile
 ) -> None:
     kind = child.type
     if kind in _CONDITIONALS:
         # Index every source branch without guessing the caller's build flags.
-        _walk(child, src, scope, in_type, out)
+        _walk(child, src, scope, out)
     elif kind == "preproc_include":
         _emit_include(child, src, out)
     elif kind == "function_definition":
-        _emit_function(child, src, scope, in_type, out, doc_node=child)
+        _emit_function(child, src, scope, out, doc_node=child)
     elif kind in ("declaration", "field_declaration"):
-        _emit_callable_declaration(child, src, scope, in_type, out, doc_node=child)
+        _emit_callable_declaration(child, src, scope, out, doc_node=child)
     elif kind in _TYPE_SPECIFIERS:
         _emit_type(child, src, _TYPE_SPECIFIERS[kind], scope, out, doc_node=child)
     elif kind == "enum_specifier":
         _emit_enum(child, src, scope, out, doc_node=child)
     elif kind == "namespace_definition":
         name = _namespace_name(child, src)
-        new_scope = f"{scope}.{name}" if scope and name else (name or scope)
+        qualified = scope.qualify(name)
+        new_scope = _Scope(qualified, qualified)
         body = child.child_by_field_name("body")
         if body is not None:
-            _walk(body, src, new_scope, in_type=False, out=out)
+            _walk(body, src, new_scope, out)
+    elif kind == "friend_declaration":
+        _walk(child, src, _Scope(scope.namespace, scope.namespace), out)
     elif kind == "template_declaration":
-        _emit_template(child, src, scope, in_type, out)
+        _emit_template(child, src, scope, out)
     elif kind == "linkage_specification":  # extern "C" { ... }
         body = child.child_by_field_name("body")
         if body is not None:
-            _walk(body, src, scope, in_type, out)
+            _walk(body, src, scope, out)
     elif kind in ("alias_declaration", "type_definition"):
         _emit_typedef(child, src, scope, out)
 
 
 def _emit_template(
-    node: Node, src: bytes, scope: str, in_type: bool, out: ParsedFile
+    node: Node, src: bytes, scope: _Scope, out: ParsedFile
 ) -> None:
     """``template <...> <decl>`` — unwrap and emit the inner declaration, but
     keep *node* as the doc anchor (the doc comment precedes the template)."""
     for child in node.children:
         kind = child.type
         if kind == "function_definition":
-            _emit_function(child, src, scope, in_type, out, doc_node=node)
+            _emit_function(child, src, scope, out, doc_node=node)
         elif kind in ("declaration", "field_declaration"):
-            _emit_callable_declaration(child, src, scope, in_type, out, doc_node=node)
+            _emit_callable_declaration(child, src, scope, out, doc_node=node)
         elif kind in _TYPE_SPECIFIERS:
             _emit_type(child, src, _TYPE_SPECIFIERS[kind], scope, out, doc_node=node)
+        else:
+            _dispatch(child, src, scope, out)
 
 
 def _emit_function(
-    node: Node, src: bytes, scope: str, in_type: bool, out: ParsedFile, *, doc_node: Node
+    node: Node, src: bytes, scope: _Scope, out: ParsedFile, *, doc_node: Node
 ) -> None:
     info = _declarator_name(node.child_by_field_name("declarator"), src)
     if info is None:
         _recover_namespace(node, src, scope, out)
         return
-    _append_callable(node, src, scope, in_type, out, info, doc_node=doc_node)
+    owner = _append_callable(node, src, scope, out, info, doc_node=doc_node)
+    body = node.child_by_field_name("body")
+    if body is not None:
+        _walk_local_types(body, src, _Scope(owner.qualname or owner.name, scope.namespace), out)
 
 
-def _recover_namespace(node: Node, src: bytes, scope: str, out: ParsedFile) -> None:
+def _walk_local_types(node: Node, src: bytes, scope: _Scope, out: ParsedFile) -> None:
+    """Find local types while excluding callable-looking macro/control blocks."""
+    if node.type in _TYPE_SPECIFIERS:
+        _emit_type(node, src, _TYPE_SPECIFIERS[node.type], scope, out, doc_node=node)
+    elif node.type not in {"function_definition", "lambda_expression"}:
+        for child in node.named_children:
+            _walk_local_types(child, src, scope, out)
+
+
+def _recover_namespace(node: Node, src: bytes, scope: _Scope, out: ParsedFile) -> None:
     """A preceding macro can make the grammar mistake a namespace for a function.
 
     Reparse only its namespace header, then walk the original body so all source
@@ -158,12 +188,13 @@ def _recover_namespace(node: Node, src: bytes, scope: str, out: ParsedFile) -> N
     if namespace.type != "namespace_definition":
         return
     name = _namespace_name(namespace, header)
-    new_scope = f"{scope}.{name}" if scope and name else (name or scope)
-    _walk(body, src, new_scope, in_type=False, out=out)
+    qualified = scope.qualify(name)
+    new_scope = _Scope(qualified, qualified)
+    _walk(body, src, new_scope, out)
 
 
 def _emit_callable_declaration(
-    node: Node, src: bytes, scope: str, in_type: bool, out: ParsedFile, *, doc_node: Node
+    node: Node, src: bytes, scope: _Scope, out: ParsedFile, *, doc_node: Node
 ) -> None:
     """A ``declaration``/``field_declaration`` is a callable only when its
     innermost declarator is a ``function_declarator`` (a prototype, an
@@ -176,30 +207,29 @@ def _emit_callable_declaration(
     info = _declarator_name(node.child_by_field_name("declarator"), src)
     if info is None:
         return
-    _append_callable(node, src, scope, in_type, out, info, doc_node=doc_node)
+    _append_callable(node, src, scope, out, info, doc_node=doc_node)
 
 
 def _append_callable(
     node: Node,
     src: bytes,
-    scope: str,
-    in_type: bool,
+    scope: _Scope,
     out: ParsedFile,
     info: tuple[str, str, str],
     *,
     doc_node: Node,
-) -> None:
+) -> ParsedSymbol:
     name, qualifier, name_kind = info
     # Out-of-line qualifier (``Foo::bar``) becomes part of the dotted scope.
-    full_scope = scope
+    full_scope = scope.qualname
     if qualifier:
-        full_scope = f"{scope}.{qualifier}" if scope else qualifier
+        full_scope = scope.qualify(qualifier)
     qual = f"{full_scope}.{name}" if full_scope else name
     # A callable is a member when it is lexically inside a type body OR carries
     # an out-of-line ``Foo::`` qualifier. Namespace scope alone keeps it a
     # free function.
-    is_member = in_type or bool(qualifier)
-    member_scope = full_scope if qualifier else scope
+    is_member = scope.in_type or bool(qualifier)
+    member_scope = full_scope if qualifier else scope.qualname
     if name_kind == "destructor":
         kind = "destructor"
     elif is_member and member_scope and name == member_scope.rsplit(".", 1)[-1]:
@@ -208,25 +238,25 @@ def _append_callable(
         kind = "method"
     else:
         kind = "function"
-    out.symbols.append(
-        ParsedSymbol(
-            kind=kind,
-            name=name,
-            qualname=qual,
-            line_start=doc_node.start_point[0] + 1,
-            line_end=node.end_point[0] + 1,
-            docstring=_cpp_doc(doc_node, src),
-        )
+    symbol = ParsedSymbol(
+        kind=kind,
+        name=name,
+        qualname=qual,
+        line_start=doc_node.start_point[0] + 1,
+        line_end=node.end_point[0] + 1,
+        docstring=_cpp_doc(doc_node, src),
     )
+    out.symbols.append(symbol)
+    return symbol
 
 
 def _emit_type(
-    node: Node, src: bytes, kind: str, scope: str, out: ParsedFile, *, doc_node: Node
+    node: Node, src: bytes, kind: str, scope: _Scope, out: ParsedFile, *, doc_node: Node
 ) -> None:
     name = node_text(node.child_by_field_name("name"), src)
     if not name:
         return
-    qual = f"{scope}.{name}" if scope else name
+    qual = scope.qualify(name)
     out.symbols.append(
         ParsedSymbol(
             kind=kind,
@@ -240,11 +270,11 @@ def _emit_type(
     body = node.child_by_field_name("body")
     if body is not None:
         for member in body.children:
-            _dispatch(member, src, qual, in_type=True, out=out)
+            _dispatch(member, src, _Scope(qual, scope.namespace, in_type=True), out)
 
 
 def _emit_enum(
-    node: Node, src: bytes, scope: str, out: ParsedFile, *, doc_node: Node
+    node: Node, src: bytes, scope: _Scope, out: ParsedFile, *, doc_node: Node
 ) -> None:
     name = node_text(node.child_by_field_name("name"), src)
     if not name:
@@ -253,7 +283,7 @@ def _emit_enum(
         ParsedSymbol(
             kind="enum",
             name=name,
-            qualname=f"{scope}.{name}" if scope else name,
+            qualname=scope.qualify(name),
             line_start=doc_node.start_point[0] + 1,
             line_end=node.end_point[0] + 1,
             docstring=_cpp_doc(doc_node, src),
@@ -261,7 +291,7 @@ def _emit_enum(
     )
 
 
-def _emit_typedef(node: Node, src: bytes, scope: str, out: ParsedFile) -> None:
+def _emit_typedef(node: Node, src: bytes, scope: _Scope, out: ParsedFile) -> None:
     if node.type == "alias_declaration":  # using X = ...;
         name = next(
             (node_text(c, src) for c in node.named_children if c.type == "type_identifier"),
@@ -275,7 +305,7 @@ def _emit_typedef(node: Node, src: bytes, scope: str, out: ParsedFile) -> None:
         ParsedSymbol(
             kind="typedef",
             name=name,
-            qualname=f"{scope}.{name}" if scope else name,
+            qualname=scope.qualify(name),
             line_start=node.start_point[0] + 1,
             line_end=node.end_point[0] + 1,
             docstring=_cpp_doc(node, src),
