@@ -1,0 +1,566 @@
+{
+  "summary": {
+    "control": {
+      "queries": 100,
+      "top1": 64,
+      "top10": 90
+    },
+    "union": {
+      "queries": 100,
+      "top1": 65,
+      "top10": 95
+    }
+  },
+  "errors": [],
+  "native_control_matches_closed_code_only": true,
+  "native_logit_max_abs_delta": 0.0,
+  "candidate_count": {
+    "min": 11,
+    "max": 19,
+    "mean": 13.56
+  },
+  "new_top1": [
+    "5cf5bedacce818bc7bf0c17d"
+  ],
+  "lost_top1": [],
+  "new_top10": [
+    "e8995bb169c9ac11ff4540cc",
+    "5cf5bedacce818bc7bf0c17d",
+    "ae63df5442adf5e42f7d07ea",
+    "6b82344031d561e92ba12734",
+    "86a2e6c50b5263a4c119cd96"
+  ],
+  "lost_top10": [],
+  "cost": {
+    "queries": {
+      "p50_ms": 2445.973000518279,
+      "p95_ms": 3837.3970853921487,
+      "max_ms": 5405.208332987968
+    },
+    "baseline_queries": {
+      "p50_ms": 3804.4740415061824,
+      "p95_ms": 5887.232371160643,
+      "max_ms": 7880.545041989535
+    },
+    "cpu": {
+      "p50_ms": 7820.414499999997,
+      "p95_ms": 12837.83404999999,
+      "max_ms": 17446.883000000005
+    },
+    "query_process_peak_rss_bytes": 1311653888,
+    "prepare_process_peak_rss_bytes": 1016709120,
+    "providers": [
+      "CPUExecutionProvider"
+    ],
+    "note": "Observed CPU timings with other benchmark/development activity; not an isolated latency experiment."
+  },
+  "rows": [
+    {
+      "id": "c13d4d7b39d60fecf9fbd776",
+      "control_rank": null,
+      "union_rank": null
+    },
+    {
+      "id": "e8995bb169c9ac11ff4540cc",
+      "control_rank": null,
+      "union_rank": 2
+    },
+    {
+      "id": "14c8eecc3a35d7d120a0a9fa",
+      "control_rank": 3,
+      "union_rank": 3
+    },
+    {
+      "id": "d0e87385f221ee57c5be2e37",
+      "control_rank": null,
+      "union_rank": null
+    },
+    {
+      "id": "1c2ee3cbcbd745cfcabfe35c",
+      "control_rank": null,
+      "union_rank": null
+    },
+    {
+      "id": "a34f9317f35fc4bce135e450",
+      "control_rank": 3,
+      "union_rank": 3
+    },
+    {
+      "id": "449d628d5e092e3c5dab8099",
+      "control_rank": 2,
+      "union_rank": 2
+    },
+    {
+      "id": "5cf5bedacce818bc7bf0c17d",
+      "control_rank": null,
+      "union_rank": 1
+    },
+    {
+      "id": "ae63df5442adf5e42f7d07ea",
+      "control_rank": null,
+      "union_rank": 3
+    },
+    {
+      "id": "579f2707cf53f5542779d0d9",
+      "control_rank": 6,
+      "union_rank": 6
+    },
+    {
+      "id": "6b82344031d561e92ba12734",
+      "control_rank": null,
+      "union_rank": 3
+    },
+    {
+      "id": "006f9bec21a209881303e2ed",
+      "control_rank": null,
+      "union_rank": null
+    },
+    {
+      "id": "ffffc38ca7a4d536aabf0e4c",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "02de5ef46a05a6ed0b748e6d",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "da1761f0f89cc10b2e57267c",
+      "control_rank": 2,
+      "union_rank": 2
+    },
+    {
+      "id": "de2eccd591ae91ab52c2ee6e",
+      "control_rank": 3,
+      "union_rank": 3
+    },
+    {
+      "id": "e1888c9f3cd12fed9687b2aa",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "6e1c40be231ec2293e7cdec6",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "4c2204fed00aa9db60e8e27a",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "e4321047125abbb539e4c158",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "c3cc9bf52c0204cae6378ab3",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "2c643d018bad7283d6286262",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "4e38d18fbafdf9175fd30d8d",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "9e352143535724dcbcc4e163",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "87b15de6e8369037f17da93e",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "a979ba67918bf9f7c3d043a4",
+      "control_rank": 2,
+      "union_rank": 2
+    },
+    {
+      "id": "4b40c576631da3ec91fa9f48",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "b934db5c139fe765e00e4902",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "836f1726ad88106ea688e248",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "101decad2b60df1c3ad2dbed",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "fac0934e4db8f71485deab84",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "bc1c3d8e333a232a19d41496",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "28251c17e1f6a448427d97b6",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "7e411a1f6203e136659fc27c",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "aa8341d3308fca83a40af0e9",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "144c44c9e039cc0998d528f5",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "304d3baf9dd351d9c779c88d",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "b5a14fca487d1f10718fd389",
+      "control_rank": 2,
+      "union_rank": 3
+    },
+    {
+      "id": "1b3c7d367ebceb925cd9b74a",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "fb7d721719e50e4cd54bb7be",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "4029e9939c70440a5eba8e66",
+      "control_rank": 3,
+      "union_rank": 3
+    },
+    {
+      "id": "792f5d7023cb5d107a80dc9a",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "ec4e5ece1c2e0458057c54f8",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "e987617d39656131c3d220d8",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "3d0a5b21510fd26d4f59e55c",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "20474d08de6c859f16465f86",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "8767087e90020d44c180f002",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "e50a47ae30bc7d0a1ae88f78",
+      "control_rank": 5,
+      "union_rank": 6
+    },
+    {
+      "id": "23c8374b63835fb9655bc8b9",
+      "control_rank": 2,
+      "union_rank": 2
+    },
+    {
+      "id": "252a9fbfc0b0c00b1f5db93f",
+      "control_rank": 2,
+      "union_rank": 2
+    },
+    {
+      "id": "e875749c78064210ee97ac4a",
+      "control_rank": 3,
+      "union_rank": 3
+    },
+    {
+      "id": "55d3807afde3b8017c582868",
+      "control_rank": 3,
+      "union_rank": 4
+    },
+    {
+      "id": "a80a18c493c7734409ac0f53",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "75a3a47da713a49f78da9b07",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "be2de82579bb05b7d8afd4bd",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "bbec47210d28f39a806178b8",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "3ebac97660323277a51350f8",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "d458f16553dca780f9df8a24",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "8dad4f87981bad85215f51c2",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "cd0b4952d8fe5c78b3036f2c",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "429d65981f91f0574e688a7d",
+      "control_rank": null,
+      "union_rank": null
+    },
+    {
+      "id": "b844fe472c3bae5faa1ea23f",
+      "control_rank": 2,
+      "union_rank": 2
+    },
+    {
+      "id": "ad3e229c118099fc2d0111a8",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "4fa9580358b09273c9c3d306",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "faa52f3ab215ef25b9ed35cf",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "cb3da4845c7e908f83289ab7",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "edc5cf51d6e156d5247c97fd",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "bae78f298d4a6ce9936b9341",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "8b3ff2f761ad73403d4b1aa5",
+      "control_rank": 3,
+      "union_rank": 3
+    },
+    {
+      "id": "b9c06fc69a608d2d5da2749e",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "75465521e96579a8ea73260a",
+      "control_rank": 2,
+      "union_rank": 2
+    },
+    {
+      "id": "38c972c27d2e4bf2df496f23",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "540f2a15c931b37223d0ba25",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "2d552ec0ad63a6f0dbb56db4",
+      "control_rank": 2,
+      "union_rank": 2
+    },
+    {
+      "id": "1ebd0128a087ff60876fd4e7",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "5f57f8e5612e3c77fc4f29f2",
+      "control_rank": 2,
+      "union_rank": 2
+    },
+    {
+      "id": "9930b997d7736e2f2e347daf",
+      "control_rank": 2,
+      "union_rank": 2
+    },
+    {
+      "id": "86a2e6c50b5263a4c119cd96",
+      "control_rank": null,
+      "union_rank": 5
+    },
+    {
+      "id": "568e54f09dc0081d8a00f1a1",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "14c8a86ce31f28fd41061c03",
+      "control_rank": 3,
+      "union_rank": 3
+    },
+    {
+      "id": "b879cc3fca11d7b38ca90391",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "eb263d93c665b925d3b40ebd",
+      "control_rank": 2,
+      "union_rank": 2
+    },
+    {
+      "id": "410cd26f185eeabf39f37544",
+      "control_rank": 3,
+      "union_rank": 3
+    },
+    {
+      "id": "0218932ef42a989c9d6f8475",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "3c411498437275412a813db1",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "46b6732c5ccf88c541feec64",
+      "control_rank": 3,
+      "union_rank": 3
+    },
+    {
+      "id": "089fb7b4bcd30e2186600b8f",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "69af6367ca40144671c494d5",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "d44e85bab85a774c0322dd2d",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "0be4efdcf6589efa2f61100d",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "4924557d047516dcadda74f7",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "4eb24744b17919fb06a2f779",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "89c0122f1c5dd8b8b76e5b13",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "fbb1961c14e2f76471e6dcb1",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "8d5c7fbfe6721c36d50e5de2",
+      "control_rank": 3,
+      "union_rank": 3
+    },
+    {
+      "id": "f950331e39a7e2249180f337",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "08b75f8523460f536fabe333",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "1dc25f69aa8862429422035a",
+      "control_rank": 3,
+      "union_rank": 3
+    },
+    {
+      "id": "7f95a2606fc32bf51d70b05e",
+      "control_rank": 1,
+      "union_rank": 1
+    },
+    {
+      "id": "6768ff52107034a789989751",
+      "control_rank": 1,
+      "union_rank": 1
+    }
+  ],
+  "registration_sha256": "2dc6764e3028572a34b31f15516051749e04950c3321fce4fc2cb4065285c33d",
+  "closure_sha256": "101c5c73baa47178c70449d8682d7d16aa2884cbfd8658bee978c2b81cb52952",
+  "union_grader_report_sha256": "135ef01a54343c149b6c464e1be175e492e6f13c17cbedc2aafee368d7bcc603",
+  "grader_sha256": "a15f1965bc6ab85200bbd86e28b60d636188641c63404bac380084883a5d7d8d",
+  "reserve": "CLOSED",
+  "production_changed": false,
+  "interpretation": "Original100Rustpublicquestions and unchanged strict callable criterion. Timed experimental source path, sameCPUmodels, <=20neuralpairs, same-source native10single-view control uses shared logits. Includes control presentation/parity check overhead; not normalMCPtransport or blind acceptance. Do not accept if control fails parity or regressions remain unresolved."
+}

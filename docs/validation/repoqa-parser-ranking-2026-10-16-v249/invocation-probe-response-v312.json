@@ -1,0 +1,249 @@
+{
+  "query": "Where does classpath file traversal invoke a consumer with both base path and file only when a path predicate matches, while continuing traversal either way?",
+  "results": [
+    {
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/ClasspathFileVisitor.java",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "ClasspathFileVisitor.visitFile",
+        "owner": "ClasspathFileVisitor",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 44,
+        "end_line": 50
+      },
+      "evidence": [
+        {
+          "start_line": 44,
+          "end_line": 50,
+          "content": "\t@Override\n\tpublic FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {\n\t\tif (filter.test(file)) {\n\t\t\tconsumer.accept(basePath, file);\n\t\t}\n\t\treturn CONTINUE;\n\t}"
+        }
+      ],
+      "source_hash": "27d00f964e26ee42e81c6072fe260d8712d0bd4cdbd3dd4ffebfba6a88231397",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/DefaultClasspathScanner.java",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "DefaultClasspathScanner.walkFilesForUri",
+        "owner": "DefaultClasspathScanner",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 166,
+        "end_line": 183
+      },
+      "evidence": [
+        {
+          "start_line": 166,
+          "end_line": 181,
+          "content": "\tprivate static void walkFilesForUri(URI baseUri, Predicate<Path> filter, BiConsumer<Path, Path> consumer) {\n\t\ttry (CloseablePath closeablePath = CloseablePath.create(baseUri)) {\n\t\t\tPath baseDir = closeablePath.getPath();\n\t\t\tPreconditions.condition(Files.exists(baseDir), () -> \"baseDir must exist: \" + baseDir);\n\t\t\ttry {\n\t\t\t\tFiles.walkFileTree(baseDir, new ClasspathFileVisitor(baseDir, filter, consumer));\n\t\t\t}\n\t\t\tcatch (IOException ex) {\n\t\t\t\tlogger.warn(ex, () -> \"I/O error scanning files in \" + baseDir);\n\t\t\t}\n\t\t}\n\t\tcatch (PreconditionViolationException ex) {\n\t\t\tthrow ex;\n\t\t}\n\t\tcatch (Exception ex) {\n\t\t\tlogger.warn(ex, () -> \"Error scanning files for URI \" + baseUri);"
+        }
+      ],
+      "source_hash": "ad945315b4f121959c770b707caa6ae92a09779f6a819f6cfc00fa6693e9d06a",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/DefaultClasspathScanner.java",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "DefaultClasspathScanner.processClassFileSafely",
+        "owner": "DefaultClasspathScanner",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 185,
+        "end_line": 206
+      },
+      "evidence": [
+        {
+          "start_line": 185,
+          "end_line": 200,
+          "content": "\tprivate void processClassFileSafely(Path baseDir, String basePackageName, ClassFilter classFilter, Path file,\n\t\t\tConsumer<Class<?>> classConsumer) {\n\t\ttry {\n\t\t\tString fullyQualifiedClassName = determineFullyQualifiedClassName(baseDir, basePackageName, file);\n\t\t\tif (classFilter.match(fullyQualifiedClassName)) {\n\t\t\t\ttry {\n\t\t\t\t\t// @formatter:off\n\t\t\t\t\tloadClass.apply(fullyQualifiedClassName, getClassLoader())\n\t\t\t\t\t\t\t.toOptional()\n\t\t\t\t\t\t\t.filter(classFilter::match)\n\t\t\t\t\t\t\t.ifPresent(classConsumer);\n\t\t\t\t\t// @formatter:on\n\t\t\t\t}\n\t\t\t\tcatch (InternalError internalError) {\n\t\t\t\t\thandleInternalError(file, fullyQualifiedClassName, internalError);\n\t\t\t\t}"
+        }
+      ],
+      "source_hash": "ad945315b4f121959c770b707caa6ae92a09779f6a819f6cfc00fa6693e9d06a",
+      "stale": false,
+      "truncated": true
+    },
+    {
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/DefaultClasspathScanner.java",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "DefaultClasspathScanner.processResourceFileSafely",
+        "owner": "DefaultClasspathScanner",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 208,
+        "end_line": 222
+      },
+      "evidence": [
+        {
+          "start_line": 208,
+          "end_line": 222,
+          "content": "\tprivate void processResourceFileSafely(Path baseDir, String basePackageName, ResourceFilter resourceFilter,\n\t\t\tPath resourceFile, Consumer<Resource> resourceConsumer) {\n\t\ttry {\n\t\t\tString fullyQualifiedResourceName = determineFullyQualifiedResourceName(baseDir, basePackageName,\n\t\t\t\tresourceFile);\n\t\t\tResource resource = Resource.of(fullyQualifiedResourceName, resourceFile.toUri());\n\t\t\tif (resourceFilter.match(resource)) {\n\t\t\t\tresourceConsumer.accept(resource);\n\t\t\t}\n\t\t\t// @formatter:on\n\t\t}\n\t\tcatch (Throwable throwable) {\n\t\t\thandleThrowable(resourceFile, throwable);\n\t\t}\n\t}"
+        }
+      ],
+      "source_hash": "ad945315b4f121959c770b707caa6ae92a09779f6a819f6cfc00fa6693e9d06a",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/SearchPathUtils.java",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "SearchPathUtils.isClassOrSourceFile",
+        "owner": "SearchPathUtils",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 42,
+        "end_line": 45
+      },
+      "evidence": [
+        {
+          "start_line": 42,
+          "end_line": 45,
+          "content": "\tstatic boolean isClassOrSourceFile(Path file) {\n\t\tvar fileName = file.getFileName().toString();\n\t\treturn isClassOrSourceFile(fileName) && !isModuleInfoOrPackageInfo(fileName);\n\t}"
+        }
+      ],
+      "source_hash": "a5ee1edf476f142aa75765a93ae41f94a366113b2c556815fa6933a91151c6b1",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/DefaultClasspathScanner.java",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "DefaultClasspathScanner.determineFullyQualifiedResourceName",
+        "owner": "DefaultClasspathScanner",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 244,
+        "end_line": 254
+      },
+      "evidence": [
+        {
+          "start_line": 244,
+          "end_line": 254,
+          "content": "\tprivate String determineFullyQualifiedResourceName(Path baseDir, String basePackageName, Path resourceFile) {\n\t\t// @formatter:off\n\t\treturn Stream.of(\n\t\t\t\t\tpackagePath(basePackageName),\n\t\t\t\t\tpackagePath(determineSubpackageName(baseDir, resourceFile)),\n\t\t\t\t\tdetermineSimpleResourceName(resourceFile)\n\t\t\t\t)\n\t\t\t\t.filter(value -> !value.isEmpty()) // Handle default package appropriately.\n\t\t\t\t.collect(joining(CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING));\n\t\t// @formatter:on\n\t}"
+        }
+      ],
+      "source_hash": "ad945315b4f121959c770b707caa6ae92a09779f6a819f6cfc00fa6693e9d06a",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "junit-platform-reporting/src/testFixtures/java/org/junit/platform/reporting/testutil/FileUtils.java",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "FileUtils.findPath",
+        "owner": "FileUtils",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 20,
+        "end_line": 30
+      },
+      "evidence": [
+        {
+          "start_line": 20,
+          "end_line": 30,
+          "content": "\tpublic static Path findPath(Path rootDir, String syntaxAndPattern) {\n\t\tvar matcher = rootDir.getFileSystem().getPathMatcher(syntaxAndPattern);\n\t\ttry (var files = Files.walk(rootDir)) {\n\t\t\treturn files.filter(matcher::matches).findFirst() //\n\t\t\t\t\t.orElseThrow(() -> new AssertionError(\n\t\t\t\t\t\t\"Failed to find file matching '%s' in %s\".formatted(syntaxAndPattern, rootDir)));\n\t\t}\n\t\tcatch (IOException e) {\n\t\t\tthrow new UncheckedIOException(e);\n\t\t}\n\t}"
+        }
+      ],
+      "source_hash": "497548852b5ea83a73074a15a4763a3f202bd267191224fbaeca081d06473451",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/support/scanning/ClasspathScanner.java",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "ClasspathScanner.scanForResourcesInClasspathRoot",
+        "owner": "ClasspathScanner",
+        "definition_ordinal": 1
+      },
+      "entity_span": {
+        "start_line": 150,
+        "end_line": 154
+      },
+      "evidence": [
+        {
+          "start_line": 150,
+          "end_line": 154,
+          "content": "\t@API(status = MAINTAINED, since = \"1.14\")\n\t@SuppressWarnings(\"removal\")\n\tdefault List<? extends Resource> scanForResourcesInClasspathRoot(URI root, ResourceFilter resourceFilter) {\n\t\treturn scanForResourcesInClasspathRoot(root, resourceFilter::match);\n\t}"
+        }
+      ],
+      "source_hash": "420e68cfa9bf9359ad740bb012517c1726d287d58c4cd0d2a679fe08f4b1eead",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "junit-jupiter-params/src/main/java/org/junit/jupiter/params/provider/CsvFileArgumentsProvider.java",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "method",
+        "qualname": "CsvFileArgumentsProvider.DefaultInputStreamProvider.openClasspathResource",
+        "owner": "CsvFileArgumentsProvider.DefaultInputStreamProvider",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 163,
+        "end_line": 169
+      },
+      "evidence": [
+        {
+          "start_line": 163,
+          "end_line": 169,
+          "content": "\t\t@Override\n\t\tpublic InputStream openClasspathResource(Class<?> baseClass, String path) {\n\t\t\tPreconditions.notBlank(path, () -> \"Classpath resource [\" + path + \"] must not be null or blank\");\n\t\t\t//noinspection resource (closed elsewhere)\n\t\t\tInputStream inputStream = baseClass.getResourceAsStream(path);\n\t\t\treturn Preconditions.notNull(inputStream, () -> \"Classpath resource [\" + path + \"] does not exist\");\n\t\t}"
+        }
+      ],
+      "source_hash": "5c72a67dff78532f173a983ad8ec83db07a7fcb02284fa706eb478186f52e28b",
+      "stale": false,
+      "truncated": false
+    },
+    {
+      "path": "junit-platform-commons/src/main/java/org/junit/platform/commons/util/ClasspathFileVisitor.java",
+      "piece_kind": "symbol",
+      "entity": {
+        "kind": "constructor",
+        "qualname": "ClasspathFileVisitor.ClasspathFileVisitor",
+        "owner": "ClasspathFileVisitor",
+        "definition_ordinal": 0
+      },
+      "entity_span": {
+        "start_line": 38,
+        "end_line": 42
+      },
+      "evidence": [
+        {
+          "start_line": 38,
+          "end_line": 42,
+          "content": "\tClasspathFileVisitor(Path basePath, Predicate<Path> filter, BiConsumer<Path, Path> consumer) {\n\t\tthis.basePath = basePath;\n\t\tthis.filter = filter;\n\t\tthis.consumer = consumer;\n\t}"
+        }
+      ],
+      "source_hash": "27d00f964e26ee42e81c6072fe260d8712d0bd4cdbd3dd4ffebfba6a88231397",
+      "stale": false,
+      "truncated": false
+    }
+  ],
+  "profile_version": "f189f081de7021005c2399fd13658fc620b8873293967b1a471a4c8142573a13",
+  "warnings": [],
+  "truncated": true,
+  "omitted_count": 0
+}

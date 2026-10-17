@@ -1,0 +1,47 @@
+{
+  "validated_engine_commit": "89bb0a9638dafa0ffc99f21230891513e2b09379",
+  "full_suite": {
+    "command": "python -m pytest tests -o addopts= -o cache_dir=/private/tmp/ken-invocation-full-cache-v310 -q",
+    "exit_code": 0,
+    "passed": 15043,
+    "xfailed": 10,
+    "elapsed_seconds": 486.04,
+    "log_sha256": "c306dee8e7244b86af319445059547c39d4521ccc8a398fa7c3170672111f307",
+    "note": "Expected failures pre-exist; no added skip/suppression or lowered threshold. Whole source unchanged during run."
+  },
+  "mypy": {
+    "command": "python -m mypy src/ken --cache-dir=/private/tmp/ken-final-mypy-cache-v301",
+    "exit_code": 0,
+    "source_files": 361,
+    "log_sha256": "8edb0691ac8752c7d7a9863d091ff85933b17ea59457e014abe3af2b8274abd5",
+    "configuration": "unchanged repository gate, no new ignores"
+  },
+  "runtime_source_matches_actual_api_probe_manifest": true,
+  "probe_engine_manifest_sha256": "e203bead4925b178949396c2b5a09221d55ae2486024263ae70edb59820e818d",
+  "changed_source_and_test_pins": {
+    "src/ken/indexer.py": "430dab7bec2d643a17a1cf3a616434b3c4efd0ffe07ea93a279146950377cbd4",
+    "src/ken/inspection/imports.py": "3a2b809c3a87333d747e4a09736237e2732cb6bbefe32b4c264b5ea018b916ec",
+    "src/ken/parsers/__init__.py": "67dd9fe4ab449b3834e1c626cfa90fcb499caaeee811975b875d41853ec1d95c",
+    "src/ken/parsers/cpp.py": "5c19d8876983b518762630e9f682b9a0a04688e38d8aaaae39939448a2ef758a",
+    "src/ken/parsers/rust.py": "d9ce67cb58aafc1a2c4b7555dfab6ca239f54afb45ab0a83662277773935ebf9",
+    "src/ken/responsibility/source.py": "c0169bbfdb0f0deecc5117d15768f2179188bf980d3e4b21830545a2eef51354",
+    "src/ken/retrieval/cli.py": "adc4cb09a259110e1d7d8e2719f4ef48049a22d3167d428bacd8bf43256e70d2",
+    "src/ken/retrieval/piece_catalog.py": "224d8990c9097234bf5009828686707e2dfa5a8e4d79ae10c9fdd1f52c3d765c",
+    "src/ken/retrieval/source_operations.py": "5c0317d362d15902e66663cfac66764a94f7bbd6526c0a9ee367cfd7d0c8ef15",
+    "src/ken/retrieval/symbol_ranking.py": "4df8c293968543cfc5c5c1b54d9931f7faa4945744ece34d3897858f89471a2d",
+    "src/ken/retrieval/symbol_requirements.py": "43d51c9e7d885de6efe6f87bf5ac31deceabea80a70522cb3670284f85764276",
+    "tests/parsers/test_cpp.py": "4d11456a4ed444fe9ce19ae498883af33692df8c744d6069aa980684e91276ec",
+    "tests/parsers/test_language.py": "a30d6660b58448e5a9022ad6acc4f2ee42bad400454c178b43566f455c814afb",
+    "tests/parsers/test_rust.py": "96691ac2f75d4b17640a869219588975e5bef2a62431e150634314b0364a1df2",
+    "tests/retrieval/test_incremental_indexing.py": "066e36b1d3d28304627eff790b63f6eb08d8b511117752eb178cf268b2592cf5",
+    "tests/retrieval/test_piece_candidates.py": "5612407c434fa6fc9da0470f95c43ef1873eb9148703ad5e17cc1f84fccfeac1",
+    "tests/retrieval/test_source_operations.py": "b974da33ea2662268311bc1b9291053d1e890db842dce558beb9fb88ee0090b1",
+    "tests/retrieval/test_symbol_ranking.py": "d5e5e816302c713824c70840fb9fd702cb73a346171d39bc25cefbd46005b555",
+    "tests/test_indexer.py": "17badc54c148fbfec50db43e35dd1fd0ab8c0914cba8e2bc1a1fd64711e88121"
+  },
+  "new_tests": "Two invocation tests observed RED before behavior, then23focusedGREEN; full suite adds those two over the15041post-rollback gate. The complete-contract experiment and its one isolated test were explicitly reverted together after quality regression.",
+  "private_reserve": "CLOSED",
+  "new_model_training": false,
+  "new_dependencies": false,
+  "release": false
+}

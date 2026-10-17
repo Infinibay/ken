@@ -1,0 +1,30 @@
+"""Authenticate two fresh changed-input calls and report an explicit100-case assembly."""
+from pathlib import Path
+import hashlib,json,sys
+base=Path.cwd();clean=Path('/Users/andres/.codex/worktrees/compact-default-output/ken');sys.path.insert(0,str(clean/'experiments/search-engine'))
+from grade_public_v224 import load_closed_results
+from public_benchmarks_v222 import repoqa_correct_piece
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();old=base/'output/development/repoqa-cpp-coverage-v246';new=base/'output/development/repoqa-final-cpp-guard-v296';registration=json.loads((new/'registration.json').read_text());assert sha(new/'repoqa-requests.jsonl')==registration['requests_sha256'] and sha(new/'repoqa-sources.json')==registration['sources_sha256'];old_requests=[json.loads(x) for x in (old/'repoqa-requests.jsonl').read_text().splitlines()];new_requests=[json.loads(x) for x in (new/'repoqa-requests.jsonl').read_text().splitlines()];assert len(old_requests)==100 and len(new_requests)==2;before=load_closed_results(old/'capture',[r['id'] for r in old_requests]);after=load_closed_results(new/'capture',[r['id'] for r in new_requests]);assert sha(new/'all100-guard-input-comparison.json')==registration['all100_guard_input_comparison_sha256'];comparison=json.loads((new/'all100-guard-input-comparison.json').read_text());assert {i for i,v in comparison.items() if v['before']!=v['after']}==set(after)
+old_manifest=json.loads((Path(json.loads((old/'registration.json').read_text())['engine'])/'SOURCE-MANIFEST.json').read_text());new_manifest=json.loads((Path(registration['engine'])/'SOURCE-MANIFEST.json').read_text());assert set(old_manifest['files'])==set(new_manifest['files']);diffs=[p for p in old_manifest['files'] if old_manifest['files'][p]!=new_manifest['files'][p]];core={'src/ken/parsers/cpp.py','src/ken/parsers/rust.py','src/ken/retrieval/symbol_requirements.py','src/ken/retrieval/symbol_ranking.py'}
+support={'src/ken/cli.py','src/ken/install.py','src/ken/install_uninstall.py','src/ken/mcp/server.py',*('src/ken/skills/bundled/'+name+'/SKILL.md' for name in ('ken-find-code-patterns','ken-investigate-bug','ken-locate-code','ken-plan-change','ken-prevent-regressions','ken-resume-work','ken-reuse-code','ken-understand-architecture'))}
+tests={'tests/parsers/test_cpp.py','tests/parsers/test_rust.py'}
+assert set(diffs)==core|support|tests
+import subprocess
+for name in support:
+    assert hashlib.sha256(subprocess.check_output(['git','show','ac5dd0a5:'+name],cwd=clean)).hexdigest()==new_manifest['files'][name],name
+# These12support files are already on unchanged base main; CLI diff adds only
+# install --agents-md, MCP diff is English-query docstrings, remaining install/skill
+# files are never called by find_best. Two test modules are not imported by capture.
+
+parity=base/'output/analysis/repoqa-diagnosis-v236/final-parser-parity-v294.json';p=json.loads(parity.read_text());assert p['different']==[] and p['errors']==[0,0]
+reference_path=base/'output/development/repoqa-core-v222/repoqa-references.json';assert sha(reference_path)=='a0069e8a685c7bec3850abb34df0c3aa942e20961f6d2718945308b336f97d01';refs=json.loads(reference_path.read_text());sources=json.loads((new/'repoqa-sources.json').read_text());literal_count=0;result_count=0;identity=lambda item:json.dumps({k:item[k] for k in ('path','entity','entity_span')},sort_keys=True)
+for request in new_requests:
+ response=after[request['id']];assert 'error' not in response and len(response['results'])==10
+ assert {identity(x) for x in response['results']}=={identity(x) for x in before[request['id']]['results']},'fresh changed-input call changed native membership unexpectedly'
+ for item in response['results']:
+  path=Path(request['root'])/item['path'];assert not item.get('stale') and sha(path)==item['source_hash']==sources[request['repo_id']]['source_pins'][item['path']];lines=path.read_text().splitlines();result_count+=1
+  for e in item['evidence']:assert e['content']=='\n'.join(lines[e['start_line']-1:e['end_line']]);literal_count+=1
+rows=[]
+for request in old_requests:
+ rid=request['id'];previous=before[rid];current=after.get(rid,previous);rank=lambda value:next((i for i,x in enumerate(value['results'],1) if repoqa_correct_piece(x,refs[rid])),None);a,b=rank(previous),rank(current);rows.append({'id':rid,'before_rank':a,'current_rank':b,'fresh_call':rid in after})
+report={'summary':{'queries':100,'top1':sum(r['current_rank']==1 for r in rows),'top10':sum(r['current_rank'] is not None for r in rows),'before_top1':sum(r['before_rank']==1 for r in rows),'before_top10':sum(r['before_rank'] is not None for r in rows)},'new_top1':[r['id'] for r in rows if r['current_rank']==1 and r['before_rank']!=1],'lost_top1':[r['id'] for r in rows if r['current_rank']!=1 and r['before_rank']==1],'fresh_calls':2,'retained_unchanged_input_calls':98,'fresh_source_integrity':{'results':result_count,'literal_excerpts':literal_count},'source_file_differences':diffs,'ranking_or_parser_source_differences':sorted(core),'base_support_files_verified_against_commit':'ac5dd0a5','non_runtime_test_files':sorted(tests),'parser_parity_sha256':sha(parity),'before_closure_sha256':sha(old/'capture/closure.json'),'fresh_closure_sha256':sha(new/'capture/closure.json'),'registration_sha256':sha(new/'registration.json'),'reference_sha256':sha(reference_path),'criterion_sha256':sha(clean/'experiments/search-engine/public_benchmarks_v222.py'),'grader_sha256':sha(Path(__file__)),'rows':rows,'reserve':'CLOSED','no_release':True,'interpretation':'Controlled100-case quality assembly:98unchanged-guard calls from frozen coverage V246 plus2fresh normalAPIcalls on final production source. Parser dataclass parity on1887Cpp/Rustfiles and exact four-source diff verified. Not a fresh100-call final-engine latency/RAM capture; use separate V246 costs with their explicit engine scope.'};(new/'assembled-report.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({k:v for k,v in report.items() if k!='rows'},indent=2))

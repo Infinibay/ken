@@ -6,7 +6,7 @@ This describes the frozen V214/V238/V246 search path, with unchanged production 
 
 `parse_*_file` discovers definitions and their source scopes. `index_files` persists canonical identities, enriches bindings where available, and creates owned retrieval passages. `SourceCatalog` authenticates source hashes and determines piece eligibility/containment. A missing parser definition, missing passage or excluded callable kind cannot be rescued by better embedding similarity or a neural reorder of ten existing pieces.
 
-Owned source is exclusive: shorter scopes own nested lines. A parent does not silently inherit a child's implementation. A scope carries signature, documentation, statements and implementation start; missing scope metadata can preserve a valid identity while supplying a poor model input. C++ previously used the symbol-only fallback, with one-line signatures and comments.
+Owned source is exclusive: shorter scopes own nested lines. A parent does not silently inherit a child's implementation. A scope carries signature, documentation, statements and implementation start; missing scope metadata can preserve a valid identity while supplying a poor model input. C++ currently uses the symbol-only fallback, with one-line contract fields. A separately measured complete-contract experiment regressed native top-ten88→86 and was explicitly reverted; it is not the final default. Original source bytes remain available for authenticated evidence and bounded whole-code neural views.
 
 ## Retrieval has several scores, not one universal similarity
 
@@ -88,3 +88,17 @@ The closed two-language composition portfolio records every variant, gains and l
 Using only whole-code neural scores improves the closed Rust pool but lowers prior English development from 218/240 to 214/240. Fixed card/code reciprocal-rank fusion and within-query standardized mean each obtain217/240. All240baseline identity orders reproduce before grading. These fixed, label-free formulas are therefore rejected as production defaults from this evidence. No parameter is fitted and no private reference is inspected. Candidate-retention experiments must still protect these earlier cohorts.
 
 Retained pair vectors contain every actual numeric input, not just the largest feature groups. All145saved scores reproduce exactly. Keep those vectors and full original traces when investigating a new proposal/representation policy: a number such as `rrf_rank` is a dependent observation about a candidate population, and removing one feature after seeing one miss is not a validated ranking design.
+
+## Rejected metadata experiment and harness boundary
+
+Complete C++ contracts preserve97reference identities but change source view texts and feature values. The independent100-call variant gives67first/86inten versus67/88forcoverage alone, including three former top-ten targets now absent. Symbol final reranking preserves native-ten membership, so those losses occur before its final ordering. This demonstrates why an information-quality improvement must be tested against a model trained on the preceding representation. The experiment is explicitly reverted, not silently incorporated because it parses more metadata.
+
+The20candidate prototype must respect both budgets: at most20pair evaluations total and at most10texts per call to the existing neural API. The failed initial100-case attempt violates the second contract and yields100query errors. Its independently registered retry changes only call chunking, preserves every original request, verifies native logits against the closed control and retains the failed attempt as infrastructure evidence. A successful group process exit is insufficient to establish query success.
+
+## Owned invocation and retained quality gates
+
+A new explicitly requested positive invocation is a necessary local source operation. The Python observer traverses only the owner's body and excludes nested callable/type bodies and declaration defaults. The existing Java/JS/TS observer starts at the callable body and skips nested callables; allocation/constructor call syntax is counted as invocation syntax. No target identity or branch execution is inferred from this boolean. Unsupported grammars supply empty observations and no positive preference. All200closed C++/Rust result sets exercise that unsupported path and preserve any prior order.
+
+The operation restores a Java regression caused by enabling constructors: storing the callback outranked the method that calls it. Fixed-logit replays preserve110/120and108/120oldEnglish first-place hits and118/119top-ten counts; the realAPI probe independently confirms the entire corrected order on the changed current candidate pool. Source and query identities, membership, forest weights and neural logits remain fixed during policy comparison.
+
+The bounded Rust union prototype attains95/100top-ten and65/100first versus64/90for its shared single-view control, with zero control losses and exactnative-logit parity. It remains research code: broader retention is useful but first-place conditional selection is65/95, far below the90/95required for90%overall. A code-only default still fails previous development gates.

@@ -1,0 +1,27 @@
+{
+  "engine": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/frozen/repoqa-final-cpp-v296",
+  "engine_manifest_sha256": "06272107f439acc4422f65d59262dbfb365ca1ed48f31263f427a45d48f749b5",
+  "requests_sha256": "35db6284c97f60391dbc237da182a0d8a94f41a84a7bac163e90c81d59501a6a",
+  "sources_sha256": "eca5b4148e8dbc5f7bed2ccb3957c6f9b70df7edd2536d9731af101f58690c61",
+  "queries": 2,
+  "groups": 2,
+  "normal_api": true,
+  "models_and_ranking_weights_unchanged": true,
+  "private_reserve": "CLOSED",
+  "parser_and_callable_eligibility_fix": true,
+  "baseline_report_sha256": "09358df5950798033958d832cc0ef9a09de66d63fe04cc7b69559b0814e00289",
+  "preparation_commands": [
+    "ken retrieval index --path ROOT --json",
+    "ken retrieval prepare --path ROOT --json"
+  ],
+  "extra_diagnostics": "After timed normal queries, replay all original queries through frozen stages without reference labels; assert normal result identities unchanged. Save full contextual scores, proposals, numeric trace, cards and final explain scores; no private inputs.",
+  "capture_stages": false,
+  "serial_after_capture": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-current-cpp-guard-v292/capture/closure.json",
+  "producer_sha256": "5ab9511e671f9262ea6464133f3a20479aa506e23888d210bcd39379f0435c80",
+  "change": "Final default after complete-contract rollback: source-equivalent iterative walks and bitwise preference correction, all other ranking/model rules retained.",
+  "comparison_capture": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/development/repoqa-cpp-coverage-v246",
+  "source_cache_closure_sha256": "fd1da30520657dd8f8f4767750e21adc7a97c2c2a19be3727bcbba788a661c55",
+  "all100_guard_input_comparison_sha256": "6ad90aa481c20dd622063ae49fdaecc16d0625d423634cc4e0dc3ea04e6c63ba",
+  "parser_parity_sha256": "f4c86253559006e6916dd567e1d4224a82ee76ca6d265617eaf89ce2b9b4bad2",
+  "interpretation": "Two fresh actual APIcalls for all changed guard inputs; remaining98quality orders require explicit controlled assembly against closedV246, not fresh100-call inference/CPUcapture."
+}

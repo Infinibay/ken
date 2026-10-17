@@ -1,0 +1,116 @@
+junit-platform-commons/src/main/java/org/junit/platform/commons/util/ClasspathFileVisitor.java:44-50 :: ClasspathFileVisitor.visitFile
+44 | 	@Override
+45 | 	public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+46 | 		if (filter.test(file)) {
+47 | 			consumer.accept(basePath, file);
+48 | 		}
+49 | 		return CONTINUE;
+50 | 	}
+
+junit-platform-commons/src/main/java/org/junit/platform/commons/util/DefaultClasspathScanner.java:166-181 :: DefaultClasspathScanner.walkFilesForUri [partial]
+166 | 	private static void walkFilesForUri(URI baseUri, Predicate<Path> filter, BiConsumer<Path, Path> consumer) {
+167 | 		try (CloseablePath closeablePath = CloseablePath.create(baseUri)) {
+168 | 			Path baseDir = closeablePath.getPath();
+169 | 			Preconditions.condition(Files.exists(baseDir), () -> "baseDir must exist: " + baseDir);
+170 | 			try {
+171 | 				Files.walkFileTree(baseDir, new ClasspathFileVisitor(baseDir, filter, consumer));
+172 | 			}
+173 | 			catch (IOException ex) {
+174 | 				logger.warn(ex, () -> "I/O error scanning files in " + baseDir);
+175 | 			}
+176 | 		}
+177 | 		catch (PreconditionViolationException ex) {
+178 | 			throw ex;
+179 | 		}
+180 | 		catch (Exception ex) {
+181 | 			logger.warn(ex, () -> "Error scanning files for URI " + baseUri);
+
+junit-platform-commons/src/main/java/org/junit/platform/commons/util/DefaultClasspathScanner.java:185-200 :: DefaultClasspathScanner.processClassFileSafely [partial]
+185 | 	private void processClassFileSafely(Path baseDir, String basePackageName, ClassFilter classFilter, Path file,
+186 | 			Consumer<Class<?>> classConsumer) {
+187 | 		try {
+188 | 			String fullyQualifiedClassName = determineFullyQualifiedClassName(baseDir, basePackageName, file);
+189 | 			if (classFilter.match(fullyQualifiedClassName)) {
+190 | 				try {
+191 | 					// @formatter:off
+192 | 					loadClass.apply(fullyQualifiedClassName, getClassLoader())
+193 | 							.toOptional()
+194 | 							.filter(classFilter::match)
+195 | 							.ifPresent(classConsumer);
+196 | 					// @formatter:on
+197 | 				}
+198 | 				catch (InternalError internalError) {
+199 | 					handleInternalError(file, fullyQualifiedClassName, internalError);
+200 | 				}
+
+junit-platform-commons/src/main/java/org/junit/platform/commons/util/DefaultClasspathScanner.java:208-222 :: DefaultClasspathScanner.processResourceFileSafely
+208 | 	private void processResourceFileSafely(Path baseDir, String basePackageName, ResourceFilter resourceFilter,
+209 | 			Path resourceFile, Consumer<Resource> resourceConsumer) {
+210 | 		try {
+211 | 			String fullyQualifiedResourceName = determineFullyQualifiedResourceName(baseDir, basePackageName,
+212 | 				resourceFile);
+213 | 			Resource resource = Resource.of(fullyQualifiedResourceName, resourceFile.toUri());
+214 | 			if (resourceFilter.match(resource)) {
+215 | 				resourceConsumer.accept(resource);
+216 | 			}
+217 | 			// @formatter:on
+218 | 		}
+219 | 		catch (Throwable throwable) {
+220 | 			handleThrowable(resourceFile, throwable);
+221 | 		}
+222 | 	}
+
+junit-platform-commons/src/main/java/org/junit/platform/commons/util/SearchPathUtils.java:42-45 :: SearchPathUtils.isClassOrSourceFile
+42 | 	static boolean isClassOrSourceFile(Path file) {
+43 | 		var fileName = file.getFileName().toString();
+44 | 		return isClassOrSourceFile(fileName) && !isModuleInfoOrPackageInfo(fileName);
+45 | 	}
+
+junit-platform-commons/src/main/java/org/junit/platform/commons/util/DefaultClasspathScanner.java:244-254 :: DefaultClasspathScanner.determineFullyQualifiedResourceName
+244 | 	private String determineFullyQualifiedResourceName(Path baseDir, String basePackageName, Path resourceFile) {
+245 | 		// @formatter:off
+246 | 		return Stream.of(
+247 | 					packagePath(basePackageName),
+248 | 					packagePath(determineSubpackageName(baseDir, resourceFile)),
+249 | 					determineSimpleResourceName(resourceFile)
+250 | 				)
+251 | 				.filter(value -> !value.isEmpty()) // Handle default package appropriately.
+252 | 				.collect(joining(CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING));
+253 | 		// @formatter:on
+254 | 	}
+
+junit-platform-reporting/src/testFixtures/java/org/junit/platform/reporting/testutil/FileUtils.java:20-30 :: FileUtils.findPath
+20 | 	public static Path findPath(Path rootDir, String syntaxAndPattern) {
+21 | 		var matcher = rootDir.getFileSystem().getPathMatcher(syntaxAndPattern);
+22 | 		try (var files = Files.walk(rootDir)) {
+23 | 			return files.filter(matcher::matches).findFirst() //
+24 | 					.orElseThrow(() -> new AssertionError(
+25 | 						"Failed to find file matching '%s' in %s".formatted(syntaxAndPattern, rootDir)));
+26 | 		}
+27 | 		catch (IOException e) {
+28 | 			throw new UncheckedIOException(e);
+29 | 		}
+30 | 	}
+
+junit-platform-commons/src/main/java/org/junit/platform/commons/support/scanning/ClasspathScanner.java:150-154 :: ClasspathScanner.scanForResourcesInClasspathRoot
+150 | 	@API(status = MAINTAINED, since = "1.14")
+151 | 	@SuppressWarnings("removal")
+152 | 	default List<? extends Resource> scanForResourcesInClasspathRoot(URI root, ResourceFilter resourceFilter) {
+153 | 		return scanForResourcesInClasspathRoot(root, resourceFilter::match);
+154 | 	}
+
+junit-jupiter-params/src/main/java/org/junit/jupiter/params/provider/CsvFileArgumentsProvider.java:163-169 :: CsvFileArgumentsProvider.DefaultInputStreamProvider.openClasspathResource
+163 | 		@Override
+164 | 		public InputStream openClasspathResource(Class<?> baseClass, String path) {
+165 | 			Preconditions.notBlank(path, () -> "Classpath resource [" + path + "] must not be null or blank");
+166 | 			//noinspection resource (closed elsewhere)
+167 | 			InputStream inputStream = baseClass.getResourceAsStream(path);
+168 | 			return Preconditions.notNull(inputStream, () -> "Classpath resource [" + path + "] does not exist");
+169 | 		}
+
+junit-platform-commons/src/main/java/org/junit/platform/commons/util/ClasspathFileVisitor.java:38-42 :: ClasspathFileVisitor.ClasspathFileVisitor
+38 | 	ClasspathFileVisitor(Path basePath, Predicate<Path> filter, BiConsumer<Path, Path> consumer) {
+39 | 		this.basePath = basePath;
+40 | 		this.filter = filter;
+41 | 		this.consumer = consumer;
+42 | 	}
