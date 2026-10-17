@@ -37,6 +37,19 @@ def _direct_nodes(root: ast.AST) -> Iterator[ast.AST]:
                 pending.append(child)
 
 
+def _invokes_body(root: ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef) -> bool:
+    """Observe calls executed by this body, excluding defaults and deferred bodies."""
+    pending: list[ast.AST] = list(root.body)
+    while pending:
+        node = pending.pop()
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):
+            continue
+        if isinstance(node, ast.Call):
+            return True
+        pending.extend(ast.iter_child_nodes(node))
+    return False
+
+
 def _snapshot_write(statements: Sequence[ast.stmt]) -> bool:
     for read, write, record in zip(statements, statements[1:], statements[2:]):
         if not (isinstance(read, ast.Assign) and len(read.targets) == 1 and isinstance(read.targets[0], ast.Name)
@@ -74,6 +87,8 @@ class OperationWitnesses:
         if key.path.endswith(('.py', '.pyi')):
             root = self._python_node(key)
             if root is not None:
+                if _invokes_body(root):
+                    result.add('invocation')
                 for node in _direct_nodes(root):
                     if isinstance(node, ast.Raise) and node.cause is not None and not (
                             isinstance(node.cause, ast.Constant) and node.cause.value is None):
@@ -91,7 +106,7 @@ class OperationWitnesses:
                                 and values[0].id == values[1].target.id and isinstance(values[1].value, ast.Call)):
                             result.add('returned_flag_refresh')
         elif key.path.endswith(('.java', '.js', '.mjs', '.cjs', '.ts', '.tsx')):
-            self._returned_update(key, result)
+            self._observe_body(key, result)
         self._cache[key] = frozenset(result)
         return self._cache[key]
 
@@ -111,7 +126,7 @@ class OperationWitnesses:
                    and node.name == name and node.end_lineno == end and start <= node.lineno <= end]
         return matches[0] if len(matches) == 1 else None
 
-    def _returned_update(self, key: EntityKey, result: set[str]) -> None:
+    def _observe_body(self, key: EntityKey, result: set[str]) -> None:
         if key.path not in self._syntax:
             self._syntax[key.path] = _Syntax('\n'.join(self.catalog.lines[key.path]).encode('utf8'), key.path)
         syntax = self._syntax[key.path]
@@ -137,11 +152,15 @@ class OperationWitnesses:
                 node = node.named_children[0]
             return node
 
-        pending = [root]
+        body = root.child_by_field_name('body')
+        pending = [body] if body is not None else []
         while pending:
             node = pending.pop()
-            if node != root and node.type in _CALLABLE:
+            if node.type in _CALLABLE:
                 continue
+            if node.type in {'call_expression', 'method_invocation', 'new_expression',
+                             'object_creation_expression', 'explicit_constructor_invocation'}:
+                result.add('invocation')
             if node.type == 'return_statement' and node.named_children:
                 value = unwrap(node.named_children[0])
                 if value is not None and value.type == 'binary_expression' and any(c.type == '||' for c in value.children):

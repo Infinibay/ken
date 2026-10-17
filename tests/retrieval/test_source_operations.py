@@ -88,3 +88,53 @@ def test_a_nested_java_lambda_return_does_not_belong_to_the_enclosing_method(tmp
 
 def test_negated_refresh_is_not_a_request_for_a_flag_update():
     assert requested_operations("Which function returns a flag or default without updating it?") == set()
+
+
+def test_invocation_uses_owned_body_not_stored_callbacks_defaults_or_nested_bodies(tmp_path):
+    catalog = make_catalog(tmp_path, {'callbacks.py': '''def store(callback=build_callback()):
+    return callback
+
+def nested(callback):
+    def deferred():
+        callback()
+    return deferred
+
+def run(callback):
+    return callback()
+''', 'Callbacks.java': '''class Callbacks {
+    Runnable callback;
+    Callbacks(Runnable callback) { this.callback = callback; }
+    void run() { callback.run(); }
+    Runnable deferred() {
+        return () -> callback.run();
+    }
+}
+''', 'callbacks.js': '''function store(callback) { return callback; }
+function run(callback) { return callback(); }
+function deferred(callback) {
+    return () => callback();
+}
+'''})
+    observations = OperationWitnesses(catalog)
+    actual = {(key.path, key.qualname): 'invocation' in observations.for_owner(key)
+              for key in catalog.owners if key.kind in {'function', 'method', 'constructor'}}
+    assert actual[('callbacks.py', 'store')] is False
+    assert actual[('callbacks.py', 'nested')] is False
+    assert actual[('callbacks.py', 'run')] is True
+    assert actual[('Callbacks.java', 'Callbacks.Callbacks')] is False
+    assert actual[('Callbacks.java', 'Callbacks.run')] is True
+    assert actual[('Callbacks.java', 'Callbacks.deferred')] is False
+    assert actual[('callbacks.js', 'store')] is False
+    assert actual[('callbacks.js', 'run')] is True
+    assert actual[('callbacks.js', 'deferred')] is False
+
+
+def test_invocation_requirement_is_an_active_positive_action_with_an_object():
+    assert requested_operations('Find a handler that invokes the selected callback.') == {'invocation'}
+    assert requested_operations('Where does an event invoke a listener after validation?') == {'invocation'}
+    assert requested_operations('Find dispatch by invoking a handler.') == {'invocation'}
+    assert requested_operations('Find callback registration without invoking a handler.') == set()
+    assert requested_operations('Find a helper that never invokes the callback.') == set()
+    assert requested_operations('Find a helper that avoids invoking a callback.') == set()
+    assert requested_operations('Find a callback that can be invoked later.') == set()
+    assert requested_operations('Show the `invoke` function definition.') == set()

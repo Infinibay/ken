@@ -73,7 +73,7 @@ def annotate(error):
     result = SymbolRanker(catalog, neural, {}).rank(SearchRequest(query), cards, query, [100., 0.])
     assert result.order == [1, 0]
     assert result.mean_scores[0] > result.mean_scores[1]
-    assert result.witnesses[1] == frozenset({'cause:AttributeError'})
+    assert result.witnesses[1] == frozenset({'cause:AttributeError', 'invocation'})
 
 
 def test_oversize_complete_view_reuses_original_score_atomically(tmp_path, registered_reranker):

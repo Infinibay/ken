@@ -10,6 +10,10 @@ from ken.retrieval.piece_catalog import SourceCatalog
 def requested_operations(query: str) -> set[str]:
     lower = query.casefold()
     required = set()
+    for action in re.finditer(r'\b(?:invokes?|invoking)\s+(?!no\b|nothing\b)\S', lower):
+        prefix = lower[:action.start()]
+        if not re.search(r"\b(?:not|never|without|cannot|can't|doesn't|don't|avoid\w*|prevent\w*)\b[^.;!?]*$", prefix):
+            required.add('invocation')
     if (re.search(r'\b(?:retain\w*|preserv\w*|keep\w*)\b', lower)
             and re.search(r'\bexception\b', lower) and re.search(r'\bcause\b', lower)
             and not re.search(r'\b(?:not|without|suppress\w*)\b[^.;]{0,60}\bcause\b', lower)):
