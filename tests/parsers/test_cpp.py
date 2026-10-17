@@ -57,3 +57,27 @@ int Vec::size() const { return 0; }
     kinds = {(s.qualname, s.kind) for s in out.symbols}
     assert ("Vec", "class") in kinds
     assert ("Vec.size", "method") in kinds
+
+
+def test_conditional_declarations_preserve_all_branches_and_owners(parse_cpp):
+    source = """#ifndef SAMPLE_HEADER
+#define SAMPLE_HEADER
+#include <vector>
+namespace sample {
+class Reader {
+public:
+#if FEATURE
+  int read() { return 1; }
+#else
+  int read() { return 2; }
+#endif
+};
+}
+#endif
+"""
+    parsed = parse_cpp(source)
+    readers = [symbol for symbol in parsed.symbols if symbol.qualname == "sample.Reader.read"]
+    assert [(symbol.kind, symbol.line_start, symbol.line_end) for symbol in readers] == [
+        ("method", 8, 8), ("method", 10, 10),
+    ]
+    assert [item.module for item in parsed.imports] == ["vector"]

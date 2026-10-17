@@ -37,6 +37,9 @@ _TYPE_SPECIFIERS = {
     "struct_specifier": "struct",
     "union_specifier": "union",
 }
+_CONDITIONALS = frozenset({
+    "preproc_if", "preproc_ifdef", "preproc_else", "preproc_elif", "preproc_elifdef",
+})
 _DECLARATOR_WRAPPERS = {
     "pointer_declarator",
     "reference_declarator",
@@ -60,7 +63,10 @@ def _dispatch(
     child: Node, src: bytes, scope: str, in_type: bool, out: ParsedFile
 ) -> None:
     kind = child.type
-    if kind == "preproc_include":
+    if kind in _CONDITIONALS:
+        # Index every source branch without guessing the caller's build flags.
+        _walk(child, src, scope, in_type, out)
+    elif kind == "preproc_include":
         _emit_include(child, src, out)
     elif kind == "function_definition":
         _emit_function(child, src, scope, in_type, out, doc_node=child)
