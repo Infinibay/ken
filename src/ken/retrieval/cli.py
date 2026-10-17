@@ -39,9 +39,8 @@ def dispatch(args: argparse.Namespace) -> int:
             init_schema(conn)
             if args.retrieval_command == "prepare":
                 from ken.indexer import index_files
-                from ken.retrieval.passages import PassagePolicy
                 from ken.retrieval.best_search import prepare_best
-                index_files(conn, root, iter_files(root), retrieval_policy=PassagePolicy())
+                index_files(conn, root, iter_files(root))
                 best_result = prepare_best(conn, root)
                 if not _paths.meta_path(root).exists():
                     _paths.meta_path(root).write_text("{}", encoding="utf-8")

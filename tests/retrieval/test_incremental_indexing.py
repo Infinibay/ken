@@ -176,3 +176,23 @@ def test_edit_reclaims_only_retired_unreferenced_artifacts(tmp_path, monkeypatch
     assert conn.execute("SELECT count(*) FROM ci_retrieval_embeddings e WHERE NOT EXISTS "
                         "(SELECT 1 FROM ci_passage_vectors v WHERE v.embedding_id=e.id)").fetchone()[0] == 0
     conn.close()
+
+
+def test_prepare_command_keeps_active_vectors_complete_during_parser_upgrade(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    from ken import _paths
+    from ken.retrieval import best_search
+    from ken.retrieval.cli import dispatch
+    conn, profile, encoder = prepared(tmp_path, monkeypatch)
+    with conn:
+        conn.execute("UPDATE ci_files SET parser_version=0")
+    conn.close()
+    monkeypatch.setattr(_paths, "db_path", lambda root: tmp_path / "index.db")
+    def check_prepared(conn, root):
+        passages = load_passage_map(conn)
+        assert passages
+        for view in ("identity", "behavior"):
+            assert set(load_vectors(conn, view, profile.vector_revision(view)).ids) == set(passages)
+        return {"indexed_files": 2, "owners": 2}
+    monkeypatch.setattr(best_search, "prepare_best", check_prepared)
+    assert dispatch(SimpleNamespace(path=str(tmp_path), retrieval_command="prepare", json=True)) == 0
