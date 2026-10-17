@@ -60,7 +60,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 logger = logging.getLogger("ken.indexer")
 
-PARSER_VERSION = 11
+PARSER_VERSION = 10
 
 
 @dataclass

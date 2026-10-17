@@ -31,7 +31,6 @@ from tree_sitter_language_pack import get_language
 
 from ken.parsers._helpers import doc_from_block_comment, doc_from_line_comments, node_text
 from ken.parsers.types import ParsedFile, ParsedImport, ParsedSymbol
-from ken.parsers.scopes import scope_for_node
 
 _PARSER = Parser(get_language("cpp"))
 
@@ -79,13 +78,6 @@ class _Scope:
 
     def qualify(self, name: str) -> str:
         return f"{self.qualname}.{name}" if self.qualname and name else (name or self.qualname)
-
-
-def _record_symbol(out: ParsedFile, src: bytes, anchor: Node, symbol: ParsedSymbol, *,
-                   body: Node | None = None) -> None:
-    """Publish identity and its complete source contract together."""
-    out.symbols.append(symbol)
-    out.scopes.append(scope_for_node(src, anchor, symbol, body=body))
 
 
 def parse_cpp_file(source: bytes, path_hint: str) -> ParsedFile:  # noqa: ARG001
@@ -256,7 +248,7 @@ def _append_callable(
         line_end=node.end_point[0] + 1,
         docstring=_cpp_doc(doc_node, src),
     )
-    _record_symbol(out, src, doc_node, symbol, body=node.child_by_field_name("body"))
+    out.symbols.append(symbol)
     return symbol
 
 
@@ -267,7 +259,7 @@ def _emit_type(
     if not name:
         return
     qual = scope.qualify(name)
-    _record_symbol(out, src, doc_node,
+    out.symbols.append(
         ParsedSymbol(
             kind=kind,
             name=name,
@@ -275,8 +267,7 @@ def _emit_type(
             line_start=doc_node.start_point[0] + 1,
             line_end=node.end_point[0] + 1,
             docstring=_cpp_doc(doc_node, src),
-        ),
-        body=node.child_by_field_name("body"),
+        )
     )
     body = node.child_by_field_name("body")
     if body is not None:
@@ -290,7 +281,7 @@ def _emit_enum(
     name = node_text(node.child_by_field_name("name"), src)
     if not name:
         return
-    _record_symbol(out, src, doc_node,
+    out.symbols.append(
         ParsedSymbol(
             kind="enum",
             name=name,
@@ -298,8 +289,7 @@ def _emit_enum(
             line_start=doc_node.start_point[0] + 1,
             line_end=node.end_point[0] + 1,
             docstring=_cpp_doc(doc_node, src),
-        ),
-        body=node.child_by_field_name("body"),
+        )
     )
 
 
@@ -313,7 +303,7 @@ def _emit_typedef(node: Node, src: bytes, scope: _Scope, out: ParsedFile) -> Non
         name = node_text(node.child_by_field_name("declarator"), src)
     if not name:
         return
-    _record_symbol(out, src, node,
+    out.symbols.append(
         ParsedSymbol(
             kind="typedef",
             name=name,
@@ -321,8 +311,7 @@ def _emit_typedef(node: Node, src: bytes, scope: _Scope, out: ParsedFile) -> Non
             line_start=node.start_point[0] + 1,
             line_end=node.end_point[0] + 1,
             docstring=_cpp_doc(node, src),
-        ),
-        body=node.child_by_field_name("body"),
+        )
     )
 
 

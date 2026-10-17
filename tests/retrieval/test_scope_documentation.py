@@ -84,39 +84,3 @@ def test_outer_documentation_after_previous_item_still_belongs_to_next_item(comm
     scopes = {s.symbol.qualname: s for s in parse_rust_file(source, 'outer.rs').scopes}
     assert scopes['first'].documentation is None
     assert scopes['second'].documentation == 'Next item documentation.'
-
-
-def test_cpp_scopes_preserve_full_template_contract_and_all_owner_kinds():
-    from ken.parsers.cpp import parse_cpp_file
-    source = b"""namespace sample {
-class Reader {
-public:
-  /** Return the supplied value.
-   * Preserve its original type without allocation.
-   */
-  template<class T>
-  T read(
-      T value
-  ) const {
-    return value;
-  }
-};
-enum class Mode { Single, Many };
-using Size = unsigned long;
-}
-"""
-    parsed = parse_cpp_file(source, "reader.hpp")
-    scopes = {scope.symbol.qualname: scope for scope in parsed.scopes}
-    assert set(scopes) == {symbol.qualname for symbol in parsed.symbols}
-    scope = scopes["sample.Reader.read"]
-    assert scope.documentation == "Return the supplied value.\nPreserve its original type without allocation."
-    assert scope.signature.strip() == "template<class T>\n  T read(\n      T value\n  ) const"
-    assert scope.owner == "sample.Reader"
-    assert scope.implementation_start_line == 11
-    assert scope.statements == [(11, 11)]
-    passages = [passage for passage in extract_passages(source, parsed, path="reader.hpp", language="cpp")
-                if passage.entity.qualname == "sample.Reader.read"]
-    assert passages
-    assert all(p.fields["documentation"] == scope.documentation for p in passages)
-    assert all("return value" not in p.fields["signature"] for p in passages)
-    assert {scope.symbol.kind for scope in parsed.scopes} >= {"class", "method", "enum", "typedef"}
