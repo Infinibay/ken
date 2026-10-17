@@ -66,9 +66,20 @@ def replace_file_passages(conn: sqlite3.Connection, file_id: int,
     return ids
 
 
+def source_extractor_current(conn: sqlite3.Connection) -> bool:
+    """Whether all admitted source follows the current extraction contract."""
+    return conn.execute(
+        "SELECT 1 FROM ci_retrieval_files WHERE extractor_version != ? LIMIT 1",
+        (EXTRACTOR_VERSION,),
+    ).fetchone() is None
+
+
 def load_passage_map(conn: sqlite3.Connection, ids: Sequence[int] | None = None) -> dict[int, Passage]:
     if ids is not None and not ids:
         return {}
+    if not source_extractor_current(conn):
+        from ken.retrieval.embedding_store import IndexVersionError
+        raise IndexVersionError("source extraction policy changed; prepare the search index again")
     sql = ("SELECT p.*, f.path,f.language,r.source_hash FROM ci_passages p "
            "JOIN ci_files f ON f.id=p.file_id JOIN ci_retrieval_files r ON r.file_id=p.file_id ")
     params = list(ids) if ids is not None else []

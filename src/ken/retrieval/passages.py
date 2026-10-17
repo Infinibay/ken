@@ -11,7 +11,7 @@ from ken.parsers.types import ParsedFile, ParsedScope
 from ken.retrieval.model import EntityKey, Passage, Span
 from ken.retrieval.roles import classify_role
 
-EXTRACTOR_VERSION = 7
+EXTRACTOR_VERSION = 8
 
 
 def lexical_token_count(text: str) -> int:
@@ -35,7 +35,12 @@ def extract_passages(source: bytes, parsed: ParsedFile, *, path: str,
     policy = policy or PassagePolicy()
     if b"\x00" in source:
         return []
-    lines = source.decode("utf-8", errors="replace").splitlines()
+    try:
+        lines = source.decode("utf-8").splitlines()
+    except UnicodeDecodeError:
+        # Passages must remain readable as the authenticated physical source.
+        # Binary fuzz fixtures need not contain a NUL byte.
+        return []
     if not lines:
         return []
     digest = hashlib.sha256(source).hexdigest()

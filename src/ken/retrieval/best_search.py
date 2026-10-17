@@ -21,7 +21,7 @@ from ken.retrieval.piece_search import PieceSearch, present_cards
 from ken.retrieval.presentation import present
 from ken.retrieval.profile import active_profile, potion_profile
 from ken.retrieval.ranking import rank_candidates
-from ken.retrieval.storage import generation
+from ken.retrieval.storage import generation, source_extractor_current
 
 
 @dataclass
@@ -38,7 +38,8 @@ _lock = threading.RLock()
 def _projection(conn: sqlite3.Connection, root: Path, resources: SearchResources) -> None:
     profile = potion_profile()
     stored = conn.execute("SELECT value FROM meta WHERE key='retrieval_profile_fingerprint'").fetchone()
-    if stored and stored[0] == profile.fingerprint and active_profile(conn) == profile:
+    if (stored and stored[0] == profile.fingerprint and active_profile(conn) == profile
+            and source_extractor_current(conn)):
         return
     files = [Path(r[0]) for r in conn.execute('SELECT path FROM ci_files ORDER BY path')]
     index_project(conn, root, files, profile=profile,

@@ -83,3 +83,28 @@ def test_passages_prefer_complete_statements_and_separate_documentation():
     assert all(p.implementation_start_line == 3 for p in passages)
     assert any(p.span.start_line == 3 and p.span.end_line >= 6 for p in passages)
     assert all(not (p.span.start_line < 3 <= p.span.end_line) for p in passages)
+
+
+def test_non_utf8_bytes_without_nul_do_not_become_source_passages():
+    from ken.parsers.types import ParsedFile
+    from ken.retrieval.passages import extract_passages
+
+    # A compressed fuzz input can contain no NUL and still be binary.
+    assert extract_passages(b"\x95compressed\xff\n", ParsedFile(),
+                            path="fuzz/deflate-stream.input") == []
+    assert extract_passages(b"// broken \xff\nfn main() {}\n", ParsedFile(),
+                            path="broken.zig") == []
+
+
+def test_valid_utf8_unknown_extension_keeps_faithful_source(tmp_path):
+    from ken.parsers.types import ParsedFile
+    from ken.retrieval.passages import extract_passages
+    from ken.retrieval.piece_catalog import SourceCatalog
+
+    source = "Unicode niño λ 日本語\r\nsecond line\r\n".encode()
+    (tmp_path / "example.input").write_bytes(source)
+    passages = extract_passages(source, ParsedFile(), path="example.input")
+    assert len(passages) == 1
+    assert passages[0].fields["body"] == "Unicode niño λ 日本語\nsecond line"
+    catalog = SourceCatalog(tmp_path, {passages[0].entity: passages})
+    assert catalog.lines["example.input"] == ["Unicode niño λ 日本語", "second line"]
