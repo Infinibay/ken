@@ -1,0 +1,2419 @@
+{
+  "schema_version": 1,
+  "review": "Independent source/reference comparison of every V246 C++ top1 miss",
+  "status": "COMPLETE_DIAGNOSTIC_WITH_REFERENCE_AND_REPRESENTATION_LIMITS",
+  "created_at_utc": "2026-10-17T01:52:30.014004+00:00",
+  "scope": {
+    "public_run": "repoqa-cpp-coverage-v246",
+    "queries_in_run": 100,
+    "reviewed_queries": 33,
+    "selection": "Exactly all rows with historical top1_piece == 0; no subsampling or replacement.",
+    "per_repo": {
+      "cpp--apache__logging-log4cxx": 5,
+      "cpp--skypjack__uvw": 4,
+      "cpp--ClickHouse__clickhouse-cpp": 2,
+      "cpp--polybar__polybar": 2,
+      "cpp--drogonframework__drogon": 3,
+      "cpp--sass__node-sass": 4,
+      "cpp--ml-explore__mlx": 3,
+      "cpp--scylladb__seastar": 2,
+      "cpp--WasmEdge__WasmEdge": 2,
+      "cpp--oatpp__oatpp": 6
+    },
+    "allowed_material": "Closed V246 public requests, sources, report, closure and returned responses; original public RepoQA references/requests; pinned physical request roots; public V257 ledger used only for matching IDs/identities/counts; own audit files.",
+    "not_performed": [
+      "No engine/model/benchmark/grader execution or fitting",
+      "No modifications to engine, grader, queries, references, captures, orders or labels",
+      "No private reserve access",
+      "No alternative-adjusted score or denominator",
+      "No exhaustive search for all other possible satisfying units"
+    ]
+  },
+  "historical_results_preserved": {
+    "queries": 100,
+    "top1_piece": 67,
+    "top10_piece": 88,
+    "top1_file": 83,
+    "top10_file": 97,
+    "indexed": 97,
+    "indexed_with_passages": 97,
+    "errors": 0,
+    "baseline_top1_piece": 35,
+    "baseline_top10_piece": 43
+  },
+  "classification_counts": {
+    "clearly_incorrect_top1": 15,
+    "query_reference_mismatch": 12,
+    "ambiguous": 3,
+    "operation_equivalent": 3
+  },
+  "classification_definitions": {
+    "clearly_incorrect_top1": "A decisive requested operation, boundary, role, input or output is different. Sharing a topic, class, name or call relationship is insufficient.",
+    "operation_equivalent": "The concrete operation is supported by both units, including an exact constructor/virtual delegation. The declaration/definition subtype identifies the same C++ callable, not two alternative functions. This does not change the frozen identity proxy or certify excerpt sufficiency.",
+    "query_reference_mismatch": "The selected reference is real source but its callable granularity or contract does not match the description, or the reference is non-callable under this track. Top1 can still also be wrong; no replacement identity is inferred.",
+    "ambiguous": "The description conflates multiple overloads/lifecycle stages or omits a decisive type/domain. Neither a clear semantic error nor satisfaction of all conditions can safely be certified."
+  },
+  "special_findings": {
+    "same_callable_declaration_vs_definition": [
+      "7e664182d9ddc7c6e7971245"
+    ],
+    "constructor_described_as_component_or_operation": [
+      "35afa9ea72541b86e26b77d7",
+      "7f0be24fe5ed99403b531fcf",
+      "5ede7fac314d65dc496f2869",
+      "0917a6f2bf94ea67daed2c07",
+      "f31c37ee00a684b83d4de379",
+      "ea9dd5e30a4de5b3f50b0146",
+      "b6b513c94c109dc77f9694dd",
+      "9c493e96674c71f26b3754c2",
+      "672ad69a64de3cc30bea2463"
+    ],
+    "all_constructor_scope_mismatch_cases": [
+      "35afa9ea72541b86e26b77d7",
+      "7f0be24fe5ed99403b531fcf",
+      "5ede7fac314d65dc496f2869",
+      "0917a6f2bf94ea67daed2c07",
+      "f31c37ee00a684b83d4de379",
+      "ea9dd5e30a4de5b3f50b0146",
+      "b6b513c94c109dc77f9694dd",
+      "9c493e96674c71f26b3754c2",
+      "672ad69a64de3cc30bea2463",
+      "8914fe186f2da974b5a355e0"
+    ],
+    "constructor_lifecycle_ambiguity": [
+      "a5634b5f43cdbd024ec1de51"
+    ],
+    "known_non_callable_reference_anomalies_in_review": [
+      "e34ba5b1e79e83c401ec51a7",
+      "f9a03a89db973d7125146afe"
+    ],
+    "previous_third_canonicality_anomaly": "The previously recorded polybar m_path/POLYBAR_NS initializer-name anomaly was not selected by the 33-miss rule and was not renamed, rescored or reopened here.",
+    "quantized_matmul_description": "Selected constructor has no matrix inputs/output; actual API constructs a floating result, contrary to the query's quantized-output statement.",
+    "partial_scope_examples": "Constructor initialization legitimately satisfies queries about stored defaults/configuration (HierarchyPrivate, ServerException, Sass_Inspect_Options, posix_datagram, CompilerContext). An empty body alone is not a defect; attribution of later class operations to that selected callable is the issue."
+  },
+  "integrity_checks": {
+    "all_outputs_closed_before_review": true,
+    "closure_pins_verified": 110,
+    "queries_unique": 100,
+    "responses_unique": 100,
+    "report_and_ledger_ids_equal": true,
+    "all_100_queries_equal_original_public_requests": true,
+    "all_100_references_equal_fixed_original": true,
+    "all_100_top1_identities_equal_report_ledger_and_closed_responses": true,
+    "summary_hit_counts_equal_row_sums": true,
+    "ledger_final_top1_top10_equal_report": true,
+    "source_files_sha256_verified": 1263,
+    "source_bytes_verified": 9801050,
+    "reviewed_source_files": 53,
+    "literal_source_evidence_ranges_verified": 94,
+    "reviewed_top1_hashes_fresh_and_returned_evidence_literal": 33,
+    "all_33_full_reference_and_top1_bodies_read_before_judgment": true,
+    "doAdvicesChain_declaration_and_definition_headers_identical_ignoring_whitespace": true,
+    "line_convention": "Evidence lines are physical 1-based inclusive. Original zero-based reference start_line, inclusive physical end_line, and original byte bounds are preserved verbatim in each original_reference object."
+  },
+  "interpretation": [
+    "The registered score remains exactly 67/100 top1 and 88/100 top10. This report supplies no semantic-adjusted score, replacement reference set or revised acceptance claim.",
+    "All 33 selected rows are misses under the unchanged original identity proxy. That fact alone does not prove every returned operation is semantically wrong, nor that the original generated description uniquely identifies its selected callable.",
+    "A same-callable forward declaration can fail a definition-end proxy. Its incomplete body may be poor response evidence, but evidence sufficiency and callable identity must not be conflated.",
+    "Descriptions can span a class lifecycle while selecting only a constructor. The report distinguishes initialized state/configuration from actual later formatting, parsing, dispatch, arithmetic or I/O execution.",
+    "This is diagnosis after public closure. No ranking design, scoring relaxation, renamed canonical identity or engine implementation is proposed."
+  ],
+  "limitations": [
+    "Not blind to closed public outcomes: the review deliberately selected all V246 top1 misses and knew the previous V236 public canonicality findings.",
+    "Judgments are manual source-based interpretations. Ambiguous natural-language descriptions are not forced into favorable credits, and a query/reference mismatch is not a claim that top1 satisfies it.",
+    "No execution/runtime correctness proof was attempted. Some behavior is delegated to external libraries or unavailable source files; such limits are explicit in the corresponding cases.",
+    "Full pinned source functions and relevant local dependencies were used. This is not a separate grade of visible-card sufficiency, a causal account of the ranker, or an official RepoQA SNF evaluation.",
+    "No claim is made that the operation-equivalent examples enumerate every valid alternative elsewhere in a repository."
+  ],
+  "input_hashes": {
+    "output/development/repoqa-cpp-coverage-v246/report.json": "6b012e1ea4ff5626f62c7d6f324bc038e698f4f623edd8b92b6359727afa12e7",
+    "output/development/repoqa-cpp-coverage-v246/registration.json": "acc3ffe042c2056129f77f57ae2be71921998327843667b696e20d0aaa09638f",
+    "output/development/repoqa-cpp-coverage-v246/capture/closure.json": "1f09df2796b7cfea2b783d86f01f14332be981f3e8e16da28e217d29aa798766",
+    "output/development/repoqa-cpp-coverage-v246/repoqa-requests.jsonl": "e61151511bfe983f9badd8e866e2025e7b2193d7a77763f8a19a4810372ed203",
+    "output/development/repoqa-cpp-coverage-v246/repoqa-sources.json": "804e618637b36ae9a58c9b750fcc348911a11a9a4f2127eccf3f469c2c34fbab",
+    "output/development/repoqa-core-v222/repoqa-references.json": "a0069e8a685c7bec3850abb34df0c3aa942e20961f6d2718945308b336f97d01",
+    "output/development/repoqa-core-v222/repoqa-requests.jsonl": "0382c17d04d9810bd0752e98359d90bc1d05d708a719385a3d03563ad1e9e0bc",
+    "output/analysis/repoqa-diagnosis-v236/cpp-stage-ledger-v257.json": "6d220c97e504a684387bbe79cfe9ae219bd782237089b50ab67372a9dd2bc140"
+  },
+  "audit_files": {
+    "/private/tmp/ken-repoqa-cpp-reference-review-v259/cases.json": "ff55bbc581d239355f57f45a4f0d3d969e11628a5d8872ca1ee34d08e8f12272",
+    "/private/tmp/ken-repoqa-cpp-reference-review-v259/decisions.py": "8afa43288d3648e53032b439d3cd7df18b1ca2e42d2f742ab5bb27a6016971fe",
+    "/private/tmp/ken-repoqa-cpp-reference-review-v259/build_review.py": "0add0df30d4d336758670c7b43b5f2ea4f8669df361428427f40f7d154da9abe"
+  },
+  "source_commits": {
+    "cpp--apache__logging-log4cxx": "502f5711809e7f48c215164e374a5df62821ed52",
+    "cpp--skypjack__uvw": "ba10b27646035594fc1dd9525dede8573b71a7d7",
+    "cpp--ClickHouse__clickhouse-cpp": "0fb483543b313a0979b4dbd130f834352a034ba8",
+    "cpp--polybar__polybar": "11b522c313f7b2b0a10063721ec8b0bf544de6f4",
+    "cpp--drogonframework__drogon": "294035beb96f6d474d501c210a1b403b0b0dedb6",
+    "cpp--sass__node-sass": "6081731aac89ce4612fe4839d4c6329539c0d8e1",
+    "cpp--ml-explore__mlx": "91eba8e4856ba9a629408e18a9d0c1e79a22dab0",
+    "cpp--scylladb__seastar": "b74a027c819ee5b9bfcee4f32edf8f37017bba12",
+    "cpp--WasmEdge__WasmEdge": "a5e6f2d011776a1d997586b6e9af0ec01efa3642",
+    "cpp--oatpp__oatpp": "17ef2a7f6c8a932498799b2a5ae5aab2869975c7"
+  },
+  "cases": [
+    {
+      "ordinal": 1,
+      "id": "046f23eb1d34d0c368c6c24a",
+      "repo_id": "cpp--apache__logging-log4cxx",
+      "query": "\n1. **Purpose**: To manage and maintain the state and configuration of a logging hierarchy, ensuring proper initialization and tracking of various status flags and settings related to logging.\n2. **Input**: No direct inputs as it initializes internal state when an instance of the containing class is created.\n3. **Output**: Does not produce a direct output but initializes and maintains internal state variables that affect the behavior of the logging system.\n4. **Procedure**: Initializes internal state with default values, including flags for configuration status and warnings, and sets a default logging level threshold. This setup is crucial for the correct functioning and configuration management of the logging system.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "HierarchyPrivate is the requested no-input default-state initializer: configured and both warnings are false and thresholdInt is ALL_INT. PropertyConfigurator.doConfigure instead consumes properties plus a hierarchy, marks it configured and applies externally supplied settings. Reconfiguration is not the described default initialization.",
+      "reference": {
+        "path": "src/main/cpp/hierarchy.cpp",
+        "start_line": 48,
+        "end_line": 54,
+        "source_sha256": "ffd428929935ae6d86dc3afa671bd68195a8f0e0d07ec7cf43d532007ea29357",
+        "official_name": "HierarchyPrivate",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "apache/logging-log4cxx",
+          "name": "HierarchyPrivate",
+          "path": "src/main/cpp/hierarchy.cpp",
+          "start_line": 47,
+          "end_line": 54,
+          "start_byte": 1583,
+          "end_byte": 1740
+        }
+      },
+      "returned_top1": {
+        "path": "src/main/cpp/propertyconfigurator.cpp",
+        "start_line": 159,
+        "end_line": 214,
+        "source_sha256": "742394b072109b0cd0a42579f7f3caba13af4d05786775dece41735ff651cc50",
+        "entity": {
+          "kind": "method",
+          "qualname": "PropertyConfigurator.doConfigure",
+          "owner": "PropertyConfigurator",
+          "definition_ordinal": 1
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/main/cpp/hierarchy.cpp",
+          "start_line": 48,
+          "end_line": 54,
+          "source_sha256": "ffd428929935ae6d86dc3afa671bd68195a8f0e0d07ec7cf43d532007ea29357",
+          "quote": "\tHierarchyPrivate()\n\t\t: configured(false)\n\t\t, emittedNoAppenderWarning(false)\n\t\t, emittedNoResourceBundleWarning(false)\n\t\t, thresholdInt(Level::ALL_INT)\n\t{\n\t}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/main/cpp/propertyconfigurator.cpp",
+          "start_line": 159,
+          "end_line": 178,
+          "source_sha256": "742394b072109b0cd0a42579f7f3caba13af4d05786775dece41735ff651cc50",
+          "quote": "spi::ConfigurationStatus PropertyConfigurator::doConfigure(helpers::Properties& properties,\n\tspi::LoggerRepositoryPtr hierarchy)\n{\n\thierarchy->setConfigured(true);\n\n\tstatic const WideLife<LogString> DEBUG_KEY(LOG4CXX_STR(\"log4j.debug\"));\n\tLogString value(properties.getProperty(DEBUG_KEY));\n\n\tif (!value.empty())\n\t{\n\t\tLogLog::setInternalDebugging(OptionConverter::toBoolean(value, true));\n\t}\n\n\tstatic const WideLife<LogString> THRESHOLD_PREFIX(LOG4CXX_STR(\"log4j.threshold\"));\n\tLogString thresholdStr =\n\t\tOptionConverter::findAndSubst(THRESHOLD_PREFIX, properties);\n\n\tif (!thresholdStr.empty())\n\t{\n\t\thierarchy->setThreshold(OptionConverter::toLevel(thresholdStr, Level::getAll()));",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/main/cpp/propertyconfigurator.cpp",
+          "start_line": 203,
+          "end_line": 214,
+          "source_sha256": "742394b072109b0cd0a42579f7f3caba13af4d05786775dece41735ff651cc50",
+          "quote": "\tconfigureRootLogger(properties, hierarchy);\n\tconfigureLoggerFactory(properties);\n\tparseCatsAndRenderers(properties, hierarchy);\n\n\tLogLog::debug(LOG4CXX_STR(\"Finished configuring.\"));\n\n\t// We don't want to hold references to appenders preventing their\n\t// destruction.\n\tregistry->clear();\n\n\treturn spi::ConfigurationStatus::Configured;\n}",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 2,
+      "id": "e34ba5b1e79e83c401ec51a7",
+      "repo_id": "cpp--apache__logging-log4cxx",
+      "query": "\n1. **Purpose**: The purpose of this function is to handle exceptions that occur during the execution of a prepared SQL statement in a database logging context. It ensures that any SQL-related errors are caught and reported appropriately.\n2. **Input**: The input includes a prepared SQL statement and a logging event that contains the data to be logged.\n3. **Output**: There is no direct output from this function; however, it affects the program by logging error messages to an error handler if an exception occurs.\n4. **Procedure**: The procedure involves attempting to execute a prepared SQL statement with the provided logging event data. If the execution fails (indicated by a negative return value), an SQL exception is thrown. This exception is then caught, and an error message is logged through an error handler, specifying the nature of the failure and the error code associated with the SQL execution failure.\n",
+      "classification": "query_reference_mismatch",
+      "subtype": "non_callable_reference",
+      "reason": "The original reference is a catch clause, not a function or method. It reports an exception but does not contain the SQLExecute/negative-return/throw steps described by the query. Those steps and this exact catch occur inside returned ODBCAppender.flushBuffer. Top1 is the real enclosing owner of the described local sequence; it is not canonically the non-callable catch reference.",
+      "reference": {
+        "path": "src/main/cpp/odbcappender.cpp",
+        "start_line": 602,
+        "end_line": 606,
+        "source_sha256": "6c21732ae784e14396159c165319fde02d0db5f80f565fe1c0d061e49e2811e4",
+        "official_name": "catch",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "apache/logging-log4cxx",
+          "name": "catch",
+          "path": "src/main/cpp/odbcappender.cpp",
+          "start_line": 601,
+          "end_line": 606,
+          "start_byte": 17557,
+          "end_byte": 17690
+        }
+      },
+      "returned_top1": {
+        "path": "src/main/cpp/odbcappender.cpp",
+        "start_line": 584,
+        "end_line": 612,
+        "source_sha256": "6c21732ae784e14396159c165319fde02d0db5f80f565fe1c0d061e49e2811e4",
+        "entity": {
+          "kind": "method",
+          "qualname": "ODBCAppender.flushBuffer",
+          "owner": "ODBCAppender",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/main/cpp/odbcappender.cpp",
+          "start_line": 602,
+          "end_line": 606,
+          "source_sha256": "6c21732ae784e14396159c165319fde02d0db5f80f565fe1c0d061e49e2811e4",
+          "quote": "\t\tcatch (SQLException& e)\n\t\t{\n\t\t\t_priv->errorHandler->error(LOG4CXX_STR(\"Failed to execute sql\"), e,\n\t\t\t\tErrorCode::FLUSH_FAILURE);\n\t\t}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/main/cpp/odbcappender.cpp",
+          "start_line": 584,
+          "end_line": 612,
+          "source_sha256": "6c21732ae784e14396159c165319fde02d0db5f80f565fe1c0d061e49e2811e4",
+          "quote": "void ODBCAppender::flushBuffer(Pool& p)\n{\n\tfor (auto& logEvent : _priv->buffer)\n\t{\n\t\tif (_priv->parameterValue.empty())\n\t\t\t_priv->errorHandler->error(LOG4CXX_STR(\"ODBCAppender column mappings not defined\"));\n#if LOG4CXX_HAVE_ODBC\n\t\telse try\n\t\t{\n\t\t\tif (0 == _priv->preparedStatement)\n\t\t\t\t_priv->setPreparedStatement(getConnection(p), p);\n\t\t\t_priv->setParameterValues(logEvent, p);\n\t\t\tauto ret = SQLExecute(_priv->preparedStatement);\n\t\t\tif (ret < 0)\n\t\t\t{\n\t\t\t\tthrow SQLException(SQL_HANDLE_STMT, _priv->preparedStatement, \"Failed to execute prepared statement\", p);\n\t\t\t}\n\t\t}\n\t\tcatch (SQLException& e)\n\t\t{\n\t\t\t_priv->errorHandler->error(LOG4CXX_STR(\"Failed to execute sql\"), e,\n\t\t\t\tErrorCode::FLUSH_FAILURE);\n\t\t}\n#endif\n\t}\n\n\t// clear the buffer of reported events\n\t_priv->buffer.clear();\n}",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [
+        "Known original canonicality anomaly preserved. The enclosing owner also loops over buffered events and takes Pool&, rather than receiving the statement and event as two direct parameters. No new canonical name or credit is assigned."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 3,
+      "id": "35afa9ea72541b86e26b77d7",
+      "repo_id": "cpp--apache__logging-log4cxx",
+      "query": "\n1. **Purpose**: The purpose of this component is to manage and format date and time strings according to specified time zones, primarily used in logging contexts.\n2. **Input**: The input typically includes a time zone identifier and a date-time value that needs formatting.\n3. **Output**: The output is a formatted date-time string adjusted according to the specified time zone.\n4. **Procedure**: The procedure involves initializing with a default time zone, parsing the time zone identifier if provided, calculating the time offset based on the parsed hours and minutes, and then formatting the date-time string according to the calculated time zone offset.\n",
+      "classification": "query_reference_mismatch",
+      "subtype": "constructor_described_as_component_or_operation",
+      "reason": "The selected StrftimeDateFormatPrivate constructor takes no arguments and only installs TimeZone::getDefault(). It cannot accept a zone identifier/date-time or format a string, let alone parse hours/minutes as the description claims. Top1 GeneralTimeZoneToken.format merely appends a time-zone ID and also does not perform the full requested conversion.",
+      "reference": {
+        "path": "src/main/cpp/strftimedateformat.cpp",
+        "start_line": 28,
+        "end_line": 30,
+        "source_sha256": "6efc73b7686de26f02b78d0a5fdbd0c4582d86f5f3780a7e76dca4494a959e33",
+        "official_name": "StrftimeDateFormatPrivate",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "apache/logging-log4cxx",
+          "name": "StrftimeDateFormatPrivate",
+          "path": "src/main/cpp/strftimedateformat.cpp",
+          "start_line": 27,
+          "end_line": 30,
+          "start_byte": 1068,
+          "end_byte": 1136
+        }
+      },
+      "returned_top1": {
+        "path": "src/main/cpp/simpledateformat.cpp",
+        "start_line": 570,
+        "end_line": 573,
+        "source_sha256": "a8747e1177c0dc2b61c00577d51e8925c4c445a76c9938e975b2ff9d8326eff3",
+        "entity": {
+          "kind": "method",
+          "qualname": "LOG4CXX_NS.helpers.SimpleDateFormatImpl.GeneralTimeZoneToken.format",
+          "owner": "LOG4CXX_NS.helpers.SimpleDateFormatImpl.GeneralTimeZoneToken",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/main/cpp/strftimedateformat.cpp",
+          "start_line": 27,
+          "end_line": 37,
+          "source_sha256": "6efc73b7686de26f02b78d0a5fdbd0c4582d86f5f3780a7e76dca4494a959e33",
+          "quote": "struct StrftimeDateFormat::StrftimeDateFormatPrivate{\n\tStrftimeDateFormatPrivate() :\n\t\ttimeZone(TimeZone::getDefault())\n\t{}\n\n\t/**\n\t*    Time zone.\n\t*/\n\tTimeZonePtr timeZone;\n\tstd::string pattern;\n};",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/main/cpp/simpledateformat.cpp",
+          "start_line": 563,
+          "end_line": 573,
+          "source_sha256": "a8747e1177c0dc2b61c00577d51e8925c4c445a76c9938e975b2ff9d8326eff3",
+          "quote": "class GeneralTimeZoneToken : public PatternToken\n{\n\tpublic:\n\t\tGeneralTimeZoneToken( int /* width */ )\n\t\t{\n\t\t}\n\n\t\tvoid format( LogString& s, const apr_time_exp_t&, Pool& /* p */ ) const\n\t\t{\n\t\t\ts.append(timeZone->getID());\n\t\t}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "support",
+          "path": "src/main/cpp/strftimedateformat.cpp",
+          "start_line": 40,
+          "end_line": 73,
+          "source_sha256": "6efc73b7686de26f02b78d0a5fdbd0c4582d86f5f3780a7e76dca4494a959e33",
+          "quote": "StrftimeDateFormat::StrftimeDateFormat(const LogString& fmt)\n\t: m_priv(std::make_unique<StrftimeDateFormatPrivate>())\n{\n\tLOG4CXX_NS::helpers::Transcoder::encode(fmt, m_priv->pattern);\n}\n\nStrftimeDateFormat::~StrftimeDateFormat()\n{\n}\n\n\nvoid StrftimeDateFormat::format(LogString& s, log4cxx_time_t time, Pool& /* p */ ) const\n{\n\tapr_time_exp_t exploded;\n\tapr_status_t stat = m_priv->timeZone->explode(&exploded, time);\n\n\tif (stat == APR_SUCCESS)\n\t{\n\t\tconst apr_size_t bufSize = 255;\n\t\tchar buf[bufSize];\n\t\tapr_size_t bufLen;\n\t\tstat = apr_strftime(buf, &bufLen, bufSize, m_priv->pattern.c_str(), &exploded);\n\n\t\tif (stat == APR_SUCCESS)\n\t\t{\n\t\t\tLOG4CXX_NS::helpers::Transcoder::decode(std::string(buf, bufLen), s);\n\t\t}\n\t}\n}\n\nvoid StrftimeDateFormat::setTimeZone(const TimeZonePtr& zone)\n{\n\tm_priv->timeZone = zone;\n}",
+          "note": "Pattern initialization, formatting and time-zone assignment are separate outer-class methods."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 4,
+      "id": "7f0be24fe5ed99403b531fcf",
+      "repo_id": "cpp--apache__logging-log4cxx",
+      "query": "\n1. **Purpose**: The function is designed to convert a sequence of characters into UTF-8 encoded bytes, which is a widely used character encoding system that supports a large range of characters from various scripts.\n2. **Input**: It accepts a sequence of characters along with a position indicator to start the conversion, and a buffer to store the encoded bytes.\n3. **Output**: The result is a status indicating the success or failure of the encoding process, and the buffer is filled with the UTF-8 encoded bytes.\n4. **Procedure**: The function iterates over the input characters, converting each character into its corresponding UTF-8 encoded form. It checks if the character can be encoded within the remaining space of the buffer. If a character cannot be encoded (due to space constraints or encoding issues), the process stops, and an appropriate status is returned.\n",
+      "classification": "query_reference_mismatch",
+      "subtype": "constructor_described_as_component_or_operation",
+      "reason": "The reference is the empty no-argument UTF8CharsetEncoder constructor. The character/iterator/buffer inputs, status result, UTF-8 conversion and buffer-space loop belong to the adjacent encode method, not this constructor. Top1 WcstombsCharsetEncoder.encode has a conversion interface but uses the locale/default external multibyte encoding, not a guaranteed UTF-8 encoding.",
+      "reference": {
+        "path": "src/main/cpp/charsetencoder.cpp",
+        "start_line": 351,
+        "end_line": 353,
+        "source_sha256": "47f54d58f84a201be4620342d7127c94a60ec25224c0d975298cd30f62540b45",
+        "official_name": "UTF8CharsetEncoder",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "apache/logging-log4cxx",
+          "name": "UTF8CharsetEncoder",
+          "path": "src/main/cpp/charsetencoder.cpp",
+          "start_line": 350,
+          "end_line": 353,
+          "start_byte": 7973,
+          "end_byte": 8001
+        }
+      },
+      "returned_top1": {
+        "path": "src/main/cpp/charsetencoder.cpp",
+        "start_line": 142,
+        "end_line": 204,
+        "source_sha256": "47f54d58f84a201be4620342d7127c94a60ec25224c0d975298cd30f62540b45",
+        "entity": {
+          "kind": "method",
+          "qualname": "LOG4CXX_NS.helpers.WcstombsCharsetEncoder.encode",
+          "owner": "LOG4CXX_NS.helpers.WcstombsCharsetEncoder",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/main/cpp/charsetencoder.cpp",
+          "start_line": 348,
+          "end_line": 353,
+          "source_sha256": "47f54d58f84a201be4620342d7127c94a60ec25224c0d975298cd30f62540b45",
+          "quote": "class UTF8CharsetEncoder : public CharsetEncoder\n{\n\tpublic:\n\t\tUTF8CharsetEncoder()\n\t\t{\n\t\t}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/main/cpp/charsetencoder.cpp",
+          "start_line": 139,
+          "end_line": 175,
+          "source_sha256": "47f54d58f84a201be4620342d7127c94a60ec25224c0d975298cd30f62540b45",
+          "quote": "\t\t/**\n\t\t *   Converts a wchar_t to the default external multibyte encoding.\n\t\t */\n\t\tlog4cxx_status_t encode(const LogString& in,\n\t\t\tLogString::const_iterator& iter,\n\t\t\tByteBuffer& out)\n\t\t{\n\t\t\tlog4cxx_status_t stat = APR_SUCCESS;\n\n\t\t\tif (iter != in.end())\n\t\t\t{\n\t\t\t\tsize_t outbytes_left = out.remaining();\n\t\t\t\tsize_t position = out.position();\n\t\t\t\tstd::wstring::size_type inOffset = (iter - in.begin());\n\t\t\t\tenum { BUFSIZE = 256 };\n\t\t\t\twchar_t buf[BUFSIZE];\n\t\t\t\tsize_t chunkSize = BUFSIZE - 1;\n\n\t\t\t\tif (chunkSize * MB_LEN_MAX > outbytes_left)\n\t\t\t\t{\n\t\t\t\t\tchunkSize = outbytes_left / MB_LEN_MAX;\n\t\t\t\t}\n\n\t\t\t\tif (chunkSize > in.length() - inOffset)\n\t\t\t\t{\n\t\t\t\t\tchunkSize = in.length() - inOffset;\n\t\t\t\t}\n\n\t\t\t\tmemset(buf, 0, BUFSIZE * sizeof(wchar_t));\n\t\t\t\tmemcpy(buf,\n\t\t\t\t\tin.data() + inOffset,\n\t\t\t\t\tchunkSize * sizeof(wchar_t));\n\t\t\t\tsize_t converted = wcstombs(out.data() + position, buf, outbytes_left);\n\n\t\t\t\tif (converted == (size_t) -1)\n\t\t\t\t{\n\t\t\t\t\tstat = APR_BADARG;",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/main/cpp/charsetencoder.cpp",
+          "start_line": 196,
+          "end_line": 204,
+          "source_sha256": "47f54d58f84a201be4620342d7127c94a60ec25224c0d975298cd30f62540b45",
+          "quote": "\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\titer += chunkSize;\n\t\t\t\t\tout.position(out.position() + converted);\n\t\t\t\t}\n\t\t\t}\n\n\t\t\treturn stat;\n\t\t}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "support",
+          "path": "src/main/cpp/charsetencoder.cpp",
+          "start_line": 355,
+          "end_line": 372,
+          "source_sha256": "47f54d58f84a201be4620342d7127c94a60ec25224c0d975298cd30f62540b45",
+          "quote": "\t\tvirtual log4cxx_status_t encode(const LogString& in,\n\t\t\tLogString::const_iterator& iter,\n\t\t\tByteBuffer& out)\n\t\t{\n\t\t\twhile (iter != in.end() && out.remaining() >= 8)\n\t\t\t{\n\t\t\t\tunsigned int sv = Transcoder::decode(in, iter);\n\n\t\t\t\tif (sv == 0xFFFF)\n\t\t\t\t{\n\t\t\t\t\treturn APR_BADARG;\n\t\t\t\t}\n\n\t\t\t\tTranscoder::encodeUTF8(sv, out);\n\t\t\t}\n\n\t\t\treturn APR_SUCCESS;\n\t\t}",
+          "note": "The actual UTF8CharsetEncoder.encode implementation has the requested inputs and Transcoder::encodeUTF8 call."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 5,
+      "id": "5ede7fac314d65dc496f2869",
+      "repo_id": "cpp--apache__logging-log4cxx",
+      "query": "\n1. **Purpose**: The purpose is to handle the customization of logging output based on specific properties. It allows the configuration of log output to include specific property values dynamically.\n2. **Input**: The input includes a property name which specifies which property of the logging event should be included in the log output.\n3. **Output**: There is no direct output; however, it modifies the logging behavior by incorporating the specified property's value into the log output.\n4. **Procedure**: The procedure involves initializing with the name of the property to be used. When a logging event occurs, the specified property's value is retrieved and formatted according to the defined style, and then included in the log output.\n",
+      "classification": "query_reference_mismatch",
+      "subtype": "constructor_described_as_component_or_operation",
+      "reason": "The selected private constructor stores propertyName as option and initializes the converter base; it never reads an event property or formats output. The description spans the larger converter lifecycle, whose format method later performs the MDC lookup. XMLLayout.format emits an XML event and, when enabled, enumerates all properties; it does not accept/store the selected property name for this converter.",
+      "reference": {
+        "path": "src/main/cpp/propertiespatternconverter.cpp",
+        "start_line": 35,
+        "end_line": 37,
+        "source_sha256": "6966b565d358552df2556f9a83e6948392dbfc6161f11cdacfd29a838b2848b3",
+        "official_name": "PropertiesPatternConverterPrivate",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "apache/logging-log4cxx",
+          "name": "PropertiesPatternConverterPrivate",
+          "path": "src/main/cpp/propertiespatternconverter.cpp",
+          "start_line": 34,
+          "end_line": 37,
+          "start_byte": 1366,
+          "end_byte": 1549
+        }
+      },
+      "returned_top1": {
+        "path": "src/main/cpp/xmllayout.cpp",
+        "start_line": 77,
+        "end_line": 176,
+        "source_sha256": "8c10e6d224a9a916838a8122862e0f653f964cda12456fc48ff5798496662933",
+        "entity": {
+          "kind": "method",
+          "qualname": "XMLLayout.format",
+          "owner": "XMLLayout",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/main/cpp/propertiespatternconverter.cpp",
+          "start_line": 33,
+          "end_line": 42,
+          "source_sha256": "6966b565d358552df2556f9a83e6948392dbfc6161f11cdacfd29a838b2848b3",
+          "quote": "struct PropertiesPatternConverter::PropertiesPatternConverterPrivate : public PatternConverterPrivate\n{\n\tPropertiesPatternConverterPrivate( const LogString& name, const LogString& style, const LogString& propertyName ) :\n\t\tPatternConverterPrivate( name, style ),\n\t\toption(propertyName) {}\n\n\t/**\n\t * Name of property to output.\n\t */\n\tconst LogString option;",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/main/cpp/xmllayout.cpp",
+          "start_line": 77,
+          "end_line": 98,
+          "source_sha256": "8c10e6d224a9a916838a8122862e0f653f964cda12456fc48ff5798496662933",
+          "quote": "void XMLLayout::format(LogString& output,\n\tconst spi::LoggingEventPtr& event,\n\tPool& p) const\n{\n\toutput.reserve(m_priv->expectedPatternLength + event->getMessage().size());\n\toutput.append(LOG4CXX_STR(\"<log4j:event logger=\\\"\"));\n\tTransform::appendEscapingTags(output, event->getLoggerName());\n\toutput.append(LOG4CXX_STR(\"\\\" timestamp=\\\"\"));\n\tStringHelper::toString(event->getTimeStamp() / 1000L, p, output);\n\toutput.append(LOG4CXX_STR(\"\\\" level=\\\"\"));\n\tTransform::appendEscapingTags(output, event->getLevel()->toString());\n\toutput.append(LOG4CXX_STR(\"\\\" thread=\\\"\"));\n\tTransform::appendEscapingTags(output, event->getThreadName());\n\toutput.append(LOG4CXX_STR(\"\\\">\"));\n\toutput.append(LOG4CXX_EOL);\n\n\toutput.append(LOG4CXX_STR(\"<log4j:message><![CDATA[\"));\n\t// Append the rendered message. Also make sure to escape any\n\t// existing CDATA sections.\n\tTransform::appendEscapingCDATA(output, event->getRenderedMessage());\n\toutput.append(LOG4CXX_STR(\"]]></log4j:message>\"));\n\toutput.append(LOG4CXX_EOL);",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/main/cpp/xmllayout.cpp",
+          "start_line": 128,
+          "end_line": 170,
+          "source_sha256": "8c10e6d224a9a916838a8122862e0f653f964cda12456fc48ff5798496662933",
+          "quote": "\tif (m_priv->properties)\n\t{\n\t\tLoggingEvent::KeySet propertySet(event->getPropertyKeySet());\n\t\tLoggingEvent::KeySet keySet(event->getMDCKeySet());\n\n\t\tif (!(keySet.empty() && propertySet.empty()))\n\t\t{\n\t\t\toutput.append(LOG4CXX_STR(\"<log4j:properties>\"));\n\t\t\toutput.append(LOG4CXX_EOL);\n\n\t\t\tfor (auto key : keySet)\n\t\t\t{\n\t\t\t\tLogString value;\n\n\t\t\t\tif (event->getMDC(key, value))\n\t\t\t\t{\n\t\t\t\t\toutput.append(LOG4CXX_STR(\"<log4j:data name=\\\"\"));\n\t\t\t\t\tTransform::appendEscapingTags(output, key);\n\t\t\t\t\toutput.append(LOG4CXX_STR(\"\\\" value=\\\"\"));\n\t\t\t\t\tTransform::appendEscapingTags(output, value);\n\t\t\t\t\toutput.append(LOG4CXX_STR(\"\\\"/>\"));\n\t\t\t\t\toutput.append(LOG4CXX_EOL);\n\t\t\t\t}\n\t\t\t}\n\n\t\t\tfor (auto key : propertySet)\n\t\t\t{\n\t\t\t\tLogString value;\n\n\t\t\t\tif (event->getProperty(key, value))\n\t\t\t\t{\n\t\t\t\t\toutput.append(LOG4CXX_STR(\"<log4j:data name=\\\"\"));\n\t\t\t\t\tTransform::appendEscapingTags(output, key);\n\t\t\t\t\toutput.append(LOG4CXX_STR(\"\\\" value=\\\"\"));\n\t\t\t\t\tTransform::appendEscapingTags(output, value);\n\t\t\t\t\toutput.append(LOG4CXX_STR(\"\\\"/>\"));\n\t\t\t\t\toutput.append(LOG4CXX_EOL);\n\t\t\t\t}\n\t\t\t}\n\n\t\t\toutput.append(LOG4CXX_STR(\"</log4j:properties>\"));\n\t\t\toutput.append(LOG4CXX_EOL);\n\t\t}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "support",
+          "path": "src/main/cpp/propertiespatternconverter.cpp",
+          "start_line": 47,
+          "end_line": 51,
+          "source_sha256": "6966b565d358552df2556f9a83e6948392dbfc6161f11cdacfd29a838b2848b3",
+          "quote": "PropertiesPatternConverter::PropertiesPatternConverter(const LogString& name1,\n\tconst LogString& propertyName) :\n\tLoggingEventPatternConverter(\n\t\tstd::make_unique<PropertiesPatternConverterPrivate>(name1, LOG4CXX_STR(\"property\"), propertyName))\n{",
+          "note": "The public converter constructor creates this private state."
+        },
+        {
+          "role": "support",
+          "path": "src/main/cpp/propertiespatternconverter.cpp",
+          "start_line": 70,
+          "end_line": 95,
+          "source_sha256": "6966b565d358552df2556f9a83e6948392dbfc6161f11cdacfd29a838b2848b3",
+          "quote": "void PropertiesPatternConverter::format(\n\tconst LoggingEventPtr& event,\n\tLogString& toAppendTo,\n\tPool& /* p */) const\n{\n\tif (priv->option.length() == 0)\n\t{\n\t\ttoAppendTo.append(1, (logchar) 0x7B /* '{' */);\n\n\t\tfor (auto const& item : event->getMDCKeySet())\n\t\t{\n\t\t\ttoAppendTo.append(1, (logchar) 0x7B /* '{' */);\n\t\t\ttoAppendTo.append(item);\n\t\t\ttoAppendTo.append(1, (logchar) 0x2C /* ',' */);\n\t\t\tevent->getMDC(item, toAppendTo);\n\t\t\ttoAppendTo.append(1, (logchar) 0x7D /* '}' */);\n\t\t}\n\n\t\ttoAppendTo.append(1, (logchar) 0x7D /* '}' */);\n\n\t}\n\telse\n\t{\n\t\tevent->getMDC(priv->option, toAppendTo);\n\t}\n}",
+          "note": "The distinct format method consumes option and performs property output."
+        }
+      ],
+      "caveats": [
+        "The private constructor is a legitimate configuration-support unit, but treating its owning converter behavior as behavior implemented by this selected callable would change the granularity."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 6,
+      "id": "0372d0649f3b6ea55f0d00d8",
+      "repo_id": "cpp--skypjack__uvw",
+      "query": "\n1. **Purpose**: The purpose of this entity is to act as a control mechanism within a class, ensuring that certain operations are restricted to be performed only through the class itself or its friends, thereby encapsulating specific functionalities.\n2. **Input**: It takes an integer as an input, which is used solely to differentiate its constructor and does not carry semantic meaning beyond controlling access.\n3. **Output**: This entity does not produce an output as it is not a function but a constructor for creating instances with restricted access.\n4. **Procedure**: The procedure involves instantiating this entity by passing an integer, which effectively serves as a key or token, allowing the creation of an instance. This instance is then used internally within the class to manage or guard certain functionalities that are sensitive or should be restricted in scope.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "loop::uv_token has the requested private explicit int constructor and grants loop friendship. Top1 is a public semaphore constructor declaration taking a loop token, loop reference and initial semaphore value; it is not the private access-key constructor whose integer is only a discriminator.",
+      "reference": {
+        "path": "src/uvw/loop.h",
+        "start_line": 68,
+        "end_line": 68,
+        "source_sha256": "c764501009aae198859aa149aaa51edfb4336426e0c31220a37a0bbe1b65f6be",
+        "official_name": "uv_token",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "skypjack/uvw",
+          "name": "uv_token",
+          "path": "src/uvw/loop.h",
+          "start_line": 67,
+          "end_line": 68,
+          "start_byte": 1510,
+          "end_byte": 1535
+        }
+      },
+      "returned_top1": {
+        "path": "src/uvw/thread.h",
+        "start_line": 259,
+        "end_line": 259,
+        "source_sha256": "cb38b5f29946bf3d5757af9f12b36286a92d8c7aa67cd2e6659239a40e4bda69",
+        "entity": {
+          "kind": "constructor",
+          "qualname": "uvw.semaphore.semaphore",
+          "owner": "uvw.semaphore",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/uvw/loop.h",
+          "start_line": 60,
+          "end_line": 69,
+          "source_sha256": "c764501009aae198859aa149aaa51edfb4336426e0c31220a37a0bbe1b65f6be",
+          "quote": "class loop final: public emitter<loop>, public std::enable_shared_from_this<loop> {\n    using deleter = void (*)(uv_loop_t *);\n\n    template<typename, typename, typename...>\n    friend class resource;\n\n    class uv_token {\n        friend class loop;\n        explicit uv_token(int) {}\n    };",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/uvw/thread.h",
+          "start_line": 250,
+          "end_line": 259,
+          "source_sha256": "cb38b5f29946bf3d5757af9f12b36286a92d8c7aa67cd2e6659239a40e4bda69",
+          "quote": "/**\n * @brief The semaphore wrapper.\n *\n * To create a `semaphore` through a `loop`, arguments follow:\n *\n * * An unsigned integer that specifies the initial value for the semaphore.\n */\nclass semaphore final: public uv_type<uv_sem_t> {\npublic:\n    explicit semaphore(loop::token token, std::shared_ptr<loop> ref, unsigned int value) noexcept;",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 7,
+      "id": "fa9b1c5c62406426aa76266f",
+      "repo_id": "cpp--skypjack__uvw",
+      "query": "\n1. **Purpose**: The function is designed to prepare the UDP socket for receiving data. If the socket is not already bound, it automatically binds to an all-interfaces IPv4 address with a random port.\n2. **Input**: There are no parameters required for this function.\n3. **Output**: Returns an integer value that represents the success or failure of the operation based on the underlying system call.\n4. **Procedure**: The function checks if the socket is bound; if not, it binds the socket to a default address and port. It then sets up the socket to start receiving data, which will trigger a data event upon data arrival.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "The reference recv<Alloc>() invokes uv_udp_recv_start with allocation and receive callbacks, matching the documented receive/autobind operation. Top1 bind(socket_address, flags) only delegates an explicit address binding. It takes address/flags inputs and never starts receive or installs receive callbacks.",
+      "reference": {
+        "path": "src/uvw/udp.h",
+        "start_line": 521,
+        "end_line": 523,
+        "source_sha256": "324d0dd787c50221186c3b94ad5168e69c2f0c47ec4bdc97f150d7fa5cbe08c0",
+        "official_name": "recv",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "skypjack/uvw",
+          "name": "recv",
+          "path": "src/uvw/udp.h",
+          "start_line": 520,
+          "end_line": 523,
+          "start_byte": 17702,
+          "end_byte": 17829
+        }
+      },
+      "returned_top1": {
+        "path": "src/uvw/udp.cpp",
+        "start_line": 97,
+        "end_line": 99,
+        "source_sha256": "52002c73dce0f2ebc2e8aa312254bec505d83012b2872c867ae959a11ac27504",
+        "entity": {
+          "kind": "method",
+          "qualname": "uvw.udp_handle.bind",
+          "owner": "uvw.udp_handle",
+          "definition_ordinal": 2
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/uvw/udp.h",
+          "start_line": 501,
+          "end_line": 523,
+          "source_sha256": "324d0dd787c50221186c3b94ad5168e69c2f0c47ec4bdc97f150d7fa5cbe08c0",
+          "quote": "    /**\n     * @brief Prepares for receiving data.\n     *\n     * Note that if the socket has not previously been bound with `bind()`, it\n     * is bound to `0.0.0.0` (the _all interfaces_ IPv4 address) and a random\n     * port number.\n     *\n     * An UDP data event will be emitted when the handle receives data.\n     *\n     * @return Underlying return value.\n     */\n    int recv();\n\n    /**\n     * @brief Prepares for receiving data.\n     * @sa recv\n     * @tparam Alloc Custom allocation function.\n     * @return Underlying return value.\n     */\n    template<auto Alloc>\n    int recv() {\n        return uv_udp_recv_start(raw(), &details::common_alloc_callback<udp_handle, Alloc>, &recv_callback);\n    }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/uvw/udp.cpp",
+          "start_line": 89,
+          "end_line": 99,
+          "source_sha256": "52002c73dce0f2ebc2e8aa312254bec505d83012b2872c867ae959a11ac27504",
+          "quote": "UVW_INLINE int udp_handle::bind(const sockaddr &addr, udp_handle::udp_flags opts) {\n    return uv_udp_bind(raw(), &addr, static_cast<uv_udp_flags>(opts));\n}\n\nUVW_INLINE int udp_handle::bind(const std::string &ip, unsigned int port, udp_flags opts) {\n    return bind(details::ip_addr(ip.data(), port), opts);\n}\n\nUVW_INLINE int udp_handle::bind(socket_address addr, udp_flags opts) {\n    return bind(addr.ip, addr.port, opts);\n}",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [
+        "Autobinding is documented by the pinned uvw API comment and delegated to libuv; no independent libuv runtime proof was attempted."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 8,
+      "id": "0917a6f2bf94ea67daed2c07",
+      "repo_id": "cpp--skypjack__uvw",
+      "query": "\n1. **Purpose**: Provides an abstraction layer for duplex communication channels, facilitating data transmission and reception across different types of stream-based connections such as TCP, pipes, and TTY.\n2. **Input**: Receives data through callbacks that handle various stream events like connection establishment, data reception, and stream closure.\n3. **Output**: Emits events corresponding to the stream's state changes and data flow, such as connection success, incoming data, or errors.\n4. **Procedure**: Initializes with a loop reference and sets up callbacks to handle stream events. It processes incoming data, handles connection lifecycle events, and manages errors and stream termination through a series of predefined callbacks.\n",
+      "classification": "query_reference_mismatch",
+      "subtype": "constructor_described_as_component_or_operation",
+      "reason": "The query describes the stream_handle abstraction and its read/connect/listen/error lifecycle, but the reference is only the conditional MSVC constructor forwarding token/ref to base. That callable does not receive callback data or process events. Top1 is the read callback of the same class, implementing data/end/error publication, but not the constructor or the entire connection/lifecycle abstraction.",
+      "reference": {
+        "path": "src/uvw/stream.h",
+        "start_line": 155,
+        "end_line": 156,
+        "source_sha256": "0d9ef1e876c9f4974312a17e056eedcf6941afd6236a7e740c770e95616b216f",
+        "official_name": "stream_handle",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "skypjack/uvw",
+          "name": "stream_handle",
+          "path": "src/uvw/stream.h",
+          "start_line": 154,
+          "end_line": 156,
+          "start_byte": 5052,
+          "end_byte": 5152
+        }
+      },
+      "returned_top1": {
+        "path": "src/uvw/stream.h",
+        "start_line": 116,
+        "end_line": 135,
+        "source_sha256": "0d9ef1e876c9f4974312a17e056eedcf6941afd6236a7e740c770e95616b216f",
+        "entity": {
+          "kind": "method",
+          "qualname": "uvw.stream_handle.read_callback",
+          "owner": "uvw.stream_handle",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/uvw/stream.h",
+          "start_line": 153,
+          "end_line": 159,
+          "source_sha256": "0d9ef1e876c9f4974312a17e056eedcf6941afd6236a7e740c770e95616b216f",
+          "quote": "public:\n#ifdef _MSC_VER\n    stream_handle(loop::token token, std::shared_ptr<loop> ref)\n        : base{token, std::move(ref)} {}\n#else\n    using base::base;\n#endif",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/uvw/stream.h",
+          "start_line": 104,
+          "end_line": 135,
+          "source_sha256": "0d9ef1e876c9f4974312a17e056eedcf6941afd6236a7e740c770e95616b216f",
+          "quote": " * The stream handle is an intermediate type, `uvw` provides three stream\n * implementations: tcp, pipe and tty handles.\n */\ntemplate<typename T, typename U, typename... E>\nclass stream_handle: public handle<T, U, listen_event, end_event, connect_event, shutdown_event, data_event, write_event, E...> {\n    using base = handle<T, U, listen_event, end_event, connect_event, shutdown_event, data_event, write_event, E...>;\n\n    template<typename, typename, typename...>\n    friend class stream_handle;\n\n    static constexpr unsigned int DEFAULT_BACKLOG = 128;\n\n    static void read_callback(uv_stream_t *hndl, ssize_t nread, const uv_buf_t *buf) {\n        T &ref = *(static_cast<T *>(hndl->data));\n        // data will be destroyed no matter of what the value of nread is\n        std::unique_ptr<char[]> data{buf->base};\n\n        // nread == 0 is ignored (see http://docs.libuv.org/en/v1.x/stream.html)\n        // equivalent to EAGAIN/EWOULDBLOCK, it shouldn't be treated as an error\n        // for we don't have data to emit though, it's fine to suppress it\n\n        if(nread == UV_EOF) {\n            // end of stream\n            ref.publish(end_event{});\n        } else if(nread > 0) {\n            // data available\n            ref.publish(data_event{std::move(data), static_cast<std::size_t>(nread)});\n        } else if(nread < 0) {\n            // transmission error\n            ref.publish(error_event(nread));\n        }\n    }",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [
+        "This is an owning-class-versus-selected-callable mismatch, not a claim that the class lacks the described responsibilities."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 9,
+      "id": "49af11ba34b3248c5867495d",
+      "repo_id": "cpp--skypjack__uvw",
+      "query": "\n1. **Purpose**: To manage environment variables by either retrieving, setting, or iterating through them.\n2. **Input**: For retrieval and setting, the name of the environment variable is required. For setting, an additional value is needed which can be an empty string to unset the variable. For iteration, a function object is required that can handle the name and value of each environment variable.\n3. **Output**: For retrieval, it returns the value of the environment variable or an empty string if not found or on error. For setting, it returns a boolean indicating success or failure. For iteration, it returns a boolean indicating success or failure of the iteration process.\n4. **Procedure**: Depending on the operation:\n   - For retrieval, the function checks the system for the specified environment variable and returns its value.\n   - For setting, the function updates or deletes the specified environment variable based on the value provided.\n   - For iteration, the function retrieves all environment variables and passes each one to the provided function object.\n",
+      "classification": "ambiguous",
+      "subtype": "overload_family_conflation",
+      "reason": "The query combines three different env overloads: getter, setter/unsetter and iteration callback. The reference is only the iteration overload; returned top1 is exactly the setter/unsetter overload. Each satisfies a different explicitly described branch, and no single selected overload implements all three input/output contracts. The query does not specify which branch should uniquely identify its answer.",
+      "reference": {
+        "path": "src/uvw/util.h",
+        "start_line": 380,
+        "end_line": 396,
+        "source_sha256": "0c8c319a6af14dafea817fce8c200e068e135061b589481e931456c22bc2bbb7",
+        "official_name": "env",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "skypjack/uvw",
+          "name": "env",
+          "path": "src/uvw/util.h",
+          "start_line": 379,
+          "end_line": 396,
+          "start_byte": 11533,
+          "end_byte": 12089
+        }
+      },
+      "returned_top1": {
+        "path": "src/uvw/util.cpp",
+        "start_line": 133,
+        "end_line": 135,
+        "source_sha256": "4021330b38ab1b780cd1c24b051ae690c4ecf3c2ef1fa59a077e8992852dbc70",
+        "entity": {
+          "kind": "method",
+          "qualname": "uvw.utilities.os.env",
+          "owner": "uvw.utilities.os",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/uvw/util.h",
+          "start_line": 379,
+          "end_line": 396,
+          "source_sha256": "0c8c319a6af14dafea817fce8c200e068e135061b589481e931456c22bc2bbb7",
+          "quote": "        template<typename Func>\n        static std::enable_if_t<std::is_invocable_v<Func, std::string_view, std::string_view>, bool>\n        env(Func func) noexcept {\n            uv_env_item_t *items = nullptr;\n            int count{};\n\n            const bool ret = (uv_os_environ(&items, &count) == 0);\n\n            if(ret) {\n                for(int pos = 0; pos < count; ++pos) {\n                    func(std::string_view{items[pos].name}, std::string_view{items[pos].value});\n                }\n\n                uv_os_free_environ(items, count);\n            }\n\n            return ret;\n        }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/uvw/util.cpp",
+          "start_line": 129,
+          "end_line": 135,
+          "source_sha256": "4021330b38ab1b780cd1c24b051ae690c4ecf3c2ef1fa59a077e8992852dbc70",
+          "quote": "UVW_INLINE std::string utilities::os::env(const std::string &name) noexcept {\n    return details::try_read(&uv_os_getenv, name.c_str());\n}\n\nUVW_INLINE bool utilities::os::env(const std::string &name, const std::string &value) noexcept {\n    return (0 == (value.empty() ? uv_os_unsetenv(name.c_str()) : uv_os_setenv(name.c_str(), value.c_str())));\n}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "support",
+          "path": "src/uvw/util.h",
+          "start_line": 349,
+          "end_line": 381,
+          "source_sha256": "0c8c319a6af14dafea817fce8c200e068e135061b589481e931456c22bc2bbb7",
+          "quote": "        /**\n         * @brief Retrieves an environment variable.\n         * @param name The name of the variable to be retrieved.\n         * @return The value of the environment variable, an empty string in\n         * case of errors.\n         */\n        static std::string env(const std::string &name) noexcept;\n\n        /**\n         * @brief Creates, updates or deletes an environment variable.\n         * @param name The name of the variable to be updated.\n         * @param value The value to be used for the variable (an empty string\n         * to unset it).\n         * @return True in case of success, false otherwise.\n         */\n        static bool env(const std::string &name, const std::string &value) noexcept;\n\n        /**\n         * @brief Retrieves all environment variables and iterates them.\n         *\n         * Environment variables are passed one at a time to the callback in the\n         * form of `std::string_view`s.<br/>\n         * The signature of the function call operator must be such that it\n         * accepts two parameters, the name and the value of the i-th variable.\n         *\n         * @tparam Func Type of a function object to which to pass environment\n         * variables.\n         * @param func A function object to which to pass environment variables.\n         * @return True in case of success, false otherwise.\n         */\n        template<typename Func>\n        static std::enable_if_t<std::is_invocable_v<Func, std::string_view, std::string_view>, bool>\n        env(Func func) noexcept {",
+          "note": "The getter, setter and iterator are separately declared overloads."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 10,
+      "id": "6005bb39a6d95a45ab58042e",
+      "repo_id": "cpp--ClickHouse__clickhouse-cpp",
+      "query": "\n1. **Purpose**: To encapsulate and handle exceptions originating from the server, providing a structured way to manage and report errors that occur during server interactions.\n2. **Input**: Receives a unique pointer to an exception structure containing details such as error code, name, display text, and stack trace.\n3. **Output**: Does not return a value but initializes an object that inherits from a standard runtime error class, enriched with server-specific error information.\n4. **Procedure**: Constructs an object by taking a unique pointer to an exception structure, transferring ownership of this structure to the newly created object to maintain error details.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "ServerException takes ownership of the supplied unique_ptr<Exception> while initializing its Error base. Client::Impl::ReceiveException instead takes a rethrow flag, reads exception fields from the input stream, notifies event hooks and may throw a server error. Receiving/building an exception is not the requested ownership-transferring exception constructor.",
+      "reference": {
+        "path": "clickhouse/exceptions.h",
+        "start_line": 43,
+        "end_line": 47,
+        "source_sha256": "526f0f84f8b840663754d974f0f14cde1c6afb966d5da7a2e2eac769abd8c616",
+        "official_name": "ServerException",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "ClickHouse/clickhouse-cpp",
+          "name": "ServerException",
+          "path": "clickhouse/exceptions.h",
+          "start_line": 42,
+          "end_line": 47,
+          "start_byte": 869,
+          "end_byte": 992
+        }
+      },
+      "returned_top1": {
+        "path": "clickhouse/client.cpp",
+        "start_line": 681,
+        "end_line": 727,
+        "source_sha256": "8b5155bf0893d89a3067ca0b7f7e91f71f0cfdfef19c734849df700b88df2218",
+        "entity": {
+          "kind": "method",
+          "qualname": "clickhouse.Client.Impl.ReceiveException",
+          "owner": "clickhouse.Client.Impl",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "clickhouse/exceptions.h",
+          "start_line": 40,
+          "end_line": 47,
+          "source_sha256": "526f0f84f8b840663754d974f0f14cde1c6afb966d5da7a2e2eac769abd8c616",
+          "quote": "// Exception received from server.\nclass ServerException : public Error {\npublic:\n    ServerException(std::unique_ptr<Exception> e)\n        : Error(std::string())\n        , exception_(std::move(e))\n    {\n    }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "clickhouse/client.cpp",
+          "start_line": 681,
+          "end_line": 708,
+          "source_sha256": "8b5155bf0893d89a3067ca0b7f7e91f71f0cfdfef19c734849df700b88df2218",
+          "quote": "bool Client::Impl::ReceiveException(bool rethrow) {\n    std::unique_ptr<Exception> e(new Exception);\n    Exception* current = e.get();\n\n    bool exception_received = true;\n    do {\n        bool has_nested = false;\n\n        if (!WireFormat::ReadFixed(*input_, &current->code)) {\n           exception_received = false;\n           break;\n        }\n        if (!WireFormat::ReadString(*input_, &current->name)) {\n            exception_received = false;\n            break;\n        }\n        if (!WireFormat::ReadString(*input_, &current->display_text)) {\n            exception_received = false;\n            break;\n        }\n        if (!WireFormat::ReadString(*input_, &current->stack_trace)) {\n            exception_received = false;\n            break;\n        }\n        if (!WireFormat::ReadFixed(*input_, &has_nested)) {\n            exception_received = false;\n            break;\n        }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "clickhouse/client.cpp",
+          "start_line": 718,
+          "end_line": 727,
+          "source_sha256": "8b5155bf0893d89a3067ca0b7f7e91f71f0cfdfef19c734849df700b88df2218",
+          "quote": "    if (events_) {\n        events_->OnServerException(*e);\n    }\n\n    if (rethrow || options_.rethrow_exceptions) {\n        throw ServerError(std::move(e));\n    }\n\n    return exception_received;\n}",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 11,
+      "id": "ff2f6474be9bd5522202d552",
+      "repo_id": "cpp--ClickHouse__clickhouse-cpp",
+      "query": "\n1. **Purpose**: The function is designed to exchange the contents of two instances of a class that represents a column in a database or data structure.\n2. **Input**: Two instances of the column class.\n3. **Output**: There is no return value; however, the internal state of the two column instances are exchanged.\n4. **Procedure**: This function directly swaps the internal data of the two column instances, effectively interchanging their states without the need for a temporary variable to hold the data of one during the swap. This is typically implemented to facilitate operations like reordering or algorithmic shuffling where elements need to be swapped efficiently.\n",
+      "classification": "operation_equivalent",
+      "subtype": "wrapper_and_concrete_virtual_implementation",
+      "reason": "The free swap(Column&,Column&) delegates to virtual left.Swap(right). Returned ColumnEnum<T>::Swap exchanges its data_ vector with the other ColumnEnum<T>. For the column class implemented by top1 this is precisely the described content swap; the query names no subtype and does not require the ADL wrapper rather than the concrete virtual implementation.",
+      "reference": {
+        "path": "clickhouse/columns/column.h",
+        "start_line": 99,
+        "end_line": 101,
+        "source_sha256": "bfbf13d876ce2f82d8f14e84736b0c89389c7824f29bd228074a65a47372f3b5",
+        "official_name": "swap",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "ClickHouse/clickhouse-cpp",
+          "name": "swap",
+          "path": "clickhouse/columns/column.h",
+          "start_line": 98,
+          "end_line": 101,
+          "start_byte": 3489,
+          "end_byte": 3561
+        }
+      },
+      "returned_top1": {
+        "path": "clickhouse/columns/enum.cpp",
+        "start_line": 109,
+        "end_line": 113,
+        "source_sha256": "2e3daa9627d88f5f9692db7e29e829478a7086ac37357446175886dc521e59ea",
+        "entity": {
+          "kind": "method",
+          "qualname": "clickhouse.ColumnEnum<T>.Swap",
+          "owner": "clickhouse.ColumnEnum<T>",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "clickhouse/columns/column.h",
+          "start_line": 91,
+          "end_line": 101,
+          "source_sha256": "bfbf13d876ce2f82d8f14e84736b0c89389c7824f29bd228074a65a47372f3b5",
+          "quote": "    virtual void Swap(Column&) = 0;\n\n    /// Get a view on raw item data if it is supported by column, will throw an exception if index is out of range.\n    /// Please note that view is invalidated once column items are added or deleted, column is loaded from strean or destroyed.\n    virtual ItemView GetItem(size_t) const {\n        throw UnimplementedError(\"GetItem() is not supported for column of \" + type_->GetName());\n    }\n\n    friend void swap(Column& left, Column& right) {\n        left.Swap(right);\n    }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "clickhouse/columns/enum.cpp",
+          "start_line": 109,
+          "end_line": 113,
+          "source_sha256": "2e3daa9627d88f5f9692db7e29e829478a7086ac37357446175886dc521e59ea",
+          "quote": "template <typename T>\nvoid ColumnEnum<T>::Swap(Column& other) {\n    auto & col = dynamic_cast<ColumnEnum<T> &>(other);\n    data_.swap(col.data_);\n}",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [
+        "This is equivalence for the concrete ColumnEnum<T> domain, not a proof that this one implementation accepts every possible Column subclass. Different callable identities remain different under the registered scorer."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 12,
+      "id": "5f27bc82d675a14127635693",
+      "repo_id": "cpp--polybar__polybar",
+      "query": "\n1. **Purpose**: The function is designed to create a bitmask based on the states of a window manager module, allowing for the combination of two different states into a single bitmask.\n2. **Input**: Two enumeration values representing the states of a window manager module, with the second state having a default value indicating no state.\n3. **Output**: An unsigned integer representing the bitmask created from the input states.\n4. **Procedure**: The function checks if each input state is non-zero. For each non-zero state, it shifts a bit left by the state value minus one and combines these bits using a bitwise OR operation to form the final bitmask.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "make_mask directly implements the two state arguments, default NONE, nonzero checks, shifts and OR result. handle_status accepts and mutates a socket status string, parses monitor/workspace tags, calls make_mask for selected states and returns bool. Its use of the helper does not supply the helper's input/output contract.",
+      "reference": {
+        "path": "src/modules/bspwm.cpp",
+        "start_line": 16,
+        "end_line": 25,
+        "source_sha256": "3caaf0cc13f0b89f105fe921924e6d4b5ec27b4b3884acd4e56b1b27a96fc004",
+        "official_name": "make_mask",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "polybar/polybar",
+          "name": "make_mask",
+          "path": "src/modules/bspwm.cpp",
+          "start_line": 15,
+          "end_line": 25,
+          "start_byte": 286,
+          "end_byte": 620
+        }
+      },
+      "returned_top1": {
+        "path": "src/modules/bspwm.cpp",
+        "start_line": 184,
+        "end_line": 390,
+        "source_sha256": "3caaf0cc13f0b89f105fe921924e6d4b5ec27b4b3884acd4e56b1b27a96fc004",
+        "entity": {
+          "kind": "method",
+          "qualname": "modules.bspwm_module.handle_status",
+          "owner": "modules.bspwm_module",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/modules/bspwm.cpp",
+          "start_line": 16,
+          "end_line": 25,
+          "source_sha256": "3caaf0cc13f0b89f105fe921924e6d4b5ec27b4b3884acd4e56b1b27a96fc004",
+          "quote": "  unsigned int make_mask(bspwm_state s1, bspwm_state s2 = bspwm_state::NONE) {\n    unsigned int mask{0U};\n    if (static_cast<unsigned int>(s1)) {\n      mask |= 1U << (static_cast<unsigned int>(s1) - 1U);\n    }\n    if (static_cast<unsigned int>(s2)) {\n      mask |= 1U << (static_cast<unsigned int>(s2) - 1U);\n    }\n    return mask;\n  }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/modules/bspwm.cpp",
+          "start_line": 184,
+          "end_line": 200,
+          "source_sha256": "3caaf0cc13f0b89f105fe921924e6d4b5ec27b4b3884acd4e56b1b27a96fc004",
+          "quote": "  bool bspwm_module::handle_status(string& data) {\n    if (data.empty()) {\n      return false;\n    }\n\n    size_t prefix_len{strlen(BSPWM_STATUS_PREFIX)};\n    if (data.compare(0, prefix_len, BSPWM_STATUS_PREFIX) != 0) {\n      m_log.err(\"%s: Unknown status '%s'\", name(), data);\n      return false;\n    }\n\n    string_util::hash_type hash;\n    if ((hash = string_util::hash(data)) == m_hash) {\n      return false;\n    }\n\n    m_hash = hash;",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/modules/bspwm.cpp",
+          "start_line": 236,
+          "end_line": 275,
+          "source_sha256": "3caaf0cc13f0b89f105fe921924e6d4b5ec27b4b3884acd4e56b1b27a96fc004",
+          "quote": "    for (auto&& tag : string_util::split(data, ':')) {\n      auto value = tag.substr(1);\n      auto mode_flag = mode::NONE;\n      unsigned int workspace_mask{0U};\n\n      if (tag[0] == 'm' || tag[0] == 'M') {\n        m_monitors.emplace_back(std::make_unique<bspwm_monitor>());\n        m_monitors.back()->name = value;\n\n        if (m_monitorlabel) {\n          m_monitors.back()->label = m_monitorlabel->clone();\n          m_monitors.back()->label->replace_token(\"%name%\", value);\n        }\n      }\n\n      switch (tag[0]) {\n        case 'm':\n          m_monitors.back()->focused = false;\n          break;\n        case 'M':\n          m_monitors.back()->focused = true;\n          break;\n        case 'F':\n          workspace_mask = make_mask(state::FOCUSED, state::EMPTY);\n          break;\n        case 'O':\n          workspace_mask = make_mask(state::FOCUSED, state::OCCUPIED);\n          break;\n        case 'U':\n          workspace_mask = make_mask(state::FOCUSED, state::URGENT);\n          break;\n        case 'f':\n          workspace_mask = make_mask(state::EMPTY);\n          break;\n        case 'o':\n          workspace_mask = make_mask(state::OCCUPIED);\n          break;\n        case 'u':\n          workspace_mask = make_mask(state::URGENT);\n          break;",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/modules/bspwm.cpp",
+          "start_line": 384,
+          "end_line": 390,
+          "source_sha256": "3caaf0cc13f0b89f105fe921924e6d4b5ec27b4b3884acd4e56b1b27a96fc004",
+          "quote": "      if (mode_flag != mode::NONE && !m_modelabels.empty()) {\n        m_monitors.back()->modes.emplace_back(m_modelabels.find(mode_flag)->second->clone());\n      }\n    }\n\n    return true;\n  }",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 13,
+      "id": "08ed88917e417357cb82ce28",
+      "repo_id": "cpp--polybar__polybar",
+      "query": "\n1. **Purpose**: The function is designed to ensure that each handle in the event loop is properly closed if it is not already in the process of closing.\n2. **Input**: It takes a handle from the event loop and an optional user-defined data pointer, which is not used in this context.\n3. **Output**: There is no direct output from this function; however, it triggers the closing of handles that are not already being closed.\n4. **Procedure**: The function checks if the given handle is already in the process of closing. If it is not, the function initiates the closing process for that handle.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "close_walk_cb has the unused second walk-callback argument and explicit !uv_is_closing guard before delegating. close_handle only takes the handle and dispatches by handle type to wrapper close methods. It is the closing suboperation, not the requested guarded walk callback.",
+      "reference": {
+        "path": "src/components/eventloop.cpp",
+        "start_line": 252,
+        "end_line": 256,
+        "source_sha256": "4f30ababdf385d290f614085db5b207a9482adf6b9ce559d3a6651d719fee713",
+        "official_name": "close_walk_cb",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "polybar/polybar",
+          "name": "close_walk_cb",
+          "path": "src/components/eventloop.cpp",
+          "start_line": 251,
+          "end_line": 256,
+          "start_byte": 6106,
+          "end_byte": 6233
+        }
+      },
+      "returned_top1": {
+        "path": "src/components/eventloop.cpp",
+        "start_line": 22,
+        "end_line": 48,
+        "source_sha256": "4f30ababdf385d290f614085db5b207a9482adf6b9ce559d3a6651d719fee713",
+        "entity": {
+          "kind": "function",
+          "qualname": "eventloop.close_handle",
+          "owner": "eventloop",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/components/eventloop.cpp",
+          "start_line": 252,
+          "end_line": 256,
+          "source_sha256": "4f30ababdf385d290f614085db5b207a9482adf6b9ce559d3a6651d719fee713",
+          "quote": "  static void close_walk_cb(uv_handle_t* handle, void*) {\n    if (!uv_is_closing(handle)) {\n      close_handle(handle);\n    }\n  }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/components/eventloop.cpp",
+          "start_line": 22,
+          "end_line": 48,
+          "source_sha256": "4f30ababdf385d290f614085db5b207a9482adf6b9ce559d3a6651d719fee713",
+          "quote": "  void close_handle(uv_handle_t* handle) {\n    switch (handle->type) {\n      case UV_ASYNC:\n        static_cast<AsyncHandle*>(handle->data)->close();\n        break;\n      case UV_FS_EVENT:\n        static_cast<FSEventHandle*>(handle->data)->close();\n        break;\n      case UV_POLL:\n        static_cast<PollHandle*>(handle->data)->close();\n        break;\n      case UV_TIMER:\n        static_cast<TimerHandle*>(handle->data)->close();\n        break;\n      case UV_SIGNAL:\n        static_cast<SignalHandle*>(handle->data)->close();\n        break;\n      case UV_NAMED_PIPE:\n        static_cast<PipeHandle*>(handle->data)->close();\n        break;\n      case UV_PREPARE:\n        static_cast<PrepareHandle*>(handle->data)->close();\n        break;\n      default:\n        assert(false);\n    }\n  }",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [
+        "The available snapshot does not include the wrapper header defining every delegated close method. The review does not assert absence of additional guards in those unavailable implementations. The callback signature and explicit guard are visible here."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 14,
+      "id": "7e664182d9ddc7c6e7971245",
+      "repo_id": "cpp--drogonframework__drogon",
+      "query": "\n1. **Purpose**: The function sequentially executes a list of advice functions for HTTP requests, allowing each advice to potentially modify the request or response before passing control to the next advice in the chain. It also ensures that the final response is returned through a callback once all advices have been processed or immediately if there are no advices.\n2. **Input**: It takes a list of advice functions, an index to keep track of the current advice being executed, an HTTP request object, and a shared pointer to a callback function that is intended to handle the final HTTP response.\n3. **Output**: There is no direct return value; however, the output is indirectly produced through the callback function which either receives the final HTTP response or `nullptr` if the chain completes without generating a response.\n4. **Procedure**: \n   - Checks if the current index is within the bounds of the advice list.\n   - If within bounds, retrieves and executes the current advice function, passing the HTTP request, a response handler, and a chain continuation callback.\n   - The response handler invokes the callback with the HTTP response.\n   - The chain continuation callback checks if it should run in the current or a different thread (based on the request's associated event loop), and then recursively calls itself with the next index, effectively moving to the next advice in the list.\n   - If the index is out of bounds (i.e., all advices have been processed), the callback is called with `nullptr` to indicate the end of processing.\n",
+      "classification": "operation_equivalent",
+      "subtype": "same_callable_forward_declaration_vs_definition",
+      "reason": "Returned top1 is the forward declaration of the exact same drogon::doAdvicesChain function whose definition is the reference: the namespace, return type and all four parameter types match. The single declared overload has the same callback and continuation signature. Its later definition performs the whole requested chain. This is a declaration-versus-definition representation of the same C++ callable, not an unrelated same-name function.",
+      "reference": {
+        "path": "lib/src/AOPAdvice.cc",
+        "start_line": 164,
+        "end_line": 208,
+        "source_sha256": "e18e9fa26099700af8caf38a1b3f937cffad0d4b89f447f757f32d98de1e4247",
+        "official_name": "doAdvicesChain",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "drogonframework/drogon",
+          "name": "doAdvicesChain",
+          "path": "lib/src/AOPAdvice.cc",
+          "start_line": 163,
+          "end_line": 208,
+          "start_byte": 3933,
+          "end_byte": 5531
+        }
+      },
+      "returned_top1": {
+        "path": "lib/src/AOPAdvice.cc",
+        "start_line": 23,
+        "end_line": 30,
+        "source_sha256": "e18e9fa26099700af8caf38a1b3f937cffad0d4b89f447f757f32d98de1e4247",
+        "entity": {
+          "kind": "function",
+          "qualname": "drogon.doAdvicesChain",
+          "owner": "drogon",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "lib/src/AOPAdvice.cc",
+          "start_line": 164,
+          "end_line": 208,
+          "source_sha256": "e18e9fa26099700af8caf38a1b3f937cffad0d4b89f447f757f32d98de1e4247",
+          "quote": "static void doAdvicesChain(\n    const std::vector<std::function<void(const HttpRequestPtr &,\n                                         AdviceCallback &&,\n                                         AdviceChainCallback &&)>> &advices,\n    size_t index,\n    const HttpRequestImplPtr &req,\n    std::shared_ptr<const std::function<void(const HttpResponsePtr &)>>\n        &&callbackPtr)\n{\n    if (index < advices.size())\n    {\n        auto &advice = advices[index];\n        advice(\n            req,\n            [/*copy*/ callbackPtr](const HttpResponsePtr &resp) {\n                (*callbackPtr)(resp);\n            },\n            [index, req, callbackPtr, &advices]() mutable {\n                auto ioLoop = req->getLoop();\n                if (ioLoop && !ioLoop->isInLoopThread())\n                {\n                    ioLoop->queueInLoop([index,\n                                         req,\n                                         callbackPtr = std::move(callbackPtr),\n                                         &advices]() mutable {\n                        doAdvicesChain(advices,\n                                       index + 1,\n                                       req,\n                                       std::move(callbackPtr));\n                    });\n                }\n                else\n                {\n                    doAdvicesChain(advices,\n                                   index + 1,\n                                   req,\n                                   std::move(callbackPtr));\n                }\n            });\n    }\n    else\n    {\n        (*callbackPtr)(nullptr);\n    }\n}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "lib/src/AOPAdvice.cc",
+          "start_line": 20,
+          "end_line": 30,
+          "source_sha256": "e18e9fa26099700af8caf38a1b3f937cffad0d4b89f447f757f32d98de1e4247",
+          "quote": "namespace drogon\n{\n\nstatic void doAdvicesChain(\n    const std::vector<std::function<void(const HttpRequestPtr &,\n                                         AdviceCallback &&,\n                                         AdviceChainCallback &&)>> &advices,\n    size_t index,\n    const HttpRequestImplPtr &req,\n    std::shared_ptr<const std::function<void(const HttpResponsePtr &)>>\n        &&callbackPtr);",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [
+        "The returned declaration contains no executable body, so this does not certify evidence sufficiency. The registered leaf+end proxy distinguishes its end line30 from definition end208, and its historical miss is retained."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 15,
+      "id": "f31c37ee00a684b83d4de379",
+      "repo_id": "cpp--drogonframework__drogon",
+      "query": "\n1. **Purpose**: The purpose of this component is to interpret and convert configuration data formatted in JSON into a usable structure within the application.\n2. **Input**: It takes a string containing JSON formatted data.\n3. **Output**: It outputs a structured representation of the JSON data, specifically in a format that can be utilized by the application for configuration purposes.\n4. **Procedure**: The component reads the input string, parses it to extract JSON data, and then converts this data into a structured format that the application can use to configure its settings or parameters.\n",
+      "classification": "query_reference_mismatch",
+      "subtype": "constructor_described_as_component_or_operation",
+      "reason": "The reference is JsonConfigAdapter() = default, without a string input or parsed result. Its class's getJson(content) method is the actual JSON-string parser. Returned ConfigLoader(Json::Value&&) stores an already-parsed Json::Value and also does not parse a string. Neither selected constructor implements the specified string-to-JSON operation.",
+      "reference": {
+        "path": "lib/src/JsonConfigAdapter.h",
+        "start_line": 9,
+        "end_line": 9,
+        "source_sha256": "b2ffebdbadbd4dab6991dcca8a284da546f8d414686e76721d150eb471c7a2ae",
+        "official_name": "JsonConfigAdapter",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "drogonframework/drogon",
+          "name": "JsonConfigAdapter",
+          "path": "lib/src/JsonConfigAdapter.h",
+          "start_line": 8,
+          "end_line": 9,
+          "start_byte": 123,
+          "end_byte": 153
+        }
+      },
+      "returned_top1": {
+        "path": "lib/src/ConfigLoader.cc",
+        "start_line": 148,
+        "end_line": 151,
+        "source_sha256": "8733922694be2bd156d055920cfb3aa9f48b79b9eb5540be893763b7f87eea3a",
+        "entity": {
+          "kind": "constructor",
+          "qualname": "ConfigLoader.ConfigLoader",
+          "owner": "ConfigLoader",
+          "definition_ordinal": 2
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "lib/src/JsonConfigAdapter.h",
+          "start_line": 6,
+          "end_line": 13,
+          "source_sha256": "b2ffebdbadbd4dab6991dcca8a284da546f8d414686e76721d150eb471c7a2ae",
+          "quote": "class JsonConfigAdapter : public ConfigAdapter\n{\n  public:\n    JsonConfigAdapter() = default;\n    ~JsonConfigAdapter() override = default;\n    Json::Value getJson(const std::string &content) const\n        noexcept(false) override;\n    std::vector<std::string> getExtensions() const override;",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "lib/src/ConfigLoader.cc",
+          "start_line": 148,
+          "end_line": 151,
+          "source_sha256": "8733922694be2bd156d055920cfb3aa9f48b79b9eb5540be893763b7f87eea3a",
+          "quote": "ConfigLoader::ConfigLoader(Json::Value &&data)\n    : configJsonRoot_(std::move(data))\n{\n}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "support",
+          "path": "lib/src/JsonConfigAdapter.cc",
+          "start_line": 7,
+          "end_line": 22,
+          "source_sha256": "9c4e5fdad854d71cc784043f53546e188035865b9929b96f70e884f75735c636",
+          "quote": "Json::Value JsonConfigAdapter::getJson(const std::string &content) const\n    noexcept(false)\n{\n    static std::once_flag once;\n    static Json::CharReaderBuilder builder;\n    std::call_once(once, []() { builder[\"collectComments\"] = false; });\n    JSONCPP_STRING errs;\n    std::unique_ptr<Json::CharReader> reader(builder.newCharReader());\n    Json::Value root;\n    if (!reader->parse(\n            content.c_str(), content.c_str() + content.size(), &root, &errs))\n    {\n        throw std::runtime_error(errs);\n    }\n    return root;\n}",
+          "note": "The actual parser takes content, invokes Json::CharReader::parse and returns root."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 16,
+      "id": "a5634b5f43cdbd024ec1de51",
+      "repo_id": "cpp--drogonframework__drogon",
+      "query": "\n1. **Purpose**: The purpose is to manage the process of dynamically fetching data in chunks for transmission over a network, particularly useful in scenarios where data needs to be sent in segments.\n2. **Input**: The input is a callback function that specifies how to retrieve the data chunks. This function takes a buffer and a size, and returns the amount of data actually filled into the buffer.\n3. **Output**: There is no direct output; however, the callback function indirectly determines the data chunks that are output through its return value, which indicates the size of the data filled.\n4. **Procedure**: The procedure involves initializing with a callback function that is responsible for providing data chunks. When data needs to be sent, this callback is invoked with a buffer and size, and it should fill the buffer with up to 'size' bytes of data, returning the number of bytes actually written.\n",
+      "classification": "ambiguous",
+      "subtype": "constructor_and_consumer_lifecycle_conflation",
+      "reason": "The reference constructor correctly accepts and retains DataCallback, while the described later buffer-filling invocation is performed by returned chunkingCallback through cbParams->dataCallback. Top1 does not accept a callback for initialization: it accepts a parameters object, buffer and size, adds chunk framing and returns a size. The query mixes configuration of the provider with its later use; neither selected body alone covers that lifecycle, so a pure semantic alternative cannot be certified.",
+      "reference": {
+        "path": "lib/src/HttpServer.cc",
+        "start_line": 741,
+        "end_line": 743,
+        "source_sha256": "ad11de74e331d86e153d01266949fccf301beb44f09614a08b338ee7702776e1",
+        "official_name": "ChunkingParams",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "drogonframework/drogon",
+          "name": "ChunkingParams",
+          "path": "lib/src/HttpServer.cc",
+          "start_line": 740,
+          "end_line": 743,
+          "start_byte": 24974,
+          "end_byte": 25056
+        }
+      },
+      "returned_top1": {
+        "path": "lib/src/HttpServer.cc",
+        "start_line": 752,
+        "end_line": 852,
+        "source_sha256": "ad11de74e331d86e153d01266949fccf301beb44f09614a08b338ee7702776e1",
+        "entity": {
+          "kind": "function",
+          "qualname": "chunkingCallback",
+          "owner": null,
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "lib/src/HttpServer.cc",
+          "start_line": 737,
+          "end_line": 750,
+          "source_sha256": "ad11de74e331d86e153d01266949fccf301beb44f09614a08b338ee7702776e1",
+          "quote": "struct ChunkingParams\n{\n    using DataCallback = std::function<std::size_t(char *, std::size_t)>;\n\n    explicit ChunkingParams(DataCallback cb) : dataCallback(std::move(cb))\n    {\n    }\n\n    DataCallback dataCallback;\n    bool bFinished{false};\n#ifndef NDEBUG  // defined by CMake for release build\n    std::size_t nDataReturned{0};\n#endif\n};",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "lib/src/HttpServer.cc",
+          "start_line": 752,
+          "end_line": 768,
+          "source_sha256": "ad11de74e331d86e153d01266949fccf301beb44f09614a08b338ee7702776e1",
+          "quote": "static std::size_t chunkingCallback(\n    const std::shared_ptr<ChunkingParams> &cbParams,\n    char *pBuffer,\n    std::size_t nSize)\n{\n    if (!cbParams)\n        return 0;\n    // Cleanup\n    if (pBuffer == nullptr)\n    {\n        LOG_TRACE << \"Chunking callback cleanup\";\n        if (cbParams && cbParams->dataCallback)\n        {\n            cbParams->dataCallback(pBuffer, nSize);\n            cbParams->dataCallback = {};\n        }\n        return 0;",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "lib/src/HttpServer.cc",
+          "start_line": 781,
+          "end_line": 805,
+          "source_sha256": "ad11de74e331d86e153d01266949fccf301beb44f09614a08b338ee7702776e1",
+          "quote": "    // Reserve size to prepend the chunk size & append cr/lf, and get data\n    struct\n    {\n        std::size_t operator()(std::size_t n)\n        {\n            return n == 0 ? 0 : 1 + (*this)(n >> 4);\n        }\n    } neededDigits;\n\n    auto nHeaderSize = neededDigits(nSize) + 2;\n    auto nDataSize =\n        cbParams->dataCallback(pBuffer + nHeaderSize, nSize - nHeaderSize - 2);\n    if (nDataSize == 0)\n    {\n        // Terminal chunk + cr/lf\n        cbParams->bFinished = true;\n#ifdef _WIN32\n        memcpy_s(pBuffer, nSize, \"0\\r\\n\\r\\n\", 5);\n#else\n        memcpy(pBuffer, \"0\\r\\n\\r\\n\", 5);\n#endif\n        LOG_TRACE << \"Chunking callback: no more data, return last chunk of \"\n                     \"size 0 & end of message\";\n        return 5;\n    }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "lib/src/HttpServer.cc",
+          "start_line": 806,
+          "end_line": 824,
+          "source_sha256": "ad11de74e331d86e153d01266949fccf301beb44f09614a08b338ee7702776e1",
+          "quote": "    // Non-terminal chunks\n    pBuffer[nHeaderSize + nDataSize] = '\\r';\n    pBuffer[nHeaderSize + nDataSize + 1] = '\\n';\n    // The spec does not say if the chunk size is allowed tohave leading zeroes\n    // Use a fixed size header with leading zeroes\n    // (tested to work with Chrome, Firefox, Safari, Edge, wget, curl and VLC)\n#ifdef _WIN32\n    char pszFormat[]{\"%04llx\\r\"};\n#else\n    char pszFormat[]{\"%04lx\\r\"};\n#endif\n    pszFormat[2] = '0' + char(nHeaderSize - 2);\n    snprintf(pBuffer, nHeaderSize, pszFormat, nDataSize);\n    pBuffer[nHeaderSize - 1] = '\\n';\n    LOG_TRACE << \"Chunking callback: return chunk of size \" << nDataSize;\n#ifndef NDEBUG  // defined by CMake for release build\n    cbParams->nDataReturned += nDataSize;\n#endif\n    return nHeaderSize + nDataSize + 2;",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [
+        "The callback type itself documents the requested buffer/size -> bytes contract. Storing that callback is a legitimate constructor responsibility, distinct from executing it."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 17,
+      "id": "329057720c5ffb20dc0fa3f0",
+      "repo_id": "cpp--sass__node-sass",
+      "query": "\n1. **Purpose**: The purpose of this structure is to configure the output characteristics of CSS code generated from SASS/SCSS files, including the style format, numerical precision, and color compression settings.\n2. **Input**: This structure takes three parameters: a style format for the output CSS (from a predefined set of styles), a numerical precision for fractional values, and a boolean indicating whether to compress color values in selectors.\n3. **Output**: There is no direct output from this structure itself; rather, it influences the output of the CSS generation process by specifying how the CSS should be formatted and how precise numerical values should be.\n4. **Procedure**: Upon initialization, the structure is configured with default values or with values provided by the user. These settings are then used during the CSS generation process to determine the output style, precision of numerical values, and whether colors in selectors should be compressed.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "Sass_Inspect_Options accepts exactly style, precision and the selector-color boolean and initializes those fields. Top1 Sass_Output_Options accepts style/precision plus indent, linefeed and source_comments; it invokes the base with only style and precision and cannot receive the requested in_selector argument.",
+      "reference": {
+        "path": "src/libsass/src/sass.hpp",
+        "start_line": 97,
+        "end_line": 100,
+        "source_sha256": "cd05ad46f2031ec86217a996826990ed745872645861a8d662ea223e55aefd3d",
+        "official_name": "Sass_Inspect_Options",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "sass/node-sass",
+          "name": "Sass_Inspect_Options",
+          "path": "src/libsass/src/sass.hpp",
+          "start_line": 96,
+          "end_line": 100,
+          "start_byte": 2197,
+          "end_byte": 2403
+        }
+      },
+      "returned_top1": {
+        "path": "src/libsass/src/sass.hpp",
+        "start_line": 127,
+        "end_line": 135,
+        "source_sha256": "cd05ad46f2031ec86217a996826990ed745872645861a8d662ea223e55aefd3d",
+        "entity": {
+          "kind": "constructor",
+          "qualname": "Sass_Output_Options.Sass_Output_Options",
+          "owner": "Sass_Output_Options",
+          "definition_ordinal": 1
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/libsass/src/sass.hpp",
+          "start_line": 86,
+          "end_line": 100,
+          "source_sha256": "cd05ad46f2031ec86217a996826990ed745872645861a8d662ea223e55aefd3d",
+          "quote": "  // Output style for the generated css code\n  // A value from above SASS_STYLE_* constants\n  enum Sass_Output_Style output_style;\n\n  // Precision for fractional numbers\n  int precision;\n\n  // Do not compress colors in selectors\n  bool in_selector;\n\n  // initialization list (constructor with defaults)\n  Sass_Inspect_Options(Sass_Output_Style style = Sass::NESTED,\n                       int precision = 5, bool in_selector = false)\n  : output_style(style), precision(precision), in_selector(in_selector)\n  { }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/libsass/src/sass.hpp",
+          "start_line": 127,
+          "end_line": 135,
+          "source_sha256": "cd05ad46f2031ec86217a996826990ed745872645861a8d662ea223e55aefd3d",
+          "quote": "  Sass_Output_Options(Sass_Output_Style style = Sass::NESTED,\n                      int precision = 5,\n                      const char* indent = \"  \",\n                      const char* linefeed = \"\\n\",\n                      bool source_comments = false)\n  : Sass_Inspect_Options(style, precision),\n    indent(indent), linefeed(linefeed),\n    source_comments(source_comments)\n  { }",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [
+        "The pinned field comment says in_selector means do not compress selector colors. The query's neutral boolean wording is not treated as a promise that true enables compression."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 18,
+      "id": "f6ef7785a6cadef91de4a2e6",
+      "repo_id": "cpp--sass__node-sass",
+      "query": "\n1. **Purpose**: To determine the category of a given unit based on its type.\n2. **Input**: An integer representing a specific unit type.\n3. **Output**: An enumeration value representing the category of the unit (e.g., length, angle, time).\n4. **Procedure**: The function checks the upper byte of the input integer to match it against predefined categories. It returns the corresponding category if a match is found, otherwise, it returns a default category indicating the unit is not commensurable with known types.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "Both functions branch on the same upper byte, but the requested result is a UnitClass enum with INCOMMENSURABLE fallback. Top1 get_unit_class returns string labels such as \"LENGTH\" instead. Matching category information does not preserve the explicit return-type contract.",
+      "reference": {
+        "path": "src/libsass/src/units.cpp",
+        "start_line": 53,
+        "end_line": 64,
+        "source_sha256": "530bac088dcc6e91c3863c37d1e5f04e8a67584326b00cc1e7fa134e8dc66e54",
+        "official_name": "get_unit_type",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "sass/node-sass",
+          "name": "get_unit_type",
+          "path": "src/libsass/src/units.cpp",
+          "start_line": 52,
+          "end_line": 64,
+          "start_byte": 2028,
+          "end_byte": 2492
+        }
+      },
+      "returned_top1": {
+        "path": "src/libsass/src/units.cpp",
+        "start_line": 66,
+        "end_line": 77,
+        "source_sha256": "530bac088dcc6e91c3863c37d1e5f04e8a67584326b00cc1e7fa134e8dc66e54",
+        "entity": {
+          "kind": "function",
+          "qualname": "Sass.get_unit_class",
+          "owner": "Sass",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/libsass/src/units.cpp",
+          "start_line": 53,
+          "end_line": 64,
+          "source_sha256": "530bac088dcc6e91c3863c37d1e5f04e8a67584326b00cc1e7fa134e8dc66e54",
+          "quote": "  UnitClass get_unit_type(UnitType unit)\n  {\n    switch (unit & 0xFF00)\n    {\n      case UnitClass::LENGTH:      return UnitClass::LENGTH;\n      case UnitClass::ANGLE:       return UnitClass::ANGLE;\n      case UnitClass::TIME:        return UnitClass::TIME;\n      case UnitClass::FREQUENCY:   return UnitClass::FREQUENCY;\n      case UnitClass::RESOLUTION:  return UnitClass::RESOLUTION;\n      default:                     return UnitClass::INCOMMENSURABLE;\n    }\n  };",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/libsass/src/units.cpp",
+          "start_line": 66,
+          "end_line": 77,
+          "source_sha256": "530bac088dcc6e91c3863c37d1e5f04e8a67584326b00cc1e7fa134e8dc66e54",
+          "quote": "  std::string get_unit_class(UnitType unit)\n  {\n    switch (unit & 0xFF00)\n    {\n      case UnitClass::LENGTH:      return \"LENGTH\";\n      case UnitClass::ANGLE:       return \"ANGLE\";\n      case UnitClass::TIME:        return \"TIME\";\n      case UnitClass::FREQUENCY:   return \"FREQUENCY\";\n      case UnitClass::RESOLUTION:  return \"RESOLUTION\";\n      default:                     return \"INCOMMENSURABLE\";\n    }\n  };",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 19,
+      "id": "ea9dd5e30a4de5b3f50b0146",
+      "repo_id": "cpp--sass__node-sass",
+      "query": "\n1. **Purpose**: The purpose of this class is to manage and process a collection of CSS selectors to determine if one selector is a superselector of another, which means it encompasses all the styles of the other selector but may include additional constraints or styles.\n2. **Input**: The input is a single node representing a collection of CSS selectors.\n3. **Output**: The output is a processed collection where selectors that are less specific or redundant due to more specific superselectors are identified or filtered.\n4. **Procedure**: The procedure involves iterating through a collection of CSS selectors, comparing each selector's specificity and checking if one selector is a superselector of another. This involves creating temporary selectors to facilitate the comparison and updating the collection based on these comparisons to ensure it only contains the most specific and relevant selectors.\n",
+      "classification": "query_reference_mismatch",
+      "subtype": "constructor_described_as_component_or_operation",
+      "reason": "The selected ParentSuperselectorChunker constructor only stores a Node reference. Its operator compares the first elements of two collections and returns bool, while a separate caller drives collection chunking. The query attributes an entire iterative filtering/processed-collection operation to this selected constructor. Top1 also only returns a boolean superselector test; it does not return or update the requested processed collection.",
+      "reference": {
+        "path": "src/libsass/src/extend.cpp",
+        "start_line": 662,
+        "end_line": 662,
+        "source_sha256": "990a11e0281ca79ee012adb58bfbce10d49bee80e528c0775a1cc7b5871e632e",
+        "official_name": "ParentSuperselectorChunker",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "sass/node-sass",
+          "name": "ParentSuperselectorChunker",
+          "path": "src/libsass/src/extend.cpp",
+          "start_line": 661,
+          "end_line": 662,
+          "start_byte": 23216,
+          "end_byte": 23268
+        }
+      },
+      "returned_top1": {
+        "path": "src/libsass/src/ast.cpp",
+        "start_line": 1617,
+        "end_line": 1624,
+        "source_sha256": "9c7efa0140e9aacfbb189ca3dc08dacd5031c0ebb5a311f94661802b06818381",
+        "entity": {
+          "kind": "method",
+          "qualname": "Sass.Selector_List.is_superselector_of",
+          "owner": "Sass.Selector_List",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/libsass/src/extend.cpp",
+          "start_line": 660,
+          "end_line": 670,
+          "source_sha256": "990a11e0281ca79ee012adb58bfbce10d49bee80e528c0775a1cc7b5871e632e",
+          "quote": "  class ParentSuperselectorChunker {\n  public:\n    ParentSuperselectorChunker(Node& lcs) : mLcs(lcs) {}\n    Node& mLcs;\n\n    bool operator()(const Node& seq) const {\n      // {|s| parent_superselector?(s.first, lcs.first)}\n      if (seq.collection()->size() == 0) return false;\n      return parentSuperselector(seq.collection()->front(), mLcs.collection()->front());\n    }\n  };",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/libsass/src/ast.cpp",
+          "start_line": 1617,
+          "end_line": 1624,
+          "source_sha256": "9c7efa0140e9aacfbb189ca3dc08dacd5031c0ebb5a311f94661802b06818381",
+          "quote": "  bool Selector_List::is_superselector_of(Selector_List_Obj sub, std::string wrapping)\n  {\n    // Check every rhs selector against left hand list\n    for(size_t i = 0, L = sub->length(); i < L; ++i) {\n      if (!is_superselector_of((*sub)[i], wrapping)) return false;\n    }\n    return true;\n  }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "support",
+          "path": "src/libsass/src/extend.cpp",
+          "start_line": 643,
+          "end_line": 657,
+          "source_sha256": "990a11e0281ca79ee012adb58bfbce10d49bee80e528c0775a1cc7b5871e632e",
+          "quote": "  static bool parentSuperselector(const Node& one, const Node& two) {\n    // TODO: figure out a better way to create a Complex_Selector from scratch\n    // TODO: There's got to be a better way. This got ugly quick...\n    Element_Selector_Obj fakeParent = SASS_MEMORY_NEW(Element_Selector, ParserState(\"[FAKE]\"), \"temp\");\n    Compound_Selector_Obj fakeHead = SASS_MEMORY_NEW(Compound_Selector, ParserState(\"[FAKE]\"), 1 /*size*/);\n    fakeHead->elements().push_back(fakeParent);\n    Complex_Selector_Obj fakeParentContainer = SASS_MEMORY_NEW(Complex_Selector, ParserState(\"[FAKE]\"), Complex_Selector::ANCESTOR_OF, fakeHead /*head*/, NULL /*tail*/);\n\n    Complex_Selector_Obj pOneWithFakeParent = nodeToComplexSelector(one);\n    pOneWithFakeParent->set_innermost(fakeParentContainer, Complex_Selector::ANCESTOR_OF);\n    Complex_Selector_Obj pTwoWithFakeParent = nodeToComplexSelector(two);\n    pTwoWithFakeParent->set_innermost(fakeParentContainer, Complex_Selector::ANCESTOR_OF);\n\n    return pOneWithFakeParent->is_superselector_of(pTwoWithFakeParent);\n  }",
+          "note": "The separate helper builds temporary selectors for one comparison."
+        },
+        {
+          "role": "support",
+          "path": "src/libsass/src/extend.cpp",
+          "start_line": 1262,
+          "end_line": 1274,
+          "source_sha256": "990a11e0281ca79ee012adb58bfbce10d49bee80e528c0775a1cc7b5871e632e",
+          "quote": "    while (!seqLcs.collection()->empty()) {\n      ParentSuperselectorChunker superselectorChunker(seqLcs);\n      Node chunksResult = chunks(groupSeq1, groupSeq2, superselectorChunker);\n      diff.collection()->push_back(chunksResult);\n\n      Node lcsWrapper = Node::createCollection();\n      lcsWrapper.collection()->push_back(seqLcs.collection()->front());\n      seqLcs.collection()->pop_front();\n      diff.collection()->push_back(lcsWrapper);\n\n      if (groupSeq1.collection()->size()) groupSeq1.collection()->pop_front();\n      if (groupSeq2.collection()->size()) groupSeq2.collection()->pop_front();\n    }",
+          "note": "The collection-processing caller constructs and uses the functor."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 20,
+      "id": "6647ac441a920817636882c7",
+      "repo_id": "cpp--sass__node-sass",
+      "query": "\n1. **Purpose**: To determine if a character is either a letter or a digit.\n2. **Input**: A single character.\n3. **Output**: A boolean value; `true` if the character is a letter or a digit, otherwise `false`.\n4. **Procedure**: The function checks if the character is a letter by calling another function designed to identify letters, or if it is a digit by calling a function designed to identify digits. If either condition is met, it returns `true`; otherwise, it returns `false`.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "is_alnum returns is_alpha || is_digit, exactly the stated condition. is_character additionally accepts is_unicode or a hyphen. Therefore it returns true for characters that are neither a letter nor a digit and does not satisfy the exclusion in the query.",
+      "reference": {
+        "path": "src/libsass/src/lexer.cpp",
+        "start_line": 72,
+        "end_line": 75,
+        "source_sha256": "f9b0710e5cddbdec29558332d00c09512b658d599abdd7c709d9ec09a3c99362",
+        "official_name": "is_alnum",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "sass/node-sass",
+          "name": "is_alnum",
+          "path": "src/libsass/src/lexer.cpp",
+          "start_line": 71,
+          "end_line": 75,
+          "start_byte": 2140,
+          "end_byte": 2227
+        }
+      },
+      "returned_top1": {
+        "path": "src/libsass/src/lexer.cpp",
+        "start_line": 114,
+        "end_line": 118,
+        "source_sha256": "f9b0710e5cddbdec29558332d00c09512b658d599abdd7c709d9ec09a3c99362",
+        "entity": {
+          "kind": "function",
+          "qualname": "Sass.Prelexer.is_character",
+          "owner": "Sass.Prelexer",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/libsass/src/lexer.cpp",
+          "start_line": 72,
+          "end_line": 75,
+          "source_sha256": "f9b0710e5cddbdec29558332d00c09512b658d599abdd7c709d9ec09a3c99362",
+          "quote": "    bool is_alnum(const char& chr)\n    {\n      return is_alpha(chr) || is_digit(chr);\n    }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/libsass/src/lexer.cpp",
+          "start_line": 114,
+          "end_line": 118,
+          "source_sha256": "f9b0710e5cddbdec29558332d00c09512b658d599abdd7c709d9ec09a3c99362",
+          "quote": "    bool is_character(const char& chr)\n    {\n      // valid alpha, numeric or unicode char (plus hyphen)\n      return is_alnum(chr) || is_unicode(chr) || chr == '-';\n    }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "support",
+          "path": "src/libsass/src/lexer.cpp",
+          "start_line": 34,
+          "end_line": 49,
+          "source_sha256": "f9b0710e5cddbdec29558332d00c09512b658d599abdd7c709d9ec09a3c99362",
+          "quote": "    bool is_alpha(const char& chr)\n    {\n      return unsigned(chr - 'A') <= 'Z' - 'A' ||\n             unsigned(chr - 'a') <= 'z' - 'a';\n    }\n\n    bool is_space(const char& chr)\n    {\n      // adapted the technique from is_alpha\n      return chr == ' ' || unsigned(chr - '\\t') <= '\\r' - '\\t';\n    }\n\n    bool is_digit(const char& chr)\n    {\n      // adapted the technique from is_alpha\n      return unsigned(chr - '0') <= '9' - '0';",
+          "note": "The delegated alpha/digit predicates cover ASCII letters and digits; hyphen is excluded."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 21,
+      "id": "bbb134e260d79616e7fc14f9",
+      "repo_id": "cpp--ml-explore__mlx",
+      "query": "\n1. **Purpose**: The function is designed to trace a vectorized computation over a batch of inputs, allowing for operations to be applied in parallel across elements of the input arrays specified by axes.\n2. **Input**: This function takes three parameters: a function that operates on vectors of arrays, a vector of arrays representing the inputs to the function, and a vector of integers specifying the axes along which to vectorize each input array.\n3. **Output**: It returns a pair of vectors of arrays. The first vector contains the modified inputs with tracing enabled, and the second vector contains the results of applying the input function to these traced inputs.\n4. **Procedure**: The function first checks that the number of specified axes matches the number of input arrays and validates the specified axes against the dimensions of the input arrays. It then determines the size of the vectorization axis and ensures consistency across all inputs. For each input, if it is to be vectorized, it modifies the shape by removing the vectorization dimension and creates a placeholder input with tracing enabled. These modified inputs are then used to invoke the provided function, capturing the computational graph of the operation.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "vmap_trace takes fun, concrete inputs and in_axes and returns the traced input/output vector pair after validation and placeholder creation. Top1 vmap takes fun, in_axes and out_axes and returns a callable, whose eventual execution calls vmap_trace then vmap_replace. This broader transformation factory does not expose the requested inputs or return that traced pair.",
+      "reference": {
+        "path": "mlx/transforms.cpp",
+        "start_line": 521,
+        "end_line": 577,
+        "source_sha256": "05378bcb1ca4633694e6dfe07ca065f47bbab35ea0d7e3a684600bca0bca77e0",
+        "official_name": "vmap_trace",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "ml-explore/mlx",
+          "name": "vmap_trace",
+          "path": "mlx/transforms.cpp",
+          "start_line": 520,
+          "end_line": 577,
+          "start_byte": 16141,
+          "end_byte": 18091
+        }
+      },
+      "returned_top1": {
+        "path": "mlx/transforms.cpp",
+        "start_line": 694,
+        "end_line": 725,
+        "source_sha256": "05378bcb1ca4633694e6dfe07ca065f47bbab35ea0d7e3a684600bca0bca77e0",
+        "entity": {
+          "kind": "function",
+          "qualname": "mlx.core.vmap",
+          "owner": "mlx.core",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "mlx/transforms.cpp",
+          "start_line": 521,
+          "end_line": 559,
+          "source_sha256": "05378bcb1ca4633694e6dfe07ca065f47bbab35ea0d7e3a684600bca0bca77e0",
+          "quote": "std::pair<std::vector<array>, std::vector<array>> vmap_trace(\n    const std::function<std::vector<array>(const std::vector<array>&)>& fun,\n    const std::vector<array>& inputs,\n    const std::vector<int>& in_axes) {\n  // Set the global tracing flag.\n  detail::InTracing in_tracing;\n\n  if (in_axes.size() != inputs.size()) {\n    throw std::invalid_argument(\n        \"[vmap] The number of in axes must match the number of inputs.\");\n  }\n\n  // Some error checking and get the vmap axis size\n  size_t vmap_ax_size;\n  for (int i = 0; i < inputs.size(); ++i) {\n    if (in_axes[i] != -1) {\n      if (inputs[i].ndim() == 0) {\n        throw std::invalid_argument(\n            \"[vmap] Cannot vmap an input with zero dimensions.\");\n      }\n      if (in_axes[i] > inputs[i].ndim()) {\n        std::ostringstream msg;\n        msg << \"[vmap] Axis \" << in_axes[i] << \" invalid for input with \"\n            << inputs[i].ndim() << \" dimensions.\";\n        throw std::invalid_argument(msg.str());\n      }\n      vmap_ax_size = inputs[i].shape(in_axes[i]);\n    }\n  }\n  // Check that all vmapped axes have the same size\n  for (int i = 0; i < inputs.size(); ++i) {\n    if (in_axes[i] != -1) {\n      if (size_t in_ax = inputs[i].shape(in_axes[i]); vmap_ax_size != in_ax) {\n        std::ostringstream msg;\n        msg << \"[vmap] Inconsistent axis sizes: \" << in_ax << \" and \"\n            << vmap_ax_size << \".\";\n        throw std::invalid_argument(msg.str());\n      }\n    }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "reference",
+          "path": "mlx/transforms.cpp",
+          "start_line": 562,
+          "end_line": 577,
+          "source_sha256": "05378bcb1ca4633694e6dfe07ca065f47bbab35ea0d7e3a684600bca0bca77e0",
+          "quote": "  // Run the function on placeholder inputs\n  // to get the original graph\n  std::vector<array> s_inputs;\n  for (int i = 0; i < inputs.size(); ++i) {\n    if (in_axes[i] != -1) {\n      std::vector<int> shape = inputs[i].shape();\n      shape.erase(shape.begin() + in_axes[i]);\n      array in(shape, inputs[i].dtype(), nullptr, {});\n      s_inputs.push_back(in);\n      s_inputs.back().set_tracer(true);\n    } else {\n      s_inputs.push_back(inputs[i]);\n    }\n  }\n  return {s_inputs, fun(s_inputs)};\n}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "mlx/transforms.cpp",
+          "start_line": 694,
+          "end_line": 725,
+          "source_sha256": "05378bcb1ca4633694e6dfe07ca065f47bbab35ea0d7e3a684600bca0bca77e0",
+          "quote": "std::function<std::vector<array>(const std::vector<array>&)> vmap(\n    const std::function<std::vector<array>(const std::vector<array>&)>& fun,\n    const std::vector<int>& in_axes /* = {} */,\n    const std::vector<int>& out_axes /* = {} */) {\n  auto infer_axes = [](auto axes) {\n    return !axes.empty() &&\n        std::all_of(axes.begin(), axes.end(), [](int ax) { return ax < 0; });\n  };\n  if (infer_axes(in_axes) != infer_axes(out_axes)) {\n    throw std::invalid_argument(\n        \"[vmap] Input (or output) axes must be \"\n        \"specified if output (or input) axes are.\");\n  }\n  auto vfun = [fun, in_axes = in_axes, out_axes = out_axes](\n                  const std::vector<array>& inputs) mutable {\n    if (in_axes.size() == 0) {\n      in_axes.resize(inputs.size(), 0);\n    }\n\n    auto [trace_inputs, trace_outputs] =\n        detail::vmap_trace(fun, inputs, in_axes);\n\n    if (out_axes.size() == 0) {\n      out_axes.resize(trace_outputs.size(), 0);\n    }\n\n    return detail::vmap_replace(\n        inputs, trace_inputs, trace_outputs, in_axes, out_axes);\n  };\n\n  return vfun;\n}",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 22,
+      "id": "76d5985b1645e20aad9865ae",
+      "repo_id": "cpp--ml-explore__mlx",
+      "query": "\n1. **Purpose**: The function is designed to handle the copying of data from one array to another, ensuring that the data type of the source array is appropriately managed during the copy process to match the destination array's data type.\n2. **Input**: This function takes a source array, a destination array, a type of copy operation, and additional arguments that may be needed for specific copy operations.\n3. **Output**: There is no direct output returned by the function; however, it modifies the destination array by copying data from the source array into it according to the specified copy type.\n4. **Procedure**: The function first identifies the data type of the source array. Based on this data type, it selects the appropriate templated copy function to execute. The selected function handles the copying process, which may vary depending on the copy type (e.g., scalar, vector, general, or general-general copying). This ensures that the data is copied correctly while respecting the data types and the intended memory layout and transformation specified by the copy type.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "copy_inplace_dispatch explicitly inspects src.dtype() and selects a source-type specialization, forwarding operation arguments. Returned copy<SrcT,DstT> already has both types selected and only switches on CopyType to choose scalar/vector/general copying. It omits the decisive source-dtype dispatch step.",
+      "reference": {
+        "path": "mlx/backend/common/copy.cpp",
+        "start_line": 337,
+        "end_line": 383,
+        "source_sha256": "27526d810c5a265ff1c512382523adfd5d1a5390f14cd61e473056c0878c8977",
+        "official_name": "copy_inplace_dispatch",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "ml-explore/mlx",
+          "name": "copy_inplace_dispatch",
+          "path": "mlx/backend/common/copy.cpp",
+          "start_line": 336,
+          "end_line": 383,
+          "start_byte": 10759,
+          "end_byte": 12171
+        }
+      },
+      "returned_top1": {
+        "path": "mlx/backend/common/copy.cpp",
+        "start_line": 274,
+        "end_line": 289,
+        "source_sha256": "27526d810c5a265ff1c512382523adfd5d1a5390f14cd61e473056c0878c8977",
+        "entity": {
+          "kind": "function",
+          "qualname": "mlx.core.copy",
+          "owner": "mlx.core",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "mlx/backend/common/copy.cpp",
+          "start_line": 336,
+          "end_line": 350,
+          "source_sha256": "27526d810c5a265ff1c512382523adfd5d1a5390f14cd61e473056c0878c8977",
+          "quote": "template <typename... Args>\ninline void copy_inplace_dispatch(\n    const array& src,\n    array& dst,\n    CopyType ctype,\n    Args&&... args) {\n  switch (src.dtype()) {\n    case bool_:\n      copy<bool>(src, dst, ctype, std::forward<Args>(args)...);\n      break;\n    case uint8:\n      copy<uint8_t>(src, dst, ctype, std::forward<Args>(args)...);\n      break;\n    case uint16:\n      copy<uint16_t>(src, dst, ctype, std::forward<Args>(args)...);",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "reference",
+          "path": "mlx/backend/common/copy.cpp",
+          "start_line": 370,
+          "end_line": 383,
+          "source_sha256": "27526d810c5a265ff1c512382523adfd5d1a5390f14cd61e473056c0878c8977",
+          "quote": "    case float16:\n      copy<float16_t>(src, dst, ctype, std::forward<Args>(args)...);\n      break;\n    case float32:\n      copy<float>(src, dst, ctype, std::forward<Args>(args)...);\n      break;\n    case bfloat16:\n      copy<bfloat16_t>(src, dst, ctype, std::forward<Args>(args)...);\n      break;\n    case complex64:\n      copy<complex64_t>(src, dst, ctype, std::forward<Args>(args)...);\n      break;\n  }\n}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "mlx/backend/common/copy.cpp",
+          "start_line": 274,
+          "end_line": 289,
+          "source_sha256": "27526d810c5a265ff1c512382523adfd5d1a5390f14cd61e473056c0878c8977",
+          "quote": "template <typename SrcT, typename DstT, typename... Args>\nvoid copy(const array& src, array& dst, CopyType ctype, Args&&... args) {\n  switch (ctype) {\n    case CopyType::Scalar:\n      copy_single<SrcT, DstT>(src, dst);\n      return;\n    case CopyType::Vector:\n      copy_vector<SrcT, DstT>(src, dst);\n      return;\n    case CopyType::General:\n      copy_general<SrcT, DstT>(src, dst, std::forward<Args>(args)...);\n      return;\n    case CopyType::GeneralGeneral:\n      copy_general_general<SrcT, DstT>(src, dst, std::forward<Args>(args)...);\n  }\n}",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 23,
+      "id": "b6b513c94c109dc77f9694dd",
+      "repo_id": "cpp--ml-explore__mlx",
+      "query": "\n1. **Purpose**: This function is designed to perform matrix multiplication on quantized data, which is a method to reduce the computational precision of the operands to lower bit-widths. This is particularly useful in scenarios where memory bandwidth and power consumption are limited, such as in embedded systems or mobile devices.\n2. **Input**: The inputs include two matrices to be multiplied. These matrices are expected to be quantized, meaning their numerical precision is reduced to a specified number of bits.\n3. **Output**: The output is a single matrix that represents the product of the input matrices, also in a quantized format.\n4. **Procedure**: The function first checks if the matrices need to be transposed based on the specified parameter. It then groups the elements of the matrices according to the provided group size, performs the multiplication in the reduced bit-width format, and finally aggregates the results to form the output matrix.\n",
+      "classification": "query_reference_mismatch",
+      "subtype": "constructor_described_as_component_or_operation",
+      "reason": "The selected QuantizedMatmul constructor only stores stream/group_size/bits/transpose; it does not receive or multiply matrices and returns no matrix. The nearby public quantized_matmul declaration is top1 and leads to the real operation. The query further claims both operands and the output are quantized, whereas the implementation requires packed uint32 weights plus scales/biases and constructs an output with a real floating dtype.",
+      "reference": {
+        "path": "mlx/primitives.h",
+        "start_line": 1349,
+        "end_line": 1357,
+        "source_sha256": "621d3a542a21b7cac659be6dfce04327e2d465ed6d31e55800fc2aa121be3e88",
+        "official_name": "QuantizedMatmul",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "ml-explore/mlx",
+          "name": "QuantizedMatmul",
+          "path": "mlx/primitives.h",
+          "start_line": 1348,
+          "end_line": 1357,
+          "start_byte": 36973,
+          "end_byte": 37197
+        }
+      },
+      "returned_top1": {
+        "path": "mlx/ops.h",
+        "start_line": 1133,
+        "end_line": 1141,
+        "source_sha256": "7cd4ac5f7137ed2bc069e05c2b27f447d4c91b622ccdc2ba5335e3e84e2fb7a0",
+        "entity": {
+          "kind": "function",
+          "qualname": "mlx.core.quantized_matmul",
+          "owner": "mlx.core",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "mlx/primitives.h",
+          "start_line": 1347,
+          "end_line": 1360,
+          "source_sha256": "621d3a542a21b7cac659be6dfce04327e2d465ed6d31e55800fc2aa121be3e88",
+          "quote": "class QuantizedMatmul : public UnaryPrimitive {\n public:\n  explicit QuantizedMatmul(\n      Stream stream,\n      int group_size,\n      int bits,\n      bool transpose)\n      : UnaryPrimitive(stream),\n        group_size_(group_size),\n        bits_(bits),\n        transpose_(transpose){};\n\n  void eval_cpu(const std::vector<array>& inputs, array& out) override;\n  void eval_gpu(const std::vector<array>& inputs, array& out) override;",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "mlx/ops.h",
+          "start_line": 1132,
+          "end_line": 1141,
+          "source_sha256": "7cd4ac5f7137ed2bc069e05c2b27f447d4c91b622ccdc2ba5335e3e84e2fb7a0",
+          "quote": "/** Quantized matmul multiplies x with a quantized matrix w*/\narray quantized_matmul(\n    const array& x,\n    const array& w,\n    const array& scales,\n    const array& biases,\n    bool transpose = true,\n    int group_size = 64,\n    int bits = 4,\n    StreamOrDevice s = {});",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "support",
+          "path": "mlx/ops.cpp",
+          "start_line": 3130,
+          "end_line": 3145,
+          "source_sha256": "6fd5a9af52324b5bec266eabfcd5b9e42989b5d3cb3e24935726c4a7690cb374",
+          "quote": "array quantized_matmul(\n    const array& in_x,\n    const array& w,\n    const array& scales,\n    const array& biases,\n    bool transpose /* = true */,\n    int group_size /* = 64 */,\n    int bits /* = 4 */,\n    StreamOrDevice s /* = {} */) {\n  array x = in_x;\n  if (w.dtype() != uint32) {\n    std::ostringstream msg;\n    msg << \"[quantized_matmul] The weight matrix should be uint32 \"\n        << \"but received\" << w.dtype();\n    throw std::invalid_argument(msg.str());\n  }",
+          "note": "Public operation inputs and packed weight type check."
+        },
+        {
+          "role": "support",
+          "path": "mlx/ops.cpp",
+          "start_line": 3189,
+          "end_line": 3208,
+          "source_sha256": "6fd5a9af52324b5bec266eabfcd5b9e42989b5d3cb3e24935726c4a7690cb374",
+          "quote": "  auto dtype = result_type(x, scales, biases);\n  if (!issubdtype(dtype, floating)) {\n    std::ostringstream msg;\n    msg << \"[quantized_matmul] Only real floating types are supported but \"\n        << \"the passed types where x.dtype() == \" << x.dtype()\n        << \", scales.dtype() == \" << scales.dtype()\n        << \" and biases.dtype() == \" << biases.dtype();\n    throw std::invalid_argument(msg.str());\n  }\n  std::vector<array> inputs;\n  original_shape.back() = w_outer_dims;\n  return array(\n      std::move(original_shape),\n      dtype,\n      std::make_shared<QuantizedMatmul>(\n          to_stream(s), group_size, bits, transpose),\n      {astype(x, dtype, s),\n       w,\n       astype(scales, dtype, s),\n       astype(biases, dtype, s)});",
+          "note": "Floating result dtype and construction of the lazy operation."
+        }
+      ],
+      "caveats": [
+        "The operation is lazy; array construction does not by itself prove synchronous multiplication. No alternative reference or score is introduced."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 24,
+      "id": "7b18d5a218718ec9985f329a",
+      "repo_id": "cpp--scylladb__seastar",
+      "query": "\n1. **Purpose**: The purpose is to encapsulate a network message, including its source and destination addresses along with the data packet, for transmission over a network.\n2. **Input**: The input includes the source address, destination address, and the data packet to be transmitted.\n3. **Output**: There is no direct output as this is a constructor for setting up the network message object. The object itself represents the encapsulated data ready for network operations.\n4. **Procedure**: The procedure involves initializing the object with the provided source and destination addresses and the data packet. The data packet is moved into the object to manage ownership and ensure efficient data handling.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "posix_datagram is the exact source/destination/packet constructor and moves the packet into its stored fields. send_ctx.prepare is a two-input method with destination and packet only; it prepares outgoing iovecs/address state and does not take/store the requested source address or construct that datagram.",
+      "reference": {
+        "path": "src/net/posix-stack.cc",
+        "start_line": 931,
+        "end_line": 931,
+        "source_sha256": "05065452d4a3bd20b51a19d91a35a4fcf8c6b9656638b0109c3941dde6e2e5eb",
+        "official_name": "posix_datagram",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "scylladb/seastar",
+          "name": "posix_datagram",
+          "path": "src/net/posix-stack.cc",
+          "start_line": 930,
+          "end_line": 931,
+          "start_byte": 35302,
+          "end_byte": 35424
+        }
+      },
+      "returned_top1": {
+        "path": "src/net/posix-stack.cc",
+        "start_line": 798,
+        "end_line": 806,
+        "source_sha256": "05065452d4a3bd20b51a19d91a35a4fcf8c6b9656638b0109c3941dde6e2e5eb",
+        "entity": {
+          "kind": "method",
+          "qualname": "seastar.net.posix_datagram_channel.send_ctx.prepare",
+          "owner": "seastar.net.posix_datagram_channel.send_ctx",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/net/posix-stack.cc",
+          "start_line": 925,
+          "end_line": 933,
+          "source_sha256": "05065452d4a3bd20b51a19d91a35a4fcf8c6b9656638b0109c3941dde6e2e5eb",
+          "quote": "class posix_datagram : public datagram_impl {\nprivate:\n    socket_address _src;\n    socket_address _dst;\n    packet _p;\npublic:\n    posix_datagram(const socket_address& src, const socket_address& dst, packet p) : _src(src), _dst(dst), _p(std::move(p)) {}\n    virtual socket_address get_src() override { return _src; }\n    virtual socket_address get_dst() override { return _dst; }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/net/posix-stack.cc",
+          "start_line": 798,
+          "end_line": 806,
+          "source_sha256": "05065452d4a3bd20b51a19d91a35a4fcf8c6b9656638b0109c3941dde6e2e5eb",
+          "quote": "        void prepare(const socket_address& dst, packet p) {\n            _dst = dst;\n            _hdr.msg_namelen = _dst.addr_length;\n            _p = std::move(p);\n            _iovecs = to_iovec(_p);\n            _hdr.msg_iov = _iovecs.data();\n            _hdr.msg_iovlen = _iovecs.size();\n            resolve_outgoing_address(_dst);\n        }",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 25,
+      "id": "f9a03a89db973d7125146afe",
+      "repo_id": "cpp--scylladb__seastar",
+      "query": "\n1. **Purpose**: The function iterates over each worker logical core (excluding the main core) available in a multi-core system, typically used in environments managed by the Data Plane Development Kit (DPDK).\n2. **Input**: There are no direct inputs as it functions as a macro iterating over available worker cores.\n3. **Output**: There is no direct output; however, it controls the flow to execute specific operations on each worker core.\n4. **Procedure**: This macro retrieves the list of all worker cores, excluding the main core, and iterates over them. During each iteration, it allows the execution of specified operations on each worker core, such as launching threads or processes tailored to run on these specific cores.\n",
+      "classification": "query_reference_mismatch",
+      "subtype": "non_callable_reference",
+      "reason": "The reference is an invocation of RTE_LCORE_FOREACH_WORKER with a loop body launching workers, not a function/method definition. The query itself explicitly describes a macro, outside the run's canonical function/method identity contract. Returned syscall_work_queue.work is merely a different method declaration and provides no worker-core iteration. The macro fragment remains the original reference without inventing a callable identity.",
+      "reference": {
+        "path": "src/core/reactor.cc",
+        "start_line": 4586,
+        "end_line": 4588,
+        "source_sha256": "c368a3856d5a91d71b07f4a82e262c11d013af364548215a18cb665361028e42",
+        "official_name": "RTE_LCORE_FOREACH_WORKER",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "scylladb/seastar",
+          "name": "RTE_LCORE_FOREACH_WORKER",
+          "path": "src/core/reactor.cc",
+          "start_line": 4585,
+          "end_line": 4588,
+          "start_byte": 173785,
+          "end_byte": 173913
+        }
+      },
+      "returned_top1": {
+        "path": "src/core/syscall_work_queue.hh",
+        "start_line": 76,
+        "end_line": 76,
+        "source_sha256": "a75bb0ebb75c1306e6b82e2c4e4106cad1d35d8d0f1ab78b01a6fd6514d30d5a",
+        "entity": {
+          "kind": "method",
+          "qualname": "seastar.syscall_work_queue.work",
+          "owner": "seastar.syscall_work_queue",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/core/reactor.cc",
+          "start_line": 4583,
+          "end_line": 4589,
+          "source_sha256": "c368a3856d5a91d71b07f4a82e262c11d013af364548215a18cb665361028e42",
+          "quote": "#ifdef SEASTAR_HAVE_DPDK\n    if (_using_dpdk) {\n        auto it = _thread_loops.begin();\n        RTE_LCORE_FOREACH_WORKER(i) {\n            rte_eal_remote_launch(dpdk_thread_adaptor, static_cast<void*>(&*(it++)), i);\n        }\n    }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/core/syscall_work_queue.hh",
+          "start_line": 76,
+          "end_line": 76,
+          "source_sha256": "a75bb0ebb75c1306e6b82e2c4e4106cad1d35d8d0f1ab78b01a6fd6514d30d5a",
+          "quote": "    void work();",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [
+        "Known original canonicality anomaly preserved; the selected fragment is real source, not a fabricated or renamed function."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 26,
+      "id": "b2a3e24892952f7217781c8f",
+      "repo_id": "cpp--WasmEdge__WasmEdge",
+      "query": "\n1. **Purpose**: The purpose of this structure is to initialize and manage the compilation process for WebAssembly modules, integrating various components necessary for compilation, code generation, loading, and validation.\n2. **Input**: It takes a configuration object which contains settings that influence the behavior of the compilation process.\n3. **Output**: It does not directly produce an output but sets up an environment for WebAssembly module compilation by initializing several internal components based on the provided configuration.\n4. **Procedure**: The procedure involves initializing internal components responsible for compiling, generating machine code, loading, and validating WebAssembly modules. These components are configured based on the settings provided in the input configuration object.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "WasmEdge_CompilerContext takes Configure and initializes all four Compiler/CodeGen/Load/Valid components. Compiler.compile instead consumes a validated AST::Module and emits compiler data after code generation/optimization. Executing compilation is not initializing the requested multi-component context from configuration.",
+      "reference": {
+        "path": "lib/api/wasmedge.cpp",
+        "start_line": 71,
+        "end_line": 72,
+        "source_sha256": "02d7594da9f64e8301119152ca34f304460a9f2c967d2257158f918dbdfe8168",
+        "official_name": "WasmEdge_CompilerContext",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "WasmEdge/WasmEdge",
+          "name": "WasmEdge_CompilerContext",
+          "path": "lib/api/wasmedge.cpp",
+          "start_line": 70,
+          "end_line": 72,
+          "start_byte": 1700,
+          "end_byte": 1832
+        }
+      },
+      "returned_top1": {
+        "path": "lib/llvm/compiler.cpp",
+        "start_line": 5035,
+        "end_line": 5169,
+        "source_sha256": "31138a66fd9d040809af345071f842155081f2d18229528626d10ac2150aabeb",
+        "entity": {
+          "kind": "method",
+          "qualname": "WasmEdge.LLVM.Compiler.compile",
+          "owner": "WasmEdge.LLVM.Compiler",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "lib/api/wasmedge.cpp",
+          "start_line": 68,
+          "end_line": 78,
+          "source_sha256": "02d7594da9f64e8301119152ca34f304460a9f2c967d2257158f918dbdfe8168",
+          "quote": "// WasmEdge_CompilerContext implementation.\nstruct WasmEdge_CompilerContext {\n#ifdef WASMEDGE_USE_LLVM\n  WasmEdge_CompilerContext(const WasmEdge::Configure &Conf) noexcept\n      : Compiler(Conf), CodeGen(Conf), Load(Conf), Valid(Conf) {}\n  WasmEdge::LLVM::Compiler Compiler;\n  WasmEdge::LLVM::CodeGen CodeGen;\n  WasmEdge::Loader::Loader Load;\n  WasmEdge::Validator::Validator Valid;\n#endif\n};",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "lib/llvm/compiler.cpp",
+          "start_line": 5035,
+          "end_line": 5063,
+          "source_sha256": "31138a66fd9d040809af345071f842155081f2d18229528626d10ac2150aabeb",
+          "quote": "Expect<Data> Compiler::compile(const AST::Module &Module) noexcept {\n  // Check the module is validated.\n  if (unlikely(!Module.getIsValidated())) {\n    spdlog::error(ErrCode::Value::NotValidated);\n    return Unexpect(ErrCode::Value::NotValidated);\n  }\n\n  std::unique_lock Lock(Mutex);\n  spdlog::info(\"compile start\");\n\n  LLVM::Core::init();\n\n  LLVM::Data D;\n  auto LLContext = D.extract().LLContext();\n  auto &LLModule = D.extract().LLModule;\n  LLModule.setTarget(LLVM::getDefaultTargetTriple().unwrap());\n  LLModule.addFlag(LLVMModuleFlagBehaviorError, \"PIC Level\"sv, 2);\n\n  CompileContext NewContext(LLContext, LLModule,\n                            Conf.getCompilerConfigure().isGenericBinary());\n  struct RAIICleanup {\n    RAIICleanup(CompileContext *&Context, CompileContext &NewContext)\n        : Context(Context) {\n      Context = &NewContext;\n    }\n    ~RAIICleanup() { Context = nullptr; }\n    CompileContext *&Context;\n  };\n  RAIICleanup Cleanup(Context, NewContext);",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "lib/llvm/compiler.cpp",
+          "start_line": 5065,
+          "end_line": 5076,
+          "source_sha256": "31138a66fd9d040809af345071f842155081f2d18229528626d10ac2150aabeb",
+          "quote": "  // Compile Function Types\n  compile(Module.getTypeSection());\n  // Compile ImportSection\n  compile(Module.getImportSection());\n  // Compile GlobalSection\n  compile(Module.getGlobalSection());\n  // Compile MemorySection (MemorySec, DataSec)\n  compile(Module.getMemorySection(), Module.getDataSection());\n  // Compile TableSection (TableSec, ElemSec)\n  compile(Module.getTableSection(), Module.getElementSection());\n  // compile Functions in module. (FunctionSec, CodeSec)\n  compile(Module.getFunctionSection(), Module.getCodeSection());",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "lib/llvm/compiler.cpp",
+          "start_line": 5167,
+          "end_line": 5169,
+          "source_sha256": "31138a66fd9d040809af345071f842155081f2d18229528626d10ac2150aabeb",
+          "quote": "  spdlog::info(\"optimize done\");\n  return Expect<Data>{std::move(D)};\n}",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 27,
+      "id": "400927d167d8c87e549bf7e1",
+      "repo_id": "cpp--WasmEdge__WasmEdge",
+      "query": "\n1. **Purpose**: To adjust a given numerical value downwards to the nearest boundary of a memory page size, which varies depending on the operating system and architecture.\n2. **Input**: A 64-bit unsigned integer representing an address or size in memory.\n3. **Output**: A 64-bit unsigned integer that has been adjusted down to the nearest page boundary.\n4. **Procedure**: The function checks the operating system and architecture to determine the appropriate page size (standard or specific to ARM64 on macOS). It then uses a bitwise AND operation with the complement of the page size minus one to clear the lower bits of the input value, effectively rounding it down to the nearest multiple of the page size.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "roundDownPageBoundary returns the integer masked with the platform-specific page-boundary complement. Allocator.resize takes a pointer plus old/new page counts and grows mapped/allocated storage, returning a pointer or null. Its page-related vocabulary does not implement numerical downward rounding.",
+      "reference": {
+        "path": "lib/loader/aot_section.cpp",
+        "start_line": 16,
+        "end_line": 23,
+        "source_sha256": "f3b9c98f1f73754903a761baac4e17a9c480c3b9b2fd23ee441c1ad13a8ee3d7",
+        "official_name": "roundDownPageBoundary",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "WasmEdge/WasmEdge",
+          "name": "roundDownPageBoundary",
+          "path": "lib/loader/aot_section.cpp",
+          "start_line": 15,
+          "end_line": 23,
+          "start_byte": 337,
+          "end_byte": 575
+        }
+      },
+      "returned_top1": {
+        "path": "lib/system/allocator.cpp",
+        "start_line": 77,
+        "end_line": 107,
+        "source_sha256": "b40f3d68ca97c1e4470309392bc4703ab256367402340a0799cec71b57dd4183",
+        "entity": {
+          "kind": "method",
+          "qualname": "WasmEdge.Allocator.resize",
+          "owner": "WasmEdge.Allocator",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "lib/loader/aot_section.cpp",
+          "start_line": 16,
+          "end_line": 23,
+          "source_sha256": "f3b9c98f1f73754903a761baac4e17a9c480c3b9b2fd23ee441c1ad13a8ee3d7",
+          "quote": "inline constexpr uint64_t roundDownPageBoundary(const uint64_t Value) {\n// ARM64 Mac has a special page size\n#if WASMEDGE_OS_MACOS && defined(__aarch64__)\n  return Value & ~UINT64_C(16383);\n#else\n  return Value & ~UINT64_C(4095);\n#endif\n}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "lib/system/allocator.cpp",
+          "start_line": 77,
+          "end_line": 107,
+          "source_sha256": "b40f3d68ca97c1e4470309392bc4703ab256367402340a0799cec71b57dd4183",
+          "quote": "WASMEDGE_EXPORT uint8_t *Allocator::resize(uint8_t *Pointer,\n                                           uint32_t OldPageCount,\n                                           uint32_t NewPageCount) noexcept {\n  assuming(NewPageCount > OldPageCount);\n#if WASMEDGE_OS_WINDOWS\n  if (winapi::VirtualAlloc(Pointer + OldPageCount * kPageSize,\n                           (NewPageCount - OldPageCount) * kPageSize,\n                           winapi::MEM_COMMIT_,\n                           winapi::PAGE_READWRITE_) == nullptr) {\n    return nullptr;\n  }\n  return Pointer;\n#elif defined(HAVE_MMAP) && defined(__x86_64__) || defined(__aarch64__) ||     \\\n    (defined(__riscv) && __riscv_xlen == 64)\n  if (mmap(Pointer + OldPageCount * kPageSize,\n           (NewPageCount - OldPageCount) * kPageSize, PROT_READ | PROT_WRITE,\n           MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0) == MAP_FAILED) {\n    return nullptr;\n  }\n  return Pointer;\n#else\n  auto Result = reinterpret_cast<uint8_t *>(\n      std::realloc(Pointer, NewPageCount * kPageSize));\n  if (Result == nullptr) {\n    return nullptr;\n  }\n  std::memset(Result + OldPageCount * kPageSize, 0,\n              (NewPageCount - OldPageCount) * kPageSize);\n  return Result;\n#endif\n}",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 28,
+      "id": "f5214068f8260739c1c80b78",
+      "repo_id": "cpp--oatpp__oatpp",
+      "query": "\n1. **Purpose**: The purpose is to handle and report errors related to communication protocols by encapsulating both I/O status and a configurable status type, providing detailed context about the error.\n2. **Input**: The input includes an I/O status code indicating the nature of the I/O error and a configurable status type that can hold additional error information specific to the protocol.\n3. **Output**: There is no direct output; however, the class provides methods to retrieve the I/O status and the additional status information encapsulated within the error.\n4. **Procedure**: Upon instantiation, the class is initialized with the I/O status and the additional status. It inherits from a base error class, which takes the I/O status and a message as parameters. The class stores these inputs and makes them accessible through methods for further error handling or logging.\n",
+      "classification": "clearly_incorrect_top1",
+      "subtype": null,
+      "reason": "The reference creates ProtocolError from Info plus message, initializes its CommunicationError base using info.ioStatus and retains m_info for retrieval. Top1 only constructs the ProtocolErrorInfo data aggregate from ioStatus/status; it neither creates the derived error object nor initializes the base error/message described by the procedure.",
+      "reference": {
+        "path": "src/oatpp/web/protocol/CommunicationError.hpp",
+        "start_line": 117,
+        "end_line": 120,
+        "source_sha256": "23cba0ad5039ce4f11668de298b0d8c01d47a817657e245020a302f3f0fc8cc9",
+        "official_name": "ProtocolError",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "oatpp/oatpp",
+          "name": "ProtocolError",
+          "path": "src/oatpp/web/protocol/CommunicationError.hpp",
+          "start_line": 116,
+          "end_line": 120,
+          "start_byte": 2791,
+          "end_byte": 2925
+        }
+      },
+      "returned_top1": {
+        "path": "src/oatpp/web/protocol/CommunicationError.hpp",
+        "start_line": 80,
+        "end_line": 83,
+        "source_sha256": "23cba0ad5039ce4f11668de298b0d8c01d47a817657e245020a302f3f0fc8cc9",
+        "entity": {
+          "kind": "constructor",
+          "qualname": "oatpp.web.protocol.ProtocolErrorInfo.ProtocolErrorInfo",
+          "owner": "oatpp.web.protocol.ProtocolErrorInfo",
+          "definition_ordinal": 1
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/oatpp/web/protocol/CommunicationError.hpp",
+          "start_line": 101,
+          "end_line": 128,
+          "source_sha256": "23cba0ad5039ce4f11668de298b0d8c01d47a817657e245020a302f3f0fc8cc9",
+          "quote": "template<class Status>\nclass ProtocolError : public CommunicationError {\npublic:\n  /**\n   * Cenvenience typedef for ProtocolErrorInfo\n   */\n  typedef ProtocolErrorInfo<Status> Info;\nprivate:\n  Info m_info;\npublic:\n\n  /**\n   * Constructor.\n   * @param info - &l:ProtocolError::Info ;.\n   * @param message - error message.\n   */\n  ProtocolError(const Info& info, const oatpp::String& message)\n    : CommunicationError(info.ioStatus, message)\n    , m_info(info)\n  {}\n\n  /**\n   * Get error info.\n   * @return - error info.\n   */\n  Info getInfo() {\n    return m_info;\n  }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/oatpp/web/protocol/CommunicationError.hpp",
+          "start_line": 65,
+          "end_line": 93,
+          "source_sha256": "23cba0ad5039ce4f11668de298b0d8c01d47a817657e245020a302f3f0fc8cc9",
+          "quote": "template<class Status>\nstruct ProtocolErrorInfo {\n\n  /**\n   * Default Constructor.\n   */\n  ProtocolErrorInfo()\n    : ioStatus(0)\n  {}\n\n  /**\n   * Constructor.\n   * @param pIOStatus - I/O level error. See &id:oatpp::v_io_size;.\n   * @param pStatus - configurable arbitrary data type.\n   */\n  ProtocolErrorInfo(oatpp::v_io_size pIOStatus, const Status& pStatus)\n    : ioStatus(pIOStatus)\n    , status(pStatus)\n  {}\n\n  /**\n   * Get I/O level error.\n   */\n  oatpp::v_io_size ioStatus;\n\n  /**\n   * Configurable arbitrary data type.\n   */\n  Status status;",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "support",
+          "path": "src/oatpp/web/protocol/CommunicationError.hpp",
+          "start_line": 35,
+          "end_line": 58,
+          "source_sha256": "23cba0ad5039ce4f11668de298b0d8c01d47a817657e245020a302f3f0fc8cc9",
+          "quote": "class CommunicationError : public std::runtime_error {\nprivate:\n  oatpp::v_io_size m_ioStatus;\n  oatpp::String m_message;\npublic:\n\n  /**\n   * Constructor.\n   * @param ioStatus - I/O error. See &id:oatpp::v_io_size;.\n   * @param message - error message.\n   */\n  CommunicationError(oatpp::v_io_size ioStatus, const oatpp::String& message);\n\n  /**\n   * Get I/O error. See &id:oatpp::v_io_size;.\n   * @return &id:oatpp::v_io_size;.\n   */\n  oatpp::v_io_size getIOStatus();\n\n  /**\n   * Get error message.\n   * @return - error message.\n   */\n  oatpp::String& getMessage();",
+          "note": "The base error provides I/O status and message access."
+        }
+      ],
+      "caveats": [
+        "The query describes the constituent status values, not the literal Info+message signature of the reference. That bundling imprecision is retained; it does not make a plain Info aggregate equivalent to the inherited error class."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 29,
+      "id": "53254a3f517606d373b4a3dd",
+      "repo_id": "cpp--oatpp__oatpp",
+      "query": "\n1. **Purpose**: The function is designed to convert a basic data type into a JSON-compatible string format and write it to an output stream. If the data is null, it writes \"null\" to the stream.\n2. **Input**: It accepts three parameters: a pointer to the serializer instance, a pointer to a consistent output stream where the data will be written, and a polymorphic wrapper around the data to be serialized.\n3. **Output**: There is no return value; the function writes the serialized data directly to the provided output stream.\n4. **Procedure**: The function first checks if the provided data is not null. If it is not null, it casts the data to its original type and writes it as a string to the output stream. If the data is null, it writes the string \"null\" to the output stream.\n",
+      "classification": "ambiguous",
+      "subtype": "unspecified_primitive_domain",
+      "reason": "The reference template serializes a typed primitive using writeAsString or emits null. Top1 has the same serializer/stream/polymorph parameter shape and null handling, but specializes for std::string and escapes/quotes it via another overload. The query never identifies the basic type as numeric/bool or excludes a JSON string. Its wording can encompass string serialization, while the concrete write path differs. There is insufficient discrimination to label the string specialization clearly wrong or fully interchangeable with the generic template.",
+      "reference": {
+        "path": "src/oatpp/parser/json/mapping/Serializer.hpp",
+        "start_line": 124,
+        "end_line": 134,
+        "source_sha256": "3d385189aa99d882064a999b3963c12c6f554e2654bc00915db0c1a605a65443",
+        "official_name": "serializePrimitive",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "oatpp/oatpp",
+          "name": "serializePrimitive",
+          "path": "src/oatpp/parser/json/mapping/Serializer.hpp",
+          "start_line": 123,
+          "end_line": 134,
+          "start_byte": 3614,
+          "end_byte": 4001
+        }
+      },
+      "returned_top1": {
+        "path": "src/oatpp/parser/json/mapping/Serializer.cpp",
+        "start_line": 84,
+        "end_line": 98,
+        "source_sha256": "1d961c02ec03b5a2df4945db896f788697093235fcaf394502c50698173db33e",
+        "entity": {
+          "kind": "method",
+          "qualname": "oatpp.parser.json.mapping.Serializer.serializeString",
+          "owner": "oatpp.parser.json.mapping.Serializer",
+          "definition_ordinal": 1
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/oatpp/parser/json/mapping/Serializer.hpp",
+          "start_line": 123,
+          "end_line": 134,
+          "source_sha256": "3d385189aa99d882064a999b3963c12c6f554e2654bc00915db0c1a605a65443",
+          "quote": "  template<class T>\n  static void serializePrimitive(Serializer* serializer,\n                                 data::stream::ConsistentOutputStream* stream,\n                                 const oatpp::Void& polymorph){\n    (void) serializer;\n\n    if(polymorph){\n      stream->writeAsString(* static_cast<typename T::ObjectType*>(polymorph.get()));\n    } else {\n      stream->writeSimple(\"null\", 4);\n    }\n  }",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/oatpp/parser/json/mapping/Serializer.cpp",
+          "start_line": 77,
+          "end_line": 98,
+          "source_sha256": "1d961c02ec03b5a2df4945db896f788697093235fcaf394502c50698173db33e",
+          "quote": "void Serializer::serializeString(data::stream::ConsistentOutputStream* stream, const char* data, v_buff_size size, v_uint32 escapeFlags) {\n  auto encodedValue = Utils::escapeString(data, size, escapeFlags);\n  stream->writeCharSimple('\\\"');\n  stream->writeSimple(encodedValue);\n  stream->writeCharSimple('\\\"');\n}\n\nvoid Serializer::serializeString(Serializer* serializer,\n                                 data::stream::ConsistentOutputStream* stream,\n                                 const oatpp::Void& polymorph)\n{\n\n  if(!polymorph) {\n    stream->writeSimple(\"null\", 4);\n    return;\n  }\n\n  auto str = static_cast<std::string*>(polymorph.get());\n\n  serializeString(stream, str->data(), static_cast<v_buff_size>(str->size()), serializer->m_config->escapeFlags);\n\n}",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [
+        "No assertion is made that string quoting and numeric writeAsString are equivalent for every primitive or that the original reference can be replaced."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 30,
+      "id": "4efdd831fdab78231af8ad17",
+      "repo_id": "cpp--oatpp__oatpp",
+      "query": "\n1. **Purpose**: To encapsulate and manage a string of data within a resource context.\n2. **Input**: A string representing the data to be managed.\n3. **Output**: An instance that holds the provided string data.\n4. **Procedure**: Upon instantiation, the input string is stored within the instance, making it accessible for further operations or retrieval within the resource management context.\n",
+      "classification": "operation_equivalent",
+      "subtype": "constructor_wrapper_and_internal_storage",
+      "reason": "The reference DataHandle constructor stores the supplied string. Returned InMemoryData(string) is its enclosing resource constructor: its out-of-line definition creates DataHandle(data), and the resource exposes that same stored string for later retrieval. The query names no internal DataHandle requirement, so this wrapper implements the described string-holding resource operation as well.",
+      "reference": {
+        "path": "src/oatpp/core/data/resource/InMemoryData.hpp",
+        "start_line": 40,
+        "end_line": 42,
+        "source_sha256": "b2592b1098b6493a86a9e76384b01e492e415348743742996cd952a8380c6501",
+        "official_name": "DataHandle",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "oatpp/oatpp",
+          "name": "DataHandle",
+          "path": "src/oatpp/core/data/resource/InMemoryData.hpp",
+          "start_line": 39,
+          "end_line": 42,
+          "start_byte": 1323,
+          "end_byte": 1388
+        }
+      },
+      "returned_top1": {
+        "path": "src/oatpp/core/data/resource/InMemoryData.hpp",
+        "start_line": 69,
+        "end_line": 69,
+        "source_sha256": "b2592b1098b6493a86a9e76384b01e492e415348743742996cd952a8380c6501",
+        "entity": {
+          "kind": "constructor",
+          "qualname": "oatpp.data.resource.InMemoryData.InMemoryData",
+          "owner": "oatpp.data.resource.InMemoryData",
+          "definition_ordinal": 1
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/oatpp/core/data/resource/InMemoryData.hpp",
+          "start_line": 33,
+          "end_line": 44,
+          "source_sha256": "b2592b1098b6493a86a9e76384b01e492e415348743742996cd952a8380c6501",
+          "quote": "class InMemoryData : public Resource {\nprivate:\n\n  struct DataHandle {\n\n    oatpp::String data;\n\n    DataHandle(const oatpp::String& pData)\n      : data(pData)\n    {}\n\n  };",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/oatpp/core/data/resource/InMemoryData.hpp",
+          "start_line": 65,
+          "end_line": 69,
+          "source_sha256": "b2592b1098b6493a86a9e76384b01e492e415348743742996cd952a8380c6501",
+          "quote": "  /**\n   * Constructor.\n   * @param fullInMemoryDataname\n   */\n  InMemoryData(const oatpp::String& data);",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "support",
+          "path": "src/oatpp/core/data/resource/InMemoryData.cpp",
+          "start_line": 33,
+          "end_line": 35,
+          "source_sha256": "0041934884815490667c5c39eabbd8af900f4c48848010c775f75ee11eeb34db",
+          "quote": "InMemoryData::InMemoryData(const oatpp::String& data)\n  : m_handle(std::make_shared<DataHandle>(data))\n{}",
+          "note": "The returned constructor delegates storage to DataHandle(data)."
+        },
+        {
+          "role": "support",
+          "path": "src/oatpp/core/data/resource/InMemoryData.cpp",
+          "start_line": 63,
+          "end_line": 68,
+          "source_sha256": "0041934884815490667c5c39eabbd8af900f4c48848010c775f75ee11eeb34db",
+          "quote": "oatpp::String InMemoryData::getInMemoryData() {\n  if(m_handle && m_handle->data) {\n    return m_handle->data;\n  }\n  return nullptr;\n}",
+          "note": "The resource returns the retained string."
+        }
+      ],
+      "caveats": [
+        "The top1 source span is a constructor declaration; its implementation is cited from the same pinned snapshot, not from the response excerpt. Evidence sufficiency is not being rescored."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 31,
+      "id": "9c493e96674c71f26b3754c2",
+      "repo_id": "cpp--oatpp__oatpp",
+      "query": "\n1. **Purpose**: The purpose of this class is to manage the invocation of specific callback functions based on the type of event occurring during the parsing of multipart data streams. It determines whether headers or data chunks are being processed and triggers the appropriate event handlers.\n2. **Input**: This class takes no direct inputs when instantiated but uses internal state variables to manage the type of callback to invoke (either for headers or data chunks) and the associated data.\n3. **Output**: There is no direct output produced by instances of this class. Instead, it indirectly affects the system by triggering specific callback functions which handle the parsed data.\n4. **Procedure**: Upon instantiation, the class initializes with no scheduled callback. When the parsing process identifies a new part or data chunk, the class sets the appropriate callback type and data pointers. Depending on the internal state, it then triggers either the header processing or data processing callbacks at the appropriate times in the parsing lifecycle.\n",
+      "classification": "query_reference_mismatch",
+      "subtype": "constructor_described_as_component_or_operation",
+      "reason": "The query expressly describes the whole ListenerCall class lifecycle: no-scheduled-callback initialization, scheduling headers/data and dispatching the selected listener callback. The reference constructor only initializes CALL_NONE/null/zero; separate methods schedule and invoke. Returned ListenerCall.call supplies dispatch behavior but not the no-input constructor or initialization. The description does not isolate a single selected callable implementing all of it.",
+      "reference": {
+        "path": "src/oatpp/web/mime/multipart/StatefulParser.hpp",
+        "start_line": 140,
+        "end_line": 144,
+        "source_sha256": "cddd6b0aa1c57ab6a9fda4af3fa6592ea1e0bafff0db942d07e0e3fe088514b6",
+        "official_name": "ListenerCall",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "oatpp/oatpp",
+          "name": "ListenerCall",
+          "path": "src/oatpp/web/mime/multipart/StatefulParser.hpp",
+          "start_line": 139,
+          "end_line": 144,
+          "start_byte": 4429,
+          "end_byte": 4516
+        }
+      },
+      "returned_top1": {
+        "path": "src/oatpp/web/mime/multipart/StatefulParser.cpp",
+        "start_line": 49,
+        "end_line": 74,
+        "source_sha256": "6f2359a2cad42ff87235b4db5f31cd961d6864d14b9bca1724f774e87d374301",
+        "entity": {
+          "kind": "method",
+          "qualname": "oatpp.web.mime.multipart.StatefulParser.ListenerCall.call",
+          "owner": "oatpp.web.mime.multipart.StatefulParser.ListenerCall",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/oatpp/web/mime/multipart/StatefulParser.hpp",
+          "start_line": 131,
+          "end_line": 156,
+          "source_sha256": "cddd6b0aa1c57ab6a9fda4af3fa6592ea1e0bafff0db942d07e0e3fe088514b6",
+          "quote": "  class ListenerCall {\n  public:\n\n    static constexpr v_int32 CALL_NONE = 0;\n    static constexpr v_int32 CALL_ON_HEADERS = 1;\n    static constexpr v_int32 CALL_ON_DATA = 2;\n\n  public:\n\n    ListenerCall()\n      : callType(CALL_NONE)\n      , data(nullptr)\n      , size(0)\n    {}\n\n    v_int32 callType;\n    const char* data;\n    v_io_size size;\n\n    void setOnHeadersCall();\n    void setOnDataCall(const char* pData, v_buff_size pSize);\n\n    void call(StatefulParser* parser);\n    async::CoroutineStarter callAsync(StatefulParser* parser);\n\n    explicit operator bool() const;",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/oatpp/web/mime/multipart/StatefulParser.cpp",
+          "start_line": 37,
+          "end_line": 74,
+          "source_sha256": "6f2359a2cad42ff87235b4db5f31cd961d6864d14b9bca1724f774e87d374301",
+          "quote": "void StatefulParser::ListenerCall::setOnHeadersCall() {\n  callType = CALL_ON_HEADERS;\n  data = nullptr;\n  size = 0;\n}\n\nvoid StatefulParser::ListenerCall::setOnDataCall(const char* pData, v_buff_size pSize) {\n  callType = CALL_ON_DATA;\n  data = pData;\n  size = pSize;\n}\n\nvoid StatefulParser::ListenerCall::call(StatefulParser* parser) {\n\n  if(parser->m_listener) {\n\n    switch(callType) {\n\n      case CALL_ON_HEADERS:\n        {\n          Headers headers;\n          parser->parseHeaders(headers);\n          parser->m_listener->onPartHeaders(headers);\n        }\n        break;\n\n      case CALL_ON_DATA:\n        parser->m_listener->onPartData(data, size);\n        break;\n\n      default:\n        break;\n\n    }\n\n  }\n\n}",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 32,
+      "id": "672ad69a64de3cc30bea2463",
+      "repo_id": "cpp--oatpp__oatpp",
+      "query": "\n1. **Purpose**: The purpose of this coroutine is to asynchronously transfer all available data from a buffer to an output stream until the buffer is empty.\n2. **Input**: The coroutine takes two inputs: a reference to a buffer from which data is read, and a shared pointer to an output stream where data is written.\n3. **Output**: The coroutine does not return a value directly but performs asynchronous I/O operations, resulting in data being written to the output stream.\n4. **Procedure**: The coroutine first checks if there is data available in the buffer. If data is available, it determines the segments of the buffer to write based on the current read and write positions. It then performs asynchronous writes to the output stream in one or two parts, depending on whether the data wraps around the end of the buffer. After writing, it resets the buffer's positions, effectively emptying it.\n",
+      "classification": "query_reference_mismatch",
+      "subtype": "constructor_described_as_component_or_operation",
+      "reason": "The reference FlushCoroutine constructor only retains fifo and stream. The ring-buffer checks, one/two-segment asynchronous writes and reset described by the query are performed by its act/fullFlush/partialFlush/beforeFinish methods, not that constructor body. Top1 transferAsync is a separate generalized callback/processor transfer coroutine and does not implement this specific FIFO ring-buffer flush policy.",
+      "reference": {
+        "path": "src/oatpp/core/data/buffer/FIFOBuffer.cpp",
+        "start_line": 387,
+        "end_line": 390,
+        "source_sha256": "828fdcdc11d12d07e6a77f1ce458e553b9a3a74d31da188a4a4ae74813a8e069",
+        "official_name": "FlushCoroutine",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "oatpp/oatpp",
+          "name": "FlushCoroutine",
+          "path": "src/oatpp/core/data/buffer/FIFOBuffer.cpp",
+          "start_line": 386,
+          "end_line": 390,
+          "start_byte": 9989,
+          "end_byte": 10133
+        }
+      },
+      "returned_top1": {
+        "path": "src/oatpp/core/data/stream/Stream.cpp",
+        "start_line": 657,
+        "end_line": 814,
+        "source_sha256": "e92e2e54541b1c255d457c96e5f1b4b7f9809ae266700b90e8279c8e8f3bf38e",
+        "entity": {
+          "kind": "function",
+          "qualname": "oatpp.data.stream.transferAsync",
+          "owner": "oatpp.data.stream",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/oatpp/core/data/buffer/FIFOBuffer.cpp",
+          "start_line": 375,
+          "end_line": 390,
+          "source_sha256": "828fdcdc11d12d07e6a77f1ce458e553b9a3a74d31da188a4a4ae74813a8e069",
+          "quote": "async::CoroutineStarter FIFOBuffer::flushToStreamAsync(const std::shared_ptr<data::stream::OutputStream>& stream)\n{\n\n  class FlushCoroutine : public oatpp::async::Coroutine<FlushCoroutine> {\n  private:\n    FIFOBuffer* m_fifo;\n    std::shared_ptr<data::stream::OutputStream> m_stream;\n  private:\n    data::buffer::InlineWriteData m_data1;\n    data::buffer::InlineWriteData m_data2;\n  public:\n\n    FlushCoroutine(FIFOBuffer* fifo, const std::shared_ptr<data::stream::OutputStream>& stream)\n      : m_fifo(fifo)\n      , m_stream(stream)\n    {}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/oatpp/core/data/stream/Stream.cpp",
+          "start_line": 657,
+          "end_line": 694,
+          "source_sha256": "e92e2e54541b1c255d457c96e5f1b4b7f9809ae266700b90e8279c8e8f3bf38e",
+          "quote": "async::CoroutineStarter transferAsync(const base::ObjectHandle<ReadCallback>& readCallback,\n                                      const base::ObjectHandle<WriteCallback>& writeCallback,\n                                      v_buff_size transferSize,\n                                      const base::ObjectHandle<data::buffer::IOBuffer>& buffer,\n                                      const base::ObjectHandle<data::buffer::Processor>& processor)\n{\n\n  class TransferCoroutine : public oatpp::async::Coroutine<TransferCoroutine> {\n  private:\n    base::ObjectHandle<ReadCallback> m_readCallback;\n    base::ObjectHandle<WriteCallback> m_writeCallback;\n    v_buff_size m_transferSize;\n    base::ObjectHandle<oatpp::data::buffer::IOBuffer> m_buffer;\n    base::ObjectHandle<data::buffer::Processor> m_processor;\n  private:\n    v_buff_size m_progress;\n  private:\n    v_int32 m_procRes;\n    data::buffer::InlineReadData m_readData;\n    data::buffer::InlineWriteData m_writeData;\n    data::buffer::InlineReadData m_inData;\n    data::buffer::InlineReadData m_outData;\n  public:\n\n    TransferCoroutine(const base::ObjectHandle<ReadCallback>& readCallback,\n                      const base::ObjectHandle<WriteCallback>& writeCallback,\n                      v_buff_size transferSize,\n                      const base::ObjectHandle<buffer::IOBuffer>& buffer,\n                      const base::ObjectHandle<buffer::Processor>& processor)\n      : m_readCallback(readCallback)\n      , m_writeCallback(writeCallback)\n      , m_transferSize(transferSize)\n      , m_buffer(buffer)\n      , m_processor(processor)\n      , m_progress(0)\n      , m_procRes(data::buffer::Processor::Error::PROVIDE_DATA_IN)\n      , m_readData(buffer->getData(), buffer->getSize())\n    {}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/oatpp/core/data/stream/Stream.cpp",
+          "start_line": 775,
+          "end_line": 814,
+          "source_sha256": "e92e2e54541b1c255d457c96e5f1b4b7f9809ae266700b90e8279c8e8f3bf38e",
+          "quote": "    Action process() {\n\n      m_procRes = m_processor->iterate(m_inData, m_outData);\n\n      switch(m_procRes) {\n\n        case data::buffer::Processor::Error::OK:\n          return repeat();\n\n        case data::buffer::Processor::Error::PROVIDE_DATA_IN: {\n          m_readData.set(m_buffer->getData(), m_buffer->getSize());\n          return yieldTo(&TransferCoroutine::act);\n        }\n\n        case data::buffer::Processor::Error::FLUSH_DATA_OUT: {\n          m_readData.set(m_buffer->getData(), m_buffer->getSize());\n          m_writeData.set(m_outData.currBufferPtr, m_outData.bytesLeft);\n          m_outData.setEof();\n          return yieldTo(&TransferCoroutine::flushData);\n        }\n\n        case data::buffer::Processor::Error::FINISHED:\n          return finish();\n\n        default:\n          return error<AsyncTransferError>(\"[oatpp::data::stream::transferAsync]: Error. ReadCallback. Unknown processing error.\");\n\n      }\n\n    }\n\n    Action flushData() {\n      return m_writeCallback->writeExactSizeDataAsyncInline(m_writeData, yieldTo(&TransferCoroutine::act));\n    }\n\n  };\n\n  return TransferCoroutine::start(readCallback, writeCallback, transferSize, buffer, processor);\n\n}",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "support",
+          "path": "src/oatpp/core/data/buffer/FIFOBuffer.cpp",
+          "start_line": 392,
+          "end_line": 431,
+          "source_sha256": "828fdcdc11d12d07e6a77f1ce458e553b9a3a74d31da188a4a4ae74813a8e069",
+          "quote": "    Action act() override {\n\n      if(!m_fifo->m_canRead) {\n        return finish();\n      }\n\n      if(m_fifo->m_readPosition < m_fifo->m_writePosition) {\n\n        m_data1.set(&m_fifo->m_buffer[m_fifo->m_readPosition], m_fifo->m_writePosition - m_fifo->m_readPosition);\n        return yieldTo(&FlushCoroutine::fullFlush);\n\n      } else {\n\n        m_data1.set(&m_fifo->m_buffer[m_fifo->m_readPosition], m_fifo->m_bufferSize - m_fifo->m_readPosition);\n        m_data2.set(m_fifo->m_buffer, m_fifo->m_writePosition);\n        return yieldTo(&FlushCoroutine::partialFlush1);\n\n      }\n    }\n\n    Action fullFlush() {\n      return m_stream->writeExactSizeDataAsyncInline(m_data1, yieldTo(&FlushCoroutine::beforeFinish));\n    }\n\n    Action partialFlush1() {\n      return m_stream->writeExactSizeDataAsyncInline(m_data1, yieldTo(&FlushCoroutine::partialFlush2));\n    }\n\n    Action partialFlush2() {\n      return m_stream->writeExactSizeDataAsyncInline(m_data2, yieldTo(&FlushCoroutine::beforeFinish));\n    }\n\n    Action beforeFinish() {\n      m_fifo->setBufferPosition(0, 0, false);\n      return finish();\n    }\n\n  };\n\n  return FlushCoroutine::start(this, stream);",
+          "note": "The other coroutine methods perform the requested FIFO operation and reset."
+        }
+      ],
+      "caveats": [
+        "The constructor legitimately configures the coroutine. The finding is a selected-callable versus whole-coroutine behavior mismatch, not denial that the class contains the algorithm."
+      ],
+      "historical_top1_credit": 0
+    },
+    {
+      "ordinal": 33,
+      "id": "8914fe186f2da974b5a355e0",
+      "repo_id": "cpp--oatpp__oatpp",
+      "query": "\n1. **Purpose**: The primary function is to route HTTP requests to the appropriate handlers based on the HTTP method and the path pattern specified in the request.\n2. **Input**: The input includes an HTTP method and a path pattern.\n3. **Output**: The output is a handler that is associated with the given HTTP method and path pattern.\n4. **Procedure**: The procedure involves checking if a routing branch exists for the specified HTTP method. If it does not exist, a new branch is created. Then, the request is forwarded to the corresponding handler based on the path pattern within the specified method's branch.\n",
+      "classification": "query_reference_mismatch",
+      "subtype": "constructor_and_registration_lookup_conflation",
+      "reason": "The selected HttpRouterTemplate() = default accepts neither HTTP method nor path and does not return a handler. The description also mixes route registration (getBranch creates missing method branches) with lookup (getRoute returns a Route but does not create missing branches). Returned route registers a supplied endpoint and returns void; it is not the claimed two-input handler-returning function either.",
+      "reference": {
+        "path": "src/oatpp/web/server/HttpRouter.hpp",
+        "start_line": 75,
+        "end_line": 75,
+        "source_sha256": "fa437f8901c17811b19c9d7c1c0bc0cba4ccb1f6bde4c0e0d0efb10bfbe9b925",
+        "official_name": "HttpRouterTemplate",
+        "original_reference": {
+          "language": "cpp",
+          "repo": "oatpp/oatpp",
+          "name": "HttpRouterTemplate",
+          "path": "src/oatpp/web/server/HttpRouter.hpp",
+          "start_line": 74,
+          "end_line": 75,
+          "start_byte": 2379,
+          "end_byte": 2410
+        }
+      },
+      "returned_top1": {
+        "path": "src/oatpp/web/server/HttpRouter.hpp",
+        "start_line": 91,
+        "end_line": 93,
+        "source_sha256": "fa437f8901c17811b19c9d7c1c0bc0cba4ccb1f6bde4c0e0d0efb10bfbe9b925",
+        "entity": {
+          "kind": "method",
+          "qualname": "oatpp.web.server.HttpRouterTemplate.route",
+          "owner": "oatpp.web.server.HttpRouterTemplate",
+          "definition_ordinal": 0
+        }
+      },
+      "evidence": [
+        {
+          "role": "reference",
+          "path": "src/oatpp/web/server/HttpRouter.hpp",
+          "start_line": 62,
+          "end_line": 75,
+          "source_sha256": "fa437f8901c17811b19c9d7c1c0bc0cba4ccb1f6bde4c0e0d0efb10bfbe9b925",
+          "quote": "  const std::shared_ptr<BranchRouter>& getBranch(const StringKeyLabel& name){\n    auto it = m_branchMap.find(name);\n    if(it == m_branchMap.end()){\n      m_branchMap[name] = BranchRouter::createShared();\n    }\n    return m_branchMap[name];\n  }\n\npublic:\n\n  /**\n   * Default Constructor.\n   */\n  HttpRouterTemplate() = default;",
+          "note": "Physical source witness for the manual judgment."
+        },
+        {
+          "role": "top1",
+          "path": "src/oatpp/web/server/HttpRouter.hpp",
+          "start_line": 85,
+          "end_line": 107,
+          "source_sha256": "fa437f8901c17811b19c9d7c1c0bc0cba4ccb1f6bde4c0e0d0efb10bfbe9b925",
+          "quote": "  /**\n   * Route URL to Endpoint by method, and pathPattern.\n   * @param method - http method like [\"GET\", \"POST\", etc.].\n   * @param pathPattern - url path pattern. ex.: `\"/path/to/resource/with/{param1}/{param2}\"`.\n   * @param endpoint - router endpoint.\n   */\n  void route(const oatpp::String& method, const oatpp::String& pathPattern, const RouterEndpoint& endpoint) {\n    getBranch(method)->route(pathPattern, endpoint);\n  }\n\n  /**\n   * Resolve http method and path to &id:oatpp::web::url::mapping::Router::Route;\n   * @param method - http method like [\"GET\", \"POST\", etc.].\n   * @param url - url path. \"Path\" part of url only.\n   * @return - &id:oatpp::web::url::mapping::Router::Route;.\n   */\n  typename BranchRouter::Route getRoute(const StringKeyLabel& method, const StringKeyLabel& path){\n    auto it = m_branchMap.find(method);\n    if(it != m_branchMap.end()) {\n      return m_branchMap[method]->getRoute(path);\n    }\n    return typename BranchRouter::Route();\n  }",
+          "note": "Physical source witness for the manual judgment."
+        }
+      ],
+      "caveats": [],
+      "historical_top1_credit": 0
+    }
+  ]
+}
