@@ -13,7 +13,7 @@ from ken.retrieval.source_operations import OperationWitnesses
 from ken.retrieval.symbol_requirements import (requirements, is_test_case,
     prefer_operations, prefer_explicit_code_terms)
 
-SYMBOL_POLICY = 'bounded-symbol-relations-v213'
+SYMBOL_POLICY = 'bounded-symbol-relations-v258'
 
 
 @dataclass(frozen=True)

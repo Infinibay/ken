@@ -35,10 +35,27 @@ def test_explicit_purpose_prevents_test_granularity_from_overriding_the_caller()
     ('Find a handler for AND and OR expressions.', {'and', 'or'}),
     ('Find a handler for `not` expressions.', {'not'}),
     ('Find a handler for token parsing and expression evaluation.', set()),
+    ('Find a bit-wise `and` mask operation.', set()),
+    ('Find a bit wise OR mask operation.', set()),
+    ('Find bitwise OR within the explicit `in` branch.', {'in'}),
 ])
 def test_only_explicit_code_operators_are_requirements(query, expected):
     from ken.retrieval.symbol_requirements import requirements
     assert requirements(SearchRequest(query)).operators == expected
+
+
+@pytest.mark.parametrize('query, implementations', [
+    ('Round a value down using bitwise AND with a complemented mask.',
+     ['return value & ~mask;', 'return left && right;']),
+    ('Combine the flags using bitwise OR.',
+     ['return first | second;', 'return first || second;']),
+    ('Invert the flags with bitwise NOT.',
+     ['return ~flags;', 'return not flags;']),
+])
+def test_bitwise_descriptions_do_not_require_boolean_keyword_witnesses(query, implementations):
+    from ken.retrieval.symbol_requirements import requirements, prefer_explicit_code_terms
+    assert not requirements(SearchRequest(query)).operators
+    assert prefer_explicit_code_terms(query, implementations, [0, 1]) == [0, 1]
 
 
 def test_symbol_relation_breaks_a_wrong_score_preference_without_losing_candidates(tmp_path, registered_reranker):

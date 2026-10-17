@@ -74,7 +74,12 @@ _WORDS = re.compile(r'[A-Za-z_][A-Za-z_0-9]*')
 def explicit_code_terms(query: str) -> frozenset[str]:
     words = {word.casefold() for word in _WORDS.findall(query) if word.isupper()}
     words.update(match.group(1).casefold() for match in re.finditer(r'`([A-Za-z]+)`', query))
-    return frozenset(words & _OPERATORS)
+    operators = words & _OPERATORS
+    if re.search(r'\bbit[\s-]?wise\b', query, re.IGNORECASE):
+        # The keyword witness understands boolean syntax, not bitwise semantics.
+        # Do not turn a named bitwise operation into a hard boolean preference.
+        operators -= {'and', 'or', 'not'}
+    return frozenset(operators)
 
 
 def prefer_explicit_code_terms(query: str, implementations: Sequence[str], order: Sequence[int]) -> list[int]:
