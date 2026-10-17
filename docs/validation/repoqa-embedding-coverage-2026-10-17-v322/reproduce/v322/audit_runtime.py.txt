@@ -1,0 +1,30 @@
+"""Verify API profile identity and describe runtime per supplied snapshot size."""
+from pathlib import Path
+import json,sys
+OUT=Path(__file__).resolve().parent;BASE=OUT.parents[2];CONTROL=BASE/'output/analysis/embedding-language-coverage-v320'
+assert (OUT/'finalized.json').exists()
+sys.path.insert(0,str(OUT/'engine/src'))
+from ken.retrieval.profile import RetrievalProfile
+def load(p):return json.loads(p.read_text())
+def quantiles(values):
+ values=sorted(values)
+ def q(p):
+  x=(len(values)-1)*p;a=int(x);b=min(a+1,len(values)-1);return values[a]+(values[b]-values[a])*(x-a)
+ return {'p50_ms':q(.5),'p95_ms':q(.95),'max_ms':max(values)}
+arms={};static=set();counts=0
+for arm in ['baseline','jina','muninn']:
+ root=OUT if arm=='muninn' else CONTROL;groups=load(root/'sources.json');profiles=set();context_models=set();normalized=[];per_repo={}
+ for group in groups:
+  folder=root/'capture'/group/arm;prov=load(folder/'provenance.json');responses=load(folder/'responses.json')
+  fingerprint=RetrievalProfile.from_dict(prov['profile']).fingerprint
+  assert all(r['profile_version']==fingerprint for r in responses)
+  assert prov['source_files']==len(groups[group]['source_pins'])
+  assert prov['provider']==['CPUExecutionProvider'] and prov['reranker_tokens']==1024 and prov['heavy_imports']==[]
+  profiles.add(fingerprint);context_models.add(prov['context_model']);static.add(prov['static_model']);counts+=len(responses)
+  values=[r['elapsed_ms']*100/prov['source_files'] for r in responses];normalized.extend(values)
+  per_repo[group]={'files':prov['source_files'],'owners':prov['owners'],'query_wall':quantiles([r['elapsed_ms'] for r in responses]),'query_wall_per100_supplied_files':quantiles(values)}
+ assert len(profiles)==len(context_models)==1
+ arms[arm]={'profile':profiles.pop(),'context_model':context_models.pop(),'query_wall_per100_supplied_files':quantiles(normalized),'per_repository':per_repo}
+assert len({a['profile'] for a in arms.values()})==len({a['context_model'] for a in arms.values()})==3 and len(static)==1 and counts==600
+result={'profiles_match_all600_API_responses':True,'distinct_contextual_models':3,'unchanged_static_model':static.pop(),'arms':arms,'interpretation':'Snapshot supplied-file counts, not complete upstream repository sizes. Per100-file normalization describes this selected corpus and is not a size-only scaling law. Actual API profile identities equal each injected runtime provenance, ruling out a silent default-context fallback.','reserve':'CLOSED'}
+(OUT/'runtime-profile-verification.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({a:{k:v for k,v in data.items() if k!='per_repository'} for a,data in arms.items()},indent=2))

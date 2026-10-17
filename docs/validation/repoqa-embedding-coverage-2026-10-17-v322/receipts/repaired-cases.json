@@ -1,0 +1,766 @@
+{
+  "cases": [
+    {
+      "id": "eedab4f5bf022527d4f390e2",
+      "repo_id": "cpp--apache__logging-log4cxx",
+      "reference": {
+        "path": "src/main/cpp/optionconverter.cpp",
+        "name": "ConfiguratorWatchdog",
+        "start_line": 52,
+        "end_line": 57,
+        "language": "cpp"
+      },
+      "reference_context_rank": 8,
+      "reference_context_score": 0.4279888868331909,
+      "wrong_raw_top1": {
+        "path": "src/main/cpp/propertyconfigurator.cpp",
+        "entity": {
+          "kind": "method",
+          "qualname": "PropertyConfigurator.configureAndWatch",
+          "owner": "PropertyConfigurator",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 133,
+          "end_line": 136
+        },
+        "score": 0.4938317537307739
+      },
+      "correct_API_top1": {
+        "path": "src/main/cpp/optionconverter.cpp",
+        "entity": {
+          "kind": "constructor",
+          "qualname": "LOG4CXX_NS.ConfiguratorWatchdog.ConfiguratorWatchdog",
+          "owner": "LOG4CXX_NS.ConfiguratorWatchdog",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 53,
+          "end_line": 57
+        }
+      }
+    },
+    {
+      "id": "46ee9ce9ac370035e6655bf8",
+      "repo_id": "cpp--apache__logging-log4cxx",
+      "reference": {
+        "path": "src/main/cpp/telnetappender.cpp",
+        "name": "TelnetAppenderPriv",
+        "start_line": 35,
+        "end_line": 42,
+        "language": "cpp"
+      },
+      "reference_context_rank": 4,
+      "reference_context_score": 0.3916477560997009,
+      "wrong_raw_top1": {
+        "path": "src/main/cpp/telnetappender.cpp",
+        "entity": {
+          "kind": "constructor",
+          "qualname": "TelnetAppender.TelnetAppender",
+          "owner": "TelnetAppender",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 61,
+          "end_line": 64
+        },
+        "score": 0.4600960910320282
+      },
+      "correct_API_top1": {
+        "path": "src/main/cpp/telnetappender.cpp",
+        "entity": {
+          "kind": "method",
+          "qualname": "TelnetAppender::TelnetAppenderPriv.TelnetAppenderPriv",
+          "owner": "TelnetAppender::TelnetAppenderPriv",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 36,
+          "end_line": 42
+        }
+      }
+    },
+    {
+      "id": "4523f76bdb59962b27c3ef14",
+      "repo_id": "cpp--apache__logging-log4cxx",
+      "reference": {
+        "path": "src/main/cpp/throwableinformationpatternconverter.cpp",
+        "name": "ThrowableInformationPatternConverterPrivate",
+        "start_line": 32,
+        "end_line": 35,
+        "language": "cpp"
+      },
+      "reference_context_rank": 3,
+      "reference_context_score": 0.43677547574043274,
+      "wrong_raw_top1": {
+        "path": "src/main/cpp/throwableinformationpatternconverter.cpp",
+        "entity": {
+          "kind": "method",
+          "qualname": "ThrowableInformationPatternConverter.format",
+          "owner": "ThrowableInformationPatternConverter",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 67,
+          "end_line": 72
+        },
+        "score": 0.4945574104785919
+      },
+      "correct_API_top1": {
+        "path": "src/main/cpp/throwableinformationpatternconverter.cpp",
+        "entity": {
+          "kind": "method",
+          "qualname": "ThrowableInformationPatternConverter::ThrowableInformationPatternConverterPrivate.ThrowableInformationPatternConverterPrivate",
+          "owner": "ThrowableInformationPatternConverter::ThrowableInformationPatternConverterPrivate",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 33,
+          "end_line": 35
+        }
+      }
+    },
+    {
+      "id": "64763c054c7565d9108ac751",
+      "repo_id": "cpp--drogonframework__drogon",
+      "reference": {
+        "path": "lib/src/HttpMessageBody.h",
+        "name": "HttpMessageStringViewBody",
+        "start_line": 115,
+        "end_line": 119,
+        "language": "cpp"
+      },
+      "reference_context_rank": 4,
+      "reference_context_score": 0.4873347282409668,
+      "wrong_raw_top1": {
+        "path": "lib/src/HttpMessageBody.h",
+        "entity": {
+          "kind": "method",
+          "qualname": "drogon.HttpMessageStringViewBody.data",
+          "owner": "drogon.HttpMessageStringViewBody",
+          "definition_ordinal": 1
+        },
+        "entity_span": {
+          "start_line": 126,
+          "end_line": 129
+        },
+        "score": 0.5170649290084839
+      },
+      "correct_API_top1": {
+        "path": "lib/src/HttpMessageBody.h",
+        "entity": {
+          "kind": "constructor",
+          "qualname": "drogon.HttpMessageStringViewBody.HttpMessageStringViewBody",
+          "owner": "drogon.HttpMessageStringViewBody",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 116,
+          "end_line": 119
+        }
+      }
+    },
+    {
+      "id": "006052189e932cd2bb140b42",
+      "repo_id": "cpp--sass__node-sass",
+      "reference": {
+        "path": "src/libsass/src/debugger.hpp",
+        "name": "debug_sources_set",
+        "start_line": 16,
+        "end_line": 25,
+        "language": "cpp"
+      },
+      "reference_context_rank": 2,
+      "reference_context_score": 0.5295517444610596,
+      "wrong_raw_top1": {
+        "path": "src/libsass/src/extend.cpp",
+        "entity": {
+          "kind": "function",
+          "qualname": "Sass.printSourcesSet",
+          "owner": "Sass",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 210,
+          "end_line": 243
+        },
+        "score": 0.5408467054367065
+      },
+      "correct_API_top1": {
+        "path": "src/libsass/src/debugger.hpp",
+        "entity": {
+          "kind": "function",
+          "qualname": "debug_sources_set",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 17,
+          "end_line": 25
+        }
+      }
+    },
+    {
+      "id": "842a433b7e43f6c4449f50f4",
+      "repo_id": "cpp--ml-explore__mlx",
+      "reference": {
+        "path": "mlx/transforms_impl.h",
+        "name": "InTracing",
+        "start_line": 33,
+        "end_line": 36,
+        "language": "cpp"
+      },
+      "reference_context_rank": 3,
+      "reference_context_score": 0.41817623376846313,
+      "wrong_raw_top1": {
+        "path": "mlx/transforms_impl.h",
+        "entity": {
+          "kind": "method",
+          "qualname": "mlx.core.detail.InTracing.in_tracing",
+          "owner": "mlx.core.detail.InTracing",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 41,
+          "end_line": 43
+        },
+        "score": 0.43512028455734253
+      },
+      "correct_API_top1": {
+        "path": "mlx/transforms_impl.h",
+        "entity": {
+          "kind": "constructor",
+          "qualname": "mlx.core.detail.InTracing.InTracing",
+          "owner": "mlx.core.detail.InTracing",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 34,
+          "end_line": 36
+        }
+      }
+    },
+    {
+      "id": "be704e2fcf15954f5678b5ca",
+      "repo_id": "cpp--ml-explore__mlx",
+      "reference": {
+        "path": "mlx/ops.cpp",
+        "name": "sqrt",
+        "start_line": 2681,
+        "end_line": 2689,
+        "language": "cpp"
+      },
+      "reference_context_rank": 2,
+      "reference_context_score": 0.5732089281082153,
+      "wrong_raw_top1": {
+        "path": "mlx/ops.h",
+        "entity": {
+          "kind": "function",
+          "qualname": "mlx.core.sqrt",
+          "owner": "mlx.core",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 1006,
+          "end_line": 1006
+        },
+        "score": 0.5919618606567383
+      },
+      "correct_API_top1": {
+        "path": "mlx/ops.cpp",
+        "entity": {
+          "kind": "function",
+          "qualname": "mlx.core.sqrt",
+          "owner": "mlx.core",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 2682,
+          "end_line": 2689
+        }
+      }
+    },
+    {
+      "id": "a9fe7ad80c5d09203ccea553",
+      "repo_id": "cpp--scylladb__seastar",
+      "reference": {
+        "path": "src/core/memory.cc",
+        "name": "enable_abort_on_allocation_failure",
+        "start_line": 170,
+        "end_line": 173,
+        "language": "cpp"
+      },
+      "reference_context_rank": 2,
+      "reference_context_score": 0.6163045167922974,
+      "wrong_raw_top1": {
+        "path": "src/core/memory.cc",
+        "entity": {
+          "kind": "function",
+          "qualname": "seastar.seastar.memory.set_abort_on_allocation_failure",
+          "owner": "seastar.seastar.memory",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 2611,
+          "end_line": 2615
+        },
+        "score": 0.6239011287689209
+      },
+      "correct_API_top1": {
+        "path": "src/core/memory.cc",
+        "entity": {
+          "kind": "function",
+          "qualname": "seastar.memory.enable_abort_on_allocation_failure",
+          "owner": "seastar.memory",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 171,
+          "end_line": 173
+        }
+      }
+    },
+    {
+      "id": "5819065ce94076d1ab87e94a",
+      "repo_id": "cpp--oatpp__oatpp",
+      "reference": {
+        "path": "src/oatpp/web/server/handler/AuthorizationHandler.hpp",
+        "name": "AuthorizationObject",
+        "start_line": 40,
+        "end_line": 41,
+        "language": "cpp"
+      },
+      "reference_context_rank": 3,
+      "reference_context_score": 0.484457790851593,
+      "wrong_raw_top1": {
+        "path": "src/oatpp/web/server/handler/AuthorizationHandler.cpp",
+        "entity": {
+          "kind": "method",
+          "qualname": "oatpp.web.server.handler.BasicAuthorizationHandler.authorize",
+          "owner": "oatpp.web.server.handler.BasicAuthorizationHandler",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 93,
+          "end_line": 100
+        },
+        "score": 0.5147064328193665
+      },
+      "correct_API_top1": {
+        "path": "src/oatpp/web/server/handler/AuthorizationHandler.hpp",
+        "entity": {
+          "kind": "constructor",
+          "qualname": "oatpp.web.server.handler.AuthorizationObject.AuthorizationObject",
+          "owner": "oatpp.web.server.handler.AuthorizationObject",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 41,
+          "end_line": 41
+        }
+      }
+    },
+    {
+      "id": "6e1c40be231ec2293e7cdec6",
+      "repo_id": "rust--helix-editor__helix",
+      "reference": {
+        "path": "helix-core/src/movement.rs",
+        "name": "move_horizontally",
+        "start_line": 33,
+        "end_line": 53,
+        "language": "rust"
+      },
+      "reference_context_rank": 2,
+      "reference_context_score": 0.45233941078186035,
+      "wrong_raw_top1": {
+        "path": "helix-core/src/selection.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "Range.put_cursor",
+          "owner": "Range",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 345,
+          "end_line": 363
+        },
+        "score": 0.4583645761013031
+      },
+      "correct_API_top1": {
+        "path": "helix-core/src/movement.rs",
+        "entity": {
+          "kind": "function",
+          "qualname": "move_horizontally",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 34,
+          "end_line": 53
+        }
+      }
+    },
+    {
+      "id": "2c643d018bad7283d6286262",
+      "repo_id": "rust--rust-lang__cargo",
+      "reference": {
+        "path": "src/cargo/ops/cargo_package.rs",
+        "name": "package",
+        "start_line": 177,
+        "end_line": 222,
+        "language": "rust"
+      },
+      "reference_context_rank": 2,
+      "reference_context_score": 0.546159029006958,
+      "wrong_raw_top1": {
+        "path": "src/cargo/ops/cargo_package.rs",
+        "entity": {
+          "kind": "function",
+          "qualname": "package_one",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 85,
+          "end_line": 176
+        },
+        "score": 0.5546281933784485
+      },
+      "correct_API_top1": {
+        "path": "src/cargo/ops/cargo_package.rs",
+        "entity": {
+          "kind": "function",
+          "qualname": "package",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 178,
+          "end_line": 222
+        }
+      }
+    },
+    {
+      "id": "aa8341d3308fca83a40af0e9",
+      "repo_id": "rust--cloudflare__pingora",
+      "reference": {
+        "path": "pingora-core/src/server/transfer_fd/mod.rs",
+        "name": "serialize_vec_string",
+        "start_line": 96,
+        "end_line": 103,
+        "language": "rust"
+      },
+      "reference_context_rank": 13,
+      "reference_context_score": 0.2553587555885315,
+      "wrong_raw_top1": {
+        "path": "pingora-core/src/protocols/http/v1/server.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "HttpSession.write_body_buf",
+          "owner": "HttpSession",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 587,
+          "end_line": 606
+        },
+        "score": 0.31486859917640686
+      },
+      "correct_API_top1": {
+        "path": "pingora-core/src/server/transfer_fd/mod.rs",
+        "entity": {
+          "kind": "function",
+          "qualname": "serialize_vec_string",
+          "owner": null,
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 97,
+          "end_line": 103
+        }
+      }
+    },
+    {
+      "id": "e987617d39656131c3d220d8",
+      "repo_id": "rust--huggingface__candle",
+      "reference": {
+        "path": "candle-core/src/indexer.rs",
+        "name": "index",
+        "start_line": 26,
+        "end_line": 61,
+        "language": "rust"
+      },
+      "reference_context_rank": 2,
+      "reference_context_score": 0.5518301725387573,
+      "wrong_raw_top1": {
+        "path": "candle-core/src/tensor.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "Tensor.index_select",
+          "owner": "Tensor",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 1463,
+          "end_line": 1484
+        },
+        "score": 0.5621452331542969
+      },
+      "correct_API_top1": {
+        "path": "candle-core/src/indexer.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "Tensor.index",
+          "owner": "Tensor",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 27,
+          "end_line": 61
+        }
+      }
+    },
+    {
+      "id": "a80a18c493c7734409ac0f53",
+      "repo_id": "rust--seanmonstar__warp",
+      "reference": {
+        "path": "src/transport.rs",
+        "name": "poll_read",
+        "start_line": 21,
+        "end_line": 28,
+        "language": "rust"
+      },
+      "reference_context_rank": 2,
+      "reference_context_score": 0.5467201471328735,
+      "wrong_raw_top1": {
+        "path": "src/tls.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "TlsStream.poll_read",
+          "owner": "TlsStream",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 314,
+          "end_line": 331
+        },
+        "score": 0.5508522987365723
+      },
+      "correct_API_top1": {
+        "path": "src/transport.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "LiftIo.poll_read",
+          "owner": "LiftIo",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 22,
+          "end_line": 28
+        }
+      }
+    },
+    {
+      "id": "ad3e229c118099fc2d0111a8",
+      "repo_id": "rust--serde-rs__serde",
+      "reference": {
+        "path": "serde/src/ser/impossible.rs",
+        "name": "serialize_key",
+        "start_line": 154,
+        "end_line": 161,
+        "language": "rust"
+      },
+      "reference_context_rank": 2,
+      "reference_context_score": 0.4457833170890808,
+      "wrong_raw_top1": {
+        "path": "serde/src/private/ser.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "FlatMapSerializeMap.serialize_key",
+          "owner": "FlatMapSerializeMap",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 1197,
+          "end_line": 1202
+        },
+        "score": 0.45346954464912415
+      },
+      "correct_API_top1": {
+        "path": "serde/src/ser/impossible.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "Impossible.serialize_key",
+          "owner": "Impossible",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 155,
+          "end_line": 161
+        }
+      }
+    },
+    {
+      "id": "edc5cf51d6e156d5247c97fd",
+      "repo_id": "rust--serde-rs__serde",
+      "reference": {
+        "path": "serde/src/ser/fmt.rs",
+        "name": "serialize_unit_variant",
+        "start_line": 67,
+        "end_line": 75,
+        "language": "rust"
+      },
+      "reference_context_rank": 2,
+      "reference_context_score": 0.5120679140090942,
+      "wrong_raw_top1": {
+        "path": "serde/src/private/ser.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "CannotSerializeVariant.fmt",
+          "owner": "CannotSerializeVariant",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 1362,
+          "end_line": 1364
+        },
+        "score": 0.5349874496459961
+      },
+      "correct_API_top1": {
+        "path": "serde/src/ser/fmt.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "&'a mut fmt::Formatter.serialize_unit_variant",
+          "owner": "&'a mut fmt::Formatter",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 68,
+          "end_line": 75
+        }
+      }
+    },
+    {
+      "id": "540f2a15c931b37223d0ba25",
+      "repo_id": "rust--tokio-rs__tracing",
+      "reference": {
+        "path": "tracing-core/src/field.rs",
+        "name": "as_ref",
+        "start_line": 659,
+        "end_line": 662,
+        "language": "rust"
+      },
+      "reference_context_rank": 2,
+      "reference_context_score": 0.3898565471172333,
+      "wrong_raw_top1": {
+        "path": "tracing-core/src/field.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "Field.name",
+          "owner": "Field",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 648,
+          "end_line": 650
+        },
+        "score": 0.4271720051765442
+      },
+      "correct_API_top1": {
+        "path": "tracing-core/src/field.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "Field.as_ref",
+          "owner": "Field",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 660,
+          "end_line": 662
+        }
+      }
+    },
+    {
+      "id": "69af6367ca40144671c494d5",
+      "repo_id": "rust--AFLplusplus__LibAFL",
+      "reference": {
+        "path": "libafl/src/feedbacks/map.rs",
+        "name": "with_history_map",
+        "start_line": 343,
+        "end_line": 352,
+        "language": "rust"
+      },
+      "reference_context_rank": 12,
+      "reference_context_score": 0.34177982807159424,
+      "wrong_raw_top1": {
+        "path": "libafl/src/observers/map.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "HitcountsMapObserver.initial",
+          "owner": "HitcountsMapObserver",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 1406,
+          "end_line": 1408
+        },
+        "score": 0.40590664744377136
+      },
+      "correct_API_top1": {
+        "path": "libafl/src/feedbacks/map.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "MapFeedbackMetadata.with_history_map",
+          "owner": "MapFeedbackMetadata",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 344,
+          "end_line": 352
+        }
+      }
+    },
+    {
+      "id": "1dc25f69aa8862429422035a",
+      "repo_id": "rust--alacritty__alacritty",
+      "reference": {
+        "path": "alacritty/src/renderer/text/mod.rs",
+        "name": "add_render_item",
+        "start_line": 119,
+        "end_line": 132,
+        "language": "rust"
+      },
+      "reference_context_rank": 3,
+      "reference_context_score": 0.6803029179573059,
+      "wrong_raw_top1": {
+        "path": "alacritty/src/renderer/text/gles2.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "Batch.add_item",
+          "owner": "Batch",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 275,
+          "end_line": 336
+        },
+        "score": 0.7073630094528198
+      },
+      "correct_API_top1": {
+        "path": "alacritty/src/renderer/text/mod.rs",
+        "entity": {
+          "kind": "method",
+          "qualname": "TextRenderApi.add_render_item",
+          "owner": "TextRenderApi",
+          "definition_ordinal": 0
+        },
+        "entity_span": {
+          "start_line": 120,
+          "end_line": 132
+        }
+      }
+    }
+  ],
+  "interpretation": "Frozencontrolcounterexamples: fullAPI repairsrawcontexttop1errors. Preserve these whenchangingrankmath. No newquery calls, modelruns,fitting orcriterionchanges.",
+  "reserve": "CLOSED"
+}

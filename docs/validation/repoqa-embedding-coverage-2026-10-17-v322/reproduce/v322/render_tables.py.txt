@@ -1,0 +1,29 @@
+"""Render already verified descriptive numbers; never rerun or fit models."""
+from pathlib import Path
+import json
+OUT=Path(__file__).resolve().parent
+assert (OUT/'finalized.json').exists()
+r=json.loads((OUT/'report.json').read_text());span=json.loads((OUT/'full-span-token-audit.json').read_text());tokens=json.loads((OUT/'token-budget-audit.json').read_text());extra=json.loads((OUT/'additional-analysis.json').read_text())
+arms={'baseline':'CodeRank INT8 (control)','jina':'Jina v2 code INT8','muninn':'Muninn-small FP32'}
+lines=[]
+for stage,title in [('final','Complete Ken API'),('context','Raw full-owner contextual retrieval')]:
+ lines += ['## '+title,'','| Model | Language | Top-1 | Top-10 | NDCG@10 |','| --- | --- | ---: | ---: | ---: |']
+ for arm,name in arms.items():
+  for language in ['cpp','rust','all']:
+   v=r['results'][arm][stage][language];n=v['queries']
+   lines.append(f"| {name} | {language} | {v['top1']}/{n} ({100*v['top1']/n:.1f}%) | {v['top10']}/{n} ({100*v['top10']/n:.1f}%) | {v['ndcg10']:.4f} |")
+ lines.append('')
+lines += ['## Local CPU cost','','| Model | API p50 | API p95 | Process CPU p95 | Peak RSS including prep |','| --- | ---: | ---: | ---: | ---: |']
+for arm,name in arms.items():
+ c=r['cost'][arm];lines.append(f"| {name} | {c['final_query']['p50_ms']/1000:.3f} s | {c['final_query']['p95_ms']/1000:.3f} s | {c['final_cpu']['p95_ms']/1000:.3f} s | {c['peak_process_rss_bytes']/1024**3:.3f} GiB |")
+lines += ['','## Complete original reference spans','','Counts include each native document prefix. Reference spans exclude documentation outside their boundaries and additional Ken headers. Selected-view counts are separate.','','| Model | Language | >512 | >1024 | >2048 | >8192 | Maximum | Expanded queries >512 |','| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |']
+for arm,name in arms.items():
+ for lang,v in span['summary'][arm].items():lines.append(f"| {name} | {lang} | {v['span_over']['512']} | {v['span_over']['1024']} | {v['span_over']['2048']} | {v['span_over']['8192']} | {v['max_original_full_span_tokens']} | {v['expanded_query_over512']} |")
+lines += ['','## Exploratory raw fusion; not normal API results','','| Models | Language | Top-1 | Top-10 |','| --- | --- | ---: | ---: |']
+for variant,langs in r['fusion'].items():
+ for lang,v in langs.items():lines.append(f"| {variant} | {lang} | {v['top1']}/{v['queries']} | {v['top10']}/{v['queries']} |")
+lines += ['','## Paired repository bootstrap','','10,000 paired resamples, stratified as ten C++ and ten Rust repositories per replicate. These are descriptive development-set intervals.','','| Candidate vs control | Metric | Net percentage points | 95% interval |','| --- | --- | ---: | ---: |']
+for arm,metrics in extra['paired'].items():
+ for metric,v in metrics.items():
+  lo,hi=v['repository_bootstrap_95_interval_percentage_points'];lines.append(f"| {arms[arm]} | {metric} | {v['net_percentage_points']:+.1f} | [{lo:+.1f}, {hi:+.1f}] |")
+(OUT/'RESULT-TABLES.md').write_text('\n'.join(lines)+'\n');print('\n'.join(lines))

@@ -1,0 +1,19 @@
+{
+  "decision_before_any_new_quality_grading": true,
+  "model": "brokkai/Muninn-small",
+  "revision": "5868553640ac37d851fa813b4e27f85a8630cea1",
+  "reason": "Published C++ and Rust coverage;47M parameters;CPU plausible;Apache2",
+  "queries": "All same200CPP/Rust originals fromV318",
+  "engine": "Exact same431file hashes asV318",
+  "source_views": "Same canonical current source and allthree Ken views with exact native query/document prompts",
+  "contextual_dimension_adapter": "384 native output zero-padded to768; no information added/lost, preserves cosine; storage/forest dimensions otherwise unchanged",
+  "weights": "Original BF16 converted FP32 only, no training, no fit",
+  "export_gate": "Native CPU Torch/ONNX label-free synthetic parity before use;no reranker/nativeforest/staticembedding changes",
+  "quality_gate": "Label-free preflight verifies all60 workers,600unique successful API calls,raw IDs,pins and provenance BEFORE either grader reads references",
+  "serial_after": "V320 full400call closure then official native export parity then V322 all200 CPU calls",
+  "cpu": "No GPU, querycost batches1/2intra1interop; no Torch in query processes",
+  "default_change": false,
+  "release": false,
+  "pooling": "Native artifact CLS, include_prompt=true; official SentenceTransformer pipeline parity required; no label-driven pooling selection",
+  "supersedes": "V321 queued mean pool was invalid; all3 waiters retired before model export/capture; no grades inspected"
+}

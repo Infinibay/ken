@@ -1,0 +1,882 @@
+{
+  "profiles_match_all600_API_responses": true,
+  "distinct_contextual_models": 3,
+  "unchanged_static_model": "minishlab/potion-code-16M-v2@568ca47373c277017539c40cd217005826ed5e8ec9d59d59d009d38ecb3669c1:39dc854015001348",
+  "arms": {
+    "baseline": {
+      "profile": "f189f081de7021005c2399fd13658fc620b8873293967b1a471a4c8142573a13",
+      "context_model": "mrsladoje/CodeRankEmbed-onnx-int8@aed8c3a8ed338b26f9fd61c5cb6798687d5700dae60fe71dfc2be4e6356512ed:31a1d853b639570e",
+      "query_wall_per100_supplied_files": {
+        "p50_ms": 4112.6063031586245,
+        "p95_ms": 13833.600657312394,
+        "max_ms": 28278.07727259245
+      },
+      "per_repository": {
+        "cpp--apache__logging-log4cxx": {
+          "files": 156,
+          "owners": 2065,
+          "query_wall": {
+            "p50_ms": 3149.7253330016974,
+            "p95_ms": 4101.879418763565,
+            "max_ms": 4257.807624991983
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2019.0547006421139,
+            "p95_ms": 2629.409883822798,
+            "max_ms": 2729.363862174348
+          }
+        },
+        "cpp--skypjack__uvw": {
+          "files": 54,
+          "owners": 1033,
+          "query_wall": {
+            "p50_ms": 2287.5912495073862,
+            "p95_ms": 2890.9027897112537,
+            "max_ms": 2891.9604580150917
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 4236.280091680345,
+            "p95_ms": 5353.5236846504695,
+            "max_ms": 5355.482329657577
+          }
+        },
+        "cpp--ClickHouse__clickhouse-cpp": {
+          "files": 75,
+          "owners": 1729,
+          "query_wall": {
+            "p50_ms": 2774.9028544931207,
+            "p95_ms": 3409.765108517604,
+            "max_ms": 3463.2815839722753
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 3699.8704726574942,
+            "p95_ms": 4546.353478023472,
+            "max_ms": 4617.708778629701
+          }
+        },
+        "cpp--polybar__polybar": {
+          "files": 97,
+          "owners": 1303,
+          "query_wall": {
+            "p50_ms": 3098.5686870117206,
+            "p95_ms": 3939.8911377968034,
+            "max_ms": 3951.504249998834
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 3194.400708259506,
+            "p95_ms": 4061.7434410276323,
+            "max_ms": 4073.7157216482824
+          }
+        },
+        "cpp--drogonframework__drogon": {
+          "files": 96,
+          "owners": 1106,
+          "query_wall": {
+            "p50_ms": 3165.141354489606,
+            "p95_ms": 4967.4047081382005,
+            "max_ms": 5409.080083016306
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 3297.022244260006,
+            "p95_ms": 5174.3799043106255,
+            "max_ms": 5634.458419808652
+          }
+        },
+        "cpp--sass__node-sass": {
+          "files": 149,
+          "owners": 4272,
+          "query_wall": {
+            "p50_ms": 3270.287395484047,
+            "p95_ms": 3988.975108464365,
+            "max_ms": 4000.5999580025673
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2194.823755358421,
+            "p95_ms": 2677.164502325077,
+            "max_ms": 2684.9664147668236
+          }
+        },
+        "cpp--ml-explore__mlx": {
+          "files": 150,
+          "owners": 2894,
+          "query_wall": {
+            "p50_ms": 3833.347979467362,
+            "p95_ms": 4589.029787655454,
+            "max_ms": 4643.373625003733
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2555.5653196449084,
+            "p95_ms": 3059.3531917703026,
+            "max_ms": 3095.582416669155
+          }
+        },
+        "cpp--scylladb__seastar": {
+          "files": 100,
+          "owners": 3369,
+          "query_wall": {
+            "p50_ms": 3070.9564999851864,
+            "p95_ms": 4607.003467125468,
+            "max_ms": 5094.4476669537835
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 3070.9564999851864,
+            "p95_ms": 4607.003467125468,
+            "max_ms": 5094.4476669537835
+          }
+        },
+        "cpp--WasmEdge__WasmEdge": {
+          "files": 89,
+          "owners": 1921,
+          "query_wall": {
+            "p50_ms": 3816.3083539984655,
+            "p95_ms": 4733.685212786077,
+            "max_ms": 4865.6717499834485
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 4287.986914605018,
+            "p95_ms": 5318.747430096715,
+            "max_ms": 5467.046910093763
+          }
+        },
+        "cpp--oatpp__oatpp": {
+          "files": 297,
+          "owners": 4397,
+          "query_wall": {
+            "p50_ms": 2816.188416996738,
+            "p95_ms": 4215.657151766936,
+            "max_ms": 4309.11658302648
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 948.2115882143898,
+            "p95_ms": 1419.4131824131098,
+            "max_ms": 1450.88100438602
+          }
+        },
+        "rust--rust-bakery__nom": {
+          "files": 28,
+          "owners": 1144,
+          "query_wall": {
+            "p50_ms": 3219.407458003843,
+            "p95_ms": 3704.7609190427465,
+            "max_ms": 3789.7113749640994
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 11497.883778585154,
+            "p95_ms": 13231.288996581237,
+            "max_ms": 13534.683482014641
+          }
+        },
+        "rust--helix-editor__helix": {
+          "files": 34,
+          "owners": 735,
+          "query_wall": {
+            "p50_ms": 3225.140520982677,
+            "p95_ms": 4487.355545326135,
+            "max_ms": 4693.988082988653
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 9485.707414654931,
+            "p95_ms": 13198.104545076869,
+            "max_ms": 13805.847302907803
+          }
+        },
+        "rust--rust-lang__cargo": {
+          "files": 210,
+          "owners": 3633,
+          "query_wall": {
+            "p50_ms": 4322.943895531353,
+            "p95_ms": 5497.919549862854,
+            "max_ms": 5614.300874993205
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2058.544712157787,
+            "p95_ms": 2618.056928506121,
+            "max_ms": 2673.4766071396216
+          }
+        },
+        "rust--cloudflare__pingora": {
+          "files": 57,
+          "owners": 1007,
+          "query_wall": {
+            "p50_ms": 3120.7636875042226,
+            "p95_ms": 4130.789281407487,
+            "max_ms": 4500.921124999877
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 5475.024013165303,
+            "p95_ms": 7246.998739311381,
+            "max_ms": 7896.352850876978
+          }
+        },
+        "rust--huggingface__candle": {
+          "files": 56,
+          "owners": 1562,
+          "query_wall": {
+            "p50_ms": 3553.3928544900846,
+            "p95_ms": 4230.0022582756355,
+            "max_ms": 4277.395207958762
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 6345.344383018009,
+            "p95_ms": 7553.575461206491,
+            "max_ms": 7638.205728497788
+          }
+        },
+        "rust--seanmonstar__warp": {
+          "files": 46,
+          "owners": 721,
+          "query_wall": {
+            "p50_ms": 2303.00775001524,
+            "p95_ms": 3348.726229014573,
+            "max_ms": 3488.9096669503488
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 5006.538586989653,
+            "p95_ms": 7279.8396282925505,
+            "max_ms": 7584.586232500758
+          }
+        },
+        "rust--serde-rs__serde": {
+          "files": 19,
+          "owners": 932,
+          "query_wall": {
+            "p50_ms": 2336.914916493697,
+            "p95_ms": 2480.9339078812627,
+            "max_ms": 2484.4003330217674
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 12299.55219207209,
+            "p95_ms": 13057.546883585594,
+            "max_ms": 13075.791226430354
+          }
+        },
+        "rust--tokio-rs__tracing": {
+          "files": 11,
+          "owners": 418,
+          "query_wall": {
+            "p50_ms": 2076.5029994945507,
+            "p95_ms": 2980.7683001330583,
+            "max_ms": 3110.5884999851696
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 18877.29999540501,
+            "p95_ms": 27097.89363757326,
+            "max_ms": 28278.07727259245
+          }
+        },
+        "rust--AFLplusplus__LibAFL": {
+          "files": 111,
+          "owners": 2720,
+          "query_wall": {
+            "p50_ms": 2932.7238960249815,
+            "p95_ms": 4518.1757921294775,
+            "max_ms": 4608.161541982554
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2642.0936000225056,
+            "p95_ms": 4070.4286415580873,
+            "max_ms": 4151.496884668967
+          }
+        },
+        "rust--alacritty__alacritty": {
+          "files": 52,
+          "owners": 1138,
+          "query_wall": {
+            "p50_ms": 3866.6787710099015,
+            "p95_ms": 4638.512048404664,
+            "max_ms": 4743.096416990738
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 7435.92071348058,
+            "p95_ms": 8920.215477701277,
+            "max_ms": 9121.339263443728
+          }
+        }
+      }
+    },
+    "jina": {
+      "profile": "7b82ae0fe41fbddbe2834c7eefb20d2f65a95bd2fa9fd889df2659542c0a7868",
+      "context_model": "jinaai/jina-embeddings-v2-base-code@ab5a12cb98afe72ce3f659ef2339ad0cdd5f045d814f109158b71221980e613b:16cfb6cbe7a55522",
+      "query_wall_per100_supplied_files": {
+        "p50_ms": 3842.6413891526563,
+        "p95_ms": 14647.45414484671,
+        "max_ms": 26810.58522694829
+      },
+      "per_repository": {
+        "cpp--apache__logging-log4cxx": {
+          "files": 156,
+          "owners": 2065,
+          "query_wall": {
+            "p50_ms": 3456.8572920106817,
+            "p95_ms": 4091.4113373466535,
+            "max_ms": 4131.358249986079
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2215.9341615453086,
+            "p95_ms": 2622.6995752222138,
+            "max_ms": 2648.3065705038966
+          }
+        },
+        "cpp--skypjack__uvw": {
+          "files": 54,
+          "owners": 1033,
+          "query_wall": {
+            "p50_ms": 2129.019979533041,
+            "p95_ms": 2832.9920357355145,
+            "max_ms": 2964.2001669853926
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 3942.6295917278535,
+            "p95_ms": 5246.28154765836,
+            "max_ms": 5489.259568491468
+          }
+        },
+        "cpp--ClickHouse__clickhouse-cpp": {
+          "files": 75,
+          "owners": 1729,
+          "query_wall": {
+            "p50_ms": 2359.534083516337,
+            "p95_ms": 3302.7419106103475,
+            "max_ms": 3564.5576670067385
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 3146.0454446884496,
+            "p95_ms": 4403.655880813796,
+            "max_ms": 4752.743556008984
+          }
+        },
+        "cpp--polybar__polybar": {
+          "files": 97,
+          "owners": 1303,
+          "query_wall": {
+            "p50_ms": 2929.131041979417,
+            "p95_ms": 3805.5558918276797,
+            "max_ms": 4023.2686669914983
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 3019.722723690121,
+            "p95_ms": 3923.253496729567,
+            "max_ms": 4147.699656692266
+          }
+        },
+        "cpp--drogonframework__drogon": {
+          "files": 96,
+          "owners": 1106,
+          "query_wall": {
+            "p50_ms": 3198.904458520701,
+            "p95_ms": 5082.927039536297,
+            "max_ms": 5416.473582969047
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 3332.1921442923967,
+            "p95_ms": 5294.715666183643,
+            "max_ms": 5642.159982259424
+          }
+        },
+        "cpp--sass__node-sass": {
+          "files": 149,
+          "owners": 4272,
+          "query_wall": {
+            "p50_ms": 3283.0224790086504,
+            "p95_ms": 4429.168987358571,
+            "max_ms": 4487.584125017747
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2203.370791280973,
+            "p95_ms": 2972.5966358111214,
+            "max_ms": 3011.8014261864078
+          }
+        },
+        "cpp--ml-explore__mlx": {
+          "files": 150,
+          "owners": 2894,
+          "query_wall": {
+            "p50_ms": 3828.2732290099375,
+            "p95_ms": 5113.765156228327,
+            "max_ms": 5321.872999949846
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2552.182152673292,
+            "p95_ms": 3409.176770818885,
+            "max_ms": 3547.9153332998976
+          }
+        },
+        "cpp--scylladb__seastar": {
+          "files": 100,
+          "owners": 3369,
+          "query_wall": {
+            "p50_ms": 2816.3535420026165,
+            "p95_ms": 4577.948293607913,
+            "max_ms": 5175.713125034235
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2816.3535420026165,
+            "p95_ms": 4577.948293607913,
+            "max_ms": 5175.713125034235
+          }
+        },
+        "cpp--WasmEdge__WasmEdge": {
+          "files": 89,
+          "owners": 1921,
+          "query_wall": {
+            "p50_ms": 3631.013999984134,
+            "p95_ms": 4438.494378924952,
+            "max_ms": 4620.193915965501
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 4079.791011218128,
+            "p95_ms": 4987.072335870732,
+            "max_ms": 5191.229119062361
+          }
+        },
+        "cpp--oatpp__oatpp": {
+          "files": 297,
+          "owners": 4397,
+          "query_wall": {
+            "p50_ms": 3018.738562503131,
+            "p95_ms": 4025.236206271802,
+            "max_ms": 4046.4730000239797
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 1016.4102904050947,
+            "p95_ms": 1355.2983859501016,
+            "max_ms": 1362.4488215568956
+          }
+        },
+        "rust--rust-bakery__nom": {
+          "files": 28,
+          "owners": 1144,
+          "query_wall": {
+            "p50_ms": 3298.069979005959,
+            "p95_ms": 4252.754104507038,
+            "max_ms": 4594.863792008255
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 11778.82135359271,
+            "p95_ms": 15188.407516096566,
+            "max_ms": 16410.22782860091
+          }
+        },
+        "rust--helix-editor__helix": {
+          "files": 34,
+          "owners": 735,
+          "query_wall": {
+            "p50_ms": 3254.6861250011716,
+            "p95_ms": 4649.663243920076,
+            "max_ms": 4886.691500025336
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 9572.606250003446,
+            "p95_ms": 13675.480129176694,
+            "max_ms": 14372.622058898047
+          }
+        },
+        "rust--rust-lang__cargo": {
+          "files": 210,
+          "owners": 3633,
+          "query_wall": {
+            "p50_ms": 4080.469875014387,
+            "p95_ms": 5250.043887519859,
+            "max_ms": 5486.73725000117
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 1943.080892863994,
+            "p95_ms": 2500.0208988189806,
+            "max_ms": 2612.732023810081
+          }
+        },
+        "rust--cloudflare__pingora": {
+          "files": 57,
+          "owners": 1007,
+          "query_wall": {
+            "p50_ms": 3237.9007084819023,
+            "p95_ms": 4073.2257895753714,
+            "max_ms": 4252.233333012555
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 5680.527558740179,
+            "p95_ms": 7146.010157149774,
+            "max_ms": 7460.058478969394
+          }
+        },
+        "rust--huggingface__candle": {
+          "files": 56,
+          "owners": 1562,
+          "query_wall": {
+            "p50_ms": 3634.1707495157607,
+            "p95_ms": 4395.777664257912,
+            "max_ms": 4564.456958032679
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 6489.590624135287,
+            "p95_ms": 7849.602971889128,
+            "max_ms": 8150.815996486926
+          }
+        },
+        "rust--seanmonstar__warp": {
+          "files": 46,
+          "owners": 721,
+          "query_wall": {
+            "p50_ms": 2232.818562479224,
+            "p95_ms": 3211.267518758541,
+            "max_ms": 3229.9657500116155
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 4853.953396693965,
+            "p95_ms": 6981.016345127263,
+            "max_ms": 7021.664673938294
+          }
+        },
+        "rust--serde-rs__serde": {
+          "files": 19,
+          "owners": 932,
+          "query_wall": {
+            "p50_ms": 2517.963521007914,
+            "p95_ms": 2841.73791250505,
+            "max_ms": 2894.587374990806
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 13252.439584252179,
+            "p95_ms": 14956.515328973946,
+            "max_ms": 15234.670394688452
+          }
+        },
+        "rust--tokio-rs__tracing": {
+          "files": 11,
+          "owners": 418,
+          "query_wall": {
+            "p50_ms": 2074.6510204917286,
+            "p95_ms": 2946.3424623332685,
+            "max_ms": 2949.1643749643117
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 18860.463822652076,
+            "p95_ms": 26784.931475756985,
+            "max_ms": 26810.58522694829
+          }
+        },
+        "rust--AFLplusplus__LibAFL": {
+          "files": 111,
+          "owners": 2720,
+          "query_wall": {
+            "p50_ms": 3110.7025830133352,
+            "p95_ms": 4422.177433554316,
+            "max_ms": 4593.3144590235315
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2802.434759471473,
+            "p95_ms": 3983.9436338327164,
+            "max_ms": 4138.121134255433
+          }
+        },
+        "rust--alacritty__alacritty": {
+          "files": 52,
+          "owners": 1138,
+          "query_wall": {
+            "p50_ms": 3785.0233124918304,
+            "p95_ms": 4739.978558698203,
+            "max_ms": 4780.262709013186
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 7278.890985561213,
+            "p95_ms": 9115.343382111929,
+            "max_ms": 9192.812901948435
+          }
+        }
+      }
+    },
+    "muninn": {
+      "profile": "6cc78752ee2e763828f1179f14aaf6a04ee5cde77a333b7844bddde78b57ac1f",
+      "context_model": "brokkai/Muninn-small@0c4baa8a0351bae8b686dce04aa7247f0a5ff9caadffd7d1fc10e42dcd19daed:34a9ae496051a9a8",
+      "query_wall_per100_supplied_files": {
+        "p50_ms": 3950.3253286951076,
+        "p95_ms": 14487.58800458897,
+        "max_ms": 28915.85984563624
+      },
+      "per_repository": {
+        "cpp--apache__logging-log4cxx": {
+          "files": 156,
+          "owners": 2065,
+          "query_wall": {
+            "p50_ms": 3168.6289375065826,
+            "p95_ms": 4026.0064543574117,
+            "max_ms": 4117.1606670250185
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2031.1723958375528,
+            "p95_ms": 2580.7733681778277,
+            "max_ms": 2639.205555785268
+          }
+        },
+        "cpp--skypjack__uvw": {
+          "files": 54,
+          "owners": 1033,
+          "query_wall": {
+            "p50_ms": 2220.693333511008,
+            "p95_ms": 2675.611800007755,
+            "max_ms": 2749.4820000138134
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 4112.395062057422,
+            "p95_ms": 4954.836666681027,
+            "max_ms": 5091.633333358914
+          }
+        },
+        "cpp--ClickHouse__clickhouse-cpp": {
+          "files": 75,
+          "owners": 1729,
+          "query_wall": {
+            "p50_ms": 2526.1176460189745,
+            "p95_ms": 3173.555039946222,
+            "max_ms": 3392.5087089883164
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 3368.1568613586323,
+            "p95_ms": 4231.406719928296,
+            "max_ms": 4523.344945317755
+          }
+        },
+        "cpp--polybar__polybar": {
+          "files": 97,
+          "owners": 1303,
+          "query_wall": {
+            "p50_ms": 2960.5075625004247,
+            "p95_ms": 3587.816571182338,
+            "max_ms": 3799.6858339756727
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 3052.0696520622932,
+            "p95_ms": 3698.77997029107,
+            "max_ms": 3917.20189069657
+          }
+        },
+        "cpp--drogonframework__drogon": {
+          "files": 96,
+          "owners": 1106,
+          "query_wall": {
+            "p50_ms": 3415.702166472329,
+            "p95_ms": 5005.196531221735,
+            "max_ms": 5454.9363749683835
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 3558.023090075342,
+            "p95_ms": 5213.746386689308,
+            "max_ms": 5682.225390592066
+          }
+        },
+        "cpp--sass__node-sass": {
+          "files": 149,
+          "owners": 4272,
+          "query_wall": {
+            "p50_ms": 3794.802708522184,
+            "p95_ms": 4281.042929345858,
+            "max_ms": 4384.512291988358
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2546.847455384016,
+            "p95_ms": 2873.1831740576226,
+            "max_ms": 2942.6256993210454
+          }
+        },
+        "cpp--ml-explore__mlx": {
+          "files": 150,
+          "owners": 2894,
+          "query_wall": {
+            "p50_ms": 3779.9371250148397,
+            "p95_ms": 4640.585914245457,
+            "max_ms": 4675.693958008196
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2519.9580833432265,
+            "p95_ms": 3093.723942830305,
+            "max_ms": 3117.1293053387976
+          }
+        },
+        "cpp--scylladb__seastar": {
+          "files": 100,
+          "owners": 3369,
+          "query_wall": {
+            "p50_ms": 3157.3211880167946,
+            "p95_ms": 4735.182125147548,
+            "max_ms": 5081.281999999192
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 3157.3211880167946,
+            "p95_ms": 4735.182125147548,
+            "max_ms": 5081.281999999192
+          }
+        },
+        "cpp--WasmEdge__WasmEdge": {
+          "files": 89,
+          "owners": 1921,
+          "query_wall": {
+            "p50_ms": 3786.1455000238493,
+            "p95_ms": 4360.019524709787,
+            "max_ms": 4461.546875012573
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 4254.096067442528,
+            "p95_ms": 4898.898342370547,
+            "max_ms": 5012.974016868059
+          }
+        },
+        "cpp--oatpp__oatpp": {
+          "files": 297,
+          "owners": 4397,
+          "query_wall": {
+            "p50_ms": 3027.9939165047836,
+            "p95_ms": 3928.5582312732,
+            "max_ms": 4055.7095000403933
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 1019.5265712137318,
+            "p95_ms": 1322.7468792165657,
+            "max_ms": 1365.5587542223548
+          }
+        },
+        "rust--rust-bakery__nom": {
+          "files": 28,
+          "owners": 1144,
+          "query_wall": {
+            "p50_ms": 3018.416958511807,
+            "p95_ms": 3533.426777203567,
+            "max_ms": 3724.097458005417
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 10780.060566113596,
+            "p95_ms": 12619.381347155595,
+            "max_ms": 13300.34806430506
+          }
+        },
+        "rust--helix-editor__helix": {
+          "files": 34,
+          "owners": 735,
+          "query_wall": {
+            "p50_ms": 3449.89185401937,
+            "p95_ms": 4614.782224857481,
+            "max_ms": 4661.41175001394
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 10146.740747115793,
+            "p95_ms": 13572.88889663965,
+            "max_ms": 13710.034558864529
+          }
+        },
+        "rust--rust-lang__cargo": {
+          "files": 210,
+          "owners": 3633,
+          "query_wall": {
+            "p50_ms": 4307.044042012421,
+            "p95_ms": 5125.238310330315,
+            "max_ms": 5284.334292053245
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2050.973353339248,
+            "p95_ms": 2440.589671585864,
+            "max_ms": 2516.349662882498
+          }
+        },
+        "rust--cloudflare__pingora": {
+          "files": 57,
+          "owners": 1007,
+          "query_wall": {
+            "p50_ms": 3293.3092914754525,
+            "p95_ms": 4220.555958856129,
+            "max_ms": 4514.127709029708
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 5777.7355990797405,
+            "p95_ms": 7404.484138344087,
+            "max_ms": 7919.522296543348
+          }
+        },
+        "rust--huggingface__candle": {
+          "files": 56,
+          "owners": 1562,
+          "query_wall": {
+            "p50_ms": 3454.284020961495,
+            "p95_ms": 4173.886824838701,
+            "max_ms": 4183.961500006262
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 6168.364323145527,
+            "p95_ms": 7453.369330069108,
+            "max_ms": 7471.359821439754
+          }
+        },
+        "rust--seanmonstar__warp": {
+          "files": 46,
+          "owners": 721,
+          "query_wall": {
+            "p50_ms": 2314.490500022657,
+            "p95_ms": 3255.394048258313,
+            "max_ms": 3264.0402920078486
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 5031.501087005776,
+            "p95_ms": 7076.943583170246,
+            "max_ms": 7095.739765234453
+          }
+        },
+        "rust--serde-rs__serde": {
+          "files": 19,
+          "owners": 932,
+          "query_wall": {
+            "p50_ms": 2530.65218750271,
+            "p95_ms": 2831.5464293700643,
+            "max_ms": 2902.560667018406
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 13319.222039487948,
+            "p95_ms": 14902.875944052968,
+            "max_ms": 15276.635089570558
+          }
+        },
+        "rust--tokio-rs__tracing": {
+          "files": 11,
+          "owners": 418,
+          "query_wall": {
+            "p50_ms": 2119.9994165217504,
+            "p95_ms": 3052.948333325912,
+            "max_ms": 3180.7445830199867
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 19272.72196837955,
+            "p95_ms": 27754.07575750829,
+            "max_ms": 28915.85984563624
+          }
+        },
+        "rust--AFLplusplus__LibAFL": {
+          "files": 111,
+          "owners": 2720,
+          "query_wall": {
+            "p50_ms": 3307.2616459976416,
+            "p95_ms": 4388.221608390449,
+            "max_ms": 4603.2697089831345
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 2979.5149963942713,
+            "p95_ms": 3953.352800351756,
+            "max_ms": 4147.089827912734
+          }
+        },
+        "rust--alacritty__alacritty": {
+          "files": 52,
+          "owners": 1138,
+          "query_wall": {
+            "p50_ms": 3829.3286040134262,
+            "p95_ms": 4427.137322566705,
+            "max_ms": 4608.350541035179
+          },
+          "query_wall_per100_supplied_files": {
+            "p50_ms": 7364.093469256589,
+            "p95_ms": 8513.725620320585,
+            "max_ms": 8862.212578913806
+          }
+        }
+      }
+    }
+  },
+  "interpretation": "Snapshot supplied-file counts, not complete upstream repository sizes. Per100-file normalization describes this selected corpus and is not a size-only scaling law. Actual API profile identities equal each injected runtime provenance, ruling out a silent default-context fallback.",
+  "reserve": "CLOSED"
+}

@@ -1,0 +1,30 @@
+{
+  "rows": [
+    {
+      "group": "cpp--ClickHouse__clickhouse-cpp",
+      "arm": "baseline",
+      "queries": 10,
+      "results_and_scores_exactly_equal": true
+    },
+    {
+      "group": "cpp--ClickHouse__clickhouse-cpp",
+      "arm": "jina",
+      "queries": 10,
+      "results_and_scores_exactly_equal": true
+    },
+    {
+      "group": "cpp--WasmEdge__WasmEdge",
+      "arm": "baseline",
+      "queries": 10,
+      "results_and_scores_exactly_equal": true
+    },
+    {
+      "group": "cpp--WasmEdge__WasmEdge",
+      "arm": "jina",
+      "queries": 10,
+      "results_and_scores_exactly_equal": true
+    }
+  ],
+  "queries": 40,
+  "labels_used": false
+}

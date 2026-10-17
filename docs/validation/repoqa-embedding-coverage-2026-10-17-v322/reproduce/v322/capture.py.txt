@@ -1,0 +1,148 @@
+"""Throwaway controlled embedding comparison. No labels in capture workers."""
+from pathlib import Path
+import argparse, hashlib, json, os, resource, shutil, sqlite3, subprocess, sys, time
+from dataclasses import dataclass, replace
+BASE=Path(__file__).resolve().parents[3]
+OUT=Path(__file__).resolve().parent
+
+def sha(p):
+ with Path(p).open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
+def write(p,d):
+ p=Path(p);p.parent.mkdir(parents=True,exist_ok=True);t=p.with_suffix('.tmp');t.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n');t.replace(p)
+def backup(a,b):
+ b.parent.mkdir(parents=True,exist_ok=True)
+ with sqlite3.connect('file:'+str(a)+'?mode=ro',uri=True) as x,sqlite3.connect(b) as y:x.backup(y)
+def register():
+ clean=Path('/Users/andres/.codex/worktrees/compact-default-output/ken');assert subprocess.check_output(['git','status','--porcelain'],cwd=clean)==b''
+ engine=OUT/'engine';engine.mkdir(exist_ok=False);pins={}
+ template=BASE/'output/frozen/repoqa-final-cpp-v296/SOURCE-MANIFEST.json'
+ for name in json.loads(template.read_text())['files']:
+  target=engine/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(clean/name,target);pins[name]=sha(target)
+ write(engine/'SOURCE-MANIFEST.json',{'files':pins,'commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=clean,text=True).strip()})
+ sources={};requests=[]
+ cppcache=json.loads((BASE/'output/analysis/repoqa-source-caches-v266/closure.json').read_text())['caches']
+ rustsources=json.loads((BASE/'output/analysis/repoqa-rust-stages-v251/repoqa-sources.json').read_text())
+ for run in ['repoqa-cpp-coverage-v246','repoqa-rust-coverage-v239']:
+  old=BASE/'output/development'/run;s=json.loads((old/'repoqa-sources.json').read_text())
+  for group,value in s.items():
+   if group in cppcache:
+    c=cppcache[group];value.update(context_cache_source=c['path'],context_cache_sha256=c['sha256'])
+   else:
+    c=rustsources[group];value.update(context_cache_source=c['context_cache_source'],context_cache_sha256=c['context_cache_sha256'])
+   closed=BASE/'output/analysis/embedding-language-coverage-v320/capture'/group/'baseline/cache.json';assert closed.exists();cache=json.loads(closed.read_text());assert cache['source_only'];value.update(context_cache_source=cache['path'],context_cache_sha256=cache['sha256'])
+   assert sha(value['context_cache_source'])==value['context_cache_sha256']
+   sources[group]=value
+  for r in map(json.loads,(old/'repoqa-requests.jsonl').read_text().splitlines()):
+   r.pop('root');requests.append(r)
+ assert len(requests)==200 and len(sources)==20
+ assert pins==json.loads((BASE/'output/analysis/embedding-language-coverage-v318/engine/SOURCE-MANIFEST.json').read_text())['files']
+ write(OUT/'sources.json',sources);write(OUT/'requests.json',requests)
+ model=BASE/'output/models/muninn-small-v319/5868553640ac37d851fa813b4e27f85a8630cea1';assert (OUT/'export-parity.json').exists()
+ artifacts={str(p.relative_to(model)):sha(p) for p in model.rglob('*') if p.is_file()}
+ write(OUT/'registration.json',{'engine_manifest_sha256':sha(engine/'SOURCE-MANIFEST.json'),'requests_sha256':sha(OUT/'requests.json'),'sources_sha256':sha(OUT/'sources.json'),'producer_sha256':sha(__file__),'prefill_sha256':sha(OUT/'prefill.py'),'arms':['muninn'],'queries':200,'groups':20,'model_root':str(model),'muninn_revision':model.name,'model_artifacts':artifacts,'policy':{'source':'Same full-owner, contract and implementation views; original source snapshots and current canonical parser.','sequence_length':512,'batch':1,'threads':[2,1],'providers':['CPUExecutionProvider'],'muninn_pooling':'native CLS followed by runtime L2;384native dimensions zero-padded to768 to preserve unchanged contextual storage and cosine geometry','query_prefix':json.loads((model/'config_sentence_transformers.json').read_text())['prompts']['query'],'document_prefix':json.loads((model/'config_sentence_transformers.json').read_text())['prompts']['document'],'control':'Current CodeRankEmbed INT8 CLS+L2, original prefix512; Potion static, native/piece forests, Ettin68M 1024 unchanged.','output':'Both normal public find_best responses (research factory injection only) and raw contextual eligible-symbol cosine top100.','interpretation':'Public exposed RepoQA development; all100/language denominator, unchanged original references/scorer; no full600 or blind acceptance claim.','selection':'All original100 CPP plus100 Rust; no case/model tuning after metrics.','private_reserve':'CLOSED','quality_gate':'Do not inspect grades before V320 and V321 all600 normal calls plus all raw captures close.','fallback':'Infrastructure failure is retained and reported; no silent model/profile/case fallback.'}})
+ print('REGISTERED',sha(OUT/'registration.json'),flush=True)
+
+def environment():
+ return os.environ|{'PYTHONPATH':str(OUT/'engine/src'),'PYTHONDONTWRITEBYTECODE':'1','HF_HUB_OFFLINE':'1','HF_HUB_CACHE':str(BASE/'output/models/portable-public-hub-v143'),'KEN_CACHE_DIR':str(BASE/'output/models/portable-public-prepared-v143'),'KEN_INDEX_WORKERS':'0','OPENBLAS_NUM_THREADS':'1','VECLIB_MAXIMUM_THREADS':'1','OMP_NUM_THREADS':'1'}
+
+def run():
+ reg=json.loads((OUT/'registration.json').read_text());assert sha(__file__)==reg['producer_sha256'] and sha(OUT/'prefill.py')==reg['prefill_sha256'];(OUT/'capture').mkdir(exist_ok=False)
+ sources=json.loads((OUT/'sources.json').read_text());pins={};completed=0
+ for group in sorted(sources):
+  for arm in reg['arms']:
+   log=OUT/'capture'/f'{group}--{arm}.log';started=time.perf_counter()
+   with log.open('w') as f:r=subprocess.run([sys.executable,str(Path(__file__).resolve()),'worker',group,arm],env=environment(),stdout=f,stderr=subprocess.STDOUT)
+   folder=OUT/'capture'/group/arm
+   if r.returncode:write(folder/'failure.json',{'exit':r.returncode})
+   for p in folder.rglob('*'):
+    if p.is_file():pins[str(p.relative_to(OUT/'capture'))]=sha(p)
+   completed+=1;status={'closed_workers':completed,'total':20,'group':group,'arm':arm,'exit':r.returncode,'elapsed_s':time.perf_counter()-started};write(OUT/'capture/progress.json',status);print(json.dumps(status),flush=True)
+ assert sha(__file__)==reg['producer_sha256']
+ assert not list((OUT/'capture').rglob('failure.json')), 'Worker failure: capture closed unsuccessfully'
+ write(OUT/'capture/closure.json',{'all_outputs_closed':True,'queries_per_arm':200,'workers':20,'pins':pins,'registration_sha256':sha(OUT/'registration.json'),'producer_sha256':sha(__file__),'reserve':'CLOSED'})
+
+def worker(group,arm):
+ import numpy as np
+ import ken
+ assert Path(ken.__file__).resolve().parents[2]==OUT/'engine'
+ reg=json.loads((OUT/'registration.json').read_text());assert sha(OUT/'engine/SOURCE-MANIFEST.json')==reg['engine_manifest_sha256']
+ for name,d in json.loads((OUT/'engine/SOURCE-MANIFEST.json').read_text())['files'].items():assert sha(OUT/'engine'/name)==d
+ assert sha(OUT/'prefill.py')==reg['prefill_sha256']
+ assert sha(OUT/'requests.json')==reg['requests_sha256'] and sha(OUT/'sources.json')==reg['sources_sha256']
+ source=json.loads((OUT/'sources.json').read_text())[group];requests=[r for r in json.loads((OUT/'requests.json').read_text()) if r['repo_id']==group];assert len(requests)==10
+ folder=OUT/'capture'/group/arm;folder.mkdir(parents=True,exist_ok=False);root=OUT/'projects'/group/arm;root.mkdir(parents=True,exist_ok=False);original=Path(source['original_root'])
+ for name,d in source['source_pins'].items():
+  assert sha(original/name)==d;target=root/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(original/name,target)
+ backup(original/'.ken/ken.db',root/'.ken/ken.db');assert sha(source['context_cache_source'])==source['context_cache_sha256'];backup(Path(source['context_cache_source']),root/'.ken/search-context/vectors.db')
+ if (original/'.ken/vectors').is_dir():shutil.copytree(original/'.ken/vectors',root/'.ken/vectors')
+ with (folder/'index.log').open('w') as log:subprocess.run([sys.executable,'-m','ken','retrieval','index','--path',str(root),'--json'],env=environment(),stdout=log,stderr=subprocess.STDOUT,check=True)
+ from ken.retrieval.best_resources import default_resources
+ resources=default_resources()
+ if arm=='muninn':
+  import onnxruntime as ort
+  from tokenizers import Tokenizer
+  from ken.retrieval.profile import EncoderSpec,ContextualRetrieval
+  modelroot=Path(reg['model_root'])
+  for n,d in reg['model_artifacts'].items():assert sha(modelroot/n)==d
+  @dataclass(frozen=True)
+  class Model:
+   document_projection:str=resources.context.model.document_projection
+   @property
+   def spec(self):
+    identity={'revision':reg['muninn_revision'],'artifacts':reg['model_artifacts'],'projection':self.document_projection,'pooling':'native-CLS-L2','query_prefix':reg['policy']['query_prefix'],'document_prefix':reg['policy']['document_prefix'],'zero_padding':'384-to768-exact-zeros','tokens':512,'batch':1,'threads':[2,1],'runtime':{n:__import__('importlib.metadata').metadata.version(n) for n in ['onnxruntime','tokenizers','numpy']}}
+    return EncoderSpec('brokkai/Muninn-small',hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest(),'provided',sequence_length=512,batch_size=1)
+  class Encoder:
+   def __init__(self):
+    self.model=Model();self.spec=self.model.spec
+    options=ort.SessionOptions();options.intra_op_num_threads=2;options.inter_op_num_threads=1
+    self.session=ort.InferenceSession(str(modelroot/'onnx/model.onnx'),sess_options=options,providers=['CPUExecutionProvider']);self.tokenizer=Tokenizer.from_file(str(modelroot/'tokenizer.json'));self.tokenizer.no_padding();self.tokenizer.enable_truncation(512);self.calls=0;self.encode_ms=0.
+   @property
+   def providers(self):return tuple(self.session.get_providers())
+   def _encode(self,text):
+    started=time.perf_counter();t=self.tokenizer.encode(text);mask=np.array([t.attention_mask],np.int64);v=self.session.run(['sentence_embedding'],{'input_ids':np.array([t.ids],np.int64),'attention_mask':mask})[0][0].astype(np.float32);assert v.shape==(384,) and np.isfinite(v).all();v=np.pad(v,(0,384));assert v.shape==(768,) and not v[384:].any();self.calls+=1;self.encode_ms+=(time.perf_counter()-started)*1000
+    return v
+   def embed_query(self,text):return self._encode(reg['policy']['query_prefix']+text)
+   def embed_passages(self,texts):return [self._encode(reg['policy']['document_prefix']+t) for t in texts]
+  encoder=Encoder();view=replace(encoder.model,document_projection=__import__('ken.retrieval.source_views',fromlist=['SOURCE_VIEW_PROJECTION']).SOURCE_VIEW_PROJECTION).spec
+  resources=replace(resources,context=encoder,profile=replace(resources.profile,contextual=ContextualRetrieval(encoder.spec,view_model=view)))
+  import ken.retrieval.best_search as bs
+  import ken.retrieval.best_resources as br
+  bs.default_resources=lambda:resources;br.default_resources=lambda:resources
+ from ken.retrieval.public import find_best,render
+ from ken.retrieval.connections import project_connection
+ from ken.retrieval.best_search import _prepared
+ from ken.retrieval.candidates import owner_passages
+ from ken.retrieval.storage import generation
+ started=time.perf_counter();responses=[];raw=[]
+ with project_connection(root) as conn:
+  from ken.retrieval.best_search import _projection
+  from ken.retrieval.piece_catalog import SourceCatalog
+  from prefill import prefill
+  _projection(conn,root,resources)
+  prefetched=prefill(SourceCatalog(root,owner_passages(conn)),resources.context,root/'.ken/search-context',lambda d:write(folder/'prefill-progress.json',d))
+  write(folder/'prefill.json',prefetched)
+  warm=find_best(conn,root,'find code that prepares a value',scope='symbols',piece_kind='symbol');assert warm.get('ok') is not False,warm
+  preparation_ms=(time.perf_counter()-started)*1000;project=_prepared(conn,root,resources);catalog=project.pieces.catalog;owners=owner_passages(conn)
+  inventory=[{'path':k.path,'entity':k.to_dict(),'entity_span':dict(zip(('start_line','end_line'),catalog.extent(k))),'piece_kind':'symbol','eligible':catalog.primary(k,'symbol')==k} for k in project.context.vectors.owners];write(folder/'owners.json',inventory)
+  for request in requests:
+   before=resource.getrusage(resource.RUSAGE_SELF);started=time.perf_counter()
+   value=find_best(conn,root,request['query'],scope=request['scope'],piece_kind=request['piece_kind'],limit=10,max_chars=12000);assert value.get('ok') is not False,value;compact=render(value);after=resource.getrusage(resource.RUSAGE_SELF)
+   responses.append({'id':request['id'],**value,'compact':compact,'elapsed_ms':(time.perf_counter()-started)*1000,'cpu_ms':((after.ru_utime+after.ru_stime)-(before.ru_utime+before.ru_stime))*1000})
+   expanded=resources.owner_ranker.prepare_query(request['query']);started=time.perf_counter();scores=project.context.score(request['query'],expanded,owners,generation=generation(conn),policy=resources.profile.contextual);elapsed=(time.perf_counter()-started)*1000;peak=np.maximum(scores.original,scores.expanded);order=[int(i) for i in np.argsort(-peak,kind='stable') if inventory[int(i)]['eligible']][:100]
+   raw.append({'id':request['id'],'expanded_query':expanded,'elapsed_ms':elapsed,'results':[{**inventory[i],'score':float(peak[i]),'original':float(scores.original[i]),'expanded':float(scores.expanded[i])} for i in order]})
+   write(folder/'query-progress.json',{'captured':len(responses),'queries':10})
+  for name,d in source['source_pins'].items():assert sha(root/name)==d
+  write(folder/'responses.json',responses);write(folder/'raw.json',raw)
+  assert resources.neural._max_tokens==1024 and resources.context.providers==('CPUExecutionProvider',) and resources.neural.providers==('CPUExecutionProvider',)
+  assert not any(n in sys.modules for n in ['torch','transformers','sentence_transformers'])
+  write(folder/'provenance.json',{'complete':True,'arm':arm,'preparation_including_warmup_ms':preparation_ms,'peak_rss_native':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,'rss_unit':'bytes' if sys.platform=='darwin' else 'KiB','source_files':len(source['source_pins']),'owners':len(inventory),'profile':resources.profile.to_dict() if hasattr(resources.profile,'to_dict') else resources.profile.fingerprint,'provider':list(resources.context.providers),'reranker_tokens':1024,'static_model':resources.words.spec.key,'context_model':resources.context.spec.key,'source_pins_sha256':hashlib.sha256(json.dumps(source['source_pins'],sort_keys=True).encode()).hexdigest(),'heavy_imports':[]})
+  # Retain source-only model vectors for reproducibility; remove the disposable index/snapshot copies.
+  cacheout=OUT/'vector-caches'/f'{group}--{arm}.db';backup(root/'.ken/search-context/vectors.db',cacheout);write(folder/'cache.json',{'path':str(cacheout),'sha256':sha(cacheout),'bytes':cacheout.stat().st_size,'source_only':True})
+ shutil.rmtree(root/'.ken')
+ print('CLOSED',group,arm,flush=True)
+
+if __name__=='__main__':
+ if sys.argv[1]=='register':register()
+ elif sys.argv[1]=='run':run()
+ elif sys.argv[1]=='worker':worker(sys.argv[2],sys.argv[3])
+ else:raise ValueError(sys.argv)

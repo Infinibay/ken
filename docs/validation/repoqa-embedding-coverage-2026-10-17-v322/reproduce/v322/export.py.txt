@@ -1,0 +1,46 @@
+"""Label-free parity against the actual native SentenceTransformer pipeline."""
+from pathlib import Path
+import hashlib, json, sys, time
+OUT=Path(__file__).resolve().parent; BASE=OUT.parents[2]
+while not (BASE/'output/analysis/embedding-language-coverage-v320/capture/closure.json').exists(): time.sleep(20)
+sys.path.insert(0,str(BASE/'output/analysis/embedding-language-coverage-v319/runtime'))
+import torch, numpy as np, onnxruntime as ort
+from sentence_transformers import SentenceTransformer
+from tokenizers import Tokenizer
+root=BASE/'output/models/muninn-small-v319/5868553640ac37d851fa813b4e27f85a8630cea1'
+torch.set_num_threads(2); torch.set_num_interop_threads(1)
+pooling=json.loads((root/'1_Pooling/config.json').read_text())
+assert pooling=={'embedding_dimension':384,'pooling_mode':'cls','include_prompt':True}
+native=SentenceTransformer(str(root),device='cpu',local_files_only=True,model_kwargs={'dtype':torch.float32,'attn_implementation':'eager'})
+native.max_seq_length=512; native.eval()
+model=native[0].auto_model
+class CLS(torch.nn.Module):
+ def __init__(self,m): super().__init__(); self.m=m
+ def forward(self,input_ids,attention_mask):
+  return self.m(input_ids=input_ids,attention_mask=attention_mask,return_dict=False)[0][:,0,:]
+wrapper=CLS(model).eval()
+prompts=json.loads((root/'config_sentence_transformers.json').read_text())['prompts']
+sample=native[0].tokenizer(prompts['document']+'fn next(x: u32) -> u32 { x + 1 }',return_tensors='pt')
+graph=root/'onnx/model.onnx'; graph.parent.mkdir(exist_ok=False)
+with torch.inference_mode():
+ torch.onnx.export(wrapper,(sample['input_ids'],sample['attention_mask']),str(graph),input_names=['input_ids','attention_mask'],output_names=['sentence_embedding'],dynamic_axes={'input_ids':{0:'batch',1:'sequence'},'attention_mask':{0:'batch',1:'sequence'},'sentence_embedding':{0:'batch'}},opset_version=17,dynamo=False,do_constant_folding=True)
+options=ort.SessionOptions(); options.intra_op_num_threads=2; options.inter_op_num_threads=1
+session=ort.InferenceSession(str(graph),sess_options=options,providers=['CPUExecutionProvider'])
+raw=Tokenizer.from_file(str(root/'tokenizer.json')); raw.no_padding(); raw.enable_truncation(512)
+samples=[('document',''),('query','Where does the iterator stop when the next item is missing?'),('document','fn first<T>(values: &[T]) -> Option<&T> { values.first() }'),('document','class Foo { public: int read() const { return value_; } };'),('document','fn hello() {}\n'*500),('document','// comment\nint clamp(int x) { return x > 9 ? 9 : x; }')]
+rows=[]
+for kind,text in samples:
+ full=prompts[kind]+text
+ batch=native[0].tokenizer(full,return_tensors='pt',truncation=True,max_length=512)
+ encoded=raw.encode(full)
+ assert encoded.ids==batch['input_ids'][0].tolist() and encoded.attention_mask==batch['attention_mask'][0].tolist(), 'Native/capture tokenization mismatch'
+ official=native.encode(text,prompt_name=kind,batch_size=1,show_progress_bar=False,normalize_embeddings=False)
+ with torch.inference_mode(): manual=wrapper(batch['input_ids'],batch['attention_mask']).numpy()[0]
+ assert np.array_equal(official,manual), 'Native SentenceTransformer pooling differs from export wrapper'
+ onnx=session.run(['sentence_embedding'],{'input_ids':np.array([encoded.ids],np.int64),'attention_mask':np.array([encoded.attention_mask],np.int64)})[0][0]
+ cosine=float((official@onnx)/(np.linalg.norm(official)*np.linalg.norm(onnx))); error=float(np.max(np.abs(official-onnx)))
+ assert cosine>=.99999 and np.allclose(official,onnx,atol=5e-5,rtol=5e-4),(cosine,error)
+ rows.append({'prompt':kind,'tokens':len(encoded.ids),'native_wrapper_bitwise_equal':True,'raw_tokenizer_ids_equal':True,'cosine':cosine,'max_abs_error':error})
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+result={'model':'brokkai/Muninn-small','revision':root.name,'precision':'FP32 from original BF16 weights','provider':session.get_providers(),'pooling':'Native CLS, include_prompt=true; retrieval L2','max_tokens':512,'query_prefix':prompts['query'],'document_prefix':prompts['document'],'rows':rows,'artifacts':{str(p.relative_to(root)):sha(p) for p in root.rglob('*') if p.is_file()},'runtime':{n:__import__(n).__version__ for n in ['torch','transformers','sentence_transformers','onnxruntime']},'benchmark_inputs_used':False,'reserve':'CLOSED'}
+(OUT/'export-parity.json').write_text(json.dumps(result,indent=2)+'\n'); print('EXPORT_PARITY_CLOSED',flush=True)

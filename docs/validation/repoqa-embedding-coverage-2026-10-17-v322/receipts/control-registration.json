@@ -1,0 +1,45 @@
+{
+  "engine_manifest_sha256": "9003e3869497f00af49882426711f51e576781799e702340aff714dc2d6e375f",
+  "requests_sha256": "62a323fde41b3bdf131eb5bd272a922a23472a5e5c9f25dd4e0332307f0294ea",
+  "sources_sha256": "321111de8fd845c61facfd2cc251a251448bb9c1d3abc2d9f127c5777b2b6c30",
+  "producer_sha256": "8d132546d1d893133368408380fde1ada9152e80de36a81291c6f24a34b53798",
+  "prefill_sha256": "ac55cef0303b3095a00063012791c329192a8cbb83d3de2e937c18e203d2c7c2",
+  "arms": [
+    "baseline",
+    "jina"
+  ],
+  "queries": 200,
+  "groups": 20,
+  "model_root": "/Users/andres/Projects/ken/output/search-engine-2026-10-14/workspace/output/models/jina-v2-code-v318/516f4baf13dec4ddddda8631e019b5737c8bc250",
+  "jina_revision": "516f4baf13dec4ddddda8631e019b5737c8bc250",
+  "model_artifacts": {
+    "config.json": "e426aa684c7f9a95c5f020aa855faf93a24f065f5fad0c9e17b124670cabdea6",
+    "tokenizer.json": "b01c78a902aa4facb2f47f95449f48e2f7bbfea5d2472ee2f6ce92323c6f86e5",
+    "README.md": "d3fcc84f4fa0b18b54e54a62171b7bb363109e776226edd02c96e105c097f494",
+    "1_Pooling/config.json": "6401a8eeaeca1f1fe2b1b46be987dcf2ee6085ec73f7d2263318ffc191dd91d3",
+    "onnx/model_quantized.onnx": "ed45870251c9f0cf656e78aab0d37a23489066df8a222bb1c8caf8a45f2cb16d"
+  },
+  "policy": {
+    "source": "Same full-owner, contract and implementation views; original source snapshots and current canonical parser.",
+    "sequence_length": 512,
+    "batch": 1,
+    "threads": [
+      2,
+      1
+    ],
+    "providers": [
+      "CPUExecutionProvider"
+    ],
+    "jina_pooling": "attention-mask mean followed by explicit runtime L2",
+    "jina_prefix": "",
+    "control": "Current CodeRankEmbed INT8 CLS+L2, original prefix512; Potion static, native/piece forests, Ettin68M 1024 unchanged.",
+    "output": "Both normal public find_best responses (research factory injection only) and raw contextual eligible-symbol cosine top100.",
+    "interpretation": "Public exposed RepoQA development; all100/language denominator, unchanged original references/scorer; no full600 or blind acceptance claim.",
+    "selection": "All original100 CPP plus100 Rust; no case/model tuning after metrics.",
+    "private_reserve": "CLOSED",
+    "quality_gate": "No quality grades until V320400calls and V321200calls close; all original200queries remain.",
+    "fallback": "Infrastructure failure is retained and reported; no silent model/profile/case fallback.",
+    "preparation": "Source-only prefill4concurrent calls into one unchanged CPU session, eachbatch1/2intra1inter;5actualsourceviews bitwise serial/parallel parity before sourceencoding;no concurrent work during querytiming.",
+    "supersedes": "V318 sourcepreparation slow; no quality grades inspected, all requests/weights/scorer unchanged; all400normal calls recaptured here."
+  }
+}

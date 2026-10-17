@@ -1,0 +1,62 @@
+"""Grade only the closed200-query two-arm capture with unchanged strict scorer."""
+from pathlib import Path
+import hashlib,json,math,sys
+DEST=Path(__file__).resolve().parent;BASE=DEST.parents[2];OUT=BASE/'output/analysis/embedding-language-coverage-v320'
+from preflight import preflight
+preflight()
+def sha(p):
+ with Path(p).open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
+def load(p):return json.loads(Path(p).read_text())
+def quantiles(values):
+ values=sorted(values)
+ def p(q):
+  if not values:return None
+  i=(len(values)-1)*q;a=int(i);b=min(len(values)-1,a+1);return values[a]+(values[b]-values[a])*(i-a)
+ return {'p50_ms':p(.5),'p95_ms':p(.95),'max_ms':max(values,default=None)}
+criterion=Path('/Users/andres/.codex/worktrees/compact-default-output/ken/experiments/search-engine/public_benchmarks_v222.py')
+assert sha(criterion)=='d1ff983c46f260520275d222d2fe605f283ce606c10297531f0d7ecde26109d8'
+sys.path.insert(0,str(criterion.parent))
+from public_benchmarks_v222 import repoqa_correct_piece
+assert (DEST/'capture/closure.json').exists()
+reg=load(OUT/'registration.json');closure=load(OUT/'capture/closure.json');assert closure['all_outputs_closed'] and closure['workers']==40 and closure['queries_per_arm']==200
+assert closure['registration_sha256']==sha(OUT/'registration.json')
+for name,d in closure['pins'].items():assert sha(OUT/'capture'/name)==d,name
+for name,key in [('requests.json','requests_sha256'),('sources.json','sources_sha256')]:assert sha(OUT/name)==reg[key]
+requests=load(OUT/'requests.json');sources=load(OUT/'sources.json');assert len(requests)==200
+refs_path=BASE/'output/development/repoqa-core-v222/repoqa-references.json';assert sha(refs_path)=='a0069e8a685c7bec3850abb34df0c3aa942e20961f6d2718945308b336f97d01';refs=load(refs_path)
+original={r['id']:{k:v for k,v in r.items() if k!='root'} for r in map(json.loads,(refs_path.parent/'repoqa-requests.jsonl').read_text().splitlines())}
+assert all(r==original[r['id']] for r in requests)
+rows=[];cost={};integrity={'results':0,'excerpts':0,'source_files':0};texts={}
+for arm in reg['arms']:
+ timed=[];cpu=[];rawtimes=[];rss=[];prep=[]
+ for group,source in sources.items():
+  folder=OUT/'capture'/group/arm;assert not (folder/'failure.json').exists(),str(folder)
+  normal={r['id']:r for r in load(folder/'responses.json')};raw={r['id']:r for r in load(folder/'raw.json')};owners=load(folder/'owners.json');prov=load(folder/'provenance.json');assert prov['complete'] and prov['heavy_imports']==[] and prov['provider']==['CPUExecutionProvider'] and prov['reranker_tokens']==1024
+  assert normal.keys()==raw.keys()=={r['id'] for r in requests if r['repo_id']==group}
+  rss.append(prov['peak_rss_native']*(1 if prov['rss_unit']=='bytes' else 1024));prep.append(prov['preparation_including_warmup_ms'])
+  for name,d in source['source_pins'].items():
+   p=Path(source['original_root'])/name;assert sha(p)==d;integrity['source_files']+=1
+  for req in [r for r in requests if r['repo_id']==group]:
+   rid=req['id'];ref=refs[rid];response=normal[rid];assert 'error' not in response and response.get('ok') is not False;items=response['results'];assert len(items)<=10
+   for item in items:
+    assert not item.get('stale') and item['source_hash']==source['source_pins'][item['path']]
+    path=Path(source['original_root'])/item['path'];lines=texts.setdefault(str(path),path.read_text().splitlines());span=item['entity_span'];assert 1<=span['start_line']<=span['end_line']<=max(1,len(lines))
+    for evidence in item.get('evidence',[]):assert evidence['content']=='\n'.join(lines[evidence['start_line']-1:evidence['end_line']]);integrity['excerpts']+=1
+    integrity['results']+=1
+   for stage,results in [('final',items),('context',raw[rid]['results'])]:
+    ranks=[i for i,item in enumerate(results,1) if repoqa_correct_piece(item,ref)];rank=ranks[0] if ranks else None;indexed=any(o['eligible'] and repoqa_correct_piece(o,ref) for o in owners)
+    rows.append({'id':rid,'repo_id':group,'language':ref['language'],'arm':arm,'stage':stage,'rank':rank,'indexed':indexed,'top1':int(rank==1),'top10':int(rank is not None and rank<=10),'top100':int(rank is not None and rank<=100),'ndcg10':1/math.log2(rank+1) if rank is not None and rank<=10 else 0.,'mrr10':1/rank if rank is not None and rank<=10 else 0.})
+   timed.append(response['elapsed_ms']);cpu.append(response['cpu_ms']);rawtimes.append(raw[rid]['elapsed_ms'])
+ cost[arm]={'final_query':quantiles(timed),'final_cpu':quantiles(cpu),'context_query_encoding_plus_dot':quantiles(rawtimes),'peak_process_rss_bytes':max(rss),'preparation_including_warmup':quantiles(prep),'preparation_total_ms':sum(prep),'note':'Serial workers; RSS includes preparation and query. Preparation reuses source-only CodeRank cache for control; Jina uses mixed cache state, including two prior source caches; preparation totals are not a cold-index comparison. Raw stage timing is separately replayed after normal calls.'}
+rows=[({k:v for k,v in r.items() if k!='top100'} if r['stage']=='final' else r) for r in rows]
+def summary(values):
+ return {'queries':len(values),**{k:sum(r[k] for r in values) for k in ['top1','top10','indexed']+(['top100'] if values[0]['stage']=='context' else [])},**{k:sum(r[k] for r in values)/len(values) for k in ['ndcg10','mrr10']}}
+results={arm:{stage:{lang:summary([r for r in rows if r['arm']==arm and r['stage']==stage and (lang=='all' or r['language']==lang)]) for lang in ['cpp','rust','all']} for stage in ['final','context']} for arm in reg['arms']}
+deltas={}
+for stage in ['final','context']:
+ baseline={r['id']:r for r in rows if r['arm']=='baseline' and r['stage']==stage};candidate={r['id']:r for r in rows if r['arm']=='jina' and r['stage']==stage};assert baseline.keys()==candidate.keys()
+ deltas[stage]={}
+ for metric in ['top1','top10']+(['top100'] if stage=='context' else []):
+  deltas[stage][metric]={'gained':[rid for rid in baseline if candidate[rid][metric] and not baseline[rid][metric]],'lost':[rid for rid in baseline if baseline[rid][metric] and not candidate[rid][metric]]}
+report={'registration_sha256':sha(OUT/'registration.json'),'closure_sha256':sha(OUT/'capture/closure.json'),'reference_sha256':sha(refs_path),'criterion_sha256':sha(criterion),'grader_sha256':sha(__file__),'results':results,'cost':cost,'deltas':deltas,'integrity':integrity,'rows':rows,'reserve':'CLOSED','release':False,'interpretation':reg['policy']['interpretation']}
+(DEST/'control-report.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({k:report[k] for k in ['results','cost','integrity']},indent=2))

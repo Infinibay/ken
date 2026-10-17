@@ -1,0 +1,41 @@
+"""Post-gate window diagnostic: original complete gold spans and expanded queries."""
+from pathlib import Path
+import hashlib,json
+from tokenizers import Tokenizer
+OUT=Path(__file__).resolve().parent;BASE=OUT.parents[2];CONTROL=BASE/'output/analysis/embedding-language-coverage-v320'
+assert (OUT/'finalized.json').exists()
+reg=json.loads((OUT/'registration.json').read_text());control=json.loads((CONTROL/'registration.json').read_text())
+sources=json.loads((OUT/'sources.json').read_text());requests=json.loads((OUT/'requests.json').read_text())
+refpath=BASE/'output/development/repoqa-core-v222/repoqa-references.json'
+assert hashlib.sha256(refpath.read_bytes()).hexdigest()=='a0069e8a685c7bec3850abb34df0c3aa942e20961f6d2718945308b336f97d01'
+refs=json.loads(refpath.read_text());selected=json.loads((OUT/'token-budget-audit.json').read_text());report=json.loads((OUT/'report.json').read_text())
+roots={'baseline':BASE/'output/models/CodeRankEmbed-onnx-int8/e74f446dc6e67e29fcee77213472c142f73a6bbb','jina':Path(control['model_root']),'muninn':Path(reg['model_root'])}
+sha={'baseline':'91f1def9b9391fdabe028cd3f3fcc4efd34e5d1f08c3bf2de513ebb5911a1854','jina':control['model_artifacts']['tokenizer.json'],'muninn':reg['model_artifacts']['tokenizer.json']}
+default=json.loads((CONTROL/'engine/src/ken/embedder/data/code-context-int8.json').read_text())
+qp={'baseline':default['query_prefix'],'jina':'','muninn':reg['policy']['query_prefix']};dp={'baseline':'','jina':'','muninn':reg['policy']['document_prefix']}
+tokenizers={}
+for arm,root in roots.items():
+ p=root/'tokenizer.json';assert hashlib.sha256(p.read_bytes()).hexdigest()==sha[arm]
+ t=Tokenizer.from_file(str(p));t.no_padding();t.no_truncation();tokenizers[arm]=t
+raw={}
+for arm in roots:
+ root=OUT if arm=='muninn' else CONTROL
+ raw[arm]={r['id']:r['expanded_query'] for group in sources for r in json.loads((root/'capture'/group/arm/'raw.json').read_text())}
+rows=[]
+for request in requests:
+ rid=request['id'];ref=refs[rid];source=sources[request['repo_id']];path=Path(source['original_root'])/ref['path'];data=path.read_bytes();assert hashlib.sha256(data).hexdigest()==source['source_pins'][ref['path']]
+ lines=data.decode().splitlines();first,last=ref['start_line'],ref['end_line'];assert 0<=first<last<=len(lines)
+ body='\n'.join(lines[first:last]);row={'id':rid,'language':ref['language'],'repo_id':request['repo_id'],'reference_span_lines':last-first,'models':{}}
+ for arm,t in tokenizers.items():
+  score=next(r for r in report['rows'] if r['id']==rid and r['arm']==arm and r['stage']=='final')
+  chosen=next(r for r in selected['rows'] if r['id']==rid)
+  row['models'][arm]={'original_full_span_tokens':len(t.encode(dp[arm]+body).ids),'expanded_query_tokens':len(t.encode(qp[arm]+raw[arm][rid]).ids),'actual_source_view_tokens':chosen['models'][arm]['source_view_tokens'],'top1':score['top1'],'top10':score['top10']}
+ rows.append(row)
+summary={}
+for arm in roots:
+ summary[arm]={}
+ for language in ['cpp','rust']:
+  chosen=[r for r in rows if r['language']==language];misses=[r for r in chosen if not r['models'][arm]['top1']]
+  summary[arm][language]={'queries':len(chosen),'max_original_full_span_tokens':max(r['models'][arm]['original_full_span_tokens'] for r in chosen),'max_expanded_query_tokens':max(r['models'][arm]['expanded_query_tokens'] for r in chosen),'span_over':{str(k):sum(r['models'][arm]['original_full_span_tokens']>k for r in chosen) for k in [512,1024,2048,8192]},'expanded_query_over512':sum(r['models'][arm]['expanded_query_tokens']>512 for r in chosen),'top1_misses_original_span_fits512':sum(r['models'][arm]['original_full_span_tokens']<=512 for r in misses)}
+result={'summary':summary,'rows':rows,'reference_sha256':hashlib.sha256(refpath.read_bytes()).hexdigest(),'tokenizer_sha256':sha,'interpretation':'Original complete gold reference span is counted before owner decomposition and contextual truncation; includes nested source inside that span, excludes documentation outside reference boundaries and extra Ken headers. Native document prefix is counted. Actual selected-view budgets come from the separate cache-verified audit. This is a budget diagnostic, not an embedding-window quality ablation. Expanded queries are exactly those captured by each model run.','no_model_execution':True,'reserve':'CLOSED'}
+(OUT/'full-span-token-audit.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(summary,indent=2))
