@@ -81,3 +81,35 @@ public:
         ("method", 8, 8), ("method", 10, 10),
     ]
     assert [item.module for item in parsed.imports] == ["vector"]
+
+
+def test_nested_type_declarations_keep_member_ownership(parse_cpp):
+    parsed = parse_cpp("""namespace sample {
+class Outer {
+public:
+  struct Inner {
+    Inner() {}
+    int read() { return 1; }
+  };
+};
+}
+""")
+    by_qual = {symbol.qualname: symbol for symbol in parsed.symbols}
+    assert by_qual["sample.Outer.Inner"].kind == "struct"
+    constructor = by_qual["sample.Outer.Inner.Inner"]
+    assert (constructor.kind, constructor.line_start, constructor.line_end) == ("constructor", 5, 5)
+    assert by_qual["sample.Outer.Inner.read"].kind == "method"
+
+
+def test_namespace_macro_recovery_does_not_invent_a_callable(parse_cpp):
+    parsed = parse_cpp("""LIBRARY_NAMESPACE_BEGIN
+namespace utility {
+int read() {
+  return 1;
+}
+}
+LIBRARY_NAMESPACE_END
+""")
+    assert [(s.kind, s.qualname, s.line_start, s.line_end) for s in parsed.symbols] == [
+        ("function", "utility.read", 3, 5),
+    ]

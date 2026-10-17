@@ -132,8 +132,34 @@ def _emit_function(
 ) -> None:
     info = _declarator_name(node.child_by_field_name("declarator"), src)
     if info is None:
+        _recover_namespace(node, src, scope, out)
         return
     _append_callable(node, src, scope, in_type, out, info, doc_node=doc_node)
+
+
+def _recover_namespace(node: Node, src: bytes, scope: str, out: ParsedFile) -> None:
+    """A preceding macro can make the grammar mistake a namespace for a function.
+
+    Reparse only its namespace header, then walk the original body so all source
+    positions remain exact. Unknown macro expansions never become fake owners.
+    """
+    body = node.child_by_field_name("body")
+    if body is None:
+        return
+    keyword = next((child for child in node.named_children
+                    if child.start_byte < body.start_byte and node_text(child, src) == "namespace"), None)
+    if keyword is None:
+        return
+    header = src[keyword.start_byte:body.start_byte] + b"{}"
+    recovered = _PARSER.parse(header).root_node
+    if recovered.has_error or len(recovered.named_children) != 1:
+        return
+    namespace = recovered.named_children[0]
+    if namespace.type != "namespace_definition":
+        return
+    name = _namespace_name(namespace, header)
+    new_scope = f"{scope}.{name}" if scope and name else (name or scope)
+    _walk(body, src, new_scope, in_type=False, out=out)
 
 
 def _emit_callable_declaration(
@@ -143,6 +169,10 @@ def _emit_callable_declaration(
     innermost declarator is a ``function_declarator`` (a prototype, an
     out-of-line def's signature, or a constructor/destructor). Plain
     variable/field declarations are skipped."""
+    declared_type = node.child_by_field_name("type")
+    if declared_type is not None and declared_type.type in _TYPE_SPECIFIERS:
+        _emit_type(declared_type, src, _TYPE_SPECIFIERS[declared_type.type], scope, out,
+                   doc_node=doc_node)
     info = _declarator_name(node.child_by_field_name("declarator"), src)
     if info is None:
         return
