@@ -3,8 +3,10 @@
 Fecha: 2026-10-18. Rama: `codex/rust-migration`.
 
 Estado: especificación aprobada explícitamente por el usuario el 2026-10-18.
-El [plan M0/M1](../plans/2026-10-18-rust-m0-m1.md) queda pendiente de revisión;
-no se ha implementado código Rust ni declarado migrado ningún componente.
+El [plan M0/M1](../plans/2026-10-18-rust-m0-m1.md) también fue aprobado y se
+ejecuta de forma nativa. M0 está aceptado; M1 implementa `status` y está pasando
+su cierre de validación y revisión. El [registro de implementación](../../validation/rust-migration-2026-10-18/m1/IMPLEMENTATION.md)
+distingue resultados observados de aceptación pendiente.
 Este documento fija el programa completo. Cada subsistema tendrá una
 especificación y un plan ejecutable propios.
 
@@ -41,7 +43,8 @@ API estable ni que puedan eliminarse antes de auditar sus consumidores.
 - Se leyeron las entradas CLI/MCP, descubrimiento de proyecto, estado, conexiones
   SQLite, partes del indexador, registro de parsers, pipeline de búsqueda,
   políticas de embeddings, cliente del daemon y contratos de diseño. No se ha
-  auditado línea por línea todo el motor ni ejecutado toda la suite.
+  auditado línea por línea todo el motor. La suite completa se ha ejecutado;
+  sus resultados y los fallos previos se conservan en los recibos M0/M1.
 
 El manifiesto identifica contenidos; **no es un backup ni un recibo de pruebas**.
 No incluye bases privadas, cachés descargadas ni secretos. Los cambios previos no

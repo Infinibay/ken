@@ -1,0 +1,96 @@
+name: Rust migration parity
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Install locked runtimes and dependencies
+        run: |
+          uv python install 3.12
+          uv sync --locked --dev
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Install Linux execution tracer
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y strace
+      - name: Freeze this checkout, without asserting local dirty-worktree hashes
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import shutil
+          from tools.rust_migration.reference import freeze_reference
+          root = Path.cwd()
+          reference = freeze_reference(root, root / '.ken/rust-migration/m0-m1/reference')
+          shutil.copy2(reference.manifest_path, reference.root.parent / 'ci-original.json')
+          PY
+      - name: Measure Python baseline before native validation
+        run: |
+          set +e
+          .venv/bin/python -m pytest --junitxml=.ken/rust-migration/m0-m1/python-baseline.xml > .ken/rust-migration/m0-m1/python-baseline.log 2>&1
+          printf '%s\n' "$?" > .ken/rust-migration/m0-m1/python-baseline.exit
+          .venv/bin/python -m mypy --no-incremental > .ken/rust-migration/m0-m1/mypy-baseline.log 2>&1
+          printf '%s\n' "$?" > .ken/rust-migration/m0-m1/mypy-baseline.exit
+          # The next step compares exact IDs and rejects new tooling failures.
+          exit 0
+      - name: Validate this platform
+        run: |
+          trace_args=()
+          if [[ "$RUNNER_OS" == Linux ]]; then trace_args+=(--trace-exec); fi
+          .venv/bin/python -m tools.rust_migration.validate \
+            --reference .ken/rust-migration/m0-m1/reference \
+            --native "$GITHUB_WORKSPACE/target/release/ken-rs" \
+            --original-manifest .ken/rust-migration/m0-m1/ci-original.json \
+            --baseline-dir .ken/rust-migration/m0-m1 \
+            --out .ken/rust-migration/m0-m1/validation \
+            --scope local "${trace_args[@]}"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: rust-migration-${{ runner.os }}
+          path: |
+            .ken/rust-migration/m0-m1/validation/
+            .ken/rust-migration/m0-m1/python-baseline.xml
+            .ken/rust-migration/m0-m1/python-baseline.log
+            .ken/rust-migration/m0-m1/mypy-baseline.log
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+  matrix:
+    needs: native
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv python install 3.12
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: rust-migration-*
+          path: .ken/rust-migration/platforms
+      - name: Require matching Linux and macOS evidence
+        run: |
+          uv run --no-project --python 3.12 python -m tools.rust_migration.validate \
+            --scope matrix --platform-receipts .ken/rust-migration/platforms \
+            --out .ken/rust-migration/matrix
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: rust-migration-matrix
+          path: .ken/rust-migration/matrix/
+          include-hidden-files: true
+          if-no-files-found: error
