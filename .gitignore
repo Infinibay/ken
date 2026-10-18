@@ -48,3 +48,20 @@ opencode.json
 # Local experiments and their generated visualizations are not release source.
 /experiments/
 /output/
+
+# Per-session agent progress and stray local run state.
+/.superpowers/
+/:memory:*.ses
+/runs*.log
+
+# Runtime session databases and supervisor logs from exploratory benchmarks.
+# Published reports, metadata and reproducible observation archives stay tracked.
+/docs/benchmark-evidence/**/session.db*
+/docs/benchmark-evidence/**/*.log
+
+# Other local Python tooling state.
+.mypy_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/

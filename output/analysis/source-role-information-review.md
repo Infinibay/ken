@@ -1,9 +1,0 @@
-# Source role information: conceptual review
-
-The representational loss is confirmed. `role=test` deliberately describes association with test code, so every helper in a recognized test file also receives it. Existing tests explicitly preserve the Rust `#[cfg(test)]` helper behavior; this review does not classify that contract as a regression or change it.
-
-Synthetic Python and Go test files give their helper and direct test the same role. Rust retains different raw annotation tuples (`cfg(test)` versus `cfg(test)` plus `test`) but collapses them into the scalar role. The synthetic Java `@Test` marker and Python fixture decorator are absent from current scope annotations; `src/ServiceTest.java` gives both methods `definition`. A JavaScript anonymous callback passed to `it` has no named canonical owner in the fixture. Thus raw current annotations are useful where present but are not a complete, uniform registration inventory.
-
-The conceptual distinction is between container association, a direct syntactic declaration marker with source origin, and framework collection/registration. Direct and inherited annotations should retain their separate provenance. Missing markers mean unknown; `test`/`it` call spelling does not establish a target. Actual registration facts require a framework/configuration/version and canonical or anonymous byte identity, and still do not prove execution.
-
-The existing `role_match` feature cannot distinguish helpers from direct tests once the enum has collapsed them. This is an information-loss diagnosis, not evidence that it caused a ranking error or that any original reference is wrong. Any future source fact needs all-owner preparation and its own versioned experiment; this review changes no role, source, test, model, query or criterion. Five synthetic fixtures and exact hashes are recorded in `source-role-information-review-probes.json`.

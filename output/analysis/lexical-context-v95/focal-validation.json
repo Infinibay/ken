@@ -1,7 +1,0 @@
-{
-  "scope": "new helper and neighboring source contracts; no API quality claim",
-  "command": "env PYTHONPATH=src:experiments/search-engine HF_HUB_OFFLINE=1 .venv-model-runtime/bin/python -m pytest experiments/search-engine/test_lexical_context.py experiments/search-engine/test_context_views.py experiments/search-engine/test_source_context.py experiments/search-engine/test_source_relations.py tests/retrieval/test_passages.py tests/retrieval/test_storage.py -q",
-  "passed": 56,
-  "failed": 0,
-  "typecheck": "MYPYPATH=src mypy helper:0errors"
-}
