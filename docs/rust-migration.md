@@ -61,6 +61,10 @@ Se informa mediana, p95 nearest rank, máximo y máximo RSS del proceso mediante
 wait4 (unidades normalizadas a bytes). No se descartan muestras fallidas/lentas
 ni se usa el high-water acumulado de hijos. La preparación se mide aparte.
 Los resultados describen esta máquina; no establecen un SLA nuevo ni miden modelos.
+En Linux el pico por hijo incluye memoria heredada antes de exec; la
+[calibración](validation/rust-migration-2026-10-18/m1/linux/rss-calibration.json)
+impide interpretarlo como memoria exclusiva del binario. M0/M1 pasaron la
+[matriz Linux/macOS](validation/rust-migration-2026-10-18/m1/matrix.json).
 
 SQLite se abre readonly, con busy timeout de 5 segundos y un único snapshot para
 contadores/paths. Se observan commits WAL publicados sin checkpoint ni migraciones.

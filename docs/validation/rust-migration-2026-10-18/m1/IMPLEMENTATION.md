@@ -1,70 +1,86 @@
 # M1: proyecto y estado nativos
 
-Rama: `codex/rust-migration`. Referencia Python congelada:
+**M0 y M1 aceptados en Linux aarch64 y macOS arm64.** La [matriz conjunta](matrix.json)
+pasó con las mismas huellas de fuentes nativas, referencia Python, casos, tooling
+y Rust 1.95.0. La aplicación completa sigue en migración: M2–M8 no están acreditados.
+
+Rama `codex/rust-migration`. Referencia congelada:
 `e95cc533cc8a603d46481c5310f4b870ffbaaced6fa24fd8a1d85cbd04123222`.
-Toolchain: Rust 1.95.0. Esta entrega conserva los originales y el comando `ken`
-instalado; el binario de ensayo es `target/release/ken-rs`.
+Los 1.066 originales y la referencia ampliada se verificaron sin deriva antes y
+al cerrar. Ninguna fuente original se eliminó o modificó; el comando instalado
+sigue activo. El binario nativo temporal es `target/release/ken-rs`.
 
-## Alcance implementado
+## Alcance verificado
 
-- Descubrimiento y confinamiento de proyectos, con override, Unicode, usuarios,
-  destinos inexistentes, symlinks y ciclos.
-- Lectura SQLite readonly en un snapshot: quince contadores, referencias inline
-  y por slot, frescura, cobertura, señales y recomendaciones.
-- Health HTTP local autenticado, sin proxy ni redirect y con deadline global.
-- `status [PATH] [--json]`, defaults y errores de proceso reales.
-- Comparación diferencial de 58 casos, ejecución fuera del checkout, shims que
-  detectan auxiliares, auditoría de dependencias y medición por proceso.
-- Gate reproducible y workflow Linux/macOS separado de la CI Python original.
+- Descubrimiento y confinamiento con override, Unicode, usuarios, symlinks,
+  destinos inexistentes, `..`, ciclos y destinos compartidos.
+- Estado SQLite readonly en un snapshot: quince contadores, referencias inline
+  y por slot, frescura, cobertura, señales y recomendaciones; WAL visible.
+- Health loopback autenticado, sin proxy ni redirect y deadline global de un segundo.
+- `status [PATH] [--json]`, argumentos, defaults, JSON/texto y errores de proceso.
+- Autonomía fuera del checkout, PATH sin Python, sentinelas y dependencias nativas;
+  [strace Linux](linux/native-exec.trace) registra sólo el exec inicial.
 
-`ken-core` posee proyectos, lectura y reglas de estado y transporte health;
-`ken-cli` posee argumentos y presentación. Los módulos nuevos de tooling separan
-fixtures, comparación de procesos, aceptación de recibos y medición.
+`ken-core` posee proyectos, lectura/reglas de estado y health; `ken-cli`, argumentos
+y presentación. Las responsabilidades de tooling se separan en referencia,
+inventario, fixtures, comparación, aceptación de recibos y medición.
 
-## Evidencia y estado del cierre
+## Pruebas y aceptación
 
-Tareas 1–9 implementadas. El primer cierre local ejecutó 15.604 pruebas Python
-aprobadas, 10 xfail históricos, 24 pruebas de integración Rust y 62 pruebas de
-integración de paridad, además del contraste separado de los 58 casos.
-No aparecieron fallos Python nuevos. Los dos errores de mypy por `transformers`
-ya estaban en M0 y se comparan por archivo/línea/mensaje/código.
+Cada plataforma pasó los 16 gates, 15.606 pruebas Python con los mismos 10 xfail
+históricos, 28 pruebas de integración Rust, 66 pruebas de integración de paridad
+y el contraste independiente de los 62 casos públicos. No hubo fallos, omisiones
+ni skips nuevos. Los 58 casos originales permanecen, con cuatro regresiones añadidas.
 
-Ese primer cierre **no se acepta como resultado final**: detectó que los avisos
-de rustup precedían a la identidad del compilador en su log. Se añadió una prueba
-RED→GREEN que exige una única línea de identidad y conserva los avisos. El cambio
-de tooling durante el ensayo también invalidó correctamente su gate de higiene.
-Los recibos de ese intento están en `.ken/rust-migration/m0-m1/validation-attempt-1`.
+El tipado no introduce errores: Linux pasó sobre los 409 fuentes; macOS conserva
+los dos errores previos por `transformers` ausente, identificados por archivo,
+línea, mensaje y código. Por ello no se presenta el baseline general como libre
+de incidencias históricas. Los fallos de arranque KQL registrados en M0 siguen
+visibles por ID y pasaron en estas ejecuciones.
 
-La validación final macOS pasó sus 16 gates: 15.605 pruebas Python aprobadas y
-10 xfail históricos, sin fallos ni omisiones nuevas; los dos errores previos de
-mypy permanecen identificados. Los [recibos macOS](macos/summary.json) y la
-[medición completa](macos/benchmark.json) conservan sus huellas y todas las muestras.
-La ejecución Linux sigue en curso. La matriz M1 sólo se
-cierra cuando ambos recibos completos tienen las mismas huellas de fuentes,
-casos, tooling y toolchain, y Linux aporta su traza exec. La revisión independiente
-del conjunto también es necesaria. No se acredita ninguna etapa M2–M8 aquí.
+Recibos locales: [macOS](macos/summary.json), [Linux](linux/summary.json),
+[paridad macOS](parity.json), [paridad Linux](linux/parity.json).
+Cada recibo local mantiene `M1_matrix_accepted=false`: sólo el agregador acredita
+la matriz completa. Los logs y JUnit crudos se conservan sin alterar bajo
+`.ken/rust-migration/m0-m1/validation/` y
+`.ken/rust-migration/m0-m1/linux-receipts/validation-corrected/`.
 
-La [revisión independiente](REVIEW.md) encontró un Important en la expansión de
-symlinks compartidos, corregido mediante TDD. El triage agregó una corrección
-de existencia de paths cíclicos/no codificables. La suite Rust ampliada pasó
-28 pruebas; los cuatro casos públicos nuevos conservan los 58 anteriores.
-Los recibos macOS anteriores describen la revisión previa a estas correcciones;
-se están regenerando los de ambas plataformas antes de aceptar M1 globalmente.
-Los dos Minor del reviewer se mantienen diferidos y están identificados en REVIEW.
+La [revisión independiente](REVIEW.md) encontró un Important en expansión de
+symlinks compartidos. Se corrigió en una única pasada TDD; el triage agregó la
+semántica de existencia de enlaces cíclicos y paths no codificables. Se observaron
+FAIL→PASS antes de regenerar ambos cierres completos. Los dos Minor del reviewer
+se mantienen diferidos y están descritos en REVIEW. No hubo segunda revisión.
 
-Los resultados completos locales se guardan bajo `.ken/rust-migration/m0-m1/`;
-los recibos públicos finales se incorporan al cerrar el gate. El manifiesto de
-1.066 originales y el manifiesto ampliado de la referencia se verifican antes y
-después. El inventario M0 conserva 60 rutas CLI, 15 herramientas MCP y 475 recursos
-de fuente: `status` constituye sólo el primer corte de esa superficie.
+Se conservaron los intentos previos: `validation-attempt-1` detectó un problema
+del parser de identidad rustc y deriva del propio tooling; `validation-before-review`
+identifica las fuentes anteriores a la corrección. Sus resultados no se mezclan
+con la aceptación actual.
 
-## Reproducción
+## Mediciones y reproducción
 
-Los comandos y límites del gate están en [la guía](../../../rust-migration.md)
-y en [el plan aprobado](../../../superpowers/plans/2026-10-18-rust-m0-m1.md).
-El workflow está preparado, pero ninguna ejecución remota se presenta como
-realizada. La comprobación Linux local usa una copia aislada en Docker Desktop,
-con Rust/Python fijados y strace, sin montar los fuentes originales para escritura.
+Se retienen 30 procesos por programa y escenario (180 muestras por plataforma),
+con orden alternado, preparación separada y ninguna muestra descartada. Para
+el caso poblado, proceso completo incluyendo arranque:
+
+| Plataforma | Rust mediana | Rust p95 | Python mediana |
+| --- | --- | --- | --- |
+| macos | 5.168 ms | 7.866 ms | 201.079 ms |
+| linux | 1.279 ms | 1.460 ms | 229.962 ms |
+
+[Todas las muestras macOS](macos/benchmark.json) y [Linux](linux/benchmark.json)
+incluyen máximo y RSS kernel por hijo. En Linux ese RSS incorpora memoria heredada
+antes de exec: la [calibración](linux/rss-calibration.json) demuestra el suelo del
+harness. No se interpreta como RSS exclusivo del binario ni se atribuye mejora de
+memoria. No se inventó un SLA para `status` ni se midieron modelos en este gate.
+
+La [guía](../../../rust-migration.md) y el [plan aprobado](../../../superpowers/plans/2026-10-18-rust-m0-m1.md)
+contienen los comandos. El workflow independiente está preparado; no se ejecutó
+CI remota, no se hizo push/PR y no se promocionó `ken-rs` como comando instalado.
+La comprobación Linux fue local, sobre copias aisladas en Docker Desktop.
+
+El inventario M0 conserva 60 rutas CLI, 15 herramientas MCP y 475 recursos;
+`status` es el primer corte. Se continúa con el [plan M2](../../../superpowers/plans/2026-10-18-rust-m2-static-encoder.md)
+antes de portar consumidores, manteniendo originales y ejecución nativa.
 
 ## Decisiones de ejecución
 
@@ -126,3 +142,5 @@ Las decisiones reemplazadas permanecen visibles junto con su corrección.
 - Final: Ruling: use pinned libc 0.2.191 (already transitive in Cargo.lock) as a direct Unix dependency for pathlib-compatible ELOOP/EBADF stat handling — std::io::ErrorKind::FilesystemLoop is still nightly-only; no hardcoded platform errno and no nightly feature — risk if wrong: platform-dependent existence classification.
 
 - Final: Ruling: append shared_symlinks/stale_cycle JSON+text cases to the matrix before verifying corrected release — all previous 58 IDs remain, now 62; independent fixture expectations test RED→GREEN — risk if wrong: extending coverage must not erase prior cases or normalize a new difference.
+
+- Final: Ruling: retain literal per-child kernel wait4 RSS with an explicit Linux pre-exec inheritance caveat — /bin/true calibration changed child peak20.6MB→104.2MB when parent allocated80MiB, so the65.2MB Linux status floor cannot establish binary-only memory usage or a memory speedup — no RSS SLA was invented; next model measurements must separate loading/inference — risk if wrong: misleading memory comparisons.

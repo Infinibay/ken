@@ -1,0 +1,17 @@
+{
+  "kind": "linux-wait4-calibration",
+  "method": "same /bin/true command; vary resident parent allocation before Popen(cwd=\"/\") and wait4",
+  "samples": [
+    {
+      "parent_buffer_bytes": 0,
+      "child_max_rss_bytes": 20635648,
+      "exit": 0
+    },
+    {
+      "parent_buffer_bytes": 83886080,
+      "child_max_rss_bytes": 104153088,
+      "exit": 0
+    }
+  ],
+  "interpretation": "Linux whole-child wait4 peak includes inherited pre-exec harness memory; these are not isolated post-exec binary RSS measurements."
+}

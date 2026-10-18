@@ -29,7 +29,7 @@
         "--version",
         "--verbose"
       ],
-      "duration_ns": 191386291,
+      "duration_ns": 152438750,
       "artifact": "rust-toolchain.log",
       "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
     },
@@ -58,9 +58,9 @@
         "tests/rust_migration",
         "-q"
       ],
-      "duration_ns": 35299089167,
+      "duration_ns": 33930745708,
       "artifact": "python-contracts.log",
-      "sha256": "3bf5ea7c2adce2a8def4d6995c21f699dd10c4eed53d65d3beca9cf0b2731e93"
+      "sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f"
     },
     "python_full": {
       "ran": true,
@@ -72,12 +72,12 @@
         "pytest",
         "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/validation/python-final.xml"
       ],
-      "duration_ns": 662417211542,
+      "duration_ns": 652654825208,
       "artifact": "python-full.log",
-      "sha256": "9832e42ca7741d0200ce01aee3dfa39f9cafa08a1fbaad9f0f96e7e7e6accab1",
+      "sha256": "5d2d75bc74c16a017e827dc2c5e6e330b585b0d2ab9b40c2cd3663ef89ded1ab",
       "details": {
         "passed": true,
-        "collected": 15615,
+        "collected": 15616,
         "new_failures": [],
         "new_skips": [],
         "missing_tests": [],
@@ -103,7 +103,7 @@
         "mypy",
         "--no-incremental"
       ],
-      "duration_ns": 18251467834,
+      "duration_ns": 18075768667,
       "artifact": "python-typing.log",
       "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
       "details": {
@@ -129,7 +129,7 @@
         "--",
         "--check"
       ],
-      "duration_ns": 238957750,
+      "duration_ns": 261350458,
       "artifact": "fmt.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -147,9 +147,9 @@
         "-D",
         "warnings"
       ],
-      "duration_ns": 316272542,
+      "duration_ns": 6950084375,
       "artifact": "clippy.log",
-      "sha256": "732186322402325172940531d8d6d7cfac85dc902585b2bef6715ad6839dacfd"
+      "sha256": "bfe3b9ed18e97ce33c71ca349314d36bda491b290424873cb6942c2ed6db7531"
     },
     "rust_tests": {
       "ran": true,
@@ -161,9 +161,9 @@
         "--locked",
         "--workspace"
       ],
-      "duration_ns": 2491626042,
+      "duration_ns": 6948735042,
       "artifact": "rust_tests.log",
-      "sha256": "c2f510addafb7f332399cdd26d172d44ec703ace3faf3a03f1881b924324d9da"
+      "sha256": "dabab1a8342876fdab2826be21a53f08c71f4a664ec4fdcfdf60581493a459bd"
     },
     "release": {
       "ran": true,
@@ -177,9 +177,9 @@
         "-p",
         "ken-cli"
       ],
-      "duration_ns": 138422458,
+      "duration_ns": 20913610208,
       "artifact": "release.log",
-      "sha256": "92434e198f27984c035c376ec77a7cf9e6ebdde782f8ccb1336ae3329b66ddb7"
+      "sha256": "d6c0d91b39ab67d6a9e19226f9c71df1371325b4485c980bdf44776ba5d70dff"
     },
     "parity_tests": {
       "ran": true,
@@ -193,9 +193,9 @@
         "-q",
         "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/validation/parity-tests.xml"
       ],
-      "duration_ns": 21741710750,
+      "duration_ns": 26129463250,
       "artifact": "parity-tests.log",
-      "sha256": "de0615cf37b5c81f3262e96c1af6d39e3e1ed022fb623f364a1d3c083a4e551f"
+      "sha256": "c3f10a075adace0c7a32194c3773838ef13ba5e6a0b346089fcca6d53d5fb848"
     },
     "parity": {
       "ran": true,
@@ -214,13 +214,13 @@
         "--out",
         "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/validation/parity.json"
       ],
-      "duration_ns": 18662147084,
+      "duration_ns": 24772901000,
       "artifact": "parity.log",
-      "sha256": "998ffa26afd1901999aba2aebb9eadbebc3db98a54a6a0b80ba753d9aecad6b2",
+      "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175",
       "details": {
         "errors": [],
-        "expected": 58,
-        "observed": 58
+        "expected": 62,
+        "observed": 62
       }
     },
     "runtime": {
@@ -237,7 +237,7 @@
             "-L",
             "/Users/andres/Projects/ken/target/release/ken-rs"
           ],
-          "duration_ns": 24898625,
+          "duration_ns": 29105125,
           "artifact": "native-dependencies.log",
           "sha256": "ef9e8b8b83e997cda8c59c7bdf6b7d26d46fc74d9913ec73b15b42978491607f"
         },
@@ -253,9 +253,9 @@
             "-e",
             "normal"
           ],
-          "duration_ns": 91442000,
+          "duration_ns": 86535042,
           "artifact": "native-cargo-tree.log",
-          "sha256": "9d375af7dca3c5e9915d16e734b4c983b65066e8e119925056df0b1c2437fca5"
+          "sha256": "e7622ffc78e17ea95166d4a1486f912b9e24ccfaaa94fd42b21d4f2a5d5929db"
         },
         "copied_binary": true,
         "path_contains_python": false
@@ -265,7 +265,7 @@
       "ran": true,
       "passed": true,
       "artifact": "benchmark.json",
-      "sha256": "b44f65c0ee92d8855c4077fe6a5ad9c1fa89abb5e4cf1b686556a941f534debc"
+      "sha256": "fa96ba841a0b0b263f377529908756e910070d10ce4f2fc931e5e9b3cae14ea9"
     },
     "hygiene": {
       "ran": true,
@@ -276,7 +276,7 @@
         "diff",
         "--check"
       ],
-      "duration_ns": 42627041,
+      "duration_ns": 40023375,
       "artifact": "hygiene.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
@@ -284,13 +284,13 @@
   "reference": "e95cc533cc8a603d46481c5310f4b870ffbaaced6fa24fd8a1d85cbd04123222",
   "model": "not applicable",
   "fingerprints": {
-    "native_source": "a4754f72c7cbf4bdc29345df0f17a934eb8dbf3f19de8ceea9056bd2fde19f86",
+    "native_source": "096c2e64c8e11d116a4453e274eb3a9ea236e6f8548727ce447e967490ff1e0c",
     "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
-    "cases": "49683b136ecaabba92b67a0e66cd0854bf80419dd1ff9530746d425e42b0af87",
-    "validator": "36452470e4839442962279ce1feddcbd894dd712863cfe12da0336b67d0c0159"
+    "cases": "3a5850765e1bb04d7dd2ff6020d016034b1717c6a0ff1e15ab4293a8b66e490e",
+    "validator": "d4c0cc742c2ac8c15e7d017e122a779489f0e8a005432fb04c0581e4fd3f506b"
   },
   "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
-  "native_sha256": "1051e1cfd00fed5b57e42821f24d5ed9c3aa4e8130ef7e8f7b2d6277ae5502e1",
+  "native_sha256": "4718240f733c87c68345d13960b4b46b637b8ba9ab1486dc5f713c2361e50371",
   "trace_exec": {
     "ran": false,
     "passed": false,

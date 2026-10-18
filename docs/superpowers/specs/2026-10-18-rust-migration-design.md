@@ -4,9 +4,9 @@ Fecha: 2026-10-18. Rama: `codex/rust-migration`.
 
 Estado: especificación aprobada explícitamente por el usuario el 2026-10-18.
 El [plan M0/M1](../plans/2026-10-18-rust-m0-m1.md) también fue aprobado y se
-ejecuta de forma nativa. M0 está aceptado; M1 implementa `status` y está pasando
-su cierre de validación y revisión. El [registro de implementación](../../validation/rust-migration-2026-10-18/m1/IMPLEMENTATION.md)
-distingue resultados observados de aceptación pendiente.
+ejecutó de forma nativa. M0/M1 están aceptados en Linux aarch64 y macOS arm64,
+con revisión independiente y correcciones TDD verificadas. El [registro de implementación](../../validation/rust-migration-2026-10-18/m1/IMPLEMENTATION.md)
+identifica las pruebas y la matriz conjunta. M2–M8 siguen pendientes.
 Este documento fija el programa completo. Cada subsistema tendrá una
 especificación y un plan ejecutable propios.
 
