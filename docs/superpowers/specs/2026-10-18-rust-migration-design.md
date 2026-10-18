@@ -2,9 +2,11 @@
 
 Fecha: 2026-10-18. Rama: `codex/rust-migration`.
 
-Estado: propuesta escrita para revisión. No se ha implementado código Rust ni
-declarado migrado ningún componente. Este documento fija el programa completo;
-cada subsistema tendrá una especificación y un plan ejecutable propios.
+Estado: especificación aprobada explícitamente por el usuario el 2026-10-18.
+El [plan M0/M1](../plans/2026-10-18-rust-m0-m1.md) queda pendiente de revisión;
+no se ha implementado código Rust ni declarado migrado ningún componente.
+Este documento fija el programa completo. Cada subsistema tendrá una
+especificación y un plan ejecutable propios.
 
 ## 1. Intención y condiciones del usuario
 
@@ -274,8 +276,9 @@ actual, Linux y macOS; Windows se audita en M0 según el soporte prometido.
 - [x] Rama propia y registro de cambios previos sin alterarlos.
 - [x] Alternativas, conceptos, contratos y etapas documentados.
 - [x] Primera capacidad definida en especificación separada.
-- [ ] Revisión del usuario de las especificaciones escritas.
-- [ ] Plan detallado M0/M1 y revisión de sus pasos/método de ejecución.
+- [x] Revisión del usuario de las especificaciones escritas: aprobadas el 2026-10-18.
+- [x] Plan detallado M0/M1 escrito y autorrevisado.
+- [ ] Revisión del usuario del plan y elección del método de ejecución.
 - [ ] Implementación con TDD, verificación y revisión de cada entrega.
 - [ ] Matriz de paridad completa y sustitución final.
 

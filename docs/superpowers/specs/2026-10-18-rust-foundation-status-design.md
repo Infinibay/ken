@@ -1,6 +1,7 @@
 # M1: proyecto y estado nativos
 
-Fecha: 2026-10-18. Estado: especificación propuesta, pendiente de revisión.
+Fecha: 2026-10-18. Estado: especificación aprobada explícitamente por el usuario.
+El [plan M0/M1](../plans/2026-10-18-rust-m0-m1.md) queda pendiente de revisión.
 Depende del [contrato de migración](2026-10-18-rust-migration-design.md).
 
 ## Objetivo y límite de la entrega
