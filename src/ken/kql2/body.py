@@ -13,9 +13,10 @@ from ken.structural_store import Node, Store
 from .cache import ArtifactCache
 from .body_operations import operation_filter
 from .semantic import SemanticRelations
+from .path_values import PathValues, Snapshot
 from .source_optional import OPTIONAL_ROLES, optional_row
 from .source_types import matches as matches_type, validate_matcher
-from .source_expressions import binary_parts, matches_operator
+from .source_expressions import binary_parts, matches_operator, literal_boolean
 from .syntax import Clause, Expr, SourceExpr, ParseError
 from .values import OperationValue, QueryValue, Unknown, identity, is_unknown, conjunction, disjunction
 
@@ -123,6 +124,7 @@ class _State:
     protected: tuple[str,...] = ()
     forbidden_calls: tuple[str,...] = ()
     cursor: str | None = None
+    values: Snapshot | None = None
 
 
 def terminal_bindings(clause: Clause) -> tuple[str,...]:
@@ -847,12 +849,14 @@ class BodyEngine:
         self.iteration_values: dict[str, tuple[Operation, str]] = {}
         # Loops whose walk hands over keys rather than values.
         self.keyed_iterations: set[str] = set()
+        from .source_candidates import IndexedCallCandidates
+        self.call_candidates = IndexedCallCandidates(store, self.semantic) if hasattr(store, 'db') else None
 
     def source_unit(self, unit: int, owner: str | None) -> IR:
         from ken.structural_store.operations import load
         return load(self.store,unit,owner)
 
-    def match_context(self, owner: Node, region: Operation | None) -> _BodyContext:
+    def match_context(self, owner: Node, region: Operation | None, *, with_dispatch: bool = False) -> _BodyContext:
         """Owner-derived read-only maps shared across distinct BODY bindings."""
         ir, _ = self.units.get_or_compute(
             str(owner.unit) + ':' + owner.local_id,
@@ -862,6 +866,13 @@ class BodyEngine:
         candidates = reader(owner.local_id, region) if region is not None and reader is not None else ir.operations
         operations = {o.id: o for o in candidates if o.owner == owner.local_id
                       and (region is None or region.start <= o.start and o.end <= region.end)}
+        # Dispatch points belong to the linked CFG, not the source-unit syntax
+        # projection. Recover their source bounds for nested region walks too.
+        for fact in self.semantic.facts('CFG_DISPATCH', owner.local_id) if with_dispatch else ():
+            statement = operations.get(fact.attrs['operation'])
+            if statement is not None:
+                operations[fact.object] = Operation(fact.object, 'DISPATCH', 'exception_dispatch',
+                    statement.parent, '', statement.start, statement.start, statement.line, owner.local_id)
         children: dict[str, list[Operation]] = {}
         for op in operations.values():
             children.setdefault(op.parent or '', []).append(op)
@@ -894,6 +905,8 @@ class BodyEngine:
         if not isinstance(owner,Node):
             yield {**bindings,**{r:Unknown('body_owner_unknown') for r in pattern.outputs}},True
             return
+        if self.call_candidates is not None and not self.call_candidates.allows(owner, pattern, bindings):
+            return
         if len(pattern.clauses) == 1 and pattern.clauses[0].kind == 'return':
             statement = pattern.clauses[0]
             value = bindings.get(statement.expressions[0].value) if statement.expressions and statement.expressions[0].kind == 'role' else None
@@ -906,6 +919,7 @@ class BodyEngine:
                     yield bindings,False
                     return
         statuses = self.semantic.facts('CFG_STATUS',owner.local_id)
+        has_dispatch = any('exception-dispatch' in fact.attrs.get('reasons', ()) for fact in statuses)
         entries = self.semantic.facts('CFG_ENTRY',owner.local_id)
         from .source_coverage import supports_pattern
         if not entries or not supports_pattern(statuses, pattern):
@@ -913,8 +927,19 @@ class BodyEngine:
             return
         context_key = repr((owner.unit, owner.local_id,
                             (region.id, region.start, region.end) if region is not None else None))
-        context, _ = self.contexts.get_or_compute(context_key, lambda: self.match_context(owner, region))
+        context, _ = self.contexts.get_or_compute(context_key, lambda: self.match_context(owner, region, with_dispatch=has_dispatch))
         ir, operations, children, local_nodes, calls, operation_spans, foreign_call_ids = context
+        implied_return = None
+        if self.semantic.facts('BODY_VALUE', owner.local_id):
+            roots = [op for op in operations.values() if op.role == 'body'
+                     and (op.parent not in operations or operations[op.parent].kind == 'FUNCTION')]
+            if len(roots) == 1:
+                root = roots[0]
+                implied_return = Operation(owner.local_id + '::implicit-return', 'RETURN',
+                                           'implicit_return', root.parent, 'body',
+                                           root.start, root.end, root.line, owner.local_id)
+                children = {**children, implied_return.id: [root]}
+        coverage_gaps = {gap for fact in statuses for gap in fact.attrs.get('gaps', ())}
         # A nested function expression (lambda, arrow, func literal) parses as its own
         # callable and owns its sub-tree, so its root operation is missing from the
         # owner-filtered table above even though it is the *value* an enclosing
@@ -970,17 +995,7 @@ class BodyEngine:
             candidate = operations.get(group)
             condition = rows('CONTROL_CONDITION',group) if candidate is not None and candidate.kind == 'BRANCH' else []
             if len(condition) == 1 and condition[0].object in operations:
-                op = operations[condition[0].object]
-                # Parentheses preserve a boolean literal's value; JS/TS
-                # expose them as the condition node rather than the literal.
-                seen_conditions=set()
-                while op.native_kind in ('parenthesized_expression','condition_clause') and op.id not in seen_conditions:
-                    seen_conditions.add(op.id)
-                    operands=[c for c in children.get(op.id,()) if 'comment' not in c.native_kind]
-                    if len(operands)!=1:break
-                    op=operands[0]
-                text = op.attrs.get('text')
-                constant = {'True':True,'true':True,'False':False,'false':False}.get(text) if isinstance(text,str) else None
+                constant = literal_boolean(operations[condition[0].object], children)
                 if constant is not None:
                     rejected = 'false' if constant else 'true'
                     edges = [f for f in edges if f.attrs.get('kind') != rejected]
@@ -1343,9 +1358,40 @@ class BodyEngine:
             selected = {f.object for f in rows('CONSTRUCTOR_TARGET',call.id)}
             return selected == {target.local_id}
 
-        def match_step(item: Clause, group: str, current: dict[str,QueryValue], cursor: str | None = None) -> Iterator[tuple[dict[str,QueryValue],bool,str]]:
+        needs_values = (any(clause.kind in {'return', 'yield'} for clause in pattern.clauses)
+                        or has_dispatch)
+        path_values = (PathValues(owner, local_nodes, ir.entities, operations, rows, parts)
+                       if needs_values and all(clause.kind in {'call', 'let', 'return', 'yield'}
+                                               for clause in pattern.clauses) else None)
+        dispatch_sources = {fact.object: fact.attrs['operation']
+                            for fact in rows('CFG_DISPATCH', owner.local_id)} if path_values is not None else {}
+
+        def path_successors(group: str, snapshot: Snapshot | None) -> tuple[str, ...]:
+            following = successors(group)
+            source = dispatch_sources.get(group)
+            if source is not None and path_values is not None and path_values.cannot_raise(source, snapshot):
+                exceptional = {fact.object for fact in rows('CFG_NEXT', group)
+                               if fact.attrs.get('kind') == 'exception'}
+                return tuple(point for point in following if point not in exceptional)
+            return following
+
+        def advanced(group: str, snapshot: Snapshot | None, successor: str) -> tuple[Snapshot | None, ...]:
+            return path_values.advance(group, snapshot, successor) if path_values is not None else (None,)
+
+        def path_matches(produced: Node, operand: Operation, snapshot: Snapshot) -> QueryValue:
+            assert path_values is not None
+            truth: QueryValue = False
+            for origin in path_values.origins(operand, snapshot):
+                truth = disjunction(truth, captured_reaches(produced.local_id, {origin}) if origin is not None
+                                    else Unknown('path_origin_unknown'))
+            return truth
+
+        def match_step(item: Clause, group: str, current: dict[str,QueryValue], cursor: str | None = None,
+                       path_snapshot: Snapshot | None = None) -> Iterator[tuple[dict[str,QueryValue],bool,str]]:
             selection = operation_filter(item)
             candidates = parts(group,selection.kinds)
+            if item.kind == 'return' and implied_return is not None and group in entries_roots:
+                candidates = (*candidates, implied_return)
             # ``call $container[$key]`` is the element-origin callee. Only that clause
             # widens the candidates: the grammar may have filed the call under another
             # native kind (Go parses an indexed ``table[key](arg)`` as a type conversion),
@@ -1364,7 +1410,10 @@ class BodyEngine:
                     while child is not None and child.parent and child.parent not in ancestors:
                         ancestors.add(child.parent)
                         child = operations.get(child.parent)
-                    if op.id not in ancestors:
+                    implicit_after_operand = (op is implied_return
+                                              and operations[cursor].start >= op.start
+                                              and operations[cursor].end <= op.end)
+                    if op.id not in ancestors and not implicit_after_operand:
                         # ``call alongside $x { ... }``: the pattern claims this
                         # occurrence is the sibling operand of the one just matched --
                         # both are operands of the same enclosing operation. That is
@@ -2515,7 +2564,11 @@ class BodyEngine:
                     if expected.kind == 'wildcard':
                         truth=True
                     elif len(operands)==1:
-                        truth=source_matches(expected,operands[0],current)
+                        produced = current.get(expected.value) if expected.kind == 'role' else None
+                        if path_snapshot is not None and isinstance(produced, Node) and produced.kind == 'VALUE':
+                            truth = path_matches(produced, operands[0], path_snapshot)
+                        else:
+                            truth=source_matches(expected,operands[0],current)
                     elif not operands:
                         truth=expected.kind=='literal' and expected.value=='null'
                 elif item.kind == 'return' and op.kind == 'RETURN':
@@ -2617,7 +2670,10 @@ class BodyEngine:
                             held = {f.object for f in rows('ASSIGNED_FROM',produced.local_id)}
                             if yielded and held:
                                 truth = bool(held & yielded)
-                        if truth is True and any(f.attrs.get('modality') == 'may' for f in origin_rows):
+                        if (path_snapshot is not None and op is not implied_return
+                                and isinstance(produced, Node) and produced.kind == 'VALUE'):
+                            truth = path_matches(produced, op, path_snapshot)
+                        elif truth is True and any(f.attrs.get('modality') == 'may' for f in origin_rows):
                             truth = Unknown('return_origin_may')
                     copy_clause = (item.blocks[0][0] if item.blocks and item.blocks[0]
                                    and item.blocks[0][0].kind == 'copies' else None)
@@ -2919,7 +2975,8 @@ class BodyEngine:
                 frontier.extend(successors(point))
             return True
 
-        pending = [_State(entries[0].object,0,bindings)]
+        entries_roots = {entry.object for entry in entries}
+        pending = [_State(entries[0].object,0,bindings,values=path_values.initial if path_values is not None else None)]
         visited: set[object] = set()
         while pending:
             state = pending.pop()
@@ -2928,7 +2985,7 @@ class BodyEngine:
             if index == len(pattern.clauses):
                 yield current,uncertain
                 continue
-            key = (group,index,identity(tuple(sorted(current.items()))),uncertain,state.last,state.adjacent,state.used,state.protected,state.forbidden_calls,state.cursor)
+            key = (group,index,identity(tuple(sorted(current.items()))),uncertain,state.last,state.adjacent,state.used,state.protected,state.forbidden_calls,state.cursor,state.values)
             if key in visited:
                 continue
             visited.add(key)
@@ -2951,12 +3008,28 @@ class BodyEngine:
             if item.kind == 'adjacent':
                 pending.append(replace(state,index=index+1,adjacent=True))
                 continue
+            if group in coverage_gaps:
+                # Inspect one clause only to preserve uncertainty about matches
+                # inside an uncovered region. Never sequence its lexical arms.
+                # A complete witness before an unrelated suffix stays valid.
+                for matched, _unknown, _operation_id in match_step(item,group,current,state.cursor,state.values):
+                    yield {**matched, **{role: matched.get(role, Unknown('control_flow_gap'))
+                                        for role in pattern.outputs}}, True
+                from .source_coverage import supports_normal_try
+                normal = ({fact.object for fact in rows('CFG_NEXT', group)
+                           if fact.attrs.get('kind') == 'normal'}
+                          if supports_normal_try(pattern) else set())
+                pending.extend(replace(state,group=n,cursor=None,values=next_values,
+                                       unknown=uncertain if n in normal else True)
+                               for n in path_successors(group,state.values) for next_values in advanced(group,state.values,n))
+                continue
             decisions = pattern.linear and bool(parts(group,frozenset({'BRANCH','LOOP','TRY','SWITCH'})))
             if not decisions and not state.adjacent and not (pattern.adjacent and state.last is not None):
-                pending.extend(replace(state,group=n,cursor=None) for n in successors(group))
+                pending.extend(replace(state,group=n,cursor=None,values=next_values)
+                               for n in path_successors(group,state.values) for next_values in advanced(group,state.values,n))
             if decisions and item.kind not in ('if','iterate'):
                 continue
-            for matched,unknown,operation_id in match_step(item,group,current,state.cursor):
+            for matched,unknown,operation_id in match_step(item,group,current,state.cursor,state.values):
                 if operation_id in state.used:
                     continue
                 constraint = interval_ok(state)
@@ -2986,5 +3059,7 @@ class BodyEngine:
                                 exits.add(point)
                         after = tuple(exits)
                     else:
-                        pending.append(_State(group,index+1,matched,uncertain or unknown,used,group,cursor=operation_id))
-                    pending.extend(_State(n,index+1,matched,uncertain or unknown,used,group) for n in after)
+                        pending.append(_State(group,index+1,matched,uncertain or unknown,used,group,cursor=operation_id,values=state.values))
+                    pending.extend(_State(n,index+1,matched,uncertain or unknown,used,group,
+                        values=next_values) for n in after
+                        for next_values in ((None,) if item.kind in ('iterate','if') else advanced(group,state.values,n)))

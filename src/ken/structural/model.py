@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
-IR_VERSION = "1.85.0"
+IR_VERSION = "1.87.0"
 
 
 def _attribute_key(value: Any) -> str:

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import time
+import sqlite3
 from uuid import uuid4
 from typing import TYPE_CHECKING
 
@@ -25,8 +26,21 @@ def renew(store: Store, *, force: bool = False) -> None:
     if store.lease_id is None or not force and time.monotonic() < store.lease_renew_at:
         return
     now = time.time_ns()
-    updated = store.db.execute('UPDATE k2_leases SET expires_ns=? WHERE lease_id=? AND expires_ns>?',
-                               (now+TTL_NS,store.lease_id,now))
+    try:
+        updated = store.db.execute('UPDATE k2_leases SET expires_ns=? WHERE lease_id=? AND expires_ns>?',
+                                   (now+TTL_NS,store.lease_id,now))
+    except sqlite3.OperationalError as exc:
+        if force or not store.defer_busy_renewal or exc.sqlite_errorcode & 0xff != sqlite3.SQLITE_BUSY:
+            raise
+        live = store.db.execute('SELECT expires_ns FROM k2_leases WHERE lease_id=? AND expires_ns>?',
+                                (store.lease_id,now)).fetchone()
+        current = time.time_ns()
+        if live is None or live[0] <= current:
+            raise SnapshotExpired('snapshot lease expired; restart acquisition') from exc
+        # The existing lease still protects a prepared reader. Retry soon,
+        # before expiry, without attempting a write at every operator check.
+        store.lease_renew_at = time.monotonic()+min(1.0,(live[0]-current)/1_000_000_000)
+        return
     if updated.rowcount != 1:
         raise SnapshotExpired('snapshot lease expired; restart acquisition')
     store.lease_renew_at = time.monotonic()+15

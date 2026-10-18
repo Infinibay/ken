@@ -9,15 +9,21 @@ from __future__ import annotations
 from collections import defaultdict
 from collections.abc import Callable, Set
 from dataclasses import dataclass
-from functools import cached_property
+from functools import cached_property, lru_cache
 from types import MappingProxyType
 from typing import TYPE_CHECKING
+
+from ken.structural_store import Node as IndexedNode
 
 if TYPE_CHECKING:
     from ken.structural.model import FactIndex
     from ken.structural.relational import Node
+    from ken.structural_store import Store
 
     from .syntax.ast import Clause as SourceClause
+    from .body import BodyPattern
+    from .semantic import SemanticRelations
+    from .values import QueryValue
 
 from .source_assignment_candidates import AssignmentCandidates
 from .body_operations import operation_filter
@@ -102,6 +108,78 @@ OWNER_REQUIREMENTS = MappingProxyType(
         "let": call_result_requirement,
     }
 )
+
+
+class IndexedCallCandidates:
+    """Disprove a named call only from a complete source-unit inventory."""
+
+    def __init__(self, store: Store, semantics: SemanticRelations):
+        self.store = store
+        self.semantics = semantics
+        self.coverage = lru_cache(maxsize=32)(self._coverage)
+        self.exact_sites = lru_cache(maxsize=32)(self._exact_sites)
+
+    def _coverage(self, unit: int) -> bool:
+        row = self.store.db.execute(
+            'SELECT coverage FROM k2_units WHERE unit_id=?', (unit,)
+        ).fetchone()
+        return bool(row and row[0])
+
+    def _missing_occurrence(self, owner: IndexedNode) -> bool:
+        return self.store.db.execute(
+            "SELECT 1 FROM k2_operations WHERE unit_id=? AND owner=? "
+            "AND kind='CALL' AND entity_id IS NULL LIMIT 1", (owner.unit, owner.local_id)
+        ).fetchone() is not None
+
+    def _exact_sites(self, target: str) -> set[str]:
+        return {fact.subject
+                for relation in ('TARGET', 'DECLARED_TARGET', 'CONSTRUCTOR_TARGET')
+                for fact in self.semantics.facts_to(relation, target)}
+
+    def allows(self, owner: IndexedNode, pattern: BodyPattern,
+               bindings: dict[str, QueryValue]) -> bool:
+        requirement = None
+        exact_target = None
+        for clause in pattern.clauses:
+            strategy = OWNER_REQUIREMENTS.get(clause.kind)
+            found = strategy(pattern.owner, clause) if strategy else None
+            if isinstance(found, CallNameRequirement) and found.sequence_safe:
+                requirement = found
+                break
+            call = None
+            if clause.kind == 'call':
+                call = clause
+            elif (clause.kind == 'let' and len(clause.blocks) == 1
+                  and len(clause.blocks[0]) == 1 and clause.blocks[0][0].kind == 'call'):
+                call = clause.blocks[0][0]
+            if call is not None and not call.expressions and not call.flags:
+                target = bindings.get(call.role)
+                dispatch = any(c.kind == 'property' and c.name == 'dispatch' for c in call.blocks[0])
+                if isinstance(target, IndexedNode) and target.kind == 'CALLABLE' and not dispatch:
+                    exact_target = target.local_id
+                    break
+            if clause.kind in {'gap', 'if', 'iterate', 'either'}:
+                break
+        if requirement is None and exact_target is None:
+            return True
+        if not self.coverage(owner.unit):
+            return True
+        if exact_target is not None:
+            # Resolved identities preserve renamed imports. An occurrence with
+            # no source projection remains a candidate below.
+            sites = self.exact_sites(exact_target)
+            witnessed = any(site in sites for (site,) in self.store.db.execute(
+                "SELECT local_id FROM k2_nodes WHERE unit_id=? AND owner=? AND kind='CALL'",
+                (owner.unit, owner.local_id),
+            ))
+        else:
+            assert requirement is not None
+            witnessed = self.store.db.execute(
+                "SELECT 1 FROM k2_nodes WHERE unit_id=? AND owner=? AND kind='CALL' AND name IN ("
+                + ','.join('?' for _ in requirement.names) + ') LIMIT 1',
+                (owner.unit, owner.local_id, *requirement.names),
+            ).fetchone() is not None
+        return witnessed or self._missing_occurrence(owner)
 
 
 @dataclass

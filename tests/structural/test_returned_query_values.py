@@ -75,7 +75,11 @@ def test_branch_uncertainty_is_not_promoted_to_certain(language):
     statements = ['let p=Product(self.count)', branch, 'return p']
     graph, strict = run(language, statements)
     _, possible = run(language, statements, possible=True)
-    assert not strict['matches']
+    # Callable-wide flow is still may. Python BODY can separately prove the
+    # route where the allocation survives, without promoting that summary.
+    assert not [match for match in strict['matches'] if match['id'] == 'returned']
+    path_witnesses = [match for match in strict['matches'] if match['id'] == 'prototype#explicit-copy']
+    assert len(path_witnesses) == (1 if language == 'python' else 0)
     assert len(possible['matches']) == 2
     view = query_graph(graph).ir
     edges = [f for f in view.facts if f.relation == 'RETURNS_VALUE' and f.attrs.get('basis') == 'flow']
@@ -119,9 +123,9 @@ def test_parameter_alias_normalizes_to_original_parameter_load():
 def test_unsupported_scopes_keep_syntax_projection_with_explicit_basis(body):
     graph, result = run('python', [body])
     assert not [m for m in result['matches'] if m['id'] == 'returned']
-    # Authored BODY requires modeled control flow. Historical syntax-only
-    # RETURNS_VALUE projection remains available, but is not a proof of BODY.
+    # BODY now models normal generator resumption; the callable-wide summary
+    # remains syntax-only. Finally is still an explicit coverage boundary.
     pattern = [m for m in result['matches'] if m['id'] == 'prototype#explicit-copy']
-    assert bool(pattern) is body.startswith('while')
+    assert bool(pattern) is body.startswith(('while', 'yield'))
     returned = [f for f in query_graph(graph).ir.facts if f.relation == 'RETURNS_VALUE']
     assert returned and all(f.attrs.get('basis') == 'syntax' for f in returned)

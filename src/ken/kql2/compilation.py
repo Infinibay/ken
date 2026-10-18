@@ -81,12 +81,14 @@ def compile_query(
     budget_bytes: int,
     reference: bool = False,
     libraries: Mapping[str, str] | None = None,
+    read_disk: bool = True,
 ) -> tuple[Prepared, str, dict[str, int]]:
-    from .catalog import with_packaged_libraries
+    from .module_inputs import ModuleResolver
 
-    libraries = (
-        with_packaged_libraries(source) if libraries is None else dict(libraries)
-    )
+    if "import" in source:
+        with ModuleResolver(root) as resolver:
+            libraries = resolver.resolve(source, libraries=libraries).libraries
+    libraries = dict(libraries or {})
     capacity = min(budget_bytes // 5, 100_000_000)
     with _LOCK:
         name = str(root)
@@ -108,7 +110,7 @@ def compile_query(
 
     def compute() -> Prepared:
         nonlocal disk_hit
-        if capacity:
+        if capacity and read_disk:
             from ken.structural_store.artifacts import read_existing
 
             from .codec import CODEC, decode

@@ -479,6 +479,10 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
         return dispatch_retrieval(args)
     if args.cmd == 'kql2':
         from ken.kql2.cli import dispatch
+        if args.capabilities or args.explain or args.save:
+            return dispatch(args)
+        from ken.kql2.process import prepare_process
+        prepare_process(freeze=False)
         return dispatch(args)
     if (
         args.cmd in {"install", "reinstall"}
@@ -671,6 +675,10 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
         return run_mcp(Path(args.path))
 
     if args.cmd == "tools":
+        if args.tool in {'find', 'ken_find'} and not args.list:
+            from ken.mcp import server
+            from ken.kql2.process import prepare_process
+            prepare_process(freeze=False)
         return _tools_cli(
             Path(args.path),
             args.tool,

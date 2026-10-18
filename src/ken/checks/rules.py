@@ -14,6 +14,19 @@ from .snapshot import engine_version
 from .store import Store
 
 
+def _compile_definition(root: Path, rule: Rule) -> Rule:
+    """Pin registered imports so validation describes an immutable definition."""
+    from ken.kql2.compilation import compile_query
+    from ken.kql2.module_inputs import ModuleResolver
+
+    with ModuleResolver(root) as resolver:
+        resolved = resolver.resolve(rule.query, libraries=rule.libraries)
+    if resolved.revisions:
+        rule = Rule.read({**asdict(rule), "libraries":dict(resolved.libraries)})
+    compile_query(root, rule.query, None, budget_bytes=0, libraries=resolved.libraries)
+    return rule
+
+
 def validated(record: dict, version: str) -> bool:
     validation = record.get("validation") or {}
     return (
@@ -65,17 +78,7 @@ def manage(
         rule = Rule.read(definition)
         if rule_id and rule_id != rule.id:
             raise ValueError("rule_id conflicts with definition id")
-        # Compile through the same public compiler before recording a definition.
-        from ken.kql2.compilation import compile_query
-        from ken.kql2.catalog import with_packaged_libraries
-
-        compile_query(
-            root,
-            rule.query,
-            None,
-            budget_bytes=0,
-            libraries=with_packaged_libraries(rule.query, rule.libraries),
-        )
+        rule = _compile_definition(root, rule)
         record: dict[str, Any] = {
             "version": 1,
             "definition": asdict(rule),
@@ -96,16 +99,7 @@ def manage(
         replacement = Rule.read(definition)
         if replacement.id != rule.id:
             raise ValueError("update cannot rename a rule")
-        from ken.kql2.compilation import compile_query
-        from ken.kql2.catalog import with_packaged_libraries
-
-        compile_query(
-            root,
-            replacement.query,
-            None,
-            budget_bytes=0,
-            libraries=with_packaged_libraries(replacement.query, replacement.libraries),
-        )
+        replacement = _compile_definition(root, replacement)
         record.update(
             definition=asdict(replacement),
             enabled=False,

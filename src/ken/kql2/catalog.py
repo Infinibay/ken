@@ -5,6 +5,8 @@ from importlib.resources import files
 from functools import lru_cache
 from hashlib import sha256
 import tomllib
+import re
+from collections.abc import Mapping
 
 from .syntax import File, parse
 from .cache import ArtifactCache
@@ -62,11 +64,8 @@ def _compile(source: str, snapshot: tuple[tuple[str, str], ...]):
     return _COMPILED.get_or_compute(key, compute)[0]
 
 
-def with_packaged_libraries(source: str, supplied=None) -> dict[str, str]:
-    """Capture exact library texts in the same key as caller-supplied libraries."""
-    supplied = dict(supplied or {})
-    if 'ken.catalog.' not in source and not any('ken.catalog.' in text for text in supplied.values()):
-        return supplied
+def packaged_libraries() -> dict[str, str]:
+    """Capture packaged texts once for an explicit prepared library revision."""
     result = {}
     for _, text in sources():
         data = tomllib.loads(text)
@@ -75,12 +74,23 @@ def with_packaged_libraries(source: str, supplied=None) -> dict[str, str]:
             if query.lstrip().startswith('language "kql/2"'):
                 # Reuse the immutable syntax snapshot instead of parsing 138
                 # declarations on every artifact lookup.
-                import re
-                match = re.search(r'(?m)^module\s+([\w.]+);', query)
+                match = re.search(r'(?m)(?:^|;)\s*module\s+([\w.]+);', query)
                 if match:
                     result[match[1]] = query
-    result.update(supplied)
     return result
+
+
+def with_packaged_libraries(
+    source: str,
+    supplied=None,
+    *,
+    packaged: Mapping[str, str] | None = None,
+) -> dict[str, str]:
+    """Include exact packaged texts in the same key as supplied libraries."""
+    supplied = dict(supplied or {})
+    if 'ken.catalog.' not in source and not any('ken.catalog.' in text for text in supplied.values()):
+        return supplied
+    return {**(packaged_libraries() if packaged is None else packaged), **supplied}
 
 
 def compile_source(source: str, *, snapshot: tuple[tuple[str, str], ...] | None = None):

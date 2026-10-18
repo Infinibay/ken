@@ -1,9 +1,11 @@
-"""Walk a project tree honouring `.gitignore` (+ `.ken`, `.git`, etc.).
+"""Walk a project tree honouring `.gitignore` and root `.kenignore`.
 
 `pathspec` parses gitignore-format patterns. We accumulate every
 `.gitignore` we encounter and apply them to descendants in scope —
 matches git's compositional behaviour without shelling out to git
 (which would also work but adds a fork per project).
+The root `.kenignore` adds source exclusions without changing Git tracking.
+It cannot re-include a path excluded by Git or the built-in rules.
 
 Returned paths are *relative* to the supplied project root, with
 forward slashes, mirroring how the DB stores `ci_files.path`.
@@ -16,6 +18,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from pathspec import GitIgnoreSpec
+
+PROJECT_IGNORE_FILE = ".kenignore"
 
 # Ken-specific extra ignores. Git already ignores these for most users
 # but we shouldn't depend on that — also, `.ken/` itself contains the
@@ -64,6 +68,7 @@ class GitignoreMatcher:
     def __init__(self, project_root: Path) -> None:
         self.root = project_root.resolve()
         self._always_spec = _make_spec(ALWAYS_IGNORE)
+        self._project_spec = _make_spec(_read_gitignore(self.root / PROJECT_IGNORE_FILE))
         self._specs: dict[Path, GitIgnoreSpec] = {
             Path("."): _make_spec(_read_gitignore(self.root / ".gitignore")),
         }
@@ -73,6 +78,8 @@ class GitignoreMatcher:
         rel = Path(rel)
         always_path = rel.as_posix() + "/" if is_dir else rel.as_posix()
         if self._always_spec.match_file(always_path):
+            return True
+        if self._project_spec.match_file(always_path):
             return True
         ignored: bool | None = None
         for scoped in self._applicable_specs(rel):
@@ -121,12 +128,19 @@ def _ancestor_dirs(rel_dir: Path) -> Iterator[Path]:
 def iter_files(project_root: Path, *, path: str | Path = ".") -> Iterator[Path]:
     """Yield every file under *project_root* not ignored by gitignore.
 
-    Composes nested `.gitignore` files with the static `ALWAYS_IGNORE`
-    set. We don't recurse into a directory that's
+    Composes nested `.gitignore` files with root `.kenignore` and the static
+    `ALWAYS_IGNORE` set. We don't recurse into a directory that's
     itself ignored, which is the only way to avoid traversing
     `.venv/` and `node_modules/` on real-world projects (those can
     contain millions of files).
     """
+    for relative, is_dir in iter_entries(project_root, path=path):
+        if not is_dir:
+            yield relative
+
+
+def iter_entries(project_root: Path, *, path: str | Path = ".") -> Iterator[tuple[Path, bool]]:
+    """Yield visible files and directories using the same authoritative ignores."""
     from ken._paths import resolve_project_path
 
     root = project_root.resolve()
@@ -158,6 +172,7 @@ def iter_files(project_root: Path, *, path: str | Path = ".") -> Iterator[Path]:
             if matcher.is_ignored(Path(rel_posix), is_dir=is_dir):
                 continue
             if is_dir:
+                yield rel, True
                 stack.append(entry)
             elif entry.is_file():
-                yield rel
+                yield rel, False

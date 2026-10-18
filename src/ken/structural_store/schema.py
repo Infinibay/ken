@@ -2,7 +2,7 @@
 from hashlib import sha256
 
 APPLICATION_ID = 0x4B514C32
-VERSION = 14
+VERSION = 15
 BASE_STATEMENTS = (
     'CREATE TABLE k2_meta(key TEXT PRIMARY KEY, value TEXT NOT NULL)',
     'CREATE TABLE k2_migrations(version INTEGER PRIMARY KEY, checksum TEXT NOT NULL)',
@@ -72,6 +72,7 @@ from .graph_publication import STATEMENTS as PUBLICATION_STATEMENTS, TABLES as P
 from .graph_dictionary_schema import STATEMENTS as DICTIONARY_STATEMENTS, DOWN as DICTIONARY_DOWN
 
 from .graph_operation_attributes import STATEMENTS as OPERATION_ATTRIBUTE_STATEMENTS, TABLES as OPERATION_ATTRIBUTE_TABLES, DOWN as OPERATION_ATTRIBUTE_DOWN
+from .semantic_dictionary import STATEMENTS as SEMANTIC_DICTIONARY, TABLES as SEMANTIC_TABLES, RESTORE_ROWS
 
 # BODY navigation uses owner/range indexes. Global role and byte-offset indexes
 # penalize every operation insertion without helping those access paths.
@@ -109,6 +110,7 @@ MIGRATIONS = {
     12: OPERATION_ATTRIBUTE_STATEMENTS,
     13: OPERATION_INDEX_TRIM,
     14: REDUNDANT_INDEX_TRIM,
+    15: SEMANTIC_DICTIONARY,
 }
 CHECKSUMS = {v: sha256('\n'.join(sql).encode()).hexdigest() for v, sql in MIGRATIONS.items()}
 STATEMENTS = tuple(sql for statements in MIGRATIONS.values() for sql in statements)
@@ -132,6 +134,7 @@ TABLES_BY_VERSION[11] = TABLES_BY_VERSION[10]
 TABLES_BY_VERSION[12] = OPERATION_ATTRIBUTE_TABLES + TABLES_BY_VERSION[11]
 TABLES_BY_VERSION[13] = TABLES_BY_VERSION[12]
 TABLES_BY_VERSION[14] = TABLES_BY_VERSION[13]
+TABLES_BY_VERSION[15] = SEMANTIC_TABLES + tuple(t for t in TABLES_BY_VERSION[14] if t != 'k2_semantic_facts')
 TABLES = TABLES_BY_VERSION[VERSION]
 DOWN = {
     1: tuple(f'DROP TABLE {name}' for name in BASE_TABLES),
@@ -148,4 +151,6 @@ DOWN = {
     12: OPERATION_ATTRIBUTE_DOWN,
     13: OPERATION_INDEX_RESTORE,
     14: REDUNDANT_INDEX_RESTORE,
+    15: ('DROP VIEW k2_semantic_facts', SEMANTIC_STATEMENTS[1], RESTORE_ROWS,
+         'DROP TABLE k2_semantic_rows', 'DROP TABLE k2_semantic_terms') + SEMANTIC_STATEMENTS[2:],
 }

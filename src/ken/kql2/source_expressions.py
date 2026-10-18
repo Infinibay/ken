@@ -1,6 +1,21 @@
 """Generic expression-pattern forms shared by validation and BODY matching."""
 import json
+from collections.abc import Mapping, Sequence
+from ken.structural.model import Operation
 from .syntax import Expr, SourceExpr, ParseError
+
+
+def literal_boolean(op: Operation, children: Mapping[str, Sequence[Operation]]) -> bool | None:
+    """Boolean literals keep their value through grammar parentheses."""
+    seen: set[str] = set()
+    while op.native_kind in {'parenthesized_expression', 'condition_clause'} and op.id not in seen:
+        seen.add(op.id)
+        operands = [child for child in children.get(op.id, ()) if 'comment' not in child.native_kind]
+        if len(operands) != 1:
+            return None
+        op = operands[0]
+    text = op.attrs.get('text')
+    return {'True': True, 'true': True, 'False': False, 'false': False}.get(text) if isinstance(text, str) else None
 
 
 def binary_parts(expression: Expr | SourceExpr):

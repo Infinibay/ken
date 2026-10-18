@@ -41,11 +41,16 @@ def capabilities() -> dict:
     }
 
 
-def explain(source, *, query_name=None, backend="indexed", libraries=None) -> dict:
-    from .catalog import with_packaged_libraries
+def explain(source=None, *, query_name=None, backend="indexed", libraries=None,
+            root=None, saved_query=None) -> dict:
+    from pathlib import Path
+
+    from .module_inputs import ModuleResolver
     from .execution import prepare
 
-    libraries = with_packaged_libraries(source, libraries)
+    with ModuleResolver(Path.cwd() if root is None else Path(root)) as resolver:
+        resolved = resolver.resolve(source, saved_query=saved_query, query_name=query_name, libraries=libraries)
+    source, query_name, libraries = resolved.source, resolved.query_name, resolved.libraries
     program = compile(
         parse(source),
         query_name,

@@ -1,0 +1,246 @@
+{
+  "date": "2026-10-18",
+  "django": {
+    "tag": "5.2.7",
+    "commit": "3cff3209e35a560f94801d428cf7f2a3ecb2a051",
+    "tracked_files": 6904,
+    "production_python": 883,
+    "javascript_units": 87,
+    "supported_units": 970
+  },
+  "protocol": {
+    "queries": 14,
+    "repetitions": 3,
+    "warm_statistic": "median of repetitions 2 and 3 for both versions",
+    "timeout_seconds": 180,
+    "entrypoint": "public python -m ken.kql2 --json",
+    "answer_cache": "disabled",
+    "cold_runs": 1,
+    "isolation": "temporary venv, cloned Django, HOME/XDG cache; not an OS container"
+  },
+  "cold_source_preparation_ms": {
+    "before": 177172.04591596965,
+    "after": 92629.38599998597
+  },
+  "results": [
+    {
+      "name": "01_context_managers",
+      "before_cli_ms": 177.30660451343283,
+      "before_timed_out": false,
+      "after_first_cli_ms": 175.13170902384445,
+      "after_warm_cli_ms": 171.28233349649236,
+      "after_warm_prepared_ms": 43.39910397538915,
+      "before_rows": 16,
+      "after_rows": 16,
+      "before_unknown": 0,
+      "after_unknown": 0
+    },
+    {
+      "name": "02_eq_without_hash_method",
+      "before_cli_ms": 178.60749998362735,
+      "before_timed_out": false,
+      "after_first_cli_ms": 175.97999999998137,
+      "after_warm_cli_ms": 177.43139548110776,
+      "after_warm_prepared_ms": 46.05400003492832,
+      "before_rows": 0,
+      "after_rows": 0,
+      "before_unknown": 30,
+      "after_unknown": 30
+    },
+    {
+      "name": "03_iterators",
+      "before_cli_ms": 172.28854150744155,
+      "before_timed_out": false,
+      "after_first_cli_ms": 175.80874997656792,
+      "after_warm_cli_ms": 171.94841647869907,
+      "after_warm_prepared_ms": 45.34758348017931,
+      "before_rows": 6,
+      "after_rows": 6,
+      "before_unknown": 0,
+      "after_unknown": 0
+    },
+    {
+      "name": "04_save_delete",
+      "before_cli_ms": 172.44112500338815,
+      "before_timed_out": false,
+      "after_first_cli_ms": 173.49395796190947,
+      "after_warm_cli_ms": 172.2131664864719,
+      "after_warm_prepared_ms": 43.9039375341963,
+      "before_rows": 11,
+      "after_rows": 11,
+      "before_unknown": 0,
+      "after_unknown": 0
+    },
+    {
+      "name": "05_mark_safe_owners",
+      "before_cli_ms": 452.7348749979865,
+      "before_timed_out": false,
+      "after_first_cli_ms": 417.5830829772167,
+      "after_warm_cli_ms": 411.7169579840265,
+      "after_warm_prepared_ms": 283.6804164981004,
+      "before_rows": 44,
+      "after_rows": 44,
+      "before_unknown": 0,
+      "after_unknown": 0
+    },
+    {
+      "name": "06_import_string_owners",
+      "before_cli_ms": 430.93291702098213,
+      "before_timed_out": false,
+      "after_first_cli_ms": 411.43325000302866,
+      "after_warm_cli_ms": 421.5603749617003,
+      "after_warm_prepared_ms": 293.3961044764146,
+      "before_rows": 35,
+      "after_rows": 35,
+      "before_unknown": 0,
+      "after_unknown": 0
+    },
+    {
+      "name": "07_exact_import_string_target",
+      "before_cli_ms": null,
+      "before_timed_out": true,
+      "after_first_cli_ms": 100337.65191701241,
+      "after_warm_cli_ms": 1165.8628750010394,
+      "after_warm_prepared_ms": 998.8242500112392,
+      "before_rows": null,
+      "after_rows": 34,
+      "before_unknown": null,
+      "after_unknown": 19
+    },
+    {
+      "name": "08_returned_mark_safe",
+      "before_cli_ms": 9571.633833518717,
+      "before_timed_out": false,
+      "after_first_cli_ms": 1238.3027920150198,
+      "after_warm_cli_ms": 1197.86216650391,
+      "after_warm_prepared_ms": 1069.730334013002,
+      "before_rows": 3,
+      "after_rows": 29,
+      "before_unknown": 11428,
+      "after_unknown": 23
+    },
+    {
+      "name": "09_returned_cached_import_target",
+      "before_cli_ms": 8585.704187484225,
+      "before_timed_out": false,
+      "after_first_cli_ms": 1197.3395840032026,
+      "after_warm_cli_ms": 1007.8088330046739,
+      "after_warm_prepared_ms": 877.0706879731733,
+      "before_rows": 0,
+      "after_rows": 1,
+      "before_unknown": 11421,
+      "after_unknown": 12
+    },
+    {
+      "name": "10_commit_and_rollback",
+      "before_cli_ms": 432.5376250199042,
+      "before_timed_out": false,
+      "after_first_cli_ms": 431.8237499683164,
+      "after_warm_cli_ms": 423.8484795205295,
+      "after_warm_prepared_ms": 293.5242080129683,
+      "before_rows": 1,
+      "after_rows": 1,
+      "before_unknown": 0,
+      "after_unknown": 0
+    },
+    {
+      "name": "11_commit_before_rollback",
+      "before_cli_ms": 9363.484625006095,
+      "before_timed_out": false,
+      "after_first_cli_ms": 1079.0650420240127,
+      "after_warm_cli_ms": 1023.2185829954688,
+      "after_warm_prepared_ms": 896.8973334995098,
+      "before_rows": 0,
+      "after_rows": 0,
+      "before_unknown": 11421,
+      "after_unknown": 12
+    },
+    {
+      "name": "12_mutable_defaults",
+      "before_cli_ms": null,
+      "before_timed_out": true,
+      "after_first_cli_ms": 14778.36912497878,
+      "after_warm_cli_ms": 130.94264551182278,
+      "after_warm_prepared_ms": 2.94987452798523,
+      "before_rows": null,
+      "after_rows": 0,
+      "before_unknown": null,
+      "after_unknown": 0
+    },
+    {
+      "name": "13_wildcard_imports",
+      "before_cli_ms": 1057.0598339836579,
+      "before_timed_out": false,
+      "after_first_cli_ms": 3347.0880000386387,
+      "after_warm_cli_ms": 1006.4634375448804,
+      "after_warm_prepared_ms": 869.5641665253788,
+      "before_rows": 31,
+      "after_rows": 31,
+      "before_unknown": 0,
+      "after_unknown": 0
+    },
+    {
+      "name": "14_handlers_without_raise",
+      "before_cli_ms": 1076.5577080019284,
+      "before_timed_out": false,
+      "after_first_cli_ms": 977.2938339738175,
+      "after_warm_cli_ms": 976.1026460037101,
+      "after_warm_prepared_ms": 835.2151035214774,
+      "before_rows": 889,
+      "after_rows": 889,
+      "before_unknown": 0,
+      "after_unknown": 0
+    }
+  ],
+  "value_flow_validation": {
+    "direct_mark_safe_returns": 29,
+    "recovered": 29,
+    "includes_lambda": true,
+    "exact_import_alias_aware_expected": 36,
+    "exact_import_witnesses": 34,
+    "missing_exact_import_owners": [
+      [
+        "django/db/migrations/state.py",
+        931
+      ],
+      [
+        "django/template/utils.py",
+        67
+      ]
+    ]
+  },
+  "verification": {
+    "experiment_checks": 173,
+    "root_targeted_tests_passed": 173,
+    "mypy_affected_modules": 19,
+    "mypy_status": "passed",
+    "general_suite": "Suite completa: 15.413 aprobadas, 10 xfailed y 7 fallos. Cuatro fallos de ubicaci\u00f3n de checkout/formato CLI pasaron al repetir desde el proyecto principal (root-retests.log). Persisten tres fallos reproducidos tambi\u00e9n en el c\u00f3digo anterior: la prueba stdio MCP espera JSON pero recibe texto, y dos pruebas de modelos presuponen que Qwen no est\u00e1 soportado por la versi\u00f3n instalada de fastembed. No se cambi\u00f3 ni se suprimi\u00f3 esas tres comprobaciones.",
+    "general_raw": {
+      "passed": 15413,
+      "xfailed": 10,
+      "failed": 7,
+      "seconds": 650.86,
+      "subsequently_passed": 4,
+      "baseline_failures_reproduced": 3
+    },
+    "baseline_failure_logs": [
+      "baseline-mcp.log",
+      "baseline-model-tests.log"
+    ]
+  },
+  "limitations": [
+    "Global coverage remains false because django/views/templates/i18n_catalog.js contains template syntax.",
+    "Mixed-scope absent __hash__ query remains 0 witnesses/30 unknowns.",
+    "Return value origins behind conditional aliases, suspension and exception paths retain uncertainty.",
+    "Cold source and semantic preparations are separate phases in this query sequence; this is not a direct virgin-clone BODY latency measurement."
+  ],
+  "resource_scope": {
+    "worker_sampled_rss_bytes_before": 5412470784,
+    "worker_sampled_rss_bytes_after": 4395958272,
+    "index_root_peak_bytes_before": 7010356298,
+    "index_root_peak_bytes_after": 2549299968,
+    "after_private_semantic_sqlite_bytes": 1424134144,
+    "notes": "Sample maxima, not guaranteed peaks. Index-root counts exclude private temporary SQLite files. Before private-spill size was not measured; total disk use is not directly comparable."
+  },
+  "candidate_python_manifest_sha256": "f954301f96d50598de09c9256925b266022202e562b04ca0635fbed89ff49018"
+}

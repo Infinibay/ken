@@ -267,3 +267,22 @@ def test_documented_failure_injection_distinguishes_the_order(tmp_path):
         "commit_then_publish ['committed']",
         "publish_then_commit []",
     ]
+
+def test_saved_module_recipe_runs_literal_programs_by_name(tmp_path, capsys):
+    resources = bundled_skills()["ken-find-code-patterns"]
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src/sample.py").write_bytes(resources["references/kql2/sample.py.txt"])
+    library = LIBRARIES["lesson.writers"]
+    entry = next(source for _, source in PROGRAMS if parse(source).module == "lesson.client")
+    assert main(["install", str(tmp_path), "--no-wire", "--quiet"]) == 0
+    capsys.readouterr()
+    for name, source in (("writers",library),("client",entry)):
+        file = tmp_path / (name + ".kql")
+        file.write_text(source)
+        assert main(["kql2", str(file), "--root", str(tmp_path), "--save"]) == 0
+        capsys.readouterr()
+    assert main(["tools", "--path", str(tmp_path), "--json", "query", "--action", "show", "--module", "lesson.client"]) == 0
+    assert json.loads(capsys.readouterr().out)["source"] == entry
+    assert main(["tools", "--path", str(tmp_path), "--json", "find", "--scope", "structure", "--query-language", "kql/2",
+                 "--saved-query", "lesson.client", "--query-name", "imported_writer", "--path", "src", "--cache-mb", "0"]) == 0
+    assert json.loads(capsys.readouterr().out)["rows"] == [["Writer", "write"]]

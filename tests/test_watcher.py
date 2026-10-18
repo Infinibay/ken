@@ -75,3 +75,22 @@ def test_watcher_nested_gitignore_change_schedules_resync(tmp_path):
     assert queue.resyncs == 1
     assert queue.reindexed == []
     assert queue.deleted == []
+
+
+def test_kenignore_reload_handles_creation_and_removal(tmp_path):
+    queue = _Queue()
+    watcher = FileWatcher(tmp_path, queue)  # type: ignore[arg-type]
+    watcher._matcher = watcher._load_matcher()
+    source = str(tmp_path / 'archive/old.py')
+    config = tmp_path / '.kenignore'
+    assert watcher._watch_filter(Change.modified, source)
+    config.write_text('archive/\n.*\n')
+    assert watcher._watch_filter(Change.added, str(config))
+    watcher._handle({(Change.added, str(config))})
+    assert queue.resyncs == 1
+    assert not watcher._watch_filter(Change.modified, source)
+    config.unlink()
+    assert watcher._watch_filter(Change.deleted, str(config))
+    watcher._handle({(Change.deleted, str(config))})
+    assert queue.resyncs == 2
+    assert watcher._watch_filter(Change.modified, source)

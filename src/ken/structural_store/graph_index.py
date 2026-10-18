@@ -395,17 +395,20 @@ class GraphIndex(FactIndex):
         return witnesses, missing
 
     def close(self):
-        self.term.cache_clear()
-        self._cached_endpoint_rows.cache_clear()
-        self.count_rows.cache_clear()
-        self._small_rows.cache_clear()
-        self._row_cache.clear()
-        self._coverage.clear()
-        self._operation_owners.clear()
-        self._missing_calls = None
-        self.ir.entities.get_entity.cache_clear()
-        self.values.cache.clear()
-        self.values.words.get.cache_clear()
-        if self.owns_store:
-            self.owns_store = False
-            self.store.close()
+        """Release caches and attempt to close a store owned by this index."""
+        try:
+            self.term.cache_clear()
+            self._cached_endpoint_rows.cache_clear()
+            self.count_rows.cache_clear()
+            self._small_rows.cache_clear()
+            self._row_cache.clear()
+            self._coverage.clear()
+            self._operation_owners.clear()
+            self._missing_calls = None
+            self.ir.entities.get_entity.cache_clear()
+            self.values.cache.clear()
+            self.values.words.get.cache_clear()
+        finally:
+            if self.owns_store:
+                self.owns_store = False
+                self.store.close()

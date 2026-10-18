@@ -21,11 +21,11 @@ from __future__ import annotations
 import logging
 import threading
 from pathlib import Path
+from typing import Protocol
 
 from watchfiles import Change, watch
 
-from ken.daemon.index_queue import IndexQueue
-from ken.gitignore_filter import GitignoreMatcher
+from ken.gitignore_filter import GitignoreMatcher, PROJECT_IGNORE_FILE
 
 logger = logging.getLogger("ken.watcher")
 
@@ -36,10 +36,18 @@ DEBOUNCE_MS = 200
 MASS_CHANGE_THRESHOLD = 512
 
 
+class ChangeSink(Protocol):
+    """A consumer of source edits; indexing and prepared queries are consumers."""
+
+    def reindex(self, rel: str) -> None: ...
+    def delete(self, rel: str) -> None: ...
+    def resync(self) -> None: ...
+
+
 class FileWatcher:
     """Background thread that pushes filesystem changes into IndexQueue."""
 
-    def __init__(self, project_root: Path, queue: IndexQueue) -> None:
+    def __init__(self, project_root: Path, queue: ChangeSink) -> None:
         self.project_root = project_root.resolve()
         self.queue = queue
         self._stop_event = threading.Event()
@@ -78,11 +86,11 @@ class FileWatcher:
             logger.exception("watcher loop crashed")
 
     def _handle(self, changes: set[tuple[Change, str]]) -> None:
-        # Reload if any gitignore changed. A pattern change can make
+        # Reload if source exclusions changed. A pattern change can make
         # already-indexed paths stale, so ask the queue for a full resync.
-        if any(Path(p).name == ".gitignore" for _, p in changes):
+        if any(Path(p).name == ".gitignore" or self._rel(p) == PROJECT_IGNORE_FILE for _, p in changes):
             self._matcher = self._load_matcher()
-            logger.info("gitignore changed; scheduling index resync")
+            logger.info("source exclusions changed; scheduling index resync")
             self.queue.resync()
             return
 
@@ -116,6 +124,10 @@ class FileWatcher:
             return False
         if not rel:
             return False
+        # Root configuration changes must remain visible even when the user
+        # excludes dotfiles or the configuration file itself from source search.
+        if rel in {".gitignore", PROJECT_IGNORE_FILE}:
+            return True
         matcher = self._matcher
         if matcher is None:
             return True

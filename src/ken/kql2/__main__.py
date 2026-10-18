@@ -7,7 +7,12 @@ from .cli import configure, dispatch
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     configure(parser)
-    return dispatch(parser.parse_args())
+    args = parser.parse_args()
+    if args.capabilities or args.explain or args.save:
+        return dispatch(args)
+    from .process import prepare_process
+    prepare_process(freeze=False)
+    return dispatch(args)
 
 
 if __name__ == '__main__':

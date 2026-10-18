@@ -48,6 +48,35 @@ def test_iter_files_works_without_gitignore(tmp_path):
     assert rels == {"a.py", "b.py"}
 
 
+def test_kenignore_excludes_archives_without_changing_git_rules(tmp_path, monkeypatch):
+    _touch(tmp_path / "src/current.py")
+    _touch(tmp_path / "docs/validation/project/src/old.py")
+    (tmp_path / ".kenignore").write_text("docs/validation/\n")
+    original = Path.iterdir
+
+    def iterdir(path):
+        assert path != tmp_path / "docs/validation", "Ignored archive was traversed"
+        return original(path)
+
+    monkeypatch.setattr(Path, 'iterdir', iterdir)
+    paths = set(iter_files(tmp_path))
+    assert Path("src/current.py") in paths
+    assert Path("docs/validation/project/src/old.py") not in paths
+    assert list(iter_files(tmp_path, path="docs/validation/project")) == []
+    assert (tmp_path / "docs/validation/project/src/old.py").is_file()
+    assert not (tmp_path / ".gitignore").exists()
+
+
+def test_kenignore_negation_cannot_override_git_or_builtin_exclusions(tmp_path):
+    for name in ("src/drop.py", "src/keep.py", "secret.env", ".ken/cache.py"):
+        _touch(tmp_path / name)
+    (tmp_path / ".gitignore").write_text("*.env\n")
+    (tmp_path / ".kenignore").write_text("src/*.py\n!src/keep.py\n!secret.env\n!.ken/\n")
+    paths = {p.as_posix() for p in iter_files(tmp_path)}
+    assert "src/keep.py" in paths
+    assert not paths.intersection({"src/drop.py", "secret.env", ".ken/cache.py"})
+
+
 def test_iter_files_yields_only_files_not_directories(tmp_path):
     _touch(tmp_path / "src" / "a.py")
     rels = list(iter_files(tmp_path))

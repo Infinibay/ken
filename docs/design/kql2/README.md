@@ -6,6 +6,8 @@ Existe una implementación experimental parcial: consultar el
 sigue siendo el objetivo; los ejemplos que usan capacidades pendientes no son
 ejecutables aún. El catálogo activo de 33 TOML usa KQL 2 sobre el [grafo semántico](graph-queries.md).
 KenQL 1 sigue disponible para consultas guardadas e identificadores históricos.
+El [registro de módulos KQL2](module-registry.md) conserva queries y patterns en
+la DB de Ken, con ejecución por nombre e imports automáticos desde CLI/MCP.
 
 El backend optativo [`exploration`](exploration-engine.md) compila consultas
 sintácticas a recorridos sobre AST persistidos en FlatBuffers. Incluye ejemplos
@@ -39,6 +41,7 @@ Los grupos `fields` y `parameters` se conservan para restricciones de conjunto.
 | Documento | Qué fija |
 |---|---|
 | [Estado de implementación](implementation-status.md) | Capacidades ejecutables, pendientes y acceso experimental |
+| [Sesiones de consultas preparadas](query-sessions.md) | API pública, revisión capturada, actualización explícita y gate de 10 ms sobre 500 archivos |
 | [Engine de exploración](exploration-engine.md) | Backend FlatBuffers, compilación de recorridos, capacidades, CLI y mediciones |
 | [Consultas sobre el grafo](graph-queries.md) | Perfil ejecutable del catálogo, relaciones, contexto, recorridos y cardinalidad |
 | [AST común y contextos](common-ast.md) | Arquitectura central, almacenamiento parcial, ámbitos y disponibilidad por anidación |

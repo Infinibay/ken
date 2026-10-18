@@ -101,6 +101,9 @@ def run(start: Path) -> int:
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(name)s %(message)s",
     )
+    from ken.kql2.process import prepare_process
+
+    prepare_process(freeze=True)
     logger.info("ken mcp ready project_root=%s", root)
     mcp.run(transport="stdio")
     return 0
@@ -954,6 +957,8 @@ def ken_find(
     full: bool = False,
     query_language: Literal["kenql/1", "kql/2"] = "kenql/1",
     libraries: dict[str, str] | None = None,
+    saved_query: str | None = None,
+    query_name: str | None = None,
     response_format: Literal["auto", "legacy", "evidence", "compact"] = "auto",
     purpose: Literal["auto", "implementation", "usage", "tests", "documentation"] = "auto",
     max_chars: int = 12000,
@@ -999,7 +1004,10 @@ def ken_find(
 
     *language* filters ``text`` results (e.g. "python").
     For KQL2 use scope="structure", query_language="kql/2" and an inline
-    versioned query. *libraries* maps module names to KQL2 source text; results
+    versioned query, or *saved_query* naming a module saved with ken_query.
+    *query_name* chooses an entry when a module declares several queries.
+    Imports resolve registered patterns automatically; explicit *libraries*
+    override registry modules. *libraries* maps module names to KQL2 source text; results
     retain coverage and budget status. Saved TOML selectors still use KQL1.
 
     Files/symbols use the complete best search configuration by default.
@@ -1039,18 +1047,23 @@ def ken_find(
         raise ValueError("purpose requires response_format=evidence or compact")
     if query_language == 'kql/2':
         if scope != 'structure' or any((rules, collections, tags, rule_files)):
-            raise ValueError('KQL2 requires an inline structural query; TOML migration is separate')
+            raise ValueError('KQL2 requires a structural query; TOML migration is separate')
         if evidence_mode != 'strict':
             raise ValueError('KQL2 evidence modes are expressed by the query, not the KQL1 flag')
-        from ken.kql2.service import search as search_kql2
+        from ken.kql2.automatic import search as search_kql2
         from ken.checks.report import query_view
         assert _PROJECT_ROOT is not None
-        result = search_kql2(_PROJECT_ROOT, query, path=path, cache_mb=cache_mb,
+        named = {}
+        if saved_query is not None:
+            named['saved_query'] = saved_query
+        if query_name is not None:
+            named['query_name'] = query_name
+        result = search_kql2(_PROJECT_ROOT, query or None, path=path, cache_mb=cache_mb,
                            timeout_ms=timeout_ms, max_rows=limit,
-                           libraries=libraries)
+                           libraries=libraries, **named)
         return query_view(result, full=full)
-    if libraries:
-        raise ValueError('inline libraries require query_language=kql/2')
+    if libraries or saved_query is not None or query_name is not None:
+        raise ValueError('libraries, saved_query and query_name require query_language=kql/2')
     if scope != "structure" and any((rules, collections, tags, rule_files)):
         raise ValueError("saved rule selectors require scope=structure")
     ranked_limit = 10 if limit is None else limit
@@ -1105,6 +1118,54 @@ def ken_find(
         "error": f"unknown scope {scope!r}",
         "scopes": ["files", "symbols", "text", "tests", "wiring", "intent", "structure", "patterns", "bugs"],
     }
+
+
+@ken_tool
+def ken_query(
+    action: Literal["save", "list", "show", "delete"] = "list",
+    module: str = "",
+    source: str = "",
+    description: str | None = None,
+    expected_revision: str | None = None,
+    prefix: str = "",
+    limit: int = 50,
+    offset: int = 0,
+) -> dict:
+    """Save and discover reusable KQL2 modules in the project's Ken DB.
+
+    save takes complete versioned source with a module declaration and queries
+    or patterns; save imported modules first. show returns source and revision.
+    Replacing source requires the current expected_revision from show; identical
+    saves are idempotent. delete refuses modules imported by another saved module.
+    list returns metadata with prefix/limit/offset pagination. Saving checks syntax
+    and imports; execution checks backend support. Execute with ken_find using
+    scope="structure", query_language="kql/2", saved_query=module and optional
+    query_name. Inline queries can import saved patterns and use them normally.
+    These modules are reusable searches, not validated/enabled source contracts;
+    use ken_rule for contracts with passing and failing examples.
+    """
+    from ken.kql2.registry import ModuleRegistry, module_tree
+
+    assert _PROJECT_ROOT is not None
+    registry = ModuleRegistry(_PROJECT_ROOT)
+    if action == 'save':
+        if module and module_tree(source).module != module:
+            raise ValueError('module conflicts with source declaration')
+        return registry.save(source, description=description, expected_revision=expected_revision).to_dict()
+    if action == 'list':
+        if not 1 <= limit <= 200 or offset < 0:
+            raise ValueError('limit must be 1..200 and offset must be nonnegative')
+        records = [record for record in registry.list_modules() if record.module.startswith(prefix)]
+        return {'modules':[record.to_dict() for record in records[offset:offset + limit]],
+                'total':len(records), 'offset':offset, 'limit':limit}
+    if not module:
+        raise ValueError('show/delete requires module')
+    if action == 'show':
+        return registry.get(module).to_dict(source=True)
+    if action == 'delete':
+        registry.delete(module, expected_revision=expected_revision)
+        return {'deleted':module}
+    raise ValueError('action must be save/list/show/delete')
 
 
 @ken_tool

@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 import time
 from contextlib import nullcontext
-from collections.abc import Iterable
+from collections.abc import Iterable, Callable
 from typing import TYPE_CHECKING, Any
 
 from .model import Fact, FactIndex
@@ -112,7 +112,7 @@ class Executor:
         self._owned: dict[str, set[str]] = {}
         # Selectivity of a clause shape, for join ordering only.
         self._sizes: dict[tuple, int] = {}
-        self.check = None
+        self.check: Callable[[], None] | None = None
         self.reference = False
         self._source_plans: dict[
             tuple[int, frozenset[str]], tuple[list[Node], list[Node]]

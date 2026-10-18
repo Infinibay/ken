@@ -2,6 +2,7 @@
 
 This pass does not build a CFG. Unsupported scopes keep the older structural
 summary; RETURN_ORIGIN is emitted only for evaluated, explicit return operands.
+A plain raise/throw ends its normal path; try/handlers remain unsupported.
 A narrower loop pass snapshots condition reads within a single iteration.
 """
 from collections import defaultdict
@@ -10,7 +11,7 @@ from hashlib import sha256
 from .model import IR, Operation
 
 
-def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
+def sequential_returns(graph: IR, *, diagnostic_paths: set[str] | None = None) -> dict[tuple[str, str], set[str]]:
     """Return precise overrides for (callable, operand) allocation summaries."""
     operations = {o.id: o for o in graph.operations}
     by_owner: dict[str, list[Operation]] = defaultdict(list)
@@ -81,7 +82,8 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
     containers = {'expression_statement', 'lexical_declaration', 'variable_declaration',
                   'local_variable_declaration', 'local_declaration_statement', 'declaration',
                   'return_statement', 'statement_list'}
-    blocked_kinds = {'LOOP', 'TRY', 'THROW', 'YIELD', 'AWAIT', 'RESOURCE_SCOPE', 'MATCH', 'IMPORT', 'EXPORT'}
+    blocked_kinds = {'LOOP', 'TRY', 'YIELD', 'AWAIT', 'RESOURCE_SCOPE', 'MATCH', 'IMPORT', 'EXPORT'}
+    terminal_throw_native = {'raise_statement', 'throw_statement'}
     blocked_native = {'global_statement', 'nonlocal_statement', 'delete_statement',
                       'update_expression', 'augmented_assignment', 'augmented_assignment_expression',
                       'goto_statement', 'labeled_statement', 'lock_statement', 'unsafe_statement',
@@ -111,7 +113,9 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
             return False
 
         reason = ''
-        if graph.diagnostics:
+        diagnostics = (bool(graph.diagnostics) if diagnostic_paths is None
+                       else entity.path in diagnostic_paths)
+        if diagnostics:
             reason = 'diagnostics'
         # Go, Rust and C++ are admitted for the bodies measured in P1.6. Multiple
         # assignment (Go ``a, b := f()``, Rust ``let (a, b) = f()``) targets an
@@ -126,6 +130,7 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
         elif owner in nested or owner in dynamic:
             reason = 'nested-or-dynamic-execution'
         elif any(o.kind in blocked_kinds or o.native_kind in blocked_native
+                 or (o.kind == 'THROW' and o.native_kind not in terminal_throw_native)
                  # An ``elif``/``else if`` arm is an analysed branch (collected below),
                  # not an opaque construct: it has its own condition and arms.
                  or (o.kind == 'BRANCH' and o.native_kind not in {'if_statement', 'elif_clause'}
@@ -193,7 +198,8 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
         # Rust spells explicit returns ``return_expression``. Use the common
         # operation kind so its return observes the same reaching definitions.
         exits = [o for o in ops if o.kind == 'RETURN']
-        if any(region_for(o) is None for o in [*exits, *branches]):
+        throws = [o for o in ops if o.kind == 'THROW']
+        if any(region_for(o) is None for o in [*exits, *throws, *branches]):
             reason = reason or 'nested-return'
         if any('consequence' not in pair for pair in arms.values()):
             reason = reason or 'branch-grammar'
@@ -240,7 +246,7 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
                     declared_blocks[binding].add(block)
             if any(len(blocks) > 1 for blocks in declared_blocks.values()):
                 reason = reason or 'shadowed-binding'
-        if (not graph.diagnostics and owner not in nested and owner not in dynamic
+        if (not diagnostics and owner not in nested and owner not in dynamic
                 and entity.attrs.get('language') in {'python', 'javascript', 'typescript', 'java', 'csharp', 'go', 'rust', 'cpp'}
                 and any(op.kind == 'LOOP' for op in ops)):
             _iteration_condition_origins(graph, ops, operations, targets, values,
@@ -302,7 +308,7 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
                         escaped.add(source)
                         todo.append(source)
         events: dict[str, list[Operation]] = defaultdict(list)
-        for op in [*writes, *exits, *branches]:
+        for op in [*writes, *exits, *throws, *branches]:
             region = region_for(op)
             if region is not None:
                 events[region].append(op)
@@ -381,6 +387,10 @@ def sequential_returns(graph: IR) -> dict[tuple[str, str], set[str]]:
                                 raise OverflowError('flow-work')
                             merged[binding] = cases
                         continuing = [merged]
+                elif op.kind == 'THROW':
+                    # There is no normal continuation from a terminal raise.
+                    # Local handlers would invalidate this rule; TRY is refused above.
+                    return []
                 elif op.id in targets:
                     for state in states:
                         rhs = snapshot(values[op.id], state)

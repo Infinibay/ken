@@ -9,6 +9,7 @@ import posixpath
 import re
 from collections import defaultdict
 from pathlib import PurePosixPath
+from collections.abc import Callable
 
 from .model import Entity, Fact, IR
 
@@ -39,15 +40,20 @@ def rust_denoted_type(spelling: str) -> str:
     return re.sub(r"^(?:dyn|impl)\s+", "", pointer[1].strip())
 
 
-def link_project(units: list[IR], *, copy_entities: bool = True) -> IR:
+def link_project(units: list[IR], *, copy_entities: bool = True,
+                 check: Callable[[], None] | None = None) -> IR:
     """Link units, isolating their mutable entity metadata by default.
 
     A caller that owns disposable units may transfer their entities with
     ``copy_entities=False``. Those units must not be reused after linking.
     """
     graph = IR("<project>", "mixed")
+    check = check or (lambda: None)
+    check()
+    diagnostic_paths = {unit.path for unit in units if unit.diagnostics}
     graph.capabilities = set.intersection(*(u.capabilities for u in units)) if units else set()
     for unit in units:
+        check()
         from copy import deepcopy
         graph.entities.update(deepcopy(unit.entities) if copy_entities else unit.entities)
         graph.operations.extend(unit.operations)
@@ -413,6 +419,7 @@ def link_project(units: list[IR], *, copy_entities: bool = True) -> IR:
     # target when a storage location can hold more than one concrete type.
     changed = False
     for _ in range(16):
+        check()
         changed = False
         for f in by_relation["ASSIGNED_FROM"]:
             before = len(known[f.subject])
@@ -641,7 +648,8 @@ def link_project(units: list[IR], *, copy_entities: bool = True) -> IR:
     for f in by_relation["ASSIGNED_FROM"]:
         assigned[f.subject].add(f.object)
     from .return_flow import sequential_returns
-    precise_returns = sequential_returns(graph)
+    check()
+    precise_returns = sequential_returns(graph, diagnostic_paths=diagnostic_paths)
     for f in by_relation["RETURNS"]:
         if f.object in entities and entities[f.object].kind == "STORAGE":
             graph.add(f.subject, "RETURNS_STORAGE", f.object, *f.evidence[:1], execution=f.attrs.get('execution', 'unknown'))
@@ -687,6 +695,7 @@ def link_project(units: list[IR], *, copy_entities: bool = True) -> IR:
         for value in returns[target]:
             graph.add(value, "FLOWS_TO", call)
     from .field_initialization import field_initial_values
+    check()
     field_initial_values(graph, declared_types)
     # Enrich selector metadata through facts; lexical names remain available for
     # explicit user predicates, but catalogue roles do not depend on them.
@@ -722,14 +731,17 @@ def link_project(units: list[IR], *, copy_entities: bool = True) -> IR:
     from .binding_writes import binding_writes
     from .collection_lifecycle import collection_lifecycle
     annotation_types(graph)
-    structured_control(graph)
+    check()
+    structured_control(graph, diagnostic_paths=diagnostic_paths)
     syntax_contexts(graph)
     from .normal_completion import normal_completion
     normal_completion(graph)
+    check()
     collection_snapshots(graph)
     collection_lifecycle(graph)
     nominal_roots(graph)
     member_access(graph)
+    check()
     from .structural_contracts import structural_contracts
     structural_contracts(graph)
     from .events import csharp_events
@@ -744,6 +756,8 @@ def link_project(units: list[IR], *, copy_entities: bool = True) -> IR:
     resolved_allocations(graph)
     from .write_inventory import explicit_write_inventory
     explicit_write_inventory(graph)
+    check()
     from .value_contracts import value_contracts
     value_contracts(graph)
+    check()
     return graph

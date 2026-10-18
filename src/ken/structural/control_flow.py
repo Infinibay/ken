@@ -1,17 +1,25 @@
 """Statement-level structured CFG, with explicit partial coverage.
 
-Expression evaluation, short circuit, exceptions and suspension are not expanded
-here. Edges describe normal structured control, not feasible runtime paths.
+Expression evaluation and injected generator exceptions are not expanded here.
+Edges describe structured source routes, not feasible runtime paths. Python
+handlers branch before an atomic statement completes, so a failed RHS never
+produces its normal result or write.
 """
 from collections import defaultdict
 
 from .model import IR, Operation
 
 
-def structured_control(graph: IR) -> None:
+def structured_control(graph: IR, *, diagnostic_paths: set[str] | None = None) -> None:
     operations = {op.id: op for op in graph.operations}
     children: dict[str, list[Operation]] = defaultdict(list)
     by_owner: dict[str, list[Operation]] = defaultdict(list)
+    local_bindings: dict[str, dict[str, str]] = defaultdict(dict)
+    for fact in graph.facts:
+        if fact.relation in {'DECLARES', 'HAS_PARAMETER'}:
+            binding = graph.entities.get(fact.object)
+            if binding is not None and binding.kind in {'STORAGE', 'PARAMETER'}:
+                local_bindings[fact.subject][binding.name] = binding.id
     for op in graph.operations:
         by_owner[op.owner].append(op)
         parent = operations.get(op.parent or '')
@@ -35,17 +43,68 @@ def structured_control(graph: IR) -> None:
         edges: list[tuple[str,str,str]] = []
         facts: list[tuple[str,str,str]] = []
         missing = set()
+        gaps: set[str] = set()
+        handlers: list[tuple[str, ...]] = []
 
         def edge(a: str, b: str, kind: str = 'next') -> None:
             edges.append((a,b,kind))
 
+        def may_raise(op: Operation, depth: int = 0) -> bool:
+            """Conservative atomic evaluation; an unlisted expression can throw.
+
+            This is an exceptional source route, not a type/feasibility proof.
+            Only inert statements and literal operands close the inventory.
+            Ordinary yield is suspension; delegated iteration can itself fail.
+            """
+            if depth > 64:
+                return True
+            literal = {'none', 'true', 'false', 'integer', 'float', 'string'}
+            if op.native_kind == 'string' and any(c.native_kind == 'interpolation' for c in children[op.id]):
+                return True
+            if op.native_kind in literal | {'pass_statement', 'break_statement', 'continue_statement'}:
+                return False
+            nested = children[op.id]
+            if op.native_kind in {'expression_statement', 'parenthesized_expression', 'return_statement'}:
+                return any(may_raise(child, depth + 1) for child in nested)
+            if op.native_kind == 'assignment':
+                fields = {child.role: child for child in nested}
+                return (fields.get('left') is None or fields['left'].native_kind != 'identifier'
+                        or fields.get('right') is None or may_raise(fields['right'], depth + 1))
+            if op.kind == 'YIELD' and not op.attrs.get('delegated'):
+                return any(may_raise(child, depth + 1) for child in nested)
+            if op.kind in {'BRANCH', 'LOOP'}:
+                conditions = [child for child in nested if child.role == 'condition']
+                return not conditions or any(may_raise(child, depth + 1) for child in conditions)
+            return True
+
         def build(op: Operation, after: str, break_to: str | None = None,
+                  continue_to: str | None = None, depth: int = 0, false_after: str | None = None) -> str:
+            entry = build_statement(op, after, break_to, continue_to, depth, false_after)
+            if (handlers and handlers[-1] and entry == op.id
+                    and graph.entities[owner].attrs.get('language') == 'python'
+                    and op.kind != 'TRY'):
+                if may_raise(op):
+                    dispatch = op.id + '::exception-dispatch'
+                    if op.kind == 'LOOP':
+                        # Re-evaluating a condition / advancing an iterator can
+                        # fail after a completed iteration too.
+                        edges[:] = [(a, dispatch if b == op.id else b, kind)
+                                    for a, b, kind in edges]
+                    graph.add(owner, 'CFG_DISPATCH', dispatch, operation=op.id)
+                    edge(dispatch, entry, 'normal')
+                    for handler in handlers[-1]:
+                        edge(dispatch, handler, 'exception')
+                    return dispatch
+            return entry
+
+        def build_statement(op: Operation, after: str, break_to: str | None = None,
                   continue_to: str | None = None, depth: int = 0, false_after: str | None = None) -> str:
             if depth > 64:
                 missing.add('nesting-limit')
                 return after
             nested = children[op.id]
             fields = {c.role:c for c in nested if c.role}
+            language = graph.entities[owner].attrs.get('language')
             if op.native_kind == 'expression_statement' and len(nested) == 1 and nested[0].native_kind in loops | {'if_expression','return_expression','break_expression','continue_expression'}:
                 return build(nested[0],after,break_to,continue_to,depth+1)
             if op.native_kind in blocks:
@@ -116,6 +175,97 @@ def structured_control(graph: IR) -> None:
                 else:
                     edge(op.id,target,'break' if is_break else 'continue')
                 return op.id
+            if language == 'python' and op.native_kind == 'with_statement':
+                resource_body = fields.get('body')
+                if resource_body is not None:
+                    entry = build(resource_body, after, break_to, continue_to, depth+1)
+                    edge(op.id, entry, 'enter')
+                    return op.id
+            if language == 'python' and op.native_kind == 'try_statement':
+                protected = fields.get('body')
+                finalizer = next((c for c in nested if c.native_kind == 'finally_clause'), None)
+                opaque_handler = False
+                for arm in nested:
+                    if arm.native_kind != 'except_clause':
+                        continue
+                    opaque_handler |= '*' in arm.attrs.get('tokens', ())
+                    todo = [c for c in children[arm.id] if c.native_kind != 'block']
+                    while todo:
+                        header = todo.pop()
+                        opaque_handler |= header.kind == 'CALL'
+                        todo.extend(children[header.id])
+                if protected is not None and finalizer is None:
+                    missing.add('exception-dispatch')
+                    entries = []
+                    catches_all = False
+                    for arm in nested:
+                        if opaque_handler:
+                            break
+                        if arm.native_kind != 'except_clause':
+                            continue
+                        arm_body = next((c for c in children[arm.id] if c.native_kind == 'block'), None)
+                        if arm_body is not None:
+                            # Python binds and later deletes ``except E as x``.
+                            # Neither occurrence retains an earlier value of x.
+                            aliases = [c for c in children[arm.id] if c.native_kind == 'as_pattern']
+                            names = [name.attrs.get('text') for alias in aliases
+                                     for target in children[alias.id] if target.role == 'alias'
+                                     for name in children[target.id]]
+                            invalidated = [local_bindings[owner][name] for name in names
+                                           if name in local_bindings[owner]]
+
+                            def cleanup(label: str, target: str | None) -> str | None:
+                                if not invalidated or target is None:
+                                    return target
+                                boundary = arm.id + '::handler-' + label
+                                graph.add(owner, 'CFG_DISPATCH', boundary, operation=arm.id)
+                                edge(boundary, target)
+                                for binding in invalidated:
+                                    graph.add(boundary, 'PATH_INVALIDATES', binding)
+                                return boundary
+
+                            handler_after = cleanup('exit', after)
+                            assert handler_after is not None
+                            outer_handlers = handlers[-1] if handlers else ()
+                            handlers.append(tuple(cleanup('raise-' + str(i), target) or target
+                                                  for i, target in enumerate(outer_handlers)))
+                            handler_entry = build(arm_body, handler_after,
+                                                  cleanup('break', break_to), cleanup('continue', continue_to), depth+1)
+                            handlers.pop()
+                            if invalidated:
+                                boundary = arm.id + '::handler-entry'
+                                graph.add(owner, 'CFG_DISPATCH', boundary, operation=arm.id)
+                                edge(boundary, handler_entry)
+                                for binding in invalidated:
+                                    graph.add(boundary, 'PATH_INVALIDATES', binding)
+                                handler_entry = boundary
+                            edge(arm.id, handler_entry, 'handler')
+                            entries.append(arm.id)
+                            if not any(c.role == 'value' for c in children[arm.id]):
+                                catches_all = True
+                                break
+                    normal_after = after
+                    for arm in reversed([c for c in nested if c.native_kind == 'else_clause']):
+                        normal_after = build(arm, normal_after, break_to, continue_to, depth+1)
+                    handlers.append(tuple(entries) + (handlers[-1] if handlers and not catches_all else ()))
+                    normal = build(protected, normal_after, break_to, continue_to, depth+1)
+                    handlers.pop()
+                    edge(op.id, normal, 'normal')
+                    if opaque_handler:
+                        missing.add(op.native_kind)
+                        gaps.add(op.id)
+                        edge(op.id, after, 'uncovered')
+                else:
+                    # A pending return/raise must run finally before completion.
+                    # Keep this local gap until that completion is represented.
+                    missing.add(op.native_kind)
+                    gaps.add(op.id)
+                    edge(op.id, after, 'uncovered')
+                return op.id
+            if op.native_kind in {'raise_statement', 'throw_statement'}:
+                for target in handlers[-1] if language == 'python' and handlers and handlers[-1] else (exit_id,):
+                    edge(op.id, target, 'raise')
+                return op.id
             if op.kind == 'RETURN' or op.kind == 'YIELD' and 'break' in op.attrs.get('tokens',()):
                 edge(op.id,exit_id,'return')
                 return op.id
@@ -137,6 +287,9 @@ def structured_control(graph: IR) -> None:
                 graph.add(a,'CFG_FALLTHROUGH',b,basis='structured-syntax')
         for a,r,b in facts:
             graph.add(a,r,b,basis='syntax')
-        graph.add(owner,'CFG_STATUS','partial' if missing or graph.diagnostics else 'structured',
+        diagnostics = (bool(graph.diagnostics) if diagnostic_paths is None
+                       else graph.entities[owner].path in diagnostic_paths)
+        graph.add(owner,'CFG_STATUS','partial' if missing or diagnostics else 'structured',
                   level='statement', excluded='expression-evaluation,exceptions,suspension',
-                  reasons=sorted(missing), analysis='structured-cfg/1')
+                  reasons=sorted(missing), analysis='structured-cfg/2', gaps=sorted(gaps),
+                  language=graph.entities[owner].attrs.get('language'))

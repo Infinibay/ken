@@ -10,6 +10,7 @@ from ken.structural.semantic import link_project
 from ken.structural_store import Node, Store
 from ken.structural_store.leases import renew
 from .values import QueryValue, Unknown, OperationValue
+from .semantic_index import SemanticIndex, exceeds_allowance, write_facts
 
 def _local_id(value: QueryValue) -> str | None:
     """The stable fact identity of a binding: a Node or an operation reference."""
@@ -120,20 +121,50 @@ STATEMENT_UNARY: dict[str, tuple[str, str]] = {
 }
 
 
+def requires_semantics(program) -> bool:
+    """Discover immutable semantic input requirements from the compiled query."""
+    from .body import BodyPattern
+    from .compiler import Action
+
+    if program.graph:
+        return False
+    if any(requires_semantics(branch) for branch in program.branches):
+        return True
+    if any(isinstance(step, BodyPattern) for step in program.steps):
+        return True
+    type_properties = {'type', 'return_type', 'type_status', 'return_type_status'}
+    if any(key in type_properties for scan in program.scans for key, _ in scan.properties):
+        return True
+    names = RELATIONS.keys() | UNARY_RELATIONS.keys() | STATEMENT_RELATIONS.keys() | STATEMENT_UNARY.keys()
+    def needed(expression):
+        return (expression.kind == 'call' and expression.value in names
+                or expression.kind == 'member' and expression.value in type_properties
+                or any(needed(arg) for arg in expression.args))
+    expressions = [*program.filters, *program.optional, *program.projection, *program.ordering,
+                   *(step.expression for step in program.steps if isinstance(step, Action)),
+                   *(p.formula for p in program.predicates)]
+    return any(needed(expression) for expression in expressions)
+
+
 class SemanticRelations:
-    def __init__(self, store: Store, snapshot: int, check: Callable[[], None]):
+    def __init__(self, store: Store, snapshot: int, check: Callable[[], None],
+                 *, index: SemanticIndex | None = None):
+        if index is not None and index.snapshot != snapshot:
+            raise ValueError('semantic index belongs to a different source snapshot')
         self.store, self.snapshot, self.check = store, snapshot, check
-        self.ready = False
+        self.prepared_index = index
+        self.ready = index is not None
         self.working: dict[tuple[str,str,str], list[Fact]] | None = None
         self.working_subjects: dict[tuple[str,str],list[Fact]] = {}
         self.types: dict[str,QueryValue] = {}
 
-    def prepare(self) -> None:
+    def prepare(self, *, retain: bool = False) -> None:
         if self.ready:
             return
         store = self.store
         self.check()
         if store.db.execute('SELECT 1 FROM k2_analysis WHERE snapshot_id=?',(self.snapshot,)).fetchone():
+            self.prepared_index = SemanticIndex(store.db, self.snapshot)
             self.ready = True
             return
         units = []
@@ -143,19 +174,31 @@ class SemanticRelations:
         # The catalog reads the query view (results, argument values, type
         # families); materialize the same facts here so both paths agree on what a
         # saved rule and a standalone query can see.
-        from ken.structural.query_view import query_graph
-        graph = query_graph(link_project(units)).ir
+        from ken.structural.query_view import normalize_query_graph
+        raw = link_project(units, copy_entities=False, check=self.check)
+        units.clear()
+        graph = normalize_query_graph(raw)
+        del raw
         self.check()
         renew(store,force=True)
+        if (retain and store.limit_bytes is not None
+                and exceeds_allowance(graph, store.limit_bytes - store.allocated_bytes, self.check)):
+            self.prepared_index = SemanticIndex.spill(store.db, self.snapshot, graph, self.check)
+            self.ready = True
+            return
         try:
             with store.transaction():
                 # Another reader can have materialized the same immutable input.
                 if not store.db.execute('SELECT 1 FROM k2_analysis WHERE snapshot_id=?',(self.snapshot,)).fetchone():
                     store.db.execute('INSERT INTO k2_analysis VALUES (?,?,?)',
                         (self.snapshot,json.dumps(sorted(graph.capabilities)),json.dumps(graph.diagnostics)))
-                    store.db.executemany('INSERT INTO k2_semantic_facts VALUES (?,?,?,?,?,?,?)',
-                        ((self.snapshot,i,f.subject,f.relation,f.object,json.dumps(f.attrs),json.dumps(f.evidence)) for i,f in enumerate(graph.facts)))
+                    write_facts(store.db, self.snapshot, graph, self.check, bulk=retain)
+            self.prepared_index = SemanticIndex(store.db, self.snapshot)
         except MemoryError:
+            if retain:
+                self.prepared_index = SemanticIndex.spill(store.db, self.snapshot, graph, self.check)
+                self.ready = True
+                return
             # Retention failure does not remove facts from this evaluation.
             self.working = {}
             for fact in graph.facts:
@@ -169,7 +212,8 @@ class SemanticRelations:
         if self.working is not None:
             rows = self.working_subjects.get((relation,subject),[])
         else:
-            rows = [Fact(subject,relation,obj,json.loads(context),json.loads(evidence)) for obj,context,evidence in self.store.db.execute(
+            db = self.prepared_index.db if self.prepared_index is not None else self.store.db
+            rows = [Fact(subject,relation,obj,json.loads(context),json.loads(evidence)) for obj,context,evidence in db.execute(
                 'SELECT object,context,evidence FROM k2_semantic_facts WHERE snapshot_id=? AND relation=? AND subject=?',
                 (self.snapshot,relation,subject))]
         if relation != 'ARGUMENT':
@@ -197,8 +241,9 @@ class SemanticRelations:
         if self.working is not None:
             return [fact for (rel,_subject,obj),group in self.working.items()
                     if rel == relation and obj == object for fact in group]
+        db = self.prepared_index.db if self.prepared_index is not None else self.store.db
         return [Fact(subject,relation,object,json.loads(context),json.loads(evidence))
-                for subject,context,evidence in self.store.db.execute(
+                for subject,context,evidence in db.execute(
                     'SELECT subject,context,evidence FROM k2_semantic_facts'
                     ' WHERE snapshot_id=? AND relation=? AND object=?',
                     (self.snapshot,relation,object))]
@@ -283,7 +328,8 @@ class SemanticRelations:
         if self.working is not None:
             contexts = [f.attrs for f in self.working.get((relation,subject,target),())]
         else:
-            contexts = [json.loads(row[0]) for row in self.store.db.execute(
+            db = self.prepared_index.db if self.prepared_index is not None else self.store.db
+            contexts = [json.loads(row[0]) for row in db.execute(
                 'SELECT context FROM k2_semantic_facts WHERE snapshot_id=? AND relation=? AND subject=? AND object=?',
                 (self.snapshot,relation,subject,target))]
         if any(c.get('execution','possible') == 'possible' for c in contexts):

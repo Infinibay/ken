@@ -83,7 +83,7 @@ def test_graph_cancellation_survives_unlimited_budgets():
 @pytest.mark.parametrize('limit',[None,2])
 def test_mcp_forwards_optional_row_limit(monkeypatch,tmp_path,limit):
  import ken.mcp.server as server
- import ken.kql2.service as service
+ import ken.kql2.automatic as service
  captured={}
  def fake_search(*args,**kwargs):captured.update(kwargs);return {'complete':True}
  monkeypatch.setattr(service,'search',fake_search)

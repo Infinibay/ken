@@ -12,7 +12,7 @@ from ken.structural.frontend import LANGUAGES, parser_for
 from ken.structural.service import _configuration, _parser_versions
 from ken.structural_store.acquisition import AcquisitionLock
 
-from ..catalog import with_packaged_libraries
+from ..module_inputs import ModuleResolver
 from ..compiler import compile as compile_program
 from ..execution_control import ExecutionBudget, ExecutionStopped
 from ..syntax import parse
@@ -49,6 +49,7 @@ def search(
     cache_directory=None,
     cancelled=None,
 ):
+    """Explore syntax snapshots and independently close cache and lock."""
     from .. import request
 
     request.phase("compile")
@@ -57,7 +58,9 @@ def search(
     if max_file_bytes < 1:
         raise ValueError("max_file_bytes must be positive")
     root = Path(root).resolve()
-    libraries = with_packaged_libraries(source, libraries)
+    with ModuleResolver(root) as resolver:
+        resolved = resolver.resolve(source, libraries=libraries)
+    libraries = resolved.libraries
     program = compile_program(
         parse(source),
         query_name,
@@ -201,7 +204,7 @@ def search(
             evicted = cache.trim(retention_bytes)
         else:
             evicted = 0
-        return {
+        return resolved.annotate({
             "language": "kql/2",
             "capability": "syntax-exploration/1",
             "query": program.name,
@@ -229,8 +232,10 @@ def search(
                 **metrics,
                 "total_ms": (time.monotonic() - started) * 1000,
             },
-        }
+        })
     finally:
-        if cache is not None:
-            cache.close()
-        acquisition.close()
+        try:
+            if cache is not None:
+                cache.close()
+        finally:
+            acquisition.close()

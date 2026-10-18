@@ -80,6 +80,7 @@ class Store:
         self.scanned = 0
         self.lease_id: str | None = None
         self.lease_renew_at = 0.0
+        self.defer_busy_renewal = False
         self.staged_units: set[int] = set()
         try:
             self.db.execute('PRAGMA foreign_keys=ON')
@@ -102,9 +103,13 @@ class Store:
             raise
 
     def close(self) -> None:
-        if self.lease_id is not None and self.db.execute('PRAGMA user_version').fetchone()[0] >= 3:
-            self.db.execute('DELETE FROM k2_leases WHERE lease_id=?',(self.lease_id,))
-        self.db.close()
+        try:
+            if self.lease_id is not None and self.db.execute('PRAGMA user_version').fetchone()[0] >= 3:
+                self.db.execute('DELETE FROM k2_leases WHERE lease_id=?',(self.lease_id,))
+        finally:
+            # A contended lease cleanup may fail; its TTL still permits GC.
+            # Closing the owned connection must not depend on that write.
+            self.db.close()
 
     def __enter__(self) -> Store:
         return self
@@ -155,14 +160,21 @@ class Store:
         row = self.db.execute('SELECT payload FROM k2_units WHERE unit_id=?', (unit,)).fetchone()
         if row is None:
             raise KeyError(unit)
-        return IR.from_dict(json.loads(zlib.decompress(row[0])))
+        from ken.structural.serialization import decoded_json
 
-    def put_unit(self, key: str, ir: IR, source_hash: str, frontend_hash: str) -> int:
+        return IR.from_dict(decoded_json(zlib.decompress(row[0])))
+
+    def put_unit(self, key: str, ir: IR, source_hash: str, frontend_hash: str,
+                 *, include_syntax: bool = True) -> int:
         with self.transaction():
             existing = self.find_unit(key)
             if existing is not None:
+                if include_syntax:
+                    self._project_syntax(existing)
                 return existing
-            payload = zlib.compress(json.dumps(ir.to_dict(), sort_keys=True).encode())
+            from ken.structural.serialization import compressed_ir
+
+            payload = compressed_ir(ir)
             result = self.db.execute('INSERT INTO k2_units(unit_key,path,language,source_hash,frontend_hash,payload,coverage) VALUES (?,?,?,?,?,?,?)',
                                      (key, ir.path, ir.language, source_hash, frontend_hash, payload, int(not ir.diagnostics)))
             assert result.lastrowid is not None
@@ -203,10 +215,21 @@ class Store:
                                 ((unit, i, f.subject, f.relation, f.object, json.dumps(f.attrs, sort_keys=True), json.dumps(f.evidence)) for i, f in enumerate(ir.facts)))
             from .operations import project
             project(self,unit,ir)
-            from ken.common_ast import normalize
-            from .common_ast import project as project_ast
-            project_ast(self,unit,normalize(ir))
+            if include_syntax:
+                self._project_syntax(unit, ir)
+            # KQL acquisition can defer this independently demanded view.
+            # View.ensure projects it when the first AST query needs this unit.
             return unit
+
+    def _project_syntax(self, unit: int, ir: IR | None = None) -> None:
+        from ken.common_ast import VERSION, normalize
+        from .common_ast import project
+
+        row = self.db.execute('SELECT version FROM k2_ast_units WHERE unit_id=?', (unit,)).fetchone()
+        if row is not None and row[0] == VERSION:
+            return
+        self.db.execute('DELETE FROM k2_ast_units WHERE unit_id=?', (unit,))
+        project(self, unit, normalize(self.load_unit(unit) if ir is None else ir))
 
     @property
     def current(self) -> int | None:

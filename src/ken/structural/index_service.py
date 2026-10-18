@@ -28,6 +28,7 @@ def project_index(
     database: Path | None = None,
     source_cache_path: Path | None = None,
 ):
+    """Yield a query index while retaining and closing its backing store."""
     from ken.kql2.compilation import implementation_fingerprint
 
     from .query_view import normalize_query_graph
@@ -163,7 +164,9 @@ def project_index(
             acquisition.close()
             yield index, analysis
         finally:
-            if index is not None:
-                index.close()
-            if store is not None:
-                store.close()
+            try:
+                if index is not None:
+                    index.close()
+            finally:
+                if store is not None:
+                    store.close()

@@ -14,10 +14,31 @@ import tempfile
 import time
 from contextlib import contextmanager
 from contextvars import ContextVar
+from collections.abc import Callable
 from dataclasses import asdict
 from pathlib import Path
 
 _ACTIVE: ContextVar[Progress | None] = ContextVar("kql2_request", default=None)
+_CANCELLED: ContextVar[Callable[[], bool] | None] = ContextVar("kql2_cancelled", default=None)
+
+
+class RequestCancelled(RuntimeError):
+    """The caller disconnected; stop preparation without changing query budgets."""
+
+
+@contextmanager
+def cancellable(callback: Callable[[], bool]):
+    token = _CANCELLED.set(callback)
+    try:
+        yield
+    finally:
+        _CANCELLED.reset(token)
+
+
+def check_cancelled() -> None:
+    callback = _CANCELLED.get()
+    if callback is not None and callback():
+        raise RequestCancelled('query client disconnected')
 
 
 class Progress:
@@ -57,6 +78,7 @@ def supervised(timeout_ms: float):
 
 
 def phase(name: str, **details) -> None:
+    check_cancelled()
     progress = _ACTIVE.get()
     if progress is not None:
         progress.update(name, **details)
@@ -72,6 +94,12 @@ def remaining(timeout_ms: float | None) -> float | None:
     return (
         remaining_ms if timeout_ms is None else max(0.0, min(timeout_ms, remaining_ms))
     )
+
+
+def expired() -> bool:
+    """Delivery uses the absolute deadline, without execution's reporting reserve."""
+    progress = _ACTIVE.get()
+    return progress is not None and time.monotonic() >= progress.deadline
 
 
 def _failure(progress: Path, options: dict, started: float) -> dict:
@@ -138,7 +166,7 @@ def _failure(progress: Path, options: dict, started: float) -> dict:
     return result
 
 
-def bounded_search(root: Path, source: str, options: dict) -> dict:
+def bounded_search(root: Path, source: str | None, options: dict) -> dict:
     """Run trusted Ken code in isolation, reap on timeout, preserve diagnostics."""
     started = time.monotonic()
     deadline = started + options["timeout_ms"] / 1000

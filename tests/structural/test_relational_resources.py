@@ -65,9 +65,9 @@ def test_body_context_is_shared_but_pattern_results_and_callbacks_are_not(monkey
 
     calls = []
     original = BodyEngine.match_context
-    def build(self, owner, region):
+    def build(self, owner, region, **kwargs):
         calls.append(owner.local_id)
-        return original(self, owner, region)
+        return original(self, owner, region, **kwargs)
     monkeypatch.setattr(BodyEngine, "match_context", build)
     index = query_graph(graph())
     resources = ExecutionResources(index)

@@ -6,6 +6,7 @@ import time
 from collections.abc import Callable
 
 from ken.structural_store import Node, Store
+from ken.structural_store.graph_index import GraphIndex
 
 from .compiler import Program, Scan
 from .execution_control import ExecutionBudget, ExecutionControl, ExecutionStopped
@@ -14,6 +15,7 @@ from .outcome import Outcome
 from .pipeline import OperatorStats, run
 from .planning import describe, prepare, schedule
 from .runtime import QueryRuntime
+from .semantic_index import SemanticIndex
 from .values import (
     ASTValue,
     EnumValue,
@@ -39,6 +41,8 @@ def execute(
     cancelled: Callable[[], bool] | None = None,
     prepared_plans: dict[str, tuple[Scan, ...]] | None = None,
     profile: bool = False,
+    semantic_index: SemanticIndex | None = None,
+    prepared_graph: GraphIndex | None = None,
 ) -> Outcome:
     """Execute a compiled query; profiling is opt-in and does not change budgets."""
     started = time.monotonic()
@@ -56,6 +60,7 @@ def execute(
             max_rows=max_rows,
             cancelled=cancelled,
             profile=profile,
+            prepared_graph=prepared_graph,
         )
     if program.branches:
         return _execute_union(
@@ -70,6 +75,8 @@ def execute(
             prepared_plans=prepared_plans,
             profile=profile,
             started=started,
+            semantic_index=semantic_index,
+            prepared_graph=prepared_graph,
         )
     return _execute_indexed(
         program,
@@ -81,6 +88,7 @@ def execute(
         prepared_plans=prepared_plans,
         profile=profile,
         started=started,
+        semantic_index=semantic_index,
     )
 
 
@@ -95,11 +103,12 @@ def _execute_indexed(
     prepared_plans: dict[str, tuple[Scan, ...]] | None,
     profile: bool,
     started: float,
+    semantic_index: SemanticIndex | None = None,
 ) -> Outcome:
     initial_scanned = store.scanned
     result = Outcome()
     control = ExecutionControl(store, result, budget, started, cancelled)
-    runtime = QueryRuntime(program, store, snapshot, control, reference=reference)
+    runtime = QueryRuntime(program, store, snapshot, control, reference=reference, semantic_index=semantic_index)
     scans = (
         prepared_plans[program.fingerprint]
         if prepared_plans is not None
@@ -217,6 +226,8 @@ def _execute_union(
     prepared_plans: dict[str, tuple[Scan, ...]] | None,
     profile: bool,
     started: float,
+    semantic_index: SemanticIndex | None = None,
+    prepared_graph: GraphIndex | None = None,
 ) -> Outcome:
     union = Outcome()
     seen_rows: set[object] = set()
@@ -242,6 +253,8 @@ def _execute_union(
             cancelled=cancelled,
             prepared_plans=prepared_plans,
             profile=profile,
+            semantic_index=semantic_index,
+            prepared_graph=prepared_graph,
         )
         union.complete &= child.complete
         union.reason = union.reason or child.reason

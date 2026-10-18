@@ -15,6 +15,29 @@ CREATE TABLE IF NOT EXISTS meta (
     value TEXT NOT NULL
 );
 
+-- Durable KQL2 source modules. These are authored knowledge, not structural
+-- cache artifacts: rebuilding or reclaiming the source index never deletes them.
+CREATE TABLE IF NOT EXISTS kql_modules (
+    module       TEXT PRIMARY KEY,
+    source       TEXT NOT NULL,
+    description  TEXT NOT NULL DEFAULT '',
+    revision     TEXT NOT NULL,
+    exports      TEXT NOT NULL,
+    imports      TEXT NOT NULL,
+    updated_ns   INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS kql_registry_state (
+    singleton  INTEGER PRIMARY KEY CHECK(singleton = 1),
+    generation INTEGER NOT NULL
+);
+INSERT OR IGNORE INTO kql_registry_state(singleton, generation) VALUES(1, 0);
+CREATE TRIGGER IF NOT EXISTS kql_modules_insert AFTER INSERT ON kql_modules
+BEGIN UPDATE kql_registry_state SET generation=generation+1 WHERE singleton=1; END;
+CREATE TRIGGER IF NOT EXISTS kql_modules_update AFTER UPDATE ON kql_modules
+BEGIN UPDATE kql_registry_state SET generation=generation+1 WHERE singleton=1; END;
+CREATE TRIGGER IF NOT EXISTS kql_modules_delete AFTER DELETE ON kql_modules
+BEGIN UPDATE kql_registry_state SET generation=generation+1 WHERE singleton=1; END;
+
 -- ----------------------------------------------------------------------------
 -- Code intelligence: files, symbols, imports, references.
 -- ----------------------------------------------------------------------------

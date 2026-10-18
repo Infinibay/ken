@@ -35,8 +35,31 @@ def supports_general_walk(statuses: Sequence[Fact]) -> bool:
 
 
 def supports_pattern(statuses: Sequence[Fact], pattern: BodyPattern) -> bool:
-    return supports_general_walk(statuses) or (
+    # Existential source witnesses may follow normal resumption or one handler
+    # route. Negative/all-path gaps still require the stronger general contract.
+    route_witness = (all(clause.kind in {'call', 'let', 'return', 'yield'}
+                         for clause in pattern.clauses)
+                     and all(fact.attrs.get('language') == 'python' for fact in statuses)
+                     and _covered(statuses, _YIELD | _ABRUPT_EXIT | {'exception-dispatch'}))
+    local_gaps = bool(statuses) and all(
+        fact.object == 'structured' or (
+            fact.object == 'partial'
+            and fact.attrs.get('analysis') == 'structured-cfg/2'
+            and bool(fact.attrs.get('gaps'))
+            and set(fact.attrs.get('reasons', ())) <= _YIELD | _ABRUPT_EXIT | {'try_statement', 'exception-dispatch'}
+        ) for fact in statuses
+    )
+    return supports_general_walk(statuses) or route_witness or local_gaps or (
         len(pattern.clauses) == 1
         and pattern.clauses[0].kind == "yield"
         and _covered(statuses, _YIELD)
     )
+
+
+def supports_normal_try(pattern: BodyPattern) -> bool:
+    """Call/result witnesses can follow a try's modeled success path.
+
+    Binding/field mutations still require the exceptional write inventory,
+    which the statement CFG deliberately does not claim to model.
+    """
+    return all(clause.kind in {'call', 'let', 'return'} for clause in pattern.clauses)

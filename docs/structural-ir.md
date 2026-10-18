@@ -1,4 +1,4 @@
-> **Operational reference: IR 1.85.0.** This document describes available behavior
+> **Operational reference: IR 1.86.0.** This document describes available behavior
 > and its limits. The [design specification](design/structural/README.md) also
 > contains future contracts; proposal text is not evidence of implementation.
 > The [KQL 2 specification](design/kql2/README.md) defines the query language and
@@ -2681,3 +2681,31 @@ KQL2 `usages of` builds occurrence-level consumers over these facts and direct
 syntactic operand links. It retains modality and an open-inventory diagnostic;
 the query's Usage objects are not injected into the immutable source graph. See
 [value capture and usage semantics](design/kql2/value-usages.md).
+
+### IR 1.86: terminal raise and normal return origins
+
+The structured local-flow pass treats explicit Python `raise` and
+JavaScript/TypeScript/Java/C# `throw` statements as terminal paths. A value
+assigned before `if condition: raise ...; return value` can now have a
+`RETURN_ORIGIN` on the continuing route; writes made only on the exiting route
+cannot reach that return. The analysis still rejects `try` and handlers, where
+an exception can resume execution, and does not infer that a call itself
+succeeds. KQL2 BODY value-flow queries can use these new origin facts, but an
+absent BODY match remains bounded by the query and its supported control flow.
+Persisted IR from 1.85 is invalidated by version 1.86.0.
+
+### IR 1.87: Python handler continuations and route-local BODY values
+
+Python statement CFGs now publish `CFG_DISPATCH(owner, point)` with the source
+`operation` attribute and normal/exceptional successor edges for `try` without
+`finally`. `PATH_INVALIDATES(point, binding)` records exception-alias boundaries.
+Dispatch occurs before atomic completion: a failed RHS contributes no result or
+write. Loop back edges revisit dispatch; handler and success-else paths stay
+separate. Exception type feasibility is not proved.
+
+KQL2 BODY preserves local origins separately on each route, including bare
+conditional aliases and ordinary generator resumption. Callable-wide
+`RETURN_ORIGIN` may summaries keep their existing meaning. `finally`, exception
+groups, dynamic handler types and injected generator exceptions remain bounded
+as documented in [statement path values](design/kql2/statement-path-values.md).
+Persisted IR from 1.86 is invalidated by version 1.87.0.

@@ -5,10 +5,9 @@ from __future__ import annotations
 import math
 import time
 from collections.abc import Mapping
-from dataclasses import asdict, is_dataclass
 from hashlib import sha256
 from pathlib import Path
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from ken._paths import resolve_project_path
 from ken.gitignore_filter import iter_files
@@ -26,6 +25,10 @@ from ken.structural_store.store import MIN_PERSISTENT_MB, fingerprint
 from .codec import CODEC, encode
 from .compilation import artifact_key, compile_query, implementation_fingerprint
 from .execution import execute
+from .reporting import query_response, serialize_value
+
+if TYPE_CHECKING:
+    from .session import QuerySession
 
 
 def frontend_fingerprint() -> str:
@@ -44,8 +47,9 @@ def frontend_fingerprint() -> str:
 
 def search(
     root: Path,
-    source: str,
+    source: str | None = None,
     *,
+    saved_query: str | None = None,
     query_name: str | None = None,
     path: str = ".",
     cache_mb: float | None = None,
@@ -60,14 +64,38 @@ def search(
     cache_directory: Path | None = None,
     source_paths: list[str] | None = None,
     include_entities: bool = False,
+    session: QuerySession | None = None,
 ) -> dict[str, Any]:
+    """Execute KQL2 while independently releasing query resources."""
+    from .module_inputs import ModuleResolver, validate_entry
+
+    validate_entry(source, saved_query)
+    if session is not None:
+        if (
+            root.resolve() != session.root
+            or path != session.path
+            or source_paths is not None and tuple(source_paths) != session.source_paths
+            or backend != "indexed"
+            or cache_directory is not None
+        ):
+            raise ValueError("prepared session scope does not match the search request")
+        if (
+            cache_mb is not None and cache_mb != session.cache_mb
+            or max_file_bytes != session.max_file_bytes
+        ):
+            raise ValueError("preparation options belong to the query session")
+        return session.search(
+            source, saved_query=saved_query, query_name=query_name, libraries=libraries,
+            reference=reference, profile=profile, timeout_ms=timeout_ms,
+            max_states=max_states, max_rows=max_rows, include_entities=include_entities,
+        )
     from . import request
 
     if timeout_ms is not None and (not math.isfinite(timeout_ms) or timeout_ms < 0):
         raise ValueError("invalid execution budget")
     if timeout_ms is not None and not request.active():
         return request.bounded_search(root, source, dict(
-            query_name=query_name, path=path, cache_mb=cache_mb,
+            saved_query=saved_query, query_name=query_name, path=path, cache_mb=cache_mb,
             timeout_ms=timeout_ms, max_states=max_states, max_rows=max_rows,
             max_file_bytes=max_file_bytes, reference=reference,
             libraries=libraries, profile=profile, backend=backend,
@@ -75,12 +103,16 @@ def search(
             include_entities=include_entities,
         ))
     request.phase("compile")
+    start = time.monotonic()
+    with ModuleResolver(root) as resolver:
+        resolved = resolver.resolve(source, saved_query=saved_query, query_name=query_name, libraries=libraries)
+    source, query_name, libraries = resolved.source, resolved.query_name, resolved.libraries
     if backend == "exploration":
         if source_paths is not None or include_entities:
             raise ValueError("explicit source inventory requires the indexed backend")
         from .exploration.service import search as explore
 
-        return explore(
+        result = explore(
             root,
             source,
             query_name=query_name,
@@ -95,11 +127,12 @@ def search(
             profile=profile,
             cache_directory=cache_directory,
         )
+        result['analysis']['total_ms'] = (time.monotonic() - start) * 1000
+        return resolved.annotate(result)
     if backend != "indexed" or cache_directory is not None:
         raise ValueError(
             "invalid backend or cache directory (custom directory requires exploration)"
         )
-    start = time.monotonic()
     if (
         timeout_ms is not None
         and (not math.isfinite(timeout_ms) or timeout_ms < 0)
@@ -110,9 +143,6 @@ def search(
     ):
         raise ValueError("invalid execution budget")
     root = root.resolve()
-    from .catalog import with_packaged_libraries
-
-    libraries = with_packaged_libraries(source, libraries)
     budget = _configuration(root, cache_mb)
     prepared, compile_state, compilation_cache = compile_query(
         root,
@@ -250,10 +280,10 @@ def search(
                             ).fetchone()
                             translated.append(
                                 temporary.put_unit(
-                                    row[0], store.load_unit(old_id), row[1], row[2]
+                                    row[0], store.load_unit(old_id), row[1], row[2], include_syntax=False
                                 )
                             )
-                        new_unit = temporary.put_unit(key, ir, source_hash, frontend)
+                        new_unit = temporary.put_unit(key, ir, source_hash, frontend, include_syntax=False)
                     except BaseException:
                         temporary.close()
                         raise
@@ -284,7 +314,7 @@ def search(
                     ).fetchone()
                     translated.append(
                         temporary.put_unit(
-                            row[0], store.load_unit(old_id), row[1], row[2]
+                            row[0], store.load_unit(old_id), row[1], row[2], include_syntax=False
                         )
                     )
                 snapshot = temporary.publish(
@@ -365,23 +395,7 @@ def search(
             scanned_nodes = states = 0
         else:
             assert outcome is not None
-            response = {
-                "language": "kql/2",
-                "capability": "structural-source/1",
-                "query": program.name,
-                "columns": [
-                    expr.value or f"column_{i + 1}"
-                    for i, expr in enumerate(program.projection)
-                ],
-                "rows": [[serialize_value(v) for v in row] for row in outcome.rows],
-                "complete": outcome.complete,
-                "coverage_complete": coverage,
-                "unknown_candidates": outcome.unknown_candidates,
-                "reason": outcome.reason,
-                "results_truncated": outcome.results_truncated,
-                "plan": outcome.plan,
-                "optional_evidence": outcome.optional_evidence,
-            }
+            response = query_response(program, outcome, coverage)
             query_ms = outcome.elapsed_ms
             scanned_nodes, states = outcome.scanned_nodes, outcome.states
             request.phase("report", result=response)
@@ -448,20 +462,12 @@ def search(
             assert outcome is not None
             response["analysis"]["operator_profile"] = outcome.profile
         request.phase("report", result=response)
-        return response
+        return resolved.annotate(response)
     finally:
-        acquisition.close()
-        store.close()
-
-
-def serialize_value(value: Any) -> Any:
-    if is_dataclass(value) and not isinstance(value, type):
-        return serialize_value(asdict(value))
-    if isinstance(value, (list, tuple)):
-        return [serialize_value(v) for v in value]
-    if isinstance(value, dict):
-        return {key: serialize_value(v) for key, v in value.items()}
-    return value
+        try:
+            acquisition.close()
+        finally:
+            store.close()
 
 
 def valid_cached_result(

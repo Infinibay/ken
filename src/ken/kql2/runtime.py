@@ -25,6 +25,7 @@ from .semantic import (
     UNARY_RELATIONS,
     SemanticRelations,
 )
+from .semantic_index import SemanticIndex
 from .source_ast import RELATIONS as AST_RELATIONS
 from .source_ast import SourceAST
 from .syntax import Expr
@@ -42,6 +43,7 @@ class QueryRuntime:
         control: ExecutionControl,
         *,
         reference: bool,
+        semantic_index: SemanticIndex | None = None,
     ):
         self.store, self.snapshot, self.control = store, snapshot, control
         self.check = control.check
@@ -66,7 +68,7 @@ class QueryRuntime:
         # The wrapper belongs to this instance, avoiding a class-level LRU retaining
         # runtimes/stores. Immutable snapshots make the bounded cache safe.
         self.properties = lru_cache(maxsize=1024)(store.properties)
-        self.semantic = SemanticRelations(store, snapshot, self.check)
+        self.semantic = SemanticRelations(store, snapshot, self.check, index=semantic_index)
         self.ast_source = SourceAST(store, snapshot, self.check)
         self.context = ExpressionContext(
             self.domain,

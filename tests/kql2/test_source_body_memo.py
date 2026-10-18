@@ -31,9 +31,9 @@ def test_irrelevant_outer_roles_do_not_repeat_body_work_or_lose_matches(monkeypa
 def test_body_memo_keeps_receiver_and_argument_constraints_distinct(monkeypatch):
     contexts = []
     original = BodyEngine.match_context
-    def context(self, owner, region):
+    def context(self, owner, region, **kwargs):
         contexts.append((owner.local_id, region))
-        return original(self, owner, region)
+        return original(self, owner, region, **kwargs)
     monkeypatch.setattr(BodyEngine, 'match_context', context)
     source='''def consume(value): pass
 class C:

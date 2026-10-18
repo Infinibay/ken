@@ -1416,7 +1416,7 @@ class Lowerer:
             self.ir.add(entry, "CONTAINER", container, ev)
             self.ir.add(entry, "INDEX", index, ev)
             self.ir.add(cid, "ARGUMENT", self.value(field(node, "operand"), scope, cls), ev, position=0, kind="positional")
-        if kind == "arrow_function":
+        if kind in {"arrow_function", "lambda"}:
             body = field(node, "body")
             if body is not None and body.type != "statement_block":
                 self.ir.add(scope, "RETURNS", self.value(body, scope, cls), ev)

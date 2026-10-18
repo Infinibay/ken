@@ -76,8 +76,11 @@ def query_view(result: dict, *, full: bool = False) -> dict:
         else:
             out["optional_evidence"] = evidence
     analysis = result.get("analysis", {})
+    if analysis.get("registry_modules"):
+        out["registry_modules"] = analysis["registry_modules"]
     timing = {key: round(analysis[key], 1) for key in
-              ("total_ms", "timeout_ms", "compile_ms", "build_ms", "query_ms")
+              ("total_ms", "timeout_ms", "compile_ms", "build_ms", "query_ms",
+               "startup_ms", "preparation_ms", "index_wait_ms", "prepared_query_ms", "session_attempt_ms")
               if isinstance(analysis.get(key), (int, float))}
     if timing:
         out["timing"] = timing

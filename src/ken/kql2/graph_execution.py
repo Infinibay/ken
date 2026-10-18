@@ -44,8 +44,10 @@ def graph_index(store: Store, snapshot: int, check) -> tuple[FactIndex, bool]:
         check()
         units.append(store.load_unit(unit))
     phase("link", execution_phase="link")
-    graph = normalize_query_graph(link_project(units))
+    raw = link_project(units, copy_entities=False, check=check)
     del units
+    graph = normalize_query_graph(raw)
+    del raw
     check()
     try:
         phase("graph_persist", execution_phase="graph_persist")
@@ -76,7 +78,9 @@ def execute_graph(
     max_rows,
     cancelled,
     profile=False,
+    prepared_graph: GraphIndex | None = None,
 ):
+    """Execute one graph query and attempt both independent cleanups."""
     started = time.monotonic()
 
     def check():
@@ -93,6 +97,10 @@ def execute_graph(
         local = local_hazards.supports(program) and not reference
         if local:
             index, hit = local_hazards.index(store, snapshot, check), False
+        elif prepared_graph is not None:
+            # Per-execution facade: query checks/caches never outlive this call.
+            # The session retains the underlying shared or private disk store.
+            index, hit = GraphIndex(prepared_graph.store, prepared_graph.graph), True
         else:
             index, hit = graph_index(store, snapshot, check)
         from .request import phase
@@ -115,10 +123,12 @@ def execute_graph(
             elapsed_ms=(time.monotonic() - started) * 1000,
         )
     finally:
-        if engine is not None:
-            engine.close()
-        if isinstance(index, GraphIndex):
-            index.close()
+        try:
+            if engine is not None:
+                engine.close()
+        finally:
+            if isinstance(index, GraphIndex):
+                index.close()
 
     def projected(value):
         usage = getattr(engine, "usage_metadata", {}).get(value)
