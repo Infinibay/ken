@@ -1,6 +1,6 @@
 # M2: primer perfil estático nativo
 
-**Implementado y con matriz Linux/macOS aprobada por pruebas; revisión independiente pendiente.**
+**Primer perfil Potion aceptado: matriz Linux/macOS y revisión independiente aprobadas.**
 Este corte acredita Potion registrado, no cierra M2 ni la migración completa.
 Los demás runtimes y el almacenamiento siguen pendientes del contrato general.
 
@@ -62,7 +62,10 @@ por separado. No se inventó un SLA ni se atribuye mejora global de la aplicaci�
 La matriz técnica sólo cambia Potion a `paridad_verificada`. No acredita tablas
 NPZ, contextual ONNX, reranker Ettin, CT2/SentencePiece, catálogo FastEmbed,
 Sentence Transformers, Qwen3/MLX, juez causal, política completa ni datos M2.
-La aceptación del perfil sigue pendiente de su única revisión independiente.
+La [revisión independiente](REVIEW.md) no encontró Critical/Important y añadió
+2.001 salidas diferenciales correctas. Quedan dos Minor: medir el coste de
+evicción de caché saturada y ampliar concurrencia a misses/inserciones/evicción.
+Ambos se difieren; no hubo segunda revisión ni cambios innecesarios de código.
 Los formatos Model2Vec cuantizados con mapping/weights se rechazan explícitamente
 en este primer encoder; no se ignoran esos tensores.
 
@@ -100,3 +103,17 @@ y `.ken/rust-migration/m2/linux-receipts/validation/`, con hashes registrados.
 - Task 6: Ruling: reject duplicate vocabulary IDs as well as out-of-range IDs — valid safetensors row count alone cannot distinguish two tokens aliased to one row; new duplicate-ID regression observed RED before adding uniqueness validation — risk if wrong: corrupt synthetic/custom registrations could silently select the wrong embeddings; real Potion remains unchanged.
 
 - Task 6: Ruling: use M2 plan base e1ae714b for its fresh whole-plan review — M0/M1 already received its one independent review and TDD fix pass; review all M2 changes including affected M1 tooling, with foundation report available as context — risk if wrong: a cross-stage regression could be missed; fullworkspace suites and all62 M1 parity cases passed onbothOS.
+
+- Final: Ruling: other models, quantized formats, storage and M3–M8 were outside reviewer scope — keep them explicitly pending and continue full migration — cost if wrong: unsupported capabilities could be mistaken for completion.
+
+- Final: Ruling: arbitrary custom registrations were not certified — accept only pinned Potion profile and exercised policies; broader compatibility remains pending — cost if wrong: users could encounter unsupported weights/tokenizer behavior.
+
+- Final: Ruling: unchanged M0/M1 was not rereviewed — preserve earlier independent review and corrected both-OS gates; include changed tooling and62 regression cases here — cost if wrong: cross-stage defect may evade review.
+
+- Final: Ruling: original dirty Python/docs/tests were not reviewed as new implementation — preserve exact1066 hashes and frozen oracle — cost if wrong: reference could drift unnoticed; integrity gates remain mandatory.
+
+- Final: Ruling: Windows/unobserved devices were not judged — receipts certify observed macOS/Linux CPU only; retain broader inventory before M8 — cost if wrong: unsupported targets might appear supported.
+
+- Final: Ruling: remote CI was not executed — local two-OS receipts are evidence; workflow inspection is not a remote-run claim — cost if wrong: hosted environment defects remain unobserved.
+
+- Final: Ruling: retrieval quality and whole-application speedup were not judged — no consumer integration or global performance claim; measure at corresponding stages — cost if wrong: encoder parity could conceal retrieval differences later.

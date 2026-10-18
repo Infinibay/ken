@@ -100,7 +100,7 @@ de [upload-artifact](https://github.com/actions/upload-artifact) y
 ## Modelos nativos: primer perfil M2
 
 `ken-models` ejecuta Potion sin Python. Los [casos y salidas congelados](validation/rust-migration-2026-10-18/m2-static/)
-se fijaron antes de implementar. El primer perfil está en validación; los demás
+se fijaron antes de implementar. El primer perfil pasó pruebas y revisión independiente; los demás
 runtimes y el almacenamiento M2 siguen pendientes. No se habilita búsqueda ni
 se escribe en índices existentes desde este probe.
 
