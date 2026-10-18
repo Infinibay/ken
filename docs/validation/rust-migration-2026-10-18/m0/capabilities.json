@@ -1,0 +1,180 @@
+{
+  "scope": "inventory only; native parity pending",
+  "entrypoints": [
+    "ken CLI",
+    "ken mcp stdio",
+    "ken tools passthrough"
+  ],
+  "python_api_candidates": [
+    {
+      "path": "src/ken/checks/store.py",
+      "symbol": "Store",
+      "public_methods": [
+        "path",
+        "read",
+        "rules",
+        "write",
+        "lock",
+        "save_rule"
+      ]
+    },
+    {
+      "path": "src/ken/structural_store/store.py",
+      "symbol": "Store",
+      "public_methods": [
+        "close",
+        "allocated_bytes",
+        "transaction",
+        "find_unit",
+        "load_unit",
+        "put_unit",
+        "current",
+        "publish",
+        "scan",
+        "scan_sql",
+        "properties"
+      ]
+    },
+    {
+      "path": "src/ken/kql2/session.py",
+      "symbol": "QuerySession",
+      "public_methods": [
+        "invalidate",
+        "refresh",
+        "search",
+        "search_json",
+        "prepare_graph",
+        "resolve_query",
+        "prepare_query",
+        "prepare_semantics",
+        "maintain",
+        "close"
+      ]
+    }
+  ],
+  "python_api_evidence": [
+    "docs/reference.md",
+    "docs/design/kql2/README.md",
+    "docs/superpowers/plans/2026-10-14-kql2-query-session.md"
+  ],
+  "external_python_consumers": "not exhaustively knowable; keep original APIs and files",
+  "extensions": {
+    ".c": "c",
+    ".h": "c",
+    ".cpp": "cpp",
+    ".cc": "cpp",
+    ".cxx": "cpp",
+    ".hpp": "cpp",
+    ".hh": "cpp",
+    ".hxx": "cpp",
+    ".ipp": "cpp",
+    ".cs": "csharp",
+    ".csx": "csharp",
+    ".css": "css",
+    ".html": "html",
+    ".htm": "html",
+    ".vue": "html",
+    ".svelte": "html",
+    ".py": "python",
+    ".pyi": "python",
+    ".rs": "rust",
+    ".rb": "ruby",
+    ".rake": "ruby",
+    ".gemspec": "ruby",
+    ".js": "javascript",
+    ".jsx": "javascript",
+    ".mjs": "javascript",
+    ".cjs": "javascript",
+    ".ts": "typescript",
+    ".tsx": "typescript",
+    ".go": "go",
+    ".java": "java",
+    ".kt": "kotlin",
+    ".kts": "kotlin",
+    ".dart": "dart",
+    ".php": "php",
+    ".phtml": "php",
+    ".sql": "sql",
+    ".graphql": "graphql",
+    ".gql": "graphql",
+    ".sh": "bash",
+    ".bash": "bash",
+    ".ksh": "bash",
+    ".ps1": "powershell",
+    ".psm1": "powershell",
+    ".psd1": "powershell"
+  },
+  "dependencies": [
+    "tree-sitter>=0.25.2,<0.26",
+    "tree-sitter-python>=0.23",
+    "tree-sitter-rust>=0.23",
+    "tree-sitter-javascript>=0.23",
+    "tree-sitter-typescript>=0.23",
+    "tree-sitter-go>=0.23",
+    "tree-sitter-java>=0.23",
+    "tree-sitter-language-pack>=1.8",
+    "pathspec>=0.12",
+    "watchfiles>=0.22",
+    "fastembed>=0.5",
+    "numpy>=1.26",
+    "model2vec==0.9.0",
+    "tokenizers==0.22.2",
+    "huggingface-hub>=0.36.2,<1",
+    "onnx==1.20.1",
+    "ctranslate2==4.8.2",
+    "sentencepiece==0.2.1",
+    "snowballstemmer==3.0.1",
+    "flatbuffers>=25.12.19",
+    "mcp>=2.0,<3",
+    "regex>=2024.11.6"
+  ],
+  "optional_backends": {
+    "gpu": [
+      "fastembed-gpu>=0.5; sys_platform != 'darwin'"
+    ],
+    "torch": [
+      "sentence-transformers>=3.0",
+      "transformers>=4.51",
+      "torch>=2.9; sys_platform == 'darwin' and platform_machine == 'arm64'"
+    ],
+    "retrieval-mlx": [
+      "mlx==0.32.3; sys_platform == 'darwin' and platform_machine == 'arm64'",
+      "mlx-lm==0.28.4; sys_platform == 'darwin' and platform_machine == 'arm64'",
+      "transformers==4.57.6",
+      "huggingface-hub>=0.36.2,<1"
+    ]
+  },
+  "hosts": [
+    "Claude Code",
+    "Codex",
+    "OpenCode",
+    "DeepSeek Harness"
+  ],
+  "hooks": [
+    "session-start",
+    "session-end",
+    "user-prompt",
+    "tool-call",
+    "stop"
+  ],
+  "formats": [
+    ".ken/meta.json",
+    "SQLite schema.sql and additive migrations",
+    "inline float32 vectors",
+    "slotted vectors",
+    "versioned structural store and syntax flatbuffers",
+    "KQL1 TOML selectors",
+    "KQL2 saved modules and QuerySession",
+    "model profile fingerprints",
+    "justified memory and source hashes"
+  ],
+  "platforms": {
+    "minimum_ci": [
+      "Linux",
+      "macOS"
+    ],
+    "Windows": "Optional inference wheels advertised; whole-app support not certified by current CI."
+  },
+  "model_policy": "Preserve per-project model, dimensions, tokenizer, prompts and pins; no inference or downloads in M1.",
+  "resource_policy": "source-owners includes every bundled resource; copied oracle contains their bytes; runtime/cache stores not copied."
+}
