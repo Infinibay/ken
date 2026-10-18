@@ -32,6 +32,25 @@ fn nearest_root_wins() {
     assert_eq!(paths.pid(), paths.root().join(".ken/daemon.pid"));
     assert_eq!(paths.log(), paths.root().join(".ken/daemon.log"));
 }
+
+#[cfg(unix)]
+#[test]
+fn cyclic_marker_is_not_a_file_and_ancestor_discovery_continues() {
+    use std::os::unix::fs::symlink;
+
+    let t = TempDir::new().unwrap();
+    marker(t.path());
+    let nested = t.path().join("nested");
+    fs::create_dir_all(nested.join(".ken")).unwrap();
+    symlink("meta.json", nested.join(".ken/meta.json")).unwrap();
+    assert_eq!(
+        locate_project(&nested, &context(t.path()))
+            .unwrap()
+            .unwrap()
+            .root(),
+        t.path().canonicalize().unwrap()
+    );
+}
 #[test]
 fn invalid_override_has_no_fallback() {
     let t = TempDir::new().unwrap();

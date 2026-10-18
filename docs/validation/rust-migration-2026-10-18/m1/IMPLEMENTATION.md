@@ -23,7 +23,7 @@ fixtures, comparación de procesos, aceptación de recibos y medición.
 
 ## Evidencia y estado del cierre
 
-Tareas 1–8 completadas. El primer cierre local ejecutó 15.604 pruebas Python
+Tareas 1–9 implementadas. El primer cierre local ejecutó 15.604 pruebas Python
 aprobadas, 10 xfail históricos, 24 pruebas de integración Rust y 62 pruebas de
 integración de paridad, además del contraste separado de los 58 casos.
 No aparecieron fallos Python nuevos. Los dos errores de mypy por `transformers`
@@ -43,6 +43,14 @@ La ejecución Linux sigue en curso. La matriz M1 sólo se
 cierra cuando ambos recibos completos tienen las mismas huellas de fuentes,
 casos, tooling y toolchain, y Linux aporta su traza exec. La revisión independiente
 del conjunto también es necesaria. No se acredita ninguna etapa M2–M8 aquí.
+
+La [revisión independiente](REVIEW.md) encontró un Important en la expansión de
+symlinks compartidos, corregido mediante TDD. El triage agregó una corrección
+de existencia de paths cíclicos/no codificables. La suite Rust ampliada pasó
+28 pruebas; los cuatro casos públicos nuevos conservan los 58 anteriores.
+Los recibos macOS anteriores describen la revisión previa a estas correcciones;
+se están regenerando los de ambas plataformas antes de aceptar M1 globalmente.
+Los dos Minor del reviewer se mantienen diferidos y están identificados en REVIEW.
 
 Los resultados completos locales se guardan bajo `.ken/rust-migration/m0-m1/`;
 los recibos públicos finales se incorporan al cerrar el gate. El manifiesto de
@@ -96,3 +104,25 @@ Las decisiones reemplazadas permanecen visibles junto con su corrección.
 - Task 9: Ruling: expose optional --original-manifest/--baseline-dir for CI platform-specific baselines and skip loading a local reference in matrix scope — clean CI must not assert dirty local hashes or depend on an unavailable interpreter path — risk if wrong: a CI receipt might be mistaken for this local checkout; fingerprints are compared explicitly.
 
 - Task 9: Ruling: parse the unique rustc version line, preserving rustup installation notices in the raw receipt — observed isolated HOME triggers installation notices before compiler output — test_rustup_notices_do_not_replace_the_compiler_identity RED→GREEN; missing/ambiguous identities fail — risk if wrong: accepting a different toolchain. The in-flight first validation is diagnostic; source fingerprints changed and a fresh final run is required.
+
+### Decisiones del cierre y revisión
+
+- Final: Ruling: M2–M8 behavior — remains pending and will be implemented under the user’s instruction to finish the full migration; this review only accepts M0/M1 — risk if wrong: a first slice could otherwise be mistaken for full migration.
+
+- Final: Ruling: Windows compatibility — Linux/macOS are the approved minimum; no Windows certification is inferred — risk if wrong: unmeasured Windows behavior.
+
+- Final: Ruling: preexisting dirty Python changes — preserve them exactly as the frozen oracle, outside migration commits — risk if wrong: accidental loss or attribution of user work.
+
+- Final: Ruling: remote CI and Linux/platform acceptance — no remote CI was run; actual local Linux gate and matrix acceptance remain mandatory for M1 — risk if wrong: false platform certification.
+
+- Final: Ruling: full independent suite reruns by reviewer — author ran complete suites; reviewer independently checked identities/integrity and reproduced the defect, without claiming to rerun every suite — risk if wrong: review depth must not be confused with a second full test execution.
+
+- Final: Ruling: manual verification of every CLI/MCP inventory entry — dynamic capture mechanisms and completeness audit preserve the original interfaces for later stages; historical commands are not certified migrated by the M1 review — risk if wrong: inventory could be mistaken for functional parity of unmigrated commands.
+
+- Final: Ruling: retain the two reviewer Minor findings as deferred — current snapshot implementation is transactional and resolver replacement is already explained in the guide; neither is a current user-visible product defect — risk if wrong: weaker regression proof and incomplete historical documentation.
+
+- Final: Ruling: include one additional Important found during triage in the same correction pass — indexed file replaced by a symlink loop returns Python status exit 0 with stale_files=1, but native exit 1; reproduce against frozen process saved in stale-cycle-repro.json — preserve Python existence semantics for ELOOP without swallowing permission/other IO failures — risk if wrong: normal stale indexes could prevent status diagnostics.
+
+- Final: Ruling: use pinned libc 0.2.191 (already transitive in Cargo.lock) as a direct Unix dependency for pathlib-compatible ELOOP/EBADF stat handling — std::io::ErrorKind::FilesystemLoop is still nightly-only; no hardcoded platform errno and no nightly feature — risk if wrong: platform-dependent existence classification.
+
+- Final: Ruling: append shared_symlinks/stale_cycle JSON+text cases to the matrix before verifying corrected release — all previous 58 IDs remain, now 62; independent fixture expectations test RED→GREEN — risk if wrong: extending coverage must not erase prior cases or normalize a new difference.

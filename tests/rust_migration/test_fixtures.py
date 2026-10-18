@@ -46,3 +46,13 @@ def test_fixture_paths_are_canonical_through_symlinks(tmp_path):
         assert fixture.root==fixture.root.resolve()
         assert fixture.expected_report["project_root"]==str(fixture.root.resolve())
         assert fixture.expected_report["db"]["path"]==str((fixture.root/".ken/ken.db").resolve())
+
+
+def test_shared_link_and_stale_cycle_expectations_are_declared(tmp_path):
+    with build_fixture(tmp_path/"shared","shared_symlinks",ref()) as fixture:
+        assert fixture.start == fixture.root/"l24"
+        assert fixture.expected_report["project_root"] == str(fixture.root)
+    with build_fixture(tmp_path/"stale","stale_cycle",ref()) as fixture:
+        assert (fixture.root/"src/live0.py").is_symlink()
+        assert fixture.expected_report["counts"]["files"] == 1
+        assert fixture.expected_report["index_health"] == {"stale_files":1,"sample":["src/live0.py"]}

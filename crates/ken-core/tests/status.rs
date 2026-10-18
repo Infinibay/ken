@@ -170,6 +170,35 @@ fn wal_commit_visible_without_checkpoint() {
 
 #[cfg(unix)]
 #[test]
+fn indexed_symlink_loops_are_reported_as_stale() {
+    use std::os::unix::fs::symlink;
+
+    let t = project();
+    let c = database(t.path());
+    file(&c, "available", None, None);
+    file(&c, "loop", None, None);
+    fs::write(t.path().join("available"), "code").unwrap();
+    symlink("loop", t.path().join("loop")).unwrap();
+
+    let report = installed(t.path());
+    assert_eq!(report.counts.files, 2);
+    assert_eq!(report.index_health.stale_files, 1);
+    assert_eq!(report.index_health.sample, ["loop"]);
+}
+
+#[test]
+fn unencodable_indexed_path_is_reported_as_stale() {
+    let t = project();
+    let c = database(t.path());
+    file(&c, "invalid\0path", None, None);
+    let report = installed(t.path());
+    assert_eq!(report.counts.files, 1);
+    assert_eq!(report.index_health.stale_files, 1);
+    assert_eq!(report.index_health.sample, ["invalid\0path"]);
+}
+
+#[cfg(unix)]
+#[test]
 fn readonly_directory_does_not_need_write_access() {
     use std::os::unix::fs::PermissionsExt;
     let t = project();

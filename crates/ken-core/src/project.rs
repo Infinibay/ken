@@ -1,6 +1,6 @@
 //! Project identity and canonical, confined paths. Environment is captured once.
 use std::{
-    collections::HashSet,
+    collections::HashMap,
     env,
     ffi::OsString,
     fs, io,
@@ -108,20 +108,45 @@ pub fn locate_project(
 }
 
 pub(crate) fn is_file(path: &Path) -> Result<bool, ProjectError> {
-    match fs::metadata(path) {
-        Ok(info) => Ok(info.is_file()),
-        Err(e)
-            if matches!(
-                e.kind(),
-                io::ErrorKind::NotFound | io::ErrorKind::NotADirectory
-            ) =>
-        {
-            Ok(false)
-        }
-        Err(source) => Err(ProjectError::Io {
+    metadata_if_present(path)
+        .map(|metadata| metadata.is_some_and(|info| info.is_file()))
+        .map_err(|source| ProjectError::Io {
             path: path.into(),
             source,
-        }),
+        })
+}
+
+pub(crate) fn path_exists(path: &Path) -> io::Result<bool> {
+    metadata_if_present(path).map(|metadata| metadata.is_some())
+}
+
+// Match pathlib's existence checks, including unavailable symlink targets.
+// Permission and other IO errors remain explicit rather than becoming absence.
+fn metadata_if_present(path: &Path) -> io::Result<Option<fs::Metadata>> {
+    if path.as_os_str().as_encoded_bytes().contains(&0) {
+        return Ok(None);
+    }
+    match fs::metadata(path) {
+        Ok(info) => Ok(Some(info)),
+        Err(error) if unavailable_path(&error) => Ok(None),
+        Err(error) => Err(error),
+    }
+}
+
+fn unavailable_path(error: &io::Error) -> bool {
+    if matches!(
+        error.kind(),
+        io::ErrorKind::NotFound | io::ErrorKind::NotADirectory
+    ) {
+        return true;
+    }
+    #[cfg(unix)]
+    {
+        matches!(error.raw_os_error(), Some(libc::ELOOP) | Some(libc::EBADF))
+    }
+    #[cfg(not(unix))]
+    {
+        false
     }
 }
 
@@ -140,12 +165,17 @@ fn canonical(path: &Path) -> Result<PathBuf, ProjectError> {
 
 // Resolve links before processing the following `..`, even when their targets
 // do not exist. A work stack also resolves links inside link targets without
-// recursion or an arbitrary maximum chain length. LeaveLink tracks cycles only
-// while expanding a target, allowing the same link later in a valid path.
+// recursion or an arbitrary maximum chain length. Links are active until their
+// target is complete; completed targets are reused within this resolution so
+// shared acyclic targets do not expand exponentially.
 fn resolve_components(path: &Path) -> io::Result<PathBuf> {
     enum Pending {
         Part(OsString),
-        LeaveLink(PathBuf),
+        FinishLink(PathBuf),
+    }
+    enum LinkResolution {
+        Active,
+        Complete(PathBuf),
     }
     let parts = |p: &Path| {
         p.components()
@@ -154,12 +184,12 @@ fn resolve_components(path: &Path) -> io::Result<PathBuf> {
             .collect::<Vec<_>>()
     };
     let mut pending = parts(path);
-    let mut active = HashSet::new();
+    let mut links = HashMap::new();
     let mut resolved = PathBuf::new();
     while let Some(next) = pending.pop() {
         let raw = match next {
-            Pending::LeaveLink(link) => {
-                active.remove(&link);
+            Pending::FinishLink(link) => {
+                links.insert(link, LinkResolution::Complete(resolved.clone()));
                 continue;
             }
             Pending::Part(raw) => raw,
@@ -174,11 +204,19 @@ fn resolve_components(path: &Path) -> io::Result<PathBuf> {
                 let candidate = resolved.join(&raw);
                 match fs::symlink_metadata(&candidate) {
                     Ok(meta) if meta.is_symlink() => {
-                        if !active.insert(candidate.clone()) {
-                            return Err(io::Error::other("symbolic link cycle"));
+                        match links.get(&candidate) {
+                            Some(LinkResolution::Active) => {
+                                return Err(io::Error::other("symbolic link cycle"));
+                            }
+                            Some(LinkResolution::Complete(target)) => {
+                                resolved = target.clone();
+                                continue;
+                            }
+                            None => {}
                         }
+                        links.insert(candidate.clone(), LinkResolution::Active);
                         let target = fs::read_link(&candidate)?;
-                        pending.push(Pending::LeaveLink(candidate));
+                        pending.push(Pending::FinishLink(candidate));
                         pending.extend(parts(&target));
                     }
                     Ok(_) => resolved.push(raw),

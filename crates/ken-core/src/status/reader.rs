@@ -1,5 +1,5 @@
 use super::{rules::*, *};
-use crate::project::{DiscoveryContext, is_file, locate_project, resolve_start};
+use crate::project::{DiscoveryContext, is_file, locate_project, path_exists, resolve_start};
 use rusqlite::{Connection, OpenFlags};
 use std::{fs, path::Path, time::Duration};
 
@@ -67,10 +67,7 @@ pub fn read_status(
     let mut stale = Vec::new();
     for relative in indexed {
         let path = paths.root().join(&relative);
-        if !path
-            .try_exists()
-            .map_err(|source| StatusError::File { path, source })?
-        {
+        if !path_exists(&path).map_err(|source| StatusError::File { path, source })? {
             stale.push(relative);
         }
     }

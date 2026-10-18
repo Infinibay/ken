@@ -194,3 +194,52 @@ fn corrupt_input_has_no_success_stdout() {
             .starts_with("ken-rs status:")
     );
 }
+
+#[cfg(unix)]
+#[test]
+fn shared_symlink_targets_resolve_in_bounded_time() {
+    use std::{
+        os::unix::fs::symlink,
+        process::Stdio,
+        time::{Duration, Instant},
+    };
+
+    let t = project();
+    symlink(".", t.path().join("l0")).unwrap();
+    for level in 1..=24 {
+        let previous = format!("l{}", level - 1);
+        symlink(
+            Path::new(&previous).join(&previous),
+            t.path().join(format!("l{level}")),
+        )
+        .unwrap();
+    }
+    let mut child = Command::new(env!("CARGO_BIN_EXE_ken-rs"))
+        .arg("status")
+        .arg(t.path().join("l24"))
+        .arg("--json")
+        .env_remove("KEN_PROJECT_ROOT")
+        .env("HOME", t.path().join("empty-home"))
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let deadline = Instant::now() + Duration::from_secs(2);
+    while child.try_wait().unwrap().is_none() {
+        if Instant::now() >= deadline {
+            child.kill().unwrap();
+            child.wait().unwrap();
+            panic!("valid shared symlink targets exceeded the two-second process deadline");
+        }
+        std::thread::sleep(Duration::from_millis(5));
+    }
+    let out = child.wait_with_output().unwrap();
+    assert!(out.status.success(), "{out:?}");
+    assert!(out.stderr.is_empty());
+    let data: Value = serde_json::from_slice(&out.stdout).unwrap();
+    assert_eq!(
+        data["project_root"],
+        t.path().canonicalize().unwrap().to_str().unwrap()
+    );
+    assert_eq!(data["installed"], false);
+}

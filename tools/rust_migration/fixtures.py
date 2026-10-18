@@ -141,8 +141,9 @@ def build_fixture(parent: Path, scenario: str, reference: Reference) -> Fixture:
     (marker / "meta.json").write_text("{" if scenario == "invalid_meta" else json.dumps(meta))
     db = marker / "ken.db"
     counts = dict.fromkeys(COUNT_NAMES, 0)
+    stale_paths = []
     populated = scenario in {"populated", "slots", "mixed", "closed_session"}
-    n = 7 if scenario == "stale" else 2 if scenario in {"partial", "mixed"} else 1 if populated or scenario in {"wal", "no_embeddings"} else 0
+    n = 7 if scenario == "stale" else 2 if scenario in {"partial", "mixed"} else 1 if populated or scenario in {"wal", "no_embeddings", "stale_cycle"} else 0
     if scenario != "metadata_only":
         conn = sqlite3.connect(db)
         conn.executescript((reference.root / "src/ken/schema.sql").read_text())
@@ -153,6 +154,10 @@ def build_fixture(parent: Path, scenario: str, reference: Reference) -> Fixture:
             rel = f"src/missing{i}.py" if scenario == "stale" else f"src/live{i}.py"
             if scenario != "stale":
                 p = root / rel; p.parent.mkdir(exist_ok=True); p.write_text("def f(): return 1\n")
+                if scenario == "stale_cycle":
+                    p.unlink(); p.symlink_to(p.name)
+            if scenario in {"stale", "stale_cycle"}:
+                stale_paths.append(rel)
             embedded = populated or scenario == "partial" and i == 0
             slot = i if embedded and (scenario == "slots" or scenario == "mixed" and i == 1) else None
             blob = b"vector" if embedded and slot is None else None
@@ -192,7 +197,7 @@ def build_fixture(parent: Path, scenario: str, reference: Reference) -> Fixture:
         total = counts["files"] + counts["symbols"]
         recommendations = []
         if not n: recommendations.append(INDEX)
-        elif scenario == "stale": recommendations.append(STALE)
+        elif stale_paths: recommendations.append(STALE)
         if n and not embedded: recommendations.append(EMBED)
         elif embedded < total: recommendations.append(PARTIAL)
         if not counts["prompt_contexts_embedded"]: recommendations.append(SEED)
@@ -200,8 +205,7 @@ def build_fixture(parent: Path, scenario: str, reference: Reference) -> Fixture:
         if not counts["session_scores"]: recommendations.append(END if counts["active_sessions"] else HISTORY)
         if not counts["findings_embedded"]: recommendations.append(SAVE)
         base.update(counts=counts,
-                    index_health={"stale_files": 7 if scenario == "stale" else 0,
-                                  "sample": [f"src/missing{i}.py" for i in range(5)] if scenario == "stale" else []},
+                    index_health={"stale_files": len(stale_paths), "sample": sorted(stale_paths)[:5]},
                     rank_signals={"index": "yes" if n else "empty", "embeddings": "none" if not embedded else "ready" if embedded == total else f"partial({embedded}/{total})",
                                   "predictive": "yes" if populated else "no", "findings": "yes" if populated else "no"},
                     embedding_coverage={"embedded": embedded, "total": total, "percent": round(embedded / total * 100, 1) if total else 0.0},
@@ -222,5 +226,11 @@ def build_fixture(parent: Path, scenario: str, reference: Reference) -> Fixture:
     if scenario == "symlink_start":
         fixture.start = parent / "linked"
         fixture.start.symlink_to(root, target_is_directory=True)
+    if scenario == "shared_symlinks":
+        (root/"l0").symlink_to(".", target_is_directory=True)
+        for level in range(1,25):
+            previous=f"l{level-1}"
+            (root/f"l{level}").symlink_to(f"{previous}/{previous}", target_is_directory=True)
+        fixture.start=root/"l24"
     fixture.before_state = state(root)
     return fixture
