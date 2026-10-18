@@ -38,7 +38,7 @@ dependencies = [
     "tokenizers==0.22.2",
     "huggingface-hub>=0.36.2,<1",
     "onnx==1.20.1",
-    "ctranslate2==4.8.3",
+    "ctranslate2==4.8.2",
     "sentencepiece==0.2.1",
     # Small CPU-only morphological normalization for source feature ranking.
     "snowballstemmer==3.0.1",
@@ -109,6 +109,9 @@ ken = "ken.cli:main"
 dev = [
     "mypy>=1.15",
     "pytest>=8.0",
+    # Tensor-level regression tests exercise optional backends without loading models.
+    "torch==2.9.0",
+    "transformers==4.57.6",
 ]
 
 [build-system]
@@ -126,6 +129,21 @@ packages = ["src/ken"]
 
 [tool.hatch.build.targets.sdist]
 include = ["src/ken", "README.md", "LICENSE", "pyproject.toml"]
+
+[tool.uv]
+# Apply a rolling supply-chain cooldown to registry distributions, including
+# transitive dependencies. This is uv policy; other installers do not enforce it.
+exclude-newer = "14 days"
+
+[tool.uv.sources]
+# Only the development group selects CPU wheels; published extras keep their
+# normal installer policy. Other packages cannot resolve from this index.
+torch = { index = "pytorch-cpu", group = "dev" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

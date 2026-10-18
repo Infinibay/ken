@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import threading
 from functools import lru_cache
+from importlib import import_module
 from pathlib import Path
 from typing import Any
 
@@ -36,14 +37,14 @@ def model_tokenizer(spec: Any):
 
 
 def load_qwen_core(spec: Any, *, output_tokens: tuple[str, ...] = ()):
-    import mlx.core as mx
-    from mlx_lm.models.qwen3 import ModelArgs, Qwen3Model
+    mx = import_module("mlx.core")
+    qwen3 = import_module("mlx_lm.models.qwen3")
     bound_free_cache(mx)
     path = model_snapshot(spec)
     config = json.loads((path / "config.json").read_text())
     if config.get("model_type") != "qwen3":
         raise ValueError("MLX retrieval backend currently supports Qwen3 only")
-    model = Qwen3Model(ModelArgs.from_dict(config))
+    model = qwen3.Qwen3Model(qwen3.ModelArgs.from_dict(config))
     weights = {}
     head = None
     for file in sorted(path.glob("*.safetensors")):
@@ -90,7 +91,7 @@ class MLXEncoder:
             return len(model_tokenizer(self.spec).encode(text, add_special_tokens=False))
 
     def _encode(self, texts: list[str]) -> list[np.ndarray]:
-        import mlx.core as mx
+        mx = import_module("mlx.core")
         with self._lock:
             self._load()
             encoded = self._tokenizer(texts, truncation=True,

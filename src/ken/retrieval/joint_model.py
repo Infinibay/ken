@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 import threading
 from functools import lru_cache
+from importlib import import_module
 from typing import Any
 
 import numpy as np
@@ -80,7 +81,7 @@ class LocalRelevanceJudge:
         true_id = tokenizer.convert_tokens_to_ids("yes")
         false_id = tokenizer.convert_tokens_to_ids("no")
         if self.device == "mlx":
-            import mlx.core as mx
+            mx = import_module("mlx.core")
             for start in range(0, len(encoded), self.spec.batch_size):
                 sequences = [prefix + header + ids + suffix
                              for ids in encoded[start:start + self.spec.batch_size]]

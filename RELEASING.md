@@ -43,6 +43,24 @@ Also keep the required runtime dependency `mcp>=2.0,<3` in
 `[project].dependencies`, not in an optional extra. The MCP startup regression
 tests protect that packaging contract and the MCP 2.x API requirement.
 
+## Dependency age policy
+
+`[tool.uv].exclude-newer = "14 days"` applies a rolling minimum age to registry
+distributions, including transitive dependencies and the development group.
+Run `uv lock --check` and `uv sync --locked --dev` before validation. Do not
+work around an ineligible pin by disabling the cutoff: select a compatible
+eligible version and repeat the relevant checks.
+
+uv records the resolved cutoff in the lockfile, so it does not become stale
+merely as time passes. A fresh resolution refreshes the cutoff. This policy is
+uv-specific; pip does not read it, and Git/local source dependencies are outside
+its registry-upload-time rule. See the
+[uv documentation](https://docs.astral.sh/uv/concepts/resolution/#dependency-cooldowns).
+
+The development group obtains Torch from the explicit official CPU index. This
+keeps tensor regression tests runnable without installing CUDA dependencies.
+The published package's normal runtime dependencies do not include Torch.
+
 ## Cutting a release
 
 1. Bump the version in **`src/ken/__init__.py`** (`__version__ = "X.Y.Z"`) — the
