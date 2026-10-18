@@ -43,6 +43,8 @@ def run_process(argv: list[str], cwd: Path, env: dict[str, str], timeout_s: floa
 
 
 def _normalize(data: dict) -> dict:
+    if not isinstance(data, dict):
+        raise ValueError("report must be an object")
     data = json.loads(json.dumps(data))
     if "project_root" in data: data["project_root"] = "<ROOT>"
     if isinstance(data.get("db"), dict) and "path" in data["db"]: data["db"]["path"] = "<ROOT>/.ken/ken.db"
@@ -51,11 +53,20 @@ def _normalize(data: dict) -> dict:
     return data
 
 
-def _typed_equal(a, b) -> bool:
-    if type(a) is not type(b): return False
-    if isinstance(a, dict): return a.keys() == b.keys() and all(_typed_equal(a[k], b[k]) for k in a)
-    if isinstance(a, list): return len(a) == len(b) and all(_typed_equal(x, y) for x, y in zip(a, b))
-    return a == b
+def _differences(expected, actual, path="report") -> list[str]:
+    if type(expected) is not type(actual):
+        return [f"{path}: expected {type(expected).__name__}, got {type(actual).__name__}"]
+    if isinstance(expected, dict):
+        errors = [f"{path}.{k}: missing" for k in expected.keys() - actual.keys()]
+        errors += [f"{path}.{k}: unexpected" for k in actual.keys() - expected.keys()]
+        for key in expected.keys() & actual.keys():
+            errors += _differences(expected[key], actual[key], f"{path}.{key}")
+        return errors
+    if isinstance(expected, list):
+        if len(expected) != len(actual): return [f"{path}: array length differs"]
+        return [error for i, (x, y) in enumerate(zip(expected, actual))
+                for error in _differences(x, y, f"{path}[{i}]")]
+    return [] if expected == actual else [f"{path}: value differs"]
 
 
 def _text(text: str) -> str:
@@ -80,9 +91,10 @@ def compare_case(case: Case, expected: dict, python: ProcessResult, native: Proc
             original_expected = _normalize(expected)
             if case.exception_id == "health_redirect":
                 original_expected["daemon"] = {"running": True, "sessions_active": 1, "idle_s": 2.5, "version": "fixture"}
-            if not _typed_equal(actual, _normalize(expected)): errors.append(f"{case.id}: native JSON differs from expected fields/types/values")
-            if not _typed_equal(original, original_expected): errors.append(f"{case.id}: Python JSON differs from expected fields/types/values")
-            if case.exception_id is None and not _typed_equal(actual, original): errors.append(f"{case.id}: native/Python JSON differ")
+            errors += [f"{case.id}: native {e}" for e in _differences(_normalize(expected), actual)]
+            errors += [f"{case.id}: Python {e}" for e in _differences(original_expected, original)]
+            if case.exception_id is None:
+                errors += [f"{case.id}: native/Python {e}" for e in _differences(original, actual)]
         except (ValueError, TypeError): errors.append(f"{case.id}: invalid JSON report")
         if native.stderr or python.stderr: errors.append(f"{case.id}: unexpected stderr")
     else:

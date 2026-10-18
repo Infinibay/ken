@@ -55,3 +55,12 @@ def test_real_bad_subprocess_is_rejected(tmp_path):
     out = run_process([sys.executable, "-c", "print('{}')"], tmp_path, dict(os.environ), 5)
     case = Case("bad-process", "installed_empty", "json", [], 0, {"ok": True})
     assert compare_case(case, case.expected, out, out)
+
+
+def test_failure_identifies_the_field_and_rejects_non_object_reports():
+    expected = {"counts": {"files": 3}}
+    case = Case("field-control", "installed_empty", "json", [], 0, expected)
+    errors = compare_case(case, expected, result(expected), result({"counts": {"files": "3"}}))
+    assert any("counts.files" in error for error in errors)
+    for value in [[], None, 3, "report"]:
+        assert compare_case(case, expected, result(expected), result(value))
