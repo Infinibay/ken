@@ -1,0 +1,94 @@
+name: Rust native model parity
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Install pinned validation runtimes
+        run: |
+          uv python install 3.12
+          uv sync --locked --dev
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Install Linux execution tracer
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y strace
+      - name: Prepare only the pinned public model data
+        run: |
+          .venv/bin/python - <<'PY'
+          import os
+          from pathlib import Path
+          from ken.embedder.model2vec_backend import potion_assets
+          snapshot = potion_assets().resolve(local_files_only=False)
+          with open(os.environ['GITHUB_ENV'], 'a') as stream:
+              stream.write(f'KEN_POTION_SNAPSHOT={snapshot}\n')
+              stream.write(f'KEN_MODEL_PROBE={Path.cwd() / "target/release/examples/model_probe"}\n')
+          PY
+          cargo build --release --locked -p ken-cli -p ken-models --bins --examples
+      - name: Freeze this checkout and measure its unchanged Python baseline
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          from tools.rust_migration.reference import freeze_reference
+          ref = freeze_reference(Path.cwd(), Path('.ken/rust-migration/m2/reference'))
+          PY
+          set +e
+          .venv/bin/python -m pytest --junitxml=.ken/rust-migration/m2/python-baseline.xml > .ken/rust-migration/m2/python-baseline.log 2>&1
+          printf '%s\n' "$?" > .ken/rust-migration/m2/python-baseline.exit
+          .venv/bin/python -m mypy --no-incremental > .ken/rust-migration/m2/mypy-baseline.log 2>&1
+          printf '%s\n' "$?" > .ken/rust-migration/m2/mypy-baseline.exit
+          exit 0
+      - name: Validate original integrity, all suites and the native model process
+        run: |
+          .venv/bin/python -m tools.rust_migration.model_validate \
+            --reference .ken/rust-migration/m2/reference \
+            --native "$KEN_MODEL_PROBE" --snapshot "$KEN_POTION_SNAPSHOT" \
+            --baseline-dir .ken/rust-migration/m2 \
+            --original-manifest .ken/rust-migration/m2/reference/reference-manifest.json \
+            --out .ken/rust-migration/m2/validation
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: rust-models-${{ runner.os }}
+          path: .ken/rust-migration/m2/validation/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+  matrix:
+    needs: static
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: rust-models-*
+          path: .ken/rust-migration/m2/platforms
+      - name: Require matching platform receipts
+        run: |
+          uv run --no-project --python 3.12 python -m tools.rust_migration.model_validate \
+            --scope matrix --platform-receipts .ken/rust-migration/m2/platforms \
+            --out .ken/rust-migration/m2/matrix
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: rust-models-matrix
+          path: .ken/rust-migration/m2/matrix/
+          include-hidden-files: true
+          if-no-files-found: error

@@ -38,6 +38,33 @@ enum Call {
     },
 }
 
+fn peak_rss() -> Result<u64, Box<dyn std::error::Error>> {
+    #[cfg(target_os = "linux")]
+    {
+        let status = std::fs::read_to_string("/proc/self/status")?;
+        let value = status
+            .lines()
+            .find(|line| line.starts_with("VmHWM:"))
+            .and_then(|line| line.split_whitespace().nth(1))
+            .ok_or("missing post-exec VmHWM")?;
+        Ok(value.parse::<u64>()? * 1024)
+    }
+    #[cfg(target_os = "macos")]
+    {
+        let mut usage = std::mem::MaybeUninit::<libc::rusage>::uninit();
+        // SAFETY: the pointer is valid; getrusage initializes it on success.
+        if unsafe { libc::getrusage(libc::RUSAGE_SELF, usage.as_mut_ptr()) } != 0 {
+            return Err(std::io::Error::last_os_error().into());
+        }
+        // SAFETY: getrusage succeeded and initialized the rusage structure.
+        Ok(unsafe { usage.assume_init() }.ru_maxrss as u64)
+    }
+    #[cfg(not(any(target_os = "linux", target_os = "macos")))]
+    {
+        Err("model RSS measurement supports Linux and macOS".into())
+    }
+}
+
 fn run() -> Result<Value, Box<dyn std::error::Error>> {
     let mut input = String::new();
     std::io::stdin().read_to_string(&mut input)?;
@@ -65,6 +92,7 @@ fn run() -> Result<Value, Box<dyn std::error::Error>> {
         let started = Instant::now();
         let encoder = Model2VecEncoder::load(&verified)?;
         let load_ns = started.elapsed().as_nanos();
+        let peak_after_load_bytes = peak_rss()?;
         dimension = Some(encoder.dim());
         let declaration = serde_json::to_value(&assets)?;
         identity = Some(
@@ -85,7 +113,9 @@ fn run() -> Result<Value, Box<dyn std::error::Error>> {
                 Call::Passages { texts } => json!(encoder.embed_passages(&texts)?),
             });
         }
-        results.push(json!({"id":case.id, "calls":calls, "load_ns":load_ns, "inference_ns":inference.elapsed().as_nanos()}));
+        let inference_ns = inference.elapsed().as_nanos();
+        results.push(json!({"id":case.id, "calls":calls, "load_ns":load_ns, "inference_ns":inference_ns,
+            "peak_after_load_bytes":peak_after_load_bytes, "peak_after_inference_bytes":peak_rss()?}));
     }
     if results.is_empty() {
         return Err("nonempty model cases required".into());

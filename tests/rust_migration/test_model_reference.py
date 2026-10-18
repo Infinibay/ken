@@ -45,6 +45,8 @@ def test_capture_uses_frozen_model_and_rejects_drift(frozen, synthetic, tmp_path
                      ]}])
     assert result['oracle']['frozen_import'] is True
     assert result['oracle']['runtime']['model2vec'] == '0.9.0'
+    assert result['results'][0]['peak_after_load_bytes'] > 0
+    assert result['results'][0]['peak_after_inference_bytes'] >= result['results'][0]['peak_after_load_bytes']
     assert result['results'][0]['calls'][0] == [1, 2]
     vectors = result['results'][0]['calls'][1]
     assert vectors['rows'] == [0, 1]

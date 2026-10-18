@@ -27,6 +27,10 @@ def test_real_model_process_matches_frozen_oracle(reference, model_inputs, tmp_p
     assert result['case_ids'] == [c['id'] for c in json.loads((ROOT / 'docs/validation/rust-migration-2026-10-18/m2-static/cases.json').read_text())['cases']]
     assert result['outside_checkout'] and result['native_children'] == []
     assert result['dependency_audit']['passed']
+    native = json.loads((tmp_path / 'parity/native.stdout.json').read_text())
+    for case in native['results']:
+        assert case['peak_after_load_bytes'] > 0
+        assert case['peak_after_inference_bytes'] >= case['peak_after_load_bytes']
 
 
 def test_probe_rejects_failed_preparation_without_success_stdout(model_inputs):

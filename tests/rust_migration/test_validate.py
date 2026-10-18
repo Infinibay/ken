@@ -95,3 +95,18 @@ def test_benchmark_keeps_all_samples_and_uses_nearest_rank():
     assert report["metrics"]["native/populated"]=={"samples":30,"median_ns":15.5,"p95_ns":29,"max_ns":30,"max_rss_bytes":30}
     assert not summarize_samples(samples[:-1])["passed"]
     samples[-1]["exit"]=1;assert not summarize_samples(samples)["passed"]
+
+def test_explicit_native_model_preparation_reaches_validation_only(tmp_path, monkeypatch):
+    from tools.rust_migration.validate import _validation_environment
+    ref=Reference(tmp_path,tmp_path/'manifest','reference',Path(sys.executable))
+    monkeypatch.setenv('KEN_POTION_SNAPSHOT','/prepared/pinned-revision')
+    monkeypatch.setenv('KEN_MODEL_PROBE','/prepared/native-model-probe')
+    monkeypatch.setenv('KEN_PROJECT_ROOT','/unrelated/project')
+    env=_validation_environment(ref,tmp_path,tmp_path/'output',tmp_path/'native')
+    assert env['KEN_POTION_SNAPSHOT']=='/prepared/pinned-revision'
+    assert env['KEN_MODEL_PROBE']=='/prepared/native-model-probe'
+    assert env['KEN_RUST_BIN']==str(tmp_path/'native')
+    assert 'KEN_PROJECT_ROOT' not in env
+    from tools.rust_migration.reference import reference_env
+    isolated=reference_env(ref,tmp_path/'oracle-env')
+    assert 'KEN_POTION_SNAPSHOT' not in isolated and 'KEN_MODEL_PROBE' not in isolated

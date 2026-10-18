@@ -96,3 +96,50 @@ casos y los escapes por symlink/prefijo. No se cambió el contrato para pasar.
 Las versiones/inputs de artefactos CI se contrastaron con la documentación
 de [upload-artifact](https://github.com/actions/upload-artifact) y
 [download-artifact](https://github.com/actions/download-artifact).
+
+## Modelos nativos: primer perfil M2
+
+`ken-models` ejecuta Potion sin Python. Los [casos y salidas congelados](validation/rust-migration-2026-10-18/m2-static/)
+se fijaron antes de implementar. El primer perfil está en validación; los demás
+runtimes y el almacenamiento M2 siguen pendientes. No se habilita búsqueda ni
+se escribe en índices existentes desde este probe.
+
+La preparación de pruebas utiliza Python exclusivamente como oráculo y para
+obtener los cuatro datos públicos fijados; el binario Rust consume sus propios
+bytes verificados. Configure los pesos antes de ejecutar la suite workspace o
+los gates de migración; la prueba real falla explícitamente si faltan:
+
+```sh
+# Una vez con acceso a red; después, local_files_only=True exige cache preparado.
+.venv/bin/python -c 'from ken.embedder.model2vec_backend import potion_assets; print(potion_assets().resolve(local_files_only=False))'
+export KEN_POTION_SNAPSHOT=/ruta/al/snapshot/e9d2a44ca6a05ac6685f3b23709ea57eb7352d5b
+export KEN_MODEL_PROBE="$PWD/target/release/examples/model_probe"
+cargo build --release --locked -p ken-models --example model_probe
+cargo test --locked --workspace
+.venv/bin/python -m tools.rust_migration.model_compare \
+  --reference .ken/rust-migration/m0-m1/reference \
+  --native "$KEN_MODEL_PROBE" --snapshot "$KEN_POTION_SNAPSHOT" \
+  --out .ken/rust-migration/m2/parity
+.venv/bin/python -m tools.rust_migration.model_validate \
+  --reference .ken/rust-migration/m0-m1/reference \
+  --native "$KEN_MODEL_PROBE" --snapshot "$KEN_POTION_SNAPSHOT" \
+  --baseline-dir .ken/rust-migration/m0-m1 \
+  --original-manifest docs/validation/rust-migration-2026-10-18/baseline.json \
+  --out .ken/rust-migration/m2/validation
+```
+
+Linux exige strace real. Ambos sistemas ejecutan una copia fuera del checkout
+con sentinelas en PATH y auditan librerías/Cargo. `compatible_identity` conserva
+metadatos del espacio Python acreditado; `runtime` declara las bibliotecas Rust
+que ejecutaron el modelo. No se confunden ambas identidades.
+
+La medición separa verificación de bytes, construcción e inferencia. Se retienen
+30 cargas nuevas por workload y motor, dentro de un proceso por motor; los picos
+post-exec se observan después de cada fase y son acumulativos dentro del proceso.
+Linux usa VmHWM del proceso, evitando el suelo heredado de wait4 observado en M1;
+macOS usa getrusage del propio proceso. No se atribuye ese pico exclusivamente a
+pesos ni se establece un SLA. La construcción Python vuelve a verificar archivos;
+Rust construye desde bytes ya verificados, diferencia declarada en los recibos.
+
+`rust-models.yml` conserva una validación independiente de este perfil y sus
+regresiones M1. Su presencia no acredita ejecución remota; no se hizo push.

@@ -111,6 +111,15 @@ def _runtime(repo,reference,native,env,output,trace_exec):
     if system=="Linux" and trace.get("passed") is not True: errors.append("Linux exec trace missing or failed")
     return {"ran":True,"passed":not errors,"details":{"errors":errors,"dependency_audit":linked,"cargo_tree":tree,"copied_binary":True,"path_contains_python":False}},trace
 
+def _validation_environment(reference: Reference, repo: Path, output: Path, native: Path) -> dict:
+    env=reference_env(reference,output/"environment")
+    env["PYTHONPATH"]=os.pathsep.join([str(repo/"src"),str(repo)])
+    env.pop("CARGO_TARGET_DIR",None);env.pop("CARGO_BUILD_TARGET",None)
+    env.update(KEN_RUST_BIN=str(native),KEN_RUST_REFERENCE=str(reference.root))
+    for key in ["KEN_POTION_SNAPSHOT","KEN_MODEL_PROBE"]:
+        if key in os.environ: env[key]=os.environ[key]
+    return env
+
 def run(repo: Path,reference: Reference,native: Path,output: Path,scope: str="local",platform_receipts: Path|None=None,trace_exec: bool=False,*,original_manifest: Path|None=None,baseline_dir: Path|None=None) -> int:
     repo=repo.resolve();output=output.resolve();output.mkdir(parents=True,exist_ok=True)
     _write(output/"summary.json",{"scope":scope,"passed":False,"status":"running"})
@@ -131,9 +140,7 @@ def run(repo: Path,reference: Reference,native: Path,output: Path,scope: str="lo
     if not gates["originals"]["passed"] or not gates["reference"]["passed"]: return finish()
     try:
         native=native.resolve();before=_fingerprints(repo,reference,cases);summary["fingerprints"]=before
-        env=reference_env(reference,output/"environment");env["PYTHONPATH"]=os.pathsep.join([str(repo/"src"),str(repo)])
-        env.pop("CARGO_TARGET_DIR",None);env.pop("CARGO_BUILD_TARGET",None)
-        env.update(KEN_RUST_BIN=str(native),KEN_RUST_REFERENCE=str(reference.root))
+        env=_validation_environment(reference,repo,output,native)
         py=[str(reference.python),"-m"]
         gates["toolchain"]=_command(repo,env,output,"rust-toolchain",["rustc","--version","--verbose"])
         summary["rustc"]=_rustc_version(output/"rust-toolchain.log") if gates["toolchain"].get("ran") else ""

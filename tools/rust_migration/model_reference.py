@@ -52,7 +52,7 @@ def model_cases() -> list[dict]:
 # This child imports exclusively from Reference.root/src; no native implementation
 # or expected outputs participate in producing the oracle.
 _CHILD = r'''
-import json, sys, time
+import json, sys, time, resource
 from pathlib import Path
 from importlib.metadata import version
 import ken
@@ -67,11 +67,22 @@ if versions['model2vec'] != '0.9.0':
     raise ValueError('model2vec 0.9.0 is required')
 assets = ModelAssets.from_dict(request['registration'])
 assets.verify(Path(request['snapshot']))
+def peak_rss():
+    if sys.platform.startswith('linux'):
+        for line in Path('/proc/self/status').read_text().splitlines():
+            if line.startswith('VmHWM:'):
+                return int(line.split()[1]) * 1024
+        raise ValueError('missing post-exec process VmHWM')
+    if sys.platform == 'darwin':
+        return int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    raise ValueError('model RSS measurement supports Linux and macOS')
 results = []
 for case in request['cases']:
     start = time.monotonic_ns()
     encoder = RegisteredStaticEncoder(Path(request['snapshot']), request['registration'])
     loaded = time.monotonic_ns()
+    peak_after_load_bytes = peak_rss()
+    inference_started = time.monotonic_ns()
     values = []
     for call in case['calls']:
         op = call['op']
@@ -86,8 +97,11 @@ for case in request['cases']:
         else:
             raise ValueError('unknown model operation')
         values.append(value)
+    inference_ns = time.monotonic_ns() - inference_started
     results.append({'id': case['id'], 'calls': values,
-                    'load_ns': loaded - start, 'inference_ns': time.monotonic_ns() - loaded})
+                    'load_ns': loaded - start, 'inference_ns': inference_ns,
+                    'peak_after_load_bytes': peak_after_load_bytes,
+                    'peak_after_inference_bytes': peak_rss()})
 print(json.dumps({'oracle': {'frozen_import': True, 'runtime': versions},
                   'assets_fingerprint': assets.fingerprint, 'identity': encoder.identity,
                   'dimension': encoder.dim, 'results': results}, allow_nan=False))

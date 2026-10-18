@@ -21,6 +21,11 @@ impl ModelTokenizer {
         if vocabulary.is_empty()
             || vocabulary
                 .values()
+                .collect::<std::collections::HashSet<_>>()
+                .len()
+                != vocabulary.len()
+            || vocabulary
+                .values()
                 .any(|id| *id as usize >= vocabulary.len())
         {
             return Err(ModelError::Tokenizer(

@@ -69,6 +69,8 @@ fn corrupt_or_sparse_vocabulary_is_rejected() {
     assert!(ModelTokenizer::load(b"{}").is_err());
     let mut sparse: Value =
         serde_json::from_slice(include_bytes!("fixtures/policy-tokenizer.json")).unwrap();
-    sparse["model"]["vocab"]["a"] = 99.into();
-    assert!(ModelTokenizer::load(&serde_json::to_vec(&sparse).unwrap()).is_err());
+    for invalid in [99, 2] {
+        sparse["model"]["vocab"]["a"] = invalid.into();
+        assert!(ModelTokenizer::load(&serde_json::to_vec(&sparse).unwrap()).is_err());
+    }
 }
