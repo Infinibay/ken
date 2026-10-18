@@ -9,7 +9,7 @@ MCP clients.
 
 **97.6% Hit@10 · 1,251 queries · 63 repositories · CPU only**
 
-*Measured on development main; [methodology and reproducible results](docs/validation/semble-embedding-comparison-2026-10-17-v323/README.md).*
+*Measured on a pinned development snapshot; [methodology and reproducible results](docs/validation/semble-embedding-comparison-2026-10-17-v323/README.md).*
 
 We evaluated Ken using the same public code-search benchmark created by
 [Semble](https://github.com/MinishLab/semble#benchmarks). Ken returned a matching
@@ -34,13 +34,6 @@ Ken detects supported assistant setups and installs local MCP configuration,
 skills and hooks where available. Restart your assistant after installation.
 Choose a host explicitly with `ken install --claude .` or `ken install --codex .`.
 OpenCode uses `ken install --opencode .`.
-
-**The benchmark below measures development main, not a new PyPI release.**
-To try that engine now, install from Git instead:
-
-```sh
-uv tool install --reinstall 'git+https://github.com/Infinibay/ken'
-```
 
 Models download on first use; indexing and inference run on your machine. Prepare
 the search models and source index ahead of the first query with:
@@ -104,7 +97,7 @@ pipeline on CPU. No model selection is needed to get the measured default.
 The benchmark was created by [Semble](https://github.com/MinishLab/semble) and
 covers **1,251 queries across 63 repositories**. Ken used the original queries,
 source revisions, annotations and NDCG evaluator, with every query retained.
-Results for the current CodeRank default:
+Results for the measured CodeRank configuration:
 
 | Metric | Result |
 |---|---:|
