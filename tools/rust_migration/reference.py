@@ -30,9 +30,11 @@ def _eligible(repo: Path, path: Path) -> bool:
 
 
 def _files(repo: Path) -> list[Path]:
+    top = subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=repo, capture_output=True, text=True)
     result = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
                             cwd=repo, capture_output=True)
-    candidates = (repo / p for p in os.fsdecode(result.stdout).split("\0") if p) if result.returncode == 0 else repo.rglob("*")
+    own_checkout = top.returncode == 0 and Path(top.stdout.strip()).resolve() == repo.resolve()
+    candidates = (repo / p for p in os.fsdecode(result.stdout).split("\0") if p) if own_checkout and result.returncode == 0 else repo.rglob("*")
     return sorted({p for p in candidates if _eligible(repo, p)})
 
 
@@ -46,7 +48,7 @@ def verify_reference(repo: Path, manifest: Path) -> list[str]:
         if name in expected or name.startswith(MIGRATION_ADDITIONS):
             continue
         if any(fnmatch.fnmatchcase(name, scope) or name.startswith(scope.rstrip("/") + "/")
-               for scope in data.get("scope", [])):
+               for scope in data.get("scope") or ["src/ken/**"]):
             changed.add(name)
     return sorted(changed)
 
@@ -86,7 +88,7 @@ def freeze_reference(repo: Path, destination: Path) -> Reference:
         python = repo / ".venv/bin/python"
         if not python.is_file():
             python = Path(sys.executable)
-        data = {"format": "ken-rust-oracle/1", "scope": [], "fingerprint": fingerprint,
+        data = {"format": "ken-rust-oracle/1", "scope": ["src/ken/**"], "fingerprint": fingerprint,
                 "python": str(python.absolute()), "files": records}
         (stage / "reference-manifest.json").write_text(json.dumps(data, indent=2) + "\n")
         stage.rename(destination)

@@ -72,3 +72,15 @@ def test_reference_imports_frozen_ken(tmp_path, monkeypatch):
     marker, path = json.loads(result.stdout)
     assert marker == "frozen"
     assert Path(path).is_relative_to(frozen.root)
+
+
+def test_nested_ignored_snapshot_still_detects_added_sources(tmp_path):
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    (tmp_path / ".gitignore").write_text("oracle/\n")
+    repo = source_repo(tmp_path)
+    frozen = freeze_reference(repo, tmp_path / "oracle")
+    data = json.loads(frozen.manifest_path.read_text())
+    data["scope"] = ["src/ken/**"]
+    frozen.manifest_path.write_text(json.dumps(data))
+    (frozen.root / "src/ken/added.py").write_text("ADDED = 1\n")
+    assert verify_reference(frozen.root, frozen.manifest_path) == ["src/ken/added.py"]
