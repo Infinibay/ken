@@ -71,4 +71,8 @@ impl ModelTokenizer {
     pub fn token_count(&self, text: &str) -> Result<usize, ModelError> {
         self.token_ids(text, None).map(|ids| ids.len())
     }
+
+    pub(crate) fn vocabulary_len(&self) -> usize {
+        self.tokenizer.get_vocab_size(true)
+    }
 }

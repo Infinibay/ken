@@ -1,8 +1,11 @@
 //! Verified native model execution, independent of project discovery and storage.
 mod assets;
+mod model2vec;
+mod term_cache;
 mod tokenization;
 
 pub use assets::{ModelAssets, VerifiedSnapshot};
+pub use model2vec::Model2VecEncoder;
 pub use tokenization::ModelTokenizer;
 
 #[derive(Debug, thiserror::Error)]
@@ -20,4 +23,8 @@ pub enum ModelError {
     Artifact(String),
     #[error("invalid model tokenizer: {0}")]
     Tokenizer(String),
+    #[error("invalid model weights: {0}")]
+    Weights(String),
+    #[error("model inference failed: {0}")]
+    Inference(String),
 }

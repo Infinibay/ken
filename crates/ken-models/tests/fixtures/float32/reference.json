@@ -1,0 +1,170 @@
+{
+  "oracle": {
+    "frozen_import": true,
+    "runtime": {
+      "numpy": "2.4.4",
+      "model2vec": "0.9.0",
+      "tokenizers": "0.22.2",
+      "safetensors": "0.8.0"
+    }
+  },
+  "assets_fingerprint": "a93bfe3c1b2ad5634565f0c4b18933647b3be9accdd982e3ecf2b7c20ce8af42",
+  "identity": {
+    "model_id": "test/static",
+    "hf_revision": "3333333333333333333333333333333333333333",
+    "artifacts": {
+      "model.safetensors": {
+        "bytes": 140,
+        "sha256": "84d830edc395ae8bf78ba65037fee2d10f7eefec1424d0e850bc00eac3d8776c"
+      },
+      "config.json": {
+        "bytes": 59,
+        "sha256": "614219220ec3db266f2028bd0711db4b88c9e3426994c292010acfc65f32940c"
+      },
+      "tokenizer.json": {
+        "bytes": 662,
+        "sha256": "f98d7db08ceea307586bfe0aedd4ca470a72f40f860cff7ed0c319a32b12c770"
+      }
+    },
+    "dtype": "float32",
+    "dimension": 3,
+    "runtime": {
+      "numpy": "2.4.4",
+      "model2vec": "0.9.0",
+      "tokenizers": "0.22.2",
+      "safetensors": "0.8.0"
+    },
+    "pooling": "model2vec-native-mean-L2-v1",
+    "sequence_length": 512,
+    "tokenizer_policy": "no-padding-no-hidden-truncation-v1",
+    "multiprocessing": false,
+    "batch_size": 1024,
+    "device": "cpu"
+  },
+  "dimension": 3,
+  "results": [
+    {
+      "id": "solo",
+      "calls": [
+        {
+          "vectors": [
+            [
+              0.4016096591949463,
+              0.5622535347938538,
+              0.7228974103927612
+            ]
+          ],
+          "rows": [
+            0
+          ]
+        }
+      ],
+      "load_ns": 106088542,
+      "inference_ns": 3215208
+    },
+    {
+      "id": "mixed",
+      "calls": [
+        {
+          "vectors": [
+            [
+              0.4016096591949463,
+              0.5622535347938538,
+              0.7228974103927612
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "rows": [
+            0,
+            1
+          ]
+        }
+      ],
+      "load_ns": 2690833,
+      "inference_ns": 115917
+    },
+    {
+      "id": "query",
+      "calls": [
+        [
+          0.26726120710372925,
+          0.5345224142074585,
+          0.8017836809158325
+        ]
+      ],
+      "load_ns": 1741166,
+      "inference_ns": 105334
+    }
+  ],
+  "format": "ken-model-oracle/1",
+  "registration": {
+    "model_id": "test/static",
+    "revision": "3333333333333333333333333333333333333333",
+    "license": "mit",
+    "artifacts": {
+      "model.safetensors": {
+        "bytes": 140,
+        "sha256": "84d830edc395ae8bf78ba65037fee2d10f7eefec1424d0e850bc00eac3d8776c"
+      },
+      "config.json": {
+        "bytes": 59,
+        "sha256": "614219220ec3db266f2028bd0711db4b88c9e3426994c292010acfc65f32940c"
+      },
+      "tokenizer.json": {
+        "bytes": 662,
+        "sha256": "f98d7db08ceea307586bfe0aedd4ca470a72f40f860cff7ed0c319a32b12c770"
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "solo",
+      "calls": [
+        {
+          "op": "passages",
+          "texts": [
+            "a b"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mixed",
+      "calls": [
+        {
+          "op": "passages",
+          "texts": [
+            "a b",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "id": "query",
+      "calls": [
+        {
+          "op": "query",
+          "text": "a"
+        }
+      ]
+    }
+  ],
+  "tolerances": {
+    "float32": {
+      "atol": 2e-06,
+      "rtol": 1e-05,
+      "cosine_min": 0.999999
+    },
+    "float16": {
+      "atol": 0.0002,
+      "rtol": 0.002,
+      "cosine_min": 0.99999
+    }
+  },
+  "reference_fingerprint": "e95cc533cc8a603d46481c5310f4b870ffbaaced6fa24fd8a1d85cbd04123222"
+}

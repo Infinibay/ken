@@ -10,3 +10,8 @@ without requiring the 32 MB weights for unit tests.
 `policy-tokenizer.json` is a synthetic WordLevel tokenizer with added UNK/PAD,
 five tokens, serialized padding length 8 and truncation length 1. Tests require
 the native Model2Vec policy to disable both hidden limits before use.
+
+`float16/` and `float32/` contain synthetic five-row, three-column static
+models. Their registered artifact hashes and complete outputs were captured
+with the frozen Python RegisteredStaticEncoder. Row means and normalization
+use different rounding when an empty text promotes a batch to float64.
