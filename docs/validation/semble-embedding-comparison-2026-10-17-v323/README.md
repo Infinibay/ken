@@ -1,5 +1,11 @@
 # Current Ken: Semble public1251 with three contextual encoders — V323
 
+This evaluation uses the public code-search benchmark created by
+[Semble](https://github.com/MinishLab/semble#benchmarks). Credit for the benchmark
+queries, annotations and original evaluator belongs to that project. Ken's
+evaluation adapters load the evaluator from a separate, pinned upstream checkout;
+Semble's engine and evaluator source are not vendored in this repository.
+
 **CodeRank remains the strongest tested default for Top1/NDCG in the frozen
 current engine.** Jina gains three Hit10 queries but loses 25 Top1 queries;
 Muninn loses 22 Top1 and four Hit10 queries. Neither replacement reaches 90%

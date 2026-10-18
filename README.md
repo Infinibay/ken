@@ -9,11 +9,12 @@ MCP clients.
 
 **97.6% Hit@10 · 1,251 queries · 63 repositories · CPU only**
 
-*Measured on development main; [reproducible benchmark](docs/validation/semble-embedding-comparison-2026-10-17-v323/README.md).*
+*Measured on development main; [methodology and reproducible results](docs/validation/semble-embedding-comparison-2026-10-17-v323/README.md).*
 
-On the public Semble benchmark, Ken returned a matching target in its first ten
-results for **1,221 of 1,251 queries**. The measured engine runs locally, with no
-embedding API key or powerful GPU required.
+We evaluated Ken using the same public code-search benchmark created by
+[Semble](https://github.com/MinishLab/semble#benchmarks). Ken returned a matching
+target in its first ten results for **1,221 of 1,251 queries**. The measured engine
+runs locally, with no embedding API key or powerful GPU required.
 [Results and methodology ↓](#measured-on-real-repositories)
 
 ## Start here
@@ -100,9 +101,10 @@ pipeline on CPU. No model selection is needed to get the measured default.
 
 ## Measured on real repositories
 
-The public Semble suite covers **1,251 queries across 63 repositories**. Ken used
-the original queries, source revisions, annotations and NDCG evaluator, with every
-query retained. Results for the current CodeRank default:
+The benchmark was created by [Semble](https://github.com/MinishLab/semble) and
+covers **1,251 queries across 63 repositories**. Ken used the original queries,
+source revisions, annotations and NDCG evaluator, with every query retained.
+Results for the current CodeRank default:
 
 | Metric | Result |
 |---|---:|
