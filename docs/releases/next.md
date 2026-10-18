@@ -16,6 +16,9 @@ package version remains 0.17.0 while the candidate is validated.
 - Tool descriptions recommend English queries for the strongest current
   results. Installation can offer project instructions in `AGENTS.md`;
   `--agents-md` and `--no-agents-md` make the choice explicit.
+- Finding reads and writes resolve the model pinned to their project database,
+  including commands run elsewhere with `--path`. A new default cannot mix
+  old and new memory vectors, even when their dimensions happen to match.
 - C++ and Rust source extraction covers additional declaration forms. Invalid
   UTF-8 fixtures are excluded from source passages; preparation rebuilds stale
   extraction projections instead of using an obsolete index.

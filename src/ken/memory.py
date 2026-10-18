@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from ken.embedder import cosine_against, get_embedder, stack_embeddings, vec_to_blob
+from ken.embedder import configure_for_project, cosine_against, get_embedder, stack_embeddings, vec_to_blob
 
 DEFAULT_RECALL_MIN_SCORE = 0.25
 FINDING_KINDS = {"finding", "persistent_rule", "experimental_finding", "hypothesis"}
@@ -56,6 +56,7 @@ def remember(
     tags_json = json.dumps(clean_tags)
     embed_text = f"{topic}\n\n{content[:1024]}"
     try:
+        configure_for_project(conn)
         # A stored finding is a *document*; ``recall`` supplies the query side.
         # Asymmetric models (e5, Qwen3) encode the two differently, so using
         # embed_query here would file every finding in the query space and
@@ -217,7 +218,8 @@ def recall(
     *,
     min_score: float | None = DEFAULT_RECALL_MIN_SCORE,
 ) -> list[dict]:
-    """Search saved findings by embedding cosine similarity."""
+    """Search saved findings within the connected project's embedding space."""
+    configure_for_project(conn)
     q = get_embedder().embed_query(query)
     rows = conn.execute(
         "SELECT topic, content, tags, embedding, created_at, updated_at "
