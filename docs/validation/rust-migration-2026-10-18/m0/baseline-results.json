@@ -56,5 +56,23 @@
   "first_attempt": {
     "exit": 2,
     "cause": "missing declared snowballstemmer==3.0.1; restored exact locked hashed wheel, no source changes"
+  },
+  "diagnostic_rerun": {
+    "scope": "tests/kql2/test_automatic.py + affected public tests + M0 scope",
+    "original_failures": [
+      "tests.kql2.test_automatic::test_graph_is_prepared_before_its_query_budget",
+      "tests.kql2.test_automatic::test_startup_retries_child_that_arrived_before_old_owner_released_lock"
+    ],
+    "new_tooling_failure": "MCP capture timeout 90s while three captures were run concurrently; isolated diagnostic initialized/listed/closed successfully",
+    "acceptance": "pending serial M0 gate; not passed by this diagnostic"
+  },
+  "serial_m0_gate": {
+    "exit": 0,
+    "passed": 43,
+    "failed": 0,
+    "skipped": 0,
+    "duration_s": 51.883,
+    "command": ".venv/bin/python -m pytest tests/test_paths.py tests/test_status.py tests/rust_migration -q --junitxml=.ken/rust-migration/m0-m1/m0-gate.xml",
+    "junit_sha256": "2f672575ef960e4633b9c78633cfd17dcc617c1ca5ae56f0a3a8e3e5a6606d51"
   }
 }

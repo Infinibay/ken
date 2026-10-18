@@ -49,3 +49,13 @@ Los recibos completos permanecen bajo `.ken/rust-migration/m0-m1/`.
 Los errores de datos conservan exit 1 y separación de streams, sin exigir el
 traceback Python; los errores de argumentos conservan exit 2. Las excepciones
 son IDs declarados antes del port, no una aceptación genérica de fallos iguales.
+
+## Aceptación observada
+
+El gate M0 serial aprobó **43 tests, cero fallos/omisiones**, en 51,883 s;
+`m0-gate.xml` conserva sus IDs. Los verificadores del manifiesto inicial y de la
+copia ampliada devolvieron `passed=true`. M0 queda aceptado; M1 sigue pendiente.
+Los intentos concurrentes se conservaron: excedieron deadlines del tooling de
+captura y mostraron dos fallos adicionales de presupuesto/arranque en KQL
+original. La captura MCP aislada recorrió initialize/list_tools/close con exit 0.
+Se repitió el gate serial completo, sin aumentar timeouts ni relajar aserciones.
