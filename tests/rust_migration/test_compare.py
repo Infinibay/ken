@@ -64,3 +64,15 @@ def test_failure_identifies_the_field_and_rejects_non_object_reports():
     assert any("counts.files" in error for error in errors)
     for value in [[], None, 3, "report"]:
         assert compare_case(case, expected, result(expected), result(value))
+
+
+def test_native_child_attempt_is_detected():
+    import sys
+    from pathlib import Path
+    from tools.rust_migration.compare import run_case
+    from tools.rust_migration.reference import Reference
+    root=Path(__file__).resolve().parents[2]
+    ref=Reference(root,root/"docs/validation/rust-migration-2026-10-18/baseline.json","test",Path(sys.executable))
+    case=Case("child-control","installed_empty","json",[],0,{})
+    result=run_case(case,ref,["/bin/sh","-c","python --version >/dev/null 2>&1; printf '{}\\n'"])
+    assert any("forbidden child" in e for e in result["errors"])

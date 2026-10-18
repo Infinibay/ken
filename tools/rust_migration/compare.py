@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 import subprocess
 import tempfile
 import time
@@ -109,9 +110,17 @@ def run_case(case: Case, reference: Reference, native_command: list[str]) -> dic
         results = []
         expected = None
         changes = []
+        child_log = parent / "native-children.log"
+        shims = parent / "shims"
+        shims.mkdir()
+        for name in ["python", "python3", "ken", "sh", "bash", "zsh"]:
+            shim = shims / name
+            shim.write_text(f"#!/bin/sh\nprintf '%s\\n' {shlex.quote(name)} >> {shlex.quote(str(child_log))}\nexit 97\n")
+            shim.chmod(0o755)
         for engine, command in [("python", [str(reference.python), "-m", "ken"]), ("native", native_command)]:
             with build_fixture(parent / engine, case.scenario, reference) as fixture:
                 env = reference_env(reference, parent / engine / "environment")
+                if engine == "native": env["PATH"] = str(shims)
                 env.update(fixture.environment)
                 argv = [*command, "status", str(fixture.start or fixture.root), *case.argv]
                 if case.mode == "json": argv.append("--json")
@@ -120,8 +129,10 @@ def run_case(case: Case, reference: Reference, native_command: list[str]) -> dic
                 results.append(result)
                 changes.extend(f"{case.id}: {engine} changed {field}" for field in fixture.changed())
         errors = compare_case(case, expected or {}, results[0], results[1]) + changes
+        children = child_log.read_text().splitlines() if child_log.exists() else []
+        if children: errors.append(f"{case.id}: native executed a forbidden child: {', '.join(children)}")
         return {"id": case.id, "exception_id": case.exception_id, "passed": not errors, "errors": errors,
-                "python": asdict(results[0]), "native": asdict(results[1])}
+                "native_children": children, "python": asdict(results[0]), "native": asdict(results[1])}
 
 
 def main() -> int:
