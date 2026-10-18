@@ -1,0 +1,192 @@
+use crate::ModelError;
+use serde::{Deserialize, Deserializer, Serialize, de};
+use sha2::{Digest, Sha256};
+use std::{collections::BTreeMap, fmt, path::Path};
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+struct Artifact {
+    bytes: u64,
+    sha256: String,
+}
+
+/// The immutable declaration of public model data, not a download client.
+#[derive(Clone, Debug, Serialize)]
+pub struct ModelAssets {
+    model_id: String,
+    revision: String,
+    license: String,
+    artifacts: BTreeMap<String, Artifact>,
+}
+
+#[derive(Deserialize)]
+struct Declaration {
+    model_id: String,
+    revision: String,
+    #[serde(default)]
+    license: String,
+    #[serde(deserialize_with = "distinct_artifacts")]
+    artifacts: BTreeMap<String, Artifact>,
+}
+
+fn distinct_artifacts<'de, D>(deserializer: D) -> Result<BTreeMap<String, Artifact>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    struct Artifacts;
+    impl<'de> de::Visitor<'de> for Artifacts {
+        type Value = BTreeMap<String, Artifact>;
+        fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            f.write_str("distinct artifact declarations")
+        }
+        fn visit_map<M: de::MapAccess<'de>>(self, mut map: M) -> Result<Self::Value, M::Error> {
+            let mut result = BTreeMap::new();
+            while let Some((key, value)) = map.next_entry::<String, Artifact>()? {
+                if result.insert(key, value).is_some() {
+                    return Err(de::Error::custom("duplicate model artifact"));
+                }
+            }
+            Ok(result)
+        }
+    }
+    deserializer.deserialize_map(Artifacts)
+}
+
+fn lowercase_hex(value: &str, length: usize) -> bool {
+    value.len() == length
+        && value
+            .bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+}
+
+impl ModelAssets {
+    pub fn from_json(json: &str) -> Result<Self, ModelError> {
+        let raw: Declaration = serde_json::from_str(json)?;
+        let assets = Self {
+            model_id: raw.model_id,
+            revision: raw.revision,
+            license: raw.license,
+            artifacts: raw.artifacts,
+        };
+        let components: Vec<_> = assets.model_id.split('/').collect();
+        if components.len() != 2
+            || components.iter().any(|part| {
+                part.is_empty()
+                    || !part
+                        .bytes()
+                        .all(|b| b.is_ascii_alphanumeric() || b"_.-".contains(&b))
+            })
+        {
+            return Err(ModelError::Registration(
+                "public model identifier required".into(),
+            ));
+        }
+        if !lowercase_hex(&assets.revision, 40) {
+            return Err(ModelError::Registration(
+                "immutable revision required".into(),
+            ));
+        }
+        if assets.artifacts.is_empty() {
+            return Err(ModelError::Registration(
+                "distinct artifacts required".into(),
+            ));
+        }
+        for (name, record) in &assets.artifacts {
+            if name.starts_with('/')
+                || name
+                    .split('/')
+                    .any(|p| p.is_empty() || p == "." || p == "..")
+                || !name
+                    .bytes()
+                    .all(|b| b.is_ascii_alphanumeric() || b"_./-".contains(&b))
+                || !lowercase_hex(&record.sha256, 64)
+            {
+                return Err(ModelError::Registration(format!("invalid artifact {name}")));
+            }
+        }
+        Ok(assets)
+    }
+
+    pub fn fingerprint(&self) -> String {
+        // ModelAssets can contain only strings and nonnegative integer sizes.
+        let value = serde_json::to_value(self).expect("model declarations serialize");
+        format!("{:x}", Sha256::digest(python_json(&value).as_bytes()))
+    }
+
+    pub fn verify(&self, snapshot: &Path) -> Result<VerifiedSnapshot, ModelError> {
+        if snapshot.file_name().and_then(|s| s.to_str()) != Some(self.revision.as_str())
+            || !snapshot.is_dir()
+        {
+            return Err(ModelError::Registration(
+                "registered revision directory required".into(),
+            ));
+        }
+        let mut files = BTreeMap::new();
+        for (name, record) in &self.artifacts {
+            let bytes = std::fs::read(snapshot.join(name)).map_err(|source| ModelError::Io {
+                artifact: name.clone(),
+                source,
+            })?;
+            if bytes.len() as u64 != record.bytes
+                || format!("{:x}", Sha256::digest(&bytes)) != record.sha256
+            {
+                return Err(ModelError::Artifact(name.clone()));
+            }
+            files.insert(name.clone(), bytes);
+        }
+        Ok(VerifiedSnapshot { files })
+    }
+}
+
+/// Owns exactly the bytes checked by ModelAssets; no unchecked public constructor.
+#[derive(Debug)]
+pub struct VerifiedSnapshot {
+    files: BTreeMap<String, Vec<u8>>,
+}
+
+impl VerifiedSnapshot {
+    pub fn artifact(&self, name: &str) -> Result<&[u8], ModelError> {
+        self.files
+            .get(name)
+            .map(Vec::as_slice)
+            .ok_or_else(|| ModelError::Artifact(name.into()))
+    }
+}
+
+fn python_json(value: &serde_json::Value) -> String {
+    match value {
+        serde_json::Value::String(s) => {
+            let mut out = String::from("\"");
+            for c in s.chars() {
+                match c {
+                    '"' => out.push_str("\\\""),
+                    '\\' => out.push_str("\\\\"),
+                    '\n' => out.push_str("\\n"),
+                    '\r' => out.push_str("\\r"),
+                    '\t' => out.push_str("\\t"),
+                    '\u{8}' => out.push_str("\\b"),
+                    '\u{c}' => out.push_str("\\f"),
+                    ' '..='~' => out.push(c),
+                    _ => {
+                        for unit in c.encode_utf16(&mut [0; 2]) {
+                            out.push_str(&format!("\\u{unit:04x}"));
+                        }
+                    }
+                }
+            }
+            out.push('"');
+            out
+        }
+        serde_json::Value::Object(map) => format!(
+            "{{{}}}",
+            map.iter()
+                .map(|(k, v)| format!(
+                    "{}: {}",
+                    python_json(&serde_json::Value::String(k.clone())),
+                    python_json(v)
+                ))
+                .collect::<Vec<_>>()
+                .join(", ")
+        ),
+        other => other.to_string(),
+    }
+}
