@@ -35,7 +35,11 @@ RED→GREEN que exige una única línea de identidad y conserva los avisos. El c
 de tooling durante el ensayo también invalidó correctamente su gate de higiene.
 Los recibos de ese intento están en `.ken/rust-migration/m0-m1/validation-attempt-1`.
 
-La validación final y la ejecución Linux están en curso. La matriz M1 sólo se
+La validación final macOS pasó sus 16 gates: 15.605 pruebas Python aprobadas y
+10 xfail históricos, sin fallos ni omisiones nuevas; los dos errores previos de
+mypy permanecen identificados. Los [recibos macOS](macos/summary.json) y la
+[medición completa](macos/benchmark.json) conservan sus huellas y todas las muestras.
+La ejecución Linux sigue en curso. La matriz M1 sólo se
 cierra cuando ambos recibos completos tienen las mismas huellas de fuentes,
 casos, tooling y toolchain, y Linux aporta su traza exec. La revisión independiente
 del conjunto también es necesaria. No se acredita ninguna etapa M2–M8 aquí.
@@ -92,4 +96,3 @@ Las decisiones reemplazadas permanecen visibles junto con su corrección.
 - Task 9: Ruling: expose optional --original-manifest/--baseline-dir for CI platform-specific baselines and skip loading a local reference in matrix scope — clean CI must not assert dirty local hashes or depend on an unavailable interpreter path — risk if wrong: a CI receipt might be mistaken for this local checkout; fingerprints are compared explicitly.
 
 - Task 9: Ruling: parse the unique rustc version line, preserving rustup installation notices in the raw receipt — observed isolated HOME triggers installation notices before compiler output — test_rustup_notices_do_not_replace_the_compiler_identity RED→GREEN; missing/ambiguous identities fail — risk if wrong: accepting a different toolchain. The in-flight first validation is diagnostic; source fingerprints changed and a fresh final run is required.
-

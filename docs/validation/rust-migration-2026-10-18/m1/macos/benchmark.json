@@ -1,0 +1,1855 @@
+{
+  "passed": true,
+  "errors": [],
+  "metrics": {
+    "native/installed_empty": {
+      "samples": 30,
+      "median_ns": 5116021.0,
+      "p95_ns": 8567833,
+      "max_ns": 8945333,
+      "max_rss_bytes": 3850240
+    },
+    "native/metadata_only": {
+      "samples": 30,
+      "median_ns": 4348646.0,
+      "p95_ns": 5778000,
+      "max_ns": 6102334,
+      "max_rss_bytes": 2310144
+    },
+    "native/populated": {
+      "samples": 30,
+      "median_ns": 5131479.5,
+      "p95_ns": 7417625,
+      "max_ns": 8008375,
+      "max_rss_bytes": 3866624
+    },
+    "python/installed_empty": {
+      "samples": 30,
+      "median_ns": 200336500.0,
+      "p95_ns": 216386333,
+      "max_ns": 225863583,
+      "max_rss_bytes": 48939008
+    },
+    "python/metadata_only": {
+      "samples": 30,
+      "median_ns": 199866479.5,
+      "p95_ns": 228924833,
+      "max_ns": 231635916,
+      "max_rss_bytes": 47382528
+    },
+    "python/populated": {
+      "samples": 30,
+      "median_ns": 200423667.0,
+      "p95_ns": 209737125,
+      "max_ns": 212477292,
+      "max_rss_bytes": 49020928
+    }
+  },
+  "samples": [
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 0,
+      "exit": 0,
+      "duration_ns": 193627958,
+      "rss_bytes": 46481408,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 0,
+      "exit": 0,
+      "duration_ns": 4117250,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 1,
+      "exit": 0,
+      "duration_ns": 3692417,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 1,
+      "exit": 0,
+      "duration_ns": 188445708,
+      "rss_bytes": 46792704,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 2,
+      "exit": 0,
+      "duration_ns": 190672875,
+      "rss_bytes": 46088192,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 2,
+      "exit": 0,
+      "duration_ns": 4550959,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 3,
+      "exit": 0,
+      "duration_ns": 5115708,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 3,
+      "exit": 0,
+      "duration_ns": 191059750,
+      "rss_bytes": 46678016,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 4,
+      "exit": 0,
+      "duration_ns": 191331042,
+      "rss_bytes": 46907392,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 4,
+      "exit": 0,
+      "duration_ns": 4495500,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 5,
+      "exit": 0,
+      "duration_ns": 4445834,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 5,
+      "exit": 0,
+      "duration_ns": 200132709,
+      "rss_bytes": 46858240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 6,
+      "exit": 0,
+      "duration_ns": 198147709,
+      "rss_bytes": 46448640,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 6,
+      "exit": 0,
+      "duration_ns": 5778000,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 7,
+      "exit": 0,
+      "duration_ns": 4239875,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 7,
+      "exit": 0,
+      "duration_ns": 195293917,
+      "rss_bytes": 46415872,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 8,
+      "exit": 0,
+      "duration_ns": 196041583,
+      "rss_bytes": 46923776,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 8,
+      "exit": 0,
+      "duration_ns": 4384292,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 9,
+      "exit": 0,
+      "duration_ns": 3663959,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 9,
+      "exit": 0,
+      "duration_ns": 197581542,
+      "rss_bytes": 46579712,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 10,
+      "exit": 0,
+      "duration_ns": 204652917,
+      "rss_bytes": 46530560,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 10,
+      "exit": 0,
+      "duration_ns": 4731250,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 11,
+      "exit": 0,
+      "duration_ns": 4243709,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 11,
+      "exit": 0,
+      "duration_ns": 206034709,
+      "rss_bytes": 46612480,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 12,
+      "exit": 0,
+      "duration_ns": 204563041,
+      "rss_bytes": 46333952,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 12,
+      "exit": 0,
+      "duration_ns": 6102334,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 13,
+      "exit": 0,
+      "duration_ns": 4406334,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 13,
+      "exit": 0,
+      "duration_ns": 199600250,
+      "rss_bytes": 46809088,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 14,
+      "exit": 0,
+      "duration_ns": 203035917,
+      "rss_bytes": 46579712,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 14,
+      "exit": 0,
+      "duration_ns": 4810541,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 15,
+      "exit": 0,
+      "duration_ns": 3846875,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 15,
+      "exit": 0,
+      "duration_ns": 200488000,
+      "rss_bytes": 46645248,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 16,
+      "exit": 0,
+      "duration_ns": 228924833,
+      "rss_bytes": 47202304,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 16,
+      "exit": 0,
+      "duration_ns": 4811083,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 17,
+      "exit": 0,
+      "duration_ns": 5182792,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 17,
+      "exit": 0,
+      "duration_ns": 213954167,
+      "rss_bytes": 47087616,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 18,
+      "exit": 0,
+      "duration_ns": 231635916,
+      "rss_bytes": 47022080,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 18,
+      "exit": 0,
+      "duration_ns": 4177167,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 19,
+      "exit": 0,
+      "duration_ns": 4648917,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 19,
+      "exit": 0,
+      "duration_ns": 206204667,
+      "rss_bytes": 46317568,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 20,
+      "exit": 0,
+      "duration_ns": 201710250,
+      "rss_bytes": 46759936,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 20,
+      "exit": 0,
+      "duration_ns": 4313000,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 21,
+      "exit": 0,
+      "duration_ns": 3832459,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 21,
+      "exit": 0,
+      "duration_ns": 195623000,
+      "rss_bytes": 47054848,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 22,
+      "exit": 0,
+      "duration_ns": 196230250,
+      "rss_bytes": 46743552,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 22,
+      "exit": 0,
+      "duration_ns": 4216375,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 23,
+      "exit": 0,
+      "duration_ns": 4011250,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 23,
+      "exit": 0,
+      "duration_ns": 195996875,
+      "rss_bytes": 46727168,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 24,
+      "exit": 0,
+      "duration_ns": 198987167,
+      "rss_bytes": 46956544,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 24,
+      "exit": 0,
+      "duration_ns": 4549709,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 25,
+      "exit": 0,
+      "duration_ns": 3991250,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 25,
+      "exit": 0,
+      "duration_ns": 200597459,
+      "rss_bytes": 46202880,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 26,
+      "exit": 0,
+      "duration_ns": 207053958,
+      "rss_bytes": 46645248,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 26,
+      "exit": 0,
+      "duration_ns": 4187541,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 27,
+      "exit": 0,
+      "duration_ns": 4047458,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 27,
+      "exit": 0,
+      "duration_ns": 197791750,
+      "rss_bytes": 47235072,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 28,
+      "exit": 0,
+      "duration_ns": 206762791,
+      "rss_bytes": 46792704,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 28,
+      "exit": 0,
+      "duration_ns": 4674209,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "metadata_only",
+      "index": 29,
+      "exit": 0,
+      "duration_ns": 4214792,
+      "rss_bytes": 2310144,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "metadata_only",
+      "index": 29,
+      "exit": 0,
+      "duration_ns": 205438958,
+      "rss_bytes": 47382528,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 0,
+      "exit": 0,
+      "duration_ns": 216386333,
+      "rss_bytes": 48447488,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 0,
+      "exit": 0,
+      "duration_ns": 5111125,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 1,
+      "exit": 0,
+      "duration_ns": 4556791,
+      "rss_bytes": 3817472,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 1,
+      "exit": 0,
+      "duration_ns": 206623750,
+      "rss_bytes": 48775168,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 2,
+      "exit": 0,
+      "duration_ns": 199460083,
+      "rss_bytes": 48152576,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 2,
+      "exit": 0,
+      "duration_ns": 4891500,
+      "rss_bytes": 3801088,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 3,
+      "exit": 0,
+      "duration_ns": 4779792,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 3,
+      "exit": 0,
+      "duration_ns": 208106667,
+      "rss_bytes": 48742400,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 4,
+      "exit": 0,
+      "duration_ns": 203360292,
+      "rss_bytes": 48201728,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 4,
+      "exit": 0,
+      "duration_ns": 5167458,
+      "rss_bytes": 3817472,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 5,
+      "exit": 0,
+      "duration_ns": 5213583,
+      "rss_bytes": 3801088,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 5,
+      "exit": 0,
+      "duration_ns": 203892125,
+      "rss_bytes": 48513024,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 6,
+      "exit": 0,
+      "duration_ns": 206742125,
+      "rss_bytes": 48365568,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 6,
+      "exit": 0,
+      "duration_ns": 5120917,
+      "rss_bytes": 3817472,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 7,
+      "exit": 0,
+      "duration_ns": 5008750,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 7,
+      "exit": 0,
+      "duration_ns": 225863583,
+      "rss_bytes": 48611328,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 8,
+      "exit": 0,
+      "duration_ns": 201561083,
+      "rss_bytes": 48742400,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 8,
+      "exit": 0,
+      "duration_ns": 5028125,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 9,
+      "exit": 0,
+      "duration_ns": 5568667,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 9,
+      "exit": 0,
+      "duration_ns": 200426875,
+      "rss_bytes": 48709632,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 10,
+      "exit": 0,
+      "duration_ns": 200541250,
+      "rss_bytes": 48103424,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 10,
+      "exit": 0,
+      "duration_ns": 5732792,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 11,
+      "exit": 0,
+      "duration_ns": 5123458,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 11,
+      "exit": 0,
+      "duration_ns": 200843041,
+      "rss_bytes": 48447488,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 12,
+      "exit": 0,
+      "duration_ns": 202504209,
+      "rss_bytes": 48398336,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 12,
+      "exit": 0,
+      "duration_ns": 8567833,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 13,
+      "exit": 0,
+      "duration_ns": 5040792,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 13,
+      "exit": 0,
+      "duration_ns": 199030041,
+      "rss_bytes": 48529408,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 14,
+      "exit": 0,
+      "duration_ns": 197807834,
+      "rss_bytes": 48644096,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 14,
+      "exit": 0,
+      "duration_ns": 5783958,
+      "rss_bytes": 3817472,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 15,
+      "exit": 0,
+      "duration_ns": 6536291,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 15,
+      "exit": 0,
+      "duration_ns": 200203250,
+      "rss_bytes": 48250880,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 16,
+      "exit": 0,
+      "duration_ns": 196513917,
+      "rss_bytes": 48070656,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 16,
+      "exit": 0,
+      "duration_ns": 4974459,
+      "rss_bytes": 3817472,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 17,
+      "exit": 0,
+      "duration_ns": 4376917,
+      "rss_bytes": 3817472,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 17,
+      "exit": 0,
+      "duration_ns": 202635958,
+      "rss_bytes": 48857088,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 18,
+      "exit": 0,
+      "duration_ns": 199929708,
+      "rss_bytes": 48431104,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 18,
+      "exit": 0,
+      "duration_ns": 4851209,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 19,
+      "exit": 0,
+      "duration_ns": 5313792,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 19,
+      "exit": 0,
+      "duration_ns": 199670375,
+      "rss_bytes": 48726016,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 20,
+      "exit": 0,
+      "duration_ns": 197944459,
+      "rss_bytes": 48463872,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 20,
+      "exit": 0,
+      "duration_ns": 4952000,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 21,
+      "exit": 0,
+      "duration_ns": 4351375,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 21,
+      "exit": 0,
+      "duration_ns": 196646292,
+      "rss_bytes": 48594944,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 22,
+      "exit": 0,
+      "duration_ns": 201043667,
+      "rss_bytes": 48496640,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 22,
+      "exit": 0,
+      "duration_ns": 8945333,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 23,
+      "exit": 0,
+      "duration_ns": 5160083,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 23,
+      "exit": 0,
+      "duration_ns": 200476958,
+      "rss_bytes": 48939008,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 24,
+      "exit": 0,
+      "duration_ns": 199119208,
+      "rss_bytes": 47923200,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 24,
+      "exit": 0,
+      "duration_ns": 6474792,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 25,
+      "exit": 0,
+      "duration_ns": 4938125,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 25,
+      "exit": 0,
+      "duration_ns": 200246125,
+      "rss_bytes": 48545792,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 26,
+      "exit": 0,
+      "duration_ns": 199995083,
+      "rss_bytes": 48939008,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 26,
+      "exit": 0,
+      "duration_ns": 4965041,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 27,
+      "exit": 0,
+      "duration_ns": 4291542,
+      "rss_bytes": 3817472,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 27,
+      "exit": 0,
+      "duration_ns": 198528625,
+      "rss_bytes": 48250880,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 28,
+      "exit": 0,
+      "duration_ns": 199379083,
+      "rss_bytes": 48316416,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 28,
+      "exit": 0,
+      "duration_ns": 5457333,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "installed_empty",
+      "index": 29,
+      "exit": 0,
+      "duration_ns": 5257459,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "installed_empty",
+      "index": 29,
+      "exit": 0,
+      "duration_ns": 198081125,
+      "rss_bytes": 48201728,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 0,
+      "exit": 0,
+      "duration_ns": 201467792,
+      "rss_bytes": 48185344,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 0,
+      "exit": 0,
+      "duration_ns": 5113417,
+      "rss_bytes": 3866624,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 1,
+      "exit": 0,
+      "duration_ns": 5105875,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 1,
+      "exit": 0,
+      "duration_ns": 198807208,
+      "rss_bytes": 48119808,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 2,
+      "exit": 0,
+      "duration_ns": 209737125,
+      "rss_bytes": 48054272,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 2,
+      "exit": 0,
+      "duration_ns": 5084875,
+      "rss_bytes": 3866624,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 3,
+      "exit": 0,
+      "duration_ns": 4646125,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 3,
+      "exit": 0,
+      "duration_ns": 201300833,
+      "rss_bytes": 49020928,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 4,
+      "exit": 0,
+      "duration_ns": 200039375,
+      "rss_bytes": 47857664,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 4,
+      "exit": 0,
+      "duration_ns": 5247625,
+      "rss_bytes": 3817472,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 5,
+      "exit": 0,
+      "duration_ns": 4684250,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 5,
+      "exit": 0,
+      "duration_ns": 196414375,
+      "rss_bytes": 48168960,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 6,
+      "exit": 0,
+      "duration_ns": 201052667,
+      "rss_bytes": 48168960,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 6,
+      "exit": 0,
+      "duration_ns": 4995750,
+      "rss_bytes": 3817472,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 7,
+      "exit": 0,
+      "duration_ns": 5118417,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 7,
+      "exit": 0,
+      "duration_ns": 208431292,
+      "rss_bytes": 48513024,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 8,
+      "exit": 0,
+      "duration_ns": 198007584,
+      "rss_bytes": 48332800,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 8,
+      "exit": 0,
+      "duration_ns": 5218416,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 9,
+      "exit": 0,
+      "duration_ns": 4318042,
+      "rss_bytes": 3866624,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 9,
+      "exit": 0,
+      "duration_ns": 203806375,
+      "rss_bytes": 48611328,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 10,
+      "exit": 0,
+      "duration_ns": 199970750,
+      "rss_bytes": 48578560,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 10,
+      "exit": 0,
+      "duration_ns": 4977041,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 11,
+      "exit": 0,
+      "duration_ns": 4220541,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 11,
+      "exit": 0,
+      "duration_ns": 198372000,
+      "rss_bytes": 48562176,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 12,
+      "exit": 0,
+      "duration_ns": 197798375,
+      "rss_bytes": 48168960,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 12,
+      "exit": 0,
+      "duration_ns": 5223458,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 13,
+      "exit": 0,
+      "duration_ns": 4568042,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 13,
+      "exit": 0,
+      "duration_ns": 207279708,
+      "rss_bytes": 48218112,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 14,
+      "exit": 0,
+      "duration_ns": 200272292,
+      "rss_bytes": 48021504,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 14,
+      "exit": 0,
+      "duration_ns": 5248458,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 15,
+      "exit": 0,
+      "duration_ns": 4684667,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 15,
+      "exit": 0,
+      "duration_ns": 200876500,
+      "rss_bytes": 48185344,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 16,
+      "exit": 0,
+      "duration_ns": 205530583,
+      "rss_bytes": 48037888,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 16,
+      "exit": 0,
+      "duration_ns": 5149125,
+      "rss_bytes": 3866624,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 17,
+      "exit": 0,
+      "duration_ns": 5610917,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 17,
+      "exit": 0,
+      "duration_ns": 200440667,
+      "rss_bytes": 48627712,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 18,
+      "exit": 0,
+      "duration_ns": 199456875,
+      "rss_bytes": 47841280,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 18,
+      "exit": 0,
+      "duration_ns": 5136875,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 19,
+      "exit": 0,
+      "duration_ns": 4893708,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 19,
+      "exit": 0,
+      "duration_ns": 200064667,
+      "rss_bytes": 48693248,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 20,
+      "exit": 0,
+      "duration_ns": 203199333,
+      "rss_bytes": 48054272,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 20,
+      "exit": 0,
+      "duration_ns": 5126084,
+      "rss_bytes": 3866624,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 21,
+      "exit": 0,
+      "duration_ns": 5257916,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 21,
+      "exit": 0,
+      "duration_ns": 200406667,
+      "rss_bytes": 48693248,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 22,
+      "exit": 0,
+      "duration_ns": 206381083,
+      "rss_bytes": 47988736,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 22,
+      "exit": 0,
+      "duration_ns": 6939042,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 23,
+      "exit": 0,
+      "duration_ns": 8008375,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 23,
+      "exit": 0,
+      "duration_ns": 212477292,
+      "rss_bytes": 48021504,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 24,
+      "exit": 0,
+      "duration_ns": 201550875,
+      "rss_bytes": 47972352,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 24,
+      "exit": 0,
+      "duration_ns": 5386917,
+      "rss_bytes": 3833856,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 25,
+      "exit": 0,
+      "duration_ns": 7417625,
+      "rss_bytes": 3866624,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 25,
+      "exit": 0,
+      "duration_ns": 207548167,
+      "rss_bytes": 48873472,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 26,
+      "exit": 0,
+      "duration_ns": 200356417,
+      "rss_bytes": 48300032,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 26,
+      "exit": 0,
+      "duration_ns": 5252917,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 27,
+      "exit": 0,
+      "duration_ns": 4771792,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 27,
+      "exit": 0,
+      "duration_ns": 198307042,
+      "rss_bytes": 48545792,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 28,
+      "exit": 0,
+      "duration_ns": 197925334,
+      "rss_bytes": 48005120,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 28,
+      "exit": 0,
+      "duration_ns": 5690958,
+      "rss_bytes": 3817472,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "native",
+      "scenario": "populated",
+      "index": 29,
+      "exit": 0,
+      "duration_ns": 5989125,
+      "rss_bytes": 3850240,
+      "timeout": false,
+      "errors": []
+    },
+    {
+      "engine": "python",
+      "scenario": "populated",
+      "index": 29,
+      "exit": 0,
+      "duration_ns": 198622208,
+      "rss_bytes": 48103424,
+      "timeout": false,
+      "errors": []
+    }
+  ],
+  "preparation_ns": 436787709,
+  "model": "not applicable",
+  "rss": "kernel wait4 maximum per process; bytes",
+  "wall": "monotonic spawn through wait4 completion; includes watchdog setup",
+  "mutations": []
+}
