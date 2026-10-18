@@ -75,6 +75,13 @@ impl Model2VecEncoder {
         self.dimension
     }
 
+    pub fn weight_dtype(&self) -> &'static str {
+        match self.weights {
+            Weights::Half(_) => "float16",
+            Weights::Single(_) => "float32",
+        }
+    }
+
     pub fn token_ids(&self, text: &str, max_length: Option<usize>) -> Result<Vec<u32>, ModelError> {
         self.tokenizer.token_ids(text, max_length)
     }
