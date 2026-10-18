@@ -41,10 +41,26 @@ The matcher never follows historical `ASSIGNED_FROM` edges as reaching writes.
 
 Python generators may follow ordinary suspension/resumption, including delegated
 iteration. Yield and return remain distinct consumers. This does not model
-externally injected `throw()`/`close()` or asynchronous cancellation. A known
-local load at `yield` does not create such an exceptional route.
+asynchronous cancellation. Injection is explicit in the query; a known local
+load at `yield` does not invent an exception under ordinary resumption.
 
-For a `try` without `finally`, a synthetic dispatch point precedes each atomic
+```kql
+// Inside a callable BODY:
+yield _;
+resume close;
+call $cleanup { name: "close"; };
+```
+
+`resume next;`, `resume throw;` and `resume close;` must immediately follow a
+matched yield. `throw` selects an injected exception of unspecified type;
+`close` injects GeneratorExit and follows cleanup until that invocation ends.
+A close that yields outward fails with RuntimeError: it delivers no yield and
+does not execute the tail during that close. A later invocation after that
+failed close is outside this successful-yield interaction syntax. Injected
+`yield from` protocols and yields inside complex expression carriers remain
+uncertain, rather than being treated as ordinary fallthrough.
+
+For a `try`, a synthetic dispatch point precedes each atomic
 statement that might throw. Its success edge executes that statement; its
 exception edge reaches one handler with the environment from the completed
 prefix. The failed statement's result and assignment are absent. A completed
@@ -64,22 +80,48 @@ class hierarchy. Atomic expression evaluation can omit routes where a nested
 operand completes before a later operand fails. These are source abstractions,
 not an exception-sensitive runtime analysis or a sound security dataflow proof.
 
+## Pending completions and exception groups
+
+IR 1.88 routes normal exit, return, raise, break and continue through finally.
+`structural/control_completions.py` owns the continuation points; the immutable
+`kql2/body_continuations.py` state owns their path-local guards. The syntax IR
+contains no synthetic operations. A shared finalizer can resume only its own
+pending destination. Return operands are captured before cleanup mutates locals.
+A finalizer's abrupt exit may replace that completion; a failed inner return
+caught inside an outer finalizer restores the suspended outer completion.
+
+`except*` visits zero or more matching subgroups in source order, retaining
+completed writes across arms. An exception raised by an arm is held until the
+remaining arms finish, then propagated together with any unmatched remainder.
+No successful continuation follows a raised portion. A successful BaseException
+catchall has no unmatched remainder. Selected, unshadowed builtin headers cannot
+consume the same subtype twice. Source binding references keep imported,
+shadowed and custom exception types uncertain for GeneratorExit matching.
+The unknown exception types produced by arbitrary expressions still have no
+runtime type or feasibility proof. Ordinary except siblings remain exclusive.
+
+The language rules are checked against Python 3.12 runtime contrasts and the
+[finally reference](https://docs.python.org/3.12/reference/compound_stmts.html#finally-clause),
+[except* reference](https://docs.python.org/3.12/reference/compound_stmts.html#except-star),
+and [generator methods](https://docs.python.org/3.12/reference/expressions.html#generator-iterator-methods).
+
 ## Remaining boundaries
 
-- `finally`, exception groups (`except*`) and calls in handler type expressions
-  retain local CFG gaps. A `finally` overriding a return cannot create a row.
+- Calls in dynamic handler type expressions retain local CFG gaps.
 - Calls/writes inside conditional expression arms need expression CFGs; bare
   conditional aliases are the admitted case. Boolean-expression aliases and
   unknown values retain uncertain provenance.
 - Dynamic locals, closure/class scopes, imports, `with` bindings and unsupported
-  local writes do not get the new route-level provenance proof. Existing
+  local writes do not get the route-level provenance proof. Existing
   structural matching and uncertainty still apply.
-- Heap aliasing, injected generator exceptions and all-path cleanup obligations
-  are outside this expansion. The broader route policy applies to existential
-  `call`/`let`/`return`/`yield` patterns, not to negated/all-path gap obligations.
+- Heap aliasing, asynchronous cancellation, delegated injected protocols,
+  expression-level suspension and all-path cleanup obligations remain outside
+  this expansion. The route policy applies to existential
+  `call`/`let`/`return`/`yield`/`resume` patterns.
 
-IR 1.87 invalidates older persisted graphs. Public regressions live in
-`tests/kql2/test_path_value_coverage.py` and `test_path_value_expressions.py`.
+IR 1.88 invalidates older persisted graphs. Public regressions live in
+`tests/kql2/test_completion_paths.py`, `test_completion_regressions.py`,
+`test_path_value_coverage.py` and `test_path_value_expressions.py`.
 The Django comparison preserves the 14 original queries, project commit,
 default language scope and warm-up protocol; the three focused probes are
 reported separately.

@@ -11,6 +11,7 @@ from typing import Callable, Iterator, NamedTuple
 from ken.structural.model import Entity, IR, Operation
 from ken.structural_store import Node, Store
 from .cache import ArtifactCache
+from .body_continuations import Continuations, advance as advance_continuation, permits as permits_continuation
 from .body_operations import operation_filter
 from .semantic import SemanticRelations
 from .path_values import PathValues, Snapshot
@@ -125,6 +126,7 @@ class _State:
     forbidden_calls: tuple[str,...] = ()
     cursor: str | None = None
     values: Snapshot | None = None
+    flow: Continuations = Continuations()
 
 
 def terminal_bindings(clause: Clause) -> tuple[str,...]:
@@ -215,6 +217,10 @@ def compile_body(clause: Clause, owner: str, mapping: dict[str,str], roles: dict
             if roles.get(item.role) not in ('macro','operation'):
                 raise ParseError('macro requires a selected macro occurrence',item.span)
             anchored=True;pending_adjacent=False;pending_gap=False
+            continue
+        if item.kind == 'resume':
+            if not anchored or clauses[clauses.index(item)-1].kind != 'yield':
+                raise ParseError('resume requires an immediately preceding yield', item.span)
             continue
         if item.kind == 'where':
             def free(e: Expr | SourceExpr) -> set[str]:
@@ -870,9 +876,9 @@ class BodyEngine:
         # projection. Recover their source bounds for nested region walks too.
         for fact in self.semantic.facts('CFG_DISPATCH', owner.local_id) if with_dispatch else ():
             statement = operations.get(fact.attrs['operation'])
-            if statement is not None:
+            if statement is not None and fact.object != statement.id:
                 operations[fact.object] = Operation(fact.object, 'DISPATCH', 'exception_dispatch',
-                    statement.parent, '', statement.start, statement.start, statement.line, owner.local_id)
+                    statement.parent, '', statement.start, statement.start, statement.line, owner.local_id, dict(fact.attrs))
         children: dict[str, list[Operation]] = {}
         for op in operations.values():
             children.setdefault(op.parent or '', []).append(op)
@@ -919,7 +925,7 @@ class BodyEngine:
                     yield bindings,False
                     return
         statuses = self.semantic.facts('CFG_STATUS',owner.local_id)
-        has_dispatch = any('exception-dispatch' in fact.attrs.get('reasons', ()) for fact in statuses)
+        has_dispatch = any(set(fact.attrs.get('reasons', ())) & {'exception-dispatch', 'generator-resumption'} for fact in statuses)
         entries = self.semantic.facts('CFG_ENTRY',owner.local_id)
         from .source_coverage import supports_pattern
         if not entries or not supports_pattern(statuses, pattern):
@@ -1002,16 +1008,22 @@ class BodyEngine:
             return tuple(f.object for f in edges if region is None or f.object in operations)
         part_cache: dict[str,tuple[Operation,...]] = {}
         kind_cache: dict[tuple[str,frozenset[str]],tuple[Operation,...]] = {}
+        events = {fact.object: dict(fact.attrs) for fact in rows('CFG_DISPATCH', owner.local_id)} if has_dispatch else {}
+        deferred_returns = {e['operation'] for e in events.values() if e.get('action') == 'return-eval'}
+
         def parts(group: str, kinds: frozenset[str] | None = None) -> tuple[Operation,...]:
             if group not in part_cache:
                 self.check()
-                todo = [operations[group]] if group in operations else []
+                event = events.get(group, {})
+                todo = ([operations[event['operation']]] if event.get('action') == 'return-complete'
+                        else [operations[group]] if group in operations else [])
                 found = []
                 while todo:
                     op = todo.pop()
                     self.check()
                     found.append(op)
-                    todo.extend(c for c in children.get(op.id,()) if not successors(c.id))
+                    if event.get('action') != 'return-complete':
+                        todo.extend(c for c in children.get(op.id,()) if not successors(c.id))
                 part_cache[group] = tuple(found)
             if kinds is None:
                 return part_cache[group]
@@ -1361,13 +1373,19 @@ class BodyEngine:
         needs_values = (any(clause.kind in {'return', 'yield'} for clause in pattern.clauses)
                         or has_dispatch)
         path_values = (PathValues(owner, local_nodes, ir.entities, operations, rows, parts)
-                       if needs_values and all(clause.kind in {'call', 'let', 'return', 'yield'}
+                       if needs_values and all(clause.kind in {'call', 'let', 'return', 'yield', 'resume'}
                                                for clause in pattern.clauses) else None)
         dispatch_sources = {fact.object: fact.attrs['operation']
                             for fact in rows('CFG_DISPATCH', owner.local_id)} if path_values is not None else {}
 
-        def path_successors(group: str, snapshot: Snapshot | None) -> tuple[str, ...]:
+        def path_successors(group: str, snapshot: Snapshot | None, flow: Continuations) -> tuple[str, ...]:
             following = successors(group)
+            if has_dispatch:
+                allowed = set(following)
+                following = tuple(f.object for f in rows('CFG_NEXT', group)
+                                  if f.object in allowed and f.attrs.get('kind') not in {'inject-throw', 'inject-close'}
+                                  and permits_continuation(events.get(group, {}), flow, f.object,
+                                                           f.attrs.get('kind', '')))
             source = dispatch_sources.get(group)
             if source is not None and path_values is not None and path_values.cannot_raise(source, snapshot):
                 exceptional = {fact.object for fact in rows('CFG_NEXT', group)
@@ -1375,8 +1393,12 @@ class BodyEngine:
                 return tuple(point for point in following if point not in exceptional)
             return following
 
-        def advanced(group: str, snapshot: Snapshot | None, successor: str) -> tuple[Snapshot | None, ...]:
-            return path_values.advance(group, snapshot, successor) if path_values is not None else (None,)
+        def advanced(group: str, snapshot: Snapshot | None, flow: Continuations, successor: str):
+            next_flow = advance_continuation(events.get(group, {}), flow, snapshot, successor)
+            if has_dispatch and any(f.object == successor and f.attrs.get('kind') in {'exception', 'raise'} for f in rows('CFG_NEXT', group)):
+                next_flow = replace(next_flow, exception='')
+            return tuple((value, next_flow) for value in (
+                path_values.advance(group, snapshot, successor) if path_values is not None else (None,)))
 
         def path_matches(produced: Node, operand: Operation, snapshot: Snapshot) -> QueryValue:
             assert path_values is not None
@@ -2572,6 +2594,8 @@ class BodyEngine:
                     elif not operands:
                         truth=expected.kind=='literal' and expected.value=='null'
                 elif item.kind == 'return' and op.kind == 'RETURN':
+                    if op.id in deferred_returns and events.get(group, {}).get('action') != 'return-complete':
+                        continue
                     expressions = [c for c in children.get(op.id,()) if 'comment' not in c.native_kind]
                     selected = (current.get(item.expressions[0].value)
                                 if item.expressions and item.expressions[0].kind == 'role' else None)
@@ -2981,15 +3005,35 @@ class BodyEngine:
         while pending:
             state = pending.pop()
             group,index,current,uncertain = state.group,state.index,state.bindings,state.unknown
+            if state.flow.exception == 'GeneratorExit' and (events.get(group, {}).get('close') == 'unknown'
+                                                             or events.get(group, {}).get('close_uncertain')):
+                uncertain = True
+                state = replace(state, unknown=True)
             self.check()
             if index == len(pattern.clauses):
                 yield current,uncertain
                 continue
-            key = (group,index,identity(tuple(sorted(current.items()))),uncertain,state.last,state.adjacent,state.used,state.protected,state.forbidden_calls,state.cursor,state.values)
+            key = (group,index,identity(tuple(sorted(current.items()))),uncertain,state.last,state.adjacent,state.used,state.protected,state.forbidden_calls,state.cursor,state.values,state.flow)
             if key in visited:
                 continue
             visited.add(key)
             item = pattern.clauses[index]
+            if item.kind == 'resume':
+                if state.cursor is None or operations.get(state.cursor) is None or operations[state.cursor].kind != 'YIELD':
+                    continue
+                if operations[state.cursor].attrs.get('delegated'):
+                    yield {**current, **{r: Unknown('delegated_resumption_unknown') for r in pattern.outputs}}, True
+                    continue
+                mode = item.name
+                if mode == 'next':
+                    pending.append(replace(state, index=index+1))
+                else:
+                    targets = {f.object for f in rows('CFG_NEXT', group) if f.attrs.get('kind') == 'inject-' + mode}
+                    for target in targets:
+                        pending.append(replace(state, group=target, index=index+1, cursor=None,
+                            flow=replace(state.flow, closing=mode == 'close',
+                                              exception='GeneratorExit' if mode == 'close' else '')))
+                continue
             if item.kind == 'where':
                 condition = item.expressions[0]
                 assert isinstance(condition,Expr)
@@ -3008,28 +3052,38 @@ class BodyEngine:
             if item.kind == 'adjacent':
                 pending.append(replace(state,index=index+1,adjacent=True))
                 continue
+            if state.flow.closing and any(op.kind == 'YIELD' for op in parts(group)):
+                # close() fails at an outward yield; it delivers no yielded value
+                # and does not execute the tail during that invocation.
+                if item.kind == 'yield':
+                    continue
+                closing_yield = True
+            else:
+                closing_yield = False
+            match_snapshot = (state.flow.returned[1] if events.get(group, {}).get('action') == 'return-complete'
+                              and state.flow.returned is not None else state.values)
             if group in coverage_gaps:
                 # Inspect one clause only to preserve uncertainty about matches
                 # inside an uncovered region. Never sequence its lexical arms.
                 # A complete witness before an unrelated suffix stays valid.
-                for matched, _unknown, _operation_id in match_step(item,group,current,state.cursor,state.values):
+                for matched, _unknown, _operation_id in match_step(item,group,current,state.cursor,match_snapshot):
                     yield {**matched, **{role: matched.get(role, Unknown('control_flow_gap'))
                                         for role in pattern.outputs}}, True
                 from .source_coverage import supports_normal_try
                 normal = ({fact.object for fact in rows('CFG_NEXT', group)
                            if fact.attrs.get('kind') == 'normal'}
                           if supports_normal_try(pattern) else set())
-                pending.extend(replace(state,group=n,cursor=None,values=next_values,
+                pending.extend(replace(state,group=n,cursor=None,values=next_values,flow=next_flow,
                                        unknown=uncertain if n in normal else True)
-                               for n in path_successors(group,state.values) for next_values in advanced(group,state.values,n))
+                               for n in path_successors(group,state.values,state.flow) for next_values, next_flow in advanced(group,state.values,state.flow,n))
                 continue
             decisions = pattern.linear and bool(parts(group,frozenset({'BRANCH','LOOP','TRY','SWITCH'})))
-            if not decisions and not state.adjacent and not (pattern.adjacent and state.last is not None):
-                pending.extend(replace(state,group=n,cursor=None,values=next_values)
-                               for n in path_successors(group,state.values) for next_values in advanced(group,state.values,n))
+            if not closing_yield and not decisions and not state.adjacent and not (pattern.adjacent and state.last is not None):
+                pending.extend(replace(state,group=n,cursor=None,values=next_values,flow=next_flow)
+                               for n in path_successors(group,state.values,state.flow) for next_values, next_flow in advanced(group,state.values,state.flow,n))
             if decisions and item.kind not in ('if','iterate'):
                 continue
-            for matched,unknown,operation_id in match_step(item,group,current,state.cursor,state.values):
+            for matched,unknown,operation_id in match_step(item,group,current,state.cursor,match_snapshot):
                 if operation_id in state.used:
                     continue
                 constraint = interval_ok(state)
@@ -3041,7 +3095,7 @@ class BodyEngine:
                         yield matched,uncertain or unknown
                 else:
                     used = state.used | {operation_id}
-                    after = successors(group)
+                    after = () if closing_yield else path_successors(group,state.values,state.flow)
                     if item.kind in ('iterate','if'):
                         # The next source pattern follows the entire region,
                         # never an instruction still inside its body/arms.
@@ -3059,7 +3113,7 @@ class BodyEngine:
                                 exits.add(point)
                         after = tuple(exits)
                     else:
-                        pending.append(_State(group,index+1,matched,uncertain or unknown,used,group,cursor=operation_id,values=state.values))
+                        pending.append(_State(group,index+1,matched,uncertain or unknown,used,group,cursor=operation_id,values=state.values,flow=state.flow))
                     pending.extend(_State(n,index+1,matched,uncertain or unknown,used,group,
-                        values=next_values) for n in after
-                        for next_values in ((None,) if item.kind in ('iterate','if') else advanced(group,state.values,n)))
+                        values=next_values,flow=next_flow) for n in after
+                        for next_values, next_flow in (((None,state.flow),) if item.kind in ('iterate','if') else advanced(group,state.values,state.flow,n)))

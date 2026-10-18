@@ -2709,3 +2709,21 @@ conditional aliases and ordinary generator resumption. Callable-wide
 groups, dynamic handler types and injected generator exceptions remain bounded
 as documented in [statement path values](design/kql2/statement-path-values.md).
 Persisted IR from 1.86 is invalidated by version 1.87.0.
+
+
+### IR 1.88: pending cleanup, exception groups and explicit generator injection
+
+Python `CFG_DISPATCH` points now include typed `action` metadata for finalizer
+entry/exit, evaluated/completed returns, scope unwinding, subgroup dispatch and
+suspension. They remain facts outside syntax operations. The BODY walker keeps
+immutable continuation frames and frozen return snapshots, so shared finalizer
+edges cannot exchange pending exits. `except*` propagates handler failures after
+later arms and excludes reusing consumed builtin subgroups.
+
+`CFG_NEXT` injection edges (`inject-throw`, `inject-close`) are excluded from
+ordinary walks. BODY `yield ...; resume throw|close|next;` selects resumption at
+that suspension. GeneratorExit matching is retained through cleanup; delegated
+protocols and complex expression suspension retain explicit uncertainty.
+Callable-wide may/must summaries and all-path cleanup contracts are unchanged.
+Persisted IR from 1.87 is invalidated by version 1.88.0. See
+[statement path values](design/kql2/statement-path-values.md) for the contract.

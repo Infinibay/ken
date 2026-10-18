@@ -1,0 +1,613 @@
+{
+  "task": "KQL2 finally, except* and explicit generator throw/close continuations",
+  "date": "2026-10-18",
+  "project": {
+    "name": "Django",
+    "version": "5.2.7",
+    "commit": "3cff3209e35a560f94801d428cf7f2a3ecb2a051",
+    "tracked_files": 6904,
+    "all_python_files": 2818,
+    "package_python_files": 883,
+    "javascript_files": 87,
+    "supported_units": 970,
+    "path": "django",
+    "inventory": {
+      "finally_blocks": 68,
+      "except_star_blocks": 0,
+      "yield_expressions": 320,
+      "throw_calls": 0,
+      "close_calls": 98
+    }
+  },
+  "versions": {
+    "before_ir": "1.87.0",
+    "after_ir": "1.88.0",
+    "before_python_files": 406,
+    "after_python_files": 409,
+    "after_source_assets": 475,
+    "git_head": "6230fd688e7ac1a655ab72fe7e3d1b5022b4ab76",
+    "uncommitted_work_preserved": true
+  },
+  "protocol": {
+    "original_queries": 14,
+    "previous_focused_probes": 3,
+    "initial_new_probes": 3,
+    "additional_occurrence_probes": 3,
+    "repetitions": 3,
+    "warm_statistic": "median of repetitions 2 and 3",
+    "external_timeout_seconds": 180,
+    "answer_cache": "disabled",
+    "cache_mb": 3000,
+    "disk_budget_mb": 2900,
+    "query_runs": 138,
+    "cold_runs": 2,
+    "baseline_unsupported_syntax_runs": 12,
+    "completed_query_runs": 126,
+    "performance_without_concurrent_tests": true,
+    "isolation": "Separate local pinned clones, frozen source trees, dependency venv, HOME and XDG cache; same OS, no container",
+    "cold_definition": "Fresh Ken index; OS caches not cleared",
+    "ordering": "Before: 01-18 contiguous, 19-20 in restarted worker, 21-23 in restarted worker. Final after: 01-23 contiguous. Warm samples exclude repetition 1; original 17-query workload is unchanged.",
+    "diagnostic_probes": "18-20 preserve unresolved callable-target uncertainty. Added 21-23 bind the owned call occurrence to measure control flow independently; initial outcomes are retained.",
+    "python": "3.12.9",
+    "platform": "macOS-26.6.2-arm64-arm-64bit"
+  },
+  "comparison": {
+    "01_context_managers": {
+      "before": {
+        "rows": 16,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 185.09439646732062,
+        "warm_api_median_ms": 47.54224998760037,
+        "first_cli_ms": 192.42595898685977
+      },
+      "after": {
+        "rows": 16,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 183.77452096319757,
+        "warm_api_median_ms": 46.13216652069241,
+        "first_cli_ms": 185.04187499638647
+      }
+    },
+    "02_eq_without_hash_method": {
+      "before": {
+        "rows": 0,
+        "unknown_candidates": 30,
+        "exit_code": 0,
+        "warm_cli_median_ms": 187.9196455120109,
+        "warm_api_median_ms": 47.42218746105209,
+        "first_cli_ms": 190.22441696142778
+      },
+      "after": {
+        "rows": 0,
+        "unknown_candidates": 30,
+        "exit_code": 0,
+        "warm_cli_median_ms": 185.7348750345409,
+        "warm_api_median_ms": 48.51445849635638,
+        "first_cli_ms": 183.87416697805747
+      }
+    },
+    "03_iterators": {
+      "before": {
+        "rows": 6,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 186.11627098289318,
+        "warm_api_median_ms": 47.17012451146729,
+        "first_cli_ms": 185.5869580176659
+      },
+      "after": {
+        "rows": 6,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 184.3009789881762,
+        "warm_api_median_ms": 48.04931252147071,
+        "first_cli_ms": 183.07520798407495
+      }
+    },
+    "04_save_delete": {
+      "before": {
+        "rows": 11,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 184.23785400227644,
+        "warm_api_median_ms": 45.46302100061439,
+        "first_cli_ms": 179.993083991576
+      },
+      "after": {
+        "rows": 11,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 182.80570799834095,
+        "warm_api_median_ms": 45.23233350482769,
+        "first_cli_ms": 185.1003750343807
+      }
+    },
+    "05_mark_safe_owners": {
+      "before": {
+        "rows": 44,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 443.5096874658484,
+        "warm_api_median_ms": 307.63958298484795,
+        "first_cli_ms": 446.9203330227174
+      },
+      "after": {
+        "rows": 44,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 437.82097948133014,
+        "warm_api_median_ms": 302.2760415042285,
+        "first_cli_ms": 442.323540977668
+      }
+    },
+    "06_import_string_owners": {
+      "before": {
+        "rows": 35,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 450.96893748268485,
+        "warm_api_median_ms": 308.0749999789987,
+        "first_cli_ms": 446.03279198054224
+      },
+      "after": {
+        "rows": 35,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 438.55352050741203,
+        "warm_api_median_ms": 302.8364584897645,
+        "first_cli_ms": 443.7122080125846
+      }
+    },
+    "07_exact_import_string_target": {
+      "before": {
+        "rows": 36,
+        "unknown_candidates": 11,
+        "exit_code": 0,
+        "warm_cli_median_ms": 1234.6993329992983,
+        "warm_api_median_ms": 1094.5767915109172,
+        "first_cli_ms": 100787.9814170301
+      },
+      "after": {
+        "rows": 36,
+        "unknown_candidates": 11,
+        "exit_code": 0,
+        "warm_cli_median_ms": 1251.5590624825563,
+        "warm_api_median_ms": 1080.6236040079966,
+        "first_cli_ms": 101295.33529200125
+      }
+    },
+    "08_returned_mark_safe": {
+      "before": {
+        "rows": 32,
+        "unknown_candidates": 12,
+        "exit_code": 0,
+        "warm_cli_median_ms": 1494.7571250377223,
+        "warm_api_median_ms": 1352.9440420097671,
+        "first_cli_ms": 1487.3409579740837
+      },
+      "after": {
+        "rows": 32,
+        "unknown_candidates": 12,
+        "exit_code": 0,
+        "warm_cli_median_ms": 1440.5323955288623,
+        "warm_api_median_ms": 1310.702353977831,
+        "first_cli_ms": 1511.3012499641627
+      }
+    },
+    "09_returned_cached_import_target": {
+      "before": {
+        "rows": 1,
+        "unknown_candidates": 11,
+        "exit_code": 0,
+        "warm_cli_median_ms": 1056.305916979909,
+        "warm_api_median_ms": 917.8565835172776,
+        "first_cli_ms": 1042.8554999525659
+      },
+      "after": {
+        "rows": 1,
+        "unknown_candidates": 11,
+        "exit_code": 0,
+        "warm_cli_median_ms": 1015.951312991092,
+        "warm_api_median_ms": 882.4503335054033,
+        "first_cli_ms": 1044.7895829565823
+      }
+    },
+    "10_commit_and_rollback": {
+      "before": {
+        "rows": 1,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 443.49325000075623,
+        "warm_api_median_ms": 306.1880205059424,
+        "first_cli_ms": 451.6790420166217
+      },
+      "after": {
+        "rows": 1,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 429.90677096531726,
+        "warm_api_median_ms": 296.509874984622,
+        "first_cli_ms": 444.4844169775024
+      }
+    },
+    "11_commit_before_rollback": {
+      "before": {
+        "rows": 0,
+        "unknown_candidates": 12,
+        "exit_code": 0,
+        "warm_cli_median_ms": 1092.7192914823536,
+        "warm_api_median_ms": 952.9851245169993,
+        "first_cli_ms": 1076.14920794731
+      },
+      "after": {
+        "rows": 0,
+        "unknown_candidates": 11,
+        "exit_code": 0,
+        "warm_cli_median_ms": 1054.3799169827253,
+        "warm_api_median_ms": 924.7441245242953,
+        "first_cli_ms": 1064.0833340003155
+      }
+    },
+    "12_mutable_defaults": {
+      "before": {
+        "rows": 0,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 140.00545849557966,
+        "warm_api_median_ms": 3.0163954943418503,
+        "first_cli_ms": 15023.021334025543
+      },
+      "after": {
+        "rows": 0,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 137.07804153091274,
+        "warm_api_median_ms": 3.051603998756036,
+        "first_cli_ms": 14540.8325829776
+      }
+    },
+    "13_wildcard_imports": {
+      "before": {
+        "rows": 31,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 1060.2698749862611,
+        "warm_api_median_ms": 911.5203960100189,
+        "first_cli_ms": 3515.836834034417
+      },
+      "after": {
+        "rows": 31,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 1018.0574170080945,
+        "warm_api_median_ms": 881.6658960131463,
+        "first_cli_ms": 3473.582583013922
+      }
+    },
+    "14_handlers_without_raise": {
+      "before": {
+        "rows": 889,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 1119.7285414964426,
+        "warm_api_median_ms": 914.3764585023746,
+        "first_cli_ms": 1069.1519590327516
+      },
+      "after": {
+        "rows": 889,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 1012.0783750026021,
+        "warm_api_median_ms": 869.6008539991453,
+        "first_cli_ms": 1006.2057919567451
+      }
+    },
+    "15_conditional_pgettext": {
+      "before": {
+        "rows": 1,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 147.66702096676454,
+        "warm_api_median_ms": 7.302999991225079,
+        "first_cli_ms": 266.7233750107698
+      },
+      "after": {
+        "rows": 1,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 145.01477099838667,
+        "warm_api_median_ms": 7.121645990991965,
+        "first_cli_ms": 149.80158297112212
+      }
+    },
+    "16_generator_target": {
+      "before": {
+        "rows": 1,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 145.51245799520984,
+        "warm_api_median_ms": 7.216395519208163,
+        "first_cli_ms": 149.87470902269706
+      },
+      "after": {
+        "rows": 1,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 139.72095903591253,
+        "warm_api_median_ms": 6.985583488130942,
+        "first_cli_ms": 144.44375003222376
+      }
+    },
+    "17_exception_handler_target": {
+      "before": {
+        "rows": 1,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 148.08272902155295,
+        "warm_api_median_ms": 9.886833548080176,
+        "first_cli_ms": 148.90808297786862
+      },
+      "after": {
+        "rows": 1,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 145.20860399352387,
+        "warm_api_median_ms": 10.46675001271069,
+        "first_cli_ms": 147.0575419953093
+      }
+    },
+    "18_finally_cursor_cleanup": {
+      "before": {
+        "rows": 0,
+        "unknown_candidates": 1,
+        "exit_code": 0,
+        "warm_cli_median_ms": 142.86727050784975,
+        "warm_api_median_ms": 5.4561669821850955,
+        "first_cli_ms": 143.37624999461696
+      },
+      "after": {
+        "rows": 0,
+        "unknown_candidates": 1,
+        "exit_code": 0,
+        "warm_cli_median_ms": 137.1502919937484,
+        "warm_api_median_ms": 5.512229021405801,
+        "first_cli_ms": 143.7597920303233
+      }
+    },
+    "19_close_cursor_cleanup": {
+      "before": {
+        "rows": 0,
+        "unknown_candidates": null,
+        "exit_code": 2,
+        "warm_cli_median_ms": 125.88712500291876,
+        "warm_api_median_ms": null,
+        "first_cli_ms": 254.64212498627603
+      },
+      "after": {
+        "rows": 0,
+        "unknown_candidates": 1,
+        "exit_code": 0,
+        "warm_cli_median_ms": 137.60483349324204,
+        "warm_api_median_ms": 5.8691249578259885,
+        "first_cli_ms": 140.40274999570101
+      }
+    },
+    "20_throw_cursor_cleanup": {
+      "before": {
+        "rows": 0,
+        "unknown_candidates": null,
+        "exit_code": 2,
+        "warm_cli_median_ms": 125.01770799281076,
+        "warm_api_median_ms": null,
+        "first_cli_ms": 125.23225002223626
+      },
+      "after": {
+        "rows": 0,
+        "unknown_candidates": 1,
+        "exit_code": 0,
+        "warm_cli_median_ms": 136.00352048524655,
+        "warm_api_median_ms": 5.639416514895856,
+        "first_cli_ms": 145.06204199278727
+      }
+    },
+    "21_finally_call_occurrence": {
+      "before": {
+        "rows": 0,
+        "unknown_candidates": 1,
+        "exit_code": 0,
+        "warm_cli_median_ms": 130.70635401527397,
+        "warm_api_median_ms": 4.87077099387534,
+        "first_cli_ms": 93571.03525003185
+      },
+      "after": {
+        "rows": 1,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 135.5111665034201,
+        "warm_api_median_ms": 5.888229003176093,
+        "first_cli_ms": 142.06341601675376
+      }
+    },
+    "22_close_call_occurrence": {
+      "before": {
+        "rows": 0,
+        "unknown_candidates": null,
+        "exit_code": 2,
+        "warm_cli_median_ms": 123.83933350793086,
+        "warm_api_median_ms": null,
+        "first_cli_ms": 123.47954098368064
+      },
+      "after": {
+        "rows": 1,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 138.41970849898644,
+        "warm_api_median_ms": 5.494000011822209,
+        "first_cli_ms": 144.17491701897234
+      }
+    },
+    "23_throw_call_occurrence": {
+      "before": {
+        "rows": 0,
+        "unknown_candidates": null,
+        "exit_code": 2,
+        "warm_cli_median_ms": 123.64533348591067,
+        "warm_api_median_ms": null,
+        "first_cli_ms": 123.8465000060387
+      },
+      "after": {
+        "rows": 1,
+        "unknown_candidates": 0,
+        "exit_code": 0,
+        "warm_cli_median_ms": 138.15829198574647,
+        "warm_api_median_ms": 5.824666499393061,
+        "first_cli_ms": 142.4836670048535
+      }
+    }
+  },
+  "resources": {
+    "before": {
+      "sample_interval_seconds": 5,
+      "sampled_max_rss_kib": 4309600,
+      "retained_end_bytes": 2407354368,
+      "cold_cli_ms": 104492.97995795496,
+      "cold_source_preparation_ms": 104073.97720898734
+    },
+    "after": {
+      "sample_interval_seconds": 5,
+      "sampled_max_rss_kib": 4328592,
+      "retained_end_bytes": 2407358464,
+      "cold_cli_ms": 101189.96458296897,
+      "cold_source_preparation_ms": 100682.7351670363
+    }
+  },
+  "controls": {
+    "before": {
+      "tests": 154,
+      "failures": 80,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 74
+    },
+    "after": {
+      "tests": 154,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 154
+    }
+  },
+  "verification": {
+    "checks": 586,
+    "exact_import_string_ast_owners": 36,
+    "returned_mark_safe_owners": 32,
+    "full_suite": {
+      "tests": 15584,
+      "failures": 66,
+      "errors": 0,
+      "skipped": 10,
+      "passed": 15508,
+      "seconds": 583.514,
+      "resolved_in_retests": 63,
+      "effective_remaining_failures": 3,
+      "effective_unique_verified_passes": 15571,
+      "retests_passed": 3700
+    },
+    "preexisting_failures_reproduced_before": [
+      "test_fastembed_model_detected",
+      "test_real_stdio_registry_and_new_cli_processes_share_prepared_session",
+      "test_torch_model_without_backend_raises_helpful_error"
+    ],
+    "resolved_failures": [
+      "tests.structural.test_algorithm_iterator::test_delegation_shape_survives_independent_work[javascript]",
+      "tests.structural.test_algorithm_iterator::test_delegation_shape_survives_independent_work[typescript]",
+      "tests.structural.test_algorithm_iterator::test_async_generator_shape_is_not_a_proof_of_async_protocol_correctness[javascript]",
+      "tests.structural.test_algorithm_iterator::test_async_generator_shape_is_not_a_proof_of_async_protocol_correctness[typescript]",
+      "tests.structural.test_authored_iterator_yield::test_yield_source_generator[positive-javascript]",
+      "tests.structural.test_authored_iterator_yield::test_yield_source_generator[positive-typescript]",
+      "tests.structural.test_authored_iterator_yield::test_yield_source_generator[positive-csharp]",
+      "tests.structural.test_authored_iterator_yield::test_yield_source_generator[nested_only-javascript]",
+      "tests.structural.test_authored_iterator_yield::test_yield_source_generator[nested_only-typescript]",
+      "tests.structural.test_authored_iterator_yield::test_yield_source_generator[nested_only-csharp]",
+      "tests.structural.test_authored_iterator_yield::test_yield_delegation_source[positive-javascript]",
+      "tests.structural.test_authored_iterator_yield::test_yield_delegation_source[positive-typescript]",
+      "tests.structural.test_authored_iterator_yield::test_yield_operand_and_operation_capture[$items-javascript]",
+      "tests.structural.test_authored_iterator_yield::test_yield_operand_and_operation_capture[$items-typescript]",
+      "tests.structural.test_authored_iterator_yield::test_yield_operand_and_operation_capture[$items-csharp]",
+      "tests.structural.test_authored_iterator_yield::test_async_suspension_does_not_erase_generator_shape[javascript]",
+      "tests.structural.test_authored_iterator_yield::test_async_suspension_does_not_erase_generator_shape[typescript]",
+      "tests.structural.test_behavioral_catalog_join_regressions::test_async_iteration_allows_immediately_available_elements[javascript]",
+      "tests.structural.test_behavioral_catalog_join_regressions::test_async_iteration_allows_immediately_available_elements[typescript]",
+      "tests.structural.test_behavioral_catalog_join_regressions::test_async_iteration_allows_immediately_available_elements[csharp]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#async-iterator/javascript/canonical]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#async-iterator/javascript/noise-1]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#async-iterator/javascript/noise-20]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#async-iterator/typescript/canonical]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#async-iterator/typescript/noise-1]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#async-iterator/typescript/noise-20]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#async-iterator/csharp/canonical]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#async-iterator/csharp/noise-1]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#async-iterator/csharp/noise-20]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#generator/javascript/canonical]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#generator/javascript/noise-1]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#generator/javascript/noise-20]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#generator/typescript/canonical]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#generator/typescript/noise-1]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#generator/typescript/noise-20]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#generator/csharp/canonical]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#generator/csharp/noise-1]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#generator/csharp/noise-20]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#delegated-generator/javascript/canonical]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#delegated-generator/javascript/noise-1]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#delegated-generator/javascript/noise-20]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#delegated-generator/typescript/canonical]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#delegated-generator/typescript/noise-1]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[iterator#delegated-generator/typescript/noise-20]",
+      "tests.structural.test_catalog_adversarial_matrix::test_catalog_semantic_oracle[directed/control-iterator-typescript]",
+      "tests.structural.test_catalog_ir_contracts::test_root_and_children_preserve_matches_through_source_and_query_ir_roundtrips[iterator-typescript]",
+      "tests.structural.test_catalog_kql2_migration::test_every_entry_against_frozen_query_on_multilingual_source[iterator/typescript]",
+      "tests.structural.test_gof_executable::test_canonical_pattern_from_source[False-iterator-typescript]",
+      "tests.structural.test_gof_executable::test_canonical_pattern_from_source[True-iterator-typescript]",
+      "tests.structural.test_gof_features::test_suspension_variants[javascript-async function* items(){ yield 1; }]",
+      "tests.structural.test_gof_features::test_suspension_variants[typescript-async function* items():AsyncGenerator<number>{ yield 1; }]",
+      "tests.structural.test_gof_features::test_suspension_variants[csharp-class Items { System.Collections.Generic.IEnumerable<int> Values(){yield return 1;} }]",
+      "tests.structural.test_gof_features::test_csharp_local_iterator_has_its_own_owner[False]",
+      "tests.structural.test_gof_features::test_csharp_local_iterator_has_its_own_owner[True]",
+      "tests.structural.test_iterator_async_iterator::test_suspending_loop_over_suspending_producer_is_detected[javascript]",
+      "tests.structural.test_iterator_async_iterator::test_suspending_loop_over_suspending_producer_is_detected[typescript]",
+      "tests.structural.test_iterator_async_iterator::test_suspending_loop_over_suspending_producer_is_detected[csharp]",
+      "tests.structural.test_kenql::test_generator_variants_on_real_languages[javascript-.js-function* items() { yield 1; }-generator]",
+      "tests.structural.test_kenql::test_generator_variants_on_real_languages[javascript-.js-function* items(xs) { yield* xs; }-delegated-generator]",
+      "tests.structural.test_kenql::test_generator_variants_on_real_languages[typescript-.ts-function* items(): Generator<number> { yield 1; }-generator]",
+      "tests.structural.test_kenql::test_generator_variants_on_real_languages[typescript-.ts-function* items(xs: number[]) { yield* xs; }-delegated-generator]",
+      "tests.structural.test_kenql::test_generator_variants_on_real_languages[csharp-.cs-class Items { System.Collections.Generic.IEnumerable<int> Values() { yield return 1; } }-generator]",
+      "tests.structural.test_returned_query_values::test_unsupported_scopes_keep_syntax_projection_with_explicit_basis[try:\\n   return Product(self.count)\\n  finally:\\n   cleanup()]"
+    ],
+    "contract_changes": [
+      "BODY now witnesses normal return through finally; callable-wide RETURNS_VALUE keeps syntax basis. Test asserts both independently."
+    ],
+    "mypy_modules": 7,
+    "strategy_states_before": 9885,
+    "strategy_states_after": 9885,
+    "new_controls": 87,
+    "new_controls_before_passed": 7,
+    "new_controls_after_passed": 87
+  },
+  "limitations": [
+    "Source CFG witnesses, not arbitrary runtime feasibility, exception-type inference, heap soundness or all-path cleanup proofs.",
+    "No except* blocks or .throw() calls in this Django package; those behaviors use explicit contrasts and Python runtime oracles. Resumption probes select externally injected routes in a real generator, not an interprocedural caller trace.",
+    "Delegated injected yield-from protocols and complex expression suspension retain uncertainty. A failed close that yields outward is a RuntimeError boundary; later invocations after that failed close are outside successful-yield interaction syntax.",
+    "Dynamic handler type calls, custom/shadowed/imported header types and unsupported local provenance remain uncertain.",
+    "Global coverage_complete stays false due one Django JavaScript template with non-JavaScript template syntax; Python inventory was parsed independently. Unknown candidate counts are evaluations, not unique owners or global coverage percentages.",
+    "Only three repetitions and two warm samples per query; timing improvements are observations, not causal speedup claims. Cold preparation has one sample per version; RSS sampled every five seconds is not an exhaustive peak."
+  ],
+  "artifacts": {
+    "report": "INFORME.txt",
+    "portable_runner": "reproduce.py",
+    "verification": "verify_comparison.py",
+    "source_contract": "docs/statement-path-values.md",
+    "patch": "completions.patch"
+  }
+}

@@ -120,12 +120,12 @@ def test_parameter_alias_normalizes_to_original_parameter_load():
     'try:\n   return Product(self.count)\n  finally:\n   cleanup()',
     'yield 1\n  return Product(self.count)',
 ])
-def test_unsupported_scopes_keep_syntax_projection_with_explicit_basis(body):
+def test_source_scopes_keep_syntax_summary_and_separate_body_witness(body):
     graph, result = run('python', [body])
     assert not [m for m in result['matches'] if m['id'] == 'returned']
-    # BODY now models normal generator resumption; the callable-wide summary
-    # remains syntax-only. Finally is still an explicit coverage boundary.
+    # BODY models normal resumption and completion through finally; the
+    # callable-wide summary keeps its independent syntax-only contract.
     pattern = [m for m in result['matches'] if m['id'] == 'prototype#explicit-copy']
-    assert bool(pattern) is body.startswith(('while', 'yield'))
+    assert len(pattern) == 1
     returned = [f for f in query_graph(graph).ir.facts if f.relation == 'RETURNS_VALUE']
     assert returned and all(f.attrs.get('basis') == 'syntax' for f in returned)

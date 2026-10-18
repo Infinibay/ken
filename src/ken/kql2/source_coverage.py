@@ -37,10 +37,10 @@ def supports_general_walk(statuses: Sequence[Fact]) -> bool:
 def supports_pattern(statuses: Sequence[Fact], pattern: BodyPattern) -> bool:
     # Existential source witnesses may follow normal resumption or one handler
     # route. Negative/all-path gaps still require the stronger general contract.
-    route_witness = (all(clause.kind in {'call', 'let', 'return', 'yield'}
+    route_witness = (all(clause.kind in {'call', 'let', 'return', 'yield', 'resume'}
                          for clause in pattern.clauses)
                      and all(fact.attrs.get('language') == 'python' for fact in statuses)
-                     and _covered(statuses, _YIELD | _ABRUPT_EXIT | {'exception-dispatch'}))
+                     and _covered(statuses, _YIELD | _ABRUPT_EXIT | {'exception-dispatch', 'completion-dispatch', 'exception-group', 'generator-resumption'}))
     local_gaps = bool(statuses) and all(
         fact.object == 'structured' or (
             fact.object == 'partial'

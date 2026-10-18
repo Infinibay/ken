@@ -107,6 +107,14 @@ def parse_assign(parser: Parser, word: str, start: Span) -> Clause:
     )
 
 
+def parse_resume(parser: Parser, word: str, start: Span) -> Clause:
+    mode = parser.take().text
+    if mode not in ('next', 'throw', 'close'):
+        parser.fail('resume requires next, throw or close')
+    parser.expect(';')
+    return Clause('resume', parser.span(start), name=mode)
+
+
 def parse_jump(parser: Parser, word: str, start: Span) -> Clause:
     if word == "break" and parser.peek().startswith("$"):
         target = parser.role()
@@ -334,6 +342,7 @@ BODY_PRODUCTIONS: Mapping[str, BodyProduction] = MappingProxyType(
         "return": parse_jump,
         "throw": parse_jump,
         "yield": parse_jump,
+        "resume": parse_resume,
         "await": parse_jump,
         "break": parse_jump,
         "continue": parse_jump,
