@@ -38,3 +38,11 @@ def test_wal_commit_is_visible_while_writer_remains_open(tmp_path):
         assert Path(str(db) + "-wal").stat().st_size > 0
         with sqlite3.connect(f"file:{db}?mode=ro", uri=True) as conn:
             assert conn.execute("SELECT count(*) FROM ci_files").fetchone()[0] == 1
+
+
+def test_fixture_paths_are_canonical_through_symlinks(tmp_path):
+    real=tmp_path/"real";real.mkdir();alias=tmp_path/"alias";alias.symlink_to(real,target_is_directory=True)
+    with build_fixture(alias,"installed_empty",ref()) as fixture:
+        assert fixture.root==fixture.root.resolve()
+        assert fixture.expected_report["project_root"]==str(fixture.root.resolve())
+        assert fixture.expected_report["db"]["path"]==str((fixture.root/".ken/ken.db").resolve())

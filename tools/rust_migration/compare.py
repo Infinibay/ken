@@ -125,6 +125,27 @@ def run_case(case: Case, reference: Reference, native_command: list[str]) -> dic
                 argv = [*command, "status", str(fixture.start or fixture.root), *case.argv]
                 if case.mode == "json": argv.append("--json")
                 result = run_process(argv, parent, env, 10)
+                # Validate each engine's actual fixture paths before normalizing
+                # the different temporary roots for the cross-engine comparison.
+                if case.exception_id not in {"data_error", "argument_error"}:
+                    wanted = fixture.expected_report
+                    if case.mode == "json":
+                        try:
+                            report = json.loads(result.stdout)
+                            if isinstance(report, dict):
+                                if "project_root" in wanted and report.get("project_root") != wanted["project_root"]:
+                                    changes.append(f"{case.id}: {engine} project_root does not match its fixture")
+                                if "db" in wanted and (not isinstance(report.get("db"), dict) or report["db"].get("path") != wanted["db"]["path"]):
+                                    changes.append(f"{case.id}: {engine} db.path does not match its fixture")
+                                if wanted.get("ok") is False and report.get("error") != wanted["error"]:
+                                    changes.append(f"{case.id}: {engine} error path does not match its fixture")
+                        except ValueError:
+                            pass  # compare_case reports invalid JSON separately.
+                    elif "project_root" in wanted:
+                        if not result.stdout.startswith(f"project_root  : {wanted['project_root']}\n"):
+                            changes.append(f"{case.id}: {engine} project_root text does not match its fixture")
+                    elif not result.stderr.startswith(wanted["error"] + "\n"):
+                        changes.append(f"{case.id}: {engine} error path text does not match its fixture")
                 if case.mode == "json" and engine == "python": expected = fixture.expected_report
                 results.append(result)
                 changes.extend(f"{case.id}: {engine} changed {field}" for field in fixture.changed())

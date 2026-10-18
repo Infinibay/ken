@@ -125,7 +125,7 @@ def _size(db: Path) -> str:
 
 
 def build_fixture(parent: Path, scenario: str, reference: Reference) -> Fixture:
-    root = parent / "project ü with spaces"
+    root = parent.resolve() / "project ü with spaces"
     root.mkdir(parents=True)
     fixture = Fixture(root, {})
     marker = root / ".ken"

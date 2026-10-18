@@ -76,3 +76,15 @@ def test_native_child_attempt_is_detected():
     case=Case("child-control","installed_empty","json",[],0,{})
     result=run_case(case,ref,["/bin/sh","-c","python --version >/dev/null 2>&1; printf '{}\\n'"])
     assert any("forbidden child" in e for e in result["errors"])
+
+
+def test_process_cannot_hide_an_incorrect_project_root():
+    import sys
+    from pathlib import Path
+    from tools.rust_migration.compare import run_case
+    from tools.rust_migration.reference import Reference
+    root=Path(__file__).resolve().parents[2]
+    ref=Reference(root,root/"docs/validation/rust-migration-2026-10-18/baseline.json","test",Path(sys.executable))
+    code="import sys,json;from pathlib import Path;from ken.status import status_report;r=status_report(Path(sys.argv[2]));r['project_root']='/wrong';print(json.dumps(r))"
+    result=run_case(Case("root-control","installed_empty","json",[],0,{}),ref,[sys.executable,"-c",code])
+    assert any("project_root" in e for e in result["errors"])
