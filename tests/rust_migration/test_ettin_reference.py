@@ -87,3 +87,15 @@ def test_fixture_generation_resolves_relative_output_and_rejects_source_drift(or
     with pytest.raises(ValueError,match='artifact'):
         source_state(source,pair['definition']['source'])
     assert str(tmp_path) not in (tmp_path/'relative/manifest.json').read_text()
+
+
+def test_original_accepts_non_f32_logits_so_native_rejection_is_an_explicit_correction(original,tmp_path):
+    from tools.rust_migration.ettin_fixtures import generate
+    from tools.rust_migration.ettin_reference import capture
+    fixtures=generate(original,tmp_path/'fixtures')
+    row=fixtures['non_f32']
+    result=capture(original,Path(row['source']),tmp_path/'original-double.json',definition=row['definition'],
+                   prepared=Path(row['prepared']),cases=[{'id':'double','options':{},'calls':[
+                       {'op':'score','query':'x','texts':['y']}]}])
+    assert result['results'][0]['calls'][0]['scores']==[29.]
+    assert row['original_scores']==[29.]

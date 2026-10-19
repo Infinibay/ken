@@ -94,10 +94,19 @@ for name in ['bad-pad-id','left-padding','model-limit','two-scores','nan-output'
  try:runtime(source,ready_bad).score('x',['y']);error=None
  except Exception as e:error=f'{type(e).__name__}: {e}'
  invalid[name]={'kind':'pair','source':str(source),'prepared':str(ready_bad),'definition':d,'original_rejected':error is not None,'error':error}
+double=root/'non-f32'/pair.name;shutil.copytree(pair,double)
+m=onnx.load(double/'graph.onnx')
+m.graph.node.append(onnx.helper.make_node('Cast',['scores'],['double_scores'],to=onnx.TensorProto.DOUBLE))
+del m.graph.output[:];m.graph.output.append(onnx.helper.make_tensor_value_info('double_scores',onnx.TensorProto.DOUBLE,['batch',1]))
+onnx.save(m,double/'graph.onnx')
+double_ready=root/'non-f32/prepared'/pair.name
+double_definition=prepared_pair(double,double_ready)
+double_scores,_=runtime(double,double_ready).score('x',['y'])
 result={'original_helpers_verified':True,'helpers':{str(p.relative_to(reference)):sha(p) for p in [head_helper,pair_helper]},
  'head':{'source':str(head),'prepared':str(ready),'definition':head_definition,'expected_graph':artifact(assets.graph),
  'original_preparation_verified':True,'original_scalar_score':score,'independent_scalar_score':expected},
- 'pair':{'source':str(pair),'prepared':str(pair_ready),'definition':pair_definition},'invalid':invalid}
+ 'pair':{'source':str(pair),'prepared':str(pair_ready),'definition':pair_definition},'invalid':invalid,
+ 'non_f32':{'source':str(double),'prepared':str(double_ready),'definition':double_definition,'original_scores':double_scores}}
 def relative(value):
  if isinstance(value,dict):return {k:relative(v) for k,v in value.items()}
  if isinstance(value,list):return [relative(v) for v in value]

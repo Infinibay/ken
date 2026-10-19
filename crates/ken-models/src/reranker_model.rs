@@ -92,6 +92,9 @@ impl RerankerModel {
     pub(crate) fn graph_name(&self) -> &str {
         &self.graph_name
     }
+    pub(crate) fn accredits(&self, prepared: &PreparedReranker) -> bool {
+        self.graph_name == prepared.graph_name && self.prepared.accredits(&prepared.snapshot)
+    }
     pub fn verify_prepared(&self, root: &Path) -> Result<PreparedReranker, ModelError> {
         Ok(PreparedReranker {
             snapshot: Arc::new(self.prepared.verify_artifacts(root)?),

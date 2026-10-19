@@ -700,5 +700,41 @@
       "original_rejected": true,
       "error": "ValueError: reranker must return one finite score per document"
     }
+  },
+  "non_f32": {
+    "source": "non-f32/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "prepared": "non-f32/prepared/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "definition": {
+      "source": {
+        "model_id": "test/reranker",
+        "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "artifacts": {
+          "config.json": {
+            "bytes": 19,
+            "sha256": "ac79963b100da854c8203926d082dee8ea80533813763f0dc129cf6b04610344"
+          },
+          "graph.onnx": {
+            "bytes": 348,
+            "sha256": "05c685d1cbf99c862a03cc9dc691dd6d43ebcad8f77fc29b20ff0d9c25181e43"
+          },
+          "tokenizer.json": {
+            "bytes": 1616,
+            "sha256": "8378c19948d2d33c0a674d286a316d0ec96af47766b2e402ecf791aa72b8b73c"
+          },
+          "tokenizer_config.json": {
+            "bytes": 47,
+            "sha256": "5dddbfa665dc52a2c8081a60646ac36b9d78c34a450be1f4663e71e8aa6c9f39"
+          }
+        }
+      },
+      "graph": {
+        "path": "model.onnx",
+        "bytes": 348,
+        "sha256": "05c685d1cbf99c862a03cc9dc691dd6d43ebcad8f77fc29b20ff0d9c25181e43"
+      }
+    },
+    "original_scores": [
+      29.0
+    ]
   }
 }
