@@ -30,7 +30,7 @@
         "--version",
         "--verbose"
       ],
-      "duration_ns": 48468459,
+      "duration_ns": 49493500,
       "artifact": "rustc.log",
       "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
     },
@@ -47,9 +47,9 @@
         "tests/test_status.py",
         "-q"
       ],
-      "duration_ns": 35558509958,
+      "duration_ns": 38173590250,
       "artifact": "python-contracts.log",
-      "sha256": "6e88d7552c7d0f69ef9dd94f2f03455134c26c337f91efc46162eecf0ee3a909"
+      "sha256": "c3f10a075adace0c7a32194c3773838ef13ba5e6a0b346089fcca6d53d5fb848"
     },
     "python_full": {
       "ran": true,
@@ -59,14 +59,14 @@
         "/Users/andres/Projects/ken/.venv/bin/python",
         "-m",
         "pytest",
-        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-table/validation/base/python-final.xml"
+        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-table/validation-corrected/base/python-final.xml"
       ],
-      "duration_ns": 660534983542,
+      "duration_ns": 676889662084,
       "artifact": "python-full.log",
-      "sha256": "b2760d083c949ef5e57f678de4abecd4a0c2c5a545ffe18876b4b6cadffbfbe9",
+      "sha256": "652259e2be9f3ad22ec9ee26f2a0ee53e0d629c31855cf75be52d694cfe06573",
       "details": {
         "passed": true,
-        "collected": 15626,
+        "collected": 15628,
         "new_failures": [],
         "new_skips": [],
         "missing_tests": [],
@@ -92,7 +92,7 @@
         "mypy",
         "--no-incremental"
       ],
-      "duration_ns": 18770696500,
+      "duration_ns": 17965385417,
       "artifact": "typing.log",
       "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
       "details": {
@@ -118,7 +118,7 @@
         "--",
         "--check"
       ],
-      "duration_ns": 305476417,
+      "duration_ns": 143397417,
       "artifact": "fmt.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -136,9 +136,9 @@
         "-D",
         "warnings"
       ],
-      "duration_ns": 318522250,
+      "duration_ns": 378627042,
       "artifact": "clippy.log",
-      "sha256": "f2066ca264b9a8598ecd436c70919e1efe1acea4098ad2a13b5d82d67bc049ec"
+      "sha256": "f591e097f22f91dd5c31fbbf7e587d80c0a4e0ed594f9c9012a544f38c52d926"
     },
     "rust_tests": {
       "ran": true,
@@ -150,9 +150,9 @@
         "--locked",
         "--workspace"
       ],
-      "duration_ns": 27940681875,
+      "duration_ns": 26392450125,
       "artifact": "rust_tests.log",
-      "sha256": "4fcbd8ff030332420672fab94a067963d26f22c2797e3605a76a11a9c9e6c702"
+      "sha256": "a91f355f2221673896d7cc802c11fc5c15e5659ce7d1dc961e3d2858019b7870"
     },
     "release": {
       "ran": true,
@@ -170,9 +170,9 @@
         "--examples",
         "--bins"
       ],
-      "duration_ns": 1418783458,
+      "duration_ns": 208341542,
       "artifact": "release.log",
-      "sha256": "bafec6262b08ebf655227650a823a0391c1faaf6037f7740fc11cc8f06597b2b"
+      "sha256": "b65d97c967cb13bb2fd061b2f5b86011ef366acea387375a92a9808f93395384"
     },
     "parity_tests": {
       "ran": true,
@@ -184,9 +184,9 @@
         "pytest",
         "migration_tests",
         "-q",
-        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-table/validation/base/parity-tests.xml"
+        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-table/validation-corrected/base/parity-tests.xml"
       ],
-      "duration_ns": 53913035167,
+      "duration_ns": 54276867500,
       "artifact": "parity-tests.log",
       "sha256": "19da9087d92935b2064df20f632357e22786ce3e50fd7075c1f2ef56c47433ca"
     },
@@ -213,9 +213,9 @@
         "--cases",
         "/Users/andres/Projects/ken/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
         "--out",
-        "/Users/andres/Projects/ken/.ken/rust-migration/m2-table/validation/base/m1-parity.json"
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-table/validation-corrected/base/m1-parity.json"
       ],
-      "duration_ns": 20054337917,
+      "duration_ns": 20312598708,
       "artifact": "m1-parity.log",
       "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
     },
@@ -233,9 +233,17 @@
         "diff",
         "--check"
       ],
-      "duration_ns": 50807833,
+      "duration_ns": 50630125,
       "artifact": "hygiene.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "table_release": {
+      "ran": true,
+      "passed": true,
+      "built": "/Users/andres/Projects/ken/target/release/examples/table_probe",
+      "supplied": "/Users/andres/Projects/ken/target/release/examples/table_probe",
+      "built_sha256": "38cebec688e272bccc62dc76bb86510aa23342e88c5ff92de2cbb6790d34ca1f",
+      "supplied_sha256": "38cebec688e272bccc62dc76bb86510aa23342e88c5ff92de2cbb6790d34ca1f"
     },
     "table_parity": {
       "ran": true,
@@ -243,16 +251,24 @@
     }
   },
   "fingerprints": {
-    "native_source": "87a64ed835d421f4a3be27cfe7bd85dd88cc7ab9bcfc1ed2a915073360991eac",
+    "native_source": "5597da7860a62dd7600514bfb9fee65e216c806d729fa0ce2c03f7574465ef3f",
     "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
     "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
-    "validator": "052183561277bd2ab192735543774b25739420c107328bf64a8752b225a74bb9",
+    "validator": "27da6801ea22c957fb3b4570d930e6c4e62305ec5c74777f41005a5ebc5b37d0",
     "oracle": "3c6c3295f97b6671dd6e00135117a276a53ce00489aa6dcfd4ba88cafb24443c",
     "registration": "d2cb2be7a0b8a0b6682ae215539a1e92d7ccec598cbbcbdf960201e718b534d5",
     "table_artifact": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
     "table_oracle": "b2ed77496c6cf5df43dd43dd9eb3b904b60a71c9e1650f879b3428fa926e62f3"
   },
   "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "table_release": {
+    "ran": true,
+    "passed": true,
+    "built": "/Users/andres/Projects/ken/target/release/examples/table_probe",
+    "supplied": "/Users/andres/Projects/ken/target/release/examples/table_probe",
+    "built_sha256": "38cebec688e272bccc62dc76bb86510aa23342e88c5ff92de2cbb6790d34ca1f",
+    "supplied_sha256": "38cebec688e272bccc62dc76bb86510aa23342e88c5ff92de2cbb6790d34ca1f"
+  },
   "table_parity": {
     "format": "ken-table-parity/1",
     "passed": true,
@@ -285,7 +301,7 @@
       "bytes": 23135664
     },
     "cases_sha256": "b2ed77496c6cf5df43dd43dd9eb3b904b60a71c9e1650f879b3428fa926e62f3",
-    "native_sha256": "5c597157833dfdf928da9dbe963a279b9e3045f5ecc739f2a25d39cd81b753ec",
+    "native_sha256": "38cebec688e272bccc62dc76bb86510aa23342e88c5ff92de2cbb6790d34ca1f",
     "dependency_audit": {
       "passed": true,
       "linked_exit": 0,
@@ -293,7 +309,7 @@
       "linked_sha256": "3aa21480fc8fe900f89f62ddebc9fe7f86bac3d54357d85865d7e5c4f504455c",
       "tree_sha256": "ed6cb7e40dc98807d8f49ce969fae9718f1b9b5366d39b4b050cfc90a6739869"
     },
-    "native_wall_ns": 5335214208,
+    "native_wall_ns": 5468129458,
     "native_exit": 0,
     "runtime": {
       "device": "cpu",

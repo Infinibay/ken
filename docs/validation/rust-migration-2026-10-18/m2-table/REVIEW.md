@@ -49,3 +49,21 @@ No numerical expectation or tolerance is weakened.
 
 Each boundary is ruled on with its cost in the execution record; none is treated
 as completion of the full migration.
+
+## Verified disposition
+
+All three Important findings are fixed in f84c472d, in one author correction pass.
+No re-review was dispatched. Duplicate dtype/order were first observed accepted
+and duplicate shape panicked; all three now return errors. The initial test
+builder had an invalid comma and was corrected before accepting RED evidence.
+Overflow norm first returned a false zero; it now errors while empty/zero stays
+valid. Stale binding, missing explicit selection, ignored matrix binding and
+missing environment forwarding each failed before the fix and pass afterwards.
+
+The complete corrected matrix passes18/18 gates on both macOS arm64 and Linux
+aarch64:15618Python passes+10historicalxfail,62distinctRust tests,73real process
+migration tests,44tooling tests,16table histories,18Potion histories and62M1cases.
+Format/clippy pass. macOS has only its two historical missing-transformers mypy
+errors; Linux409files clean. Original1066hashes and frozen sources are intact.
+Both receipts bind the actual table process to its newly built release; Linux
+trace contains exactly one initial exec. No Important/Critical finding remains.

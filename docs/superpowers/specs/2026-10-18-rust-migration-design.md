@@ -286,7 +286,8 @@ actual, Linux y macOS; Windows se audita en M0 según el soporte prometido.
 - [ ] Matriz de paridad completa y sustitución final.
 
 M0/M1 y el primer perfil Potion de M2 ya tienen recibos Linux/macOS y revisión
-independiente. La tabla NPZ está en su gate multiplataforma; los demás perfiles
+independiente. La tabla NPZ también pasó su gate multiplataforma y la revisión
+con tres correcciones TDD verificadas; los demás perfiles
 y datos siguen pendientes. Cada entrega conserva especificación, plan, TDD y
 revisión. La orden de continuar hasta terminar mantiene el alcance completo y
 el método nativo aprobado; no convierte entregas parciales en cierre M2/M8.

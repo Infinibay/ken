@@ -175,5 +175,6 @@ el release recién compilado y con el proceso de paridad. La matriz requiere
 Linux y macOS con ocho huellas coincidentes, los18gates, casos completos y
 strace Linux. Cabeceras NPY duplicadas y normas desbordadas producen un error;
 esta última corrección evita el cero aparente que también devolvía Python.
-Tras tres hallazgos importantes de la revisión, la tabla está repitiendo la
-validación completa. M2 sigue abierto para los demás modelos y datos.
+Los tres hallazgos importantes de la revisión fueron corregidos con TDD y la
+tabla pasó18/18gates en ambos sistemas. M2 sigue abierto para los demás modelos
+y datos.

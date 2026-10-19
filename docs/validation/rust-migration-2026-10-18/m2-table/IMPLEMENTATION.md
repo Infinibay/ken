@@ -1,7 +1,9 @@
 # Native NPZ table profile
 
-Implemented; Linux and macOS each passed17/17 gates with matching eight source/input
-fingerprints and Rust1.95.0. Independent review is pending. This does not close M2.
+Accepted for this profile; Linux and macOS each passed18/18 gates after the single
+review correction pass, with matching eight source/input fingerprints and
+Rust1.95.0. The [independent review](REVIEW.md) found three Important issues;
+all were reproduced and fixed with TDD. This does not close M2.
 
 The original bundled NPZ remains unchanged. Frozen Python outputs for16 histories
 were captured before Rust. Native `StaticTableEncoder` owns its converted arrays
@@ -14,11 +16,11 @@ NPY header regression cover conversion, numerical cancellation and corruption.
 The header test first reproduced a panic in npyz; explicit literal shape/payload
 checks now return an error before unchecked library arithmetic. No pickle runs.
 
-Both platforms passed15616Python tests+10historicalxfail,58distinctRust integrations,
+Both platforms passed15618Python tests+10historicalxfail,62distinctRust tests,
 73explicit migration tests,18Potion histories,62M1cases and16table histories.
 macOS retains two historical missing-transformers mypy errors; Linux checked409files
-without errors. Full raw receipts are retained at `.ken/rust-migration/m2-table/validation`
-and `linux-receipts/validation`; the interrupted wrong
+without errors. Corrected full raw receipts are retained at `.ken/rust-migration/m2-table/validation-corrected`
+and `linux-receipts/validation-corrected`; earlier pre-review runs and the interrupted wrong
 snapshot-path attempt is retained separately and was not accepted.
 
 The native probe runs outside checkout with restricted PATH, owned data copies,
@@ -26,10 +28,18 @@ strict exact tokens/zero vectors and fixed F32 atol2e-6/rtol1e-5/cosine0.999999.
 Public [macOS](macos/summary.json) and [Linux](linux/summary.json) receipts are
 verbatim copies; the [matrix](matrix.json) passes. The [Linux trace](linux/native-exec.trace)
 contains exactly one initial exec. The additional
-[source binding](macos/source-binding.json) (also recorded on Linux) checks the explicit table executable
-hash against the freshly built in-tree release. The CLI table validator currently
-relies on the caller's explicit native path plus output/dependency checks for that
-binding; this observed run supplies the in-tree binary and records the check.
+[source binding](macos/source-binding.json) (also recorded on Linux) records the
+mandatory automatic table_release gate. It requires the selected executable,
+freshly built release and actual parity process hashes to match. Process tests
+require explicit KEN_TABLE_PROBE; no sibling inference is allowed. Code receipt
+commit is f84c472d. The previous17-gate receipts remain historical evidence only.
+
+Duplicate NPY keys are rejected before unchecked npyz arithmetic. A nonfinite
+computed norm now returns an inference error before division; frozen Python
+also returned false zeros for this overflow, so the stricter error is an
+intentional narrow correction. Empty and valid zero inputs retain their results.
+Four added Rust regressions, stale-binding/matrix/selection/environment regressions
+and the complete suites verified all three changes without widening tolerances.
 
 [Measurements macOS](macos/measurements.json) and [Linux](linux/measurements.json)
 retain all16fixed case histories per engine and OS.
