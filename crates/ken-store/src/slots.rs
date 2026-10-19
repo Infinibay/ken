@@ -65,16 +65,34 @@ pub fn allocate(
     if count == 0 {
         return Ok(Vec::new());
     }
-    let requested = i64::try_from(count)
+    i64::try_from(count)
         .map_err(|_| StoreError::InvalidSlot("count exceeds SQLite integer range"))?;
     let conn = active(tx)?;
+    let committed = tx.committed_connection()?;
     let start = high_water(conn, space)?;
     let table = space.as_str();
+    for view in [conn, &committed] {
+        let last: Option<i64> = view
+            .query_row(&format!("SELECT max(vec_slot) FROM {table}"), [], |r| {
+                r.get(0)
+            })
+            .map_err(|e| sql_error(view, e))?;
+        if last.is_some_and(|slot| slot >= start) {
+            return Err(StoreError::InvalidSlot(
+                "high-water mark overlaps an index row",
+            ));
+        }
+    }
+    let mut committed_owner = committed
+        .prepare(&format!(
+            "SELECT EXISTS(SELECT 1 FROM {table} WHERE vec_slot=?1)"
+        ))
+        .map_err(|e| sql_error(&committed, e))?;
     let mut statement = conn
-        .prepare(&format!("SELECT free.slot, EXISTS(SELECT 1 FROM {table} AS owner WHERE owner.vec_slot=free.slot) FROM ci_vec_free AS free WHERE free.space=?1 ORDER BY free.slot LIMIT ?2"))
+        .prepare(&format!("SELECT free.slot, EXISTS(SELECT 1 FROM {table} AS owner WHERE owner.vec_slot=free.slot) FROM ci_vec_free AS free WHERE free.space=?1 ORDER BY free.slot"))
         .map_err(|e| sql_error(conn, e))?;
     let rows = statement
-        .query_map(params![space.as_str(), requested], |r| {
+        .query_map([space.as_str()], |r| {
             Ok((r.get::<_, i64>(0)?, r.get::<_, bool>(1)?))
         })
         .map_err(|e| sql_error(conn, e))?;
@@ -89,10 +107,21 @@ pub fn allocate(
         if slot < 0 || slot >= start {
             return Err(StoreError::InvalidSlot("free slot outside allocated range"));
         }
+        let restorable: bool = committed_owner
+            .query_row([slot], |row| row.get(0))
+            .map_err(|e| sql_error(&committed, e))?;
+        if restorable {
+            // Leave this free entry for a later transaction: writing it now
+            // would corrupt the old owner after rollback or process death.
+            continue;
+        }
         reused
             .try_reserve(1)
             .map_err(|_| StoreError::InvalidSlot("free-list exceeds available capacity"))?;
         reused.push(slot);
+        if reused.len() == count {
+            break;
+        }
     }
     let remaining = count
         .checked_sub(reused.len())

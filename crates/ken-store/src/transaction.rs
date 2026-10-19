@@ -1,5 +1,5 @@
 use crate::{StoreError, StoreResult, StoredModelState, model_state};
-use rusqlite::{Connection, Transaction};
+use rusqlite::{Connection, OpenFlags, Transaction};
 use std::path::PathBuf;
 
 #[derive(Debug)]
@@ -14,6 +14,16 @@ impl<'a> WriteTransaction<'a> {
     }
     pub fn connection(&self) -> &Connection {
         &self.inner
+    }
+
+    /// The IMMEDIATE writer lock prevents other commits while this independent
+    /// reader sees owners that this transaction could restore on rollback.
+    pub(crate) fn committed_connection(&self) -> StoreResult<Connection> {
+        Connection::open_with_flags(
+            &self.path,
+            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+        )
+        .map_err(|e| StoreError::sqlite(&self.path, e))
     }
 
     pub fn model_state(&self) -> StoreResult<StoredModelState> {

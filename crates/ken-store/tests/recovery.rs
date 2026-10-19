@@ -210,6 +210,67 @@ fn killed_compaction_recovers_before_project_data_is_exposed() {
         );
     }
 }
+
+#[test]
+fn killed_recovery_cleanup_resumes_after_its_internal_owner_receipt_is_deleted() {
+    // Catches loss of recovery authority partway through recursive removal.
+    let root = tempfile::tempdir().unwrap();
+    seed(root.path());
+    let live = root.path().join(".ken/vectors");
+    let many = live.join("zz-many");
+    std::fs::create_dir(&many).unwrap();
+    for n in 0..15_000 {
+        std::fs::write(many.join(format!("{n:05}")), []).unwrap();
+    }
+    kill_at(root.path(), "new_published");
+    let owner = live.join(".ken-storage-owner.json");
+    assert!(owner.is_file());
+    let mut process = child(root.path(), "recover");
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+    let interrupted = loop {
+        if !owner.exists() && live.exists() {
+            // Freeze before checking the remaining entries, then kill externally.
+            assert_eq!(unsafe { libc::kill(process.id() as i32, libc::SIGSTOP) }, 0);
+            let incomplete = std::fs::read_dir(&live).unwrap().next().is_some();
+            process.kill().unwrap();
+            assert_eq!(process.wait().unwrap().signal(), Some(9));
+            break incomplete;
+        }
+        if process.try_wait().unwrap().is_some() {
+            break false;
+        }
+        if std::time::Instant::now() >= deadline {
+            process.kill().unwrap();
+            process.wait().unwrap();
+            break false;
+        }
+        std::thread::yield_now();
+    };
+    assert!(
+        interrupted,
+        "did not interrupt a partially removed generation"
+    );
+    let hidden = root.path().join(".ken/interrupted-generation");
+    std::fs::rename(&live, &hidden).unwrap();
+    std::fs::create_dir(&live).unwrap();
+    std::fs::write(live.join("foreign"), "keep").unwrap();
+    assert!(ProjectStore::open(&paths(root.path())).is_err());
+    assert_eq!(
+        std::fs::read_to_string(live.join("foreign")).unwrap(),
+        "keep"
+    );
+    std::fs::remove_file(live.join("foreign")).unwrap();
+    std::fs::remove_dir(&live).unwrap();
+    std::fs::rename(&hidden, &live).unwrap();
+    let actual = reopen_process(root.path());
+    for space in VectorSpace::ALL {
+        assert_eq!(actual[space.as_str()]["pairs"], json!([[1, 4], [2, 1]]));
+        assert_eq!(actual[space.as_str()]["rows"], json!([[1., 0.], [0., 1.]]));
+    }
+    assert_eq!(reopen_process(root.path()), actual);
+    assert_eq!(std::fs::read_dir(&many).unwrap().count(), 15_000);
+    assert!(!root.path().join(".ken/vectors-maintenance.json").exists());
+}
 #[test]
 fn malformed_recovery_journal_cannot_touch_unrelated_paths() {
     // Catches unconfined paths, forged ownership, unknown phases/markers and silent empty recovery.
@@ -254,6 +315,17 @@ fn malformed_recovery_journal_cannot_touch_unrelated_paths() {
     let committed = tempfile::tempdir().unwrap();
     seed(committed.path());
     kill_at(committed.path(), "database_committed");
+    let committed_journal = committed.path().join(".ken/vectors-maintenance.json");
+    let committed_raw = std::fs::read(&committed_journal).unwrap();
+    let mut invalid_cleanup: Value = serde_json::from_slice(&committed_raw).unwrap();
+    invalid_cleanup["phase"] = json!("discarding_new");
+    std::fs::write(
+        &committed_journal,
+        serde_json::to_vec(&invalid_cleanup).unwrap(),
+    )
+    .unwrap();
+    assert!(ProjectStore::open(&paths(committed.path())).is_err());
+    std::fs::write(&committed_journal, committed_raw).unwrap();
     let live = committed.path().join(".ken/vectors");
     let hidden = committed.path().join(".ken/hidden-committed");
     std::fs::rename(&live, &hidden).unwrap();

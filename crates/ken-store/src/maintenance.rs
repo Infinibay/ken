@@ -253,6 +253,7 @@ fn copy_entry(source: &Path, dest: &Path) -> StoreResult<()> {
             let entry = entry.map_err(|e| StoreError::io(source, e))?;
             copy_entry(&entry.path(), &dest.join(entry.file_name()))?;
         }
+        std::fs::set_permissions(dest, kind.permissions()).map_err(|e| StoreError::io(dest, e))?;
     } else if kind.is_file() {
         std::fs::copy(source, dest).map_err(|e| StoreError::io(source, e))?;
     } else {

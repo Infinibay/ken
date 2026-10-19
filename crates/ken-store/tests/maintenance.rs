@@ -19,6 +19,48 @@ fn fixture() -> (tempfile::TempDir, ProjectStore) {
 fn blob(values: &[f32]) -> Vec<u8> {
     values.iter().flat_map(|n| n.to_le_bytes()).collect()
 }
+
+#[test]
+fn compaction_preserves_nested_private_directory_permissions() {
+    // Catches disclosure through a recreated parent with broader permissions.
+    if std::env::var_os("KEN_PRIVATE_DIRECTORY_CHILD").is_none() {
+        use std::os::unix::process::CommandExt;
+        let mut command = std::process::Command::new(std::env::current_exe().unwrap());
+        command
+            .args([
+                "--exact",
+                "compaction_preserves_nested_private_directory_permissions",
+            ])
+            .env("KEN_PRIVATE_DIRECTORY_CHILD", "1");
+        unsafe {
+            command.pre_exec(|| {
+                libc::umask(0o022);
+                Ok(())
+            });
+        }
+        assert!(command.status().unwrap().success());
+        return;
+    }
+    let (root, mut project) = fixture();
+    let private = root.path().join(".ken/vectors/private");
+    let nested = private.join("nested");
+    std::fs::create_dir_all(&nested).unwrap();
+    std::fs::set_permissions(&private, std::fs::Permissions::from_mode(0o700)).unwrap();
+    std::fs::set_permissions(&nested, std::fs::Permissions::from_mode(0o710)).unwrap();
+    std::fs::write(nested.join("data"), "private contents").unwrap();
+    std::fs::set_permissions(nested.join("data"), std::fs::Permissions::from_mode(0o644)).unwrap();
+    compact(&mut project, 2, |_| {}).unwrap();
+    assert_eq!(std::fs::metadata(&private).unwrap().mode() & 0o777, 0o700);
+    assert_eq!(std::fs::metadata(&nested).unwrap().mode() & 0o777, 0o710);
+    assert_eq!(
+        std::fs::metadata(nested.join("data")).unwrap().mode() & 0o777,
+        0o644
+    );
+    assert_eq!(
+        std::fs::read_to_string(nested.join("data")).unwrap(),
+        "private contents"
+    );
+}
 fn file(project: &ProjectStore, id: i64, embedding: &[f32]) {
     project.database().connection().execute("INSERT INTO ci_files(id,path,content_hash,mtime,indexed_at,embedding) VALUES(?1,?2,x'',0,0,?3)",rusqlite::params![id,format!("f{id}"),blob(embedding)]).unwrap();
 }

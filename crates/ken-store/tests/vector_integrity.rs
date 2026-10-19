@@ -153,7 +153,22 @@ fn verification_and_live_scores_preserve_slot_accounting() {
     let metadata = std::fs::metadata(root.path().join("vectors/ci_files.0000.vec")).unwrap();
     assert_eq!(metadata.len(), 65536 * 2 * 4);
     assert_eq!(store.bytes_on_disk().unwrap(), metadata.blocks() * 512);
-    assert!(store.bytes_on_disk().unwrap() < metadata.len());
+    // A filesystem may fully allocate a written segment. Keep a genuinely
+    // sparse, never-written segment to distinguish physical bytes from length.
+    let sparse_dir = root.path().join("sparse");
+    let sparse = VectorStore::open(&sparse_dir, VectorSpace::Files, 2, None).unwrap();
+    let segment = std::fs::File::create(sparse_dir.join("ci_files.0000.vec")).unwrap();
+    segment.set_len(65536 * 2 * 4).unwrap();
+    let sparse_metadata = segment.metadata().unwrap();
+    assert_eq!(
+        sparse.bytes_on_disk().unwrap(),
+        sparse_metadata.blocks() * 512
+    );
+    assert!(sparse.bytes_on_disk().unwrap() < sparse_metadata.len());
+    assert_eq!(
+        sparse.read(&[0, 65535]).unwrap(),
+        [vec![0., 0.], vec![0., 0.]]
+    );
     db.connection()
         .execute_batch("DROP TABLE ci_vec_alloc")
         .unwrap();

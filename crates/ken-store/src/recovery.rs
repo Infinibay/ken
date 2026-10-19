@@ -79,7 +79,7 @@ struct Journal {
 impl Journal {
     fn validate(&self, path: &Path) -> StoreResult<()> {
         if self.format != 1
-            || self.phase != "prepared"
+            || !matches!(self.phase.as_str(), "prepared" | "discarding_new")
             || !valid_id(&self.id)
             || self.staging != format!(".vectors-stage-{}", self.id)
             || self.backup != format!(".vectors-backup-{}", self.id)
@@ -91,6 +91,32 @@ impl Journal {
             ));
         }
         Ok(())
+    }
+
+    fn discard_new(&mut self, path: &Path) -> StoreResult<()> {
+        if self.phase == "discarding_new" {
+            return Ok(());
+        }
+        // Persist cleanup authority outside the directory before deleting its
+        // internal owner receipt. The recorded inode must still match on retry.
+        self.phase = "discarding_new".into();
+        let raw = serde_json::to_vec_pretty(self).map_err(|e| invalid(path, e.to_string()))?;
+        let parent = path
+            .parent()
+            .ok_or_else(|| invalid(path, "no journal parent"))?;
+        let mut replacement =
+            tempfile::NamedTempFile::new_in(parent).map_err(|e| StoreError::io(parent, e))?;
+        replacement
+            .write_all(&raw)
+            .map_err(|e| StoreError::io(path, e))?;
+        replacement
+            .as_file()
+            .sync_all()
+            .map_err(|e| StoreError::io(path, e))?;
+        replacement
+            .persist(path)
+            .map_err(|e| StoreError::io(path, e.error))?;
+        sync_parent(parent)
     }
 }
 fn owner(path: &Path, id: &str) -> StoreResult<()> {
@@ -237,7 +263,7 @@ pub(crate) fn recover(db: &mut ProjectDatabase, live: &Path) -> StoreResult<()> 
         }
         Err(e) => return Err(StoreError::io(&path, e)),
     };
-    let journal: Journal =
+    let mut journal: Journal =
         serde_json::from_slice(&raw).map_err(|e| invalid(&path, e.to_string()))?;
     journal.validate(&path)?;
     let staging = parent.join(&journal.staging);
@@ -246,13 +272,18 @@ pub(crate) fn recover(db: &mut ProjectDatabase, live: &Path) -> StoreResult<()> 
     if marker.as_ref().is_some_and(|s| s != &journal.id) {
         return Err(invalid(&path, "SQLite marker belongs to another operation"));
     }
+    if marker.is_some() && journal.phase == "discarding_new" {
+        return Err(invalid(&path, "committed generation cannot be discarded"));
+    }
     let live_id = identity(live)?;
     let stage_id = identity(&staging)?;
     let backup_id = identity(&backup)?;
     // Validate every generation before mutating anything named by the journal.
     if let Some(actual) = live_id {
         if actual == journal.new {
-            owner(live, &journal.id)?;
+            if journal.phase == "prepared" {
+                owner(live, &journal.id)?;
+            }
         } else if Some(actual) != journal.old {
             return Err(invalid(
                 live,
@@ -267,7 +298,9 @@ pub(crate) fn recover(db: &mut ProjectDatabase, live: &Path) -> StoreResult<()> 
                 "staging generation identity does not match journal",
             ));
         }
-        owner(&staging, &journal.id)?;
+        if journal.phase == "prepared" {
+            owner(&staging, &journal.id)?;
+        }
     }
     if let Some(actual) = backup_id
         && Some(actual) != journal.old
@@ -292,17 +325,20 @@ pub(crate) fn recover(db: &mut ProjectDatabase, live: &Path) -> StoreResult<()> 
         if let Some(old) = journal.old {
             if backup_id == Some(old) {
                 if live_id.is_some() {
-                    remove_owned(live, journal.new, Some(&journal.id))?;
+                    journal.discard_new(&path)?;
+                    remove_owned(live, journal.new, None)?;
                 }
                 fs::rename(&backup, live).map_err(|e| StoreError::io(live, e))?;
             } else if live_id != Some(old) {
                 return Err(invalid(live, "uncommitted original generation is missing"));
             }
         } else if live_id.is_some() {
-            remove_owned(live, journal.new, Some(&journal.id))?;
+            journal.discard_new(&path)?;
+            remove_owned(live, journal.new, None)?;
         }
         if stage_id.is_some() {
-            remove_owned(&staging, journal.new, Some(&journal.id))?;
+            journal.discard_new(&path)?;
+            remove_owned(&staging, journal.new, None)?;
         }
     }
     fs::remove_file(&path).map_err(|e| StoreError::io(&path, e))?;

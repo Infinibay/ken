@@ -89,6 +89,13 @@ Los contadores y offsets se calculan con aritmética comprobada; datos corruptos
 no provocan overflow, una asignación gigante implícita ni un nombre de tabla/ruta
 arbitrario. Los helpers aceptan VectorSpace, no SQL proporcionada como nombre.
 
+Una fila eliminada dentro de una transacción puede reaparecer por rollback o
+caída del proceso. Su slot no se reutiliza hasta confirmar la eliminación: la
+asignación consulta también los propietarios comprometidos bajo el bloqueo
+IMMEDIATE. La lista libre conserva esos slots para la transacción siguiente.
+Un contador ausente o inferior a un propietario actual o recuperable produce un
+error antes de reservar slots o permitir sobrescribir sus bytes.
+
 Cada segmento se crea una vez con capacidad completa y nunca se redimensiona.
 Una carrera de creación no permite usar un archivo parcialmente dimensionado:
 publicación exclusiva de un segmento preparado completo o verificación/reintento
@@ -160,6 +167,13 @@ marcador se retiran tras completar recuperación, sin restos en el estado establ
 Los formatos finales permanecen legibles por Python. No se opera sobre el índice
 real del usuario en esta etapa. El costo declarado es bloquear escritores durante
 compactación; no se acredita disponibilidad del daemon para ese mantenimiento.
+
+La limpieza también es recuperable tras una terminación: antes de eliminar la
+generación no comprometida se publica atómicamente la fase `discarding_new` en
+el diario externo, conservando los inodos ya acreditados. Esa fase permite
+reanudar una eliminación parcial aunque haya desaparecido su recibo interno;
+no autoriza eliminar una generación comprometida ni otra carpeta que ocupe su
+ruta. Cada subdirectorio ajeno conserva sus permisos originales al copiarse.
 
 ## Pruebas y aceptación
 
