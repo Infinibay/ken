@@ -1,0 +1,67 @@
+{
+  "scope": "disposable-runtime-viability-only",
+  "product_profile_accepted": false,
+  "model_registration": "src/ken/embedder/data/es-en-ct2-int8.json",
+  "MacOS": {
+    "scope": "throwaway-runtime-viability-not-product-acceptance",
+    "cases": 24,
+    "original_runtime": {
+      "ctranslate2": "4.8.3",
+      "sentencepiece": "0.2.1"
+    },
+    "native_ct2": "4.8.2",
+    "native_replicas": 1,
+    "differences": [],
+    "binary_sha256": "e30e4b3f717e98f3301616976a1b16707dc8607acd95436a04725c68a7449af7",
+    "float_backend": "Accelerate",
+    "int8_backend": "Ruy"
+  },
+  "Linux": {
+    "scope": "throwaway-runtime-viability-not-product-acceptance",
+    "cases": 24,
+    "original_runtime": {
+      "ctranslate2": "4.8.2",
+      "sentencepiece": "0.2.1"
+    },
+    "native_ct2": "4.8.2",
+    "native_replicas": 1,
+    "differences": [],
+    "binary_sha256": "aa83ff385c3adc83ed6ccd85e4140146e1c78681c7ba08cb90b26abee1995ddf",
+    "float_backend": "OpenBLAS0.3.26",
+    "int8_backend": "Ruy",
+    "openblas_build": {
+      "scope": "private-runtime-viability",
+      "version": "0.3.26",
+      "source_sha256": "4e6e4f5cb14c209262e33e6816d70221a2fe49eb69eaf0a06f065598ac602c68",
+      "options": [
+        "TARGET=ARMV8",
+        "NO_SHARED=1",
+        "BUILD_SINGLE=1",
+        "NO_LAPACK=1",
+        "ONLY_CBLAS=1",
+        "USE_OPENMP=1",
+        "NUM_THREADS=64",
+        "NUM_PARALLEL=1"
+      ],
+      "library_bytes": 1051378,
+      "library_sha256": "e5e5011ce926b86236ff5e1943575e249bed46bac07e57d1a4aa8cfbb55a0f17"
+    }
+  },
+  "native_dependencies": {
+    "MacOS": [
+      "Accelerate.framework",
+      "libiconv.2.dylib",
+      "libc++.1.dylib",
+      "libSystem.B.dylib"
+    ],
+    "Linux": [
+      "libgomp.so.1",
+      "libstdc++.so.6",
+      "libm.so.6",
+      "libgcc_s.so.1",
+      "libc.so.6",
+      "ld-linux-aarch64.so.1"
+    ]
+  },
+  "original_platform_boundary_outputs_differ": true
+}

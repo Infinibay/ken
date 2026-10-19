@@ -43,20 +43,20 @@ capture(reference:Reference,source:Path,output:Path,*,cases=None,definition=None
 generate_policy(reference:Reference,output:Path)->dict records fixed/generated
 query decisions/matches and whole-scalar Unicode digest; generate_preparation
 explicitly adapts the frozen original translation_files fixture with sourcehash.
-- [ ] Write RED tests for missing oracle/fixture modules. Assert native-independent
+- [x] Write RED tests for missing oracle/fixture modules. Assert native-independent
   original tiny config/vocabulary exact bytes, recipe SHA, distinct-word/lazy
   behavior, 2438policy histories including indices above9, and Unicode15source.
-- [ ] Implement frozen child capture with reference_env/verify_reference;
+- [x] Implement frozen child capture with reference_env/verify_reference;
   record original module/helper hashes, actual CT2/SPM versions/device/compute,
   protected/prepared input, sourceIDs/pieces+EOS, raw hypotheses/decoded/restored
   output, errors/readiness, timing/peak and source/prepared sizes/SHA.
   Label policy-only doubles; actual neural outputs always use real CT2/SPM.
-- [ ] Freeze English/missing-data/empty, repeated-one/two-distinct/question,
+- [x] Freeze English/missing-data/empty, repeated-one/two-distinct/question,
   Spanish/code/Unicode/emoji/NUL/newline, repeated/many identifiers, literal
   placeholder, repeated/error-then-English histories. Derive translated queries
   with exactly511/512/513/1023/1024/1025source pieces INCLUDING EOS from original
   SentencePiece; assert measured counts instead of guessing BPE overhead.
-- [ ] Retain BOTH platform OpenBLAS/Accelerate viability and capture real original
+- [x] Retain BOTH platform OpenBLAS/Accelerate viability and capture real original
   histories before native product runtime. Run .venv/bin/python -m pytest
   tests/rust_migration/test_translation_reference.py tests/retrieval/test_local_query_expansion.py
   tests/retrieval/test_translation_preparation.py -q; Expected allpass.
@@ -72,7 +72,8 @@ add pinned onig dependency in workspace/crate manifests and lock.
 prepared_assets()->ModelAssets,recipe_key()->&str,cache_path(&Path)->PathBuf,
 verify_prepared(&Path)->Result<PreparedTranslation>,prepare(Option<&Path>,&Path)->Result<PreparedTranslation>;
 PreparedTranslation::artifact(&str)->Result<&[u8]>;
-FrozenTranslationRuntime::{MacOS483,Linux482}; model.compatible_identity(profile)->Value.
+FrozenTranslationRuntime::{MacOS483,Linux482}; model.compatible_identity(profile)->Value
+returns the original identity object; compatible_revision(profile)->String returns its hash.
 plan_query(&str)->Result<QueryExpansionPlan>; QueryExpansionPlan::{Passthrough(String),Translate(ProtectedQuery)};
 ProtectedQuery::text()->&str,protected_values()->&[String],restore(&str)->Result<String>.
 - [ ] RED integration tests for original fixture bytes, full recipe and both

@@ -5,7 +5,9 @@ no intermediate confirmation pauses. Ettin is accepted at 1ae4bb97 with 23 gates
 on both registered platforms; M2 remains open. Preserve all original sources,
 tests, resources, unrelated work, installed entrypoint and user indexes.
 
-Status: design; private runtime experiments are feasibility evidence only.
+Status: independent original oracles captured; native product implementation and
+profile acceptance remain pending. Private runtime experiments are feasibility
+evidence only.
 
 ## Purpose, concepts and representative use
 
@@ -152,10 +154,11 @@ must not imply Rust imported or executed those Python packages.
 
 ## Evidence and acceptance
 
-Before product implementation, retain actual private both-platform viability;
-macOS currently matches all24 raw histories after adding Accelerate. Linux Ruy-only
-differs on two long histories; its matching OpenBLAS experiment must pass before
-the runtime implementation task. These experiments are not final profile proof.
+Private both-platform viability matched all24 raw histories after adding
+Accelerate/OpenBLAS. The failed Ruy-only histories are retained. These experiments
+are not final profile proof. Original macOS and Linux themselves produce different
+text at511/512 repeated-token boundaries; preserve each platform's original
+behavior with an explicit per-platform oracle, not cross-platform text equality.
 
 Create frozen-original independent preparation, query-policy and real-model
 oracles before native implementations. Adapt the original tiny preparation
