@@ -123,7 +123,7 @@ def benchmark_model(reference: Reference, native: Path, snapshot: Path, output: 
 
 
 def validate_models(repo: Path, reference: Reference, native: Path, snapshot: Path, output: Path,
-                    baseline_dir: Path, original_manifest: Path) -> int:
+                    baseline_dir: Path, original_manifest: Path, *, table_probe: Path | None = None) -> int:
     repo, output, native, snapshot = repo.resolve(), output.resolve(), native.resolve(), snapshot.absolute()
     output.mkdir(parents=True, exist_ok=True)
     gates = {}
@@ -147,6 +147,7 @@ def validate_models(repo: Path, reference: Reference, native: Path, snapshot: Pa
         env.update(PYTHONPATH=os.pathsep.join([str(repo / 'src'), str(repo)]),
             KEN_RUST_REFERENCE=str(reference.root), KEN_RUST_BIN=str(repo / 'target/release/ken-rs'),
             KEN_MODEL_PROBE=str(native), KEN_POTION_SNAPSHOT=str(snapshot),
+            KEN_TABLE_PROBE=str((table_probe or repo / 'target/release/examples/table_probe').resolve()),
             RUSTUP_HOME=os.environ.get('RUSTUP_HOME', str(Path.home() / '.rustup')),
             CARGO_HOME=os.environ.get('CARGO_HOME', str(Path.home() / '.cargo')))
         env.pop('CARGO_TARGET_DIR', None); env.pop('CARGO_BUILD_TARGET', None)

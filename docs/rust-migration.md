@@ -114,6 +114,7 @@ los gates de migración; la prueba real falla explícitamente si faltan:
 .venv/bin/python -c 'from ken.embedder.model2vec_backend import potion_assets; print(potion_assets().resolve(local_files_only=False))'
 export KEN_POTION_SNAPSHOT=/ruta/al/snapshot/e9d2a44ca6a05ac6685f3b23709ea57eb7352d5b
 export KEN_MODEL_PROBE="$PWD/target/release/examples/model_probe"
+export KEN_TABLE_PROBE="$PWD/target/release/examples/table_probe"
 cargo build --release --locked -p ken-models --examples
 cargo test --locked --workspace
 .venv/bin/python -m tools.rust_migration.model_compare \
@@ -169,7 +170,10 @@ cargo build --release --locked -p ken-models --examples
 ```
 
 El gate ejecuta las suites completas y regresiones de Potion/M1 junto a la tabla.
-No acepta recibos antiguos para fuentes nuevas. La matriz requiere exactamente
-Linux y macOS con ocho huellas coincidentes, casos completos y strace Linux.
-La aceptación de esta tabla sigue pendiente de esos gates y revisión; M2 sigue
-abierto para los demás modelos y datos.
+Exige que el ejecutable seleccionado explícitamente coincida por SHA-256 con
+el release recién compilado y con el proceso de paridad. La matriz requiere
+Linux y macOS con ocho huellas coincidentes, los18gates, casos completos y
+strace Linux. Cabeceras NPY duplicadas y normas desbordadas producen un error;
+esta última corrección evita el cero aparente que también devolvía Python.
+Tras tres hallazgos importantes de la revisión, la tabla está repitiendo la
+validación completa. M2 sigue abierto para los demás modelos y datos.

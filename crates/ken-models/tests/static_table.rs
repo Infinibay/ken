@@ -163,6 +163,83 @@ fn overflowing_array_header_returns_error() {
     assert!(StaticTableEncoder::from_npz(&bytes).is_err());
 }
 
+fn rewrite_array(name: &str, transform: impl Fn(&[u8]) -> Vec<u8>) -> Vec<u8> {
+    use std::io::{Cursor, Read, Write};
+    use zip::{ZipArchive, ZipWriter, write::SimpleFileOptions};
+    let bytes = fs::read(fixtures().join("f32.npz")).unwrap();
+    let mut source = ZipArchive::new(Cursor::new(bytes)).unwrap();
+    let mut writer = ZipWriter::new(Cursor::new(Vec::new()));
+    for index in 0..source.len() {
+        let mut entry = source.by_index(index).unwrap();
+        writer
+            .start_file(entry.name(), SimpleFileOptions::default())
+            .unwrap();
+        let mut bytes = Vec::new();
+        entry.read_to_end(&mut bytes).unwrap();
+        if entry.name() == name {
+            bytes = transform(&bytes);
+        }
+        writer.write_all(&bytes).unwrap();
+    }
+    writer.finish().unwrap().into_inner()
+}
+
+#[test]
+fn duplicate_npy_shape_returns_error_before_unchecked_reader() {
+    let bytes = duplicate_header_field("'shape': (18446744073709551615, 2)");
+    assert!(StaticTableEncoder::from_npz(&bytes).is_err());
+}
+
+#[test]
+fn duplicate_npy_dtype_is_rejected_even_when_identical() {
+    let bytes = duplicate_header_field("'descr': '<f4'");
+    assert!(StaticTableEncoder::from_npz(&bytes).is_err());
+}
+
+#[test]
+fn duplicate_npy_order_is_rejected_even_when_identical() {
+    let bytes = duplicate_header_field("'fortran_order': False");
+    assert!(StaticTableEncoder::from_npz(&bytes).is_err());
+}
+
+fn duplicate_header_field(field: &str) -> Vec<u8> {
+    rewrite_array("A.npy", |bytes| {
+        let length = u16::from_le_bytes(bytes[8..10].try_into().unwrap()) as usize;
+        let header = std::str::from_utf8(&bytes[10..10 + length]).unwrap();
+        let header = format!(
+            "{}, {field}}}\n",
+            header
+                .trim()
+                .trim_end_matches('}')
+                .trim()
+                .trim_end_matches(',')
+        );
+        let mut output = b"\x93NUMPY\x01\x00".to_vec();
+        output.extend_from_slice(&(header.len() as u16).to_le_bytes());
+        output.extend_from_slice(header.as_bytes());
+        output.extend_from_slice(&bytes[10 + length..]);
+        output
+    })
+}
+
+#[test]
+fn overflowing_norm_returns_error_but_empty_input_remains_zero() {
+    let bytes = rewrite_array("B.npy", |bytes| {
+        let mut output = bytes.to_vec();
+        let length = u16::from_le_bytes(bytes[8..10].try_into().unwrap()) as usize;
+        for value in output[10 + length..].chunks_exact_mut(4) {
+            let scaled = f32::from_le_bytes(value.try_into().unwrap()) * 1e20;
+            assert!(scaled.is_finite());
+            value.copy_from_slice(&scaled.to_le_bytes());
+        }
+        output
+    });
+    let encoder = StaticTableEncoder::from_npz(&bytes).unwrap();
+    assert!(encoder.embed_query("alfa").is_err());
+    assert!(encoder.embed_query("").unwrap().iter().all(|v| *v == 0.));
+    assert!(encoder.embed_passages(&[]).unwrap().is_empty());
+}
+
 #[test]
 fn results_are_independent_owned_vectors() {
     let encoder =

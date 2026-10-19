@@ -116,7 +116,7 @@ def _validation_environment(reference: Reference, repo: Path, output: Path, nati
     env["PYTHONPATH"]=os.pathsep.join([str(repo/"src"),str(repo)])
     env.pop("CARGO_TARGET_DIR",None);env.pop("CARGO_BUILD_TARGET",None)
     env.update(KEN_RUST_BIN=str(native),KEN_RUST_REFERENCE=str(reference.root))
-    for key in ["KEN_POTION_SNAPSHOT","KEN_MODEL_PROBE"]:
+    for key in ["KEN_POTION_SNAPSHOT","KEN_MODEL_PROBE","KEN_TABLE_PROBE"]:
         if key in os.environ: env[key]=os.environ[key]
     return env
 

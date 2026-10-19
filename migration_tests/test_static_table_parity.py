@@ -11,9 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def probe():
-    model = Path(os.environ.get('KEN_MODEL_PROBE', ''))
-    value = Path(os.environ.get('KEN_TABLE_PROBE', str(model.with_name('table_probe')) if model.name else ''))
-    assert value.is_absolute() and value.is_file(), 'an already-built native table_probe is required'
+    value = Path(os.environ.get('KEN_TABLE_PROBE', ''))
+    assert value.is_absolute() and value.is_file(), 'an explicit already-built KEN_TABLE_PROBE is required'
     return value
 
 

@@ -86,10 +86,11 @@ impl StaticTableEncoder {
         let mut output = pooled.dot(&self.table.b);
         let mut result = Vec::with_capacity(texts.len());
         for mut row in output.rows_mut() {
-            let norm = pairwise_sum(row.len(), &|i| row[i] * row[i])
-                .sqrt()
-                .max(1e-12);
-            row /= norm;
+            let norm = pairwise_sum(row.len(), &|i| row[i] * row[i]).sqrt();
+            if !norm.is_finite() {
+                return Err(ModelError::Inference("nonfinite static table norm".into()));
+            }
+            row /= norm.max(1e-12);
             if row.iter().any(|x| !x.is_finite()) {
                 return Err(ModelError::Inference(
                     "nonfinite static table output".into(),

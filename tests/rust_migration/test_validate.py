@@ -101,12 +101,15 @@ def test_explicit_native_model_preparation_reaches_validation_only(tmp_path, mon
     ref=Reference(tmp_path,tmp_path/'manifest','reference',Path(sys.executable))
     monkeypatch.setenv('KEN_POTION_SNAPSHOT','/prepared/pinned-revision')
     monkeypatch.setenv('KEN_MODEL_PROBE','/prepared/native-model-probe')
+    monkeypatch.setenv('KEN_TABLE_PROBE','/prepared/native-table-probe')
     monkeypatch.setenv('KEN_PROJECT_ROOT','/unrelated/project')
     env=_validation_environment(ref,tmp_path,tmp_path/'output',tmp_path/'native')
     assert env['KEN_POTION_SNAPSHOT']=='/prepared/pinned-revision'
     assert env['KEN_MODEL_PROBE']=='/prepared/native-model-probe'
+    assert env['KEN_TABLE_PROBE']=='/prepared/native-table-probe'
     assert env['KEN_RUST_BIN']==str(tmp_path/'native')
     assert 'KEN_PROJECT_ROOT' not in env
     from tools.rust_migration.reference import reference_env
     isolated=reference_env(ref,tmp_path/'oracle-env')
     assert 'KEN_POTION_SNAPSHOT' not in isolated and 'KEN_MODEL_PROBE' not in isolated
+    assert 'KEN_TABLE_PROBE' not in isolated

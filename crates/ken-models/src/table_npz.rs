@@ -154,6 +154,15 @@ fn check_header(bytes: &[u8]) -> Result<(), ModelError> {
     let Value::Dict(fields) = text.trim().parse::<Value>().map_err(invalid)? else {
         return Err(invalid("header dict required"));
     };
+    let mut names = BTreeSet::new();
+    for (key, _) in &fields {
+        let Value::String(name) = key else {
+            return Err(invalid("header keys must be strings"));
+        };
+        if !names.insert(name) {
+            return Err(invalid(format!("duplicate NPY header key: {name}")));
+        }
+    }
     let field = |name: &str| {
         fields
             .iter()

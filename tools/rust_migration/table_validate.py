@@ -13,7 +13,28 @@ from .table_reference import table_cases
 from .validate import _sha, _write
 
 TABLE_KEYS = FINGERPRINT_KEYS | {'table_artifact', 'table_oracle'}
-TABLE_GATES = (*REQUIRED_GATES, 'table_parity')
+TABLE_GATES = (*REQUIRED_GATES, 'table_release', 'table_parity')
+
+
+def bind_table_probe(repo: Path, native: Path) -> dict:
+    """Bind an explicitly selected executable to the just-built release bytes."""
+    built = repo / 'target/release/examples/table_probe'
+    result = {'ran': True, 'passed': False, 'built': str(built), 'supplied': str(native)}
+    try:
+        result.update(built_sha256=_sha(built), supplied_sha256=_sha(native))
+        result['passed'] = result['built_sha256'] == result['supplied_sha256']
+        if not result['passed']: result['error'] = 'supplied table probe differs from fresh release'
+    except OSError as error:
+        result['error'] = str(error)
+    return result
+
+
+def _binding_matches(binding: dict, parity: dict) -> bool:
+    digest = binding.get('built_sha256')
+    return (binding.get('ran') is True and binding.get('passed') is True
+        and isinstance(digest, str) and len(digest) == 64
+        and all(c in '0123456789abcdef' for c in digest)
+        and digest == binding.get('supplied_sha256') == parity.get('native_sha256'))
 
 
 def aggregate_tables(directory: Path, *, expected_ids: list[str] | None = None) -> dict:
@@ -42,6 +63,8 @@ def aggregate_tables(directory: Path, *, expected_ids: list[str] | None = None) 
         if not str(row.get('rustc', '')).startswith('rustc 1.95.0 '): errors.append(f'wrong toolchain: {name}')
         if row.get('case_ids') != expected_ids: errors.append(f'wrong cases: {name}')
         parity = row.get('table_parity', {})
+        if not _binding_matches(row.get('table_release', {}), parity):
+            errors.append(f'table executable is not bound to fresh release: {name}')
         if (parity.get('passed') is not True or parity.get('outside_checkout') is not True
                 or parity.get('native_children') != [] or parity.get('dependency_audit', {}).get('passed') is not True):
             errors.append(f'missing native table proof: {name}')
@@ -66,14 +89,20 @@ def validate_tables(repo: Path, reference: Reference, model_probe: Path, snapsho
                 'table_artifact': _sha(artifact), 'table_oracle': _sha(GOLDEN)}
         before = fingerprints()
         result['fingerprints'] = before
-        validate_models(repo, reference, model_probe, snapshot, out / 'base', baseline_dir, original_manifest)
+        validate_models(repo, reference, model_probe, snapshot, out / 'base', baseline_dir,
+                        original_manifest, table_probe=native)
         base = json.loads((out / 'base/summary.json').read_text())
         result.update(gates=base.get('gates', {}), rustc=base.get('rustc'))
         if base.get('execution_error'): result['execution_error'] = base['execution_error']
-        parity = compare(reference, native, artifact, out / 'table-parity')
-        result.update(table_parity=parity, case_ids=parity.get('case_ids', []))
-        result['gates']['table_parity'] = {'ran': True, 'passed': parity['passed'] and
-            result['case_ids'] == [c['id'] for c in table_cases()]}
+        binding = (bind_table_probe(repo, native) if result['gates'].get('release', {}).get('passed') is True
+                   else {'ran': False, 'passed': False, 'error': 'fresh release build did not pass'})
+        result['table_release'] = binding
+        result['gates']['table_release'] = binding
+        if binding['passed']:
+            parity = compare(reference, native, artifact, out / 'table-parity')
+            result.update(table_parity=parity, case_ids=parity.get('case_ids', []))
+            result['gates']['table_parity'] = {'ran': True, 'passed': parity['passed'] and
+                _binding_matches(binding, parity) and result['case_ids'] == [c['id'] for c in table_cases()]}
         if before != fingerprints(): result['execution_error'] = 'source/input drift during validation'
     except (OSError, ValueError, KeyError, TypeError, IndexError) as error:
         result['execution_error'] = f'{type(error).__name__}: {error}'

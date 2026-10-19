@@ -38,6 +38,7 @@ jobs:
           with open(os.environ['GITHUB_ENV'], 'a') as stream:
               stream.write(f'KEN_POTION_SNAPSHOT={snapshot}\n')
               stream.write(f'KEN_MODEL_PROBE={Path.cwd() / "target/release/examples/model_probe"}\n')
+              stream.write(f'KEN_TABLE_PROBE={Path.cwd() / "target/release/examples/table_probe"}\n')
           PY
           cargo build --release --locked -p ken-cli -p ken-models --bins --examples
       - name: Freeze this checkout and measure its unchanged Python baseline
