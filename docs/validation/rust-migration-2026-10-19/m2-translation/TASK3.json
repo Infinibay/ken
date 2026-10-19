@@ -1,0 +1,54 @@
+{
+  "scope": "task3-native-runtime-not-profile-acceptance",
+  "Task3_accepted": true,
+  "Translation_accepted": false,
+  "M2_accepted": false,
+  "immutable_input_fingerprint": "b0504724e43743398de3dcaacf69de591edaf75e19a913942e46d91050fddf50",
+  "platforms": {
+    "macos": {
+      "reported_passes": 131,
+      "sections": 25,
+      "failed": 0,
+      "ignored": 0,
+      "workspace_log_sha256": "7d4f9673582f492595a7f7b2f3e585f08f29e33341100ab43e9f80f8e6da47c2",
+      "fmt_passed": true,
+      "fmt_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clippy_all_targets_passed": true,
+      "clippy_log_sha256": "4d2510d3d455c2ac3a9b8deab8efc2d88b024f88db4ea9b6bccb9904eb562274",
+      "observed_native_build": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "WITH_RUY": "ON",
+        "WITH_ACCELERATE": "ON",
+        "OPENMP_RUNTIME": "NONE"
+      },
+      "cmake_cache_sha256": "67f88236b9d436ed6517f246a29d853024022fde5664df09a9e55318665a678b"
+    },
+    "linux": {
+      "reported_passes": 131,
+      "sections": 25,
+      "failed": 0,
+      "ignored": 0,
+      "workspace_log_sha256": "7b19396f9e46c66f07675a950eb9cb7fd0f9b83def09d089ee26f848e154c477",
+      "fmt_passed": true,
+      "fmt_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clippy_all_targets_passed": true,
+      "clippy_log_sha256": "c6e068f80bbde4f697d3823d5d8712da798bb86ffa0ce25ace32492bdff3e644",
+      "observed_native_build": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "WITH_RUY": "ON",
+        "WITH_OPENBLAS": "ON",
+        "OPENMP_RUNTIME": "COMP"
+      },
+      "cmake_cache_sha256": "9021ab1aae791f9ed163326d5565125bcb35fe5f6f9f9329ae0cd027fb360c49"
+    }
+  },
+  "public_original_histories": 29,
+  "additional_raw_original_histories": 24,
+  "public_runtime_tests": 5,
+  "raw_core_tests": 1,
+  "original_and_oracle_python_tests": 13,
+  "original1066_hashes_unchanged": true,
+  "ctranslate2_source": "4.8.2",
+  "sentencepiece_source": "0.2.1",
+  "native_core_release_in_rust_dev_and_test": true
+}

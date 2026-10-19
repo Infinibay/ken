@@ -22,6 +22,15 @@ py_literal.workspace = true
 tempfile.workspace = true
 libloading.workspace = true
 ort.workspace = true
+ct2rs.workspace = true
+sentencepiece.workspace = true
+
+[target.'cfg(target_os = "macos")'.dependencies]
+ct2rs = { workspace = true, features = ["accelerate"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+ct2rs = { workspace = true, features = ["openblas", "openmp-runtime-comp"] }
+openblas-src.workspace = true
 
 [target.'cfg(unix)'.dependencies]
 libc.workspace = true

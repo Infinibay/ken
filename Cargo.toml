@@ -22,6 +22,9 @@ tempfile = "=3.27.0"
 sha2 = "=0.10.9"
 tokenizers = { version = "=0.22.2", default-features = false, features = ["onig"] }
 onig = { version = "=6.5.3", default-features = false }
+ct2rs = { version = "=0.10.1", default-features = false, features = ["ruy", "sentencepiece"] }
+sentencepiece = "=0.13.2"
+openblas-src = { version = "=0.10.14", features = ["static", "system"] }
 safetensors = "=0.8.0"
 half = "=2.7.1"
 npyz = { version = "=0.9.1", default-features = false, features = ["half"] }
@@ -30,3 +33,9 @@ ndarray = { version = "=0.17.1", default-features = false, features = ["std"] }
 py_literal = "=0.4.0"
 libloading = "=0.9.0"
 ort = { version = "=2.0.0-rc.14", default-features = false, features = ["std", "alternative-backend", "api-25"] }
+
+# Keep the native numerical core in Release even during Rust development/tests.
+# CTranslate2's Debug floating-point path changes long greedy translations.
+[profile.dev.package.ct2rs]
+opt-level = 3
+debug = false

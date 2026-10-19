@@ -106,20 +106,24 @@ and lock. Private build prerequisites become explicit inputs, no user venv edits
 **Interfaces:** LocalQueryExpansion::new(model:TranslationModel,source:Option<PathBuf>,cache:PathBuf)->Result<Self>;
 expand(&self,&str)->Result<String>,is_loaded()->bool,load(&self)->Result<()>,
 tokenize_prepared(&self,&str)->Result<TranslationTokens>,runtime_identity()->Result<Option<TranslationRuntimeIdentity>>;
+expand_detailed(&self,&str)->Result<ExpandedQuery> returns per-call owned text and
+optional TranslationTrace{prepared,tokens,hypotheses,decoded}; expand forwards its
+text. The private native session's real translate operation is also exercised by
+the independent24raw-core oracle, including English/raw-empty and degenerate inputs.
 TranslationTokens{ids:Vec<u32>,pieces_with_eos:Vec<String>}; runtime identity
 distinguishes compiled versions/configured backends from observed replica count.
-- [ ] RED original real histories and negative constructor/load tests: English
+- [x] RED original real histories and negative constructor/load tests: English
   with absent/bad source/cache stays untouched; translated failures retry;
   source/cache replacement cannot replace owned data; same/different concurrent
   queries match serial originals and returned strings remain independent.
-- [ ] Implement private retained authenticated materialization, C++translator
+- [x] Implement private retained authenticated materialization, C++translator
   CPU/int8/2/1 and SPM0.2.1, sourcepieces+</s>, beam1/maxdecode256/defaults,
   firsthypothesis decode/restore. One mutex serializes loading/calls, no global
   env writes, Python bridge or fallback. Check empty/missing outputs and errors.
-- [ ] Require exact BOTH platform raw and restored results for511/512/513 and
+- [x] Require exact BOTH platform raw and restored results for511/512/513 and
   maxinput boundaries, including the previously differing degenerate histories.
   Pin platform float/int8/native-library provenance and actual1replica.
-- [ ] Run cargo test --locked -p ken-models --test query_expansion and original
+- [x] Run cargo test --locked -p ken-models --test query_expansion and original
   tests/retrieval/test_local_query_expansion.py; Expected allpass with explicit
   prepared inputs on bothOS. Prepared workspace/fmt/clippy,1066hashes;
   inspect/commit ownfiles; task-done targeted Rust command.

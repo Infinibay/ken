@@ -2,8 +2,8 @@
 
 Continues codex/rust-migration after accepted Ettin1ae4bb97. Overall M2 and the
 whole application migration remain open. Original sources/resources/tests and
-installed application are preserved. This record does not certify a native
-translation product implementation yet.
+installed application are preserved. Final26gate translation profile acceptance
+remains pending.
 
 Design: docs/superpowers/specs/2026-10-19-rust-translation-design.md.
 Plan: docs/superpowers/plans/2026-10-19-rust-m2-translation.md.
@@ -62,8 +62,8 @@ ignored tests; both workspace fmt and all-target clippy pass. TASK2.json records
 the immutable input fingerprint and raw-log hashes. The13 original/oracle Python
 tests and original1066-file integrity check also pass.
 
-Task2 is complete. Native CTranslate2 runtime integration and final26gate profile
-acceptance remain pending; M2 is still open.
+Task2 is complete. Native CTranslate2 runtime integration is implemented;
+final26gate profile acceptance remains pending and M2 is still open.
 
 Python sanity verification passes15651 tests with the same10 historical xfail
 IDs, no original baseline test IDs lost. The initial restricted diagnostic run
@@ -72,3 +72,42 @@ sockets; their worker logs confirmed PermissionError. All three passed with
 the required local-socket permission, followed by the complete passing suite.
 No original source/test/timeout was changed. Seven new oracle tests and six
 original translation tests also passed the Task1 completion command.
+
+## Native runtime implementation
+
+LocalQueryExpansion owns one lazy, serialized CTranslate2/SentencePiece session.
+The session materializes all five authenticated artifacts into a retained private
+directory and loads SentencePiece from authenticated serialized bytes. It keeps
+the directory alive until after the native model and workers are destroyed.
+English passthrough returns before loading or filesystem work; loading failures
+remain retryable. Initialized models and returned diagnostics own their data,
+including after source/cache paths are replaced.
+
+expand_detailed returns per-call prepared text, token IDs/pieces, actual native
+hypotheses and decoded/restored text; expand consumes that same operation. The
+native identity distinguishes compiled CT24.8.2/SPM0.2.1, configured CPU/int8
+policy and platform GEMM backends from the observed single native replica. It
+does not report the original Python package versions as executing Rust versions.
+
+Five public integration tests exercise all29 original histories, independent
+returned results, simultaneous first calls, failure/retry and cache replacement.
+A private-core test additionally exercises the original24 raw histories through
+the same product translation method, including raw inputs outside the public
+Spanish language gate. The exact per-platform expectations remain unchanged.
+
+The initial default C++ Debug build changed the511-token question-prefix greedy
+translation on macOS. A controlled run of the same product in Release matched
+all29 histories. Keeping only ct2rs optimized in the ordinary Rust dev/test
+profile then passed all five public tests. Cargo.toml therefore pins that native
+core to Release via opt-level3/debugfalse; Rust overflow and assertion checks
+remain enabled. Actual CMake caches confirm Release with Accelerate/Ruy on
+macOS and OpenBLAS/Ruy/OpenMP COMP on Linux. This costs C++ build time and native
+debug information; removing the override invalidates the demonstrated parity.
+
+The final Task3 implementation passes the complete131-test Rust workspace on
+each registered platform, with zero failures or ignored tests. Formatting and
+all-target Clippy pass on both platforms; the13 original/oracle Python tests and
+the original1066-file integrity check pass. TASK3.json binds the immutable tested
+input fingerprint, actual CMake policies and full log hashes. These are runtime
+implementation checks; the independent process and composed26gate acceptance
+are the next task.

@@ -5,9 +5,10 @@ no intermediate confirmation pauses. Ettin is accepted at 1ae4bb97 with 23 gates
 on both registered platforms; M2 remains open. Preserve all original sources,
 tests, resources, unrelated work, installed entrypoint and user indexes.
 
-Status: independent original oracles captured; native product implementation and
-profile acceptance remain pending. Private runtime experiments are feasibility
-evidence only.
+Status: native policy, preparation and runtime pass both platforms, including
+the29 public histories,24 raw core histories and complete131-test Rust suites.
+Final26gate profile acceptance remains pending. Private runtime experiments
+remain feasibility evidence only.
 
 ## Purpose, concepts and representative use
 
@@ -32,6 +33,9 @@ LocalQueryExpansion(model, optional source snapshot, explicit cache destination)
 expand(query) returns String or ModelError. An English request succeeds with no
 model/cache/runtime preparation. Diagnostic public methods expose the query plan,
 actual token pieces/IDs, readiness and native policy for independent probes.
+expand_detailed returns owned per-call prepared text, tokens, raw hypotheses and
+decoded text alongside the restored result. expand delegates to that same path;
+no shared last-result cache or probe-only inference implementation.
 
 Chosen approach: ct2rs with static CTranslate2 and SentencePiece, preserving the
 published CPU model. Rejected alternatives: invoking Python/subprocesses, which
@@ -126,6 +130,12 @@ NO_SHARED=1, NO_LAPACK=1, ONLY_CBLAS=1, USE_OPENMP=1, NUM_THREADS=64,NUM_PARALLE
 The ordinary system libgomp is an explicit Linux native dependency. Never link a
 Python extension as a substitute runtime. Public crates and source provenance,
 checksums, compiler/tool versions and actual linked libraries travel with proof.
+Compile CTranslate2 in Release for Rust development/tests as well as release
+builds. The observed C++ Debug build changes the511-token question-prefix greedy
+translation; the same product in Release and the isolated ct2rs package override
+(opt-level3,debugfalse) preserve all29 histories. Rust checks remain enabled.
+Bind the workspace profile setting and retain actual CMake build-type evidence;
+Rust debug_assertions does not identify the native core's compilation mode.
 
 Model configuration: cpu,int8,intra_threads2,inter_threads1; verify actual replica
 count is one. Source SentencePiece pieces plus exactly one explicit </s>;
