@@ -114,7 +114,7 @@ los gates de migración; la prueba real falla explícitamente si faltan:
 .venv/bin/python -c 'from ken.embedder.model2vec_backend import potion_assets; print(potion_assets().resolve(local_files_only=False))'
 export KEN_POTION_SNAPSHOT=/ruta/al/snapshot/e9d2a44ca6a05ac6685f3b23709ea57eb7352d5b
 export KEN_MODEL_PROBE="$PWD/target/release/examples/model_probe"
-cargo build --release --locked -p ken-models --example model_probe
+cargo build --release --locked -p ken-models --examples
 cargo test --locked --workspace
 .venv/bin/python -m tools.rust_migration.model_compare \
   --reference .ken/rust-migration/m0-m1/reference \
@@ -143,3 +143,33 @@ Rust construye desde bytes ya verificados, diferencia declarada en los recibos.
 
 `rust-models.yml` conserva una validación independiente de este perfil y sus
 regresiones M1. Su presencia no acredita ejecución remota; no se hizo push.
+
+## Tabla estática NPZ nativa
+
+`StaticTableEncoder` consume los bytes del NPZ original, conserva su tokenizer,
+desquantiza filas int8 y ejecuta gather→suma F32→proyección→L2. Las expectativas
+del [modelo real y fixtures](validation/rust-migration-2026-10-18/m2-table/)
+se capturaron antes de implementar. No usa Python ni BLAS del host.
+
+```sh
+cargo build --release --locked -p ken-models --examples
+.venv/bin/python -m tools.rust_migration.table_compare \
+  --reference .ken/rust-migration/m0-m1/reference \
+  --native "$PWD/target/release/examples/table_probe" \
+  --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
+  --out .ken/rust-migration/m2-table/parity
+.venv/bin/python -m tools.rust_migration.table_validate \
+  --reference .ken/rust-migration/m0-m1/reference \
+  --model-probe "$KEN_MODEL_PROBE" --snapshot "$KEN_POTION_SNAPSHOT" \
+  --native "$PWD/target/release/examples/table_probe" \
+  --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
+  --baseline-dir .ken/rust-migration/m0-m1 \
+  --original-manifest docs/validation/rust-migration-2026-10-18/baseline.json \
+  --out .ken/rust-migration/m2-table/validation
+```
+
+El gate ejecuta las suites completas y regresiones de Potion/M1 junto a la tabla.
+No acepta recibos antiguos para fuentes nuevas. La matriz requiere exactamente
+Linux y macOS con ocho huellas coincidentes, casos completos y strace Linux.
+La aceptación de esta tabla sigue pendiente de esos gates y revisión; M2 sigue
+abierto para los demás modelos y datos.

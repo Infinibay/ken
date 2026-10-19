@@ -55,17 +55,19 @@ jobs:
           exit 0
       - name: Validate original integrity, all suites and the native model process
         run: |
-          .venv/bin/python -m tools.rust_migration.model_validate \
+          .venv/bin/python -m tools.rust_migration.table_validate \
             --reference .ken/rust-migration/m2/reference \
-            --native "$KEN_MODEL_PROBE" --snapshot "$KEN_POTION_SNAPSHOT" \
+            --model-probe "$KEN_MODEL_PROBE" --snapshot "$KEN_POTION_SNAPSHOT" \
+            --native "$PWD/target/release/examples/table_probe" \
+            --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
             --baseline-dir .ken/rust-migration/m2 \
             --original-manifest .ken/rust-migration/m2/reference/reference-manifest.json \
-            --out .ken/rust-migration/m2/validation
+            --out .ken/rust-migration/m2-table/validation
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: rust-models-${{ runner.os }}
-          path: .ken/rust-migration/m2/validation/
+          path: .ken/rust-migration/m2-table/validation/
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
@@ -82,7 +84,7 @@ jobs:
           path: .ken/rust-migration/m2/platforms
       - name: Require matching platform receipts
         run: |
-          uv run --no-project --python 3.12 python -m tools.rust_migration.model_validate \
+          uv run --no-project --python 3.12 python -m tools.rust_migration.table_validate \
             --scope matrix --platform-receipts .ken/rust-migration/m2/platforms \
             --out .ken/rust-migration/m2/matrix
       - uses: actions/upload-artifact@v7

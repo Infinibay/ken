@@ -39,7 +39,7 @@ jobs:
               stream.write(f'KEN_POTION_SNAPSHOT={snapshot}\n')
               stream.write(f'KEN_MODEL_PROBE={Path.cwd() / "target/release/examples/model_probe"}\n')
           PY
-          cargo build --release --locked -p ken-models --example model_probe
+          cargo build --release --locked -p ken-models --examples
       - name: Freeze this checkout, without asserting local dirty-worktree hashes
         run: |
           .venv/bin/python - <<'PY'
