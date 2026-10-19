@@ -285,9 +285,13 @@ actual, Linux y macOS; Windows se audita en M0 según el soporte prometido.
 - [ ] Implementación con TDD, verificación y revisión de cada entrega.
 - [ ] Matriz de paridad completa y sustitución final.
 
-M0/M1 y el primer perfil Potion de M2 ya tienen recibos Linux/macOS y revisión
-independiente. La tabla NPZ también pasó su gate multiplataforma y la revisión
-con tres correcciones TDD verificadas; los demás perfiles
-y datos siguen pendientes. Cada entrega conserva especificación, plan, TDD y
-revisión. La orden de continuar hasta terminar mantiene el alcance completo y
-el método nativo aprobado; no convierte entregas parciales en cierre M2/M8.
+M0/M1 y los perfiles Potion, tabla NPZ, contexto ONNX, reranker Ettin,
+traducción CT2 y política de selección de M2 tienen recibos Linux/macOS y revisión
+independiente con correcciones TDD verificadas. La [política de modelos](../../validation/rust-migration-2026-10-19/m2-policy/IMPLEMENTATION.md)
+se aceptó tras sus dos correcciones y la matriz conjunta actual de28controles.
+M2 sigue abierta: almacenamiento, integraciones y runtimes restantes no están
+acreditados. La [especificación de almacenamiento](2026-10-19-rust-storage-design.md)
+y su [plan](../plans/2026-10-19-rust-m2-storage.md) concretan el siguiente bloque.
+Cada entrega conserva especificación, plan, TDD y revisión. La orden de continuar
+hasta terminar mantiene el alcance completo y el método nativo aprobado; no
+convierte entregas parciales en cierre M2/M8.

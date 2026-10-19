@@ -1,0 +1,58 @@
+{
+  "format": "ken-table-parity/1",
+  "passed": true,
+  "errors": [],
+  "platform": "Darwin",
+  "architecture": "arm64",
+  "outside_checkout": true,
+  "native_children": [],
+  "M2_accepted": false,
+  "case_ids": [
+    "empty",
+    "spaces",
+    "spanish",
+    "nfc",
+    "nfd",
+    "emoji",
+    "code",
+    "unknown",
+    "pad",
+    "long-512",
+    "long-513",
+    "long-4097",
+    "mixed-empty",
+    "empty-batch",
+    "batching",
+    "repeated-order"
+  ],
+  "artifact": {
+    "sha256": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
+    "bytes": 23135664
+  },
+  "cases_sha256": "b2ed77496c6cf5df43dd43dd9eb3b904b60a71c9e1650f879b3428fa926e62f3",
+  "native_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782",
+  "dependency_audit": {
+    "passed": true,
+    "linked_exit": 0,
+    "tree_exit": 0,
+    "linked_sha256": "96699970fc90da6a67dd8b855b39a9ef49521a85987687fed2351adb949b3db0",
+    "tree_sha256": "d749402959f4c8997685c01b4488866d9474b2a8acecaea05e2081614de0b309"
+  },
+  "native_wall_ns": 5732400875,
+  "native_exit": 0,
+  "runtime": {
+    "device": "cpu",
+    "engine": "rust",
+    "ken_models": "0.18.0",
+    "ndarray": "0.17.1",
+    "npyz": "0.9.1",
+    "target_arch": "aarch64",
+    "target_os": "macos",
+    "tokenizers": "0.22.2",
+    "zip": "6.0.0"
+  },
+  "reference_runtime": {
+    "numpy": "2.4.4",
+    "tokenizers": "0.22.2"
+  }
+}
