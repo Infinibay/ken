@@ -1,4 +1,4 @@
-# Native model policy: implementation and pending acceptance
+# Native model policy: verified matrix, final review pending
 
 Policy implementation:82d2e97. Original-oracle cut:8a091c79; both originals were
 captured before native code. Spec/plan:9e98e95f. Native inline; originals preserved.
@@ -14,8 +14,12 @@ Task2 full Rust/all-targets:141passed,0failed/ignored; fmt and Clippy pass. Five
 public API and two probe tests observed RED before GREEN. A real copied executable
 outside the checkout with sentinelPATH/no model environment exactly matched both
 originals for1292histories and23promptnames; six forced variants per history.
-Task3 tooling115passed/0skip/error; actual macOS policyprocess3passed. These checks
-are not the final28gate acceptance matrix: both full platform runs/review are pending.
+Task3 tooling115passed/0skip/error; policy-only process3passed on each platform.
+The full28gate matrix then passed for Darwin/arm64 and Linux/aarch64: each ran
+15689Python passes plus the same10historicxfail,141Rust passes/0failed/ignored,
+and85process tests/0failed/error/skipped. Exactbaseline IDs, typing, source hashes,
+release binding and all26current fingerprints passed. Policy_accepted=true;
+M2_accepted=false. Final independent review is still pending.
 
 Fresh captures verify their current frozen manifest before and after execution.
 Historical full manifests include unrelated checkout files; CI freezes a newer
