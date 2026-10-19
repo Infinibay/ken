@@ -228,6 +228,20 @@ fn raw_pair_scores_preserve_order_padding_and_remainder_batches() {
 }
 
 #[test]
+fn session_policy_is_available_only_after_successful_cpu_load() {
+    let scorer = fixture(&manifest()["pair"], RerankOptions::new(3, 2, 512).unwrap());
+    assert!(scorer.session_policy().unwrap().is_none());
+    assert!(scorer.score("x", &[]).unwrap().scores.is_empty());
+    assert!(scorer.session_policy().unwrap().is_none());
+    assert_eq!(scorer.score("x", &["y"]).unwrap().scores, [29.]);
+    let policy = scorer.session_policy().unwrap().unwrap();
+    assert_eq!(policy.providers, ["CPUExecutionProvider"]);
+    assert!(policy.cpu_arena);
+    assert_eq!(policy.intra_threads, 2);
+    assert_eq!(policy.inter_threads, 1);
+}
+
+#[test]
 fn empty_pool_and_top11_do_not_load_and_model_failure_precedes_query_guard() {
     let model = RerankerModel::from_json(&manifest()["pair"]["definition"].to_string()).unwrap();
     let temp = tempfile::tempdir().unwrap();

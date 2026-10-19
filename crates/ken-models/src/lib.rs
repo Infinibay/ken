@@ -21,7 +21,9 @@ pub use context_encoder::{ContextEncoder, ContextInput, ContextTokens};
 pub use context_model::ContextModel;
 pub use model2vec::Model2VecEncoder;
 pub use native_onnx::{NativeOnnxRuntime, RuntimeIdentity};
-pub use onnx_reranker::{OnnxReranker, RerankDetails, RerankOptions, ScoredPool};
+pub use onnx_reranker::{
+    OnnxReranker, RerankDetails, RerankOptions, RerankSessionPolicy, ScoredPool,
+};
 pub use published_head::compile_head;
 pub use reranker_model::{PreparedReranker, RerankerModel};
 pub use reranker_tokens::PairTokens;

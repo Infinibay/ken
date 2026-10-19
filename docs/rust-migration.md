@@ -120,6 +120,8 @@ export KEN_TABLE_PROBE="$PWD/target/release/examples/table_probe"
 export KEN_CONTEXT_SNAPSHOT=/ruta/al/snapshot/e74f446dc6e67e29fcee77213472c142f73a6bbb
 export KEN_ORT_LIBRARY=/ruta/absoluta/al/core/nativo/registrado
 export KEN_CONTEXT_PROBE="$PWD/target/release/examples/context_probe"
+export KEN_ETTIN_SOURCE=/ruta/al/snapshot/d166fa88ddde3c42bc3ee92f7df476d941c8204a
+export KEN_ETTIN_PROBE="$PWD/target/release/examples/ettin_probe"
 cargo build --release --locked -p ken-models --examples
 cargo test --locked --workspace
 .venv/bin/python -m tools.rust_migration.model_compare \
@@ -237,3 +239,51 @@ diferencias numéricas entre plataformas; cada nativo se compara estrictamente
 contra su propio oráculo, sin ampliar tolerancias. Linux permite únicamente cero
 o una aparición de la advertencia exacta de identificación de CPU calibrada;
 cualquier otro stderr falla. Los perfiles Potion/NPZ mantienen stderr vacío.
+
+## Preparación e inferencia Ettin nativas
+
+`RerankerModel` compila en Rust la cabeza publicada sobre el backbone fijado.
+Verifica los 15 archivos fuente, publica un caché completo de forma atómica y
+permite reutilizarlo sin el snapshot original. `OnnxReranker` conserva los logits
+crudos y el orden de documentos; usa truncado sólo del documento, padding derecho,
+CPU con arena activa y cuatro hilos intra-op y uno inter-op por defecto.
+
+Las expectativas se fijaron en ambos sistemas antes del port. Los
+[casos y comprobaciones](validation/rust-migration-2026-10-19/m2-ettin/)
+incluyen preparación exacta, límites de consulta, concurrencia y 23 historiales
+reales. La aplicación original y sus índices se conservan. M2 continúa abierto.
+
+Prepare los datos públicos desde el entorno de desarrollo; esta descarga no
+forma parte del runtime Rust:
+
+```sh
+.venv/bin/python -c 'import json; from pathlib import Path; from ken.model_assets import ModelAssets; d=json.loads(Path("src/ken/embedder/data/ettin-68m-fp32.json").read_text()); print(ModelAssets.from_dict(d["source"]).resolve(local_files_only=False))'
+export KEN_ETTIN_SOURCE=/ruta/al/snapshot/d166fa88ddde3c42bc3ee92f7df476d941c8204a
+export KEN_ETTIN_PROBE="$PWD/target/release/examples/ettin_probe"
+cargo build --release --locked -p ken-cli -p ken-models --bins --examples
+.venv/bin/python -m tools.rust_migration.ettin_validate \
+  --reference .ken/rust-migration/m0-m1/reference \
+  --model-probe "$KEN_MODEL_PROBE" --potion-snapshot "$KEN_POTION_SNAPSHOT" \
+  --table-probe "$KEN_TABLE_PROBE" \
+  --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
+  --context-probe "$KEN_CONTEXT_PROBE" --context-snapshot "$KEN_CONTEXT_SNAPSHOT" \
+  --library "$KEN_ORT_LIBRARY" --native "$KEN_ETTIN_PROBE" --source "$KEN_ETTIN_SOURCE" \
+  --baseline-dir .ken/rust-migration/m0-m1 \
+  --original-manifest docs/validation/rust-migration-2026-10-18/baseline.json \
+  --out .ken/rust-migration/m2-ettin/validation
+.venv/bin/python -m tools.rust_migration.ettin_validate --scope matrix \
+  --platform-receipts /ruta/a/recibos-linux-y-macos \
+  --out .ken/rust-migration/m2-ettin/matrix
+```
+
+Este gate exige las 20 comprobaciones anteriores y tres nuevas: release Ettin
+recién construido, preparación nativa desde un destino inicialmente inexistente
+y paridad real. Une 18 huellas del código y datos actuales. Un caché construido
+sólo por Python o un ejecutable antiguo impiden aceptar. Los procesos consumen
+copias propias fuera del repositorio; Linux exige un único exec trazado.
+
+Los validadores aceptan prerrequisitos tipados o variables preparadas explícitas.
+No inventan rutas si faltan. El oráculo elimina las variables nativas heredadas y
+conserva únicamente sus directorios aislados de configuración y caché.
+La configuración CI exige este perfil; su edición local no acredita ejecución
+remota ni sustituye las pruebas locales en ambas plataformas.

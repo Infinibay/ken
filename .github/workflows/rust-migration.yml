@@ -35,12 +35,17 @@ jobs:
           from pathlib import Path
           from ken.embedder.model2vec_backend import potion_assets
           from ken.embedder.contextual_onnx import code_context_model
+          from ken.model_assets import ModelAssets
           from tools.rust_migration.context_compare import core_for_platform, RUNTIME_REGISTRATION
           from tools.rust_migration.context_reference import snapshot_state
+          from tools.rust_migration.ettin_reference import source_state
           snapshot = potion_assets().resolve(local_files_only=False)
           context = code_context_model().assets.resolve(local_files_only=False)
           definition = json.loads(Path('src/ken/embedder/data/code-context-int8.json').read_text())
           snapshot_state(context, definition)
+          ettin_definition = json.loads(Path('src/ken/embedder/data/ettin-68m-fp32.json').read_text())
+          ettin = ModelAssets.from_dict(ettin_definition['source']).resolve(local_files_only=False)
+          source_state(ettin, ettin_definition['source'])
           # Test preparation copies the native C core from the pinned validation
           # wheel. Rust loads only the authenticated standalone library.
           package = Path(importlib.util.find_spec('onnxruntime').origin).parent
@@ -59,6 +64,8 @@ jobs:
               stream.write(f'KEN_CONTEXT_SNAPSHOT={context}\n')
               stream.write(f'KEN_ORT_LIBRARY={library}\n')
               stream.write(f'KEN_CONTEXT_PROBE={Path.cwd() / "target/release/examples/context_probe"}\n')
+              stream.write(f'KEN_ETTIN_SOURCE={ettin}\n')
+              stream.write(f'KEN_ETTIN_PROBE={Path.cwd() / "target/release/examples/ettin_probe"}\n')
           PY
           cargo build --release --locked -p ken-models --examples
       - name: Freeze this checkout, without asserting local dirty-worktree hashes

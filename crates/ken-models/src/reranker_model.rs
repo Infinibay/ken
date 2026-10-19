@@ -104,7 +104,10 @@ impl RerankerModel {
 }
 
 impl PreparedReranker {
+    pub fn artifact(&self, name: &str) -> Result<&[u8], ModelError> {
+        self.snapshot.artifact(name)
+    }
     pub fn graph(&self) -> Result<&[u8], ModelError> {
-        self.snapshot.artifact(&self.graph_name)
+        self.artifact(&self.graph_name)
     }
 }

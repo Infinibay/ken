@@ -73,12 +73,22 @@ pub struct ScoredPool {
     pub details: RerankDetails,
 }
 
+/// Policy used to commit a successfully loaded, CPU-only reranker session.
+#[derive(Clone, Copy, Debug, Serialize, PartialEq, Eq)]
+pub struct RerankSessionPolicy {
+    pub providers: [&'static str; 1],
+    pub cpu_arena: bool,
+    pub intra_threads: usize,
+    pub inter_threads: usize,
+}
+
 struct LoadedReranker {
     // Own authenticated graph and tokenizer bytes for the whole session lifetime.
     _prepared: Arc<PreparedReranker>,
     tokenizer: PairedTokenizer,
     session: Session,
     output: String,
+    policy: RerankSessionPolicy,
 }
 
 pub struct OnnxReranker {
@@ -132,6 +142,10 @@ impl OnnxReranker {
         Ok(self.lock()?.is_some())
     }
 
+    pub fn session_policy(&self) -> Result<Option<RerankSessionPolicy>, ModelError> {
+        Ok(self.lock()?.as_ref().map(|loaded| loaded.policy))
+    }
+
     fn load<'a>(
         &self,
         slot: &'a mut Option<LoadedReranker>,
@@ -143,14 +157,20 @@ impl OnnxReranker {
             };
             let tokenizer = PairedTokenizer::new(&prepared, self.options.max_tokens)?;
             let environment = self.runtime.environment()?;
+            let policy = RerankSessionPolicy {
+                providers: ["CPUExecutionProvider"],
+                cpu_arena: true,
+                intra_threads: self.options.intra_threads,
+                inter_threads: 1,
+            };
             let session = Session::builder(&environment)
                 .map_err(invalid)?
-                .with_intra_threads(self.options.intra_threads)
+                .with_intra_threads(policy.intra_threads)
                 .map_err(invalid)?
-                .with_inter_threads(1)
+                .with_inter_threads(policy.inter_threads)
                 .map_err(invalid)?
                 .with_execution_providers([ort::ep::CPU::default()
-                    .with_arena_allocator(true)
+                    .with_arena_allocator(policy.cpu_arena)
                     .build()
                     .error_on_failure()])
                 .map_err(invalid)?
@@ -167,6 +187,7 @@ impl OnnxReranker {
                 tokenizer,
                 session,
                 output,
+                policy,
             });
         }
         slot.as_mut()

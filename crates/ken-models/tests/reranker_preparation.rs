@@ -23,9 +23,14 @@ fn prepared_cache_is_owned_verified_and_reused_without_source() {
     let cache = temp.path().join("arbitrary-cache-name");
     let prepared = model.prepare(Some(&source), &cache).unwrap();
     assert_eq!(prepared.graph().unwrap(), want);
+    let tokenizer = std::fs::read(source.join("tokenizer.json")).unwrap();
+    assert_eq!(prepared.artifact("tokenizer.json").unwrap(), tokenizer);
+    assert!(prepared.artifact("not-registered").is_err());
     assert_eq!(model.prepare(None, &cache).unwrap().graph().unwrap(), want);
     std::fs::write(cache.join("model.onnx"), b"corrupt").unwrap();
+    std::fs::write(cache.join("tokenizer.json"), b"corrupt").unwrap();
     assert_eq!(prepared.graph().unwrap(), want);
+    assert_eq!(prepared.artifact("tokenizer.json").unwrap(), tokenizer);
     assert!(model.verify_prepared(&cache).is_err());
     assert!(model.prepare(None, &cache).is_err());
 }

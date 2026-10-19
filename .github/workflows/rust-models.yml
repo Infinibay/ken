@@ -35,12 +35,17 @@ jobs:
           from pathlib import Path
           from ken.embedder.model2vec_backend import potion_assets
           from ken.embedder.contextual_onnx import code_context_model
+          from ken.model_assets import ModelAssets
           from tools.rust_migration.context_compare import core_for_platform, RUNTIME_REGISTRATION
           from tools.rust_migration.context_reference import snapshot_state
+          from tools.rust_migration.ettin_reference import source_state
           snapshot = potion_assets().resolve(local_files_only=False)
           context = code_context_model().assets.resolve(local_files_only=False)
           definition = json.loads(Path('src/ken/embedder/data/code-context-int8.json').read_text())
           snapshot_state(context, definition)
+          ettin_definition = json.loads(Path('src/ken/embedder/data/ettin-68m-fp32.json').read_text())
+          ettin = ModelAssets.from_dict(ettin_definition['source']).resolve(local_files_only=False)
+          source_state(ettin, ettin_definition['source'])
           # Test preparation copies the native C core from the pinned validation
           # wheel. Rust loads only the authenticated standalone library.
           package = Path(importlib.util.find_spec('onnxruntime').origin).parent
@@ -59,6 +64,8 @@ jobs:
               stream.write(f'KEN_CONTEXT_SNAPSHOT={context}\n')
               stream.write(f'KEN_ORT_LIBRARY={library}\n')
               stream.write(f'KEN_CONTEXT_PROBE={Path.cwd() / "target/release/examples/context_probe"}\n')
+              stream.write(f'KEN_ETTIN_SOURCE={ettin}\n')
+              stream.write(f'KEN_ETTIN_PROBE={Path.cwd() / "target/release/examples/ettin_probe"}\n')
           PY
           cargo build --release --locked -p ken-cli -p ken-models --bins --examples
       - name: Freeze this checkout and measure its unchanged Python baseline
@@ -76,20 +83,21 @@ jobs:
           exit 0
       - name: Validate original integrity, all suites and the native model process
         run: |
-          .venv/bin/python -m tools.rust_migration.context_validate \
+          .venv/bin/python -m tools.rust_migration.ettin_validate \
             --reference .ken/rust-migration/m2/reference \
             --model-probe "$KEN_MODEL_PROBE" --potion-snapshot "$KEN_POTION_SNAPSHOT" \
-            --table-probe "$KEN_TABLE_PROBE" --native "$KEN_CONTEXT_PROBE" \
-            --snapshot "$KEN_CONTEXT_SNAPSHOT" --library "$KEN_ORT_LIBRARY" \
+            --table-probe "$KEN_TABLE_PROBE" --context-probe "$KEN_CONTEXT_PROBE" \
+            --context-snapshot "$KEN_CONTEXT_SNAPSHOT" --library "$KEN_ORT_LIBRARY" \
+            --native "$KEN_ETTIN_PROBE" --source "$KEN_ETTIN_SOURCE" \
             --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
             --baseline-dir .ken/rust-migration/m2 \
             --original-manifest .ken/rust-migration/m2/reference/reference-manifest.json \
-            --out .ken/rust-migration/m2-context/validation
+            --out .ken/rust-migration/m2-ettin/validation
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: rust-models-${{ runner.os }}
-          path: .ken/rust-migration/m2-context/validation/
+          path: .ken/rust-migration/m2-ettin/validation/
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
@@ -106,7 +114,7 @@ jobs:
           path: .ken/rust-migration/m2/platforms
       - name: Require matching platform receipts
         run: |
-          uv run --no-project --python 3.12 python -m tools.rust_migration.context_validate \
+          uv run --no-project --python 3.12 python -m tools.rust_migration.ettin_validate \
             --scope matrix --platform-receipts .ken/rust-migration/m2/platforms \
             --out .ken/rust-migration/m2/matrix
       - uses: actions/upload-artifact@v7

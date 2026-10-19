@@ -21,7 +21,7 @@ from .inventory import audit_ownership
 from .measure import benchmark,summarize_samples
 from .receipts import REQUIRED_GATES,aggregate_platforms,assess_gates,assess_parity,compare_python
 from .reference import Reference,reference_env,verify_reference,_files
-from .preparation import PreparedNativeContext,context_environment
+from .preparation import PreparedNativeContext,PreparedNativeEttin,context_environment,ettin_environment
 
 def _write(path: Path,data: dict) -> None:
     path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(data,indent=2)+"\n")
@@ -125,7 +125,7 @@ def _runtime(repo,reference,native,env,output,trace_exec):
     if system=="Linux" and trace.get("passed") is not True: errors.append("Linux exec trace missing or failed")
     return {"ran":True,"passed":not errors,"details":{"errors":errors,"dependency_audit":linked,"cargo_tree":tree,"copied_binary":True,"path_contains_python":False}},trace
 
-def _validation_environment(reference: Reference, repo: Path, output: Path, native: Path,*,context:PreparedNativeContext|None=None) -> dict:
+def _validation_environment(reference: Reference, repo: Path, output: Path, native: Path,*,context:PreparedNativeContext|None=None,ettin:PreparedNativeEttin|None=None) -> dict:
     env=reference_env(reference,output/"environment")
     env["PYTHONPATH"]=os.pathsep.join([str(repo/"src"),str(repo)])
     env.pop("CARGO_TARGET_DIR",None);env.pop("CARGO_BUILD_TARGET",None)
@@ -133,6 +133,7 @@ def _validation_environment(reference: Reference, repo: Path, output: Path, nati
     for key in ["KEN_POTION_SNAPSHOT","KEN_MODEL_PROBE","KEN_TABLE_PROBE"]:
         if key in os.environ: env[key]=os.environ[key]
     env.update(context_environment(context))
+    env.update(ettin_environment(ettin))
     return env
 
 def run(repo: Path,reference: Reference,native: Path,output: Path,scope: str="local",platform_receipts: Path|None=None,trace_exec: bool=False,*,original_manifest: Path|None=None,baseline_dir: Path|None=None) -> int:

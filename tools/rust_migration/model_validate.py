@@ -14,7 +14,7 @@ from .model_reference import TOLERANCES, model_cases
 from .receipts import compare_python
 from .reference import Reference, reference_env
 from .validate import _command, _digest, _fingerprints, _rustc_version, _sha, _typing_errors, _verify, _write, bind_native_release
-from .preparation import PreparedNativeContext,context_environment
+from .preparation import PreparedNativeContext,PreparedNativeEttin,context_environment,ettin_environment
 
 REQUIRED_GATES = ('originals', 'reference', 'toolchain', 'python_contracts', 'python_full', 'typing',
                   'fmt', 'clippy', 'rust_tests', 'release', 'parity_tests', 'model_parity',
@@ -125,7 +125,7 @@ def benchmark_model(reference: Reference, native: Path, snapshot: Path, output: 
 
 def validate_models(repo: Path, reference: Reference, native: Path, snapshot: Path, output: Path,
                     baseline_dir: Path, original_manifest: Path, *, table_probe: Path | None = None,
-                    context:PreparedNativeContext|None=None) -> int:
+                    context:PreparedNativeContext|None=None,ettin:PreparedNativeEttin|None=None) -> int:
     repo, output, native, snapshot = repo.resolve(), output.resolve(), native.resolve(), snapshot.absolute()
     output.mkdir(parents=True, exist_ok=True)
     gates = {}
@@ -154,6 +154,7 @@ def validate_models(repo: Path, reference: Reference, native: Path, snapshot: Pa
             CARGO_HOME=os.environ.get('CARGO_HOME', str(Path.home() / '.cargo')))
         env.pop('CARGO_TARGET_DIR', None); env.pop('CARGO_BUILD_TARGET', None)
         env.update(context_environment(context))
+        env.update(ettin_environment(ettin))
         py = [str(reference.python), '-m']
         gates['toolchain'] = _command(repo, env, output, 'rustc', ['rustc', '--version', '--verbose'])
         result['rustc'] = _rustc_version(output / 'rustc.log')
