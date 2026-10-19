@@ -322,6 +322,35 @@ fn only_document_truncates_and_unicode_character_guard_is_not_byte_count() {
 }
 
 #[test]
+fn positive_budgets_smaller_than_special_tokens_return_errors_without_panicking() {
+    for budget in [1, 2, 3, 4] {
+        let scorer = fixture(
+            &manifest()["pair"],
+            RerankOptions::new(1, 4, budget).unwrap(),
+        );
+        let result =
+            std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| scorer.score("x", &["y"])));
+        assert!(result.is_ok(), "token budget{budget} panicked");
+        assert!(
+            result
+                .unwrap()
+                .unwrap_err()
+                .to_string()
+                .contains("query is too long")
+        );
+        assert!(!scorer.pair_fits("x", "y").unwrap());
+        assert!(scorer.tokenize_pairs("x", &[]).unwrap().is_empty());
+        if budget < 3 {
+            let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                scorer.tokenize_pairs("x", &["y"])
+            }));
+            assert!(result.is_ok(), "paired special budget{budget} panicked");
+            assert!(result.unwrap().is_err());
+        }
+    }
+}
+
+#[test]
 fn malformed_published_policy_and_nonfinite_or_wrong_count_outputs_fail() {
     let data = manifest();
     for (name, row) in data["invalid"].as_object().unwrap() {

@@ -47,13 +47,22 @@ impl PairedTokenizer {
         }
         let mut paired =
             Tokenizer::from_bytes(snapshot.artifact("tokenizer.json")?).map_err(invalid)?;
+        let single_special = paired
+            .get_post_processor()
+            .map_or(0, |processor| processor.added_tokens(false));
         paired
             .with_truncation(Some(TruncationParams {
-                max_length: max_tokens,
+                // tokenizers validates via an unchecked single-sequence
+                // subtraction even though this owner only encodes pairs.
+                max_length: max_tokens.max(single_special),
                 strategy: TruncationStrategy::OnlySecond,
                 ..Default::default()
             }))
             .map_err(invalid)?;
+        paired
+            .get_truncation_mut()
+            .ok_or_else(|| invalid("paired truncation missing"))?
+            .max_length = max_tokens;
         let token = token_config["pad_token"]
             .as_str()
             .or_else(|| token_config["pad_token"]["content"].as_str())
@@ -131,6 +140,14 @@ impl PairedTokenizer {
         query: &str,
         texts: &[&str],
     ) -> Result<Vec<PairTokens>, ModelError> {
+        // The dependency also subtracts paired special tokens unchecked at
+        // encoding time. score's query guard rejects these budgets first;
+        // the public token inspection path must return an error as well.
+        if !texts.is_empty() && self.max_tokens < self.special {
+            return Err(invalid(
+                "token budget cannot accommodate paired special tokens",
+            ));
+        }
         let inputs: Vec<_> = texts.iter().map(|text| (query, *text)).collect();
         let encodings = self.paired.encode_batch(inputs, true).map_err(invalid)?;
         Ok(encodings.into_iter().map(Self::tokens).collect())

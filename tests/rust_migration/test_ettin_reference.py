@@ -99,3 +99,19 @@ def test_original_accepts_non_f32_logits_so_native_rejection_is_an_explicit_corr
                        {'op':'score','query':'x','texts':['y']}]}])
     assert result['results'][0]['calls'][0]['scores']==[29.]
     assert row['original_scores']==[29.]
+
+
+def test_original_small_positive_budgets_load_then_reject_query_without_panicking(original,tmp_path):
+    from tools.rust_migration.ettin_fixtures import generate
+    from tools.rust_migration.ettin_reference import capture
+    pair=generate(original,tmp_path/'fixtures')['pair']
+    cases=[{'id':str(n),'options':{'max_tokens':n},'calls':[
+        {'op':'tokens','query':'x','texts':[]},
+        {'op':'pair_fits','query':'x','text':'y'},{'op':'score','query':'x','texts':['y']}]} for n in [1,2,3,4]]
+    result=capture(original,Path(pair['source']),tmp_path/'small-budgets.json',definition=pair['definition'],
+                   prepared=Path(pair['prepared']),cases=cases)
+    for row in result['results']:
+        assert row['calls'][0] == []
+        assert row['calls'][1] is False
+        assert row['session_loaded'] is True
+        assert 'query is too long' in row['calls'][2]['error']['message']
