@@ -1,0 +1,704 @@
+{
+  "original_helpers_verified": true,
+  "helpers": {
+    "tests/retrieval/test_reranker_head.py": "e1717d0a2a81ee570beba662b4d3a89553e14b798676970ae99282a8b87eb6ec",
+    "tests/retrieval/test_neural_reranker.py": "18988cafa15e6745c220b1665e1ff8427964969162ab13ba74912dad1b41c948"
+  },
+  "head": {
+    "source": "head/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "prepared": "head/prepared/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "definition": {
+      "source": {
+        "model_id": "test/reranker",
+        "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "artifacts": {
+          "tokenizer_config.json": {
+            "bytes": 44,
+            "sha256": "5aa6181e7aca06a42d71597e99b80a74e47dc5ddd1ab6ed7b2fd8b83c6dd469e"
+          },
+          "config.json": {
+            "bytes": 18,
+            "sha256": "e2ec557f2466f287bb9b901c687238b104c2b42351d2dee4b70a8104e05f98b6"
+          },
+          "tokenizer.json": {
+            "bytes": 342,
+            "sha256": "f9a387bebe0fec92cfb674c488f7a0facf7d16b261b005af74332527c2f4dafe"
+          },
+          "1_Pooling/config.json": {
+            "bytes": 49,
+            "sha256": "59678d8bf7b5295d884568b46f6ed1ebeef0ec4aafdeec166a26a735e4bbe80a"
+          },
+          "onnx/model.onnx": {
+            "bytes": 148,
+            "sha256": "add3d509187e41a8cf0bbbda81a4c58a918bddb6612d7f7910cd085044904231"
+          },
+          "2_Dense/model.safetensors": {
+            "bytes": 116,
+            "sha256": "305b5286bbf1cd776ad28ce1a4356fa190c84de493419cd959db92808f6f2e10"
+          },
+          "2_Dense/config.json": {
+            "bytes": 111,
+            "sha256": "fa9d49dd045527faa7967401e414869f2bb8d6e695609769298521c78739a6f7"
+          },
+          "4_Dense/model.safetensors": {
+            "bytes": 160,
+            "sha256": "83a1290024e50011bd8b4efd62bc8ecc04117a9cb60e875237676d134ec0047b"
+          },
+          "4_Dense/config.json": {
+            "bytes": 110,
+            "sha256": "3bf06688d6c0c75926ca595265a4085f4fbeb789eecba93a11fae81511540436"
+          },
+          "3_LayerNorm/model.safetensors": {
+            "bytes": 160,
+            "sha256": "f145b84483f1b3874101a7ac9916a0414864280f1e5884634dd1fac7fe5b79a1"
+          },
+          "3_LayerNorm/config.json": {
+            "bytes": 16,
+            "sha256": "cdc447abb15439be0230a9acfd60fcad6ebe9e35bdea2d6f580db8493c2342be"
+          }
+        }
+      },
+      "graph": {
+        "path": "model.onnx",
+        "bytes": 1814,
+        "sha256": "c71c3ae2c9fd100d4329b697fc2465d885a8c12c0cef81ca3ca168fb2993d64c"
+      }
+    },
+    "expected_graph": {
+      "bytes": 1814,
+      "sha256": "c71c3ae2c9fd100d4329b697fc2465d885a8c12c0cef81ca3ca168fb2993d64c"
+    },
+    "original_preparation_verified": true,
+    "original_scalar_score": 0.9822524189949036,
+    "independent_scalar_score": 0.9822522507241072
+  },
+  "pair": {
+    "source": "pair/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "prepared": "pair/prepared/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "definition": {
+      "source": {
+        "model_id": "test/reranker",
+        "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "artifacts": {
+          "config.json": {
+            "bytes": 19,
+            "sha256": "ac79963b100da854c8203926d082dee8ea80533813763f0dc129cf6b04610344"
+          },
+          "graph.onnx": {
+            "bytes": 299,
+            "sha256": "0dd302186a746452d8f8e2f74811b9ec160ffae9d3a29b63dee0f4a898ca0af5"
+          },
+          "tokenizer.json": {
+            "bytes": 1616,
+            "sha256": "8378c19948d2d33c0a674d286a316d0ec96af47766b2e402ecf791aa72b8b73c"
+          },
+          "tokenizer_config.json": {
+            "bytes": 47,
+            "sha256": "5dddbfa665dc52a2c8081a60646ac36b9d78c34a450be1f4663e71e8aa6c9f39"
+          }
+        }
+      },
+      "graph": {
+        "path": "model.onnx",
+        "bytes": 299,
+        "sha256": "0dd302186a746452d8f8e2f74811b9ec160ffae9d3a29b63dee0f4a898ca0af5"
+      }
+    }
+  },
+  "invalid": {
+    "activation": {
+      "kind": "head",
+      "source": "invalid/activation/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "definition": {
+        "source": {
+          "model_id": "test/reranker",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifacts": {
+            "1_Pooling/config.json": {
+              "bytes": 49,
+              "sha256": "59678d8bf7b5295d884568b46f6ed1ebeef0ec4aafdeec166a26a735e4bbe80a"
+            },
+            "2_Dense/config.json": {
+              "bytes": 90,
+              "sha256": "960b07c58efb6dd352c6dfd9b5d9d58bfad2f7da936705736f0e5ed604a09a9a"
+            },
+            "2_Dense/model.safetensors": {
+              "bytes": 116,
+              "sha256": "305b5286bbf1cd776ad28ce1a4356fa190c84de493419cd959db92808f6f2e10"
+            },
+            "3_LayerNorm/config.json": {
+              "bytes": 16,
+              "sha256": "cdc447abb15439be0230a9acfd60fcad6ebe9e35bdea2d6f580db8493c2342be"
+            },
+            "3_LayerNorm/model.safetensors": {
+              "bytes": 160,
+              "sha256": "f145b84483f1b3874101a7ac9916a0414864280f1e5884634dd1fac7fe5b79a1"
+            },
+            "4_Dense/config.json": {
+              "bytes": 110,
+              "sha256": "3bf06688d6c0c75926ca595265a4085f4fbeb789eecba93a11fae81511540436"
+            },
+            "4_Dense/model.safetensors": {
+              "bytes": 160,
+              "sha256": "83a1290024e50011bd8b4efd62bc8ecc04117a9cb60e875237676d134ec0047b"
+            },
+            "config.json": {
+              "bytes": 18,
+              "sha256": "e2ec557f2466f287bb9b901c687238b104c2b42351d2dee4b70a8104e05f98b6"
+            },
+            "onnx/model.onnx": {
+              "bytes": 148,
+              "sha256": "add3d509187e41a8cf0bbbda81a4c58a918bddb6612d7f7910cd085044904231"
+            },
+            "tokenizer.json": {
+              "bytes": 342,
+              "sha256": "f9a387bebe0fec92cfb674c488f7a0facf7d16b261b005af74332527c2f4dafe"
+            },
+            "tokenizer_config.json": {
+              "bytes": 44,
+              "sha256": "5aa6181e7aca06a42d71597e99b80a74e47dc5ddd1ab6ed7b2fd8b83c6dd469e"
+            }
+          }
+        },
+        "graph": {
+          "path": "model.onnx",
+          "bytes": 1814,
+          "sha256": "c71c3ae2c9fd100d4329b697fc2465d885a8c12c0cef81ca3ca168fb2993d64c"
+        }
+      },
+      "original_rejected": true,
+      "error": "ValueError: unsupported published head architecture"
+    },
+    "nonfinite-head": {
+      "kind": "head",
+      "source": "invalid/nonfinite-head/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "definition": {
+        "source": {
+          "model_id": "test/reranker",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifacts": {
+            "1_Pooling/config.json": {
+              "bytes": 49,
+              "sha256": "59678d8bf7b5295d884568b46f6ed1ebeef0ec4aafdeec166a26a735e4bbe80a"
+            },
+            "2_Dense/config.json": {
+              "bytes": 111,
+              "sha256": "fa9d49dd045527faa7967401e414869f2bb8d6e695609769298521c78739a6f7"
+            },
+            "2_Dense/model.safetensors": {
+              "bytes": 116,
+              "sha256": "cd12b5c5a4066074e745089716294a9b947aae2d518592d9da4b01a8429e5386"
+            },
+            "3_LayerNorm/config.json": {
+              "bytes": 16,
+              "sha256": "cdc447abb15439be0230a9acfd60fcad6ebe9e35bdea2d6f580db8493c2342be"
+            },
+            "3_LayerNorm/model.safetensors": {
+              "bytes": 160,
+              "sha256": "f145b84483f1b3874101a7ac9916a0414864280f1e5884634dd1fac7fe5b79a1"
+            },
+            "4_Dense/config.json": {
+              "bytes": 110,
+              "sha256": "3bf06688d6c0c75926ca595265a4085f4fbeb789eecba93a11fae81511540436"
+            },
+            "4_Dense/model.safetensors": {
+              "bytes": 160,
+              "sha256": "83a1290024e50011bd8b4efd62bc8ecc04117a9cb60e875237676d134ec0047b"
+            },
+            "config.json": {
+              "bytes": 18,
+              "sha256": "e2ec557f2466f287bb9b901c687238b104c2b42351d2dee4b70a8104e05f98b6"
+            },
+            "onnx/model.onnx": {
+              "bytes": 148,
+              "sha256": "add3d509187e41a8cf0bbbda81a4c58a918bddb6612d7f7910cd085044904231"
+            },
+            "tokenizer.json": {
+              "bytes": 342,
+              "sha256": "f9a387bebe0fec92cfb674c488f7a0facf7d16b261b005af74332527c2f4dafe"
+            },
+            "tokenizer_config.json": {
+              "bytes": 44,
+              "sha256": "5aa6181e7aca06a42d71597e99b80a74e47dc5ddd1ab6ed7b2fd8b83c6dd469e"
+            }
+          }
+        },
+        "graph": {
+          "path": "model.onnx",
+          "bytes": 1814,
+          "sha256": "c71c3ae2c9fd100d4329b697fc2465d885a8c12c0cef81ca3ca168fb2993d64c"
+        }
+      },
+      "original_rejected": true,
+      "error": "ValueError: unsupported or nonfinite published head weights"
+    },
+    "wrong-head-shape": {
+      "kind": "head",
+      "source": "invalid/wrong-head-shape/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "definition": {
+        "source": {
+          "model_id": "test/reranker",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifacts": {
+            "1_Pooling/config.json": {
+              "bytes": 49,
+              "sha256": "59678d8bf7b5295d884568b46f6ed1ebeef0ec4aafdeec166a26a735e4bbe80a"
+            },
+            "2_Dense/config.json": {
+              "bytes": 111,
+              "sha256": "fa9d49dd045527faa7967401e414869f2bb8d6e695609769298521c78739a6f7"
+            },
+            "2_Dense/model.safetensors": {
+              "bytes": 104,
+              "sha256": "ddc25432fcdde18860622aa83c11724c90afdcead69c7554c9df9b215286c2c4"
+            },
+            "3_LayerNorm/config.json": {
+              "bytes": 16,
+              "sha256": "cdc447abb15439be0230a9acfd60fcad6ebe9e35bdea2d6f580db8493c2342be"
+            },
+            "3_LayerNorm/model.safetensors": {
+              "bytes": 160,
+              "sha256": "f145b84483f1b3874101a7ac9916a0414864280f1e5884634dd1fac7fe5b79a1"
+            },
+            "4_Dense/config.json": {
+              "bytes": 110,
+              "sha256": "3bf06688d6c0c75926ca595265a4085f4fbeb789eecba93a11fae81511540436"
+            },
+            "4_Dense/model.safetensors": {
+              "bytes": 160,
+              "sha256": "83a1290024e50011bd8b4efd62bc8ecc04117a9cb60e875237676d134ec0047b"
+            },
+            "config.json": {
+              "bytes": 18,
+              "sha256": "e2ec557f2466f287bb9b901c687238b104c2b42351d2dee4b70a8104e05f98b6"
+            },
+            "onnx/model.onnx": {
+              "bytes": 148,
+              "sha256": "add3d509187e41a8cf0bbbda81a4c58a918bddb6612d7f7910cd085044904231"
+            },
+            "tokenizer.json": {
+              "bytes": 342,
+              "sha256": "f9a387bebe0fec92cfb674c488f7a0facf7d16b261b005af74332527c2f4dafe"
+            },
+            "tokenizer_config.json": {
+              "bytes": 44,
+              "sha256": "5aa6181e7aca06a42d71597e99b80a74e47dc5ddd1ab6ed7b2fd8b83c6dd469e"
+            }
+          }
+        },
+        "graph": {
+          "path": "model.onnx",
+          "bytes": 1814,
+          "sha256": "c71c3ae2c9fd100d4329b697fc2465d885a8c12c0cef81ca3ca168fb2993d64c"
+        }
+      },
+      "original_rejected": true,
+      "error": "ValueError: unsupported or nonfinite published head weights"
+    },
+    "malformed-backbone": {
+      "kind": "head",
+      "source": "invalid/malformed-backbone/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "definition": {
+        "source": {
+          "model_id": "test/reranker",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifacts": {
+            "1_Pooling/config.json": {
+              "bytes": 49,
+              "sha256": "59678d8bf7b5295d884568b46f6ed1ebeef0ec4aafdeec166a26a735e4bbe80a"
+            },
+            "2_Dense/config.json": {
+              "bytes": 111,
+              "sha256": "fa9d49dd045527faa7967401e414869f2bb8d6e695609769298521c78739a6f7"
+            },
+            "2_Dense/model.safetensors": {
+              "bytes": 116,
+              "sha256": "305b5286bbf1cd776ad28ce1a4356fa190c84de493419cd959db92808f6f2e10"
+            },
+            "3_LayerNorm/config.json": {
+              "bytes": 16,
+              "sha256": "cdc447abb15439be0230a9acfd60fcad6ebe9e35bdea2d6f580db8493c2342be"
+            },
+            "3_LayerNorm/model.safetensors": {
+              "bytes": 160,
+              "sha256": "f145b84483f1b3874101a7ac9916a0414864280f1e5884634dd1fac7fe5b79a1"
+            },
+            "4_Dense/config.json": {
+              "bytes": 110,
+              "sha256": "3bf06688d6c0c75926ca595265a4085f4fbeb789eecba93a11fae81511540436"
+            },
+            "4_Dense/model.safetensors": {
+              "bytes": 160,
+              "sha256": "83a1290024e50011bd8b4efd62bc8ecc04117a9cb60e875237676d134ec0047b"
+            },
+            "config.json": {
+              "bytes": 18,
+              "sha256": "e2ec557f2466f287bb9b901c687238b104c2b42351d2dee4b70a8104e05f98b6"
+            },
+            "onnx/model.onnx": {
+              "bytes": 12,
+              "sha256": "b30b1b42a5b1821b97e4deba90754b0e40ef2d0d3adf3699ad45e767f356c2b5"
+            },
+            "tokenizer.json": {
+              "bytes": 342,
+              "sha256": "f9a387bebe0fec92cfb674c488f7a0facf7d16b261b005af74332527c2f4dafe"
+            },
+            "tokenizer_config.json": {
+              "bytes": 44,
+              "sha256": "5aa6181e7aca06a42d71597e99b80a74e47dc5ddd1ab6ed7b2fd8b83c6dd469e"
+            }
+          }
+        },
+        "graph": {
+          "path": "model.onnx",
+          "bytes": 1814,
+          "sha256": "c71c3ae2c9fd100d4329b697fc2465d885a8c12c0cef81ca3ca168fb2993d64c"
+        }
+      },
+      "original_rejected": true,
+      "error": "DecodeError: Error parsing message with type 'onnx.ModelProto'"
+    },
+    "wrong-opset": {
+      "kind": "head",
+      "source": "invalid/wrong-opset/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "definition": {
+        "source": {
+          "model_id": "test/reranker",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifacts": {
+            "1_Pooling/config.json": {
+              "bytes": 49,
+              "sha256": "59678d8bf7b5295d884568b46f6ed1ebeef0ec4aafdeec166a26a735e4bbe80a"
+            },
+            "2_Dense/config.json": {
+              "bytes": 111,
+              "sha256": "fa9d49dd045527faa7967401e414869f2bb8d6e695609769298521c78739a6f7"
+            },
+            "2_Dense/model.safetensors": {
+              "bytes": 116,
+              "sha256": "305b5286bbf1cd776ad28ce1a4356fa190c84de493419cd959db92808f6f2e10"
+            },
+            "3_LayerNorm/config.json": {
+              "bytes": 16,
+              "sha256": "cdc447abb15439be0230a9acfd60fcad6ebe9e35bdea2d6f580db8493c2342be"
+            },
+            "3_LayerNorm/model.safetensors": {
+              "bytes": 160,
+              "sha256": "f145b84483f1b3874101a7ac9916a0414864280f1e5884634dd1fac7fe5b79a1"
+            },
+            "4_Dense/config.json": {
+              "bytes": 110,
+              "sha256": "3bf06688d6c0c75926ca595265a4085f4fbeb789eecba93a11fae81511540436"
+            },
+            "4_Dense/model.safetensors": {
+              "bytes": 160,
+              "sha256": "83a1290024e50011bd8b4efd62bc8ecc04117a9cb60e875237676d134ec0047b"
+            },
+            "config.json": {
+              "bytes": 18,
+              "sha256": "e2ec557f2466f287bb9b901c687238b104c2b42351d2dee4b70a8104e05f98b6"
+            },
+            "onnx/model.onnx": {
+              "bytes": 148,
+              "sha256": "53f53951ddd8010f974b0fbd5ca6502d390a9536d848a5a0f48eb896fbad88f1"
+            },
+            "tokenizer.json": {
+              "bytes": 342,
+              "sha256": "f9a387bebe0fec92cfb674c488f7a0facf7d16b261b005af74332527c2f4dafe"
+            },
+            "tokenizer_config.json": {
+              "bytes": 44,
+              "sha256": "5aa6181e7aca06a42d71597e99b80a74e47dc5ddd1ab6ed7b2fd8b83c6dd469e"
+            }
+          }
+        },
+        "graph": {
+          "path": "model.onnx",
+          "bytes": 1814,
+          "sha256": "c71c3ae2c9fd100d4329b697fc2465d885a8c12c0cef81ca3ca168fb2993d64c"
+        }
+      },
+      "original_rejected": true,
+      "error": "ValueError: unsupported published backbone output or opset"
+    },
+    "extra-backbone-output": {
+      "kind": "head",
+      "source": "invalid/extra-backbone-output/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "definition": {
+        "source": {
+          "model_id": "test/reranker",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifacts": {
+            "1_Pooling/config.json": {
+              "bytes": 49,
+              "sha256": "59678d8bf7b5295d884568b46f6ed1ebeef0ec4aafdeec166a26a735e4bbe80a"
+            },
+            "2_Dense/config.json": {
+              "bytes": 111,
+              "sha256": "fa9d49dd045527faa7967401e414869f2bb8d6e695609769298521c78739a6f7"
+            },
+            "2_Dense/model.safetensors": {
+              "bytes": 116,
+              "sha256": "305b5286bbf1cd776ad28ce1a4356fa190c84de493419cd959db92808f6f2e10"
+            },
+            "3_LayerNorm/config.json": {
+              "bytes": 16,
+              "sha256": "cdc447abb15439be0230a9acfd60fcad6ebe9e35bdea2d6f580db8493c2342be"
+            },
+            "3_LayerNorm/model.safetensors": {
+              "bytes": 160,
+              "sha256": "f145b84483f1b3874101a7ac9916a0414864280f1e5884634dd1fac7fe5b79a1"
+            },
+            "4_Dense/config.json": {
+              "bytes": 110,
+              "sha256": "3bf06688d6c0c75926ca595265a4085f4fbeb789eecba93a11fae81511540436"
+            },
+            "4_Dense/model.safetensors": {
+              "bytes": 160,
+              "sha256": "83a1290024e50011bd8b4efd62bc8ecc04117a9cb60e875237676d134ec0047b"
+            },
+            "config.json": {
+              "bytes": 18,
+              "sha256": "e2ec557f2466f287bb9b901c687238b104c2b42351d2dee4b70a8104e05f98b6"
+            },
+            "onnx/model.onnx": {
+              "bytes": 178,
+              "sha256": "12f2069235b64ccf74ca406ea6b154a19446d3545ef6f75b88ee077b6be27e66"
+            },
+            "tokenizer.json": {
+              "bytes": 342,
+              "sha256": "f9a387bebe0fec92cfb674c488f7a0facf7d16b261b005af74332527c2f4dafe"
+            },
+            "tokenizer_config.json": {
+              "bytes": 44,
+              "sha256": "5aa6181e7aca06a42d71597e99b80a74e47dc5ddd1ab6ed7b2fd8b83c6dd469e"
+            }
+          }
+        },
+        "graph": {
+          "path": "model.onnx",
+          "bytes": 1814,
+          "sha256": "c71c3ae2c9fd100d4329b697fc2465d885a8c12c0cef81ca3ca168fb2993d64c"
+        }
+      },
+      "original_rejected": true,
+      "error": "ValueError: unsupported published backbone output or opset"
+    },
+    "bad-pad-id": {
+      "kind": "pair",
+      "source": "invalid/bad-pad-id/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "prepared": "invalid/bad-pad-id/prepared/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": {
+        "source": {
+          "model_id": "test/reranker",
+          "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "artifacts": {
+            "config.json": {
+              "bytes": 19,
+              "sha256": "1630dcb0853863b484d2832fd1253e39c1b486b3eee0685a7a69fc5c66f8865f"
+            },
+            "graph.onnx": {
+              "bytes": 299,
+              "sha256": "0dd302186a746452d8f8e2f74811b9ec160ffae9d3a29b63dee0f4a898ca0af5"
+            },
+            "tokenizer.json": {
+              "bytes": 1616,
+              "sha256": "8378c19948d2d33c0a674d286a316d0ec96af47766b2e402ecf791aa72b8b73c"
+            },
+            "tokenizer_config.json": {
+              "bytes": 47,
+              "sha256": "5dddbfa665dc52a2c8081a60646ac36b9d78c34a450be1f4663e71e8aa6c9f39"
+            }
+          }
+        },
+        "graph": {
+          "path": "model.onnx",
+          "bytes": 299,
+          "sha256": "0dd302186a746452d8f8e2f74811b9ec160ffae9d3a29b63dee0f4a898ca0af5"
+        }
+      },
+      "original_rejected": true,
+      "error": "ValueError: inconsistent published padding configuration"
+    },
+    "left-padding": {
+      "kind": "pair",
+      "source": "invalid/left-padding/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "prepared": "invalid/left-padding/prepared/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": {
+        "source": {
+          "model_id": "test/reranker",
+          "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "artifacts": {
+            "config.json": {
+              "bytes": 19,
+              "sha256": "ac79963b100da854c8203926d082dee8ea80533813763f0dc129cf6b04610344"
+            },
+            "graph.onnx": {
+              "bytes": 299,
+              "sha256": "0dd302186a746452d8f8e2f74811b9ec160ffae9d3a29b63dee0f4a898ca0af5"
+            },
+            "tokenizer.json": {
+              "bytes": 1616,
+              "sha256": "8378c19948d2d33c0a674d286a316d0ec96af47766b2e402ecf791aa72b8b73c"
+            },
+            "tokenizer_config.json": {
+              "bytes": 46,
+              "sha256": "22f844f089b476bd7c16cced0844cbcd288458e8f07f40e1cd09e3b6f4a04983"
+            }
+          }
+        },
+        "graph": {
+          "path": "model.onnx",
+          "bytes": 299,
+          "sha256": "0dd302186a746452d8f8e2f74811b9ec160ffae9d3a29b63dee0f4a898ca0af5"
+        }
+      },
+      "original_rejected": true,
+      "error": "ValueError: inconsistent published padding configuration"
+    },
+    "model-limit": {
+      "kind": "pair",
+      "source": "invalid/model-limit/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "prepared": "invalid/model-limit/prepared/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": {
+        "source": {
+          "model_id": "test/reranker",
+          "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "artifacts": {
+            "config.json": {
+              "bytes": 50,
+              "sha256": "34c6e80a0abc99168d997e8f63606cac0ff030c018f6ce5aebaba37b1de907db"
+            },
+            "graph.onnx": {
+              "bytes": 299,
+              "sha256": "0dd302186a746452d8f8e2f74811b9ec160ffae9d3a29b63dee0f4a898ca0af5"
+            },
+            "tokenizer.json": {
+              "bytes": 1616,
+              "sha256": "8378c19948d2d33c0a674d286a316d0ec96af47766b2e402ecf791aa72b8b73c"
+            },
+            "tokenizer_config.json": {
+              "bytes": 47,
+              "sha256": "5dddbfa665dc52a2c8081a60646ac36b9d78c34a450be1f4663e71e8aa6c9f39"
+            }
+          }
+        },
+        "graph": {
+          "path": "model.onnx",
+          "bytes": 299,
+          "sha256": "0dd302186a746452d8f8e2f74811b9ec160ffae9d3a29b63dee0f4a898ca0af5"
+        }
+      },
+      "original_rejected": true,
+      "error": "ValueError: token budget exceeds or conflicts with declared model limit"
+    },
+    "two-scores": {
+      "kind": "pair",
+      "source": "invalid/two-scores/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "prepared": "invalid/two-scores/prepared/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": {
+        "source": {
+          "model_id": "test/reranker",
+          "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "artifacts": {
+            "config.json": {
+              "bytes": 19,
+              "sha256": "ac79963b100da854c8203926d082dee8ea80533813763f0dc129cf6b04610344"
+            },
+            "graph.onnx": {
+              "bytes": 348,
+              "sha256": "43c441b623ca693a54fba81df757a54698b232ed494394994497cca483c4ef75"
+            },
+            "tokenizer.json": {
+              "bytes": 1616,
+              "sha256": "8378c19948d2d33c0a674d286a316d0ec96af47766b2e402ecf791aa72b8b73c"
+            },
+            "tokenizer_config.json": {
+              "bytes": 47,
+              "sha256": "5dddbfa665dc52a2c8081a60646ac36b9d78c34a450be1f4663e71e8aa6c9f39"
+            }
+          }
+        },
+        "graph": {
+          "path": "model.onnx",
+          "bytes": 348,
+          "sha256": "43c441b623ca693a54fba81df757a54698b232ed494394994497cca483c4ef75"
+        }
+      },
+      "original_rejected": true,
+      "error": "ValueError: reranker must return one finite score per document"
+    },
+    "nan-output": {
+      "kind": "pair",
+      "source": "invalid/nan-output/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "prepared": "invalid/nan-output/prepared/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": {
+        "source": {
+          "model_id": "test/reranker",
+          "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "artifacts": {
+            "config.json": {
+              "bytes": 19,
+              "sha256": "ac79963b100da854c8203926d082dee8ea80533813763f0dc129cf6b04610344"
+            },
+            "graph.onnx": {
+              "bytes": 364,
+              "sha256": "19e00dc8cd27e9dcf62c48a25f3508fbddc080b8a6e0a41538e9cd0df64b979d"
+            },
+            "tokenizer.json": {
+              "bytes": 1616,
+              "sha256": "8378c19948d2d33c0a674d286a316d0ec96af47766b2e402ecf791aa72b8b73c"
+            },
+            "tokenizer_config.json": {
+              "bytes": 47,
+              "sha256": "5dddbfa665dc52a2c8081a60646ac36b9d78c34a450be1f4663e71e8aa6c9f39"
+            }
+          }
+        },
+        "graph": {
+          "path": "model.onnx",
+          "bytes": 364,
+          "sha256": "19e00dc8cd27e9dcf62c48a25f3508fbddc080b8a6e0a41538e9cd0df64b979d"
+        }
+      },
+      "original_rejected": true,
+      "error": "ValueError: reranker must return one finite score per document"
+    },
+    "inf-output": {
+      "kind": "pair",
+      "source": "invalid/inf-output/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "prepared": "invalid/inf-output/prepared/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": {
+        "source": {
+          "model_id": "test/reranker",
+          "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "artifacts": {
+            "config.json": {
+              "bytes": 19,
+              "sha256": "ac79963b100da854c8203926d082dee8ea80533813763f0dc129cf6b04610344"
+            },
+            "graph.onnx": {
+              "bytes": 364,
+              "sha256": "6bf084862290629fa0f0ed2078b43f32330e1a7ed8ae2d1a60e214ea58d88da5"
+            },
+            "tokenizer.json": {
+              "bytes": 1616,
+              "sha256": "8378c19948d2d33c0a674d286a316d0ec96af47766b2e402ecf791aa72b8b73c"
+            },
+            "tokenizer_config.json": {
+              "bytes": 47,
+              "sha256": "5dddbfa665dc52a2c8081a60646ac36b9d78c34a450be1f4663e71e8aa6c9f39"
+            }
+          }
+        },
+        "graph": {
+          "path": "model.onnx",
+          "bytes": 364,
+          "sha256": "6bf084862290629fa0f0ed2078b43f32330e1a7ed8ae2d1a60e214ea58d88da5"
+        }
+      },
+      "original_rejected": true,
+      "error": "ValueError: reranker must return one finite score per document"
+    }
+  }
+}

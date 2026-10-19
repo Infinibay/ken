@@ -34,6 +34,7 @@ safetensors0.8,sha2/serde/tempfile; no new product dependency initially.
 tests/rust_migration/test_ettin_reference.py,crates/ken-models/tests/fixtures/ettin/,
 docs/validation/rust-migration-2026-10-19/m2-ettin/{cases,reference}.json.
 **Interfaces:** ettin_cases()->list[dict]; capture(reference,source,out,*,cases=None)
+accepts optional definition/prepared overrides for independent tiny graph fixtures;
 records original preparation bytes/hashes, runtime, options, token/mask/pair_fits,
 logits/details/state/timing; fixture generation explicitly adapts frozen original
 published_head/registered_head/registered_reranker helpers and records sourcehash.
@@ -50,14 +51,19 @@ published_head/registered_head/registered_reranker helpers and records sourcehas
 ### Task 2: Native graph preparation and cache ownership
 
 **Files:** create crates/ken-models/src/{reranker_model,published_head,onnx_wire,reranker_preparation}.rs,
-tests/{published_head,reranker_preparation}.rs; reexport via read lib.rs.
+tests/{published_head,reranker_preparation}.rs; reexport via read lib.rs;
+modify assets.rs only to factor crate-private verify_artifacts(root), preserving
+public verify revision guard and existing asset tests.
 **Interfaces:** RerankerModel::from_json(&str)->Result<Self>; source_assets()->&ModelAssets;
-prepared_assets()->ModelAssets; recipe_key()->String; compile_head(&VerifiedSnapshot)->Result<Vec<u8>>;
+prepared_assets()->ModelAssets; verify_prepared(&Path)->Result<PreparedReranker>;
+recipe_key()->String; compile_head(&VerifiedSnapshot)->Result<Vec<u8>>;
 prepare(&self,source:Option<&Path>,destination:&Path)->Result<PreparedReranker>;
 PreparedReranker owns Arc<VerifiedSnapshot> and model association, private constructors.
 - [ ] RED public tests exact tiny assembled bytes, every head operator/transpose,
   malformed varints/lengths/duplicate graph/output/opset/collision/nonfinite F32,
-  oldcache without upstream, changed cache and failed derivedhash no publication.
+  arbitrarily named prepared cache without upstream, changed cache and failed
+  derivedhash no publication; stage an inner ordinary-mode directory, preserving
+  umask-readable files/directories instead of publishing TempDir0700.
 - [ ] Implement bounded wire fields, preserved upstream data and exact scalar/
   tensor/node/valueinfo presence/order. Validate head with safetensors, no generic
   graph interpreter. Verify source provenance and derived four-artifact bytes.
