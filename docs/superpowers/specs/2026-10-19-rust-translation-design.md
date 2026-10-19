@@ -114,7 +114,10 @@ empty/whitespace-only translation using Python whitespace, including U+001C..001
 
 Pin ct2rs 0.10.1, compiled CTranslate2 4.8.2, sentencepiece and sentencepiece-sys
 0.13.2 with embedded SentencePiece 0.2.1. Disable default ct2rs features; enable
-Ruy/SentencePiece, macOS Accelerate, Linux OpenBLAS/system/OpenMP COMP. Linux build
+Ruy/SentencePiece, macOS Accelerate, Linux OpenBLAS/OpenMP COMP. Enable system
+only on the separate openblas-src0.10.14 dependency, not ct2rs: the latter's
+system feature skips compiling CTranslate2 and incorrectly requests CUDA archives
+for this CPU profile. Linux build
 prepares verified OpenBLAS0.3.26 privately/static, TARGET=ARMV8, BUILD_SINGLE=1,
 NO_SHARED=1, NO_LAPACK=1, ONLY_CBLAS=1, USE_OPENMP=1, NUM_THREADS=64,NUM_PARALLEL=1.
 The ordinary system libgomp is an explicit Linux native dependency. Never link a
