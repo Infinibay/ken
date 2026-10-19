@@ -44,5 +44,17 @@ ade25dd6e59cf7919537e19af9070770bd3ec5ea50b5ad98c6948ea2ff495777.
 Tiny preparation bytes come from the frozen original test helper with its SHA;
 they are preparation-only and do not masquerade as a working neural model.
 
-Current verification: seven new oracle tests plus six original translation tests
-pass. Native policy/preparation/runtime and final acceptance are still pending.
+The native text-policy slice now passes the2438 original histories, six original
+controlled restoration cases, independent-plan/sequential-collision checks, all38
+original lexicon members and the whole-scalar Unicode digest (four integration
+tests plus one unit test). Workspace formatting and ken-models all-target clippy
+pass. Model registration/preparation/runtime and final26gate acceptance remain
+pending; this is not completion of Task2 or the profile.
+
+Python sanity verification passes15651 tests with the same10 historical xfail
+IDs, no original baseline test IDs lost. The initial restricted diagnostic run
+was interrupted after three unchanged KQL-service tests could not bind local
+sockets; their worker logs confirmed PermissionError. All three passed with
+the required local-socket permission, followed by the complete passing suite.
+No original source/test/timeout was changed. Seven new oracle tests and six
+original translation tests also passed the Task1 completion command.

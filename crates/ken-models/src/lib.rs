@@ -7,6 +7,8 @@ mod native_onnx;
 mod onnx_reranker;
 mod onnx_wire;
 mod published_head;
+mod python_unicode;
+mod query_policy;
 mod reranker_model;
 mod reranker_preparation;
 mod reranker_tokens;
@@ -25,6 +27,7 @@ pub use onnx_reranker::{
     OnnxReranker, RerankDetails, RerankOptions, RerankSessionPolicy, ScoredPool,
 };
 pub use published_head::compile_head;
+pub use query_policy::{ProtectedQuery, QueryExpansionPlan, plan_query};
 pub use reranker_model::{PreparedReranker, RerankerModel};
 pub use reranker_tokens::PairTokens;
 pub use static_table::StaticTableEncoder;

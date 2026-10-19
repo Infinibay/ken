@@ -92,7 +92,7 @@ elif mode=='policy':
    try:row['output']=encoder(query)
    except ValueError as error:row['error']=str(error)
    restoration.append(row)
- result=common|{'scope':'original-only-policy-characterization','cases':rows,
+ result=common|{'scope':'original-only-policy-characterization','cases':rows,'lexicon':sorted(original._SPANISH),
   'restoration_scope':'original-policy-only-controlled-decoder','restoration':restoration}
 else:raise ValueError('unknown characterization mode')
 print(json.dumps(result,ensure_ascii=True,allow_nan=False))
