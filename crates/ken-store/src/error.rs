@@ -5,6 +5,18 @@ pub type StoreResult<T> = Result<T, StoreError>;
 
 #[derive(Debug, Error)]
 pub enum StoreError {
+    #[error("storage file {path:?}: {source}")]
+    Io {
+        path: PathBuf,
+        #[source]
+        source: std::io::Error,
+    },
+    #[error("corrupt vector manifest {path:?}: {reason}")]
+    CorruptManifest { path: PathBuf, reason: String },
+    #[error("vector dimension/count: {0}")]
+    Dimension(&'static str),
+    #[error("vector contains non-finite values or a non-finite F32 norm")]
+    NonFinite,
     #[error("SQLite database {path:?}: {source}")]
     Sqlite {
         path: PathBuf,
@@ -18,6 +30,12 @@ pub enum StoreError {
 }
 
 impl StoreError {
+    pub(crate) fn io(path: &Path, source: std::io::Error) -> Self {
+        Self::Io {
+            path: path.into(),
+            source,
+        }
+    }
     pub(crate) fn sqlite(path: &Path, source: rusqlite::Error) -> Self {
         Self::Sqlite {
             path: path.into(),
