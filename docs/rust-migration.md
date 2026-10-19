@@ -415,6 +415,11 @@ fuentes propietarias deben conservar sus hashes originales. Su identidad complet
 puede cambiar por archivos ajenos a esa lógica; la huella de fuentes actual se
 vincula a los recibos de ambas plataformas.
 
+El replay admite parches estables de Python 3.12 conservando el parche real como
+procedencia. Sigue exigiendo Unicode 15, hashes exactos de las fuentes y todos los
+resultados, filas y prompts; otra versión menor o una diferencia de comportamiento
+rechaza la comparación.
+
 Prepare todos los modelos anteriores y añada el probe explícito antes de los
 gates o de `migration_tests`; ninguna ruta se inventa cuando falta:
 
@@ -444,3 +449,11 @@ La aceptación exige las 26 comprobaciones previas más release y paridad de
 política: 28 gates y 26 huellas actuales. `Policy_accepted` corresponde a este
 tramo; `M2_accepted` permanece falso. Otros runtimes, adquisición, ciclo de vida
 de cachés, almacenamiento y etapas posteriores siguen pendientes.
+
+Cada recibo local vincula `execution-artifacts.json` por SHA-256. La matriz exige
+los archivos enumerados y sus hashes/tamaños, los recibos previos en su árbol real,
+logs, resultados XML, benchmark y trazas Linux; vuelve a comparar la salida de
+política autenticada con el oráculo original. Copie el árbol completo de evidencia
+con sus rutas relativas. Los resúmenes sueltos no acreditan una ejecución. La
+carpeta `environment` contiene cachés descartables de preparación y se excluye del
+manifiesto de resultados.

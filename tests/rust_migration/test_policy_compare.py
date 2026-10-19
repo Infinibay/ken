@@ -83,3 +83,19 @@ def test_dependency_audit_rejects_model_runtimes_and_non_system_libraries():
     for name in ['libpython3.12.so','libonnxruntime.so','libtorch.so','libunregistered.so']:
         assert dependency_errors(linux+f'{name} => /usr/lib/{name} (0x1)\n','Linux')
     assert dependency_errors(linux.replace('/lib/aarch64-linux-gnu/libc.so.6','/tmp/libc.so.6'),'Linux')
+
+
+def test_python312_patch_provenance_does_not_reject_identical_original_decisions():
+    expected=original();actual=deepcopy(expected)
+    actual['oracle']['python']='3.12.10'
+    assert compare_reference(expected,actual)==[]
+    assert actual['oracle']['python']=='3.12.10'
+    for version in ['3.11.9','3.13.0','3.12','3.12.10rc1',None,31210]:
+        bad=deepcopy(actual);bad['oracle']['python']=version
+        assert compare_reference(expected,bad),version
+    for path,value in [(['oracle','unicode'],'16.0.0'),(['oracle','sources'],{}),
+                       (['results',0,'project','model'],'wrong/model')]:
+        bad=deepcopy(actual);owner=bad
+        for key in path[:-1]:owner=owner[key]
+        owner[path[-1]]=value
+        assert compare_reference(expected,bad),path

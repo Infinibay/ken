@@ -61,7 +61,24 @@ def compare_reference(expected:dict,actual:object,*,reference_fingerprint:str|No
     # Capture verifies the current manifest before and after the original child.
     # Its ancillary checkout files need not equal the historical oracle checkout.
     wanted=expected if reference_fingerprint is None else expected|{'reference_fingerprint':reference_fingerprint}
-    return differences(wanted,actual,'original')
+    if not isinstance(actual,dict):return differences(wanted,actual,'original')
+    return (oracle_errors(wanted['oracle'],actual.get('oracle'),'original.oracle')
+        +differences({k:v for k,v in wanted.items() if k!='oracle'},
+                     {k:v for k,v in actual.items() if k!='oracle'},'original'))
+
+
+def oracle_errors(expected:dict,actual:object,path:str='reference_oracle')->list[str]:
+    """Retain actual patch provenance; require Python3.12, Unicode15 and exact owners.
+
+    Patch releases may replay an oracle only when all observed decisions, rows and
+    prompt bytes also match. This does not authorize a new minor/Unicode version.
+    """
+    if not isinstance(actual,dict):return differences(expected,actual,path)
+    patch=actual.get('python')
+    compatible=all(isinstance(v,str) and re.fullmatch(r'3\.12\.[0-9]+',v)
+                   for v in [expected.get('python'),patch])
+    wanted=expected|{'python':patch} if compatible else expected
+    return differences(wanted,actual,path)
 
 
 def dependency_errors(linked:str,system:str)->list[str]:

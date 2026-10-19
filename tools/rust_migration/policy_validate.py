@@ -8,8 +8,9 @@ from pathlib import Path
 import platform
 import subprocess
 
-from .policy_compare import GOLDEN,ROOT,RUNTIME,compare_policy,differences,select_oracle
+from .policy_compare import GOLDEN,ROOT,RUNTIME,compare_policy,differences,oracle_errors,select_oracle
 from .policy_reference import policy_cases,policy_prompts
+from .policy_evidence import execution_errors,seal_execution
 from .preparation import PreparedNativeContext,PreparedNativeEttin,PreparedNativeTranslation,PreparedTranslationBuild,policy_environment
 from .reference import Reference
 from .table_validate import _binding_matches
@@ -67,7 +68,7 @@ def policy_receipt_errors(row:dict,expected_ids:list[str],fingerprints:dict)->li
         if parity.get(key)!=identities.get(identity):errors.append('policy oracle/input fingerprint mismatch')
     golden=select_oracle(json.loads(GOLDEN.read_text()),system,architecture)
     errors.extend(differences(RUNTIME,parity.get('runtime'),'runtime'))
-    errors.extend(differences(golden['oracle'],parity.get('reference_oracle'),'reference_oracle'))
+    errors.extend(oracle_errors(golden['oracle'],parity.get('reference_oracle')))
     stamp=parity.get('reference_fingerprint')
     if not isinstance(stamp,str) or len(stamp)!=64 or any(c not in '0123456789abcdef' for c in stamp):
         errors.append('policy original manifest fingerprint required')
@@ -80,17 +81,19 @@ def aggregate_policies(directory:Path,*,expected_fingerprints:dict|None=None)->d
     if expected_fingerprints is None:
         expected_fingerprints=policy_fingerprints(ROOT,None,
             ROOT/'src/ken/embedder/data/ken__static-qwen3-r512-v2.npz',None,None,None)
-    rows=[];errors=[];ids=[c['id'] for c in policy_cases()]
+    rows=[];roots=[];errors=[];ids=[c['id'] for c in policy_cases()]
     for path in sorted(directory.rglob('summary.json')):
         try:
             row=json.loads(path.read_text())
-            if isinstance(row,dict) and row.get('scope')=='policy-local':rows.append(row)
+            if isinstance(row,dict) and row.get('scope')=='policy-local':rows.append(row);roots.append(path.parent)
         except (OSError,ValueError):errors.append('unreadable policy receipt: '+str(path))
     if sorted((r.get('platform',''),r.get('architecture','')) for r in rows)!=[('Darwin','arm64'),('Linux','aarch64')]:
         errors.append('exactly one registered macOS and Linux policy receipt required')
     signatures=[]
-    for row in rows:
-        try:errors.extend(policy_receipt_errors(row,ids,expected_fingerprints))
+    for root,row in zip(roots,rows,strict=True):
+        try:
+            errors.extend(policy_receipt_errors(row,ids,expected_fingerprints))
+            errors.extend(execution_errors(root,row))
         except (ValueError,TypeError,KeyError,AttributeError,IndexError) as error:errors.append('malformed policy receipt: '+str(error))
         signatures.append((row.get('fingerprints',{}),row.get('rustc')))
     if signatures and any(signature!=signatures[0] for signature in signatures):errors.append('policy platform source/input/toolchain drift')
@@ -134,6 +137,13 @@ def validate_policy(repo:Path,reference:Reference,model_probe:Path,potion_snapsh
         gate for gate in POLICY_GATES if result['gates'].get(gate,{}).get('ran') is not True
         or result['gates'][gate].get('passed') is not True]
     result['passed']=not result['errors'];result['Policy_local_accepted']=result['passed']
+    if result['passed']:
+        try:
+            result['execution_artifacts']=seal_execution(out)
+            result['errors'].extend(execution_errors(out,result))
+        except (OSError,ValueError,TypeError) as error:
+            result['errors'].append('execution evidence: '+str(error))
+        result['passed']=not result['errors'];result['Policy_local_accepted']=result['passed']
     _write(out/'summary.json',result);return int(not result['passed'])
 
 
