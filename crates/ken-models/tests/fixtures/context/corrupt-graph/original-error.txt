@@ -1,0 +1,12 @@
+frozen context capture failed: Traceback (most recent call last):
+  File "<string>", line 29, in <module>
+  File "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/reference/src/ken/embedder/contextual_onnx.py", line 70, in _load
+    session = ort.InferenceSession(str(root / 'onnx/model.onnx'), sess_options=options,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andres/Projects/ken/.venv/lib/python3.12/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 529, in __init__
+    self._create_inference_session(providers, provider_options, disabled_optimizers)
+  File "/Users/andres/Projects/ken/.venv/lib/python3.12/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 624, in _create_inference_session
+    sess = C.InferenceSession(session_options, self._model_path, True, self._read_config_from_model)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+onnxruntime.capi.onnxruntime_pybind11_state.InvalidProtobuf: [ONNXRuntimeError] : 7 : INVALID_PROTOBUF : Load model from $SNAPSHOT/onnx/model.onnx failed:Protobuf parsing failed.
+

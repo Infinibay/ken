@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "<string>", line 48, in <module>
+  File "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/reference/src/ken/embedder/contextual_onnx.py", line 95, in embed_query
+    return self._encode(self.model.query_prefix + query)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/reference/src/ken/embedder/contextual_onnx.py", line 89, in _encode
+    vector = self._session.run(['sentence_embedding'], inputs)[0][0]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andres/Projects/ken/.venv/lib/python3.12/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 321, in run
+    return self._sess.run(output_names, input_feed, run_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+onnxruntime.capi.onnxruntime_pybind11_state.InvalidArgument: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Unexpected input data type. Actual: (tensor(int64)) , expected: (tensor(float))

@@ -1,0 +1,254 @@
+{
+  "format": "ken-context-fixtures/1",
+  "helper": {
+    "path": "tests/test_context_encoder.py",
+    "sha256": "9959ced1452b09adc408b24fba5b29033d029f3b1aeb3a04a36da4a12ee33702"
+  },
+  "valid": [
+    {
+      "snapshot": "valid/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": "valid/definition.json",
+      "oracle": "valid/oracle.json"
+    }
+  ],
+  "invalid": [
+    {
+      "id": "wrong-dimension",
+      "snapshot": "wrong-dimension/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": "wrong-dimension/definition.json",
+      "native_reject": true,
+      "original_accepted": false
+    },
+    {
+      "id": "wrong-dtype",
+      "snapshot": "wrong-dtype/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": "wrong-dtype/definition.json",
+      "native_reject": true,
+      "original_accepted": false
+    },
+    {
+      "id": "wrong-output-name",
+      "snapshot": "wrong-output-name/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": "wrong-output-name/definition.json",
+      "native_reject": true,
+      "original_accepted": false
+    },
+    {
+      "id": "extra-row",
+      "snapshot": "extra-row/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": "extra-row/definition.json",
+      "native_reject": true,
+      "original_accepted": true
+    },
+    {
+      "id": "nan",
+      "snapshot": "nan/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": "nan/definition.json",
+      "native_reject": true,
+      "original_accepted": false
+    },
+    {
+      "id": "infinity",
+      "snapshot": "infinity/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": "infinity/definition.json",
+      "native_reject": true,
+      "original_accepted": false
+    },
+    {
+      "id": "wrong-input-dtype",
+      "snapshot": "wrong-input-dtype/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": "wrong-input-dtype/definition.json",
+      "native_reject": true,
+      "original_accepted": false
+    },
+    {
+      "id": "corrupt-graph",
+      "snapshot": "corrupt-graph/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "definition": "corrupt-graph/definition.json",
+      "native_reject": true,
+      "original_accepted": false
+    }
+  ],
+  "files": [
+    {
+      "path": "corrupt-graph/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/onnx/model.onnx",
+      "sha256": "9e9a3c16adf669fef9c716cac085708ce9ce53da2af2f0a14fd16245d36434dd"
+    },
+    {
+      "path": "corrupt-graph/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/tokenizer.json",
+      "sha256": "6c2fd815fe5f236c338a08d014a9185f3033a456186521b623447f6d05ee8de9"
+    },
+    {
+      "path": "corrupt-graph/definition.json",
+      "sha256": "1ec31174b2665165ced5ca74f9e70615e1311a7b2b9b5049c2e9a9461ae00123"
+    },
+    {
+      "path": "corrupt-graph/original-error.txt",
+      "sha256": "e503dcf7c6d3a925e2efd5aa292ca7a2ac2a255a8798520564545abe7a8e8161"
+    },
+    {
+      "path": "corrupt-graph/original.stderr.log",
+      "sha256": "c81f9b868b8c7fe8579c52fe0978677a5b80b6e021c7eef162787f6719f545a9"
+    },
+    {
+      "path": "extra-row/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/onnx/model.onnx",
+      "sha256": "22e5122ab37b3f65a5443ca02b8fb69f409ca41479e5af83261fa31838ff3e69"
+    },
+    {
+      "path": "extra-row/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/tokenizer.json",
+      "sha256": "6c2fd815fe5f236c338a08d014a9185f3033a456186521b623447f6d05ee8de9"
+    },
+    {
+      "path": "extra-row/definition.json",
+      "sha256": "b1b2ebdfe81cf9b2a5a1749ff51fcfa5e7be917d6cdf32b248e787914fd5a2b4"
+    },
+    {
+      "path": "extra-row/original.json",
+      "sha256": "7c94929207a3a06634f45f775214fdf375f174b2f73a17ba66b12ce229da7c83"
+    },
+    {
+      "path": "extra-row/original.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "infinity/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/onnx/model.onnx",
+      "sha256": "8c459f5c46e6f2c5f7bc3839044fd3286eed231ef66425e12aa077d26baaf8df"
+    },
+    {
+      "path": "infinity/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/tokenizer.json",
+      "sha256": "6c2fd815fe5f236c338a08d014a9185f3033a456186521b623447f6d05ee8de9"
+    },
+    {
+      "path": "infinity/definition.json",
+      "sha256": "478d71b962176fec4fe8991bf87cc27482f64ac3768e09c76aa5ea223aac9903"
+    },
+    {
+      "path": "infinity/original-error.txt",
+      "sha256": "a8ac8bf1f3583e83afc3830775d9a05c31d5febf8cf17163f34bf5203e55a6bc"
+    },
+    {
+      "path": "infinity/original.stderr.log",
+      "sha256": "0ca9b2f597a20ac12564f837d3ce44f742f015028880c34b86165ecb09f4656e"
+    },
+    {
+      "path": "nan/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/onnx/model.onnx",
+      "sha256": "2abb2970c34c3df79971aec17be64ba6d4dddba1aadbbcdd1c71eb666a8589c1"
+    },
+    {
+      "path": "nan/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/tokenizer.json",
+      "sha256": "6c2fd815fe5f236c338a08d014a9185f3033a456186521b623447f6d05ee8de9"
+    },
+    {
+      "path": "nan/definition.json",
+      "sha256": "7b6cc810dcafc18572c23a84d35955588f440cfa409c07d9ec56481a2202c859"
+    },
+    {
+      "path": "nan/original-error.txt",
+      "sha256": "a8ac8bf1f3583e83afc3830775d9a05c31d5febf8cf17163f34bf5203e55a6bc"
+    },
+    {
+      "path": "nan/original.stderr.log",
+      "sha256": "0ca9b2f597a20ac12564f837d3ce44f742f015028880c34b86165ecb09f4656e"
+    },
+    {
+      "path": "valid/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/onnx/model.onnx",
+      "sha256": "a3c603586272b20ca688355721efcc98836d2ba156edf565e51ccd790f29207a"
+    },
+    {
+      "path": "valid/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/tokenizer.json",
+      "sha256": "6c2fd815fe5f236c338a08d014a9185f3033a456186521b623447f6d05ee8de9"
+    },
+    {
+      "path": "valid/definition.json",
+      "sha256": "cc00f1d6a986eb911ef4c7fad2b1a76609a06f243e729d0e0acbbea359ec0794"
+    },
+    {
+      "path": "valid/oracle.json",
+      "sha256": "3eea1b6ec39849fb52815dec9da9f655977ff07e4ebb5453b238226e48371323"
+    },
+    {
+      "path": "valid/oracle.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "wrong-dimension/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/onnx/model.onnx",
+      "sha256": "54518153377f0d41b7aabadad789898805451fb1f916e17b36481987ac1fc9aa"
+    },
+    {
+      "path": "wrong-dimension/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/tokenizer.json",
+      "sha256": "6c2fd815fe5f236c338a08d014a9185f3033a456186521b623447f6d05ee8de9"
+    },
+    {
+      "path": "wrong-dimension/definition.json",
+      "sha256": "9deb9a511ae7b86b9d167f1605d4ccd36146e9c359ef6737153e2180b9314acd"
+    },
+    {
+      "path": "wrong-dimension/original-error.txt",
+      "sha256": "a8ac8bf1f3583e83afc3830775d9a05c31d5febf8cf17163f34bf5203e55a6bc"
+    },
+    {
+      "path": "wrong-dimension/original.stderr.log",
+      "sha256": "0ca9b2f597a20ac12564f837d3ce44f742f015028880c34b86165ecb09f4656e"
+    },
+    {
+      "path": "wrong-dtype/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/onnx/model.onnx",
+      "sha256": "432471a829819bdf415296274b72c4cc8cd6c4a79ff199f88b7b39255382e7af"
+    },
+    {
+      "path": "wrong-dtype/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/tokenizer.json",
+      "sha256": "6c2fd815fe5f236c338a08d014a9185f3033a456186521b623447f6d05ee8de9"
+    },
+    {
+      "path": "wrong-dtype/definition.json",
+      "sha256": "751d05e9287453597f2e28734a40bf855740f95b9ee45a02b3c4950743d0b1b7"
+    },
+    {
+      "path": "wrong-dtype/original-error.txt",
+      "sha256": "a8ac8bf1f3583e83afc3830775d9a05c31d5febf8cf17163f34bf5203e55a6bc"
+    },
+    {
+      "path": "wrong-dtype/original.stderr.log",
+      "sha256": "0ca9b2f597a20ac12564f837d3ce44f742f015028880c34b86165ecb09f4656e"
+    },
+    {
+      "path": "wrong-input-dtype/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/onnx/model.onnx",
+      "sha256": "afaa4ca95d99e6a1ce102707b556f75ada431ab8709648451a9855b187db13e4"
+    },
+    {
+      "path": "wrong-input-dtype/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/tokenizer.json",
+      "sha256": "6c2fd815fe5f236c338a08d014a9185f3033a456186521b623447f6d05ee8de9"
+    },
+    {
+      "path": "wrong-input-dtype/definition.json",
+      "sha256": "36da8c690180dc0ca815e39c98ac9fb3eec0a4a7fba7404efa32b8cafa5d2360"
+    },
+    {
+      "path": "wrong-input-dtype/original-error.txt",
+      "sha256": "70e773c2a5a7a1eefe4b640e49866908ee0545df21ef9bd5c1d08ee7481e5710"
+    },
+    {
+      "path": "wrong-input-dtype/original.stderr.log",
+      "sha256": "ad73d9b7d22a79b3fd5eb5ea73ad1c5e55c6fa4ae91df715ca77e7fe839d92ab"
+    },
+    {
+      "path": "wrong-output-name/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/onnx/model.onnx",
+      "sha256": "d34eb377bb558f74b8fa75834a1de7e624950e97f7fced666b6dd8d3fa60f075"
+    },
+    {
+      "path": "wrong-output-name/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/tokenizer.json",
+      "sha256": "6c2fd815fe5f236c338a08d014a9185f3033a456186521b623447f6d05ee8de9"
+    },
+    {
+      "path": "wrong-output-name/definition.json",
+      "sha256": "db85a39a4ef8bebd3361a431eb833bca6dda9fe1cd9cfe807570608c888d7899"
+    },
+    {
+      "path": "wrong-output-name/original-error.txt",
+      "sha256": "84a93280848828f0e8436d71cd6d8bbafbb6ff1404d3c481fddf4dcec018431c"
+    },
+    {
+      "path": "wrong-output-name/original.stderr.log",
+      "sha256": "1bfcddd8b8d45f65b5aec6d41a7fc507c07a39bb1b1d12212bbb54f064f8f2ba"
+    }
+  ]
+}
