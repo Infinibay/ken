@@ -8,6 +8,24 @@ ETTIN_ENV=('KEN_ETTIN_SOURCE','KEN_ETTIN_PROBE')
 TRANSLATION_ENV=('KEN_TRANSLATION_SOURCE','KEN_TRANSLATION_PROBE')
 TRANSLATION_BUILD_ENV=('CMAKE','PKG_CONFIG_PATH','DEP_OPENBLAS_INCLUDE','DEP_OPENBLAS_LIBRARY')
 
+@dataclass(frozen=True)
+class PreparedNativeStorage:
+    probe:Path
+
+    def environment(self)->dict[str,str]:
+        if not isinstance(self.probe,Path) or not self.probe.is_absolute():
+            raise ValueError('explicit absolute native storage probe required')
+        return {'KEN_STORAGE_PROBE':str(self.probe)}
+
+
+def storage_environment(prepared:PreparedNativeStorage|None=None)->dict[str,str]:
+    if prepared is not None:
+        if not isinstance(prepared,PreparedNativeStorage):
+            raise ValueError('typed PreparedNativeStorage input required')
+        return prepared.environment()
+    value=os.environ.get('KEN_STORAGE_PROBE')
+    return {} if value is None else PreparedNativeStorage(Path(value)).environment()
+
 
 def policy_environment(probe:Path|None=None)->dict[str,str]:
     value=str(probe) if probe is not None else os.environ.get('KEN_POLICY_PROBE')

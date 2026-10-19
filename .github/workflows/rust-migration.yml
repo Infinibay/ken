@@ -20,54 +20,8 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
-      - name: Install locked runtimes and dependencies
-        run: |
-          uv python install 3.12
-          uv sync --locked --dev
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-      - name: Install Linux execution tracer
-        if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y strace
-      - name: Prepare native model tests now included in the workspace
-        run: |
-          .venv/bin/python - <<'PY'
-          import hashlib, importlib.util, json, os, platform, shutil
-          from pathlib import Path
-          from ken.embedder.model2vec_backend import potion_assets
-          from ken.embedder.contextual_onnx import code_context_model
-          from ken.model_assets import ModelAssets
-          from tools.rust_migration.context_compare import core_for_platform, RUNTIME_REGISTRATION
-          from tools.rust_migration.context_reference import snapshot_state
-          from tools.rust_migration.ettin_reference import source_state
-          snapshot = potion_assets().resolve(local_files_only=False)
-          context = code_context_model().assets.resolve(local_files_only=False)
-          definition = json.loads(Path('src/ken/embedder/data/code-context-int8.json').read_text())
-          snapshot_state(context, definition)
-          ettin_definition = json.loads(Path('src/ken/embedder/data/ettin-68m-fp32.json').read_text())
-          ettin = ModelAssets.from_dict(ettin_definition['source']).resolve(local_files_only=False)
-          source_state(ettin, ettin_definition['source'])
-          # Test preparation copies the native C core from the pinned validation
-          # wheel. Rust loads only the authenticated standalone library.
-          package = Path(importlib.util.find_spec('onnxruntime').origin).parent
-          name = 'libonnxruntime.1.25.1.dylib' if platform.system() == 'Darwin' else 'libonnxruntime.so.1.25.1'
-          source = package / 'capi' / name
-          core = core_for_platform(json.loads(RUNTIME_REGISTRATION.read_text()), platform.system(), platform.machine())
-          assert source.stat().st_size == core['bytes']
-          assert hashlib.sha256(source.read_bytes()).hexdigest() == core['sha256']
-          library = Path.cwd() / '.ken/rust-migration/prepared-core' / name
-          library.parent.mkdir(parents=True, exist_ok=True)
-          shutil.copyfile(source, library)
-          with open(os.environ['GITHUB_ENV'], 'a') as stream:
-              stream.write(f'KEN_POTION_SNAPSHOT={snapshot}\n')
-              stream.write(f'KEN_MODEL_PROBE={Path.cwd() / "target/release/examples/model_probe"}\n')
-              stream.write(f'KEN_TABLE_PROBE={Path.cwd() / "target/release/examples/table_probe"}\n')
-              stream.write(f'KEN_CONTEXT_SNAPSHOT={context}\n')
-              stream.write(f'KEN_ORT_LIBRARY={library}\n')
-              stream.write(f'KEN_CONTEXT_PROBE={Path.cwd() / "target/release/examples/context_probe"}\n')
-              stream.write(f'KEN_ETTIN_SOURCE={ettin}\n')
-              stream.write(f'KEN_ETTIN_PROBE={Path.cwd() / "target/release/examples/ettin_probe"}\n')
-          PY
-          cargo build --release --locked -p ken-models --examples
+      - name: Prepare the complete native validation workspace
+        uses: ./.github/actions/prepare-native-validation
       - name: Freeze this checkout, without asserting local dirty-worktree hashes
         run: |
           .venv/bin/python - <<'PY'
@@ -114,17 +68,19 @@ jobs:
     needs: native
     if: always()
     runs-on: ubuntu-latest
+    env:
+      UV_PYTHON_INSTALL_DIR: ${{ github.workspace }}/.ken/rust-migration/validation-python
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
-      - run: uv python install 3.12
+      - run: uv python install 3.12.9 --no-bin
       - uses: actions/download-artifact@v8
         with:
           pattern: rust-migration-*
           path: .ken/rust-migration/platforms
       - name: Require matching Linux and macOS evidence
         run: |
-          uv run --no-project --python 3.12 python -m tools.rust_migration.validate \
+          uv run --no-project --python 3.12.9 --managed-python python -m tools.rust_migration.validate \
             --scope matrix --platform-receipts .ken/rust-migration/platforms \
             --out .ken/rust-migration/matrix
       - uses: actions/upload-artifact@v7

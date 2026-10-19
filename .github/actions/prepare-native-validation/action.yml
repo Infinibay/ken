@@ -1,0 +1,111 @@
+name: Prepare native migration validation
+description: Prepare pinned Python/Rust, registered model data and native test executables.
+runs:
+  using: composite
+  steps:
+    - name: Install pinned validation runtimes
+      shell: bash
+      run: |
+        export UV_PYTHON_INSTALL_DIR="$GITHUB_WORKSPACE/.ken/rust-migration/validation-python"
+        printf '%s\n' "UV_PYTHON_INSTALL_DIR=$UV_PYTHON_INSTALL_DIR" >> "$GITHUB_ENV"
+        uv python install 3.12.9 --no-bin
+        uv sync --locked --dev --python 3.12.9 --managed-python
+        .venv/bin/python - <<'PYTHON'
+        import platform, sqlite3, numpy
+        observed = (platform.python_version(), sqlite3.sqlite_version, numpy.__version__)
+        assert observed == ('3.12.9', '3.47.1', '2.4.4'), observed
+        PYTHON
+        rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+    - name: Install Linux execution tracer
+      if: runner.os == 'Linux'
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install -y strace build-essential pkg-config
+    - name: Prepare pinned standalone CMake and the registered original translator
+      shell: bash
+      run: |
+        uv pip install --python .venv/bin/python --target .ken/rust-migration/native-build-tools --no-deps cmake==3.31.10
+        .venv/bin/python - <<'PY'
+        import os
+        from pathlib import Path
+        cmake = Path.cwd() / '.ken/rust-migration/native-build-tools/cmake/data/bin/cmake'
+        with open(os.environ['GITHUB_ENV'], 'a') as stream:
+            stream.write(f'CMAKE={cmake}\n')
+        PY
+        # The frozen macOS oracle ran CT2 4.8.3; the Linux oracle ran 4.8.2.
+        # This changes only the disposable CI oracle environment.
+        if [ "$RUNNER_OS" = 'macOS' ]; then
+          uv pip install --python .venv/bin/python --no-deps ctranslate2==4.8.3
+        fi
+    - name: Build authenticated private OpenBLAS for Linux
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        mkdir -p .ken/rust-migration/translation-build
+        curl --fail --location --silent --show-error \
+          https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.26/OpenBLAS-0.3.26.tar.gz \
+          --output .ken/rust-migration/translation-build/OpenBLAS-0.3.26.tar.gz
+        .venv/bin/python -m tools.rust_migration.translation_build prepare-openblas \
+          --archive "$PWD/.ken/rust-migration/translation-build/OpenBLAS-0.3.26.tar.gz" \
+          --destination "$PWD/.ken/rust-migration/translation-build/openblas"
+        .venv/bin/python - <<'PY'
+        import os
+        from pathlib import Path
+        from tools.rust_migration.preparation import PreparedTranslationBuild
+        prefix = Path.cwd() / '.ken/rust-migration/translation-build/openblas'
+        values = PreparedTranslationBuild(Path(os.environ['CMAKE']), prefix).environment()
+        values['KEN_TRANSLATION_OPENBLAS_PREFIX'] = str(prefix)
+        with open(os.environ['GITHUB_ENV'], 'a') as stream:
+            for key, value in values.items():
+                stream.write(f'{key}={value}\n')
+        PY
+    - name: Prepare pinned model data and authenticated native core for tests
+      shell: bash
+      run: |
+        .venv/bin/python - <<'PY'
+        import hashlib, importlib.util, json, os, platform, shutil
+        from pathlib import Path
+        from ken.embedder.model2vec_backend import potion_assets
+        from ken.embedder.contextual_onnx import code_context_model
+        from ken.model_assets import ModelAssets
+        from tools.rust_migration.context_compare import core_for_platform, RUNTIME_REGISTRATION
+        from tools.rust_migration.context_reference import snapshot_state
+        from tools.rust_migration.ettin_reference import source_state
+        snapshot = potion_assets().resolve(local_files_only=False)
+        context = code_context_model().assets.resolve(local_files_only=False)
+        definition = json.loads(Path('src/ken/embedder/data/code-context-int8.json').read_text())
+        snapshot_state(context, definition)
+        ettin_definition = json.loads(Path('src/ken/embedder/data/ettin-68m-fp32.json').read_text())
+        ettin = ModelAssets.from_dict(ettin_definition['source']).resolve(local_files_only=False)
+        source_state(ettin, ettin_definition['source'])
+        translation_definition = json.loads(Path('src/ken/embedder/data/es-en-ct2-int8.json').read_text())
+        translation = ModelAssets.from_dict(translation_definition['source']).resolve(local_files_only=False)
+        source_state(translation, translation_definition['source'])
+        # Test preparation copies the native C core from the pinned validation
+        # wheel. Rust loads only the authenticated standalone library.
+        package = Path(importlib.util.find_spec('onnxruntime').origin).parent
+        name = 'libonnxruntime.1.25.1.dylib' if platform.system() == 'Darwin' else 'libonnxruntime.so.1.25.1'
+        source = package / 'capi' / name
+        core = core_for_platform(json.loads(RUNTIME_REGISTRATION.read_text()), platform.system(), platform.machine())
+        assert source.stat().st_size == core['bytes']
+        assert hashlib.sha256(source.read_bytes()).hexdigest() == core['sha256']
+        library = Path.cwd() / '.ken/rust-migration/prepared-core' / name
+        library.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, library)
+        with open(os.environ['GITHUB_ENV'], 'a') as stream:
+            stream.write(f'KEN_POTION_SNAPSHOT={snapshot}\n')
+            stream.write(f'KEN_MODEL_PROBE={Path.cwd() / "target/release/examples/model_probe"}\n')
+            stream.write(f'KEN_TABLE_PROBE={Path.cwd() / "target/release/examples/table_probe"}\n')
+            stream.write(f'KEN_CONTEXT_SNAPSHOT={context}\n')
+            stream.write(f'KEN_ORT_LIBRARY={library}\n')
+            stream.write(f'KEN_CONTEXT_PROBE={Path.cwd() / "target/release/examples/context_probe"}\n')
+            stream.write(f'KEN_ETTIN_SOURCE={ettin}\n')
+            stream.write(f'KEN_ETTIN_PROBE={Path.cwd() / "target/release/examples/ettin_probe"}\n')
+            stream.write(f'KEN_TRANSLATION_SOURCE={translation}\n')
+            stream.write(f'KEN_TRANSLATION_PROBE={Path.cwd() / "target/release/examples/translation_probe"}\n')
+            stream.write(f'KEN_POLICY_PROBE={Path.cwd() / "target/release/examples/model_policy_probe"}\n')
+            stream.write(f'KEN_STORAGE_PROBE={Path.cwd() / "target/release/examples/storage_probe"}\n')
+        PY
+        cargo build --release --locked -p ken-cli -p ken-models -p ken-store --bins --examples
+        # Compile test executables during preparation; the validator's unchanged
+        # execution deadline must not include a cold C++/Rust test build.
+        cargo test --locked --workspace --all-targets --no-run

@@ -82,11 +82,11 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _audit(probe: Path, output: Path) -> dict:
+def _audit(probe: Path, output: Path,*,package:str='ken-models') -> dict:
     command = ['otool', '-L', str(probe)] if platform.system() == 'Darwin' else ['ldd', str(probe)]
     linked = subprocess.run(command, text=True, capture_output=True, timeout=30)
     repo = Path(__file__).resolve().parents[2]
-    tree = subprocess.run(['cargo', 'tree', '--locked', '-p', 'ken-models', '-e', 'normal'],
+    tree = subprocess.run(['cargo', 'tree', '--locked', '-p', package, '-e', 'normal'],
                           cwd=repo, text=True, capture_output=True, timeout=60)
     (output / 'dependencies.log').write_text(linked.stdout + linked.stderr)
     (output / 'cargo-tree.log').write_text(tree.stdout + tree.stderr)

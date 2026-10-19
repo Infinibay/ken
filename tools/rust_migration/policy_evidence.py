@@ -20,11 +20,17 @@ def _digest(data:bytes)->str:
     return hashlib.sha256(data).hexdigest()
 
 
-def _read(root:Path,name:str)->bytes:
+def _relative(name:str)->PurePosixPath:
+    if not isinstance(name,str):raise ValueError('unsafe execution artifact path')
     relative=PurePosixPath(name)
-    if (not isinstance(name,str) or relative.is_absolute() or not relative.parts
+    if (relative.is_absolute() or not relative.parts
             or relative.as_posix()!=name or any(p in ('.','..') for p in relative.parts)):
         raise ValueError('unsafe execution artifact path')
+    return relative
+
+
+def _read(root:Path,name:str)->bytes:
+    relative=_relative(name)
     path=root
     for part in relative.parts:
         path=path/part
@@ -33,7 +39,7 @@ def _read(root:Path,name:str)->bytes:
     return path.read_bytes()
 
 
-def seal_execution(root:Path)->dict:
+def seal_execution(root:Path,*,format:str=FORMAT)->dict:
     """Seal saved outputs before the final root receipt; never hash that receipt itself.
 
     The disposable environment contains downloaded models/parser libraries rather
@@ -46,7 +52,7 @@ def seal_execution(root:Path)->dict:
         if path.is_file() or path.is_symlink():
             data=_read(root,relative)
             files.append({'path':relative,'bytes':len(data),'sha256':_digest(data)})
-    data=(json.dumps({'format':FORMAT,'files':files},indent=2)+'\n').encode()
+    data=(json.dumps({'format':format,'files':files},indent=2)+'\n').encode()
     (root/MANIFEST).write_bytes(data)
     return {'artifact':MANIFEST,'sha256':_digest(data)}
 
@@ -54,29 +60,34 @@ def seal_execution(root:Path)->dict:
 def execution_errors(root:Path,row:dict)->list[str]:
     """Authenticate once, then parse/recompare the same owned bytes."""
     try:
-        descriptor=row.get('execution_artifacts',{})
-        if (set(descriptor)!={'artifact','sha256'} or descriptor['artifact']!=MANIFEST):
-            raise ValueError('bound execution artifact manifest required')
-        raw=_read(root,MANIFEST)
-        if _digest(raw)!=descriptor['sha256']:raise ValueError('execution manifest hash differs')
-        manifest=json.loads(raw)
-        if set(manifest)!={'format','files'} or manifest['format']!=FORMAT or not isinstance(manifest['files'],list):
-            raise ValueError('invalid execution artifact manifest')
-        files={}
-        for record in manifest['files']:
-            if not isinstance(record,dict) or set(record)!={'path','bytes','sha256'}:
-                raise ValueError('invalid execution artifact entry')
-            name=record['path']
-            if name in files or name in ('summary.json',MANIFEST):raise ValueError('duplicate or recursive execution artifact')
-            data=_read(root,name)
-            if (type(record['bytes']) is not int or record['bytes']!=len(data)
-                    or not isinstance(record['sha256'],str) or not re.fullmatch('[0-9a-f]{64}',record['sha256'])
-                    or _digest(data)!=record['sha256']):
-                raise ValueError('execution artifact hash/size differs: '+name)
-            files[name]=data
+        files=authenticate_manifest(row.get('execution_artifacts',{}),lambda name:_read(root,name))
         return _proof_errors(files,row)
     except (OSError,ValueError,KeyError,TypeError,AttributeError,IndexError) as error:
         return ['execution evidence: '+str(error)]
+
+
+def authenticate_manifest(descriptor:dict,read,*,format:str=FORMAT)->dict[str,bytes]:
+    """Authenticate through one reader, including an already-owned outer bundle."""
+    if (set(descriptor)!={'artifact','sha256'} or descriptor['artifact']!=MANIFEST):
+        raise ValueError('bound execution artifact manifest required')
+    raw=read(MANIFEST)
+    if _digest(raw)!=descriptor['sha256']:raise ValueError('execution manifest hash differs')
+    manifest=json.loads(raw)
+    if set(manifest)!={'format','files'} or manifest['format']!=format or not isinstance(manifest['files'],list):
+        raise ValueError('invalid execution artifact manifest')
+    files={}
+    for record in manifest['files']:
+        if not isinstance(record,dict) or set(record)!={'path','bytes','sha256'}:
+            raise ValueError('invalid execution artifact entry')
+        name=record['path'];_relative(name)
+        if name in files or name in ('summary.json',MANIFEST):raise ValueError('duplicate or recursive execution artifact')
+        data=read(name)
+        if (type(record['bytes']) is not int or record['bytes']!=len(data)
+                or not isinstance(record['sha256'],str) or not re.fullmatch('[0-9a-f]{64}',record['sha256'])
+                or _digest(data)!=record['sha256']):
+            raise ValueError('execution artifact hash/size differs: '+name)
+        files[name]=data
+    return files
 
 
 def _proof_errors(files:dict[str,bytes],row:dict)->list[str]:

@@ -1,0 +1,350 @@
+{
+  "format": "ken-storage-recovery-cases/1",
+  "dim": 2,
+  "spaces": [
+    "ci_files",
+    "ci_symbols",
+    "ci_intent_sources"
+  ],
+  "cases": [
+    {
+      "id": "compact-journal_published",
+      "operation": "compact",
+      "barrier": "journal_published",
+      "before": "compact_old",
+      "after": "compact_old",
+      "final": "compact_old",
+      "roles": [
+        "interrupted",
+        "recover",
+        "repeat"
+      ]
+    },
+    {
+      "id": "compact-backup_renamed",
+      "operation": "compact",
+      "barrier": "backup_renamed",
+      "before": "compact_old",
+      "after": "compact_old",
+      "final": "compact_old",
+      "roles": [
+        "interrupted",
+        "recover",
+        "repeat"
+      ]
+    },
+    {
+      "id": "compact-new_published",
+      "operation": "compact",
+      "barrier": "new_published",
+      "before": "compact_old",
+      "after": "compact_old",
+      "final": "compact_old",
+      "roles": [
+        "interrupted",
+        "recover",
+        "repeat"
+      ]
+    },
+    {
+      "id": "compact-database_committed",
+      "operation": "compact",
+      "barrier": "database_committed",
+      "before": "compact_old",
+      "after": "compact_new",
+      "final": "compact_new",
+      "roles": [
+        "interrupted",
+        "recover",
+        "repeat"
+      ]
+    },
+    {
+      "id": "inline-first-batch",
+      "operation": "inline",
+      "barrier": "migrated",
+      "before": "inline_before",
+      "after": "inline_first_batch",
+      "final": "inline_done",
+      "roles": [
+        "interrupted",
+        "recover",
+        "resume",
+        "repeat"
+      ]
+    }
+  ],
+  "states": {
+    "compact_old": {
+      "spaces": {
+        "ci_files": [
+          {
+            "id": 1,
+            "vec_slot": 4,
+            "embedding_hex": null,
+            "vector": [
+              1.0,
+              0.0
+            ]
+          },
+          {
+            "id": 2,
+            "vec_slot": 1,
+            "embedding_hex": null,
+            "vector": [
+              0.0,
+              1.0
+            ]
+          }
+        ],
+        "ci_symbols": [
+          {
+            "id": 1,
+            "vec_slot": 4,
+            "embedding_hex": null,
+            "vector": [
+              1.0,
+              0.0
+            ]
+          },
+          {
+            "id": 2,
+            "vec_slot": 1,
+            "embedding_hex": null,
+            "vector": [
+              0.0,
+              1.0
+            ]
+          }
+        ],
+        "ci_intent_sources": [
+          {
+            "id": 1,
+            "vec_slot": 4,
+            "embedding_hex": null,
+            "vector": [
+              1.0,
+              0.0
+            ]
+          },
+          {
+            "id": 2,
+            "vec_slot": 1,
+            "embedding_hex": null,
+            "vector": [
+              0.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      "high_water": {
+        "ci_files": 5,
+        "ci_symbols": 5,
+        "ci_intent_sources": 5
+      },
+      "free": {
+        "ci_files": [],
+        "ci_symbols": [],
+        "ci_intent_sources": []
+      },
+      "internal_markers": []
+    },
+    "compact_new": {
+      "spaces": {
+        "ci_files": [
+          {
+            "id": 1,
+            "vec_slot": 1,
+            "embedding_hex": null,
+            "vector": [
+              1.0,
+              0.0
+            ]
+          },
+          {
+            "id": 2,
+            "vec_slot": 0,
+            "embedding_hex": null,
+            "vector": [
+              0.0,
+              1.0
+            ]
+          }
+        ],
+        "ci_symbols": [
+          {
+            "id": 1,
+            "vec_slot": 1,
+            "embedding_hex": null,
+            "vector": [
+              1.0,
+              0.0
+            ]
+          },
+          {
+            "id": 2,
+            "vec_slot": 0,
+            "embedding_hex": null,
+            "vector": [
+              0.0,
+              1.0
+            ]
+          }
+        ],
+        "ci_intent_sources": [
+          {
+            "id": 1,
+            "vec_slot": 1,
+            "embedding_hex": null,
+            "vector": [
+              1.0,
+              0.0
+            ]
+          },
+          {
+            "id": 2,
+            "vec_slot": 0,
+            "embedding_hex": null,
+            "vector": [
+              0.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      "high_water": {
+        "ci_files": 2,
+        "ci_symbols": 2,
+        "ci_intent_sources": 2
+      },
+      "free": {
+        "ci_files": [],
+        "ci_symbols": [],
+        "ci_intent_sources": []
+      },
+      "internal_markers": []
+    },
+    "inline_before": {
+      "spaces": {
+        "ci_files": [
+          {
+            "id": 1,
+            "vec_slot": null,
+            "embedding_hex": "000000000000803f00000000",
+            "vector": null
+          },
+          {
+            "id": 2,
+            "vec_slot": null,
+            "embedding_hex": "0000803f00000000",
+            "vector": null
+          },
+          {
+            "id": 3,
+            "vec_slot": null,
+            "embedding_hex": "000000000000803f",
+            "vector": null
+          }
+        ],
+        "ci_symbols": [],
+        "ci_intent_sources": []
+      },
+      "high_water": {
+        "ci_files": 0,
+        "ci_symbols": 0,
+        "ci_intent_sources": 0
+      },
+      "free": {
+        "ci_files": [],
+        "ci_symbols": [],
+        "ci_intent_sources": []
+      },
+      "internal_markers": []
+    },
+    "inline_first_batch": {
+      "spaces": {
+        "ci_files": [
+          {
+            "id": 1,
+            "vec_slot": null,
+            "embedding_hex": "000000000000803f00000000",
+            "vector": null
+          },
+          {
+            "id": 2,
+            "vec_slot": 0,
+            "embedding_hex": null,
+            "vector": [
+              1.0,
+              0.0
+            ]
+          },
+          {
+            "id": 3,
+            "vec_slot": null,
+            "embedding_hex": "000000000000803f",
+            "vector": null
+          }
+        ],
+        "ci_symbols": [],
+        "ci_intent_sources": []
+      },
+      "high_water": {
+        "ci_files": 1,
+        "ci_symbols": 0,
+        "ci_intent_sources": 0
+      },
+      "free": {
+        "ci_files": [],
+        "ci_symbols": [],
+        "ci_intent_sources": []
+      },
+      "internal_markers": []
+    },
+    "inline_done": {
+      "spaces": {
+        "ci_files": [
+          {
+            "id": 1,
+            "vec_slot": null,
+            "embedding_hex": "000000000000803f00000000",
+            "vector": null
+          },
+          {
+            "id": 2,
+            "vec_slot": 0,
+            "embedding_hex": null,
+            "vector": [
+              1.0,
+              0.0
+            ]
+          },
+          {
+            "id": 3,
+            "vec_slot": 1,
+            "embedding_hex": null,
+            "vector": [
+              0.0,
+              1.0
+            ]
+          }
+        ],
+        "ci_symbols": [],
+        "ci_intent_sources": []
+      },
+      "high_water": {
+        "ci_files": 2,
+        "ci_symbols": 0,
+        "ci_intent_sources": 0
+      },
+      "free": {
+        "ci_files": [],
+        "ci_symbols": [],
+        "ci_intent_sources": []
+      },
+      "internal_markers": []
+    }
+  },
+  "provenance": "Explicit axis fixtures: original Python writes the before state; an independent original process reads each recovered native generation. Values and ID/slot associations are declared before the Task5 controller implementation."
+}

@@ -14,6 +14,7 @@ from .model_reference import TOLERANCES, model_cases
 from .receipts import compare_python
 from .reference import Reference, reference_env
 from .validate import _command, _digest, _fingerprints, _rustc_version, _sha, _typing_errors, _verify, _write, bind_native_release
+from .preparation import PreparedNativeStorage,storage_environment
 from .preparation import PreparedNativeContext,PreparedNativeEttin,PreparedNativeTranslation,TRANSLATION_BUILD_ENV,context_environment,ettin_environment,translation_environment,policy_environment
 
 REQUIRED_GATES = ('originals', 'reference', 'toolchain', 'python_contracts', 'python_full', 'typing',
@@ -125,7 +126,7 @@ def benchmark_model(reference: Reference, native: Path, snapshot: Path, output: 
 
 def validate_models(repo: Path, reference: Reference, native: Path, snapshot: Path, output: Path,
                     baseline_dir: Path, original_manifest: Path, *, table_probe: Path | None = None,
-                    context:PreparedNativeContext|None=None,ettin:PreparedNativeEttin|None=None,translation:PreparedNativeTranslation|None=None,policy_probe:Path|None=None) -> int:
+                    context:PreparedNativeContext|None=None,ettin:PreparedNativeEttin|None=None,translation:PreparedNativeTranslation|None=None,policy_probe:Path|None=None,storage:PreparedNativeStorage|None=None) -> int:
     repo, output, native, snapshot = repo.resolve(), output.resolve(), native.resolve(), snapshot.absolute()
     output.mkdir(parents=True, exist_ok=True)
     gates = {}
@@ -158,6 +159,7 @@ def validate_models(repo: Path, reference: Reference, native: Path, snapshot: Pa
         for key in TRANSLATION_BUILD_ENV:env.pop(key,None)
         env.update(translation_environment(translation))
         env.update(policy_environment(policy_probe))
+        env.update(storage_environment(storage))
         py = [str(reference.python), '-m']
         gates['toolchain'] = _command(repo, env, output, 'rustc', ['rustc', '--version', '--verbose'])
         result['rustc'] = _rustc_version(output / 'rustc.log')
@@ -175,7 +177,7 @@ def validate_models(repo: Path, reference: Reference, native: Path, snapshot: Pa
         for name, command in [('fmt', ['cargo','fmt','--all','--','--check']),
                 ('clippy', ['cargo','clippy','--locked','--workspace','--all-targets','--','-D','warnings']),
                 ('rust_tests', ['cargo','test','--locked','--workspace','--all-targets']),
-                ('release', ['cargo','build','--release','--locked','-p','ken-cli','-p','ken-models','--examples','--bins','--message-format=json'])]:
+                ('release', ['cargo','build','--release','--locked','-p','ken-cli','-p','ken-models',*(['-p','ken-store'] if storage_environment(storage) else []),'--examples','--bins','--message-format=json'])]:
             gates[name] = _command(repo, env, output, name, command)
         rust_log = (output / 'rust_tests.log').read_text()
         import re

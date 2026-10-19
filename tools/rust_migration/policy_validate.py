@@ -11,6 +11,7 @@ import subprocess
 from .policy_compare import GOLDEN,ROOT,RUNTIME,compare_policy,differences,oracle_errors,select_oracle
 from .policy_reference import policy_cases,policy_prompts
 from .policy_evidence import execution_errors,seal_execution
+from .preparation import PreparedNativeStorage,storage_environment
 from .preparation import PreparedNativeContext,PreparedNativeEttin,PreparedNativeTranslation,PreparedTranslationBuild,policy_environment
 from .reference import Reference
 from .table_validate import _binding_matches
@@ -104,7 +105,7 @@ def aggregate_policies(directory:Path,*,expected_fingerprints:dict|None=None)->d
 
 def validate_policy(repo:Path,reference:Reference,model_probe:Path,potion_snapshot:Path,table_probe:Path,artifact:Path,
                     context:PreparedNativeContext,ettin:PreparedNativeEttin,translation:PreparedNativeTranslation,
-                    policy_probe:Path,out:Path,baseline_dir:Path,original_manifest:Path)->int:
+                    policy_probe:Path,out:Path,baseline_dir:Path,original_manifest:Path,*,storage:PreparedNativeStorage|None=None)->int:
     repo=repo.resolve();out=out.resolve();out.mkdir(parents=True,exist_ok=True)
     result={'scope':'policy-local','platform':platform.system(),'architecture':platform.machine(),
         'passed':False,'M2_accepted':False,'gates':{}}
@@ -116,7 +117,7 @@ def validate_policy(repo:Path,reference:Reference,model_probe:Path,potion_snapsh
         def fingerprints():return policy_fingerprints(repo,reference,artifact,context.snapshot,ettin.source,translation.source)
         before=fingerprints();result['fingerprints']=before
         validate_translation(repo,reference,model_probe,potion_snapshot,table_probe,artifact,context,ettin,translation,
-            out/'base',baseline_dir,original_manifest,policy_probe=policy_probe)
+            out/'base',baseline_dir,original_manifest,policy_probe=policy_probe,storage=storage)
         base=json.loads((out/'base/summary.json').read_text())
         result.update(translation_base=base,gates=dict(base.get('gates',{})),rustc=base.get('rustc'))
         if base.get('execution_error'):result['execution_error']=base['execution_error']

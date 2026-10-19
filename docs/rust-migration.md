@@ -402,8 +402,9 @@ el default del usuario. Cada instancia y cada resultado poseen sus datos.
 de vectores incluye BLOB vacío y slots cero o negativos. Un lector que no puede
 establecer esos hechos debe producir un error. Sólo ausencia probada de vectores
 y de marcador permite devolver `InitialModelPin`; un marcador presente vacío
-impide ese pin. El resultado es un valor: la publicación transaccional y los
-lectores SQLite/config todavía pertenecen a etapas posteriores.
+impide ese pin. El resultado es un valor. `ken-store` ya ofrece la publicación transaccional y
+los hechos SQLite; la conexión con los consumidores de la aplicación y los
+lectores de configuración se completa en sus etapas de integración.
 
 Las [expectativas originales](validation/rust-migration-2026-10-19/m2-policy/reference.json)
 se capturaron en ambas plataformas antes del código nativo: 1.292 historiales,
@@ -448,7 +449,8 @@ cargo test --locked --workspace --all-targets --no-run
 La aceptación exige las 26 comprobaciones previas más release y paridad de
 política: 28 gates y 26 huellas actuales. `Policy_accepted` corresponde a este
 tramo; `M2_accepted` permanece falso. Otros runtimes, adquisición, ciclo de vida
-de cachés, almacenamiento y etapas posteriores siguen pendientes.
+de cachés y etapas posteriores siguen pendientes. El almacenamiento tiene su
+propio perfil de aceptación, descrito abajo.
 
 Cada recibo local vincula `execution-artifacts.json` por SHA-256. La matriz exige
 los archivos enumerados y sus hashes/tamaños, los recibos previos en su árbol real,
@@ -457,3 +459,78 @@ política autenticada con el oráculo original. Copie el árbol completo de evid
 con sus rutas relativas. Los resúmenes sueltos no acreditan una ejecución. La
 carpeta `environment` contiene cachés descartables de preparación y se excluye del
 manifiesto de resultados.
+
+
+## Almacenamiento nativo y recuperación
+
+`ken-store` conserva SQLite y los segmentos formato1/F32 de65536filas. La SQL
+original se incorpora como recurso compartido. `ProjectStore` recupera una
+compactación pendiente antes de exponer la conexión; el asignador exige una
+transacción `BEGIN IMMEDIATE`. Manifiestos y segmentos se publican completos;
+los segmentos existentes no se redimensionan y las lecturas poseen sus buffers.
+La [especificación](superpowers/specs/2026-10-19-rust-storage-design.md) y el
+[plan](superpowers/plans/2026-10-19-rust-m2-storage.md) definen las garantías y
+las correcciones de integridad. Los originales y el comando instalado se conservan.
+
+Los [32 historiales originales](validation/rust-migration-2026-10-19/m2-storage/reference.json)
+se congelaron antes del código nativo:23 de compatibilidad y9 defectos de
+integridad separados. Normalización/scoring usa exactamente
+`abs(actual-reference) <= 1e-6 + 1e-6*abs(reference)`; IDs, slots, BLOBs, orden y
+tipos son exactos. El oráculo de datos exige Python3.12.9, SQLite3.47.1 y
+NumPy2.4.4. La excepción de parches de Python del perfil de políticas no amplía
+este registro. El runtime Rust usa el SQLite3.53.2 ya fijado por Cargo.
+
+Prepare los datos y cores anteriores y añada el perfil explícito:
+
+```sh
+export KEN_STORAGE_PROBE="$PWD/target/release/examples/storage_probe"
+cargo build --release --locked -p ken-cli -p ken-models -p ken-store --bins --examples
+cargo test --locked --workspace --all-targets --no-run
+.venv/bin/python -m tools.rust_migration.storage_validate \
+  --reference .ken/rust-migration/m0-m1/reference \
+  --model-probe "$KEN_MODEL_PROBE" --potion-snapshot "$KEN_POTION_SNAPSHOT" \
+  --table-probe "$KEN_TABLE_PROBE" \
+  --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
+  --context-probe "$KEN_CONTEXT_PROBE" --context-snapshot "$KEN_CONTEXT_SNAPSHOT" \
+  --library "$KEN_ORT_LIBRARY" \
+  --ettin-probe "$KEN_ETTIN_PROBE" --ettin-source "$KEN_ETTIN_SOURCE" \
+  --native "$KEN_TRANSLATION_PROBE" --source "$KEN_TRANSLATION_SOURCE" \
+  --policy-probe "$KEN_POLICY_PROBE" --storage-probe "$KEN_STORAGE_PROBE" \
+  --baseline-dir .ken/rust-migration/m0-m1 \
+  --original-manifest docs/validation/rust-migration-2026-10-18/baseline.json \
+  --out .ken/rust-migration/m2-storage/validation "${native_build_args[@]}"
+.venv/bin/python -m tools.rust_migration.storage_validate --scope matrix \
+  --platform-receipts /ruta/a/recibos-linux-y-macos \
+  --out .ken/rust-migration/m2-storage/matrix
+```
+
+El directorio del probe debe contener también `storage_recovery_driver`, vinculado
+al release recién compilado. El controlador prepara datos con el Python original,
+ejecuta copias Rust fuera del checkout con PATH sin Python y termina su propio
+grupo de procesos en cuatro fases de compactación y después del primer lote de
+migración. El original lee las generaciones recuperadas y comprueba valores,
+filas, contadores, listas libres y ausencia de marcadores internos estables.
+Linux conserva las trazas reales de cada ejecución. La prueba acredita recuperación
+ante terminación del proceso; la serialización de lectores y la pérdida eléctrica
+mantienen los límites declarados en la especificación.
+
+El probe informa tiempo del recorrido y pico acumulado de su proceso al terminar
+las observaciones, antes de serializar el transporte JSON. Los tamaños aparentes,
+bloques asignados y hashes físicos se distinguen de la comparación lógica; no se
+presume una mejora de rendimiento por el cambio de lenguaje.
+
+La matriz exige31gates y29huellas actuales: los28controles anteriores más release,
+paridad y recuperación de almacenamiento. Autentica una sola lectura de los bytes
+del árbol completo y reutiliza esos buffers al verificar el manifiesto de políticas
+anidado. Repite las comparaciones semánticas aun cuando los archivos hayan sido
+sellados de nuevo. Las fixtures sintéticas de las pruebas no pueden acreditar una
+aceptación real. `Storage_accepted` corresponde sólo a este subsistema;
+`M2_accepted` continúa falso hasta cubrir el resto de los modelos e integraciones.
+
+Los dos workflows comparten `.github/actions/prepare-native-validation`, siguiendo
+el mecanismo de [acciones compuestas de GitHub](https://docs.github.com/en/actions/tutorials/create-actions/create-a-composite-action).
+La preparación usa Python administrado por uv dentro de `.ken`, sin crear un
+comando global, y verifica las versiones registradas antes de descargar modelos;
+la [gestión de Python de uv](https://docs.astral.sh/uv/guides/install-python/)
+documenta ese mecanismo. La configuración de CI es revisable localmente; su
+presencia no acredita que se haya ejecutado en GitHub.

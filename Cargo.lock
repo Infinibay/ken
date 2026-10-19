@@ -786,9 +786,11 @@ name = "ken-store"
 version = "0.18.0"
 dependencies = [
  "ken-core",
+ "libc",
  "rusqlite",
  "serde",
  "serde_json",
+ "sha2",
  "tempfile",
  "thiserror",
 ]

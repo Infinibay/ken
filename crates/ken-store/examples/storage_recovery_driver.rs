@@ -1,6 +1,6 @@
 //! Standalone validation driver: blocks only through the ordinary progress callback.
 use ken_core::project::{DiscoveryContext, ProjectPaths};
-use ken_store::{ProjectStore, compact};
+use ken_store::{ProjectStore, compact, migrate_inline};
 use std::{
     io::{self, Write},
     path::PathBuf,
@@ -24,7 +24,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut project = ProjectStore::open(&paths)?;
     project.initialize()?;
     if phase != "recover" {
-        compact(&mut project, 2, |event| {
+        let mut progress = |event| {
             let value = serde_json::to_value(event).expect("event serialization");
             println!("{value}");
             io::stdout().flush().expect("progress output");
@@ -34,7 +34,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .read_line(&mut line)
                     .expect("controller barrier");
             }
-        })?;
+        };
+        if matches!(phase.as_str(), "migrated" | "migrate_resume") {
+            migrate_inline(&mut project, 2, None, 1, &mut progress)?;
+        } else {
+            compact(&mut project, 2, &mut progress)?;
+        }
     }
     println!("{{\"recovered\":true}}");
     Ok(())
