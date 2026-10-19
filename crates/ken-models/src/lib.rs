@@ -5,6 +5,7 @@ mod static_table;
 mod table_npz;
 mod term_cache;
 mod tokenization;
+mod verified_file;
 
 pub use assets::{ModelAssets, VerifiedSnapshot};
 pub use model2vec::Model2VecEncoder;

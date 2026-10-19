@@ -103,3 +103,87 @@ fn accepts_huggingface_blob_symlinks() {
         b"abc"
     );
 }
+
+#[cfg(unix)]
+#[test]
+fn rejects_nonregular_device_even_when_size_and_hash_match() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path().join("1111111111111111111111111111111111111111");
+    std::fs::create_dir(&root).unwrap();
+    std::os::unix::fs::symlink("/dev/null", root.join("weights.bin")).unwrap();
+    let mut value = registration();
+    value["artifacts"]["weights.bin"] = json!({"bytes":0,
+        "sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"});
+    let assets = ModelAssets::from_json(&value.to_string()).unwrap();
+    assert!(
+        assets.verify(&root).is_err(),
+        "a device is not an immutable model artifact"
+    );
+}
+
+#[cfg(unix)]
+#[test]
+fn fifo_artifact_verification_does_not_wait_for_a_writer() {
+    use std::{
+        ffi::CString,
+        process::Command,
+        time::{Duration, Instant},
+    };
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path().join("1111111111111111111111111111111111111111");
+    std::fs::create_dir(&root).unwrap();
+    let path = CString::new(root.join("weights.bin").as_os_str().as_encoded_bytes()).unwrap();
+    // SAFETY: NUL-terminated owned path; mkfifo only creates this test's FIFO.
+    assert_eq!(unsafe { libc::mkfifo(path.as_ptr(), 0o600) }, 0);
+    let mut child = Command::new(std::env::current_exe().unwrap())
+        .args(["--exact", "fifo_verification_child", "--nocapture"])
+        .env("KEN_ASSET_FIFO_CASE", &root)
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .unwrap();
+    let deadline = Instant::now() + Duration::from_secs(3);
+    loop {
+        if let Some(status) = child.try_wait().unwrap() {
+            let output = child.wait_with_output().unwrap();
+            assert!(
+                status.success(),
+                "{}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+            break;
+        }
+        if Instant::now() >= deadline {
+            child.kill().unwrap();
+            child.wait().unwrap();
+            panic!("FIFO verification blocked waiting for a writer");
+        }
+        std::thread::sleep(Duration::from_millis(5));
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn fifo_verification_child() {
+    let Some(root) = std::env::var_os("KEN_ASSET_FIFO_CASE") else {
+        return;
+    };
+    let assets = ModelAssets::from_json(&registration().to_string()).unwrap();
+    assert!(assets.verify(std::path::Path::new(&root)).is_err());
+}
+
+#[test]
+fn maximal_declared_size_returns_error_without_allocation() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path().join("1111111111111111111111111111111111111111");
+    std::fs::create_dir(&root).unwrap();
+    std::fs::write(root.join("weights.bin"), b"abc").unwrap();
+    let mut value = registration();
+    value["artifacts"]["weights.bin"]["bytes"] = json!(u64::MAX);
+    assert!(
+        ModelAssets::from_json(&value.to_string())
+            .unwrap()
+            .verify(&root)
+            .is_err()
+    );
+}

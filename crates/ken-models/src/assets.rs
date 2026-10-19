@@ -122,15 +122,17 @@ impl ModelAssets {
         }
         let mut files = BTreeMap::new();
         for (name, record) in &self.artifacts {
-            let bytes = std::fs::read(snapshot.join(name)).map_err(|source| ModelError::Io {
-                artifact: name.clone(),
-                source,
-            })?;
-            if bytes.len() as u64 != record.bytes
-                || format!("{:x}", Sha256::digest(&bytes)) != record.sha256
-            {
-                return Err(ModelError::Artifact(name.clone()));
-            }
+            let bytes =
+                crate::verified_file::read(&snapshot.join(name), record.bytes, &record.sha256)
+                    .map_err(|error| match error {
+                        crate::verified_file::VerificationError::Io(source) => ModelError::Io {
+                            artifact: name.clone(),
+                            source,
+                        },
+                        crate::verified_file::VerificationError::Invalid(_) => {
+                            ModelError::Artifact(name.clone())
+                        }
+                    })?;
             files.insert(name.clone(), bytes);
         }
         Ok(VerifiedSnapshot { files })
