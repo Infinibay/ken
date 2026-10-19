@@ -1,6 +1,7 @@
 //! Verified native model execution, independent of project discovery and storage.
 mod assets;
 mod model2vec;
+mod native_onnx;
 mod static_table;
 mod table_npz;
 mod term_cache;
@@ -9,6 +10,7 @@ mod verified_file;
 
 pub use assets::{ModelAssets, VerifiedSnapshot};
 pub use model2vec::Model2VecEncoder;
+pub use native_onnx::{NativeOnnxRuntime, RuntimeIdentity};
 pub use static_table::StaticTableEncoder;
 pub use tokenization::ModelTokenizer;
 
@@ -31,4 +33,6 @@ pub enum ModelError {
     Weights(String),
     #[error("model inference failed: {0}")]
     Inference(String),
+    #[error("native ONNX runtime: {0}")]
+    Runtime(String),
 }
