@@ -3,6 +3,7 @@ mod assets;
 mod context_encoder;
 mod context_model;
 mod model2vec;
+pub mod model_policy;
 mod native_onnx;
 mod onnx_reranker;
 mod onnx_wire;
