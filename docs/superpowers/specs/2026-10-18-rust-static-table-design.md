@@ -36,6 +36,9 @@ de `KEN_STATIC_HEAD`/cache/bundle pertenece a la futura fábrica de modelos.
   de Model2Vec. `token_count` usa encode individual con la misma política.
 - Gather LUT→A, suma F32 por texto, proyección F32 con B y norma L2 F32 acotada
   por `1e-12`. Int8 se desquantiza a F32 con escala de cada fila al cargar.
+  `reduceat` conserva la primera fila y añade la suma por pares del resto;
+  la norma también usa suma por pares. Una suma secuencial falla en cancelación
+  y textos largos, como se observó en los fixtures antes de corregir el port.
   Vacíos producen ceros si el tokenizer no añade padding. Queries/passages
   comparten tabla; batch vacío devuelve[]; resultados son copias independientes.
 - Paridad: IDs/count exactos, dimensión1024 real; ceros exactos, finitos y
@@ -66,3 +69,7 @@ Las [fuentes oficiales de npyz](https://docs.rs/npyz/0.9.1/npyz/) documentan F16
 endianness y orden; la compilación real verifica compatibilidad con Rust1.95.
 `ndarray-npy` no incluye F16 directamente; un parser NPY casero duplicaría formato.
 No se carga NumPy ni se introduce dependencia dinámica en Python/BLAS del host.
+`py_literal=0.4.0`, dependencia ya transitiva de npyz, se declara directamente
+para validar productos de forma/strides y tamaño de payload antes del lector:
+un test reprodujo overflow/pánico en el cálculo sin comprobación de npyz0.9.1.
+El parser interpreta datos literales y no evalúa código Python.

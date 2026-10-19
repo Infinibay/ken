@@ -1,11 +1,14 @@
 //! Verified native model execution, independent of project discovery and storage.
 mod assets;
 mod model2vec;
+mod static_table;
+mod table_npz;
 mod term_cache;
 mod tokenization;
 
 pub use assets::{ModelAssets, VerifiedSnapshot};
 pub use model2vec::Model2VecEncoder;
+pub use static_table::StaticTableEncoder;
 pub use tokenization::ModelTokenizer;
 
 #[derive(Debug, thiserror::Error)]
