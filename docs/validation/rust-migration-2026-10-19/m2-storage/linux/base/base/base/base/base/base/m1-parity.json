@@ -1,0 +1,1997 @@
+{
+  "kind": "native-parity",
+  "reference": "54be57530d20242289168c53a2dfacd2d2ee3e4573ed920da7a91a7caaf7f857",
+  "passed": true,
+  "cases": [
+    {
+      "id": "no_project-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-rdy6vvub/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 1,
+        "stdout": "{\n  \"ok\": false,\n  \"error\": \"no ken project found at or above /tmp/ken-status-parity-rdy6vvub/python/project \\u00fc with spaces\"\n}\n",
+        "stderr": "",
+        "duration_ns": 242141584
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-rdy6vvub/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 1,
+        "stdout": "{\n  \"error\": \"no ken project found at or above /tmp/ken-status-parity-rdy6vvub/native/project \u00fc with spaces\",\n  \"ok\": false\n}\n",
+        "stderr": "",
+        "duration_ns": 847750
+      }
+    },
+    {
+      "id": "no_project-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-qbcxcx6j/python/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "no ken project found at or above /tmp/ken-status-parity-qbcxcx6j/python/project \u00fc with spaces\nhint: `ken install .` from a project root\n",
+        "duration_ns": 257817584
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-qbcxcx6j/native/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "no ken project found at or above /tmp/ken-status-parity-qbcxcx6j/native/project \u00fc with spaces\nhint: `ken install .` from a project root\n",
+        "duration_ns": 757667
+      }
+    },
+    {
+      "id": "marker_only-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-8ke421x5/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 1,
+        "stdout": "{\n  \"ok\": false,\n  \"error\": \"no ken project found at or above /tmp/ken-status-parity-8ke421x5/python/project \\u00fc with spaces\"\n}\n",
+        "stderr": "",
+        "duration_ns": 299625833
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-8ke421x5/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 1,
+        "stdout": "{\n  \"error\": \"no ken project found at or above /tmp/ken-status-parity-8ke421x5/native/project \u00fc with spaces\",\n  \"ok\": false\n}\n",
+        "stderr": "",
+        "duration_ns": 845000
+      }
+    },
+    {
+      "id": "marker_only-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-5vdtzeop/python/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "no ken project found at or above /tmp/ken-status-parity-5vdtzeop/python/project \u00fc with spaces\nhint: `ken install .` from a project root\n",
+        "duration_ns": 238630583
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-5vdtzeop/native/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "no ken project found at or above /tmp/ken-status-parity-5vdtzeop/native/project \u00fc with spaces\nhint: `ken install .` from a project root\n",
+        "duration_ns": 805042
+      }
+    },
+    {
+      "id": "metadata_only-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-cqrk0fjt/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-cqrk0fjt/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-cqrk0fjt/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"missing\",\n    \"exists\": false\n  },\n  \"installed\": false\n}\n",
+        "stderr": "",
+        "duration_ns": 241376417
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-cqrk0fjt/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"db\": {\n    \"exists\": false,\n    \"path\": \"/tmp/ken-status-parity-cqrk0fjt/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"missing\"\n  },\n  \"installed\": false,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-cqrk0fjt/native/project \u00fc with spaces\"\n}\n",
+        "stderr": "",
+        "duration_ns": 883208
+      }
+    },
+    {
+      "id": "metadata_only-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-hvh1cz53/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-hvh1cz53/python/project \u00fc with spaces\n(no DB yet \u2014 run `ken install .`)\n",
+        "stderr": "",
+        "duration_ns": 253015000
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-hvh1cz53/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-hvh1cz53/native/project \u00fc with spaces\n(no DB yet \u2014 run `ken install .`)\n",
+        "stderr": "",
+        "duration_ns": 908166
+      }
+    },
+    {
+      "id": "installed_empty-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-mdjzem6z/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-mdjzem6z/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-mdjzem6z/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 244957542
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-mdjzem6z/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-mdjzem6z/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-mdjzem6z/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1461667
+      }
+    },
+    {
+      "id": "installed_empty-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-bd6csn16/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-bd6csn16/python/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 248263084
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-bd6csn16/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-bd6csn16/native/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1430250
+      }
+    },
+    {
+      "id": "populated-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-n3iovbw0/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-n3iovbw0/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-n3iovbw0/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 1,\n    \"files_embedded\": 1,\n    \"symbols\": 1,\n    \"symbols_embedded\": 1,\n    \"sessions\": 1,\n    \"active_sessions\": 1,\n    \"contexts\": 1,\n    \"prompt_contexts\": 1,\n    \"prompt_contexts_embedded\": 1,\n    \"interactions\": 1,\n    \"session_scores\": 1,\n    \"findings\": 1,\n    \"findings_embedded\": 1,\n    \"intent_sources\": 1,\n    \"intent_sources_embedded\": 1\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"yes\",\n    \"embeddings\": \"ready\",\n    \"predictive\": \"yes\",\n    \"findings\": \"yes\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 2,\n    \"total\": 2,\n    \"percent\": 100.0\n  },\n  \"recommendations\": [],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 263528792
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-n3iovbw0/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 1,\n    \"contexts\": 1,\n    \"files\": 1,\n    \"files_embedded\": 1,\n    \"findings\": 1,\n    \"findings_embedded\": 1,\n    \"intent_sources\": 1,\n    \"intent_sources_embedded\": 1,\n    \"interactions\": 1,\n    \"prompt_contexts\": 1,\n    \"prompt_contexts_embedded\": 1,\n    \"session_scores\": 1,\n    \"sessions\": 1,\n    \"symbols\": 1,\n    \"symbols_embedded\": 1\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-n3iovbw0/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 2,\n    \"percent\": 100.0,\n    \"total\": 2\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-n3iovbw0/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"ready\",\n    \"findings\": \"yes\",\n    \"index\": \"yes\",\n    \"predictive\": \"yes\"\n  },\n  \"recommendations\": []\n}\n",
+        "stderr": "",
+        "duration_ns": 1466333
+      }
+    },
+    {
+      "id": "populated-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-flz8h6e4/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-flz8h6e4/python/project \u00fc with spaces\nfiles indexed : 1 (1 embedded)\nsymbols       : 1 (1 embedded)\nembedding cov : 2/2 (100.0%)\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 247041166
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-flz8h6e4/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-flz8h6e4/native/project \u00fc with spaces\nfiles indexed : 1 (1 embedded)\nsymbols       : 1 (1 embedded)\nembedding cov : 2/2 (100.0%)\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1395042
+      }
+    },
+    {
+      "id": "slots-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-q225mvf1/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-q225mvf1/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-q225mvf1/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 1,\n    \"files_embedded\": 1,\n    \"symbols\": 1,\n    \"symbols_embedded\": 1,\n    \"sessions\": 1,\n    \"active_sessions\": 1,\n    \"contexts\": 1,\n    \"prompt_contexts\": 1,\n    \"prompt_contexts_embedded\": 1,\n    \"interactions\": 1,\n    \"session_scores\": 1,\n    \"findings\": 1,\n    \"findings_embedded\": 1,\n    \"intent_sources\": 1,\n    \"intent_sources_embedded\": 1\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"yes\",\n    \"embeddings\": \"ready\",\n    \"predictive\": \"yes\",\n    \"findings\": \"yes\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 2,\n    \"total\": 2,\n    \"percent\": 100.0\n  },\n  \"recommendations\": [],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 285933208
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-q225mvf1/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 1,\n    \"contexts\": 1,\n    \"files\": 1,\n    \"files_embedded\": 1,\n    \"findings\": 1,\n    \"findings_embedded\": 1,\n    \"intent_sources\": 1,\n    \"intent_sources_embedded\": 1,\n    \"interactions\": 1,\n    \"prompt_contexts\": 1,\n    \"prompt_contexts_embedded\": 1,\n    \"session_scores\": 1,\n    \"sessions\": 1,\n    \"symbols\": 1,\n    \"symbols_embedded\": 1\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-q225mvf1/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 2,\n    \"percent\": 100.0,\n    \"total\": 2\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-q225mvf1/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"ready\",\n    \"findings\": \"yes\",\n    \"index\": \"yes\",\n    \"predictive\": \"yes\"\n  },\n  \"recommendations\": []\n}\n",
+        "stderr": "",
+        "duration_ns": 1464333
+      }
+    },
+    {
+      "id": "slots-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-nffqk3mf/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-nffqk3mf/python/project \u00fc with spaces\nfiles indexed : 1 (1 embedded)\nsymbols       : 1 (1 embedded)\nembedding cov : 2/2 (100.0%)\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 243061792
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-nffqk3mf/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-nffqk3mf/native/project \u00fc with spaces\nfiles indexed : 1 (1 embedded)\nsymbols       : 1 (1 embedded)\nembedding cov : 2/2 (100.0%)\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1394041
+      }
+    },
+    {
+      "id": "mixed-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-nm0z9vxe/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-nm0z9vxe/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-nm0z9vxe/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 2,\n    \"files_embedded\": 2,\n    \"symbols\": 2,\n    \"symbols_embedded\": 2,\n    \"sessions\": 1,\n    \"active_sessions\": 1,\n    \"contexts\": 1,\n    \"prompt_contexts\": 1,\n    \"prompt_contexts_embedded\": 1,\n    \"interactions\": 1,\n    \"session_scores\": 1,\n    \"findings\": 1,\n    \"findings_embedded\": 1,\n    \"intent_sources\": 1,\n    \"intent_sources_embedded\": 1\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"yes\",\n    \"embeddings\": \"ready\",\n    \"predictive\": \"yes\",\n    \"findings\": \"yes\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 4,\n    \"total\": 4,\n    \"percent\": 100.0\n  },\n  \"recommendations\": [],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 244635626
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-nm0z9vxe/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 1,\n    \"contexts\": 1,\n    \"files\": 2,\n    \"files_embedded\": 2,\n    \"findings\": 1,\n    \"findings_embedded\": 1,\n    \"intent_sources\": 1,\n    \"intent_sources_embedded\": 1,\n    \"interactions\": 1,\n    \"prompt_contexts\": 1,\n    \"prompt_contexts_embedded\": 1,\n    \"session_scores\": 1,\n    \"sessions\": 1,\n    \"symbols\": 2,\n    \"symbols_embedded\": 2\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-nm0z9vxe/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 4,\n    \"percent\": 100.0,\n    \"total\": 4\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-nm0z9vxe/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"ready\",\n    \"findings\": \"yes\",\n    \"index\": \"yes\",\n    \"predictive\": \"yes\"\n  },\n  \"recommendations\": []\n}\n",
+        "stderr": "",
+        "duration_ns": 1529417
+      }
+    },
+    {
+      "id": "mixed-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-txxu9x_p/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-txxu9x_p/python/project \u00fc with spaces\nfiles indexed : 2 (2 embedded)\nsymbols       : 2 (2 embedded)\nembedding cov : 4/4 (100.0%)\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 303987625
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-txxu9x_p/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-txxu9x_p/native/project \u00fc with spaces\nfiles indexed : 2 (2 embedded)\nsymbols       : 2 (2 embedded)\nembedding cov : 4/4 (100.0%)\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1620250
+      }
+    },
+    {
+      "id": "partial-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-q_0_eib9/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-q_0_eib9/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-q_0_eib9/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 2,\n    \"files_embedded\": 1,\n    \"symbols\": 2,\n    \"symbols_embedded\": 1,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"yes\",\n    \"embeddings\": \"partial(2/4)\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 2,\n    \"total\": 4,\n    \"percent\": 50.0\n  },\n  \"recommendations\": [\n    \"embeddings are partial; use `ken install . --embed --embed-limit N` to warm more of the project when semantic recall matters\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 245353125
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-q_0_eib9/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 2,\n    \"files_embedded\": 1,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 2,\n    \"symbols_embedded\": 1\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-q_0_eib9/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 2,\n    \"percent\": 50.0,\n    \"total\": 4\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-q_0_eib9/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"partial(2/4)\",\n    \"findings\": \"no\",\n    \"index\": \"yes\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"embeddings are partial; use `ken install . --embed --embed-limit N` to warm more of the project when semantic recall matters\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1489458
+      }
+    },
+    {
+      "id": "partial-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-rnnxwg8z/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-rnnxwg8z/python/project \u00fc with spaces\nfiles indexed : 2 (1 embedded)\nsymbols       : 2 (1 embedded)\nembedding cov : 2/4 (50.0%)\nrecommendation: embeddings are partial; use `ken install . --embed --embed-limit N` to warm more of the project when semantic recall matters\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 245763791
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-rnnxwg8z/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-rnnxwg8z/native/project \u00fc with spaces\nfiles indexed : 2 (1 embedded)\nsymbols       : 2 (1 embedded)\nembedding cov : 2/4 (50.0%)\nrecommendation: embeddings are partial; use `ken install . --embed --embed-limit N` to warm more of the project when semantic recall matters\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1443500
+      }
+    },
+    {
+      "id": "no_embeddings-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-tr_e9rtv/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-tr_e9rtv/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-tr_e9rtv/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 1,\n    \"files_embedded\": 0,\n    \"symbols\": 1,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"yes\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 2,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken rank \\\"your task\\\"` once to lazily build embeddings\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 248990167
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-tr_e9rtv/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 1,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 1,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-tr_e9rtv/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 2\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-tr_e9rtv/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"yes\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken rank \\\"your task\\\"` once to lazily build embeddings\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1545875
+      }
+    },
+    {
+      "id": "no_embeddings-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-s4491dlw/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-s4491dlw/python/project \u00fc with spaces\nfiles indexed : 1 (0 embedded)\nsymbols       : 1 (0 embedded)\nembedding cov : 0/2 (0.0%)\nrecommendation: run `ken rank \"your task\"` once to lazily build embeddings\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 243252417
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-s4491dlw/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-s4491dlw/native/project \u00fc with spaces\nfiles indexed : 1 (0 embedded)\nsymbols       : 1 (0 embedded)\nembedding cov : 0/2 (0.0%)\nrecommendation: run `ken rank \"your task\"` once to lazily build embeddings\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1421417
+      }
+    },
+    {
+      "id": "stale-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-hulv6c95/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-hulv6c95/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-hulv6c95/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 7,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 7,\n    \"sample\": [\n      \"src/missing0.py\",\n      \"src/missing1.py\",\n      \"src/missing2.py\",\n      \"src/missing3.py\",\n      \"src/missing4.py\"\n    ]\n  },\n  \"rank_signals\": {\n    \"index\": \"yes\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 7,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"indexed files are missing on disk; run `ken install .` to resync after branch changes\",\n    \"run `ken rank \\\"your task\\\"` once to lazily build embeddings\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 257937417
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-hulv6c95/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 7,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-hulv6c95/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 7\n  },\n  \"index_health\": {\n    \"sample\": [\n      \"src/missing0.py\",\n      \"src/missing1.py\",\n      \"src/missing2.py\",\n      \"src/missing3.py\",\n      \"src/missing4.py\"\n    ],\n    \"stale_files\": 7\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-hulv6c95/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"yes\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"indexed files are missing on disk; run `ken install .` to resync after branch changes\",\n    \"run `ken rank \\\"your task\\\"` once to lazily build embeddings\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1472584
+      }
+    },
+    {
+      "id": "stale-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-fwhb0l57/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-fwhb0l57/python/project \u00fc with spaces\nfiles indexed : 7 (0 embedded)\nsymbols       : 0 (0 embedded)\nindex health  : 7 stale files (src/missing0.py, src/missing1.py, src/missing2.py, src/missing3.py, src/missing4.py)\nembedding cov : 0/7 (0.0%)\nrecommendation: indexed files are missing on disk; run `ken install .` to resync after branch changes\nrecommendation: run `ken rank \"your task\"` once to lazily build embeddings\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 270758833
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-fwhb0l57/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-fwhb0l57/native/project \u00fc with spaces\nfiles indexed : 7 (0 embedded)\nsymbols       : 0 (0 embedded)\nindex health  : 7 stale files (src/missing0.py, src/missing1.py, src/missing2.py, src/missing3.py, src/missing4.py)\nembedding cov : 0/7 (0.0%)\nrecommendation: indexed files are missing on disk; run `ken install .` to resync after branch changes\nrecommendation: run `ken rank \"your task\"` once to lazily build embeddings\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1510833
+      }
+    },
+    {
+      "id": "prompts_only-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-13gxmra8/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-13gxmra8/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-13gxmra8/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 1,\n    \"active_sessions\": 1,\n    \"contexts\": 1,\n    \"prompt_contexts\": 1,\n    \"prompt_contexts_embedded\": 1,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"verify tool hooks are recording reads/edits; no interactions have been captured\",\n    \"end the active session to snapshot predictive scores\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 249361375
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-13gxmra8/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 1,\n    \"contexts\": 1,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 1,\n    \"prompt_contexts_embedded\": 1,\n    \"session_scores\": 0,\n    \"sessions\": 1,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-13gxmra8/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-13gxmra8/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"verify tool hooks are recording reads/edits; no interactions have been captured\",\n    \"end the active session to snapshot predictive scores\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1606000
+      }
+    },
+    {
+      "id": "prompts_only-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-vvwsgvxr/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-vvwsgvxr/python/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\nrecommendation: verify tool hooks are recording reads/edits; no interactions have been captured\nrecommendation: end the active session to snapshot predictive scores\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 254496292
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-vvwsgvxr/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-vvwsgvxr/native/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\nrecommendation: verify tool hooks are recording reads/edits; no interactions have been captured\nrecommendation: end the active session to snapshot predictive scores\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1777750
+      }
+    },
+    {
+      "id": "closed_session-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-3t0azttz/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-3t0azttz/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-3t0azttz/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 1,\n    \"files_embedded\": 1,\n    \"symbols\": 1,\n    \"symbols_embedded\": 1,\n    \"sessions\": 1,\n    \"active_sessions\": 0,\n    \"contexts\": 1,\n    \"prompt_contexts\": 1,\n    \"prompt_contexts_embedded\": 1,\n    \"interactions\": 1,\n    \"session_scores\": 1,\n    \"findings\": 1,\n    \"findings_embedded\": 1,\n    \"intent_sources\": 1,\n    \"intent_sources_embedded\": 1\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"yes\",\n    \"embeddings\": \"ready\",\n    \"predictive\": \"yes\",\n    \"findings\": \"yes\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 2,\n    \"total\": 2,\n    \"percent\": 100.0\n  },\n  \"recommendations\": [],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 243458333
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-3t0azttz/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 1,\n    \"files\": 1,\n    \"files_embedded\": 1,\n    \"findings\": 1,\n    \"findings_embedded\": 1,\n    \"intent_sources\": 1,\n    \"intent_sources_embedded\": 1,\n    \"interactions\": 1,\n    \"prompt_contexts\": 1,\n    \"prompt_contexts_embedded\": 1,\n    \"session_scores\": 1,\n    \"sessions\": 1,\n    \"symbols\": 1,\n    \"symbols_embedded\": 1\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-3t0azttz/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 2,\n    \"percent\": 100.0,\n    \"total\": 2\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-3t0azttz/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"ready\",\n    \"findings\": \"yes\",\n    \"index\": \"yes\",\n    \"predictive\": \"yes\"\n  },\n  \"recommendations\": []\n}\n",
+        "stderr": "",
+        "duration_ns": 1799292
+      }
+    },
+    {
+      "id": "closed_session-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-jiizpyf9/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-jiizpyf9/python/project \u00fc with spaces\nfiles indexed : 1 (1 embedded)\nsymbols       : 1 (1 embedded)\nembedding cov : 2/2 (100.0%)\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 270629459
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-jiizpyf9/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-jiizpyf9/native/project \u00fc with spaces\nfiles indexed : 1 (1 embedded)\nsymbols       : 1 (1 embedded)\nembedding cov : 2/2 (100.0%)\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1592250
+      }
+    },
+    {
+      "id": "wal-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-k1x_p7c2/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-k1x_p7c2/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-k1x_p7c2/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 1,\n    \"files_embedded\": 0,\n    \"symbols\": 1,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"yes\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 2,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken rank \\\"your task\\\"` once to lazily build embeddings\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 256839000
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-k1x_p7c2/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 1,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 1,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-k1x_p7c2/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 2\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-k1x_p7c2/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"yes\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken rank \\\"your task\\\"` once to lazily build embeddings\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1616250
+      }
+    },
+    {
+      "id": "wal-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-33__ja6p/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-33__ja6p/python/project \u00fc with spaces\nfiles indexed : 1 (0 embedded)\nsymbols       : 1 (0 embedded)\nembedding cov : 0/2 (0.0%)\nrecommendation: run `ken rank \"your task\"` once to lazily build embeddings\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 262978209
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-33__ja6p/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-33__ja6p/native/project \u00fc with spaces\nfiles indexed : 1 (0 embedded)\nsymbols       : 1 (0 embedded)\nembedding cov : 0/2 (0.0%)\nrecommendation: run `ken rank \"your task\"` once to lazily build embeddings\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1520750
+      }
+    },
+    {
+      "id": "nested-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-m3nsa6xp/python/project \u00fc with spaces/a/b",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-m3nsa6xp/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-m3nsa6xp/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 255511001
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-m3nsa6xp/native/project \u00fc with spaces/a/b",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-m3nsa6xp/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-m3nsa6xp/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1823333
+      }
+    },
+    {
+      "id": "nested-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-ahe6pvuz/python/project \u00fc with spaces/a/b"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-ahe6pvuz/python/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 254961792
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-ahe6pvuz/native/project \u00fc with spaces/a/b"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-ahe6pvuz/native/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1611958
+      }
+    },
+    {
+      "id": "missing_start-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-f8pvfvb4/python/project \u00fc with spaces/a/b",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-f8pvfvb4/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-f8pvfvb4/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 250402209
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-f8pvfvb4/native/project \u00fc with spaces/a/b",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-f8pvfvb4/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-f8pvfvb4/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1627208
+      }
+    },
+    {
+      "id": "missing_start-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-99o8_rdy/python/project \u00fc with spaces/a/b"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-99o8_rdy/python/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 282035083
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-99o8_rdy/native/project \u00fc with spaces/a/b"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-99o8_rdy/native/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1548500
+      }
+    },
+    {
+      "id": "override_valid-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-xlgawp5x/python/outside",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-xlgawp5x/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-xlgawp5x/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 279872459
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-xlgawp5x/native/outside",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-xlgawp5x/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-xlgawp5x/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1566042
+      }
+    },
+    {
+      "id": "override_valid-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-getaiow6/python/outside"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-getaiow6/python/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 247755458
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-getaiow6/native/outside"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-getaiow6/native/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1544042
+      }
+    },
+    {
+      "id": "override_invalid-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-oq4u2aqu/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 1,
+        "stdout": "{\n  \"ok\": false,\n  \"error\": \"no ken project found at or above /tmp/ken-status-parity-oq4u2aqu/python/project \\u00fc with spaces\"\n}\n",
+        "stderr": "",
+        "duration_ns": 244157125
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-oq4u2aqu/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 1,
+        "stdout": "{\n  \"error\": \"no ken project found at or above /tmp/ken-status-parity-oq4u2aqu/native/project \u00fc with spaces\",\n  \"ok\": false\n}\n",
+        "stderr": "",
+        "duration_ns": 905333
+      }
+    },
+    {
+      "id": "override_invalid-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-bctnkloi/python/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "no ken project found at or above /tmp/ken-status-parity-bctnkloi/python/project \u00fc with spaces\nhint: `ken install .` from a project root\n",
+        "duration_ns": 253789959
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-bctnkloi/native/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "no ken project found at or above /tmp/ken-status-parity-bctnkloi/native/project \u00fc with spaces\nhint: `ken install .` from a project root\n",
+        "duration_ns": 962542
+      }
+    },
+    {
+      "id": "override_empty-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-4wqppgi_/python/project \u00fc with spaces/a/b",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-4wqppgi_/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-4wqppgi_/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 249196042
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-4wqppgi_/native/project \u00fc with spaces/a/b",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-4wqppgi_/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-4wqppgi_/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1506667
+      }
+    },
+    {
+      "id": "override_empty-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-_sv50zd1/python/project \u00fc with spaces/a/b"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-_sv50zd1/python/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 251287166
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-_sv50zd1/native/project \u00fc with spaces/a/b"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-_sv50zd1/native/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1497750
+      }
+    },
+    {
+      "id": "tilde_override-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-skdq8eum/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-skdq8eum/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-skdq8eum/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 242144292
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-skdq8eum/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-skdq8eum/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-skdq8eum/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1542917
+      }
+    },
+    {
+      "id": "tilde_override-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-8mt9l3ah/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-8mt9l3ah/python/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 255674667
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-8mt9l3ah/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-8mt9l3ah/native/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1555167
+      }
+    },
+    {
+      "id": "symlink_start-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-0co5d2d5/python/linked",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-0co5d2d5/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-0co5d2d5/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 236895209
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-0co5d2d5/native/linked",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-0co5d2d5/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-0co5d2d5/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1486291
+      }
+    },
+    {
+      "id": "symlink_start-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-89r4p_cj/python/linked"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-89r4p_cj/python/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 237849833
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-89r4p_cj/native/linked"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-89r4p_cj/native/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1545917
+      }
+    },
+    {
+      "id": "invalid_port-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-8c2bosx3/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-8c2bosx3/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-8c2bosx3/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 246795125
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-8c2bosx3/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-8c2bosx3/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-8c2bosx3/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1466042
+      }
+    },
+    {
+      "id": "invalid_port-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-_8u03zqt/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-_8u03zqt/python/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 246797833
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-_8u03zqt/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-_8u03zqt/native/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1645125
+      }
+    },
+    {
+      "id": "health-up",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-opuisxu7/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-opuisxu7/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-opuisxu7/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": true,\n    \"sessions_active\": 1,\n    \"idle_s\": 2.5,\n    \"version\": \"fixture\"\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 253030000
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-opuisxu7/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"idle_s\": 2.5,\n    \"running\": true,\n    \"sessions_active\": 1,\n    \"version\": \"fixture\"\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-opuisxu7/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-opuisxu7/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 2297791
+      }
+    },
+    {
+      "id": "health-empty",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-i6hcuivl/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-i6hcuivl/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-i6hcuivl/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 248758834
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-i6hcuivl/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-i6hcuivl/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-i6hcuivl/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 2091250
+      }
+    },
+    {
+      "id": "health-empty_object",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-kewok3a9/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-kewok3a9/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-kewok3a9/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 245101208
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-kewok3a9/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-kewok3a9/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-kewok3a9/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 2039209
+      }
+    },
+    {
+      "id": "health-invalid",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-h4hawufp/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-h4hawufp/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-h4hawufp/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 246673291
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-h4hawufp/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-h4hawufp/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-h4hawufp/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 2116209
+      }
+    },
+    {
+      "id": "health-array",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-jq_yozc4/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-jq_yozc4/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-jq_yozc4/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 241995625
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-jq_yozc4/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-jq_yozc4/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-jq_yozc4/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1981166
+      }
+    },
+    {
+      "id": "health-null",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-8z1zxtwx/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-8z1zxtwx/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-8z1zxtwx/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 243639958
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-8z1zxtwx/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-8z1zxtwx/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-8z1zxtwx/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1913917
+      }
+    },
+    {
+      "id": "health-unauthorized",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-o4mm8pc6/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-o4mm8pc6/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-o4mm8pc6/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 251125500
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-o4mm8pc6/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-o4mm8pc6/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-o4mm8pc6/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 2073209
+      }
+    },
+    {
+      "id": "health-error",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-8lp3g4_2/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-8lp3g4_2/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-8lp3g4_2/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 276387834
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-8lp3g4_2/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-8lp3g4_2/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-8lp3g4_2/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 2225000
+      }
+    },
+    {
+      "id": "health-slow",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-v6oghg2j/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-v6oghg2j/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-v6oghg2j/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 1267486584
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-v6oghg2j/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-v6oghg2j/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-v6oghg2j/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1057802834
+      }
+    },
+    {
+      "id": "health-redirect",
+      "exception_id": "health_redirect",
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-hv57ee9a/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-hv57ee9a/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-hv57ee9a/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": true,\n    \"sessions_active\": 1,\n    \"idle_s\": 2.5,\n    \"version\": \"fixture\"\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 251911708
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-hv57ee9a/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-hv57ee9a/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-hv57ee9a/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1937500
+      }
+    },
+    {
+      "id": "invalid_meta",
+      "exception_id": "data_error",
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-ry74jd7o/python/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/__main__.py\", line 8, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/cli.py\", line 476, in main\n    return _dispatch(args, parser)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/cli.py\", line 546, in _dispatch\n    return show_status(Path(args.path), as_json=args.json)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 34, in show_status\n    report = status_report(start)\n             ^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 58, in status_report\n    meta = json.loads(_paths.meta_path(root).read_text(encoding=\"utf-8\"))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.local/share/uv/python/cpython-3.12.9-linux-aarch64-gnu/lib/python3.12/json/__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.local/share/uv/python/cpython-3.12.9-linux-aarch64-gnu/lib/python3.12/json/decoder.py\", line 338, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.local/share/uv/python/cpython-3.12.9-linux-aarch64-gnu/lib/python3.12/json/decoder.py\", line 354, in raw_decode\n    obj, end = self.scan_once(s, idx)\n               ^^^^^^^^^^^^^^^^^^^^^^\njson.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n",
+        "duration_ns": 246712500
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-ry74jd7o/native/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "ken-rs status: invalid JSON metadata at /tmp/ken-status-parity-ry74jd7o/native/project \u00fc with spaces/.ken/meta.json: EOF while parsing an object at line 1 column 1\n",
+        "duration_ns": 922916
+      }
+    },
+    {
+      "id": "missing_id",
+      "exception_id": "data_error",
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-9w5qt2p8/python/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/__main__.py\", line 8, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/cli.py\", line 476, in main\n    return _dispatch(args, parser)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/cli.py\", line 546, in _dispatch\n    return show_status(Path(args.path), as_json=args.json)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 34, in show_status\n    report = status_report(start)\n             ^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 63, in status_report\n    \"project_id\": meta[\"project_id\"],\n                  ~~~~^^^^^^^^^^^^^^\nKeyError: 'project_id'\n",
+        "duration_ns": 222947667
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-9w5qt2p8/native/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "ken-rs status: invalid metadata at /tmp/ken-status-parity-9w5qt2p8/native/project \u00fc with spaces/.ken/meta.json: missing project_id\n",
+        "duration_ns": 946375
+      }
+    },
+    {
+      "id": "corrupt_db",
+      "exception_id": "data_error",
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-l66ie970/python/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/__main__.py\", line 8, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/cli.py\", line 476, in main\n    return _dispatch(args, parser)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/cli.py\", line 546, in _dispatch\n    return show_status(Path(args.path), as_json=args.json)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 34, in show_status\n    report = status_report(start)\n             ^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 74, in status_report\n    counts = _read_counts(db_p)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 122, in _read_counts\n    conn = connect(db_p)\n           ^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/db.py\", line 38, in connect\n    conn.execute(\"PRAGMA journal_mode = WAL\")\nsqlite3.DatabaseError: file is not a database\n",
+        "duration_ns": 242189792
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-l66ie970/native/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "ken-rs status: cannot read SQLite database /tmp/ken-status-parity-l66ie970/native/project \u00fc with spaces/.ken/ken.db: file is not a database\n",
+        "duration_ns": 1147000
+      }
+    },
+    {
+      "id": "old_schema",
+      "exception_id": "data_error",
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-thj6o73b/python/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/__main__.py\", line 8, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/cli.py\", line 476, in main\n    return _dispatch(args, parser)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/cli.py\", line 546, in _dispatch\n    return show_status(Path(args.path), as_json=args.json)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 34, in show_status\n    report = status_report(start)\n             ^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 74, in status_report\n    counts = _read_counts(db_p)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 127, in _read_counts\n    symbols=_count(conn, \"ci_symbols\"),\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 153, in _count\n    return int(conn.execute(sql).fetchone()[\"n\"])\n               ^^^^^^^^^^^^^^^^^\nsqlite3.OperationalError: no such table: ci_symbols\n",
+        "duration_ns": 245508125
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-thj6o73b/native/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "ken-rs status: cannot read SQLite database /tmp/ken-status-parity-thj6o73b/native/project \u00fc with spaces/.ken/ken.db: no such table: ci_symbols\n",
+        "duration_ns": 1525167
+      }
+    },
+    {
+      "id": "missing_token",
+      "exception_id": "data_error",
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-4wt9ebnp/python/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/__main__.py\", line 8, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/cli.py\", line 476, in main\n    return _dispatch(args, parser)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/cli.py\", line 546, in _dispatch\n    return show_status(Path(args.path), as_json=args.json)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 34, in show_status\n    report = status_report(start)\n             ^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 84, in status_report\n    \"daemon\": _daemon_health(root),\n              ^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/status.py\", line 174, in _daemon_health\n    health = daemon_client.health(root)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/daemon/client.py\", line 75, in health\n    return _request(\"GET\", project_root, port, \"/health\", body=None, timeout=HEALTH_TIMEOUT_S)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/daemon/client.py\", line 178, in _request\n    headers = {\"Authorization\": f\"Bearer {_read_token(project_root)}\"}\n                                          ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.ken/rust-migration/m2-context/reference-t4/src/ken/daemon/client.py\", line 164, in _read_token\n    return str(meta[\"auth_token\"])\n               ~~~~^^^^^^^^^^^^^^\nKeyError: 'auth_token'\n",
+        "duration_ns": 248519291
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-4wt9ebnp/native/project \u00fc with spaces"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "ken-rs status: invalid metadata at /tmp/ken-status-parity-4wt9ebnp/native/project \u00fc with spaces/.ken/meta.json: auth_token must be a string\n",
+        "duration_ns": 1436125
+      }
+    },
+    {
+      "id": "unknown-argument",
+      "exception_id": "argument_error",
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-gh6z0pt8/python/project \u00fc with spaces",
+          "--unknown"
+        ],
+        "returncode": 2,
+        "stdout": "",
+        "stderr": "usage: ken [-h] [--version]\n           {install,reinstall,status,rank,explain,search-files,search-symbols,bench,reembed,vectors,default-model,models,remember,forget,findings,recall,related-findings,file-findings,findings-graph,serve,hook,mcp,tools,uninstall,structural,kql2,code-check,code-find,retrieval}\n           ...\nken: error: unrecognized arguments: --unknown\n",
+        "duration_ns": 239403792
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-gh6z0pt8/native/project \u00fc with spaces",
+          "--unknown"
+        ],
+        "returncode": 2,
+        "stdout": "",
+        "stderr": "error: unexpected argument '--unknown' found\n\n  tip: to pass '--unknown' as a value, use '-- --unknown'\n\nUsage: ken-rs status <PATH>\n\nFor more information, try '--help'.\n",
+        "duration_ns": 794000
+      }
+    },
+    {
+      "id": "shared_symlinks-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-xz06pqtd/python/project \u00fc with spaces/l24",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-xz06pqtd/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-xz06pqtd/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 0,\n    \"sample\": []\n  },\n  \"rank_signals\": {\n    \"index\": \"empty\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 0,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 250626000
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-xz06pqtd/native/project \u00fc with spaces/l24",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 0,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 0,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-xz06pqtd/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 0\n  },\n  \"index_health\": {\n    \"sample\": [],\n    \"stale_files\": 0\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-xz06pqtd/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"empty\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"run `ken install .` or re-run it to populate the code index\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1881708
+      }
+    },
+    {
+      "id": "shared_symlinks-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-_9_xhj5f/python/project \u00fc with spaces/l24"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-_9_xhj5f/python/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 240113458
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-_9_xhj5f/native/project \u00fc with spaces/l24"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-_9_xhj5f/native/project \u00fc with spaces\nfiles indexed : 0 (0 embedded)\nsymbols       : 0 (0 embedded)\nrecommendation: run `ken install .` or re-run it to populate the code index\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1585500
+      }
+    },
+    {
+      "id": "stale_cycle-json",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-tk0uzgsz/python/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"ok\": true,\n  \"project_root\": \"/tmp/ken-status-parity-tk0uzgsz/python/project \\u00fc with spaces\",\n  \"project_id\": \"fixture-project\",\n  \"db\": {\n    \"path\": \"/tmp/ken-status-parity-tk0uzgsz/python/project \\u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\",\n    \"exists\": true\n  },\n  \"installed\": true,\n  \"counts\": {\n    \"files\": 1,\n    \"files_embedded\": 0,\n    \"symbols\": 1,\n    \"symbols_embedded\": 0,\n    \"sessions\": 0,\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"interactions\": 0,\n    \"session_scores\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0\n  },\n  \"index_health\": {\n    \"stale_files\": 1,\n    \"sample\": [\n      \"src/live0.py\"\n    ]\n  },\n  \"rank_signals\": {\n    \"index\": \"yes\",\n    \"embeddings\": \"none\",\n    \"predictive\": \"no\",\n    \"findings\": \"no\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"total\": 2,\n    \"percent\": 0.0\n  },\n  \"recommendations\": [\n    \"indexed files are missing on disk; run `ken install .` to resync after branch changes\",\n    \"run `ken rank \\\"your task\\\"` once to lazily build embeddings\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ],\n  \"daemon\": {\n    \"running\": false\n  }\n}\n",
+        "stderr": "",
+        "duration_ns": 254255917
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-tk0uzgsz/native/project \u00fc with spaces",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"counts\": {\n    \"active_sessions\": 0,\n    \"contexts\": 0,\n    \"files\": 1,\n    \"files_embedded\": 0,\n    \"findings\": 0,\n    \"findings_embedded\": 0,\n    \"intent_sources\": 0,\n    \"intent_sources_embedded\": 0,\n    \"interactions\": 0,\n    \"prompt_contexts\": 0,\n    \"prompt_contexts_embedded\": 0,\n    \"session_scores\": 0,\n    \"sessions\": 0,\n    \"symbols\": 1,\n    \"symbols_embedded\": 0\n  },\n  \"daemon\": {\n    \"running\": false\n  },\n  \"db\": {\n    \"exists\": true,\n    \"path\": \"/tmp/ken-status-parity-tk0uzgsz/native/project \u00fc with spaces/.ken/ken.db\",\n    \"size\": \"332KiB\"\n  },\n  \"embedding_coverage\": {\n    \"embedded\": 0,\n    \"percent\": 0.0,\n    \"total\": 2\n  },\n  \"index_health\": {\n    \"sample\": [\n      \"src/live0.py\"\n    ],\n    \"stale_files\": 1\n  },\n  \"installed\": true,\n  \"ok\": true,\n  \"project_id\": \"fixture-project\",\n  \"project_root\": \"/tmp/ken-status-parity-tk0uzgsz/native/project \u00fc with spaces\",\n  \"rank_signals\": {\n    \"embeddings\": \"none\",\n    \"findings\": \"no\",\n    \"index\": \"yes\",\n    \"predictive\": \"no\"\n  },\n  \"recommendations\": [\n    \"indexed files are missing on disk; run `ken install .` to resync after branch changes\",\n    \"run `ken rank \\\"your task\\\"` once to lazily build embeddings\",\n    \"submit at least one prompt through a hooked agent to seed context history\",\n    \"let hooks run through a few real turns to build predictive history\",\n    \"save reusable project facts with `ken remember TOPIC CONTENT`\"\n  ]\n}\n",
+        "stderr": "",
+        "duration_ns": 1670875
+      }
+    },
+    {
+      "id": "stale_cycle-text",
+      "exception_id": null,
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "python": {
+        "argv": [
+          "/app/.venv/bin/python",
+          "-m",
+          "ken",
+          "status",
+          "/tmp/ken-status-parity-oaaf2o52/python/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-oaaf2o52/python/project \u00fc with spaces\nfiles indexed : 1 (0 embedded)\nsymbols       : 1 (0 embedded)\nindex health  : 1 stale files (src/live0.py)\nembedding cov : 0/2 (0.0%)\nrecommendation: indexed files are missing on disk; run `ken install .` to resync after branch changes\nrecommendation: run `ken rank \"your task\"` once to lazily build embeddings\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 242513541
+      },
+      "native": {
+        "argv": [
+          "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "status",
+          "/tmp/ken-status-parity-oaaf2o52/native/project \u00fc with spaces"
+        ],
+        "returncode": 0,
+        "stdout": "project_root  : /tmp/ken-status-parity-oaaf2o52/native/project \u00fc with spaces\nfiles indexed : 1 (0 embedded)\nsymbols       : 1 (0 embedded)\nindex health  : 1 stale files (src/live0.py)\nembedding cov : 0/2 (0.0%)\nrecommendation: indexed files are missing on disk; run `ken install .` to resync after branch changes\nrecommendation: run `ken rank \"your task\"` once to lazily build embeddings\ndaemon        : stopped\n",
+        "stderr": "",
+        "duration_ns": 1504666
+      }
+    }
+  ]
+}

@@ -1,0 +1,1181 @@
+{
+  "passed": true,
+  "errors": [],
+  "metrics": {
+    "native/passages": {
+      "load_ns": {
+        "median": 87179021.0,
+        "p95": 95656917,
+        "max": 96032542
+      },
+      "inference_ns": {
+        "median": 1655750.0,
+        "p95": 1772000,
+        "max": 1788459
+      },
+      "peak_after_load_bytes": {
+        "median": 104570880.0,
+        "p95": 112041984,
+        "max": 112041984
+      },
+      "peak_after_inference_bytes": {
+        "median": 104570880.0,
+        "p95": 112041984,
+        "max": 112041984
+      }
+    },
+    "native/query": {
+      "load_ns": {
+        "median": 86308520.5,
+        "p95": 93050375,
+        "max": 106281959
+      },
+      "inference_ns": {
+        "median": 48896.5,
+        "p95": 84750,
+        "max": 116250
+      },
+      "peak_after_load_bytes": {
+        "median": 104841216.0,
+        "p95": 110977024,
+        "max": 112119808
+      },
+      "peak_after_inference_bytes": {
+        "median": 104841216.0,
+        "p95": 110977024,
+        "max": 112119808
+      }
+    },
+    "python/passages": {
+      "load_ns": {
+        "median": 148507125.0,
+        "p95": 182974708,
+        "max": 184840584
+      },
+      "inference_ns": {
+        "median": 2488541.5,
+        "p95": 3007250,
+        "max": 3016458
+      },
+      "peak_after_load_bytes": {
+        "median": 230240256.0,
+        "p95": 242757632,
+        "max": 242757632
+      },
+      "peak_after_inference_bytes": {
+        "median": 230240256.0,
+        "p95": 242757632,
+        "max": 242757632
+      }
+    },
+    "python/query": {
+      "load_ns": {
+        "median": 148963187.5,
+        "p95": 283873167,
+        "max": 315317584
+      },
+      "inference_ns": {
+        "median": 265166.0,
+        "p95": 403166,
+        "max": 641292
+      },
+      "peak_after_load_bytes": {
+        "median": 230778880.0,
+        "p95": 242757632,
+        "max": 242851840
+      },
+      "peak_after_inference_bytes": {
+        "median": 230778880.0,
+        "p95": 242757632,
+        "max": 242851840
+      }
+    }
+  },
+  "samples": [
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 0,
+      "load_ns": 283873167,
+      "inference_ns": 641292,
+      "peak_after_load_bytes": 146923520,
+      "peak_after_inference_bytes": 146923520
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 0,
+      "load_ns": 137084708,
+      "inference_ns": 2621333,
+      "peak_after_load_bytes": 206741504,
+      "peak_after_inference_bytes": 206741504
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 1,
+      "load_ns": 148864375,
+      "inference_ns": 2391667,
+      "peak_after_load_bytes": 209993728,
+      "peak_after_inference_bytes": 209993728
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 1,
+      "load_ns": 141886958,
+      "inference_ns": 300541,
+      "peak_after_load_bytes": 215207936,
+      "peak_after_inference_bytes": 215207936
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 2,
+      "load_ns": 140979750,
+      "inference_ns": 251541,
+      "peak_after_load_bytes": 223965184,
+      "peak_after_inference_bytes": 223965184
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 2,
+      "load_ns": 142592042,
+      "inference_ns": 2501792,
+      "peak_after_load_bytes": 223965184,
+      "peak_after_inference_bytes": 223965184
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 3,
+      "load_ns": 142407417,
+      "inference_ns": 2492708,
+      "peak_after_load_bytes": 223965184,
+      "peak_after_inference_bytes": 223965184
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 3,
+      "load_ns": 159422583,
+      "inference_ns": 222083,
+      "peak_after_load_bytes": 225001472,
+      "peak_after_inference_bytes": 225001472
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 4,
+      "load_ns": 145983833,
+      "inference_ns": 250416,
+      "peak_after_load_bytes": 225001472,
+      "peak_after_inference_bytes": 225001472
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 4,
+      "load_ns": 143975875,
+      "inference_ns": 2606791,
+      "peak_after_load_bytes": 225001472,
+      "peak_after_inference_bytes": 225001472
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 5,
+      "load_ns": 143773375,
+      "inference_ns": 2314250,
+      "peak_after_load_bytes": 225001472,
+      "peak_after_inference_bytes": 225001472
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 5,
+      "load_ns": 177632500,
+      "inference_ns": 403166,
+      "peak_after_load_bytes": 226033664,
+      "peak_after_inference_bytes": 226033664
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 6,
+      "load_ns": 147176167,
+      "inference_ns": 242375,
+      "peak_after_load_bytes": 226041856,
+      "peak_after_inference_bytes": 226041856
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 6,
+      "load_ns": 149678667,
+      "inference_ns": 2572416,
+      "peak_after_load_bytes": 226045952,
+      "peak_after_inference_bytes": 226045952
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 7,
+      "load_ns": 148149875,
+      "inference_ns": 2334583,
+      "peak_after_load_bytes": 226070528,
+      "peak_after_inference_bytes": 226070528
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 7,
+      "load_ns": 315317584,
+      "inference_ns": 278375,
+      "peak_after_load_bytes": 227069952,
+      "peak_after_inference_bytes": 227069952
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 8,
+      "load_ns": 267788417,
+      "inference_ns": 303750,
+      "peak_after_load_bytes": 227074048,
+      "peak_after_inference_bytes": 227074048
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 8,
+      "load_ns": 184840584,
+      "inference_ns": 2749666,
+      "peak_after_load_bytes": 227074048,
+      "peak_after_inference_bytes": 227074048
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 9,
+      "load_ns": 157537583,
+      "inference_ns": 2815333,
+      "peak_after_load_bytes": 227074048,
+      "peak_after_inference_bytes": 227074048
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 9,
+      "load_ns": 182464791,
+      "inference_ns": 277042,
+      "peak_after_load_bytes": 228106240,
+      "peak_after_inference_bytes": 228106240
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 10,
+      "load_ns": 177978500,
+      "inference_ns": 289667,
+      "peak_after_load_bytes": 228233216,
+      "peak_after_inference_bytes": 228233216
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 10,
+      "load_ns": 173332083,
+      "inference_ns": 2469584,
+      "peak_after_load_bytes": 228233216,
+      "peak_after_inference_bytes": 228233216
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 11,
+      "load_ns": 158126166,
+      "inference_ns": 2484375,
+      "peak_after_load_bytes": 228233216,
+      "peak_after_inference_bytes": 228233216
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 11,
+      "load_ns": 157234375,
+      "inference_ns": 319708,
+      "peak_after_load_bytes": 229154816,
+      "peak_after_inference_bytes": 229154816
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 12,
+      "load_ns": 155109541,
+      "inference_ns": 292666,
+      "peak_after_load_bytes": 229154816,
+      "peak_after_inference_bytes": 229154816
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 12,
+      "load_ns": 160862833,
+      "inference_ns": 2378708,
+      "peak_after_load_bytes": 229154816,
+      "peak_after_inference_bytes": 229154816
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 13,
+      "load_ns": 149186500,
+      "inference_ns": 2462667,
+      "peak_after_load_bytes": 229154816,
+      "peak_after_inference_bytes": 229154816
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 13,
+      "load_ns": 151366542,
+      "inference_ns": 255500,
+      "peak_after_load_bytes": 230240256,
+      "peak_after_inference_bytes": 230240256
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 14,
+      "load_ns": 150750208,
+      "inference_ns": 275958,
+      "peak_after_load_bytes": 230240256,
+      "peak_after_inference_bytes": 230240256
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 14,
+      "load_ns": 155327792,
+      "inference_ns": 2480917,
+      "peak_after_load_bytes": 230240256,
+      "peak_after_inference_bytes": 230240256
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 15,
+      "load_ns": 166085875,
+      "inference_ns": 3007250,
+      "peak_after_load_bytes": 230240256,
+      "peak_after_inference_bytes": 230240256
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 15,
+      "load_ns": 166149500,
+      "inference_ns": 256708,
+      "peak_after_load_bytes": 231317504,
+      "peak_after_inference_bytes": 231317504
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 16,
+      "load_ns": 163662958,
+      "inference_ns": 258417,
+      "peak_after_load_bytes": 231317504,
+      "peak_after_inference_bytes": 231317504
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 16,
+      "load_ns": 164526791,
+      "inference_ns": 2805750,
+      "peak_after_load_bytes": 231317504,
+      "peak_after_inference_bytes": 231317504
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 17,
+      "load_ns": 161296000,
+      "inference_ns": 2785625,
+      "peak_after_load_bytes": 231317504,
+      "peak_after_inference_bytes": 231317504
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 17,
+      "load_ns": 157495625,
+      "inference_ns": 264541,
+      "peak_after_load_bytes": 232239104,
+      "peak_after_inference_bytes": 232239104
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 18,
+      "load_ns": 160203375,
+      "inference_ns": 258292,
+      "peak_after_load_bytes": 236564480,
+      "peak_after_inference_bytes": 236564480
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 18,
+      "load_ns": 182974708,
+      "inference_ns": 3016458,
+      "peak_after_load_bytes": 237596672,
+      "peak_after_inference_bytes": 237596672
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 19,
+      "load_ns": 156176875,
+      "inference_ns": 2327750,
+      "peak_after_load_bytes": 237596672,
+      "peak_after_inference_bytes": 237596672
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 19,
+      "load_ns": 146398834,
+      "inference_ns": 276708,
+      "peak_after_load_bytes": 237596672,
+      "peak_after_inference_bytes": 237596672
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 20,
+      "load_ns": 145463500,
+      "inference_ns": 254292,
+      "peak_after_load_bytes": 238628864,
+      "peak_after_inference_bytes": 238628864
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 20,
+      "load_ns": 157658417,
+      "inference_ns": 2630375,
+      "peak_after_load_bytes": 238628864,
+      "peak_after_inference_bytes": 238628864
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 21,
+      "load_ns": 144739792,
+      "inference_ns": 2314959,
+      "peak_after_load_bytes": 238628864,
+      "peak_after_inference_bytes": 238628864
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 21,
+      "load_ns": 143853083,
+      "inference_ns": 252959,
+      "peak_after_load_bytes": 238628864,
+      "peak_after_inference_bytes": 238628864
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 22,
+      "load_ns": 139434000,
+      "inference_ns": 275042,
+      "peak_after_load_bytes": 239661056,
+      "peak_after_inference_bytes": 239661056
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 22,
+      "load_ns": 146687459,
+      "inference_ns": 2337334,
+      "peak_after_load_bytes": 239661056,
+      "peak_after_inference_bytes": 239661056
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 23,
+      "load_ns": 138926542,
+      "inference_ns": 2383334,
+      "peak_after_load_bytes": 239661056,
+      "peak_after_inference_bytes": 239661056
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 23,
+      "load_ns": 139641042,
+      "inference_ns": 269625,
+      "peak_after_load_bytes": 239661056,
+      "peak_after_inference_bytes": 239661056
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 24,
+      "load_ns": 138808250,
+      "inference_ns": 257708,
+      "peak_after_load_bytes": 240693248,
+      "peak_after_inference_bytes": 240693248
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 24,
+      "load_ns": 137964375,
+      "inference_ns": 2542250,
+      "peak_after_load_bytes": 240693248,
+      "peak_after_inference_bytes": 240693248
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 25,
+      "load_ns": 136520458,
+      "inference_ns": 2585542,
+      "peak_after_load_bytes": 240693248,
+      "peak_after_inference_bytes": 240693248
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 25,
+      "load_ns": 139550042,
+      "inference_ns": 232792,
+      "peak_after_load_bytes": 240693248,
+      "peak_after_inference_bytes": 240693248
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 26,
+      "load_ns": 138130209,
+      "inference_ns": 264417,
+      "peak_after_load_bytes": 241725440,
+      "peak_after_inference_bytes": 241725440
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 26,
+      "load_ns": 136299500,
+      "inference_ns": 2693958,
+      "peak_after_load_bytes": 241725440,
+      "peak_after_inference_bytes": 241725440
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 27,
+      "load_ns": 137359917,
+      "inference_ns": 2439917,
+      "peak_after_load_bytes": 241725440,
+      "peak_after_inference_bytes": 241725440
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 27,
+      "load_ns": 139814917,
+      "inference_ns": 265791,
+      "peak_after_load_bytes": 241725440,
+      "peak_after_inference_bytes": 241725440
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 28,
+      "load_ns": 137164666,
+      "inference_ns": 245583,
+      "peak_after_load_bytes": 242757632,
+      "peak_after_inference_bytes": 242757632
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 28,
+      "load_ns": 143082792,
+      "inference_ns": 2267708,
+      "peak_after_load_bytes": 242757632,
+      "peak_after_inference_bytes": 242757632
+    },
+    {
+      "engine": "python",
+      "scenario": "passages",
+      "index": 29,
+      "load_ns": 139743292,
+      "inference_ns": 2341000,
+      "peak_after_load_bytes": 242757632,
+      "peak_after_inference_bytes": 242757632
+    },
+    {
+      "engine": "python",
+      "scenario": "query",
+      "index": 29,
+      "load_ns": 141011375,
+      "inference_ns": 318708,
+      "peak_after_load_bytes": 242851840,
+      "peak_after_inference_bytes": 242851840
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 0,
+      "load_ns": 106281959,
+      "inference_ns": 48584,
+      "peak_after_load_bytes": 94855168,
+      "peak_after_inference_bytes": 94855168
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 0,
+      "load_ns": 89381166,
+      "inference_ns": 1657667,
+      "peak_after_load_bytes": 95272960,
+      "peak_after_inference_bytes": 95272960
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 1,
+      "load_ns": 88571959,
+      "inference_ns": 1581750,
+      "peak_after_load_bytes": 95428608,
+      "peak_after_inference_bytes": 95428608
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 1,
+      "load_ns": 92706208,
+      "inference_ns": 47917,
+      "peak_after_load_bytes": 95952896,
+      "peak_after_inference_bytes": 95952896
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 2,
+      "load_ns": 93050375,
+      "inference_ns": 50792,
+      "peak_after_load_bytes": 96481280,
+      "peak_after_inference_bytes": 96481280
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 2,
+      "load_ns": 96032542,
+      "inference_ns": 1653833,
+      "peak_after_load_bytes": 97681408,
+      "peak_after_inference_bytes": 97681408
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 3,
+      "load_ns": 95656917,
+      "inference_ns": 1684541,
+      "peak_after_load_bytes": 98148352,
+      "peak_after_inference_bytes": 98148352
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 3,
+      "load_ns": 88671083,
+      "inference_ns": 49375,
+      "peak_after_load_bytes": 98148352,
+      "peak_after_inference_bytes": 98148352
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 4,
+      "load_ns": 86318708,
+      "inference_ns": 48000,
+      "peak_after_load_bytes": 98148352,
+      "peak_after_inference_bytes": 98148352
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 4,
+      "load_ns": 87138167,
+      "inference_ns": 1691417,
+      "peak_after_load_bytes": 99209216,
+      "peak_after_inference_bytes": 99209216
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 5,
+      "load_ns": 87370625,
+      "inference_ns": 1558625,
+      "peak_after_load_bytes": 99209216,
+      "peak_after_inference_bytes": 99209216
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 5,
+      "load_ns": 83780333,
+      "inference_ns": 50250,
+      "peak_after_load_bytes": 99745792,
+      "peak_after_inference_bytes": 99745792
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 6,
+      "load_ns": 85131333,
+      "inference_ns": 57916,
+      "peak_after_load_bytes": 100274176,
+      "peak_after_inference_bytes": 100274176
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 6,
+      "load_ns": 82694125,
+      "inference_ns": 1579292,
+      "peak_after_load_bytes": 100274176,
+      "peak_after_inference_bytes": 100274176
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 7,
+      "load_ns": 85069833,
+      "inference_ns": 1561209,
+      "peak_after_load_bytes": 100274176,
+      "peak_after_inference_bytes": 100274176
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 7,
+      "load_ns": 82425375,
+      "inference_ns": 48250,
+      "peak_after_load_bytes": 100372480,
+      "peak_after_inference_bytes": 100372480
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 8,
+      "load_ns": 83904708,
+      "inference_ns": 49500,
+      "peak_after_load_bytes": 101351424,
+      "peak_after_inference_bytes": 101351424
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 8,
+      "load_ns": 82885000,
+      "inference_ns": 1567166,
+      "peak_after_load_bytes": 101367808,
+      "peak_after_inference_bytes": 101367808
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 9,
+      "load_ns": 83128250,
+      "inference_ns": 1568459,
+      "peak_after_load_bytes": 101367808,
+      "peak_after_inference_bytes": 101367808
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 9,
+      "load_ns": 87975959,
+      "inference_ns": 48542,
+      "peak_after_load_bytes": 101367808,
+      "peak_after_inference_bytes": 101367808
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 10,
+      "load_ns": 84956500,
+      "inference_ns": 52625,
+      "peak_after_load_bytes": 102420480,
+      "peak_after_inference_bytes": 102420480
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 10,
+      "load_ns": 85465875,
+      "inference_ns": 1675708,
+      "peak_after_load_bytes": 102420480,
+      "peak_after_inference_bytes": 102420480
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 11,
+      "load_ns": 85584375,
+      "inference_ns": 1595334,
+      "peak_after_load_bytes": 102445056,
+      "peak_after_inference_bytes": 102445056
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 11,
+      "load_ns": 85657875,
+      "inference_ns": 46958,
+      "peak_after_load_bytes": 102965248,
+      "peak_after_inference_bytes": 102965248
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 12,
+      "load_ns": 88286708,
+      "inference_ns": 60834,
+      "peak_after_load_bytes": 102965248,
+      "peak_after_inference_bytes": 102965248
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 12,
+      "load_ns": 88919250,
+      "inference_ns": 1716375,
+      "peak_after_load_bytes": 103501824,
+      "peak_after_inference_bytes": 103501824
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 13,
+      "load_ns": 88306750,
+      "inference_ns": 1675333,
+      "peak_after_load_bytes": 103501824,
+      "peak_after_inference_bytes": 103501824
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 13,
+      "load_ns": 85938208,
+      "inference_ns": 48000,
+      "peak_after_load_bytes": 103501824,
+      "peak_after_inference_bytes": 103501824
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 14,
+      "load_ns": 89781916,
+      "inference_ns": 49958,
+      "peak_after_load_bytes": 104570880,
+      "peak_after_inference_bytes": 104570880
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 14,
+      "load_ns": 87111583,
+      "inference_ns": 1772000,
+      "peak_after_load_bytes": 104570880,
+      "peak_after_inference_bytes": 104570880
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 15,
+      "load_ns": 87219875,
+      "inference_ns": 1676042,
+      "peak_after_load_bytes": 104570880,
+      "peak_after_inference_bytes": 104570880
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 15,
+      "load_ns": 86726542,
+      "inference_ns": 47000,
+      "peak_after_load_bytes": 105111552,
+      "peak_after_inference_bytes": 105111552
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 16,
+      "load_ns": 84261875,
+      "inference_ns": 58000,
+      "peak_after_load_bytes": 105111552,
+      "peak_after_inference_bytes": 105111552
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 16,
+      "load_ns": 84147000,
+      "inference_ns": 1669292,
+      "peak_after_load_bytes": 105201664,
+      "peak_after_inference_bytes": 105201664
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 17,
+      "load_ns": 87434500,
+      "inference_ns": 1557792,
+      "peak_after_load_bytes": 105205760,
+      "peak_after_inference_bytes": 105205760
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 17,
+      "load_ns": 85401708,
+      "inference_ns": 46875,
+      "peak_after_load_bytes": 105721856,
+      "peak_after_inference_bytes": 105721856
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 18,
+      "load_ns": 85736583,
+      "inference_ns": 46833,
+      "peak_after_load_bytes": 106250240,
+      "peak_after_inference_bytes": 106250240
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 18,
+      "load_ns": 85431709,
+      "inference_ns": 1788459,
+      "peak_after_load_bytes": 106717184,
+      "peak_after_inference_bytes": 106717184
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 19,
+      "load_ns": 87385582,
+      "inference_ns": 1650250,
+      "peak_after_load_bytes": 106717184,
+      "peak_after_inference_bytes": 106717184
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 19,
+      "load_ns": 87053250,
+      "inference_ns": 116250,
+      "peak_after_load_bytes": 107249664,
+      "peak_after_inference_bytes": 107249664
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 20,
+      "load_ns": 90323750,
+      "inference_ns": 47500,
+      "peak_after_load_bytes": 107249664,
+      "peak_after_inference_bytes": 107249664
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 20,
+      "load_ns": 88858708,
+      "inference_ns": 1736708,
+      "peak_after_load_bytes": 107335680,
+      "peak_after_inference_bytes": 107335680
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 21,
+      "load_ns": 88723958,
+      "inference_ns": 1600459,
+      "peak_after_load_bytes": 107335680,
+      "peak_after_inference_bytes": 107335680
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 21,
+      "load_ns": 85663000,
+      "inference_ns": 46958,
+      "peak_after_load_bytes": 107859968,
+      "peak_after_inference_bytes": 107859968
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 22,
+      "load_ns": 88330583,
+      "inference_ns": 46167,
+      "peak_after_load_bytes": 108384256,
+      "peak_after_inference_bytes": 108384256
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 22,
+      "load_ns": 84217375,
+      "inference_ns": 1640708,
+      "peak_after_load_bytes": 108847104,
+      "peak_after_inference_bytes": 108847104
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 23,
+      "load_ns": 88062333,
+      "inference_ns": 1664208,
+      "peak_after_load_bytes": 108859392,
+      "peak_after_inference_bytes": 108859392
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 23,
+      "load_ns": 90391916,
+      "inference_ns": 46542,
+      "peak_after_load_bytes": 109371392,
+      "peak_after_inference_bytes": 109371392
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 24,
+      "load_ns": 86298333,
+      "inference_ns": 49209,
+      "peak_after_load_bytes": 109899776,
+      "peak_after_inference_bytes": 109899776
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 24,
+      "load_ns": 81953416,
+      "inference_ns": 1678417,
+      "peak_after_load_bytes": 109899776,
+      "peak_after_inference_bytes": 109899776
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 25,
+      "load_ns": 83465917,
+      "inference_ns": 1576750,
+      "peak_after_load_bytes": 109916160,
+      "peak_after_inference_bytes": 109916160
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 25,
+      "load_ns": 87098166,
+      "inference_ns": 50333,
+      "peak_after_load_bytes": 110440448,
+      "peak_after_inference_bytes": 110440448
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 26,
+      "load_ns": 89642625,
+      "inference_ns": 49291,
+      "peak_after_load_bytes": 110440448,
+      "peak_after_inference_bytes": 110440448
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 26,
+      "load_ns": 89944626,
+      "inference_ns": 1731708,
+      "peak_after_load_bytes": 110964736,
+      "peak_after_inference_bytes": 110964736
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 27,
+      "load_ns": 86282833,
+      "inference_ns": 1605000,
+      "peak_after_load_bytes": 110977024,
+      "peak_after_inference_bytes": 110977024
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 27,
+      "load_ns": 84666916,
+      "inference_ns": 63958,
+      "peak_after_load_bytes": 110977024,
+      "peak_after_inference_bytes": 110977024
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 28,
+      "load_ns": 86083625,
+      "inference_ns": 84750,
+      "peak_after_load_bytes": 110977024,
+      "peak_after_inference_bytes": 110977024
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 28,
+      "load_ns": 86781708,
+      "inference_ns": 1644958,
+      "peak_after_load_bytes": 112041984,
+      "peak_after_inference_bytes": 112041984
+    },
+    {
+      "engine": "native",
+      "scenario": "passages",
+      "index": 29,
+      "load_ns": 88488833,
+      "inference_ns": 1696708,
+      "peak_after_load_bytes": 112041984,
+      "peak_after_inference_bytes": 112041984
+    },
+    {
+      "engine": "native",
+      "scenario": "query",
+      "index": 29,
+      "load_ns": 84859500,
+      "inference_ns": 47292,
+      "peak_after_load_bytes": 112119808,
+      "peak_after_inference_bytes": 112119808
+    }
+  ],
+  "process_parity": true,
+  "method": "30 fresh encoder loads per workload inside one process per engine; ordered calls, no samples discarded",
+  "memory": "post-exec process peak measured after each phase; Linux /proc/self/status VmHWM, macOS self getrusage; cumulative across loads, not isolated model allocations",
+  "timing": "model construction and inference measured separately; Python construction also re-verifies registered files, Rust consumes previously verified owned bytes",
+  "native_preparation_ns": 110713916
+}

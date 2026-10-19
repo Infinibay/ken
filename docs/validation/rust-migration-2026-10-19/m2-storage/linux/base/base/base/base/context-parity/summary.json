@@ -1,0 +1,95 @@
+{
+  "format": "ken-context-parity/1",
+  "platform": "Linux",
+  "architecture": "aarch64",
+  "passed": true,
+  "errors": [],
+  "native_children": [],
+  "outside_checkout": true,
+  "M2_accepted": false,
+  "native_sha256": "7c728e1e9cbfbc24c31764b2487bc02cc9bbf50154b22bfe84210d6200ced84f",
+  "case_ids": [
+    "empty-passages",
+    "empty-query",
+    "whitespace-query",
+    "empty-passage",
+    "spanish-query",
+    "code-query",
+    "unicode-canonical",
+    "emoji-and-nul",
+    "query-versus-passage",
+    "serialized-special-literals",
+    "mixed-passages",
+    "repeated-history",
+    "unicode-whitespace",
+    "passage-boundary511",
+    "passage-boundary512",
+    "passage-boundary513",
+    "query-boundary511",
+    "query-boundary512",
+    "query-boundary513",
+    "long4097"
+  ],
+  "artifacts": {
+    "onnx/model.onnx": {
+      "bytes": 138619279,
+      "sha256": "4eae31d09b1843103a1ebd5e2b2e24b5a5cad441a33906b35b12b1e2ed91d1db"
+    },
+    "tokenizer.json": {
+      "bytes": 711649,
+      "sha256": "91f1def9b9391fdabe028cd3f3fcc4efd34e5d1f08c3bf2de513ebb5911a1854"
+    }
+  },
+  "oracle_sha256": "343fd57f5f644beff252260784fca165d2edf0ab8f38319815f2b0357b181af6",
+  "runtime_registration_sha256": "469470d57e38df2fb89c8cb005eb978c1ae295b427a3c7b8d5c03215b114536b",
+  "dependency_audit": {
+    "passed": true,
+    "linked_exit": 0,
+    "tree_exit": 0,
+    "linked_sha256": "b37c7d5166ff81023e609b88953b5b3b5294d96fe758a3fe8ebde1535724e295",
+    "tree_sha256": "a433603d4c19290273e81ed03c598a7dd022c9ee1180b554035ce0483ccd8baf"
+  },
+  "core_dependency_audit": {
+    "passed": true,
+    "linked_exit": 0,
+    "tree_exit": 0,
+    "linked_sha256": "71514417466dbd18a491a791ef401ce50088b60900f045d42271503f43b0ed28",
+    "tree_sha256": "a433603d4c19290273e81ed03c598a7dd022c9ee1180b554035ce0483ccd8baf"
+  },
+  "native_exit": 0,
+  "native_wall_ns": 15294321381,
+  "runtime": {
+    "device": "cpu",
+    "engine": "rust",
+    "inter_threads": 1,
+    "intra_threads": 2,
+    "ken_models": "0.18.0",
+    "native_core": {
+      "api": 25,
+      "arch": "aarch64",
+      "bytes": 19280896,
+      "os": "linux",
+      "sha256": "0ebab581324d80e2975d743eabcf640ac3f8acd429ca8af656ce4f121672afde",
+      "version": "1.25.1"
+    },
+    "ort": "2.0.0-rc.14",
+    "tokenizers": "0.22.2"
+  },
+  "reference_runtime": {
+    "numpy": "2.4.4",
+    "onnxruntime": "1.25.1",
+    "tokenizers": "0.22.2",
+    "onnx": "1.20.1"
+  },
+  "core_identity": {
+    "os": "linux",
+    "arch": "aarch64",
+    "version": "1.25.1",
+    "api": 25,
+    "bytes": 19280896,
+    "sha256": "0ebab581324d80e2975d743eabcf640ac3f8acd429ca8af656ce4f121672afde"
+  },
+  "stderr": "onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0\n",
+  "stderr_warning_count": 1,
+  "exec_attempts": 1
+}
