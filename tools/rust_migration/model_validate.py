@@ -13,7 +13,8 @@ from .model_compare import compare_models
 from .model_reference import TOLERANCES, model_cases
 from .receipts import compare_python
 from .reference import Reference, reference_env
-from .validate import _command, _digest, _fingerprints, _rustc_version, _sha, _typing_errors, _verify, _write
+from .validate import _command, _digest, _fingerprints, _rustc_version, _sha, _typing_errors, _verify, _write, bind_native_release
+from .preparation import PreparedNativeContext,context_environment
 
 REQUIRED_GATES = ('originals', 'reference', 'toolchain', 'python_contracts', 'python_full', 'typing',
                   'fmt', 'clippy', 'rust_tests', 'release', 'parity_tests', 'model_parity',
@@ -80,13 +81,13 @@ def assess_model_samples(samples: list[dict]) -> dict:
     return {'passed': not errors, 'errors': errors, 'metrics': metrics, 'samples': samples}
 
 
-def _model_fingerprints(repo: Path, reference: Reference, cases: Path) -> dict:
+def _model_fingerprints(repo: Path, reference: Reference|None, cases: Path) -> dict:
     result = _fingerprints(repo, reference, cases)
     files = [repo / n for n in ['Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml']]
     files += sorted(p for p in (repo / 'crates').rglob('*') if p.is_file())
     result['native_source'] = _digest([{'path': p.relative_to(repo).as_posix(), 'sha256': _sha(p)} for p in files])
     result['oracle'] = _sha(cases.parent / 'potion-reference.json')
-    result['registration'] = _sha(reference.root / 'src/ken/embedder/data/potion-code-16M-v2.json')
+    result['registration'] = _sha((reference.root if reference is not None else repo) / 'src/ken/embedder/data/potion-code-16M-v2.json')
     return result
 
 
@@ -123,7 +124,8 @@ def benchmark_model(reference: Reference, native: Path, snapshot: Path, output: 
 
 
 def validate_models(repo: Path, reference: Reference, native: Path, snapshot: Path, output: Path,
-                    baseline_dir: Path, original_manifest: Path, *, table_probe: Path | None = None) -> int:
+                    baseline_dir: Path, original_manifest: Path, *, table_probe: Path | None = None,
+                    context:PreparedNativeContext|None=None) -> int:
     repo, output, native, snapshot = repo.resolve(), output.resolve(), native.resolve(), snapshot.absolute()
     output.mkdir(parents=True, exist_ok=True)
     gates = {}
@@ -151,6 +153,7 @@ def validate_models(repo: Path, reference: Reference, native: Path, snapshot: Pa
             RUSTUP_HOME=os.environ.get('RUSTUP_HOME', str(Path.home() / '.rustup')),
             CARGO_HOME=os.environ.get('CARGO_HOME', str(Path.home() / '.cargo')))
         env.pop('CARGO_TARGET_DIR', None); env.pop('CARGO_BUILD_TARGET', None)
+        env.update(context_environment(context))
         py = [str(reference.python), '-m']
         gates['toolchain'] = _command(repo, env, output, 'rustc', ['rustc', '--version', '--verbose'])
         result['rustc'] = _rustc_version(output / 'rustc.log')
@@ -174,8 +177,8 @@ def validate_models(repo: Path, reference: Reference, native: Path, snapshot: Pa
         import re
         ignored = re.findall(r'; (\d+) ignored;', rust_log)
         gates['rust_tests']['passed'] = gates['rust_tests']['passed'] and bool(ignored) and all(int(n) == 0 for n in ignored)
-        built = repo / 'target/release/examples/model_probe'
-        gates['release']['passed'] = gates['release']['passed'] and native.is_file() and _sha(built) == _sha(native)
+        binding=bind_native_release(repo,native,'model_probe')
+        gates['release'].update(passed=gates['release']['passed'] and binding['passed'],native_binding=binding)
         gates['parity_tests'] = _command(repo, env, output, 'parity-tests', [*py,'pytest','migration_tests','-q',f'--junitxml={output / "parity-tests.xml"}'])
         parity = compare_models(reference, native, snapshot, cases, output / 'model-parity')
         result['model_parity'] = parity; result['case_ids'] = parity.get('case_ids', [])

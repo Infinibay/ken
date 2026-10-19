@@ -121,6 +121,16 @@ impl NativeOnnxRuntime {
         Ok(self.0.identity.clone())
     }
 
+    /// Observe authenticated code already used by this declaration, without loading it.
+    pub fn loaded_identity(&self) -> Result<Option<RuntimeIdentity>, ModelError> {
+        let owner = self
+            .0
+            .verified
+            .lock()
+            .map_err(|_| invalid("declaration lock poisoned"))?;
+        Ok(owner.as_ref().map(|owner| owner.identity.clone()))
+    }
+
     pub(crate) fn environment(&self) -> Result<Environment, ModelError> {
         self.owner()?.environment()
     }

@@ -20,7 +20,8 @@ from .fixtures import build_fixture
 from .inventory import audit_ownership
 from .measure import benchmark,summarize_samples
 from .receipts import REQUIRED_GATES,aggregate_platforms,assess_gates,assess_parity,compare_python
-from .reference import Reference,reference_env,verify_reference
+from .reference import Reference,reference_env,verify_reference,_files
+from .preparation import PreparedNativeContext,context_environment
 
 def _write(path: Path,data: dict) -> None:
     path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(data,indent=2)+"\n")
@@ -28,15 +29,28 @@ def _write(path: Path,data: dict) -> None:
 def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
+def bind_native_release(repo:Path,native:Path,example:str)->dict:
+    built=repo/'target/release/examples'/example
+    result={'ran':True,'passed':False,'built':str(built),'supplied':str(native)}
+    try:
+        result.update(built_sha256=_sha(built),supplied_sha256=_sha(native))
+        result['passed']=result['built_sha256']==result['supplied_sha256']
+        if not result['passed']:result['error']='supplied probe differs from fresh release'
+    except OSError as error:result['error']=str(error)
+    return result
+
 def _digest(rows) -> str:
     return hashlib.sha256(json.dumps(rows,sort_keys=True).encode()).hexdigest()
 
-def _fingerprints(repo: Path,reference: Reference,cases: Path) -> dict:
+def _fingerprints(repo: Path,reference: Reference|None,cases: Path) -> dict:
     native=[repo/n for n in ["Cargo.toml","Cargo.lock","rust-toolchain.toml"]]
     native+=sorted(p for p in (repo/"crates").rglob("*") if p.is_file() and (p.suffix==".rs" or p.name=="Cargo.toml"))
     validator=sorted(p for folder in ["tools/rust_migration","migration_tests","tests/rust_migration"] for p in (repo/folder).rglob("*.py"))
     rows=lambda paths:[{"path":p.relative_to(repo).as_posix(),"sha256":_sha(p)} for p in paths]
-    source=[row for row in json.loads(reference.manifest_path.read_text())["files"] if row["path"].startswith("src/ken/")]
+    if reference is None:
+        source=rows([p for p in _files(repo) if p.relative_to(repo).as_posix().startswith('src/ken/')])
+    else:
+        source=[row for row in json.loads(reference.manifest_path.read_text())["files"] if row["path"].startswith("src/ken/")]
     return {"native_source":_digest(rows(native)),"reference_source":_digest(source),"cases":_sha(cases),"validator":_digest(rows(validator))}
 
 def _command(repo: Path,env: dict,output: Path,name: str,argv: list[str],timeout_s=600) -> dict:
@@ -111,13 +125,14 @@ def _runtime(repo,reference,native,env,output,trace_exec):
     if system=="Linux" and trace.get("passed") is not True: errors.append("Linux exec trace missing or failed")
     return {"ran":True,"passed":not errors,"details":{"errors":errors,"dependency_audit":linked,"cargo_tree":tree,"copied_binary":True,"path_contains_python":False}},trace
 
-def _validation_environment(reference: Reference, repo: Path, output: Path, native: Path) -> dict:
+def _validation_environment(reference: Reference, repo: Path, output: Path, native: Path,*,context:PreparedNativeContext|None=None) -> dict:
     env=reference_env(reference,output/"environment")
     env["PYTHONPATH"]=os.pathsep.join([str(repo/"src"),str(repo)])
     env.pop("CARGO_TARGET_DIR",None);env.pop("CARGO_BUILD_TARGET",None)
     env.update(KEN_RUST_BIN=str(native),KEN_RUST_REFERENCE=str(reference.root))
     for key in ["KEN_POTION_SNAPSHOT","KEN_MODEL_PROBE","KEN_TABLE_PROBE"]:
         if key in os.environ: env[key]=os.environ[key]
+    env.update(context_environment(context))
     return env
 
 def run(repo: Path,reference: Reference,native: Path,output: Path,scope: str="local",platform_receipts: Path|None=None,trace_exec: bool=False,*,original_manifest: Path|None=None,baseline_dir: Path|None=None) -> int:

@@ -10,7 +10,8 @@ from .model_validate import FINGERPRINT_KEYS, REQUIRED_GATES, _model_fingerprint
 from .reference import Reference
 from .table_compare import GOLDEN, compare
 from .table_reference import table_cases
-from .validate import _sha, _write
+from .validate import _sha, _write,bind_native_release
+from .preparation import PreparedNativeContext
 
 TABLE_KEYS = FINGERPRINT_KEYS | {'table_artifact', 'table_oracle'}
 TABLE_GATES = (*REQUIRED_GATES, 'table_release', 'table_parity')
@@ -18,15 +19,7 @@ TABLE_GATES = (*REQUIRED_GATES, 'table_release', 'table_parity')
 
 def bind_table_probe(repo: Path, native: Path) -> dict:
     """Bind an explicitly selected executable to the just-built release bytes."""
-    built = repo / 'target/release/examples/table_probe'
-    result = {'ran': True, 'passed': False, 'built': str(built), 'supplied': str(native)}
-    try:
-        result.update(built_sha256=_sha(built), supplied_sha256=_sha(native))
-        result['passed'] = result['built_sha256'] == result['supplied_sha256']
-        if not result['passed']: result['error'] = 'supplied table probe differs from fresh release'
-    except OSError as error:
-        result['error'] = str(error)
-    return result
+    return bind_native_release(repo,native,'table_probe')
 
 
 def _binding_matches(binding: dict, parity: dict) -> bool:
@@ -35,6 +28,31 @@ def _binding_matches(binding: dict, parity: dict) -> bool:
         and isinstance(digest, str) and len(digest) == 64
         and all(c in '0123456789abcdef' for c in digest)
         and digest == binding.get('supplied_sha256') == parity.get('native_sha256'))
+
+
+def table_fingerprints(repo:Path,reference:Reference|None,artifact:Path)->dict:
+    cases=repo/'docs/validation/rust-migration-2026-10-18/m2-static/cases.json'
+    return _model_fingerprints(repo,reference,cases)|{'table_artifact':_sha(artifact),'table_oracle':_sha(GOLDEN)}
+
+
+def table_receipt_errors(row:dict,expected_ids:list[str])->list[str]:
+    errors=[];name=row.get('platform');gates=row.get('gates',{})
+    if row.get('scope')!='table-local' or row.get('passed') is not True or row.get('execution_error') or row.get('M2_accepted') is not False:
+        errors.append(f'failed table receipt: {name}')
+    if any(not isinstance(gates.get(g),dict) or gates[g].get('ran') is not True
+           or gates[g].get('passed') is not True for g in TABLE_GATES):errors.append(f'incomplete full gates: {name}')
+    identities=row.get('fingerprints',{})
+    if set(identities)!=TABLE_KEYS or any(not isinstance(v,str) or len(v)!=64
+            or any(c not in '0123456789abcdef' for c in v) for v in identities.values()):errors.append(f'incomplete identities: {name}')
+    if not str(row.get('rustc','')).startswith('rustc 1.95.0 '):errors.append(f'wrong toolchain: {name}')
+    if row.get('case_ids')!=expected_ids:errors.append(f'wrong cases: {name}')
+    parity=row.get('table_parity',{})
+    if not _binding_matches(row.get('table_release',{}),parity):errors.append(f'table executable is not bound to fresh release: {name}')
+    if (parity.get('passed') is not True or parity.get('outside_checkout') is not True
+            or parity.get('native_children')!=[] or parity.get('dependency_audit',{}).get('passed') is not True):
+        errors.append(f'missing native table proof: {name}')
+    if name=='Linux' and parity.get('exec_attempts')!=1:errors.append('Linux requires exactly1exec')
+    return errors
 
 
 def aggregate_tables(directory: Path, *, expected_ids: list[str] | None = None) -> dict:
@@ -49,26 +67,8 @@ def aggregate_tables(directory: Path, *, expected_ids: list[str] | None = None) 
         errors.append('exactly one Linux and one macOS table receipt required')
     signatures = []
     for row in rows:
-        name = row.get('platform'); gates = row.get('gates', {})
-        if row.get('passed') is not True or row.get('execution_error') or row.get('M2_accepted') is not False:
-            errors.append(f'failed table receipt: {name}')
-        if any(not isinstance(gates.get(g), dict) or gates[g].get('ran') is not True
-               or gates[g].get('passed') is not True for g in TABLE_GATES):
-            errors.append(f'incomplete full gates: {name}')
-        identities = row.get('fingerprints', {})
-        if set(identities) != TABLE_KEYS or any(not isinstance(v, str) or len(v) != 64
-                or any(c not in '0123456789abcdef' for c in v) for v in identities.values()):
-            errors.append(f'incomplete identities: {name}')
-        signatures.append((identities, row.get('rustc')))
-        if not str(row.get('rustc', '')).startswith('rustc 1.95.0 '): errors.append(f'wrong toolchain: {name}')
-        if row.get('case_ids') != expected_ids: errors.append(f'wrong cases: {name}')
-        parity = row.get('table_parity', {})
-        if not _binding_matches(row.get('table_release', {}), parity):
-            errors.append(f'table executable is not bound to fresh release: {name}')
-        if (parity.get('passed') is not True or parity.get('outside_checkout') is not True
-                or parity.get('native_children') != [] or parity.get('dependency_audit', {}).get('passed') is not True):
-            errors.append(f'missing native table proof: {name}')
-        if name == 'Linux' and parity.get('exec_attempts') != 1: errors.append('Linux requires exactly1exec')
+        errors.extend(table_receipt_errors(row,expected_ids))
+        signatures.append((row.get('fingerprints',{}),row.get('rustc')))
     if signatures and any(s != signatures[0] for s in signatures): errors.append('platform source/input/toolchain drift')
     passed = not errors and len(rows) == 2
     return {'scope': 'table-matrix', 'passed': passed, 'errors': errors,
@@ -77,20 +77,17 @@ def aggregate_tables(directory: Path, *, expected_ids: list[str] | None = None) 
 
 def validate_tables(repo: Path, reference: Reference, model_probe: Path, snapshot: Path,
                     native: Path, artifact: Path, out: Path, baseline_dir: Path,
-                    original_manifest: Path) -> int:
+                    original_manifest: Path,*,context:PreparedNativeContext|None=None) -> int:
     out = out.resolve(); out.mkdir(parents=True, exist_ok=True)
     result = {'scope': 'table-local', 'platform': platform.system(), 'architecture': platform.machine(),
               'passed': False, 'M2_accepted': False, 'gates': {}}
     _write(out / 'summary.json', result)
     try:
-        cases = repo / 'docs/validation/rust-migration-2026-10-18/m2-static/cases.json'
-        def fingerprints():
-            return _model_fingerprints(repo, reference, cases) | {
-                'table_artifact': _sha(artifact), 'table_oracle': _sha(GOLDEN)}
+        def fingerprints():return table_fingerprints(repo,reference,artifact)
         before = fingerprints()
         result['fingerprints'] = before
         validate_models(repo, reference, model_probe, snapshot, out / 'base', baseline_dir,
-                        original_manifest, table_probe=native)
+                        original_manifest, table_probe=native,context=context)
         base = json.loads((out / 'base/summary.json').read_text())
         result.update(gates=base.get('gates', {}), rustc=base.get('rustc'))
         if base.get('execution_error'): result['execution_error'] = base['execution_error']

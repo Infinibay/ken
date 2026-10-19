@@ -248,7 +248,10 @@ fn lazy_context_child() {
         return;
     };
     if scenario == "valid" {
-        assert_eq!(&fixture().embed_query("red").unwrap()[..2], &[12., 4.]);
+        let encoder = fixture();
+        assert!(!encoder.is_prepared().unwrap());
+        assert_eq!(&encoder.embed_query("red").unwrap()[..2], &[12., 4.]);
+        assert!(encoder.is_prepared().unwrap());
     } else {
         let root = fixtures().join("valid");
         let model =
@@ -263,6 +266,7 @@ fn lazy_context_child() {
         let missing=NativeOnnxRuntime::from_json(include_str!("../../../docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json"),&std::env::temp_dir().join("absent-ken-cold-context-core")).unwrap();
         let encoder = ContextEncoder::new(model, snapshot, missing).unwrap();
         assert!(encoder.embed_passages(&[]).unwrap().is_empty());
+        assert!(!encoder.is_prepared().unwrap());
         assert!(encoder.embed_query("red").is_err());
     }
 }

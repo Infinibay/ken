@@ -63,6 +63,13 @@ impl ContextEncoder {
         768
     }
 
+    pub fn is_prepared(&self) -> Result<bool, ModelError> {
+        self.session
+            .lock()
+            .map(|slot| slot.is_some())
+            .map_err(|_| inference("context session lock poisoned"))
+    }
+
     fn load_session(&self, slot: &mut Option<Session>) -> Result<(), ModelError> {
         if slot.is_none() {
             let environment = self.runtime.environment()?;

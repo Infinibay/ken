@@ -49,6 +49,7 @@ fn declaration_is_lazy_and_rejects_ambiguous_or_unsupported_pins() {
     let dir = tempfile::tempdir().unwrap();
     let absent = dir.path().join("absent-core");
     let runtime = declare(&absent);
+    assert!(runtime.loaded_identity().unwrap().is_none());
     assert!(runtime.load().is_err());
     assert!(
         NativeOnnxRuntime::from_json(&manifest().to_string(), Path::new("relative-core")).is_err()
@@ -79,7 +80,9 @@ fn declaration_is_lazy_and_rejects_ambiguous_or_unsupported_pins() {
 fn authenticated_runtime_reuses_identity_and_verifies_new_aliases() {
     let original = library();
     let runtime = declare(&original);
+    assert!(runtime.loaded_identity().unwrap().is_none());
     let identity = runtime.load().unwrap();
+    assert_eq!(runtime.loaded_identity().unwrap(), Some(identity.clone()));
     assert_eq!(identity.version, "1.25.1");
     assert_eq!(identity.api, 25);
     let expected = current(&mut manifest()).clone();

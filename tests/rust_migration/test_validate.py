@@ -102,14 +102,32 @@ def test_explicit_native_model_preparation_reaches_validation_only(tmp_path, mon
     monkeypatch.setenv('KEN_POTION_SNAPSHOT','/prepared/pinned-revision')
     monkeypatch.setenv('KEN_MODEL_PROBE','/prepared/native-model-probe')
     monkeypatch.setenv('KEN_TABLE_PROBE','/prepared/native-table-probe')
+    monkeypatch.setenv('KEN_ORT_LIBRARY','/prepared/native-core')
+    monkeypatch.setenv('KEN_CONTEXT_SNAPSHOT','/prepared/context-snapshot')
+    monkeypatch.setenv('KEN_CONTEXT_PROBE','/prepared/context-probe')
     monkeypatch.setenv('KEN_PROJECT_ROOT','/unrelated/project')
     env=_validation_environment(ref,tmp_path,tmp_path/'output',tmp_path/'native')
     assert env['KEN_POTION_SNAPSHOT']=='/prepared/pinned-revision'
     assert env['KEN_MODEL_PROBE']=='/prepared/native-model-probe'
     assert env['KEN_TABLE_PROBE']=='/prepared/native-table-probe'
+    assert env['KEN_ORT_LIBRARY']=='/prepared/native-core'
+    assert env['KEN_CONTEXT_SNAPSHOT']=='/prepared/context-snapshot'
+    assert env['KEN_CONTEXT_PROBE']=='/prepared/context-probe'
     assert env['KEN_RUST_BIN']==str(tmp_path/'native')
     assert 'KEN_PROJECT_ROOT' not in env
     from tools.rust_migration.reference import reference_env
     isolated=reference_env(ref,tmp_path/'oracle-env')
     assert 'KEN_POTION_SNAPSHOT' not in isolated and 'KEN_MODEL_PROBE' not in isolated
     assert 'KEN_TABLE_PROBE' not in isolated
+    assert not any(k in isolated for k in ['KEN_ORT_LIBRARY','KEN_CONTEXT_SNAPSHOT','KEN_CONTEXT_PROBE'])
+
+def test_explicit_context_inputs_are_validator_only_and_override_ambient_preparation(tmp_path,monkeypatch):
+    from tools.rust_migration.preparation import PreparedNativeContext
+    from tools.rust_migration.validate import _validation_environment
+    reference=Reference(tmp_path,tmp_path/'manifest','reference',Path(sys.executable))
+    monkeypatch.setenv('KEN_ORT_LIBRARY','/wrong/ambient-core')
+    prepared=PreparedNativeContext(tmp_path/'snapshot',tmp_path/'core',tmp_path/'probe')
+    env=_validation_environment(reference,tmp_path,tmp_path/'output',tmp_path/'native',context=prepared)
+    assert env['KEN_ORT_LIBRARY']==str(tmp_path/'core')
+    assert env['KEN_CONTEXT_SNAPSHOT']==str(tmp_path/'snapshot')
+    assert env['KEN_CONTEXT_PROBE']==str(tmp_path/'probe')

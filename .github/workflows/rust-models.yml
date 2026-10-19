@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-24.04-arm, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
     steps:
@@ -28,17 +28,37 @@ jobs:
       - name: Install Linux execution tracer
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y strace
-      - name: Prepare only the pinned public model data
+      - name: Prepare pinned model data and authenticated native core for tests
         run: |
           .venv/bin/python - <<'PY'
-          import os
+          import hashlib, importlib.util, json, os, platform, shutil
           from pathlib import Path
           from ken.embedder.model2vec_backend import potion_assets
+          from ken.embedder.contextual_onnx import code_context_model
+          from tools.rust_migration.context_compare import core_for_platform, RUNTIME_REGISTRATION
+          from tools.rust_migration.context_reference import snapshot_state
           snapshot = potion_assets().resolve(local_files_only=False)
+          context = code_context_model().assets.resolve(local_files_only=False)
+          definition = json.loads(Path('src/ken/embedder/data/code-context-int8.json').read_text())
+          snapshot_state(context, definition)
+          # Test preparation copies the native C core from the pinned validation
+          # wheel. Rust loads only the authenticated standalone library.
+          package = Path(importlib.util.find_spec('onnxruntime').origin).parent
+          name = 'libonnxruntime.1.25.1.dylib' if platform.system() == 'Darwin' else 'libonnxruntime.so.1.25.1'
+          source = package / 'capi' / name
+          core = core_for_platform(json.loads(RUNTIME_REGISTRATION.read_text()), platform.system(), platform.machine())
+          assert source.stat().st_size == core['bytes']
+          assert hashlib.sha256(source.read_bytes()).hexdigest() == core['sha256']
+          library = Path.cwd() / '.ken/rust-migration/prepared-core' / name
+          library.parent.mkdir(parents=True, exist_ok=True)
+          shutil.copyfile(source, library)
           with open(os.environ['GITHUB_ENV'], 'a') as stream:
               stream.write(f'KEN_POTION_SNAPSHOT={snapshot}\n')
               stream.write(f'KEN_MODEL_PROBE={Path.cwd() / "target/release/examples/model_probe"}\n')
               stream.write(f'KEN_TABLE_PROBE={Path.cwd() / "target/release/examples/table_probe"}\n')
+              stream.write(f'KEN_CONTEXT_SNAPSHOT={context}\n')
+              stream.write(f'KEN_ORT_LIBRARY={library}\n')
+              stream.write(f'KEN_CONTEXT_PROBE={Path.cwd() / "target/release/examples/context_probe"}\n')
           PY
           cargo build --release --locked -p ken-cli -p ken-models --bins --examples
       - name: Freeze this checkout and measure its unchanged Python baseline
@@ -56,19 +76,20 @@ jobs:
           exit 0
       - name: Validate original integrity, all suites and the native model process
         run: |
-          .venv/bin/python -m tools.rust_migration.table_validate \
+          .venv/bin/python -m tools.rust_migration.context_validate \
             --reference .ken/rust-migration/m2/reference \
-            --model-probe "$KEN_MODEL_PROBE" --snapshot "$KEN_POTION_SNAPSHOT" \
-            --native "$PWD/target/release/examples/table_probe" \
+            --model-probe "$KEN_MODEL_PROBE" --potion-snapshot "$KEN_POTION_SNAPSHOT" \
+            --table-probe "$KEN_TABLE_PROBE" --native "$KEN_CONTEXT_PROBE" \
+            --snapshot "$KEN_CONTEXT_SNAPSHOT" --library "$KEN_ORT_LIBRARY" \
             --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
             --baseline-dir .ken/rust-migration/m2 \
             --original-manifest .ken/rust-migration/m2/reference/reference-manifest.json \
-            --out .ken/rust-migration/m2-table/validation
+            --out .ken/rust-migration/m2-context/validation
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: rust-models-${{ runner.os }}
-          path: .ken/rust-migration/m2-table/validation/
+          path: .ken/rust-migration/m2-context/validation/
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
@@ -85,7 +106,7 @@ jobs:
           path: .ken/rust-migration/m2/platforms
       - name: Require matching platform receipts
         run: |
-          uv run --no-project --python 3.12 python -m tools.rust_migration.table_validate \
+          uv run --no-project --python 3.12 python -m tools.rust_migration.context_validate \
             --scope matrix --platform-receipts .ken/rust-migration/m2/platforms \
             --out .ken/rust-migration/m2/matrix
       - uses: actions/upload-artifact@v7

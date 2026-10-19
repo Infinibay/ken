@@ -24,6 +24,7 @@ un clon limpio de HEAD no reconstruye esos contenidos sin la copia.
 
 ```sh
 .venv/bin/python -m tools.rust_migration.reference verify --repo . --manifest docs/validation/rust-migration-2026-10-18/baseline.json
+# Prepare primero todas las variables de modelos indicadas más abajo.
 cargo test --locked --workspace
 KEN_RUST_BIN="$PWD/target/release/ken-rs" .venv/bin/python -m pytest migration_tests -q
 .venv/bin/python -m tools.rust_migration.validate \
@@ -115,6 +116,10 @@ los gates de migración; la prueba real falla explícitamente si faltan:
 export KEN_POTION_SNAPSHOT=/ruta/al/snapshot/e9d2a44ca6a05ac6685f3b23709ea57eb7352d5b
 export KEN_MODEL_PROBE="$PWD/target/release/examples/model_probe"
 export KEN_TABLE_PROBE="$PWD/target/release/examples/table_probe"
+# También obligatorias para la suite workspace y todos los gates:
+export KEN_CONTEXT_SNAPSHOT=/ruta/al/snapshot/e74f446dc6e67e29fcee77213472c142f73a6bbb
+export KEN_ORT_LIBRARY=/ruta/absoluta/al/core/nativo/registrado
+export KEN_CONTEXT_PROBE="$PWD/target/release/examples/context_probe"
 cargo build --release --locked -p ken-models --examples
 cargo test --locked --workspace
 .venv/bin/python -m tools.rust_migration.model_compare \
@@ -178,3 +183,57 @@ esta última corrección evita el cero aparente que también devolvía Python.
 Los tres hallazgos importantes de la revisión fueron corregidos con TDD y la
 tabla pasó18/18gates en ambos sistemas. M2 sigue abierto para los demás modelos
 y datos.
+
+## Perfil ONNX contextual
+
+`ContextEncoder` carga el core nativo ORT1.25.1/API25 declarado en
+[runtime-libraries.json](validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json).
+La ruta del core es explícita; su tamaño, hash, versión y API deben coincidir.
+El snapshot de CodeRank contiene únicamente el tokenizer y grafo fijados por
+`code-context-int8.json`. Una lista vacía de pasajes conserva la carga perezosa.
+Los vectores son F32 crudos; la normalización pertenece a recuperación.
+
+Para preparar datos con el oráculo de desarrollo:
+
+```sh
+.venv/bin/python -c 'from ken.embedder.contextual_onnx import code_context_model; print(code_context_model().assets.resolve(local_files_only=False))'
+```
+
+El core standalone puede copiarse del directorio `onnxruntime/capi` del wheel
+fijado del entorno de validación. En macOS se llama
+`libonnxruntime.1.25.1.dylib`; en Linux, `libonnxruntime.so.1.25.1`. Compruebe su
+SHA-256 y tamaño contra la entrada de su plataforma antes de configurar
+`KEN_ORT_LIBRARY`. Esta preparación de pruebas no establece el mecanismo de
+distribución final de M8 ni requiere Python desde el ejecutable Rust.
+
+```sh
+cargo build --release --locked -p ken-cli -p ken-models --bins --examples
+.venv/bin/python -m tools.rust_migration.context_validate \
+  --reference .ken/rust-migration/m0-m1/reference \
+  --model-probe "$KEN_MODEL_PROBE" --potion-snapshot "$KEN_POTION_SNAPSHOT" \
+  --table-probe "$KEN_TABLE_PROBE" \
+  --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
+  --native "$KEN_CONTEXT_PROBE" --snapshot "$KEN_CONTEXT_SNAPSHOT" \
+  --library "$KEN_ORT_LIBRARY" --baseline-dir .ken/rust-migration/m0-m1 \
+  --original-manifest docs/validation/rust-migration-2026-10-18/baseline.json \
+  --out .ken/rust-migration/m2-context/validation
+.venv/bin/python -m tools.rust_migration.context_validate --scope matrix \
+  --platform-receipts /ruta/a/recibos-linux-y-macos \
+  --out .ken/rust-migration/m2-context/matrix
+```
+
+La matriz contextual exige20gates, las13huellas del candidato actual,20historias
+completas por plataforma, el core autenticado y la correspondencia entre release
+y proceso real. Rechaza incluso dos recibos coincidentes de fuentes antiguas.
+Audita tanto el ejecutable como el core fuera del checkout; Linux exige un solo
+exec trazado. Los recibos conservan stdout/stderr y tiempos de preparación,
+carga e inferencia, junto al pico acumulativo de memoria del proceso.
+
+Los oráculos anteriores a la implementación y los cores registrados cubren
+Darwin/arm64 y Linux/aarch64. Los workflows nativos seleccionan `macos-15` y
+`ubuntu-24.04-arm`, según los [runners oficiales de GitHub](https://docs.github.com/en/actions/reference/runners/github-hosted-runners).
+No se acredita aquí otra arquitectura. El Python original ya presenta pequeñas
+diferencias numéricas entre plataformas; cada nativo se compara estrictamente
+contra su propio oráculo, sin ampliar tolerancias. Linux permite únicamente cero
+o una aparición de la advertencia exacta de identificación de CPU calibrada;
+cualquier otro stderr falla. Los perfiles Potion/NPZ mantienen stderr vacío.
