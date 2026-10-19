@@ -782,6 +782,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "ken-store"
+version = "0.18.0"
+dependencies = [
+ "rusqlite",
+ "serde_json",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.191"
 source = "registry+https://github.com/rust-lang/crates.io-index"
