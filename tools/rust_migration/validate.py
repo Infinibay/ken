@@ -21,7 +21,7 @@ from .inventory import audit_ownership
 from .measure import benchmark,summarize_samples
 from .receipts import REQUIRED_GATES,aggregate_platforms,assess_gates,assess_parity,compare_python
 from .reference import Reference,reference_env,verify_reference,_files
-from .preparation import PreparedNativeContext,PreparedNativeEttin,PreparedNativeTranslation,TRANSLATION_BUILD_ENV,context_environment,ettin_environment,translation_environment
+from .preparation import PreparedNativeContext,PreparedNativeEttin,PreparedNativeTranslation,TRANSLATION_BUILD_ENV,context_environment,ettin_environment,translation_environment,policy_environment
 
 def _write(path: Path,data: dict) -> None:
     path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(data,indent=2)+"\n")
@@ -128,7 +128,7 @@ def _runtime(repo,reference,native,env,output,trace_exec):
     if system=="Linux" and trace.get("passed") is not True: errors.append("Linux exec trace missing or failed")
     return {"ran":True,"passed":not errors,"details":{"errors":errors,"dependency_audit":linked,"cargo_tree":tree,"copied_binary":True,"path_contains_python":False}},trace
 
-def _validation_environment(reference: Reference, repo: Path, output: Path, native: Path,*,context:PreparedNativeContext|None=None,ettin:PreparedNativeEttin|None=None,translation:PreparedNativeTranslation|None=None) -> dict:
+def _validation_environment(reference: Reference, repo: Path, output: Path, native: Path,*,context:PreparedNativeContext|None=None,ettin:PreparedNativeEttin|None=None,translation:PreparedNativeTranslation|None=None,policy_probe:Path|None=None) -> dict:
     env=reference_env(reference,output/"environment")
     env["PYTHONPATH"]=os.pathsep.join([str(repo/"src"),str(repo)])
     env.pop("CARGO_TARGET_DIR",None);env.pop("CARGO_BUILD_TARGET",None)
@@ -139,9 +139,10 @@ def _validation_environment(reference: Reference, repo: Path, output: Path, nati
     env.update(ettin_environment(ettin))
     for key in TRANSLATION_BUILD_ENV:env.pop(key,None)
     env.update(translation_environment(translation))
+    env.update(policy_environment(policy_probe))
     return env
 
-def run(repo: Path,reference: Reference,native: Path,output: Path,scope: str="local",platform_receipts: Path|None=None,trace_exec: bool=False,*,original_manifest: Path|None=None,baseline_dir: Path|None=None) -> int:
+def run(repo: Path,reference: Reference,native: Path,output: Path,scope: str="local",platform_receipts: Path|None=None,trace_exec: bool=False,*,original_manifest: Path|None=None,baseline_dir: Path|None=None,policy_probe:Path|None=None) -> int:
     repo=repo.resolve();output=output.resolve();output.mkdir(parents=True,exist_ok=True)
     _write(output/"summary.json",{"scope":scope,"passed":False,"status":"running"})
     if scope=="matrix":
@@ -161,7 +162,7 @@ def run(repo: Path,reference: Reference,native: Path,output: Path,scope: str="lo
     if not gates["originals"]["passed"] or not gates["reference"]["passed"]: return finish()
     try:
         native=native.resolve();before=_fingerprints(repo,reference,cases);summary["fingerprints"]=before
-        env=_validation_environment(reference,repo,output,native)
+        env=_validation_environment(reference,repo,output,native,policy_probe=policy_probe)
         py=[str(reference.python),"-m"]
         gates["toolchain"]=_command(repo,env,output,"rust-toolchain",["rustc","--version","--verbose"])
         summary["rustc"]=_rustc_version(output/"rust-toolchain.log") if gates["toolchain"].get("ran") else ""
@@ -176,7 +177,7 @@ def run(repo: Path,reference: Reference,native: Path,output: Path,scope: str="lo
         gates["typing"]=_command(repo,env,output,"python-typing",[*py,"mypy","--no-incremental"])
         old_errors=_typing_errors(baseline_dir/"mypy-baseline.log");current=_typing_errors(output/"python-typing.log")
         gates["typing"].update(passed=gates["typing"].get("exit") in [0,1] and not(current-old_errors) and (bool(current) or gates["typing"].get("exit")==0),details={"previous_errors":sorted(old_errors),"current_errors":sorted(current),"new_errors":sorted(current-old_errors)})
-        for name,argv in [("fmt",["cargo","fmt","--all","--","--check"]),("clippy",["cargo","clippy","--locked","--workspace","--all-targets","--","-D","warnings"]),("rust_tests",["cargo","test","--locked","--workspace"]),("release",["cargo","build","--release","--locked","-p","ken-cli"])]:
+        for name,argv in [("fmt",["cargo","fmt","--all","--","--check"]),("clippy",["cargo","clippy","--locked","--workspace","--all-targets","--","-D","warnings"]),("rust_tests",["cargo","test","--locked","--workspace","--all-targets"]),("release",["cargo","build","--release","--locked","-p","ken-cli"])]:
             gates[name]=_command(repo,env,output,name,argv)
         ignored=re.findall(r"; (\d+) ignored;",(output/"rust_tests.log").read_text())
         gates["rust_tests"]["passed"]=gates["rust_tests"]["passed"] and bool(ignored) and all(int(n)==0 for n in ignored)

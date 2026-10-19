@@ -125,6 +125,7 @@ export KEN_ETTIN_PROBE="$PWD/target/release/examples/ettin_probe"
 # Traducción y compilación C++: preparación detallada al final de esta guía.
 export KEN_TRANSLATION_SOURCE=/ruta/al/snapshot/ad91ad1697ea1761111ff4c179400796d085b347
 export KEN_TRANSLATION_PROBE="$PWD/target/release/examples/translation_probe"
+export KEN_POLICY_PROBE="$PWD/target/release/examples/model_policy_probe"
 export CMAKE=/ruta/absoluta/al/ejecutable/cmake-3.31.10
 # En Linux prepare también OpenBLAS y sus tres variables antes de compilar.
 cargo build --release --locked -p ken-models --examples
@@ -388,3 +389,58 @@ una mejora de rendimiento ni un SLA. Las fuentes y fixtures embebidas participan
 en las huellas del candidato actual. El workflow usa los CT2 originales
 4.8.3/macOS y4.8.2/Linux en entornos CI desechables; el runtime Rust declara su
 propia versión. Los originales, el comando instalado y los índices se conservan.
+
+## Política de selección de modelos en Rust
+
+`ken_models::model_policy` decide la recomendación, el modelo del proyecto,
+el modelo activo y los prompts desde valores explícitos. Mantiene separados el
+modelo forzado del proceso y la resolución del proyecto. Conserva espacios,
+NUL y nombres desconocidos; usa las reglas Unicode15 del original para validar
+el default del usuario. Cada instancia y cada resultado poseen sus datos.
+
+`ProjectModelFacts` exige hechos de almacenamiento ya establecidos. La presencia
+de vectores incluye BLOB vacío y slots cero o negativos. Un lector que no puede
+establecer esos hechos debe producir un error. Sólo ausencia probada de vectores
+y de marcador permite devolver `InitialModelPin`; un marcador presente vacío
+impide ese pin. El resultado es un valor: la publicación transaccional y los
+lectores SQLite/config todavía pertenecen a etapas posteriores.
+
+Las [expectativas originales](validation/rust-migration-2026-10-19/m2-policy/reference.json)
+se capturaron en ambas plataformas antes del código nativo: 1.292 historiales,
+seis variantes de forzado por historial y 23 nombres para prompts. El comparador
+repite el original, exige tipos JSON exactos y ejecuta una copia del probe fuera
+del checkout con PATH de sentinelas y sin datos de modelos. Linux exige un exec
+real. El manifiesto de la referencia actual se verifica antes y después; las
+fuentes propietarias deben conservar sus hashes originales. Su identidad completa
+puede cambiar por archivos ajenos a esa lógica; la huella de fuentes actual se
+vincula a los recibos de ambas plataformas.
+
+Prepare todos los modelos anteriores y añada el probe explícito antes de los
+gates o de `migration_tests`; ninguna ruta se inventa cuando falta:
+
+```sh
+export KEN_POLICY_PROBE="$PWD/target/release/examples/model_policy_probe"
+cargo build --release --locked -p ken-cli -p ken-models --bins --examples
+cargo test --locked --workspace --all-targets --no-run
+.venv/bin/python -m tools.rust_migration.policy_validate \
+  --reference .ken/rust-migration/m0-m1/reference \
+  --model-probe "$KEN_MODEL_PROBE" --potion-snapshot "$KEN_POTION_SNAPSHOT" \
+  --table-probe "$KEN_TABLE_PROBE" \
+  --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
+  --context-probe "$KEN_CONTEXT_PROBE" --context-snapshot "$KEN_CONTEXT_SNAPSHOT" \
+  --library "$KEN_ORT_LIBRARY" \
+  --ettin-probe "$KEN_ETTIN_PROBE" --ettin-source "$KEN_ETTIN_SOURCE" \
+  --native "$KEN_TRANSLATION_PROBE" --source "$KEN_TRANSLATION_SOURCE" \
+  --policy-probe "$KEN_POLICY_PROBE" \
+  --baseline-dir .ken/rust-migration/m0-m1 \
+  --original-manifest docs/validation/rust-migration-2026-10-18/baseline.json \
+  --out .ken/rust-migration/m2-policy/validation "${native_build_args[@]}"
+.venv/bin/python -m tools.rust_migration.policy_validate --scope matrix \
+  --platform-receipts /ruta/a/recibos-linux-y-macos \
+  --out .ken/rust-migration/m2-policy/matrix
+```
+
+La aceptación exige las 26 comprobaciones previas más release y paridad de
+política: 28 gates y 26 huellas actuales. `Policy_accepted` corresponde a este
+tramo; `M2_accepted` permanece falso. Otros runtimes, adquisición, ciclo de vida
+de cachés, almacenamiento y etapas posteriores siguen pendientes.

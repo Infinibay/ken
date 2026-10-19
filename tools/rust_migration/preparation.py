@@ -8,6 +8,14 @@ ETTIN_ENV=('KEN_ETTIN_SOURCE','KEN_ETTIN_PROBE')
 TRANSLATION_ENV=('KEN_TRANSLATION_SOURCE','KEN_TRANSLATION_PROBE')
 TRANSLATION_BUILD_ENV=('CMAKE','PKG_CONFIG_PATH','DEP_OPENBLAS_INCLUDE','DEP_OPENBLAS_LIBRARY')
 
+
+def policy_environment(probe:Path|None=None)->dict[str,str]:
+    value=str(probe) if probe is not None else os.environ.get('KEN_POLICY_PROBE')
+    if value is None:return {}
+    if not Path(value).is_absolute():
+        raise ValueError('explicit absolute native policy probe required')
+    return {'KEN_POLICY_PROBE':value}
+
 @dataclass(frozen=True)
 class PreparedNativeContext:
     snapshot:Path

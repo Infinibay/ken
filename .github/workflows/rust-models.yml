@@ -107,11 +107,12 @@ jobs:
               stream.write(f'KEN_ETTIN_PROBE={Path.cwd() / "target/release/examples/ettin_probe"}\n')
               stream.write(f'KEN_TRANSLATION_SOURCE={translation}\n')
               stream.write(f'KEN_TRANSLATION_PROBE={Path.cwd() / "target/release/examples/translation_probe"}\n')
+              stream.write(f'KEN_POLICY_PROBE={Path.cwd() / "target/release/examples/model_policy_probe"}\n')
           PY
           cargo build --release --locked -p ken-cli -p ken-models --bins --examples
           # Compile test executables during preparation; the validator's unchanged
           # execution deadline must not include a cold C++/Rust test build.
-          cargo test --locked --workspace --no-run
+          cargo test --locked --workspace --all-targets --no-run
       - name: Freeze this checkout and measure its unchanged Python baseline
         run: |
           .venv/bin/python - <<'PY'
@@ -131,22 +132,23 @@ jobs:
           if [ "$RUNNER_OS" = 'Linux' ]; then
             native_build_args+=(--openblas-prefix "$KEN_TRANSLATION_OPENBLAS_PREFIX")
           fi
-          .venv/bin/python -m tools.rust_migration.translation_validate \
+          .venv/bin/python -m tools.rust_migration.policy_validate \
             --reference .ken/rust-migration/m2/reference \
             --model-probe "$KEN_MODEL_PROBE" --potion-snapshot "$KEN_POTION_SNAPSHOT" \
             --table-probe "$KEN_TABLE_PROBE" --context-probe "$KEN_CONTEXT_PROBE" \
             --context-snapshot "$KEN_CONTEXT_SNAPSHOT" --library "$KEN_ORT_LIBRARY" \
             --ettin-probe "$KEN_ETTIN_PROBE" --ettin-source "$KEN_ETTIN_SOURCE" \
             --native "$KEN_TRANSLATION_PROBE" --source "$KEN_TRANSLATION_SOURCE" \
+            --policy-probe "$KEN_POLICY_PROBE" \
             --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
             --baseline-dir .ken/rust-migration/m2 \
             --original-manifest .ken/rust-migration/m2/reference/reference-manifest.json \
-            --out .ken/rust-migration/m2-translation/validation "${native_build_args[@]}"
+            --out .ken/rust-migration/m2-policy/validation "${native_build_args[@]}"
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: rust-models-${{ runner.os }}
-          path: .ken/rust-migration/m2-translation/validation/
+          path: .ken/rust-migration/m2-policy/validation/
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
@@ -163,7 +165,7 @@ jobs:
           path: .ken/rust-migration/m2/platforms
       - name: Require matching platform receipts
         run: |
-          uv run --no-project --python 3.12 python -m tools.rust_migration.translation_validate \
+          uv run --no-project --python 3.12 python -m tools.rust_migration.policy_validate \
             --scope matrix --platform-receipts .ken/rust-migration/m2/platforms \
             --out .ken/rust-migration/m2/matrix
       - uses: actions/upload-artifact@v7

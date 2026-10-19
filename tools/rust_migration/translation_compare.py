@@ -122,12 +122,13 @@ def compare_output(expected:dict,actual:object)->list[str]:
         return [f'malformed native translation history: {error}']
 
 
-def compare_reference(expected:dict,actual:dict)->list[str]:
+def compare_reference(expected:dict,actual:dict,*,reference_fingerprint:str|None=None)->list[str]:
     try:
         errors=[]
         for key in ['format','platform','architecture','definition','cases','source_artifacts',
                     'prepared_artifacts','recipe_sha256','boundary_characterization','reference_fingerprint','oracle']:
-            errors.extend(_differences(expected[key],actual.get(key),'original.'+key))
+            wanted=reference_fingerprint if key=='reference_fingerprint' and reference_fingerprint is not None else expected[key]
+            errors.extend(_differences(wanted,actual.get(key),'original.'+key))
         if not _positive(actual.get('prepare_ns')):errors.append('invalid original preparation measurement')
         errors.extend(_memory_errors(expected,actual.get('memory_samples')))
         return errors+_history_errors(expected,actual.get('results'),native=False)
@@ -226,7 +227,7 @@ def compare(reference:Reference,native:Path,source:Path,out:Path)->dict:
             if not loaded:raise ValueError('actual native translation session identity required')
             receipt['native_identity']=loaded[0]
             expected=capture(reference,copies[0],out/'oracle.json',definition=definition,cases=golden['cases'])
-            receipt['errors'].extend(compare_reference(golden,expected))
+            receipt['errors'].extend(compare_reference(golden,expected,reference_fingerprint=reference.fingerprint))
             receipt['errors'].extend(compare_output(expected,actual))
             receipt.update(preparation=actual['preparation'],runtime=actual['runtime'],reference_runtime=expected['oracle']['runtime'])
             for destination in [source,*copies]:

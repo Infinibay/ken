@@ -100,7 +100,7 @@ def aggregate_ettins(directory:Path,*,expected_ids:list[str]|None=None,expected_
 
 
 def validate_ettin(repo:Path,reference:Reference,model_probe:Path,potion_snapshot:Path,table_probe:Path,artifact:Path,
-                   context:PreparedNativeContext,ettin:PreparedNativeEttin,out:Path,baseline_dir:Path,original_manifest:Path,*,translation:PreparedNativeTranslation|None=None)->int:
+                   context:PreparedNativeContext,ettin:PreparedNativeEttin,out:Path,baseline_dir:Path,original_manifest:Path,*,translation:PreparedNativeTranslation|None=None,policy_probe:Path|None=None)->int:
     repo=repo.resolve();out=out.resolve();out.mkdir(parents=True,exist_ok=True)
     result={'scope':'ettin-local','platform':platform.system(),'architecture':platform.machine(),
         'passed':False,'M2_accepted':False,'gates':{}}
@@ -109,7 +109,7 @@ def validate_ettin(repo:Path,reference:Reference,model_probe:Path,potion_snapsho
         def fingerprints():return ettin_fingerprints(repo,reference,artifact,context.snapshot,ettin.source)
         before=fingerprints();result['fingerprints']=before
         validate_context(repo,reference,model_probe,potion_snapshot,table_probe,artifact,context,out/'base',
-                         baseline_dir,original_manifest,ettin=ettin,translation=translation)
+                         baseline_dir,original_manifest,ettin=ettin,translation=translation,policy_probe=policy_probe)
         base=json.loads((out/'base/summary.json').read_text())
         result.update(context_base=base,gates=dict(base.get('gates',{})),rustc=base.get('rustc'))
         if base.get('execution_error'):result['execution_error']=base['execution_error']

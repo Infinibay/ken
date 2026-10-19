@@ -106,6 +106,16 @@ def test_original_replay_requires_frozen_module_runtime_and_all_local_histories(
     assert compare_reference(expected,bad)
 
 
+def test_original_replay_binds_current_verified_manifest_without_freezing_unrelated_checkout_files():
+    _,expected,_=evidence()
+    current=deepcopy(expected);current['reference_fingerprint']='b'*64
+    assert compare_reference(expected,current)
+    assert compare_reference(expected,current,reference_fingerprint='b'*64)==[]
+    assert compare_reference(expected,current,reference_fingerprint='c'*64)
+    current['oracle']['module_hashes']={}
+    assert compare_reference(expected,current,reference_fingerprint='b'*64)
+
+
 def test_platform_oracle_selection_rejects_ambiguous_or_foreign_registered_platforms():
     document,_,_=evidence()
     assert select_oracle(document,'Darwin','arm64')['platform']=='Darwin'

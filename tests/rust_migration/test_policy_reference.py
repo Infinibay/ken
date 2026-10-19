@@ -84,3 +84,17 @@ def test_capture_rejects_incomplete_reference_before_output(original,tmp_path):
     with pytest.raises(ValueError,match='frozen source drift'):
         capture_policy(replace(original,root=empty),output)
     assert not output.exists()
+
+
+def test_verified_current_reference_can_have_a_different_full_manifest_with_identical_policy_source(original,tmp_path):
+    import json
+    import platform
+    from tools.rust_migration.policy_compare import GOLDEN,compare_reference,select_oracle
+    from tools.rust_migration.policy_reference import capture_policy
+    expected=select_oracle(json.loads(GOLDEN.read_text()),platform.system(),platform.machine())
+    actual=capture_policy(original,tmp_path/'oracle.json')
+    assert actual['reference_fingerprint']!=expected['reference_fingerprint']
+    assert actual['oracle']['sources']==expected['oracle']['sources']
+    assert compare_reference(expected,actual,reference_fingerprint=original.fingerprint)==[]
+    actual['oracle']['sources']['src/ken/db.py']='0'*64
+    assert compare_reference(expected,actual,reference_fingerprint=original.fingerprint)
