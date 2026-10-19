@@ -1,8 +1,8 @@
 # Contextual ONNX profile: independent expectations fixed
 
 Status: complete20gate macOS/Linux matrix passed for source4c6db1d8.
-Independent whole-plan review is pending; this is not final context-profile or
-M2 acceptance.
+Independent whole-plan [review](REVIEW.md) passed with no Critical/Important
+findings and one deferred Minor. Context profile accepted; M2 remains pending.
 
 The [shared cases](cases.json) fix20histories. [Original outputs](reference.json)
 were captured independently from frozen Python on macOS arm64 and Linux aarch64.
@@ -121,6 +121,6 @@ succeeds even when the declared core file is missing and reports null actualcore
 The comparator rejects altered IDs/masks/raw vectors, nonfinite original/native
 values, wrong shape/runtime/core/OS/stderr and stale release.58targeted tooling/
 original tests passed before full gates. RED/GREEN logs and all rulings remain
-in this plan's ledger until final-review archival. Only the independent review
-and any one-pass verified fixes remain for this scoped profile. M2 as a whole
+in this plan's ledger until final-review archival. The independent review passed without a correction pass; its one deferred Minor
+records the native CPU arena disabled versus original enabled allocation policy. M2 as a whole
 still includes remaining runtimes, selection/preparation and storage.
