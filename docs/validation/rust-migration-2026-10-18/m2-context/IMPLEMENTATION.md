@@ -1,9 +1,8 @@
 # Contextual ONNX profile: independent expectations fixed
 
-Status: oracle/fixtures and native runtime complete. The runtime passed the
-prepared workspace and original tests on bothOS. Contextual encoder, actual
-native process and full platform gates remain pending; this is not context-profile
-or M2 acceptance.
+Status: oracle, runtime and contextual encoder implemented and tested on bothOS.
+Actual autonomous process, complete platform gates and independent review remain
+pending; this is not context-profile or M2 acceptance.
 
 The [shared cases](cases.json) fix20histories. [Original outputs](reference.json)
 were captured independently from frozen Python on macOS arm64 and Linux aarch64.
@@ -55,3 +54,20 @@ error now names the missing symbol. Full prepared Rust passes70distinct tests
 Raw Linux evidence is `.ken/rust-migration/m2-context/t2-linux-receipts`; macOS
 task logs and ledger retain RED/GREEN evidence. Whole-profile gate/review remains
 pending, including CI preparation for the newly explicit native-core prerequisite.
+
+## Contextual encoder
+
+Commitda99f0a matches all20registered histories and exact original spec/key/tokens
+on each OS at unchanged tolerances. The encoder owns tokenizer policy, shares
+immutable verified graph bytes and serializes one lazy CPU2/1 session. It returns
+raw owned768-vectors. Snapshot artifact proof prevents passing a different model's
+verified bytes under this model's identity.
+
+Cold-process tests first reproduced use of the native API before initialization;
+the session/runtime now initializes before any tensor construction. Empty batches
+still succeed without a core, and missing core queries return errors. All eight
+invalid graph classes error, including the original extra-row gap. Mixed-input
+concurrency and independent result buffers pass. Both platforms passed77distinct
+Rust tests (78reported including the old nested child), fmt/clippy and10targeted
+original/oracle Python tests. Original1066hashes remain unchanged. Raw Linux
+receipts: `.ken/rust-migration/m2-context/t3-linux-receipts`.
