@@ -252,6 +252,10 @@ Las expectativas se fijaron en ambos sistemas antes del port. Los
 [casos y comprobaciones](validation/rust-migration-2026-10-19/m2-ettin/)
 incluyen preparación exacta, límites de consulta, concurrencia y 23 historiales
 reales. La aplicación original y sus índices se conservan. M2 continúa abierto.
+La matriz de 23 comprobaciones pasó en macOS arm64 y Linux aarch64; la
+[revisión independiente](validation/rust-migration-2026-10-19/m2-ettin/REVIEW.md)
+no encontró problemas críticos ni importantes. Quedó un detalle menor de
+diagnóstico de opsets en grafos personalizados, documentado como pendiente.
 
 Prepare los datos públicos desde el entorno de desarrollo; esta descarga no
 forma parte del runtime Rust:

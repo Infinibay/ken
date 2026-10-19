@@ -5,6 +5,11 @@ without intermediate confirmations, using native inline execution. Contextual
 ONNX is accepted with20gates on bothOS and fresh review; M2 remains open.
 Original sources/tests/resources, installed entrypoint and user indexes stay intact.
 
+Status: this scoped profile passed all 23 gates on both registered platforms and
+the independent review, with one deferred Minor. See the
+[implementation record](../../validation/rust-migration-2026-10-19/m2-ettin/IMPLEMENTATION.md).
+The whole M2 stage remains open.
+
 ## Purpose, concepts and caller
 
 Execute the existing Ettin reranker and prepare its graph without Python.

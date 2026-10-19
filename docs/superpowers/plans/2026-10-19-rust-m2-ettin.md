@@ -38,14 +38,14 @@ accepts optional definition/prepared overrides for independent tiny graph fixtur
 records original preparation bytes/hashes, runtime, options, token/mask/pair_fits,
 logits/details/state/timing; fixture generation explicitly adapts frozen original
 published_head/registered_head/registered_reranker helpers and records sourcehash.
-- [ ] Write RED tests missing modules; assert tiny head scalar expected within4e-6,
+- [x] Write RED tests missing modules; assert tiny head scalar expected within4e-6,
   exact original assembled bytes, pair scores29/30/28/31,pad7,empty no load,
   config/graph failures, raw boundary counts and original imports confined.
-- [ ] Implement frozen child capture/generator, dynamicbatch tiny graph adapter,
+- [x] Implement frozen child capture/generator, dynamicbatch tiny graph adapter,
   malformed protobuf/head/weights/output/config fixtures. Preserve failures.
-- [ ] Fix all23real histories from spec and record raw1023/1024/1025pair lengths;
+- [x] Fix all23real histories from spec and record raw1023/1024/1025pair lengths;
   capture bothOS before native scorer. Expected all exact policies/graphhash match.
-- [ ] Run .venv/bin/python -m pytest tests/rust_migration/test_ettin_reference.py tests/retrieval/test_reranker_head.py tests/retrieval/test_neural_reranker.py -q;
+- [x] Run .venv/bin/python -m pytest tests/rust_migration/test_ettin_reference.py tests/retrieval/test_reranker_head.py tests/retrieval/test_neural_reranker.py -q;
   Expected allpass. Verify originals, inspect/commit ownfiles; task-done samecommand.
 
 ### Task 2: Native graph preparation and cache ownership
@@ -59,18 +59,18 @@ prepared_assets()->ModelAssets; verify_prepared(&Path)->Result<PreparedReranker>
 recipe_key()->String; compile_head(&VerifiedSnapshot)->Result<Vec<u8>>;
 prepare(&self,source:Option<&Path>,destination:&Path)->Result<PreparedReranker>;
 PreparedReranker owns Arc<VerifiedSnapshot> and model association, private constructors.
-- [ ] RED public tests exact tiny assembled bytes, every head operator/transpose,
+- [x] RED public tests exact tiny assembled bytes, every head operator/transpose,
   malformed varints/lengths/duplicate graph/output/opset/collision/nonfinite F32,
   arbitrarily named prepared cache without upstream, changed cache and failed
   derivedhash no publication; stage an inner ordinary-mode directory, preserving
   umask-readable files/directories instead of publishing TempDir0700.
-- [ ] Implement bounded wire fields, preserved upstream data and exact scalar/
+- [x] Implement bounded wire fields, preserved upstream data and exact scalar/
   tensor/node/valueinfo presence/order. Validate head with safetensors, no generic
   graph interpreter. Verify source provenance and derived four-artifact bytes.
-- [ ] Atomic sibling-stage sync/publish/reverify winning cache; actual concurrent
+- [x] Atomic sibling-stage sync/publish/reverify winning cache; actual concurrent
   callers and source replacement use owned authenticated bytes. Real graph must
   equal declared274035078/SHA8e22 exactly on bothOS, never copy Python output.
-- [ ] Run cargo test --locked -p ken-models --test published_head --test reranker_preparation;
+- [x] Run cargo test --locked -p ken-models --test published_head --test reranker_preparation;
   Expected allpass with explicit KEN_ETTIN_SOURCE. Run prepared workspace/fmt/clippy
   and original preparation tests, verify originals, commit; task-done targetedcommand.
 
@@ -85,13 +85,13 @@ tokenize_pairs(&str,&[&str])->Result<Vec<PairTokens>>,score(&str,&[&str])->Resul
 ScoredPool{scores:Vec<f32>,details:RerankDetails}; details token_ms/inference_ms,
 truncated_documents,pair_tokens,pad_id Option omittedwhenempty. Lazy missing data
 errors on actual use, empty/top11/invalidoptions ordering pinned to original.
-- [ ] RED tiny and mandatory actual23histories; invalid options/config padding/
+- [x] RED tiny and mandatory actual23histories; invalid options/config padding/
   limits/dtype/output/count/NaN/Inf, query65536/65537 and token capacity, custom512/
   2048, batch3remainder, same/different concurrent queries and independent results.
-- [ ] Implement tokenizer policy and CPU4/1 arenaenabled with error_on_failure,
+- [x] Implement tokenizer policy and CPU4/1 arenaenabled with error_on_failure,
   runtime/session initialization before tensors, exact original outputfirstname,
   raw owned logits/details; no context/Potion normalization or prefix.
-- [ ] Run cargo test --locked -p ken-models --test onnx_reranker and original
+- [x] Run cargo test --locked -p ken-models --test onnx_reranker and original
   tests/retrieval/test_neural_reranker.py. Expected allpass on bothOS before closure;
   prepared workspace/fmt/clippy,1066hashes; commit/task-done targetedRustcommand.
 
@@ -111,15 +111,15 @@ keyword ettin to validate_context/validate_tables/validate_models and the shared
 _validation_environment. Typed inputs override ambient prepared vars; old CLI
 callers forward only explicit KEN_ETTIN_SOURCE/KEN_ETTIN_PROBE. Frozen original
 reference_env still strips everyKEN variable. No global os.environ mutation.
-- [ ] RED incorrect tokens/logits/config/state/core/assembledhash/stalebinary,
+- [x] RED incorrect tokens/logits/config/state/core/assembledhash/stalebinary,
   cached-Python-only shortcut, wrongOS/stderr/missing cases/baseproof/currenthash.
-- [ ] Implement real probe, independent original/native destinations, fresh-source
+- [x] Implement real probe, independent original/native destinations, fresh-source
   native preparation and existing-cache-without-source history; Linux actual1exec,
   copied binary/core audits, retained calibrated stderr policy and allmeasurements.
-- [ ] Prepared full tooling/process/original tests, then immutable-source complete
+- [x] Prepared full tooling/process/original tests, then immutable-source complete
   bothOS23gates: fullPython exactbaselineIDs/mypy/Rust/fmt/clippy/allpriorparity+
   benchmark/integrity/current-sourcebinding; retain every attempt, no fake speedup.
-- [ ] Publish receipts/matrix, task-done printed matrix, one fresh whole-plan
+- [x] Publish receipts/matrix, task-done printed matrix, one fresh whole-plan
   gpt-6-astra reviewer with all5ReviewFocus verbatim/rulings. Regrade C/I oneTDDfix
   pass, no rereview; deferMinors; acceptonlythisprofile then continue remainingM2.
 
@@ -132,3 +132,8 @@ prerequisites require explicit forwarding and CI preparation, originals stripped
 of all KEN env. CPU arena difference from prior context deferredMinor is not
 silently copied into new profile. All5ReviewFocus have owningtask tests. Global
 whole-program/selection/storage/optionalruntime obligations stay open.
+
+Execution status: all four tasks complete; both-platform 23-gate matrix and the
+one fresh whole-plan review passed. One Minor is deferred. See
+[the execution record](../../validation/rust-migration-2026-10-19/m2-ettin/EXECUTION.md).
+Global M2 remains open; the same migration branch continues.

@@ -1,7 +1,8 @@
 # Ettin: native preparation and paired scoring
 
 The complete 23-gate matrix passes on Darwin/arm64 and Linux/aarch64 for native
-source `ffb65afc`. Independent whole-plan review is pending; M2 remains open.
+source `ffb65afc`. Independent whole-plan [review](REVIEW.md) found no Critical or
+Important issues and one deferred Minor. Ettin is accepted; M2 remains open.
 
 [Cases](cases.json) fix23histories; [original outputs](reference.json) were captured
 independently from frozen source on Darwin/arm64 and Linux/aarch64 before native
@@ -149,3 +150,10 @@ on both platforms using a declared offline verified resolver substitution.
 Syntax checks covered YAML, shell and all four embedded Python blocks. This
 does not claim a remote CI run or network preparation proof. Remaining runtimes,
 model selection/acquisition and storage still block global M2 completion.
+
+The deferred Minor concerns opset-domain/duplicate-import diagnostics for custom
+graphs. The executor independently reproduced both reported cases. Source and
+derived-byte authentication protect the fixed registered Ettin graph, so the
+finding does not block this profile. [Execution decisions](EXECUTION.md) retain
+every ruling and its cost, including all seven behaviors the reviewer declined
+to judge. No second review, source change or fix claim was made after review.

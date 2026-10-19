@@ -1,8 +1,9 @@
 # Ettin execution record
 
-Native inline execution followed all four tasks of the scoped plan.
-The full source-bound matrix passed on both registered platforms.
-Independent whole-plan review is still pending.
+Native inline execution completed all four tasks. The complete source-bound
+matrix passed on both registered platforms. The one fresh independent review
+found no Critical/Important issue and one deferred Minor. No correction pass or
+second review was required. Ettin is accepted; global M2 remains open.
 
 ## Recorded decisions, in order
 
@@ -34,6 +35,22 @@ Independent whole-plan review is still pending.
 
 14. Task4: Ruling: represent approximate kernel HWM as retained raw reports plus their exact running observed maximum — Linux6.12.67 actually reported decreases372/396KiB, and its proc_pid_status manual documents VmHWM inaccurate; claiming every raw report was an exact monotonic peak was false. Comparator reconstructs the envelope exactly and rejects invented inflation/zero/noninteger reports; score tolerances and original tests unchanged — cost if wrong: observed reports may miss the real allocation peak, so no exact-peak/SLA claim is made. New Rust actual-trace2tests and Python comparator-decrease fixture observed RED then GREEN. Corrected test placement keeps all prior original-replay assertions in their original test. Full tooling70GREEN, alltargetclippyGREEN,1066originalhashes intact; fullcurrentbothOS23proof remainsmandatory.
 
+15. Final: Ruling: prior contextual CPU-arena difference stays with its already deferred owningplan — newEttin explicitlymatchesoriginalarenaTrue andnocontextsourcechanged — cost if wrong: existingcontextallocation/performance difference persists untilthatowner'sfollow-up.
+
+16. Final: Ruling: wholeM2/remainingruntimes/acquisition/selection/storage/installedentrypointpromotion remainoutside thisprofile'sacceptance — continueapprovedmigrationafterEttinclosure; allreceiptsretainM2_acceptedFalse — cost if wrong: users cannot yetreplaceinstalledKen with thispartialprofile.
+
+17. Final: Ruling: remoteCI/live networkpreparation are notcertifiedbylocalproof/offlineverifiedsmokes — retainactualscopeandcompleteM8distributionvalidationlater — cost if wrong: hostedrunner/network-specificintegrationmaystillfail.
+
+18. Final: Ruling: measuredelapsedtime andapproximatekernelreports establish noexactallocationpeak,memorySLAorspeedup — publishrawreports/exactobservedenvelopesandphaseboundaries — cost if wrong: unsuitableasexclusivememorybudgetorperformanceregressionthreshold.
+
+19. Final: Ruling: semanticONNXvalidation beyondfixedpublishedrecipe isnotpromised — exactregisteredsource/derivedauthenticationprotectsthisprofile; concreteopsetambiguityis explicitlydeferredMinor, nothiddenasout-of-scope — cost if wrong: unsupportedcustomgraphs canfailonlywhenloaded.
+
+20. Final: Ruling: acceptance covers Darwin/arm64 andLinux/aarch64 only — thesearetheactuallyregistered/executedplatforms; additionalarchitecturesremaindistributionwork — cost if wrong: x86/otherplatformbinariesmaynotyetwork.
+
+21. Final: Ruling: documentlength andunboundedtoken-inspection behavior staysoriginal-compatible — no newresourcepolicyintroducedduringnumeric/lexicalport; broaderrequestbudgetsbelonginaseparateconsumercontract — cost if wrong: enormousdocument/helperinputs canuseexcessivetimeormemory.
+
+22. Final: Ruling: archive this plan's generated workspace ratherthanpurge raw TDD/failure/review evidence — preserve-attempt contract and durableaudit outweigh ephemeralworkspace deletion; moveonlythisowner'sdirectory afterpublicdecisions/reviewarecommitted — cost if wrong: extra private disk usage, no otherplan/worktree/source affected.
+
 ## Deferred minors
 
-None recorded for this scoped plan before independent review.
+- Final: minor (deferred): published_head.rs:first-opset validation doesnotcheckdefaultdomain orduplicate/conflictingimports; custommalformedgraphs may reachlaterruntimeerror. Futurefixvalidateexactdefaultdomain+duplicates, preservingomitted/explicitemptydomain, withfocusedregressions. Registeredsource/derivedhashandreal23histories remainprotected.
