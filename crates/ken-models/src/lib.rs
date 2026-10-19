@@ -1,5 +1,7 @@
 //! Verified native model execution, independent of project discovery and storage.
 mod assets;
+mod context_encoder;
+mod context_model;
 mod model2vec;
 mod native_onnx;
 mod static_table;
@@ -9,6 +11,8 @@ mod tokenization;
 mod verified_file;
 
 pub use assets::{ModelAssets, VerifiedSnapshot};
+pub use context_encoder::{ContextEncoder, ContextInput, ContextTokens};
+pub use context_model::ContextModel;
 pub use model2vec::Model2VecEncoder;
 pub use native_onnx::{NativeOnnxRuntime, RuntimeIdentity};
 pub use static_table::StaticTableEncoder;

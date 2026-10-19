@@ -1,8 +1,9 @@
 # Contextual ONNX profile: independent expectations fixed
 
-Status: oracle/fixtures complete before native contextual implementation.
-Runtime, encoder, actual native process and full platform gates remain pending;
-this is not context-profile or M2 acceptance.
+Status: oracle/fixtures and native runtime complete. The runtime passed the
+prepared workspace and original tests on bothOS. Contextual encoder, actual
+native process and full platform gates remain pending; this is not context-profile
+or M2 acceptance.
 
 The [shared cases](cases.json) fix20histories. [Original outputs](reference.json)
 were captured independently from frozen Python on macOS arm64 and Linux aarch64.
@@ -35,3 +36,22 @@ fail, and macOS requires silence. Each actual run records its observed stderr.
 
 Raw captures: `.ken/rust-migration/m2-context/oracle-{macos,linux}.json`.
 The frozen original reference and model revisions are included in the JSON.
+
+## Native runtime foundation
+
+Commits4f513025/f9a3d00 implement shared bounded regular-file verification and
+an authenticated native API owner. Device EOF acceptance and FIFO blocking were
+reproduced before the fix; regular HF symlinks remain supported. Runtime
+declarations stay lazy, verify requested aliases even when warm, load only a
+private authenticated byte copy and remove that temporary file after dlopen.
+The mapped handle is retained process-wide before environment construction.
+
+Tests cover actual core1.25.1/API25, malformed C API symbols/pointers/version,
+foreign initialization, byte corruption, conflicting identity and an eight-alias
+cold race. A strengthened diagnostic test exposed generic macOS dlsym text; the
+error now names the missing symbol. Full prepared Rust passes70distinct tests
+(71reported including a preexisting nested child), fmt/clippy are clean and
+22original Python tests pass on bothOS. Original1066hashes remain unchanged.
+Raw Linux evidence is `.ken/rust-migration/m2-context/t2-linux-receipts`; macOS
+task logs and ledger retain RED/GREEN evidence. Whole-profile gate/review remains
+pending, including CI preparation for the newly explicit native-core prerequisite.

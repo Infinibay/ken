@@ -3,7 +3,7 @@ use serde::{Deserialize, Deserializer, Serialize, de};
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeMap, fmt, path::Path};
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 struct Artifact {
     bytes: u64,
     sha256: String,
@@ -135,7 +135,26 @@ impl ModelAssets {
                     })?;
             files.insert(name.clone(), bytes);
         }
-        Ok(VerifiedSnapshot { files })
+        Ok(VerifiedSnapshot {
+            files,
+            artifacts: self.artifacts.clone(),
+        })
+    }
+
+    pub(crate) fn model_id(&self) -> &str {
+        &self.model_id
+    }
+    pub(crate) fn revision(&self) -> &str {
+        &self.revision
+    }
+    pub(crate) fn artifact_hashes(&self) -> BTreeMap<&str, &str> {
+        self.artifacts
+            .iter()
+            .map(|(name, artifact)| (name.as_str(), artifact.sha256.as_str()))
+            .collect()
+    }
+    pub(crate) fn accredits(&self, snapshot: &VerifiedSnapshot) -> bool {
+        self.artifacts == snapshot.artifacts
     }
 }
 
@@ -143,6 +162,7 @@ impl ModelAssets {
 #[derive(Debug)]
 pub struct VerifiedSnapshot {
     files: BTreeMap<String, Vec<u8>>,
+    artifacts: BTreeMap<String, Artifact>,
 }
 
 impl VerifiedSnapshot {
@@ -154,7 +174,7 @@ impl VerifiedSnapshot {
     }
 }
 
-fn python_json(value: &serde_json::Value) -> String {
+pub(crate) fn python_json(value: &serde_json::Value) -> String {
     match value {
         serde_json::Value::String(s) => {
             let mut out = String::from("\"");
