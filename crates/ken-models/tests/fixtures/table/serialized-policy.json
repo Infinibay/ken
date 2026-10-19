@@ -1,0 +1,748 @@
+{
+  "oracle": {
+    "frozen_import": true,
+    "runtime": {
+      "numpy": "2.4.4",
+      "tokenizers": "0.22.2"
+    }
+  },
+  "dimension": 4,
+  "meta": {
+    "name": "test/table",
+    "dim": 4
+  },
+  "results": [
+    {
+      "id": "empty",
+      "calls": [
+        [
+          3,
+          3,
+          3,
+          3
+        ],
+        4,
+        [
+          0.6900655627250671,
+          0.6900655627250671,
+          -0.0690065547823906,
+          0.20701967179775238
+        ]
+      ],
+      "load_ns": 4055167,
+      "inference_ns": 660208,
+      "peak_after_load_bytes": 42254336,
+      "peak_after_inference_bytes": 43646976
+    },
+    {
+      "id": "spaces",
+      "calls": [
+        [
+          3,
+          3,
+          3,
+          3
+        ],
+        4,
+        [
+          0.6900655627250671,
+          0.6900655627250671,
+          -0.0690065547823906,
+          0.20701967179775238
+        ]
+      ],
+      "load_ns": 358959,
+      "inference_ns": 69666,
+      "peak_after_load_bytes": 43712512,
+      "peak_after_inference_bytes": 43778048
+    },
+    {
+      "id": "spanish",
+      "calls": [
+        [
+          4,
+          4,
+          3,
+          3
+        ],
+        4,
+        [
+          0.5577732920646667,
+          0.31872761249542236,
+          0.7569780945777893,
+          0.11952286213636398
+        ]
+      ],
+      "load_ns": 385000,
+      "inference_ns": 212709,
+      "peak_after_load_bytes": 43810816,
+      "peak_after_inference_bytes": 43909120
+    },
+    {
+      "id": "nfc",
+      "calls": [
+        [
+          4,
+          3,
+          3,
+          3
+        ],
+        4,
+        [
+          0.707412838935852,
+          0.582575261592865,
+          0.353706419467926,
+          0.1872563362121582
+        ]
+      ],
+      "load_ns": 287125,
+      "inference_ns": 63875,
+      "peak_after_load_bytes": 43909120,
+      "peak_after_inference_bytes": 43909120
+    },
+    {
+      "id": "nfd",
+      "calls": [
+        [
+          4,
+          3,
+          3,
+          3
+        ],
+        4,
+        [
+          0.707412838935852,
+          0.582575261592865,
+          0.353706419467926,
+          0.1872563362121582
+        ]
+      ],
+      "load_ns": 280542,
+      "inference_ns": 58791,
+      "peak_after_load_bytes": 43958272,
+      "peak_after_inference_bytes": 43958272
+    },
+    {
+      "id": "emoji",
+      "calls": [
+        [
+          4,
+          3,
+          3,
+          3
+        ],
+        4,
+        [
+          0.707412838935852,
+          0.582575261592865,
+          0.353706419467926,
+          0.1872563362121582
+        ]
+      ],
+      "load_ns": 281833,
+      "inference_ns": 76417,
+      "peak_after_load_bytes": 43974656,
+      "peak_after_inference_bytes": 43991040
+    },
+    {
+      "id": "code",
+      "calls": [
+        [
+          4,
+          4,
+          3,
+          3
+        ],
+        4,
+        [
+          0.5577732920646667,
+          0.31872761249542236,
+          0.7569780945777893,
+          0.11952286213636398
+        ]
+      ],
+      "load_ns": 268333,
+      "inference_ns": 124667,
+      "peak_after_load_bytes": 43991040,
+      "peak_after_inference_bytes": 44072960
+    },
+    {
+      "id": "unknown",
+      "calls": [
+        [
+          4,
+          4,
+          3,
+          3
+        ],
+        4,
+        [
+          0.5577732920646667,
+          0.31872761249542236,
+          0.7569780945777893,
+          0.11952286213636398
+        ]
+      ],
+      "load_ns": 260458,
+      "inference_ns": 71667,
+      "peak_after_load_bytes": 44072960,
+      "peak_after_inference_bytes": 44072960
+    },
+    {
+      "id": "pad",
+      "calls": [
+        [
+          4,
+          4,
+          3,
+          3
+        ],
+        4,
+        [
+          0.5577732920646667,
+          0.31872761249542236,
+          0.7569780945777893,
+          0.11952286213636398
+        ]
+      ],
+      "load_ns": 258792,
+      "inference_ns": 43333,
+      "peak_after_load_bytes": 44072960,
+      "peak_after_inference_bytes": 44072960
+    },
+    {
+      "id": "long-512",
+      "calls": [
+        [
+          0,
+          0,
+          3,
+          3
+        ],
+        4,
+        [
+          0.8899883031845093,
+          0.44499415159225464,
+          0.08899883925914764,
+          0.044499412178993225
+        ]
+      ],
+      "load_ns": 260167,
+      "inference_ns": 1321333,
+      "peak_after_load_bytes": 44072960,
+      "peak_after_inference_bytes": 44400640
+    },
+    {
+      "id": "long-513",
+      "calls": [
+        [
+          0,
+          0,
+          3,
+          3
+        ],
+        4,
+        [
+          0.8899883031845093,
+          0.44499415159225464,
+          0.08899883925914764,
+          0.044499412178993225
+        ]
+      ],
+      "load_ns": 263917,
+      "inference_ns": 1317208,
+      "peak_after_load_bytes": 44417024,
+      "peak_after_inference_bytes": 44515328
+    },
+    {
+      "id": "long-4097",
+      "calls": [
+        [
+          0,
+          0,
+          3,
+          3
+        ],
+        4,
+        [
+          0.8899883031845093,
+          0.44499415159225464,
+          0.08899883925914764,
+          0.044499412178993225
+        ]
+      ],
+      "load_ns": 268000,
+      "inference_ns": 10485042,
+      "peak_after_load_bytes": 44515328,
+      "peak_after_inference_bytes": 48119808
+    },
+    {
+      "id": "mixed-empty",
+      "calls": [
+        [
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.20701967179775238
+          ],
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.2070196568965912
+          ],
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.20701967179775238
+          ],
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.20701967179775238
+          ],
+          [
+            0.7164378762245178,
+            0.6492718458175659,
+            0.15672078728675842,
+            0.2014981508255005
+          ],
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.20701967179775238
+          ]
+        ],
+        [
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.20701967179775238
+          ],
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.2070196568965912
+          ],
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.20701967179775238
+          ],
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.20701967179775238
+          ],
+          [
+            0.7164378762245178,
+            0.6492718458175659,
+            0.15672078728675842,
+            0.2014981508255005
+          ],
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.20701967179775238
+          ]
+        ]
+      ],
+      "load_ns": 295208,
+      "inference_ns": 90000,
+      "peak_after_load_bytes": 48119808,
+      "peak_after_inference_bytes": 48119808
+    },
+    {
+      "id": "empty-batch",
+      "calls": [
+        [],
+        []
+      ],
+      "load_ns": 307917,
+      "inference_ns": 4625,
+      "peak_after_load_bytes": 48136192,
+      "peak_after_inference_bytes": 48136192
+    },
+    {
+      "id": "batching",
+      "calls": [
+        [
+          0.6900655627250671,
+          0.6900655627250671,
+          -0.0690065547823906,
+          0.2070196568965912
+        ],
+        [
+          [
+            0.7164378762245178,
+            0.6492718458175659,
+            0.15672078728675842,
+            0.2014981508255005
+          ],
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.2070196568965912
+          ],
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.20701967179775238
+          ]
+        ],
+        [
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.2070196568965912
+          ]
+        ]
+      ],
+      "load_ns": 261375,
+      "inference_ns": 93291,
+      "peak_after_load_bytes": 48136192,
+      "peak_after_inference_bytes": 48152576
+    },
+    {
+      "id": "repeated-order",
+      "calls": [
+        [
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.2070196568965912
+          ],
+          [
+            0.5753723382949829,
+            0.7584453821182251,
+            0.10461314767599106,
+            0.28768616914749146
+          ],
+          [
+            0.8899883031845093,
+            0.44499415159225464,
+            0.08899883925914764,
+            0.044499412178993225
+          ],
+          [
+            0.6900655627250671,
+            0.6900655627250671,
+            -0.0690065547823906,
+            0.2070196568965912
+          ]
+        ]
+      ],
+      "load_ns": 259500,
+      "inference_ns": 52125,
+      "peak_after_load_bytes": 48152576,
+      "peak_after_inference_bytes": 48152576
+    }
+  ],
+  "format": "ken-table-oracle/1",
+  "cases": [
+    {
+      "id": "empty",
+      "calls": [
+        {
+          "op": "tokens",
+          "text": ""
+        },
+        {
+          "op": "count",
+          "text": ""
+        },
+        {
+          "op": "query",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "id": "spaces",
+      "calls": [
+        {
+          "op": "tokens",
+          "text": " \t\n"
+        },
+        {
+          "op": "count",
+          "text": " \t\n"
+        },
+        {
+          "op": "query",
+          "text": " \t\n"
+        }
+      ]
+    },
+    {
+      "id": "spanish",
+      "calls": [
+        {
+          "op": "tokens",
+          "text": "\u00bfD\u00f3nde se guarda la configuraci\u00f3n del usuario?"
+        },
+        {
+          "op": "count",
+          "text": "\u00bfD\u00f3nde se guarda la configuraci\u00f3n del usuario?"
+        },
+        {
+          "op": "query",
+          "text": "\u00bfD\u00f3nde se guarda la configuraci\u00f3n del usuario?"
+        }
+      ]
+    },
+    {
+      "id": "nfc",
+      "calls": [
+        {
+          "op": "tokens",
+          "text": "caf\u00e9"
+        },
+        {
+          "op": "count",
+          "text": "caf\u00e9"
+        },
+        {
+          "op": "query",
+          "text": "caf\u00e9"
+        }
+      ]
+    },
+    {
+      "id": "nfd",
+      "calls": [
+        {
+          "op": "tokens",
+          "text": "cafe\u0301"
+        },
+        {
+          "op": "count",
+          "text": "cafe\u0301"
+        },
+        {
+          "op": "query",
+          "text": "cafe\u0301"
+        }
+      ]
+    },
+    {
+      "id": "emoji",
+      "calls": [
+        {
+          "op": "tokens",
+          "text": "\ud83d\ude42\ud83d\ude80"
+        },
+        {
+          "op": "count",
+          "text": "\ud83d\ude42\ud83d\ude80"
+        },
+        {
+          "op": "query",
+          "text": "\ud83d\ude42\ud83d\ude80"
+        }
+      ]
+    },
+    {
+      "id": "code",
+      "calls": [
+        {
+          "op": "tokens",
+          "text": "def save_config(path):\n    config.value = read_json(path)"
+        },
+        {
+          "op": "count",
+          "text": "def save_config(path):\n    config.value = read_json(path)"
+        },
+        {
+          "op": "query",
+          "text": "def save_config(path):\n    config.value = read_json(path)"
+        }
+      ]
+    },
+    {
+      "id": "unknown",
+      "calls": [
+        {
+          "op": "tokens",
+          "text": "[UNK]"
+        },
+        {
+          "op": "count",
+          "text": "[UNK]"
+        },
+        {
+          "op": "query",
+          "text": "[UNK]"
+        }
+      ]
+    },
+    {
+      "id": "pad",
+      "calls": [
+        {
+          "op": "tokens",
+          "text": "[PAD]"
+        },
+        {
+          "op": "count",
+          "text": "[PAD]"
+        },
+        {
+          "op": "query",
+          "text": "[PAD]"
+        }
+      ]
+    },
+    {
+      "id": "long-512",
+      "calls": [
+        {
+          "op": "tokens",
+          "text": "alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa "
+        },
+        {
+          "op": "count",
+          "text": "alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa "
+        },
+        {
+          "op": "query",
+          "text": "alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa "
+        }
+      ]
+    },
+    {
+      "id": "long-513",
+      "calls": [
+        {
+          "op": "tokens",
+          "text": "alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa "
+        },
+        {
+          "op": "count",
+          "text": "alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa "
+        },
+        {
+          "op": "query",
+          "text": "alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa "
+        }
+      ]
+    },
+    {
+      "id": "long-4097",
+      "calls": [
+        {
+          "op": "tokens",
+          "text": "alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa "
+        },
+        {
+          "op": "count",
+          "text": "alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa "
+        },
+        {
+          "op": "query",
+          "text": "alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa alfa "
+        }
+      ]
+    },
+    {
+      "id": "mixed-empty",
+      "calls": [
+        {
+          "op": "passages",
+          "texts": [
+            "",
+            "alfa beta",
+            "",
+            "",
+            "gamma",
+            ""
+          ]
+        },
+        {
+          "op": "queries",
+          "texts": [
+            "",
+            "alfa beta",
+            "",
+            "",
+            "gamma",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "id": "empty-batch",
+      "calls": [
+        {
+          "op": "passages",
+          "texts": []
+        },
+        {
+          "op": "queries",
+          "texts": []
+        }
+      ]
+    },
+    {
+      "id": "batching",
+      "calls": [
+        {
+          "op": "query",
+          "text": "alfa beta"
+        },
+        {
+          "op": "passages",
+          "texts": [
+            "gamma",
+            "alfa beta",
+            "delta"
+          ]
+        },
+        {
+          "op": "queries",
+          "texts": [
+            "alfa beta"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "repeated-order",
+      "calls": [
+        {
+          "op": "passages",
+          "texts": [
+            "alfa beta gamma",
+            "gamma beta alfa",
+            "alfa alfa beta",
+            "alfa beta gamma"
+          ]
+        }
+      ]
+    }
+  ],
+  "tolerances": {
+    "atol": 2e-06,
+    "rtol": 1e-05,
+    "cosine_min": 0.999999
+  },
+  "artifact": {
+    "sha256": "0f83e58964410bcb8ad04a4fb3cfcceeed7cd22ef857b996a84f81593b451529",
+    "bytes": 1269
+  },
+  "reference_fingerprint": "e95cc533cc8a603d46481c5310f4b870ffbaaced6fa24fd8a1d85cbd04123222"
+}
