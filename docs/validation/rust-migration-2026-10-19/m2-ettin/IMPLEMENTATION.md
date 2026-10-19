@@ -1,7 +1,8 @@
-# Ettin: independent expectations fixed before native implementation
+# Ettin: native preparation and paired scoring
 
-Only Task1/original expectations are complete. No native Ettin preparation or
-scoring is accepted yet; M2 remains open.
+Native graph preparation and all 23 paired scoring histories pass on Darwin/arm64
+and Linux/aarch64. Profile acceptance still requires the complete 23 gate platform
+matrix and fresh review in Task 4; M2 remains open.
 
 [Cases](cases.json) fix23histories; [original outputs](reference.json) were captured
 independently from frozen source on Darwin/arm64 and Linux/aarch64 before native
@@ -28,6 +29,52 @@ remain unchanged. Sandbox DNS failure and successful anonymous pinned-data
 preparation are retained privately; no original cache/source was modified.
 
 Raw: .ken/rust-migration/m2-ettin/oracle-macos.json and t1-linux-receipts/.
-The private original helper/data preparation is validation-only; actual native
-assembly from authenticated sources remains a mandatory next gate. No graph
-copied from Python will count as native preparation.
+The private original helper/data preparation is validation-only. Native assembly
+from all 15 authenticated source artifacts independently produces the exact 8e22
+graph on bothOS; it does not copy the Python-built graph.
+
+RerankerModel and PreparedReranker own registration and verified graph/config
+bytes. The head compiler preserves untouched protobuf data and emits the exact
+published operators. Cache publication verifies a sibling stage, syncs it and
+atomically publishes an ordinary umask-readable directory; concurrent winners
+are reverified. Twelve native preparation tests pass on both platforms, including
+corruption, bounded malformed protobuf, namespace collisions, owned source
+bytes after path replacement, concurrent publication and failed publication.
+
+OnnxReranker coordinates lazy preparation, one serialized CPU session and raw
+ordered scores. Its private PairedTokenizer owns model limits, query capacity,
+only-second truncation and right padding. Fourteen native tests pass on both platforms, covering
+the 23 independently frozen real histories, synthetic arithmetic, batch remainders,
+Unicode character/token boundaries, empty/top11/load-error ordering, malformed
+configuration/output, concurrent first use, independent returned results and
+an actual cold-process first score. The registered profile explicitly enables the
+CPU arena and uses four intra-op threads and one inter-op thread.
+
+Two explicit integrity decisions preserve the registered profile while rejecting
+unsupported requests. Thread counts above i32::MAX error before any I/O because
+pinned ort casts usize to C int; 2^32 would otherwise wrap to zero (all cores). Native
+outputs must be F32 as registered. The original accepts finiteF64 outputs; an
+independent Cast fixture captures its score 29, while Rust rejects that dtype.
+All prior fixture bytes remain unchanged. The original/reference/preparation tests
+include this characterization. These decisions do not change any original file.
+
+An additional regression exposed unchecked subtraction inside tokenizers 0.22.2
+when the token budget is smaller than its special-token count. Rust now configures
+the paired tokenizer without that overflow and checks capacity before encoding.
+Budgets 1–4 preserve the original load ordering, false pair_fits result and query
+error; empty token inspection still returns an empty list. The regression first
+reproduced the panic, then passed on both platforms. The portable original test
+independently checks the same behavior.
+
+The corrected source passes the complete native workspace on both platforms:
+103 distinct tests (104 reported, including the existing nested context test),
+formatting and clippy. All 29 original/reference/preparation tests pass, and the
+1,066 original file hashes remain intact. All 13 existing source/input fingerprint
+fields match across platforms. Raw checkpoints are retained under
+.ken/rust-migration/m2-ettin/t3-{macos,linux}-corrected-receipts/.
+
+Native runtime code uses no Python, subprocess or network fallback. Task4 must
+still prove a fresh native executable and cache outside the checkout, actual
+Linux exec traces, authenticated core dependencies and all prior profile gates
+bound to the current sources. Earlier accepted context receipts describe their
+own earlier source revision and cannot substitute for this fresh matrix.
