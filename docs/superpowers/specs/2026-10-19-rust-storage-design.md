@@ -98,6 +98,15 @@ bytes-antes-de-referencia son obligatorios. durable=false corresponde al perfil
 NORMAL actual; flush/durable=true hacen fsync. No se promete resistencia adicional
 a pérdida eléctrica que la configuración original tampoco ofrece.
 
+La lectura nativa usa buffers propios por bloques mediante read_exact_at, con
+objetivo8MiB por bloque y al menos una fila. Evita prestar slices Rust sobre
+archivos que los escritores modifican concurrentemente. La [documentación de
+memmap2](https://docs.rs/memmap2/0.9.11/memmap2/struct.MmapOptions.html#safety)
+advierte que modificar el archivo subyacente puede invalidar la seguridad de un
+mapa. El formato fijo sigue siendo compatible con lectores mmap originales.
+Se medirán RSS y tiempo del recorrido nativo; no se presume aceleración ni se
+cambia el contrato del lector por una opción de implementación.
+
 Los vectores se convierten a F32 y normalizan con norma F32 y suelo1e-12; ceros
 siguen siendo ceros. El scoring normaliza la pregunta del mismo modo y devuelve
 un vector F32 por slot[0,count). read conserva el orden y duplicados solicitados.
