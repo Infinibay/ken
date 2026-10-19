@@ -19,11 +19,13 @@ def evidence():
             'source_artifacts':deepcopy(expected['source_artifacts']),
             'artifacts':deepcopy(expected['artifacts']),
             'recipe_key':hashlib.sha256(json.dumps(expected['definition'],sort_keys=True).encode()).hexdigest()},
-        'prepare_ns':1,'peak_after_prepare_bytes':1000,
+        'prepare_ns':1,'peak_after_prepare_bytes':1000,'reported_hwm_after_prepare_bytes':1000,
         'runtime':RUNTIME|{'native_core':core},'results':deepcopy(expected['results'])}
     for index,row in enumerate(actual['results']):
         row['peak_before_calls_bytes']=1000+2000*index
         row['peak_after_calls_bytes']=2000+2000*index
+        row['reported_hwm_before_calls_bytes']=row['peak_before_calls_bytes']
+        row['reported_hwm_after_calls_bytes']=row['peak_after_calls_bytes']
         for call in row['calls']:
             if isinstance(call,dict) and 'error' in call:
                 call['error']['type']='ModelError'
@@ -131,3 +133,17 @@ def test_original_replay_requires_frozen_provenance_and_the_same_local_behavior(
     assert compare_reference(expected,bad)
     bad=deepcopy(expected);bad['results'][1]['calls'][0][0]['ids']=[0]
     assert compare_reference(expected,bad)
+
+
+def test_raw_hwm_can_decrease_but_observed_envelope_must_match_every_sample_exactly():
+    _,expected,actual,core=evidence()
+    row=actual['results'][1]
+    row.update(reported_hwm_before_calls_bytes=1500,peak_before_calls_bytes=2000,
+               reported_hwm_after_calls_bytes=1800,peak_after_calls_bytes=2000)
+    assert compare_output(expected,actual,core)==[]
+    for field,value in [('peak_before_calls_bytes',1500),('peak_after_calls_bytes',99999),
+                        ('reported_hwm_before_calls_bytes',0),('reported_hwm_after_calls_bytes',True)]:
+        bad=deepcopy(actual);bad['results'][1][field]=value
+        assert compare_output(expected,bad,core),field
+    bad=deepcopy(actual);bad['peak_after_prepare_bytes']=2000
+    assert compare_output(expected,bad,core), 'initial observed peak must equal its first raw sample'

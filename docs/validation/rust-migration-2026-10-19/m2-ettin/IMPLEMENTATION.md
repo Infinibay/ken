@@ -78,3 +78,21 @@ still prove a fresh native executable and cache outside the checkout, actual
 Linux exec traces, authenticated core dependencies and all prior profile gates
 bound to the current sources. Earlier accepted context receipts describe their
 own earlier source revision and cannot substitute for this fresh matrix.
+
+The first complete Task4 attempts are retained rather than accepted: macOS passed
+22/23 gates, with one unchanged original 700ms lease-phase test stopping during
+acquisition; Linux passed its full original Python and native suites but rejected
+Ettin process evidence because reported VmHWM fell by 372 and 396 KiB. Tokens,
+raw logits, graph derivation and core identity matched the pre-port oracle.
+Linux's documented VmHWM counter is approximate, so treating every report as an
+exact, monotonically increasing peak was an invalid measurement assumption.
+
+The Ettin adapter now retains every raw `reported_hwm_*_bytes` sample and reports
+`peak_*_bytes` as the running maximum of those samples. Its comparator requires
+exact equality with that observed envelope, including the initial sample; zero,
+noninteger and invented inflated peaks are rejected. Rust tests use the actual
+decreasing Linux sequence. This measures observed kernel reports, not an exact
+allocation peak or a memory SLA. See the
+[Linux proc_pid_status manual](https://man7.org/linux/man-pages/man5/proc_pid_status.5.html).
+Both platforms require new complete source-bound proof after this correction.
+The original timing test, budget and failure allowances remain unchanged.

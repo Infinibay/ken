@@ -11,6 +11,8 @@ use std::{
     sync::Arc,
     time::Instant,
 };
+#[path = "support/observed_peak.rs"]
+mod observed_peak;
 mod support;
 
 #[derive(Deserialize)]
@@ -103,7 +105,8 @@ fn run() -> Result<Value, Box<dyn std::error::Error>> {
     drop(first);
     let prepared = Arc::new(reused);
     let prepare_ns = started.elapsed().as_nanos();
-    let peak_after_prepare_bytes = support::peak_rss()?;
+    let mut peaks = observed_peak::ObservedPeak::default();
+    let prepare_peak = peaks.record(support::peak_rss()?)?;
     let mut results = Vec::new();
     for case in request.cases {
         let started = Instant::now();
@@ -116,7 +119,7 @@ fn run() -> Result<Value, Box<dyn std::error::Error>> {
             case.options,
         )?;
         let constructor_ns = started.elapsed().as_nanos();
-        let peak_before_calls_bytes = support::peak_rss()?;
+        let before = peaks.record(support::peak_rss()?)?;
         let started = Instant::now();
         let mut calls = Vec::new();
         for call in case.calls {
@@ -143,12 +146,14 @@ fn run() -> Result<Value, Box<dyn std::error::Error>> {
             });
         }
         let calls_ns = started.elapsed().as_nanos();
+        let after = peaks.record(support::peak_rss()?)?;
         let policy = encoder.session_policy()?;
         let providers = policy
             .map(|policy| policy.providers.to_vec())
             .unwrap_or_default();
         results.push(json!({"id":case.id,"calls":calls,"constructor_ns":constructor_ns,"calls_ns":calls_ns,
-            "peak_before_calls_bytes":peak_before_calls_bytes,"peak_after_calls_bytes":support::peak_rss()?,
+            "peak_before_calls_bytes":before.observed_peak_bytes,"peak_after_calls_bytes":after.observed_peak_bytes,
+            "reported_hwm_before_calls_bytes":before.reported_hwm_bytes,"reported_hwm_after_calls_bytes":after.reported_hwm_bytes,
             "session_loaded":encoder.is_prepared()?,"providers":providers,
             "cpu_arena":policy.map(|policy|policy.cpu_arena),"intra_threads":policy.map(|policy|policy.intra_threads),
             "inter_threads":policy.map(|policy|policy.inter_threads)}));
@@ -156,7 +161,8 @@ fn run() -> Result<Value, Box<dyn std::error::Error>> {
     Ok(
         json!({"artifacts":artifacts,"preparation":{"fresh_cache":fresh_cache,"reused_without_source":true,
         "source_artifacts":source_artifacts,"artifacts":artifacts,"recipe_key":model.recipe_key()},
-        "prepare_ns":prepare_ns,"peak_after_prepare_bytes":peak_after_prepare_bytes,"results":results,
+        "prepare_ns":prepare_ns,"peak_after_prepare_bytes":prepare_peak.observed_peak_bytes,
+        "reported_hwm_after_prepare_bytes":prepare_peak.reported_hwm_bytes,"results":results,
         "runtime":{"engine":"rust","ken_models":env!("CARGO_PKG_VERSION"),"tokenizers":"0.22.2",
             "ort":"2.0.0-rc.14","device":"cpu","cpu_arena":true,"inter_threads":1,
             "native_core":runtime.loaded_identity()?}}),

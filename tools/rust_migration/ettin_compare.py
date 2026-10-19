@@ -87,13 +87,16 @@ def compare_histories(expected:dict,rows:object,prepare_peak:int)->list[str]:
         path=case['id']
         for field in ['session_loaded','providers','cpu_arena','intra_threads','inter_threads']:
             errors.extend(_differences(want[field],row.get(field),f'{path}.{field}'))
-        measures=['constructor_ns','calls_ns','peak_before_calls_bytes','peak_after_calls_bytes']
+        measures=['constructor_ns','calls_ns','peak_before_calls_bytes','peak_after_calls_bytes',
+                  'reported_hwm_before_calls_bytes','reported_hwm_after_calls_bytes']
         if any(not _positive_integer(row.get(field)) for field in measures):
             errors.append(path+': invalid native phase measurement')
         else:
-            if not previous_peak<=row['peak_before_calls_bytes']<=row['peak_after_calls_bytes']:
-                errors.append(path+': decreasing process peak')
-            previous_peak=row['peak_after_calls_bytes']
+            before=max(previous_peak,row['reported_hwm_before_calls_bytes'])
+            after=max(before,row['reported_hwm_after_calls_bytes'])
+            if row['peak_before_calls_bytes']!=before or row['peak_after_calls_bytes']!=after:
+                errors.append(path+': observed peak differs from retained raw reports')
+            previous_peak=after
         calls=row.get('calls')
         if not isinstance(calls,list) or len(calls)!=len(case['calls']) or len(want['calls'])!=len(case['calls']):
             errors.append(path+': missing or extra calls');continue
@@ -107,14 +110,17 @@ def compare_histories(expected:dict,rows:object,prepare_peak:int)->list[str]:
 
 def compare_output(expected:dict,actual:object,core:dict)->list[str]:
     if not isinstance(actual,dict):return ['native Ettin output must be an object']
-    if set(actual)!={'artifacts','preparation','prepare_ns','peak_after_prepare_bytes','runtime','results'}:
+    if set(actual)!={'artifacts','preparation','prepare_ns','peak_after_prepare_bytes',
+                     'reported_hwm_after_prepare_bytes','runtime','results'}:
         return ['missing or unexpected native Ettin output fields']
     errors=_differences(expected['artifacts'],actual.get('artifacts'),'artifacts')
     errors.extend(preparation_errors(expected,actual.get('preparation')))
     errors.extend(_differences(RUNTIME|{'native_core':core},actual.get('runtime'),'runtime'))
-    for field in ['prepare_ns','peak_after_prepare_bytes']:
+    for field in ['prepare_ns','peak_after_prepare_bytes','reported_hwm_after_prepare_bytes']:
         if not _positive_integer(actual.get(field)):errors.append('invalid '+field)
     peak=actual.get('peak_after_prepare_bytes')
+    if peak!=actual.get('reported_hwm_after_prepare_bytes'):
+        errors.append('initial observed peak differs from its raw report')
     return errors+compare_histories(expected,actual.get('results'),peak if _positive_integer(peak) else 0)
 
 

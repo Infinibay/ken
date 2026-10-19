@@ -282,6 +282,12 @@ y paridad real. Une 18 huellas del código y datos actuales. Un caché construid
 sólo por Python o un ejecutable antiguo impiden aceptar. Los procesos consumen
 copias propias fuera del repositorio; Linux exige un único exec trazado.
 
+Ettin conserva cada lectura cruda `reported_hwm_*_bytes` del contador del sistema.
+Los campos `peak_*_bytes` son el máximo observado de esas lecturas, comprobado
+exactamente por el comparador. Linux documenta `VmHWM` como aproximado y puede
+devolver lecturas decrecientes; esta evidencia no mide un pico exacto de memoria
+ni acredita un SLA.
+
 Los validadores aceptan prerrequisitos tipados o variables preparadas explícitas.
 No inventan rutas si faltan. El oráculo elimina las variables nativas heredadas y
 conserva únicamente sus directorios aislados de configuración y caché.
