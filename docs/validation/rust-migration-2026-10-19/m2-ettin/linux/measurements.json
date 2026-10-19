@@ -1,0 +1,741 @@
+{
+  "source_commit": "ffb65afc",
+  "platform": "Linux",
+  "architecture": "aarch64",
+  "native_wall_ns": 69563797365,
+  "native_prepare_ns": 7424700087,
+  "native_reported_hwm_after_prepare_bytes": 837902336,
+  "native_observed_peak_after_prepare_bytes": 837902336,
+  "memory_semantics": "Original peak_bytes fields are raw kernel reports. Native reported_hwm_* fields retain every approximate kernel report; native peak_* fields are their exact cumulative maximum. Neither is an exclusive allocation peak or SLA.",
+  "phase_semantics": "Native source verification/assembly/cache reuse is separate. Original constructors and native constructors do different work; these phases establish no speedup.",
+  "cases": [
+    {
+      "id": "empty-pool",
+      "original": {
+        "id": "empty-pool",
+        "constructor_ns": 12125,
+        "calls_ns": 8125,
+        "peak_bytes": 1719992320,
+        "session_loaded": false,
+        "providers": [],
+        "cpu_arena": null,
+        "intra_threads": null,
+        "inter_threads": null
+      },
+      "native": {
+        "calls_ns": 5000,
+        "constructor_ns": 5166,
+        "cpu_arena": null,
+        "id": "empty-pool",
+        "inter_threads": null,
+        "intra_threads": null,
+        "peak_after_calls_bytes": 837902336,
+        "peak_before_calls_bytes": 837902336,
+        "providers": [],
+        "reported_hwm_after_calls_bytes": 837902336,
+        "reported_hwm_before_calls_bytes": 837902336,
+        "session_loaded": false
+      }
+    },
+    {
+      "id": "empty-query",
+      "original": {
+        "id": "empty-query",
+        "constructor_ns": 3583,
+        "calls_ns": 979187792,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 766308501,
+        "constructor_ns": 2000,
+        "cpu_arena": true,
+        "id": "empty-query",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 837902336,
+        "peak_before_calls_bytes": 837902336,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 837902336,
+        "reported_hwm_before_calls_bytes": 837902336,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "empty-document",
+      "original": {
+        "id": "empty-document",
+        "constructor_ns": 6714958,
+        "calls_ns": 981743833,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 624361334,
+        "constructor_ns": 270291,
+        "cpu_arena": true,
+        "id": "empty-document",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 837902336,
+        "peak_before_calls_bytes": 837902336,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 837902336,
+        "reported_hwm_before_calls_bytes": 837902336,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "spanish",
+      "original": {
+        "id": "spanish",
+        "constructor_ns": 7904083,
+        "calls_ns": 1111333751,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 776919917,
+        "constructor_ns": 72209,
+        "cpu_arena": true,
+        "id": "spanish",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 837902336,
+        "peak_before_calls_bytes": 837902336,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 837902336,
+        "reported_hwm_before_calls_bytes": 837902336,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "code",
+      "original": {
+        "id": "code",
+        "constructor_ns": 8944417,
+        "calls_ns": 1087611042,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 692172083,
+        "constructor_ns": 74000,
+        "cpu_arena": true,
+        "id": "code",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 837902336,
+        "peak_before_calls_bytes": 837902336,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 837902336,
+        "reported_hwm_before_calls_bytes": 837902336,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "unicode",
+      "original": {
+        "id": "unicode",
+        "constructor_ns": 10599583,
+        "calls_ns": 1074424500,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 665008084,
+        "constructor_ns": 101042,
+        "cpu_arena": true,
+        "id": "unicode",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 837902336,
+        "peak_before_calls_bytes": 837902336,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 837902336,
+        "reported_hwm_before_calls_bytes": 837902336,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "emoji-nul",
+      "original": {
+        "id": "emoji-nul",
+        "constructor_ns": 11921875,
+        "calls_ns": 1044920667,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 635687833,
+        "constructor_ns": 15042,
+        "cpu_arena": true,
+        "id": "emoji-nul",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 837902336,
+        "peak_before_calls_bytes": 837902336,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 837902336,
+        "reported_hwm_before_calls_bytes": 837902336,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "repeated-documents",
+      "original": {
+        "id": "repeated-documents",
+        "constructor_ns": 18194333,
+        "calls_ns": 1103800417,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 658578333,
+        "constructor_ns": 73291,
+        "cpu_arena": true,
+        "id": "repeated-documents",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 837902336,
+        "peak_before_calls_bytes": 837902336,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 837902336,
+        "reported_hwm_before_calls_bytes": 837902336,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "pool10",
+      "original": {
+        "id": "pool10",
+        "constructor_ns": 11340125,
+        "calls_ns": 1312085292,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 898659625,
+        "constructor_ns": 104209,
+        "cpu_arena": true,
+        "id": "pool10",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 837902336,
+        "peak_before_calls_bytes": 837902336,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 837902336,
+        "reported_hwm_before_calls_bytes": 837902336,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "empty-pool-then-score",
+      "original": {
+        "id": "empty-pool-then-score",
+        "constructor_ns": 11596000,
+        "calls_ns": 1027971500,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 653491625,
+        "constructor_ns": 48792,
+        "cpu_arena": true,
+        "id": "empty-pool-then-score",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 837902336,
+        "peak_before_calls_bytes": 837902336,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 837902336,
+        "reported_hwm_before_calls_bytes": 837902336,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "batch3-remainder",
+      "original": {
+        "id": "batch3-remainder",
+        "constructor_ns": 14495792,
+        "calls_ns": 1161434792,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 783320459,
+        "constructor_ns": 88500,
+        "cpu_arena": true,
+        "id": "batch3-remainder",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 837902336,
+        "peak_before_calls_bytes": 837902336,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 837902336,
+        "reported_hwm_before_calls_bytes": 837902336,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "pair-boundary1023",
+      "original": {
+        "id": "pair-boundary1023",
+        "constructor_ns": 13670875,
+        "calls_ns": 6861206670,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 6376996044,
+        "constructor_ns": 77458,
+        "cpu_arena": true,
+        "id": "pair-boundary1023",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 837902336,
+        "peak_before_calls_bytes": 837902336,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 837902336,
+        "reported_hwm_before_calls_bytes": 837902336,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "pair-boundary1024",
+      "original": {
+        "id": "pair-boundary1024",
+        "constructor_ns": 11771667,
+        "calls_ns": 6706683336,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 6317657295,
+        "constructor_ns": 90417,
+        "cpu_arena": true,
+        "id": "pair-boundary1024",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 846585856,
+        "peak_before_calls_bytes": 837902336,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 846585856,
+        "reported_hwm_before_calls_bytes": 837902336,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "pair-boundary1025",
+      "original": {
+        "id": "pair-boundary1025",
+        "constructor_ns": 11847875,
+        "calls_ns": 6699602378,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 6325558295,
+        "constructor_ns": 113333,
+        "cpu_arena": true,
+        "id": "pair-boundary1025",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 846585856,
+        "peak_before_calls_bytes": 846585856,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 846143488,
+        "reported_hwm_before_calls_bytes": 846143488,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "long-document",
+      "original": {
+        "id": "long-document",
+        "constructor_ns": 41343500,
+        "calls_ns": 6736773628,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 6484607837,
+        "constructor_ns": 28083,
+        "cpu_arena": true,
+        "id": "long-document",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 862285824,
+        "peak_before_calls_bytes": 846585856,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 862285824,
+        "reported_hwm_before_calls_bytes": 846143488,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "query-capacity-allowed",
+      "original": {
+        "id": "query-capacity-allowed",
+        "constructor_ns": 12587291,
+        "calls_ns": 6674838379,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 6367518919,
+        "constructor_ns": 104417,
+        "cpu_arena": true,
+        "id": "query-capacity-allowed",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 868577280,
+        "peak_before_calls_bytes": 862285824,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 868577280,
+        "reported_hwm_before_calls_bytes": 861847552,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "query-capacity-rejected",
+      "original": {
+        "id": "query-capacity-rejected",
+        "constructor_ns": 12641000,
+        "calls_ns": 1012005084,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 631008501,
+        "constructor_ns": 97334,
+        "cpu_arena": true,
+        "id": "query-capacity-rejected",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 868577280,
+        "peak_before_calls_bytes": 868577280,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 868159488,
+        "reported_hwm_before_calls_bytes": 868159488,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "query-char-limit-allowed",
+      "original": {
+        "id": "query-char-limit-allowed",
+        "constructor_ns": 12792750,
+        "calls_ns": 2076660417,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 1667962209,
+        "constructor_ns": 93833,
+        "cpu_arena": true,
+        "id": "query-char-limit-allowed",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 868577280,
+        "peak_before_calls_bytes": 868577280,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 868159488,
+        "reported_hwm_before_calls_bytes": 868159488,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "query-char-limit-rejected",
+      "original": {
+        "id": "query-char-limit-rejected",
+        "constructor_ns": 12951333,
+        "calls_ns": 1032274750,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 631756292,
+        "constructor_ns": 99333,
+        "cpu_arena": true,
+        "id": "query-char-limit-rejected",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 868577280,
+        "peak_before_calls_bytes": 868577280,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 868159488,
+        "reported_hwm_before_calls_bytes": 868159488,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "pool11-rejected",
+      "original": {
+        "id": "pool11-rejected",
+        "constructor_ns": 11696416,
+        "calls_ns": 9357791,
+        "peak_bytes": 1719992320,
+        "session_loaded": false,
+        "providers": [],
+        "cpu_arena": null,
+        "intra_threads": null,
+        "inter_threads": null
+      },
+      "native": {
+        "calls_ns": 6125,
+        "constructor_ns": 114792,
+        "cpu_arena": null,
+        "id": "pool11-rejected",
+        "inter_threads": null,
+        "intra_threads": null,
+        "peak_after_calls_bytes": 868577280,
+        "peak_before_calls_bytes": 868577280,
+        "providers": [],
+        "reported_hwm_after_calls_bytes": 868159488,
+        "reported_hwm_before_calls_bytes": 868159488,
+        "session_loaded": false
+      }
+    },
+    {
+      "id": "custom-budget512",
+      "original": {
+        "id": "custom-budget512",
+        "constructor_ns": 8625,
+        "calls_ns": 3389053085,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 2969695377,
+        "constructor_ns": 2833,
+        "cpu_arena": true,
+        "id": "custom-budget512",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 868577280,
+        "peak_before_calls_bytes": 868577280,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 868159488,
+        "reported_hwm_before_calls_bytes": 868159488,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "custom-budget2048",
+      "original": {
+        "id": "custom-budget2048",
+        "constructor_ns": 10366584,
+        "calls_ns": 10842410797,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 10302659921,
+        "constructor_ns": 34750,
+        "cpu_arena": true,
+        "id": "custom-budget2048",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 931377152,
+        "peak_before_calls_bytes": 868577280,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 931377152,
+        "reported_hwm_before_calls_bytes": 868159488,
+        "session_loaded": true
+      }
+    },
+    {
+      "id": "pair-fits-before-and-after-truncation",
+      "original": {
+        "id": "pair-fits-before-and-after-truncation",
+        "constructor_ns": 53811083,
+        "calls_ns": 6740791628,
+        "peak_bytes": 1719992320,
+        "session_loaded": true,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "cpu_arena": true,
+        "intra_threads": 4,
+        "inter_threads": 1
+      },
+      "native": {
+        "calls_ns": 6382115878,
+        "constructor_ns": 181834,
+        "cpu_arena": true,
+        "id": "pair-fits-before-and-after-truncation",
+        "inter_threads": 1,
+        "intra_threads": 4,
+        "peak_after_calls_bytes": 931377152,
+        "peak_before_calls_bytes": 931377152,
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "reported_hwm_after_calls_bytes": 930988032,
+        "reported_hwm_before_calls_bytes": 930988032,
+        "session_loaded": true
+      }
+    }
+  ]
+}

@@ -1,8 +1,7 @@
 # Ettin: native preparation and paired scoring
 
-Native graph preparation and all 23 paired scoring histories pass on Darwin/arm64
-and Linux/aarch64. Profile acceptance still requires the complete 23 gate platform
-matrix and fresh review in Task 4; M2 remains open.
+The complete 23-gate matrix passes on Darwin/arm64 and Linux/aarch64 for native
+source `ffb65afc`. Independent whole-plan review is pending; M2 remains open.
 
 [Cases](cases.json) fix23histories; [original outputs](reference.json) were captured
 independently from frozen source on Darwin/arm64 and Linux/aarch64 before native
@@ -96,3 +95,57 @@ allocation peak or a memory SLA. See the
 [Linux proc_pid_status manual](https://man7.org/linux/man-pages/man5/proc_pid_status.5.html).
 Both platforms require new complete source-bound proof after this correction.
 The original timing test, budget and failure allowances remain unchanged.
+
+## Complete platform proof
+
+The [matrix](matrix.json) recomputes all 18 current source/input fingerprints and
+accepts both [macOS](macos/summary.json) and [Linux](linux/summary.json) receipts.
+Each retains all 20 prior gates plus the new Ettin release, native preparation
+and real parity gates. The selected probe, newly built release and executed copy
+have the same platform-specific SHA-256. No source changed during either run.
+
+Both platforms passed 15,644 Python tests, with 10 historical xfails and no new
+failures or missing baseline IDs. Rust reported 107 passing tests, including the
+existing nested child test, with none ignored. All 79 migration process tests
+passed without skips. Formatting and clippy passed. Linux mypy had no errors;
+macOS retained only its two historical missing-transformers imports. All 1,066
+original hashes and the frozen reference inputs remained intact.
+
+Every platform repeated the 62 M1 cases, 18 Potion histories, 16 NPZ histories,
+20 contextual histories and the Potion phase benchmark. Ettin adds all 23
+independently frozen paired histories, exact source/assembled bytes, tokens,
+masks, padding, session policy, load/error ordering and ordered raw logits at the
+unchanged 1e-5 absolute/relative bounds. Fresh native cache creation and verified
+reuse without source both passed. A separate fresh original replay also matched
+the pre-port oracle and the native outputs.
+
+Native execution used owned executable, source and authenticated core copies
+outside the checkout with a sentinel-only PATH and no child process. Executable
+and core dependency audits passed. Linux's [actual trace](linux/ettin-native-exec.trace)
+contains exactly one exec; it retained one calibrated CPU-vendor warning.
+macOS stderr was empty. The core remains ORT 1.25.1/API25 with the registered
+platform bytes. No installed entrypoint or user index was promoted.
+
+The [macOS measurements](macos/measurements.json) and
+[Linux measurements](linux/measurements.json) retain native preparation, process
+wall time, each constructor/call phase and every raw/observed memory sample.
+Preparation took 6.539 seconds on macOS and 7.425 seconds on Linux in these runs;
+the complete native processes took 20.910 and 69.564 seconds respectively.
+These platform observations establish no speedup or SLA. Original `peak_bytes`
+values are raw kernel reports; native `peak_*` values are the exact maximum of
+the retained native reports. Neither describes exclusive per-phase allocations.
+
+The corrected Linux compatibility process also observed raw drops of 376 and
+416 KiB and passed exact envelope validation and the fresh original replay.
+Its full raw evidence is retained at
+`.ken/rust-migration/m2-ettin/t4-process-linux-memory/`.
+Complete final attempts are retained at `validation-t4-memory/` and
+`linux-receipts-validation-t4-memory/` under that same private profile directory.
+The earlier failed attempts remain separate and are not counted as acceptance.
+
+Both native CI workflows prepare all 15 pinned source artifacts and require the
+explicit Ettin source/probe inputs. Their exact preparation blocks ran locally
+on both platforms using a declared offline verified resolver substitution.
+Syntax checks covered YAML, shell and all four embedded Python blocks. This
+does not claim a remote CI run or network preparation proof. Remaining runtimes,
+model selection/acquisition and storage still block global M2 completion.
