@@ -1,8 +1,8 @@
 # Contextual ONNX profile: independent expectations fixed
 
-Status: oracle, runtime and contextual encoder implemented and tested on bothOS.
-Actual autonomous process, complete platform gates and independent review remain
-pending; this is not context-profile or M2 acceptance.
+Status: complete20gate macOS/Linux matrix passed for source4c6db1d8.
+Independent whole-plan review is pending; this is not final context-profile or
+M2 acceptance.
 
 The [shared cases](cases.json) fix20histories. [Original outputs](reference.json)
 were captured independently from frozen Python on macOS arm64 and Linux aarch64.
@@ -71,3 +71,56 @@ concurrency and independent result buffers pass. Both platforms passed77distinct
 Rust tests (78reported including the old nested child), fmt/clippy and10targeted
 original/oracle Python tests. Original1066hashes remain unchanged. Raw Linux
 receipts: `.ken/rust-migration/m2-context/t3-linux-receipts`.
+
+## Complete native process and platform proof
+
+Source4c6db1d8303b3c773fd4dd75bae3cad6421a6014 passed20/20gates on both
+Darwin/arm64 and Linux/aarch64 with unchanged sources throughout each run.
+The [matrix](matrix.json) recomputes13current candidate fingerprints and rejects
+matching stale receipts. [macOS](macos/summary.json) and [Linux](linux/summary.json)
+retain all nested18table gates plus actual contextual release/parity bindings.
+Selected probe == just-built release == executed process SHA-256 on each OS.
+
+Both platforms:15626Python passes,10historicxfails,no new failures/missing IDs;
+77distinct Rust passes (78reported because an existing test invokes a nested
+child), no ignored tests; fmt/clippy clean;76migration process tests pass with no
+skips. Linux mypy checks409files without errors; macOS retains only the same two
+historical missing-transformers imports. All1066original hashes and frozen
+reference inputs remain unchanged. Original warnings/failure history stays in
+raw receipts; no old tests or constraints were weakened.
+
+Each platform repeated18Potion histories,16NPZ histories and62M1 cases, and
+retained120Potion phase benchmark samples. Context adds20histories with exact
+IDs/masks/legacy identity and tight local-original raw768vector bounds. Native
+runs execute owned model/core/executable copies outside the checkout with a
+sentinel-only PATH, no native child, separate executable/core dependency audits
+and actual Linux [trace](linux/context-native-exec.trace) of exactly1exec.
+The macOS core SHA is4478626717e213a1827ab52af61d1a0ac08f9906bcb2c2ab4563124967b2948b;
+Linux0ebab581324d80e2975d743eabcf640ac3f8acd429ca8af656ce4f121672afde.
+macOS stderr is empty; Linux preserves exactly one calibrated CPU-vendor line.
+
+[macOS measurements](macos/measurements.json) and [Linux measurements](linux/measurements.json)
+retain per-case construction/explicit preparation, inference and cumulative
+post-exec process peaks. Model-byte preparation is separate for native; original
+constructor loads reverify model data. These phases are not equivalent exclusive
+allocations and establish no speedup/SLA. Raw vectors/stdout/stderr/every attempt
+remain in `.ken/rust-migration/m2-context/validation` and
+`linux-receipts/validation`; the public measurements omit only numeric calls,
+which the original and actual process JSON retain privately.
+
+Both native workflows now prepare explicit context snapshot, core and probe
+inputs. Their shared Python preparation block parsed and ran on macOS using the
+actual cached data/core. Linux smoke verified actual core/copy/env, explicitly
+substituting only the resolver for its already prepared private data paths in a
+throwaway process. This is not network preparation or remote CI evidence. The
+workflows target the registered ARM architectures; x86/native installation and
+M8 packaging remain pending. No installed entrypoint or user index is promoted.
+
+The native probe exposes factual unloaded/prepared/core state; empty-only input
+succeeds even when the declared core file is missing and reports null actualcore.
+The comparator rejects altered IDs/masks/raw vectors, nonfinite original/native
+values, wrong shape/runtime/core/OS/stderr and stale release.58targeted tooling/
+original tests passed before full gates. RED/GREEN logs and all rulings remain
+in this plan's ledger until final-review archival. Only the independent review
+and any one-pass verified fixes remain for this scoped profile. M2 as a whole
+still includes remaining runtimes, selection/preparation and storage.

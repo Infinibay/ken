@@ -1,0 +1,186 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.24s
+     Running unittests src/lib.rs (target/debug/deps/ken_cli-71b8e4b949ec558b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/ken_rs-dd053f85f4887da8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/status_cli.rs (target/debug/deps/status_cli-846760c017121e5e)
+
+running 6 tests
+test metadata_only_and_missing_project_have_correct_streams ... ok
+test json_preserves_types_and_all_keys ... ok
+test installed_text_omits_inventory_json_keeps_it ... ok
+test shared_symlink_targets_resolve_in_bounded_time ... ok
+test corrupt_input_has_no_success_stdout ... ok
+test argument_errors_exit_two ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.73s
+
+     Running unittests src/lib.rs (target/debug/deps/ken_core-de99fdc6419a3378)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/health.rs (target/debug/deps/health-ba6b1f72b5da72eb)
+
+running 6 tests
+
+running 1 test
+test missing_port_does_not_require_auth_token ... ok
+test ignores_inherited_proxy_and_redirect ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.01s
+
+test empty_body_or_object_is_stopped ... ok
+test ignores_inherited_proxy_and_redirect ... ok
+test invalid_payload_and_http_error_are_stopped ... ok
+test sends_bearer_only_to_loopback ... ok
+test slow_body_hits_global_deadline ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.01s
+
+     Running tests/project.rs (target/debug/deps/project-6361d716f8a37165)
+
+running 7 tests
+test empty_override_uses_start ... ok
+test rejects_sibling_prefix_and_symlink_escape ... ok
+test cyclic_marker_is_not_a_file_and_ancestor_discovery_continues ... ok
+test invalid_override_has_no_fallback ... ok
+test nearest_root_wins ... ok
+test symlink_parent_order_and_missing_tail ... ok
+test tilde_and_named_user_match_python ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/status.rs (target/debug/deps/status-f8b27083c192c22e)
+
+running 9 tests
+test rules_and_rounding_match_python ... ok
+test missing_database_is_not_created ... ok
+test readonly_directory_does_not_need_write_access ... ok
+test unencodable_indexed_path_is_reported_as_stale ... ok
+test corrupt_or_old_incompatible_schema_fails ... ok
+test indexed_symlink_loops_are_reported_as_stale ... ok
+test wal_commit_visible_without_checkpoint ... ok
+test all_fifteen_counts_include_inline_and_slots ... ok
+test counts_and_paths_share_one_snapshot ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s
+
+     Running unittests src/lib.rs (target/debug/deps/ken_models-e53f151c034033bb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/assets.rs (target/debug/deps/assets-e2728887171c1d63)
+
+running 8 tests
+test fifo_verification_child ... ok
+test fingerprint_matches_python_ascii_sorted_identity ... ok
+test rejects_ambiguous_or_unsafe_registrations ... ok
+test maximal_declared_size_returns_error_without_allocation ... ok
+test rejects_nonregular_device_even_when_size_and_hash_match ... ok
+test accepts_huggingface_blob_symlinks ... ok
+test verified_snapshot_owns_the_accredited_bytes ... ok
+test fifo_artifact_verification_does_not_wait_for_a_writer ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/context_encoder.rs (target/debug/deps/context_encoder-85ee4a65407dcb86)
+
+running 7 tests
+test lazy_context_child ... ok
+test snapshot_must_accredit_the_context_models_exact_artifacts ... ok
+test first_query_is_lazy_and_missing_runtime_is_an_error_in_clean_processes ... ok
+test empty_passages_need_no_runtime_and_results_are_independent_under_concurrency ... ok
+test frozen_fixture_preserves_prefix_specials_raw_output_and_serialized_policy_override ... ok
+test malformed_graphs_and_outputs_return_errors_including_hidden_extra_rows ... ok
+test registered_context_matches_all_twenty_local_frozen_histories ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 42.40s
+
+     Running tests/model2vec.rs (target/debug/deps/model2vec-98d01323a11092dc)
+
+running 9 tests
+test mean_and_norm_match_weight_dtype ... ok
+test empty_row_promotes_its_batch ... ok
+test cache_is_safe_for_concurrent_queries ... ok
+test cache_matches_call_history_and_returns_independent_values ... ok
+test corrupt_shapes_and_nonfinite_weights_fail ... ok
+test batch_boundary_1024_is_preserved ... ok
+test cache_byte_budget_evicts_before_the_entry_limit ... ok
+test cache_entry_budget_evicts_least_recent_term ... ok
+test real_registered_potion_matches_all_frozen_calls ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.77s
+
+     Running tests/native_onnx.rs (target/debug/deps/native_onnx-553e37587e0c249b)
+
+running 4 tests
+test runtime_child ... ok
+test declaration_is_lazy_and_rejects_ambiguous_or_unsupported_pins ... ok
+test authenticated_runtime_reuses_identity_and_verifies_new_aliases ... ok
+test malformed_native_apis_and_foreign_initialization_fail_in_clean_processes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.82s
+
+     Running tests/static_table.rs (target/debug/deps/static_table-1ddfae1fec819987)
+
+running 16 tests
+test duplicate_npy_order_is_rejected_even_when_identical ... ok
+test duplicate_npy_shape_returns_error_before_unchecked_reader ... ok
+test duplicate_npy_dtype_is_rejected_even_when_identical ... ok
+test overflowing_array_header_returns_error ... ok
+test overflowing_norm_returns_error_but_empty_input_remains_zero ... ok
+test corrupt_tables_fail_without_panicking_or_executing_pickle ... ok
+test results_are_independent_owned_vectors ... ok
+test int8_uses_individual_row_scales ... ok
+test float32_sum_projection_empty_and_long_batches ... ok
+test float64_is_cast_to_float32_before_inference ... ok
+test float16_is_converted_before_pooling ... ok
+test cancellation_uses_frozen_float32_reduction ... ok
+test fortran_and_big_endian_keep_matrix_coordinates ... ok
+test negative_lut_indexes_from_the_end ... ok
+test serialized_padding_truncation_unknown_and_count_are_preserved ... ok
+test bundled_table_matches_all_frozen_case_outputs ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.76s
+
+     Running tests/tokenization.rs (target/debug/deps/tokenization-79c6bcd0669a6e29)
+
+running 5 tests
+test corrupt_or_sparse_vocabulary_is_rejected ... ok
+test bounded_encode_preserves_character_prefix_and_unknown_policy ... ok
+test unicode_length_is_not_utf8_bytes ... ok
+test count_has_no_hidden_limit ... ok
+test matches_reference_tokens ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s
+
+   Doc-tests ken_cli
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ken_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ken_models
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
