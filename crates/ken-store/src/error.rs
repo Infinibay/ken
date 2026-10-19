@@ -5,6 +5,8 @@ pub type StoreResult<T> = Result<T, StoreError>;
 
 #[derive(Debug, Error)]
 pub enum StoreError {
+    #[error("vector recovery at {path:?}: {reason}")]
+    Recovery { path: PathBuf, reason: String },
     #[error("storage file {path:?}: {source}")]
     Io {
         path: PathBuf,

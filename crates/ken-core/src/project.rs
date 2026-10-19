@@ -62,6 +62,9 @@ impl ProjectPaths {
     pub fn db(&self) -> PathBuf {
         self.root.join(".ken/ken.db")
     }
+    pub fn vectors(&self) -> PathBuf {
+        self.root.join(".ken/vectors")
+    }
     pub fn port(&self) -> PathBuf {
         self.root.join(".ken/daemon.port")
     }

@@ -1,0 +1,26 @@
+   Compiling ken-store v0.18.0 (/Users/andres/Projects/ken/crates/ken-store)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.10s
+     Running tests/maintenance.rs (.ken/rust-migration/m2-translation/source-t4a/target/debug/deps/maintenance-39d5988cd6444a26)
+
+running 2 tests
+test inline_migration_is_batched_restartable_and_preserves_foreign_dimensions ... ok
+test compaction_preserves_all_three_spaces_and_reuses_a_dense_prefix ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s
+
+     Running tests/recovery.rs (.ken/rust-migration/m2-translation/source-t4a/target/debug/deps/recovery-847f79ec27d3e561)
+
+running 5 tests
+test recovery_process ... ok
+recovery-observation:{"actual":{"ci_files":{"pairs":[[2,0],[3,1]],"rows":[[1.0,0.0],[0.0,1.0]]},"ci_intent_sources":{"pairs":[],"rows":[]},"ci_symbols":{"pairs":[],"rows":[]}},"killed_at":"migrated_batch1","repeat_equal":true}
+test killed_inline_migration_keeps_committed_batches_and_resumes ... ok
+recovery-observation:{"actual":{"ci_files":{"pairs":[[1,4],[2,1]],"rows":[[1.0,0.0],[0.0,1.0]]},"ci_intent_sources":{"pairs":[[1,4],[2,1]],"rows":[[1.0,0.0],[0.0,1.0]]},"ci_symbols":{"pairs":[[1,4],[2,1]],"rows":[[1.0,0.0],[0.0,1.0]]}},"killed_at":"journal_published","repeat_equal":true}
+test null_commit_marker_never_reinterprets_committed_rows_as_rollback ... ok
+recovery-observation:{"actual":{"ci_files":{"pairs":[[1,4],[2,1]],"rows":[[1.0,0.0],[0.0,1.0]]},"ci_intent_sources":{"pairs":[[1,4],[2,1]],"rows":[[1.0,0.0],[0.0,1.0]]},"ci_symbols":{"pairs":[[1,4],[2,1]],"rows":[[1.0,0.0],[0.0,1.0]]}},"killed_at":"backup_renamed","repeat_equal":true}
+test malformed_recovery_journal_cannot_touch_unrelated_paths ... ok
+recovery-observation:{"actual":{"ci_files":{"pairs":[[1,4],[2,1]],"rows":[[1.0,0.0],[0.0,1.0]]},"ci_intent_sources":{"pairs":[[1,4],[2,1]],"rows":[[1.0,0.0],[0.0,1.0]]},"ci_symbols":{"pairs":[[1,4],[2,1]],"rows":[[1.0,0.0],[0.0,1.0]]}},"killed_at":"new_published","repeat_equal":true}
+recovery-observation:{"actual":{"ci_files":{"pairs":[[1,1],[2,0]],"rows":[[1.0,0.0],[0.0,1.0]]},"ci_intent_sources":{"pairs":[[1,1],[2,0]],"rows":[[1.0,0.0],[0.0,1.0]]},"ci_symbols":{"pairs":[[1,1],[2,0]],"rows":[[1.0,0.0],[0.0,1.0]]}},"killed_at":"database_committed","repeat_equal":true}
+test killed_compaction_recovers_before_project_data_is_exposed ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.24s
+

@@ -1,0 +1,53 @@
+{
+  "scope": "storage-task4-development",
+  "Storage_accepted": false,
+  "M2_accepted": false,
+  "note": "Task5 current 31-gate BOTH-platform acceptance and final review remain required. Linux log covers ken-store and ken-core; macOS workspace includes all models.",
+  "macos_workspace": {
+    "passed": 169,
+    "sections": 38,
+    "failed": 0,
+    "ignored": 0
+  },
+  "macos_maintenance_recovery": {
+    "passed": 7,
+    "sections": 2,
+    "failed": 0,
+    "ignored": 0
+  },
+  "linux_store_core": {
+    "passed": 51,
+    "sections": 14,
+    "failed": 0,
+    "ignored": 0
+  },
+  "standalone_macos_kills": 4,
+  "native_inputs_sha256": "945de162312ebfc57d68fb6567601334117bd1a64ecc5989c9d64a1e9b391b38",
+  "native_input_files": 341,
+  "original_count": 1066,
+  "changed_originals": [],
+  "clippy": "workspace all targets, -D warnings, passed",
+  "fmt": "passed",
+  "artifacts": [
+    {
+      "path": "development-macos-workspace.log",
+      "bytes": 21311,
+      "sha256": "ba9489835a04d789d909da6178d8a4cbe000ca096b61d861169fad359fa636f0"
+    },
+    {
+      "path": "development-macos.log",
+      "bytes": 2482,
+      "sha256": "0e976d31b14023d0e6ac5d456861dfc04196fba44dad4736ecba8d549fd36a0e"
+    },
+    {
+      "path": "development-linux.log",
+      "bytes": 8023,
+      "sha256": "023d686712132b6544663f7b81f08c2afaa123bd39117b3ae5f90f11dadc6124"
+    },
+    {
+      "path": "development-standalone-macos.json",
+      "bytes": 7602,
+      "sha256": "168380f0a5a61ea65ced0eeb8b3938d526063ffa0b250103cd5cd7ed4336bde5"
+    }
+  ]
+}

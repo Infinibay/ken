@@ -40,6 +40,9 @@ impl ProjectDatabase {
     pub fn connection(&self) -> &Connection {
         &self.connection
     }
+    pub(crate) fn path(&self) -> &Path {
+        &self.path
+    }
 
     pub fn get_meta(&self, key: &str) -> StoreResult<Option<String>> {
         get_meta(&self.connection, key).map_err(|e| StoreError::sqlite(&self.path, e))

@@ -8,6 +8,11 @@ pub enum VectorSpace {
     Symbols,
     IntentSources,
 }
+impl serde::Serialize for VectorSpace {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.serialize_str(self.as_str())
+    }
+}
 
 impl VectorSpace {
     pub const ALL: [Self; 3] = [Self::Files, Self::Symbols, Self::IntentSources];
