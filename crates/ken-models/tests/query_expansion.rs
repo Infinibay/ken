@@ -281,3 +281,43 @@ fn simultaneous_first_calls_use_one_replica_without_crossing_queries_or_results(
         1
     );
 }
+
+#[test]
+fn failed_inference_attempt_owns_the_actual_input_before_error_and_keeps_lazy_recovery() {
+    let engine = LocalQueryExpansion::new(model(), None, fixture().cache.clone()).unwrap();
+    let query = "¿ ".to_owned() + &"hola ".repeat(511);
+    let attempt = engine.expand_attempt(&query);
+    let input = attempt.input.unwrap();
+    assert_eq!(input.prepared, query);
+    let original = oracle();
+    let row = original["results"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["id"] == "source-boundary513")
+        .unwrap();
+    assert_eq!(
+        serde_json::to_value(&input.tokens.ids).unwrap(),
+        row["calls"][0]["trace"]["source_ids"]
+    );
+    assert_eq!(
+        serde_json::to_value(&input.tokens.pieces_with_eos).unwrap(),
+        row["calls"][0]["trace"]["source_pieces_with_eos"]
+    );
+    let ModelError::Inference(message) = attempt.result.unwrap_err() else {
+        panic!("actual inference error required")
+    };
+    assert_eq!(
+        message,
+        "No position encodings are defined for positions >= 512, but got position 512"
+    );
+    assert!(engine.is_loaded());
+    let english = engine.expand_attempt("find the input parser");
+    assert!(english.input.is_none());
+    assert_eq!(english.result.unwrap().text, "find the input parser");
+    assert_eq!(input.tokens.pieces_with_eos.len(), 513);
+    let missing = tempfile::tempdir().unwrap();
+    let broken = LocalQueryExpansion::new(model(), None, missing.path().join(REVISION)).unwrap();
+    let attempt = broken.expand_attempt(QUESTION);
+    assert!(attempt.result.is_err() && attempt.input.is_none() && !broken.is_loaded());
+}

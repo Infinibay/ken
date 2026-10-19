@@ -27,7 +27,43 @@ jobs:
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
       - name: Install Linux execution tracer
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y strace
+        run: sudo apt-get update && sudo apt-get install -y strace build-essential pkg-config
+      - name: Prepare pinned standalone CMake and the registered original translator
+        run: |
+          uv pip install --python .venv/bin/python --target .ken/rust-migration/native-build-tools --no-deps cmake==3.31.10
+          .venv/bin/python - <<'PY'
+          import os
+          from pathlib import Path
+          cmake = Path.cwd() / '.ken/rust-migration/native-build-tools/cmake/data/bin/cmake'
+          with open(os.environ['GITHUB_ENV'], 'a') as stream:
+              stream.write(f'CMAKE={cmake}\n')
+          PY
+          # The frozen macOS oracle ran CT2 4.8.3; the Linux oracle ran 4.8.2.
+          # This changes only the disposable CI oracle environment.
+          if [ "$RUNNER_OS" = 'macOS' ]; then
+            uv pip install --python .venv/bin/python --no-deps ctranslate2==4.8.3
+          fi
+      - name: Build authenticated private OpenBLAS for Linux
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p .ken/rust-migration/translation-build
+          curl --fail --location --silent --show-error \
+            https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.26/OpenBLAS-0.3.26.tar.gz \
+            --output .ken/rust-migration/translation-build/OpenBLAS-0.3.26.tar.gz
+          .venv/bin/python -m tools.rust_migration.translation_build prepare-openblas \
+            --archive "$PWD/.ken/rust-migration/translation-build/OpenBLAS-0.3.26.tar.gz" \
+            --destination "$PWD/.ken/rust-migration/translation-build/openblas"
+          .venv/bin/python - <<'PY'
+          import os
+          from pathlib import Path
+          from tools.rust_migration.preparation import PreparedTranslationBuild
+          prefix = Path.cwd() / '.ken/rust-migration/translation-build/openblas'
+          values = PreparedTranslationBuild(Path(os.environ['CMAKE']), prefix).environment()
+          values['KEN_TRANSLATION_OPENBLAS_PREFIX'] = str(prefix)
+          with open(os.environ['GITHUB_ENV'], 'a') as stream:
+              for key, value in values.items():
+                  stream.write(f'{key}={value}\n')
+          PY
       - name: Prepare pinned model data and authenticated native core for tests
         run: |
           .venv/bin/python - <<'PY'
@@ -46,6 +82,9 @@ jobs:
           ettin_definition = json.loads(Path('src/ken/embedder/data/ettin-68m-fp32.json').read_text())
           ettin = ModelAssets.from_dict(ettin_definition['source']).resolve(local_files_only=False)
           source_state(ettin, ettin_definition['source'])
+          translation_definition = json.loads(Path('src/ken/embedder/data/es-en-ct2-int8.json').read_text())
+          translation = ModelAssets.from_dict(translation_definition['source']).resolve(local_files_only=False)
+          source_state(translation, translation_definition['source'])
           # Test preparation copies the native C core from the pinned validation
           # wheel. Rust loads only the authenticated standalone library.
           package = Path(importlib.util.find_spec('onnxruntime').origin).parent
@@ -66,8 +105,13 @@ jobs:
               stream.write(f'KEN_CONTEXT_PROBE={Path.cwd() / "target/release/examples/context_probe"}\n')
               stream.write(f'KEN_ETTIN_SOURCE={ettin}\n')
               stream.write(f'KEN_ETTIN_PROBE={Path.cwd() / "target/release/examples/ettin_probe"}\n')
+              stream.write(f'KEN_TRANSLATION_SOURCE={translation}\n')
+              stream.write(f'KEN_TRANSLATION_PROBE={Path.cwd() / "target/release/examples/translation_probe"}\n')
           PY
           cargo build --release --locked -p ken-cli -p ken-models --bins --examples
+          # Compile test executables during preparation; the validator's unchanged
+          # execution deadline must not include a cold C++/Rust test build.
+          cargo test --locked --workspace --no-run
       - name: Freeze this checkout and measure its unchanged Python baseline
         run: |
           .venv/bin/python - <<'PY'
@@ -83,21 +127,26 @@ jobs:
           exit 0
       - name: Validate original integrity, all suites and the native model process
         run: |
-          .venv/bin/python -m tools.rust_migration.ettin_validate \
+          native_build_args=(--cmake "$CMAKE")
+          if [ "$RUNNER_OS" = 'Linux' ]; then
+            native_build_args+=(--openblas-prefix "$KEN_TRANSLATION_OPENBLAS_PREFIX")
+          fi
+          .venv/bin/python -m tools.rust_migration.translation_validate \
             --reference .ken/rust-migration/m2/reference \
             --model-probe "$KEN_MODEL_PROBE" --potion-snapshot "$KEN_POTION_SNAPSHOT" \
             --table-probe "$KEN_TABLE_PROBE" --context-probe "$KEN_CONTEXT_PROBE" \
             --context-snapshot "$KEN_CONTEXT_SNAPSHOT" --library "$KEN_ORT_LIBRARY" \
-            --native "$KEN_ETTIN_PROBE" --source "$KEN_ETTIN_SOURCE" \
+            --ettin-probe "$KEN_ETTIN_PROBE" --ettin-source "$KEN_ETTIN_SOURCE" \
+            --native "$KEN_TRANSLATION_PROBE" --source "$KEN_TRANSLATION_SOURCE" \
             --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
             --baseline-dir .ken/rust-migration/m2 \
             --original-manifest .ken/rust-migration/m2/reference/reference-manifest.json \
-            --out .ken/rust-migration/m2-ettin/validation
+            --out .ken/rust-migration/m2-translation/validation "${native_build_args[@]}"
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: rust-models-${{ runner.os }}
-          path: .ken/rust-migration/m2-ettin/validation/
+          path: .ken/rust-migration/m2-translation/validation/
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
@@ -114,7 +163,7 @@ jobs:
           path: .ken/rust-migration/m2/platforms
       - name: Require matching platform receipts
         run: |
-          uv run --no-project --python 3.12 python -m tools.rust_migration.ettin_validate \
+          uv run --no-project --python 3.12 python -m tools.rust_migration.translation_validate \
             --scope matrix --platform-receipts .ken/rust-migration/m2/platforms \
             --out .ken/rust-migration/m2/matrix
       - uses: actions/upload-artifact@v7

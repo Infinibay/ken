@@ -32,6 +32,18 @@ pub struct ExpandedQuery {
 }
 
 #[derive(Clone, Debug, Serialize)]
+pub struct TranslationInput {
+    pub prepared: String,
+    pub tokens: TranslationTokens,
+}
+
+#[derive(Debug)]
+pub struct ExpansionAttempt {
+    pub result: Result<ExpandedQuery, ModelError>,
+    pub input: Option<TranslationInput>,
+}
+
+#[derive(Clone, Debug, Serialize)]
 pub struct TranslationRuntimeIdentity {
     pub ct2rs_crate: &'static str,
     pub ctranslate2_source: &'static str,
@@ -162,8 +174,16 @@ impl NativeSession {
         })
     }
 
-    fn translate(&self, prepared: &str) -> Result<TranslationTrace, ModelError> {
+    fn translate(
+        &self,
+        prepared: &str,
+        input: &mut Option<TranslationInput>,
+    ) -> Result<TranslationTrace, ModelError> {
         let tokens = self.tokenize(prepared)?;
+        *input = Some(TranslationInput {
+            prepared: prepared.into(),
+            tokens: tokens.clone(),
+        });
         let rows = self
             .translator
             .translate_batch(
@@ -251,17 +271,23 @@ impl LocalQueryExpansion {
     }
 
     pub fn expand_detailed(&self, query: &str) -> Result<ExpandedQuery, ModelError> {
-        match plan_query(query)? {
+        self.expand_attempt(query).result
+    }
+
+    pub fn expand_attempt(&self, query: &str) -> ExpansionAttempt {
+        let mut input = None;
+        let result = (|| match plan_query(query)? {
             QueryExpansionPlan::Passthrough(text) => Ok(ExpandedQuery { text, trace: None }),
             QueryExpansionPlan::Translate(query) => self.with_runtime(|runtime| {
-                let trace = runtime.translate(query.text())?;
+                let trace = runtime.translate(query.text(), &mut input)?;
                 let text = query.restore(&trace.decoded)?;
                 Ok(ExpandedQuery {
                     text,
                     trace: Some(trace),
                 })
             }),
-        }
+        })();
+        ExpansionAttempt { result, input }
     }
 
     pub fn tokenize_prepared(&self, prepared: &str) -> Result<TranslationTokens, ModelError> {
@@ -333,7 +359,7 @@ mod tests {
                 serde_json::to_value(tokens.pieces_with_eos).unwrap(),
                 row["source_pieces_with_eos"]
             );
-            match session.translate(query) {
+            match session.translate(query, &mut None) {
                 Ok(trace) => {
                     assert!(row.get("error").is_none());
                     assert_eq!(

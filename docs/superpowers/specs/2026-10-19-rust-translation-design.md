@@ -36,6 +36,9 @@ actual token pieces/IDs, readiness and native policy for independent probes.
 expand_detailed returns owned per-call prepared text, tokens, raw hypotheses and
 decoded text alongside the restored result. expand delegates to that same path;
 no shared last-result cache or probe-only inference implementation.
+expand_attempt additionally retains owned actual prepared text/tokens when native
+inference fails. expand_detailed consumes its normal Result, so successful and
+failed diagnostics observe the same product operation without later tokenization.
 
 Chosen approach: ct2rs with static CTranslate2 and SentencePiece, preserving the
 published CPU model. Rejected alternatives: invoking Python/subprocesses, which
@@ -136,6 +139,13 @@ translation; the same product in Release and the isolated ct2rs package override
 (opt-level3,debugfalse) preserve all29 histories. Rust checks remain enabled.
 Bind the workspace profile setting and retain actual CMake build-type evidence;
 Rust debug_assertions does not identify the native core's compilation mode.
+Validation explicitly supplies the standalone CMake executable and Linux BLAS
+prefix. Its preparator checks the original source archive's size/SHA, builds the
+fixed flags privately and uses the upstream install target to generate ABI
+headers. Retain compiler identity, archive/header/pkg-config hashes and build log.
+Bind the native build proof to the ct2rs0.10.1 out_dir selected by the actual
+release Cargo JSON log; arbitrary older CMake caches cannot stand in for it.
+Eligible crate src/data and tests/fixtures bytes are native source inputs too.
 
 Model configuration: cpu,int8,intra_threads2,inter_threads1; verify actual replica
 count is one. Source SentencePiece pieces plus exactly one explicit </s>;

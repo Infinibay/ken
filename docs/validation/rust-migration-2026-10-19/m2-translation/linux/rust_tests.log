@@ -1,0 +1,287 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running unittests src/lib.rs (target/debug/deps/ken_cli-f65d81f29c430422)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/ken_rs-94afe9407792efd6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/status_cli.rs (target/debug/deps/status_cli-b9eb01211d176933)
+
+running 6 tests
+test corrupt_input_has_no_success_stdout ... ok
+test argument_errors_exit_two ... ok
+test installed_text_omits_inventory_json_keeps_it ... ok
+test json_preserves_types_and_all_keys ... ok
+test metadata_only_and_missing_project_have_correct_streams ... ok
+test shared_symlink_targets_resolve_in_bounded_time ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+     Running unittests src/lib.rs (target/debug/deps/ken_core-3d9f30dd0952e20f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/health.rs (target/debug/deps/health-031b75947d5f3ba6)
+
+running 6 tests
+
+running 1 test
+test empty_body_or_object_is_stopped ... ok
+test ignores_inherited_proxy_and_redirect ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.01s
+
+test ignores_inherited_proxy_and_redirect ... ok
+test missing_port_does_not_require_auth_token ... ok
+test invalid_payload_and_http_error_are_stopped ... ok
+test sends_bearer_only_to_loopback ... ok
+test slow_body_hits_global_deadline ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.09s
+
+     Running tests/project.rs (target/debug/deps/project-f9a4df689c1b9cfb)
+
+running 7 tests
+test empty_override_uses_start ... ok
+test cyclic_marker_is_not_a_file_and_ancestor_discovery_continues ... ok
+test invalid_override_has_no_fallback ... ok
+test nearest_root_wins ... ok
+test rejects_sibling_prefix_and_symlink_escape ... ok
+test symlink_parent_order_and_missing_tail ... ok
+test tilde_and_named_user_match_python ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/status.rs (target/debug/deps/status-9b67362d97265c53)
+
+running 9 tests
+test corrupt_or_old_incompatible_schema_fails ... ok
+test all_fifteen_counts_include_inline_and_slots ... ok
+test indexed_symlink_loops_are_reported_as_stale ... ok
+test missing_database_is_not_created ... ok
+test counts_and_paths_share_one_snapshot ... ok
+test rules_and_rounding_match_python ... ok
+test readonly_directory_does_not_need_write_access ... ok
+test unencodable_indexed_path_is_reported_as_stale ... ok
+test wal_commit_visible_without_checkpoint ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.81s
+
+     Running unittests src/lib.rs (target/debug/deps/ken_models-54e94187120a8f18)
+
+running 2 tests
+test python_unicode::tests::whole_scalar_contract_matches_independent_python_unicode15_digest ... ok
+test query_expansion::tests::actual_native_core_matches_all_pre_product_original_raw_histories ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.65s
+
+     Running tests/assets.rs (target/debug/deps/assets-616b97bdec6b8840)
+
+running 8 tests
+test accepts_huggingface_blob_symlinks ... ok
+test fifo_verification_child ... ok
+test fingerprint_matches_python_ascii_sorted_identity ... ok
+test maximal_declared_size_returns_error_without_allocation ... ok
+test rejects_ambiguous_or_unsafe_registrations ... ok
+test rejects_nonregular_device_even_when_size_and_hash_match ... ok
+test verified_snapshot_owns_the_accredited_bytes ... ok
+test fifo_artifact_verification_does_not_wait_for_a_writer ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/context_encoder.rs (target/debug/deps/context_encoder-2e01e1d87ca5d8fd)
+
+running 7 tests
+onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+test empty_passages_need_no_runtime_and_results_are_independent_under_concurrency ... ok
+test first_query_is_lazy_and_missing_runtime_is_an_error_in_clean_processes ... ok
+test lazy_context_child ... ok
+test frozen_fixture_preserves_prefix_specials_raw_output_and_serialized_policy_override ... ok
+test malformed_graphs_and_outputs_return_errors_including_hidden_extra_rows ... ok
+test snapshot_must_accredit_the_context_models_exact_artifacts ... ok
+test registered_context_matches_all_twenty_local_frozen_histories ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 59.68s
+
+     Running tests/model2vec.rs (target/debug/deps/model2vec-4cb4e7f2a640b0d6)
+
+running 9 tests
+test batch_boundary_1024_is_preserved ... ok
+test cache_byte_budget_evicts_before_the_entry_limit ... ok
+test cache_is_safe_for_concurrent_queries ... ok
+test cache_matches_call_history_and_returns_independent_values ... ok
+test corrupt_shapes_and_nonfinite_weights_fail ... ok
+test empty_row_promotes_its_batch ... ok
+test mean_and_norm_match_weight_dtype ... ok
+test cache_entry_budget_evicts_least_recent_term ... ok
+test real_registered_potion_matches_all_frozen_calls ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 24.11s
+
+     Running tests/native_onnx.rs (target/debug/deps/native_onnx-d377bce23142866d)
+
+running 4 tests
+test declaration_is_lazy_and_rejects_ambiguous_or_unsupported_pins ... ok
+onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+test authenticated_runtime_reuses_identity_and_verifies_new_aliases ... ok
+test runtime_child ... ok
+test malformed_native_apis_and_foreign_initialization_fail_in_clean_processes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.51s
+
+     Running tests/observed_peak.rs (target/debug/deps/observed_peak-bd6065d4c487311d)
+
+running 2 tests
+test observed_peak_retains_every_reported_sample_and_its_exact_running_maximum ... ok
+test zero_report_is_an_error_and_does_not_reset_the_observed_peak ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/onnx_reranker.rs (target/debug/deps/onnx_reranker-91bfd2736a7fce02)
+
+running 15 tests
+test empty_pool_and_top11_do_not_load_and_model_failure_precedes_query_guard ... ok
+onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+test explicit_pair_policy_overrides_serialized_padding_truncation_and_accepts_content_token ... ok
+test concurrent_first_use_and_owned_results_do_not_cross_queries ... ok
+test invalid_model_limits_and_padding_types_cannot_silently_select_a_policy ... ok
+test first_lazy_score_initializes_native_api_in_a_cold_process ... ok
+test native_head_prepares_lazily_without_python_built_cache ... ok
+test malformed_published_policy_and_nonfinite_or_wrong_count_outputs_fail ... ok
+test non_f32_output_is_an_explicit_integrity_error ... ok
+test options_reject_zero_nonintegers_and_thread_budget_wraparound ... ok
+test only_document_truncates_and_unicode_character_guard_is_not_byte_count ... ok
+test prepared_model_provenance_and_owned_bytes_survive_path_changes ... ok
+test positive_budgets_smaller_than_special_tokens_return_errors_without_panicking ... ok
+test raw_pair_scores_preserve_order_padding_and_remainder_batches ... ok
+test session_policy_is_available_only_after_successful_cpu_load ... ok
+test registered_ettin_matches_all23_frozen_platform_histories has been running for over 60 seconds
+test registered_ettin_matches_all23_frozen_platform_histories ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 149.19s
+
+     Running tests/published_head.rs (target/debug/deps/published_head-7c52d9f1fd10fd13)
+
+running 6 tests
+test compilation_keeps_owned_source_after_original_paths_change ... ok
+test malformed_published_heads_return_errors ... ok
+test published_head_matches_every_original_preparation_byte ... ok
+test published_namespace_collision_is_an_explicit_error ... ok
+test corrupt_wire_is_bounded_and_never_panics ... ok
+test real_ettin_assembly_matches_registered_graph_without_python_cache ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 38.48s
+
+     Running tests/query_expansion.rs (target/debug/deps/query_expansion-dd5046636238efac)
+
+running 6 tests
+test english_and_repeated_single_spanish_word_need_no_assets_or_runtime ... ok
+test failed_inference_attempt_owns_the_actual_input_before_error_and_keeps_lazy_recovery ... ok
+test failed_loading_is_retryable_and_english_remains_lazy_after_failure ... ok
+test loaded_native_data_and_returned_traces_are_owned_after_cache_replacement ... ok
+test simultaneous_first_calls_use_one_replica_without_crossing_queries_or_results ... ok
+test all_original_histories_preserve_actual_tokens_hypotheses_text_errors_and_lazy_state has been running for over 60 seconds
+test all_original_histories_preserve_actual_tokens_hypotheses_text_errors_and_lazy_state ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 156.30s
+
+     Running tests/query_policy.rs (target/debug/deps/query_policy-42de55be9a159088)
+
+running 4 tests
+test every_original_lexicon_member_counts_once_and_casefolds_before_the_decision ... ok
+test query_plans_are_independent_and_restoration_is_sequential_without_trimming_output ... ok
+test original_query_decisions_and_exact_matches_survive_unicode_and_regex_boundaries ... ok
+test restoration_preserves_original_whitespace_case_collisions_and_literal_replacements ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/reranker_preparation.rs (target/debug/deps/reranker_preparation-c01d821fb7042b20)
+
+running 6 tests
+test failed_derivation_never_publishes_partial_cache ... ok
+test concurrent_preparers_reverify_the_published_winner ... ok
+test nested_source_duplicate_artifacts_do_not_bypass_shared_validation ... ok
+test nested_graph_layout_is_verified_by_the_same_artifact_owner ... ok
+test prepared_cache_is_owned_verified_and_reused_without_source ... ok
+test published_files_and_directory_follow_the_ordinary_umask ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/static_table.rs (target/debug/deps/static_table-487c26a799e275a5)
+
+running 16 tests
+test cancellation_uses_frozen_float32_reduction ... ok
+test corrupt_tables_fail_without_panicking_or_executing_pickle ... ok
+test duplicate_npy_dtype_is_rejected_even_when_identical ... ok
+test duplicate_npy_order_is_rejected_even_when_identical ... ok
+test duplicate_npy_shape_returns_error_before_unchecked_reader ... ok
+test float16_is_converted_before_pooling ... ok
+test float32_sum_projection_empty_and_long_batches ... ok
+test float64_is_cast_to_float32_before_inference ... ok
+test fortran_and_big_endian_keep_matrix_coordinates ... ok
+test int8_uses_individual_row_scales ... ok
+test negative_lut_indexes_from_the_end ... ok
+test overflowing_array_header_returns_error ... ok
+test overflowing_norm_returns_error_but_empty_input_remains_zero ... ok
+test results_are_independent_owned_vectors ... ok
+test serialized_padding_truncation_unknown_and_count_are_preserved ... ok
+test bundled_table_matches_all_frozen_case_outputs ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.24s
+
+     Running tests/tokenization.rs (target/debug/deps/tokenization-266fdb6e870ce592)
+
+running 5 tests
+test corrupt_or_sparse_vocabulary_is_rejected ... ok
+test bounded_encode_preserves_character_prefix_and_unknown_policy ... ok
+test count_has_no_hidden_limit ... ok
+test unicode_length_is_not_utf8_bytes ... ok
+test matches_reference_tokens ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.45s
+
+     Running tests/translation_preparation.rs (target/debug/deps/translation_preparation-949913d933ea91aa)
+
+running 13 tests
+test declared_empty_device_is_rejected_instead_of_published_as_model_data ... ok
+test failed_derivation_does_not_publish_a_partial_directory_or_leave_stages ... ok
+test concurrent_publishers_return_the_same_verified_cache ... ok
+test nested_non_ascii_array_metadata_keeps_the_original_python_recipe_hash ... ok
+test missing_extra_or_unknown_recipe_declarations_fail_before_use ... ok
+test ordered_nested_json_uses_python_ascii_escaping_without_sorting ... ok
+test published_files_and_revision_directory_keep_the_ordinary_umask ... ok
+test original_full_recipe_and_both_runtime_compatibility_revisions_are_exact ... ok
+test registration_rejects_ambiguous_keys_and_enforces_the_explicit_json_byte_limit ... ok
+test tiny_preparation_matches_original_bytes_and_keeps_verified_owned_snapshots ... ok
+test unsupported_json_is_rejected_for_its_content_before_derived_hash_check ... ok
+test wrong_revision_is_rejected_even_for_an_otherwise_valid_existing_cache ... ok
+test registered_real_source_prepares_all_five_exact_derived_artifacts ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.95s
+
+   Doc-tests ken_cli
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ken_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ken_models
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -2,8 +2,8 @@
 
 Continues codex/rust-migration after accepted Ettin1ae4bb97. Overall M2 and the
 whole application migration remain open. Original sources/resources/tests and
-installed application are preserved. Final26gate translation profile acceptance
-remains pending.
+installed application are preserved. Both platform26gate validation and the current-source matrix now pass. The
+final fresh whole-plan review remains pending.
 
 Design: docs/superpowers/specs/2026-10-19-rust-translation-design.md.
 Plan: docs/superpowers/plans/2026-10-19-rust-m2-translation.md.
@@ -62,8 +62,8 @@ ignored tests; both workspace fmt and all-target clippy pass. TASK2.json records
 the immutable input fingerprint and raw-log hashes. The13 original/oracle Python
 tests and original1066-file integrity check also pass.
 
-Task2 is complete. Native CTranslate2 runtime integration is implemented;
-final26gate profile acceptance remains pending and M2 is still open.
+Tasks2 and3 are complete. Native CTranslate2 runtime integration and both
+platform26gate verification now pass; the final review is pending and M2 is open.
 
 Python sanity verification passes15651 tests with the same10 historical xfail
 IDs, no original baseline test IDs lost. The initial restricted diagnostic run
@@ -111,3 +111,37 @@ the original1066-file integrity check pass. TASK3.json binds the immutable teste
 input fingerprint, actual CMake policies and full log hashes. These are runtime
 implementation checks; the independent process and composed26gate acceptance
 are the next task.
+
+## Independent process and composed validation
+
+The native JSON probe executes the actual preparation and expansion owners. It
+contains no expected translations. Both platform histories match the original
+source tokens, hypotheses, final text, errors and lazy/retry state exactly. Each
+process uses independent data and a copied executable outside the checkout with
+sentinel PATH; Linux records exactly one exec. Native dependencies are audited,
+including static CT2/SPM/OpenBLAS and the explicit Linux system OpenMP runtime.
+Actual native identities, Cargo-selected build directories, CMake3.31.10 compiler
+and Release/backend flags bind the proof to the executed source and executable.
+
+macOS arm64 and Linux aarch64 each pass all26 gates,132 Rust tests (zero failed or
+ignored),15670 Python tests and the same10 historical xfail IDs. No baseline IDs
+are lost and no new skips or type errors appear. All1066 originals match their
+pre-migration hashes. MATRIX.json binds all24 current source/input fingerprints
+and reports Translation_accepted=true,M2_accepted=false. The fresh final review
+still gates closure of this profile.
+
+The first Linux full attempt is retained as failed: cold test compilation plus
+execution exceeded the unchanged600s gate; host filesystem pressure also caused
+EIO writing private prepared models. Only our disposable target/debug cache was
+removed, preserving source, originals, models and release binaries. A100MB fsync
+probe and both actual model process smokes then passed. Precompiling test binaries
+before the gate took compilation out of its execution budget; the complete retry
+passed with the same tests, expectations and600s limit. CI now prepares those
+binaries explicitly, but no remote CI execution is claimed.
+
+The public platform directories retain full summary/logs, measured timings and
+raw/observed memory histories, plus manifests hashing all private raw evidence.
+The raw evidence and failed attempts remain in .ken; model weights and disposable
+environment caches are excluded from version control. No speedup or memory SLA
+is claimed. expand_attempt owns the actual encoded input even on inference
+failure; no failed-case trace is reconstructed by re-tokenizing later.

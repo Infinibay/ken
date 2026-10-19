@@ -122,6 +122,11 @@ export KEN_ORT_LIBRARY=/ruta/absoluta/al/core/nativo/registrado
 export KEN_CONTEXT_PROBE="$PWD/target/release/examples/context_probe"
 export KEN_ETTIN_SOURCE=/ruta/al/snapshot/d166fa88ddde3c42bc3ee92f7df476d941c8204a
 export KEN_ETTIN_PROBE="$PWD/target/release/examples/ettin_probe"
+# Traducción y compilación C++: preparación detallada al final de esta guía.
+export KEN_TRANSLATION_SOURCE=/ruta/al/snapshot/ad91ad1697ea1761111ff4c179400796d085b347
+export KEN_TRANSLATION_PROBE="$PWD/target/release/examples/translation_probe"
+export CMAKE=/ruta/absoluta/al/ejecutable/cmake-3.31.10
+# En Linux prepare también OpenBLAS y sus tres variables antes de compilar.
 cargo build --release --locked -p ken-models --examples
 cargo test --locked --workspace
 .venv/bin/python -m tools.rust_migration.model_compare \
@@ -297,3 +302,85 @@ No inventan rutas si faltan. El oráculo elimina las variables nativas heredadas
 conserva únicamente sus directorios aislados de configuración y caché.
 La configuración CI exige este perfil; su edición local no acredita ejecución
 remota ni sustituye las pruebas locales en ambas plataformas.
+
+## Traducción española nativa
+
+`TranslationModel` prepara los cinco archivos registrados sin convertir pesos.
+`LocalQueryExpansion` conserva las reglas Unicode15, la protección de nombres de
+código y la carga perezosa del original. Ejecuta CTranslate2 4.8.2 y SentencePiece
+0.2.1 directamente; las consultas inglesas no necesitan datos ni cargar el motor.
+`expand_attempt` conserva también la entrada realmente codificada cuando falla
+la inferencia. Las salidas y trazas pertenecen a cada llamada.
+
+Los29 historiales públicos y24 adicionales del motor coinciden exactamente con
+los originales de cada plataforma. Los originales ya difieren en algunos textos
+largos entre macOS y Linux; se conservan ambas expectativas. Las26 comprobaciones del perfil pasan en ambos sistemas, con132 pruebas Rust y
+15670 pruebas Python por plataforma y los mismos10 xfail históricos. La matriz
+acredita este perfil; la revisión final está pendiente. M2 y la migración
+completa siguen abiertos.
+
+La compilación requiere CMake3.31.10 y un compilador C++. Puede preparar el
+ejecutable CMake en el directorio privado, sin modificar el entorno instalado:
+
+```sh
+uv pip install --python .venv/bin/python --target .ken/rust-migration/native-build-tools --no-deps cmake==3.31.10
+export CMAKE="$PWD/.ken/rust-migration/native-build-tools/cmake/data/bin/cmake"
+.venv/bin/python -c 'import json; from pathlib import Path; from ken.model_assets import ModelAssets; d=json.loads(Path("src/ken/embedder/data/es-en-ct2-int8.json").read_text()); print(ModelAssets.from_dict(d["source"]).resolve(local_files_only=False))'
+export KEN_TRANSLATION_SOURCE=/ruta/al/snapshot/ad91ad1697ea1761111ff4c179400796d085b347
+export KEN_TRANSLATION_PROBE="$PWD/target/release/examples/translation_probe"
+```
+
+macOS usa Accelerate y Ruy. Linux requiere GNU make, pkg-config, libgomp y una
+compilación privada y estática de OpenBLAS0.3.26. El preparador verifica los
+24404912bytes y SHA-256 del archivo fuente antes de ejecutar herramientas,
+conserva los registros y publica un prefijo completo con sus hashes:
+
+```sh
+# Sólo Linux aarch64; obtenga el archivo de la publicación oficial fijada.
+mkdir -p .ken/rust-migration/translation-build
+curl --fail --location https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.26/OpenBLAS-0.3.26.tar.gz \
+  --output .ken/rust-migration/translation-build/OpenBLAS-0.3.26.tar.gz
+.venv/bin/python -m tools.rust_migration.translation_build prepare-openblas \
+  --archive "$PWD/.ken/rust-migration/translation-build/OpenBLAS-0.3.26.tar.gz" \
+  --destination "$PWD/.ken/rust-migration/translation-build/openblas"
+export PKG_CONFIG_PATH="$PWD/.ken/rust-migration/translation-build/openblas/lib/pkgconfig"
+export DEP_OPENBLAS_INCLUDE="$PWD/.ken/rust-migration/translation-build/openblas/include"
+export DEP_OPENBLAS_LIBRARY="$PWD/.ken/rust-migration/translation-build/openblas/lib"
+```
+
+El núcleo C++ se compila en Release incluso durante las pruebas Rust ordinarias:
+su build Debug alteraba una traducción larga. El override afecta sólo a ct2rs;
+Rust conserva sus comprobaciones. La validación lee el directorio que Cargo
+seleccionó realmente, sus opciones CMake y el compilador; rechaza un caché antiguo,
+un backend distinto o prerrequisitos ausentes o cambiados.
+
+```sh
+cargo build --release --locked -p ken-cli -p ken-models --bins --examples
+cargo test --locked --workspace --no-run
+native_build_args=(--cmake "$CMAKE")
+# En Linux añada: native_build_args+=(--openblas-prefix /ruta/absoluta/al/prefijo/openblas)
+.venv/bin/python -m tools.rust_migration.translation_validate \
+  --reference .ken/rust-migration/m0-m1/reference \
+  --model-probe "$KEN_MODEL_PROBE" --potion-snapshot "$KEN_POTION_SNAPSHOT" \
+  --table-probe "$KEN_TABLE_PROBE" \
+  --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
+  --context-probe "$KEN_CONTEXT_PROBE" --context-snapshot "$KEN_CONTEXT_SNAPSHOT" \
+  --library "$KEN_ORT_LIBRARY" \
+  --ettin-probe "$KEN_ETTIN_PROBE" --ettin-source "$KEN_ETTIN_SOURCE" \
+  --native "$KEN_TRANSLATION_PROBE" --source "$KEN_TRANSLATION_SOURCE" \
+  --baseline-dir .ken/rust-migration/m0-m1 \
+  --original-manifest docs/validation/rust-migration-2026-10-18/baseline.json \
+  --out .ken/rust-migration/m2-translation/validation "${native_build_args[@]}"
+.venv/bin/python -m tools.rust_migration.translation_validate --scope matrix \
+  --platform-receipts /ruta/a/recibos-linux-y-macos \
+  --out .ken/rust-migration/m2-translation/matrix
+```
+
+Este gate incorpora las23 comprobaciones anteriores, la preparación nueva en
+Rust, el release acreditado y el proceso de traducción. El proceso consume copias
+independientes fuera del repositorio, con PATH de sentinelas; Linux registra un
+único exec real. Los tiempos y picos crudos/observados se conservan sin atribuir
+una mejora de rendimiento ni un SLA. Las fuentes y fixtures embebidas participan
+en las huellas del candidato actual. El workflow usa los CT2 originales
+4.8.3/macOS y4.8.2/Linux en entornos CI desechables; el runtime Rust declara su
+propia versión. Los originales, el comando instalado y los índices se conservan.

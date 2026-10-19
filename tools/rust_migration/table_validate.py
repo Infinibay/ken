@@ -11,7 +11,7 @@ from .reference import Reference
 from .table_compare import GOLDEN, compare
 from .table_reference import table_cases
 from .validate import _sha, _write,bind_native_release
-from .preparation import PreparedNativeContext,PreparedNativeEttin
+from .preparation import PreparedNativeContext,PreparedNativeEttin,PreparedNativeTranslation
 
 TABLE_KEYS = FINGERPRINT_KEYS | {'table_artifact', 'table_oracle'}
 TABLE_GATES = (*REQUIRED_GATES, 'table_release', 'table_parity')
@@ -77,7 +77,7 @@ def aggregate_tables(directory: Path, *, expected_ids: list[str] | None = None) 
 
 def validate_tables(repo: Path, reference: Reference, model_probe: Path, snapshot: Path,
                     native: Path, artifact: Path, out: Path, baseline_dir: Path,
-                    original_manifest: Path,*,context:PreparedNativeContext|None=None,ettin:PreparedNativeEttin|None=None) -> int:
+                    original_manifest: Path,*,context:PreparedNativeContext|None=None,ettin:PreparedNativeEttin|None=None,translation:PreparedNativeTranslation|None=None) -> int:
     out = out.resolve(); out.mkdir(parents=True, exist_ok=True)
     result = {'scope': 'table-local', 'platform': platform.system(), 'architecture': platform.machine(),
               'passed': False, 'M2_accepted': False, 'gates': {}}
@@ -87,7 +87,7 @@ def validate_tables(repo: Path, reference: Reference, model_probe: Path, snapsho
         before = fingerprints()
         result['fingerprints'] = before
         validate_models(repo, reference, model_probe, snapshot, out / 'base', baseline_dir,
-                        original_manifest, table_probe=native,context=context,ettin=ettin)
+                        original_manifest, table_probe=native,context=context,ettin=ettin,translation=translation)
         base = json.loads((out / 'base/summary.json').read_text())
         result.update(gates=base.get('gates', {}), rustc=base.get('rustc'))
         if base.get('execution_error'): result['execution_error'] = base['execution_error']

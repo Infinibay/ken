@@ -32,8 +32,8 @@ pub use onnx_reranker::{
 };
 pub use published_head::compile_head;
 pub use query_expansion::{
-    ExpandedQuery, LocalQueryExpansion, TranslationRuntimeIdentity, TranslationTokens,
-    TranslationTrace,
+    ExpandedQuery, ExpansionAttempt, LocalQueryExpansion, TranslationInput,
+    TranslationRuntimeIdentity, TranslationTokens, TranslationTrace,
 };
 pub use query_policy::{ProtectedQuery, QueryExpansionPlan, plan_query};
 pub use reranker_model::{PreparedReranker, RerankerModel};

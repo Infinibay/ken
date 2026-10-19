@@ -5,6 +5,8 @@ from pathlib import Path
 
 CONTEXT_ENV=('KEN_CONTEXT_SNAPSHOT','KEN_ORT_LIBRARY','KEN_CONTEXT_PROBE')
 ETTIN_ENV=('KEN_ETTIN_SOURCE','KEN_ETTIN_PROBE')
+TRANSLATION_ENV=('KEN_TRANSLATION_SOURCE','KEN_TRANSLATION_PROBE')
+TRANSLATION_BUILD_ENV=('CMAKE','PKG_CONFIG_PATH','DEP_OPENBLAS_INCLUDE','DEP_OPENBLAS_LIBRARY')
 
 @dataclass(frozen=True)
 class PreparedNativeContext:
@@ -46,4 +48,41 @@ def ettin_environment(prepared:PreparedNativeEttin|None=None)->dict[str,str]:
     values={key:os.environ[key] for key in ETTIN_ENV if key in os.environ}
     if any(not Path(value).is_absolute() for value in values.values()):
         raise ValueError('absolute prepared Ettin paths required')
+    return values
+
+
+@dataclass(frozen=True)
+class PreparedTranslationBuild:
+    cmake:Path
+    openblas_prefix:Path|None=None
+
+    def environment(self)->dict[str,str]:
+        paths={'CMAKE':self.cmake}
+        if self.openblas_prefix is not None:
+            paths.update(PKG_CONFIG_PATH=self.openblas_prefix/'lib/pkgconfig',
+                DEP_OPENBLAS_INCLUDE=self.openblas_prefix/'include',DEP_OPENBLAS_LIBRARY=self.openblas_prefix/'lib')
+        if any(not path.is_absolute() for path in paths.values()):
+            raise ValueError('absolute explicit native translation build paths required')
+        return {key:str(path) for key,path in paths.items()}
+
+
+@dataclass(frozen=True)
+class PreparedNativeTranslation:
+    source:Path
+    probe:Path
+    build:PreparedTranslationBuild|None=None
+
+    def environment(self)->dict[str,str]:
+        paths=dict(zip(TRANSLATION_ENV,(self.source,self.probe),strict=True))
+        if any(not path.is_absolute() for path in paths.values()):
+            raise ValueError('absolute explicit native translation prerequisites required')
+        return {key:str(path) for key,path in paths.items()} | (self.build.environment() if self.build is not None else {})
+
+
+def translation_environment(prepared:PreparedNativeTranslation|None=None)->dict[str,str]:
+    keys=TRANSLATION_ENV if prepared is not None and prepared.build is not None else TRANSLATION_ENV+TRANSLATION_BUILD_ENV
+    values={key:os.environ[key] for key in keys if key in os.environ}
+    if prepared is not None:values.update(prepared.environment())
+    if any(not Path(value).is_absolute() for value in values.values()):
+        raise ValueError('absolute prepared translation/build paths required')
     return values

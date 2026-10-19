@@ -8,7 +8,7 @@ import platform
 
 from .context_compare import GOLDEN,RUNTIME_REGISTRATION,ROOT,RUNTIME,compare,core_for_platform
 from .context_reference import context_cases,snapshot_state,stderr_errors
-from .preparation import PreparedNativeContext,PreparedNativeEttin
+from .preparation import PreparedNativeContext,PreparedNativeEttin,PreparedNativeTranslation
 from .reference import Reference
 from .table_reference import table_cases
 from .table_validate import TABLE_KEYS,TABLE_GATES,_binding_matches,table_fingerprints,table_receipt_errors,validate_tables
@@ -96,7 +96,7 @@ def aggregate_contexts(directory:Path,*,expected_ids:list[str]|None=None,table_c
 
 
 def validate_context(repo:Path,reference:Reference,model_probe:Path,potion_snapshot:Path,table_probe:Path,
-                     artifact:Path,context:PreparedNativeContext,out:Path,baseline_dir:Path,original_manifest:Path,*,ettin:PreparedNativeEttin|None=None)->int:
+                     artifact:Path,context:PreparedNativeContext,out:Path,baseline_dir:Path,original_manifest:Path,*,ettin:PreparedNativeEttin|None=None,translation:PreparedNativeTranslation|None=None)->int:
     repo=repo.resolve();out=out.resolve();out.mkdir(parents=True,exist_ok=True)
     result={'scope':'context-local','platform':platform.system(),'architecture':platform.machine(),
             'passed':False,'M2_accepted':False,'gates':{}}
@@ -105,7 +105,7 @@ def validate_context(repo:Path,reference:Reference,model_probe:Path,potion_snaps
         def fingerprints():return context_fingerprints(repo,reference,artifact,context.snapshot)
         before=fingerprints();result['fingerprints']=before
         validate_tables(repo,reference,model_probe,potion_snapshot,table_probe,artifact,out/'base',baseline_dir,
-                        original_manifest,context=context,ettin=ettin)
+                        original_manifest,context=context,ettin=ettin,translation=translation)
         base=json.loads((out/'base/summary.json').read_text())
         result.update(table_base=base,gates=dict(base.get('gates',{})),rustc=base.get('rustc'))
         if base.get('execution_error'):result['execution_error']=base['execution_error']

@@ -131,26 +131,33 @@ distinguishes compiled versions/configured backends from observed replica count.
 ### Task 4: Native process proof and composed both-platform acceptance
 
 **Files:** create examples/translation_probe.rs in ken-models,
-tools/rust_migration/{translation_compare,translation_validate}.py,
-tests/rust_migration/test_translation_{compare,validate}.py,
+tools/rust_migration/{translation_compare,translation_validate,translation_build}.py,
+tests/rust_migration/test_translation_{compare,validate,inputs,build}.py,
 migration_tests/test_translation_parity.py; update preparation.py, prior validators,
 CI rust-models.yml, guide and public evidence.
 **Interfaces:** PreparedNativeTranslation{source:Path,probe:Path}.environment()->dict;
 translation_environment(prepared=None) validates absolute explicit paths.
+The typed translation input also accepts optional PreparedTranslationBuild{cmake,
+openblas_prefix}; explicit build inputs override ambient paths. ExpansionAttempt
+owns the normal expansion Result and optional actual pre-inference TranslationInput.
+Native build proof consumes Cargo JSON's selected ct2rs out_dir and actual CMake
+compiler/backend flags. The private OpenBLAS preparator authenticates source and
+publishes archive/header/pkg-config identities. Shared native_source fingerprints
+also bind eligible crate src/data and tests/fixtures bytes.
 Add optional keyword translation to validate_ettin/context/tables/models and
 _validation_environment; typed inputs override ambient values. CLI only forwards
 explicit KEN_TRANSLATION_SOURCE/KEN_TRANSLATION_PROBE; frozen originals strip all
 KEN vars. validate_translation composes23prior+3translation gates=26; aggregate
 requires both current-source receipts and exact registered platform/compiler.
-- [ ] RED wrong tokens/hypotheses/text/errors/state/recipe/derivedbytes/backends,
+- [x] RED wrong tokens/hypotheses/text/errors/state/recipe/derivedbytes/backends,
   missing/corrupt native prerequisites, stale binaries, Python-prepared-only
   shortcut, wrongOS/libs/stderr/caseIDs/baseproof/current-fingerprint damage.
-- [ ] Implement actual JSON probe with no expected outputs; original and native
+- [x] Implement actual JSON probe with no expected outputs; original and native
   independent destinations, fresh native preparation then reuse without source.
   Execute copied binary outsidecheckout/sentinelPATH, audit system dependencies
   including explicit Linuxlibgomp, actual Linux1exec, retain raw/observed peaks
   and all measurements/attempts. No speedup/SLA claim.
-- [ ] Run targeted tooling/process tests, then immutable-source full BOTH OS26gates:
+- [x] Run targeted tooling/process tests, then immutable-source full BOTH OS26gates:
   exact fullPythonbaselineIDs/mypy/Rust/fmt/clippy/original1066hashes/allpriorparity/
   benchmark/integrity/current-sourcebinding. Missing prerequisites fail, no skips.
   Publish receipts/matrix and task-done printed matrix; Expected passed=true on
