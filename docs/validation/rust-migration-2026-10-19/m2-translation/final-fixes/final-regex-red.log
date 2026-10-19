@@ -1,0 +1,28 @@
+   Compiling bytes v1.12.1
+   Compiling derive_builder v0.20.2
+   Compiling tokenizers v0.22.2
+   Compiling prost v0.14.4
+   Compiling sentencepiece v0.13.2
+   Compiling ct2rs v0.10.1
+   Compiling ken-models v0.18.0 (/Users/andres/Projects/ken/crates/ken-models)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.10s
+     Running tests/query_policy.rs (.ken/rust-migration/m2-translation/source-t4a/target/debug/deps/query_policy-71132ea1d3f58758)
+
+running 1 test
+test long_failed_identifier_matches_preserve_original_text_without_panicking ... FAILED
+
+failures:
+
+---- long_failed_identifier_matches_preserve_original_text_without_panicking stdout ----
+
+thread 'long_failed_identifier_matches_preserve_original_text_without_panicking' (9836718) panicked at /Users/andres/Projects/ken/.ken/rust-migration/m2-translation/cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/onig-6.5.3/src/lib.rs:647:23:
+Onig: Regex search error: retry-limit-in-match over
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    long_failed_identifier_matches_preserve_original_text_without_panicking
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.37s
+
+error: test failed, to rerun pass `-p ken-models --test query_policy`

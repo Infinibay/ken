@@ -1,0 +1,22 @@
+   Compiling ken-models v0.18.0 (/Users/andres/Projects/ken/crates/ken-models)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.69s
+     Running tests/query_expansion.rs (.ken/rust-migration/m2-translation/source-t4a/target/debug/deps/query_expansion-9e057768fc087092)
+
+running 1 test
+test long_unmatched_identifier_attempt_reaches_normal_error_and_english_recovery ... FAILED
+
+failures:
+
+---- long_unmatched_identifier_attempt_reaches_normal_error_and_english_recovery stdout ----
+
+thread 'long_unmatched_identifier_attempt_reaches_normal_error_and_english_recovery' (9838764) panicked at /Users/andres/Projects/ken/.ken/rust-migration/m2-translation/cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/onig-6.5.3/src/lib.rs:647:23:
+Onig: Regex search error: retry-limit-in-match over
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    long_unmatched_identifier_attempt_reaches_normal_error_and_english_recovery
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.35s
+
+error: test failed, to rerun pass `-p ken-models --test query_expansion`

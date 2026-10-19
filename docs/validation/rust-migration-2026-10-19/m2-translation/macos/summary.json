@@ -30,7 +30,7 @@
         "--version",
         "--verbose"
       ],
-      "duration_ns": 86615625,
+      "duration_ns": 83867208,
       "artifact": "rustc.log",
       "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
     },
@@ -47,9 +47,9 @@
         "tests/test_status.py",
         "-q"
       ],
-      "duration_ns": 75519018209,
+      "duration_ns": 70958297500,
       "artifact": "python-contracts.log",
-      "sha256": "4e10206c039ed42fed66b2c4800cc80f393ec98b809c7fbb8c91c7b3fefd808b"
+      "sha256": "3967a3470f7eac359388222b353644d0c76efe416477cf10067638da7e665570"
     },
     "python_full": {
       "ran": true,
@@ -59,14 +59,14 @@
         "/Users/andres/Projects/ken/.venv/bin/python",
         "-m",
         "pytest",
-        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4a/macos/base/base/base/base/python-final.xml"
+        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4b/macos/base/base/base/base/python-final.xml"
       ],
-      "duration_ns": 707297596375,
+      "duration_ns": 798756659708,
       "artifact": "python-full.log",
-      "sha256": "26afe2ff501d580257d04e68518c7abeaefe641589102db6be2b7648cdbe3862",
+      "sha256": "bc7e688b1a87aeb2c6b2c5a0e060bcd14fca0684a17ecf95357ad72283d5af31",
       "details": {
         "passed": true,
-        "collected": 15680,
+        "collected": 15681,
         "new_failures": [],
         "new_skips": [],
         "missing_tests": [],
@@ -92,7 +92,7 @@
         "mypy",
         "--no-incremental"
       ],
-      "duration_ns": 19160829625,
+      "duration_ns": 19633852709,
       "artifact": "typing.log",
       "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
       "details": {
@@ -118,7 +118,7 @@
         "--",
         "--check"
       ],
-      "duration_ns": 367950250,
+      "duration_ns": 411729125,
       "artifact": "fmt.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -136,9 +136,9 @@
         "-D",
         "warnings"
       ],
-      "duration_ns": 112543407166,
+      "duration_ns": 667999792,
       "artifact": "clippy.log",
-      "sha256": "5b5f98aa61b98e12c4304fd67d506dc5afddab3d44d3afea7975dfd8f2d9d874"
+      "sha256": "c54bca416b8a09e3c2018b0ada16771065b3b9b5469242539af42bc53077e2cf"
     },
     "rust_tests": {
       "ran": true,
@@ -150,9 +150,9 @@
         "--locked",
         "--workspace"
       ],
-      "duration_ns": 418837023667,
+      "duration_ns": 322259580291,
       "artifact": "rust_tests.log",
-      "sha256": "0c1befb66d2594937e1d4d7b19000ea91e4a283ddfbfbfa8b98003425a9782e9"
+      "sha256": "4795ec18ba2032beb26615647680ad8b69ec6b0dee8200c54fdc5a0f6105e6c2"
     },
     "release": {
       "ran": true,
@@ -171,16 +171,16 @@
         "--bins",
         "--message-format=json"
       ],
-      "duration_ns": 444911916,
+      "duration_ns": 431554291,
       "artifact": "release.log",
-      "sha256": "9866ac0c75ffda75e6b09f79ee4ddb7e2c911e231820cbe254e90e3ce960d9db",
+      "sha256": "52b740e5481bd7fcc5d40a473ab3311412e7d6f65485d1cb66660bd859292500",
       "native_binding": {
         "ran": true,
         "passed": true,
-        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/model_probe",
         "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
-        "built_sha256": "f450eb4494e7fb6e912ff26592c9f5ae01166172757b8b4e9d4ebf032e3c3e2a",
-        "supplied_sha256": "f450eb4494e7fb6e912ff26592c9f5ae01166172757b8b4e9d4ebf032e3c3e2a"
+        "built_sha256": "f6f40312da1482e443575b60b39a1bfb20c5fb4f3e081e53b070a2e8971213c9",
+        "supplied_sha256": "f6f40312da1482e443575b60b39a1bfb20c5fb4f3e081e53b070a2e8971213c9"
       }
     },
     "parity_tests": {
@@ -193,9 +193,9 @@
         "pytest",
         "migration_tests",
         "-q",
-        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4a/macos/base/base/base/base/parity-tests.xml"
+        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4b/macos/base/base/base/base/parity-tests.xml"
       ],
-      "duration_ns": 160908760916,
+      "duration_ns": 159860892875,
       "artifact": "parity-tests.log",
       "sha256": "4bed8cc624113743771e380f4fea7f09ec8586d03d46684c5c3a9889a2038305"
     },
@@ -218,13 +218,13 @@
         "--reference",
         "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/reference",
         "--native",
-        "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/ken-rs",
         "--cases",
-        "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
         "--out",
-        "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4a/macos/base/base/base/base/m1-parity.json"
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4b/macos/base/base/base/base/m1-parity.json"
       ],
-      "duration_ns": 19767115791,
+      "duration_ns": 20089097791,
       "artifact": "m1-parity.log",
       "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
     },
@@ -242,17 +242,17 @@
         "diff",
         "--check"
       ],
-      "duration_ns": 47053000,
+      "duration_ns": 41712500,
       "artifact": "hygiene.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "table_release": {
       "ran": true,
       "passed": true,
-      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
-      "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
-      "built_sha256": "05a1148774b1a3aadad9e35e1cf7cf2d81410fe0a543d469f97e16b0a7645397",
-      "supplied_sha256": "05a1148774b1a3aadad9e35e1cf7cf2d81410fe0a543d469f97e16b0a7645397"
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/table_probe",
+      "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/table_probe",
+      "built_sha256": "87ecac4b1e2357d17593ba80e89f28581784b453eeb0080637353f62cee7b788",
+      "supplied_sha256": "87ecac4b1e2357d17593ba80e89f28581784b453eeb0080637353f62cee7b788"
     },
     "table_parity": {
       "ran": true,
@@ -261,10 +261,10 @@
     "context_release": {
       "ran": true,
       "passed": true,
-      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
-      "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
-      "built_sha256": "d158f457cada608d47e3be1d006fcc2c153374c0c9f47544d814fc7c4a94e60a",
-      "supplied_sha256": "d158f457cada608d47e3be1d006fcc2c153374c0c9f47544d814fc7c4a94e60a"
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/context_probe",
+      "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/context_probe",
+      "built_sha256": "b73d0560dfa2843a0e0e431ba0b97a8b429e3e06455bc8e9fffb150913024758",
+      "supplied_sha256": "b73d0560dfa2843a0e0e431ba0b97a8b429e3e06455bc8e9fffb150913024758"
     },
     "context_parity": {
       "ran": true,
@@ -273,10 +273,10 @@
     "ettin_release": {
       "ran": true,
       "passed": true,
-      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/ettin_probe",
-      "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/ettin_probe",
-      "built_sha256": "c3a215a6c98cc756b897900d54b6c18bce9e6227a999fab5eaba62f76a18bf94",
-      "supplied_sha256": "c3a215a6c98cc756b897900d54b6c18bce9e6227a999fab5eaba62f76a18bf94"
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/ettin_probe",
+      "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/ettin_probe",
+      "built_sha256": "a070f27634773c00d3169a3b6965accdd65b570f224a4e86dfec9188f9c10887",
+      "supplied_sha256": "a070f27634773c00d3169a3b6965accdd65b570f224a4e86dfec9188f9c10887"
     },
     "ettin_preparation": {
       "ran": true,
@@ -289,10 +289,10 @@
     "translation_release": {
       "ran": true,
       "passed": true,
-      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/translation_probe",
-      "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/translation_probe",
-      "built_sha256": "372b2c00687e9ee1d51c6d1f348645bd452c9f02c5caa8b9d52a9ae4180aebfb",
-      "supplied_sha256": "372b2c00687e9ee1d51c6d1f348645bd452c9f02c5caa8b9d52a9ae4180aebfb",
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/translation_probe",
+      "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/translation_probe",
+      "built_sha256": "46317c790df4ca03097d15c6288ab83fb3e140074814912e2c423812ded15e11",
+      "supplied_sha256": "46317c790df4ca03097d15c6288ab83fb3e140074814912e2c423812ded15e11",
       "native_build": {
         "format": "ken-translation-build/1",
         "platform": "Darwin",
@@ -327,10 +327,10 @@
     }
   },
   "fingerprints": {
-    "native_source": "ba58a3dc6b4d52f52f8961d9ae718c5b1d55a80b449144c17e5f4d5ce4e721a2",
+    "native_source": "d65149fcf07a8900af25ffa9f75805f95d0e8392ba1d0766fc0ec3fefb49d5b2",
     "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
     "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
-    "validator": "1c29541aede3c43b1a607d3855499def7aa3713cb3e04d87c08e805bbf72884e",
+    "validator": "e024bea3dd5c07e45ef83b7b115cdc78e7f6a409be53a44d4171c75ac2a4d738",
     "oracle": "3c6c3295f97b6671dd6e00135117a276a53ce00489aa6dcfd4ba88cafb24443c",
     "registration": "d2cb2be7a0b8a0b6682ae215539a1e92d7ccec598cbbcbdf960201e718b534d5",
     "table_artifact": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
@@ -384,7 +384,7 @@
           "--version",
           "--verbose"
         ],
-        "duration_ns": 86615625,
+        "duration_ns": 83867208,
         "artifact": "rustc.log",
         "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
       },
@@ -401,9 +401,9 @@
           "tests/test_status.py",
           "-q"
         ],
-        "duration_ns": 75519018209,
+        "duration_ns": 70958297500,
         "artifact": "python-contracts.log",
-        "sha256": "4e10206c039ed42fed66b2c4800cc80f393ec98b809c7fbb8c91c7b3fefd808b"
+        "sha256": "3967a3470f7eac359388222b353644d0c76efe416477cf10067638da7e665570"
       },
       "python_full": {
         "ran": true,
@@ -413,14 +413,14 @@
           "/Users/andres/Projects/ken/.venv/bin/python",
           "-m",
           "pytest",
-          "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4a/macos/base/base/base/base/python-final.xml"
+          "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4b/macos/base/base/base/base/python-final.xml"
         ],
-        "duration_ns": 707297596375,
+        "duration_ns": 798756659708,
         "artifact": "python-full.log",
-        "sha256": "26afe2ff501d580257d04e68518c7abeaefe641589102db6be2b7648cdbe3862",
+        "sha256": "bc7e688b1a87aeb2c6b2c5a0e060bcd14fca0684a17ecf95357ad72283d5af31",
         "details": {
           "passed": true,
-          "collected": 15680,
+          "collected": 15681,
           "new_failures": [],
           "new_skips": [],
           "missing_tests": [],
@@ -446,7 +446,7 @@
           "mypy",
           "--no-incremental"
         ],
-        "duration_ns": 19160829625,
+        "duration_ns": 19633852709,
         "artifact": "typing.log",
         "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
         "details": {
@@ -472,7 +472,7 @@
           "--",
           "--check"
         ],
-        "duration_ns": 367950250,
+        "duration_ns": 411729125,
         "artifact": "fmt.log",
         "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
@@ -490,9 +490,9 @@
           "-D",
           "warnings"
         ],
-        "duration_ns": 112543407166,
+        "duration_ns": 667999792,
         "artifact": "clippy.log",
-        "sha256": "5b5f98aa61b98e12c4304fd67d506dc5afddab3d44d3afea7975dfd8f2d9d874"
+        "sha256": "c54bca416b8a09e3c2018b0ada16771065b3b9b5469242539af42bc53077e2cf"
       },
       "rust_tests": {
         "ran": true,
@@ -504,9 +504,9 @@
           "--locked",
           "--workspace"
         ],
-        "duration_ns": 418837023667,
+        "duration_ns": 322259580291,
         "artifact": "rust_tests.log",
-        "sha256": "0c1befb66d2594937e1d4d7b19000ea91e4a283ddfbfbfa8b98003425a9782e9"
+        "sha256": "4795ec18ba2032beb26615647680ad8b69ec6b0dee8200c54fdc5a0f6105e6c2"
       },
       "release": {
         "ran": true,
@@ -525,16 +525,16 @@
           "--bins",
           "--message-format=json"
         ],
-        "duration_ns": 444911916,
+        "duration_ns": 431554291,
         "artifact": "release.log",
-        "sha256": "9866ac0c75ffda75e6b09f79ee4ddb7e2c911e231820cbe254e90e3ce960d9db",
+        "sha256": "52b740e5481bd7fcc5d40a473ab3311412e7d6f65485d1cb66660bd859292500",
         "native_binding": {
           "ran": true,
           "passed": true,
-          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
+          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/model_probe",
           "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
-          "built_sha256": "f450eb4494e7fb6e912ff26592c9f5ae01166172757b8b4e9d4ebf032e3c3e2a",
-          "supplied_sha256": "f450eb4494e7fb6e912ff26592c9f5ae01166172757b8b4e9d4ebf032e3c3e2a"
+          "built_sha256": "f6f40312da1482e443575b60b39a1bfb20c5fb4f3e081e53b070a2e8971213c9",
+          "supplied_sha256": "f6f40312da1482e443575b60b39a1bfb20c5fb4f3e081e53b070a2e8971213c9"
         }
       },
       "parity_tests": {
@@ -547,9 +547,9 @@
           "pytest",
           "migration_tests",
           "-q",
-          "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4a/macos/base/base/base/base/parity-tests.xml"
+          "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4b/macos/base/base/base/base/parity-tests.xml"
         ],
-        "duration_ns": 160908760916,
+        "duration_ns": 159860892875,
         "artifact": "parity-tests.log",
         "sha256": "4bed8cc624113743771e380f4fea7f09ec8586d03d46684c5c3a9889a2038305"
       },
@@ -572,13 +572,13 @@
           "--reference",
           "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/reference",
           "--native",
-          "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/ken-rs",
           "--cases",
-          "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
           "--out",
-          "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4a/macos/base/base/base/base/m1-parity.json"
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4b/macos/base/base/base/base/m1-parity.json"
         ],
-        "duration_ns": 19767115791,
+        "duration_ns": 20089097791,
         "artifact": "m1-parity.log",
         "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
       },
@@ -596,17 +596,17 @@
           "diff",
           "--check"
         ],
-        "duration_ns": 47053000,
+        "duration_ns": 41712500,
         "artifact": "hygiene.log",
         "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       "table_release": {
         "ran": true,
         "passed": true,
-        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
-        "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
-        "built_sha256": "05a1148774b1a3aadad9e35e1cf7cf2d81410fe0a543d469f97e16b0a7645397",
-        "supplied_sha256": "05a1148774b1a3aadad9e35e1cf7cf2d81410fe0a543d469f97e16b0a7645397"
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/table_probe",
+        "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/table_probe",
+        "built_sha256": "87ecac4b1e2357d17593ba80e89f28581784b453eeb0080637353f62cee7b788",
+        "supplied_sha256": "87ecac4b1e2357d17593ba80e89f28581784b453eeb0080637353f62cee7b788"
       },
       "table_parity": {
         "ran": true,
@@ -615,10 +615,10 @@
       "context_release": {
         "ran": true,
         "passed": true,
-        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
-        "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
-        "built_sha256": "d158f457cada608d47e3be1d006fcc2c153374c0c9f47544d814fc7c4a94e60a",
-        "supplied_sha256": "d158f457cada608d47e3be1d006fcc2c153374c0c9f47544d814fc7c4a94e60a"
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/context_probe",
+        "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/context_probe",
+        "built_sha256": "b73d0560dfa2843a0e0e431ba0b97a8b429e3e06455bc8e9fffb150913024758",
+        "supplied_sha256": "b73d0560dfa2843a0e0e431ba0b97a8b429e3e06455bc8e9fffb150913024758"
       },
       "context_parity": {
         "ran": true,
@@ -627,10 +627,10 @@
       "ettin_release": {
         "ran": true,
         "passed": true,
-        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/ettin_probe",
-        "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/ettin_probe",
-        "built_sha256": "c3a215a6c98cc756b897900d54b6c18bce9e6227a999fab5eaba62f76a18bf94",
-        "supplied_sha256": "c3a215a6c98cc756b897900d54b6c18bce9e6227a999fab5eaba62f76a18bf94"
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/ettin_probe",
+        "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/ettin_probe",
+        "built_sha256": "a070f27634773c00d3169a3b6965accdd65b570f224a4e86dfec9188f9c10887",
+        "supplied_sha256": "a070f27634773c00d3169a3b6965accdd65b570f224a4e86dfec9188f9c10887"
       },
       "ettin_preparation": {
         "ran": true,
@@ -642,10 +642,10 @@
       }
     },
     "fingerprints": {
-      "native_source": "ba58a3dc6b4d52f52f8961d9ae718c5b1d55a80b449144c17e5f4d5ce4e721a2",
+      "native_source": "d65149fcf07a8900af25ffa9f75805f95d0e8392ba1d0766fc0ec3fefb49d5b2",
       "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
       "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
-      "validator": "1c29541aede3c43b1a607d3855499def7aa3713cb3e04d87c08e805bbf72884e",
+      "validator": "e024bea3dd5c07e45ef83b7b115cdc78e7f6a409be53a44d4171c75ac2a4d738",
       "oracle": "3c6c3295f97b6671dd6e00135117a276a53ce00489aa6dcfd4ba88cafb24443c",
       "registration": "d2cb2be7a0b8a0b6682ae215539a1e92d7ccec598cbbcbdf960201e718b534d5",
       "table_artifact": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
@@ -693,7 +693,7 @@
             "--version",
             "--verbose"
           ],
-          "duration_ns": 86615625,
+          "duration_ns": 83867208,
           "artifact": "rustc.log",
           "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
         },
@@ -710,9 +710,9 @@
             "tests/test_status.py",
             "-q"
           ],
-          "duration_ns": 75519018209,
+          "duration_ns": 70958297500,
           "artifact": "python-contracts.log",
-          "sha256": "4e10206c039ed42fed66b2c4800cc80f393ec98b809c7fbb8c91c7b3fefd808b"
+          "sha256": "3967a3470f7eac359388222b353644d0c76efe416477cf10067638da7e665570"
         },
         "python_full": {
           "ran": true,
@@ -722,14 +722,14 @@
             "/Users/andres/Projects/ken/.venv/bin/python",
             "-m",
             "pytest",
-            "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4a/macos/base/base/base/base/python-final.xml"
+            "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4b/macos/base/base/base/base/python-final.xml"
           ],
-          "duration_ns": 707297596375,
+          "duration_ns": 798756659708,
           "artifact": "python-full.log",
-          "sha256": "26afe2ff501d580257d04e68518c7abeaefe641589102db6be2b7648cdbe3862",
+          "sha256": "bc7e688b1a87aeb2c6b2c5a0e060bcd14fca0684a17ecf95357ad72283d5af31",
           "details": {
             "passed": true,
-            "collected": 15680,
+            "collected": 15681,
             "new_failures": [],
             "new_skips": [],
             "missing_tests": [],
@@ -755,7 +755,7 @@
             "mypy",
             "--no-incremental"
           ],
-          "duration_ns": 19160829625,
+          "duration_ns": 19633852709,
           "artifact": "typing.log",
           "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
           "details": {
@@ -781,7 +781,7 @@
             "--",
             "--check"
           ],
-          "duration_ns": 367950250,
+          "duration_ns": 411729125,
           "artifact": "fmt.log",
           "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
@@ -799,9 +799,9 @@
             "-D",
             "warnings"
           ],
-          "duration_ns": 112543407166,
+          "duration_ns": 667999792,
           "artifact": "clippy.log",
-          "sha256": "5b5f98aa61b98e12c4304fd67d506dc5afddab3d44d3afea7975dfd8f2d9d874"
+          "sha256": "c54bca416b8a09e3c2018b0ada16771065b3b9b5469242539af42bc53077e2cf"
         },
         "rust_tests": {
           "ran": true,
@@ -813,9 +813,9 @@
             "--locked",
             "--workspace"
           ],
-          "duration_ns": 418837023667,
+          "duration_ns": 322259580291,
           "artifact": "rust_tests.log",
-          "sha256": "0c1befb66d2594937e1d4d7b19000ea91e4a283ddfbfbfa8b98003425a9782e9"
+          "sha256": "4795ec18ba2032beb26615647680ad8b69ec6b0dee8200c54fdc5a0f6105e6c2"
         },
         "release": {
           "ran": true,
@@ -834,16 +834,16 @@
             "--bins",
             "--message-format=json"
           ],
-          "duration_ns": 444911916,
+          "duration_ns": 431554291,
           "artifact": "release.log",
-          "sha256": "9866ac0c75ffda75e6b09f79ee4ddb7e2c911e231820cbe254e90e3ce960d9db",
+          "sha256": "52b740e5481bd7fcc5d40a473ab3311412e7d6f65485d1cb66660bd859292500",
           "native_binding": {
             "ran": true,
             "passed": true,
-            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
+            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/model_probe",
             "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
-            "built_sha256": "f450eb4494e7fb6e912ff26592c9f5ae01166172757b8b4e9d4ebf032e3c3e2a",
-            "supplied_sha256": "f450eb4494e7fb6e912ff26592c9f5ae01166172757b8b4e9d4ebf032e3c3e2a"
+            "built_sha256": "f6f40312da1482e443575b60b39a1bfb20c5fb4f3e081e53b070a2e8971213c9",
+            "supplied_sha256": "f6f40312da1482e443575b60b39a1bfb20c5fb4f3e081e53b070a2e8971213c9"
           }
         },
         "parity_tests": {
@@ -856,9 +856,9 @@
             "pytest",
             "migration_tests",
             "-q",
-            "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4a/macos/base/base/base/base/parity-tests.xml"
+            "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4b/macos/base/base/base/base/parity-tests.xml"
           ],
-          "duration_ns": 160908760916,
+          "duration_ns": 159860892875,
           "artifact": "parity-tests.log",
           "sha256": "4bed8cc624113743771e380f4fea7f09ec8586d03d46684c5c3a9889a2038305"
         },
@@ -881,13 +881,13 @@
             "--reference",
             "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/reference",
             "--native",
-            "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+            "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/ken-rs",
             "--cases",
-            "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+            "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
             "--out",
-            "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4a/macos/base/base/base/base/m1-parity.json"
+            "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4b/macos/base/base/base/base/m1-parity.json"
           ],
-          "duration_ns": 19767115791,
+          "duration_ns": 20089097791,
           "artifact": "m1-parity.log",
           "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
         },
@@ -905,17 +905,17 @@
             "diff",
             "--check"
           ],
-          "duration_ns": 47053000,
+          "duration_ns": 41712500,
           "artifact": "hygiene.log",
           "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
         "table_release": {
           "ran": true,
           "passed": true,
-          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
-          "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
-          "built_sha256": "05a1148774b1a3aadad9e35e1cf7cf2d81410fe0a543d469f97e16b0a7645397",
-          "supplied_sha256": "05a1148774b1a3aadad9e35e1cf7cf2d81410fe0a543d469f97e16b0a7645397"
+          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/table_probe",
+          "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/table_probe",
+          "built_sha256": "87ecac4b1e2357d17593ba80e89f28581784b453eeb0080637353f62cee7b788",
+          "supplied_sha256": "87ecac4b1e2357d17593ba80e89f28581784b453eeb0080637353f62cee7b788"
         },
         "table_parity": {
           "ran": true,
@@ -924,10 +924,10 @@
         "context_release": {
           "ran": true,
           "passed": true,
-          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
-          "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
-          "built_sha256": "d158f457cada608d47e3be1d006fcc2c153374c0c9f47544d814fc7c4a94e60a",
-          "supplied_sha256": "d158f457cada608d47e3be1d006fcc2c153374c0c9f47544d814fc7c4a94e60a"
+          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/context_probe",
+          "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/context_probe",
+          "built_sha256": "b73d0560dfa2843a0e0e431ba0b97a8b429e3e06455bc8e9fffb150913024758",
+          "supplied_sha256": "b73d0560dfa2843a0e0e431ba0b97a8b429e3e06455bc8e9fffb150913024758"
         },
         "context_parity": {
           "ran": true,
@@ -935,10 +935,10 @@
         }
       },
       "fingerprints": {
-        "native_source": "ba58a3dc6b4d52f52f8961d9ae718c5b1d55a80b449144c17e5f4d5ce4e721a2",
+        "native_source": "d65149fcf07a8900af25ffa9f75805f95d0e8392ba1d0766fc0ec3fefb49d5b2",
         "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
         "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
-        "validator": "1c29541aede3c43b1a607d3855499def7aa3713cb3e04d87c08e805bbf72884e",
+        "validator": "e024bea3dd5c07e45ef83b7b115cdc78e7f6a409be53a44d4171c75ac2a4d738",
         "oracle": "3c6c3295f97b6671dd6e00135117a276a53ce00489aa6dcfd4ba88cafb24443c",
         "registration": "d2cb2be7a0b8a0b6682ae215539a1e92d7ccec598cbbcbdf960201e718b534d5",
         "table_artifact": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
@@ -981,7 +981,7 @@
               "--version",
               "--verbose"
             ],
-            "duration_ns": 86615625,
+            "duration_ns": 83867208,
             "artifact": "rustc.log",
             "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
           },
@@ -998,9 +998,9 @@
               "tests/test_status.py",
               "-q"
             ],
-            "duration_ns": 75519018209,
+            "duration_ns": 70958297500,
             "artifact": "python-contracts.log",
-            "sha256": "4e10206c039ed42fed66b2c4800cc80f393ec98b809c7fbb8c91c7b3fefd808b"
+            "sha256": "3967a3470f7eac359388222b353644d0c76efe416477cf10067638da7e665570"
           },
           "python_full": {
             "ran": true,
@@ -1010,14 +1010,14 @@
               "/Users/andres/Projects/ken/.venv/bin/python",
               "-m",
               "pytest",
-              "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4a/macos/base/base/base/base/python-final.xml"
+              "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4b/macos/base/base/base/base/python-final.xml"
             ],
-            "duration_ns": 707297596375,
+            "duration_ns": 798756659708,
             "artifact": "python-full.log",
-            "sha256": "26afe2ff501d580257d04e68518c7abeaefe641589102db6be2b7648cdbe3862",
+            "sha256": "bc7e688b1a87aeb2c6b2c5a0e060bcd14fca0684a17ecf95357ad72283d5af31",
             "details": {
               "passed": true,
-              "collected": 15680,
+              "collected": 15681,
               "new_failures": [],
               "new_skips": [],
               "missing_tests": [],
@@ -1043,7 +1043,7 @@
               "mypy",
               "--no-incremental"
             ],
-            "duration_ns": 19160829625,
+            "duration_ns": 19633852709,
             "artifact": "typing.log",
             "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
             "details": {
@@ -1069,7 +1069,7 @@
               "--",
               "--check"
             ],
-            "duration_ns": 367950250,
+            "duration_ns": 411729125,
             "artifact": "fmt.log",
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
@@ -1087,9 +1087,9 @@
               "-D",
               "warnings"
             ],
-            "duration_ns": 112543407166,
+            "duration_ns": 667999792,
             "artifact": "clippy.log",
-            "sha256": "5b5f98aa61b98e12c4304fd67d506dc5afddab3d44d3afea7975dfd8f2d9d874"
+            "sha256": "c54bca416b8a09e3c2018b0ada16771065b3b9b5469242539af42bc53077e2cf"
           },
           "rust_tests": {
             "ran": true,
@@ -1101,9 +1101,9 @@
               "--locked",
               "--workspace"
             ],
-            "duration_ns": 418837023667,
+            "duration_ns": 322259580291,
             "artifact": "rust_tests.log",
-            "sha256": "0c1befb66d2594937e1d4d7b19000ea91e4a283ddfbfbfa8b98003425a9782e9"
+            "sha256": "4795ec18ba2032beb26615647680ad8b69ec6b0dee8200c54fdc5a0f6105e6c2"
           },
           "release": {
             "ran": true,
@@ -1122,16 +1122,16 @@
               "--bins",
               "--message-format=json"
             ],
-            "duration_ns": 444911916,
+            "duration_ns": 431554291,
             "artifact": "release.log",
-            "sha256": "9866ac0c75ffda75e6b09f79ee4ddb7e2c911e231820cbe254e90e3ce960d9db",
+            "sha256": "52b740e5481bd7fcc5d40a473ab3311412e7d6f65485d1cb66660bd859292500",
             "native_binding": {
               "ran": true,
               "passed": true,
-              "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
+              "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/model_probe",
               "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
-              "built_sha256": "f450eb4494e7fb6e912ff26592c9f5ae01166172757b8b4e9d4ebf032e3c3e2a",
-              "supplied_sha256": "f450eb4494e7fb6e912ff26592c9f5ae01166172757b8b4e9d4ebf032e3c3e2a"
+              "built_sha256": "f6f40312da1482e443575b60b39a1bfb20c5fb4f3e081e53b070a2e8971213c9",
+              "supplied_sha256": "f6f40312da1482e443575b60b39a1bfb20c5fb4f3e081e53b070a2e8971213c9"
             }
           },
           "parity_tests": {
@@ -1144,9 +1144,9 @@
               "pytest",
               "migration_tests",
               "-q",
-              "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4a/macos/base/base/base/base/parity-tests.xml"
+              "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4b/macos/base/base/base/base/parity-tests.xml"
             ],
-            "duration_ns": 160908760916,
+            "duration_ns": 159860892875,
             "artifact": "parity-tests.log",
             "sha256": "4bed8cc624113743771e380f4fea7f09ec8586d03d46684c5c3a9889a2038305"
           },
@@ -1169,13 +1169,13 @@
               "--reference",
               "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/reference",
               "--native",
-              "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/ken-rs",
+              "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/ken-rs",
               "--cases",
-              "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+              "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
               "--out",
-              "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4a/macos/base/base/base/base/m1-parity.json"
+              "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/acceptance-t4b/macos/base/base/base/base/m1-parity.json"
             ],
-            "duration_ns": 19767115791,
+            "duration_ns": 20089097791,
             "artifact": "m1-parity.log",
             "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
           },
@@ -1193,17 +1193,17 @@
               "diff",
               "--check"
             ],
-            "duration_ns": 47053000,
+            "duration_ns": 41712500,
             "artifact": "hygiene.log",
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
           "table_release": {
             "ran": true,
             "passed": true,
-            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
-            "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
-            "built_sha256": "05a1148774b1a3aadad9e35e1cf7cf2d81410fe0a543d469f97e16b0a7645397",
-            "supplied_sha256": "05a1148774b1a3aadad9e35e1cf7cf2d81410fe0a543d469f97e16b0a7645397"
+            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/table_probe",
+            "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/table_probe",
+            "built_sha256": "87ecac4b1e2357d17593ba80e89f28581784b453eeb0080637353f62cee7b788",
+            "supplied_sha256": "87ecac4b1e2357d17593ba80e89f28581784b453eeb0080637353f62cee7b788"
           },
           "table_parity": {
             "ran": true,
@@ -1211,10 +1211,10 @@
           }
         },
         "fingerprints": {
-          "native_source": "ba58a3dc6b4d52f52f8961d9ae718c5b1d55a80b449144c17e5f4d5ce4e721a2",
+          "native_source": "d65149fcf07a8900af25ffa9f75805f95d0e8392ba1d0766fc0ec3fefb49d5b2",
           "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
           "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
-          "validator": "1c29541aede3c43b1a607d3855499def7aa3713cb3e04d87c08e805bbf72884e",
+          "validator": "e024bea3dd5c07e45ef83b7b115cdc78e7f6a409be53a44d4171c75ac2a4d738",
           "oracle": "3c6c3295f97b6671dd6e00135117a276a53ce00489aa6dcfd4ba88cafb24443c",
           "registration": "d2cb2be7a0b8a0b6682ae215539a1e92d7ccec598cbbcbdf960201e718b534d5",
           "table_artifact": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
@@ -1224,10 +1224,10 @@
         "table_release": {
           "ran": true,
           "passed": true,
-          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
-          "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
-          "built_sha256": "05a1148774b1a3aadad9e35e1cf7cf2d81410fe0a543d469f97e16b0a7645397",
-          "supplied_sha256": "05a1148774b1a3aadad9e35e1cf7cf2d81410fe0a543d469f97e16b0a7645397"
+          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/table_probe",
+          "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/table_probe",
+          "built_sha256": "87ecac4b1e2357d17593ba80e89f28581784b453eeb0080637353f62cee7b788",
+          "supplied_sha256": "87ecac4b1e2357d17593ba80e89f28581784b453eeb0080637353f62cee7b788"
         },
         "table_parity": {
           "format": "ken-table-parity/1",
@@ -1261,15 +1261,15 @@
             "bytes": 23135664
           },
           "cases_sha256": "b2ed77496c6cf5df43dd43dd9eb3b904b60a71c9e1650f879b3428fa926e62f3",
-          "native_sha256": "05a1148774b1a3aadad9e35e1cf7cf2d81410fe0a543d469f97e16b0a7645397",
+          "native_sha256": "87ecac4b1e2357d17593ba80e89f28581784b453eeb0080637353f62cee7b788",
           "dependency_audit": {
             "passed": true,
             "linked_exit": 0,
             "tree_exit": 0,
-            "linked_sha256": "96699970fc90da6a67dd8b855b39a9ef49521a85987687fed2351adb949b3db0",
-            "tree_sha256": "9b5b223799c4ed77ef3bf79a1c593a80faef1b961a9e3c94a8294433354bd22e"
+            "linked_sha256": "13bf37210ca83bdff1816a1159f6e1ffd787dba2f19525ed3212233a9b4d71ff",
+            "tree_sha256": "c68fce224f969fe1c2ea753f56754aa4698a5a44ba975980870c6a0ce2473476"
           },
-          "native_wall_ns": 5691066917,
+          "native_wall_ns": 5837725333,
           "native_exit": 0,
           "runtime": {
             "device": "cpu",
@@ -1312,10 +1312,10 @@
       "context_release": {
         "ran": true,
         "passed": true,
-        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
-        "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
-        "built_sha256": "d158f457cada608d47e3be1d006fcc2c153374c0c9f47544d814fc7c4a94e60a",
-        "supplied_sha256": "d158f457cada608d47e3be1d006fcc2c153374c0c9f47544d814fc7c4a94e60a"
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/context_probe",
+        "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/context_probe",
+        "built_sha256": "b73d0560dfa2843a0e0e431ba0b97a8b429e3e06455bc8e9fffb150913024758",
+        "supplied_sha256": "b73d0560dfa2843a0e0e431ba0b97a8b429e3e06455bc8e9fffb150913024758"
       },
       "context_parity": {
         "format": "ken-context-parity/1",
@@ -1326,7 +1326,7 @@
         "native_children": [],
         "outside_checkout": true,
         "M2_accepted": false,
-        "native_sha256": "d158f457cada608d47e3be1d006fcc2c153374c0c9f47544d814fc7c4a94e60a",
+        "native_sha256": "b73d0560dfa2843a0e0e431ba0b97a8b429e3e06455bc8e9fffb150913024758",
         "case_ids": [
           "empty-passages",
           "empty-query",
@@ -1365,18 +1365,18 @@
           "passed": true,
           "linked_exit": 0,
           "tree_exit": 0,
-          "linked_sha256": "8b328dd9466b5f761ff5a461cb3be1113f9902576dda3cd8910c8151df28fc28",
-          "tree_sha256": "9b5b223799c4ed77ef3bf79a1c593a80faef1b961a9e3c94a8294433354bd22e"
+          "linked_sha256": "2726bffbd09b9a3c92996bd1ae9e2a04da9820363d84ea35aa2412fb4ef5d497",
+          "tree_sha256": "c68fce224f969fe1c2ea753f56754aa4698a5a44ba975980870c6a0ce2473476"
         },
         "core_dependency_audit": {
           "passed": true,
           "linked_exit": 0,
           "tree_exit": 0,
           "linked_sha256": "ab10047d389579a3a3474f0b76b8070359af91f088ca132deda30f22a77123bf",
-          "tree_sha256": "9b5b223799c4ed77ef3bf79a1c593a80faef1b961a9e3c94a8294433354bd22e"
+          "tree_sha256": "c68fce224f969fe1c2ea753f56754aa4698a5a44ba975980870c6a0ce2473476"
         },
         "native_exit": 0,
-        "native_wall_ns": 9618350208,
+        "native_wall_ns": 9808684959,
         "runtime": {
           "device": "cpu",
           "engine": "rust",
@@ -1440,10 +1440,10 @@
     "ettin_release": {
       "ran": true,
       "passed": true,
-      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/ettin_probe",
-      "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/ettin_probe",
-      "built_sha256": "c3a215a6c98cc756b897900d54b6c18bce9e6227a999fab5eaba62f76a18bf94",
-      "supplied_sha256": "c3a215a6c98cc756b897900d54b6c18bce9e6227a999fab5eaba62f76a18bf94"
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/ettin_probe",
+      "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/ettin_probe",
+      "built_sha256": "a070f27634773c00d3169a3b6965accdd65b570f224a4e86dfec9188f9c10887",
+      "supplied_sha256": "a070f27634773c00d3169a3b6965accdd65b570f224a4e86dfec9188f9c10887"
     },
     "ettin_parity": {
       "format": "ken-ettin-parity/1",
@@ -1454,7 +1454,7 @@
       "native_children": [],
       "outside_checkout": true,
       "M2_accepted": false,
-      "native_sha256": "c3a215a6c98cc756b897900d54b6c18bce9e6227a999fab5eaba62f76a18bf94",
+      "native_sha256": "a070f27634773c00d3169a3b6965accdd65b570f224a4e86dfec9188f9c10887",
       "oracle_sha256": "ddbd13c1e29d8a4f689b58cb9041aa0fcea4745618f065423ddf7dbe4cf7824b",
       "runtime_registration_sha256": "469470d57e38df2fb89c8cb005eb978c1ae295b427a3c7b8d5c03215b114536b",
       "case_ids": [
@@ -1486,18 +1486,18 @@
         "passed": true,
         "linked_exit": 0,
         "tree_exit": 0,
-        "linked_sha256": "209634682fe7c4fcfed8246a43a672cfd12ac97c5adcee1ed2235e7d6296c9d1",
-        "tree_sha256": "9b5b223799c4ed77ef3bf79a1c593a80faef1b961a9e3c94a8294433354bd22e"
+        "linked_sha256": "f02799b2062ccd1d2648eb378f4122df7f3809e1c303c5d89b223e825ad344a6",
+        "tree_sha256": "c68fce224f969fe1c2ea753f56754aa4698a5a44ba975980870c6a0ce2473476"
       },
       "core_dependency_audit": {
         "passed": true,
         "linked_exit": 0,
         "tree_exit": 0,
         "linked_sha256": "ab10047d389579a3a3474f0b76b8070359af91f088ca132deda30f22a77123bf",
-        "tree_sha256": "9b5b223799c4ed77ef3bf79a1c593a80faef1b961a9e3c94a8294433354bd22e"
+        "tree_sha256": "c68fce224f969fe1c2ea753f56754aa4698a5a44ba975980870c6a0ce2473476"
       },
       "native_exit": 0,
-      "native_wall_ns": 19090459375,
+      "native_wall_ns": 20010223083,
       "preparation": {
         "artifacts": {
           "config.json": {
@@ -1649,10 +1649,10 @@
   "translation_release": {
     "ran": true,
     "passed": true,
-    "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/translation_probe",
-    "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/translation_probe",
-    "built_sha256": "372b2c00687e9ee1d51c6d1f348645bd452c9f02c5caa8b9d52a9ae4180aebfb",
-    "supplied_sha256": "372b2c00687e9ee1d51c6d1f348645bd452c9f02c5caa8b9d52a9ae4180aebfb",
+    "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/translation_probe",
+    "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4b/target/release/examples/translation_probe",
+    "built_sha256": "46317c790df4ca03097d15c6288ab83fb3e140074814912e2c423812ded15e11",
+    "supplied_sha256": "46317c790df4ca03097d15c6288ab83fb3e140074814912e2c423812ded15e11",
     "native_build": {
       "format": "ken-translation-build/1",
       "platform": "Darwin",
@@ -1686,7 +1686,7 @@
     "native_children": [],
     "outside_checkout": true,
     "M2_accepted": false,
-    "native_sha256": "372b2c00687e9ee1d51c6d1f348645bd452c9f02c5caa8b9d52a9ae4180aebfb",
+    "native_sha256": "46317c790df4ca03097d15c6288ab83fb3e140074814912e2c423812ded15e11",
     "oracle_sha256": "f4e06db941dd706b0dee406ab8861fa5581219ccd6b5a5071e0a6bf7a2d89c1b",
     "raw_oracle_sha256": "52aba5a994da4505a9ba3fe2d17264a72c693ca387415c2545ee026d30cbf92c",
     "case_ids": [
@@ -1724,12 +1724,12 @@
       "passed": true,
       "linked_exit": 0,
       "tree_exit": 0,
-      "linked_sha256": "bf60e3913a4be552839ab991605ddfd04e28c2766c278f76578d0cdfb668a2ea",
-      "tree_sha256": "9b5b223799c4ed77ef3bf79a1c593a80faef1b961a9e3c94a8294433354bd22e",
+      "linked_sha256": "88653c35e13ea0a8e543488d8ade2b41c0d343529efd175a0d96efb4e6995e48",
+      "tree_sha256": "c68fce224f969fe1c2ea753f56754aa4698a5a44ba975980870c6a0ce2473476",
       "errors": []
     },
     "native_exit": 0,
-    "native_wall_ns": 14558120292,
+    "native_wall_ns": 13517063250,
     "stderr": "",
     "native_identity": {
       "beam_size": 1,

@@ -3,12 +3,14 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
 import platform
 import re
 import shutil
+import stat
 import subprocess
 import tarfile
 import tempfile
@@ -70,10 +72,22 @@ def inspect_openblas(prefix:Path)->dict:
     except (OSError,TypeError,KeyError) as error:raise ValueError(f'incomplete prepared OpenBLAS: {error}') from error
 
 
-def prepare_openblas(archive:Path,destination:Path)->dict:
+def _openblas_snapshot(archive:Path)->bytes:
+    """Own bounded, authenticated bytes before executing any build tool."""
     try:
-        if _record(archive)!=OPENBLAS_SOURCE:raise ValueError('OpenBLAS source byte identity mismatch')
+        with os.fdopen(os.open(archive,os.O_RDONLY|os.O_NONBLOCK),'rb') as source:
+            metadata=os.fstat(source.fileno())
+            if not stat.S_ISREG(metadata.st_mode) or metadata.st_size!=OPENBLAS_SOURCE['bytes']:
+                raise ValueError('OpenBLAS source must be a regular archive of the registered size')
+            snapshot=source.read(OPENBLAS_SOURCE['bytes']+1)
     except OSError as error:raise ValueError(f'OpenBLAS source unavailable: {error}') from error
+    if {'bytes':len(snapshot),'sha256':hashlib.sha256(snapshot).hexdigest()}!=OPENBLAS_SOURCE:
+        raise ValueError('OpenBLAS source byte identity mismatch')
+    return snapshot
+
+
+def prepare_openblas(archive:Path,destination:Path)->dict:
+    snapshot=_openblas_snapshot(archive)
     if (platform.system(),platform.machine())!=('Linux','aarch64'):
         raise ValueError('OpenBLAS preparation requires registered Linux aarch64')
     if not destination.is_absolute():raise ValueError('absolute private OpenBLAS destination required')
@@ -85,7 +99,7 @@ def prepare_openblas(archive:Path,destination:Path)->dict:
     destination.parent.mkdir(parents=True,exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='.openblas-stage-',dir=destination.parent) as temporary:
         stage=Path(temporary);source=stage/'source';source.mkdir();ready=stage/'ready';installed=stage/'installed'
-        with tarfile.open(archive) as package:package.extractall(source,filter='data')
+        with tarfile.open(fileobj=io.BytesIO(snapshot)) as package:package.extractall(source,filter='data')
         project=source/'OpenBLAS-0.3.26'
         with tempfile.NamedTemporaryFile(prefix='openblas-attempt-',suffix='.log',dir=destination.parent,delete=False) as log:
             started=time.monotonic_ns()
@@ -101,7 +115,7 @@ def prepare_openblas(archive:Path,destination:Path)->dict:
         for folder in ['lib/pkgconfig','include']:(ready/folder).mkdir(parents=True,exist_ok=True)
         shutil.copyfile(libraries[0],ready/'lib/libopenblas.a')
         for name in ['cblas.h','openblas_config.h']:shutil.copyfile(installed/'include'/name,ready/'include'/name)
-        shutil.copyfile(archive,ready/'source.tar.gz')
+        (ready/'source.tar.gz').write_bytes(snapshot)
         (ready/'lib/pkgconfig/openblas.pc').write_text(
             f'prefix={destination}\nlibdir=${{prefix}}/lib\nincludedir=${{prefix}}/include\n'
             'Name: OpenBLAS\nDescription: pinned native CPU BLAS\nVersion: 0.3.26\n'

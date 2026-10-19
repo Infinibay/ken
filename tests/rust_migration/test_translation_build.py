@@ -70,3 +70,45 @@ def test_unverified_openblas_archive_fails_before_building_or_creating_destinati
     for path in [archive,tmp_path/'missing']:
         with pytest.raises(ValueError,match='OpenBLAS source'):prepare_openblas(path,destination)
         assert not destination.exists()
+
+
+def test_openblas_build_and_published_archive_use_the_authenticated_owned_snapshot(tmp_path, monkeypatch):
+    """Replacing the caller's path cannot change the Makefile the helper executes."""
+    import hashlib
+    import io
+    import tarfile
+    from tools.rust_migration import translation_build as build
+
+    def package(label):
+        stream=io.BytesIO()
+        files={'Makefile':(
+            '.PHONY: all install\n'
+            f'all:\n\tprintf "{label}" > libopenblas_test.a\n'
+            'install:\n\tmkdir -p "$(PREFIX)/include"\n'
+            '\tcp cblas.h openblas_config.h "$(PREFIX)/include/"\n'
+        ).encode(),'cblas.h':b'fixture cblas header','openblas_config.h':b'fixture config header'}
+        with tarfile.open(fileobj=stream,mode='w:gz') as target:
+            for name,data in files.items():
+                info=tarfile.TarInfo('OpenBLAS-0.3.26/'+name);info.size=len(data)
+                target.addfile(info,io.BytesIO(data))
+        return stream.getvalue()
+
+    trusted=package('authenticated');replacement=package('replacement')
+    archive=tmp_path/'source.tar.gz';archive.write_bytes(trusted)
+    monkeypatch.setattr(build,'OPENBLAS_SOURCE',{'bytes':len(trusted),'sha256':hashlib.sha256(trusted).hexdigest()})
+    monkeypatch.setattr(build.platform,'system',lambda:'Linux')
+    monkeypatch.setattr(build.platform,'machine',lambda:'aarch64')
+    original_read=Path.read_bytes;original_which=build.shutil.which;replaced=[]
+
+    def replace_after_verification(name):
+        if name=='cc' and not replaced:
+            archive.write_bytes(replacement);replaced.append(True)
+        return original_which(name)
+
+    monkeypatch.setattr(build.shutil,'which',replace_after_verification)
+    destination=tmp_path/'prepared'
+    result=prepare_openblas(archive,destination)
+    assert replaced and original_read(archive)==replacement
+    assert original_read(destination/'lib/libopenblas.a')==b'authenticated'
+    assert original_read(destination/'source.tar.gz')==trusted
+    assert result['source']==build.OPENBLAS_SOURCE

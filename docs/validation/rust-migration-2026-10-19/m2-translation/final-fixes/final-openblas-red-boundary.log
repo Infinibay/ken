@@ -1,0 +1,65 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_openblas_build_and_published_archive_use_the_authenticated_owned_snapshot _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-969/test_openblas_build_and_publis0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10aa84800>
+
+    def test_openblas_build_and_published_archive_use_the_authenticated_owned_snapshot(tmp_path, monkeypatch):
+        """Replacing the caller's path cannot change the Makefile the helper executes."""
+        import hashlib
+        import io
+        import tarfile
+        from tools.rust_migration import translation_build as build
+    
+        def package(label):
+            stream=io.BytesIO()
+            files={'Makefile':(
+                '.PHONY: all install\n'
+                f'all:\n\tprintf "{label}" > libopenblas_test.a\n'
+                'install:\n\tmkdir -p "$(PREFIX)/include"\n'
+                '\tcp cblas.h openblas_config.h "$(PREFIX)/include/"\n'
+            ).encode(),'cblas.h':b'fixture cblas header','openblas_config.h':b'fixture config header'}
+            with tarfile.open(fileobj=stream,mode='w:gz') as target:
+                for name,data in files.items():
+                    info=tarfile.TarInfo('OpenBLAS-0.3.26/'+name);info.size=len(data)
+                    target.addfile(info,io.BytesIO(data))
+            return stream.getvalue()
+    
+        trusted=package('authenticated');replacement=package('replacement')
+        archive=tmp_path/'source.tar.gz';archive.write_bytes(trusted)
+        monkeypatch.setattr(build,'OPENBLAS_SOURCE',{'bytes':len(trusted),'sha256':hashlib.sha256(trusted).hexdigest()})
+        monkeypatch.setattr(build.platform,'system',lambda:'Linux')
+        monkeypatch.setattr(build.platform,'machine',lambda:'aarch64')
+        original_read=Path.read_bytes;original_which=build.shutil.which;replaced=[]
+    
+        def replace_after_verification(name):
+            if name=='cc' and not replaced:
+                archive.write_bytes(replacement);replaced.append(True)
+            return original_which(name)
+    
+        monkeypatch.setattr(build.shutil,'which',replace_after_verification)
+        destination=tmp_path/'prepared'
+>       result=prepare_openblas(archive,destination)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/rust_migration/test_translation_build.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/rust_migration/translation_build.py:114: in prepare_openblas
+    inspect_openblas(ready)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+prefix = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-969/test_openblas_build_and_publis0/.openblas-stage-tv4hfnl0/ready')
+
+    def inspect_openblas(prefix:Path)->dict:
+        try:
+            if not prefix.is_absolute():raise ValueError('absolute prepared OpenBLAS prefix required')
+            receipt=json.loads((prefix/'ken-build.json').read_text())
+            errors=_openblas_errors(receipt)
+>           if errors:raise ValueError('; '.join(errors))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: unregistered OpenBLAS source archive
+
+tools/rust_migration/translation_build.py:66: ValueError
+=========================== short test summary info ============================
+FAILED tests/rust_migration/test_translation_build.py::test_openblas_build_and_published_archive_use_the_authenticated_owned_snapshot

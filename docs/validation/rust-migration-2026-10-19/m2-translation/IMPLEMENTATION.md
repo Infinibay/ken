@@ -2,8 +2,8 @@
 
 Continues codex/rust-migration after accepted Ettin1ae4bb97. Overall M2 and the
 whole application migration remain open. Original sources/resources/tests and
-installed application are preserved. Both platform26gate validation and the current-source matrix now pass. The
-final fresh whole-plan review remains pending.
+installed application are preserved. Both platform26gate validation and the current-source matrix pass after one
+fresh review and one verified correction pass. This profile is accepted; M2 is open.
 
 Design: docs/superpowers/specs/2026-10-19-rust-translation-design.md.
 Plan: docs/superpowers/plans/2026-10-19-rust-m2-translation.md.
@@ -63,7 +63,8 @@ the immutable input fingerprint and raw-log hashes. The13 original/oracle Python
 tests and original1066-file integrity check also pass.
 
 Tasks2 and3 are complete. Native CTranslate2 runtime integration and both
-platform26gate verification now pass; the final review is pending and M2 is open.
+platform26gate verification now pass; the final review and correction pass are
+complete, and M2 is open.
 
 Python sanity verification passes15651 tests with the same10 historical xfail
 IDs, no original baseline test IDs lost. The initial restricted diagnostic run
@@ -123,12 +124,14 @@ including static CT2/SPM/OpenBLAS and the explicit Linux system OpenMP runtime.
 Actual native identities, Cargo-selected build directories, CMake3.31.10 compiler
 and Release/backend flags bind the proof to the executed source and executable.
 
-macOS arm64 and Linux aarch64 each pass all26 gates,132 Rust tests (zero failed or
-ignored),15670 Python tests and the same10 historical xfail IDs. No baseline IDs
+The reviewed pre-correction cut passed26 gates with132 Rust and15670 Python
+tests on each platform. The corrected cut below passes134 Rust/15671 Python
+tests on each platform, with zero Rust failures/ignored tests and the same10
+historical xfail IDs. No baseline IDs
 are lost and no new skips or type errors appear. All1066 originals match their
 pre-migration hashes. MATRIX.json binds all24 current source/input fingerprints
-and reports Translation_accepted=true,M2_accepted=false. The fresh final review
-still gates closure of this profile.
+and reports Translation_accepted=true,M2_accepted=false. The one final review
+and required correction pass are now complete.
 
 The first Linux full attempt is retained as failed: cold test compilation plus
 execution exceeded the unchanged600s gate; host filesystem pressure also caused
@@ -145,3 +148,24 @@ The raw evidence and failed attempts remain in .ken; model weights and disposabl
 environment caches are excluded from version control. No speedup or memory SLA
 is claimed. expand_attempt owns the actual encoded input even on inference
 failure; no failed-case trace is reconstructed by re-tokenizing later.
+
+## Final-review correction verified
+
+The one fresh reviewer identified two Important defects: a valid5KB lexical
+input can panic on Onig's retry limit, and the BLAS preparator reopened a mutable
+archive after authenticating it. Both were reproduced by new failing tests and
+corrected in one pass. The original29 histories and2438 policy histories remain
+unchanged;5 policy/7 expansion tests,97 tooling tests and Clippy now pass.
+The new immutable T4b candidate passes all26 gates on BOTH platforms. Current
+MATRIX.json/public platform receipts identify this corrected source; the reviewed
+proof remains in commit14da4bcc and private evidence. REVIEW.md records the report
+and two deferred Minors. FINAL-FIXES.md links the regression evidence.
+
+The corrected candidate29de2b391b082f914256712abe24f73ac04a34f6836e5bf809073ee683aa0b1d
+passes full Python baselines by ID, typing, formatting, Clippy,134 Rust tests,82
+process cases, all native model/profile replays, benchmarks and original integrity
+on both registered platforms. No tests were skipped for missing prerequisites,
+no deadline/tolerance/expected output was relaxed, and no second review was used.
+The shared native source fingerprint is d65149fcf07a8900af25ffa9f75805f95d0e8392ba1d0766fc0ec3fefb49d5b2;
+validator e024bea3dd5c07e45ef83b7b115cdc78e7f6a409be53a44d4171c75ac2a4d738.
+All1066 originals, installed entrypoints and user indexes remain preserved.

@@ -314,10 +314,11 @@ la inferencia. Las salidas y trazas pertenecen a cada llamada.
 
 Los29 historiales públicos y24 adicionales del motor coinciden exactamente con
 los originales de cada plataforma. Los originales ya difieren en algunos textos
-largos entre macOS y Linux; se conservan ambas expectativas. Las26 comprobaciones del perfil pasan en ambos sistemas, con132 pruebas Rust y
-15670 pruebas Python por plataforma y los mismos10 xfail históricos. La matriz
-acredita este perfil; la revisión final está pendiente. M2 y la migración
-completa siguen abiertos.
+largos entre macOS y Linux; se conservan ambas expectativas. Las26 comprobaciones del perfil pasan en ambos sistemas, con134 pruebas Rust y
+15671 pruebas Python por plataforma y los mismos10 xfail históricos. La revisión
+final detectó dos fallos, corregidos con pruebas de regresión y una matriz nueva.
+Los [dos detalles menores](validation/rust-migration-2026-10-19/m2-translation/REVIEW.md)
+quedan registrados. Este perfil está aceptado; M2 y la migración completa siguen abiertos.
 
 La compilación requiere CMake3.31.10 y un compilador C++. Puede preparar el
 ejecutable CMake en el directorio privado, sin modificar el entorno instalado:
@@ -353,6 +354,9 @@ su build Debug alteraba una traducción larga. El override afecta sólo a ct2rs;
 Rust conserva sus comprobaciones. La validación lee el directorio que Cargo
 seleccionó realmente, sus opciones CMake y el compilador; rechaza un caché antiguo,
 un backend distinto o prerrequisitos ausentes o cambiados.
+Si cambia el prefijo OpenBLAS, regenere ct2rs en cada perfil: `cargo clean -p ct2rs`
+limpia el perfil por defecto; `cargo clean -p ct2rs --release` renueva Release.
+Precompile las pruebas antes de ejecutar el gate con su límite fijo.
 
 ```sh
 cargo build --release --locked -p ken-cli -p ken-models --bins --examples

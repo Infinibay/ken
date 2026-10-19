@@ -231,6 +231,19 @@ fn failed_loading_is_retryable_and_english_remains_lazy_after_failure() {
 }
 
 #[test]
+fn long_unmatched_identifier_attempt_reaches_normal_error_and_english_recovery() {
+    let temp = tempfile::tempdir().unwrap();
+    let cache = temp.path().join(REVISION);
+    let engine = LocalQueryExpansion::new(model(), None, cache).unwrap();
+    let query = format!("¿ {}é", "_".repeat(5_000));
+    let attempt = engine.expand_attempt(&query);
+    assert!(matches!(attempt.result, Err(ModelError::Artifact(_))));
+    assert!(attempt.input.is_none());
+    assert!(!engine.is_loaded());
+    assert_eq!(engine.expand("find the parser").unwrap(), "find the parser");
+}
+
+#[test]
 fn loaded_native_data_and_returned_traces_are_owned_after_cache_replacement() {
     let temp = tempfile::tempdir().unwrap();
     let cache = copy_cache(temp.path());

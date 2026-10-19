@@ -162,7 +162,7 @@ requires both current-source receipts and exact registered platform/compiler.
   benchmark/integrity/current-sourcebinding. Missing prerequisites fail, no skips.
   Publish receipts/matrix and task-done printed matrix; Expected passed=true on
   both platforms, Translation_accepted=true,M2_accepted=false.
-- [ ] One fresh whole-plan gpt-6-astra reviewer with all5ReviewFocus verbatim and
+- [x] One fresh whole-plan gpt-6-astra reviewer with all5ReviewFocus verbatim and
   ledger rulings; regrade, one TDD correction pass for C/I, no rereview; defer
   Minors, record every declined scope and cost. Accept only this profile and
   continue remaining migration under the existing authorization.

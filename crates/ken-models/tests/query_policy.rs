@@ -97,3 +97,28 @@ fn query_plans_are_independent_and_restoration_is_sequential_without_trimming_ou
     );
     assert!(first.restore("").is_err());
 }
+
+#[test]
+fn long_failed_identifier_matches_preserve_original_text_without_panicking() {
+    // The original Python matcher finds no identifier in these histories.
+    // A trailing word character disallows ending before the accented letter.
+    for count in [5_000, 20_000] {
+        let query = format!("¿ {}é", "_".repeat(count));
+        let QueryExpansionPlan::Translate(plan) = plan_query(&query).unwrap() else {
+            panic!("question must select translation");
+        };
+        assert_eq!(plan.text(), query);
+        assert!(plan.protected_values().is_empty());
+    }
+    for (query, expected) in [
+        ("¿ a$_$", Vec::<String>::new()),
+        ("¿ __", vec![]),
+        ("¿ a__", vec!["a__".into()]),
+        ("¿ __a_١", vec!["__a_١".into()]),
+    ] {
+        let QueryExpansionPlan::Translate(plan) = plan_query(query).unwrap() else {
+            panic!("question must select translation");
+        };
+        assert_eq!(plan.protected_values(), expected);
+    }
+}

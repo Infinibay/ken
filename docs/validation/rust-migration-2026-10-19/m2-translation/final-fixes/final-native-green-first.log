@@ -1,0 +1,27 @@
+   Compiling ken-models v0.18.0 (/Users/andres/Projects/ken/crates/ken-models)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.75s
+     Running tests/query_expansion.rs (.ken/rust-migration/m2-translation/source-t4a/target/debug/deps/query_expansion-9e057768fc087092)
+
+running 7 tests
+test english_and_repeated_single_spanish_word_need_no_assets_or_runtime ... ok
+test long_unmatched_identifier_attempt_reaches_normal_error_and_english_recovery ... ok
+test failed_inference_attempt_owns_the_actual_input_before_error_and_keeps_lazy_recovery ... ok
+test failed_loading_is_retryable_and_english_remains_lazy_after_failure ... ok
+test loaded_native_data_and_returned_traces_are_owned_after_cache_replacement ... ok
+test simultaneous_first_calls_use_one_replica_without_crossing_queries_or_results ... ok
+test all_original_histories_preserve_actual_tokens_hypotheses_text_errors_and_lazy_state has been running for over 60 seconds
+test all_original_histories_preserve_actual_tokens_hypotheses_text_errors_and_lazy_state ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 103.39s
+
+     Running tests/query_policy.rs (.ken/rust-migration/m2-translation/source-t4a/target/debug/deps/query_policy-71132ea1d3f58758)
+
+running 5 tests
+test query_plans_are_independent_and_restoration_is_sequential_without_trimming_output ... ok
+test long_failed_identifier_matches_preserve_original_text_without_panicking ... ok
+test restoration_preserves_original_whitespace_case_collisions_and_literal_replacements ... ok
+test every_original_lexicon_member_counts_once_and_casefolds_before_the_decision ... ok
+test original_query_decisions_and_exact_matches_survive_unicode_and_regex_boundaries ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

@@ -521,3 +521,156 @@ python-full.xml and stopped after copying receipt/logs/manifest. The real gate
 produces python-final.xml; corrected publication reads that existing XML, then
 finishes measurements and verifies original integrity. No validation/source/test
 change, and no failed attempt was overwritten.
+Task 4: complete (commits 4f2e5e4..14da4bc, tests: .venv/bin/python -m tools.rust_migration.translation_validate --scope matrix --platform-receipts docs/validation/rust-migration-2026-10-19/m2-translation --out .ken/rust-migration/m2-translation/matrix-t4a-final → {"passed": true, "errors": []})
+
+Final review dispatched once: gpt-6-astra/xhigh/freshcontext, committed range
+1ae4bb97..14da4bcc, all5ReviewFocus verbatim and complete ledger supplied.
+Reviewer has reported two reproducible Important findings while continuing audit:
+(1) onig find_iter panics on retry-limit for question +5000underscores+é;
+(2) OpenBLAS archive path is authenticated then reopened before make, permitting
+path replacement to change executed source. Regraded both Important by actual
+caller crash/build execution effect. Product unchanged pending full final report;
+will batch both in ONE TDD correction pass, then fresh full BOTH26gate validation.
+No re-review. Current matrix is the pre-correction proof, not profile closure.
+
+Private Python-only equivalent-regex experiment:299593exhaustive strings length0–6
+in alphabet a_$1.:`é, old protected regex vs earliest-underscore factorization,
+zero span differences. final-regex-factor-experiment.json retained. This is not
+native acceptance and changes no fixture/expected output. Stronger native tests
+will first reproduce the reported panic before any production correction.
+
+Final report received: one review only; 0Critical/2Important/2Minor. All5focuses
+covered. Native immutable probe and both current26receipts independently checked.
+Both Important retained by executor effect regrade. Their tests were written and
+observed RED BEFORE production correction: long policy test exits101/retrylimit;
+normal expand_attempt regression exits101 before assets; actual tiny-Makefile
+archive replacement fails after unverified replacement build/copy. Refined race
+trigger at compiler discovery (after verification/before extraction) also RED.
+Logs final-regex-red,final-expansion-red,final-openblas-red[-boundary].log retained.
+Frozen original process separately confirms5000/20000underscores+é have no matches.
+
+Single C/I fix pass: factor underscore rule at its earliest valid separator,
+retaining longest exact span because suffix accepts all following underscores;
+use fallible search_with_param without changing retry limits. OpenBLAS opens a
+nonblocking regular file, bounds read to declared size+1, authenticates immutable
+owned bytes, extracts and publishes those SAME bytes without reopening source.
+Actual tiny real make race test now GREEN, including retained source/library;
+public failed-attempt/English recovery test now GREEN. Full verification pending.
+
+Final: minor (deferred): translation_json.rs lexical integer -0 is rejected by
+serde float dispatch despite the stated bounded-integer subset; fixed published
+model has no such number. Preserve frozen expectations; address in explicit
+normalizer extension later.
+Final: minor (deferred): translation_reference.py two-distinct-words names busca
+la, whose la is outside the original lexicon; real distinct-word behavior has
+other coverage. Preserve this frozen history, correct/add label in future oracle.
+
+Final: Ruling: retrieval/CLI/MCP integration and remainingM2/M3–M8 are not accepted
+by this profile — retain them as required pending migration, with each owning
+native implementation and proof — cost if wrong: later integration reveals an
+additional compatibility obligation; no whole-application completion is claimed.
+Final: Ruling: public acquisition/automatic selection and installed promotion are
+separate pending capabilities; push/merge/original deletion remain unperformed —
+this profile proves explicit local preparation/runtime only — cost if wrong:
+installation still needs native data acquisition and packaging before M8.
+Final: Ruling: accept only registered ARM macOS/Linux local-platform behavior —
+other platforms/backends and cross-platform equality require separate evidence —
+cost if wrong: unsupported users remain explicitly unserved, never silently mapped.
+Final: Ruling: preserve original detection, translation text, literal collisions
+and damaged-placeholder semantics — changing meaning would invalidate existing
+compatibility evidence — cost if wrong: original quality limitations remain.
+Final: Ruling: retain documented bounded JSON rejections for floats/duplicates/
+surrogates/size/depth; keep -0 as explicit Minor — the fixed source needs none of
+these extensions — cost if wrong: a future custom model needs an explicit parser
+extension rather than unverified preparation.
+Final: Ruling: timing/memory measurements confer no latency/throughput/fairness/
+allocation SLA — still fix the lexical crash as a functional failure — cost if
+wrong: performance limits may surface in later realistic consumers and must be
+measured then; no speedup or peak-allocation guarantee is inferred.
+Final: Ruling: local CI configuration is reviewed but no remote runner/deployment
+outcome is accepted — only actual local two-platform proof counts here — cost if
+wrong: hosted environment drift requires a later CI-specific correction.
+
+Final correction focused checks GREEN:7expansion+5policy tests/0failed/ignored,
+97tooling/0failed/errors, workspaceall-targetclippyGREEN. Original1066hashesstill
+unchanged. Both5000/20000underscore histories agreewithfrozenoriginal no matches;
+normal expand_attempt returns missing-assets Artifact and English recovery works.
+Corrected immutable T4b fingerprint29de2b391b082f914256712abe24f73ac04a34f6836e5bf809073ee683aa0b1d.
+Native-sourced65149fcf07a8900af25ffa9f75805f95d0e8392ba1d0766fc0ec3fefb49d5b2; validatore024bea3dd5c07e45ef83b7b115cdc78e7f6a409be53a44d4171c75ac2a4d738.
+PriorA6releaseexecutables archived withSHAmanifest beforebuildcache reuse. T4b
+target is an explicit symlink toexistingA buildcache toavoid cold C++ duplication
+and diskpressure; sourceA remainsunchanged, priorrawreceiptsretained. Freshrelease
+binding and all24sourceFPs still mandatory; no acceptance fromcache alone.
+
+User explicitly authorized project-only temporary cleanup. Removed only40ignored
+regenerablepaths:5246files,1259246631apparentbytes (~1.17GiB). Rootoldtarget/dist,
+Rootpytest/mypy/ruff caches, selectedsource/test/tool __pycache__, already-extracted
+T4btransferarchive. Noneweregit-trackedororiginalmanifestfiles; lsof Root target
+hadno openfiles. ActiveBtargetresolvesAprivatecache, notRoot target, andremains.
+Original1066hashesverifiedbefore/after, nooutsideprojectfiletouched. Receipt:
+.ken/rust-migration/cleanup-2026-10-19-receipt.json. Models/evidence/installedenv kept.
+Reportedcleanupincommentary, continuousmigrationresumed.
+
+ActualLinuxnewOpenBLASpreparation96392CLOSED0,17.823907758s; library1051378bytes/
+SHAe5e5011ce926b86236ff5e1943575e249bed46bac07e57d1a4aa8cfbb55a0f17, matching
+priornumericcore. Newprefixopenblas-final-t4b. All24LinuxFPs verifiedcurrent.
+InitialLinuxprebuild71863CLOSED0, but explicit launchpreflightcorrectly rejected
+ReleaseCMake'soldopenblas-t4 path beforevalidatorstarted. Defaultcargo clean -p
+hadcleanedDebugonly: Debugselectsnewprefix, Releasekeptcachedoldprefix. No product
+codechange/acceptanceweakening. RenewReleaseexplicitlywithcargo clean--release,
+thenactualreleasebuild+test--no-run. Exec97202currentlyrunning. Failed
+preflightretained final-gates-linux.log; no26gateLinuxrunstartedyet. CurrentMac
+full26exec94501running. NeednewLinux26launchafterReleaseproofcorrect.
+
+ExplicitLinuxReleaseprebuild97202CLOSED0; no-runalltestexecutablesalsoGREEN.
+ReleaseCMake selectedfreshopenblas-final-t4b include/librarypaths afteractual
+recompilation. Launchpreflightpassed and actualLinuxFULL26exec73545RUNNING,
+logfinal-gates-linux-prepared.log; outputacceptance-t4b/linux. Mac94501running.
+Fullsource/validatorunchangedT4b; all24sharedFPsmatch. Awaitbothactual26closures.
+
+Post-review Mac fullPython completed15671passed/10historicxfail/1warning,795.36s.
+MacRustworkspacefinished134passes/25sections/0failed/0ignored (actual logcount).
+Full26stillrunning94501; doNOTpublishfrompartialproof. Linux73545fullPythonin
+progress. No code changes sinceT4b freeze; cleanupaffectednoinputs/activeoutputs.
+
+T4bMACFULL26CLOSED0 exec94501: all26ran/passed,errors[],noexecution_error.
+134Rust/25sections/0failed/0ignored;15671Python/10historicalxfail. Publisherchecks
+all24currentFPs/nestedreceipt/original1066 beforewriting publicMacBproof. OldMacA
+publicfolderretainedprivatelyunderpublished-reviewed-t4a/macos; oldfullrawproof
+andreviewedcommit14da4bccremain. Linux73545stillfullPython (lastread88%).
+No aggregateprofileclosureuntilactualLinux26pass.
+
+LinuxT4bfullPythoncompleted15671passed/10historicalxfail/1warning,979.32s.
+Actual26stillrunning73545; Rust/remainingnativegatesnext. Mac26passed/public11
+filesverified43789CLOSED0,65rawmanifestrows. IntermediateFINAL-FIXES.md and
+final-fixes/10log/jsonproofs+manifestpublished; finalLinuxstatusmustupdateafter
+actualfull26closure. PublicEXECUTION includesreview7rulings+2deferredMinors.
+No source changes sinceT4b freeze. NeedfinishfullLinux, publish/matrix/commit,
+thenarchiveworkspace/continueALLmigration. No secondreview.
+
+LinuxfullRustlog134passes/25sections/0failed/0ignored, no validation timeout marker.
+Full26stillrunning73545 withprocessparity/benchmark/nativeprofile replay next.
+No source changes, no gate budget/tolerance/expectedoutput relaxation.
+
+LinuxFULL26exec73545CLOSED0: all26actuallyran/passed,errors[],noexecution_error.
+134Rust/25sections/0failed/ignored,15671Python/10historicxfail,82processcases/0skip/
+fail/error. Fullcurrent typing/baselineIDs/parity/benchmark/integrity passed.
+Linuxpublished87645CLOSED0,11files/71rawartifacthashes(includingalltracefiles).
+Mac11files/65rawproofs; oldpublicreviewedA keptprivately andinGit14da4bcc.
+Matrix38638CLOSED0 printedpassedtrue/errors[]; current24fingerprints bothmatch.
+MATRIX.json reportsTranslation_acceptedtrue,M2_acceptedfalse.
+
+Final: fixed valid-input Onig panic — long_failed_identifier_matches_preserve_original_text_without_panicking
+and long_unmatched_identifier_attempt_reaches_normal_error_and_english_recovery
+RED→GREEN; BOTH complete134Rust/15671Python/82process/26gates passed.
+Final: fixed unchecked OpenBLAS source reopening — test_openblas_build_and_published_archive_use_the_authenticated_owned_snapshot
+RED→GREEN withactualtinymake, actualpinnedLinuxbuildGREEN; BOTH full26 suitespass.
+Originalmanifest1066files freshunchanged. Nooriginaldeletion.
+Final review clean after the authorized ONE correction pass; two Minors deferred,
+all7declined scopes ruled withcosts above. No rereview dispatched.
+
+Ruling: Keep codex/rust-migration local and continue the remaining whole migration
+instead of presenting a branch-integration menu between profiles — user expressly
+requests continuous native work without stage confirmations, and the branch is
+not complete — cost if wrong: integration remains for the final complete branch;
+no installed promotion, push, merge or original removal is inferred.

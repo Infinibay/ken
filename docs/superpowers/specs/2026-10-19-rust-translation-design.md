@@ -5,10 +5,12 @@ no intermediate confirmation pauses. Ettin is accepted at 1ae4bb97 with 23 gates
 on both registered platforms; M2 remains open. Preserve all original sources,
 tests, resources, unrelated work, installed entrypoint and user indexes.
 
-Status: native policy, preparation and runtime pass both platforms, including
-the29 public histories,24 raw core histories and complete131-test Rust suites.
-Final26gate profile acceptance remains pending. Private runtime experiments
-remain feasibility evidence only.
+Status: this native profile is accepted after one fresh whole-plan review and one
+verified correction pass. Both registered platforms pass all26 gates,134 Rust
+tests (zero failures/ignored) and15671 Python tests with the same10 historic xfails.
+The29 public/24 raw core histories and2438 original policy histories are preserved.
+MATRIX.json binds all24 current input fingerprints; FINAL-FIXES.md and REVIEW.md
+record the corrections and two deferred Minors. Overall M2 remains open.
 
 ## Purpose, concepts and representative use
 
