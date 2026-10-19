@@ -120,19 +120,27 @@ impl ModelAssets {
                 "registered revision directory required".into(),
             ));
         }
+        self.verify_artifacts(snapshot)
+    }
+
+    /// Derived caches have caller-chosen names, unlike upstream HF snapshots.
+    /// Keep all byte/provenance checks here; only the source revision guard differs.
+    pub(crate) fn verify_artifacts(&self, root: &Path) -> Result<VerifiedSnapshot, ModelError> {
+        if !root.is_dir() {
+            return Err(ModelError::Artifact("artifact directory required".into()));
+        }
         let mut files = BTreeMap::new();
         for (name, record) in &self.artifacts {
-            let bytes =
-                crate::verified_file::read(&snapshot.join(name), record.bytes, &record.sha256)
-                    .map_err(|error| match error {
-                        crate::verified_file::VerificationError::Io(source) => ModelError::Io {
-                            artifact: name.clone(),
-                            source,
-                        },
-                        crate::verified_file::VerificationError::Invalid(_) => {
-                            ModelError::Artifact(name.clone())
-                        }
-                    })?;
+            let bytes = crate::verified_file::read(&root.join(name), record.bytes, &record.sha256)
+                .map_err(|error| match error {
+                    crate::verified_file::VerificationError::Io(source) => ModelError::Io {
+                        artifact: name.clone(),
+                        source,
+                    },
+                    crate::verified_file::VerificationError::Invalid(_) => {
+                        ModelError::Artifact(name.clone())
+                    }
+                })?;
             files.insert(name.clone(), bytes);
         }
         Ok(VerifiedSnapshot {
