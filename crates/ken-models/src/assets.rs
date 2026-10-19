@@ -206,6 +206,14 @@ pub(crate) fn python_json(value: &serde_json::Value) -> String {
             out.push('"');
             out
         }
+        serde_json::Value::Array(values) => format!(
+            "[{}]",
+            values
+                .iter()
+                .map(python_json)
+                .collect::<Vec<_>>()
+                .join(", ")
+        ),
         serde_json::Value::Object(map) => format!(
             "{{{}}}",
             map.iter()

@@ -16,6 +16,9 @@ mod static_table;
 mod table_npz;
 mod term_cache;
 mod tokenization;
+mod translation_json;
+mod translation_model;
+mod translation_preparation;
 mod verified_file;
 
 pub use assets::{ModelAssets, VerifiedSnapshot};
@@ -32,6 +35,7 @@ pub use reranker_model::{PreparedReranker, RerankerModel};
 pub use reranker_tokens::PairTokens;
 pub use static_table::StaticTableEncoder;
 pub use tokenization::ModelTokenizer;
+pub use translation_model::{FrozenTranslationRuntime, PreparedTranslation, TranslationModel};
 
 #[derive(Debug, thiserror::Error)]
 pub enum ModelError {

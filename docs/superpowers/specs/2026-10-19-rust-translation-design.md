@@ -63,7 +63,8 @@ is 223 bytes/SHA8f6496adfc930cbfecbe8281112197705c488fab47d34b4829b06d7f478909af
 vocabulary is 1276136 bytes/SHA040e48c9d00734f48506e052695837720bd1f6aa01c70636cde83038362baf19.
 
 The supported normalization representation is ordered objects, arrays, strings,
-bools, null and bounded integers. Reject unsupported floats, duplicate object
+bools, null and bounded integers. Limit each JSON text to4194304bytes and the
+standard serde_json128-level recursion budget. Reject unsupported floats, duplicate object
 keys, unpaired surrogates and oversized/malformed input explicitly, without
 publishing. The fixed public profile needs none of those extensions. Do not claim
 a general Python JSON interpreter. Share the authoritative ASCII string escaping

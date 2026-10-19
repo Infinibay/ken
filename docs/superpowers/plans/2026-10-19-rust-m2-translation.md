@@ -76,24 +76,24 @@ FrozenTranslationRuntime::{MacOS483,Linux482}; model.compatible_identity(profile
 returns the original identity object; compatible_revision(profile)->String returns its hash.
 plan_query(&str)->Result<QueryExpansionPlan>; QueryExpansionPlan::{Passthrough(String),Translate(ProtectedQuery)};
 ProtectedQuery::text()->&str,protected_values()->&[String],restore(&str)->Result<String>.
-- [ ] RED integration tests for original fixture bytes, full recipe and both
+- [x] RED integration tests for original fixture bytes, full recipe and both
   compatibility revisions; recursive-array ASCII identity regression; exact
   whole-scalar digest and original2438policy cases. Pin repeat/alias/long-s/
   dotted-I classification; match priority, dollar/end boundaries, Unicode digits,
   backticks/newlines/repeats; restore indices0/9/10/23 with001C..001F whitespace,
   mixed case, literal collision, damaged key, regex replacement punctuation and
   empty/whitespace rejection.
-- [ ] Implement explicit Unicode15 data/predicate/fold owner and onig explicit
+- [x] Implement explicit Unicode15 data/predicate/fold owner and onig explicit
   classes/boundaries; per-query ordered placeholders. Extend shared python_json
   arrays only; ordered JSON normalizer delegates the same string escaping and
   rejects unsupported float/duplicates/surrogates/invalid/bounded-number input.
   Preserve all existing model identities and global serde ordering.
-- [ ] RED missing/extra/wrong-revision/size/hash/recipe/cache/JSON damage,
+- [x] RED missing/extra/wrong-revision/size/hash/recipe/cache/JSON damage,
   existing-cache-without-source, concurrent publishers, source path replacement,
   failed derived hash and nonregular-source tests. Implement via authenticated
   owned snapshots, staged sync/atomic publish/reverify; real derived bytes must
   match all5pins. No network/weight conversion.
-- [ ] Run cargo test --locked -p ken-models --test query_policy --test translation_preparation
+- [x] Run cargo test --locked -p ken-models --test query_policy --test translation_preparation
   with explicit KEN_TRANSLATION_SOURCE; Expected allpass. Run existing assets/
   context/reranker identity tests and prepared workspace/fmt/clippy; verify
   originals, inspect/commit ownfiles; task-done targeted Rust command.

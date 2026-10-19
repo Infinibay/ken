@@ -48,8 +48,22 @@ The native text-policy slice now passes the2438 original histories, six original
 controlled restoration cases, independent-plan/sequential-collision checks, all38
 original lexicon members and the whole-scalar Unicode digest (four integration
 tests plus one unit test). Workspace formatting and ken-models all-target clippy
-pass. Model registration/preparation/runtime and final26gate acceptance remain
-pending; this is not completion of Task2 or the profile.
+pass.
+
+Native model registration, exact legacy identities and atomic preparation now
+pass13 public-usage tests on both platforms. This includes the real five-file
+derivation, cache reuse without upstream, owned snapshots after replacement,
+simultaneous publishers, failed publication, ordinary permissions, nonregular
+input and ordered nested JSON/Unicode/integer boundaries. Two recipe-hash tests
+first reproduced missing recursive Python array formatting in the shared helper;
+the focused array fix made them pass without changing established object order.
+The complete Rust workspace reports125 passes on each platform, no failures or
+ignored tests; both workspace fmt and all-target clippy pass. TASK2.json records
+the immutable input fingerprint and raw-log hashes. The13 original/oracle Python
+tests and original1066-file integrity check also pass.
+
+Task2 is complete. Native CTranslate2 runtime integration and final26gate profile
+acceptance remain pending; M2 is still open.
 
 Python sanity verification passes15651 tests with the same10 historical xfail
 IDs, no original baseline test IDs lost. The initial restricted diagnostic run
