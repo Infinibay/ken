@@ -281,12 +281,12 @@ actual, Linux y macOS; Windows se audita en M0 según el soporte prometido.
 - [x] Primera capacidad definida en especificación separada.
 - [x] Revisión del usuario de las especificaciones escritas: aprobadas el 2026-10-18.
 - [x] Plan detallado M0/M1 escrito y autorrevisado.
-- [ ] Revisión del usuario del plan y elección del método de ejecución.
+- [x] Revisión del usuario del plan y elección de ejecución nativa; petición posterior de continuar hasta terminar.
 - [ ] Implementación con TDD, verificación y revisión de cada entrega.
 - [ ] Matriz de paridad completa y sustitución final.
 
-La pausa previa a implementar deriva de `superpowers:brainstorming`: para cambios
-arquitectónicos exige revisión de la especificación escrita y del plan antes de
-escribir código de producto. La petición de empezar después de definir las
-etapas se conserva; no se interpreta la documentación como una reescritura
-funcional ya realizada.
+M0/M1 y el primer perfil Potion de M2 ya tienen recibos Linux/macOS y revisión
+independiente. La tabla NPZ está en su gate multiplataforma; los demás perfiles
+y datos siguen pendientes. Cada entrega conserva especificación, plan, TDD y
+revisión. La orden de continuar hasta terminar mantiene el alcance completo y
+el método nativo aprobado; no convierte entregas parciales en cierre M2/M8.
