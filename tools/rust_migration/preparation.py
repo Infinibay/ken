@@ -7,6 +7,20 @@ CONTEXT_ENV=('KEN_CONTEXT_SNAPSHOT','KEN_ORT_LIBRARY','KEN_CONTEXT_PROBE')
 ETTIN_ENV=('KEN_ETTIN_SOURCE','KEN_ETTIN_PROBE')
 TRANSLATION_ENV=('KEN_TRANSLATION_SOURCE','KEN_TRANSLATION_PROBE')
 TRANSLATION_BUILD_ENV=('CMAKE','PKG_CONFIG_PATH','DEP_OPENBLAS_INCLUDE','DEP_OPENBLAS_LIBRARY')
+FASTEMBED_ENV=('KEN_FASTEMBED_PROBE','KEN_FASTEMBED_SOURCES','KEN_FASTEMBED_REGISTRY')
+
+
+@dataclass(frozen=True)
+class PreparedNativeFastEmbed:
+    probe:Path
+    sources:Path
+    registry:Path
+
+    def environment(self)->dict[str,str]:
+        values=(self.probe,self.sources,self.registry)
+        if any(not isinstance(path,Path) or not path.is_absolute() for path in values):
+            raise ValueError('explicit absolute native FastEmbed paths required')
+        return dict(zip(FASTEMBED_ENV,map(str,values),strict=True))
 
 @dataclass(frozen=True)
 class PreparedNativeStorage:

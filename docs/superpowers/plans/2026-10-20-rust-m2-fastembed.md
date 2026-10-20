@@ -43,7 +43,7 @@
 | Model/token/pooling | `fastembed_model.rs`, `fastembed_tokens.rs`, `embedding_pool.rs` | Independent declarations, lexical policy, arithmetic |
 | Provider/session | `onnx_providers.rs`, `fastembed_session.rs` | Real provider construction/fallback and one owned session/batch |
 | Encoder | `fastembed_encoder.rs`, `lib.rs` | Lazy serialized public use/reexports |
-| Process proof | `examples/fastembed_probe.rs`, `tools/rust_migration/fastembed_{compare,ownership}.py` | Real text-to-vectors and external source-mutation controller |
+| Process proof | `examples/fastembed_probe.rs`, `tools/rust_migration/fastembed_{compare,ownership,process}.py` | Real text-to-vectors and external source-mutation controller |
 | Acceptance | `fastembed_{validate,evidence}.py`, existing preparation/validator chain | Complete current34gate and33fingerprint proof |
 
 Public Rust contracts to implement:
@@ -202,7 +202,7 @@ and the same explicit prepared/base arguments as storage, adding
 
 ### Task 6: Prove real text-to-vector parity and file ownership outside checkout
 
-**Files:** `examples/fastembed_probe.rs`, `tools/rust_migration/fastembed_{compare,ownership}.py`, tests `test_fastembed_compare.py`, `migration_tests/test_fastembed_{parity,ownership}.py`.
+**Files:** `examples/fastembed_probe.rs`, `tools/rust_migration/fastembed_{compare,ownership,process}.py`, early `PreparedNativeFastEmbed` DTO in `preparation.py`, tests `test_fastembed_{compare,ownership,process}.py`, `migration_tests/test_fastembed_{parity,ownership}.py`.
 **Interfaces:** strict NDJSON probe with explicit args `--registry/--sources/--work/--runtime-library/--model`; operations `status`, `prepare`, `tokenize`, `embed` (`side=query|passage`, `texts`), no expected results/source-setup/failure switches. One process per model avoids retaining30large sessions.
 
 - [ ] RED comparator mutations: changed ID/order/prompt/token/mask/type/shape/byte, extra hidden row, wrong dim, nonfinite value, swapped model/revision, stale binary/source/producer and missing300case IDs reject. Only the exact original-reported384 vs registered non384 discrepancy is the declared dimension correction.
