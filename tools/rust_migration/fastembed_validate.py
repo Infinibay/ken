@@ -161,6 +161,7 @@ def main()->int:
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--scope',choices=['local','matrix'],default='local')
     parser.add_argument('--platform-receipts',type=Path);parser.add_argument('--out',type=Path,required=True)
+    parser.add_argument('--acquire-fastembed-sources',action='store_true',help='use and remove owned per-model source leases')
     names=['reference','model-probe','potion-snapshot','table-probe','artifact','context-probe','context-snapshot',
         'library','ettin-probe','ettin-source','translation-probe','translation-source','policy-probe','storage-probe',
         'fastembed-probe','fastembed-sources','fastembed-registry','baseline-dir','original-manifest','cmake','openblas-prefix']
@@ -174,7 +175,7 @@ def main()->int:
     return validate_fastembed(Path.cwd(),Reference.load(args.reference),args.model_probe,args.potion_snapshot,args.table_probe,args.artifact,
         PreparedNativeContext(args.context_snapshot,args.library,args.context_probe),PreparedNativeEttin(args.ettin_source,args.ettin_probe),
         PreparedNativeTranslation(args.translation_source,args.translation_probe,build),args.policy_probe,PreparedNativeStorage(args.storage_probe),
-        PreparedNativeFastEmbed(args.fastembed_probe,args.fastembed_sources,args.fastembed_registry),args.out,args.baseline_dir,args.original_manifest)
+        PreparedNativeFastEmbed(args.fastembed_probe,args.fastembed_sources,args.fastembed_registry,acquire=args.acquire_fastembed_sources),args.out,args.baseline_dir,args.original_manifest)
 
 
 if __name__=='__main__':raise SystemExit(main())

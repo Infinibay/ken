@@ -19,6 +19,12 @@ def fastembed_row(folder='linux'):
     # Historical evidence has a different full reference manifest, but the same
     # frozen application. This fixture binds the current composed base explicitly.
     parity['reference_fingerprint']=base['storage_parity']['reference_fingerprint']
+    # Only this explicitly synthetic fixture rebinds controller identities.
+    # Published historical receipts remain immutable and fail current acceptance.
+    import hashlib
+    tools=Path(__file__).resolve().parents[2]/'tools/rust_migration'
+    parity['tooling']={name:hashlib.sha256((tools/name).read_bytes()).hexdigest()
+        for name in ['fastembed_compare.py','fastembed_process.py']}
     binding={'ran':True,'passed':True,'built_sha256':parity['native_sha256'],
              'supplied_sha256':parity['native_sha256']}
     return {'scope':'fastembed-local','synthetic_fixture':True,'platform':base['platform'],
@@ -48,6 +54,7 @@ def test_fastembed_requires34_gates33_current_inputs_and_complete_bound_base():
         (['fastembed_parity','core_identity','api'],24),
         (['fastembed_parity','reference_fingerprint'],'0'*64),
         (['fastembed_parity','tooling','fastembed_compare.py'],'0'*64),
+        (['fastembed_parity','tooling','fastembed_process.py'],'0'*64),
         (['fastembed_ownership','models'],[]),(['fastembed_ownership','native_sha256'],'0'*64),
         (['storage_base','storage_parity','runtime','sqlite'],'wrong')]:
         bad=deepcopy(row);target=bad

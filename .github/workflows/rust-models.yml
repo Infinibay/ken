@@ -14,7 +14,9 @@ jobs:
       matrix:
         os: [ubuntu-24.04-arm, macos-15]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 90
+    # Cold verified downloads, the original baseline and both complete suites
+    # need an orchestration budget beyond90min. Test/model deadlines stay fixed.
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
@@ -51,6 +53,7 @@ jobs:
             --policy-probe "$KEN_POLICY_PROBE" --storage-probe "$KEN_STORAGE_PROBE" \
             --fastembed-probe "$KEN_FASTEMBED_PROBE" --fastembed-sources "$KEN_FASTEMBED_SOURCES" \
             --fastembed-registry "$KEN_FASTEMBED_REGISTRY" \
+            --acquire-fastembed-sources \
             --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
             --baseline-dir .ken/rust-migration/m2 \
             --original-manifest .ken/rust-migration/m2/reference/reference-manifest.json \
@@ -78,7 +81,7 @@ jobs:
           path: .ken/rust-migration/m2/platforms
       - name: Require matching platform receipts
         run: |
-          uv run --no-project --python 3.12.9 --managed-python python -m tools.rust_migration.fastembed_validate \
+          uv run --isolated --no-project --with numpy==2.4.4 --python 3.12.9 --managed-python python -m tools.rust_migration.fastembed_validate \
             --scope matrix --platform-receipts .ken/rust-migration/m2/platforms \
             --out .ken/rust-migration/m2/matrix
       - uses: actions/upload-artifact@v7

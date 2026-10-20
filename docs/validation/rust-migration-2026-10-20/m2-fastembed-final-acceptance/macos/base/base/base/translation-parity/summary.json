@@ -1,0 +1,128 @@
+{
+  "format": "ken-translation-parity/1",
+  "platform": "Darwin",
+  "architecture": "arm64",
+  "passed": true,
+  "errors": [],
+  "native_children": [],
+  "outside_checkout": true,
+  "M2_accepted": false,
+  "native_sha256": "609406a6a68d5df1b61cd189cd10199f97c597f060d153f2b28b4a508b8ba905",
+  "oracle_sha256": "f4e06db941dd706b0dee406ab8861fa5581219ccd6b5a5071e0a6bf7a2d89c1b",
+  "raw_oracle_sha256": "52aba5a994da4505a9ba3fe2d17264a72c693ca387415c2545ee026d30cbf92c",
+  "case_ids": [
+    "english",
+    "empty",
+    "repeated-one-word",
+    "two-distinct-words",
+    "accent-aliases",
+    "question-only",
+    "spanish",
+    "spanish-lexicon",
+    "protected-code",
+    "repeated-identifiers",
+    "many-identifiers",
+    "literal-placeholder",
+    "long-s-casefold",
+    "dotted-i-casefold",
+    "combining-boundary",
+    "unicode",
+    "emoji-nul",
+    "newlines",
+    "repeated-calls",
+    "empty-after-load",
+    "source-boundary511",
+    "source-boundary512",
+    "source-boundary513",
+    "source-boundary1023",
+    "source-boundary1024",
+    "source-boundary1025",
+    "error-then-english",
+    "missing-assets-lazy",
+    "corrupt-assets-lazy"
+  ],
+  "dependency_audit": {
+    "passed": true,
+    "linked_exit": 0,
+    "tree_exit": 0,
+    "linked_sha256": "5f971eea5a0568f951c8278804f09da48d374d99473a62775734fa5deb9ae1fe",
+    "tree_sha256": "3505fe5f16d60f27bf2aed353863a5c226b60502a340b3369249d089ab6d11d1",
+    "errors": []
+  },
+  "native_exit": 0,
+  "native_wall_ns": 13343066375,
+  "stderr": "",
+  "native_identity": {
+    "beam_size": 1,
+    "configured_compute_type": "int8",
+    "configured_device": "cpu",
+    "ct2rs_crate": "0.10.1",
+    "ctranslate2_source": "4.8.2",
+    "float_backend": "Accelerate",
+    "int8_backend": "Ruy",
+    "inter_threads": 1,
+    "intra_threads": 2,
+    "max_decoding_length": 256,
+    "max_input_length": 1024,
+    "observed_replicas": 1,
+    "sentencepiece_crate": "0.13.2",
+    "sentencepiece_source": "0.2.1"
+  },
+  "preparation": {
+    "artifacts": {
+      "config.json": {
+        "bytes": 223,
+        "sha256": "8f6496adfc930cbfecbe8281112197705c488fab47d34b4829b06d7f478909af"
+      },
+      "model.bin": {
+        "bytes": 79567635,
+        "sha256": "44c5adc2c680f27c14c991e5ab7f74f38b41597153f7123bc8f6455f09a3b38b"
+      },
+      "shared_vocabulary.json": {
+        "bytes": 1276136,
+        "sha256": "040e48c9d00734f48506e052695837720bd1f6aa01c70636cde83038362baf19"
+      },
+      "source.spm": {
+        "bytes": 825924,
+        "sha256": "e236ee6d866b635c0142114f8647f39831f9d92534aa2aad75c942f6a78ad0e3"
+      },
+      "target.spm": {
+        "bytes": 801636,
+        "sha256": "4dd547c24816a335e7b0b2e63376a8f1b3cbfc671eda5ab808dd44fdadaa8791"
+      }
+    },
+    "fresh_cache": true,
+    "recipe_key": "1af342f7677e9f51477171000e5aa6e6527590a715f064bd64679c1aa491a9f0",
+    "reused_without_source": true,
+    "source_artifacts": {
+      "config.json": {
+        "bytes": 233,
+        "sha256": "72901fbd8abd89fb5cf4a388f26fc681f5c4c58a1e1a88b30b879f107270e7ee"
+      },
+      "model.bin": {
+        "bytes": 79567635,
+        "sha256": "44c5adc2c680f27c14c991e5ab7f74f38b41597153f7123bc8f6455f09a3b38b"
+      },
+      "shared_vocabulary.json": {
+        "bytes": 1341137,
+        "sha256": "5d57da3a8899ca0a45f085eff04c41553d784a981544702996001911b9dd0af1"
+      },
+      "source.spm": {
+        "bytes": 825924,
+        "sha256": "e236ee6d866b635c0142114f8647f39831f9d92534aa2aad75c942f6a78ad0e3"
+      },
+      "target.spm": {
+        "bytes": 801636,
+        "sha256": "4dd547c24816a335e7b0b2e63376a8f1b3cbfc671eda5ab808dd44fdadaa8791"
+      }
+    }
+  },
+  "runtime": {
+    "engine": "rust",
+    "ken_models": "0.18.0"
+  },
+  "reference_runtime": {
+    "ctranslate2": "4.8.3",
+    "sentencepiece": "0.2.1"
+  }
+}

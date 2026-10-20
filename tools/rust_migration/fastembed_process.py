@@ -1,11 +1,12 @@
 """One bounded native NDJSON process, outside checkout, with actual exec witness."""
 from __future__ import annotations
-import hashlib,json,os,platform,re,selectors,shlex,shutil,subprocess,tempfile,time
+import hashlib,json,math,os,platform,re,selectors,shlex,shutil,signal,subprocess,tempfile,time
 from pathlib import Path
 from .fastembed_reference import RAW_LIMIT
 
 ROOT=Path(__file__).resolve().parents[2]
 MODEL_TIMEOUT=1800
+VALIDATION_DEADLINE_ENV='KEN_FASTEMBED_VALIDATION_DEADLINE'
 
 
 def digest(path:Path)->str:
@@ -43,7 +44,7 @@ class NativeProbeProcess:
         self.root=Path(self.temporary.name);self.work=self.root/'work';self.work.mkdir()
         self.copied=self.root/'fastembed-probe';self.core=self.root/'native-core';self.catalog=self.root/'registry.json'
         self.stdout=self.out/'native.stdout.ndjson';self.stderr=self.out/'native.stderr.log'
-        self.output=self.stdout.open('w',encoding='utf8');self.errors=self.stderr.open('w',encoding='utf8')
+        self.output=self.stdout.open('wb');self.errors=self.stderr.open('wb')
         self.selector=selectors.DefaultSelector()
 
     def __enter__(self):
@@ -65,34 +66,90 @@ class NativeProbeProcess:
                 self.command=[tracer,'-f','-e','trace=execve,execveat','-o',str(self.out/'native-exec.trace'),*self.command]
             if self.root.is_relative_to(ROOT):raise ValueError('process workspace must be outside checkout')
             self.started=time.monotonic_ns();self.deadline=time.monotonic()+MODEL_TIMEOUT
-            self.process=subprocess.Popen(self.command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=self.errors,cwd=self.root,env={'PATH':str(sentinels),'HOME':str(self.root),'TOKENIZERS_PARALLELISM':'false'},text=True,encoding='utf8',bufsize=1)
+            parent=os.environ.get(VALIDATION_DEADLINE_ENV)
+            if parent is not None:
+                bound=float(parent)
+                if not math.isfinite(bound):raise ValueError('finite parent native validation deadline required')
+                self.deadline=min(self.deadline,bound)
+                self._remaining()
+            self.process=subprocess.Popen(self.command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=self.errors,cwd=self.root,env={'PATH':str(sentinels),'HOME':str(self.root),'TOKENIZERS_PARALLELISM':'false'},bufsize=0,start_new_session=True)
+            os.set_blocking(self.process.stdin.fileno(),False)
+            os.set_blocking(self.process.stdout.fileno(),False)
             self.selector.register(self.process.stdout,selectors.EVENT_READ)
             return self
         except BaseException:
             self.__exit__(None,None,None);raise
 
     def send(self,request:dict)->dict:
+        encoded=(json.dumps(request,ensure_ascii=True,allow_nan=False)+'\n').encode('utf8')
+        if len(encoded)>RAW_LIMIT:raise ValueError('oversized native request')
         self.requests.append(request)
-        self.process.stdin.write(json.dumps(request,ensure_ascii=True,allow_nan=False)+'\n');self.process.stdin.flush()
-        remaining=self.deadline-time.monotonic()
-        if remaining<=0 or not self.selector.select(remaining):raise TimeoutError('native model process deadline')
-        raw=self.process.stdout.readline(RAW_LIMIT+1)
-        if not raw or len(raw.encode())>RAW_LIMIT:raise ValueError('missing or oversized native frame')
-        self.output.write(raw);self.output.flush();rows=decode_frames(raw)
+        pending=memoryview(encoded);raw=bytearray()
+        self.selector.register(self.process.stdin,selectors.EVENT_WRITE)
+        while pending or not raw.endswith(b'\n'):
+            for key,_ in self._events():
+                if key.fileobj is self.process.stdin:
+                    try:written=os.write(self.process.stdin.fileno(),pending[:65536])
+                    except BlockingIOError:continue
+                    pending=pending[written:]
+                    if not pending:self.selector.unregister(self.process.stdin)
+                else:
+                    chunk=self._read()
+                    if chunk is None:continue
+                    if not chunk:raise ValueError('missing or incomplete native frame')
+                    raw.extend(chunk)
+                    if len(raw)>RAW_LIMIT:raise ValueError('oversized native frame')
+                    if b'\n' in raw and (not raw.endswith(b'\n') or raw.count(b'\n')!=1):
+                        raise ValueError('unexpected extra native frame')
+        rows=decode_frames(raw.decode('utf8'))
         if len(rows)!=1 or rows[0].get('id')!=request.get('id'):raise ValueError('native request/frame identity mismatch')
         self.frames.append(rows[0]);return rows[0]
+
+    def _remaining(self):
+        remaining=self.deadline-time.monotonic()
+        if remaining<=0:raise TimeoutError('native model process deadline')
+        return remaining
+
+    def _events(self):
+        events=self.selector.select(self._remaining())
+        if not events:raise TimeoutError('native model process deadline')
+        return events
+
+    def _read(self):
+        try:chunk=os.read(self.process.stdout.fileno(),65536)
+        except BlockingIOError:return None
+        if chunk:self.output.write(chunk);self.output.flush()
+        return chunk
+
+    def _terminate(self):
+        # A separate session owns both strace and its native tracee on Linux.
+        # Kill that group, not just the tracer, and reap our direct child.
+        try:os.killpg(self.process.pid,signal.SIGTERM)
+        except ProcessLookupError:pass
+        try:self.process.wait(timeout=0.5)
+        except subprocess.TimeoutExpired:
+            try:os.killpg(self.process.pid,signal.SIGKILL)
+            except ProcessLookupError:pass
+            self.process.wait(timeout=0.5)
+        finally:
+            try:os.killpg(self.process.pid,signal.SIGKILL)
+            except ProcessLookupError:pass
 
     def __exit__(self,kind,value,traceback):
         failure=None
         try:
             if self.process is not None:
+                if kind is not None:
+                    self._terminate()
+                    return
                 self.process.stdin.close()
-                try:self.process.wait(timeout=max(0.1,self.deadline-time.monotonic()))
-                except subprocess.TimeoutExpired:
-                    self.process.kill();self.process.wait();raise TimeoutError('native model process deadline')
+                while True:
+                    self._events();extra=self._read()
+                    if extra is None:continue
+                    if extra:raise ValueError('native process emitted extra output')
+                    break
+                self.process.wait(timeout=self._remaining())
                 ended=time.monotonic_ns()
-                extra=self.process.stdout.read(RAW_LIMIT+1)
-                if extra:self.output.write(extra)
                 self.output.flush();self.errors.flush()
                 children=self.children.read_text().splitlines()if self.children.exists()else[]
                 attempts=None
@@ -100,13 +157,17 @@ class NativeProbeProcess:
                     lines=[line for line in (self.out/'native-exec.trace').read_text().splitlines()if re.search(r'\bexecve(?:at)?\(',line)]
                     attempts=len(lines)
                     if attempts!=1 or str(self.copied)not in lines[0]:raise ValueError('only initial native exec allowed')
-                if self.process.returncode or children or extra:raise ValueError('native process failed, executed a child or emitted extra output')
+                if self.process.returncode or children:raise ValueError('native process failed or executed a child')
                 for original,copied,key in [(self.probe,self.copied,'native_sha256'),(self.library,self.core,'core_sha256'),(self.registry,self.catalog,'registry_sha256')]:
                     if digest(original)!=self.identities[key]or digest(copied)!=self.identities[key]:raise ValueError('native executable/core/registry changed')
                 owned=list(self.work.iterdir())
                 if owned:raise ValueError('native session left owned temporary files after exit')
                 self.report={**self.identities,'native_exit':self.process.returncode,'native_process_wall_ns':ended-self.started,'outside_checkout':True,'native_children':children,'exec_attempts':attempts,'owned_after_exit':[],'command':self.command}
-        except BaseException as error:failure=error
+        except BaseException as error:
+            failure=error
+            if self.process is not None:self._terminate()
         finally:
+            if self.process is not None:
+                self.process.stdin.close();self.process.stdout.close()
             self.selector.close();self.output.close();self.errors.close();self.temporary.cleanup()
         if kind is None and failure is not None:raise failure

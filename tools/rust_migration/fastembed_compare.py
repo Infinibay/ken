@@ -190,6 +190,7 @@ def compare_fastembed(reference,prepared,out:Path,*,library:Path|None=None)->dic
     from .fastembed_reference import source_state,native_request,write_chunk,read_chunk
     from .model_compare import _audit
     from .preparation import context_environment
+    from .fastembed_sources import source_lease
     out=out.resolve();out.mkdir(parents=True,exist_ok=False)
     receipt={'format':'ken-fastembed-parity/1','platform':platform.system(),'architecture':platform.machine(),
         'passed':False,'errors':[],'models':[],'case_ids':[],'FastEmbed_accepted':False,'M2_accepted':False}
@@ -212,13 +213,14 @@ def compare_fastembed(reference,prepared,out:Path,*,library:Path|None=None)->dic
             reference_fingerprint=reference.fingerprint)
         for index,(definition,original)in enumerate(zip(catalogue['models'],originals,strict=True)):
             name=definition['name'];model_cases=[c for c in cases if c['model']==name];destination=out/f'{index:02}';
-            before=source_state(prepared.sources,definition)
-            requests=[{'id':name+':control-cold','operation':'status'},*[native_request(case)for case in model_cases],{'id':name+':control-final','operation':'status'}]
-            with NativeProbeProcess(native,prepared.registry,prepared.sources,library,name,destination)as process:
-                for request in requests:process.send(request)
-            raw=process.stdout.read_text();stderr=process.stderr.read_text();frames=decode_frames(raw)
-            errors=compare_model(definition,model_cases,original,frames,producer,core)
-            after=source_state(prepared.sources,definition)
+            with source_lease(prepared,definition,copies=2)as leased:
+                before=source_state(leased.sources,definition)
+                requests=[{'id':name+':control-cold','operation':'status'},*[native_request(case)for case in model_cases],{'id':name+':control-final','operation':'status'}]
+                with NativeProbeProcess(native,prepared.registry,leased.sources,library,name,destination)as process:
+                    for request in requests:process.send(request)
+                raw=process.stdout.read_text();stderr=process.stderr.read_text();frames=decode_frames(raw)
+                errors=compare_model(definition,model_cases,original,frames,producer,core)
+                after=source_state(leased.sources,definition)
             if after!=before:errors.append('canonical source changed')
             record={'format':'ken-fastembed-native-record/1','model':name,'requests':requests,'stdout':raw,'stderr':stderr,
                 'process':process.report,'source_before':before,'source_after':after,'producer':producer,

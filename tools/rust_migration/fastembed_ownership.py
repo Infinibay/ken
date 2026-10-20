@@ -86,6 +86,7 @@ def _owned_files(work:Path,snapshot:Path,definition:dict)->dict:
 
 def verify_fastembed_ownership(reference,prepared,out:Path,*,library:Path|None=None)->dict:
     from .preparation import context_environment
+    from .fastembed_sources import source_lease
     out=out.resolve();out.mkdir(parents=True,exist_ok=False)
     receipt={'format':'ken-fastembed-ownership/1','platform':platform.system(),'architecture':platform.machine(),
         'passed':False,'errors':[],'models':[],'FastEmbed_accepted':False,'M2_accepted':False}
@@ -99,34 +100,35 @@ def verify_fastembed_ownership(reference,prepared,out:Path,*,library:Path|None=N
             definition=next(m for m in catalogue['models']if m['name']==name)
             original=next(r for r in originals if r['model']==name)
             case=next(c for c in cases if c['model']==name and c['id'].endswith(':mixed_queries'))
-            wanted=next(r for r in original['results']if r['id']==case['id']);before=source_state(prepared.sources,definition)
-            with tempfile.TemporaryDirectory(prefix='ken-fastembed-mutable-source-')as temporary:
-                sources=Path(temporary)/'sources';snapshot=sources/definition['assets']['model_id'].replace('/','--')/definition['assets']['revision'];snapshot.mkdir(parents=True)
-                for path in definition['assets']['artifacts']:
-                    target=snapshot/path;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(Path(before['snapshot'])/path,target)
-                bad=snapshot/'tokenizer_config.json';correct=bad.read_bytes()
-                if not correct:raise ValueError('nonempty actual tokenizer config required')
-                bad.write_bytes(bytes([correct[0]^1])+correct[1:])
-                requests=ownership_requests(name,case);destination=out/f'{index:02}'
-                with NativeProbeProcess(prepared.probe,prepared.registry,sources,library,name,destination)as process:
-                    process.send(requests[0]);process.send(requests[1]);facts={'failed_owned_roots':len(list(process.work.iterdir()))}
-                    failed=process.send(requests[2])
-                    if failed.get('state',{}).get('model_loaded')is not False:raise ValueError('failed preparation became ready')
-                    bad.write_bytes(correct);repaired=process.send(requests[3])
-                    if repaired.get('state',{}).get('model_loaded')is not True:raise ValueError('real source repair did not prepare')
-                    facts.update(prepared_owned_roots=len(list(process.work.iterdir())),owned_artifacts=_owned_files(process.work,snapshot,definition))
-                    process.send(requests[4]);shutil.rmtree(snapshot);facts['source_removed']=not snapshot.exists();process.send(requests[5]);process.send(requests[6])
-                raw=process.stdout.read_text();stderr=process.stderr.read_text();after=source_state(prepared.sources,definition)
-                errors=ownership_errors(definition,case,wanted,decode_frames(raw),facts,process.report,producer,core,native_sha256=native_sha,registry_sha256=registry_sha)
-                if before!=after:errors.append('canonical model source changed')
-                record={'format':'ken-fastembed-ownership-record/1','model':name,'requests':requests,'stdout':raw,'stderr':stderr,
-                    'process':process.report,'facts':facts,'canonical_before':before,'canonical_after':after,'producer':producer}
-                chunk=write_chunk(destination,'ownership',record)
-                if read_chunk(destination,chunk)!=record:raise ValueError('ownership raw authentication/roundtrip failed')
-                process.stdout.unlink();process.stderr.unlink()
-                receipt['models'].append({'model':name,'directory':f'{index:02}','record':chunk,'errors':errors})
-                if errors:raise ValueError(name+': '+'; '.join(errors))
-                print(f'{index+1}/5 {name}: actual failed copy/repair/source removal/owned vectors/drop GREEN',flush=True)
+            with source_lease(prepared,definition,copies=3)as leased:
+                wanted=next(r for r in original['results']if r['id']==case['id']);before=source_state(leased.sources,definition)
+                with tempfile.TemporaryDirectory(prefix='ken-fastembed-mutable-source-')as temporary:
+                    sources=Path(temporary)/'sources';snapshot=sources/definition['assets']['model_id'].replace('/','--')/definition['assets']['revision'];snapshot.mkdir(parents=True)
+                    for path in definition['assets']['artifacts']:
+                        target=snapshot/path;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(Path(before['snapshot'])/path,target)
+                    bad=snapshot/'tokenizer_config.json';correct=bad.read_bytes()
+                    if not correct:raise ValueError('nonempty actual tokenizer config required')
+                    bad.write_bytes(bytes([correct[0]^1])+correct[1:])
+                    requests=ownership_requests(name,case);destination=out/f'{index:02}'
+                    with NativeProbeProcess(prepared.probe,prepared.registry,sources,library,name,destination)as process:
+                        process.send(requests[0]);process.send(requests[1]);facts={'failed_owned_roots':len(list(process.work.iterdir()))}
+                        failed=process.send(requests[2])
+                        if failed.get('state',{}).get('model_loaded')is not False:raise ValueError('failed preparation became ready')
+                        bad.write_bytes(correct);repaired=process.send(requests[3])
+                        if repaired.get('state',{}).get('model_loaded')is not True:raise ValueError('real source repair did not prepare')
+                        facts.update(prepared_owned_roots=len(list(process.work.iterdir())),owned_artifacts=_owned_files(process.work,snapshot,definition))
+                        process.send(requests[4]);shutil.rmtree(snapshot);facts['source_removed']=not snapshot.exists();process.send(requests[5]);process.send(requests[6])
+                    raw=process.stdout.read_text();stderr=process.stderr.read_text();after=source_state(leased.sources,definition)
+                    errors=ownership_errors(definition,case,wanted,decode_frames(raw),facts,process.report,producer,core,native_sha256=native_sha,registry_sha256=registry_sha)
+                    if before!=after:errors.append('canonical model source changed')
+                    record={'format':'ken-fastembed-ownership-record/1','model':name,'requests':requests,'stdout':raw,'stderr':stderr,
+                        'process':process.report,'facts':facts,'canonical_before':before,'canonical_after':after,'producer':producer}
+                    chunk=write_chunk(destination,'ownership',record)
+                    if read_chunk(destination,chunk)!=record:raise ValueError('ownership raw authentication/roundtrip failed')
+                    process.stdout.unlink();process.stderr.unlink()
+                    receipt['models'].append({'model':name,'directory':f'{index:02}','record':chunk,'errors':errors})
+                    if errors:raise ValueError(name+': '+'; '.join(errors))
+                    print(f'{index+1}/5 {name}: actual failed copy/repair/source removal/owned vectors/drop GREEN',flush=True)
         if [m['model']for m in receipt['models']]!=MODELS:raise ValueError('all five ownership families required')
         receipt['passed']=True
     except (OSError,ValueError,TypeError,KeyError,IndexError,AttributeError,TimeoutError,RuntimeError)as error:receipt['errors'].append(str(error))

@@ -5,6 +5,7 @@ from tools.rust_migration.preparation import PreparedNativeFastEmbed
 from tools.rust_migration.fastembed_compare import _oracle_inputs,compare_model,native_producer
 from tools.rust_migration.fastembed_process import NativeProbeProcess
 from tools.rust_migration.fastembed_reference import native_request
+from tools.rust_migration.fastembed_sources import source_lease
 
 
 def prepared():
@@ -13,7 +14,7 @@ def prepared():
         value=os.environ.get(name,'');path=Path(value)
         assert value and path.is_absolute()and path.exists(),f'explicit prepared {name} required'
         values.append(path)
-    result=PreparedNativeFastEmbed(*values);result.environment();return result
+    result=PreparedNativeFastEmbed(*values,acquire=os.environ.get('KEN_FASTEMBED_ACQUIRE')=='1');result.environment();return result
 
 
 def library():
@@ -27,8 +28,9 @@ def test_native_fastembed_real_text_history_outside_checkout(reference,tmp_path)
     name='BAAI/bge-small-en-v1.5';definition=next(m for m in catalogue['models']if m['name']==name)
     wanted=next(r for r in originals if r['model']==name);cases=[c for c in cases if c['model']==name]
     requests=[{'id':name+':control-cold','operation':'status'},*[native_request(c)for c in cases],{'id':name+':control-final','operation':'status'}]
-    with NativeProbeProcess(value.probe,value.registry,value.sources,library(),name,tmp_path/'role')as process:
-        frames=[process.send(request)for request in requests]
+    with source_lease(value,definition,copies=2)as leased:
+        with NativeProbeProcess(leased.probe,leased.registry,leased.sources,library(),name,tmp_path/'role')as process:
+            frames=[process.send(request)for request in requests]
     assert compare_model(definition,cases,wanted,frames,native_producer(),core)==[]
     assert process.report['native_children']==[]and process.report['outside_checkout']
     assert process.report['owned_after_exit']==[]

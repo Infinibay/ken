@@ -554,8 +554,23 @@ paridad numérica GPU ni identidad de vectores entre sistemas operativos.
 Prepare los tres parámetros explícitos, además de los anteriores. `SOURCES`
 contiene `<model_id con / reemplazado por -->/<revision>/` para cada fuente del
 catálogo registrado. Los archivos de origen pueden ser symlinks de una caché;
-los archivos privados del encoder son independientes. La preparación de CI
-descarga y verifica todas las fuentes declaradas antes de medir.
+los archivos privados del encoder son independientes. Para CI, use una carpeta
+temporal vacía y `--acquire-fastembed-sources`: cada modelo se descarga con su
+revisión, tamaño y hash fijados, se valida y se retira al cerrar su propia sesión.
+Las fuentes preparadas sin esa opción se conservan. Los30modelos y cinco familias
+se recorren completos; no se necesita retener simultáneamente19GB de pesos.
+
+CI comprueba espacio real antes y después de compilar, y antes de cada descarga.
+Reserva dos copias para paridad y tres para propiedad, más512MiB para evidencia.
+Los cinco modelos de las pruebas por procesos se preparan juntos antes de su
+contador de600s y se retiran al cerrar la suite; sus procesos reciben el plazo
+restante para poder terminar antes del corte. El máximo, incluyendo esa fase,
+es8.14GB. La preparación añade3GiB de margen para compilar.
+Las compilaciones dev/test de CI omiten símbolos de depuración y conservan
+assertions y optimización. No se borran cachés ajenas ni se contratan runners.
+El comando aislado de matriz instala explícitamente `numpy==2.4.4`.
+El job completo dispone de180min para preparación, baseline y validación; los
+plazos de600s por suite y1800s por modelo conservan sus valores anteriores.
 
 ```sh
 export CARGO_INCREMENTAL=0
@@ -592,3 +607,11 @@ Los resúmenes guardan referencias y medidas; stdout y stderr completos permanec
 en registros gzip autenticados. Una fixture sintética no puede acreditar la matriz.
 `FastEmbed_accepted` y `Storage_accepted` corresponden a esos subsistemas;
 `M2_accepted` permanece falso hasta completar los modelos e integraciones restantes.
+
+El controlador aplica el mismo plazo total a escribir solicitudes, completar
+líneas y cerrar el proceso. Las tuberías no bloqueantes limitan cada frame a16MiB;
+un timeout o frame inválido termina y recoge el grupo propio, incluido el trazador
+de Linux. Las pruebas usan procesos nativos reales que dejan de leer, envían una
+línea parcial o producen salida excesiva.
+
+La [aceptación posterior a la revisión](validation/rust-migration-2026-10-20/m2-fastembed-final-acceptance/IMPLEMENTATION.md) conserva los recibos actuales de34controles/33huellas en ambos sistemas,30modelos y cinco familias de propiedad. Cada sistema pasó15.844tests Python y221ejecuciones Rust; las93pruebas por procesos terminaron en211,010s/macOS y449,871s/Linux, sin ampliar el plazo de600s. El comando de matriz aislado conNumPy2.4.4 también pasó. La [revisión original](validation/rust-migration-2026-10-20/m2-fastembed-final-acceptance/REVIEW.md), las [decisiones y el menor diferido](validation/rust-migration-2026-10-20/m2-fastembed-final-acceptance/DECISIONS.md) y las medidas de recursos permanecen junto a los registros completos. Los recibos anteriores permanecen intactos; M2 continúa abierto para los modelos e integraciones restantes.

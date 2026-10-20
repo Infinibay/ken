@@ -15,7 +15,7 @@ from tools.rust_migration.validate import _validation_environment
 
 def test_fastembed_requires_explicit_absolute_input_and_does_not_leak_to_original(tmp_path,monkeypatch):
     from tools.rust_migration.preparation import FASTEMBED_ENV
-    for key in FASTEMBED_ENV:monkeypatch.delenv(key,raising=False)
+    for key in (*FASTEMBED_ENV,'KEN_FASTEMBED_ACQUIRE'):monkeypatch.delenv(key,raising=False)
     assert fastembed_environment()=={}
     for invalid in ['','relative']:
         monkeypatch.setenv('KEN_FASTEMBED_PROBE',invalid)
@@ -36,7 +36,7 @@ def test_fastembed_requires_explicit_absolute_input_and_does_not_leak_to_origina
 @pytest.mark.parametrize('key',['KEN_FASTEMBED_PROBE','KEN_FASTEMBED_SOURCES','KEN_FASTEMBED_REGISTRY'])
 def test_fastembed_partial_or_relative_inherited_input_rejects(key,tmp_path,monkeypatch):
     from tools.rust_migration.preparation import FASTEMBED_ENV
-    for name in FASTEMBED_ENV:monkeypatch.delenv(name,raising=False)
+    for name in (*FASTEMBED_ENV,'KEN_FASTEMBED_ACQUIRE'):monkeypatch.delenv(name,raising=False)
     monkeypatch.setenv(key,str(tmp_path/'one'))
     with pytest.raises(ValueError):fastembed_environment()
     for name in FASTEMBED_ENV:monkeypatch.setenv(name,str(tmp_path/name))
@@ -49,10 +49,11 @@ class BoundaryReached(Exception):pass
 
 
 @pytest.mark.parametrize('profile',['storage','policy','translation','ettin','context','table','model','base'])
-def test_every_prior_profile_forwards_explicit_fastembed(profile,tmp_path,monkeypatch):
+@pytest.mark.parametrize('acquire',[False,True])
+def test_every_prior_profile_forwards_explicit_fastembed(profile,acquire,tmp_path,monkeypatch):
     from tools.rust_migration import translation_validate as tr,ettin_validate as ev,context_validate as cv
     from tools.rust_migration import table_validate as tv,model_validate as mv,validate as bv
-    probe=PreparedNativeFastEmbed(tmp_path/'fastembed-probe',tmp_path/'sources',tmp_path/'registry');seen={}
+    probe=PreparedNativeFastEmbed(tmp_path/'fastembed-probe',tmp_path/'sources',tmp_path/'registry',acquire=acquire);seen={}
     context=PreparedNativeContext(tmp_path/'context',tmp_path/'library',tmp_path/'context-probe')
     ettin=PreparedNativeEttin(tmp_path/'ettin',tmp_path/'ettin-probe')
     translation=PreparedNativeTranslation(tmp_path/'translation',tmp_path/'translation-probe',PreparedTranslationBuild(tmp_path/'cmake'))

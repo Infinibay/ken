@@ -15,23 +15,28 @@ class PreparedNativeFastEmbed:
     probe:Path
     sources:Path
     registry:Path
+    acquire:bool=False
 
     def environment(self)->dict[str,str]:
         values=(self.probe,self.sources,self.registry)
         if any(not isinstance(path,Path) or not path.is_absolute() for path in values):
             raise ValueError('explicit absolute native FastEmbed paths required')
-        return dict(zip(FASTEMBED_ENV,map(str,values),strict=True))
+        if type(self.acquire)is not bool:raise ValueError('explicit boolean FastEmbed acquisition policy required')
+        return dict(zip(FASTEMBED_ENV,map(str,values),strict=True))|({'KEN_FASTEMBED_ACQUIRE':'1'}if self.acquire else {})
 
-def fastembed_environment(prepared:PreparedNativeFastEmbed|None=None)->dict[str,str]:
+def fastembed_environment(prepared:PreparedNativeFastEmbed|None=None,*,environ:dict[str,str]|None=None)->dict[str,str]:
     if prepared is not None:
         if not isinstance(prepared,PreparedNativeFastEmbed):
             raise ValueError('typed PreparedNativeFastEmbed input required')
         return prepared.environment()
-    values={key:os.environ[key] for key in FASTEMBED_ENV if key in os.environ}
-    if not values:return {}
+    source=os.environ if environ is None else environ
+    values={key:source[key] for key in FASTEMBED_ENV if key in source}
+    acquisition=source.get('KEN_FASTEMBED_ACQUIRE')
+    if acquisition is not None and acquisition!='1':raise ValueError('explicit FastEmbed acquisition policy must be 1')
+    if not values and acquisition is None:return {}
     if set(values)!=set(FASTEMBED_ENV):
         raise ValueError('complete explicit native FastEmbed paths required')
-    return PreparedNativeFastEmbed(*(Path(values[key]) for key in FASTEMBED_ENV)).environment()
+    return PreparedNativeFastEmbed(*(Path(values[key]) for key in FASTEMBED_ENV),acquire=acquisition=='1').environment()
 
 
 @dataclass(frozen=True)

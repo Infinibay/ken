@@ -11,7 +11,7 @@ def test_live_native_fastembed_keeps_own_files_after_external_source_removal(ref
         value=os.environ.get(name,'');path=Path(value)
         assert value and path.is_absolute()and path.exists(),f'explicit prepared {name} required'
         paths.append(path)
-    result=verify_fastembed_ownership(reference,PreparedNativeFastEmbed(*paths[:3]),tmp_path/'ownership',library=paths[3])
+    result=verify_fastembed_ownership(reference,PreparedNativeFastEmbed(*paths[:3],acquire=os.environ.get('KEN_FASTEMBED_ACQUIRE')=='1'),tmp_path/'ownership',library=paths[3])
     assert result['passed'],result['errors']
     assert [m['model']for m in result['models']]==MODELS
     assert result['FastEmbed_accepted']is False and result['M2_accepted']is False

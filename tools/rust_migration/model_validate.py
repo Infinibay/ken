@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import platform
 import statistics
+import time
 
 from .model_compare import compare_models
 from .model_reference import TOLERANCES, model_cases
@@ -21,6 +22,28 @@ REQUIRED_GATES = ('originals', 'reference', 'toolchain', 'python_contracts', 'py
                   'fmt', 'clippy', 'rust_tests', 'release', 'parity_tests', 'model_parity',
                   'm1_parity', 'autonomy', 'benchmark', 'hygiene')
 FINGERPRINT_KEYS = {'native_source', 'reference_source', 'cases', 'validator', 'oracle', 'registration'}
+
+
+def run_parity_suite(repo:Path,env:dict,output:Path,py:list[str],fastembed:PreparedNativeFastEmbed|None)->dict:
+    from . import fastembed_sources
+    from .fastembed_process import VALIDATION_DEADLINE_ENV
+    from .preparation import FASTEMBED_ENV
+    started=time.monotonic_ns()
+    acquired=fastembed.acquire if fastembed is not None else env.get('KEN_FASTEMBED_ACQUIRE')=='1'
+    with fastembed_sources.suite_source_lease(fastembed,environ=env)as ready:
+        preparation_ns=time.monotonic_ns()-started
+        execution=dict(env)
+        if ready is not None:
+            for name in (*FASTEMBED_ENV,'KEN_FASTEMBED_ACQUIRE'):execution.pop(name,None)
+            execution.update(ready.environment())
+        # Native coordinators must unwind/reap their own groups before the
+        # unchanged hard600s process-test deadline can terminate pytest.
+        execution[VALIDATION_DEADLINE_ENV]=str(time.monotonic()+595)
+        result=_command(repo,execution,output,'parity-tests',
+            [*py,'pytest','migration_tests','-q',f'--junitxml={output/"parity-tests.xml"}'],600)
+        result['preparation']={'ran':bool(acquired),'duration_ns':preparation_ns,
+            'outside_execution_budget':True}
+        return result
 
 
 def aggregate_models(directory: Path, *, expected_ids: list[str] | None = None) -> dict:
@@ -186,7 +209,7 @@ def validate_models(repo: Path, reference: Reference, native: Path, snapshot: Pa
         gates['rust_tests']['passed'] = gates['rust_tests']['passed'] and bool(ignored) and all(int(n) == 0 for n in ignored)
         binding=bind_native_release(repo,native,'model_probe')
         gates['release'].update(passed=gates['release']['passed'] and binding['passed'],native_binding=binding)
-        gates['parity_tests'] = _command(repo, env, output, 'parity-tests', [*py,'pytest','migration_tests','-q',f'--junitxml={output / "parity-tests.xml"}'])
+        gates['parity_tests'] = run_parity_suite(repo,env,output,py,fastembed)
         parity = compare_models(reference, native, snapshot, cases, output / 'model-parity')
         result['model_parity'] = parity; result['case_ids'] = parity.get('case_ids', [])
         gates['model_parity'] = {'ran': True, 'passed': parity['passed'] and result['case_ids'] == [c['id'] for c in model_cases()]}
