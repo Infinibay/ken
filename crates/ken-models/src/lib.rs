@@ -26,6 +26,10 @@ mod static_table;
 mod table_npz;
 mod term_cache;
 mod tokenization;
+mod transformer_client;
+mod transformer_model;
+mod transformer_runtime;
+mod transformer_session;
 mod translation_json;
 mod translation_model;
 mod translation_preparation;
@@ -42,6 +46,10 @@ pub use fastembed_session::{
 };
 pub use fastembed_tokens::{FastEmbedInput, FastEmbedTokenizer, FastEmbedTokens};
 pub use file_assets::{ModelFileSource, VerifiedModelFiles};
+pub use ken_native_model_api::{
+    TransformerArchitecture, TransformerBatch, TransformerDevice, TransformerDeviceRequest,
+    TransformerDtype, TransformerOutput, TransformerPooling, TransformerWeightLayout,
+};
 pub use model2vec::Model2VecEncoder;
 pub use native_onnx::{NativeOnnxRuntime, RuntimeIdentity};
 pub use onnx_dependencies::verify_onnx_dependencies;
@@ -59,6 +67,11 @@ pub use reranker_model::{PreparedReranker, RerankerModel};
 pub use reranker_tokens::PairTokens;
 pub use static_table::StaticTableEncoder;
 pub use tokenization::ModelTokenizer;
+pub use transformer_model::{TransformerModel, TransformerRole, TransformerSettings};
+pub use transformer_runtime::{
+    NativeTransformerRuntime, TransformerNativeArtifact, TransformerRuntimeIdentity,
+};
+pub use transformer_session::{TransformerBatchResult, TransformerSession, TransformerTrace};
 pub use translation_model::{FrozenTranslationRuntime, PreparedTranslation, TranslationModel};
 
 #[derive(Debug, thiserror::Error)]

@@ -762,6 +762,7 @@ version = "0.18.0"
 dependencies = [
  "ct2rs",
  "half",
+ "ken-native-model-api",
  "libc",
  "libloading",
  "ndarray",
@@ -779,6 +780,17 @@ dependencies = [
  "thiserror",
  "tokenizers",
  "zip",
+]
+
+[[package]]
+name = "ken-native-model-api"
+version = "0.18.0"
+dependencies = [
+ "libloading",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror",
 ]
 
 [[package]]
