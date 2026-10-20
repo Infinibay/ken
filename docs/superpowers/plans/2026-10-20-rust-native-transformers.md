@@ -1,0 +1,216 @@
+# Native Transformer Models Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax. The user chose inline/native continuous execution; no stage confirmation.
+
+**Goal:** Preserve the original ST, MLX Qwen and local judge behavior through verified native Rust backends.
+**Architecture:** A lazy verified C ABI module separates optional tensor-library linkage from ken-models. Focused Qwen3/XLM-R cores execute the actual data; text encoders and the judge retain responsibility for token/prompt/batch/device policy.
+**Tech Stack:** Rust1.95, existing tokenizers0.22.2/ModelAssets/VerifiedModelFiles; exacttch0.22/libtorch2.9; exactMLX0.32.3 with inspected mlx-rs0.32.0/mlx-sys0.6.0 adaptation. No Python runtime in product.
+**Spec:** [Native transformer design](../specs/2026-10-20-rust-native-transformers-design.md), under the approved general migration/runtime specifications. FastEmbed final acceptance74c4b6cb is closed. Linux primitives passed; Task1 must finish the original corpus/native model viability before Task2 product dependencies. The already authorized continuous execution begins with Task1; no new approval is required.
+
+## Global constraints
+
+- Preserve all original1066application/test/config files and original oracle/source captures; never implement through Python, a Python converter or remote model code.
+- Preserve immutable source-final-fix2 and its published acceptance; new transformer changes receive fresh source fingerprints rather than altering old proof.
+- Linux native2.9 tensor/model feasibility precedes product dependencies. CPU must pass macOS/Linux. MLX requires actual macOS GPU; unavailable CUDA/ROCm is recorded as availability/fallback, not numerical acceptance.
+- Data revisions: Qwen embedding97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3; BGE-M35617a9f61b028005a4858fdac845db406aefb181; Qwen judgee61197ed45024b0ed8a2d74b80b4d909f1255473. Every file size/SHA comes from verified-data receipts, including non-LFS Git-blob validation.
+- Three supported profile dtypes F32/F16/BF16, sequence default512 and batch default16; preserve lower model sequence limits, right padding, exact prompt behavior and untruncated nonspecial token counts.
+- Judge query128, source minimum16, exact original PREFIX/SUFFIX/INSTRUCTIONS and raw F32 yes-minus-no; CPU/MLX errors propagate, other-device failure retries once on CPU/F32.
+- Preserve compatible profile identity separately from actual native backend/core/device proof. Never relabel an old index or mix vector spaces.
+- Native artifacts execute outside checkout with sentinel PATH; actual linked libraries/core hashes and Linux exec traces show no Python. Ordinary status works without optional modules/cores.
+- All comparisons use thresholds frozen from the original before native inference. No skipped/missing/corrupt model silently passes; no tolerance/budget change from a failing candidate.
+- Per-task focused meaningful tests first RED then GREEN, scoped commits, task-done ledger. Complete regression/native evidence and one fresh final review at the end; exactly one verified Important/Critical repair pass, minors deferred.
+
+## File responsibilities (proposed exact paths)
+
+- crates/ken-native-model-api/src/{lib,request,validation}.rs: minimal C ABI V1, bounded typed payloads, shared semantic input validation; no tensor runtime or model acquisition.
+- crates/ken-models/src/transformer_{model,tokens,runtime,session}.rs: registration/config, lexical policy, lazy module API ownership, model/session/device state.
+- crates/ken-models/src/{sentence_encoder,mlx_encoder,relevance_judge}.rs: three public behavior owners matching the original adapters.
+- native/ken-torch-backend/src/{lib,weights,qwen3,xlm_roberta,output,device}.rs and build.rs/native/mps.cpp: isolated Rust dynamic backend, owned tensor weights, architecture operations, outputs and exact native device/cache controls.
+- native/ken-mlx-backend/src/{lib,weights,qwen3,output}.rs plus vendor/mlx-sys: isolated macOS Rust dynamic backend, exact-core data and documented upstream compatibility patch/licenses.
+- crates/ken-models/resources/{transformer-catalog,transformer-runtimes}.json: authenticated model/module/core declarations.
+- crates/ken-models/examples/transformer_probe.rs: native public-usage validation driver; no expected-vector/setup/failure arguments.
+- tools/rust_migration/transformer_{reference,process,compare,evidence,validate}.py and corresponding tests: frozen-original capture, native external execution, semantic evidence and full gates. Product code never imports them.
+- transformer_migration_tests/test_{parity,ownership}.py: actual native/runtime/model integration, no dependency-based skips.
+- .github/actions/prepare-native-validation/action.yml, workflow dedicated transformer jobs and docs/rust-migration.md: explicit bounded preparation, isolated matrix dependencies and truthful acceptance.
+
+## Public interfaces (binding between tasks)
+
+`transformer_model.rs` defines `TransformerDtype::{Float32,Float16,BFloat16}`, `TransformerDevice::{Cpu,Mps,Cuda(usize)}`, `TransformerDeviceRequest::{Auto,Cpu,Gpu,Cuda(usize),Mps}`, `TransformerSettings { dtype: Option<TransformerDtype>, sequence_length: Option<usize>, batch_size: Option<usize> }`. Invalid zero settings are errors; unset defaults are F32/512/16, clamped only to a lower registered sequence limit. Model registration exposes TransformerModel::from_json(&str)->Result<Self,ModelError>, assets()->&ModelAssets, dimension()->usize, architecture()/weight layout/tokenizer/module config accessors. TransformerSettings contains dtype/sequence_length/batch_size and compatible identity inputs rather than importing nonexistent Rust EncoderSpec (the existing Rust workspace has not ported that Python profile type yet).
+
+NativeTransformerRuntime::from_json(&str,module_path:&Path,core_root:&Path)->Result<Self,ModelError> declares paths without loading; identity()/capabilities become available only after native verification. TransformerSession::prepare(model:&TransformerModel,files:Arc<VerifiedModelFiles>,runtime:NativeTransformerRuntime,device:TransformerDevice,dtype:TransformerDtype)->Result<Self,ModelError> publishes a complete ready model only. run(&mut self,batch:&TransformerBatch,output:&TransformerOutput)->Result<TransformerBatchResult,ModelError> returns bounded real results; the output plan carries pooling/normalization/head selection owned by the adapter.
+
+SentenceEncoder::new(model,source,runtime,settings,device_request)->Result<Self,ModelError>; dim()->Result<usize,ModelError> loads the model; token_count(&str)->Result<usize,ModelError> can load tokenizer only; embed_passages(&[&str])->Result<Vec<Vec<f32>>,ModelError>; embed_query(&str)->Result<Vec<f32>,ModelError>. MLXEncoder follows its own original loading/order/cache rules. RelevanceJudge::score(query:&str,documents:&[&str],purpose:&str)->Result<Vec<f32>,ModelError> owns the original judge contract. Preparation reports declared and actual device/dtype/runtime separately.
+
+C ABI V1: one exported API-table getter, version/struct-size/capability fields, explicit open/run/close and backend-buffer release functions. Request/result payloads contain only bounded bytes; no Rust object layout crosses the ABI. The owning module remains mapped through every model/output lifetime. Model-state Send is proved at backend compile time and serialized by the host; no MLX Stream crosses a thread boundary.
+
+## Review focus
+
+1. ABI success/failure/unwind paths: malformed lengths, partial allocations, library/handle/output ownership and concurrent drops cannot cause UB or leave native weights alive indefinitely. Add real malformed ABI and drop-order tests in Task2.
+2. Model layout/token/prompt/module variation: a valid model name with wrong revision/layout/module or library-added EOS/default prompt cannot produce plausible wrong vectors. Exact native lexical/original inventory tests in Tasks1/5.
+3. MPS operation and initialization order: CPU-equivalent algebra can change F16 GPU output; exact pow(2), CPU RoPE buffer initialization and lower memory cap must survive the port. Real GPU and native-hook tests in Task3.
+4. Demotion/concurrency: an obsolete GPU handle cannot execute after a successful CPU rebuild, and failed CPU initialization cannot publish a false device/state. Concurrent real-owner/failure tests in Tasks5/7/8.
+5. Resource/preparation and stale proof: full held-source/independent-copy/build/core footprint fits the explicit runner/free-space plan, acquisition is outside execution deadlines, resealing false tokens/vectors/source identity never accepts. Real budget and proof-mutation tests in Task9.
+
+### Task 1: Freeze the original transformer inventory/corpus and Linux feasibility
+
+**Files:** Create reference capture/catalog resources, tests/rust_migration/test_transformer_reference.py and versioned public original-data proof. Read the frozen original st_backend/mlx_backend/joint_model and all declared consumers/tests; preserve originals.
+**Consumes:** ModelAssets validation, existing frozen M0/M1 reference, private real-source feasibility and verified upstream crate/core hashes.
+**Produces:** immutable TransformerModel declarations; exact cases/tokens/masks/pooling/actual-device/original vectors/logits/errors per applicable platform/dtype; fixed thresholds and timed preparation/execution budgets.
+
+- [ ] Write tests for complete consumer/model/module/dtype/case inventory, exact revision/size/hash, repeat capture, source identity, bounded raw chunks and missing/fake original outputs; watch absent capture/schema fail.
+- [ ] Prove Linux native library primitive and all registered cores against original CPU outputs outside checkout under actual strace, without another NN validation job competing. Manual exact libtorch, no Python binding/bypass. If native ABI/model fails, diagnose before selecting product dependencies.
+- [ ] Capture full original corpus before product inference: ordinary/boundary/short-budget/unequal batches, lazy states, original errors and device demotion. Pin thresholds before Rust runs and derive execution budgets from original measurements. Capture3dtypes and all original module defaults rather than assuming two model cards cover generic ST.
+- [ ] Validate the original capture twice and check all original sources unchanged. Commit only original reference/capture/catalog evidence and task tooling; task-done runs the complete reference contract suite.
+
+### Task 2: Versioned lazy native module/session ownership
+
+**Files:** Create ken-native-model-api, transformer_runtime/session and tests/native_module_{abi,lifetime}.rs; update workspace/lib exports. Native synthetic fixture library is test data and performs real operations, not a production fallback.
+**Consumes:** Task1 runtime/core registrations and existing VerifiedModelFiles independent-copy API.
+**Produces:** lazy NativeTransformerRuntime, versioned ABI V1, backend-buffer/model/library ownership, typed TransformerSession requests/results.
+
+- [ ] Write public tests asserting absent optional module/core paths do not break cold declarations/status, malformed/duplicate ABI input fails, wrong module/core hash/version/arch is rejected before use, bad/null/oversized buffers are errors, panic never unwinds over C, and release/model/library ordering is correct under concurrent first use. Run RED.
+- [ ] Implement the bounded ABI/parser/client owners only. Require explicit absolute paths/registrations, authenticate all native data before mapping and preserve ordinary status without optional linkage. Prove backend model state Send and serialized execution; retain owners until all native handles/buffers are released.
+- [ ] Run focused native ABI/lifetime tests and Rust fmt/clippy; inspect host dependencies without optional runtimes. Commit scoped files and task-done with the complete ABI/session suite.
+
+### Task 3: Actual Torch Qwen3 core in the lazy module
+
+**Files:** Create native/ken-torch-backend isolated cdylib and focused weights/qwen3/output/device owners, native MPS bridge and tests.
+**Consumes:** Task2 ABI/output plans; Task1 actual Qwen data/core/corpus.
+**Produces:** real Qwen3 forward/pooling/native runtime identity through the production ABI on CPU and actual MPS where available.
+
+- [ ] Write tiny distinguishable-weight architecture/shape/dtype/layout/finite-data tests and real source/API comparisons. Include missing/extra/tied-layout records, repeated requests with no KV leakage, owned source removal, actual MPS cache controls, CPU-initialized RoPE and pow(2) numerical regressions. Run RED before product implementation.
+- [ ] Implement exact tch fallible operations against manual libtorch2.9, separate owned weight validation from Qwen architecture, and native hooks for original MPS memory/cache semantics. Optional core must not link into the host CLI.
+- [ ] Prove every mandatory CPU dtype and applicable MPS corpus through the ABI outside checkout with exact tokens/shapes and fixed numeric criteria. Linux exec audit/native dependency checks, source before/after, fmt/clippy. Commit/task-done on full Qwen-core contract.
+
+### Task 4: Actual Torch XLM-R core and original ZIP weights
+
+**Files:** Create xlm_roberta.rs/owned parameter archive reader and focused tests; extend the backend model dispatch without changing Qwen rules.
+**Consumes:** Task3 tensor/weight/output owners and Task1 BGE original archive/corpus.
+**Produces:** exact XLM-R embedding positions, biased linear/LayerNorm/SDPA/GELU/residual execution using original registered weights, no Python conversion.
+
+- [ ] Add RED tests for nonpad-ID position counts, literal pad versus attention mask, all registered tensor shapes/biases, unused pooler policy, invalid archive names/weights and real F32/F16/BF16 outputs.
+- [ ] Implement native ZIP parameter reading and the XLM-R owner; share only actual common tensor/data responsibilities. Preserve original mask/position/normalization behavior.
+- [ ] Run real CPU/applicable MPS corpus and independent source lifetime/corruption tests, Qwen regressions and Rust checks. Commit/task-done with both architecture suites.
+
+### Task 5: Original Sentence Transformers text/state/device semantics
+
+**Files:** Create transformer_model/tokens/sentence_encoder, tests/sentence_{tokens,lifecycle,devices}.rs and public native driver.
+**Consumes:** Tasks1–4 registered module/tokenizer data and real native sessions.
+**Produces:** complete SentenceEncoder public API and truthful preparation/device/dtype reporting.
+
+- [ ] Write exact lexical RED fixtures for raw count without specials/truncation, actual ST EOS/default-prompt behavior, NumPy2.4.4 character-length argsort/tie behavior versus stable MLX token-length sorting, Ken prompt spelling, lower sequence clamp, right padding/batching/order, module pooling/Normalize and final F32 normalization.
+- [ ] Write lifecycle RED tests: empty batch/model-lazy, dimension loads model, local count tokenizer-only, failed load/repair, concurrent first use, whole-request late failure, permanent GPU demotion on exception/nonfinite/nonunit only after CPU rebuild succeeds, failed rebuild retains prior state and cannot publish a false device. Use actual model and controlled native failure boundary rather than editing originals or fake success.
+- [ ] Implement the outside-in encoder/state owners and route exact output plans to the cores. Fail unsupported actual model/module configuration explicitly; never alias a model or run remote Python.
+- [ ] Run full original-vs-native ST corpus and ownership/device proofs on both mandatory CPU platforms, applicable MPS proof and prior model/Rust regressions. Commit/task-done on all encoder tests.
+
+### Task 6: Exact native MLX Qwen module
+
+**Files:** Create native/ken-mlx-backend isolated cdylib, inspected vendor build/API adaptation/licenses and native-core registration/tests.
+**Consumes:** Task2 ABI, Task1 exact MLX core/shader/data declarations and Task3 declared Qwen architecture contract.
+**Produces:** real MLX Qwen operations and runtime/device identity through the same safe host boundary, without Torch linkage.
+
+- [ ] Write RED tests for actual core version/shader identity, unsupported architecture/layout/weights, source independence, repeated requests, actual fast RMS/RoPE/SDPA/SiLU and thread-local stream ownership. Include the gather_qmm compatibility default test/build contract; do not claim quantized models from this adaptation.
+- [ ] Implement the documented exact0.32.3 core import and native data operations, preserve original weight/head precision and no per-request KV cache. Retain every upstream license and precise patched-source hash.
+- [ ] Run real3dtype actual GPU corpus outside checkout, native dependency/library audits and ABI/lifetime regressions. Linux reports MLX nonapplicability truthfully; it never inherits a macOS pass. Commit/task-done.
+
+### Task 7: Original MLX encoder/cache semantics
+
+**Files:** Create mlx_encoder and tests/mlx_encoder_{tokens,lifecycle,memory}.rs.
+**Consumes:** Tasks1/2/6 verified tokenizers/native core and output API.
+**Produces:** original MLXEncoder public behavior, stable length batches/restoration, last-real selection and F32 vectors.
+
+- [ ] Write RED tests for equal-length stable ordering, empty/count-only states, batch boundaries, last real versus padding, invalid/zero/nonfinite output, failed preparation/repair/source mutation and concurrent calls. Real allocator cap cases0/64MiB/1GiB→0/64MiB/512MiB; live host limit unchanged.
+- [ ] Implement the adapter and serialized state; errors propagate and do not fabricate CPU fallback for MLX. Drop model state before native owners and verify retired-cache bounds.
+- [ ] Run complete original/native MLX corpus and actual memory/thread/source proof plus prior native-core/ABI tests. Commit/task-done.
+
+### Task 8: Original local relevance judge over both cores
+
+**Files:** Create relevance_judge, native output projection support and tests/relevance_judge_{tokens,scores,lifecycle}.rs.
+**Consumes:** Task1 exact constants/corpus, both verified core sessions and explicit versus tied output-head declarations.
+**Produces:** RelevanceJudge::score and complete original error/empty/budget/retry behavior with raw scores.
+
+- [ ] Write RED tests for every purpose/unknown-purpose fallback, exact prefix/header/suffix, query128/129, remaining15/16, source truncation without specials, right padding/last real, empty documents still loading/checking budget, and original batch order. Assert no sigmoid/no normalization.
+- [ ] Pin explicit lm_head versus tied head with distinguishable real/synthetic weights and precision differences. Write failure/concurrency tests for nonfinite logits, CPU/MLX propagation and one other-device CPU/F32 retry.
+- [ ] Implement the judge owner and generic core projection, preserving state/identity while reporting actual retry device/dtype separately.
+- [ ] Run full real3dtype CPU both-platform and applicable MPS/MLX judge corpus, ownership/lifetime/ABI and prior encoder tests; source originals unchanged. Commit/task-done.
+
+### Task 9: Full native acceptance, bounded preparation, CI and independent review
+
+**Files:** Create transformer comparison/evidence/validation tooling and native integration tests, explicit preparation/CI jobs and sibling public proof/docs.
+**Consumes:** All original capture and production APIs from Tasks1–8, existing accepted34gate FastEmbed chain.
+**Produces:** authenticated current-source both-platform transformer acceptance and explicit remaining M2 acquisition/integration status.
+
+- [ ] Add RED tests for missing model/core/input, stale source/runtime/library identity, resealed false vectors/tokens/logits/state, wrong dtype/device/order, missing cases and resource/protocol failures. Execution preparation is explicit and outside unchanged frozen execution budgets; acquisition only creates/removes its own verified data leases.
+- [ ] Implement semantic evidence replay and explicit typed preparation propagation; keep existing gates and add applicable new ones. Freeze capacities from real source/core/private-copy/build/Python footprint before CI job layout. Keep new transformer process tests in the dedicated transformer_migration_tests directory with explicit gates after the legacy93-test suite; never preload3transformer models together with the5FastEmbed sources. Acquire/hold/release only the model under test between groups, while retaining every required test and unchanged pre-fixed execution budget. Isolated matrix includes every actual dependency. No unmeasured hosted-run success claim.
+- [ ] Freeze one candidate and run complete regression/original/Rust/native/ownership/dynamic-link/exec/corruption/device gates on macOS and Linux. Publish a new immutable sibling with full raw outputs, source/asset/runtime/hash/threshold bindings; independently replay both under current code.
+- [ ] Verify all1066originals, current matrix and scoped staged hygiene, commit only owned source/proof/docs and task-done. Dispatch ONE fresh whole-plan reviewer with exhaustive review focus/rulings. Regrade by actual effect, one TDD Important/Critical fix pass and full green suites, defer minors. Preserve exhaustive rulings/minors/report in tracked history before deleting only this plan's workspace. Continue native acquisition/integration and M3–M8 without confirmation or a partial final.
+
+## Exact task boundaries, RED fixtures and commands
+
+The following blocks complete the steps above with executable paths/signatures. Each test implementation is written and run before its corresponding product code. A missing target/module is the initial RED only; subsequent tests must fail on the intended behavior, not an import typo. All command output goes to this plan's SDD workspace with the expected status inspected. Task completion means every listed assertion and all relevant preceding tests pass. A scoped commit follows each task, and `task-done` records the successful verification command.
+
+### Task1 contract
+
+Create `tools/rust_migration/transformer_reference.py` and `tests/rust_migration/test_transformer_reference.py`. Functions: `validate_original(record:dict)->None`, `write_original(directory:Path,name:str,record:dict)->dict`, `read_original(directory:Path,receipt:dict)->dict`, `validate_inventory(records:list[dict],inventory:dict)->None`. Reuse authenticated bounded gzip chunks from fastembed_reference rather than duplicate decompression. Create `crates/ken-models/resources/transformer-catalog.json` and `docs/validation/rust-migration-2026-10-20/m2-transformer-reference/` with the original full captures and provenance. They are reference only, accepted flags false. Copy the exact three verified-data size/SHA manifests into model artifact registrations. Read original router, profile loader, st_backend, mlx_backend, joint_model, test_embedder_device, test_model_profiles and joint-model tests; include every observed concrete consumer and unresolved arbitrary architecture explicitly.
+
+- [ ] Write `test_successful_original_requires_actual_feeds`, `test_original_rows_bind_tokens_vectors_versions_and_data`, `test_inventory_cannot_omit_profile_or_case`, `test_raw_chunks_authenticate_and_bound`, `test_original_errors_cannot_masquerade_as_outputs`. Assertions: ST12 macOS+6Linux profiles and MLX3macOS profiles, all3dtypes, exactly12 standard requests/profile, actual nonempty feed ranges for successful nonempty cases, exact dimensions/finite F32 vector lengths, all declared versions/source SHAs. Missing/wrong model/revision/dtype/device/case/output/byte count raises ValueError. Add judge corpus coverage separately: all5purposes+unknown, query128/129, source15/16 budget, emptydocuments afterload, batch16/17 and shorter sequence budget on all applicable devices/dtypes. A deliberately resealed invalid semantic record must fail.
+- [ ] Run `.venv/bin/python -m pytest tests/rust_migration/test_transformer_reference.py -q`. Expected RED for missing validation, then GREEN for complete genuine original data with every corruption case rejected.
+- [ ] Complete Linux native Qwen and XLM-R F32/F16/BF16 against that platform's locked original, then native judge feasibility. Each standalone artifact runs outside checkout, sentinelPATH, actual strace and loaded-library hashes; vectors maxabs1e-6/raw logits1e-5 fixed beforehand. No expected output enters the Rust process. Native experiments remain feasibility with product acceptance false. Record timing/preparation/HWM, normalization/feed/device details and source guard. No concurrent LinuxNN/build work.
+- [ ] Capture original error/lazy/demotion boundaries using original public calls with controlled actual failing collaborators; retain actual captures rather than claim a real GPU OOM. Capture a second original pass and check equality/tolerance frozen in advance; no duplicate package-wide regression yet because no product source changed. Commit message `test(migration): freeze transformer original contracts and native feasibility`.
+
+### Task2 contract
+
+Create crate `crates/ken-native-model-api` (`src/{lib,request,validation}.rs`), add only this dependency-light crate to root workspace. ABI constants `ABI_VERSION=1`, `MAX_PAYLOAD=16*1024*1024`, `MAX_DIAGNOSTIC=64*1024`; shared request structs/enum layouts own validation. Create `native/ken-model-test-backend/{Cargo.toml,src/lib.rs}` as an independent test fixture cdylib and `crates/ken-models/tests/transformer_runtime.rs`. `KenBytes {ptr:*const u8,len:usize}`, `KenBuffer {ptr:*const u8,len:usize,allocation:u64}` and `KenModelApiV1 {abi_version:u32,struct_bytes:u32,backend:u32,reserved:u32,open,run,close,release}` use repr(C); table function returns `*const KenModelApiV1`. open takes `(KenBytes,*mut u64,*mut KenBuffer)->i32`; run `(u64,KenBytes,*mut KenBuffer)->i32`; close `(u64)->i32`; release `(*mut KenBuffer)->i32`. All functions use unsafe extern C; status0success/nonzeroerror and a bounded diagnostic buffer on failure. Integer registries own models/results, unknown handle errors and release at most once. Document valid caller-memory requirements explicitly.
+
+NativeTransformerRuntime::from_json(registration:&str,module_path:&Path,core_root:&Path)->Result<Self,ModelError> validates declarations without file reads/load; loaded_identity()->Result<Option<TransformerRuntimeIdentity>,ModelError> observes only. TransformerSession::prepare(...) and run(...) use the signatures above, serialize model requests and retain verified files/module. `TransformerBatch {input_ids:Vec<Vec<i64>>,attention_mask:Vec<Vec<i64>>}` validates equal positive shapes and token/config bounds. `TransformerOutput::{Sentence,MLXLast,YesMinusNo{true_id:u32,false_id:u32}}` selects only declared pooling/head; `TransformerBatchResult {rows:usize,columns:usize,values:Vec<f32>,trace:TransformerTrace}` validates finite count/shape. Core version/device/dtype reports come from actual backend after load, not the request.
+
+- [ ] Write `cold_declarations_do_not_load_optional_cores`, `abi_null_length_version_and_duplicate_fields_are_rejected`, `unknown_and_released_handles_are_errors`, `buffers_close_before_model_and_module`, `concurrent_first_use_has_one_owner`, `wrong_native_registration_is_not_reused`. Real fixture logs model/result close through an owned test file. Cold status executes without optional cores present; loader rejects a changed registered module/hash before calling it.
+- [ ] Run `cargo test -p ken-native-model-api --lib` and `cargo test -p ken-models --test transformer_runtime`. Expected initial missing APIs/incorrect behavior RED, then all tests GREEN with no Torch/MLX host linkage. Use libloading0.9 already pinned. Run fmt/clippy for these crates. Commit `feat(models): own lazy versioned native transformer sessions`.
+
+### Task3 contract
+
+Create isolated `native/ken-torch-backend` with `[workspace]`, crate-type cdylib and exacttch0.22 default-features=false plus path shared API. Manual LIBTORCH2.9 and ABI-specific supplied prefix, no Python discovery/version bypass. `weights::TorchWeights::load(config:&CoreConfig,path:&Path,device:TransformerDevice,dtype:TransformerDtype)->Result<Self,CoreError>` owns validated tensors. `qwen3::Qwen3::load(...)`/`forward(&self,batch:&TransformerBatch)->Result<tch::Tensor,CoreError>` owns the network. Backend table/session dispatcher owns Tensor lifetimes and calls output policy; architecture is not implemented in host. Add unit tests in the focused owners and `tests/qwen_core.rs` with two distinguishable miniature transformer layers.
+
+- [ ] RED assertions: reject missing/wrong-shaped/nonfinite/unexpected weights before publication, unprefixed versus model.-prefix explicitly configured, same request repeats without KV retention; CPU-initialized RoPE and pow(2) variance preserve actual MPSF16 output. `cargo test --locked --manifest-path native/ken-torch-backend/Cargo.toml --test qwen_core` expected RED then GREEN. Native source capture/controlled tensor failure must not escape ABI unwind.
+- [ ] Require full real Qwen profiles through production ABI with Task1 tokens, everydtype/applicabledevice, maxabs1e-6 and raw1e-5. Run `cargo clippy --locked --manifest-path native/ken-torch-backend/Cargo.toml --all-targets -- -D warnings` and root fmt. Commit `feat(models): execute verified Qwen3 through native Torch`.
+
+### Task4 contract
+
+Create `xlm_roberta::XlmRoberta` with the same load/forward boundary and `weights::read_parameter_zip(path:&Path)->Result<BTreeMap<String,Tensor>,CoreError>` reading original native libtorch parameter archive, not unpickling through Python. Add `tests/xlmr_core.rs`. Keep exact dense/bias/LayerNorm epsilon/GELU/position rules from registered configuration.
+
+- [ ] RED assertions: nonpadID cumulative positions distinct from attentionmask, all-ones mask omitted before SDPA, padding mask used for unequal lengths, wrong tensors/duplicate ZIP entries rejected, unused registered pooler names accepted only as declared. Run `cargo test --locked --manifest-path native/ken-torch-backend/Cargo.toml --test xlmr_core`, then both core suites. Expected GREEN only with all assertions plus Task1 real6CPU+3MPS? CPU macOS/Linux each3 and MPSmacOS3 profiles. Preserve every profile separately. Commit `feat(models): execute original XLM-R parameter archives natively`.
+
+### Task5 contract
+
+Create `transformer_model.rs`, `transformer_tokens.rs`, `sentence_encoder.rs`, `crates/ken-models/tests/sentence_encoder.rs`, and `examples/transformer_probe.rs`. Methods: `SentenceEncoder::new(model:TransformerModel,source:ModelFileSource,runtime:NativeTransformerRuntime,settings:TransformerSettings,device_request:TransformerDeviceRequest)->Result<Self,ModelError>`; `dim(&self)->Result<usize,ModelError>`; `token_count(&self,text:&str)->Result<usize,ModelError>`; `embed_passages(&self,texts:&[&str])->Result<Vec<Vec<f32>>,ModelError>`; `embed_queries` same; `embed_query(&self,text:&str)->Result<Vec<f32>,ModelError>`; `preparation(&self)->Result<Option<TransformerPreparation>,ModelError>`. Shared `TransformerTokens` owns exact tokenizer policy, NumPy source algorithm for ST order and typed batch restoration; no expected outputs/probe failure flags.
+
+- [ ] RED assertions in `cargo test -p ken-models --test sentence_encoder`: empty does not load; local count only tokenizer; dim loads; dtypeNoneF32; all known pooling/Normalize/module prompt variants; clamp to lower registered limit; character sortties17/33/257; all exact standard original feeds including511/512/513; permanent demotion only after completed CPU rebuild, failed rebuild preserves state, concurrent callers use replacement session, a late failed batch returns no partial whole-request vector list. Exercise controlled real backend fixture boundaries, not conditional success/product failure switches.
+- [ ] Run public probe lexical/state corpus on macOS/LinuxCPU and actualMPS. Expected exact tokens/masks/counts/order/states and maxabs1e-6; original behavior/captured failures must match. Host dependencies remain free ofTorch. Root fmt/clippy/preceding ABI and core suites GREEN. Commit `feat(models): preserve Sentence Transformers text and device policy`.
+
+### Task6 contract
+
+Create `native/ken-mlx-backend` independent cdylib with exactmlx-rs0.32.0 and vendored exactmlx-sys0.6.0 sources/licenses; build imports actualMLX0.32.3 core/shader resources, documented nullopt global_scale compatibility adaptation. Native core API follows Task3 core responsibility while using MLXTensor types. `tests/mlx_core.rs` checks dtype/layout/version/shader/repeat/source lifetime and actual buffer ownership; quantizedmodels are not an accepted inference family.
+
+- [ ] `cargo test --locked --manifest-path native/ken-mlx-backend/Cargo.toml --test mlx_core` RED before implementation, GREEN on actualmacOSGPU after exact3dtype real corpus and all required shape/weight errors. A missing MLX asset fails preparation; Linux only records this platform as not applicable rather than skipping a mandatory CPU test. Run clippy for this isolated crate and shared ABI regressions. Commit `feat(models): add exact MLX Qwen native module`.
+
+### Task7 contract
+
+Create `mlx_encoder.rs`, `crates/ken-models/tests/mlx_encoder.rs`; `MLXEncoder::new(model,source,runtime,settings)` and dim/token_count/embed_passages/embed_query/preparation methods match Task5 types. Model spec remains Qwen-only. Cache bounding occurs under module-global memory lock: set512MiB, then restoreprior if lower; host/live-memory cap stays untouched. Per-call stream comes from its callingthread, never a stored non-SendStream.
+
+- [ ] `cargo test -p ken-models --test mlx_encoder`: RED then GREEN for stable increasingtokenlength/ties, actualEOS==padID with real lengths, lastreal poolingF32/L2, cacheprior0/64MiB/1GiB→0/64MiB/512MiB, hostlimitunchanged, missing/corrupt/repair/ownedsource, finite/zero/error propagation and concurrentfirstload. Full36original cases and all actualGPU trace/library checks must pass; no fabricatedCPUfallback. Commit `feat(models): preserve MLX encoder ordering and memory bounds`.
+
+### Task8 contract
+
+Create `relevance_judge.rs`, `crates/ken-models/tests/relevance_judge.rs`; `RelevanceJudge::new(model,source,runtime,settings,device_request)` and `score(&self,query:&str,documents:&[&str],purpose:&str)->Result<Vec<f32>,ModelError>`. Exact PREFIX/SUFFIX/INSTRUCTIONS come from frozenoriginal joint_model, not rewritten prose. Torch head differences cast eachrowF32 before subtraction; MLX explicithead retains its original precision before selection, tiedfallback usescast model embedding; no sigmoid orL2.
+
+- [ ] `cargo test -p ken-models --test relevance_judge`: RED then GREEN for fivepurposes+unknownimplementationfallback,128/129querytokens, remaining15error/16success, emptydocumentsstillload/budgetcheck, batch16/17preserveorder, lastrealnotpad, explicit/tiedhead distinguishableweights, rawnegative/positivescore exact, nonfinite/errorCPU+MLXpropagate, oneotherdeviceCPU/F32retry and state. FulloriginalCPUmacOS/Linux3dtypes, actualMPSandMLX3dtypes pass maxabs1e-5 with exactfeeds. Commit `feat(models): preserve local Qwen relevance judge contracts`.
+
+### Task9 contract
+
+Create `transformer_{process,compare,evidence,validate}.py`, tests named `tests/rust_migration/test_transformer_{process,compare,evidence,validate}.py`, integration files `transformer_migration_tests/test_{parity,ownership}.py`, preparation and CI manifests plus current public proof. `validate_transformer(platform_receipt:Path,source_root:Path)->dict` replays authenticated semantic proof; main module CLI has `--scope platform|matrix`, `--platform-receipts`, `--out` and explicit prepared probe/model/runtime input paths. Normal matrix and exact isolated uv+numpy2.4.4 matrix must agree; no synthetic fixture can be published as platform inference.
+
+- [ ] RED: absent/stale/partial model/core/source/profile proof, resealed wrongtokens/vectors/scores/device/state, missingcase, timeout/partialframe/blockedstdin/childcleanup, sourceownership and budgetfailures all rejected. Run `.venv/bin/python -m pytest tests/rust_migration/test_transformer_reference.py tests/rust_migration/test_transformer_process.py tests/rust_migration/test_transformer_compare.py tests/rust_migration/test_transformer_evidence.py tests/rust_migration/test_transformer_validate.py -q` expected allGREEN after implementation. Reuse the verified nonblockingdeadlineprocess pattern, preserve legacy600s gate unchanged; new transformer groups get originalmeasured frozen execution budgets before candidate execution.
+- [ ] Freeze one immutable both-platform candidate; run full originalPython, workspacefmt/clippy/tests, all34legacygates plus explicitnewtransformergroups, realdataownership/corruption/drop/cache/concurrency/exec/librarychecks, source1066guard beforeafter. Prepare per-modelsourcelease outside executionclock; prove actualallocatedpeak plus3GiBreserve within declaredrunnercapacity andactualfreebytes beforeeachphase. No combined preloadwith5FastEmbedfamilies, no omittedtests. Publish new sibling proof with exactcoverage, data/core/module/source hashes and rawgates; current semantic matrix mustreject any deliberatelyresealedfalsefixture.
+- [ ] Matrix command `.venv/bin/python -m tools.rust_migration.transformer_validate --scope matrix --platform-receipts docs/validation/rust-migration-2026-10-20/m2-transformer-acceptance --out .ken/rust-migration/m2-optional/current-matrix`; expected `passed=true`, bothplatforms accepted, `M2_accepted=false` until global acquisition/integration are done. Isolatedrepeat `uv run --isolated --no-project --with numpy==2.4.4 --python 3.12.9 --managed-python python -m tools.rust_migration.transformer_validate` with the sameargs mustpass. Check stagedownedpathsonly, commit `feat(migration): verify native transformer acceptance on both platforms`, taskdone9 and ONEfinalfreshreview of the wholeplan range. One TDD Important/Criticalfixpass, deferminors, preservefullreport/rulings in trackedproof, deleteonlyownSDD andcontinueM2→M8.
+
+Self-review: all specification concepts map toTasks1–9. Cross-task types are defined inTask2; modelsettings/catalog inTask1/5; nativecore types staybackendlocal. ReviewFocus1→Task2,2→Tasks1/5,3→Tasks3/4,4→Tasks5/7/8,5→Task9. No fabricatedEncoderSpec import. Proof flags distinguish original/preflight/product/global acceptance. Branch integration remains unchanged and original sources remain in place.
