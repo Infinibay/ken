@@ -1,5 +1,5 @@
 //! Read exactly a declared regular artifact, retaining the verified bytes.
-use sha2::{Digest, Sha256};
+use ring::digest::{Context, SHA256};
 use std::{
     fs::{File, OpenOptions},
     io::{Read, Write},
@@ -72,7 +72,7 @@ fn copy_stream<R: Read, W: Write>(
 ) -> Result<(), VerificationError> {
     let mut buffer = [0_u8; 64 * 1024];
     let mut count = 0_u64;
-    let mut digest = Sha256::new();
+    let mut digest = Context::new(&SHA256);
     loop {
         let size = match source.read(&mut buffer) {
             Err(error) if error.kind() == std::io::ErrorKind::Interrupted => continue,
@@ -90,7 +90,13 @@ fn copy_stream<R: Read, W: Write>(
             "artifact size changed during read",
         ));
     }
-    if format!("{:x}", digest.finalize()) != expected_sha256 {
+    let digest = digest.finish();
+    let actual_sha256: String = digest
+        .as_ref()
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect();
+    if actual_sha256 != expected_sha256 {
         return Err(VerificationError::Invalid("artifact hash mismatch"));
     }
     Ok(())
@@ -127,5 +133,27 @@ mod tests {
         )
         .unwrap();
         assert_eq!(copied, b"abc");
+    }
+
+    #[test]
+    fn streaming_hash_preserves_sha256_across_partial_blocks() {
+        struct ShortReads(std::io::Cursor<Vec<u8>>);
+        impl Read for ShortReads {
+            fn read(&mut self, buffer: &mut [u8]) -> std::io::Result<usize> {
+                let length = buffer.len().min(4093);
+                self.0.read(&mut buffer[..length])
+            }
+        }
+        // The standard million-'a' vector is independent of the hash backend.
+        let source = ShortReads(std::io::Cursor::new(vec![b'a'; 1_000_000]));
+        let mut copied = Vec::new();
+        copy_stream(
+            source,
+            1_000_000,
+            "cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0",
+            &mut copied,
+        )
+        .unwrap();
+        assert_eq!(copied, vec![b'a'; 1_000_000]);
     }
 }
