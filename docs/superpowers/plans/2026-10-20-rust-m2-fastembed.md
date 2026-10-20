@@ -74,6 +74,10 @@ FastEmbedCatalog::model(&self, name: &str) -> Result<&FastEmbedModel, ModelError
 FastEmbedCatalog::models(&self) -> &[FastEmbedModel];
 FastEmbedTokenizer::tokenize(&self, texts: &[&str], kind: FastEmbedInput) -> Result<Vec<FastEmbedTokens>, ModelError>;
 FastEmbedDeviceRequest::from_inputs(preference: Option<&str>, raw_ids: Option<&str>) -> Self;
+FastEmbedDeviceRequest::{preference, requested_ids, invalid_ids, device_ids_applied, providers_for};
+EmbeddingSession::prepare(model: &FastEmbedModel, files: Arc<VerifiedModelFiles>, runtime: NativeOnnxRuntime, request: &FastEmbedDeviceRequest) -> Result<Self, ModelError>;
+EmbeddingSession::run(&mut self, batch: &FastEmbedTokens) -> Result<EmbeddingBatch, ModelError>;
+EmbeddingSession::{preparation, thread_policy, cpu_arena, optimization};
 FastEmbedEncoder::new(model: FastEmbedModel, source: ModelFileSource,
     runtime: NativeOnnxRuntime, device: FastEmbedDeviceRequest) -> Result<Self, ModelError>;
 FastEmbedEncoder::prepare(&self) -> Result<(), ModelError>;
@@ -89,6 +93,7 @@ FastEmbedEncoder::embed_details(&self, texts: &[&str], kind: FastEmbedInput)
 ```
 
 `FastEmbedInput={Query,Passage}`; `FastEmbedDevice={Unknown,Cpu,Gpu}`.
+Provider request diagnostics retain validated integer lexical spellings, distinguish invalid/absent/empty IDs and report them unapplied in the explicit-provider route. `providers_for` is pure selection, not hardware attestation. Session policy uses original arena=true, threads0/0 and ORT_ENABLE_ALL; NN comparison uses each platform’s own original (cross-platform original outputs already differ), with the fixed1e-6 rule on BOTH platforms.
 `FastEmbedTokens` owns `shape:[usize;2]`, flat `ids:Vec<i64>` and `attention_mask:Vec<i64>`.
 `FastEmbedRun` owns vectors, actual per-batch input tensors/output shapes/dtype,
 provider/preparation report and artifact/model fingerprints; it never retains or

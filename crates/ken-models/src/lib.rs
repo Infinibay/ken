@@ -4,12 +4,14 @@ mod context_encoder;
 mod context_model;
 mod embedding_pool;
 mod fastembed_model;
+mod fastembed_session;
 mod fastembed_tokens;
 mod file_assets;
 mod model2vec;
 pub mod model_policy;
 mod native_onnx;
 mod onnx_dependencies;
+mod onnx_providers;
 mod onnx_reranker;
 mod onnx_wire;
 mod published_head;
@@ -32,11 +34,16 @@ pub use assets::{ModelAssets, VerifiedSnapshot};
 pub use context_encoder::{ContextEncoder, ContextInput, ContextTokens};
 pub use context_model::ContextModel;
 pub use fastembed_model::{FastEmbedCatalog, FastEmbedModel, FastEmbedNotice};
+pub use fastembed_session::{
+    EmbeddingBatch, EmbeddingSession, FastEmbedBatchTrace, FastEmbedPreparation,
+    FastEmbedProviderAttempt, FastEmbedTensorI64,
+};
 pub use fastembed_tokens::{FastEmbedInput, FastEmbedTokenizer, FastEmbedTokens};
 pub use file_assets::{ModelFileSource, VerifiedModelFiles};
 pub use model2vec::Model2VecEncoder;
 pub use native_onnx::{NativeOnnxRuntime, RuntimeIdentity};
 pub use onnx_dependencies::verify_onnx_dependencies;
+pub use onnx_providers::{FastEmbedDevice, FastEmbedDeviceRequest};
 pub use onnx_reranker::{
     OnnxReranker, RerankDetails, RerankOptions, RerankSessionPolicy, ScoredPool,
 };
