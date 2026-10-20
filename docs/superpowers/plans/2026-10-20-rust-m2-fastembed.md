@@ -84,6 +84,7 @@ FastEmbedEncoder::prepare(&self) -> Result<(), ModelError>;
 FastEmbedEncoder::is_prepared(&self) -> Result<bool, ModelError>;
 FastEmbedEncoder::dim(&self) -> usize;
 FastEmbedEncoder::device(&self) -> Result<FastEmbedDevice, ModelError>;
+FastEmbedEncoder::preparation(&self) -> Result<FastEmbedPreparation, ModelError>;
 FastEmbedEncoder::tokenize(&self, texts: &[&str], kind: FastEmbedInput)
     -> Result<Vec<FastEmbedTokens>, ModelError>;
 FastEmbedEncoder::embed_queries(&self, texts: &[&str]) -> Result<Vec<Vec<f32>>, ModelError>;
@@ -190,7 +191,7 @@ and the same explicit prepared/base arguments as storage, adding
 
 ### Task 5: Deliver the lazy serialized public encoder
 
-**Files:** `fastembed_encoder.rs`, `lib.rs`, tests `fastembed_encoder.rs`.
+**Files:** `fastembed_encoder.rs`, `lib.rs`, `fastembed_session.rs` (shared cold preparation metadata), tests `fastembed_encoder.rs`, generated `fixtures/fastembed/late_error.onnx` plus generator/inventory.
 **Interfaces:** complete public encoder contracts above; one mutex protects preparation/tokenization/session for a whole nonempty request. A tokenizer-only diagnostic can verify four configs without initializing model weights/runtime.
 
 - [ ] RED public-use tests: cold constructor/empty inputs with absent model/library create no owned directory and leave deviceUnknown/preparedFalse; dim comes from registered model. First query prepares; CPU failures can retry after real source repair.

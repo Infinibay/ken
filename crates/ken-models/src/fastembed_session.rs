@@ -39,6 +39,20 @@ pub struct FastEmbedPreparation {
     pub verified_artifacts_fingerprint: Option<String>,
     pub notices: Vec<FastEmbedNotice>,
 }
+impl FastEmbedPreparation {
+    pub(crate) fn unprepared(model: &FastEmbedModel) -> Self {
+        Self {
+            device: FastEmbedDevice::Unknown,
+            configured_providers: Vec::new(),
+            attempts: Vec::new(),
+            runtime: None,
+            model_fingerprint: model.fingerprint(),
+            declared_artifacts_fingerprint: model.assets().fingerprint(),
+            verified_artifacts_fingerprint: None,
+            notices: model.advisories().to_vec(),
+        }
+    }
+}
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FastEmbedTensorI64 {
     pub shape: Vec<usize>,
@@ -200,10 +214,9 @@ impl EmbeddingSession {
             configured_providers: providers,
             attempts,
             runtime: runtime.loaded_identity()?,
-            model_fingerprint: model.fingerprint(),
-            declared_artifacts_fingerprint: model.assets().fingerprint(),
             verified_artifacts_fingerprint: Some(files.fingerprint().into()),
             notices,
+            ..FastEmbedPreparation::unprepared(model)
         };
         Ok(Self {
             session,

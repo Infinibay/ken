@@ -3,12 +3,15 @@ from pathlib import Path
 import hashlib,json,onnx
 from onnx import helper as h,TensorProto as T
 root=Path(__file__).parent
-for mode in ['hidden','clip','task','wrong_type','extra_rows','nonfinite','unknown_input','wrong_input_type','invalid_operator']:
+for mode in ['hidden','clip','task','wrong_type','extra_rows','nonfinite','unknown_input','wrong_input_type','invalid_operator','late_error']:
  inputs=[h.make_tensor_value_info('input_ids',T.FLOAT if mode=='wrong_input_type'else T.INT64,['batch','sequence'])]
  if mode not in ['clip','invalid_operator']:inputs.append(h.make_tensor_value_info('attention_mask',T.INT64,['batch','sequence']))
  if mode=='task':inputs.extend([h.make_tensor_value_info('token_type_ids',T.INT64,['batch','sequence']),h.make_tensor_value_info('task_id',T.INT64,[])])
  if mode=='unknown_input':inputs.append(h.make_tensor_value_info('mystery',T.INT64,[]))
- if mode in ['hidden','task','wrong_type','wrong_input_type','unknown_input']:
+ if mode=='late_error':
+  nodes=[h.make_node('Cast',['input_ids'],['cast'],to=T.FLOAT),h.make_node('Sub',['cast','three'],['denominator']),h.make_node('Div',['one','denominator'],['value']),h.make_node('Unsqueeze',['value','axis'],['column']),h.make_node('Concat',['column','column'],['output'],axis=2)]
+  initial=[h.make_tensor('three',T.FLOAT,[],[3.]),h.make_tensor('one',T.FLOAT,[],[1.]),h.make_tensor('axis',T.INT64,[1],[2])];shape=['batch','sequence',2];dtype=T.FLOAT;name='late-error'
+ elif mode in ['hidden','task','wrong_type','wrong_input_type','unknown_input']:
   nodes=[h.make_node('Cast',['input_ids'],['cast'],to=T.INT64 if mode=='wrong_type'else T.FLOAT),h.make_node('Unsqueeze',['cast','axis'],['column']),h.make_node('Concat',['column','column'],['output'],axis=2)]
   initial=[h.make_tensor('axis',T.INT64,[1],[2])];shape=['batch','sequence',2];dtype=T.INT64 if mode=='wrong_type'else T.FLOAT;name='fastembed-'+mode
  elif mode=='invalid_operator':

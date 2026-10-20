@@ -3,6 +3,7 @@ mod assets;
 mod context_encoder;
 mod context_model;
 mod embedding_pool;
+mod fastembed_encoder;
 mod fastembed_model;
 mod fastembed_session;
 mod fastembed_tokens;
@@ -33,6 +34,7 @@ mod verified_file;
 pub use assets::{ModelAssets, VerifiedSnapshot};
 pub use context_encoder::{ContextEncoder, ContextInput, ContextTokens};
 pub use context_model::ContextModel;
+pub use fastembed_encoder::{FastEmbedEncoder, FastEmbedRun};
 pub use fastembed_model::{FastEmbedCatalog, FastEmbedModel, FastEmbedNotice};
 pub use fastembed_session::{
     EmbeddingBatch, EmbeddingSession, FastEmbedBatchTrace, FastEmbedPreparation,
