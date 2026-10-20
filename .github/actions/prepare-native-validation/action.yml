@@ -8,6 +8,7 @@ runs:
       run: |
         export UV_PYTHON_INSTALL_DIR="$GITHUB_WORKSPACE/.ken/rust-migration/validation-python"
         printf '%s\n' "UV_PYTHON_INSTALL_DIR=$UV_PYTHON_INSTALL_DIR" >> "$GITHUB_ENV"
+        printf '%s\n' 'CARGO_INCREMENTAL=0' >> "$GITHUB_ENV"
         uv python install 3.12.9 --no-bin
         uv sync --locked --dev --python 3.12.9 --managed-python
         .venv/bin/python - <<'PYTHON'
@@ -70,6 +71,7 @@ runs:
         from tools.rust_migration.context_compare import core_for_platform, RUNTIME_REGISTRATION
         from tools.rust_migration.context_reference import snapshot_state
         from tools.rust_migration.ettin_reference import source_state
+        from tools.rust_migration.fastembed_reference import catalogue_snapshots,source_state as fastembed_source_state
         snapshot = potion_assets().resolve(local_files_only=False)
         context = code_context_model().assets.resolve(local_files_only=False)
         definition = json.loads(Path('src/ken/embedder/data/code-context-int8.json').read_text())
@@ -80,6 +82,17 @@ runs:
         translation_definition = json.loads(Path('src/ken/embedder/data/es-en-ct2-int8.json').read_text())
         translation = ModelAssets.from_dict(translation_definition['source']).resolve(local_files_only=False)
         source_state(translation, translation_definition['source'])
+        registry=Path.cwd()/'crates/ken-models/resources/fastembed-catalog.json'
+        catalogue=json.loads(registry.read_bytes())
+        fastembed_sources=Path.cwd()/'.ken/rust-migration/fastembed-sources'
+        fastembed_sources.mkdir(parents=True,exist_ok=True)
+        for model_id,assets in catalogue_snapshots(catalogue).items():
+            assets={'model_id':model_id,**assets}
+            snapshot_path=ModelAssets.from_dict(assets).resolve(local_files_only=False)
+            destination=fastembed_sources/model_id.replace('/','--')/assets['revision']
+            destination.parent.mkdir(parents=True,exist_ok=True)
+            destination.symlink_to(snapshot_path,target_is_directory=True)
+        for model in catalogue['models']:fastembed_source_state(fastembed_sources,model)
         # Test preparation copies the native C core from the pinned validation
         # wheel. Rust loads only the authenticated standalone library.
         package = Path(importlib.util.find_spec('onnxruntime').origin).parent
@@ -104,6 +117,9 @@ runs:
             stream.write(f'KEN_TRANSLATION_PROBE={Path.cwd() / "target/release/examples/translation_probe"}\n')
             stream.write(f'KEN_POLICY_PROBE={Path.cwd() / "target/release/examples/model_policy_probe"}\n')
             stream.write(f'KEN_STORAGE_PROBE={Path.cwd() / "target/release/examples/storage_probe"}\n')
+            stream.write(f'KEN_FASTEMBED_PROBE={Path.cwd() / "target/release/examples/fastembed_probe"}\n')
+            stream.write(f'KEN_FASTEMBED_SOURCES={fastembed_sources}\n')
+            stream.write(f'KEN_FASTEMBED_REGISTRY={registry}\n')
         PY
         cargo build --release --locked -p ken-cli -p ken-models -p ken-store --bins --examples
         # Compile test executables during preparation; the validator's unchanged

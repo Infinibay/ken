@@ -1,0 +1,1538 @@
+{
+  "format": "ken-storage-recovery/1",
+  "platform": "Linux",
+  "architecture": "aarch64",
+  "passed": true,
+  "errors": [],
+  "M2_accepted": false,
+  "outside_checkout": true,
+  "native_children": [],
+  "cases": [
+    {
+      "id": "compact-journal_published",
+      "executions": [
+        {
+          "role": "interrupted",
+          "exit": -9,
+          "stdout": "{\"after\":2,\"before\":5,\"phase\":\"compacted\",\"space\":\"ci_files\"}\n{\"after\":2,\"before\":5,\"phase\":\"compacted\",\"space\":\"ci_symbols\"}\n{\"after\":2,\"before\":5,\"phase\":\"compacted\",\"space\":\"ci_intent_sources\"}\n{\"phase\":\"staging_ready\"}\n{\"phase\":\"journal_published\"}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        },
+        {
+          "role": "recover",
+          "exit": 0,
+          "stdout": "{\"recovered\":true}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        },
+        {
+          "role": "repeat",
+          "exit": 0,
+          "stdout": "{\"recovered\":true}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        }
+      ],
+      "before": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 5,
+          "ci_symbols": 5,
+          "ci_intent_sources": 5
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "after": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 5,
+          "ci_symbols": 5,
+          "ci_intent_sources": 5
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "final": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 5,
+          "ci_symbols": 5,
+          "ci_intent_sources": 5
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "repeat": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 5,
+          "ci_symbols": 5,
+          "ci_intent_sources": 5
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      }
+    },
+    {
+      "id": "compact-backup_renamed",
+      "executions": [
+        {
+          "role": "interrupted",
+          "exit": -9,
+          "stdout": "{\"after\":2,\"before\":5,\"phase\":\"compacted\",\"space\":\"ci_files\"}\n{\"after\":2,\"before\":5,\"phase\":\"compacted\",\"space\":\"ci_symbols\"}\n{\"after\":2,\"before\":5,\"phase\":\"compacted\",\"space\":\"ci_intent_sources\"}\n{\"phase\":\"staging_ready\"}\n{\"phase\":\"journal_published\"}\n{\"phase\":\"backup_renamed\"}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        },
+        {
+          "role": "recover",
+          "exit": 0,
+          "stdout": "{\"recovered\":true}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        },
+        {
+          "role": "repeat",
+          "exit": 0,
+          "stdout": "{\"recovered\":true}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        }
+      ],
+      "before": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 5,
+          "ci_symbols": 5,
+          "ci_intent_sources": 5
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "after": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 5,
+          "ci_symbols": 5,
+          "ci_intent_sources": 5
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "final": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 5,
+          "ci_symbols": 5,
+          "ci_intent_sources": 5
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "repeat": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 5,
+          "ci_symbols": 5,
+          "ci_intent_sources": 5
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      }
+    },
+    {
+      "id": "compact-new_published",
+      "executions": [
+        {
+          "role": "interrupted",
+          "exit": -9,
+          "stdout": "{\"after\":2,\"before\":5,\"phase\":\"compacted\",\"space\":\"ci_files\"}\n{\"after\":2,\"before\":5,\"phase\":\"compacted\",\"space\":\"ci_symbols\"}\n{\"after\":2,\"before\":5,\"phase\":\"compacted\",\"space\":\"ci_intent_sources\"}\n{\"phase\":\"staging_ready\"}\n{\"phase\":\"journal_published\"}\n{\"phase\":\"backup_renamed\"}\n{\"phase\":\"new_published\"}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        },
+        {
+          "role": "recover",
+          "exit": 0,
+          "stdout": "{\"recovered\":true}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        },
+        {
+          "role": "repeat",
+          "exit": 0,
+          "stdout": "{\"recovered\":true}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        }
+      ],
+      "before": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 5,
+          "ci_symbols": 5,
+          "ci_intent_sources": 5
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "after": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 5,
+          "ci_symbols": 5,
+          "ci_intent_sources": 5
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "final": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 5,
+          "ci_symbols": 5,
+          "ci_intent_sources": 5
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "repeat": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 5,
+          "ci_symbols": 5,
+          "ci_intent_sources": 5
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      }
+    },
+    {
+      "id": "compact-database_committed",
+      "executions": [
+        {
+          "role": "interrupted",
+          "exit": -9,
+          "stdout": "{\"after\":2,\"before\":5,\"phase\":\"compacted\",\"space\":\"ci_files\"}\n{\"after\":2,\"before\":5,\"phase\":\"compacted\",\"space\":\"ci_symbols\"}\n{\"after\":2,\"before\":5,\"phase\":\"compacted\",\"space\":\"ci_intent_sources\"}\n{\"phase\":\"staging_ready\"}\n{\"phase\":\"journal_published\"}\n{\"phase\":\"backup_renamed\"}\n{\"phase\":\"new_published\"}\n{\"phase\":\"database_committed\"}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        },
+        {
+          "role": "recover",
+          "exit": 0,
+          "stdout": "{\"recovered\":true}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        },
+        {
+          "role": "repeat",
+          "exit": 0,
+          "stdout": "{\"recovered\":true}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        }
+      ],
+      "before": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 4,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 5,
+          "ci_symbols": 5,
+          "ci_intent_sources": 5
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "after": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 0,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 0,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 0,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 2,
+          "ci_symbols": 2,
+          "ci_intent_sources": 2
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "final": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 0,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 0,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 0,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 2,
+          "ci_symbols": 2,
+          "ci_intent_sources": 2
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "repeat": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 0,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [
+            {
+              "id": 1,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 0,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_intent_sources": [
+            {
+              "id": 1,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 2,
+              "vec_slot": 0,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        "high_water": {
+          "ci_files": 2,
+          "ci_symbols": 2,
+          "ci_intent_sources": 2
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      }
+    },
+    {
+      "id": "inline-first-batch",
+      "executions": [
+        {
+          "role": "interrupted",
+          "exit": -9,
+          "stdout": "{\"count\":1,\"phase\":\"migrated\",\"space\":\"ci_files\"}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        },
+        {
+          "role": "recover",
+          "exit": 0,
+          "stdout": "{\"recovered\":true}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        },
+        {
+          "role": "resume",
+          "exit": 0,
+          "stdout": "{\"count\":1,\"phase\":\"migrated\",\"space\":\"ci_files\"}\n{\"recovered\":true}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        },
+        {
+          "role": "repeat",
+          "exit": 0,
+          "stdout": "{\"recovered\":true}\n",
+          "stderr": "",
+          "exec_attempts": 1
+        }
+      ],
+      "before": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": null,
+              "embedding_hex": "000000000000803f00000000",
+              "vector": null
+            },
+            {
+              "id": 2,
+              "vec_slot": null,
+              "embedding_hex": "0000803f00000000",
+              "vector": null
+            },
+            {
+              "id": 3,
+              "vec_slot": null,
+              "embedding_hex": "000000000000803f",
+              "vector": null
+            }
+          ],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "high_water": {
+          "ci_files": 0,
+          "ci_symbols": 0,
+          "ci_intent_sources": 0
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "after": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": null,
+              "embedding_hex": "000000000000803f00000000",
+              "vector": null
+            },
+            {
+              "id": 2,
+              "vec_slot": 0,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 3,
+              "vec_slot": null,
+              "embedding_hex": "000000000000803f",
+              "vector": null
+            }
+          ],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "high_water": {
+          "ci_files": 1,
+          "ci_symbols": 0,
+          "ci_intent_sources": 0
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "final": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": null,
+              "embedding_hex": "000000000000803f00000000",
+              "vector": null
+            },
+            {
+              "id": 2,
+              "vec_slot": 0,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 3,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "high_water": {
+          "ci_files": 2,
+          "ci_symbols": 0,
+          "ci_intent_sources": 0
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      },
+      "repeat": {
+        "spaces": {
+          "ci_files": [
+            {
+              "id": 1,
+              "vec_slot": null,
+              "embedding_hex": "000000000000803f00000000",
+              "vector": null
+            },
+            {
+              "id": 2,
+              "vec_slot": 0,
+              "embedding_hex": null,
+              "vector": [
+                1.0,
+                0.0
+              ]
+            },
+            {
+              "id": 3,
+              "vec_slot": 1,
+              "embedding_hex": null,
+              "vector": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "high_water": {
+          "ci_files": 2,
+          "ci_symbols": 0,
+          "ci_intent_sources": 0
+        },
+        "free": {
+          "ci_files": [],
+          "ci_symbols": [],
+          "ci_intent_sources": []
+        },
+        "internal_markers": []
+      }
+    }
+  ],
+  "dependency_audit": {
+    "passed": true,
+    "linked_exit": 0,
+    "tree_exit": 0,
+    "linked_sha256": "1f97ce0d690ed461fdb44539f0979b0ee81919b46862364766e185977e8f8c75",
+    "tree_sha256": "42ad9c60647bb2409c31e0f614b594c7b0870449f8f0a7a4ae7b593959dddc9b",
+    "errors": []
+  },
+  "driver_sha256": "12c836f1ac93217064cda701f072fb1e9410532eacb32db4e7efc276950ca40a",
+  "cases_sha256": "bc1d24b6fdab169ec279e3a37c75a3b5314496a0188ae18bee9b6f6aee73f0a0",
+  "reference_fingerprint": "54be57530d20242289168c53a2dfacd2d2ee3e4573ed920da7a91a7caaf7f857",
+  "reference_source_fingerprint": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
+  "reference_oracle": {
+    "frozen_import": true,
+    "encoder_singleton_unloaded": true,
+    "python": "3.12.9",
+    "sqlite": "3.47.1",
+    "numpy": "2.4.4",
+    "sources": {
+      "src/ken/db.py": "90af6cef60cc8c6e13ce4bd33f0fe082c1c1fc0898d3821b2a36aaca99dc04d0",
+      "src/ken/schema.sql": "b6754dff40483a37177b157b4644da256b052920fdb6f31565ff63dfded8af28",
+      "src/ken/vectors.py": "a88770b6accdadbb1aba12e8970c2c51ce5a619ca8d40a7929aa7131396c5d4a",
+      "src/ken/embedder/__init__.py": "1e559d12a44c7379877a464ff97e5c942c7649bf2bdd1e5fbb43af9fa7e89d49",
+      "src/ken/_paths.py": "e6af40a5215554d99b9614b89d93732193e8faa027bdf5b40b5cea72de116af1"
+    }
+  }
+}

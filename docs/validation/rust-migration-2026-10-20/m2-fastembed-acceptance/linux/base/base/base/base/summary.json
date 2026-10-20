@@ -1,0 +1,1272 @@
+{
+  "scope": "ettin-local",
+  "platform": "Linux",
+  "architecture": "aarch64",
+  "passed": true,
+  "M2_accepted": false,
+  "gates": {
+    "originals": {
+      "ran": true,
+      "passed": true,
+      "details": {
+        "changed": [],
+        "manifest_sha256": "a14617ee9422e1215d870695feb71cb9d88802e70112afd91340d3575d4d6a25"
+      }
+    },
+    "reference": {
+      "ran": true,
+      "passed": true,
+      "details": {
+        "changed": [],
+        "manifest_sha256": "d710487cb1c59b685aae1867ffd0233251010943353d433f3016feb62fb9d7c2"
+      }
+    },
+    "toolchain": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "rustc",
+        "--version",
+        "--verbose"
+      ],
+      "duration_ns": 26370500,
+      "artifact": "rustc.log",
+      "sha256": "9e52f76a6e81c8cce82c76c2ee87a3c9999e56d92106b19142416460b9d2c727"
+    },
+    "python_contracts": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "/app/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/rust_migration",
+        "tests/test_paths.py",
+        "tests/test_status.py",
+        "-q"
+      ],
+      "duration_ns": 196405457715,
+      "artifact": "python-contracts.log",
+      "sha256": "32fa09100d9a12f098496533f5870b4a63d841a7780445d6782df2957d78239f"
+    },
+    "python_full": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "/app/.venv/bin/python",
+        "-m",
+        "pytest",
+        "--junitxml=/app/.ken/rust-migration/m2-fastembed/validation-linux-t7a/base/base/base/base/base/base/base/python-final.xml"
+      ],
+      "duration_ns": 1027408348882,
+      "artifact": "python-full.log",
+      "sha256": "c620b005c54eb8e52ce7608a9340343d0b319f07e66a6fb26a94c5a9b81a515c",
+      "details": {
+        "passed": true,
+        "collected": 15829,
+        "new_failures": [],
+        "new_skips": [],
+        "missing_tests": [],
+        "previous_failures": {
+          "tests.kql2.test_automatic::test_graph_is_prepared_before_its_query_budget": "passed",
+          "tests.kql2.test_automatic::test_startup_retries_child_that_arrived_before_old_owner_released_lock": "passed"
+        },
+        "current_failures": []
+      }
+    },
+    "typing": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "/app/.venv/bin/python",
+        "-m",
+        "mypy",
+        "--no-incremental"
+      ],
+      "duration_ns": 33978277557,
+      "artifact": "typing.log",
+      "sha256": "119a5c789c6106f60ab231c0a5ab2cbdbc75299bde6ec7dd07f6c5c76beaac6b",
+      "details": {
+        "previous_errors": [],
+        "current_errors": [],
+        "new_errors": []
+      }
+    },
+    "fmt": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "duration_ns": 259848417,
+      "artifact": "fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "clippy": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--workspace",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "duration_ns": 3878477169,
+      "artifact": "clippy.log",
+      "sha256": "d7bf0fbf03a46990e47c7cfb9b1ba22b47675ec9e6b98da2f2b00a2ae9b58024"
+    },
+    "rust_tests": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--workspace",
+        "--all-targets"
+      ],
+      "duration_ns": 518463527111,
+      "artifact": "rust_tests.log",
+      "sha256": "706f203810ffa955d7e863987880c492fd98ed48633383c55cd488f4bd22831a"
+    },
+    "release": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "-p",
+        "ken-cli",
+        "-p",
+        "ken-models",
+        "-p",
+        "ken-store",
+        "--examples",
+        "--bins",
+        "--message-format=json"
+      ],
+      "duration_ns": 300356042,
+      "artifact": "release.log",
+      "sha256": "25df1d713d186f6f1bd8a35e7519d30b44da18792b2a6103d430db0d88347f9f",
+      "native_binding": {
+        "ran": true,
+        "passed": true,
+        "built": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/model_probe",
+        "supplied": "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
+        "built_sha256": "add665a1919cc08b757536937c3673d81075bb8c2c7016ccacc376ec6aafd4a0",
+        "supplied_sha256": "add665a1919cc08b757536937c3673d81075bb8c2c7016ccacc376ec6aafd4a0"
+      }
+    },
+    "parity_tests": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "/app/.venv/bin/python",
+        "-m",
+        "pytest",
+        "migration_tests",
+        "-q",
+        "--junitxml=/app/.ken/rust-migration/m2-fastembed/validation-linux-t7a/base/base/base/base/base/base/base/parity-tests.xml"
+      ],
+      "duration_ns": 432362931197,
+      "artifact": "parity-tests.log",
+      "sha256": "15d45ee89dd77c1573712d174e175e1369a0daf3ca0e6acdebef061ce046e96d"
+    },
+    "model_parity": {
+      "ran": true,
+      "passed": true
+    },
+    "autonomy": {
+      "ran": true,
+      "passed": true
+    },
+    "m1_parity": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "/app/.venv/bin/python",
+        "-m",
+        "tools.rust_migration.compare",
+        "--reference",
+        "/app/.ken/rust-migration/m2-context/reference-t4",
+        "--native",
+        "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/ken-rs",
+        "--cases",
+        "/app/.ken/rust-migration/m2-fastembed/source-t7a/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+        "--out",
+        "/app/.ken/rust-migration/m2-fastembed/validation-linux-t7a/base/base/base/base/base/base/base/m1-parity.json"
+      ],
+      "duration_ns": 27132460845,
+      "artifact": "m1-parity.log",
+      "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
+    },
+    "benchmark": {
+      "ran": true,
+      "passed": true,
+      "artifact": "benchmark/benchmark.json"
+    },
+    "hygiene": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "duration_ns": 5323125,
+      "artifact": "hygiene.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "table_release": {
+      "ran": true,
+      "passed": true,
+      "built": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/table_probe",
+      "supplied": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/table_probe",
+      "built_sha256": "a96323f3129d84d66b04eeef1803d05bab44a931f96d10644704efc505c85c12",
+      "supplied_sha256": "a96323f3129d84d66b04eeef1803d05bab44a931f96d10644704efc505c85c12"
+    },
+    "table_parity": {
+      "ran": true,
+      "passed": true
+    },
+    "context_release": {
+      "ran": true,
+      "passed": true,
+      "built": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/context_probe",
+      "supplied": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/context_probe",
+      "built_sha256": "1653f35e1f1dc8368a61e1352045b3306ad3d67440c791f7f1712273197d8a15",
+      "supplied_sha256": "1653f35e1f1dc8368a61e1352045b3306ad3d67440c791f7f1712273197d8a15"
+    },
+    "context_parity": {
+      "ran": true,
+      "passed": true
+    },
+    "ettin_release": {
+      "ran": true,
+      "passed": true,
+      "built": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/ettin_probe",
+      "supplied": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/ettin_probe",
+      "built_sha256": "f6e72db1b86d6b737252e05857150b67b950ed9fa85d98e85e86a5c9ada3cb5a",
+      "supplied_sha256": "f6e72db1b86d6b737252e05857150b67b950ed9fa85d98e85e86a5c9ada3cb5a"
+    },
+    "ettin_preparation": {
+      "ran": true,
+      "passed": true
+    },
+    "ettin_parity": {
+      "ran": true,
+      "passed": true
+    }
+  },
+  "fingerprints": {
+    "native_source": "cc5f259edece26a12ce685bb86e8fb0109bd60419e9599177629977124d97acb",
+    "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
+    "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
+    "validator": "a5cd4639618b15cb8787a5545617842cd32cbdb60cb8af21fb7ba1b3dfacd392",
+    "oracle": "3c6c3295f97b6671dd6e00135117a276a53ce00489aa6dcfd4ba88cafb24443c",
+    "registration": "d2cb2be7a0b8a0b6682ae215539a1e92d7ccec598cbbcbdf960201e718b534d5",
+    "table_artifact": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
+    "table_oracle": "b2ed77496c6cf5df43dd43dd9eb3b904b60a71c9e1650f879b3428fa926e62f3",
+    "context_cases": "776db83073511d63c17b4d595eb221e1a776b0082bd2fcbfc77f87ad699f6d42",
+    "context_oracle": "343fd57f5f644beff252260784fca165d2edf0ab8f38319815f2b0357b181af6",
+    "context_registration": "4fd47b6170f98e0cd7652b39af01e9f25ba207b9261bbe21141d38377286aa9d",
+    "runtime_registration": "469470d57e38df2fb89c8cb005eb978c1ae295b427a3c7b8d5c03215b114536b",
+    "context_assets": "85c370eb7ff483542ec0b10ce84471837c2a789d6f2deb712405e415c8775734",
+    "ettin_cases": "cfe20479ad8442aee05e2ab0085d1a944f2abe379f6a2df5b20e236419766946",
+    "ettin_oracle": "ddbd13c1e29d8a4f689b58cb9041aa0fcea4745618f065423ddf7dbe4cf7824b",
+    "ettin_registration": "8967138122550d4aad2ad534cef1d3a1da0d6b19ecc8734fd9607c8079f3c3c3",
+    "ettin_source_assets": "59cc6143e3826ecb050a2a7c0cbc70b04c9a7afe4fbfedb14c1eae7c6a708b89",
+    "ettin_prepared_assets": "d97177a7e282b5561c688f7d23c3c3df29e76944f3654f1ff54db436ea6c3628"
+  },
+  "context_base": {
+    "scope": "context-local",
+    "platform": "Linux",
+    "architecture": "aarch64",
+    "passed": true,
+    "M2_accepted": false,
+    "gates": {
+      "originals": {
+        "ran": true,
+        "passed": true,
+        "details": {
+          "changed": [],
+          "manifest_sha256": "a14617ee9422e1215d870695feb71cb9d88802e70112afd91340d3575d4d6a25"
+        }
+      },
+      "reference": {
+        "ran": true,
+        "passed": true,
+        "details": {
+          "changed": [],
+          "manifest_sha256": "d710487cb1c59b685aae1867ffd0233251010943353d433f3016feb62fb9d7c2"
+        }
+      },
+      "toolchain": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "rustc",
+          "--version",
+          "--verbose"
+        ],
+        "duration_ns": 26370500,
+        "artifact": "rustc.log",
+        "sha256": "9e52f76a6e81c8cce82c76c2ee87a3c9999e56d92106b19142416460b9d2c727"
+      },
+      "python_contracts": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "/app/.venv/bin/python",
+          "-m",
+          "pytest",
+          "tests/rust_migration",
+          "tests/test_paths.py",
+          "tests/test_status.py",
+          "-q"
+        ],
+        "duration_ns": 196405457715,
+        "artifact": "python-contracts.log",
+        "sha256": "32fa09100d9a12f098496533f5870b4a63d841a7780445d6782df2957d78239f"
+      },
+      "python_full": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "/app/.venv/bin/python",
+          "-m",
+          "pytest",
+          "--junitxml=/app/.ken/rust-migration/m2-fastembed/validation-linux-t7a/base/base/base/base/base/base/base/python-final.xml"
+        ],
+        "duration_ns": 1027408348882,
+        "artifact": "python-full.log",
+        "sha256": "c620b005c54eb8e52ce7608a9340343d0b319f07e66a6fb26a94c5a9b81a515c",
+        "details": {
+          "passed": true,
+          "collected": 15829,
+          "new_failures": [],
+          "new_skips": [],
+          "missing_tests": [],
+          "previous_failures": {
+            "tests.kql2.test_automatic::test_graph_is_prepared_before_its_query_budget": "passed",
+            "tests.kql2.test_automatic::test_startup_retries_child_that_arrived_before_old_owner_released_lock": "passed"
+          },
+          "current_failures": []
+        }
+      },
+      "typing": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "/app/.venv/bin/python",
+          "-m",
+          "mypy",
+          "--no-incremental"
+        ],
+        "duration_ns": 33978277557,
+        "artifact": "typing.log",
+        "sha256": "119a5c789c6106f60ab231c0a5ab2cbdbc75299bde6ec7dd07f6c5c76beaac6b",
+        "details": {
+          "previous_errors": [],
+          "current_errors": [],
+          "new_errors": []
+        }
+      },
+      "fmt": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "duration_ns": 259848417,
+        "artifact": "fmt.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "clippy": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--workspace",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "duration_ns": 3878477169,
+        "artifact": "clippy.log",
+        "sha256": "d7bf0fbf03a46990e47c7cfb9b1ba22b47675ec9e6b98da2f2b00a2ae9b58024"
+      },
+      "rust_tests": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "cargo",
+          "test",
+          "--locked",
+          "--workspace",
+          "--all-targets"
+        ],
+        "duration_ns": 518463527111,
+        "artifact": "rust_tests.log",
+        "sha256": "706f203810ffa955d7e863987880c492fd98ed48633383c55cd488f4bd22831a"
+      },
+      "release": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "-p",
+          "ken-cli",
+          "-p",
+          "ken-models",
+          "-p",
+          "ken-store",
+          "--examples",
+          "--bins",
+          "--message-format=json"
+        ],
+        "duration_ns": 300356042,
+        "artifact": "release.log",
+        "sha256": "25df1d713d186f6f1bd8a35e7519d30b44da18792b2a6103d430db0d88347f9f",
+        "native_binding": {
+          "ran": true,
+          "passed": true,
+          "built": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/model_probe",
+          "supplied": "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
+          "built_sha256": "add665a1919cc08b757536937c3673d81075bb8c2c7016ccacc376ec6aafd4a0",
+          "supplied_sha256": "add665a1919cc08b757536937c3673d81075bb8c2c7016ccacc376ec6aafd4a0"
+        }
+      },
+      "parity_tests": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "/app/.venv/bin/python",
+          "-m",
+          "pytest",
+          "migration_tests",
+          "-q",
+          "--junitxml=/app/.ken/rust-migration/m2-fastembed/validation-linux-t7a/base/base/base/base/base/base/base/parity-tests.xml"
+        ],
+        "duration_ns": 432362931197,
+        "artifact": "parity-tests.log",
+        "sha256": "15d45ee89dd77c1573712d174e175e1369a0daf3ca0e6acdebef061ce046e96d"
+      },
+      "model_parity": {
+        "ran": true,
+        "passed": true
+      },
+      "autonomy": {
+        "ran": true,
+        "passed": true
+      },
+      "m1_parity": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "/app/.venv/bin/python",
+          "-m",
+          "tools.rust_migration.compare",
+          "--reference",
+          "/app/.ken/rust-migration/m2-context/reference-t4",
+          "--native",
+          "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/ken-rs",
+          "--cases",
+          "/app/.ken/rust-migration/m2-fastembed/source-t7a/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+          "--out",
+          "/app/.ken/rust-migration/m2-fastembed/validation-linux-t7a/base/base/base/base/base/base/base/m1-parity.json"
+        ],
+        "duration_ns": 27132460845,
+        "artifact": "m1-parity.log",
+        "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
+      },
+      "benchmark": {
+        "ran": true,
+        "passed": true,
+        "artifact": "benchmark/benchmark.json"
+      },
+      "hygiene": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "duration_ns": 5323125,
+        "artifact": "hygiene.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "table_release": {
+        "ran": true,
+        "passed": true,
+        "built": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/table_probe",
+        "supplied": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/table_probe",
+        "built_sha256": "a96323f3129d84d66b04eeef1803d05bab44a931f96d10644704efc505c85c12",
+        "supplied_sha256": "a96323f3129d84d66b04eeef1803d05bab44a931f96d10644704efc505c85c12"
+      },
+      "table_parity": {
+        "ran": true,
+        "passed": true
+      },
+      "context_release": {
+        "ran": true,
+        "passed": true,
+        "built": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/context_probe",
+        "supplied": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/context_probe",
+        "built_sha256": "1653f35e1f1dc8368a61e1352045b3306ad3d67440c791f7f1712273197d8a15",
+        "supplied_sha256": "1653f35e1f1dc8368a61e1352045b3306ad3d67440c791f7f1712273197d8a15"
+      },
+      "context_parity": {
+        "ran": true,
+        "passed": true
+      }
+    },
+    "fingerprints": {
+      "native_source": "cc5f259edece26a12ce685bb86e8fb0109bd60419e9599177629977124d97acb",
+      "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
+      "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
+      "validator": "a5cd4639618b15cb8787a5545617842cd32cbdb60cb8af21fb7ba1b3dfacd392",
+      "oracle": "3c6c3295f97b6671dd6e00135117a276a53ce00489aa6dcfd4ba88cafb24443c",
+      "registration": "d2cb2be7a0b8a0b6682ae215539a1e92d7ccec598cbbcbdf960201e718b534d5",
+      "table_artifact": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
+      "table_oracle": "b2ed77496c6cf5df43dd43dd9eb3b904b60a71c9e1650f879b3428fa926e62f3",
+      "context_cases": "776db83073511d63c17b4d595eb221e1a776b0082bd2fcbfc77f87ad699f6d42",
+      "context_oracle": "343fd57f5f644beff252260784fca165d2edf0ab8f38319815f2b0357b181af6",
+      "context_registration": "4fd47b6170f98e0cd7652b39af01e9f25ba207b9261bbe21141d38377286aa9d",
+      "runtime_registration": "469470d57e38df2fb89c8cb005eb978c1ae295b427a3c7b8d5c03215b114536b",
+      "context_assets": "85c370eb7ff483542ec0b10ce84471837c2a789d6f2deb712405e415c8775734"
+    },
+    "table_base": {
+      "scope": "table-local",
+      "platform": "Linux",
+      "architecture": "aarch64",
+      "passed": true,
+      "M2_accepted": false,
+      "gates": {
+        "originals": {
+          "ran": true,
+          "passed": true,
+          "details": {
+            "changed": [],
+            "manifest_sha256": "a14617ee9422e1215d870695feb71cb9d88802e70112afd91340d3575d4d6a25"
+          }
+        },
+        "reference": {
+          "ran": true,
+          "passed": true,
+          "details": {
+            "changed": [],
+            "manifest_sha256": "d710487cb1c59b685aae1867ffd0233251010943353d433f3016feb62fb9d7c2"
+          }
+        },
+        "toolchain": {
+          "ran": true,
+          "passed": true,
+          "exit": 0,
+          "command": [
+            "rustc",
+            "--version",
+            "--verbose"
+          ],
+          "duration_ns": 26370500,
+          "artifact": "rustc.log",
+          "sha256": "9e52f76a6e81c8cce82c76c2ee87a3c9999e56d92106b19142416460b9d2c727"
+        },
+        "python_contracts": {
+          "ran": true,
+          "passed": true,
+          "exit": 0,
+          "command": [
+            "/app/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/rust_migration",
+            "tests/test_paths.py",
+            "tests/test_status.py",
+            "-q"
+          ],
+          "duration_ns": 196405457715,
+          "artifact": "python-contracts.log",
+          "sha256": "32fa09100d9a12f098496533f5870b4a63d841a7780445d6782df2957d78239f"
+        },
+        "python_full": {
+          "ran": true,
+          "passed": true,
+          "exit": 0,
+          "command": [
+            "/app/.venv/bin/python",
+            "-m",
+            "pytest",
+            "--junitxml=/app/.ken/rust-migration/m2-fastembed/validation-linux-t7a/base/base/base/base/base/base/base/python-final.xml"
+          ],
+          "duration_ns": 1027408348882,
+          "artifact": "python-full.log",
+          "sha256": "c620b005c54eb8e52ce7608a9340343d0b319f07e66a6fb26a94c5a9b81a515c",
+          "details": {
+            "passed": true,
+            "collected": 15829,
+            "new_failures": [],
+            "new_skips": [],
+            "missing_tests": [],
+            "previous_failures": {
+              "tests.kql2.test_automatic::test_graph_is_prepared_before_its_query_budget": "passed",
+              "tests.kql2.test_automatic::test_startup_retries_child_that_arrived_before_old_owner_released_lock": "passed"
+            },
+            "current_failures": []
+          }
+        },
+        "typing": {
+          "ran": true,
+          "passed": true,
+          "exit": 0,
+          "command": [
+            "/app/.venv/bin/python",
+            "-m",
+            "mypy",
+            "--no-incremental"
+          ],
+          "duration_ns": 33978277557,
+          "artifact": "typing.log",
+          "sha256": "119a5c789c6106f60ab231c0a5ab2cbdbc75299bde6ec7dd07f6c5c76beaac6b",
+          "details": {
+            "previous_errors": [],
+            "current_errors": [],
+            "new_errors": []
+          }
+        },
+        "fmt": {
+          "ran": true,
+          "passed": true,
+          "exit": 0,
+          "command": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "duration_ns": 259848417,
+          "artifact": "fmt.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "clippy": {
+          "ran": true,
+          "passed": true,
+          "exit": 0,
+          "command": [
+            "cargo",
+            "clippy",
+            "--locked",
+            "--workspace",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "duration_ns": 3878477169,
+          "artifact": "clippy.log",
+          "sha256": "d7bf0fbf03a46990e47c7cfb9b1ba22b47675ec9e6b98da2f2b00a2ae9b58024"
+        },
+        "rust_tests": {
+          "ran": true,
+          "passed": true,
+          "exit": 0,
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--workspace",
+            "--all-targets"
+          ],
+          "duration_ns": 518463527111,
+          "artifact": "rust_tests.log",
+          "sha256": "706f203810ffa955d7e863987880c492fd98ed48633383c55cd488f4bd22831a"
+        },
+        "release": {
+          "ran": true,
+          "passed": true,
+          "exit": 0,
+          "command": [
+            "cargo",
+            "build",
+            "--release",
+            "--locked",
+            "-p",
+            "ken-cli",
+            "-p",
+            "ken-models",
+            "-p",
+            "ken-store",
+            "--examples",
+            "--bins",
+            "--message-format=json"
+          ],
+          "duration_ns": 300356042,
+          "artifact": "release.log",
+          "sha256": "25df1d713d186f6f1bd8a35e7519d30b44da18792b2a6103d430db0d88347f9f",
+          "native_binding": {
+            "ran": true,
+            "passed": true,
+            "built": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/model_probe",
+            "supplied": "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
+            "built_sha256": "add665a1919cc08b757536937c3673d81075bb8c2c7016ccacc376ec6aafd4a0",
+            "supplied_sha256": "add665a1919cc08b757536937c3673d81075bb8c2c7016ccacc376ec6aafd4a0"
+          }
+        },
+        "parity_tests": {
+          "ran": true,
+          "passed": true,
+          "exit": 0,
+          "command": [
+            "/app/.venv/bin/python",
+            "-m",
+            "pytest",
+            "migration_tests",
+            "-q",
+            "--junitxml=/app/.ken/rust-migration/m2-fastembed/validation-linux-t7a/base/base/base/base/base/base/base/parity-tests.xml"
+          ],
+          "duration_ns": 432362931197,
+          "artifact": "parity-tests.log",
+          "sha256": "15d45ee89dd77c1573712d174e175e1369a0daf3ca0e6acdebef061ce046e96d"
+        },
+        "model_parity": {
+          "ran": true,
+          "passed": true
+        },
+        "autonomy": {
+          "ran": true,
+          "passed": true
+        },
+        "m1_parity": {
+          "ran": true,
+          "passed": true,
+          "exit": 0,
+          "command": [
+            "/app/.venv/bin/python",
+            "-m",
+            "tools.rust_migration.compare",
+            "--reference",
+            "/app/.ken/rust-migration/m2-context/reference-t4",
+            "--native",
+            "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/ken-rs",
+            "--cases",
+            "/app/.ken/rust-migration/m2-fastembed/source-t7a/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+            "--out",
+            "/app/.ken/rust-migration/m2-fastembed/validation-linux-t7a/base/base/base/base/base/base/base/m1-parity.json"
+          ],
+          "duration_ns": 27132460845,
+          "artifact": "m1-parity.log",
+          "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
+        },
+        "benchmark": {
+          "ran": true,
+          "passed": true,
+          "artifact": "benchmark/benchmark.json"
+        },
+        "hygiene": {
+          "ran": true,
+          "passed": true,
+          "exit": 0,
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "duration_ns": 5323125,
+          "artifact": "hygiene.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "table_release": {
+          "ran": true,
+          "passed": true,
+          "built": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/table_probe",
+          "supplied": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/table_probe",
+          "built_sha256": "a96323f3129d84d66b04eeef1803d05bab44a931f96d10644704efc505c85c12",
+          "supplied_sha256": "a96323f3129d84d66b04eeef1803d05bab44a931f96d10644704efc505c85c12"
+        },
+        "table_parity": {
+          "ran": true,
+          "passed": true
+        }
+      },
+      "fingerprints": {
+        "native_source": "cc5f259edece26a12ce685bb86e8fb0109bd60419e9599177629977124d97acb",
+        "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
+        "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
+        "validator": "a5cd4639618b15cb8787a5545617842cd32cbdb60cb8af21fb7ba1b3dfacd392",
+        "oracle": "3c6c3295f97b6671dd6e00135117a276a53ce00489aa6dcfd4ba88cafb24443c",
+        "registration": "d2cb2be7a0b8a0b6682ae215539a1e92d7ccec598cbbcbdf960201e718b534d5",
+        "table_artifact": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
+        "table_oracle": "b2ed77496c6cf5df43dd43dd9eb3b904b60a71c9e1650f879b3428fa926e62f3"
+      },
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+      "table_release": {
+        "ran": true,
+        "passed": true,
+        "built": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/table_probe",
+        "supplied": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/table_probe",
+        "built_sha256": "a96323f3129d84d66b04eeef1803d05bab44a931f96d10644704efc505c85c12",
+        "supplied_sha256": "a96323f3129d84d66b04eeef1803d05bab44a931f96d10644704efc505c85c12"
+      },
+      "table_parity": {
+        "format": "ken-table-parity/1",
+        "passed": true,
+        "errors": [],
+        "platform": "Linux",
+        "architecture": "aarch64",
+        "outside_checkout": true,
+        "native_children": [],
+        "M2_accepted": false,
+        "case_ids": [
+          "empty",
+          "spaces",
+          "spanish",
+          "nfc",
+          "nfd",
+          "emoji",
+          "code",
+          "unknown",
+          "pad",
+          "long-512",
+          "long-513",
+          "long-4097",
+          "mixed-empty",
+          "empty-batch",
+          "batching",
+          "repeated-order"
+        ],
+        "artifact": {
+          "sha256": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
+          "bytes": 23135664
+        },
+        "cases_sha256": "b2ed77496c6cf5df43dd43dd9eb3b904b60a71c9e1650f879b3428fa926e62f3",
+        "native_sha256": "a96323f3129d84d66b04eeef1803d05bab44a931f96d10644704efc505c85c12",
+        "dependency_audit": {
+          "passed": true,
+          "linked_exit": 0,
+          "tree_exit": 0,
+          "linked_sha256": "f2f33339c787051a225bcc916ae4881f85ff2f1e731fa16e859e61cc980d3bfc",
+          "tree_sha256": "76cc6a12bcd3b514b69e885dc4031e08516e5f0b99b06121bfd5b15816829ac2"
+        },
+        "native_wall_ns": 7921865087,
+        "native_exit": 0,
+        "exec_attempts": 1,
+        "runtime": {
+          "device": "cpu",
+          "engine": "rust",
+          "ken_models": "0.18.0",
+          "ndarray": "0.17.1",
+          "npyz": "0.9.1",
+          "target_arch": "aarch64",
+          "target_os": "linux",
+          "tokenizers": "0.22.2",
+          "zip": "6.0.0"
+        },
+        "reference_runtime": {
+          "numpy": "2.4.4",
+          "tokenizers": "0.22.2"
+        }
+      },
+      "case_ids": [
+        "empty",
+        "spaces",
+        "spanish",
+        "nfc",
+        "nfd",
+        "emoji",
+        "code",
+        "unknown",
+        "pad",
+        "long-512",
+        "long-513",
+        "long-4097",
+        "mixed-empty",
+        "empty-batch",
+        "batching",
+        "repeated-order"
+      ],
+      "errors": [],
+      "Table_local_accepted": true
+    },
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "context_release": {
+      "ran": true,
+      "passed": true,
+      "built": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/context_probe",
+      "supplied": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/context_probe",
+      "built_sha256": "1653f35e1f1dc8368a61e1352045b3306ad3d67440c791f7f1712273197d8a15",
+      "supplied_sha256": "1653f35e1f1dc8368a61e1352045b3306ad3d67440c791f7f1712273197d8a15"
+    },
+    "context_parity": {
+      "format": "ken-context-parity/1",
+      "platform": "Linux",
+      "architecture": "aarch64",
+      "passed": true,
+      "errors": [],
+      "native_children": [],
+      "outside_checkout": true,
+      "M2_accepted": false,
+      "native_sha256": "1653f35e1f1dc8368a61e1352045b3306ad3d67440c791f7f1712273197d8a15",
+      "case_ids": [
+        "empty-passages",
+        "empty-query",
+        "whitespace-query",
+        "empty-passage",
+        "spanish-query",
+        "code-query",
+        "unicode-canonical",
+        "emoji-and-nul",
+        "query-versus-passage",
+        "serialized-special-literals",
+        "mixed-passages",
+        "repeated-history",
+        "unicode-whitespace",
+        "passage-boundary511",
+        "passage-boundary512",
+        "passage-boundary513",
+        "query-boundary511",
+        "query-boundary512",
+        "query-boundary513",
+        "long4097"
+      ],
+      "artifacts": {
+        "onnx/model.onnx": {
+          "bytes": 138619279,
+          "sha256": "4eae31d09b1843103a1ebd5e2b2e24b5a5cad441a33906b35b12b1e2ed91d1db"
+        },
+        "tokenizer.json": {
+          "bytes": 711649,
+          "sha256": "91f1def9b9391fdabe028cd3f3fcc4efd34e5d1f08c3bf2de513ebb5911a1854"
+        }
+      },
+      "oracle_sha256": "343fd57f5f644beff252260784fca165d2edf0ab8f38319815f2b0357b181af6",
+      "runtime_registration_sha256": "469470d57e38df2fb89c8cb005eb978c1ae295b427a3c7b8d5c03215b114536b",
+      "dependency_audit": {
+        "passed": true,
+        "linked_exit": 0,
+        "tree_exit": 0,
+        "linked_sha256": "428f1578c7e7399b656be38ff37a8485e327d1391b76fe8dd9ea3e87637f86a1",
+        "tree_sha256": "76cc6a12bcd3b514b69e885dc4031e08516e5f0b99b06121bfd5b15816829ac2"
+      },
+      "core_dependency_audit": {
+        "passed": true,
+        "linked_exit": 0,
+        "tree_exit": 0,
+        "linked_sha256": "601c1b66e4ed5aa7eeed37e714488eb2d11fc596485a6838761f23884fc59ea9",
+        "tree_sha256": "76cc6a12bcd3b514b69e885dc4031e08516e5f0b99b06121bfd5b15816829ac2"
+      },
+      "native_exit": 0,
+      "native_wall_ns": 13793854715,
+      "runtime": {
+        "device": "cpu",
+        "engine": "rust",
+        "inter_threads": 1,
+        "intra_threads": 2,
+        "ken_models": "0.18.0",
+        "native_core": {
+          "api": 25,
+          "arch": "aarch64",
+          "bytes": 19280896,
+          "os": "linux",
+          "sha256": "0ebab581324d80e2975d743eabcf640ac3f8acd429ca8af656ce4f121672afde",
+          "version": "1.25.1"
+        },
+        "ort": "2.0.0-rc.14",
+        "tokenizers": "0.22.2"
+      },
+      "reference_runtime": {
+        "numpy": "2.4.4",
+        "onnxruntime": "1.25.1",
+        "tokenizers": "0.22.2",
+        "onnx": "1.20.1"
+      },
+      "core_identity": {
+        "os": "linux",
+        "arch": "aarch64",
+        "version": "1.25.1",
+        "api": 25,
+        "bytes": 19280896,
+        "sha256": "0ebab581324d80e2975d743eabcf640ac3f8acd429ca8af656ce4f121672afde"
+      },
+      "stderr": "onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0\n",
+      "stderr_warning_count": 1,
+      "exec_attempts": 1
+    },
+    "case_ids": [
+      "empty-passages",
+      "empty-query",
+      "whitespace-query",
+      "empty-passage",
+      "spanish-query",
+      "code-query",
+      "unicode-canonical",
+      "emoji-and-nul",
+      "query-versus-passage",
+      "serialized-special-literals",
+      "mixed-passages",
+      "repeated-history",
+      "unicode-whitespace",
+      "passage-boundary511",
+      "passage-boundary512",
+      "passage-boundary513",
+      "query-boundary511",
+      "query-boundary512",
+      "query-boundary513",
+      "long4097"
+    ],
+    "errors": [],
+    "Context_local_accepted": true
+  },
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "ettin_release": {
+    "ran": true,
+    "passed": true,
+    "built": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/ettin_probe",
+    "supplied": "/app/.ken/rust-migration/m2-fastembed/source-t7a/target/release/examples/ettin_probe",
+    "built_sha256": "f6e72db1b86d6b737252e05857150b67b950ed9fa85d98e85e86a5c9ada3cb5a",
+    "supplied_sha256": "f6e72db1b86d6b737252e05857150b67b950ed9fa85d98e85e86a5c9ada3cb5a"
+  },
+  "ettin_parity": {
+    "format": "ken-ettin-parity/1",
+    "platform": "Linux",
+    "architecture": "aarch64",
+    "passed": true,
+    "errors": [],
+    "native_children": [],
+    "outside_checkout": true,
+    "M2_accepted": false,
+    "native_sha256": "f6e72db1b86d6b737252e05857150b67b950ed9fa85d98e85e86a5c9ada3cb5a",
+    "oracle_sha256": "ddbd13c1e29d8a4f689b58cb9041aa0fcea4745618f065423ddf7dbe4cf7824b",
+    "runtime_registration_sha256": "469470d57e38df2fb89c8cb005eb978c1ae295b427a3c7b8d5c03215b114536b",
+    "case_ids": [
+      "empty-pool",
+      "empty-query",
+      "empty-document",
+      "spanish",
+      "code",
+      "unicode",
+      "emoji-nul",
+      "repeated-documents",
+      "pool10",
+      "empty-pool-then-score",
+      "batch3-remainder",
+      "pair-boundary1023",
+      "pair-boundary1024",
+      "pair-boundary1025",
+      "long-document",
+      "query-capacity-allowed",
+      "query-capacity-rejected",
+      "query-char-limit-allowed",
+      "query-char-limit-rejected",
+      "pool11-rejected",
+      "custom-budget512",
+      "custom-budget2048",
+      "pair-fits-before-and-after-truncation"
+    ],
+    "dependency_audit": {
+      "passed": true,
+      "linked_exit": 0,
+      "tree_exit": 0,
+      "linked_sha256": "f6e6414420c2fb7b0f7c5d5620b703db5947e376a1d0c29baff8a55f47b88402",
+      "tree_sha256": "76cc6a12bcd3b514b69e885dc4031e08516e5f0b99b06121bfd5b15816829ac2"
+    },
+    "core_dependency_audit": {
+      "passed": true,
+      "linked_exit": 0,
+      "tree_exit": 0,
+      "linked_sha256": "20fc956ef79cfdc55f87970bf01f35822ca98dec91e3a360af04495093592692",
+      "tree_sha256": "76cc6a12bcd3b514b69e885dc4031e08516e5f0b99b06121bfd5b15816829ac2"
+    },
+    "native_exit": 0,
+    "native_wall_ns": 69819786990,
+    "exec_attempts": 1,
+    "preparation": {
+      "artifacts": {
+        "config.json": {
+          "bytes": 1946,
+          "sha256": "de2d1d2f63fea40e28850f4b678c8e026ef399a72fbba2b157b391378e48f81a"
+        },
+        "model.onnx": {
+          "bytes": 274035078,
+          "sha256": "8e22c1a014dbb6bf803824b531943ee067de4e9c6dea72f8c178348732db38bf"
+        },
+        "tokenizer.json": {
+          "bytes": 3583327,
+          "sha256": "28c5e078e4c52aa37cf0e6de1a212878f3dbd58dd1c70466298efe0b6b86db35"
+        },
+        "tokenizer_config.json": {
+          "bytes": 488,
+          "sha256": "2b85302525d8c528a9e1fbaea2733472bd00d4755eae881441c8c52b90e2d600"
+        }
+      },
+      "fresh_cache": true,
+      "recipe_key": "5aaa7ed84370f351ef99445d8e12a29932f450fca4a0c5a57e1d95e53c4968e7",
+      "reused_without_source": true,
+      "source_artifacts": {
+        "1_Pooling/config.json": {
+          "bytes": 89,
+          "sha256": "6147ee30f9df2901f83bc99fbbae3951a64ba3333db85252164c0e849888a67b"
+        },
+        "2_Dense/config.json": {
+          "bytes": 228,
+          "sha256": "b2a82c8f8d4ea4c5b87af1e633f65a5348f44d1c0c7f2de2913d17f9973080b3"
+        },
+        "2_Dense/model.safetensors": {
+          "bytes": 1048664,
+          "sha256": "ee9b8a9186fffb05cea0cd73e2ccfc8a4bf641c075d8f304e5c4e4f5fe0716d0"
+        },
+        "3_LayerNorm/config.json": {
+          "bytes": 24,
+          "sha256": "f3d06c06d736484f4a308c6e27a057c500c109cb372e9a0702bce14afa3952f1"
+        },
+        "3_LayerNorm/model.safetensors": {
+          "bytes": 4248,
+          "sha256": "3906f4be69408f4f370c7bfdc2de6ef825d4d1f4da4f01221d831336c0e3a91a"
+        },
+        "4_Dense/config.json": {
+          "bytes": 213,
+          "sha256": "0025e3b35cee1a6508f38e90524450075319b0b8cc0c34d4dfcbf56af5ca9ba0"
+        },
+        "4_Dense/model.safetensors": {
+          "bytes": 2196,
+          "sha256": "1a391820f020c8fc3efb1da894e1719cfdfb8a6c73d214f34f5b1802bac8b9dd"
+        },
+        "README.md": {
+          "bytes": 66854,
+          "sha256": "bdcf7a39e16bd06e5e934dc1545dbef7fd6806b8f1fbed2e5e813ade25885777"
+        },
+        "config.json": {
+          "bytes": 1946,
+          "sha256": "de2d1d2f63fea40e28850f4b678c8e026ef399a72fbba2b157b391378e48f81a"
+        },
+        "config_sentence_transformers.json": {
+          "bytes": 257,
+          "sha256": "58704a86e4fe20f511de172ce623498c68991abfa7b330740d642d8e049affb7"
+        },
+        "modules.json": {
+          "bytes": 678,
+          "sha256": "d8394ab6c24cb0fb80229dafb886fac022ff489e757e3e6ed7d69603d5ae5942"
+        },
+        "onnx/model.onnx": {
+          "bytes": 272978775,
+          "sha256": "95505bbc6a95f9bdfad71e55998fec30c5cc0be490e921cbd796d2dbf0243f2f"
+        },
+        "sentence_bert_config.json": {
+          "bytes": 241,
+          "sha256": "3084164002c0bca01b0259c5327123803fce32e660a57feb93184ffead186fc8"
+        },
+        "tokenizer.json": {
+          "bytes": 3583327,
+          "sha256": "28c5e078e4c52aa37cf0e6de1a212878f3dbd58dd1c70466298efe0b6b86db35"
+        },
+        "tokenizer_config.json": {
+          "bytes": 488,
+          "sha256": "2b85302525d8c528a9e1fbaea2733472bd00d4755eae881441c8c52b90e2d600"
+        }
+      }
+    },
+    "runtime": {
+      "cpu_arena": true,
+      "device": "cpu",
+      "engine": "rust",
+      "inter_threads": 1,
+      "ken_models": "0.18.0",
+      "native_core": {
+        "api": 25,
+        "arch": "aarch64",
+        "bytes": 19280896,
+        "os": "linux",
+        "sha256": "0ebab581324d80e2975d743eabcf640ac3f8acd429ca8af656ce4f121672afde",
+        "version": "1.25.1"
+      },
+      "ort": "2.0.0-rc.14",
+      "tokenizers": "0.22.2"
+    },
+    "core_identity": {
+      "os": "linux",
+      "arch": "aarch64",
+      "version": "1.25.1",
+      "api": 25,
+      "bytes": 19280896,
+      "sha256": "0ebab581324d80e2975d743eabcf640ac3f8acd429ca8af656ce4f121672afde"
+    },
+    "stderr": "onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0\n",
+    "stderr_warning_count": 1,
+    "reference_runtime": {
+      "numpy": "2.4.4",
+      "onnxruntime": "1.25.1",
+      "onnx": "1.20.1",
+      "tokenizers": "0.22.2"
+    }
+  },
+  "case_ids": [
+    "empty-pool",
+    "empty-query",
+    "empty-document",
+    "spanish",
+    "code",
+    "unicode",
+    "emoji-nul",
+    "repeated-documents",
+    "pool10",
+    "empty-pool-then-score",
+    "batch3-remainder",
+    "pair-boundary1023",
+    "pair-boundary1024",
+    "pair-boundary1025",
+    "long-document",
+    "query-capacity-allowed",
+    "query-capacity-rejected",
+    "query-char-limit-allowed",
+    "query-char-limit-rejected",
+    "pool11-rejected",
+    "custom-budget512",
+    "custom-budget2048",
+    "pair-fits-before-and-after-truncation"
+  ],
+  "errors": [],
+  "Ettin_local_accepted": true
+}

@@ -1,0 +1,90 @@
+{
+  "format": "ken-fastembed-ownership/1",
+  "platform": "Darwin",
+  "architecture": "arm64",
+  "passed": true,
+  "errors": [],
+  "models": [
+    {
+      "model": "BAAI/bge-small-en-v1.5",
+      "directory": "00",
+      "record": {
+        "path": "ownership.json.gz",
+        "bytes": 14806,
+        "sha256": "43df905a5aab6fc22b5ccddb886783e46156f88190f2edc5a66d93e9ba565d60",
+        "raw_bytes": 66140,
+        "raw_sha256": "129557ad981440e52b75809539c64e5ee472ded3d0e73c61533ad5a01039075b"
+      },
+      "errors": []
+    },
+    {
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "directory": "01",
+      "record": {
+        "path": "ownership.json.gz",
+        "bytes": 15150,
+        "sha256": "3e1d7a621938ceb044237fd8fd53a52a655d0a9b4a7f83cad82e52eaa582c45d",
+        "raw_bytes": 66469,
+        "raw_sha256": "b03973c1ad80ca6abf5f24327b1552dfe332c588d2fe1d329273c7d484cec788"
+      },
+      "errors": []
+    },
+    {
+      "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "directory": "02",
+      "record": {
+        "path": "ownership.json.gz",
+        "bytes": 13371,
+        "sha256": "57c713282c97d5a7ec0f1cb1489b2aa3b4f70aee1301d87b28585eeb0c1c1b6d",
+        "raw_bytes": 69382,
+        "raw_sha256": "bdad823230ac730b0a730a109bd185bb2eb86685ac283d5b98f88b26118bf889"
+      },
+      "errors": []
+    },
+    {
+      "model": "Qdrant/clip-ViT-B-32-text",
+      "directory": "03",
+      "record": {
+        "path": "ownership.json.gz",
+        "bytes": 34237,
+        "sha256": "5aff3345a387a43d26b7c6c0c098e2bcf9d8548b857f0f935ec4806c8023ed84",
+        "raw_bytes": 82510,
+        "raw_sha256": "e3fef9009434c5ca4f1fc799435b3ed025168a12ab671c7c4ebe9b64c4652a9f"
+      },
+      "errors": []
+    },
+    {
+      "model": "jinaai/jina-embeddings-v3",
+      "directory": "04",
+      "record": {
+        "path": "ownership.json.gz",
+        "bytes": 67755,
+        "sha256": "4ef1e19744621d9fa3a07fcd188153090a3e1117ebbabc978b2e9e342659f808",
+        "raw_bytes": 148276,
+        "raw_sha256": "2bedc8c2452d77ea542814d0168c61ebb6647da79cc53c7c7e32433ca36f75de"
+      },
+      "errors": []
+    }
+  ],
+  "FastEmbed_accepted": false,
+  "M2_accepted": false,
+  "native_sha256": "dae9a2143f1764bac44aa65590a43bde7232e70f4669db38a57406b4d8b4abc7",
+  "registry_sha256": "09afbff147e38b81ca2f18407efcaa6b2fb6873f8f9de046d9eaf6970acc20d9",
+  "producer": {
+    "engine": "rust",
+    "ken_models": "0.18.0",
+    "tokenizers": "0.22.2",
+    "ort": "2.0.0-rc.14",
+    "api": 25,
+    "source_sha256": "0e16ce7dea3b3932cb65893ca47c9f4fc23512512681b3928b560eeab40e0cd5",
+    "source_files": 39
+  },
+  "core_identity": {
+    "os": "macos",
+    "arch": "aarch64",
+    "version": "1.25.1",
+    "api": 25,
+    "bytes": 28418248,
+    "sha256": "4478626717e213a1827ab52af61d1a0ac08f9906bcb2c2ab4563124967b2948b"
+  }
+}

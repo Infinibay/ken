@@ -22,6 +22,18 @@ class PreparedNativeFastEmbed:
             raise ValueError('explicit absolute native FastEmbed paths required')
         return dict(zip(FASTEMBED_ENV,map(str,values),strict=True))
 
+def fastembed_environment(prepared:PreparedNativeFastEmbed|None=None)->dict[str,str]:
+    if prepared is not None:
+        if not isinstance(prepared,PreparedNativeFastEmbed):
+            raise ValueError('typed PreparedNativeFastEmbed input required')
+        return prepared.environment()
+    values={key:os.environ[key] for key in FASTEMBED_ENV if key in os.environ}
+    if not values:return {}
+    if set(values)!=set(FASTEMBED_ENV):
+        raise ValueError('complete explicit native FastEmbed paths required')
+    return PreparedNativeFastEmbed(*(Path(values[key]) for key in FASTEMBED_ENV)).environment()
+
+
 @dataclass(frozen=True)
 class PreparedNativeStorage:
     probe:Path

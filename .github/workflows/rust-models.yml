@@ -1,4 +1,4 @@
-name: Rust native models and storage parity
+name: Rust native models, storage and FastEmbed parity
 
 on:
   pull_request:
@@ -35,29 +35,31 @@ jobs:
           .venv/bin/python -m mypy --no-incremental > .ken/rust-migration/m2/mypy-baseline.log 2>&1
           printf '%s\n' "$?" > .ken/rust-migration/m2/mypy-baseline.exit
           exit 0
-      - name: Validate original integrity, all suites and31 native model/storage gates
+      - name: Validate original integrity, all suites and34 native model/storage/FastEmbed gates
         run: |
           native_build_args=(--cmake "$CMAKE")
           if [ "$RUNNER_OS" = 'Linux' ]; then
             native_build_args+=(--openblas-prefix "$KEN_TRANSLATION_OPENBLAS_PREFIX")
           fi
-          .venv/bin/python -m tools.rust_migration.storage_validate \
+          .venv/bin/python -m tools.rust_migration.fastembed_validate \
             --reference .ken/rust-migration/m2/reference \
             --model-probe "$KEN_MODEL_PROBE" --potion-snapshot "$KEN_POTION_SNAPSHOT" \
             --table-probe "$KEN_TABLE_PROBE" --context-probe "$KEN_CONTEXT_PROBE" \
             --context-snapshot "$KEN_CONTEXT_SNAPSHOT" --library "$KEN_ORT_LIBRARY" \
             --ettin-probe "$KEN_ETTIN_PROBE" --ettin-source "$KEN_ETTIN_SOURCE" \
-            --native "$KEN_TRANSLATION_PROBE" --source "$KEN_TRANSLATION_SOURCE" \
+            --translation-probe "$KEN_TRANSLATION_PROBE" --translation-source "$KEN_TRANSLATION_SOURCE" \
             --policy-probe "$KEN_POLICY_PROBE" --storage-probe "$KEN_STORAGE_PROBE" \
+            --fastembed-probe "$KEN_FASTEMBED_PROBE" --fastembed-sources "$KEN_FASTEMBED_SOURCES" \
+            --fastembed-registry "$KEN_FASTEMBED_REGISTRY" \
             --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
             --baseline-dir .ken/rust-migration/m2 \
             --original-manifest .ken/rust-migration/m2/reference/reference-manifest.json \
-            --out .ken/rust-migration/m2-storage/validation "${native_build_args[@]}"
+            --out .ken/rust-migration/m2-fastembed/validation "${native_build_args[@]}"
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: rust-models-${{ runner.os }}
-          path: .ken/rust-migration/m2-storage/validation/
+          path: .ken/rust-migration/m2-fastembed/validation/
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
@@ -76,7 +78,7 @@ jobs:
           path: .ken/rust-migration/m2/platforms
       - name: Require matching platform receipts
         run: |
-          uv run --no-project --python 3.12.9 --managed-python python -m tools.rust_migration.storage_validate \
+          uv run --no-project --python 3.12.9 --managed-python python -m tools.rust_migration.fastembed_validate \
             --scope matrix --platform-receipts .ken/rust-migration/m2/platforms \
             --out .ken/rust-migration/m2/matrix
       - uses: actions/upload-artifact@v7

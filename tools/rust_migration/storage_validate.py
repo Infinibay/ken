@@ -10,7 +10,7 @@ import subprocess
 from .policy_compare import differences
 from .policy_reference import policy_cases
 from .policy_validate import POLICY_GATES,POLICY_KEYS,policy_fingerprints,policy_receipt_errors,validate_policy
-from .preparation import PreparedNativeContext,PreparedNativeEttin,PreparedNativeTranslation,PreparedNativeStorage,PreparedTranslationBuild,storage_environment
+from .preparation import PreparedNativeContext,PreparedNativeEttin,PreparedNativeTranslation,PreparedNativeFastEmbed,PreparedNativeStorage,PreparedTranslationBuild,storage_environment
 from .reference import Reference
 from .storage_compare import GOLDEN,ROOT,RUNTIME,select_oracle,compare_storage
 from .storage_reference import storage_cases
@@ -106,7 +106,7 @@ def aggregate_storage(directory:Path,*,expected_fingerprints:dict|None=None)->di
 
 def validate_storage(repo:Path,reference:Reference,model_probe:Path,potion_snapshot:Path,table_probe:Path,artifact:Path,
                      context:PreparedNativeContext,ettin:PreparedNativeEttin,translation:PreparedNativeTranslation,
-                     policy_probe:Path,storage:PreparedNativeStorage,out:Path,baseline_dir:Path,original_manifest:Path)->int:
+                     policy_probe:Path,storage:PreparedNativeStorage,out:Path,baseline_dir:Path,original_manifest:Path,*,fastembed:PreparedNativeFastEmbed|None=None)->int:
     from .storage_evidence import seal_execution,execution_errors
     repo=repo.resolve();out=out.resolve();out.mkdir(parents=True,exist_ok=True)
     result={'scope':'storage-local','synthetic_fixture':False,'platform':platform.system(),'architecture':platform.machine(),
@@ -119,7 +119,7 @@ def validate_storage(repo:Path,reference:Reference,model_probe:Path,potion_snaps
         def fingerprints():return storage_fingerprints(repo,reference,artifact,context.snapshot,ettin.source,translation.source)
         before=fingerprints();result['fingerprints']=before
         validate_policy(repo,reference,model_probe,potion_snapshot,table_probe,artifact,context,ettin,translation,
-                        policy_probe,out/'base',baseline_dir,original_manifest,storage=storage)
+                        policy_probe,out/'base',baseline_dir,original_manifest,storage=storage,fastembed=fastembed)
         base=json.loads((out/'base/summary.json').read_bytes())
         result.update(policy_base=base,gates=dict(base.get('gates',{})),rustc=base.get('rustc'))
         if base.get('execution_error'):result['execution_error']=base['execution_error']

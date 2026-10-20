@@ -1,0 +1,94 @@
+{
+  "format": "ken-static-parity/1",
+  "passed": true,
+  "errors": [],
+  "platform": "Darwin",
+  "architecture": "arm64",
+  "native_children": [],
+  "outside_checkout": true,
+  "M2_accepted": false,
+  "case_ids": [
+    "empty",
+    "spaces",
+    "spanish",
+    "nfc",
+    "nfd",
+    "emoji",
+    "code",
+    "unknown",
+    "pad",
+    "tokens-511",
+    "tokens-512",
+    "tokens-513",
+    "mixed-empty",
+    "empty-batch",
+    "cache-history",
+    "unicode-prefix",
+    "batch-1024",
+    "batch-1025"
+  ],
+  "cases_sha256": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
+  "native_sha256": "e2f65db64cb73479fbb07a8671d9614bee93d17050872681c2c42bd2c789d677",
+  "dependency_audit": {
+    "passed": true,
+    "linked_exit": 0,
+    "tree_exit": 0,
+    "linked_sha256": "a47e4e2d1655535619ae9e5f762b1c5abbd57465aeb7d70911faafa2072d7d30",
+    "tree_sha256": "916c41ba61efaf7e650b0914da9f8a2420b0ce6a4fa6e6c5b175edc875b644cd"
+  },
+  "native_wall_ns": 1750084500,
+  "native_exit": 0,
+  "assets_fingerprint": "358803c97ebfa214e3cc325cfb1c8d0e4ceaf38d060676a7c2e40f9204c1589e",
+  "compatible_identity": {
+    "model_id": "minishlab/potion-code-16M-v2",
+    "hf_revision": "e9d2a44ca6a05ac6685f3b23709ea57eb7352d5b",
+    "artifacts": {
+      "model.safetensors": {
+        "bytes": 32490072,
+        "sha256": "75cf7a6c2171b230ad19b1e7d8e0b1aee86da5a02af8e7cacedd9921d227623c"
+      },
+      "config.json": {
+        "bytes": 59,
+        "sha256": "148e5691a6fcc553437156859701fba017a1ba5d340b170f17e0f3668fb861a7"
+      },
+      "tokenizer.json": {
+        "bytes": 1024340,
+        "sha256": "107bbdcbad4bff1d299b7a4c3a2fb17c52890688b7dd0e4c9deab79d3c4f3d45"
+      },
+      "modules.json": {
+        "bytes": 278,
+        "sha256": "a68dcbed0429dcdd5bfdca92b0b03cc30d09122c0a3fcf4758787d4b244e45b2"
+      }
+    },
+    "dtype": "float16",
+    "dimension": 256,
+    "runtime": {
+      "numpy": "2.4.4",
+      "model2vec": "0.9.0",
+      "tokenizers": "0.22.2",
+      "safetensors": "0.8.0"
+    },
+    "pooling": "model2vec-native-mean-L2-v1",
+    "sequence_length": 512,
+    "tokenizer_policy": "no-padding-no-hidden-truncation-v1",
+    "multiprocessing": false,
+    "batch_size": 1024,
+    "device": "cpu"
+  },
+  "runtime": {
+    "device": "cpu",
+    "engine": "rust",
+    "half": "2.7.1",
+    "ken_models": "0.18.0",
+    "safetensors": "0.8.0",
+    "target_arch": "aarch64",
+    "target_os": "macos",
+    "tokenizers": "0.22.2"
+  },
+  "reference_runtime": {
+    "numpy": "2.4.4",
+    "model2vec": "0.9.0",
+    "tokenizers": "0.22.2",
+    "safetensors": "0.8.0"
+  }
+}

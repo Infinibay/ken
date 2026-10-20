@@ -534,3 +534,61 @@ comando global, y verifica las versiones registradas antes de descargar modelos;
 la [gestión de Python de uv](https://docs.astral.sh/uv/guides/install-python/)
 documenta ese mecanismo. La configuración de CI es revisable localmente; su
 presencia no acredita que se haya ejecutado en GitHub.
+
+### FastEmbed nativo: corpus completo y propiedad de archivos
+
+El encoder Rust prepara el modelo al primer texto no vacío. La construcción y las
+listas vacías no necesitan pesos ni runtime. El tokenizer conserva los prompts del
+nombre solicitado, los inputs I64 y el batching de256 del original. La sesión
+posee archivos privados verificados hasta después de destruir el runtime; una
+preparación fallida permite corregir la fuente y volver a intentar.
+
+El [plan FastEmbed](superpowers/plans/2026-10-20-rust-m2-fastembed.md) añade tres
+controles a los31 anteriores: release recién compilado, paridad de30modelos/300casos
+y propiedad con fallo real, reparación y retirada de fuentes copiadas en cinco
+familias. Los vectores F32 finitos se comparan con el original de la misma
+plataforma a1e-6absoluto+1e-6relativo. El error original del modelo alemán FP16 se
+conserva como error observado y delimitado; no se fabrican vectores. No se afirma
+paridad numérica GPU ni identidad de vectores entre sistemas operativos.
+
+Prepare los tres parámetros explícitos, además de los anteriores. `SOURCES`
+contiene `<model_id con / reemplazado por -->/<revision>/` para cada fuente del
+catálogo registrado. Los archivos de origen pueden ser symlinks de una caché;
+los archivos privados del encoder son independientes. La preparación de CI
+descarga y verifica todas las fuentes declaradas antes de medir.
+
+```sh
+export CARGO_INCREMENTAL=0
+export KEN_FASTEMBED_PROBE="$PWD/target/release/examples/fastembed_probe"
+export KEN_FASTEMBED_SOURCES=/ruta/absoluta/a/las/fuentes
+export KEN_FASTEMBED_REGISTRY="$PWD/crates/ken-models/resources/fastembed-catalog.json"
+cargo build --release --locked -p ken-cli -p ken-models -p ken-store --bins --examples
+cargo test --locked --workspace --all-targets --no-run
+.venv/bin/python -m tools.rust_migration.fastembed_validate \
+  --reference .ken/rust-migration/m0-m1/reference \
+  --model-probe "$KEN_MODEL_PROBE" --potion-snapshot "$KEN_POTION_SNAPSHOT" \
+  --table-probe "$KEN_TABLE_PROBE" \
+  --artifact src/ken/embedder/data/ken__static-qwen3-r512-v2.npz \
+  --context-probe "$KEN_CONTEXT_PROBE" --context-snapshot "$KEN_CONTEXT_SNAPSHOT" \
+  --library "$KEN_ORT_LIBRARY" \
+  --ettin-probe "$KEN_ETTIN_PROBE" --ettin-source "$KEN_ETTIN_SOURCE" \
+  --translation-probe "$KEN_TRANSLATION_PROBE" --translation-source "$KEN_TRANSLATION_SOURCE" \
+  --policy-probe "$KEN_POLICY_PROBE" --storage-probe "$KEN_STORAGE_PROBE" \
+  --fastembed-probe "$KEN_FASTEMBED_PROBE" --fastembed-sources "$KEN_FASTEMBED_SOURCES" \
+  --fastembed-registry "$KEN_FASTEMBED_REGISTRY" \
+  --baseline-dir .ken/rust-migration/m0-m1 \
+  --original-manifest docs/validation/rust-migration-2026-10-18/baseline.json \
+  --out .ken/rust-migration/m2-fastembed/validation "${native_build_args[@]}"
+.venv/bin/python -m tools.rust_migration.fastembed_validate --scope matrix \
+  --platform-receipts /ruta/a/recibos-linux-y-macos \
+  --out .ken/rust-migration/m2-fastembed/matrix
+```
+
+La matriz exige34controles y33huellas actuales en Darwin arm64 y Linux aarch64.
+Autentica una sola vez el árbol de ejecución completo y usa los mismos bytes
+para verificar los manifiestos anidados, descomprimir registros limitados a16MiB
+y repetir las comparaciones semánticas de vectores, inputs, fuentes y propiedad.
+Los resúmenes guardan referencias y medidas; stdout y stderr completos permanecen
+en registros gzip autenticados. Una fixture sintética no puede acreditar la matriz.
+`FastEmbed_accepted` y `Storage_accepted` corresponden a esos subsistemas;
+`M2_accepted` permanece falso hasta completar los modelos e integraciones restantes.

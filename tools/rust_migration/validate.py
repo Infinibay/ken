@@ -21,7 +21,7 @@ from .inventory import audit_ownership
 from .measure import benchmark,summarize_samples
 from .receipts import REQUIRED_GATES,aggregate_platforms,assess_gates,assess_parity,compare_python
 from .reference import Reference,reference_env,verify_reference,_files
-from .preparation import PreparedNativeStorage,storage_environment
+from .preparation import PreparedNativeFastEmbed,fastembed_environment,PreparedNativeStorage,storage_environment
 from .preparation import PreparedNativeContext,PreparedNativeEttin,PreparedNativeTranslation,TRANSLATION_BUILD_ENV,context_environment,ettin_environment,translation_environment,policy_environment
 
 def _write(path: Path,data: dict) -> None:
@@ -129,7 +129,7 @@ def _runtime(repo,reference,native,env,output,trace_exec):
     if system=="Linux" and trace.get("passed") is not True: errors.append("Linux exec trace missing or failed")
     return {"ran":True,"passed":not errors,"details":{"errors":errors,"dependency_audit":linked,"cargo_tree":tree,"copied_binary":True,"path_contains_python":False}},trace
 
-def _validation_environment(reference: Reference, repo: Path, output: Path, native: Path,*,context:PreparedNativeContext|None=None,ettin:PreparedNativeEttin|None=None,translation:PreparedNativeTranslation|None=None,policy_probe:Path|None=None,storage:PreparedNativeStorage|None=None) -> dict:
+def _validation_environment(reference: Reference, repo: Path, output: Path, native: Path,*,context:PreparedNativeContext|None=None,ettin:PreparedNativeEttin|None=None,translation:PreparedNativeTranslation|None=None,policy_probe:Path|None=None,storage:PreparedNativeStorage|None=None,fastembed:PreparedNativeFastEmbed|None=None) -> dict:
     env=reference_env(reference,output/"environment")
     env["PYTHONPATH"]=os.pathsep.join([str(repo/"src"),str(repo)])
     env.pop("CARGO_TARGET_DIR",None);env.pop("CARGO_BUILD_TARGET",None)
@@ -142,9 +142,10 @@ def _validation_environment(reference: Reference, repo: Path, output: Path, nati
     env.update(translation_environment(translation))
     env.update(policy_environment(policy_probe))
     env.update(storage_environment(storage))
+    env.update(fastembed_environment(fastembed))
     return env
 
-def run(repo: Path,reference: Reference,native: Path,output: Path,scope: str="local",platform_receipts: Path|None=None,trace_exec: bool=False,*,original_manifest: Path|None=None,baseline_dir: Path|None=None,policy_probe:Path|None=None,storage:PreparedNativeStorage|None=None) -> int:
+def run(repo: Path,reference: Reference,native: Path,output: Path,scope: str="local",platform_receipts: Path|None=None,trace_exec: bool=False,*,original_manifest: Path|None=None,baseline_dir: Path|None=None,policy_probe:Path|None=None,storage:PreparedNativeStorage|None=None,fastembed:PreparedNativeFastEmbed|None=None) -> int:
     repo=repo.resolve();output=output.resolve();output.mkdir(parents=True,exist_ok=True)
     _write(output/"summary.json",{"scope":scope,"passed":False,"status":"running"})
     if scope=="matrix":
@@ -164,7 +165,7 @@ def run(repo: Path,reference: Reference,native: Path,output: Path,scope: str="lo
     if not gates["originals"]["passed"] or not gates["reference"]["passed"]: return finish()
     try:
         native=native.resolve();before=_fingerprints(repo,reference,cases);summary["fingerprints"]=before
-        env=_validation_environment(reference,repo,output,native,policy_probe=policy_probe,storage=storage)
+        env=_validation_environment(reference,repo,output,native,policy_probe=policy_probe,storage=storage,fastembed=fastembed)
         py=[str(reference.python),"-m"]
         gates["toolchain"]=_command(repo,env,output,"rust-toolchain",["rustc","--version","--verbose"])
         summary["rustc"]=_rustc_version(output/"rust-toolchain.log") if gates["toolchain"].get("ran") else ""

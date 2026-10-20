@@ -11,7 +11,7 @@ import subprocess
 from .compare import _differences
 from .ettin_reference import ettin_cases, source_state
 from .ettin_validate import ETTIN_KEYS, ETTIN_GATES, ettin_fingerprints, ettin_receipt_errors, validate_ettin
-from .preparation import PreparedNativeStorage,storage_environment
+from .preparation import PreparedNativeFastEmbed,fastembed_environment,PreparedNativeStorage,storage_environment
 from .preparation import PreparedNativeContext, PreparedNativeEttin, PreparedNativeTranslation, PreparedTranslationBuild, translation_environment
 from .reference import Reference
 from .table_validate import _binding_matches
@@ -113,7 +113,7 @@ def _build_inputs(translation:PreparedNativeTranslation)->PreparedTranslationBui
 
 def validate_translation(repo:Path,reference:Reference,model_probe:Path,potion_snapshot:Path,table_probe:Path,artifact:Path,
                          context:PreparedNativeContext,ettin:PreparedNativeEttin,translation:PreparedNativeTranslation,
-                         out:Path,baseline_dir:Path,original_manifest:Path,*,policy_probe:Path|None=None,storage:PreparedNativeStorage|None=None)->int:
+                         out:Path,baseline_dir:Path,original_manifest:Path,*,policy_probe:Path|None=None,storage:PreparedNativeStorage|None=None,fastembed:PreparedNativeFastEmbed|None=None)->int:
     repo=repo.resolve();out=out.resolve();out.mkdir(parents=True,exist_ok=True)
     result={'scope':'translation-local','platform':platform.system(),'architecture':platform.machine(),
         'passed':False,'M2_accepted':False,'gates':{}}
@@ -125,7 +125,7 @@ def validate_translation(repo:Path,reference:Reference,model_probe:Path,potion_s
         def fingerprints():return translation_fingerprints(repo,reference,artifact,context.snapshot,ettin.source,translation.source)
         before=fingerprints();result['fingerprints']=before
         validate_ettin(repo,reference,model_probe,potion_snapshot,table_probe,artifact,context,ettin,out/'base',
-            baseline_dir,original_manifest,translation=translation,policy_probe=policy_probe,storage=storage)
+            baseline_dir,original_manifest,translation=translation,policy_probe=policy_probe,storage=storage,fastembed=fastembed)
         base=json.loads((out/'base/summary.json').read_text())
         result.update(ettin_base=base,gates=dict(base.get('gates',{})),rustc=base.get('rustc'))
         if base.get('execution_error'):result['execution_error']=base['execution_error']
