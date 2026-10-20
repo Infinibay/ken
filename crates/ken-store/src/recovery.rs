@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     fs::{self, File},
     io::Write,
-    os::unix::fs::MetadataExt,
+    os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt},
     path::{Path, PathBuf},
 };
 
@@ -135,7 +135,46 @@ fn remove_owned(path: &Path, expected: Identity, id: Option<&str>) -> StoreResul
     if let Some(id) = id {
         owner(path, id)?;
     }
-    fs::remove_dir_all(path).map_err(|e| StoreError::io(path, e))
+    match fs::remove_dir_all(path) {
+        Ok(()) => Ok(()),
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => {
+            // Unmanaged directories retain their original permissions in both
+            // generations. Only this validated, discarded tree may be made
+            // writable; never change the published tree or follow its symlinks.
+            if identity(path)? != Some(expected) {
+                return Err(invalid(path, "generation identity changed before cleanup"));
+            }
+            writable_directories(path)?;
+            fs::remove_dir_all(path).map_err(|e| StoreError::io(path, e))
+        }
+        Err(e) => Err(StoreError::io(path, e)),
+    }
+}
+
+fn writable_directories(path: &Path) -> StoreResult<()> {
+    let directory = fs::OpenOptions::new()
+        .read(true)
+        .custom_flags(libc::O_DIRECTORY | libc::O_NOFOLLOW)
+        .open(path)
+        .map_err(|e| StoreError::io(path, e))?;
+    let permissions = directory
+        .metadata()
+        .map_err(|e| StoreError::io(path, e))?
+        .permissions();
+    directory
+        .set_permissions(fs::Permissions::from_mode(permissions.mode() | 0o700))
+        .map_err(|e| StoreError::io(path, e))?;
+    for entry in fs::read_dir(path).map_err(|e| StoreError::io(path, e))? {
+        let entry = entry.map_err(|e| StoreError::io(path, e))?;
+        if entry
+            .file_type()
+            .map_err(|e| StoreError::io(&entry.path(), e))?
+            .is_dir()
+        {
+            writable_directories(&entry.path())?;
+        }
+    }
+    Ok(())
 }
 
 pub(crate) struct Publication {

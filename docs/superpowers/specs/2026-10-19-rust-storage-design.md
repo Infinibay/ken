@@ -174,6 +174,10 @@ el diario externo, conservando los inodos ya acreditados. Esa fase permite
 reanudar una eliminación parcial aunque haya desaparecido su recibo interno;
 no autoriza eliminar una generación comprometida ni otra carpeta que ocupe su
 ruta. Cada subdirectorio ajeno conserva sus permisos originales al copiarse.
+Si sus permisos impiden borrar una generación descartada ya acreditada, la
+limpieza puede habilitar permisos de propietario únicamente en los directorios
+reales de esa generación. No sigue enlaces simbólicos ni modifica los permisos
+de la generación conservada. Esto también aplica al reanudar tras SIGKILL.
 
 ## Pruebas y aceptación
 

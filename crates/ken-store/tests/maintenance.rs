@@ -21,6 +21,61 @@ fn blob(values: &[f32]) -> Vec<u8> {
 }
 
 #[test]
+fn compaction_cleans_readonly_backups_without_changing_live_or_symlink_targets() {
+    // Catches a committed compaction making every subsequent project open fail.
+    let (root, mut project) = fixture();
+    let external = root.path().join("external");
+    let private = root.path().join(".ken/vectors/private");
+    std::fs::create_dir_all(&private).unwrap();
+    std::fs::create_dir(&external).unwrap();
+    std::fs::write(private.join("data"), "keep private").unwrap();
+    std::fs::write(external.join("data"), "keep external").unwrap();
+    std::os::unix::fs::symlink(&external, private.join("link")).unwrap();
+    for path in [&private, &external] {
+        std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o500)).unwrap();
+    }
+    let result = compact(&mut project, 2, |_| {});
+    drop(project);
+    let context = DiscoveryContext {
+        cwd: root.path().into(),
+        forced_root: None,
+        home: None,
+    };
+    let reopened = ProjectStore::open(&ProjectPaths::at(root.path(), &context).unwrap());
+    let private_mode = std::fs::metadata(&private).unwrap().mode() & 0o777;
+    let external_mode = std::fs::metadata(&external).unwrap().mode() & 0o777;
+    let contents = std::fs::read_to_string(private.join("data")).unwrap();
+    let external_contents = std::fs::read_to_string(external.join("data")).unwrap();
+    let link = std::fs::read_link(private.join("link")).unwrap();
+    // Restore fixture permissions even on the pre-fix failure path.
+    std::fs::set_permissions(&external, std::fs::Permissions::from_mode(0o700)).unwrap();
+    for entry in std::fs::read_dir(root.path().join(".ken")).unwrap() {
+        let candidate = entry.unwrap().path().join("private");
+        if candidate.is_dir() {
+            std::fs::set_permissions(candidate, std::fs::Permissions::from_mode(0o700)).unwrap();
+        }
+    }
+    result.unwrap();
+    reopened.unwrap();
+    assert_eq!((private_mode, external_mode), (0o500, 0o500));
+    assert_eq!(contents, "keep private");
+    assert_eq!(external_contents, "keep external");
+    assert_eq!(link, external);
+    assert!(!root.path().join(".ken/vectors-maintenance.json").exists());
+    assert!(
+        std::fs::read_dir(root.path().join(".ken"))
+            .unwrap()
+            .all(|entry| {
+                !entry
+                    .unwrap()
+                    .file_name()
+                    .to_string_lossy()
+                    .starts_with(".vectors-")
+            })
+    );
+}
+
+#[test]
 fn compaction_preserves_nested_private_directory_permissions() {
     // Catches disclosure through a recreated parent with broader permissions.
     if std::env::var_os("KEN_PRIVATE_DIRECTORY_CHILD").is_none() {

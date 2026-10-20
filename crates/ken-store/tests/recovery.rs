@@ -168,6 +168,7 @@ fn killed_inline_migration_keeps_committed_batches_and_resumes() {
 #[test]
 fn killed_compaction_recovers_before_project_data_is_exposed() {
     // Catches any DB/file generation hybrid at each real publication/commit boundary.
+    use std::os::unix::fs::PermissionsExt;
     for phase in [
         "journal_published",
         "backup_renamed",
@@ -176,10 +177,19 @@ fn killed_compaction_recovers_before_project_data_is_exposed() {
     ] {
         let root = tempfile::tempdir().unwrap();
         seed(root.path());
+        let private = root.path().join(".ken/vectors/private");
+        std::fs::create_dir(&private).unwrap();
+        std::fs::write(private.join("data"), "readonly contents").unwrap();
+        std::fs::set_permissions(&private, std::fs::Permissions::from_mode(0o500)).unwrap();
         std::fs::write(root.path().join(".ken/foreign-sentinel"), "keep").unwrap();
         kill_at(root.path(), phase);
         let actual = reopen_process(root.path());
         assert_eq!(reopen_process(root.path()), actual);
+        let private_mode = std::fs::metadata(&private).unwrap().permissions().mode() & 0o777;
+        let private_contents = std::fs::read_to_string(private.join("data")).unwrap();
+        std::fs::set_permissions(&private, std::fs::Permissions::from_mode(0o700)).unwrap();
+        assert_eq!(private_mode, 0o500);
+        assert_eq!(private_contents, "readonly contents");
         for space in VectorSpace::ALL {
             assert_eq!(actual[space.as_str()]["rows"], json!([[1., 0.], [0., 1.]]));
             let expected = if phase == "database_committed" {
