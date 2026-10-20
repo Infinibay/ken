@@ -4,9 +4,9 @@ use sha2::{Digest, Sha256};
 use std::{collections::BTreeMap, fmt, path::Path};
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
-struct Artifact {
-    bytes: u64,
-    sha256: String,
+pub(crate) struct Artifact {
+    pub(crate) bytes: u64,
+    pub(crate) sha256: String,
 }
 
 /// The immutable declaration of public model data, not a download client.
@@ -58,6 +58,16 @@ fn lowercase_hex(value: &str, length: usize) -> bool {
             .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
 }
 
+pub(crate) fn valid_artifact_name(name: &str) -> bool {
+    !name.starts_with('/')
+        && !name
+            .split('/')
+            .any(|part| part.is_empty() || part == "." || part == "..")
+        && name
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || b"_./-".contains(&byte))
+}
+
 impl ModelAssets {
     pub fn from_json(json: &str) -> Result<Self, ModelError> {
         let raw: Declaration = serde_json::from_str(json)?;
@@ -91,15 +101,7 @@ impl ModelAssets {
             ));
         }
         for (name, record) in &assets.artifacts {
-            if name.starts_with('/')
-                || name
-                    .split('/')
-                    .any(|p| p.is_empty() || p == "." || p == "..")
-                || !name
-                    .bytes()
-                    .all(|b| b.is_ascii_alphanumeric() || b"_./-".contains(&b))
-                || !lowercase_hex(&record.sha256, 64)
-            {
+            if !valid_artifact_name(name) || !lowercase_hex(&record.sha256, 64) {
                 return Err(ModelError::Registration(format!("invalid artifact {name}")));
             }
         }
@@ -121,6 +123,17 @@ impl ModelAssets {
             ));
         }
         self.verify_artifacts(snapshot)
+    }
+
+    pub fn verify_files(
+        &self,
+        source: &crate::ModelFileSource,
+    ) -> Result<crate::VerifiedModelFiles, ModelError> {
+        crate::file_assets::verify(self, source)
+    }
+
+    pub(crate) fn artifact_records(&self) -> &BTreeMap<String, Artifact> {
+        &self.artifacts
     }
 
     /// Derived caches have caller-chosen names, unlike upstream HF snapshots.

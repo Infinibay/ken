@@ -2,9 +2,11 @@
 mod assets;
 mod context_encoder;
 mod context_model;
+mod file_assets;
 mod model2vec;
 pub mod model_policy;
 mod native_onnx;
+mod onnx_dependencies;
 mod onnx_reranker;
 mod onnx_wire;
 mod published_head;
@@ -26,8 +28,10 @@ mod verified_file;
 pub use assets::{ModelAssets, VerifiedSnapshot};
 pub use context_encoder::{ContextEncoder, ContextInput, ContextTokens};
 pub use context_model::ContextModel;
+pub use file_assets::{ModelFileSource, VerifiedModelFiles};
 pub use model2vec::Model2VecEncoder;
 pub use native_onnx::{NativeOnnxRuntime, RuntimeIdentity};
+pub use onnx_dependencies::verify_onnx_dependencies;
 pub use onnx_reranker::{
     OnnxReranker, RerankDetails, RerankOptions, RerankSessionPolicy, ScoredPool,
 };

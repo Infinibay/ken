@@ -53,6 +53,7 @@ ModelFileSource::new(snapshot: &Path, private_parent: &Path) -> Result<Self, Mod
 ModelAssets::verify_files(&self, source: &ModelFileSource) -> Result<VerifiedModelFiles, ModelError>;
 VerifiedModelFiles::fingerprint(&self) -> &str;
 VerifiedModelFiles::read(&self, name: &str) -> Result<Vec<u8>, ModelError>;
+verify_onnx_dependencies(graph_name: &str, files: &VerifiedModelFiles) -> Result<(), ModelError>;
 // Its registered artifact path accessor stays crate-private for native loading.
 FastEmbedModel::from_json(json: &str) -> Result<Self, ModelError>;
 FastEmbedModel::dim(&self) -> usize;

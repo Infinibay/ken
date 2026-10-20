@@ -1,0 +1,56 @@
+   Compiling ken-models v0.18.0 (/Users/andres/Projects/ken/crates/ken-models)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.11s
+     Running unittests src/lib.rs (.ken/rust-migration/m2-translation/source-t4a/target/debug/deps/ken_models-596576d3c4202677)
+
+running 4 tests
+test verified_file::tests::an_interrupted_regular_file_read_is_retried ... ok
+test file_assets::tests::interrupted_real_copy_cleans_staging_before_publishing ... ok
+test python_unicode::tests::whole_scalar_contract_matches_independent_python_unicode15_digest ... ok
+test query_expansion::tests::actual_native_core_matches_all_pre_product_original_raw_histories ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.70s
+
+     Running tests/assets.rs (.ken/rust-migration/m2-translation/source-t4a/target/debug/deps/assets-9817aa2a42628f3b)
+
+running 8 tests
+test fifo_verification_child ... ok
+test fingerprint_matches_python_ascii_sorted_identity ... ok
+test rejects_ambiguous_or_unsafe_registrations ... ok
+test rejects_nonregular_device_even_when_size_and_hash_match ... ok
+test maximal_declared_size_returns_error_without_allocation ... ok
+test accepts_huggingface_blob_symlinks ... ok
+test verified_snapshot_owns_the_accredited_bytes ... ok
+test fifo_artifact_verification_does_not_wait_for_a_writer ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/file_assets.rs (.ken/rust-migration/m2-translation/source-t4a/target/debug/deps/file_assets-ca29f307d29806ef)
+
+running 7 tests
+test fifo_copy_child ... ok
+
+running 1 test
+test explicit_absolute_paths_and_registered_revision_are_required ... ok
+test device_source_is_rejected_even_for_empty_matching_bytes ... ok
+test fifo_copy_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.01s
+
+test source_blob_symlinks_are_copied_as_independent_regular_files ... ok
+test private_copy_survives_source_replacement_and_drops_its_files ... ok
+test fifo_copy_does_not_wait_for_a_writer ... ok
+test failed_partial_copy_does_not_publish_or_leave_a_directory ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/onnx_dependencies.rs (.ken/rust-migration/m2-translation/source-t4a/target/debug/deps/onnx_dependencies-6419bdc11e962c72)
+
+running 5 tests
+test registered_graph_relative_file_ranges_are_validated ... ok
+test nested_external_references_cannot_escape_owned_artifacts ... ok
+test ambiguous_external_metadata_and_invalid_ranges_are_rejected ... ok
+test every_tensor_carrier_is_audited ... ok
+test malformed_wire_and_structural_budgets_are_rejected ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.74s
+

@@ -1,5 +1,6 @@
 //! Bounded protobuf fields; untouched ONNX payloads keep their original bytes.
 use crate::ModelError;
+use std::io::{Read, Seek, SeekFrom};
 
 fn invalid(message: &str) -> ModelError {
     ModelError::Weights(format!("ONNX wire: {message}"))
@@ -14,12 +15,19 @@ pub(crate) struct Field<'a> {
 }
 
 fn read_varint(bytes: &[u8], position: &mut usize) -> Result<u64, ModelError> {
-    let mut value = 0;
-    for index in 0..10 {
+    decode_varint(|| {
         let byte = *bytes
             .get(*position)
             .ok_or_else(|| invalid("truncated varint"))?;
         *position += 1;
+        Ok(byte)
+    })
+}
+
+fn decode_varint(mut next: impl FnMut() -> Result<u8, ModelError>) -> Result<u64, ModelError> {
+    let mut value = 0;
+    for index in 0..10 {
+        let byte = next()?;
         if index == 9 && byte > 1 {
             return Err(invalid("overflowing varint"));
         }
@@ -31,6 +39,134 @@ fn read_varint(bytes: &[u8], position: &mut usize) -> Result<u64, ModelError> {
     Err(invalid("overlong varint"))
 }
 
+fn field_key(key: u64) -> Result<(u32, u8), ModelError> {
+    let tag = u32::try_from(key >> 3).map_err(|_| invalid("invalid field number"))?;
+    if tag == 0 || tag > 0x1fff_ffff {
+        return Err(invalid("invalid field number"));
+    }
+    Ok((tag, (key & 7) as u8))
+}
+
+#[derive(Clone, Copy)]
+pub(crate) struct StreamField {
+    pub tag: u32,
+    pub wire: u8,
+    pub start: u64,
+    pub end: u64,
+    pub number: Option<u64>,
+}
+
+/// Keeps its own position, so bounded field traversal does not seek per byte.
+pub(crate) struct Stream<R> {
+    source: R,
+    position: u64,
+    length: u64,
+    fields: usize,
+}
+
+impl<R: Read + Seek> Stream<R> {
+    pub fn new(source: R, length: u64) -> Self {
+        Self {
+            source,
+            position: 0,
+            length,
+            fields: 0,
+        }
+    }
+
+    fn byte(&mut self, end: u64) -> Result<u8, ModelError> {
+        if self.position >= end {
+            return Err(invalid("truncated varint"));
+        }
+        let mut byte = [0];
+        self.source
+            .read_exact(&mut byte)
+            .map_err(|error| invalid(&error.to_string()))?;
+        self.position += 1;
+        Ok(byte[0])
+    }
+
+    fn number(&mut self, end: u64) -> Result<u64, ModelError> {
+        decode_varint(|| self.byte(end))
+    }
+
+    pub fn field(&mut self, end: u64) -> Result<Option<StreamField>, ModelError> {
+        if end > self.length || self.position > end {
+            return Err(invalid("invalid message range"));
+        }
+        if self.position == end {
+            return Ok(None);
+        }
+        if self.fields >= 1_000_000 {
+            return Err(invalid("message field budget exceeded"));
+        }
+        self.fields += 1;
+        let key = self.number(end)?;
+        let (tag, wire) = field_key(key)?;
+        let mut field = StreamField {
+            tag,
+            wire,
+            start: self.position,
+            end: self.position,
+            number: None,
+        };
+        match wire {
+            0 => {
+                field.number = Some(self.number(end)?);
+                field.end = self.position;
+            }
+            1 | 5 => {
+                field.end = self
+                    .position
+                    .checked_add(if wire == 1 { 8 } else { 4 })
+                    .ok_or_else(|| invalid("offset overflow"))?;
+            }
+            2 => {
+                let length = self.number(end)?;
+                field.start = self.position;
+                field.end = self
+                    .position
+                    .checked_add(length)
+                    .ok_or_else(|| invalid("offset overflow"))?;
+            }
+            _ => return Err(invalid("unsupported group or wire type")),
+        }
+        if field.end > end {
+            return Err(invalid("truncated payload"));
+        }
+        Ok(Some(field))
+    }
+
+    pub fn skip(&mut self, end: u64) -> Result<(), ModelError> {
+        if end < self.position || end > self.length {
+            return Err(invalid("invalid field range"));
+        }
+        if end != self.position {
+            self.source
+                .seek(SeekFrom::Start(end))
+                .map_err(|error| invalid(&error.to_string()))?;
+            self.position = end;
+        }
+        Ok(())
+    }
+
+    pub fn text(&mut self, field: StreamField) -> Result<String, ModelError> {
+        if field.wire != 2 || self.position != field.start {
+            return Err(invalid("string field required"));
+        }
+        let length = field.end - field.start;
+        if length > 4096 {
+            return Err(invalid("external metadata string budget exceeded"));
+        }
+        let mut bytes = vec![0; length as usize];
+        self.source
+            .read_exact(&mut bytes)
+            .map_err(|error| invalid(&error.to_string()))?;
+        self.position = field.end;
+        String::from_utf8(bytes).map_err(|_| invalid("invalid UTF8 name"))
+    }
+}
+
 pub(crate) fn fields(bytes: &[u8]) -> Result<Vec<Field<'_>>, ModelError> {
     let mut result = Vec::new();
     let mut position = 0;
@@ -40,11 +176,7 @@ pub(crate) fn fields(bytes: &[u8]) -> Result<Vec<Field<'_>>, ModelError> {
         }
         let start = position;
         let key = read_varint(bytes, &mut position)?;
-        let tag = u32::try_from(key >> 3).map_err(|_| invalid("invalid field number"))?;
-        if tag == 0 || tag > 0x1fff_ffff {
-            return Err(invalid("invalid field number"));
-        }
-        let wire = (key & 7) as u8;
+        let (tag, wire) = field_key(key)?;
         let begin;
         match wire {
             0 => {

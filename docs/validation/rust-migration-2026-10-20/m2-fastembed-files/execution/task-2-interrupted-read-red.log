@@ -1,0 +1,22 @@
+   Compiling ken-models v0.18.0 (/Users/andres/Projects/ken/crates/ken-models)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.48s
+     Running unittests src/lib.rs (.ken/rust-migration/m2-translation/source-t4a/target/debug/deps/ken_models-596576d3c4202677)
+
+running 1 test
+test verified_file::tests::an_interrupted_regular_file_read_is_retried ... FAILED
+
+failures:
+
+---- verified_file::tests::an_interrupted_regular_file_read_is_retried stdout ----
+
+thread 'verified_file::tests::an_interrupted_regular_file_read_is_retried' (11231777) panicked at crates/ken-models/src/verified_file.rs:115:94:
+called `Result::unwrap()` on an `Err` value: Io(Kind(Interrupted))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    verified_file::tests::an_interrupted_regular_file_read_is_retried
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p ken-models --lib`
