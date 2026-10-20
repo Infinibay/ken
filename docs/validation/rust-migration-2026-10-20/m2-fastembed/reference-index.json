@@ -1,0 +1,36 @@
+{
+  "original_source_sha256": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
+  "original_source_files": 475,
+  "format": "ken-fastembed-reference-index/1",
+  "registry_sha256": "09afbff147e38b81ca2f18407efcaa6b2fb6873f8f9de046d9eaf6970acc20d9",
+  "cases_sha256": "8a5dd4ef1c39a16250cf6241adb02a05b366a3badbf3ed012b180c4ee62a9926",
+  "platforms": [
+    {
+      "platform": "Darwin",
+      "architecture": "arm64",
+      "directory": "reference-macos",
+      "index_sha256": "ca0a4a92c79b7e394e7beaf33952495034247ff8034a99369eacfcfa59c10c6e",
+      "files_sha256": "16498e48b91fec345234588b3584c0dd64aadb68c6915cf01f0285cfeb37ff62",
+      "models": 30,
+      "cases": 300,
+      "failed_cases": 8,
+      "vector_rows": 15660,
+      "tokenizers": 29
+    },
+    {
+      "platform": "Linux",
+      "architecture": "aarch64",
+      "directory": "reference-linux",
+      "index_sha256": "754bb5610ba91c520e5dbd8e45b2ed954dca1dafd7782d16740552fd6094b59b",
+      "files_sha256": "5fe2eafff1b3c4b1cd51972025ff31dc16ca2f1548b1a3514f34ca9613b90166",
+      "models": 30,
+      "cases": 300,
+      "failed_cases": 8,
+      "vector_rows": 15660,
+      "tokenizers": 29
+    }
+  ],
+  "native_acceptance": false,
+  "M2_accepted": false,
+  "timing_scope": "record.process_wall_ns is the controller capture span including sandbox, child, output validation and post-execution artifact hashing; per-case elapsed_ns surrounds original embed call"
+}

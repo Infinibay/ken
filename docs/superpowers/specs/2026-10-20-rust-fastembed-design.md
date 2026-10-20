@@ -94,6 +94,35 @@ let vectors = encoder.embed_queries(&["Read a stored setting by key"])?;
 
 Las firmas y archivos exactos se fijan en el plan antes de implementación.
 
+### Fallo previo observado durante T1
+
+El original real no puede iniciar en CPU el registro
+`jinaai/jina-embeddings-v2-base-de`, revisión
+`3f9eede875721714945b6a99a3198299243cf2be`, grafo
+`onnx/model_fp16.onnx`, SHA-256
+`e039ce538df36cb7ecee6bb88aacf0699227277be769a8e9adb5da719d23c571`.
+Dos intentos sin hooks de sesión/inferencia en cada plataforma reprodujeron
+`onnxruntime.capi.onnxruntime_pybind11_state.Fail`: `GetIndexFromName`
+encuentra una referencia `InsertedPrecisionFreeCast_` inexistente en
+`SimplifiedLayerNormFusion`. Sólo se adaptó la ubicación local/offline; hilos,
+optimizaciones y código original permanecieron intactos. La causa interna de
+esa inconsistencia del optimizador no está demostrada.
+
+Esta observación corrige la premisa de que los 30 registros producen vectores
+CPU en el original acreditado. Se ejercitan los 30 y sus 300 casos: los casos
+no vacíos de ese único registro deben conservar el error de inicialización y
+estado desconocido/reintentable, sin campos de vectores o formas inventados.
+El corpus conserva el error y traceback completos, cada intento de sesión,
+hash del grafo y plataforma. La excepción de comparación queda ligada a ese
+nombre, repositorio, revisión, grafo, hash, clase y firma específica del error;
+otro fallo sigue rechazándose. No se modifica el modelo, no se desactivan
+optimizaciones y no se sustituye su grafo para fabricar una referencia válida.
+Los casos exitosos mantienen íntegra la exigencia de paridad F32 y su tolerancia.
+El encoder nativo debe reproducir el fallo real del runtime y permitir reintento;
+los 34 controles, los casos, las aserciones y las pruebas anteriores permanecen.
+La evidencia previa queda en `.ken/rust-migration/m2-fastembed/`:
+`fp16-uninstrumented-{macos,linux}.json` y sus stderr completos.
+
 ## Artefactos y límite de propiedad
 
 Se reutiliza `ModelAssets` como autoridad de nombres relativos, revisiones,

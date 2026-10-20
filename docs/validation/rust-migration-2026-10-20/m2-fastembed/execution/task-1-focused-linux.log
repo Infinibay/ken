@@ -1,0 +1,15 @@
+
+==================================== ERRORS ====================================
+______ ERROR collecting tests/rust_migration/test_fastembed_reference.py _______
+ImportError while importing test module '/app/.ken/rust-migration/m2-fastembed/tooling/tests/rust_migration/test_fastembed_reference.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.local/share/uv/python/cpython-3.12.9-linux-aarch64-gnu/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/rust_migration/test_fastembed_reference.py:10: in <module>
+    from tools.rust_migration.fastembed_catalog import build_catalogue, describe_catalogue
+E   ModuleNotFoundError: No module named 'tools.rust_migration.fastembed_catalog'
+=========================== short test summary info ============================
+ERROR tests/rust_migration/test_fastembed_reference.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!

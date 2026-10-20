@@ -1,0 +1,5 @@
+onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+[1;31m2026-10-20 05:54:31.234241212 [E:onnxruntime:, inference_session.cc:2677 operator()] Exception during initialization: /onnxruntime_src/onnxruntime/core/graph/graph_utils.cc:29 int onnxruntime::graph_utils::GetIndexFromName(const onnxruntime::Node&, const std::string&, bool) itr != node_args.end() was false. Attempting to get index by a name which does not exist:InsertedPrecisionFreeCast_/encoder/layer.11/attention/output/LayerNorm/Constant_output_0for node: /embeddings/LayerNorm/Mul/SimplifiedLayerNormFusion/
+[m
+[1;31m2026-10-20 05:54:32.041189045 [E:onnxruntime:, inference_session.cc:2677 operator()] Exception during initialization: /onnxruntime_src/onnxruntime/core/graph/graph_utils.cc:29 int onnxruntime::graph_utils::GetIndexFromName(const onnxruntime::Node&, const std::string&, bool) itr != node_args.end() was false. Attempting to get index by a name which does not exist:InsertedPrecisionFreeCast_/encoder/layer.11/attention/output/LayerNorm/Constant_output_0for node: /embeddings/LayerNorm/Mul/SimplifiedLayerNormFusion/
+[m
