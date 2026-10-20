@@ -49,3 +49,6 @@ ejemplos y la comparación byte a byte del head ONNX anterior; fmt y Clippy de
 todo el workspace pasan. Los1.066originales mantienen sus hashes. Las primeras
 pruebas detectaron permisos0755 y propagación de Interrupted; ambos fallos
 tienen pruebas RED→GREEN conservadas en execution/.
+
+Los logs se conservan íntegros como gzip, con hash/tamaño del log original y
+del transporte. Esto preserva también los saltos finales emitidos por Cargo.
