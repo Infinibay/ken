@@ -31,7 +31,7 @@
         "--version",
         "--verbose"
       ],
-      "duration_ns": 74652417,
+      "duration_ns": 40782208,
       "artifact": "rustc.log",
       "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
     },
@@ -48,7 +48,7 @@
         "tests/test_status.py",
         "-q"
       ],
-      "duration_ns": 109375859416,
+      "duration_ns": 114614804792,
       "artifact": "python-contracts.log",
       "sha256": "b1851057fd7aad6a86f4621298b3dea93ef03f8387d45d1663e8dbd40c3fe7c9"
     },
@@ -60,11 +60,11 @@
         "/Users/andres/Projects/ken/.venv/bin/python",
         "-m",
         "pytest",
-        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/python-final.xml"
+        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/python-final.xml"
       ],
-      "duration_ns": 767010872584,
+      "duration_ns": 768989693625,
       "artifact": "python-full.log",
-      "sha256": "eb57a61725d22839e4f0873e73366eb319dd96d59ff3f9cb46d1bc052e82d346",
+      "sha256": "7bd96c4ed1c08725651db6952cdcc7dd72b682561f7cc8eb22e5bb049a56e88b",
       "details": {
         "passed": true,
         "collected": 15741,
@@ -93,7 +93,7 @@
         "mypy",
         "--no-incremental"
       ],
-      "duration_ns": 20962554833,
+      "duration_ns": 18577765458,
       "artifact": "typing.log",
       "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
       "details": {
@@ -119,7 +119,7 @@
         "--",
         "--check"
       ],
-      "duration_ns": 430613750,
+      "duration_ns": 400801916,
       "artifact": "fmt.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -137,9 +137,9 @@
         "-D",
         "warnings"
       ],
-      "duration_ns": 4756254875,
+      "duration_ns": 664162375,
       "artifact": "clippy.log",
-      "sha256": "43bb651b36e3b03cc39197c2e259da3360fd7a6c837fd7118c0f209a4aeb8231"
+      "sha256": "80a72ab0b6d57f57833fbff08eb4f1c216d4bb98fd0953be701bdd8ef1a25c8e"
     },
     "rust_tests": {
       "ran": true,
@@ -152,9 +152,9 @@
         "--workspace",
         "--all-targets"
       ],
-      "duration_ns": 343609260541,
+      "duration_ns": 325330562625,
       "artifact": "rust_tests.log",
-      "sha256": "c251927c86382452a28f4b0136c53ae3a3078f0778a00152e7be1db693a39b74"
+      "sha256": "b5729a908cec716001a658e3cb29f1ce9f49db6aa7e13568544894be25674278"
     },
     "release": {
       "ran": true,
@@ -175,13 +175,13 @@
         "--bins",
         "--message-format=json"
       ],
-      "duration_ns": 491117750,
+      "duration_ns": 489165750,
       "artifact": "release.log",
-      "sha256": "e0acbdd9374f6d0cb6391b2648c1a486545cd42cdba03378d86cec65fbb3138b",
+      "sha256": "ebe061d8e5fa34da8ac282dab9965941d4b700b0082ba35d4d39c9722897bddc",
       "native_binding": {
         "ran": true,
         "passed": true,
-        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/model_probe",
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/model_probe",
         "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
         "built_sha256": "981912b7e56591b61257d6f4780e7ef91693212c5b3a6ccd65083b1a5ad0873a",
         "supplied_sha256": "981912b7e56591b61257d6f4780e7ef91693212c5b3a6ccd65083b1a5ad0873a"
@@ -197,9 +197,9 @@
         "pytest",
         "migration_tests",
         "-q",
-        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/parity-tests.xml"
+        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/parity-tests.xml"
       ],
-      "duration_ns": 176376944334,
+      "duration_ns": 173002481250,
       "artifact": "parity-tests.log",
       "sha256": "6997ffb705c1c5fa984efec27d8164c9d96401110464c8e386ecce809f88569c"
     },
@@ -222,13 +222,13 @@
         "--reference",
         "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/reference",
         "--native",
-        "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/ken-rs",
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/ken-rs",
         "--cases",
-        "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
         "--out",
-        "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/m1-parity.json"
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/m1-parity.json"
       ],
-      "duration_ns": 19783304459,
+      "duration_ns": 19344132750,
       "artifact": "m1-parity.log",
       "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
     },
@@ -246,14 +246,14 @@
         "diff",
         "--check"
       ],
-      "duration_ns": 48545042,
+      "duration_ns": 25683958,
       "artifact": "hygiene.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "table_release": {
       "ran": true,
       "passed": true,
-      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/table_probe",
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/table_probe",
       "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
       "built_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782",
       "supplied_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782"
@@ -265,7 +265,7 @@
     "context_release": {
       "ran": true,
       "passed": true,
-      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/context_probe",
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/context_probe",
       "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
       "built_sha256": "45121c922bb10deaa2d83b6ed8fbeae47125ba7483d34b04cef65a5a2ab93234",
       "supplied_sha256": "45121c922bb10deaa2d83b6ed8fbeae47125ba7483d34b04cef65a5a2ab93234"
@@ -277,7 +277,7 @@
     "ettin_release": {
       "ran": true,
       "passed": true,
-      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/ettin_probe",
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/ettin_probe",
       "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/ettin_probe",
       "built_sha256": "5a79a48bf8d9c1c1f6622171e9088582056a5a6a070db2d2eae396387a1156bf",
       "supplied_sha256": "5a79a48bf8d9c1c1f6622171e9088582056a5a6a070db2d2eae396387a1156bf"
@@ -293,7 +293,7 @@
     "translation_release": {
       "ran": true,
       "passed": true,
-      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/translation_probe",
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/translation_probe",
       "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/translation_probe",
       "built_sha256": "c59d1f2ac10855341d0a55de8b43d863cd1fc640aa483e56e3c3346bf5399f68",
       "supplied_sha256": "c59d1f2ac10855341d0a55de8b43d863cd1fc640aa483e56e3c3346bf5399f68",
@@ -332,7 +332,7 @@
     "policy_release": {
       "ran": true,
       "passed": true,
-      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/model_policy_probe",
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/model_policy_probe",
       "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_policy_probe",
       "built_sha256": "611d347f2953a49be1d9d687d54e78d78342ab9967d57f59f9737fcd9da91a79",
       "supplied_sha256": "611d347f2953a49be1d9d687d54e78d78342ab9967d57f59f9737fcd9da91a79"
@@ -344,17 +344,17 @@
     "storage_release": {
       "ran": true,
       "passed": true,
-      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/storage_probe",
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/storage_probe",
       "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/storage_probe",
-      "built_sha256": "4f7d9a8724c40e21eead5f0b1976334b9db045aa0652743f79effd52e3b946fc",
-      "supplied_sha256": "4f7d9a8724c40e21eead5f0b1976334b9db045aa0652743f79effd52e3b946fc",
+      "built_sha256": "f4a2af6fb88e26a81621248273ba92fa7f7b17546f00a2d157c7288807a8a9f0",
+      "supplied_sha256": "f4a2af6fb88e26a81621248273ba92fa7f7b17546f00a2d157c7288807a8a9f0",
       "recovery_driver": {
         "ran": true,
         "passed": true,
-        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/storage_recovery_driver",
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/storage_recovery_driver",
         "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/storage_recovery_driver",
-        "built_sha256": "f0b9d68a14eaa32aaed12ea73267da7e8966612f4936c78f4272a25d5a18eb34",
-        "supplied_sha256": "f0b9d68a14eaa32aaed12ea73267da7e8966612f4936c78f4272a25d5a18eb34"
+        "built_sha256": "3427af9ddecb879f3b61eef28757c7c329207b75015f066f386f99df9f9d6853",
+        "supplied_sha256": "3427af9ddecb879f3b61eef28757c7c329207b75015f066f386f99df9f9d6853"
       }
     },
     "storage_parity": {
@@ -367,7 +367,7 @@
     }
   },
   "fingerprints": {
-    "native_source": "48dfa4ac52e7cba8581567a461db08bde420196a1da0cdafaab84a77d3d0a826",
+    "native_source": "25b6bec95370969e8529a50b55b99c7e4b19de2bc92705c83e876ce978bb68eb",
     "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
     "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
     "validator": "b662b05c5c0490115f2894c3d31a2a525edb96dee7cda5d9b3296f0650c24046",
@@ -429,7 +429,7 @@
           "--version",
           "--verbose"
         ],
-        "duration_ns": 74652417,
+        "duration_ns": 40782208,
         "artifact": "rustc.log",
         "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
       },
@@ -446,7 +446,7 @@
           "tests/test_status.py",
           "-q"
         ],
-        "duration_ns": 109375859416,
+        "duration_ns": 114614804792,
         "artifact": "python-contracts.log",
         "sha256": "b1851057fd7aad6a86f4621298b3dea93ef03f8387d45d1663e8dbd40c3fe7c9"
       },
@@ -458,11 +458,11 @@
           "/Users/andres/Projects/ken/.venv/bin/python",
           "-m",
           "pytest",
-          "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/python-final.xml"
+          "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/python-final.xml"
         ],
-        "duration_ns": 767010872584,
+        "duration_ns": 768989693625,
         "artifact": "python-full.log",
-        "sha256": "eb57a61725d22839e4f0873e73366eb319dd96d59ff3f9cb46d1bc052e82d346",
+        "sha256": "7bd96c4ed1c08725651db6952cdcc7dd72b682561f7cc8eb22e5bb049a56e88b",
         "details": {
           "passed": true,
           "collected": 15741,
@@ -491,7 +491,7 @@
           "mypy",
           "--no-incremental"
         ],
-        "duration_ns": 20962554833,
+        "duration_ns": 18577765458,
         "artifact": "typing.log",
         "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
         "details": {
@@ -517,7 +517,7 @@
           "--",
           "--check"
         ],
-        "duration_ns": 430613750,
+        "duration_ns": 400801916,
         "artifact": "fmt.log",
         "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
@@ -535,9 +535,9 @@
           "-D",
           "warnings"
         ],
-        "duration_ns": 4756254875,
+        "duration_ns": 664162375,
         "artifact": "clippy.log",
-        "sha256": "43bb651b36e3b03cc39197c2e259da3360fd7a6c837fd7118c0f209a4aeb8231"
+        "sha256": "80a72ab0b6d57f57833fbff08eb4f1c216d4bb98fd0953be701bdd8ef1a25c8e"
       },
       "rust_tests": {
         "ran": true,
@@ -550,9 +550,9 @@
           "--workspace",
           "--all-targets"
         ],
-        "duration_ns": 343609260541,
+        "duration_ns": 325330562625,
         "artifact": "rust_tests.log",
-        "sha256": "c251927c86382452a28f4b0136c53ae3a3078f0778a00152e7be1db693a39b74"
+        "sha256": "b5729a908cec716001a658e3cb29f1ce9f49db6aa7e13568544894be25674278"
       },
       "release": {
         "ran": true,
@@ -573,13 +573,13 @@
           "--bins",
           "--message-format=json"
         ],
-        "duration_ns": 491117750,
+        "duration_ns": 489165750,
         "artifact": "release.log",
-        "sha256": "e0acbdd9374f6d0cb6391b2648c1a486545cd42cdba03378d86cec65fbb3138b",
+        "sha256": "ebe061d8e5fa34da8ac282dab9965941d4b700b0082ba35d4d39c9722897bddc",
         "native_binding": {
           "ran": true,
           "passed": true,
-          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/model_probe",
+          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/model_probe",
           "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
           "built_sha256": "981912b7e56591b61257d6f4780e7ef91693212c5b3a6ccd65083b1a5ad0873a",
           "supplied_sha256": "981912b7e56591b61257d6f4780e7ef91693212c5b3a6ccd65083b1a5ad0873a"
@@ -595,9 +595,9 @@
           "pytest",
           "migration_tests",
           "-q",
-          "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/parity-tests.xml"
+          "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/parity-tests.xml"
         ],
-        "duration_ns": 176376944334,
+        "duration_ns": 173002481250,
         "artifact": "parity-tests.log",
         "sha256": "6997ffb705c1c5fa984efec27d8164c9d96401110464c8e386ecce809f88569c"
       },
@@ -620,13 +620,13 @@
           "--reference",
           "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/reference",
           "--native",
-          "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/ken-rs",
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/ken-rs",
           "--cases",
-          "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
           "--out",
-          "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/m1-parity.json"
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/m1-parity.json"
         ],
-        "duration_ns": 19783304459,
+        "duration_ns": 19344132750,
         "artifact": "m1-parity.log",
         "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
       },
@@ -644,14 +644,14 @@
           "diff",
           "--check"
         ],
-        "duration_ns": 48545042,
+        "duration_ns": 25683958,
         "artifact": "hygiene.log",
         "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       "table_release": {
         "ran": true,
         "passed": true,
-        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/table_probe",
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/table_probe",
         "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
         "built_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782",
         "supplied_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782"
@@ -663,7 +663,7 @@
       "context_release": {
         "ran": true,
         "passed": true,
-        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/context_probe",
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/context_probe",
         "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
         "built_sha256": "45121c922bb10deaa2d83b6ed8fbeae47125ba7483d34b04cef65a5a2ab93234",
         "supplied_sha256": "45121c922bb10deaa2d83b6ed8fbeae47125ba7483d34b04cef65a5a2ab93234"
@@ -675,7 +675,7 @@
       "ettin_release": {
         "ran": true,
         "passed": true,
-        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/ettin_probe",
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/ettin_probe",
         "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/ettin_probe",
         "built_sha256": "5a79a48bf8d9c1c1f6622171e9088582056a5a6a070db2d2eae396387a1156bf",
         "supplied_sha256": "5a79a48bf8d9c1c1f6622171e9088582056a5a6a070db2d2eae396387a1156bf"
@@ -691,7 +691,7 @@
       "translation_release": {
         "ran": true,
         "passed": true,
-        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/translation_probe",
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/translation_probe",
         "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/translation_probe",
         "built_sha256": "c59d1f2ac10855341d0a55de8b43d863cd1fc640aa483e56e3c3346bf5399f68",
         "supplied_sha256": "c59d1f2ac10855341d0a55de8b43d863cd1fc640aa483e56e3c3346bf5399f68",
@@ -730,7 +730,7 @@
       "policy_release": {
         "ran": true,
         "passed": true,
-        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/model_policy_probe",
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/model_policy_probe",
         "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_policy_probe",
         "built_sha256": "611d347f2953a49be1d9d687d54e78d78342ab9967d57f59f9737fcd9da91a79",
         "supplied_sha256": "611d347f2953a49be1d9d687d54e78d78342ab9967d57f59f9737fcd9da91a79"
@@ -741,7 +741,7 @@
       }
     },
     "fingerprints": {
-      "native_source": "48dfa4ac52e7cba8581567a461db08bde420196a1da0cdafaab84a77d3d0a826",
+      "native_source": "25b6bec95370969e8529a50b55b99c7e4b19de2bc92705c83e876ce978bb68eb",
       "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
       "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
       "validator": "b662b05c5c0490115f2894c3d31a2a525edb96dee7cda5d9b3296f0650c24046",
@@ -800,7 +800,7 @@
             "--version",
             "--verbose"
           ],
-          "duration_ns": 74652417,
+          "duration_ns": 40782208,
           "artifact": "rustc.log",
           "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
         },
@@ -817,7 +817,7 @@
             "tests/test_status.py",
             "-q"
           ],
-          "duration_ns": 109375859416,
+          "duration_ns": 114614804792,
           "artifact": "python-contracts.log",
           "sha256": "b1851057fd7aad6a86f4621298b3dea93ef03f8387d45d1663e8dbd40c3fe7c9"
         },
@@ -829,11 +829,11 @@
             "/Users/andres/Projects/ken/.venv/bin/python",
             "-m",
             "pytest",
-            "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/python-final.xml"
+            "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/python-final.xml"
           ],
-          "duration_ns": 767010872584,
+          "duration_ns": 768989693625,
           "artifact": "python-full.log",
-          "sha256": "eb57a61725d22839e4f0873e73366eb319dd96d59ff3f9cb46d1bc052e82d346",
+          "sha256": "7bd96c4ed1c08725651db6952cdcc7dd72b682561f7cc8eb22e5bb049a56e88b",
           "details": {
             "passed": true,
             "collected": 15741,
@@ -862,7 +862,7 @@
             "mypy",
             "--no-incremental"
           ],
-          "duration_ns": 20962554833,
+          "duration_ns": 18577765458,
           "artifact": "typing.log",
           "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
           "details": {
@@ -888,7 +888,7 @@
             "--",
             "--check"
           ],
-          "duration_ns": 430613750,
+          "duration_ns": 400801916,
           "artifact": "fmt.log",
           "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
@@ -906,9 +906,9 @@
             "-D",
             "warnings"
           ],
-          "duration_ns": 4756254875,
+          "duration_ns": 664162375,
           "artifact": "clippy.log",
-          "sha256": "43bb651b36e3b03cc39197c2e259da3360fd7a6c837fd7118c0f209a4aeb8231"
+          "sha256": "80a72ab0b6d57f57833fbff08eb4f1c216d4bb98fd0953be701bdd8ef1a25c8e"
         },
         "rust_tests": {
           "ran": true,
@@ -921,9 +921,9 @@
             "--workspace",
             "--all-targets"
           ],
-          "duration_ns": 343609260541,
+          "duration_ns": 325330562625,
           "artifact": "rust_tests.log",
-          "sha256": "c251927c86382452a28f4b0136c53ae3a3078f0778a00152e7be1db693a39b74"
+          "sha256": "b5729a908cec716001a658e3cb29f1ce9f49db6aa7e13568544894be25674278"
         },
         "release": {
           "ran": true,
@@ -944,13 +944,13 @@
             "--bins",
             "--message-format=json"
           ],
-          "duration_ns": 491117750,
+          "duration_ns": 489165750,
           "artifact": "release.log",
-          "sha256": "e0acbdd9374f6d0cb6391b2648c1a486545cd42cdba03378d86cec65fbb3138b",
+          "sha256": "ebe061d8e5fa34da8ac282dab9965941d4b700b0082ba35d4d39c9722897bddc",
           "native_binding": {
             "ran": true,
             "passed": true,
-            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/model_probe",
+            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/model_probe",
             "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
             "built_sha256": "981912b7e56591b61257d6f4780e7ef91693212c5b3a6ccd65083b1a5ad0873a",
             "supplied_sha256": "981912b7e56591b61257d6f4780e7ef91693212c5b3a6ccd65083b1a5ad0873a"
@@ -966,9 +966,9 @@
             "pytest",
             "migration_tests",
             "-q",
-            "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/parity-tests.xml"
+            "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/parity-tests.xml"
           ],
-          "duration_ns": 176376944334,
+          "duration_ns": 173002481250,
           "artifact": "parity-tests.log",
           "sha256": "6997ffb705c1c5fa984efec27d8164c9d96401110464c8e386ecce809f88569c"
         },
@@ -991,13 +991,13 @@
             "--reference",
             "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/reference",
             "--native",
-            "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/ken-rs",
+            "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/ken-rs",
             "--cases",
-            "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+            "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
             "--out",
-            "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/m1-parity.json"
+            "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/m1-parity.json"
           ],
-          "duration_ns": 19783304459,
+          "duration_ns": 19344132750,
           "artifact": "m1-parity.log",
           "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
         },
@@ -1015,14 +1015,14 @@
             "diff",
             "--check"
           ],
-          "duration_ns": 48545042,
+          "duration_ns": 25683958,
           "artifact": "hygiene.log",
           "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
         "table_release": {
           "ran": true,
           "passed": true,
-          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/table_probe",
+          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/table_probe",
           "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
           "built_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782",
           "supplied_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782"
@@ -1034,7 +1034,7 @@
         "context_release": {
           "ran": true,
           "passed": true,
-          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/context_probe",
+          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/context_probe",
           "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
           "built_sha256": "45121c922bb10deaa2d83b6ed8fbeae47125ba7483d34b04cef65a5a2ab93234",
           "supplied_sha256": "45121c922bb10deaa2d83b6ed8fbeae47125ba7483d34b04cef65a5a2ab93234"
@@ -1046,7 +1046,7 @@
         "ettin_release": {
           "ran": true,
           "passed": true,
-          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/ettin_probe",
+          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/ettin_probe",
           "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/ettin_probe",
           "built_sha256": "5a79a48bf8d9c1c1f6622171e9088582056a5a6a070db2d2eae396387a1156bf",
           "supplied_sha256": "5a79a48bf8d9c1c1f6622171e9088582056a5a6a070db2d2eae396387a1156bf"
@@ -1062,7 +1062,7 @@
         "translation_release": {
           "ran": true,
           "passed": true,
-          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/translation_probe",
+          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/translation_probe",
           "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/translation_probe",
           "built_sha256": "c59d1f2ac10855341d0a55de8b43d863cd1fc640aa483e56e3c3346bf5399f68",
           "supplied_sha256": "c59d1f2ac10855341d0a55de8b43d863cd1fc640aa483e56e3c3346bf5399f68",
@@ -1100,7 +1100,7 @@
         }
       },
       "fingerprints": {
-        "native_source": "48dfa4ac52e7cba8581567a461db08bde420196a1da0cdafaab84a77d3d0a826",
+        "native_source": "25b6bec95370969e8529a50b55b99c7e4b19de2bc92705c83e876ce978bb68eb",
         "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
         "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
         "validator": "b662b05c5c0490115f2894c3d31a2a525edb96dee7cda5d9b3296f0650c24046",
@@ -1157,7 +1157,7 @@
               "--version",
               "--verbose"
             ],
-            "duration_ns": 74652417,
+            "duration_ns": 40782208,
             "artifact": "rustc.log",
             "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
           },
@@ -1174,7 +1174,7 @@
               "tests/test_status.py",
               "-q"
             ],
-            "duration_ns": 109375859416,
+            "duration_ns": 114614804792,
             "artifact": "python-contracts.log",
             "sha256": "b1851057fd7aad6a86f4621298b3dea93ef03f8387d45d1663e8dbd40c3fe7c9"
           },
@@ -1186,11 +1186,11 @@
               "/Users/andres/Projects/ken/.venv/bin/python",
               "-m",
               "pytest",
-              "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/python-final.xml"
+              "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/python-final.xml"
             ],
-            "duration_ns": 767010872584,
+            "duration_ns": 768989693625,
             "artifact": "python-full.log",
-            "sha256": "eb57a61725d22839e4f0873e73366eb319dd96d59ff3f9cb46d1bc052e82d346",
+            "sha256": "7bd96c4ed1c08725651db6952cdcc7dd72b682561f7cc8eb22e5bb049a56e88b",
             "details": {
               "passed": true,
               "collected": 15741,
@@ -1219,7 +1219,7 @@
               "mypy",
               "--no-incremental"
             ],
-            "duration_ns": 20962554833,
+            "duration_ns": 18577765458,
             "artifact": "typing.log",
             "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
             "details": {
@@ -1245,7 +1245,7 @@
               "--",
               "--check"
             ],
-            "duration_ns": 430613750,
+            "duration_ns": 400801916,
             "artifact": "fmt.log",
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
@@ -1263,9 +1263,9 @@
               "-D",
               "warnings"
             ],
-            "duration_ns": 4756254875,
+            "duration_ns": 664162375,
             "artifact": "clippy.log",
-            "sha256": "43bb651b36e3b03cc39197c2e259da3360fd7a6c837fd7118c0f209a4aeb8231"
+            "sha256": "80a72ab0b6d57f57833fbff08eb4f1c216d4bb98fd0953be701bdd8ef1a25c8e"
           },
           "rust_tests": {
             "ran": true,
@@ -1278,9 +1278,9 @@
               "--workspace",
               "--all-targets"
             ],
-            "duration_ns": 343609260541,
+            "duration_ns": 325330562625,
             "artifact": "rust_tests.log",
-            "sha256": "c251927c86382452a28f4b0136c53ae3a3078f0778a00152e7be1db693a39b74"
+            "sha256": "b5729a908cec716001a658e3cb29f1ce9f49db6aa7e13568544894be25674278"
           },
           "release": {
             "ran": true,
@@ -1301,13 +1301,13 @@
               "--bins",
               "--message-format=json"
             ],
-            "duration_ns": 491117750,
+            "duration_ns": 489165750,
             "artifact": "release.log",
-            "sha256": "e0acbdd9374f6d0cb6391b2648c1a486545cd42cdba03378d86cec65fbb3138b",
+            "sha256": "ebe061d8e5fa34da8ac282dab9965941d4b700b0082ba35d4d39c9722897bddc",
             "native_binding": {
               "ran": true,
               "passed": true,
-              "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/model_probe",
+              "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/model_probe",
               "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
               "built_sha256": "981912b7e56591b61257d6f4780e7ef91693212c5b3a6ccd65083b1a5ad0873a",
               "supplied_sha256": "981912b7e56591b61257d6f4780e7ef91693212c5b3a6ccd65083b1a5ad0873a"
@@ -1323,9 +1323,9 @@
               "pytest",
               "migration_tests",
               "-q",
-              "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/parity-tests.xml"
+              "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/parity-tests.xml"
             ],
-            "duration_ns": 176376944334,
+            "duration_ns": 173002481250,
             "artifact": "parity-tests.log",
             "sha256": "6997ffb705c1c5fa984efec27d8164c9d96401110464c8e386ecce809f88569c"
           },
@@ -1348,13 +1348,13 @@
               "--reference",
               "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/reference",
               "--native",
-              "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/ken-rs",
+              "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/ken-rs",
               "--cases",
-              "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+              "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
               "--out",
-              "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/m1-parity.json"
+              "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/m1-parity.json"
             ],
-            "duration_ns": 19783304459,
+            "duration_ns": 19344132750,
             "artifact": "m1-parity.log",
             "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
           },
@@ -1372,14 +1372,14 @@
               "diff",
               "--check"
             ],
-            "duration_ns": 48545042,
+            "duration_ns": 25683958,
             "artifact": "hygiene.log",
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
           "table_release": {
             "ran": true,
             "passed": true,
-            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/table_probe",
+            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/table_probe",
             "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
             "built_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782",
             "supplied_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782"
@@ -1391,7 +1391,7 @@
           "context_release": {
             "ran": true,
             "passed": true,
-            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/context_probe",
+            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/context_probe",
             "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
             "built_sha256": "45121c922bb10deaa2d83b6ed8fbeae47125ba7483d34b04cef65a5a2ab93234",
             "supplied_sha256": "45121c922bb10deaa2d83b6ed8fbeae47125ba7483d34b04cef65a5a2ab93234"
@@ -1403,7 +1403,7 @@
           "ettin_release": {
             "ran": true,
             "passed": true,
-            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/ettin_probe",
+            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/ettin_probe",
             "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/ettin_probe",
             "built_sha256": "5a79a48bf8d9c1c1f6622171e9088582056a5a6a070db2d2eae396387a1156bf",
             "supplied_sha256": "5a79a48bf8d9c1c1f6622171e9088582056a5a6a070db2d2eae396387a1156bf"
@@ -1418,7 +1418,7 @@
           }
         },
         "fingerprints": {
-          "native_source": "48dfa4ac52e7cba8581567a461db08bde420196a1da0cdafaab84a77d3d0a826",
+          "native_source": "25b6bec95370969e8529a50b55b99c7e4b19de2bc92705c83e876ce978bb68eb",
           "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
           "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
           "validator": "b662b05c5c0490115f2894c3d31a2a525edb96dee7cda5d9b3296f0650c24046",
@@ -1469,7 +1469,7 @@
                 "--version",
                 "--verbose"
               ],
-              "duration_ns": 74652417,
+              "duration_ns": 40782208,
               "artifact": "rustc.log",
               "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
             },
@@ -1486,7 +1486,7 @@
                 "tests/test_status.py",
                 "-q"
               ],
-              "duration_ns": 109375859416,
+              "duration_ns": 114614804792,
               "artifact": "python-contracts.log",
               "sha256": "b1851057fd7aad6a86f4621298b3dea93ef03f8387d45d1663e8dbd40c3fe7c9"
             },
@@ -1498,11 +1498,11 @@
                 "/Users/andres/Projects/ken/.venv/bin/python",
                 "-m",
                 "pytest",
-                "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/python-final.xml"
+                "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/python-final.xml"
               ],
-              "duration_ns": 767010872584,
+              "duration_ns": 768989693625,
               "artifact": "python-full.log",
-              "sha256": "eb57a61725d22839e4f0873e73366eb319dd96d59ff3f9cb46d1bc052e82d346",
+              "sha256": "7bd96c4ed1c08725651db6952cdcc7dd72b682561f7cc8eb22e5bb049a56e88b",
               "details": {
                 "passed": true,
                 "collected": 15741,
@@ -1531,7 +1531,7 @@
                 "mypy",
                 "--no-incremental"
               ],
-              "duration_ns": 20962554833,
+              "duration_ns": 18577765458,
               "artifact": "typing.log",
               "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
               "details": {
@@ -1557,7 +1557,7 @@
                 "--",
                 "--check"
               ],
-              "duration_ns": 430613750,
+              "duration_ns": 400801916,
               "artifact": "fmt.log",
               "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
             },
@@ -1575,9 +1575,9 @@
                 "-D",
                 "warnings"
               ],
-              "duration_ns": 4756254875,
+              "duration_ns": 664162375,
               "artifact": "clippy.log",
-              "sha256": "43bb651b36e3b03cc39197c2e259da3360fd7a6c837fd7118c0f209a4aeb8231"
+              "sha256": "80a72ab0b6d57f57833fbff08eb4f1c216d4bb98fd0953be701bdd8ef1a25c8e"
             },
             "rust_tests": {
               "ran": true,
@@ -1590,9 +1590,9 @@
                 "--workspace",
                 "--all-targets"
               ],
-              "duration_ns": 343609260541,
+              "duration_ns": 325330562625,
               "artifact": "rust_tests.log",
-              "sha256": "c251927c86382452a28f4b0136c53ae3a3078f0778a00152e7be1db693a39b74"
+              "sha256": "b5729a908cec716001a658e3cb29f1ce9f49db6aa7e13568544894be25674278"
             },
             "release": {
               "ran": true,
@@ -1613,13 +1613,13 @@
                 "--bins",
                 "--message-format=json"
               ],
-              "duration_ns": 491117750,
+              "duration_ns": 489165750,
               "artifact": "release.log",
-              "sha256": "e0acbdd9374f6d0cb6391b2648c1a486545cd42cdba03378d86cec65fbb3138b",
+              "sha256": "ebe061d8e5fa34da8ac282dab9965941d4b700b0082ba35d4d39c9722897bddc",
               "native_binding": {
                 "ran": true,
                 "passed": true,
-                "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/model_probe",
+                "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/model_probe",
                 "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
                 "built_sha256": "981912b7e56591b61257d6f4780e7ef91693212c5b3a6ccd65083b1a5ad0873a",
                 "supplied_sha256": "981912b7e56591b61257d6f4780e7ef91693212c5b3a6ccd65083b1a5ad0873a"
@@ -1635,9 +1635,9 @@
                 "pytest",
                 "migration_tests",
                 "-q",
-                "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/parity-tests.xml"
+                "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/parity-tests.xml"
               ],
-              "duration_ns": 176376944334,
+              "duration_ns": 173002481250,
               "artifact": "parity-tests.log",
               "sha256": "6997ffb705c1c5fa984efec27d8164c9d96401110464c8e386ecce809f88569c"
             },
@@ -1660,13 +1660,13 @@
                 "--reference",
                 "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/reference",
                 "--native",
-                "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/ken-rs",
+                "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/ken-rs",
                 "--cases",
-                "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+                "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
                 "--out",
-                "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/m1-parity.json"
+                "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/m1-parity.json"
               ],
-              "duration_ns": 19783304459,
+              "duration_ns": 19344132750,
               "artifact": "m1-parity.log",
               "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
             },
@@ -1684,14 +1684,14 @@
                 "diff",
                 "--check"
               ],
-              "duration_ns": 48545042,
+              "duration_ns": 25683958,
               "artifact": "hygiene.log",
               "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
             },
             "table_release": {
               "ran": true,
               "passed": true,
-              "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/table_probe",
+              "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/table_probe",
               "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
               "built_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782",
               "supplied_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782"
@@ -1703,7 +1703,7 @@
             "context_release": {
               "ran": true,
               "passed": true,
-              "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/context_probe",
+              "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/context_probe",
               "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
               "built_sha256": "45121c922bb10deaa2d83b6ed8fbeae47125ba7483d34b04cef65a5a2ab93234",
               "supplied_sha256": "45121c922bb10deaa2d83b6ed8fbeae47125ba7483d34b04cef65a5a2ab93234"
@@ -1714,7 +1714,7 @@
             }
           },
           "fingerprints": {
-            "native_source": "48dfa4ac52e7cba8581567a461db08bde420196a1da0cdafaab84a77d3d0a826",
+            "native_source": "25b6bec95370969e8529a50b55b99c7e4b19de2bc92705c83e876ce978bb68eb",
             "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
             "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
             "validator": "b662b05c5c0490115f2894c3d31a2a525edb96dee7cda5d9b3296f0650c24046",
@@ -1760,7 +1760,7 @@
                   "--version",
                   "--verbose"
                 ],
-                "duration_ns": 74652417,
+                "duration_ns": 40782208,
                 "artifact": "rustc.log",
                 "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
               },
@@ -1777,7 +1777,7 @@
                   "tests/test_status.py",
                   "-q"
                 ],
-                "duration_ns": 109375859416,
+                "duration_ns": 114614804792,
                 "artifact": "python-contracts.log",
                 "sha256": "b1851057fd7aad6a86f4621298b3dea93ef03f8387d45d1663e8dbd40c3fe7c9"
               },
@@ -1789,11 +1789,11 @@
                   "/Users/andres/Projects/ken/.venv/bin/python",
                   "-m",
                   "pytest",
-                  "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/python-final.xml"
+                  "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/python-final.xml"
                 ],
-                "duration_ns": 767010872584,
+                "duration_ns": 768989693625,
                 "artifact": "python-full.log",
-                "sha256": "eb57a61725d22839e4f0873e73366eb319dd96d59ff3f9cb46d1bc052e82d346",
+                "sha256": "7bd96c4ed1c08725651db6952cdcc7dd72b682561f7cc8eb22e5bb049a56e88b",
                 "details": {
                   "passed": true,
                   "collected": 15741,
@@ -1822,7 +1822,7 @@
                   "mypy",
                   "--no-incremental"
                 ],
-                "duration_ns": 20962554833,
+                "duration_ns": 18577765458,
                 "artifact": "typing.log",
                 "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
                 "details": {
@@ -1848,7 +1848,7 @@
                   "--",
                   "--check"
                 ],
-                "duration_ns": 430613750,
+                "duration_ns": 400801916,
                 "artifact": "fmt.log",
                 "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
               },
@@ -1866,9 +1866,9 @@
                   "-D",
                   "warnings"
                 ],
-                "duration_ns": 4756254875,
+                "duration_ns": 664162375,
                 "artifact": "clippy.log",
-                "sha256": "43bb651b36e3b03cc39197c2e259da3360fd7a6c837fd7118c0f209a4aeb8231"
+                "sha256": "80a72ab0b6d57f57833fbff08eb4f1c216d4bb98fd0953be701bdd8ef1a25c8e"
               },
               "rust_tests": {
                 "ran": true,
@@ -1881,9 +1881,9 @@
                   "--workspace",
                   "--all-targets"
                 ],
-                "duration_ns": 343609260541,
+                "duration_ns": 325330562625,
                 "artifact": "rust_tests.log",
-                "sha256": "c251927c86382452a28f4b0136c53ae3a3078f0778a00152e7be1db693a39b74"
+                "sha256": "b5729a908cec716001a658e3cb29f1ce9f49db6aa7e13568544894be25674278"
               },
               "release": {
                 "ran": true,
@@ -1904,13 +1904,13 @@
                   "--bins",
                   "--message-format=json"
                 ],
-                "duration_ns": 491117750,
+                "duration_ns": 489165750,
                 "artifact": "release.log",
-                "sha256": "e0acbdd9374f6d0cb6391b2648c1a486545cd42cdba03378d86cec65fbb3138b",
+                "sha256": "ebe061d8e5fa34da8ac282dab9965941d4b700b0082ba35d4d39c9722897bddc",
                 "native_binding": {
                   "ran": true,
                   "passed": true,
-                  "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/model_probe",
+                  "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/model_probe",
                   "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
                   "built_sha256": "981912b7e56591b61257d6f4780e7ef91693212c5b3a6ccd65083b1a5ad0873a",
                   "supplied_sha256": "981912b7e56591b61257d6f4780e7ef91693212c5b3a6ccd65083b1a5ad0873a"
@@ -1926,9 +1926,9 @@
                   "pytest",
                   "migration_tests",
                   "-q",
-                  "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/parity-tests.xml"
+                  "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/parity-tests.xml"
                 ],
-                "duration_ns": 176376944334,
+                "duration_ns": 173002481250,
                 "artifact": "parity-tests.log",
                 "sha256": "6997ffb705c1c5fa984efec27d8164c9d96401110464c8e386ecce809f88569c"
               },
@@ -1951,13 +1951,13 @@
                   "--reference",
                   "/Users/andres/Projects/ken/.ken/rust-migration/m0-m1/reference",
                   "--native",
-                  "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/ken-rs",
+                  "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/ken-rs",
                   "--cases",
-                  "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+                  "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
                   "--out",
-                  "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t5/macos/base/base/base/base/base/base/m1-parity.json"
+                  "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/acceptance-t7/macos/base/base/base/base/base/base/m1-parity.json"
                 ],
-                "duration_ns": 19783304459,
+                "duration_ns": 19344132750,
                 "artifact": "m1-parity.log",
                 "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
               },
@@ -1975,14 +1975,14 @@
                   "diff",
                   "--check"
                 ],
-                "duration_ns": 48545042,
+                "duration_ns": 25683958,
                 "artifact": "hygiene.log",
                 "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
               },
               "table_release": {
                 "ran": true,
                 "passed": true,
-                "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/table_probe",
+                "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/table_probe",
                 "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
                 "built_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782",
                 "supplied_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782"
@@ -1993,7 +1993,7 @@
               }
             },
             "fingerprints": {
-              "native_source": "48dfa4ac52e7cba8581567a461db08bde420196a1da0cdafaab84a77d3d0a826",
+              "native_source": "25b6bec95370969e8529a50b55b99c7e4b19de2bc92705c83e876ce978bb68eb",
               "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
               "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
               "validator": "b662b05c5c0490115f2894c3d31a2a525edb96dee7cda5d9b3296f0650c24046",
@@ -2006,7 +2006,7 @@
             "table_release": {
               "ran": true,
               "passed": true,
-              "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/table_probe",
+              "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/table_probe",
               "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/table_probe",
               "built_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782",
               "supplied_sha256": "b80b8911940d8e23eaae7d15ac2595527d30ada472efca58d1d65ce479d36782"
@@ -2049,9 +2049,9 @@
                 "linked_exit": 0,
                 "tree_exit": 0,
                 "linked_sha256": "96699970fc90da6a67dd8b855b39a9ef49521a85987687fed2351adb949b3db0",
-                "tree_sha256": "f44ee4aee7bd27f8bfa463b31c9643b326dbdb8d89e851a8ea82bf3a7684d988"
+                "tree_sha256": "191d189d1a200273da3adf56ccb6106dbfd5ee63a668d24294b2e4e31755b21e"
               },
-              "native_wall_ns": 5600181458,
+              "native_wall_ns": 5491309917,
               "native_exit": 0,
               "runtime": {
                 "device": "cpu",
@@ -2094,7 +2094,7 @@
           "context_release": {
             "ran": true,
             "passed": true,
-            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/context_probe",
+            "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/context_probe",
             "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/context_probe",
             "built_sha256": "45121c922bb10deaa2d83b6ed8fbeae47125ba7483d34b04cef65a5a2ab93234",
             "supplied_sha256": "45121c922bb10deaa2d83b6ed8fbeae47125ba7483d34b04cef65a5a2ab93234"
@@ -2148,17 +2148,17 @@
               "linked_exit": 0,
               "tree_exit": 0,
               "linked_sha256": "8b328dd9466b5f761ff5a461cb3be1113f9902576dda3cd8910c8151df28fc28",
-              "tree_sha256": "f44ee4aee7bd27f8bfa463b31c9643b326dbdb8d89e851a8ea82bf3a7684d988"
+              "tree_sha256": "191d189d1a200273da3adf56ccb6106dbfd5ee63a668d24294b2e4e31755b21e"
             },
             "core_dependency_audit": {
               "passed": true,
               "linked_exit": 0,
               "tree_exit": 0,
               "linked_sha256": "ab10047d389579a3a3474f0b76b8070359af91f088ca132deda30f22a77123bf",
-              "tree_sha256": "f44ee4aee7bd27f8bfa463b31c9643b326dbdb8d89e851a8ea82bf3a7684d988"
+              "tree_sha256": "191d189d1a200273da3adf56ccb6106dbfd5ee63a668d24294b2e4e31755b21e"
             },
             "native_exit": 0,
-            "native_wall_ns": 9497290834,
+            "native_wall_ns": 9432138208,
             "runtime": {
               "device": "cpu",
               "engine": "rust",
@@ -2222,7 +2222,7 @@
         "ettin_release": {
           "ran": true,
           "passed": true,
-          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/ettin_probe",
+          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/ettin_probe",
           "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/ettin_probe",
           "built_sha256": "5a79a48bf8d9c1c1f6622171e9088582056a5a6a070db2d2eae396387a1156bf",
           "supplied_sha256": "5a79a48bf8d9c1c1f6622171e9088582056a5a6a070db2d2eae396387a1156bf"
@@ -2269,17 +2269,17 @@
             "linked_exit": 0,
             "tree_exit": 0,
             "linked_sha256": "209634682fe7c4fcfed8246a43a672cfd12ac97c5adcee1ed2235e7d6296c9d1",
-            "tree_sha256": "f44ee4aee7bd27f8bfa463b31c9643b326dbdb8d89e851a8ea82bf3a7684d988"
+            "tree_sha256": "191d189d1a200273da3adf56ccb6106dbfd5ee63a668d24294b2e4e31755b21e"
           },
           "core_dependency_audit": {
             "passed": true,
             "linked_exit": 0,
             "tree_exit": 0,
             "linked_sha256": "ab10047d389579a3a3474f0b76b8070359af91f088ca132deda30f22a77123bf",
-            "tree_sha256": "f44ee4aee7bd27f8bfa463b31c9643b326dbdb8d89e851a8ea82bf3a7684d988"
+            "tree_sha256": "191d189d1a200273da3adf56ccb6106dbfd5ee63a668d24294b2e4e31755b21e"
           },
           "native_exit": 0,
-          "native_wall_ns": 18745016500,
+          "native_wall_ns": 18509878000,
           "preparation": {
             "artifacts": {
               "config.json": {
@@ -2431,7 +2431,7 @@
       "translation_release": {
         "ran": true,
         "passed": true,
-        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/translation_probe",
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/translation_probe",
         "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/translation_probe",
         "built_sha256": "c59d1f2ac10855341d0a55de8b43d863cd1fc640aa483e56e3c3346bf5399f68",
         "supplied_sha256": "c59d1f2ac10855341d0a55de8b43d863cd1fc640aa483e56e3c3346bf5399f68",
@@ -2507,11 +2507,11 @@
           "linked_exit": 0,
           "tree_exit": 0,
           "linked_sha256": "bf60e3913a4be552839ab991605ddfd04e28c2766c278f76578d0cdfb668a2ea",
-          "tree_sha256": "f44ee4aee7bd27f8bfa463b31c9643b326dbdb8d89e851a8ea82bf3a7684d988",
+          "tree_sha256": "191d189d1a200273da3adf56ccb6106dbfd5ee63a668d24294b2e4e31755b21e",
           "errors": []
         },
         "native_exit": 0,
-        "native_wall_ns": 13140987375,
+        "native_wall_ns": 13098886834,
         "stderr": "",
         "native_identity": {
           "beam_size": 1,
@@ -2625,7 +2625,7 @@
     "policy_release": {
       "ran": true,
       "passed": true,
-      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/model_policy_probe",
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/model_policy_probe",
       "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_policy_probe",
       "built_sha256": "611d347f2953a49be1d9d687d54e78d78342ab9967d57f59f9737fcd9da91a79",
       "supplied_sha256": "611d347f2953a49be1d9d687d54e78d78342ab9967d57f59f9737fcd9da91a79"
@@ -3966,7 +3966,7 @@
         "linked_exit": 0,
         "tree_exit": 0,
         "linked_sha256": "a51839eee1bde2dde4155209f3c7b59156869493bc435b4318389ddf75e01701",
-        "tree_sha256": "f44ee4aee7bd27f8bfa463b31c9643b326dbdb8d89e851a8ea82bf3a7684d988",
+        "tree_sha256": "191d189d1a200273da3adf56ccb6106dbfd5ee63a668d24294b2e4e31755b21e",
         "errors": []
       },
       "reference_oracle": {
@@ -3982,7 +3982,7 @@
       "reference_fingerprint": "e95cc533cc8a603d46481c5310f4b870ffbaaced6fa24fd8a1d85cbd04123222",
       "reference_source_fingerprint": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
       "native_exit": 0,
-      "native_wall_ns": 335420250,
+      "native_wall_ns": 312690583,
       "stderr": "",
       "runtime": {
         "engine": "rust",
@@ -5289,24 +5289,24 @@
     "Policy_local_accepted": true,
     "execution_artifacts": {
       "artifact": "execution-artifacts.json",
-      "sha256": "c1cfebe22e66c26b292a9307916bff56ca37f67b538a49ac27844d39b7061061"
+      "sha256": "ce02c8c3b6a9b9348e4900a2570a35224a331c765a6592ef6c039a3a86898747"
     }
   },
   "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
   "storage_release": {
     "ran": true,
     "passed": true,
-    "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/storage_probe",
+    "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/storage_probe",
     "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/storage_probe",
-    "built_sha256": "4f7d9a8724c40e21eead5f0b1976334b9db045aa0652743f79effd52e3b946fc",
-    "supplied_sha256": "4f7d9a8724c40e21eead5f0b1976334b9db045aa0652743f79effd52e3b946fc",
+    "built_sha256": "f4a2af6fb88e26a81621248273ba92fa7f7b17546f00a2d157c7288807a8a9f0",
+    "supplied_sha256": "f4a2af6fb88e26a81621248273ba92fa7f7b17546f00a2d157c7288807a8a9f0",
     "recovery_driver": {
       "ran": true,
       "passed": true,
-      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t5/target/release/examples/storage_recovery_driver",
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-storage/source-t7/target/release/examples/storage_recovery_driver",
       "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/storage_recovery_driver",
-      "built_sha256": "f0b9d68a14eaa32aaed12ea73267da7e8966612f4936c78f4272a25d5a18eb34",
-      "supplied_sha256": "f0b9d68a14eaa32aaed12ea73267da7e8966612f4936c78f4272a25d5a18eb34"
+      "built_sha256": "3427af9ddecb879f3b61eef28757c7c329207b75015f066f386f99df9f9d6853",
+      "supplied_sha256": "3427af9ddecb879f3b61eef28757c7c329207b75015f066f386f99df9f9d6853"
     }
   },
   "storage_parity": {
@@ -5318,7 +5318,7 @@
     "native_children": [],
     "outside_checkout": true,
     "M2_accepted": false,
-    "native_sha256": "4f7d9a8724c40e21eead5f0b1976334b9db045aa0652743f79effd52e3b946fc",
+    "native_sha256": "f4a2af6fb88e26a81621248273ba92fa7f7b17546f00a2d157c7288807a8a9f0",
     "oracle_sha256": "ff5fe91b21fce85da9b896a1ad30c0cba2bcb1b4cf98ec371177e5535e7136c3",
     "cases_sha256": "db8806ae8311641a017abf017ddd60f9f9c6fc6b6a5ce56a85084a201ca07f0b",
     "case_ids": [
@@ -5360,12 +5360,12 @@
       "linked_exit": 0,
       "tree_exit": 0,
       "linked_sha256": "787e12a91b32c03811d86a31f8e0b4349cd6b0c0d9b08007a9fa0946471dbe9c",
-      "tree_sha256": "2478d1c26a44007a88b9ab2a6b5ccded1a7d2ad41c1800316a1f3cb7b1ebbcfc",
+      "tree_sha256": "603be1e7619b92d67faa3b95c08c798f60d2987d07bee1ee4830237448808d8e",
       "errors": []
     },
     "compatibility_count": 23,
     "correction_count": 9,
-    "original_wall_ns": 2688027459,
+    "original_wall_ns": 2494138083,
     "reference_oracle": {
       "frozen_import": true,
       "encoder_singleton_unloaded": true,
@@ -5383,7 +5383,7 @@
     "reference_fingerprint": "e95cc533cc8a603d46481c5310f4b870ffbaaced6fa24fd8a1d85cbd04123222",
     "reference_source_fingerprint": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
     "native_exit": 0,
-    "native_wall_ns": 1389140042,
+    "native_wall_ns": 1180981000,
     "stderr": "",
     "runtime": {
       "dtype": "float32",
@@ -5395,7 +5395,7 @@
       "sqlite": "3.53.2"
     },
     "metrics": {
-      "elapsed_ns": 1038379375,
+      "elapsed_ns": 838279375,
       "peak_rss_bytes": 15024128
     }
   },
@@ -6949,10 +6949,10 @@
       "linked_exit": 0,
       "tree_exit": 0,
       "linked_sha256": "70e6e0a5d6e682ae294e2e88a9b7f1609ff43fdede502b743a17ec8d767c81e2",
-      "tree_sha256": "2478d1c26a44007a88b9ab2a6b5ccded1a7d2ad41c1800316a1f3cb7b1ebbcfc",
+      "tree_sha256": "603be1e7619b92d67faa3b95c08c798f60d2987d07bee1ee4830237448808d8e",
       "errors": []
     },
-    "driver_sha256": "f0b9d68a14eaa32aaed12ea73267da7e8966612f4936c78f4272a25d5a18eb34",
+    "driver_sha256": "3427af9ddecb879f3b61eef28757c7c329207b75015f066f386f99df9f9d6853",
     "cases_sha256": "bc1d24b6fdab169ec279e3a37c75a3b5314496a0188ae18bee9b6f6aee73f0a0",
     "reference_fingerprint": "e95cc533cc8a603d46481c5310f4b870ffbaaced6fa24fd8a1d85cbd04123222",
     "reference_source_fingerprint": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
@@ -6975,6 +6975,6 @@
   "Storage_local_accepted": true,
   "execution_artifacts": {
     "artifact": "execution-artifacts.json",
-    "sha256": "3d9b5a71b7ababef91b4c79e8015ca475ddc7738b4b9193509a1f68ea6342b88"
+    "sha256": "2c51874bd40731982d342f218dd669c78d789910459fb26a2ab6041d14e9eab3"
   }
 }

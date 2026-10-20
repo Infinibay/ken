@@ -1,21 +1,19 @@
 # Current storage matrix
 
-The current worktree matrix accepts the complete macOS arm64 and Linux aarch64
-proof with 31 gates and 29 matching input fingerprints:
+The current macOS arm64 and Linux aarch64 proof passes all 31 gates with 29
+matching source/input fingerprints after the one final review and TDD fix pass:
 
 - `Storage_accepted=true`
 - `Policy_accepted=true`
 - `M2_accepted=false`
 
-The final whole-plan code review is pending at this proof cut. This receipt
-does not complete M2 or the application migration.
+[matrix.json](matrix.json) is the current machine result.
+[EXECUTION.md](EXECUTION.md) records both full execution trees, measurements and
+excluded attempts. [IMPLEMENTATION.md](IMPLEMENTATION.md) describes ownership and
+limits; [FINAL-FIXES.md](FINAL-FIXES.md) maps the regressions to their corrections.
+Remaining model backends/integration and M3–M8 remain required.
 
-[matrix.json](matrix.json) is the machine result. [EXECUTION.md](EXECUTION.md)
-links both full execution trees and reports tests, measurements and rejected
-environmental attempts. [IMPLEMENTATION.md](IMPLEMENTATION.md) describes the
-public storage responsibilities and limitations.
-
-Reproduce from the current project root with the prepared native inputs:
+Reproduce from the project root with the prepared native inputs:
 
 ```sh
 PYTHONPATH="$PWD:$PWD/src" CARGO_INCREMENTAL=0 \
@@ -25,8 +23,7 @@ PYTHONPATH="$PWD:$PWD/src" CARGO_INCREMENTAL=0 \
   --out "$PWD/.ken/rust-migration/m2-storage/matrix-current"
 ```
 
-Expected: exit 0, `passed=true`, no errors, exactly the two registered platforms,
-`Storage_accepted=true` and `M2_accepted=false`. Fingerprints are recomputed from
-the current sources/prepared inputs; historical receipts or synthetic fixtures
-cannot replace this check. All nested raw proof is required, and incorrect
-re-sealed storage/policy output still fails semantic comparison.
+Expected: exit 0, `passed=true`, no errors, both registered platforms,
+`Storage_accepted=true`, `M2_accepted=false`. This recomputes current fingerprints,
+authenticates the whole nested raw tree and rejects synthetic/historical receipts
+or incorrect re-sealed output.

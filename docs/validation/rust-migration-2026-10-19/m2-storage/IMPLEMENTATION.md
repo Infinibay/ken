@@ -1,11 +1,12 @@
 # Native project storage
 
-Implementation: `ea0e73d6fd4066f1617be72d3f91daaa6fda3484` and its storage
+Implementation: `20db131d1ac56f43fb9d779678d9a5daaa29bbab` and its storage
 predecessors. This cut implements the approved
 [storage specification](../../../superpowers/specs/2026-10-19-rust-storage-design.md)
 and [five-task plan](../../../superpowers/plans/2026-10-19-rust-m2-storage.md).
 The current both-platform acceptance is recorded in [MATRIX.md](MATRIX.md).
-The final whole-plan review is pending at this proof cut.
+The one final whole-plan review and its TDD correction pass are complete;
+see [FINAL-REVIEW.md](FINAL-REVIEW.md) and [FINAL-FIXES.md](FINAL-FIXES.md).
 
 `ken-store` owns physical persistence. `ProjectDatabase` owns SQLite setup and
 schema initialization; `WriteTransaction` is the real `BEGIN IMMEDIATE`
@@ -18,9 +19,10 @@ on storage or inference.
 The store preserves WAL, synchronous NORMAL, foreign keys, the 5000 ms busy
 timeout, existing table/space names and the segmented vector format: version 1,
 little-endian float32, 65536 rows per default segment. Metadata distinguishes an
-absent/NULL value from a present empty string. Allocation checks ownership in
-the same immediate transaction and rejects a corrupt free list before bytes
-can be overwritten. Pin writes are atomic and recheck the physical state.
+absent/NULL value from a present empty string. Allocation checks current and rollback-restorable committed owners while the
+IMMEDIATE writer lock is held. A read-only SQLite reader identifies committed
+owners; their freed slots wait until a later transaction. Missing/lowered counters
+and corrupt free lists fail before physical bytes or allocator state change. Pin writes are atomic and recheck the physical state.
 
 Segment publication creates complete files exclusively and never resizes an
 existing mapped file. Reads own their buffers and use bounded positional I/O;
@@ -34,8 +36,13 @@ Inline migration commits complete batches, preserves foreign dimensions and
 can resume. Compaction prepares all three spaces in one writer transaction,
 publishes an owned journal and complete directory generations, and records its
 database commit marker transactionally. Recovery validates all generations
-before choosing the complete old or new mapping; cleanup is idempotent.
-Unmanaged files and directory permissions are preserved. Vacuum/checkpoint
+before choosing the complete old or new mapping. The external `discarding_new`
+phase makes partial uncommitted cleanup restartable even after its internal
+owner receipt disappears; committed/displaced generations cannot be discarded.
+Unmanaged files and live directory permissions are preserved, including readonly
+0500 contents. Permission-denied cleanup can enable owner access only in an
+inode-validated discarded tree, using no-follow directory descriptors and
+skipping symlinks. It leaves the live tree and outside targets unchanged. Vacuum/checkpoint
 errors do not undo an already committed data migration.
 
 The frozen original corpus contains 32 histories: 23 valid-data compatibility

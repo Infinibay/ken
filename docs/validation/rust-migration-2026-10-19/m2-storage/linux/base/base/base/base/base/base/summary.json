@@ -30,7 +30,7 @@
         "--version",
         "--verbose"
       ],
-      "duration_ns": 21258667,
+      "duration_ns": 40061375,
       "artifact": "rustc.log",
       "sha256": "9e52f76a6e81c8cce82c76c2ee87a3c9999e56d92106b19142416460b9d2c727"
     },
@@ -47,7 +47,7 @@
         "tests/test_status.py",
         "-q"
       ],
-      "duration_ns": 104741990757,
+      "duration_ns": 115141832344,
       "artifact": "python-contracts.log",
       "sha256": "b1851057fd7aad6a86f4621298b3dea93ef03f8387d45d1663e8dbd40c3fe7c9"
     },
@@ -59,11 +59,11 @@
         "/app/.venv/bin/python",
         "-m",
         "pytest",
-        "--junitxml=/app/.ken/rust-migration/m2-storage/acceptance-t5/linux/base/base/base/base/base/base/python-final.xml"
+        "--junitxml=/app/.ken/rust-migration/m2-storage/acceptance-t7/linux/base/base/base/base/base/base/python-final.xml"
       ],
-      "duration_ns": 974568037486,
+      "duration_ns": 994840556826,
       "artifact": "python-full.log",
-      "sha256": "1a1222b4fe31d4f7377f93899d8c366a6544d1b84cbc419158ddc173a41f53ef",
+      "sha256": "2f67512f682078cf12dced693a69c7c1a535b523861c6d469fb21d9c240d1556",
       "details": {
         "passed": true,
         "collected": 15741,
@@ -87,7 +87,7 @@
         "mypy",
         "--no-incremental"
       ],
-      "duration_ns": 35249472434,
+      "duration_ns": 37662488517,
       "artifact": "typing.log",
       "sha256": "119a5c789c6106f60ab231c0a5ab2cbdbc75299bde6ec7dd07f6c5c76beaac6b",
       "details": {
@@ -107,7 +107,7 @@
         "--",
         "--check"
       ],
-      "duration_ns": 297050375,
+      "duration_ns": 286917500,
       "artifact": "fmt.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -125,9 +125,9 @@
         "-D",
         "warnings"
       ],
-      "duration_ns": 3322926919,
+      "duration_ns": 1219800501,
       "artifact": "clippy.log",
-      "sha256": "5e1967e087e0687410cc3ce202e9a8390d619c34de9b9e8d1d36b795125e03e4"
+      "sha256": "63a0a939d0545260abd56416a7d6b71254bae6bc9c0e1ca775b6f5073119199c"
     },
     "rust_tests": {
       "ran": true,
@@ -140,9 +140,9 @@
         "--workspace",
         "--all-targets"
       ],
-      "duration_ns": 494894516976,
+      "duration_ns": 503437304939,
       "artifact": "rust_tests.log",
-      "sha256": "fefe909c376e8d19d7a23b61e6b7ac8283b625afbadbb5f0dbfc62cb55db7e99"
+      "sha256": "286880a164f39aed8c3f4e4e319111d1f8efd6b08850c9d4b91cd6e784294474"
     },
     "release": {
       "ran": true,
@@ -163,13 +163,13 @@
         "--bins",
         "--message-format=json"
       ],
-      "duration_ns": 244318334,
+      "duration_ns": 224869542,
       "artifact": "release.log",
-      "sha256": "99d52c858d6d72f57e56746f491875db28d115412e9b7923dcfdf446b5e91f21",
+      "sha256": "a813a29e77a2a6f6cd1d556d7b0b0907c13758f541f6b1a1972fd736aa5a9bf4",
       "native_binding": {
         "ran": true,
         "passed": true,
-        "built": "/app/.ken/rust-migration/m2-storage/source-t5/target/release/examples/model_probe",
+        "built": "/app/.ken/rust-migration/m2-storage/source-t7/target/release/examples/model_probe",
         "supplied": "/app/.ken/rust-migration/m2-translation/source-t4a/target/release/examples/model_probe",
         "built_sha256": "a426cb796fc79c6915b0902340ebf0ddec3ac4467f4b0bf3ed65c1d910b34b54",
         "supplied_sha256": "a426cb796fc79c6915b0902340ebf0ddec3ac4467f4b0bf3ed65c1d910b34b54"
@@ -185,9 +185,9 @@
         "pytest",
         "migration_tests",
         "-q",
-        "--junitxml=/app/.ken/rust-migration/m2-storage/acceptance-t5/linux/base/base/base/base/base/base/parity-tests.xml"
+        "--junitxml=/app/.ken/rust-migration/m2-storage/acceptance-t7/linux/base/base/base/base/base/base/parity-tests.xml"
       ],
-      "duration_ns": 345365073489,
+      "duration_ns": 329261473150,
       "artifact": "parity-tests.log",
       "sha256": "6997ffb705c1c5fa984efec27d8164c9d96401110464c8e386ecce809f88569c"
     },
@@ -210,13 +210,13 @@
         "--reference",
         "/app/.ken/rust-migration/m2-context/reference-t4",
         "--native",
-        "/app/.ken/rust-migration/m2-storage/source-t5/target/release/ken-rs",
+        "/app/.ken/rust-migration/m2-storage/source-t7/target/release/ken-rs",
         "--cases",
-        "/app/.ken/rust-migration/m2-storage/source-t5/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+        "/app/.ken/rust-migration/m2-storage/source-t7/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
         "--out",
-        "/app/.ken/rust-migration/m2-storage/acceptance-t5/linux/base/base/base/base/base/base/m1-parity.json"
+        "/app/.ken/rust-migration/m2-storage/acceptance-t7/linux/base/base/base/base/base/base/m1-parity.json"
       ],
-      "duration_ns": 35784000225,
+      "duration_ns": 27395143721,
       "artifact": "m1-parity.log",
       "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
     },
@@ -234,13 +234,13 @@
         "diff",
         "--check"
       ],
-      "duration_ns": 135532042,
+      "duration_ns": 6175750,
       "artifact": "hygiene.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   },
   "fingerprints": {
-    "native_source": "48dfa4ac52e7cba8581567a461db08bde420196a1da0cdafaab84a77d3d0a826",
+    "native_source": "25b6bec95370969e8529a50b55b99c7e4b19de2bc92705c83e876ce978bb68eb",
     "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
     "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
     "validator": "b662b05c5c0490115f2894c3d31a2a525edb96dee7cda5d9b3296f0650c24046",
@@ -283,10 +283,10 @@
       "passed": true,
       "linked_exit": 0,
       "tree_exit": 0,
-      "linked_sha256": "9ba1351fc5be161b79b428d3ec0e08010aabc4b6c8f6701a4dc1504ffc289e65",
-      "tree_sha256": "a433603d4c19290273e81ed03c598a7dd022c9ee1180b554035ce0483ccd8baf"
+      "linked_sha256": "2618de814c61a138ee02f457b36bdc8c4c16c2deb4eb5f394374458864621a6d",
+      "tree_sha256": "265e4a12bdcb13b15c96c1153e4b15631d4a4b3a1b76b066600c79680875f67e"
     },
-    "native_wall_ns": 1872086584,
+    "native_wall_ns": 1724766501,
     "native_exit": 0,
     "exec_attempts": 1,
     "assets_fingerprint": "358803c97ebfa214e3cc325cfb1c8d0e4ceaf38d060676a7c2e40f9204c1589e",
