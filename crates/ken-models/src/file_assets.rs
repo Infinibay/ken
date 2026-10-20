@@ -17,6 +17,9 @@ pub struct ModelFileSource {
 }
 
 impl ModelFileSource {
+    pub(crate) fn snapshot(&self) -> &Path {
+        &self.snapshot
+    }
     pub fn new(snapshot: &Path, private_parent: &Path) -> Result<Self, ModelError> {
         if !snapshot.is_absolute() || !private_parent.is_absolute() {
             return Err(ModelError::Registration(
@@ -128,13 +131,7 @@ fn verify_with(
     source: &ModelFileSource,
     mut copy: impl FnMut(&Path, &Artifact, &mut File) -> Result<(), VerificationError>,
 ) -> Result<VerifiedModelFiles, ModelError> {
-    if source.snapshot.file_name().and_then(|name| name.to_str()) != Some(assets.revision())
-        || !source.snapshot.is_dir()
-    {
-        return Err(ModelError::Registration(
-            "registered revision directory required".into(),
-        ));
-    }
+    assets.validate_snapshot(&source.snapshot)?;
     let mut builder = tempfile::Builder::new();
     builder.prefix("ken-model-files-");
     #[cfg(unix)]

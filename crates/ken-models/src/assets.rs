@@ -115,6 +115,11 @@ impl ModelAssets {
     }
 
     pub fn verify(&self, snapshot: &Path) -> Result<VerifiedSnapshot, ModelError> {
+        self.validate_snapshot(snapshot)?;
+        self.verify_artifacts(snapshot)
+    }
+
+    pub(crate) fn validate_snapshot(&self, snapshot: &Path) -> Result<(), ModelError> {
         if snapshot.file_name().and_then(|s| s.to_str()) != Some(self.revision.as_str())
             || !snapshot.is_dir()
         {
@@ -122,7 +127,30 @@ impl ModelAssets {
                 "registered revision directory required".into(),
             ));
         }
-        self.verify_artifacts(snapshot)
+        Ok(())
+    }
+
+    pub(crate) fn read_source_artifact(
+        &self,
+        snapshot: &Path,
+        name: &str,
+    ) -> Result<Vec<u8>, ModelError> {
+        self.validate_snapshot(snapshot)?;
+        let record = self
+            .artifacts
+            .get(name)
+            .ok_or_else(|| ModelError::Artifact(name.into()))?;
+        crate::verified_file::read(&snapshot.join(name), record.bytes, &record.sha256).map_err(
+            |error| match error {
+                crate::verified_file::VerificationError::Io(source) => ModelError::Io {
+                    artifact: name.into(),
+                    source,
+                },
+                crate::verified_file::VerificationError::Invalid(_) => {
+                    ModelError::Artifact(name.into())
+                }
+            },
+        )
     }
 
     pub fn verify_files(
