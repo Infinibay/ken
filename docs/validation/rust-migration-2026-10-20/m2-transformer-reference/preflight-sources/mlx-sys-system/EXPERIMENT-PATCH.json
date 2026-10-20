@@ -1,0 +1,16 @@
+{
+  "upstream": {
+    "metadata_url": "https://crates.io/api/v1/crates/mlx-sys/0.6.0",
+    "metadata_sha256": "a8e2e48e6c7ca9ada04c39b8c47c6b583590bb6d462108fcb811930446d72715",
+    "archive_sha256": "1848b6f1686114039e6e0adcf1578911e2e4d7707b9768ad61da074132319e1c",
+    "archive_bytes": 182700
+  },
+  "changed": [
+    "build.rs",
+    "src/mlx-c/mlx/c/ops.cpp"
+  ],
+  "reason": "Use exact original MLX0.32.3 dynamic core; upstream build fetches0.32.2 and static links. Bridge0.6.0 source/API is untouched. Private viability only; not a product dependency decision.",
+  "patched_build_sha256": "f51d0d0cdff9a0efa61a70c445ae7bef091dc9cf47659fbd8a065ef3f5d79e90",
+  "compatibility_observed": "Actual compile found added MLX0.32.3 gather_qmm optional global_scale before sorted_indices; bridge supplies nullopt preserving0.32.2 default. No C API declaration change. Quantized models are outside the original unquantized Qwen MLX path.",
+  "ops_sha256": "474781d396544b916564bf860c3914bdc20ace78896168532f3599fc4d6fdc96"
+}

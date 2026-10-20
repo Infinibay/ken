@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "profiles": [
+    {
+      "profile": "qwen-cpu-float32.json",
+      "cases": 12,
+      "byte_identical": true
+    },
+    {
+      "profile": "qwen-cpu-float16.json",
+      "cases": 12,
+      "byte_identical": true
+    },
+    {
+      "profile": "qwen-cpu-bfloat16.json",
+      "cases": 12,
+      "byte_identical": true
+    },
+    {
+      "profile": "bge-cpu-float32.json",
+      "cases": 12,
+      "byte_identical": true
+    },
+    {
+      "profile": "bge-cpu-float16.json",
+      "cases": 12,
+      "byte_identical": true
+    },
+    {
+      "profile": "bge-cpu-bfloat16.json",
+      "cases": 12,
+      "byte_identical": true
+    }
+  ],
+  "cases": 72,
+  "feeds": 96,
+  "model_inference_accepted": false
+}

@@ -1,0 +1,936 @@
+{
+  "format": "ken-transformer-catalog/1",
+  "models": [
+    {
+      "name": "BAAI/bge-m3",
+      "assets": {
+        "model_id": "BAAI/bge-m3",
+        "revision": "5617a9f61b028005a4858fdac845db406aefb181",
+        "license": "",
+        "artifacts": {
+          "1_Pooling/config.json": {
+            "bytes": 191,
+            "sha256": "e54c164a07274f2eb45bb724f54a79d1efcc90c41573887cd9a29aeee0597352"
+          },
+          "config.json": {
+            "bytes": 687,
+            "sha256": "26159e7ad065073448460117eb24b7a4572f6f4e78eadff65dc0a11c052449fa"
+          },
+          "config_sentence_transformers.json": {
+            "bytes": 123,
+            "sha256": "1eef72430e7194a1e59680e635aed81ffa083f05668dbc5bb1c56c04c0999c38"
+          },
+          "modules.json": {
+            "bytes": 349,
+            "sha256": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf"
+          },
+          "pytorch_model.bin": {
+            "bytes": 2271145830,
+            "sha256": "b5e0ce3470abf5ef3831aa1bd5553b486803e83251590ab7ff35a117cf6aad38"
+          },
+          "sentence_bert_config.json": {
+            "bytes": 54,
+            "sha256": "eb9b44b13c0f52a3b3685c3b1cbdea1ba8b04bea123b98f61610048940776eb1"
+          },
+          "sentencepiece.bpe.model": {
+            "bytes": 5069051,
+            "sha256": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865"
+          },
+          "special_tokens_map.json": {
+            "bytes": 964,
+            "sha256": "8c785abebea9ae3257b61681b4e6fd8365ceafde980c21970d001e834cf10835"
+          },
+          "tokenizer.json": {
+            "bytes": 17098108,
+            "sha256": "21106b6d7dab2952c1d496fb21d5dc9db75c28ed361a05f5020bbba27810dd08"
+          },
+          "tokenizer_config.json": {
+            "bytes": 444,
+            "sha256": "a62b2b6784f990259fddef5f16388693a8043be4f69179e6a5257eeb3f9abac4"
+          }
+        }
+      },
+      "dimension": 1024,
+      "architecture": "xlm-roberta",
+      "weight_layout": "unprefixed",
+      "role": "encoder",
+      "configs": {
+        "config.json": {
+          "_name_or_path": "",
+          "architectures": [
+            "XLMRobertaModel"
+          ],
+          "attention_probs_dropout_prob": 0.1,
+          "bos_token_id": 0,
+          "classifier_dropout": null,
+          "eos_token_id": 2,
+          "hidden_act": "gelu",
+          "hidden_dropout_prob": 0.1,
+          "hidden_size": 1024,
+          "initializer_range": 0.02,
+          "intermediate_size": 4096,
+          "layer_norm_eps": 1e-05,
+          "max_position_embeddings": 8194,
+          "model_type": "xlm-roberta",
+          "num_attention_heads": 16,
+          "num_hidden_layers": 24,
+          "output_past": true,
+          "pad_token_id": 1,
+          "position_embedding_type": "absolute",
+          "torch_dtype": "float32",
+          "transformers_version": "4.33.0",
+          "type_vocab_size": 1,
+          "use_cache": true,
+          "vocab_size": 250002
+        },
+        "modules.json": [
+          {
+            "idx": 0,
+            "name": "0",
+            "path": "",
+            "type": "sentence_transformers.models.Transformer"
+          },
+          {
+            "idx": 1,
+            "name": "1",
+            "path": "1_Pooling",
+            "type": "sentence_transformers.models.Pooling"
+          },
+          {
+            "idx": 2,
+            "name": "2",
+            "path": "2_Normalize",
+            "type": "sentence_transformers.models.Normalize"
+          }
+        ],
+        "sentence_bert_config.json": {
+          "max_seq_length": 8192,
+          "do_lower_case": false
+        },
+        "1_Pooling/config.json": {
+          "word_embedding_dimension": 1024,
+          "pooling_mode_cls_token": true,
+          "pooling_mode_mean_tokens": false,
+          "pooling_mode_max_tokens": false,
+          "pooling_mode_mean_sqrt_len_tokens": false
+        },
+        "config_sentence_transformers.json": {
+          "__version__": {
+            "sentence_transformers": "2.2.2",
+            "transformers": "4.33.0",
+            "pytorch": "2.1.2+cu121"
+          }
+        },
+        "tokenizer_config.json": {
+          "bos_token": "<s>",
+          "clean_up_tokenization_spaces": true,
+          "cls_token": "<s>",
+          "eos_token": "</s>",
+          "mask_token": {
+            "__type": "AddedToken",
+            "content": "<mask>",
+            "lstrip": true,
+            "normalized": true,
+            "rstrip": false,
+            "single_word": false
+          },
+          "model_max_length": 8192,
+          "pad_token": "<pad>",
+          "sep_token": "</s>",
+          "sp_model_kwargs": {},
+          "tokenizer_class": "XLMRobertaTokenizer",
+          "unk_token": "<unk>"
+        },
+        "special_tokens_map.json": {
+          "bos_token": {
+            "content": "<s>",
+            "lstrip": false,
+            "normalized": false,
+            "rstrip": false,
+            "single_word": false
+          },
+          "cls_token": {
+            "content": "<s>",
+            "lstrip": false,
+            "normalized": false,
+            "rstrip": false,
+            "single_word": false
+          },
+          "eos_token": {
+            "content": "</s>",
+            "lstrip": false,
+            "normalized": false,
+            "rstrip": false,
+            "single_word": false
+          },
+          "mask_token": {
+            "content": "<mask>",
+            "lstrip": true,
+            "normalized": false,
+            "rstrip": false,
+            "single_word": false
+          },
+          "pad_token": {
+            "content": "<pad>",
+            "lstrip": false,
+            "normalized": false,
+            "rstrip": false,
+            "single_word": false
+          },
+          "sep_token": {
+            "content": "</s>",
+            "lstrip": false,
+            "normalized": false,
+            "rstrip": false,
+            "single_word": false
+          },
+          "unk_token": {
+            "content": "<unk>",
+            "lstrip": false,
+            "normalized": false,
+            "rstrip": false,
+            "single_word": false
+          }
+        }
+      }
+    },
+    {
+      "name": "Qwen/Qwen3-Embedding-0.6B",
+      "assets": {
+        "model_id": "Qwen/Qwen3-Embedding-0.6B",
+        "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+        "license": "",
+        "artifacts": {
+          "1_Pooling/config.json": {
+            "bytes": 313,
+            "sha256": "37bf193fa101f19101bfad9c31d3eb0f786e247b7b1e5cb7f007d730eed1ddbd"
+          },
+          "config.json": {
+            "bytes": 727,
+            "sha256": "b5bf1f51fc45be473a54718cef92448d90a1be001bf9b9a44b8c7f10a19feaa9"
+          },
+          "config_sentence_transformers.json": {
+            "bytes": 215,
+            "sha256": "10667c72ddb772627bf1780cb7f86af8e2ae0032b8c243c731172064105c6961"
+          },
+          "merges.txt": {
+            "bytes": 1671853,
+            "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+          },
+          "model.safetensors": {
+            "bytes": 1191586416,
+            "sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd"
+          },
+          "modules.json": {
+            "bytes": 349,
+            "sha256": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf"
+          },
+          "tokenizer.json": {
+            "bytes": 11423705,
+            "sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a"
+          },
+          "tokenizer_config.json": {
+            "bytes": 9706,
+            "sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0"
+          },
+          "vocab.json": {
+            "bytes": 2776833,
+            "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+          }
+        }
+      },
+      "dimension": 1024,
+      "architecture": "qwen3",
+      "weight_layout": "unprefixed",
+      "role": "encoder",
+      "configs": {
+        "config.json": {
+          "architectures": [
+            "Qwen3ForCausalLM"
+          ],
+          "attention_bias": false,
+          "attention_dropout": 0.0,
+          "bos_token_id": 151643,
+          "eos_token_id": 151643,
+          "head_dim": 128,
+          "hidden_act": "silu",
+          "hidden_size": 1024,
+          "initializer_range": 0.02,
+          "intermediate_size": 3072,
+          "max_position_embeddings": 32768,
+          "max_window_layers": 28,
+          "model_type": "qwen3",
+          "num_attention_heads": 16,
+          "num_hidden_layers": 28,
+          "num_key_value_heads": 8,
+          "rms_norm_eps": 1e-06,
+          "rope_scaling": null,
+          "rope_theta": 1000000,
+          "sliding_window": null,
+          "tie_word_embeddings": true,
+          "torch_dtype": "bfloat16",
+          "transformers_version": "4.51.3",
+          "use_cache": true,
+          "use_sliding_window": false,
+          "vocab_size": 151669
+        },
+        "modules.json": [
+          {
+            "idx": 0,
+            "name": "0",
+            "path": "",
+            "type": "sentence_transformers.models.Transformer"
+          },
+          {
+            "idx": 1,
+            "name": "1",
+            "path": "1_Pooling",
+            "type": "sentence_transformers.models.Pooling"
+          },
+          {
+            "idx": 2,
+            "name": "2",
+            "path": "2_Normalize",
+            "type": "sentence_transformers.models.Normalize"
+          }
+        ],
+        "1_Pooling/config.json": {
+          "word_embedding_dimension": 1024,
+          "pooling_mode_cls_token": false,
+          "pooling_mode_mean_tokens": false,
+          "pooling_mode_max_tokens": false,
+          "pooling_mode_mean_sqrt_len_tokens": false,
+          "pooling_mode_weightedmean_tokens": false,
+          "pooling_mode_lasttoken": true,
+          "include_prompt": true
+        },
+        "config_sentence_transformers.json": {
+          "prompts": {
+            "query": "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:",
+            "document": ""
+          },
+          "default_prompt_name": null,
+          "similarity_fn_name": "cosine"
+        },
+        "tokenizer_config.json": {
+          "add_bos_token": false,
+          "add_prefix_space": false,
+          "added_tokens_decoder": {
+            "151643": {
+              "content": "<|endoftext|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151644": {
+              "content": "<|im_start|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151645": {
+              "content": "<|im_end|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151646": {
+              "content": "<|object_ref_start|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151647": {
+              "content": "<|object_ref_end|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151648": {
+              "content": "<|box_start|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151649": {
+              "content": "<|box_end|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151650": {
+              "content": "<|quad_start|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151651": {
+              "content": "<|quad_end|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151652": {
+              "content": "<|vision_start|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151653": {
+              "content": "<|vision_end|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151654": {
+              "content": "<|vision_pad|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151655": {
+              "content": "<|image_pad|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151656": {
+              "content": "<|video_pad|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151657": {
+              "content": "<tool_call>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151658": {
+              "content": "</tool_call>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151659": {
+              "content": "<|fim_prefix|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151660": {
+              "content": "<|fim_middle|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151661": {
+              "content": "<|fim_suffix|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151662": {
+              "content": "<|fim_pad|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151663": {
+              "content": "<|repo_name|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151664": {
+              "content": "<|file_sep|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151665": {
+              "content": "<tool_response>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151666": {
+              "content": "</tool_response>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151667": {
+              "content": "<think>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151668": {
+              "content": "</think>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            }
+          },
+          "additional_special_tokens": [
+            "<|im_start|>",
+            "<|im_end|>",
+            "<|object_ref_start|>",
+            "<|object_ref_end|>",
+            "<|box_start|>",
+            "<|box_end|>",
+            "<|quad_start|>",
+            "<|quad_end|>",
+            "<|vision_start|>",
+            "<|vision_end|>",
+            "<|vision_pad|>",
+            "<|image_pad|>",
+            "<|video_pad|>"
+          ],
+          "bos_token": null,
+          "chat_template": "{%- if tools %}\n    {{- '<|im_start|>system\\n' }}\n    {%- if messages[0].role == 'system' %}\n        {{- messages[0].content + '\\n\\n' }}\n    {%- endif %}\n    {{- \"# Tools\\n\\nYou may call one or more functions to assist with the user query.\\n\\nYou are provided with function signatures within <tools></tools> XML tags:\\n<tools>\" }}\n    {%- for tool in tools %}\n        {{- \"\\n\" }}\n        {{- tool | tojson }}\n    {%- endfor %}\n    {{- \"\\n</tools>\\n\\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\\n<tool_call>\\n{\\\"name\\\": <function-name>, \\\"arguments\\\": <args-json-object>}\\n</tool_call><|im_end|>\\n\" }}\n{%- else %}\n    {%- if messages[0].role == 'system' %}\n        {{- '<|im_start|>system\\n' + messages[0].content + '<|im_end|>\\n' }}\n    {%- endif %}\n{%- endif %}\n{%- set ns = namespace(multi_step_tool=true, last_query_index=messages|length - 1) %}\n{%- for message in messages[::-1] %}\n    {%- set index = (messages|length - 1) - loop.index0 %}\n    {%- if ns.multi_step_tool and message.role == \"user\" and not(message.content.startswith('<tool_response>') and message.content.endswith('</tool_response>')) %}\n        {%- set ns.multi_step_tool = false %}\n        {%- set ns.last_query_index = index %}\n    {%- endif %}\n{%- endfor %}\n{%- for message in messages %}\n    {%- if (message.role == \"user\") or (message.role == \"system\" and not loop.first) %}\n        {{- '<|im_start|>' + message.role + '\\n' + message.content + '<|im_end|>' + '\\n' }}\n    {%- elif message.role == \"assistant\" %}\n        {%- set content = message.content %}\n        {%- set reasoning_content = '' %}\n        {%- if message.reasoning_content is defined and message.reasoning_content is not none %}\n            {%- set reasoning_content = message.reasoning_content %}\n        {%- else %}\n            {%- if '</think>' in message.content %}\n                {%- set content = message.content.split('</think>')[-1].lstrip('\\n') %}\n                {%- set reasoning_content = message.content.split('</think>')[0].rstrip('\\n').split('<think>')[-1].lstrip('\\n') %}\n            {%- endif %}\n        {%- endif %}\n        {%- if loop.index0 > ns.last_query_index %}\n            {%- if loop.last or (not loop.last and reasoning_content) %}\n                {{- '<|im_start|>' + message.role + '\\n<think>\\n' + reasoning_content.strip('\\n') + '\\n</think>\\n\\n' + content.lstrip('\\n') }}\n            {%- else %}\n                {{- '<|im_start|>' + message.role + '\\n' + content }}\n            {%- endif %}\n        {%- else %}\n            {{- '<|im_start|>' + message.role + '\\n' + content }}\n        {%- endif %}\n        {%- if message.tool_calls %}\n            {%- for tool_call in message.tool_calls %}\n                {%- if (loop.first and content) or (not loop.first) %}\n                    {{- '\\n' }}\n                {%- endif %}\n                {%- if tool_call.function %}\n                    {%- set tool_call = tool_call.function %}\n                {%- endif %}\n                {{- '<tool_call>\\n{\"name\": \"' }}\n                {{- tool_call.name }}\n                {{- '\", \"arguments\": ' }}\n                {%- if tool_call.arguments is string %}\n                    {{- tool_call.arguments }}\n                {%- else %}\n                    {{- tool_call.arguments | tojson }}\n                {%- endif %}\n                {{- '}\\n</tool_call>' }}\n            {%- endfor %}\n        {%- endif %}\n        {{- '<|im_end|>\\n' }}\n    {%- elif message.role == \"tool\" %}\n        {%- if loop.first or (messages[loop.index0 - 1].role != \"tool\") %}\n            {{- '<|im_start|>user' }}\n        {%- endif %}\n        {{- '\\n<tool_response>\\n' }}\n        {{- message.content }}\n        {{- '\\n</tool_response>' }}\n        {%- if loop.last or (messages[loop.index0 + 1].role != \"tool\") %}\n            {{- '<|im_end|>\\n' }}\n        {%- endif %}\n    {%- endif %}\n{%- endfor %}\n{%- if add_generation_prompt %}\n    {{- '<|im_start|>assistant\\n' }}\n    {%- if enable_thinking is defined and enable_thinking is false %}\n        {{- '<think>\\n\\n</think>\\n\\n' }}\n    {%- endif %}\n{%- endif %}",
+          "clean_up_tokenization_spaces": false,
+          "eos_token": "<|im_end|>",
+          "errors": "replace",
+          "extra_special_tokens": {},
+          "model_max_length": 131072,
+          "pad_token": "<|endoftext|>",
+          "split_special_tokens": false,
+          "tokenizer_class": "Qwen2Tokenizer",
+          "unk_token": null
+        }
+      }
+    },
+    {
+      "name": "Qwen/Qwen3-Reranker-0.6B",
+      "assets": {
+        "model_id": "Qwen/Qwen3-Reranker-0.6B",
+        "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+        "license": "",
+        "artifacts": {
+          "config.json": {
+            "bytes": 727,
+            "sha256": "d479c427a9ca5295218063d4f9aca4f297ab4ac27487cca7af42c84643d51ef0"
+          },
+          "config_sentence_transformers.json": {
+            "bytes": 325,
+            "sha256": "6a153d6696f78fd588c1c728967f0b773ea869d3c6028f151ce71ebe49140762"
+          },
+          "merges.txt": {
+            "bytes": 1671853,
+            "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+          },
+          "model.safetensors": {
+            "bytes": 1191588280,
+            "sha256": "27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b"
+          },
+          "modules.json": {
+            "bytes": 280,
+            "sha256": "6f13b6b4a89e577b591b2077bca40c67c26541a6740a8809267cb474f90806a9"
+          },
+          "sentence_bert_config.json": {
+            "bytes": 362,
+            "sha256": "3234ebd224d492cbe8d55d5ec80a3f408451c4db3005bafb64fe1c51c763e01e"
+          },
+          "tokenizer.json": {
+            "bytes": 11422654,
+            "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+          },
+          "tokenizer_config.json": {
+            "bytes": 9706,
+            "sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0"
+          },
+          "vocab.json": {
+            "bytes": 2776833,
+            "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+          }
+        }
+      },
+      "dimension": 1024,
+      "architecture": "qwen3",
+      "weight_layout": "model-prefix",
+      "role": "judge",
+      "configs": {
+        "config.json": {
+          "architectures": [
+            "Qwen3ForCausalLM"
+          ],
+          "attention_bias": false,
+          "attention_dropout": 0.0,
+          "bos_token_id": 151643,
+          "eos_token_id": 151645,
+          "head_dim": 128,
+          "hidden_act": "silu",
+          "hidden_size": 1024,
+          "initializer_range": 0.02,
+          "intermediate_size": 3072,
+          "max_position_embeddings": 40960,
+          "max_window_layers": 28,
+          "model_type": "qwen3",
+          "num_attention_heads": 16,
+          "num_hidden_layers": 28,
+          "num_key_value_heads": 8,
+          "rms_norm_eps": 1e-06,
+          "rope_scaling": null,
+          "rope_theta": 1000000,
+          "sliding_window": null,
+          "tie_word_embeddings": true,
+          "torch_dtype": "bfloat16",
+          "transformers_version": "4.51.3",
+          "use_cache": true,
+          "use_sliding_window": false,
+          "vocab_size": 151669
+        },
+        "modules.json": [
+          {
+            "idx": 0,
+            "name": "0",
+            "path": "",
+            "type": "sentence_transformers.base.modules.transformer.Transformer"
+          },
+          {
+            "idx": 1,
+            "name": "1",
+            "path": "1_LogitScore",
+            "type": "sentence_transformers.cross_encoder.modules.logit_score.LogitScore"
+          }
+        ],
+        "sentence_bert_config.json": {
+          "transformer_task": "text-generation",
+          "modality_config": {
+            "text": {
+              "method": "forward",
+              "method_output_name": "logits"
+            },
+            "message": {
+              "method": "forward",
+              "method_output_name": "logits",
+              "format": "flat"
+            }
+          },
+          "module_output_name": "causal_logits"
+        },
+        "config_sentence_transformers.json": {
+          "__version__": {
+            "pytorch": "2.10.0+cu128",
+            "sentence_transformers": "5.4.0"
+          },
+          "activation_fn": "torch.nn.modules.linear.Identity",
+          "default_prompt_name": "query",
+          "model_type": "CrossEncoder",
+          "prompts": {
+            "query": "Given a web search query, retrieve relevant passages that answer the query"
+          }
+        },
+        "tokenizer_config.json": {
+          "add_bos_token": false,
+          "add_prefix_space": false,
+          "added_tokens_decoder": {
+            "151643": {
+              "content": "<|endoftext|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151644": {
+              "content": "<|im_start|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151645": {
+              "content": "<|im_end|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151646": {
+              "content": "<|object_ref_start|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151647": {
+              "content": "<|object_ref_end|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151648": {
+              "content": "<|box_start|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151649": {
+              "content": "<|box_end|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151650": {
+              "content": "<|quad_start|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151651": {
+              "content": "<|quad_end|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151652": {
+              "content": "<|vision_start|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151653": {
+              "content": "<|vision_end|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151654": {
+              "content": "<|vision_pad|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151655": {
+              "content": "<|image_pad|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151656": {
+              "content": "<|video_pad|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": true
+            },
+            "151657": {
+              "content": "<tool_call>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151658": {
+              "content": "</tool_call>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151659": {
+              "content": "<|fim_prefix|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151660": {
+              "content": "<|fim_middle|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151661": {
+              "content": "<|fim_suffix|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151662": {
+              "content": "<|fim_pad|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151663": {
+              "content": "<|repo_name|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151664": {
+              "content": "<|file_sep|>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151665": {
+              "content": "<tool_response>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151666": {
+              "content": "</tool_response>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151667": {
+              "content": "<think>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            },
+            "151668": {
+              "content": "</think>",
+              "lstrip": false,
+              "normalized": false,
+              "rstrip": false,
+              "single_word": false,
+              "special": false
+            }
+          },
+          "additional_special_tokens": [
+            "<|im_start|>",
+            "<|im_end|>",
+            "<|object_ref_start|>",
+            "<|object_ref_end|>",
+            "<|box_start|>",
+            "<|box_end|>",
+            "<|quad_start|>",
+            "<|quad_end|>",
+            "<|vision_start|>",
+            "<|vision_end|>",
+            "<|vision_pad|>",
+            "<|image_pad|>",
+            "<|video_pad|>"
+          ],
+          "bos_token": null,
+          "chat_template": "{%- if tools %}\n    {{- '<|im_start|>system\\n' }}\n    {%- if messages[0].role == 'system' %}\n        {{- messages[0].content + '\\n\\n' }}\n    {%- endif %}\n    {{- \"# Tools\\n\\nYou may call one or more functions to assist with the user query.\\n\\nYou are provided with function signatures within <tools></tools> XML tags:\\n<tools>\" }}\n    {%- for tool in tools %}\n        {{- \"\\n\" }}\n        {{- tool | tojson }}\n    {%- endfor %}\n    {{- \"\\n</tools>\\n\\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\\n<tool_call>\\n{\\\"name\\\": <function-name>, \\\"arguments\\\": <args-json-object>}\\n</tool_call><|im_end|>\\n\" }}\n{%- else %}\n    {%- if messages[0].role == 'system' %}\n        {{- '<|im_start|>system\\n' + messages[0].content + '<|im_end|>\\n' }}\n    {%- endif %}\n{%- endif %}\n{%- set ns = namespace(multi_step_tool=true, last_query_index=messages|length - 1) %}\n{%- for message in messages[::-1] %}\n    {%- set index = (messages|length - 1) - loop.index0 %}\n    {%- if ns.multi_step_tool and message.role == \"user\" and not(message.content.startswith('<tool_response>') and message.content.endswith('</tool_response>')) %}\n        {%- set ns.multi_step_tool = false %}\n        {%- set ns.last_query_index = index %}\n    {%- endif %}\n{%- endfor %}\n{%- for message in messages %}\n    {%- if (message.role == \"user\") or (message.role == \"system\" and not loop.first) %}\n        {{- '<|im_start|>' + message.role + '\\n' + message.content + '<|im_end|>' + '\\n' }}\n    {%- elif message.role == \"assistant\" %}\n        {%- set content = message.content %}\n        {%- set reasoning_content = '' %}\n        {%- if message.reasoning_content is defined and message.reasoning_content is not none %}\n            {%- set reasoning_content = message.reasoning_content %}\n        {%- else %}\n            {%- if '</think>' in message.content %}\n                {%- set content = message.content.split('</think>')[-1].lstrip('\\n') %}\n                {%- set reasoning_content = message.content.split('</think>')[0].rstrip('\\n').split('<think>')[-1].lstrip('\\n') %}\n            {%- endif %}\n        {%- endif %}\n        {%- if loop.index0 > ns.last_query_index %}\n            {%- if loop.last or (not loop.last and reasoning_content) %}\n                {{- '<|im_start|>' + message.role + '\\n<think>\\n' + reasoning_content.strip('\\n') + '\\n</think>\\n\\n' + content.lstrip('\\n') }}\n            {%- else %}\n                {{- '<|im_start|>' + message.role + '\\n' + content }}\n            {%- endif %}\n        {%- else %}\n            {{- '<|im_start|>' + message.role + '\\n' + content }}\n        {%- endif %}\n        {%- if message.tool_calls %}\n            {%- for tool_call in message.tool_calls %}\n                {%- if (loop.first and content) or (not loop.first) %}\n                    {{- '\\n' }}\n                {%- endif %}\n                {%- if tool_call.function %}\n                    {%- set tool_call = tool_call.function %}\n                {%- endif %}\n                {{- '<tool_call>\\n{\"name\": \"' }}\n                {{- tool_call.name }}\n                {{- '\", \"arguments\": ' }}\n                {%- if tool_call.arguments is string %}\n                    {{- tool_call.arguments }}\n                {%- else %}\n                    {{- tool_call.arguments | tojson }}\n                {%- endif %}\n                {{- '}\\n</tool_call>' }}\n            {%- endfor %}\n        {%- endif %}\n        {{- '<|im_end|>\\n' }}\n    {%- elif message.role == \"tool\" %}\n        {%- if loop.first or (messages[loop.index0 - 1].role != \"tool\") %}\n            {{- '<|im_start|>user' }}\n        {%- endif %}\n        {{- '\\n<tool_response>\\n' }}\n        {{- message.content }}\n        {{- '\\n</tool_response>' }}\n        {%- if loop.last or (messages[loop.index0 + 1].role != \"tool\") %}\n            {{- '<|im_end|>\\n' }}\n        {%- endif %}\n    {%- endif %}\n{%- endfor %}\n{%- if add_generation_prompt %}\n    {{- '<|im_start|>assistant\\n' }}\n    {%- if enable_thinking is defined and enable_thinking is false %}\n        {{- '<think>\\n\\n</think>\\n\\n' }}\n    {%- endif %}\n{%- endif %}",
+          "clean_up_tokenization_spaces": false,
+          "eos_token": "<|im_end|>",
+          "errors": "replace",
+          "extra_special_tokens": {},
+          "model_max_length": 131072,
+          "pad_token": "<|endoftext|>",
+          "split_special_tokens": false,
+          "tokenizer_class": "Qwen2Tokenizer",
+          "unk_token": null
+        }
+      }
+    }
+  ],
+  "original_sources": {
+    "sentence": {
+      "path": "src/ken/embedder/st_backend.py",
+      "sha256": "ca68df7765852ef9e8f8c293133672d31b9cfe33a73d3e74fa5e3f24c727b621"
+    },
+    "mlx": {
+      "path": "src/ken/embedder/mlx_backend.py",
+      "sha256": "20fe64331e8a7b6b574e49665393dca7920451eb357cbd8d3d917d6847eccf5d"
+    },
+    "judge": {
+      "path": "src/ken/retrieval/joint_model.py",
+      "sha256": "166d15f9ef7387b5b4f2485bb6d33507ef67d0204c8a0b18b88b57a6c26906f1"
+    }
+  },
+  "model_inference_accepted": false
+}
