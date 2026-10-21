@@ -15,6 +15,8 @@ mod onnx_dependencies;
 mod onnx_providers;
 mod onnx_reranker;
 mod onnx_wire;
+mod profile;
+mod profile_identity;
 mod published_head;
 mod python_unicode;
 mod query_expansion;
@@ -57,6 +59,11 @@ pub use onnx_providers::{FastEmbedDevice, FastEmbedDeviceRequest};
 pub use onnx_reranker::{
     OnnxReranker, RerankDetails, RerankOptions, RerankSessionPolicy, ScoredPool,
 };
+pub use profile::{
+    ContextualRetrieval, EncoderBackend, EncoderSpec, EvidenceRanking, JointRanking,
+    RetrievalProfile,
+};
+pub use profile_identity::LegacyRuntimeIdentity;
 pub use published_head::compile_head;
 pub use query_expansion::{
     ExpandedQuery, ExpansionAttempt, LocalQueryExpansion, TranslationInput,

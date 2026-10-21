@@ -1,0 +1,1398 @@
+{
+  "format": "ken-profile-original/1",
+  "platform": "linux",
+  "original_source": {
+    "path": "src/ken/retrieval/profile.py",
+    "bytes": 12515,
+    "sha256": "aac4a430dbecd0a2d79b76054e26e57752df8fab88bdf9d963bfa857afcbed13"
+  },
+  "capture_tool_sha256": "697f0a8c0f2d6c52c860ff55883f9d83726d51aac49d17dabc7ebe6020025901",
+  "legacy_runtime": {
+    "format": "ken-legacy-runtime/1",
+    "backends": {
+      "static": [
+        [
+          "numpy",
+          "2.4.4"
+        ],
+        [
+          "tokenizers",
+          "0.22.2"
+        ]
+      ],
+      "model2vec": [
+        [
+          "numpy",
+          "2.4.4"
+        ],
+        [
+          "model2vec",
+          "0.9.0"
+        ],
+        [
+          "tokenizers",
+          "0.22.2"
+        ],
+        [
+          "safetensors",
+          "0.8.0"
+        ]
+      ],
+      "sentence-transformers": [
+        [
+          "numpy",
+          "2.4.4"
+        ],
+        [
+          "torch",
+          "2.9.0+cpu"
+        ],
+        [
+          "transformers",
+          "4.57.6"
+        ],
+        [
+          "tokenizers",
+          "0.22.2"
+        ],
+        [
+          "sentence-transformers",
+          "unavailable"
+        ],
+        [
+          "huggingface-hub",
+          "0.36.2"
+        ]
+      ],
+      "mlx": [
+        [
+          "numpy",
+          "2.4.4"
+        ],
+        [
+          "mlx",
+          "unavailable"
+        ],
+        [
+          "mlx-lm",
+          "unavailable"
+        ],
+        [
+          "transformers",
+          "4.57.6"
+        ],
+        [
+          "tokenizers",
+          "0.22.2"
+        ],
+        [
+          "huggingface-hub",
+          "0.36.2"
+        ]
+      ],
+      "provided": []
+    },
+    "evidence": [
+      [
+        "numpy",
+        "2.4.4"
+      ],
+      [
+        "snowballstemmer",
+        "3.0.1"
+      ]
+    ],
+    "contextual": [
+      [
+        "numpy",
+        "2.4.4"
+      ],
+      [
+        "tokenizers",
+        "0.22.2"
+      ],
+      [
+        "onnxruntime",
+        "1.25.1"
+      ]
+    ]
+  },
+  "encoders": [
+    {
+      "label": "static",
+      "input": {
+        "model_id": "ken/static-qwen3-r512-v2",
+        "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "config": {
+        "model_id": "ken/static-qwen3-r512-v2",
+        "revision": "1111111111111111111111111111111111111111111111111111111111111111",
+        "backend": "static",
+        "dtype": "float32",
+        "sequence_length": 512,
+        "batch_size": 16
+      },
+      "key": "ken/static-qwen3-r512-v2@1111111111111111111111111111111111111111111111111111111111111111:3edd4e2f343d8cea",
+      "tokenizer_revision": "9b1db4cd7f6b8231"
+    },
+    {
+      "label": "potion",
+      "input": {
+        "model_id": "minishlab/potion-code-16M-v2",
+        "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+        "backend": "model2vec",
+        "dtype": "float16",
+        "batch_size": 1024
+      },
+      "config": {
+        "model_id": "minishlab/potion-code-16M-v2",
+        "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+        "backend": "model2vec",
+        "dtype": "float16",
+        "sequence_length": 512,
+        "batch_size": 1024
+      },
+      "key": "minishlab/potion-code-16M-v2@2222222222222222222222222222222222222222222222222222222222222222:4a1bb061a945ea01",
+      "tokenizer_revision": "9b1db4cd7f6b8231"
+    },
+    {
+      "label": "torch",
+      "input": {
+        "model_id": "Qwen/Qwen3-Embedding-0.6B",
+        "revision": "3333333333333333333333333333333333333333",
+        "backend": "sentence-transformers",
+        "dtype": "bfloat16",
+        "sequence_length": 384
+      },
+      "config": {
+        "model_id": "Qwen/Qwen3-Embedding-0.6B",
+        "revision": "3333333333333333333333333333333333333333",
+        "backend": "sentence-transformers",
+        "dtype": "bfloat16",
+        "sequence_length": 384,
+        "batch_size": 16
+      },
+      "key": "Qwen/Qwen3-Embedding-0.6B@3333333333333333333333333333333333333333:0e5ec1c7e17da801",
+      "tokenizer_revision": "0f24f5cc674a5e29"
+    },
+    {
+      "label": "mlx",
+      "input": {
+        "model_id": "Qwen/Qwen3-Embedding-0.6B",
+        "revision": "3333333333333333333333333333333333333333",
+        "backend": "mlx",
+        "dtype": "float16",
+        "batch_size": 8
+      },
+      "config": {
+        "model_id": "Qwen/Qwen3-Embedding-0.6B",
+        "revision": "3333333333333333333333333333333333333333",
+        "backend": "mlx",
+        "dtype": "float16",
+        "sequence_length": 512,
+        "batch_size": 8
+      },
+      "key": "Qwen/Qwen3-Embedding-0.6B@3333333333333333333333333333333333333333:65c68dd162819abf",
+      "tokenizer_revision": "0f24f5cc674a5e29"
+    },
+    {
+      "label": "provided",
+      "input": {
+        "model_id": "injected/encoder",
+        "revision": "4444444444444444444444444444444444444444",
+        "backend": "provided"
+      },
+      "config": {
+        "model_id": "injected/encoder",
+        "revision": "4444444444444444444444444444444444444444",
+        "backend": "provided",
+        "dtype": "float32",
+        "sequence_length": 512,
+        "batch_size": 16
+      },
+      "key": "injected/encoder@4444444444444444444444444444444444444444:15788b9f742750ef",
+      "tokenizer_revision": "4f53cda18c2baa0c"
+    },
+    {
+      "label": "unicode",
+      "input": {
+        "model_id": "modelos/ni\u00f1o \ud83d\ude80\t\"\\",
+        "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "backend": "provided"
+      },
+      "config": {
+        "model_id": "modelos/ni\u00f1o \ud83d\ude80\t\"\\",
+        "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "backend": "provided",
+        "dtype": "float32",
+        "sequence_length": 512,
+        "batch_size": 16
+      },
+      "key": "modelos/ni\u00f1o \ud83d\ude80\t\"\\@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:92671daac6228128",
+      "tokenizer_revision": "4f53cda18c2baa0c"
+    }
+  ],
+  "profiles": [
+    {
+      "label": "static",
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        }
+      },
+      "config": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111",
+          "backend": "static",
+          "dtype": "float32",
+          "sequence_length": 512,
+          "batch_size": 16
+        },
+        "behavior": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111",
+          "backend": "static",
+          "dtype": "float32",
+          "sequence_length": 512,
+          "batch_size": 16
+        },
+        "max_tokens": 256,
+        "candidate_limit": 100,
+        "rrf_k": 60,
+        "passage_tokenizer": "code-lexical-v1",
+        "representation_version": 3,
+        "joint": null
+      },
+      "serialized_python": "{\"behavior\": {\"backend\": \"static\", \"batch_size\": 16, \"dtype\": \"float32\", \"model_id\": \"ken/static-qwen3-r512-v2\", \"revision\": \"1111111111111111111111111111111111111111111111111111111111111111\", \"sequence_length\": 512}, \"candidate_limit\": 100, \"identity\": {\"backend\": \"static\", \"batch_size\": 16, \"dtype\": \"float32\", \"model_id\": \"ken/static-qwen3-r512-v2\", \"revision\": \"1111111111111111111111111111111111111111111111111111111111111111\", \"sequence_length\": 512}, \"joint\": null, \"max_tokens\": 256, \"passage_tokenizer\": \"code-lexical-v1\", \"representation_version\": 3, \"rrf_k\": 60}",
+      "fingerprint": "38022658a222777691581672a0e34fdc31a38a385bd384c4227d2fa69808c0c5",
+      "vector_revisions": {
+        "identity": "ken/static-qwen3-r512-v2@1111111111111111111111111111111111111111111111111111111111111111:3edd4e2f343d8cea:projection-ffb47084a620b16e",
+        "behavior": "ken/static-qwen3-r512-v2@1111111111111111111111111111111111111111111111111111111111111111:3edd4e2f343d8cea:projection-a3779679a8d59c6e"
+      }
+    },
+    {
+      "label": "potion",
+      "input": {
+        "identity": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        }
+      },
+      "config": {
+        "identity": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "sequence_length": 512,
+          "batch_size": 1024
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "sequence_length": 512,
+          "batch_size": 1024
+        },
+        "max_tokens": 256,
+        "candidate_limit": 100,
+        "rrf_k": 60,
+        "passage_tokenizer": "code-lexical-v1",
+        "representation_version": 3,
+        "joint": null
+      },
+      "serialized_python": "{\"behavior\": {\"backend\": \"model2vec\", \"batch_size\": 1024, \"dtype\": \"float16\", \"model_id\": \"minishlab/potion-code-16M-v2\", \"revision\": \"2222222222222222222222222222222222222222222222222222222222222222\", \"sequence_length\": 512}, \"candidate_limit\": 100, \"identity\": {\"backend\": \"model2vec\", \"batch_size\": 1024, \"dtype\": \"float16\", \"model_id\": \"minishlab/potion-code-16M-v2\", \"revision\": \"2222222222222222222222222222222222222222222222222222222222222222\", \"sequence_length\": 512}, \"joint\": null, \"max_tokens\": 256, \"passage_tokenizer\": \"code-lexical-v1\", \"representation_version\": 3, \"rrf_k\": 60}",
+      "fingerprint": "503a25e49befbb280f9dcbb2b4b8265b64f25b98a367da4c8cb7567aee4b452a",
+      "vector_revisions": {
+        "identity": "minishlab/potion-code-16M-v2@2222222222222222222222222222222222222222222222222222222222222222:4a1bb061a945ea01:projection-ffb47084a620b16e",
+        "behavior": "minishlab/potion-code-16M-v2@2222222222222222222222222222222222222222222222222222222222222222:4a1bb061a945ea01:projection-a3779679a8d59c6e"
+      }
+    },
+    {
+      "label": "torch",
+      "input": {
+        "identity": {
+          "model_id": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "3333333333333333333333333333333333333333",
+          "backend": "sentence-transformers",
+          "dtype": "bfloat16",
+          "sequence_length": 384
+        },
+        "behavior": {
+          "model_id": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "3333333333333333333333333333333333333333",
+          "backend": "sentence-transformers",
+          "dtype": "bfloat16",
+          "sequence_length": 384
+        }
+      },
+      "config": {
+        "identity": {
+          "model_id": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "3333333333333333333333333333333333333333",
+          "backend": "sentence-transformers",
+          "dtype": "bfloat16",
+          "sequence_length": 384,
+          "batch_size": 16
+        },
+        "behavior": {
+          "model_id": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "3333333333333333333333333333333333333333",
+          "backend": "sentence-transformers",
+          "dtype": "bfloat16",
+          "sequence_length": 384,
+          "batch_size": 16
+        },
+        "max_tokens": 256,
+        "candidate_limit": 100,
+        "rrf_k": 60,
+        "passage_tokenizer": "code-lexical-v1",
+        "representation_version": 3,
+        "joint": null
+      },
+      "serialized_python": "{\"behavior\": {\"backend\": \"sentence-transformers\", \"batch_size\": 16, \"dtype\": \"bfloat16\", \"model_id\": \"Qwen/Qwen3-Embedding-0.6B\", \"revision\": \"3333333333333333333333333333333333333333\", \"sequence_length\": 384}, \"candidate_limit\": 100, \"identity\": {\"backend\": \"sentence-transformers\", \"batch_size\": 16, \"dtype\": \"bfloat16\", \"model_id\": \"Qwen/Qwen3-Embedding-0.6B\", \"revision\": \"3333333333333333333333333333333333333333\", \"sequence_length\": 384}, \"joint\": null, \"max_tokens\": 256, \"passage_tokenizer\": \"code-lexical-v1\", \"representation_version\": 3, \"rrf_k\": 60}",
+      "fingerprint": "06065640a36c14be62c896c091903fc7479ed2f70edd73023922f55a7b00d901",
+      "vector_revisions": {
+        "identity": "Qwen/Qwen3-Embedding-0.6B@3333333333333333333333333333333333333333:0e5ec1c7e17da801:projection-ffb47084a620b16e",
+        "behavior": "Qwen/Qwen3-Embedding-0.6B@3333333333333333333333333333333333333333:0e5ec1c7e17da801:projection-a3779679a8d59c6e"
+      }
+    },
+    {
+      "label": "mlx",
+      "input": {
+        "identity": {
+          "model_id": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "3333333333333333333333333333333333333333",
+          "backend": "mlx",
+          "dtype": "float16",
+          "batch_size": 8
+        },
+        "behavior": {
+          "model_id": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "3333333333333333333333333333333333333333",
+          "backend": "mlx",
+          "dtype": "float16",
+          "batch_size": 8
+        }
+      },
+      "config": {
+        "identity": {
+          "model_id": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "3333333333333333333333333333333333333333",
+          "backend": "mlx",
+          "dtype": "float16",
+          "sequence_length": 512,
+          "batch_size": 8
+        },
+        "behavior": {
+          "model_id": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "3333333333333333333333333333333333333333",
+          "backend": "mlx",
+          "dtype": "float16",
+          "sequence_length": 512,
+          "batch_size": 8
+        },
+        "max_tokens": 256,
+        "candidate_limit": 100,
+        "rrf_k": 60,
+        "passage_tokenizer": "code-lexical-v1",
+        "representation_version": 3,
+        "joint": null
+      },
+      "serialized_python": "{\"behavior\": {\"backend\": \"mlx\", \"batch_size\": 8, \"dtype\": \"float16\", \"model_id\": \"Qwen/Qwen3-Embedding-0.6B\", \"revision\": \"3333333333333333333333333333333333333333\", \"sequence_length\": 512}, \"candidate_limit\": 100, \"identity\": {\"backend\": \"mlx\", \"batch_size\": 8, \"dtype\": \"float16\", \"model_id\": \"Qwen/Qwen3-Embedding-0.6B\", \"revision\": \"3333333333333333333333333333333333333333\", \"sequence_length\": 512}, \"joint\": null, \"max_tokens\": 256, \"passage_tokenizer\": \"code-lexical-v1\", \"representation_version\": 3, \"rrf_k\": 60}",
+      "fingerprint": "ab5d51454d96a2943bd32b495aa852c6b22ceb092d80b6eff6b49eed35e7cea2",
+      "vector_revisions": {
+        "identity": "Qwen/Qwen3-Embedding-0.6B@3333333333333333333333333333333333333333:65c68dd162819abf:projection-ffb47084a620b16e",
+        "behavior": "Qwen/Qwen3-Embedding-0.6B@3333333333333333333333333333333333333333:65c68dd162819abf:projection-a3779679a8d59c6e"
+      }
+    },
+    {
+      "label": "provided",
+      "input": {
+        "identity": {
+          "model_id": "injected/encoder",
+          "revision": "4444444444444444444444444444444444444444",
+          "backend": "provided"
+        },
+        "behavior": {
+          "model_id": "injected/encoder",
+          "revision": "4444444444444444444444444444444444444444",
+          "backend": "provided"
+        }
+      },
+      "config": {
+        "identity": {
+          "model_id": "injected/encoder",
+          "revision": "4444444444444444444444444444444444444444",
+          "backend": "provided",
+          "dtype": "float32",
+          "sequence_length": 512,
+          "batch_size": 16
+        },
+        "behavior": {
+          "model_id": "injected/encoder",
+          "revision": "4444444444444444444444444444444444444444",
+          "backend": "provided",
+          "dtype": "float32",
+          "sequence_length": 512,
+          "batch_size": 16
+        },
+        "max_tokens": 256,
+        "candidate_limit": 100,
+        "rrf_k": 60,
+        "passage_tokenizer": "code-lexical-v1",
+        "representation_version": 3,
+        "joint": null
+      },
+      "serialized_python": "{\"behavior\": {\"backend\": \"provided\", \"batch_size\": 16, \"dtype\": \"float32\", \"model_id\": \"injected/encoder\", \"revision\": \"4444444444444444444444444444444444444444\", \"sequence_length\": 512}, \"candidate_limit\": 100, \"identity\": {\"backend\": \"provided\", \"batch_size\": 16, \"dtype\": \"float32\", \"model_id\": \"injected/encoder\", \"revision\": \"4444444444444444444444444444444444444444\", \"sequence_length\": 512}, \"joint\": null, \"max_tokens\": 256, \"passage_tokenizer\": \"code-lexical-v1\", \"representation_version\": 3, \"rrf_k\": 60}",
+      "fingerprint": "72d736cba084e5f306059d4c2fa2367dc5f6c0f99f7966c075ffbd7fde7b5250",
+      "vector_revisions": {
+        "identity": "injected/encoder@4444444444444444444444444444444444444444:15788b9f742750ef:projection-ffb47084a620b16e",
+        "behavior": "injected/encoder@4444444444444444444444444444444444444444:15788b9f742750ef:projection-a3779679a8d59c6e"
+      }
+    },
+    {
+      "label": "unicode",
+      "input": {
+        "identity": {
+          "model_id": "modelos/ni\u00f1o \ud83d\ude80\t\"\\",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "backend": "provided"
+        },
+        "behavior": {
+          "model_id": "modelos/ni\u00f1o \ud83d\ude80\t\"\\",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "backend": "provided"
+        }
+      },
+      "config": {
+        "identity": {
+          "model_id": "modelos/ni\u00f1o \ud83d\ude80\t\"\\",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "backend": "provided",
+          "dtype": "float32",
+          "sequence_length": 512,
+          "batch_size": 16
+        },
+        "behavior": {
+          "model_id": "modelos/ni\u00f1o \ud83d\ude80\t\"\\",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "backend": "provided",
+          "dtype": "float32",
+          "sequence_length": 512,
+          "batch_size": 16
+        },
+        "max_tokens": 256,
+        "candidate_limit": 100,
+        "rrf_k": 60,
+        "passage_tokenizer": "code-lexical-v1",
+        "representation_version": 3,
+        "joint": null
+      },
+      "serialized_python": "{\"behavior\": {\"backend\": \"provided\", \"batch_size\": 16, \"dtype\": \"float32\", \"model_id\": \"modelos/ni\\u00f1o \\ud83d\\ude80\\t\\\"\\\\\", \"revision\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"sequence_length\": 512}, \"candidate_limit\": 100, \"identity\": {\"backend\": \"provided\", \"batch_size\": 16, \"dtype\": \"float32\", \"model_id\": \"modelos/ni\\u00f1o \\ud83d\\ude80\\t\\\"\\\\\", \"revision\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"sequence_length\": 512}, \"joint\": null, \"max_tokens\": 256, \"passage_tokenizer\": \"code-lexical-v1\", \"representation_version\": 3, \"rrf_k\": 60}",
+      "fingerprint": "f3b140f5111ab5896ecb5aa39ce7309e4e4170e461e5166c1d66233c0cb1a644",
+      "vector_revisions": {
+        "identity": "modelos/ni\u00f1o \ud83d\ude80\t\"\\@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:92671daac6228128:projection-ffb47084a620b16e",
+        "behavior": "modelos/ni\u00f1o \ud83d\ude80\t\"\\@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:92671daac6228128:projection-a3779679a8d59c6e"
+      }
+    },
+    {
+      "label": "joint",
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "joint": {
+          "model": {
+            "model_id": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "3333333333333333333333333333333333333333",
+            "backend": "sentence-transformers",
+            "dtype": "bfloat16",
+            "sequence_length": 384
+          },
+          "candidate_limit": 80,
+          "rank_unit": "entity",
+          "evidence_results": 0,
+          "max_windows": 4,
+          "max_fragments": 4
+        },
+        "passage_tokenizer": "behavior-model"
+      },
+      "config": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111",
+          "backend": "static",
+          "dtype": "float32",
+          "sequence_length": 512,
+          "batch_size": 16
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "sequence_length": 512,
+          "batch_size": 1024
+        },
+        "max_tokens": 256,
+        "candidate_limit": 100,
+        "rrf_k": 60,
+        "passage_tokenizer": "behavior-model",
+        "representation_version": 3,
+        "joint": {
+          "model": {
+            "model_id": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "3333333333333333333333333333333333333333",
+            "backend": "sentence-transformers",
+            "dtype": "bfloat16",
+            "sequence_length": 384,
+            "batch_size": 16
+          },
+          "candidate_limit": 80,
+          "rank_unit": "entity",
+          "evidence_results": 0,
+          "max_windows": 4,
+          "max_fragments": 4
+        }
+      },
+      "serialized_python": "{\"behavior\": {\"backend\": \"model2vec\", \"batch_size\": 1024, \"dtype\": \"float16\", \"model_id\": \"minishlab/potion-code-16M-v2\", \"revision\": \"2222222222222222222222222222222222222222222222222222222222222222\", \"sequence_length\": 512}, \"candidate_limit\": 100, \"identity\": {\"backend\": \"static\", \"batch_size\": 16, \"dtype\": \"float32\", \"model_id\": \"ken/static-qwen3-r512-v2\", \"revision\": \"1111111111111111111111111111111111111111111111111111111111111111\", \"sequence_length\": 512}, \"joint\": {\"candidate_limit\": 80, \"evidence_results\": 0, \"max_fragments\": 4, \"max_windows\": 4, \"model\": {\"backend\": \"sentence-transformers\", \"batch_size\": 16, \"dtype\": \"bfloat16\", \"model_id\": \"Qwen/Qwen3-Embedding-0.6B\", \"revision\": \"3333333333333333333333333333333333333333\", \"sequence_length\": 384}, \"rank_unit\": \"entity\"}, \"max_tokens\": 256, \"passage_tokenizer\": \"behavior-model\", \"representation_version\": 3, \"rrf_k\": 60}",
+      "fingerprint": "392b8a34878303cd5dbcc1179c5f5d05a91506dc8267bc4bdd48ba6833a95a6f",
+      "vector_revisions": {
+        "identity": "ken/static-qwen3-r512-v2@1111111111111111111111111111111111111111111111111111111111111111:3edd4e2f343d8cea:projection-ffb47084a620b16e",
+        "behavior": "minishlab/potion-code-16M-v2@2222222222222222222222222222222222222222222222222222222222222222:4a1bb061a945ea01:projection-a3779679a8d59c6e"
+      }
+    },
+    {
+      "label": "evidence-v1",
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "evidence": {
+          "model_revision": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "word_model": {
+            "model_id": "minishlab/potion-code-16M-v2",
+            "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+            "backend": "model2vec",
+            "dtype": "float16",
+            "batch_size": 1024
+          },
+          "feature_version": 1,
+          "evidence_version": 1
+        }
+      },
+      "config": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111",
+          "backend": "static",
+          "dtype": "float32",
+          "sequence_length": 512,
+          "batch_size": 16
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "sequence_length": 512,
+          "batch_size": 1024
+        },
+        "max_tokens": 256,
+        "candidate_limit": 100,
+        "rrf_k": 60,
+        "passage_tokenizer": "code-lexical-v1",
+        "representation_version": 3,
+        "joint": null,
+        "evidence": {
+          "model_revision": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "word_model": {
+            "model_id": "minishlab/potion-code-16M-v2",
+            "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+            "backend": "model2vec",
+            "dtype": "float16",
+            "sequence_length": 512,
+            "batch_size": 1024
+          },
+          "expansion_revision": null,
+          "stemming": "snowball-english-v1",
+          "feature_version": 1,
+          "evidence_version": 1
+        }
+      },
+      "serialized_python": "{\"behavior\": {\"backend\": \"model2vec\", \"batch_size\": 1024, \"dtype\": \"float16\", \"model_id\": \"minishlab/potion-code-16M-v2\", \"revision\": \"2222222222222222222222222222222222222222222222222222222222222222\", \"sequence_length\": 512}, \"candidate_limit\": 100, \"evidence\": {\"evidence_version\": 1, \"expansion_revision\": null, \"feature_version\": 1, \"model_revision\": \"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\", \"stemming\": \"snowball-english-v1\", \"word_model\": {\"backend\": \"model2vec\", \"batch_size\": 1024, \"dtype\": \"float16\", \"model_id\": \"minishlab/potion-code-16M-v2\", \"revision\": \"2222222222222222222222222222222222222222222222222222222222222222\", \"sequence_length\": 512}}, \"identity\": {\"backend\": \"static\", \"batch_size\": 16, \"dtype\": \"float32\", \"model_id\": \"ken/static-qwen3-r512-v2\", \"revision\": \"1111111111111111111111111111111111111111111111111111111111111111\", \"sequence_length\": 512}, \"joint\": null, \"max_tokens\": 256, \"passage_tokenizer\": \"code-lexical-v1\", \"representation_version\": 3, \"rrf_k\": 60}",
+      "fingerprint": "8af801724aba8f5788b7e7985725429923030777ea814697903e78383e98f2dd",
+      "vector_revisions": {
+        "identity": "ken/static-qwen3-r512-v2@1111111111111111111111111111111111111111111111111111111111111111:3edd4e2f343d8cea:projection-ffb47084a620b16e",
+        "behavior": "minishlab/potion-code-16M-v2@2222222222222222222222222222222222222222222222222222222222222222:4a1bb061a945ea01:projection-a3779679a8d59c6e"
+      }
+    },
+    {
+      "label": "evidence-v2",
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "evidence": {
+          "model_revision": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "word_model": {
+            "model_id": "minishlab/potion-code-16M-v2",
+            "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+            "backend": "model2vec",
+            "dtype": "float16",
+            "batch_size": 1024
+          },
+          "feature_version": 2,
+          "evidence_version": 2,
+          "expansion_revision": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        },
+        "contextual": {
+          "model": {
+            "model_id": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "3333333333333333333333333333333333333333",
+            "backend": "sentence-transformers",
+            "dtype": "bfloat16",
+            "sequence_length": 384
+          },
+          "channel_limit": 100,
+          "broad_limit": 400
+        }
+      },
+      "config": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111",
+          "backend": "static",
+          "dtype": "float32",
+          "sequence_length": 512,
+          "batch_size": 16
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "sequence_length": 512,
+          "batch_size": 1024
+        },
+        "max_tokens": 256,
+        "candidate_limit": 100,
+        "rrf_k": 60,
+        "passage_tokenizer": "code-lexical-v1",
+        "representation_version": 3,
+        "joint": null,
+        "evidence": {
+          "model_revision": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "word_model": {
+            "model_id": "minishlab/potion-code-16M-v2",
+            "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+            "backend": "model2vec",
+            "dtype": "float16",
+            "sequence_length": 512,
+            "batch_size": 1024
+          },
+          "expansion_revision": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "stemming": "snowball-english-v1",
+          "feature_version": 2,
+          "evidence_version": 2
+        },
+        "contextual": {
+          "model": {
+            "model_id": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "3333333333333333333333333333333333333333",
+            "backend": "sentence-transformers",
+            "dtype": "bfloat16",
+            "sequence_length": 384,
+            "batch_size": 16
+          },
+          "channel_limit": 100,
+          "broad_limit": 400,
+          "projection_version": 1
+        }
+      },
+      "serialized_python": "{\"behavior\": {\"backend\": \"model2vec\", \"batch_size\": 1024, \"dtype\": \"float16\", \"model_id\": \"minishlab/potion-code-16M-v2\", \"revision\": \"2222222222222222222222222222222222222222222222222222222222222222\", \"sequence_length\": 512}, \"candidate_limit\": 100, \"contextual\": {\"broad_limit\": 400, \"channel_limit\": 100, \"model\": {\"backend\": \"sentence-transformers\", \"batch_size\": 16, \"dtype\": \"bfloat16\", \"model_id\": \"Qwen/Qwen3-Embedding-0.6B\", \"revision\": \"3333333333333333333333333333333333333333\", \"sequence_length\": 384}, \"projection_version\": 1}, \"evidence\": {\"evidence_version\": 2, \"expansion_revision\": \"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\", \"feature_version\": 2, \"model_revision\": \"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\", \"stemming\": \"snowball-english-v1\", \"word_model\": {\"backend\": \"model2vec\", \"batch_size\": 1024, \"dtype\": \"float16\", \"model_id\": \"minishlab/potion-code-16M-v2\", \"revision\": \"2222222222222222222222222222222222222222222222222222222222222222\", \"sequence_length\": 512}}, \"identity\": {\"backend\": \"static\", \"batch_size\": 16, \"dtype\": \"float32\", \"model_id\": \"ken/static-qwen3-r512-v2\", \"revision\": \"1111111111111111111111111111111111111111111111111111111111111111\", \"sequence_length\": 512}, \"joint\": null, \"max_tokens\": 256, \"passage_tokenizer\": \"code-lexical-v1\", \"representation_version\": 3, \"rrf_k\": 60}",
+      "fingerprint": "fa6a0fd3e7ade69f2d30373c1fd203f4fca150840dc32ca69d7966d95213d44c",
+      "vector_revisions": {
+        "identity": "ken/static-qwen3-r512-v2@1111111111111111111111111111111111111111111111111111111111111111:3edd4e2f343d8cea:projection-ffb47084a620b16e",
+        "behavior": "minishlab/potion-code-16M-v2@2222222222222222222222222222222222222222222222222222222222222222:4a1bb061a945ea01:projection-a3779679a8d59c6e"
+      }
+    },
+    {
+      "label": "evidence-v3",
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "evidence": {
+          "model_revision": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "word_model": {
+            "model_id": "minishlab/potion-code-16M-v2",
+            "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+            "backend": "model2vec",
+            "dtype": "float16",
+            "batch_size": 1024
+          },
+          "feature_version": 3,
+          "evidence_version": 3,
+          "expansion_revision": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        },
+        "contextual": {
+          "model": {
+            "model_id": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "3333333333333333333333333333333333333333",
+            "backend": "sentence-transformers",
+            "dtype": "bfloat16",
+            "sequence_length": 384
+          },
+          "channel_limit": 100,
+          "broad_limit": 400,
+          "view_model": {
+            "model_id": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "3333333333333333333333333333333333333333",
+            "backend": "mlx",
+            "dtype": "float16",
+            "batch_size": 8
+          }
+        }
+      },
+      "config": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111",
+          "backend": "static",
+          "dtype": "float32",
+          "sequence_length": 512,
+          "batch_size": 16
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "sequence_length": 512,
+          "batch_size": 1024
+        },
+        "max_tokens": 256,
+        "candidate_limit": 100,
+        "rrf_k": 60,
+        "passage_tokenizer": "code-lexical-v1",
+        "representation_version": 3,
+        "joint": null,
+        "evidence": {
+          "model_revision": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "word_model": {
+            "model_id": "minishlab/potion-code-16M-v2",
+            "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+            "backend": "model2vec",
+            "dtype": "float16",
+            "sequence_length": 512,
+            "batch_size": 1024
+          },
+          "expansion_revision": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "stemming": "snowball-english-v1",
+          "feature_version": 3,
+          "evidence_version": 3
+        },
+        "contextual": {
+          "model": {
+            "model_id": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "3333333333333333333333333333333333333333",
+            "backend": "sentence-transformers",
+            "dtype": "bfloat16",
+            "sequence_length": 384,
+            "batch_size": 16
+          },
+          "channel_limit": 100,
+          "broad_limit": 400,
+          "projection_version": 1,
+          "view_model": {
+            "model_id": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "3333333333333333333333333333333333333333",
+            "backend": "mlx",
+            "dtype": "float16",
+            "sequence_length": 512,
+            "batch_size": 8
+          }
+        }
+      },
+      "serialized_python": "{\"behavior\": {\"backend\": \"model2vec\", \"batch_size\": 1024, \"dtype\": \"float16\", \"model_id\": \"minishlab/potion-code-16M-v2\", \"revision\": \"2222222222222222222222222222222222222222222222222222222222222222\", \"sequence_length\": 512}, \"candidate_limit\": 100, \"contextual\": {\"broad_limit\": 400, \"channel_limit\": 100, \"model\": {\"backend\": \"sentence-transformers\", \"batch_size\": 16, \"dtype\": \"bfloat16\", \"model_id\": \"Qwen/Qwen3-Embedding-0.6B\", \"revision\": \"3333333333333333333333333333333333333333\", \"sequence_length\": 384}, \"projection_version\": 1, \"view_model\": {\"backend\": \"mlx\", \"batch_size\": 8, \"dtype\": \"float16\", \"model_id\": \"Qwen/Qwen3-Embedding-0.6B\", \"revision\": \"3333333333333333333333333333333333333333\", \"sequence_length\": 512}}, \"evidence\": {\"evidence_version\": 3, \"expansion_revision\": \"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\", \"feature_version\": 3, \"model_revision\": \"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\", \"stemming\": \"snowball-english-v1\", \"word_model\": {\"backend\": \"model2vec\", \"batch_size\": 1024, \"dtype\": \"float16\", \"model_id\": \"minishlab/potion-code-16M-v2\", \"revision\": \"2222222222222222222222222222222222222222222222222222222222222222\", \"sequence_length\": 512}}, \"identity\": {\"backend\": \"static\", \"batch_size\": 16, \"dtype\": \"float32\", \"model_id\": \"ken/static-qwen3-r512-v2\", \"revision\": \"1111111111111111111111111111111111111111111111111111111111111111\", \"sequence_length\": 512}, \"joint\": null, \"max_tokens\": 256, \"passage_tokenizer\": \"code-lexical-v1\", \"representation_version\": 3, \"rrf_k\": 60}",
+      "fingerprint": "096a52c0e989877b7a849c8747bf215722b6a02b18ab011416f85a90d6f1c54c",
+      "vector_revisions": {
+        "identity": "ken/static-qwen3-r512-v2@1111111111111111111111111111111111111111111111111111111111111111:3edd4e2f343d8cea:projection-ffb47084a620b16e",
+        "behavior": "minishlab/potion-code-16M-v2@2222222222222222222222222222222222222222222222222222222222222222:4a1bb061a945ea01:projection-a3779679a8d59c6e"
+      }
+    }
+  ],
+  "invalid_encoders": [
+    {
+      "input": {
+        "model_id": "ken/static-qwen3-r512-v2",
+        "revision": "main"
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "an immutable model revision/hash is required"
+      }
+    },
+    {
+      "input": {
+        "model_id": "ken/static-qwen3-r512-v2",
+        "revision": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "an immutable model revision/hash is required"
+      }
+    },
+    {
+      "input": {
+        "model_id": "ken/static-qwen3-r512-v2",
+        "revision": "1111111111111111111111111111111111111111111111111111111111111111",
+        "backend": "unknown"
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "unknown encoder backend"
+      }
+    },
+    {
+      "input": {
+        "model_id": "ken/static-qwen3-r512-v2",
+        "revision": "1111111111111111111111111111111111111111111111111111111111111111",
+        "dtype": "int8"
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "unknown encoder dtype"
+      }
+    },
+    {
+      "input": {
+        "model_id": "ken/static-qwen3-r512-v2",
+        "revision": "1111111111111111111111111111111111111111111111111111111111111111",
+        "sequence_length": 0
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "positive encoder sequence and batch budgets required"
+      }
+    },
+    {
+      "input": {
+        "model_id": "ken/static-qwen3-r512-v2",
+        "revision": "1111111111111111111111111111111111111111111111111111111111111111",
+        "batch_size": 0
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "positive encoder sequence and batch budgets required"
+      }
+    }
+  ],
+  "invalid_profiles": [
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "max_tokens": 0
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "positive retrieval budgets required"
+      }
+    },
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "candidate_limit": 0
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "positive retrieval budgets required"
+      }
+    },
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "rrf_k": 0
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "positive retrieval budgets required"
+      }
+    },
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "passage_tokenizer": "unknown"
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "unknown source passage tokenizer"
+      }
+    },
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "representation_version": 2
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "unsupported representation version; reindex with current profile"
+      }
+    },
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "joint": {
+          "model": {
+            "model_id": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "3333333333333333333333333333333333333333",
+            "backend": "sentence-transformers",
+            "dtype": "bfloat16",
+            "sequence_length": 384
+          },
+          "candidate_limit": 80,
+          "rank_unit": "entity",
+          "evidence_results": 0,
+          "max_windows": 4,
+          "max_fragments": 4
+        },
+        "evidence": {
+          "model_revision": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "word_model": {
+            "model_id": "minishlab/potion-code-16M-v2",
+            "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+            "backend": "model2vec",
+            "dtype": "float16",
+            "batch_size": 1024
+          },
+          "feature_version": 1,
+          "evidence_version": 1
+        }
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "choose one owner ranking profile"
+      }
+    },
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "contextual": {
+          "model": {
+            "model_id": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "3333333333333333333333333333333333333333",
+            "backend": "sentence-transformers",
+            "dtype": "bfloat16",
+            "sequence_length": 384
+          }
+        }
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "contextual retrieval and its pinned ranking features are required together"
+      }
+    },
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "evidence": {
+          "model_revision": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "word_model": {
+            "model_id": "minishlab/potion-code-16M-v2",
+            "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+            "backend": "model2vec",
+            "dtype": "float16",
+            "batch_size": 1024
+          },
+          "feature_version": 2,
+          "evidence_version": 2,
+          "expansion_revision": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        }
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "contextual retrieval and its pinned ranking features are required together"
+      }
+    },
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "evidence": {
+          "model_revision": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "word_model": {
+            "model_id": "minishlab/potion-code-16M-v2",
+            "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+            "backend": "model2vec",
+            "dtype": "float16",
+            "batch_size": 1024
+          },
+          "feature_version": 3,
+          "evidence_version": 3,
+          "expansion_revision": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        },
+        "contextual": {
+          "model": {
+            "model_id": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "3333333333333333333333333333333333333333",
+            "backend": "sentence-transformers",
+            "dtype": "bfloat16",
+            "sequence_length": 384
+          }
+        }
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "source views and their pinned ranking features are required together"
+      }
+    },
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "joint": {
+          "model": {
+            "model_id": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "3333333333333333333333333333333333333333",
+            "backend": "sentence-transformers",
+            "dtype": "bfloat16",
+            "sequence_length": 384
+          },
+          "candidate_limit": 80,
+          "rank_unit": "entity",
+          "evidence_results": 0,
+          "max_windows": 4,
+          "max_fragments": 5
+        }
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "invalid relevance/evidence budgets"
+      }
+    },
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "joint": {
+          "model": {
+            "model_id": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "3333333333333333333333333333333333333333",
+            "backend": "sentence-transformers",
+            "dtype": "bfloat16",
+            "sequence_length": 384
+          },
+          "candidate_limit": 80,
+          "rank_unit": "file",
+          "evidence_results": 0,
+          "max_windows": 4,
+          "max_fragments": 4
+        }
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "unknown relevance unit"
+      }
+    },
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "evidence": {
+          "model_revision": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "word_model": {
+            "model_id": "minishlab/potion-code-16M-v2",
+            "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+            "backend": "model2vec",
+            "dtype": "float16",
+            "batch_size": 1024
+          },
+          "feature_version": 1,
+          "evidence_version": 1,
+          "stemming": "other"
+        }
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "unsupported ranking stemming algorithm"
+      }
+    },
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "evidence": {
+          "model_revision": "main",
+          "word_model": {
+            "model_id": "minishlab/potion-code-16M-v2",
+            "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+            "backend": "model2vec",
+            "dtype": "float16",
+            "batch_size": 1024
+          },
+          "feature_version": 1,
+          "evidence_version": 1
+        }
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "an immutable numeric model revision is required"
+      }
+    },
+    {
+      "input": {
+        "identity": {
+          "model_id": "ken/static-qwen3-r512-v2",
+          "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "behavior": {
+          "model_id": "minishlab/potion-code-16M-v2",
+          "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+          "backend": "model2vec",
+          "dtype": "float16",
+          "batch_size": 1024
+        },
+        "evidence": {
+          "model_revision": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "word_model": {
+            "model_id": "minishlab/potion-code-16M-v2",
+            "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+            "backend": "model2vec",
+            "dtype": "float16",
+            "batch_size": 1024
+          },
+          "feature_version": 1,
+          "evidence_version": 4
+        }
+      },
+      "error": {
+        "type": "ValueError",
+        "message": "unsupported ranking feature version"
+      }
+    }
+  ],
+  "representation_upgrade": {
+    "label": "representation2-upgraded",
+    "input": {
+      "identity": {
+        "model_id": "ken/static-qwen3-r512-v2",
+        "revision": "1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "behavior": {
+        "model_id": "minishlab/potion-code-16M-v2",
+        "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+        "backend": "model2vec",
+        "dtype": "float16",
+        "batch_size": 1024
+      },
+      "representation_version": 2
+    },
+    "config": {
+      "identity": {
+        "model_id": "ken/static-qwen3-r512-v2",
+        "revision": "1111111111111111111111111111111111111111111111111111111111111111",
+        "backend": "static",
+        "dtype": "float32",
+        "sequence_length": 512,
+        "batch_size": 16
+      },
+      "behavior": {
+        "model_id": "minishlab/potion-code-16M-v2",
+        "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+        "backend": "model2vec",
+        "dtype": "float16",
+        "sequence_length": 512,
+        "batch_size": 1024
+      },
+      "max_tokens": 256,
+      "candidate_limit": 100,
+      "rrf_k": 60,
+      "passage_tokenizer": "code-lexical-v1",
+      "representation_version": 3,
+      "joint": null
+    },
+    "serialized_python": "{\"behavior\": {\"backend\": \"model2vec\", \"batch_size\": 1024, \"dtype\": \"float16\", \"model_id\": \"minishlab/potion-code-16M-v2\", \"revision\": \"2222222222222222222222222222222222222222222222222222222222222222\", \"sequence_length\": 512}, \"candidate_limit\": 100, \"identity\": {\"backend\": \"static\", \"batch_size\": 16, \"dtype\": \"float32\", \"model_id\": \"ken/static-qwen3-r512-v2\", \"revision\": \"1111111111111111111111111111111111111111111111111111111111111111\", \"sequence_length\": 512}, \"joint\": null, \"max_tokens\": 256, \"passage_tokenizer\": \"code-lexical-v1\", \"representation_version\": 3, \"rrf_k\": 60}",
+    "fingerprint": "9e88a7fe023b3ded0c0cd03be239d396d0acaef12883c37fbc33d9dc4aa04f48",
+    "vector_revisions": {
+      "identity": "ken/static-qwen3-r512-v2@1111111111111111111111111111111111111111111111111111111111111111:3edd4e2f343d8cea:projection-ffb47084a620b16e",
+      "behavior": "minishlab/potion-code-16M-v2@2222222222222222222222222222222222222222222222222222222222222222:4a1bb061a945ea01:projection-a3779679a8d59c6e"
+    }
+  },
+  "native_inference_accepted": false
+}
