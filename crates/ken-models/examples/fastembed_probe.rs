@@ -195,6 +195,8 @@ fn sample(peaks: &mut observed_peak::ObservedPeak) -> Result<Value> {
 fn producer() -> Result<Value> {
     let files:BTreeMap<&str,String>=[
   ("crates/ken-models/src/assets.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/assets.rs")))),
+  ("crates/ken-models/src/artifact_cache.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/artifact_cache.rs")))),
+  ("crates/ken-models/src/cache_directory.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/cache_directory.rs")))),
   ("crates/ken-models/src/context_encoder.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/context_encoder.rs")))),
   ("crates/ken-models/src/context_model.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/context_model.rs")))),
   ("crates/ken-models/src/embedding_pool.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/embedding_pool.rs")))),

@@ -1,5 +1,7 @@
 //! Verified native model execution, independent of project discovery and storage.
+mod artifact_cache;
 mod assets;
+mod cache_directory;
 mod context_encoder;
 mod context_model;
 mod embedding_pool;
@@ -37,6 +39,7 @@ mod translation_model;
 mod translation_preparation;
 mod verified_file;
 
+pub use artifact_cache::{AcquisitionPolicy, ArtifactCache, ArtifactRequest, ArtifactTransport};
 pub use assets::{ModelAssets, VerifiedSnapshot};
 pub use context_encoder::{ContextEncoder, ContextInput, ContextTokens};
 pub use context_model::ContextModel;

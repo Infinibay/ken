@@ -64,12 +64,16 @@ pub(crate) fn copy<W: Write>(
     )
 }
 
-fn copy_stream<R: Read, W: Write>(
-    mut source: R,
+pub(crate) fn copy_stream<R: Read, W: Write>(
+    source: R,
     expected_bytes: u64,
     expected_sha256: &str,
     destination: &mut W,
 ) -> Result<(), VerificationError> {
+    let limit = expected_bytes
+        .checked_add(1)
+        .ok_or(VerificationError::Invalid("declared size overflow"))?;
+    let mut source = source.take(limit);
     let mut buffer = [0_u8; 64 * 1024];
     let mut count = 0_u64;
     let mut digest = Context::new(&SHA256);
@@ -82,6 +86,9 @@ fn copy_stream<R: Read, W: Write>(
             break;
         }
         count += size as u64;
+        if count > expected_bytes {
+            return Err(VerificationError::Invalid("artifact exceeds declared size"));
+        }
         digest.update(&buffer[..size]);
         destination.write_all(&buffer[..size])?;
     }
@@ -155,5 +162,49 @@ mod tests {
         )
         .unwrap();
         assert_eq!(copied, vec![b'a'; 1_000_000]);
+    }
+
+    #[test]
+    fn real_file_writes_retry_interruptions_and_propagate_storage_failure() {
+        struct Writer {
+            file: File,
+            interrupt: bool,
+            remaining: usize,
+        }
+        impl Write for Writer {
+            fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+                if self.interrupt {
+                    self.interrupt = false;
+                    return Err(std::io::ErrorKind::Interrupted.into());
+                }
+                if self.remaining == 0 {
+                    return Err(std::io::Error::other("storage write failed"));
+                }
+                let n = bytes.len().min(self.remaining);
+                let actual = self.file.write(&bytes[..n])?;
+                self.remaining -= actual;
+                Ok(actual)
+            }
+            fn flush(&mut self) -> std::io::Result<()> {
+                self.file.flush()
+            }
+        }
+        let temp = tempfile::tempdir().unwrap();
+        for remaining in [2, 3] {
+            let path = temp.path().join(format!("written-{remaining}"));
+            let mut writer = Writer {
+                file: File::create(&path).unwrap(),
+                interrupt: true,
+                remaining,
+            };
+            let result = copy_stream(
+                b"abc".as_slice(),
+                3,
+                "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+                &mut writer,
+            );
+            assert_eq!(result.is_ok(), remaining == 3);
+            assert_eq!(std::fs::read(path).unwrap(), &b"abc"[..remaining]);
+        }
     }
 }
