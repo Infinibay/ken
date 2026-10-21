@@ -51,6 +51,25 @@ impl TransformerSession {
         device: TransformerDevice,
         dtype: TransformerDtype,
     ) -> Result<Self, ModelError> {
+        Self::prepare_requested(
+            model,
+            files,
+            runtime,
+            match device {
+                TransformerDevice::Cpu => TransformerDeviceRequest::Cpu,
+                TransformerDevice::Mps => TransformerDeviceRequest::Mps,
+                TransformerDevice::Cuda(i) => TransformerDeviceRequest::Cuda(i),
+            },
+            dtype,
+        )
+    }
+    pub fn prepare_requested(
+        model: &TransformerModel,
+        files: Arc<VerifiedModelFiles>,
+        runtime: NativeTransformerRuntime,
+        device: TransformerDeviceRequest,
+        dtype: TransformerDtype,
+    ) -> Result<Self, ModelError> {
         if files.fingerprint() != model.assets().fingerprint() {
             return Err(invalid("model files belong to a different registration"));
         }
@@ -72,11 +91,7 @@ impl TransformerSession {
             weight_files: model.weight_files().to_vec(),
             weight_layout: model.weight_layout(),
             dtype,
-            device: match device {
-                TransformerDevice::Cpu => TransformerDeviceRequest::Cpu,
-                TransformerDevice::Mps => TransformerDeviceRequest::Mps,
-                TransformerDevice::Cuda(i) => TransformerDeviceRequest::Cuda(i),
-            },
+            device,
             pooling: model.pooling(),
             normalize_modules: model.normalize_modules(),
         };
@@ -86,7 +101,7 @@ impl TransformerSession {
         let (native, prepared): (NativeHandle, TransformerPrepared) =
             NativeHandle::open(owner, &request)?;
         if prepared.core_version != identity.declared_core_version
-            || prepared.device != device
+            || !matches_request(device, prepared.device)
             || prepared.dtype != dtype
             || prepared.dimension != model.dimension()
         {
@@ -124,7 +139,9 @@ impl TransformerSession {
             (TransformerRole::Judge, TransformerOutput::YesMinusNo { .. }) => 1,
             (
                 TransformerRole::Encoder,
-                TransformerOutput::Sentence | TransformerOutput::MLXLast,
+                TransformerOutput::Sentence
+                | TransformerOutput::SentenceEncoded
+                | TransformerOutput::MLXLast,
             ) => self.dimension,
             _ => {
                 return Err(invalid(
@@ -150,5 +167,14 @@ impl TransformerSession {
             values: result.values,
             trace: self.trace.clone(),
         })
+    }
+}
+
+fn matches_request(request: TransformerDeviceRequest, actual: TransformerDevice) -> bool {
+    match request {
+        TransformerDeviceRequest::Auto | TransformerDeviceRequest::Gpu => true,
+        TransformerDeviceRequest::Cpu => actual == TransformerDevice::Cpu,
+        TransformerDeviceRequest::Mps => actual == TransformerDevice::Mps,
+        TransformerDeviceRequest::Cuda(i) => actual == TransformerDevice::Cuda(i),
     }
 }

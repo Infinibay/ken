@@ -227,6 +227,8 @@ impl TransformerBatch {
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum TransformerOutput {
     Sentence,
+    /// ST-normalized values before application F32 canonicalization/guards.
+    SentenceEncoded,
     #[serde(rename = "mlx_last")]
     MLXLast,
     YesMinusNo {

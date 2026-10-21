@@ -96,3 +96,16 @@ pub enum ModelError {
     #[error("native ONNX runtime: {0}")]
     Runtime(String),
 }
+
+mod transformer_order;
+
+mod transformer_tokens;
+
+pub use transformer_tokens::{PreparedTransformerText, TransformerTokens};
+
+mod sentence_encoder;
+
+pub use sentence_encoder::{SentenceEncoder, TransformerPreparation};
+
+#[cfg(test)]
+mod transformer_test_support;

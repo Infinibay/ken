@@ -3,12 +3,12 @@ use crate::{CoreError, invalid, weights::finite};
 use ken_native_model_api::{TransformerBatch, TransformerPooling, TransformerRunResult};
 use tch::{Device, Kind, Tensor};
 
-pub(crate) fn sentence(
+fn encoded(
     hidden: &Tensor,
     batch: &TransformerBatch,
     pooling: TransformerPooling,
     normalize_modules: usize,
-) -> Result<TransformerRunResult, CoreError> {
+) -> Result<Tensor, CoreError> {
     let shape = hidden.size();
     if shape.len() != 3 {
         return Err(invalid("sentence output requires rank-three hidden states"));
@@ -44,10 +44,25 @@ pub(crate) fn sentence(
         pooled = normalize(&pooled)?;
     }
     pooled = normalize(&pooled)?; // Original encode(normalize_embeddings=true).
-    let vectors = normalize(&pooled.f_to_kind(Kind::Float)?)?; // Ken outgoing F32 canonicalization.
-    finite(&vectors, "sentence vectors")?;
+    Ok(pooled)
+}
+
+/// Retain model-dtype normalization rounding for the caller's GPU guard.
+pub(crate) fn sentence_encoded(
+    hidden: &Tensor,
+    batch: &TransformerBatch,
+    pooling: TransformerPooling,
+    normalize_modules: usize,
+) -> Result<TransformerRunResult, CoreError> {
+    let values = encoded(hidden, batch, pooling, normalize_modules)?.f_to_kind(Kind::Float)?;
+    result(&values, batch)
+}
+
+fn result(vectors: &Tensor, batch: &TransformerBatch) -> Result<TransformerRunResult, CoreError> {
+    finite(vectors, "sentence vectors")?;
+    let columns =
+        usize::try_from(vectors.size()[1]).map_err(|_| invalid("sentence dimension overflow"))?;
     let values: Vec<f32> = Vec::try_from(&vectors.f_to_device(Device::Cpu)?.f_reshape([-1])?)?;
-    let columns = usize::try_from(shape[2]).map_err(|_| invalid("sentence dimension overflow"))?;
     let result = TransformerRunResult {
         rows: batch.input_ids.len(),
         columns,
@@ -56,6 +71,19 @@ pub(crate) fn sentence(
     result
         .validate(result.rows, columns)
         .map_err(|e| invalid(e.to_string()))?;
+    Ok(result)
+}
+
+pub(crate) fn sentence(
+    hidden: &Tensor,
+    batch: &TransformerBatch,
+    pooling: TransformerPooling,
+    normalize_modules: usize,
+) -> Result<TransformerRunResult, CoreError> {
+    let pooled = encoded(hidden, batch, pooling, normalize_modules)?;
+    let vectors = normalize(&pooled.f_to_kind(Kind::Float)?)?; // Ken outgoing F32 canonicalization.
+    let result = result(&vectors, batch)?;
+    let columns = result.columns;
     for row in result.values.chunks_exact(columns) {
         let norm = row.iter().map(|&v| (v as f64).powi(2)).sum::<f64>().sqrt();
         if (norm - 1.0).abs() > 1e-4 {
@@ -108,4 +136,38 @@ fn last_real(hidden: &Tensor, batch: &TransformerBatch) -> Result<Tensor, CoreEr
         })
         .collect::<Result<Vec<_>, CoreError>>()?;
     Ok(Tensor::f_stack(&rows, 0)?)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn encoded_boundary_preserves_dtype_rounding_before_outgoing_canonicalization() {
+        let batch = TransformerBatch {
+            input_ids: vec![vec![1]],
+            attention_mask: vec![vec![1]],
+        };
+        for kind in [Kind::Half, Kind::BFloat16] {
+            let hidden = Tensor::f_from_slice(&[0.31_f32, -0.71, 0.19, 0.42])
+                .unwrap()
+                .f_reshape([1, 1, 4])
+                .unwrap()
+                .f_to_kind(kind)
+                .unwrap();
+            let actual = sentence_encoded(&hidden, &batch, TransformerPooling::Last, 0).unwrap();
+            let original = normalize(&hidden.f_select(1, 0).unwrap())
+                .unwrap()
+                .f_to_kind(Kind::Float)
+                .unwrap()
+                .f_reshape([-1])
+                .unwrap();
+            assert_eq!(actual.values, Vec::<f32>::try_from(&original).unwrap());
+            assert_ne!(
+                actual.values,
+                sentence(&hidden, &batch, TransformerPooling::Last, 0)
+                    .unwrap()
+                    .values
+            );
+        }
+    }
 }

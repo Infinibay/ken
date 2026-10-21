@@ -118,6 +118,12 @@ impl Model {
                     &request.batch,
                     &self.core.projection_difference(true_id, false_id)?,
                 ),
+                TransformerOutput::SentenceEncoded => output::sentence_encoded(
+                    &hidden,
+                    &request.batch,
+                    self.pooling,
+                    self.normalize_modules,
+                ),
                 TransformerOutput::Sentence => output::sentence(
                     &hidden,
                     &request.batch,
