@@ -10,7 +10,14 @@ fn invalid(message: impl std::fmt::Display) -> ModelError {
     ModelError::Tokenizer(message.to_string())
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum TextPolicy {
+    Sentence,
+    Mlx,
+}
+
 pub struct TransformerTokens {
+    policy: TextPolicy,
     raw: Tokenizer,
     prepared: Tokenizer,
     sequence_limit: usize,
@@ -54,6 +61,21 @@ impl TransformerTokens {
         source: &ModelFileSource,
         settings: &TransformerSettings,
     ) -> Result<Self, ModelError> {
+        Self::load_policy(model, source, settings, TextPolicy::Sentence)
+    }
+    pub fn for_mlx(
+        model: &TransformerModel,
+        source: &ModelFileSource,
+        settings: &TransformerSettings,
+    ) -> Result<Self, ModelError> {
+        Self::load_policy(model, source, settings, TextPolicy::Mlx)
+    }
+    fn load_policy(
+        model: &TransformerModel,
+        source: &ModelFileSource,
+        settings: &TransformerSettings,
+        policy: TextPolicy,
+    ) -> Result<Self, ModelError> {
         settings.validate()?;
         for name in [
             "config.json",
@@ -61,6 +83,10 @@ impl TransformerTokens {
             "sentence_bert_config.json",
             "config_sentence_transformers.json",
         ] {
+            if policy == TextPolicy::Mlx && !matches!(name, "config.json" | "tokenizer_config.json")
+            {
+                continue;
+            }
             if let Some(expected) = model.configuration(name) {
                 let value: serde_json::Value = serde_json::from_slice(
                     &model
@@ -83,9 +109,10 @@ impl TransformerTokens {
         let configuration = model
             .configuration("tokenizer_config.json")
             .ok_or_else(|| invalid("missing tokenizer configuration"))?;
-        if configuration["padding_side"]
-            .as_str()
-            .is_some_and(|s| s != "right")
+        if (policy == TextPolicy::Sentence
+            && configuration["padding_side"]
+                .as_str()
+                .is_some_and(|s| s != "right"))
             || configuration["truncation_side"]
                 .as_str()
                 .is_some_and(|s| s != "right")
@@ -95,9 +122,10 @@ impl TransformerTokens {
             ));
         }
         let mut prepared = tokenizer.clone();
-        if model
-            .configuration("sentence_bert_config.json")
-            .is_some_and(|c| c["do_lower_case"] == true)
+        if policy == TextPolicy::Sentence
+            && model
+                .configuration("sentence_bert_config.json")
+                .is_some_and(|c| c["do_lower_case"] == true)
         {
             use tokenizers::normalizers::{
                 NormalizerWrapper,
@@ -131,7 +159,11 @@ impl TransformerTokens {
             .and_then(|c| c["max_seq_length"].as_u64())
             .and_then(|n| usize::try_from(n).ok())
             .unwrap_or(model_limit.min(tokenizer_limit));
-        let sequence_limit = original_limit.min(settings.sequence_length.unwrap_or(512));
+        let sequence_limit = if policy == TextPolicy::Sentence {
+            original_limit.min(settings.sequence_length.unwrap_or(512))
+        } else {
+            settings.sequence_length.unwrap_or(512)
+        };
         if sequence_limit == 0 {
             return Err(invalid("registered sequence bound must be positive"));
         }
@@ -146,7 +178,8 @@ impl TransformerTokens {
             })
             .transpose()?;
         let mut default_prompt = String::new();
-        if let Some(config) = model.configuration("config_sentence_transformers.json")
+        if policy == TextPolicy::Sentence
+            && let Some(config) = model.configuration("config_sentence_transformers.json")
             && let Some(name) = config["default_prompt_name"].as_str()
         {
             default_prompt = config["prompts"][name]
@@ -155,6 +188,7 @@ impl TransformerTokens {
                 .to_owned();
         }
         Ok(Self {
+            policy,
             raw: tokenizer,
             prepared,
             sequence_limit,
@@ -197,6 +231,9 @@ impl TransformerTokens {
             .iter()
             .map(|text| format!("{}{prompt}{text}", self.default_prompt))
             .collect();
+        if self.policy == TextPolicy::Mlx {
+            return self.prepare_mlx(&payload);
+        }
         let lengths: Vec<_> = payload.iter().map(|s| s.chars().count()).collect();
         let order = crate::transformer_order::sentence_indices(&lengths);
         let (pad_id, pad_token) = self
@@ -238,6 +275,57 @@ impl TransformerTokens {
                             .collect()
                     })
                     .collect(),
+            });
+        }
+        Ok(PreparedTransformerText { batches, order })
+    }
+    fn prepare_mlx(&self, payload: &[String]) -> Result<PreparedTransformerText, ModelError> {
+        let (pad_id, _) = self
+            .pad
+            .as_ref()
+            .ok_or_else(|| invalid("MLX right padding requires its registered pad ID"))?;
+        let mut tokenizer = self.raw.clone();
+        tokenizer
+            .with_truncation(Some(TruncationParams {
+                direction: TruncationDirection::Right,
+                max_length: self.sequence_limit,
+                strategy: TruncationStrategy::LongestFirst,
+                stride: 0,
+            }))
+            .map_err(invalid)?;
+        let encoded = tokenizer
+            .encode_batch(payload.to_vec(), true)
+            .map_err(invalid)?;
+        let mut order: Vec<_> = (0..encoded.len()).collect();
+        order.sort_by_key(|&i| encoded[i].len());
+        let mut batches = Vec::new();
+        for indices in order.chunks(self.batch_size) {
+            let length = indices
+                .iter()
+                .map(|&i| encoded[i].len())
+                .max()
+                .ok_or_else(|| invalid("MLX empty batch"))?;
+            if length == 0 {
+                return Err(invalid("MLX text has no token after postprocessing"));
+            }
+            let mut ids = Vec::new();
+            let mut mask = Vec::new();
+            for &i in indices {
+                let real = encoded[i].len();
+                let mut row: Vec<_> = encoded[i]
+                    .get_ids()
+                    .iter()
+                    .map(|&id| i64::from(id))
+                    .collect();
+                row.resize(length, i64::from(*pad_id));
+                let mut attention = vec![1_i64; real];
+                attention.resize(length, 0);
+                ids.push(row);
+                mask.push(attention);
+            }
+            batches.push(TransformerBatch {
+                input_ids: ids,
+                attention_mask: mask,
             });
         }
         Ok(PreparedTransformerText { batches, order })
@@ -399,5 +487,111 @@ mod tests {
         );
         std::fs::write(source.snapshot().join("tokenizer.json"), b"{}").unwrap();
         assert!(TransformerTokens::load(&model, &source, &TransformerSettings::default()).is_err());
+    }
+    #[test]
+    fn actual_mlx_feeds_use_stable_token_length_order_and_raw_counts() {
+        let golden: Value = serde_json::from_str(include_str!(
+            "../tests/fixtures/transformer-tokens/mlx.json"
+        ))
+        .unwrap();
+        let catalog: Value =
+            serde_json::from_str(include_str!("../resources/transformer-catalog.json")).unwrap();
+        let registration = catalog["models"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|m| m["name"] == golden["model"])
+            .unwrap();
+        let model = TransformerModel::from_json(&registration.to_string()).unwrap();
+        let sources = PathBuf::from(
+            std::env::var_os("KEN_TRANSFORMER_SOURCE_ROOT")
+                .expect("prepare registered tokenizer source"),
+        );
+        let source = ModelFileSource::new(
+            &sources
+                .join(model.assets().model_id().replace('/', "--"))
+                .join(model.assets().revision()),
+            &sources,
+        )
+        .unwrap();
+        let tokens = TransformerTokens::for_mlx(
+            &model,
+            &source,
+            &TransformerSettings {
+                sequence_length: Some(512),
+                batch_size: Some(16),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        for case in golden["cases"].as_array().unwrap() {
+            let texts: Vec<_> = case["texts"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|s| s.as_str().unwrap())
+                .collect();
+            let counts: Vec<_> = texts.iter().map(|s| tokens.raw_count(s).unwrap()).collect();
+            assert_eq!(serde_json::to_value(counts).unwrap(), case["counts"]);
+            let prepared = if case["side"] == "query" {
+                tokens.queries(&texts)
+            } else {
+                tokens.passages(&texts)
+            }
+            .unwrap();
+            assert_eq!(
+                serde_json::to_value(prepared.batches()).unwrap(),
+                case["feeds"],
+                "{} feeds",
+                case["id"]
+            );
+            assert_eq!(
+                serde_json::to_value(prepared.original_indices()).unwrap(),
+                case["order"],
+                "{} order",
+                case["id"]
+            );
+        }
+    }
+    #[test]
+    fn mlx_ignores_st_lowercase_default_prompt_and_lower_limit_and_overrides_left_padding() {
+        use serde_json::json;
+        let (_temp, model, source, _runtime) =
+            crate::transformer_test_support::fixture_with_configs(&[
+                (
+                    "sentence_bert_config.json",
+                    json!({"max_seq_length":4,"do_lower_case":true}),
+                ),
+                (
+                    "tokenizer_config.json",
+                    json!({"pad_token":"[PAD]","model_max_length":16,"padding_side":"left"}),
+                ),
+                (
+                    "config_sentence_transformers.json",
+                    json!({"default_prompt_name":"search","prompts":{"search":"find "}}),
+                ),
+            ]);
+        let tokens = TransformerTokens::for_mlx(
+            &model,
+            &source,
+            &TransformerSettings {
+                sequence_length: Some(8),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        assert_eq!(tokens.sequence_limit(), 8);
+        let prepared = tokens
+            .queries(&["FIND RED", "find red red red red red red red red"])
+            .unwrap();
+        assert_eq!(
+            prepared.batches()[0].input_ids[0],
+            vec![4, 0, 0, 5, 3, 3, 3, 3]
+        );
+        assert_eq!(
+            prepared.batches()[0].attention_mask[0],
+            vec![1, 1, 1, 1, 0, 0, 0, 0]
+        );
+        assert_eq!(prepared.batches()[0].input_ids[1].len(), 8);
     }
 }

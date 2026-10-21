@@ -109,3 +109,6 @@ pub use sentence_encoder::{SentenceEncoder, TransformerPreparation};
 
 #[cfg(test)]
 mod transformer_test_support;
+
+mod mlx_encoder;
+pub use mlx_encoder::MLXEncoder;

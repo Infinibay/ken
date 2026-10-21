@@ -180,6 +180,10 @@ impl NativeTransformerRuntime {
         })))
     }
 
+    pub fn backend(&self) -> &str {
+        &self.0.identity.backend
+    }
+
     pub fn loaded_identity(&self) -> Result<Option<TransformerRuntimeIdentity>, ModelError> {
         Ok(self
             .0

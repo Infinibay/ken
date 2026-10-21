@@ -17,6 +17,17 @@ pub(crate) fn fixture_with_configs(
     ModelFileSource,
     NativeTransformerRuntime,
 ) {
+    fixture_with_weights(overrides, None)
+}
+pub(crate) fn fixture_with_weights(
+    overrides: &[(&str, Value)],
+    weights: Option<&[u8]>,
+) -> (
+    tempfile::TempDir,
+    TransformerModel,
+    ModelFileSource,
+    NativeTransformerRuntime,
+) {
     let repo = Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .unwrap()
@@ -82,6 +93,9 @@ pub(crate) fn fixture_with_configs(
     )
     .unwrap();
     std::fs::copy(repo.join("crates/ken-models/tests/fixtures/context/valid/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/tokenizer.json"),snapshot.join("tokenizer.json")).unwrap();
+    if let Some(weights) = weights {
+        std::fs::write(snapshot.join("model.safetensors"), weights).unwrap();
+    }
     let mut artifacts = BTreeMap::new();
     for name in configs
         .keys()
