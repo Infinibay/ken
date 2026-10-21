@@ -8,7 +8,7 @@ runs:
       run: |
         export UV_PYTHON_INSTALL_DIR="$GITHUB_WORKSPACE/.ken/rust-migration/validation-python"
         printf '%s\n' "UV_PYTHON_INSTALL_DIR=$UV_PYTHON_INSTALL_DIR" >> "$GITHUB_ENV"
-        printf '%s\n' 'CARGO_INCREMENTAL=0' >> "$GITHUB_ENV"
+        printf '%s\n' 'CARGO_INCREMENTAL=0' 'RUST_TEST_THREADS=1' >> "$GITHUB_ENV"
         # Remove dev/test symbols, keeping assertions, optimization and coverage.
         printf '%s\n' 'CARGO_PROFILE_DEV_DEBUG=0' 'CARGO_PROFILE_TEST_DEBUG=0' >> "$GITHUB_ENV"
         uv python install 3.12.9 --no-bin
@@ -127,3 +127,37 @@ runs:
           --sources "$PWD/.ken/rust-migration/fastembed-sources" \
           --registry crates/ken-models/resources/fastembed-catalog.json \
           --out .ken/rust-migration/fastembed-capacity-after-build.json
+
+    - name: Prepare the pinned Apple SDK for native transformer regressions
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        uv venv .ken/rust-migration/mlx-sdk-python --python 3.12.9 --managed-python
+        uv pip install --python .ken/rust-migration/mlx-sdk-python/bin/python 'mlx==0.32.3'
+        .ken/rust-migration/mlx-sdk-python/bin/python - <<'PYTHON'
+        import importlib.util,os
+        from pathlib import Path
+        sdk=Path(importlib.util.find_spec('mlx').submodule_search_locations[0])
+        with open(os.environ['GITHUB_ENV'],'a') as stream:stream.write(f'KEN_MLX_SDK_PACKAGE={sdk}\n')
+        PYTHON
+    - name: Prepare actual native cores and metadata-only transformer test inputs
+      shell: bash
+      run: |
+        .venv/bin/python - <<'PYTHON'
+        import importlib.util,os,platform
+        from pathlib import Path
+        from tools.rust_migration.transformer_prepare import prepare_transformers
+        from tools.rust_migration.preparation import PreparedTransformerTests
+        root=Path.cwd();output=root/'.ken/rust-migration/m2-transformers/preparation'
+        torch=Path(importlib.util.find_spec('torch').submodule_search_locations[0])
+        mlx=Path(os.environ['KEN_MLX_SDK_PACKAGE']) if platform.system()=='Darwin' else None
+        report=prepare_transformers(root,torch,mlx,output,root/'target',Path(os.environ['CMAKE']))
+        slots=report['prepared']
+        ready=PreparedTransformerTests(Path(slots['metadata_sources']),Path(slots['torch_core']),
+            Path(slots['torch_module']),Path(slots['torch_core'])/'PREPARATION.json',
+            mlx_core=Path(slots['mlx_core']) if mlx else None,
+            mlx_module=Path(slots['mlx_module']) if mlx else None)
+        with open(os.environ['GITHUB_ENV'],'a') as stream:
+            stream.write(f'KEN_TRANSFORMER_PREPARATION={output/"preparation.json"}\n')
+            for key,value in ready.environment().items():stream.write(f'{key}={value}\n')
+        PYTHON

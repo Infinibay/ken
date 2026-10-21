@@ -1,0 +1,114 @@
+{
+  "scope": "complete",
+  "positive_passed": true,
+  "controls": [
+    {
+      "control": "vector",
+      "rejected": true,
+      "errors": [
+        "lexical: original numerical tolerance exceeded"
+      ]
+    },
+    {
+      "control": "scores",
+      "rejected": true,
+      "errors": [
+        "purpose_implementation: original numerical tolerance exceeded"
+      ]
+    },
+    {
+      "control": "token",
+      "rejected": true,
+      "errors": [
+        "lexical: wrong token feeds/masks"
+      ]
+    },
+    {
+      "control": "counts",
+      "rejected": true,
+      "errors": [
+        "lexical: wrong raw token counts"
+      ]
+    },
+    {
+      "control": "case",
+      "rejected": true,
+      "errors": [
+        "missing or extra public cases"
+      ]
+    },
+    {
+      "control": "device",
+      "rejected": true,
+      "errors": [
+        "lexical: wrong actual device/dtype transition"
+      ]
+    },
+    {
+      "control": "actual-module",
+      "rejected": true,
+      "errors": [
+        "transformer execution evidence: actual runtime identity differs from verified native module/core closure"
+      ]
+    },
+    {
+      "control": "actual-core",
+      "rejected": true,
+      "errors": [
+        "transformer execution evidence: actual runtime identity differs from verified native module/core closure"
+      ]
+    },
+    {
+      "control": "source",
+      "rejected": true,
+      "errors": [
+        "transformer execution evidence: stale/incomplete native source identity"
+      ]
+    },
+    {
+      "control": "deadline",
+      "rejected": true,
+      "errors": [
+        "transformer execution evidence: original fixed deadline changed"
+      ]
+    },
+    {
+      "control": "coverage",
+      "rejected": true,
+      "errors": [
+        "transformer profile evidence: missing/duplicated/reordered profile coverage"
+      ]
+    },
+    {
+      "control": "gate-output",
+      "rejected": true,
+      "errors": [
+        "transformer gate evidence: incomplete or skipped transformer tests: transformer_unit"
+      ]
+    },
+    {
+      "control": "native-owner",
+      "rejected": true,
+      "errors": [
+        "transformer gate evidence: missing actual lifecycle regression: actual_cpu_loads_even_for_empty_then_scores_raw_batches_and_keeps_its_owned_source"
+      ]
+    },
+    {
+      "control": "capacity-reserve",
+      "rejected": true,
+      "errors": [
+        "transformer gate evidence: model/core/private-copy capacity or3GiB reserve changed"
+      ]
+    },
+    {
+      "control": "base-proof",
+      "rejected": true,
+      "errors": [
+        "incomplete native FastEmbed process provenance",
+        "transformer platform evidence: raw/embedded FastEmbed proof differs: fastembed-parity/summary.json"
+      ]
+    }
+  ],
+  "original_files_unchanged": true,
+  "M2_accepted": false
+}

@@ -15,7 +15,7 @@ from .model_reference import TOLERANCES, model_cases
 from .receipts import compare_python
 from .reference import Reference, reference_env
 from .validate import _command, _digest, _fingerprints, _rustc_version, _sha, _typing_errors, _verify, _write, bind_native_release
-from .preparation import PreparedNativeFastEmbed,fastembed_environment,PreparedNativeStorage,storage_environment
+from .preparation import PreparedNativeFastEmbed,fastembed_environment,PreparedNativeStorage,storage_environment,transformer_test_environment
 from .preparation import PreparedNativeContext,PreparedNativeEttin,PreparedNativeTranslation,TRANSLATION_BUILD_ENV,context_environment,ettin_environment,translation_environment,policy_environment
 
 REQUIRED_GATES = ('originals', 'reference', 'toolchain', 'python_contracts', 'python_full', 'typing',
@@ -184,6 +184,7 @@ def validate_models(repo: Path, reference: Reference, native: Path, snapshot: Pa
         env.update(policy_environment(policy_probe))
         env.update(storage_environment(storage))
         env.update(fastembed_environment(fastembed))
+        env.update(transformer_test_environment())
         py = [str(reference.python), '-m']
         gates['toolchain'] = _command(repo, env, output, 'rustc', ['rustc', '--version', '--verbose'])
         result['rustc'] = _rustc_version(output / 'rustc.log')

@@ -226,6 +226,17 @@ fn producer() -> Result<Value> {
   ("crates/ken-models/src/translation_model.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/translation_model.rs")))),
   ("crates/ken-models/src/translation_preparation.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/translation_preparation.rs")))),
   ("crates/ken-models/src/verified_file.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/verified_file.rs")))),
+  ("crates/ken-models/src/judge_tokens.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/judge_tokens.rs")))),
+  ("crates/ken-models/src/mlx_encoder.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/mlx_encoder.rs")))),
+  ("crates/ken-models/src/relevance_judge.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/relevance_judge.rs")))),
+  ("crates/ken-models/src/sentence_encoder.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/sentence_encoder.rs")))),
+  ("crates/ken-models/src/transformer_client.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/transformer_client.rs")))),
+  ("crates/ken-models/src/transformer_model.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/transformer_model.rs")))),
+  ("crates/ken-models/src/transformer_order.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/transformer_order.rs")))),
+  ("crates/ken-models/src/transformer_runtime.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/transformer_runtime.rs")))),
+  ("crates/ken-models/src/transformer_session.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/transformer_session.rs")))),
+  ("crates/ken-models/src/transformer_test_support.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/transformer_test_support.rs")))),
+  ("crates/ken-models/src/transformer_tokens.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/transformer_tokens.rs")))),
   ("Cargo.toml",format!("{:x}",Sha256::digest(include_bytes!("../../../Cargo.toml")))),
   ("Cargo.lock",format!("{:x}",Sha256::digest(include_bytes!("../../../Cargo.lock")))),
   ("crates/ken-models/Cargo.toml",format!("{:x}",Sha256::digest(include_bytes!("../Cargo.toml")))),
@@ -345,6 +356,50 @@ mod tests {
             }
             assert!(super::parse_request(&value.to_string(), &mut BTreeSet::new()).is_ok());
         }
+    }
+    #[test]
+    fn producer_covers_every_compiled_model_source() {
+        use sha2::{Digest, Sha256};
+        use std::{collections::BTreeMap, fs, path::Path};
+        fn collect(root: &Path, directory: &Path, files: &mut BTreeMap<String, String>) {
+            for entry in fs::read_dir(directory).unwrap() {
+                let path = entry.unwrap().path();
+                if path.is_dir() {
+                    collect(root, &path, files);
+                } else if path.extension().is_some_and(|ext| ext == "rs") {
+                    files.insert(
+                        path.strip_prefix(root)
+                            .unwrap()
+                            .to_string_lossy()
+                            .into_owned(),
+                        format!("{:x}", Sha256::digest(fs::read(&path).unwrap())),
+                    );
+                }
+            }
+        }
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let mut files = BTreeMap::new();
+        collect(&root, &root.join("crates/ken-models/src"), &mut files);
+        for name in [
+            "Cargo.toml",
+            "Cargo.lock",
+            "crates/ken-models/Cargo.toml",
+            "crates/ken-models/examples/fastembed_probe.rs",
+            "crates/ken-models/examples/support/mod.rs",
+            "crates/ken-models/examples/support/observed_peak.rs",
+            "docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json",
+        ] {
+            files.insert(
+                name.to_owned(),
+                format!("{:x}", Sha256::digest(fs::read(root.join(name)).unwrap())),
+            );
+        }
+        let actual = super::producer().unwrap();
+        assert_eq!(actual["source_files"], files.len());
+        assert_eq!(
+            actual["source_sha256"],
+            format!("{:x}", Sha256::digest(serde_json::to_vec(&files).unwrap()))
+        );
     }
     #[test]
     fn command_line_requires_explicit_absolute_paths_and_exact_five_flags() {

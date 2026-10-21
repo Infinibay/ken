@@ -1,0 +1,12 @@
+name: Prepare native transformer validation
+description: Reuse the shared explicit SDK, metadata and native-probe preparation.
+runs:
+  using: composite
+  steps:
+    - name: Prepare shared dependencies and actual native transformer cores
+      uses: ./.github/actions/prepare-native-validation
+    - name: Require the explicit completed preparation
+      shell: bash
+      run: |
+        test -n "$KEN_TRANSFORMER_PREPARATION"
+        test -f "$KEN_TRANSFORMER_PREPARATION"

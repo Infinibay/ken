@@ -91,3 +91,7 @@ jobs:
           path: .ken/rust-migration/m2/matrix/
           include-hidden-files: true
           if-no-files-found: error
+
+  transformers:
+    needs: static
+    uses: ./.github/workflows/rust-transformers.yml

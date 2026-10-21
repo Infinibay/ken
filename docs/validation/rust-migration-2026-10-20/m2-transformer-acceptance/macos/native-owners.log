@@ -1,0 +1,42 @@
+    Finished `test` profile [unoptimized] target(s) in 0.28s
+     Running unittests src/lib.rs (target/debug/deps/ken_models-4def48317d7c3a05)
+
+running 30 tests
+test fastembed_session::tests::actual_gpu_registration_failure_rebuilds_cpu_and_cpu_failures_propagate ... ok
+test file_assets::tests::interrupted_real_copy_cleans_staging_before_publishing ... ok
+test mlx_encoder::tests::actual_mlx_is_lazy_count_only_then_owns_sources_and_moves_between_calling_threads ... ok
+test mlx_encoder::tests::actual_mlx_late_failure_returns_no_partial_list_and_keeps_gpu_state ... ok
+test mlx_encoder::tests::actual_zero_hidden_states_return_error_without_cpu_fallback ... ok
+test python_unicode::tests::whole_scalar_contract_matches_independent_python_unicode15_digest ... ok
+test query_expansion::tests::actual_native_core_matches_all_pre_product_original_raw_histories ... ok
+test relevance_judge::tests::actual_cpu_loads_even_for_empty_then_scores_raw_batches_and_keeps_its_owned_source ... ok
+test relevance_judge::tests::actual_mlx_empty_and_budget_errors_keep_the_original_gpu_and_dtype ... ok
+test relevance_judge::tests::actual_mps_empty_keeps_gpu_but_budget_failure_converts_resident_weights_to_cpu_float32 ... ok
+test relevance_judge::tests::concurrent_first_use_serializes_one_owned_judge ... ok
+test relevance_judge::tests::conversion_failure_keeps_gpu_and_cpu_retry_failure_remains_cpu_without_second_retry ... ok
+test relevance_judge::tests::cpu_late_failure_and_nonfinite_return_no_partial_scores_without_retry ... ok
+test relevance_judge::tests::mlx_late_failure_and_nonfinite_propagate_without_cpu_conversion ... ok
+test relevance_judge::tests::mps_late_failure_and_nonfinite_convert_once_and_retry_all_batches ... ok
+test sentence_encoder::tests::actual_concurrent_first_use_shares_one_session_and_source_copy ... ok
+test sentence_encoder::tests::actual_cpu_late_batch_failure_returns_error_then_recovers ... ok
+test sentence_encoder::tests::actual_mps_failure_rebuilds_cpu_atomically_and_retries_whole_request ... ok
+test sentence_encoder::tests::actual_tiny_cpu_is_lazy_counts_without_weights_then_loads_repeats_and_owns_sources ... ok
+test sentence_encoder::tests::failed_actual_cpu_rebuild_keeps_previous_mps_and_successful_rebuild_commits_before_retry ... ok
+test sentence_encoder::tests::unavailable_explicit_cuda_falls_back_to_actual_cpu ... ok
+test transformer_client::tests::buffers_close_before_model_and_module_and_execution_can_change_thread ...     Finished `dev` profile [unoptimized] target(s) in 0.02s
+
+thread '<unnamed>' (12810522) panicked at src/lib.rs:265:21:
+controlled contract-fixture panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+ok
+test transformer_order::tests::sentence_order_matches_original_numpy_including_equal_keys_and_depth_fallback ... ok
+test transformer_tokens::tests::actual_mlx_feeds_use_stable_token_length_order_and_raw_counts ... ok
+test transformer_tokens::tests::lowercasing_is_only_for_prepared_text_and_composes_with_default_prompt ... ok
+test transformer_tokens::tests::mlx_ignores_st_lowercase_default_prompt_and_lower_limit_and_overrides_left_padding ... ok
+test transformer_tokens::tests::real_original_feeds_and_raw_counts_require_only_tokenizer_data ... ok
+test transformer_tokens::tests::token_metadata_is_authenticated_and_lower_requested_limit_is_kept ... ok
+test verified_file::tests::an_interrupted_regular_file_read_is_retried ... ok
+test verified_file::tests::streaming_hash_preserves_sha256_across_partial_blocks ... ok
+
+test result: ok. 30 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 74.82s
+

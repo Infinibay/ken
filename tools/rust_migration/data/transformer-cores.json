@@ -1,0 +1,105 @@
+{
+  "format": "ken-native-transformer-cores/1",
+  "cores": [
+    {
+      "os": "macos",
+      "arch": "aarch64",
+      "backend": "torch",
+      "core_version": "2.9.0",
+      "libraries": {
+        "lib/libc10.dylib": {
+          "bytes": 1106704,
+          "sha256": "0b9d25a296110e1bda1370ec4d2a6522bfe132c8c97e642d9f4feb8f07def4f0"
+        },
+        "lib/libomp.dylib": {
+          "bytes": 754912,
+          "sha256": "45cbdf682cf45eea9362d54f158c949b657a4bd620510d31e691c04ebf459c39"
+        },
+        "lib/libshm.dylib": {
+          "bytes": 77568,
+          "sha256": "8191d605b2710f97622e8cbe2368fe4d86f995386934d9df46b19b656140215a"
+        },
+        "lib/libtorch.dylib": {
+          "bytes": 16736,
+          "sha256": "2178657b7eeffc0c0a989889ac3e2b2e3d216073b35f3a291ee89bd65c0fb406"
+        },
+        "lib/libtorch_cpu.dylib": {
+          "bytes": 207886736,
+          "sha256": "304260233d5915f69274e54127f63e3d53d8f4ba1d8eca6e5486571a6172348a"
+        },
+        "lib/libtorch_global_deps.dylib": {
+          "bytes": 16744,
+          "sha256": "6ff1aedff89150170f225ce821dc9355a9d5f9c80a6cc1bb761c8d209638c2c7"
+        }
+      }
+    },
+    {
+      "os": "linux",
+      "arch": "aarch64",
+      "backend": "torch",
+      "core_version": "2.9.0",
+      "libraries": {
+        "lib/libtorch_cpu.so": {
+          "bytes": 252826513,
+          "sha256": "6ca3092065e55a876af9542b0e520dcf4e4c54c8f13873c8fae9f8ec7a30e57e"
+        },
+        "lib/libc10.so": {
+          "bytes": 1469336,
+          "sha256": "14176d01526770ecaa6f877e328c094ab18a8cea6661d87181fe21f04501e570"
+        },
+        "lib/libtorch.so": {
+          "bytes": 265833,
+          "sha256": "43de14f79a6d90f239622bf0624c57fcac1a0ffd302e031f7843b8a819f1b797"
+        },
+        "lib/libtorch_global_deps.so": {
+          "bytes": 201072,
+          "sha256": "188dfe4f3260496f17c7280c5c2c26c810ee6c889b115af30d4cf79e5e34bfe5"
+        },
+        "lib/libshm.so": {
+          "bytes": 266465,
+          "sha256": "e42b154860d465520fa6b8f098584d78ef4ac5a17a98eba3458562254e3a3b54"
+        },
+        "lib/libarm_compute_graph-91f54ff9.so": {
+          "bytes": 1430097,
+          "sha256": "771700cf8c2a60ebc78870096f25ccd76ffd132a21d6fe4b980d007049fae3a4"
+        },
+        "lib/libgomp-a49a47f9.so.1.0.0": {
+          "bytes": 343345,
+          "sha256": "43642df04bdf20f9b4122d336ef3e2e6a486c536e614159ac0e981a901d54537"
+        },
+        "lib/libarm_compute-9ce79921.so": {
+          "bytes": 18607121,
+          "sha256": "d195108ee86a40ac9684a7391dcd061ff2c76067c6c42d434429ac0200043840"
+        },
+        "lib/libopenblasp-r0-121ca252.3.30.so": {
+          "bytes": 23907585,
+          "sha256": "eeed4eeb5b5c2691b5ee0812a4e909adf8c0d936dc29aa72ea56d91614f3f623"
+        },
+        "lib/libgfortran-e1b7dfc8.so.5.0.0": {
+          "bytes": 1484433,
+          "sha256": "296e40e3d92d0c4377e1f8b40a929045fee6bc5686226faf940fc824e469a7be"
+        }
+      }
+    },
+    {
+      "os": "macos",
+      "arch": "aarch64",
+      "backend": "mlx",
+      "core_version": "0.32.3",
+      "libraries": {
+        "lib/libmlx.dylib": {
+          "bytes": 21108048,
+          "sha256": "ebc8a5f5465afb79d3d9c8f5b0929de1a9b277b7179db8672f92da77ae110a1e"
+        },
+        "lib/libjaccl.dylib": {
+          "bytes": 1555552,
+          "sha256": "949e901df832d600a71ff2bc5f3738d55b010668102f36e071e1890807a965cd"
+        },
+        "lib/mlx.metallib": {
+          "bytes": 190319536,
+          "sha256": "95974b7de464ec2be7833a914ca5a53d283a70789470fd84218738fc8fcea3e1"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,781 @@
+{
+  "scope": "context-local",
+  "platform": "Darwin",
+  "architecture": "arm64",
+  "passed": true,
+  "M2_accepted": false,
+  "gates": {
+    "originals": {
+      "ran": true,
+      "passed": true,
+      "details": {
+        "changed": [],
+        "manifest_sha256": "a14617ee9422e1215d870695feb71cb9d88802e70112afd91340d3575d4d6a25"
+      }
+    },
+    "reference": {
+      "ran": true,
+      "passed": true,
+      "details": {
+        "changed": [],
+        "manifest_sha256": "509eb20fe9d76b1b170b9d4cf1148ed9f564937cea873f0550c5f1b3fd6c8b92"
+      }
+    },
+    "toolchain": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "rustc",
+        "--version",
+        "--verbose"
+      ],
+      "duration_ns": 149425709,
+      "artifact": "rustc.log",
+      "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
+    },
+    "python_contracts": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/rust_migration",
+        "tests/test_paths.py",
+        "tests/test_status.py",
+        "-q"
+      ],
+      "duration_ns": 188312999667,
+      "artifact": "python-contracts.log",
+      "sha256": "c4408bbda0a26d2761d58a258d0cdb05b86e89dc3bc948b8f0fe9dde430a1480"
+    },
+    "python_full": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/.venv/bin/python",
+        "-m",
+        "pytest",
+        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/legacy-current-t9-macos-v4/base/base/base/base/base/base/base/python-final.xml"
+      ],
+      "duration_ns": 827762789250,
+      "artifact": "python-full.log",
+      "sha256": "67f622bbeb531fcdf10d8afd3148a7439f4067c208770887c57167d8cbc89379",
+      "details": {
+        "passed": true,
+        "collected": 15950,
+        "new_failures": [],
+        "new_skips": [],
+        "missing_tests": [],
+        "previous_failures": {
+          "tests.kql2.test_automatic::test_graph_is_prepared_before_its_query_budget": "passed",
+          "tests.kql2.test_automatic::test_startup_retries_child_that_arrived_before_old_owner_released_lock": "passed"
+        },
+        "current_failures": []
+      }
+    },
+    "typing": {
+      "ran": true,
+      "passed": true,
+      "exit": 1,
+      "command": [
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/.venv/bin/python",
+        "-m",
+        "mypy",
+        "--no-incremental"
+      ],
+      "duration_ns": 19245389084,
+      "artifact": "typing.log",
+      "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
+      "details": {
+        "previous_errors": [
+          "src/ken/embedder/mlx_backend.py:34: error: Cannot find implementation or library stub for module named \"transformers\"  [import-not-found]",
+          "src/ken/retrieval/joint_model.py:56: error: Cannot find implementation or library stub for module named \"transformers\"  [import-not-found]"
+        ],
+        "current_errors": [
+          "src/ken/embedder/mlx_backend.py:34: error: Cannot find implementation or library stub for module named \"transformers\"  [import-not-found]",
+          "src/ken/retrieval/joint_model.py:56: error: Cannot find implementation or library stub for module named \"transformers\"  [import-not-found]"
+        ],
+        "new_errors": []
+      }
+    },
+    "fmt": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "duration_ns": 482822667,
+      "artifact": "fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "clippy": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--workspace",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "duration_ns": 642931250,
+      "artifact": "clippy.log",
+      "sha256": "fe368598dee37a838fc947bb61fdf7683a67dd9c56d87bf1c158f0d080cf0571"
+    },
+    "rust_tests": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--workspace",
+        "--all-targets"
+      ],
+      "duration_ns": 173241931667,
+      "artifact": "rust_tests.log",
+      "sha256": "dbdf21515d5086455d86b20427bd4d66b71e2679c1e5df1f5314c4c87e0669e1"
+    },
+    "release": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "-p",
+        "ken-cli",
+        "-p",
+        "ken-models",
+        "-p",
+        "ken-store",
+        "--examples",
+        "--bins",
+        "--message-format=json"
+      ],
+      "duration_ns": 438001959,
+      "artifact": "release.log",
+      "sha256": "75c773eb8cc30dc88667e3d9429491ae34949deec2b58b8f043e6a559296be0c",
+      "native_binding": {
+        "ran": true,
+        "passed": true,
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/examples/model_probe",
+        "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-fastembed/target-final-ci/release/examples/model_probe",
+        "built_sha256": "c19152e909cc05d1f0d1c0cf09339520d0df1eba85c2c0fc5e1fe8a58702f40a",
+        "supplied_sha256": "c19152e909cc05d1f0d1c0cf09339520d0df1eba85c2c0fc5e1fe8a58702f40a"
+      }
+    },
+    "parity_tests": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/.venv/bin/python",
+        "-m",
+        "pytest",
+        "migration_tests",
+        "-q",
+        "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/legacy-current-t9-macos-v4/base/base/base/base/base/base/base/parity-tests.xml"
+      ],
+      "duration_ns": 221768622667,
+      "artifact": "parity-tests.log",
+      "sha256": "15d45ee89dd77c1573712d174e175e1369a0daf3ca0e6acdebef061ce046e96d",
+      "preparation": {
+        "ran": true,
+        "duration_ns": 195960789791,
+        "outside_execution_budget": true
+      }
+    },
+    "model_parity": {
+      "ran": true,
+      "passed": true
+    },
+    "autonomy": {
+      "ran": true,
+      "passed": true
+    },
+    "m1_parity": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/.venv/bin/python",
+        "-m",
+        "tools.rust_migration.compare",
+        "--reference",
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/reference-final-t9",
+        "--native",
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/ken-rs",
+        "--cases",
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+        "--out",
+        "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/legacy-current-t9-macos-v4/base/base/base/base/base/base/base/m1-parity.json"
+      ],
+      "duration_ns": 19353774792,
+      "artifact": "m1-parity.log",
+      "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
+    },
+    "benchmark": {
+      "ran": true,
+      "passed": true,
+      "artifact": "benchmark/benchmark.json"
+    },
+    "hygiene": {
+      "ran": true,
+      "passed": true,
+      "exit": 0,
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "duration_ns": 83607750,
+      "artifact": "hygiene.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "table_release": {
+      "ran": true,
+      "passed": true,
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/examples/table_probe",
+      "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/examples/table_probe",
+      "built_sha256": "f63499b1b796971f2dcfb4cc038bb521edfafd8fad65bff324409fcc0c803772",
+      "supplied_sha256": "f63499b1b796971f2dcfb4cc038bb521edfafd8fad65bff324409fcc0c803772"
+    },
+    "table_parity": {
+      "ran": true,
+      "passed": true
+    },
+    "context_release": {
+      "ran": true,
+      "passed": true,
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/examples/context_probe",
+      "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/examples/context_probe",
+      "built_sha256": "19911038a0c48bc2462cb388bed979aea8521372430a2e6adb602f6359d4a4f2",
+      "supplied_sha256": "19911038a0c48bc2462cb388bed979aea8521372430a2e6adb602f6359d4a4f2"
+    },
+    "context_parity": {
+      "ran": true,
+      "passed": true
+    }
+  },
+  "fingerprints": {
+    "native_source": "f0d7e3ca2f26025099eac699932f7a666d45e43228a87231c5b24ea462e2bd2c",
+    "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
+    "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
+    "validator": "69ec2567e270005ceec07738e0c80a342aee566e765e1495a4f8ebcfeac4323a",
+    "oracle": "3c6c3295f97b6671dd6e00135117a276a53ce00489aa6dcfd4ba88cafb24443c",
+    "registration": "d2cb2be7a0b8a0b6682ae215539a1e92d7ccec598cbbcbdf960201e718b534d5",
+    "table_artifact": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
+    "table_oracle": "b2ed77496c6cf5df43dd43dd9eb3b904b60a71c9e1650f879b3428fa926e62f3",
+    "context_cases": "776db83073511d63c17b4d595eb221e1a776b0082bd2fcbfc77f87ad699f6d42",
+    "context_oracle": "343fd57f5f644beff252260784fca165d2edf0ab8f38319815f2b0357b181af6",
+    "context_registration": "4fd47b6170f98e0cd7652b39af01e9f25ba207b9261bbe21141d38377286aa9d",
+    "runtime_registration": "469470d57e38df2fb89c8cb005eb978c1ae295b427a3c7b8d5c03215b114536b",
+    "context_assets": "85c370eb7ff483542ec0b10ce84471837c2a789d6f2deb712405e415c8775734"
+  },
+  "table_base": {
+    "scope": "table-local",
+    "platform": "Darwin",
+    "architecture": "arm64",
+    "passed": true,
+    "M2_accepted": false,
+    "gates": {
+      "originals": {
+        "ran": true,
+        "passed": true,
+        "details": {
+          "changed": [],
+          "manifest_sha256": "a14617ee9422e1215d870695feb71cb9d88802e70112afd91340d3575d4d6a25"
+        }
+      },
+      "reference": {
+        "ran": true,
+        "passed": true,
+        "details": {
+          "changed": [],
+          "manifest_sha256": "509eb20fe9d76b1b170b9d4cf1148ed9f564937cea873f0550c5f1b3fd6c8b92"
+        }
+      },
+      "toolchain": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "rustc",
+          "--version",
+          "--verbose"
+        ],
+        "duration_ns": 149425709,
+        "artifact": "rustc.log",
+        "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
+      },
+      "python_contracts": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/.venv/bin/python",
+          "-m",
+          "pytest",
+          "tests/rust_migration",
+          "tests/test_paths.py",
+          "tests/test_status.py",
+          "-q"
+        ],
+        "duration_ns": 188312999667,
+        "artifact": "python-contracts.log",
+        "sha256": "c4408bbda0a26d2761d58a258d0cdb05b86e89dc3bc948b8f0fe9dde430a1480"
+      },
+      "python_full": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/.venv/bin/python",
+          "-m",
+          "pytest",
+          "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/legacy-current-t9-macos-v4/base/base/base/base/base/base/base/python-final.xml"
+        ],
+        "duration_ns": 827762789250,
+        "artifact": "python-full.log",
+        "sha256": "67f622bbeb531fcdf10d8afd3148a7439f4067c208770887c57167d8cbc89379",
+        "details": {
+          "passed": true,
+          "collected": 15950,
+          "new_failures": [],
+          "new_skips": [],
+          "missing_tests": [],
+          "previous_failures": {
+            "tests.kql2.test_automatic::test_graph_is_prepared_before_its_query_budget": "passed",
+            "tests.kql2.test_automatic::test_startup_retries_child_that_arrived_before_old_owner_released_lock": "passed"
+          },
+          "current_failures": []
+        }
+      },
+      "typing": {
+        "ran": true,
+        "passed": true,
+        "exit": 1,
+        "command": [
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/.venv/bin/python",
+          "-m",
+          "mypy",
+          "--no-incremental"
+        ],
+        "duration_ns": 19245389084,
+        "artifact": "typing.log",
+        "sha256": "5cf98656d0dcb80b5e83bcd155700747e158b019def7e7a3d1c31f490e48265d",
+        "details": {
+          "previous_errors": [
+            "src/ken/embedder/mlx_backend.py:34: error: Cannot find implementation or library stub for module named \"transformers\"  [import-not-found]",
+            "src/ken/retrieval/joint_model.py:56: error: Cannot find implementation or library stub for module named \"transformers\"  [import-not-found]"
+          ],
+          "current_errors": [
+            "src/ken/embedder/mlx_backend.py:34: error: Cannot find implementation or library stub for module named \"transformers\"  [import-not-found]",
+            "src/ken/retrieval/joint_model.py:56: error: Cannot find implementation or library stub for module named \"transformers\"  [import-not-found]"
+          ],
+          "new_errors": []
+        }
+      },
+      "fmt": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "duration_ns": 482822667,
+        "artifact": "fmt.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "clippy": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--workspace",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "duration_ns": 642931250,
+        "artifact": "clippy.log",
+        "sha256": "fe368598dee37a838fc947bb61fdf7683a67dd9c56d87bf1c158f0d080cf0571"
+      },
+      "rust_tests": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "cargo",
+          "test",
+          "--locked",
+          "--workspace",
+          "--all-targets"
+        ],
+        "duration_ns": 173241931667,
+        "artifact": "rust_tests.log",
+        "sha256": "dbdf21515d5086455d86b20427bd4d66b71e2679c1e5df1f5314c4c87e0669e1"
+      },
+      "release": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "-p",
+          "ken-cli",
+          "-p",
+          "ken-models",
+          "-p",
+          "ken-store",
+          "--examples",
+          "--bins",
+          "--message-format=json"
+        ],
+        "duration_ns": 438001959,
+        "artifact": "release.log",
+        "sha256": "75c773eb8cc30dc88667e3d9429491ae34949deec2b58b8f043e6a559296be0c",
+        "native_binding": {
+          "ran": true,
+          "passed": true,
+          "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/examples/model_probe",
+          "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-fastembed/target-final-ci/release/examples/model_probe",
+          "built_sha256": "c19152e909cc05d1f0d1c0cf09339520d0df1eba85c2c0fc5e1fe8a58702f40a",
+          "supplied_sha256": "c19152e909cc05d1f0d1c0cf09339520d0df1eba85c2c0fc5e1fe8a58702f40a"
+        }
+      },
+      "parity_tests": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/.venv/bin/python",
+          "-m",
+          "pytest",
+          "migration_tests",
+          "-q",
+          "--junitxml=/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/legacy-current-t9-macos-v4/base/base/base/base/base/base/base/parity-tests.xml"
+        ],
+        "duration_ns": 221768622667,
+        "artifact": "parity-tests.log",
+        "sha256": "15d45ee89dd77c1573712d174e175e1369a0daf3ca0e6acdebef061ce046e96d",
+        "preparation": {
+          "ran": true,
+          "duration_ns": 195960789791,
+          "outside_execution_budget": true
+        }
+      },
+      "model_parity": {
+        "ran": true,
+        "passed": true
+      },
+      "autonomy": {
+        "ran": true,
+        "passed": true
+      },
+      "m1_parity": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/.venv/bin/python",
+          "-m",
+          "tools.rust_migration.compare",
+          "--reference",
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/reference-final-t9",
+          "--native",
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/ken-rs",
+          "--cases",
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/docs/validation/rust-migration-2026-10-18/m0/m1-cases.json",
+          "--out",
+          "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/legacy-current-t9-macos-v4/base/base/base/base/base/base/base/m1-parity.json"
+        ],
+        "duration_ns": 19353774792,
+        "artifact": "m1-parity.log",
+        "sha256": "558cfe0bcdecb4d0516466c9208681b9f88917872d2751b3cca59e600e486175"
+      },
+      "benchmark": {
+        "ran": true,
+        "passed": true,
+        "artifact": "benchmark/benchmark.json"
+      },
+      "hygiene": {
+        "ran": true,
+        "passed": true,
+        "exit": 0,
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "duration_ns": 83607750,
+        "artifact": "hygiene.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "table_release": {
+        "ran": true,
+        "passed": true,
+        "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/examples/table_probe",
+        "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/examples/table_probe",
+        "built_sha256": "f63499b1b796971f2dcfb4cc038bb521edfafd8fad65bff324409fcc0c803772",
+        "supplied_sha256": "f63499b1b796971f2dcfb4cc038bb521edfafd8fad65bff324409fcc0c803772"
+      },
+      "table_parity": {
+        "ran": true,
+        "passed": true
+      }
+    },
+    "fingerprints": {
+      "native_source": "f0d7e3ca2f26025099eac699932f7a666d45e43228a87231c5b24ea462e2bd2c",
+      "reference_source": "151562ba33a5bd718c0b0f61e6e31b897e43f4988b569eab76612fc6873fbce2",
+      "cases": "50b5873d20f8b344660a3b65bf85a09287481a6681db93e599dfa9602942b8cf",
+      "validator": "69ec2567e270005ceec07738e0c80a342aee566e765e1495a4f8ebcfeac4323a",
+      "oracle": "3c6c3295f97b6671dd6e00135117a276a53ce00489aa6dcfd4ba88cafb24443c",
+      "registration": "d2cb2be7a0b8a0b6682ae215539a1e92d7ccec598cbbcbdf960201e718b534d5",
+      "table_artifact": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
+      "table_oracle": "b2ed77496c6cf5df43dd43dd9eb3b904b60a71c9e1650f879b3428fa926e62f3"
+    },
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "table_release": {
+      "ran": true,
+      "passed": true,
+      "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/examples/table_probe",
+      "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/examples/table_probe",
+      "built_sha256": "f63499b1b796971f2dcfb4cc038bb521edfafd8fad65bff324409fcc0c803772",
+      "supplied_sha256": "f63499b1b796971f2dcfb4cc038bb521edfafd8fad65bff324409fcc0c803772"
+    },
+    "table_parity": {
+      "format": "ken-table-parity/1",
+      "passed": true,
+      "errors": [],
+      "platform": "Darwin",
+      "architecture": "arm64",
+      "outside_checkout": true,
+      "native_children": [],
+      "M2_accepted": false,
+      "case_ids": [
+        "empty",
+        "spaces",
+        "spanish",
+        "nfc",
+        "nfd",
+        "emoji",
+        "code",
+        "unknown",
+        "pad",
+        "long-512",
+        "long-513",
+        "long-4097",
+        "mixed-empty",
+        "empty-batch",
+        "batching",
+        "repeated-order"
+      ],
+      "artifact": {
+        "sha256": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
+        "bytes": 23135664
+      },
+      "cases_sha256": "b2ed77496c6cf5df43dd43dd9eb3b904b60a71c9e1650f879b3428fa926e62f3",
+      "native_sha256": "f63499b1b796971f2dcfb4cc038bb521edfafd8fad65bff324409fcc0c803772",
+      "dependency_audit": {
+        "passed": true,
+        "linked_exit": 0,
+        "tree_exit": 0,
+        "linked_sha256": "1ff09502a0e08362595c27356c3c11dfeb942eeccdd06def3fa10de98af6f6fd",
+        "tree_sha256": "734be27aa75550ca60ca69a84ec0085fa5602564c2cebd78e0e572afb46e7f14"
+      },
+      "native_wall_ns": 5420027042,
+      "native_exit": 0,
+      "runtime": {
+        "device": "cpu",
+        "engine": "rust",
+        "ken_models": "0.18.0",
+        "ndarray": "0.17.1",
+        "npyz": "0.9.1",
+        "target_arch": "aarch64",
+        "target_os": "macos",
+        "tokenizers": "0.22.2",
+        "zip": "6.0.0"
+      },
+      "reference_runtime": {
+        "numpy": "2.4.4",
+        "tokenizers": "0.22.2"
+      }
+    },
+    "case_ids": [
+      "empty",
+      "spaces",
+      "spanish",
+      "nfc",
+      "nfd",
+      "emoji",
+      "code",
+      "unknown",
+      "pad",
+      "long-512",
+      "long-513",
+      "long-4097",
+      "mixed-empty",
+      "empty-batch",
+      "batching",
+      "repeated-order"
+    ],
+    "errors": [],
+    "Table_local_accepted": true
+  },
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "context_release": {
+    "ran": true,
+    "passed": true,
+    "built": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/examples/context_probe",
+    "supplied": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/target/release/examples/context_probe",
+    "built_sha256": "19911038a0c48bc2462cb388bed979aea8521372430a2e6adb602f6359d4a4f2",
+    "supplied_sha256": "19911038a0c48bc2462cb388bed979aea8521372430a2e6adb602f6359d4a4f2"
+  },
+  "context_parity": {
+    "format": "ken-context-parity/1",
+    "platform": "Darwin",
+    "architecture": "arm64",
+    "passed": true,
+    "errors": [],
+    "native_children": [],
+    "outside_checkout": true,
+    "M2_accepted": false,
+    "native_sha256": "19911038a0c48bc2462cb388bed979aea8521372430a2e6adb602f6359d4a4f2",
+    "case_ids": [
+      "empty-passages",
+      "empty-query",
+      "whitespace-query",
+      "empty-passage",
+      "spanish-query",
+      "code-query",
+      "unicode-canonical",
+      "emoji-and-nul",
+      "query-versus-passage",
+      "serialized-special-literals",
+      "mixed-passages",
+      "repeated-history",
+      "unicode-whitespace",
+      "passage-boundary511",
+      "passage-boundary512",
+      "passage-boundary513",
+      "query-boundary511",
+      "query-boundary512",
+      "query-boundary513",
+      "long4097"
+    ],
+    "artifacts": {
+      "onnx/model.onnx": {
+        "bytes": 138619279,
+        "sha256": "4eae31d09b1843103a1ebd5e2b2e24b5a5cad441a33906b35b12b1e2ed91d1db"
+      },
+      "tokenizer.json": {
+        "bytes": 711649,
+        "sha256": "91f1def9b9391fdabe028cd3f3fcc4efd34e5d1f08c3bf2de513ebb5911a1854"
+      }
+    },
+    "oracle_sha256": "343fd57f5f644beff252260784fca165d2edf0ab8f38319815f2b0357b181af6",
+    "runtime_registration_sha256": "469470d57e38df2fb89c8cb005eb978c1ae295b427a3c7b8d5c03215b114536b",
+    "dependency_audit": {
+      "passed": true,
+      "linked_exit": 0,
+      "tree_exit": 0,
+      "linked_sha256": "8632285a8510655bb566796abb4463cac513ab2f2942a46144bfdc81a502d6be",
+      "tree_sha256": "734be27aa75550ca60ca69a84ec0085fa5602564c2cebd78e0e572afb46e7f14"
+    },
+    "core_dependency_audit": {
+      "passed": true,
+      "linked_exit": 0,
+      "tree_exit": 0,
+      "linked_sha256": "ab10047d389579a3a3474f0b76b8070359af91f088ca132deda30f22a77123bf",
+      "tree_sha256": "734be27aa75550ca60ca69a84ec0085fa5602564c2cebd78e0e572afb46e7f14"
+    },
+    "native_exit": 0,
+    "native_wall_ns": 9085256416,
+    "runtime": {
+      "device": "cpu",
+      "engine": "rust",
+      "inter_threads": 1,
+      "intra_threads": 2,
+      "ken_models": "0.18.0",
+      "native_core": {
+        "api": 25,
+        "arch": "aarch64",
+        "bytes": 28418248,
+        "os": "macos",
+        "sha256": "4478626717e213a1827ab52af61d1a0ac08f9906bcb2c2ab4563124967b2948b",
+        "version": "1.25.1"
+      },
+      "ort": "2.0.0-rc.14",
+      "tokenizers": "0.22.2"
+    },
+    "reference_runtime": {
+      "numpy": "2.4.4",
+      "onnxruntime": "1.25.1",
+      "tokenizers": "0.22.2",
+      "onnx": "1.20.1"
+    },
+    "core_identity": {
+      "os": "macos",
+      "arch": "aarch64",
+      "version": "1.25.1",
+      "api": 25,
+      "bytes": 28418248,
+      "sha256": "4478626717e213a1827ab52af61d1a0ac08f9906bcb2c2ab4563124967b2948b"
+    },
+    "stderr": "",
+    "stderr_warning_count": 0
+  },
+  "case_ids": [
+    "empty-passages",
+    "empty-query",
+    "whitespace-query",
+    "empty-passage",
+    "spanish-query",
+    "code-query",
+    "unicode-canonical",
+    "emoji-and-nul",
+    "query-versus-passage",
+    "serialized-special-literals",
+    "mixed-passages",
+    "repeated-history",
+    "unicode-whitespace",
+    "passage-boundary511",
+    "passage-boundary512",
+    "passage-boundary513",
+    "query-boundary511",
+    "query-boundary512",
+    "query-boundary513",
+    "long4097"
+  ],
+  "errors": [],
+  "Context_local_accepted": true
+}

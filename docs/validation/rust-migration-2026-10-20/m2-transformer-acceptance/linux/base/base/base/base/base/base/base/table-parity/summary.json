@@ -1,0 +1,59 @@
+{
+  "format": "ken-table-parity/1",
+  "passed": true,
+  "errors": [],
+  "platform": "Linux",
+  "architecture": "aarch64",
+  "outside_checkout": true,
+  "native_children": [],
+  "M2_accepted": false,
+  "case_ids": [
+    "empty",
+    "spaces",
+    "spanish",
+    "nfc",
+    "nfd",
+    "emoji",
+    "code",
+    "unknown",
+    "pad",
+    "long-512",
+    "long-513",
+    "long-4097",
+    "mixed-empty",
+    "empty-batch",
+    "batching",
+    "repeated-order"
+  ],
+  "artifact": {
+    "sha256": "e6ab79ad2462d447d367ac4c9735e1062cb752ba6ed50901773ec2bd427a1ff0",
+    "bytes": 23135664
+  },
+  "cases_sha256": "b2ed77496c6cf5df43dd43dd9eb3b904b60a71c9e1650f879b3428fa926e62f3",
+  "native_sha256": "15837e44e747d980134be6ddf02a061740d8aa960742399f9cc08cb14167202a",
+  "dependency_audit": {
+    "passed": true,
+    "linked_exit": 0,
+    "tree_exit": 0,
+    "linked_sha256": "4417a07d8b0bbf9b2be48dfcbba9ccf0fadf8d15828466248a239e2b9a30b15e",
+    "tree_sha256": "dbabdfb2c5419e3a073885368686ac8e5f7d37a5e44ddb3df3756e76115cc9a8"
+  },
+  "native_wall_ns": 8361408295,
+  "native_exit": 0,
+  "exec_attempts": 1,
+  "runtime": {
+    "device": "cpu",
+    "engine": "rust",
+    "ken_models": "0.18.0",
+    "ndarray": "0.17.1",
+    "npyz": "0.9.1",
+    "target_arch": "aarch64",
+    "target_os": "linux",
+    "tokenizers": "0.22.2",
+    "zip": "6.0.0"
+  },
+  "reference_runtime": {
+    "numpy": "2.4.4",
+    "tokenizers": "0.22.2"
+  }
+}

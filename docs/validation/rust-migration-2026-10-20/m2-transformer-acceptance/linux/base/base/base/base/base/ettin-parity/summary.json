@@ -1,0 +1,173 @@
+{
+  "format": "ken-ettin-parity/1",
+  "platform": "Linux",
+  "architecture": "aarch64",
+  "passed": true,
+  "errors": [],
+  "native_children": [],
+  "outside_checkout": true,
+  "M2_accepted": false,
+  "native_sha256": "df24258026e23cf221feedcfec27311a29677c994b97b935b5643c79e4134369",
+  "oracle_sha256": "ddbd13c1e29d8a4f689b58cb9041aa0fcea4745618f065423ddf7dbe4cf7824b",
+  "runtime_registration_sha256": "469470d57e38df2fb89c8cb005eb978c1ae295b427a3c7b8d5c03215b114536b",
+  "case_ids": [
+    "empty-pool",
+    "empty-query",
+    "empty-document",
+    "spanish",
+    "code",
+    "unicode",
+    "emoji-nul",
+    "repeated-documents",
+    "pool10",
+    "empty-pool-then-score",
+    "batch3-remainder",
+    "pair-boundary1023",
+    "pair-boundary1024",
+    "pair-boundary1025",
+    "long-document",
+    "query-capacity-allowed",
+    "query-capacity-rejected",
+    "query-char-limit-allowed",
+    "query-char-limit-rejected",
+    "pool11-rejected",
+    "custom-budget512",
+    "custom-budget2048",
+    "pair-fits-before-and-after-truncation"
+  ],
+  "dependency_audit": {
+    "passed": true,
+    "linked_exit": 0,
+    "tree_exit": 0,
+    "linked_sha256": "3084559b36d98355258b3e1fc22ca625c83827db6daaeaaa64717288c30da196",
+    "tree_sha256": "dbabdfb2c5419e3a073885368686ac8e5f7d37a5e44ddb3df3756e76115cc9a8"
+  },
+  "core_dependency_audit": {
+    "passed": true,
+    "linked_exit": 0,
+    "tree_exit": 0,
+    "linked_sha256": "1c40aed89f3737b298c5629c327a1acc1ab70eb4b56361f661d3ec690c9cdf96",
+    "tree_sha256": "dbabdfb2c5419e3a073885368686ac8e5f7d37a5e44ddb3df3756e76115cc9a8"
+  },
+  "native_exit": 0,
+  "native_wall_ns": 66523724031,
+  "exec_attempts": 1,
+  "preparation": {
+    "artifacts": {
+      "config.json": {
+        "bytes": 1946,
+        "sha256": "de2d1d2f63fea40e28850f4b678c8e026ef399a72fbba2b157b391378e48f81a"
+      },
+      "model.onnx": {
+        "bytes": 274035078,
+        "sha256": "8e22c1a014dbb6bf803824b531943ee067de4e9c6dea72f8c178348732db38bf"
+      },
+      "tokenizer.json": {
+        "bytes": 3583327,
+        "sha256": "28c5e078e4c52aa37cf0e6de1a212878f3dbd58dd1c70466298efe0b6b86db35"
+      },
+      "tokenizer_config.json": {
+        "bytes": 488,
+        "sha256": "2b85302525d8c528a9e1fbaea2733472bd00d4755eae881441c8c52b90e2d600"
+      }
+    },
+    "fresh_cache": true,
+    "recipe_key": "5aaa7ed84370f351ef99445d8e12a29932f450fca4a0c5a57e1d95e53c4968e7",
+    "reused_without_source": true,
+    "source_artifacts": {
+      "1_Pooling/config.json": {
+        "bytes": 89,
+        "sha256": "6147ee30f9df2901f83bc99fbbae3951a64ba3333db85252164c0e849888a67b"
+      },
+      "2_Dense/config.json": {
+        "bytes": 228,
+        "sha256": "b2a82c8f8d4ea4c5b87af1e633f65a5348f44d1c0c7f2de2913d17f9973080b3"
+      },
+      "2_Dense/model.safetensors": {
+        "bytes": 1048664,
+        "sha256": "ee9b8a9186fffb05cea0cd73e2ccfc8a4bf641c075d8f304e5c4e4f5fe0716d0"
+      },
+      "3_LayerNorm/config.json": {
+        "bytes": 24,
+        "sha256": "f3d06c06d736484f4a308c6e27a057c500c109cb372e9a0702bce14afa3952f1"
+      },
+      "3_LayerNorm/model.safetensors": {
+        "bytes": 4248,
+        "sha256": "3906f4be69408f4f370c7bfdc2de6ef825d4d1f4da4f01221d831336c0e3a91a"
+      },
+      "4_Dense/config.json": {
+        "bytes": 213,
+        "sha256": "0025e3b35cee1a6508f38e90524450075319b0b8cc0c34d4dfcbf56af5ca9ba0"
+      },
+      "4_Dense/model.safetensors": {
+        "bytes": 2196,
+        "sha256": "1a391820f020c8fc3efb1da894e1719cfdfb8a6c73d214f34f5b1802bac8b9dd"
+      },
+      "README.md": {
+        "bytes": 66854,
+        "sha256": "bdcf7a39e16bd06e5e934dc1545dbef7fd6806b8f1fbed2e5e813ade25885777"
+      },
+      "config.json": {
+        "bytes": 1946,
+        "sha256": "de2d1d2f63fea40e28850f4b678c8e026ef399a72fbba2b157b391378e48f81a"
+      },
+      "config_sentence_transformers.json": {
+        "bytes": 257,
+        "sha256": "58704a86e4fe20f511de172ce623498c68991abfa7b330740d642d8e049affb7"
+      },
+      "modules.json": {
+        "bytes": 678,
+        "sha256": "d8394ab6c24cb0fb80229dafb886fac022ff489e757e3e6ed7d69603d5ae5942"
+      },
+      "onnx/model.onnx": {
+        "bytes": 272978775,
+        "sha256": "95505bbc6a95f9bdfad71e55998fec30c5cc0be490e921cbd796d2dbf0243f2f"
+      },
+      "sentence_bert_config.json": {
+        "bytes": 241,
+        "sha256": "3084164002c0bca01b0259c5327123803fce32e660a57feb93184ffead186fc8"
+      },
+      "tokenizer.json": {
+        "bytes": 3583327,
+        "sha256": "28c5e078e4c52aa37cf0e6de1a212878f3dbd58dd1c70466298efe0b6b86db35"
+      },
+      "tokenizer_config.json": {
+        "bytes": 488,
+        "sha256": "2b85302525d8c528a9e1fbaea2733472bd00d4755eae881441c8c52b90e2d600"
+      }
+    }
+  },
+  "runtime": {
+    "cpu_arena": true,
+    "device": "cpu",
+    "engine": "rust",
+    "inter_threads": 1,
+    "ken_models": "0.18.0",
+    "native_core": {
+      "api": 25,
+      "arch": "aarch64",
+      "bytes": 19280896,
+      "os": "linux",
+      "sha256": "0ebab581324d80e2975d743eabcf640ac3f8acd429ca8af656ce4f121672afde",
+      "version": "1.25.1"
+    },
+    "ort": "2.0.0-rc.14",
+    "tokenizers": "0.22.2"
+  },
+  "core_identity": {
+    "os": "linux",
+    "arch": "aarch64",
+    "version": "1.25.1",
+    "api": 25,
+    "bytes": 19280896,
+    "sha256": "0ebab581324d80e2975d743eabcf640ac3f8acd429ca8af656ce4f121672afde"
+  },
+  "stderr": "onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0\n",
+  "stderr_warning_count": 1,
+  "reference_runtime": {
+    "numpy": "2.4.4",
+    "onnxruntime": "1.25.1",
+    "onnx": "1.20.1",
+    "tokenizers": "0.22.2"
+  }
+}

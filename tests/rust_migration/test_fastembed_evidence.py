@@ -41,6 +41,19 @@ def execution_fixture(root,row,folder='linux'):
     for key,source in [('fastembed_parity',f'native-{folder}-attempt1'),
                        ('fastembed_ownership',f'ownership-{folder}-attempt1')]:
         folder=key.replace('_','-');shutil.copytree(PUBLIC/source,root/folder)
+        # Rebind producer metadata only in these explicitly synthetic fixtures.
+        # Neural values and immutable published historical evidence stay intact.
+        from tools.rust_migration.fastembed_compare import native_producer
+        producer=native_producer()
+        for item in row[key]['models']:
+            owned=root/folder/item['directory']
+            record=authenticate_chunk((owned/item['record']['path']).read_bytes(),item['record'])
+            record['producer']=producer
+            frames=[json.loads(line) for line in record['stdout'].splitlines()]
+            for frame in frames:
+                if 'producer' in frame:frame['producer']=producer
+            record['stdout']=''.join(json.dumps(frame)+'\n' for frame in frames)
+            item['record']=write_chunk(owned,'ownership' if key.endswith('ownership') else 'native',record)
         (root/folder/'summary.json').write_text(json.dumps(row[key]))
     row['execution_artifacts']=seal_execution(root)
 

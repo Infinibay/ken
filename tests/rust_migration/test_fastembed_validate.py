@@ -25,6 +25,8 @@ def fastembed_row(folder='linux'):
     tools=Path(__file__).resolve().parents[2]/'tools/rust_migration'
     parity['tooling']={name:hashlib.sha256((tools/name).read_bytes()).hexdigest()
         for name in ['fastembed_compare.py','fastembed_process.py']}
+    from tools.rust_migration.fastembed_compare import native_producer
+    parity['producer']=native_producer();ownership['producer']=native_producer()
     binding={'ran':True,'passed':True,'built_sha256':parity['native_sha256'],
              'supplied_sha256':parity['native_sha256']}
     return {'scope':'fastembed-local','synthetic_fixture':True,'platform':base['platform'],

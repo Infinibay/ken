@@ -1,0 +1,67 @@
+name: Native transformer parity after the existing34 gates
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  platform:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04-arm
+            platform: linux
+          - runner: macos-15
+            platform: macos
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - uses: actions/download-artifact@v8
+        with:
+          name: rust-models-${{ runner.os }}
+          path: .ken/rust-migration/m2-transformers/legacy
+      - uses: ./.github/actions/prepare-native-transformers
+      - name: Run transformer groups after the legacy93 process tests
+        run: |
+          .venv/bin/python -m tools.rust_migration.transformer_validate \
+            --scope platform --execute \
+            --preparation "$KEN_TRANSFORMER_PREPARATION" \
+            --legacy-platform "$PWD/.ken/rust-migration/m2-transformers/legacy" \
+            --sources "$PWD/.ken/rust-migration/transformer-sources" --acquire-sources \
+            --out "$PWD/.ken/rust-migration/m2-transformers/validation"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: rust-transformers-${{ runner.os }}
+          path: .ken/rust-migration/m2-transformers/validation/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+  matrix:
+    needs: platform
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: rust-transformers-*
+          path: .ken/rust-migration/m2-transformers/platforms
+      - name: Independently replay complete33-profile acceptance
+        run: |
+          uv run --isolated --no-project --with numpy==2.4.4 --python 3.12.9 --managed-python \
+            python -m tools.rust_migration.transformer_validate --scope matrix \
+            --platform-receipts .ken/rust-migration/m2-transformers/platforms \
+            --out .ken/rust-migration/m2-transformers/matrix
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: rust-transformers-matrix
+          path: .ken/rust-migration/m2-transformers/matrix/
+          include-hidden-files: true
+          if-no-files-found: error

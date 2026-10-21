@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "profile": {
+    "model": "Qwen/Qwen3-Embedding-0.6B",
+    "device": "cpu",
+    "dtype": "float16",
+    "requests": 12,
+    "feeds": 16,
+    "rows": 107,
+    "maximum_absolute_error": 1.6391277313232422e-07,
+    "fixed_deadline_s": 2722,
+    "elapsed_s": 937.0076429659966,
+    "outside_checkout": true,
+    "actual_optional_core_loaded": true
+  },
+  "source_map_sha256": "d9b0fe6dcd7e7e311c40a2d9776ab110414452d265ea55bd20fe6e418ccfa590",
+  "source_files_unchanged": true,
+  "host_binary": {
+    "bytes": 6537784,
+    "sha256": "0b5ad3ba6dc127664f85c06c4856cfffd43fbcae618c7f78e07dcb5a36c66e31"
+  },
+  "native_module": {
+    "bytes": 1492008,
+    "sha256": "1f38a6f3b7b04e631ed66cfff5d853fd31cef38f037dc9d9c4984f1f0d61bcfd"
+  },
+  "execution_audit_syscalls": [
+    "execve",
+    "execveat"
+  ]
+}

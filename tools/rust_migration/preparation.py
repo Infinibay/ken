@@ -143,3 +143,69 @@ def translation_environment(prepared:PreparedNativeTranslation|None=None)->dict[
     if any(not Path(value).is_absolute() for value in values.values()):
         raise ValueError('absolute prepared translation/build paths required')
     return values
+
+
+TRANSFORMER_ENV=('KEN_TRANSFORMER_PROBE','KEN_TRANSFORMER_SOURCES','KEN_TRANSFORMER_REGISTRY',
+                 'KEN_TRANSFORMER_MODULE','KEN_TRANSFORMER_CORE','KEN_TRANSFORMER_RUNTIMES')
+
+
+@dataclass(frozen=True)
+class PreparedNativeTransformer:
+    """Explicit preparation for one public adapter and one optional native core."""
+    probe:Path
+    sources:Path
+    registry:Path
+    module:Path
+    core:Path
+    runtimes:Path
+    acquire:bool=False
+
+    def environment(self)->dict[str,str]:
+        values=(self.probe,self.sources,self.registry,self.module,self.core,self.runtimes)
+        if any(not isinstance(p,Path) or not p.is_absolute() for p in values):
+            raise ValueError('complete absolute prepared transformer paths required')
+        if type(self.acquire)is not bool:
+            raise ValueError('explicit boolean transformer acquisition policy required')
+        return dict(zip(TRANSFORMER_ENV,map(str,values),strict=True))|({'KEN_TRANSFORMER_ACQUIRE':'1'}if self.acquire else {})
+
+
+TRANSFORMER_TEST_ENV=('KEN_TRANSFORMER_SOURCE_ROOT','KEN_TORCH_CORE','KEN_TORCH_MODULE','KEN_TORCH_PREPARATION')
+MLX_TEST_ENV=('KEN_MLX_CORE','KEN_MLX_MODULE')
+
+
+@dataclass(frozen=True)
+class PreparedTransformerTests:
+    """Small metadata sources and actual optional cores for workspace regressions."""
+    metadata:Path
+    torch_core:Path
+    torch_module:Path
+    torch_preparation:Path
+    mlx_core:Path|None=None
+    mlx_module:Path|None=None
+
+    def environment(self)->dict[str,str]:
+        paths=(self.metadata,self.torch_core,self.torch_module,self.torch_preparation)
+        if any(not isinstance(p,Path) or not p.is_absolute() for p in paths):
+            raise ValueError('complete absolute transformer test inputs required')
+        if (self.mlx_core is None)!=(self.mlx_module is None):
+            raise ValueError('complete explicit MLX test inputs required')
+        result=dict(zip(TRANSFORMER_TEST_ENV,map(str,paths),strict=True))
+        if self.mlx_core is not None:
+            if any(not isinstance(p,Path) or not p.is_absolute() for p in (self.mlx_core,self.mlx_module)):
+                raise ValueError('absolute MLX test inputs required')
+            result.update(dict(zip(MLX_TEST_ENV,map(str,(self.mlx_core,self.mlx_module)),strict=True)))
+        return result
+
+
+def transformer_test_environment(prepared:PreparedTransformerTests|None=None,*,environ:dict|None=None)->dict[str,str]:
+    if prepared is not None:
+        if not isinstance(prepared,PreparedTransformerTests):raise ValueError('typed transformer test preparation required')
+        return prepared.environment()
+    source=os.environ if environ is None else environ
+    values={key:source[key] for key in (*TRANSFORMER_TEST_ENV,*MLX_TEST_ENV) if key in source}
+    if not values:return {}
+    if any(key not in values for key in TRANSFORMER_TEST_ENV):
+        raise ValueError('complete explicit transformer test inputs required')
+    return PreparedTransformerTests(*(Path(values[k]) for k in TRANSFORMER_TEST_ENV),
+        mlx_core=Path(values[MLX_TEST_ENV[0]]) if MLX_TEST_ENV[0] in values else None,
+        mlx_module=Path(values[MLX_TEST_ENV[1]]) if MLX_TEST_ENV[1] in values else None).environment()
