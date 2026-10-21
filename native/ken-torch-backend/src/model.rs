@@ -103,6 +103,59 @@ impl Model {
         ))
     }
 
+    pub(crate) fn control(
+        &mut self,
+        request: ken_native_model_api::TransformerControlRequest,
+    ) -> Result<TransformerPrepared, CoreError> {
+        request.validate()?;
+        if matches!(
+            request.operation,
+            ken_native_model_api::TransformerControl::ValidateCausalHead
+        ) {
+            match &self.core {
+                Network::Qwen3(core) => core.validate_output_head()?,
+                Network::XlmRoberta(_) => return Err(invalid("XLM-R has no causal output head")),
+            };
+            let (_, kind, dimension) = self.core.observed_identity()?;
+            let dtype = match kind {
+                Kind::Float => TransformerDtype::Float32,
+                Kind::Half => TransformerDtype::Float16,
+                Kind::BFloat16 => TransformerDtype::BFloat16,
+                _ => return Err(invalid("unsupported current Torch precision")),
+            };
+            return Ok(TransformerPrepared {
+                core_version: device::core_version()?,
+                device: self.device,
+                dtype,
+                dimension,
+            });
+        }
+
+        let replacement = match &self.core {
+            Network::Qwen3(core) => Network::Qwen3(core.to_cpu_float32()?),
+            Network::XlmRoberta(_) => {
+                return Err(invalid(
+                    "CPU conversion control is restricted to the Qwen judge",
+                ));
+            }
+        };
+        let (device, kind, dimension) = replacement.observed_identity()?;
+        if device != Device::Cpu || kind != Kind::Float {
+            return Err(invalid(
+                "native conversion did not produce CPU Float32 weights",
+            ));
+        }
+        let prepared = TransformerPrepared {
+            core_version: device::core_version()?,
+            device: TransformerDevice::Cpu,
+            dtype: TransformerDtype::Float32,
+            dimension,
+        };
+        self.core = replacement;
+        self.device = TransformerDevice::Cpu;
+        Ok(prepared)
+    }
+
     pub(crate) fn run(
         &self,
         request: TransformerRunRequest,

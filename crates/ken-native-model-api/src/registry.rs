@@ -34,6 +34,12 @@ impl<T> HandleRegistry<T> {
             .ok_or_else(|| ApiError::Invalid("unknown or closed native handle".into()))
     }
 
+    pub fn get_mut(&mut self, handle: u64) -> Result<&mut T, ApiError> {
+        self.values
+            .get_mut(&handle)
+            .ok_or_else(|| ApiError::Invalid("unknown or closed native handle".into()))
+    }
+
     pub fn remove(&mut self, handle: u64) -> Result<T, ApiError> {
         self.values
             .remove(&handle)

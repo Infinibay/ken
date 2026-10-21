@@ -147,31 +147,9 @@ impl MLXEncoder {
 #[cfg(all(test, target_os = "macos"))]
 mod tests {
     use super::MLXEncoder;
-    use crate::{NativeTransformerRuntime, TransformerSettings};
+    use crate::TransformerSettings;
+    use crate::transformer_test_support::mlx_runtime as runtime;
     use ken_native_model_api::{TransformerDevice, TransformerDtype};
-    use serde_json::json;
-    use sha2::{Digest, Sha256};
-    use std::path::PathBuf;
-    fn runtime() -> NativeTransformerRuntime {
-        let module =
-            PathBuf::from(std::env::var_os("KEN_MLX_MODULE").expect("prepare exact MLX module"));
-        let core = PathBuf::from(std::env::var_os("KEN_MLX_CORE").expect("prepare exact MLX core"));
-        let artifact = |path: &std::path::Path| {
-            let bytes = std::fs::read(path).unwrap();
-            json!({"bytes":bytes.len(),"sha256":format!("{:x}",Sha256::digest(&bytes))})
-        };
-        let libraries: std::collections::BTreeMap<_, _> =
-            ["libmlx.dylib", "libjaccl.dylib", "mlx.metallib"]
-                .into_iter()
-                .map(|name| {
-                    (
-                        format!("lib/{name}"),
-                        artifact(&core.join("lib").join(name)),
-                    )
-                })
-                .collect();
-        NativeTransformerRuntime::from_json(&json!({"format":"ken-native-transformer/1","backend":"mlx","runtimes":[{"os":"macos","arch":"aarch64","core_version":"0.32.3","module":artifact(&module),"libraries":libraries}]}).to_string(),&module,&core).unwrap()
-    }
     #[test]
     fn actual_mlx_is_lazy_count_only_then_owns_sources_and_moves_between_calling_threads() {
         let (_temp, model, source, _unused) = crate::transformer_test_support::fixture();

@@ -70,6 +70,33 @@ impl Model {
             prepared,
         ))
     }
+    pub(crate) fn control(
+        &mut self,
+        request: ken_native_model_api::TransformerControlRequest,
+    ) -> Result<TransformerPrepared, CoreError> {
+        request.validate()?;
+        if matches!(
+            request.operation,
+            ken_native_model_api::TransformerControl::ValidateCausalHead
+        ) {
+            self.core.validate_output_head()?;
+            let dtype = match self.core.dtype()? {
+                Dtype::Float32 => TransformerDtype::Float32,
+                Dtype::Float16 => TransformerDtype::Float16,
+                Dtype::Bfloat16 => TransformerDtype::BFloat16,
+                _ => return Err(invalid("unsupported actual MLX precision")),
+            };
+            return Ok(TransformerPrepared {
+                core_version: device::core_version()?,
+                device: TransformerDevice::Mps,
+                dtype,
+                dimension: self.core.dimension(),
+            });
+        }
+
+        Err(invalid("MLX cannot perform a CPU model demotion"))
+    }
+
     pub(crate) fn run(
         &self,
         request: TransformerRunRequest,

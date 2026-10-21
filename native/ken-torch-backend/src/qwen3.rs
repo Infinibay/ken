@@ -13,17 +13,28 @@ pub struct Qwen3 {
 }
 
 impl Qwen3 {
+    pub(crate) fn to_cpu_float32(&self) -> Result<Self, CoreError> {
+        let weights = self.weights.to_cpu_float32()?;
+        let inv_frequency = self
+            .inv_frequency
+            .f_to_device(Device::Cpu)?
+            .f_to_kind(Kind::Float)?;
+        finite(&inv_frequency, "converted RoPE buffer")?;
+        Ok(Self {
+            config: self.config.clone(),
+            weights,
+            inv_frequency,
+        })
+    }
+    pub(crate) fn validate_output_head(&self) -> Result<(), CoreError> {
+        self.weights.output_head().map(|_| ())
+    }
     pub(crate) fn projection_difference(
         &self,
         true_id: u32,
         false_id: u32,
     ) -> Result<Tensor, CoreError> {
-        if !self.config.tie_word_embeddings {
-            return Err(invalid(
-                "untied output projection requires an explicit registered head",
-            ));
-        }
-        let weight = self.weights.get("embed_tokens.weight")?;
+        let weight = self.weights.output_head()?;
         // The original Torch judge casts each selected row before subtraction.
         // Lower-precision subtraction followed by casting changes the logits.
         Ok(weight

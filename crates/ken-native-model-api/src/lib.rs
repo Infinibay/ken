@@ -358,3 +358,6 @@ pub use qwen3::Qwen3Config;
 
 mod parameter_header;
 pub use parameter_header::validate_parameter_header;
+
+mod control;
+pub use control::{TransformerCall, TransformerControl, TransformerControlRequest};

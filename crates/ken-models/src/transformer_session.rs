@@ -98,7 +98,7 @@ impl TransformerSession {
         request.validate_schema().map_err(invalid)?;
         let owner = runtime.owner()?;
         let identity = owner.identity.clone();
-        let (native, prepared): (NativeHandle, TransformerPrepared) =
+        let (mut native, prepared): (NativeHandle, TransformerPrepared) =
             NativeHandle::open(owner, &request)?;
         if prepared.core_version != identity.declared_core_version
             || !matches_request(device, prepared.device)
@@ -108,6 +108,22 @@ impl TransformerSession {
             return Err(invalid(
                 "native preparation differs from registered core/device/dtype/dimension",
             ));
+        }
+        if model.role() == TransformerRole::Judge {
+            let checked: TransformerPrepared =
+                native.run(&ken_native_model_api::TransformerControlRequest {
+                    schema: 1,
+                    operation: ken_native_model_api::TransformerControl::ValidateCausalHead,
+                })?;
+            if checked.device != prepared.device
+                || checked.dtype != prepared.dtype
+                || checked.dimension != prepared.dimension
+                || checked.core_version != prepared.core_version
+            {
+                return Err(invalid(
+                    "native output-head validation changed preparation identity",
+                ));
+            }
         }
         Ok(Self {
             model: native,
@@ -124,6 +140,33 @@ impl TransformerSession {
             sequence_limit,
             role: model.role(),
         })
+    }
+
+    /// Convert the resident, already cast model; never reload source weights.
+    pub fn to_cpu_float32(&mut self) -> Result<(), ModelError> {
+        if self.role != TransformerRole::Judge || self.trace.runtime.backend != "torch" {
+            return Err(invalid(
+                "CPU Float32 model conversion requires a Torch relevance judge",
+            ));
+        }
+        let prepared: TransformerPrepared =
+            self.model
+                .run(&ken_native_model_api::TransformerControlRequest {
+                    schema: 1,
+                    operation: ken_native_model_api::TransformerControl::CpuFloat32,
+                })?;
+        if prepared.device != TransformerDevice::Cpu
+            || prepared.dtype != TransformerDtype::Float32
+            || prepared.dimension != self.dimension
+            || prepared.core_version != self.trace.core_version
+        {
+            return Err(invalid(
+                "native CPU conversion identity differs from the executing model",
+            ));
+        }
+        self.trace.device = prepared.device;
+        self.trace.dtype = prepared.dtype;
+        Ok(())
     }
 
     pub fn trace(&self) -> &TransformerTrace {

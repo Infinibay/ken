@@ -77,35 +77,17 @@ impl TransformerTokens {
         policy: TextPolicy,
     ) -> Result<Self, ModelError> {
         settings.validate()?;
-        for name in [
-            "config.json",
-            "tokenizer_config.json",
-            "sentence_bert_config.json",
-            "config_sentence_transformers.json",
-        ] {
-            if policy == TextPolicy::Mlx && !matches!(name, "config.json" | "tokenizer_config.json")
-            {
-                continue;
-            }
-            if let Some(expected) = model.configuration(name) {
-                let value: serde_json::Value = serde_json::from_slice(
-                    &model
-                        .assets()
-                        .read_source_artifact(source.snapshot(), name)?,
-                )?;
-                if &value != expected {
-                    return Err(invalid(format!(
-                        "registered tokenizer metadata differs from {name}"
-                    )));
-                }
-            }
-        }
-        let raw = model
-            .assets()
-            .read_source_artifact(source.snapshot(), "tokenizer.json")?;
-        let mut tokenizer = Tokenizer::from_bytes(raw).map_err(invalid)?;
-        tokenizer.with_padding(None);
-        tokenizer.with_truncation(None).map_err(invalid)?;
+        let metadata: &[&str] = if policy == TextPolicy::Sentence {
+            &[
+                "config.json",
+                "tokenizer_config.json",
+                "sentence_bert_config.json",
+                "config_sentence_transformers.json",
+            ]
+        } else {
+            &["config.json", "tokenizer_config.json"]
+        };
+        let tokenizer = authenticated_raw(model, source, metadata)?;
         let configuration = model
             .configuration("tokenizer_config.json")
             .ok_or_else(|| invalid("missing tokenizer configuration"))?;
@@ -167,16 +149,7 @@ impl TransformerTokens {
         if sequence_limit == 0 {
             return Err(invalid("registered sequence bound must be positive"));
         }
-        let pad = configuration["pad_token"]
-            .as_str()
-            .or_else(|| configuration["pad_token"]["content"].as_str())
-            .map(|name| {
-                tokenizer
-                    .token_to_id(name)
-                    .map(|id| (id, name.to_owned()))
-                    .ok_or_else(|| invalid("pad token is absent from registered tokenizer"))
-            })
-            .transpose()?;
+        let pad = registered_pad(model, &tokenizer)?;
         let mut default_prompt = String::new();
         if policy == TextPolicy::Sentence
             && let Some(config) = model.configuration("config_sentence_transformers.json")
@@ -330,6 +303,54 @@ impl TransformerTokens {
         }
         Ok(PreparedTransformerText { batches, order })
     }
+}
+
+pub(crate) fn authenticated_raw(
+    model: &TransformerModel,
+    source: &ModelFileSource,
+    metadata: &[&str],
+) -> Result<Tokenizer, ModelError> {
+    for &name in metadata {
+        if let Some(expected) = model.configuration(name) {
+            let actual: serde_json::Value = serde_json::from_slice(
+                &model
+                    .assets()
+                    .read_source_artifact(source.snapshot(), name)?,
+            )?;
+            if &actual != expected {
+                return Err(invalid(format!(
+                    "registered tokenizer metadata differs from {name}"
+                )));
+            }
+        }
+    }
+    let mut tokenizer = Tokenizer::from_bytes(
+        model
+            .assets()
+            .read_source_artifact(source.snapshot(), "tokenizer.json")?,
+    )
+    .map_err(invalid)?;
+    tokenizer.with_padding(None);
+    tokenizer.with_truncation(None).map_err(invalid)?;
+    Ok(tokenizer)
+}
+pub(crate) fn registered_pad(
+    model: &TransformerModel,
+    tokenizer: &Tokenizer,
+) -> Result<Option<(u32, String)>, ModelError> {
+    let configuration = model
+        .configuration("tokenizer_config.json")
+        .ok_or_else(|| invalid("missing tokenizer configuration"))?;
+    configuration["pad_token"]
+        .as_str()
+        .or_else(|| configuration["pad_token"]["content"].as_str())
+        .map(|name| {
+            tokenizer
+                .token_to_id(name)
+                .map(|id| (id, name.to_owned()))
+                .ok_or_else(|| invalid("pad token is absent from registered tokenizer"))
+        })
+        .transpose()
 }
 
 #[cfg(test)]

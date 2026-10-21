@@ -46,6 +46,13 @@ impl Qwen3 {
     pub(crate) fn dimension(&self) -> usize {
         self.config.hidden_size as usize
     }
+    pub(crate) fn validate_output_head(&self) -> Result<(), CoreError> {
+        if self.weights.head.is_some() || self.config.tie_word_embeddings {
+            Ok(())
+        } else {
+            Err(invalid("missing untied MLX language model output weights"))
+        }
+    }
     pub(crate) fn projection_difference(&self, yes: u32, no: u32) -> Result<Array, CoreError> {
         let head = if let Some(head) = &self.weights.head {
             head
@@ -132,4 +139,58 @@ fn infer(c: &Qwen3Config, w: &MlxWeights, ids: &[Vec<i32>]) -> Result<Array, Cor
         ));
     }
     norm(&x, w, "norm", eps)
+}
+
+#[cfg(test)]
+mod head_tests {
+    use super::*;
+    use ken_native_model_api::{TransformerDtype, TransformerWeightLayout};
+    #[test]
+    fn explicit_mlx_head_retains_source_precision_even_when_backbone_is_bfloat16() {
+        let source = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../ken-torch-backend/tests/fixtures/qwen");
+        let config = Qwen3Config::from_json(
+            &std::fs::read_to_string(source.join("config.json")).unwrap(),
+            TransformerWeightLayout::Unprefixed,
+        )
+        .unwrap();
+        let raw = std::fs::read(source.join("model.safetensors")).unwrap();
+        let length = u64::from_le_bytes(raw[..8].try_into().unwrap()) as usize;
+        let data = &raw[8 + length..];
+        let mut header: serde_json::Value = serde_json::from_slice(&raw[8..8 + length]).unwrap();
+        let values: Vec<f32> = (0..32).map(|n| 1.0004_f32 + n as f32 * 0.1234).collect();
+        let extra: Vec<_> = values.iter().flat_map(|n| n.to_le_bytes()).collect();
+        header["lm_head.weight"] = serde_json::json!({"dtype":"F32","shape":[8,4],"data_offsets":[data.len(),data.len()+extra.len()]});
+        let mut metadata = serde_json::to_vec(&header).unwrap();
+        while !metadata.len().is_multiple_of(8) {
+            metadata.push(b' ');
+        }
+        let mut bytes = (metadata.len() as u64).to_le_bytes().to_vec();
+        bytes.extend(metadata);
+        bytes.extend(data);
+        bytes.extend(extra);
+        let temp = tempfile::tempdir().unwrap();
+        let path = temp.path().join("model.safetensors");
+        std::fs::write(&path, bytes).unwrap();
+        let weights = MlxWeights::load(&config, &path, TransformerDtype::BFloat16).unwrap();
+        let core = Qwen3::load(config, weights).unwrap();
+        with_device(Device::gpu(), || {
+            let actual = core.projection_difference(1, 6).unwrap();
+            actual.eval().unwrap();
+            let wanted: Vec<_> = (0..4).map(|i| values[4 + i] - values[24 + i]).collect();
+            assert_eq!(actual.as_slice::<f32>(), wanted);
+            let rounded = Array::from_slice(&values, &[8, 4])
+                .as_dtype(Dtype::Bfloat16)
+                .unwrap()
+                .as_dtype(Dtype::Float32)
+                .unwrap();
+            let rounded = rounded
+                .take_axis(Array::from_int(1), 0)
+                .unwrap()
+                .subtract(rounded.take_axis(Array::from_int(6), 0).unwrap())
+                .unwrap();
+            rounded.eval().unwrap();
+            assert_ne!(actual.as_slice::<f32>(), rounded.as_slice::<f32>());
+        });
+    }
 }

@@ -2,7 +2,7 @@
 use crate::model::Model;
 use ken_native_model_api::{
     ABI_VERSION, ApiError, BACKEND_TORCH, BufferRegistry, HandleRegistry, KenBuffer, KenBytes,
-    KenModelApiV1, MAX_DIAGNOSTIC, MAX_PAYLOAD, TransformerOpenRequest, TransformerRunRequest,
+    KenModelApiV1, MAX_DIAGNOSTIC, MAX_PAYLOAD, TransformerCall, TransformerOpenRequest,
     checked_json, guarded,
 };
 use std::sync::{Mutex, MutexGuard, OnceLock};
@@ -96,16 +96,25 @@ unsafe extern "C" fn run(handle: u64, input: KenBytes, output: *mut KenBuffer) -
         *output = KenBuffer::EMPTY;
     }
     let result = guarded(|| {
-        let request: TransformerRunRequest = unsafe { checked_json(input, MAX_PAYLOAD) }?;
+        let request: TransformerCall = unsafe { checked_json(input, MAX_PAYLOAD) }?;
         let mut state = state();
-        let result = state
-            .models
-            .get(handle)?
-            .run(request)
-            .map_err(|e| ApiError::Invalid(e.to_string()))?;
-        state
-            .buffers
-            .publish(serde_json::to_vec(&result)?, MAX_PAYLOAD)
+        let payload = match request {
+            TransformerCall::Inference(request) => serde_json::to_vec(
+                &state
+                    .models
+                    .get(handle)?
+                    .run(request)
+                    .map_err(|e| ApiError::Invalid(e.to_string()))?,
+            )?,
+            TransformerCall::Control(request) => serde_json::to_vec(
+                &state
+                    .models
+                    .get_mut(handle)?
+                    .control(request)
+                    .map_err(|e| ApiError::Invalid(e.to_string()))?,
+            )?,
+        };
+        state.buffers.publish(payload, MAX_PAYLOAD)
     });
     match result {
         Ok(buffer) => {

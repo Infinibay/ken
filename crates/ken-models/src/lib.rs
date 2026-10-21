@@ -91,6 +91,12 @@ pub enum ModelError {
     Tokenizer(String),
     #[error("invalid model weights: {0}")]
     Weights(String),
+    #[error("joint model sequence budget cannot contain query and source")]
+    RelevanceBudget,
+    #[error("list index out of range")]
+    RelevanceEmptyDocuments,
+    #[error("non-finite relevance logits")]
+    RelevanceNonfinite,
     #[error("model inference failed: {0}")]
     Inference(String),
     #[error("native ONNX runtime: {0}")]
@@ -112,3 +118,10 @@ mod transformer_test_support;
 
 mod mlx_encoder;
 pub use mlx_encoder::MLXEncoder;
+
+mod judge_tokens;
+
+mod relevance_judge;
+pub use relevance_judge::RelevanceJudge;
+
+pub use judge_tokens::{JudgeTokenError, JudgeTokens, PreparedJudge};

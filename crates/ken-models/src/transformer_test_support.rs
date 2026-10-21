@@ -28,6 +28,19 @@ pub(crate) fn fixture_with_weights(
     ModelFileSource,
     NativeTransformerRuntime,
 ) {
+    fixture_with_details(overrides, weights, "encoder", None)
+}
+pub(crate) fn fixture_with_details(
+    overrides: &[(&str, Value)],
+    weights: Option<&[u8]>,
+    role: &str,
+    tokenizer: Option<&Value>,
+) -> (
+    tempfile::TempDir,
+    TransformerModel,
+    ModelFileSource,
+    NativeTransformerRuntime,
+) {
     let repo = Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .unwrap()
@@ -96,6 +109,13 @@ pub(crate) fn fixture_with_weights(
     if let Some(weights) = weights {
         std::fs::write(snapshot.join("model.safetensors"), weights).unwrap();
     }
+    if let Some(tokenizer) = tokenizer {
+        std::fs::write(
+            snapshot.join("tokenizer.json"),
+            serde_json::to_vec(tokenizer).unwrap(),
+        )
+        .unwrap();
+    }
     let mut artifacts = BTreeMap::new();
     for name in configs
         .keys()
@@ -107,7 +127,7 @@ pub(crate) fn fixture_with_weights(
             fingerprint(&std::fs::read(snapshot.join(name)).unwrap()),
         );
     }
-    let model=TransformerModel::from_json(&json!({"name":"fixtures/CPU-Qwen","assets":{"model_id":"fixtures/CPU-Qwen","revision":revision,"license":"derived-tiny-test-fixture","artifacts":artifacts},"dimension":4,"architecture":"qwen3","weight_layout":"unprefixed","role":"encoder","configs":configs}).to_string()).unwrap();
+    let model=TransformerModel::from_json(&json!({"name":"fixtures/CPU-Qwen","assets":{"model_id":"fixtures/CPU-Qwen","revision":revision,"license":"derived-tiny-test-fixture","artifacts":artifacts},"dimension":4,"architecture":"qwen3","weight_layout":"unprefixed","role":role,"configs":configs}).to_string()).unwrap();
     let source = ModelFileSource::new(&snapshot, temp.path()).unwrap();
     (temp, model, source, runtime)
 }
@@ -119,4 +139,26 @@ pub(crate) fn fixture() -> (
     NativeTransformerRuntime,
 ) {
     fixture_with_configs(&[])
+}
+
+#[cfg(target_os = "macos")]
+pub(crate) fn mlx_runtime() -> NativeTransformerRuntime {
+    let module =
+        PathBuf::from(std::env::var_os("KEN_MLX_MODULE").expect("prepare exact MLX module"));
+    let core = PathBuf::from(std::env::var_os("KEN_MLX_CORE").expect("prepare exact MLX core"));
+    let artifact = |path: &std::path::Path| {
+        let bytes = std::fs::read(path).unwrap();
+        json!({"bytes":bytes.len(),"sha256":format!("{:x}",Sha256::digest(&bytes))})
+    };
+    let libraries: std::collections::BTreeMap<_, _> =
+        ["libmlx.dylib", "libjaccl.dylib", "mlx.metallib"]
+            .into_iter()
+            .map(|name| {
+                (
+                    format!("lib/{name}"),
+                    artifact(&core.join("lib").join(name)),
+                )
+            })
+            .collect();
+    NativeTransformerRuntime::from_json(&json!({"format":"ken-native-transformer/1","backend":"mlx","runtimes":[{"os":"macos","arch":"aarch64","core_version":"0.32.3","module":artifact(&module),"libraries":libraries}]}).to_string(),&module,&core).unwrap()
 }

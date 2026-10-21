@@ -65,7 +65,10 @@ fn failure(error: ModelError) -> Value {
         ModelError::Artifact(_) => "artifact",
         ModelError::Tokenizer(_) => "tokenizer",
         ModelError::Weights(_) => "weights",
-        ModelError::Inference(_) => "inference",
+        ModelError::Inference(_)
+        | ModelError::RelevanceBudget
+        | ModelError::RelevanceEmptyDocuments
+        | ModelError::RelevanceNonfinite => "inference",
         ModelError::Runtime(_) => "runtime",
     };
     let message = match &error {
