@@ -1,6 +1,7 @@
 //! Cold registrations read declared data only and never initialize a tensor core.
 use ken_models::{TransformerModel, TransformerSettings};
-use serde_json::Value;
+use serde_json::{Value, json};
+use sha2::{Digest, Sha256};
 
 fn catalog() -> Vec<Value> {
     serde_json::from_str::<Value>(include_str!("../resources/transformer-catalog.json"))
@@ -93,4 +94,54 @@ fn unset_dtype_means_original_float32_and_zero_limits_are_errors() {
         .validate()
         .is_err()
     );
+}
+
+fn prompted_mean_registration(include_prompt: Option<Value>) -> Value {
+    let mut entry = catalog().remove(0);
+    let mut pooling = json!({"word_embedding_dimension":1024,"pooling_mode_mean_tokens":true});
+    if let Some(value) = include_prompt {
+        pooling["include_prompt"] = value;
+    }
+    for (name, config) in [
+        ("1_Pooling/config.json", pooling),
+        (
+            "config_sentence_transformers.json",
+            json!({
+                "default_prompt_name":"search","prompts":{"search":"Represent this query: "}
+            }),
+        ),
+    ] {
+        let bytes = serde_json::to_vec(&config).unwrap();
+        entry["configs"][name] = config;
+        entry["assets"]["artifacts"][name] = json!({
+            "bytes":bytes.len(),"sha256":format!("{:x}",Sha256::digest(&bytes))
+        });
+    }
+    entry
+}
+
+#[test]
+fn authenticated_prompt_exclusion_and_malformed_prompt_policies_are_rejected() {
+    for value in [
+        json!(false),
+        json!(null),
+        json!("false"),
+        json!(0),
+        json!([]),
+        json!({}),
+    ] {
+        let entry = prompted_mean_registration(Some(value.clone()));
+        assert!(
+            TransformerModel::from_json(&entry.to_string()).is_err(),
+            "unsupported include_prompt={value} must fail before inference"
+        );
+    }
+}
+
+#[test]
+fn authenticated_prompt_inclusive_mean_pooling_retains_the_original_default() {
+    for value in [None, Some(json!(true))] {
+        let entry = prompted_mean_registration(value);
+        TransformerModel::from_json(&entry.to_string()).unwrap();
+    }
 }

@@ -95,7 +95,8 @@ def prepare_transformers(repo: Path, torch_package: Path, mlx_package: Path | No
     run('torch-build', ['cargo', 'build', '--release', '--locked', '--manifest-path', str(repo/'native/ken-torch-backend/Cargo.toml')])
     suffix = 'dylib' if system == 'macos' else 'so'
     module = out/f'torch-target/release/libken_torch_backend.{suffix}'
-    prepared = {'torch_core': str(out/'torch-sdk'), 'torch_module': str(module), 'torch_module_identity': artifact(module)}
+    prepared = {'torch_core': str(out/'torch-sdk'), 'torch_module': str(module),
+                'torch_module_identity': artifact(module), 'workspace_target': str(target)}
     if system == 'macos':
         if mlx_package is None or not mlx_package.is_absolute(): raise ValueError('explicit pinned MLX SDK required on macOS')
         mlx = next(r for r in registry['cores'] if r['os'] == system and r['backend'] == 'mlx')

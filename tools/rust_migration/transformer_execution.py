@@ -5,7 +5,7 @@ import hashlib, json, os, platform, shutil, signal, subprocess, sys
 from dataclasses import replace
 from pathlib import Path
 from .policy_evidence import seal_execution
-from .preparation import PreparedNativeTransformer
+from .preparation import PreparedNativeTransformer, PreparedTransformerTests
 from .transformer_compare import compare_prepared_transformer
 from .transformer_evidence import source_identity
 from .transformer_reference import read_original
@@ -60,13 +60,18 @@ def execute_platform(repo: Path, preparation: Path, legacy_platform: Path, sourc
     def save(): (out/'summary.json').write_text(json.dumps(row, indent=2, allow_nan=False)+'\n')
     save()
     env = os.environ.copy()
-    env.update(KEN_TORCH_CORE=slots['torch_core'], KEN_TORCH_MODULE=slots['torch_module'],
-               KEN_TORCH_PREPARATION=str(Path(slots['torch_core'])/'PREPARATION.json'),
-               KEN_TRANSFORMER_SOURCE_ROOT=str(sources), CARGO_INCREMENTAL='0',
+    tests_prepared = PreparedTransformerTests(
+        Path(slots['metadata_sources']), Path(slots['torch_core']), Path(slots['torch_module']),
+        Path(slots['torch_core'])/'PREPARATION.json',
+        mlx_core=Path(slots['mlx_core']) if system == 'macos' else None,
+        mlx_module=Path(slots['mlx_module']) if system == 'macos' else None)
+    workspace_target = Path(slots['workspace_target'])
+    if not workspace_target.is_absolute(): raise ValueError('absolute prepared workspace target required')
+    env.update(tests_prepared.environment())
+    env.update(CARGO_TARGET_DIR=str(workspace_target), CARGO_INCREMENTAL='0',
                CARGO_PROFILE_DEV_DEBUG='0', CARGO_PROFILE_TEST_DEBUG='0')
-    if system == 'macos': env.update(KEN_MLX_CORE=slots['mlx_core'], KEN_MLX_MODULE=slots['mlx_module'])
     tests = [f'tests/rust_migration/test_transformer_{name}.py' for name in
-             ('reference', 'process', 'compare', 'evidence', 'validate', 'sources', 'prepare')]
+             ('reference', 'process', 'compare', 'evidence', 'validate', 'sources', 'prepare', 'execution')]
     row['gates']['transformer_unit'] = _gate(repo, env, out, 'transformer-unit',
             [sys.executable, '-m', 'pytest', *tests, '-o', 'addopts=', '-q', f'--junitxml={out/"unit.xml"}'])
     # Native tests may use an explicit loader path; run_transformer removes it

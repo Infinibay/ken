@@ -1,0 +1,136 @@
+diff --git a/crates/ken-models/src/transformer_model.rs b/crates/ken-models/src/transformer_model.rs
+index 6b43dead..6736f1c1 100644
+--- a/crates/ken-models/src/transformer_model.rs
++++ b/crates/ken-models/src/transformer_model.rs
+@@ -215,6 +215,13 @@ fn sentence_policy(
+             if config["word_embedding_dimension"].as_u64() != Some(dimension as u64) {
+                 return Err(invalid("pooling dimension mismatch"));
+             }
++            match config.get("include_prompt") {
++                None | Some(Value::Bool(true)) => {}
++                Some(Value::Bool(false)) => {
++                    return Err(invalid("prompt-excluding pooling is unsupported"));
++                }
++                Some(_) => return Err(invalid("pooling include_prompt must be a boolean")),
++            }
+             for unsupported in [
+                 "pooling_mode_max_tokens",
+                 "pooling_mode_mean_sqrt_len_tokens",
+diff --git a/crates/ken-models/tests/transformer_model.rs b/crates/ken-models/tests/transformer_model.rs
+index bff8c51e..6e1f59a5 100644
+--- a/crates/ken-models/tests/transformer_model.rs
++++ b/crates/ken-models/tests/transformer_model.rs
+@@ -1,6 +1,7 @@
+ //! Cold registrations read declared data only and never initialize a tensor core.
+ use ken_models::{TransformerModel, TransformerSettings};
+-use serde_json::Value;
++use serde_json::{Value, json};
++use sha2::{Digest, Sha256};
+ 
+ fn catalog() -> Vec<Value> {
+     serde_json::from_str::<Value>(include_str!("../resources/transformer-catalog.json"))
+@@ -94,3 +95,53 @@ fn unset_dtype_means_original_float32_and_zero_limits_are_errors() {
+         .is_err()
+     );
+ }
++
++fn prompted_mean_registration(include_prompt: Option<Value>) -> Value {
++    let mut entry = catalog().remove(0);
++    let mut pooling = json!({"word_embedding_dimension":1024,"pooling_mode_mean_tokens":true});
++    if let Some(value) = include_prompt {
++        pooling["include_prompt"] = value;
++    }
++    for (name, config) in [
++        ("1_Pooling/config.json", pooling),
++        (
++            "config_sentence_transformers.json",
++            json!({
++                "default_prompt_name":"search","prompts":{"search":"Represent this query: "}
++            }),
++        ),
++    ] {
++        let bytes = serde_json::to_vec(&config).unwrap();
++        entry["configs"][name] = config;
++        entry["assets"]["artifacts"][name] = json!({
++            "bytes":bytes.len(),"sha256":format!("{:x}",Sha256::digest(&bytes))
++        });
++    }
++    entry
++}
++
++#[test]
++fn authenticated_prompt_exclusion_and_malformed_prompt_policies_are_rejected() {
++    for value in [
++        json!(false),
++        json!(null),
++        json!("false"),
++        json!(0),
++        json!([]),
++        json!({}),
++    ] {
++        let entry = prompted_mean_registration(Some(value.clone()));
++        assert!(
++            TransformerModel::from_json(&entry.to_string()).is_err(),
++            "unsupported include_prompt={value} must fail before inference"
++        );
++    }
++}
++
++#[test]
++fn authenticated_prompt_inclusive_mean_pooling_retains_the_original_default() {
++    for value in [None, Some(json!(true))] {
++        let entry = prompted_mean_registration(value);
++        TransformerModel::from_json(&entry.to_string()).unwrap();
++    }
++}
+diff --git a/tools/rust_migration/transformer_execution.py b/tools/rust_migration/transformer_execution.py
+index ee385e97..7caefca0 100644
+--- a/tools/rust_migration/transformer_execution.py
++++ b/tools/rust_migration/transformer_execution.py
+@@ -5,7 +5,7 @@ import hashlib, json, os, platform, shutil, signal, subprocess, sys
+ from dataclasses import replace
+ from pathlib import Path
+ from .policy_evidence import seal_execution
+-from .preparation import PreparedNativeTransformer
++from .preparation import PreparedNativeTransformer, PreparedTransformerTests
+ from .transformer_compare import compare_prepared_transformer
+ from .transformer_evidence import source_identity
+ from .transformer_reference import read_original
+@@ -60,13 +60,18 @@ def execute_platform(repo: Path, preparation: Path, legacy_platform: Path, sourc
+     def save(): (out/'summary.json').write_text(json.dumps(row, indent=2, allow_nan=False)+'\n')
+     save()
+     env = os.environ.copy()
+-    env.update(KEN_TORCH_CORE=slots['torch_core'], KEN_TORCH_MODULE=slots['torch_module'],
+-               KEN_TORCH_PREPARATION=str(Path(slots['torch_core'])/'PREPARATION.json'),
+-               KEN_TRANSFORMER_SOURCE_ROOT=str(sources), CARGO_INCREMENTAL='0',
++    tests_prepared = PreparedTransformerTests(
++        Path(slots['metadata_sources']), Path(slots['torch_core']), Path(slots['torch_module']),
++        Path(slots['torch_core'])/'PREPARATION.json',
++        mlx_core=Path(slots['mlx_core']) if system == 'macos' else None,
++        mlx_module=Path(slots['mlx_module']) if system == 'macos' else None)
++    workspace_target = Path(slots['workspace_target'])
++    if not workspace_target.is_absolute(): raise ValueError('absolute prepared workspace target required')
++    env.update(tests_prepared.environment())
++    env.update(CARGO_TARGET_DIR=str(workspace_target), CARGO_INCREMENTAL='0',
+                CARGO_PROFILE_DEV_DEBUG='0', CARGO_PROFILE_TEST_DEBUG='0')
+-    if system == 'macos': env.update(KEN_MLX_CORE=slots['mlx_core'], KEN_MLX_MODULE=slots['mlx_module'])
+     tests = [f'tests/rust_migration/test_transformer_{name}.py' for name in
+-             ('reference', 'process', 'compare', 'evidence', 'validate', 'sources', 'prepare')]
++             ('reference', 'process', 'compare', 'evidence', 'validate', 'sources', 'prepare', 'execution')]
+     row['gates']['transformer_unit'] = _gate(repo, env, out, 'transformer-unit',
+             [sys.executable, '-m', 'pytest', *tests, '-o', 'addopts=', '-q', f'--junitxml={out/"unit.xml"}'])
+     # Native tests may use an explicit loader path; run_transformer removes it
+diff --git a/tools/rust_migration/transformer_prepare.py b/tools/rust_migration/transformer_prepare.py
+index 9452ca57..25e38093 100644
+--- a/tools/rust_migration/transformer_prepare.py
++++ b/tools/rust_migration/transformer_prepare.py
+@@ -95,7 +95,8 @@ def prepare_transformers(repo: Path, torch_package: Path, mlx_package: Path | No
+     run('torch-build', ['cargo', 'build', '--release', '--locked', '--manifest-path', str(repo/'native/ken-torch-backend/Cargo.toml')])
+     suffix = 'dylib' if system == 'macos' else 'so'
+     module = out/f'torch-target/release/libken_torch_backend.{suffix}'
+-    prepared = {'torch_core': str(out/'torch-sdk'), 'torch_module': str(module), 'torch_module_identity': artifact(module)}
++    prepared = {'torch_core': str(out/'torch-sdk'), 'torch_module': str(module),
++                'torch_module_identity': artifact(module), 'workspace_target': str(target)}
+     if system == 'macos':
+         if mlx_package is None or not mlx_package.is_absolute(): raise ValueError('explicit pinned MLX SDK required on macOS')
+         mlx = next(r for r in registry['cores'] if r['os'] == system and r['backend'] == 'mlx')

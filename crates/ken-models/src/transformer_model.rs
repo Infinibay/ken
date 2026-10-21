@@ -215,6 +215,13 @@ fn sentence_policy(
             if config["word_embedding_dimension"].as_u64() != Some(dimension as u64) {
                 return Err(invalid("pooling dimension mismatch"));
             }
+            match config.get("include_prompt") {
+                None | Some(Value::Bool(true)) => {}
+                Some(Value::Bool(false)) => {
+                    return Err(invalid("prompt-excluding pooling is unsupported"));
+                }
+                Some(_) => return Err(invalid("pooling include_prompt must be a boolean")),
+            }
             for unsupported in [
                 "pooling_mode_max_tokens",
                 "pooling_mode_mean_sqrt_len_tokens",
