@@ -208,6 +208,7 @@ fn producer() -> Result<Value> {
   ("crates/ken-models/src/lib.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/lib.rs")))),
   ("crates/ken-models/src/model2vec.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/model2vec.rs")))),
   ("crates/ken-models/src/model_policy.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/model_policy.rs")))),
+  ("crates/ken-models/src/model_transport.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/model_transport.rs")))),
   ("crates/ken-models/src/native_onnx.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/native_onnx.rs")))),
   ("crates/ken-models/src/onnx_dependencies.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/onnx_dependencies.rs")))),
   ("crates/ken-models/src/onnx_providers.rs",format!("{:x}",Sha256::digest(include_bytes!("../src/onnx_providers.rs")))),

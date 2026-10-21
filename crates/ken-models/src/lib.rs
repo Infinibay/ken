@@ -12,6 +12,7 @@ mod fastembed_tokens;
 mod file_assets;
 mod model2vec;
 pub mod model_policy;
+mod model_transport;
 mod native_onnx;
 mod onnx_dependencies;
 mod onnx_providers;
@@ -55,6 +56,7 @@ pub use ken_native_model_api::{
     TransformerArchitecture, TransformerBatch, TransformerDevice, TransformerDeviceRequest,
     TransformerDtype, TransformerOutput, TransformerPooling, TransformerWeightLayout,
 };
+pub use model_transport::PublicModelTransport;
 pub use model2vec::Model2VecEncoder;
 pub use native_onnx::{NativeOnnxRuntime, RuntimeIdentity};
 pub use onnx_dependencies::verify_onnx_dependencies;

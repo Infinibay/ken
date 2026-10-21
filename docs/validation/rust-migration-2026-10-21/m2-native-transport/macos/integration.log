@@ -1,0 +1,31 @@
+    Finished `test` profile [unoptimized] target(s) in 0.10s
+     Running tests/artifact_cache.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/artifact_cache-1905b4ae56122786)
+
+running 8 tests
+test a_failed_concurrent_download_cleans_only_its_stage_and_preserves_the_winner ... ok
+test concurrent_publishers_reverify_and_share_the_complete_winner ... ok
+test dot_model_components_cannot_escape_and_cache_symlink_substitutions_are_rejected ... ok
+test missing_offline_and_corrupt_existing_data_never_call_transport_or_delete_the_snapshot ... ok
+test publication_is_complete_nested_zero_length_verified_and_reused_without_transport ... ok
+test stage_swapped_for_a_symlink_cannot_write_or_clean_unrelated_files ... ok
+test streaming_stops_at_first_excess_byte_and_retries_only_real_interrupted_reads ... ok
+test truncated_wrong_digest_overlong_or_failed_writes_never_publish_and_clean_their_stage ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.54s
+
+     Running tests/model_transport.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/model_transport-bd061ec03c68b541)
+
+running 1 test
+test invalid_public_identifiers_revisions_and_paths_fail_before_connecting ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/fastembed_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/fastembed_probe-501f3c037bbcabf5)
+
+running 3 tests
+test tests::command_line_requires_explicit_absolute_paths_and_exact_five_flags ... ok
+test tests::producer_covers_every_compiled_model_source ... ok
+test tests::protocol_rejects_unknown_fields_types_operations_and_duplicate_ids ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
