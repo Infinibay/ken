@@ -2,16 +2,7 @@
 use crate::{CoreError, invalid};
 use ken_native_model_api::MAX_PAYLOAD;
 use safetensors::SafeTensors;
-use serde::{
-    Deserialize,
-    de::{self, Visitor},
-};
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    fs::OpenOptions,
-    io::Read,
-    path::Path,
-};
+use std::{fs::OpenOptions, io::Read, path::Path};
 use tch::Tensor;
 
 pub(crate) fn read(path: &Path, maximum: u64) -> Result<Vec<(String, Tensor)>, CoreError> {
@@ -50,55 +41,7 @@ pub(crate) fn read(path: &Path, maximum: u64) -> Result<Vec<(String, Tensor)>, C
         .collect()
 }
 
-#[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
-struct HeaderTensor {
-    dtype: String,
-    shape: Vec<u64>,
-    data_offsets: [u64; 2],
-}
-
-struct Header;
-impl<'de> Visitor<'de> for Header {
-    type Value = ();
-    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        formatter.write_str("distinct tensor header records")
-    }
-    fn visit_map<M: de::MapAccess<'de>>(self, mut map: M) -> Result<(), M::Error> {
-        let mut names = BTreeSet::new();
-        while let Some(name) = map.next_key::<String>()? {
-            if !names.insert(name.clone()) {
-                return Err(de::Error::custom("duplicate parameter header name"));
-            }
-            if name == "__metadata__" {
-                map.next_value::<BTreeMap<String, String>>()?;
-                continue;
-            }
-            let tensor = map.next_value::<HeaderTensor>()?;
-            let width = match tensor.dtype.as_str() {
-                "F32" => 4_u64,
-                "F16" | "BF16" => 2,
-                _ => return Err(de::Error::custom("unsupported parameter dtype")),
-            };
-            let expected = tensor
-                .shape
-                .iter()
-                .try_fold(width, |n, &size| n.checked_mul(size));
-            if tensor.shape.is_empty()
-                || tensor.shape.len() > 2
-                || tensor.shape.contains(&0)
-                || expected.is_none()
-                || tensor.data_offsets[1].checked_sub(tensor.data_offsets[0]) != expected
-            {
-                return Err(de::Error::custom("invalid parameter header shape/offsets"));
-            }
-        }
-        Ok(())
-    }
-}
-
 fn validate_header(bytes: &[u8]) -> Result<(), CoreError> {
-    use serde::Deserializer;
     let size = u64::from_le_bytes(
         bytes
             .get(..8)
@@ -113,8 +56,6 @@ fn validate_header(bytes: &[u8]) -> Result<(), CoreError> {
     let header = bytes
         .get(8..8 + size)
         .ok_or_else(|| invalid("truncated parameter metadata"))?;
-    let mut parser = serde_json::Deserializer::from_slice(header);
-    parser.deserialize_map(Header)?;
-    parser.end()?;
+    ken_native_model_api::validate_parameter_header(header, (bytes.len() - 8 - size) as u64)?;
     Ok(())
 }

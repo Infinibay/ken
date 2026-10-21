@@ -352,3 +352,9 @@ mod tests {
         assert!(bad.validate(2, 2).is_err());
     }
 }
+
+mod qwen3;
+pub use qwen3::Qwen3Config;
+
+mod parameter_header;
+pub use parameter_header::validate_parameter_header;

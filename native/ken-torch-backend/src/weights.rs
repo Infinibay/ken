@@ -22,7 +22,7 @@ impl TorchWeights {
         config.validate()?;
         let device = resolve_device(device)?;
         let kind = resolve_kind(dtype);
-        let expected = expected(config);
+        let expected = config.parameter_shapes();
         let maximum = expected
             .values()
             .try_fold(0_u64, |total, shape| {
@@ -36,7 +36,7 @@ impl TorchWeights {
         let tensors = owned_tensors(
             crate::parameter_file::read(path, maximum)?,
             expected,
-            config.layout,
+            config.layout(),
             device,
             kind,
         )?;
@@ -60,56 +60,6 @@ pub(crate) fn finite(tensor: &Tensor, name: &str) -> Result<(), CoreError> {
         return Err(invalid(format!("nonfinite native tensor: {name}")));
     }
     Ok(())
-}
-
-fn expected(c: &CoreConfig) -> BTreeMap<String, Vec<i64>> {
-    let mut result = BTreeMap::from([
-        (
-            "embed_tokens.weight".into(),
-            vec![c.vocab_size, c.hidden_size],
-        ),
-        ("norm.weight".into(), vec![c.hidden_size]),
-    ]);
-    for layer in 0..c.num_hidden_layers {
-        let prefix = format!("layers.{layer}");
-        for (name, shape) in [
-            ("input_layernorm.weight", vec![c.hidden_size]),
-            ("post_attention_layernorm.weight", vec![c.hidden_size]),
-            ("self_attn.q_norm.weight", vec![c.head_dim]),
-            ("self_attn.k_norm.weight", vec![c.head_dim]),
-            (
-                "self_attn.q_proj.weight",
-                vec![c.num_attention_heads * c.head_dim, c.hidden_size],
-            ),
-            (
-                "self_attn.k_proj.weight",
-                vec![c.num_key_value_heads * c.head_dim, c.hidden_size],
-            ),
-            (
-                "self_attn.v_proj.weight",
-                vec![c.num_key_value_heads * c.head_dim, c.hidden_size],
-            ),
-            (
-                "self_attn.o_proj.weight",
-                vec![c.hidden_size, c.num_attention_heads * c.head_dim],
-            ),
-            (
-                "mlp.gate_proj.weight",
-                vec![c.intermediate_size, c.hidden_size],
-            ),
-            (
-                "mlp.up_proj.weight",
-                vec![c.intermediate_size, c.hidden_size],
-            ),
-            (
-                "mlp.down_proj.weight",
-                vec![c.hidden_size, c.intermediate_size],
-            ),
-        ] {
-            result.insert(format!("{prefix}.{name}"), shape);
-        }
-    }
-    result
 }
 
 pub(crate) fn resolve_device(device: TransformerDevice) -> Result<Device, CoreError> {

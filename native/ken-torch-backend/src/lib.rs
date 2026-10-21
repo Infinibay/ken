@@ -17,6 +17,8 @@ pub use config::CoreConfig;
 pub enum CoreError {
     #[error("invalid native transformer: {0}")]
     Invalid(String),
+    #[error("native model contract: {0}")]
+    Contract(#[from] ken_native_model_api::ApiError),
     #[error("native tensor operation: {0}")]
     Tensor(#[from] tch::TchError),
     #[error("native model data: {0}")]
