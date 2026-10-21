@@ -5,8 +5,11 @@ pub mod device;
 mod model;
 mod output;
 mod parameter_file;
+mod parameter_zip;
 pub mod qwen3;
 pub mod weights;
+pub mod xlm_roberta;
+pub mod xlm_roberta_weights;
 pub use abi::ken_model_api_v1;
 pub use config::CoreConfig;
 

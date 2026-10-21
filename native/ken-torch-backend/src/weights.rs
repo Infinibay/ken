@@ -1,4 +1,5 @@
 //! Validate the complete declared network before publishing owned native tensors.
+pub(crate) use crate::parameter_zip::read as read_parameter_zip;
 use crate::{CoreConfig, CoreError, invalid};
 use ken_native_model_api::{TransformerDevice, TransformerDtype, TransformerWeightLayout};
 use std::{collections::BTreeMap, path::Path};
@@ -20,13 +21,8 @@ impl TorchWeights {
     ) -> Result<Self, CoreError> {
         config.validate()?;
         let device = resolve_device(device)?;
-        let kind = match dtype {
-            TransformerDtype::Float32 => Kind::Float,
-            TransformerDtype::Float16 => Kind::Half,
-            TransformerDtype::BFloat16 => Kind::BFloat16,
-        };
-        let mut expected = expected(config);
-        let mut tensors = BTreeMap::new();
+        let kind = resolve_kind(dtype);
+        let expected = expected(config);
         let maximum = expected
             .values()
             .try_fold(0_u64, |total, shape| {
@@ -37,33 +33,13 @@ impl TorchWeights {
             })
             .and_then(|v| v.checked_add(ken_native_model_api::MAX_PAYLOAD as u64 + 8))
             .ok_or_else(|| invalid("weight storage size overflow"))?;
-        for (name, tensor) in crate::parameter_file::read(path, maximum)? {
-            let canonical = match config.layout {
-                Some(TransformerWeightLayout::Unprefixed) => name.as_str(),
-                Some(TransformerWeightLayout::ModelPrefix) => name
-                    .strip_prefix("model.")
-                    .ok_or_else(|| invalid(format!("wrong declared tensor prefix: {name}")))?,
-                None => return Err(invalid("missing declared weight layout")),
-            };
-            let shape = expected
-                .remove(canonical)
-                .ok_or_else(|| invalid(format!("unexpected or duplicate weight: {name}")))?;
-            if tensor.size() != shape
-                || !matches!(tensor.kind(), Kind::Float | Kind::Half | Kind::BFloat16)
-            {
-                return Err(invalid(format!("wrong tensor shape/dtype: {name}")));
-            }
-            finite(&tensor, &name)?;
-            let tensor = tensor.f_to_kind(kind)?;
-            finite(&tensor, &name)?;
-            tensors.insert(canonical.into(), tensor.f_to_device(device)?);
-        }
-        if !expected.is_empty() {
-            return Err(invalid(format!(
-                "missing weights: {}",
-                expected.keys().cloned().collect::<Vec<_>>().join(", ")
-            )));
-        }
+        let tensors = owned_tensors(
+            crate::parameter_file::read(path, maximum)?,
+            expected,
+            config.layout,
+            device,
+            kind,
+        )?;
         Ok(Self {
             config: config.clone(),
             tensors,
@@ -136,7 +112,7 @@ fn expected(c: &CoreConfig) -> BTreeMap<String, Vec<i64>> {
     result
 }
 
-fn resolve_device(device: TransformerDevice) -> Result<Device, CoreError> {
+pub(crate) fn resolve_device(device: TransformerDevice) -> Result<Device, CoreError> {
     match device {
         TransformerDevice::Cpu => Ok(Device::Cpu),
         TransformerDevice::Mps if tch::utils::has_mps() => Ok(Device::Mps),
@@ -147,4 +123,50 @@ fn resolve_device(device: TransformerDevice) -> Result<Device, CoreError> {
         }
         _ => Err(invalid("requested native tensor device is unavailable")),
     }
+}
+
+pub(crate) fn resolve_kind(dtype: TransformerDtype) -> Kind {
+    match dtype {
+        TransformerDtype::Float32 => Kind::Float,
+        TransformerDtype::Float16 => Kind::Half,
+        TransformerDtype::BFloat16 => Kind::BFloat16,
+    }
+}
+
+pub(crate) fn owned_tensors(
+    items: Vec<(String, Tensor)>,
+    mut expected: BTreeMap<String, Vec<i64>>,
+    layout: Option<TransformerWeightLayout>,
+    device: Device,
+    kind: Kind,
+) -> Result<BTreeMap<String, Tensor>, CoreError> {
+    let mut tensors = BTreeMap::new();
+    for (name, tensor) in items {
+        let canonical = match layout {
+            Some(TransformerWeightLayout::Unprefixed) => name.as_str(),
+            Some(TransformerWeightLayout::ModelPrefix) => name
+                .strip_prefix("model.")
+                .ok_or_else(|| invalid(format!("wrong declared tensor prefix: {name}")))?,
+            None => return Err(invalid("missing declared weight layout")),
+        };
+        let shape = expected
+            .remove(canonical)
+            .ok_or_else(|| invalid(format!("unexpected or duplicate weight: {name}")))?;
+        if tensor.size() != shape
+            || !matches!(tensor.kind(), Kind::Float | Kind::Half | Kind::BFloat16)
+        {
+            return Err(invalid(format!("wrong tensor shape/dtype: {name}")));
+        }
+        finite(&tensor, &name)?;
+        let tensor = tensor.f_to_kind(kind)?;
+        finite(&tensor, &name)?;
+        tensors.insert(canonical.into(), tensor.f_to_device(device)?);
+    }
+    if !expected.is_empty() {
+        return Err(invalid(format!(
+            "missing weights: {}",
+            expected.keys().cloned().collect::<Vec<_>>().join(", ")
+        )));
+    }
+    Ok(tensors)
 }

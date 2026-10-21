@@ -9,8 +9,9 @@ use std::path::Path;
 use tch::{Device, Kind};
 
 pub(crate) struct Model {
-    core: Qwen3,
-    config: CoreConfig,
+    core: Network,
+    vocab_size: u64,
+    max_position_embeddings: usize,
     pooling: TransformerPooling,
     normalize_modules: usize,
     device: TransformerDevice,
@@ -23,10 +24,9 @@ impl Model {
         request
             .validate_schema()
             .map_err(|e| invalid(e.to_string()))?;
-        if request.architecture != TransformerArchitecture::Qwen3 || request.weight_files.len() != 1
-        {
+        if request.weight_files.len() != 1 {
             return Err(invalid(
-                "this native profile requires one registered Qwen3 parameter file",
+                "this native profile requires one registered parameter file",
             ));
         }
         let version = device::core_version()?;
@@ -41,17 +41,36 @@ impl Model {
         }
         tch::set_num_threads(2);
         let source = Path::new(&request.snapshot);
-        let config = CoreConfig::from_json(
-            &std::fs::read_to_string(source.join("config.json"))?,
-            request.weight_layout,
-        )?;
-        let weights = TorchWeights::load(
-            &config,
-            &source.join(&request.weight_files[0]),
-            requested,
-            request.dtype,
-        )?;
-        let core = Qwen3::load(config.clone(), weights)?;
+        let json = std::fs::read_to_string(source.join("config.json"))?;
+        let path = source.join(&request.weight_files[0]);
+        let (core, vocab_size, max_position_embeddings) = match request.architecture {
+            TransformerArchitecture::Qwen3 => {
+                let config = CoreConfig::from_json(&json, request.weight_layout)?;
+                let limits = (config.vocab_size as u64, config.max_position_embeddings);
+                let weights = TorchWeights::load(&config, &path, requested, request.dtype)?;
+                (
+                    Network::Qwen3(Qwen3::load(config, weights)?),
+                    limits.0,
+                    limits.1,
+                )
+            }
+            TransformerArchitecture::XlmRoberta => {
+                let config =
+                    crate::xlm_roberta::XlmRobertaConfig::from_json(&json, request.weight_layout)?;
+                let limits = (config.vocab_size as u64, config.max_position_embeddings);
+                let weights = crate::xlm_roberta_weights::XlmRobertaWeights::load(
+                    &config,
+                    &path,
+                    requested,
+                    request.dtype,
+                )?;
+                (
+                    Network::XlmRoberta(crate::xlm_roberta::XlmRoberta::load(config, weights)?),
+                    limits.0,
+                    limits.1,
+                )
+            }
+        };
         let (actual_device, actual_kind, dimension) = core.observed_identity()?;
         let actual_device = match actual_device {
             Device::Cpu => TransformerDevice::Cpu,
@@ -74,7 +93,8 @@ impl Model {
         Ok((
             Self {
                 core,
-                config,
+                vocab_size,
+                max_position_embeddings,
                 pooling: request.pooling,
                 normalize_modules: request.normalize_modules,
                 device: actual_device,
@@ -88,11 +108,7 @@ impl Model {
         request: TransformerRunRequest,
     ) -> Result<TransformerRunResult, CoreError> {
         request
-            .validate(
-                self.config.vocab_size as u64,
-                self.config.max_position_embeddings,
-                usize::MAX,
-            )
+            .validate(self.vocab_size, self.max_position_embeddings, usize::MAX)
             .map_err(|e| invalid(e.to_string()))?;
         let result = (|| {
             let hidden = self.core.forward(&request.batch)?;
@@ -141,5 +157,33 @@ fn select_device(request: TransformerDeviceRequest) -> Result<TransformerDevice,
         TransformerDeviceRequest::Auto => Ok(gpu().unwrap_or(TransformerDevice::Cpu)),
         TransformerDeviceRequest::Gpu => gpu().ok_or_else(|| invalid("no native GPU available")),
         _ => Err(invalid("requested native device unavailable")),
+    }
+}
+
+enum Network {
+    Qwen3(Qwen3),
+    XlmRoberta(crate::xlm_roberta::XlmRoberta),
+}
+impl Network {
+    fn observed_identity(&self) -> Result<(Device, Kind, usize), CoreError> {
+        match self {
+            Self::Qwen3(core) => core.observed_identity(),
+            Self::XlmRoberta(core) => core.observed_identity(),
+        }
+    }
+    fn forward(
+        &self,
+        batch: &ken_native_model_api::TransformerBatch,
+    ) -> Result<tch::Tensor, CoreError> {
+        match self {
+            Self::Qwen3(core) => core.forward(batch),
+            Self::XlmRoberta(core) => core.forward(batch),
+        }
+    }
+    fn projection_difference(&self, true_id: u32, false_id: u32) -> Result<tch::Tensor, CoreError> {
+        match self {
+            Self::Qwen3(core) => core.projection_difference(true_id, false_id),
+            Self::XlmRoberta(_) => Err(invalid("XLM-R encoder has no declared yes/no head")),
+        }
     }
 }
