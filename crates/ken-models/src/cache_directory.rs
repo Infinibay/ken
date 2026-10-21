@@ -160,4 +160,13 @@ impl CacheDirectory {
     pub(crate) fn sync(&self) -> io::Result<()> {
         self.file.sync_all()
     }
+
+    pub(crate) fn ensure_capacity(&self, bytes: u64) -> io::Result<()> {
+        self.unchanged()?;
+        let space = at::fstatvfs(&self.file)?;
+        if u128::from(space.f_bavail) * u128::from(space.f_frsize) < u128::from(bytes) {
+            return Err(io::Error::from_raw_os_error(libc::ENOSPC));
+        }
+        Ok(())
+    }
 }

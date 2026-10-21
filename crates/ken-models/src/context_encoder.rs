@@ -20,10 +20,15 @@ pub struct ContextTokens {
 
 pub struct ContextEncoder {
     model: ContextModel,
-    snapshot: Arc<VerifiedSnapshot>,
     runtime: NativeOnnxRuntime,
-    tokenizer: Tokenizer,
+    data: Mutex<Option<Arc<ContextData>>>,
+    source: Option<Arc<dyn crate::model_sources::SnapshotProvider>>,
     session: Mutex<Option<Session>>,
+}
+
+struct ContextData {
+    snapshot: Arc<VerifiedSnapshot>,
+    tokenizer: Tokenizer,
 }
 
 fn inference(error: impl std::fmt::Display) -> ModelError {
@@ -36,6 +41,34 @@ impl ContextEncoder {
         snapshot: Arc<VerifiedSnapshot>,
         runtime: NativeOnnxRuntime,
     ) -> Result<Self, ModelError> {
+        let data = Self::prepare_data(&model, snapshot)?;
+        Ok(Self {
+            model,
+            runtime,
+            data: Mutex::new(Some(Arc::new(data))),
+            source: None,
+            session: Mutex::new(None),
+        })
+    }
+
+    pub(crate) fn with_source_provider(
+        model: ContextModel,
+        source: Arc<dyn crate::model_sources::SnapshotProvider>,
+        runtime: NativeOnnxRuntime,
+    ) -> Self {
+        Self {
+            model,
+            runtime,
+            data: Mutex::new(None),
+            source: Some(source),
+            session: Mutex::new(None),
+        }
+    }
+
+    fn prepare_data(
+        model: &ContextModel,
+        snapshot: Arc<VerifiedSnapshot>,
+    ) -> Result<ContextData, ModelError> {
         if !model.assets().accredits(&snapshot) {
             return Err(ModelError::Registration(
                 "snapshot does not accredit context model artifacts".into(),
@@ -50,13 +83,32 @@ impl ContextEncoder {
                 ..Default::default()
             }))
             .map_err(|e| ModelError::Tokenizer(e.to_string()))?;
-        Ok(Self {
-            model,
+        Ok(ContextData {
             snapshot,
-            runtime,
             tokenizer,
-            session: Mutex::new(None),
         })
+    }
+
+    fn data(&self) -> Result<Arc<ContextData>, ModelError> {
+        let mut slot = self
+            .data
+            .lock()
+            .map_err(|_| inference("context data lock poisoned"))?;
+        if let Some(data) = slot.as_ref() {
+            return Ok(data.clone());
+        }
+        let source = self
+            .source
+            .as_ref()
+            .ok_or_else(|| inference("context source absent"))?;
+        let snapshot = Arc::new(
+            self.model
+                .assets()
+                .verify(&source.snapshot(self.model.assets())?)?,
+        );
+        let data = Arc::new(Self::prepare_data(&self.model, snapshot)?);
+        *slot = Some(data.clone());
+        Ok(data)
     }
 
     pub fn dim(&self) -> usize {
@@ -72,6 +124,7 @@ impl ContextEncoder {
 
     fn load_session(&self, slot: &mut Option<Session>) -> Result<(), ModelError> {
         if slot.is_none() {
+            let data = self.data()?;
             let environment = self.runtime.environment()?;
             let session = Session::builder(&environment)
                 .map_err(inference)?
@@ -81,7 +134,7 @@ impl ContextEncoder {
                 .map_err(inference)?
                 .with_execution_providers([ort::ep::CPU::default().build().error_on_failure()])
                 .map_err(inference)?
-                .commit_from_memory(self.snapshot.artifact("onnx/model.onnx")?)
+                .commit_from_memory(data.snapshot.artifact("onnx/model.onnx")?)
                 .map_err(inference)?;
             *slot = Some(session);
         }
@@ -102,6 +155,7 @@ impl ContextEncoder {
             ContextInput::Passage => text.to_owned(),
         };
         let encoded = self
+            .data()?
             .tokenizer
             .encode(input, true)
             .map_err(|e| ModelError::Tokenizer(e.to_string()))?;

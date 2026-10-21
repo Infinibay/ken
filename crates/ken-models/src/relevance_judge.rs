@@ -18,7 +18,7 @@ struct State {
 /// Owns one causal model and its whole-request relevance/retry policy.
 pub struct RelevanceJudge {
     model: TransformerModel,
-    source: ModelFileSource,
+    source: crate::model_sources::TransformerSource,
     runtime: NativeTransformerRuntime,
     settings: TransformerSettings,
     device: TransformerDeviceRequest,
@@ -28,6 +28,22 @@ impl RelevanceJudge {
     pub fn new(
         model: TransformerModel,
         source: ModelFileSource,
+        runtime: NativeTransformerRuntime,
+        settings: TransformerSettings,
+        device: TransformerDeviceRequest,
+    ) -> Result<Self, ModelError> {
+        Self::from_source(
+            model,
+            crate::model_sources::TransformerSource::Borrowed(source),
+            runtime,
+            settings,
+            device,
+        )
+    }
+
+    fn from_source(
+        model: TransformerModel,
+        source: crate::model_sources::TransformerSource,
         runtime: NativeTransformerRuntime,
         settings: TransformerSettings,
         device: TransformerDeviceRequest,
@@ -59,14 +75,40 @@ impl RelevanceJudge {
             .lock()
             .map_err(|_| invalid("relevance judge state lock poisoned"))
     }
+
+    pub(crate) fn with_source_provider(
+        model: TransformerModel,
+        provider: Arc<dyn crate::model_sources::SnapshotProvider>,
+        private_parent: std::path::PathBuf,
+        runtime: NativeTransformerRuntime,
+        settings: TransformerSettings,
+        device: TransformerDeviceRequest,
+    ) -> Result<Self, ModelError> {
+        if !private_parent.is_absolute() {
+            return Err(crate::profile::invalid(
+                "absolute private model parent required",
+            ));
+        }
+        Self::from_source(
+            model,
+            crate::model_sources::TransformerSource::Deferred {
+                provider,
+                private_parent,
+            },
+            runtime,
+            settings,
+            device,
+        )
+    }
     fn load(&self, state: &mut State) -> Result<(), ModelError> {
         if state.session.is_some() {
             return Ok(());
         }
+        let source = self.source.resolve(self.model.assets())?;
         if state.tokens.is_none() {
-            state.tokens = Some(JudgeTokens::load(&self.model, &self.source)?);
+            state.tokens = Some(JudgeTokens::load(&self.model, &source)?);
         }
-        let files = Arc::new(self.model.assets().verify_files(&self.source)?);
+        let files = Arc::new(self.model.assets().verify_files(&source)?);
         let session = TransformerSession::prepare_requested(
             &self.model,
             files,

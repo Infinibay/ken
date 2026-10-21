@@ -121,6 +121,16 @@ struct Declaration {
 pub struct NativeTransformerRuntime(Arc<Declaration>);
 
 impl NativeTransformerRuntime {
+    pub(crate) fn private_copy_bytes(&self) -> Result<u64, ModelError> {
+        self.0
+            .identity
+            .libraries
+            .values()
+            .try_fold(self.0.identity.module.bytes, |total, artifact| {
+                total.checked_add(artifact.bytes)
+            })
+            .ok_or_else(|| invalid("native core private-copy size overflow"))
+    }
     pub fn from_json(
         registration: &str,
         module_path: &Path,

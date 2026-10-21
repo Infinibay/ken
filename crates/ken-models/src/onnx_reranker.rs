@@ -94,7 +94,7 @@ struct LoadedReranker {
 pub struct OnnxReranker {
     model: RerankerModel,
     prepared: Option<Arc<PreparedReranker>>,
-    source: Option<PathBuf>,
+    source: crate::model_sources::PreparationSource,
     cache: PathBuf,
     runtime: NativeOnnxRuntime,
     options: RerankOptions,
@@ -125,7 +125,7 @@ impl OnnxReranker {
         Ok(Self {
             model,
             prepared,
-            source,
+            source: crate::model_sources::PreparationSource::Borrowed(source),
             cache,
             runtime,
             options,
@@ -137,6 +137,18 @@ impl OnnxReranker {
         self.loaded
             .lock()
             .map_err(|_| invalid("reranker session lock poisoned"))
+    }
+
+    pub(crate) fn with_source_provider(
+        model: RerankerModel,
+        source: Arc<dyn crate::model_sources::SnapshotProvider>,
+        cache: PathBuf,
+        runtime: NativeOnnxRuntime,
+        options: RerankOptions,
+    ) -> Result<Self, ModelError> {
+        let mut owner = Self::new(model, None, None, cache, runtime, options)?;
+        owner.source = crate::model_sources::PreparationSource::Deferred(source);
+        Ok(owner)
     }
     pub fn is_prepared(&self) -> Result<bool, ModelError> {
         Ok(self.lock()?.is_some())
@@ -153,7 +165,12 @@ impl OnnxReranker {
         if slot.is_none() {
             let prepared = match &self.prepared {
                 Some(prepared) => prepared.clone(),
-                None => Arc::new(self.model.prepare(self.source.as_deref(), &self.cache)?),
+                None => {
+                    let source = self
+                        .source
+                        .for_preparation(self.model.source_assets(), &self.cache)?;
+                    Arc::new(self.model.prepare(source.as_deref(), &self.cache)?)
+                }
             };
             let tokenizer = PairedTokenizer::new(&prepared, self.options.max_tokens)?;
             let environment = self.runtime.environment()?;

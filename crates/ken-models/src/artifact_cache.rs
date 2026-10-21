@@ -127,6 +127,26 @@ fn verify_cached(assets: &ModelAssets, directory: &CacheDirectory) -> Result<(),
 }
 
 impl ArtifactCache {
+    pub(crate) fn contains_snapshot(&self, assets: &ModelAssets) -> Result<bool, ModelError> {
+        self.root
+            .unchanged()
+            .map_err(|e| io_error("cache root", e))?;
+        let found = self
+            .root
+            .child("models", false)
+            .and_then(|models| models.child(&assets.fingerprint(), false))
+            .and_then(|model| model.child(assets.revision(), false));
+        match found {
+            Ok(_) => Ok(true),
+            Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(false),
+            Err(error) => Err(io_error("cached model snapshot", error)),
+        }
+    }
+    pub(crate) fn ensure_capacity(&self, bytes: u64) -> Result<(), ModelError> {
+        self.root
+            .ensure_capacity(bytes)
+            .map_err(|e| io_error("model free space plus3GiB reserve", e))
+    }
     pub fn new(root: &Path) -> Result<Self, ModelError> {
         Ok(Self {
             root: CacheDirectory::root(root).map_err(|e| io_error("cache root", e))?,

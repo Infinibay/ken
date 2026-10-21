@@ -89,6 +89,11 @@ impl RerankerModel {
     pub fn recipe_key(&self) -> String {
         self.recipe_key.clone()
     }
+    pub(crate) fn cache_path(&self, root: &Path) -> std::path::PathBuf {
+        root.join("models/reranker")
+            .join(&self.recipe_key)
+            .join(self.source.revision())
+    }
     pub(crate) fn graph_name(&self) -> &str {
         &self.graph_name
     }

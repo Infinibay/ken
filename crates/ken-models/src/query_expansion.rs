@@ -9,6 +9,7 @@ use ct2rs::{
 };
 use sentencepiece::SentencePieceProcessor;
 use serde::Serialize;
+use std::sync::Arc;
 use std::{fs, path::PathBuf, sync::Mutex};
 
 #[derive(Clone, Debug, Serialize, PartialEq, Eq)]
@@ -222,7 +223,7 @@ impl NativeSession {
 
 pub struct LocalQueryExpansion {
     model: TranslationModel,
-    source: Option<PathBuf>,
+    source: crate::model_sources::PreparationSource,
     cache: PathBuf,
     runtime: Mutex<Option<NativeSession>>,
 }
@@ -241,10 +242,22 @@ impl LocalQueryExpansion {
         };
         Ok(Self {
             model,
-            source: source.map(absolute).transpose()?,
+            source: crate::model_sources::PreparationSource::Borrowed(
+                source.map(absolute).transpose()?,
+            ),
             cache: absolute(cache)?,
             runtime: Mutex::new(None),
         })
+    }
+
+    pub(crate) fn with_source_provider(
+        model: TranslationModel,
+        source: Arc<dyn crate::model_sources::SnapshotProvider>,
+        cache: PathBuf,
+    ) -> Result<Self, ModelError> {
+        let mut owner = Self::new(model, None, cache)?;
+        owner.source = crate::model_sources::PreparationSource::Deferred(source);
+        Ok(owner)
     }
 
     fn with_runtime<T>(
@@ -256,7 +269,10 @@ impl LocalQueryExpansion {
             .lock()
             .map_err(|_| ModelError::Runtime("translation runtime mutex poisoned".into()))?;
         if guard.is_none() {
-            let prepared = self.model.prepare(self.source.as_deref(), &self.cache)?;
+            let source = self
+                .source
+                .for_preparation(self.model.source_assets(), &self.cache)?;
+            let prepared = self.model.prepare(source.as_deref(), &self.cache)?;
             *guard = Some(NativeSession::load(prepared)?);
         }
         action(

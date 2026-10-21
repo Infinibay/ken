@@ -70,6 +70,9 @@ struct Declaration {
 pub struct NativeOnnxRuntime(Arc<Declaration>);
 
 impl NativeOnnxRuntime {
+    pub(crate) fn private_copy_bytes(&self) -> u64 {
+        self.0.identity.bytes
+    }
     pub fn from_json(registration: &str, library: &Path) -> Result<Self, ModelError> {
         let registration: Registration = serde_json::from_str(registration)?;
         if registration.format != "ken-native-onnx/1" || !library.is_absolute() {
