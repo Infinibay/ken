@@ -4,9 +4,12 @@ use crate::{
     embedding_store::VectorView,
     query::{Candidate, Signals},
 };
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    sync::Arc,
+};
 pub struct DenseView {
-    passages: Vec<Passage>,
+    passages: Vec<Arc<Passage>>,
     matrix: Vec<f32>,
     entities: Vec<EntityKey>,
     labels: Vec<usize>,
@@ -14,6 +17,18 @@ pub struct DenseView {
 }
 impl DenseView {
     pub fn new(passages: Vec<(i64, Passage)>, vectors: VectorView) -> Result<Self> {
+        Self::from_shared(
+            passages
+                .into_iter()
+                .map(|(id, p)| (id, Arc::new(p)))
+                .collect(),
+            vectors,
+        )
+    }
+    pub(crate) fn from_shared(
+        passages: Vec<(i64, Arc<Passage>)>,
+        vectors: VectorView,
+    ) -> Result<Self> {
         let dimension = vectors.matrix.first().map_or(0, Vec::len);
         if vectors.ids.len() != vectors.matrix.len()
             || vectors
@@ -108,7 +123,7 @@ impl DenseView {
                 .get_mut(&self.labels[row])
                 .expect("selected source owner");
             if owned.len() < 4 {
-                let mut passage = self.passages[row].clone();
+                let mut passage = (*self.passages[row]).clone();
                 passage.signals.insert(signal.clone(), scores[row] as f64);
                 owned.push(passage)
             }

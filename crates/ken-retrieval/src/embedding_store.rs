@@ -53,7 +53,7 @@ pub(crate) fn validated_norm(vector: &[f32], dimension: Option<usize>) -> Result
             "embedding dimensions differ from encoder".into(),
         ));
     }
-    let norm = vector.iter().fold(0f32, |sum, n| sum + n * n).sqrt();
+    let norm = crate::dense_math::DenseMath::platform()?.norm(vector)?;
     if norm <= 0. || !norm.is_finite() {
         return Err(RetrievalError::Invalid(
             "embedding must have a positive finite norm".into(),

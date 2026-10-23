@@ -5,8 +5,10 @@ from pathlib import Path
 from .reference import Reference,reference_env
 from .retrieval_reference import owners as kernel_owners,digest
 from .native_json import load,identity
+from .selection_owner_reference import SCRIPT as OWNERS_SCRIPT
+from .selection_sql_reference import SCRIPT as SELECTION_SCRIPT
 ROOT=Path(__file__).resolve().parents[2]
-SUITES={'text':['tests/retrieval/test_intent.py','tests/retrieval/test_qualified_locator.py']}
+SUITES={'text':['tests/retrieval/test_intent.py','tests/retrieval/test_qualified_locator.py'],'owners':['tests/retrieval/test_owner_description.py'],'selection':['tests/retrieval/test_candidates.py']}
 
 def owners(repo:Path):
     value=kernel_owners(repo)
@@ -66,7 +68,7 @@ exit_code=pytest.main(['-o','addopts=','--rootdir='+str(root),'-q',*request['sui
 value=dict(format='ken-selection-reference/1',family='text',cases=records,text_semantics=text_semantics,runtime=dict(system=platform.system(),machine=platform.machine(),python=platform.python_version(),unicode=unicodedata.unidata_version),discovered=discovered,test_states=states,original_test_exit=exit_code)
 pathlib.Path(request['result']).write_text(json.dumps(value,ensure_ascii=True,allow_nan=False)+'\n');sys.exit(exit_code)
 '''
-SCRIPTS={'text':TEXT_SCRIPT}
+SCRIPTS={'text':TEXT_SCRIPT,'owners':OWNERS_SCRIPT,'selection':SELECTION_SCRIPT}
 
 def validate_reference(value:dict,family:str,repo:Path=ROOT):
     try:

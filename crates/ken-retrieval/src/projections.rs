@@ -145,18 +145,7 @@ impl ProjectionIndexer {
         Ok(encoder)
     }
     pub fn policy(&self) -> Result<PassagePolicy> {
-        let spec = &self.profile.behavior;
-        let tokenizer = if self.profile.passage_tokenizer == "code-lexical-v1" {
-            "code-lexical-v1".into()
-        } else {
-            format!(
-                "{}@{}:tokenizer-v1:{}",
-                spec.model_id,
-                spec.revision,
-                spec.tokenizer_revision(&self.legacy)?
-            )
-        };
-        PassagePolicy::new(self.profile.max_tokens, tokenizer)
+        source_policy(&self.profile, &self.legacy)
     }
     pub fn prepare(
         &self,
@@ -209,6 +198,24 @@ impl ProjectionIndexer {
         }
         Ok(out)
     }
+}
+/// One authoritative source passage policy for indexing and query compatibility.
+pub fn source_policy(
+    profile: &RetrievalProfile,
+    legacy: &LegacyRuntimeIdentity,
+) -> Result<PassagePolicy> {
+    let spec = &profile.behavior;
+    let tokenizer = if profile.passage_tokenizer == "code-lexical-v1" {
+        "code-lexical-v1".into()
+    } else {
+        format!(
+            "{}@{}:tokenizer-v1:{}",
+            spec.model_id,
+            spec.revision,
+            spec.tokenizer_revision(legacy)?
+        )
+    };
+    PassagePolicy::new(profile.max_tokens, tokenizer)
 }
 impl TokenCounter for ProjectionIndexer {
     fn count(&self, text: &str) -> Result<usize> {

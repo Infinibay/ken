@@ -1,4 +1,4 @@
-//! Match the original query patterns while retaining Python codepoint coordinates.
+//! Frozen text matching with original Python codepoint capture coordinates.
 use ken_text::{PythonText, unicode};
 use onig::{Regex, RegexOptions, Syntax};
 use std::{

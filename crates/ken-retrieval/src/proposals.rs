@@ -4,7 +4,7 @@ use crate::{
     query::{Candidate, Signals, merge_spans},
 };
 use std::collections::{BTreeMap, HashMap, HashSet};
-fn max_signals(target: &mut Signals, source: &Signals) {
+pub(crate) fn max_signals(target: &mut Signals, source: &Signals) {
     for (name, &value) in source {
         target
             .entry(name.clone())

@@ -1,7 +1,7 @@
 //! Bind a whole explicit source namespace to a complete qualified symbol.
 use crate::{
     EntityKey,
-    query_patterns::{self as p, strip_chars},
+    text_patterns::{self as p, strip_chars},
 };
 use ken_text::{PythonText, unicode::identifier};
 use serde::{Deserialize, Serialize};

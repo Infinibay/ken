@@ -1,7 +1,7 @@
 //! Interpret explicit source requests; behavioral prose grants no accidental identity.
 use crate::{
     query::SearchRequest,
-    query_patterns::{self as p},
+    text_patterns::{self as p},
 };
 use ken_text::PythonText;
 use serde::{Deserialize, Serialize};
