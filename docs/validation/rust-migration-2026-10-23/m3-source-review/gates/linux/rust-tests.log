@@ -1,0 +1,83 @@
+    Finished `test` profile [unoptimized] target(s) in 0.07s
+     Running unittests src/lib.rs (target/debug/deps/ken_core-7f44fff3ef39747f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/health.rs (target/debug/deps/health-e1fc06d213fba5fa)
+
+running 6 tests
+test empty_body_or_object_is_stopped ... ok
+test ignores_inherited_proxy_and_redirect ... 
+running 1 test
+test ignores_inherited_proxy_and_redirect ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+ok
+test invalid_payload_and_http_error_are_stopped ... ok
+test missing_port_does_not_require_auth_token ... ok
+test sends_bearer_only_to_loopback ... ok
+test slow_body_hits_global_deadline ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.45s
+
+     Running tests/project.rs (target/debug/deps/project-f86e98181d27b720)
+
+running 7 tests
+test cyclic_marker_is_not_a_file_and_ancestor_discovery_continues ... ok
+test empty_override_uses_start ... ok
+test invalid_override_has_no_fallback ... ok
+test nearest_root_wins ... ok
+test rejects_sibling_prefix_and_symlink_escape ... ok
+test symlink_parent_order_and_missing_tail ... ok
+test tilde_and_named_user_match_python ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/source_filter.rs (target/debug/deps/source_filter-c57ca7eb987a5328)
+
+running 6 tests
+test a_rule_symlink_cannot_read_outside_the_project ... ok
+test descending_ranges_and_dangling_escapes_are_errors_but_unclosed_classes_are_noops ... ok
+test matcher_rejects_non_relative_identity_instead_of_reading_ancestor_rules ... ok
+test original_all_builtin_scoped_negation_unicode_and_escaped_pattern_decisions ... ok
+test reviewed_original_braces_character_wildcards_and_directory_precedence ... ok
+test root_barriers_cannot_be_overridden_but_nested_git_rules_can_override_git ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.40s
+
+     Running tests/source_walk.rs (target/debug/deps/source_walk-944682d0f82c4374)
+
+running 6 tests
+test a_new_walk_reads_new_rules_without_sharing_stale_filter_state ... ok
+test all_original_ordered_entries_scopes_unicode_and_internal_aliases_match ... ok
+test external_file_directory_and_ancestor_cycle_are_errors_and_do_not_hide_valid_entries ... ok
+test queued_directory_replaced_between_iterator_calls_cannot_escape ... ok
+test reviewed_original_membership_and_unavailable_scopes_match ... ok
+test unreadable_directory_is_an_error_but_ignored_directory_is_pruned ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.99s
+
+     Running tests/status.rs (target/debug/deps/status-18048e32ca4df73c)
+
+running 9 tests
+test all_fifteen_counts_include_inline_and_slots ... ok
+test corrupt_or_old_incompatible_schema_fails ... ok
+test counts_and_paths_share_one_snapshot ... ok
+test indexed_symlink_loops_are_reported_as_stale ... ok
+test missing_database_is_not_created ... ok
+test readonly_directory_does_not_need_write_access ... ok
+test rules_and_rounding_match_python ... ok
+test unencodable_indexed_path_is_reported_as_stale ... ok
+test wal_commit_visible_without_checkpoint ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.33s
+
+   Doc-tests ken_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

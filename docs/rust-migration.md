@@ -26,12 +26,13 @@ sus identidades y resultados; esas cifras no representan nuevas ejecuciones de
 todos los modelos ni promoción de la aplicación completa.
 
 M3a añade `SourceFilter` y `ProjectSources` para exclusiones y recorrido confinado.
-Los [recibos](validation/rust-migration-2026-10-23/m3-source-discovery/README.md)
-comparan270decisiones y51recorridos originales en cada plataforma; preservan
-orden, scopes, Unicode y aliases internos. Enlaces externos, ciclos y errores de
-acceso se informan explícitamente. La aceptación automática acredita este alcance;
-su revisión final se registra por separado. Parsers, modelo común e indexación
-incremental siguen pendientes, al igual que M4–M8. Los originales permanecen intactos.
+La [revisión y reparación](validation/rust-migration-2026-10-23/m3-source-review/README.md)
+cierra sus seis hallazgos con34pruebas Rust y24pruebas de herramientas por
+plataforma. Se comparan702decisiones y134recorridos originales, preservando
+patrones Unicode, prioridades, orden y scopes. Los directorios pendientes se
+abren mediante un descriptor confinado. M3a está aceptado; parsers, modelo común
+e indexación incremental siguen pendientes, al igual que M4–M8. Los originales
+permanecen intactos.
 
 Los recibos históricos describen sus propias fuentes. Para reproducir el bloque
 de fuentes después de cambios posteriores, el agregador usa la copia pequeña de

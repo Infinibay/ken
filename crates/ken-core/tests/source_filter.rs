@@ -59,6 +59,64 @@ fn original_all_builtin_scoped_negation_unicode_and_escaped_pattern_decisions() 
 }
 
 #[test]
+fn reviewed_original_braces_character_wildcards_and_directory_precedence() {
+    let original: Value = serde_json::from_str(include_str!(
+        "fixtures/source-discovery/reference-review.json"
+    ))
+    .unwrap();
+    for (case, expected) in original["definitions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .zip(original["cases"].as_array().unwrap())
+    {
+        let temp = tempfile::tempdir().unwrap();
+        populate(temp.path(), case);
+        let mut filter = SourceFilter::new(temp.path()).unwrap();
+        for (query, ignored) in case["queries"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(expected["ignored"].as_array().unwrap())
+        {
+            assert_eq!(
+                filter
+                    .is_ignored(
+                        Path::new(query["path"].as_str().unwrap()),
+                        query["is_dir"].as_bool().unwrap()
+                    )
+                    .unwrap(),
+                ignored.as_bool().unwrap(),
+                "case={} query={query}",
+                case["id"]
+            );
+        }
+    }
+}
+
+#[test]
+fn descending_ranges_and_dangling_escapes_are_errors_but_unclosed_classes_are_noops() {
+    for rule in ["a[z-a].py", "a\\", "!", "a[a--b].py"] {
+        let temp = tempfile::tempdir().unwrap();
+        fs::write(temp.path().join(".gitignore"), rule).unwrap();
+        let mut filter = SourceFilter::new(temp.path()).unwrap();
+        assert!(
+            filter.is_ignored(Path::new("az.py"), false).is_err(),
+            "rule={rule}"
+        );
+    }
+    for rule in ["a[.py", "a[].py", "a[!].py"] {
+        let temp = tempfile::tempdir().unwrap();
+        fs::write(temp.path().join(".gitignore"), rule).unwrap();
+        let mut filter = SourceFilter::new(temp.path()).unwrap();
+        assert!(
+            !filter.is_ignored(Path::new("az.py"), false).unwrap(),
+            "rule={rule}"
+        );
+    }
+}
+
+#[test]
 fn root_barriers_cannot_be_overridden_but_nested_git_rules_can_override_git() {
     let temp = tempfile::tempdir().unwrap();
     fs::create_dir(temp.path().join("pkg")).unwrap();

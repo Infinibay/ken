@@ -4,6 +4,7 @@ use crate::{
     source_filter::{SourceError, SourceFilter},
 };
 use std::{
+    ffi::OsString,
     fs, io,
     path::{Path, PathBuf},
 };
@@ -29,19 +30,6 @@ impl ProjectSources {
         let root = self.paths.root().to_path_buf();
         // Each walk owns a fresh rule cache; later walks see edited rules.
         let mut filter = SourceFilter::new(&root)?;
-        let mut ancestor = PathBuf::new();
-        for part in target
-            .strip_prefix(&root)
-            .map_err(|_| SourceError::OutsideRoot {
-                path: target.clone(),
-            })?
-            .components()
-        {
-            ancestor.push(part);
-            if filter.is_ignored(&ancestor, true)? {
-                return Ok(SourceWalk::empty(root, filter));
-            }
-        }
         let metadata = match fs::metadata(&target) {
             Ok(metadata) => metadata,
             Err(error)
@@ -62,12 +50,32 @@ impl ProjectSources {
         if !metadata.is_dir() {
             return Ok(SourceWalk::empty(root, filter));
         }
-        let ancestry = target
+        let mut ancestor = PathBuf::new();
+        for part in target
+            .strip_prefix(&root)
+            .map_err(|_| SourceError::OutsideRoot {
+                path: target.clone(),
+            })?
+            .components()
+        {
+            ancestor.push(part);
+            if filter.is_ignored(&ancestor, true)? {
+                return Ok(SourceWalk::empty(root, filter));
+            }
+        }
+        let mut ancestry: Vec<_> = target
             .ancestors()
             .take_while(|p| p.starts_with(&root))
             .map(Path::to_path_buf)
             .collect();
+        ancestry.reverse();
         let mut walk = SourceWalk::empty(root, filter);
+        walk.root_handle = Some(
+            fs::File::open(&walk.root).map_err(|source| SourceError::Io {
+                path: walk.root.clone(),
+                source,
+            })?,
+        );
         walk.pending.push(Directory {
             path: target,
             ancestry,
@@ -85,7 +93,9 @@ pub struct SourceWalk {
     root: PathBuf,
     filter: SourceFilter,
     pending: Vec<Directory>,
-    entries: std::vec::IntoIter<fs::DirEntry>,
+    entries: std::vec::IntoIter<OsString>,
+    current: PathBuf,
+    root_handle: Option<fs::File>,
     ancestry: Vec<PathBuf>,
 }
 
@@ -96,12 +106,14 @@ impl SourceWalk {
             filter,
             pending: Vec::new(),
             entries: Vec::new().into_iter(),
+            current: PathBuf::new(),
+            root_handle: None,
             ancestry: Vec::new(),
         }
     }
 
-    fn entry(&mut self, entry: fs::DirEntry) -> Result<Option<SourceEntry>, SourceError> {
-        let path = entry.path();
+    fn entry(&mut self, name: OsString) -> Result<Option<SourceEntry>, SourceError> {
+        let path = self.current.join(name);
         let relative = path
             .strip_prefix(&self.root)
             .map_err(|_| SourceError::OutsideRoot { path: path.clone() })?
@@ -111,7 +123,7 @@ impl SourceWalk {
             // pathlib treats unavailable symlink targets as neither file nor directory.
             Err(error)
                 if error.kind() == io::ErrorKind::NotFound
-                    && entry.file_type().is_ok_and(|t| t.is_symlink()) =>
+                    && fs::symlink_metadata(&path).is_ok_and(|m| m.is_symlink()) =>
             {
                 return Ok(None);
             }
@@ -148,6 +160,43 @@ impl SourceWalk {
             is_dir,
         }))
     }
+
+    fn directory_entries(&self, directory: &Directory) -> Result<Vec<OsString>, SourceError> {
+        let relative = directory
+            .path
+            .strip_prefix(&self.root)
+            .unwrap_or(&directory.path);
+        let canonical = fs::canonicalize(&directory.path).map_err(|source| SourceError::Io {
+            path: relative.into(),
+            source,
+        })?;
+        if !canonical.starts_with(&self.root) {
+            return Err(SourceError::OutsideRoot {
+                path: relative.into(),
+            });
+        }
+        if directory.ancestry.last() != Some(&canonical) {
+            return Err(SourceError::Io {
+                path: relative.into(),
+                source: io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    "source directory changed during traversal",
+                ),
+            });
+        }
+        crate::source_directory::read_names(
+            self.root_handle
+                .as_ref()
+                .expect("nonempty walk owns root handle"),
+            canonical
+                .strip_prefix(&self.root)
+                .expect("confined canonical path"),
+        )
+        .map_err(|source| SourceError::Io {
+            path: relative.into(),
+            source,
+        })
+    }
 }
 
 impl Iterator for SourceWalk {
@@ -162,20 +211,15 @@ impl Iterator for SourceWalk {
                 }
             }
             let directory = self.pending.pop()?;
-            let entries = fs::read_dir(&directory.path)
-                .and_then(|entries| entries.collect::<io::Result<Vec<_>>>());
+            let entries = self.directory_entries(&directory);
             match entries {
                 Ok(mut entries) => {
-                    entries.sort_by_key(|entry| entry.file_name());
+                    entries.sort();
                     self.entries = entries.into_iter();
+                    self.current = directory.path;
                     self.ancestry = directory.ancestry;
                 }
-                Err(source) => {
-                    return Some(Err(SourceError::Io {
-                        path: directory.path,
-                        source,
-                    }));
-                }
+                Err(error) => return Some(Err(error)),
             }
         }
     }

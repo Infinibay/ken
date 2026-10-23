@@ -105,6 +105,60 @@ fn all_original_ordered_entries_scopes_unicode_and_internal_aliases_match() {
 }
 
 #[test]
+fn reviewed_original_membership_and_unavailable_scopes_match() {
+    let original: Value = serde_json::from_str(include_str!(
+        "fixtures/source-discovery/reference-review.json"
+    ))
+    .unwrap();
+    for (definition, expected) in original["definitions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .zip(original["cases"].as_array().unwrap())
+    {
+        let temp = tempfile::tempdir().unwrap();
+        populate(temp.path(), definition);
+        let owner = sources(temp.path());
+        for walk in expected["walks"].as_array().unwrap() {
+            let scope = walk["scope"].as_str().unwrap();
+            let entries: Vec<_> = ordered(&owner, scope)
+                .iter()
+                .map(|e| serde_json::json!({"path":e.path.to_str().unwrap(),"is_dir":e.is_dir}))
+                .collect();
+            assert_eq!(
+                Value::from(entries),
+                walk["entries"],
+                "case={} scope={scope}",
+                definition["id"]
+            );
+        }
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn queued_directory_replaced_between_iterator_calls_cannot_escape() {
+    let temp = tempfile::tempdir().unwrap();
+    let root = temp.path().join("project");
+    fs::create_dir_all(root.join("queued")).unwrap();
+    fs::create_dir(temp.path().join("outside")).unwrap();
+    let owner = sources(&root);
+    let mut walk = owner.walk(Path::new(".")).unwrap();
+    assert_eq!(walk.next().unwrap().unwrap().path, Path::new("queued"));
+    fs::remove_dir(root.join("queued")).unwrap();
+    std::os::unix::fs::symlink(temp.path().join("outside"), root.join("queued")).unwrap();
+    let errors: Vec<_> = walk
+        .map(|entry| entry.expect_err("replaced directory was enumerated"))
+        .collect();
+    assert_eq!(errors.len(), 1);
+    assert!(
+        errors[0].to_string().contains("escapes project root"),
+        "{}",
+        errors[0]
+    );
+}
+
+#[test]
 fn a_new_walk_reads_new_rules_without_sharing_stale_filter_state() {
     let temp = tempfile::tempdir().unwrap();
     file(temp.path(), "main.py", b"");

@@ -62,14 +62,20 @@ for item in sources.walk(Path::new("pkg/src"))? {
 
 ## Implementación elegida
 
-Se añade un matcher nativo fijado a `ignore = 0.4.33`, usando únicamente
-`GitignoreBuilder` y `Gitignore::matched`, no su walker con políticas implícitas.
-La composición y el recorrido pertenecen a Ken. La API oficial documenta la raíz
-del matcher y la decisión triestado; la comparación original decide compatibilidad:
-[builder](https://docs.rs/ignore/0.4.33/ignore/gitignore/struct.GitignoreBuilder.html),
-[matcher](https://docs.rs/ignore/0.4.33/ignore/gitignore/struct.Gitignore.html).
-Si una diferencia real exige adaptación, se registra y se prueba en su propietario.
-No se introduce un segundo motor de patrones ni se invoca Git para decidir reglas.
+La revisión final demostró que `ignore0.4.33`/globset cambia llaves literales,
+comodines Unicode y prioridades de directorios. Se sustituye por `SourcePatterns`,
+una adaptación nativa del algoritmo pathspec1.1.1, con `regex1.13.1` ya fijado en
+el workspace. Su archivo conserva atribución y licencia MPL2.0; composición y
+recorrido siguen perteneciendo a Ken. Las clases sin cierre se descartan como
+el original; rangos descendentes, escapes sin carácter y `!` sin patrón fallan.
+No se invoca Python ni Git para decidir reglas.
+
+Los directorios pendientes se revalidan al abrirse. La enumeración usa un
+descriptor de raíz y `openat` sin seguir enlaces en cada componente canónico;
+`fdopendir/readdir` enumera el descriptor mantenido, cerrando la ventana entre
+comprobación y apertura. La identidad lógica del alias no se sustituye por un
+nombre de descriptor. Scope inexistente bajo un archivo se reconoce antes de
+consultar reglas de directorios imposibles.
 
 ## Aceptación
 

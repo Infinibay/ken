@@ -1,0 +1,52 @@
+{
+  "script": "import json,pathlib,tempfile\nfrom ken.gitignore_filter import GitignoreMatcher\nrows=[]\nfor rule in ['a[z-a].py', 'a\\\\', '!', 'a[a--b].py', 'a[.py', 'a[].py', 'a[!].py']:\n with tempfile.TemporaryDirectory() as d:\n  p=pathlib.Path(d);(p/'.gitignore').write_text(rule+'\\n')\n  try:\n   m=GitignoreMatcher(p);answer=m.is_ignored(pathlib.Path('az.py'))\n   rows.append(dict(rule=rule,ignored=answer))\n  except Exception as e: rows.append(dict(rule=rule,error=dict(type=type(e).__name__,message=str(e))))\nprint(json.dumps(rows))\n",
+  "sources": {
+    "src/ken/_paths.py": "e6af40a5215554d99b9614b89d93732193e8faa027bdf5b40b5cea72de116af1",
+    "src/ken/gitignore_filter.py": "a4d7e4ec1f21ee06f83a9b3922c8712ca69d1162f4fe8a345d1c88ac578bd5dd"
+  },
+  "stdout": "[{\"rule\": \"a[z-a].py\", \"error\": {\"type\": \"error\", \"message\": \"bad character range z-a at position 11\"}}, {\"rule\": \"a\\\\\", \"error\": {\"type\": \"GitIgnorePatternError\", \"message\": \"Invalid git pattern: 'a\\\\\\\\'\"}}, {\"rule\": \"!\", \"error\": {\"type\": \"GitIgnorePatternError\", \"message\": \"Invalid git pattern: '!'\"}}, {\"rule\": \"a[a--b].py\", \"error\": {\"type\": \"error\", \"message\": \"bad character range a-- at position 11\"}}, {\"rule\": \"a[.py\", \"ignored\": false}, {\"rule\": \"a[].py\", \"ignored\": false}, {\"rule\": \"a[!].py\", \"ignored\": false}]\n",
+  "stderr": "/Users/andres/Projects/ken/.venv/lib/python3.12/site-packages/pathspec/pattern.py:132: FutureWarning: Possible set difference at position 12\n  regex = re.compile(raw_regex)\n",
+  "exit": 0,
+  "rows": [
+    {
+      "rule": "a[z-a].py",
+      "error": {
+        "type": "error",
+        "message": "bad character range z-a at position 11"
+      }
+    },
+    {
+      "rule": "a\\",
+      "error": {
+        "type": "GitIgnorePatternError",
+        "message": "Invalid git pattern: 'a\\\\'"
+      }
+    },
+    {
+      "rule": "!",
+      "error": {
+        "type": "GitIgnorePatternError",
+        "message": "Invalid git pattern: '!'"
+      }
+    },
+    {
+      "rule": "a[a--b].py",
+      "error": {
+        "type": "error",
+        "message": "bad character range a-- at position 11"
+      }
+    },
+    {
+      "rule": "a[.py",
+      "ignored": false
+    },
+    {
+      "rule": "a[].py",
+      "ignored": false
+    },
+    {
+      "rule": "a[!].py",
+      "ignored": false
+    }
+  ]
+}

@@ -80,3 +80,13 @@ Shared APIs are produced before consumers; all five review risks have concrete t
 No task changes original files, model math, stored schema or active command. Later
 parser selection consumes relative paths and source bytes independently of traversal.
 Execution method is the user's previously selected native inline execution.
+
+## Final review amendment
+
+The one whole-plan review found six Important defects in the selected matcher,
+unavailable scopes and queued-directory confinement. The required one TDD repair
+pass is recorded in `docs/validation/rust-migration-2026-10-23/m3-source-review/`.
+The selected engine is now native `SourcePatterns` + existing regex1.13.1, with
+pathspec1.1.1 attribution/MPL2.0 preserved. The original task history above is
+retained; it does not describe the final engine. Final captures extend the
+original oracle with432decisions/83walks and malformed-error observations.

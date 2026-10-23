@@ -1,0 +1,35 @@
+   Compiling ken-core v0.18.0 (/Users/andres/Projects/ken/crates/ken-core)
+    Finished `test` profile [unoptimized] target(s) in 0.72s
+     Running tests/source_filter.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/source_filter-c9f090d7cabfd429)
+
+running 6 tests
+test a_rule_symlink_cannot_read_outside_the_project ... ok
+test descending_ranges_and_dangling_escapes_are_errors_but_unclosed_classes_are_noops ... FAILED
+test matcher_rejects_non_relative_identity_instead_of_reading_ancestor_rules ... ok
+test original_all_builtin_scoped_negation_unicode_and_escaped_pattern_decisions ... ok
+test reviewed_original_braces_character_wildcards_and_directory_precedence ... FAILED
+test root_barriers_cannot_be_overridden_but_nested_git_rules_can_override_git ... ok
+
+failures:
+
+---- descending_ranges_and_dangling_escapes_are_errors_but_unclosed_classes_are_noops stdout ----
+
+thread 'descending_ranges_and_dangling_escapes_are_errors_but_unclosed_classes_are_noops' (13797438) panicked at crates/ken-core/tests/source_filter.rs:86:9:
+rule=a[z-a].py
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- reviewed_original_braces_character_wildcards_and_directory_precedence stdout ----
+
+thread 'reviewed_original_braces_character_wildcards_and_directory_precedence' (13797443) panicked at crates/ken-core/tests/source_filter.rs:73:13:
+assertion `left == right` failed: case="braces-gitignore" query={"is_dir":false,"path":"a{b,c}.py"}
+  left: false
+ right: true
+
+
+failures:
+    descending_ranges_and_dangling_escapes_are_errors_but_unclosed_classes_are_noops
+    reviewed_original_braces_character_wildcards_and_directory_precedence
+
+test result: FAILED. 4 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+error: test failed, to rerun pass `-p ken-core --test source_filter`

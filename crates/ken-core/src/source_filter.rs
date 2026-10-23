@@ -1,5 +1,5 @@
 //! Project-owned exclusion barriers and independently scoped Git decisions.
-use ignore::gitignore::{Gitignore, GitignoreBuilder};
+use crate::source_patterns::SourcePatterns;
 use std::{
     collections::BTreeMap,
     fs, io,
@@ -34,12 +34,8 @@ pub enum SourceError {
         #[source]
         source: io::Error,
     },
-    #[error("invalid source rules at {path}: {source}")]
-    Rules {
-        path: PathBuf,
-        #[source]
-        source: ignore::Error,
-    },
+    #[error("invalid source rules at {path}: {reason}")]
+    Rules { path: PathBuf, reason: String },
     #[error("source path escapes project root: {path}")]
     OutsideRoot { path: PathBuf },
     #[error("source directory cycle: {path}")]
@@ -50,9 +46,9 @@ pub enum SourceError {
 
 pub struct SourceFilter {
     root: PathBuf,
-    builtins: Gitignore,
-    project: Gitignore,
-    git: BTreeMap<PathBuf, Gitignore>,
+    builtins: SourcePatterns,
+    project: SourcePatterns,
+    git: BTreeMap<PathBuf, SourcePatterns>,
 }
 
 fn io_error(path: &Path, source: io::Error) -> SourceError {
@@ -62,75 +58,38 @@ fn io_error(path: &Path, source: io::Error) -> SourceError {
     }
 }
 
-fn compile(root: &Path, path: &Path, text: &str) -> Result<Gitignore, SourceError> {
-    let mut builder = GitignoreBuilder::new(root);
-    builder.allow_unclosed_class(false);
-    // Python str.splitlines includes these Unicode separators, unlike Rust lines().
-    for line in text.split(|c| {
-        matches!(
-            c,
-            '\n' | '\r'
-                | '\x0b'
-                | '\x0c'
-                | '\x1c'
-                | '\x1d'
-                | '\x1e'
-                | '\u{85}'
-                | '\u{2028}'
-                | '\u{2029}'
-        )
-    }) {
-        match builder.add_line(Some(path.into()), line) {
-            Ok(_) => {}
-            // pathspec1.1.1 discards malformed ranges. ignore0.4.33 exposes
-            // the underlying globset error as text, so keep this adaptation
-            // narrowly bound to the two pinned character-class failures.
-            Err(ignore::Error::Glob { err, .. })
-                if err == "unclosed character class; missing ']'"
-                    || err.starts_with("invalid range; ") => {}
-            Err(source) => {
-                return Err(SourceError::Rules {
-                    path: path.into(),
-                    source,
-                });
-            }
-        }
-    }
-    builder.build().map_err(|source| SourceError::Rules {
+fn compile(path: &Path, text: &str) -> Result<SourcePatterns, SourceError> {
+    SourcePatterns::compile(text).map_err(|reason| SourceError::Rules {
         path: path.into(),
-        source,
+        reason,
     })
 }
 
 impl SourceFilter {
     pub fn new(root: &Path) -> Result<Self, SourceError> {
         let root = fs::canonicalize(root).map_err(|e| io_error(root, e))?;
-        let builtins = compile(&root, &root.join("<builtins>"), &ALWAYS_IGNORE.join("\n"))?;
+        let builtins = compile(&root.join("<builtins>"), &ALWAYS_IGNORE.join("\n"))?;
         let mut filter = Self {
             root,
             builtins,
-            project: Gitignore::empty(),
+            project: SourcePatterns::default(),
             git: BTreeMap::new(),
         };
         filter.project = filter.read_rules(&filter.root.join(".kenignore"))?;
         Ok(filter)
     }
 
-    fn read_rules(&self, path: &Path) -> Result<Gitignore, SourceError> {
+    fn read_rules(&self, path: &Path) -> Result<SourcePatterns, SourceError> {
         let canonical = match fs::canonicalize(path) {
             Ok(path) => path,
-            Err(e) if e.kind() == io::ErrorKind::NotFound => return Ok(Gitignore::empty()),
+            Err(e) if e.kind() == io::ErrorKind::NotFound => return Ok(SourcePatterns::default()),
             Err(e) => return Err(io_error(path, e)),
         };
         if !canonical.starts_with(&self.root) {
             return Err(SourceError::OutsideRoot { path: path.into() });
         }
         let raw = fs::read(&canonical).map_err(|e| io_error(path, e))?;
-        compile(
-            path.parent().unwrap_or(&self.root),
-            path,
-            &String::from_utf8_lossy(&raw),
-        )
+        compile(path, &String::from_utf8_lossy(&raw))
     }
 
     pub fn is_ignored(&mut self, relative: &Path, is_dir: bool) -> Result<bool, SourceError> {
@@ -142,15 +101,12 @@ impl SourceFilter {
                 path: relative.into(),
             });
         }
-        let full = self.root.join(relative);
-        if self
-            .builtins
-            .matched_path_or_any_parents(&full, is_dir)
-            .is_ignore()
-            || self
-                .project
-                .matched_path_or_any_parents(&full, is_dir)
-                .is_ignore()
+        let mut identity = relative.to_string_lossy().into_owned();
+        if is_dir {
+            identity.push('/');
+        }
+        if self.builtins.decision(&identity) == Some(true)
+            || self.project.decision(&identity) == Some(true)
         {
             return Ok(true);
         }
@@ -171,9 +127,13 @@ impl SourceFilter {
                 let spec = self.read_rules(&self.root.join(&base).join(".gitignore"))?;
                 self.git.insert(base.clone(), spec);
             }
-            let result = self.git[&base].matched_path_or_any_parents(&full, is_dir);
-            if !result.is_none() {
-                ignored = result.is_ignore();
+            let local = relative.strip_prefix(&base).expect("ancestor base");
+            let mut local = local.to_string_lossy().into_owned();
+            if is_dir {
+                local.push('/');
+            }
+            if let Some(result) = self.git[&base].decision(&local) {
+                ignored = result;
             }
         }
         Ok(ignored)
