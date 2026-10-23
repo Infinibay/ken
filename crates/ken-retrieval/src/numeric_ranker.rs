@@ -460,6 +460,7 @@ pub struct TreeExplanation {
     pub tree_index: usize,
     pub left_leaf: f64,
     pub right_leaf: f64,
+    #[serde(with = "crate::number_json")]
     pub delta: f64,
     pub first_divergence: Option<Divergence>,
     pub left_path: Vec<PathStep>,
@@ -474,6 +475,7 @@ pub struct PairExplanation {
     pub trees: Vec<TreeExplanation>,
     #[serde(serialize_with = "serialize_margins")]
     pub branch_margin_by_feature: Vec<(PythonText, f64)>,
+    #[serde(serialize_with = "crate::number_json::serialize")]
     pub rounding_residual: f64,
     pub attribution: String,
 }
@@ -487,7 +489,7 @@ fn serialize_margins<S: serde::Serializer>(
         let name = name
             .to_utf8()
             .ok_or_else(|| serde::ser::Error::custom("non-scalar ranking feature"))?;
-        map.serialize_entry(&name, value)?;
+        map.serialize_entry(&name, &crate::number_json::value(*value))?;
     }
     map.end()
 }

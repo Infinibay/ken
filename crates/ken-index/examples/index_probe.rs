@@ -115,6 +115,7 @@ struct NativeError {
 }
 fn retrieval_kind(error: &RetrievalError) -> &'static str {
     match error {
+        RetrievalError::Numeric(e) => e.kind(),
         RetrievalError::Version(_) => "index_version",
         RetrievalError::Model(_) => "model",
         RetrievalError::Invalid(_) => "invalid",

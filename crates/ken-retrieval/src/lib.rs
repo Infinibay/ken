@@ -11,6 +11,8 @@ pub use roles::classify_role;
 #[derive(Debug, thiserror::Error)]
 pub enum RetrievalError {
     #[error(transparent)]
+    Numeric(#[from] numeric_ranker::NumericError),
+    #[error(transparent)]
     Model(#[from] ken_models::ModelError),
     #[error("{0}")]
     Invalid(String),
@@ -68,5 +70,10 @@ pub mod contextual_features;
 pub mod coverage;
 pub mod evidence_features;
 pub mod feature_matrix;
+mod number_json;
+pub mod owner_ranking;
+pub mod ranking_trace;
 mod reductions;
 pub mod word_encoder;
+
+pub mod json_transport;

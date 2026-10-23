@@ -6,12 +6,13 @@ from .reference import Reference,reference_env
 from .numeric_stem_reference import SCRIPT as STEM_SCRIPT
 from .numeric_alignment_reference import SCRIPT as ALIGNMENT_SCRIPT
 from .numeric_feature_reference import SCRIPT as FEATURE_SCRIPT
+from .numeric_owner_reference import SCRIPT as OWNER_SCRIPT
 from .snowball_provenance import capture_original as capture_stem_dependency
 from .native_json import load,identity
 from .selection_reference import owners
 from .retrieval_reference import digest
 ROOT=Path(__file__).resolve().parents[2]
-SUITES={'forest':['tests/retrieval/test_numeric_ranker.py'],'stems':['tests/retrieval/test_stem_reuse.py'],'alignment':['tests/retrieval/test_term_alignment.py'],'features':['tests/retrieval/test_evidence_features.py','tests/retrieval/test_contextual_features.py','tests/retrieval/test_batched_term_coverage.py']}
+SUITES={'forest':['tests/retrieval/test_numeric_ranker.py'],'stems':['tests/retrieval/test_stem_reuse.py'],'alignment':['tests/retrieval/test_term_alignment.py'],'features':['tests/retrieval/test_evidence_features.py','tests/retrieval/test_contextual_features.py','tests/retrieval/test_batched_term_coverage.py'],'owner-ranking':['tests/retrieval/test_owner_ranking.py','tests/retrieval/test_ranking_trace.py']}
 SCRIPT=r'''
 import importlib,json,math,pathlib,platform,sys,unicodedata,warnings
 import numpy as np,pytest
@@ -59,7 +60,7 @@ pathlib.Path(request['result']).write_text(json.dumps(value,ensure_ascii=True,al
 EDGES_SCRIPT=SCRIPT.replace("exit_code=pytest.main(['-o','addopts=','--rootdir='+str(root),'-q',*request['suite'],'--junitxml='+request['junit']],plugins=[Plugin()])","cached=json.loads(pathlib.Path(request['cached_suite']).read_bytes());discovered=cached['discovered'];states=cached['test_states'];exit_code=cached['original_test_exit']")
 ALIGNMENT_EDGES_SCRIPT=ALIGNMENT_SCRIPT.replace("family='alignment'","family=request['family']").replace("exit_code=pytest.main(['-o','addopts=','--rootdir='+str(root),'-q',*request['suite'],'--junitxml='+request['junit']],plugins=[Plugin()])","cached=json.loads(pathlib.Path(request['cached_suite']).read_bytes());discovered=cached['discovered'];states=cached['test_states'];exit_code=cached['original_test_exit']")
 FEATURE_EDGES_SCRIPT=FEATURE_SCRIPT.replace("exit_code=pytest.main(['-o','addopts=','--rootdir='+str(root),'-q',*request['suite'],'--junitxml='+request['junit']],plugins=[Plugin()])","cached=json.loads(pathlib.Path(request['cached_suite']).read_bytes());discovered=cached['discovered'];states=cached['test_states'];exit_code=cached['original_test_exit']").replace("def vector(text):\n if not text:return np.zeros(3,dtype=np.float32)\n value=sum(ord(c)for c in text)%6;v=np.zeros(3,dtype=np.float32);v[value%3]=1. if value<3 else -1.;return v", "def vector(text):\n if text in data.get('vectors',{}):return np.asarray(data['vectors'][text],dtype=np.float32)\n dim=data.get('dimensions',3)\n if not text:return np.zeros(dim,dtype=np.float32)\n value=sum(ord(c)for c in text)%6;v=np.zeros(dim,dtype=np.float32);v[value%dim]=1. if value<3 else -1.;return v")
-SCRIPTS={'forest':SCRIPT,'forest-edges':EDGES_SCRIPT,'stems':STEM_SCRIPT,'alignment':ALIGNMENT_SCRIPT,'alignment-edges':ALIGNMENT_EDGES_SCRIPT,'features':FEATURE_SCRIPT,'features-edges':FEATURE_EDGES_SCRIPT,'features-math-edges':FEATURE_EDGES_SCRIPT}
+SCRIPTS={'forest':SCRIPT,'forest-edges':EDGES_SCRIPT,'stems':STEM_SCRIPT,'alignment':ALIGNMENT_SCRIPT,'alignment-edges':ALIGNMENT_EDGES_SCRIPT,'features':FEATURE_SCRIPT,'features-edges':FEATURE_EDGES_SCRIPT,'features-math-edges':FEATURE_EDGES_SCRIPT,'owner-ranking':OWNER_SCRIPT}
 REUSED_SUITE_PARENTS={'forest-edges':'forest','alignment-edges':'alignment','features-edges':'features','features-math-edges':'features'}
 def definitions(family:str,repo:Path=ROOT):return load(repo/f'crates/ken-retrieval/tests/fixtures/numeric-inputs-{family}.json')['cases']
 def validate_reference(value:dict,family:str,repo:Path=ROOT):
