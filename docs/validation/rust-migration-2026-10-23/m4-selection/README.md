@@ -1,0 +1,11 @@
+# M4b complete owner selection and relevance ranking
+
+Both actual platforms match all758preserved original observations across text/locator, owner descriptions, real-SQL candidate union, contextual ownership/source views, contextual SQL composition and entity/passage relevance.122original tests/platform were captured once in disjoint families. A repeated ranking input occurrence is preserved; combined wire IDs name family/occurrence/original-id.41retrieval Rust roots and38tooling roots pass per platform. All1066original source files are preserved.
+
+Run `.venv/bin/python docs/validation/rust-migration-2026-10-23/m4-selection/VERIFY.py --current` from the repository root. Its authenticated source/tooling snapshot replays raw original/native bytes, exact ordered owners/evidence and calls, fixed numeric bounds, actual platform identity, complete gates, pinned M4a predecessor and preserved original files. M4b acceptance additionally requires the recorded final review to be complete with no remaining Critical/Important findings. M4 and the complete migration remain pending.
+
+The native process runs outside the checkout with empty PATH/HOME, explicit native resources and loader/exec/connect auditing. The request has inputs only. JSON strings join valid escaped surrogate pairs and preserve lone surrogates at the transport boundary; the shared legacy text codec remains unchanged. Numeric comparisons are limited to the predeclared F32/F64 bounds; owner/evidence/source identities, order, output shape and model call traces remain exact.
+
+Native debug measurements include request parsing, scenario SQL preparation and all selection/ranking cases before output serialization. They do not measure the complete public CLI/MCP search path. Linux includes first-load verification of the accepted30,371,298-byte pure-native BLAS bundle. Acquisition/packaging remains M7/M8's explicit obligation. M4c retains numeric forests/features, source-piece ranking and fresh bounded evidence; M4d retains production channels, real public adapters and quality/resource acceptance.
+
+LEDGER.md, RULINGS.md, MINORS.md and the completed REVIEW.md retain the decisions and review record. Original captures/model receipts are reused; no original Python source was removed or modified.
