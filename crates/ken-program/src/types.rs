@@ -62,25 +62,12 @@ pub fn split_types(text: &str, separator: char) -> Vec<String> {
     parts.push(trim(&text[start..]).into());
     parts
 }
-#[derive(Deserialize)]
-struct Unicode {
-    word_ranges: Vec<[u32; 2]>,
-    decimal_ranges: Vec<[u32; 2]>,
-}
 fn character(c: char, decimal: bool) -> bool {
-    static TABLE: OnceLock<Unicode> = OnceLock::new();
-    let table = TABLE.get_or_init(|| {
-        serde_json::from_str(include_str!("unicode15.json")).expect("frozen Unicode15 properties")
-    });
-    let ranges = if decimal {
-        &table.decimal_ranges
+    if decimal {
+        ken_text::unicode::decimal(c)
     } else {
-        &table.word_ranges
-    };
-    let code = u32::from(c);
-    ranges
-        .get(ranges.partition_point(|r| r[1] < code))
-        .is_some_and(|r| r[0] <= code)
+        ken_text::unicode::word(c)
+    }
 }
 fn nominal(s: &str) -> bool {
     !s.is_empty()

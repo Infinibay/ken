@@ -114,3 +114,5 @@ impl<'de> Deserialize<'de> for PythonText {
         Ok(Self { codepoints: points })
     }
 }
+
+pub mod unicode;
