@@ -37,3 +37,5 @@ pub mod representations;
 pub mod query;
 
 pub mod lexical;
+
+pub mod dense;
