@@ -39,3 +39,5 @@ pub mod query;
 pub mod lexical;
 
 pub mod dense;
+
+pub mod proposals;
