@@ -1,0 +1,43 @@
+[workspace]
+members = ["crates/ken-core", "crates/ken-cli", "crates/ken-models", "crates/ken-store", "crates/ken-native-model-api"]
+resolver = "3"
+
+[workspace.package]
+version = "0.18.0"
+edition = "2024"
+rust-version = "1.95"
+publish = false
+license = "MIT"
+
+[workspace.dependencies]
+clap = { version = "=4.5.60", features = ["derive"] }
+ignore = "=0.4.33"
+ureq = { version = "=3.4.2", default-features = false }
+rusqlite = { version = "=0.40.2", default-features = false, features = ["bundled"] }
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = { version = "=1.0.154", features = ["raw_value"] }
+thiserror = "=2.0.21"
+uzers = "=0.12.2"
+libc = "=0.2.191"
+tempfile = "=3.27.0"
+sha2 = "=0.10.9"
+ring = "=0.17.14"
+tokenizers = { version = "=0.22.2", default-features = false, features = ["onig"] }
+onig = { version = "=6.5.3", default-features = false }
+ct2rs = { version = "=0.10.1", default-features = false, features = ["ruy", "sentencepiece"] }
+sentencepiece = "=0.13.2"
+openblas-src = { version = "=0.10.14", features = ["static", "system"] }
+safetensors = "=0.8.0"
+half = "=2.7.1"
+npyz = { version = "=0.9.1", default-features = false, features = ["half"] }
+zip = { version = "=6.0.0", default-features = false, features = ["deflate"] }
+ndarray = { version = "=0.17.1", default-features = false, features = ["std"] }
+py_literal = "=0.4.0"
+libloading = "=0.9.0"
+ort = { version = "=2.0.0-rc.14", default-features = false, features = ["std", "alternative-backend", "api-25", "cuda", "rocm"] }
+
+# Keep the native numerical core in Release even during Rust development/tests.
+# CTranslate2's Debug floating-point path changes long greedy translations.
+[profile.dev.package.ct2rs]
+opt-level = 3
+debug = false

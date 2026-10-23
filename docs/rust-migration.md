@@ -15,6 +15,29 @@ Rust 1.95.0 y los componentes rustfmt/clippy quedan fijados en
 `rust-toolchain.toml`. Cargo fija las dependencias directas y transitivas.
 No se instala ni reemplaza el comando `ken` para ensayar esta entrega.
 
+## Avance al 23 de octubre
+
+M2 está cerrado con [la integración nativa](validation/rust-migration-2026-10-21/m2-integration/README.md)
+y [su revisión y reparación](validation/rust-migration-2026-10-23/m2-integration-review/README.md):
+modelos, adquisición, propietarios diferidos y almacenamiento tienen evidencia
+en macOS arm64 y Linux aarch64. El cierre pasó318/308casos Rust y77tests de
+integración afectados por plataforma. Las matrices neurales previas conservan
+sus identidades y resultados; esas cifras no representan nuevas ejecuciones de
+todos los modelos ni promoción de la aplicación completa.
+
+M3a añade `SourceFilter` y `ProjectSources` para exclusiones y recorrido confinado.
+Los [recibos](validation/rust-migration-2026-10-23/m3-source-discovery/README.md)
+comparan270decisiones y51recorridos originales en cada plataforma; preservan
+orden, scopes, Unicode y aliases internos. Enlaces externos, ciclos y errores de
+acceso se informan explícitamente. La aceptación automática acredita este alcance;
+su revisión final se registra por separado. Parsers, modelo común e indexación
+incremental siguen pendientes, al igual que M4–M8. Los originales permanecen intactos.
+
+Los recibos históricos describen sus propias fuentes. Para reproducir el bloque
+de fuentes después de cambios posteriores, el agregador usa la copia pequeña de
+`native-sources` incluida en el recibo; no atribuye una ejecución vieja al código
+nuevo ni obliga a repetir inferencia sin cambios.
+
 ## Referencia y pruebas
 
 M0 conserva una copia del worktree original, incluyendo fuentes untracked,

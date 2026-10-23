@@ -1,0 +1,75 @@
+{
+  "all_rejected": true,
+  "controls": [
+    {
+      "control": "membership",
+      "rejected": true,
+      "errors": [
+        "actual native response bytes differ"
+      ]
+    },
+    {
+      "control": "directory",
+      "rejected": true,
+      "errors": [
+        "actual native response bytes differ"
+      ]
+    },
+    {
+      "control": "ordering",
+      "rejected": true,
+      "errors": [
+        "actual native response bytes differ"
+      ]
+    },
+    {
+      "control": "source",
+      "rejected": true,
+      "errors": [
+        "recorded native sources differ"
+      ]
+    },
+    {
+      "control": "missing-case",
+      "rejected": true,
+      "errors": [
+        "missing or duplicated source observation"
+      ]
+    },
+    {
+      "control": "rules",
+      "rejected": true,
+      "errors": [
+        "original platform input/results differ"
+      ]
+    },
+    {
+      "control": "integrity",
+      "rejected": true,
+      "errors": [
+        "actual native response bytes differ"
+      ]
+    },
+    {
+      "control": "false-audit-command",
+      "rejected": true,
+      "errors": [
+        "actual exec/network tracer command differs"
+      ]
+    },
+    {
+      "control": "extra-execveat",
+      "rejected": true,
+      "errors": [
+        "unexpected native subprocess or network connection"
+      ]
+    },
+    {
+      "control": "passing-flag-instead-of-tests",
+      "rejected": true,
+      "errors": [
+        "missing, duplicate or unexpected executed Rust cases; incomplete Rust result counters"
+      ]
+    }
+  ]
+}
