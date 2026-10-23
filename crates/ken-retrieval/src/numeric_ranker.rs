@@ -172,6 +172,7 @@ impl Tree {
 pub struct NumericRanker {
     features: Vec<PythonText>,
     trees: Vec<Tree>,
+    fingerprint: std::sync::OnceLock<NumericResult<String>>,
 }
 impl NumericRanker {
     pub fn from_json(raw: &str) -> NumericResult<Self> {
@@ -270,10 +271,14 @@ impl NumericRanker {
                 .map(|r| Tree::parse(r, features.len(), 0))
                 .collect::<NumericResult<_>>()?,
             features,
+            fingerprint: std::sync::OnceLock::new(),
         })
     }
     pub fn features(&self) -> &[PythonText] {
         &self.features
+    }
+    pub fn tree_count(&self) -> usize {
+        self.trees.len()
     }
     pub fn to_json(&self) -> NumericResult<String> {
         Ok(format!(
@@ -291,6 +296,11 @@ impl NumericRanker {
         ))
     }
     pub fn fingerprint(&self) -> NumericResult<String> {
+        self.fingerprint
+            .get_or_init(|| self.compute_fingerprint())
+            .clone()
+    }
+    fn compute_fingerprint(&self) -> NumericResult<String> {
         let canonical = self.to_json()?;
         // ensure_ascii=false emits surrogate code points, which UTF-8 cannot encode.
         let mut offset = 13;

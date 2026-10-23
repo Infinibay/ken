@@ -77,3 +77,4 @@ mod reductions;
 pub mod word_encoder;
 
 pub mod json_transport;
+pub mod rank_models;

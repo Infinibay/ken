@@ -77,11 +77,11 @@ pub struct Owner {
 }
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 pub struct Call {
-    op: String,
+    pub op: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    text: Option<PythonText>,
+    pub text: Option<PythonText>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    texts: Option<Vec<PythonText>>,
+    pub texts: Option<Vec<PythonText>>,
 }
 pub struct Encoder {
     spec: EncoderSpec,
