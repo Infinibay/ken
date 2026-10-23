@@ -1,0 +1,3747 @@
+{
+  "format": "ken-selection-inputs/1",
+  "family": "context_selection",
+  "cases": [
+    {
+      "id": "context_selection:1b8759584b269bd04449573731c32475ff93ca60f780af52f8e556010c44bc02",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel",
+        "views": false,
+        "channel_limit": 1,
+        "broad_limit": 4
+      }
+    },
+    {
+      "id": "context_selection:360939ce0920457ad593d8dd0235a0562dc821a3977a4ed1a138dd5f748c0241",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel",
+        "views": false,
+        "channel_limit": 2,
+        "broad_limit": 4
+      }
+    },
+    {
+      "id": "context_selection:39a539662027bb2158420f0b5919603b24e759c6cb93650341fd4abc64fc5c94",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel",
+        "views": false,
+        "channel_limit": 3,
+        "broad_limit": 4
+      }
+    },
+    {
+      "id": "context_selection:10ef585cb8cac304911c4a6589a8762479a68f9c272bd01d06ec9ff2c5d3effb",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel",
+        "views": true,
+        "channel_limit": 1,
+        "broad_limit": 4
+      }
+    },
+    {
+      "id": "context_selection:85086ff3bce314eca275ee96d33cbe909b821647d2b4edabea9cd5ac5b07ad00",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel",
+        "views": true,
+        "channel_limit": 2,
+        "broad_limit": 4
+      }
+    },
+    {
+      "id": "context_selection:4979e39d438817cb8031722aefa20556b19031919babc0e5829ba90952a046b0",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel",
+        "views": true,
+        "channel_limit": 3,
+        "broad_limit": 4
+      }
+    },
+    {
+      "id": "context_selection:40d420e069ed6b428672de5c14cab4e1b73af3f446d468cfe7e3b23073eaa104",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "browser state",
+        "views": false,
+        "channel_limit": 1,
+        "broad_limit": 4
+      }
+    },
+    {
+      "id": "context_selection:3c14d4d29142dfca46f40cc5261efd5856bf7f0c90a1c9071334b5173a45e57d",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "browser state",
+        "views": false,
+        "channel_limit": 2,
+        "broad_limit": 4
+      }
+    },
+    {
+      "id": "context_selection:94161d440bbb5b5529a83d19ecbdb1c79599b5b3a118596e9c0eb0637d005922",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "browser state",
+        "views": false,
+        "channel_limit": 3,
+        "broad_limit": 4
+      }
+    },
+    {
+      "id": "context_selection:151fb066f0eaaa36538f55376935ff9afbeee3380b438b83cd43817796f70100",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "browser state",
+        "views": true,
+        "channel_limit": 1,
+        "broad_limit": 4
+      }
+    },
+    {
+      "id": "context_selection:84f0f17f448cdc67b88ab3935bfe714fd5e36a8a1d5dbfe98c6ae34c976904a6",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "browser state",
+        "views": true,
+        "channel_limit": 2,
+        "broad_limit": 4
+      }
+    },
+    {
+      "id": "context_selection:56b8a833b1a55186b4b86e8bc834e48384de9339027c666066004d661cfa12dd",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "browser state",
+        "views": true,
+        "channel_limit": 3,
+        "broad_limit": 4
+      }
+    },
+    {
+      "id": "context_selection:e4610f2957127296dba981396ac960c433002893a406a5a24dc43a160f97083b",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "persist_state"
+      }
+    },
+    {
+      "id": "context_selection:422c6fd5ef695cb81fb5c07072c9cf511201c32eb24bba5415d647051a4e8750",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": ""
+      }
+    },
+    {
+      "id": "context_selection:2644196b8a9acbedd62607b74c77c2d6cbf64bf105d42eb8651ff2b6ab7e7b96",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": " \t\n"
+      }
+    },
+    {
+      "id": "context_selection:2c95a069aa216ac74269d1469efda621fab1ca18ccf0fcca1021cd745ff83da7",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel",
+        "runtime": false
+      }
+    },
+    {
+      "id": "context_selection:34ffc99f8b2a71372975bb2c06a19c9d495d52f8de9dc283c2a12dfac5524d55",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel",
+        "expander": false
+      }
+    },
+    {
+      "id": "context_selection:b06e6f4383cf5cf4c23b6b1dcad054729861fb65ad909f69966fc3283143a614",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel",
+        "contextual": false
+      }
+    },
+    {
+      "id": "context_selection:93f51bc910f76284c92b762163861d24ffbb0fac4405099b01e70aadcc4c3a28",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel",
+        "generation_offset": 1
+      }
+    },
+    {
+      "id": "context_selection:0c0a5b322943fc76622aaec7aacd874b7b57aeff94acb907d6dd791a7b07d2db",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel",
+        "stale_source": true
+      }
+    },
+    {
+      "id": "context_selection:31c429830caf41cfef6d835c7b892720e32cb0b5af03e9b978e08e239031312d",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "browser state"
+        },
+        "shared": false,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel"
+      }
+    },
+    {
+      "id": "context_selection:86faf34735cd3d723afbe4031d619fafc62b7597ffe71b01ba50dcc06a73536f",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "persist_state"
+        },
+        "shared": true,
+        "prepare": false,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel",
+        "runtime": false,
+        "expander": false
+      }
+    },
+    {
+      "id": "context_selection:b10d6266d9af94833bb22c4e72a4a4cf66cccf8bffba80447b6b20a0c6352337",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "persist_state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel",
+        "runtime": false,
+        "expander": false
+      }
+    },
+    {
+      "id": "context_selection:ee9a9ea599f118f3370489b7fbf336ada0822db481f7d102d05fd539001f892d",
+      "kind": "context_selection",
+      "input": {
+        "passages": [
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "unrelated",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "fields": {
+              "identity": "function unrelated",
+              "signature": "def unrelated():",
+              "documentation": "Read stored source.",
+              "body": "def unrelated():\n    return 1\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 1,
+              "end_line": 3
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 2
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "persist_state",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "fields": {
+              "identity": "function persist_state",
+              "signature": "def persist_state():",
+              "documentation": "Read stored source.",
+              "body": "def persist_state(jar):\n    jar.store('cookie')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 6,
+              "end_line": 8
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 7
+          },
+          {
+            "entity": {
+              "path": "client.py",
+              "kind": "function",
+              "qualname": "fail",
+              "owner": null,
+              "definition_ordinal": 0
+            },
+            "span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "fields": {
+              "identity": "function fail",
+              "signature": "def fail():",
+              "documentation": "Read stored source.",
+              "body": "def fail():\n    raise ValueError('CONFLICT_SENTINEL')\n",
+              "path": "client.py"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "entity_span": {
+              "start_line": 11,
+              "end_line": 13
+            },
+            "language": "python",
+            "role": "definition",
+            "split_reason": null,
+            "signals": {},
+            "implementation_start_line": 12
+          }
+        ],
+        "document_vectors": [
+          [
+            "persist_state",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "cookie",
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            "fail",
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "fallback_vector": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "query_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "request": {
+          "query": "def unrelated; def persist_state"
+        },
+        "shared": true,
+        "prepare": true,
+        "context_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.6,
+            0.8
+          ]
+        ],
+        "expanded": "conflict sentinel"
+      }
+    }
+  ]
+}

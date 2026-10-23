@@ -44,9 +44,12 @@ mod dense_math;
 pub use dense_math::verify_dense_runtime;
 
 pub mod candidates;
+pub mod contextual;
 pub mod description;
 pub mod intent;
+mod normalized_matrix;
 pub mod proposals;
 pub mod query_encoder;
 pub mod source_locator;
+pub mod source_views;
 mod text_patterns;

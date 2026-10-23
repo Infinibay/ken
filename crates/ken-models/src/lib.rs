@@ -86,6 +86,7 @@ pub use query_policy::{ProtectedQuery, QueryExpansionPlan, plan_query};
 pub use reranker_model::{PreparedReranker, RerankerModel};
 pub use reranker_tokens::PairTokens;
 pub use static_table::StaticTableEncoder;
+pub use static_table::pairwise_sum as numpy_pairwise_sum;
 pub use tokenization::ModelTokenizer;
 pub use transformer_model::{TransformerModel, TransformerRole, TransformerSettings};
 pub use transformer_runtime::{

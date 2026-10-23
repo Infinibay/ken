@@ -105,7 +105,7 @@ impl StaticTableEncoder {
 // NumPy 2.4's stable F32 reduction grouping: eight lanes, 128-element
 // blocks and recursively aligned halves. Required for cancellation/long texts.
 // https://github.com/numpy/numpy/blob/v2.4.4/numpy/_core/src/umath/loops_utils.h.src
-fn pairwise_sum(len: usize, at: &impl Fn(usize) -> f32) -> f32 {
+pub fn pairwise_sum(len: usize, at: &impl Fn(usize) -> f32) -> f32 {
     fn block(start: usize, len: usize, at: &impl Fn(usize) -> f32) -> f32 {
         if len < 8 {
             return (start..start + len).fold(-0.0_f32, |sum, i| sum + at(i));

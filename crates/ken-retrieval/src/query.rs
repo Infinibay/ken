@@ -113,6 +113,11 @@ impl SearchRequest {
     pub fn query(&self) -> &PythonText {
         &self.0.query
     }
+    pub fn with_query(&self, query: PythonText) -> Result<Self> {
+        let mut options = self.0.clone();
+        options.query = query;
+        options.try_into()
+    }
     pub fn target(&self) -> &str {
         &self.0.target
     }

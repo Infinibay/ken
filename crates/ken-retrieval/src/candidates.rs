@@ -377,3 +377,92 @@ pub fn retrieve(
     snapshot.finish()?;
     Ok(result)
 }
+
+pub type QueryExpander<'a> = dyn Fn(&ken_text::PythonText) -> Result<ken_text::PythonText> + 'a;
+
+/// Query expansion contributes proposals; only the original query grants exact authority.
+pub fn retrieve_contextual(
+    conn: &Connection,
+    request: &SearchRequest,
+    profile: &RetrievalProfile,
+    legacy: &LegacyRuntimeIdentity,
+    encoders: &QueryEncoders,
+    runtime: Option<&crate::contextual::ContextualRetriever>,
+    expand_query: Option<&QueryExpander<'_>>,
+) -> Result<(Vec<Candidate>, ken_text::PythonText)> {
+    let policy = profile.contextual.as_ref().ok_or_else(|| {
+        RetrievalError::Invalid("contextual retrieval requires its pinned source policy".into())
+    })?;
+    let mut source_profile = profile.clone();
+    source_profile.candidate_limit = policy.channel_limit;
+    let snapshot = retrieval_snapshot(conn)?;
+    let original = retrieve(conn, request, &source_profile, legacy, encoders)?;
+    if original.len() == 1 && original[0].signals.get("exact").is_some_and(|x| *x != 0.) {
+        snapshot.finish()?;
+        return Ok((original, request.query().clone()));
+    }
+    let (runtime, expand_query) = runtime.zip(expand_query).ok_or_else(|| {
+        RetrievalError::Invalid(
+            "contextual profile requires its pinned retriever and query preparation".into(),
+        )
+    })?;
+    let expanded = expand_query(request.query())?;
+    if expanded
+        .codepoints()
+        .iter()
+        .all(|&c| char::from_u32(c).is_some_and(ken_text::unicode::whitespace))
+    {
+        return Err(RetrievalError::Invalid(
+            "contextual expansion must return nonempty query text".into(),
+        ));
+    }
+    fn without_exact(candidates: Vec<Candidate>) -> Vec<Candidate> {
+        candidates
+            .into_iter()
+            .map(|mut c| {
+                c.signals.remove("exact");
+                c
+            })
+            .collect()
+    }
+    let mut runs = vec![("original".into(), original)];
+    if expanded != *request.query() {
+        let translated = retrieve(
+            conn,
+            &request.with_query(expanded.clone())?,
+            &source_profile,
+            legacy,
+            encoders,
+        )?;
+        runs.push(("expanded".into(), without_exact(translated)));
+    }
+    let static_limit = policy.channel_limit.checked_mul(2).ok_or_else(|| {
+        RetrievalError::Invalid("contextual proposal budget exceeds the native limit".into())
+    })?;
+    let static_proposals = crate::proposals::fuse_proposals(&runs, static_limit, profile.rrf_k)?;
+    let passages = load_passage_map(conn, None)?;
+    let exact = exact_from_passages(conn, &passages, request)?;
+    let owners = group_passages(passages);
+    let scores = runtime.score(
+        request.query(),
+        &expanded,
+        &owners,
+        snapshot.generation,
+        policy,
+    )?;
+    let code_limit = isize::try_from(policy.channel_limit).map_err(|_| {
+        RetrievalError::Invalid("contextual proposal budget exceeds the native limit".into())
+    })?;
+    let mut combined = crate::proposals::fuse_proposals(
+        &[
+            ("static".into(), without_exact(static_proposals)),
+            ("code".into(), scores.propose(&owners, code_limit)?),
+            ("exact".into(), exact),
+        ],
+        policy.broad_limit,
+        profile.rrf_k,
+    )?;
+    scores.enrich(&mut combined)?;
+    snapshot.finish()?;
+    Ok((combined, expanded))
+}
