@@ -1,0 +1,121 @@
+{
+  "format": "ken-import-supplements/1",
+  "cases": [
+    {
+      "id": "28807e5223357963c74a2dc0aad7120d3640e36a7ce6718d6de6b151527c49f1",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "tsconfig.json"
+        ],
+        "configs": {
+          "tsconfig.json": "7b22636f6d70696c65724f7074696f6e73223a7b227061746873223a7b224076616c7565223a225c7564383030227d7d7d"
+        },
+        "imports": [
+          {
+            "module": "@value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": null,
+          "resolution": "unresolved"
+        }
+      ]
+    },
+    {
+      "id": "90dd2c7ddeb1ddd72a41468c906d41f571cf9c6fbac2957d4aa8da57ae2209ec",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "tsconfig.json"
+        ],
+        "configs": {
+          "tsconfig.json": "7b22636f6d70696c65724f7074696f6e73223a7b226261736555726c223a225c7564383030222c227061746873223a7b224076616c7565223a5b226f6e65225d7d7d7d"
+        },
+        "imports": [
+          {
+            "module": "@value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": null,
+          "resolution": "unresolved"
+        }
+      ]
+    }
+  ],
+  "calls": 2,
+  "discovered": [],
+  "test_states": [],
+  "original_test_exit": 0,
+  "runtime": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "python": "3.12.9"
+  },
+  "owners": {
+    "src/ken/indexer.py": "430dab7bec2d643a17a1cf3a616434b3c4efd0ffe07ea93a279146950377cbd4",
+    "src/ken/jsresolve.py": "228919f225dffc74d193d6e24cab7fe093aed4ec7c8d507e722b3079169efd0a",
+    "tests/conftest.py": "e350ce30ebaf2ee1d2861e1e737c96957478b498a9fcaa8a59f04a5e91933986",
+    "tests/test_indexer.py": "17badc54c148fbfec50db43e35dd1fd0ab8c0914cba8e2bc1a1fd64711e88121"
+  },
+  "script": "\nimport functools,hashlib,json,pathlib,platform,sqlite3,sys,tempfile\nimport pytest\nrequest=json.loads(pathlib.Path(sys.argv[1]).read_bytes());root=pathlib.Path(request['root']).resolve()\nimport tree_sitter_language_pack as pack\npack.configure({'cache_dir':request['grammar_cache']})\nimport ken.indexer as indexer\nimport ken.jsresolve as jsresolve\nfor module in (indexer,jsresolve):\n if not pathlib.Path(module.__file__).resolve().is_relative_to(root):raise ValueError('wrong original import module root')\nactual_resolve=indexer._resolve_internal_imports;actual_load=jsresolve._load_jsonc\nobserved={};active_test=None;active_configs=None;discovered=[];states=[];calls=0\n\ndef load(project,rel):\n if active_configs is not None:\n  try:active_configs[rel]=(project/rel).read_bytes().hex()\n  except OSError:pass\n return actual_load(project,rel)\njsresolve._load_jsonc=load\n\n@functools.wraps(actual_resolve)\ndef resolve(conn,project_root=None):\n global calls,active_configs\n imports=conn.execute('SELECT i.id,i.to_module,f.path AS src,f.language AS lang FROM ci_imports i JOIN ci_files f ON f.id=i.from_file_id WHERE i.to_file_id IS NULL').fetchall()\n if not imports:return actual_resolve(conn,project_root)\n calls+=1\n files=[r['path']for r in conn.execute('SELECT id,path FROM ci_files')]\n configs=None if project_root is None else {}\n if configs is not None:\n  for path in files:\n   if path.endswith(('go.mod','composer.json')):\n    try:configs[path]=(project_root/path).read_bytes().hex()\n    except OSError:pass\n inputs=[dict(module=r['to_module'],source_path=r['src'],language=r['lang'])for r in imports]\n structural=[indexer._resolve_import_target(r['module'],files,source_path=r['source_path'])for r in inputs]\n old=active_configs;active_configs=configs\n error=None\n try:actual_resolve(conn,project_root)\n except Exception as failure:error=dict(type=type(failure).__name__,message=str(failure))\n finally:active_configs=old\n definition=dict(files=files,configs=configs,imports=inputs)\n identity=hashlib.sha256(json.dumps(definition,sort_keys=True,ensure_ascii=True).encode()).hexdigest()\n result=dict(id=identity,input=definition,structural_targets=structural,tests=[active_test]if active_test else[],calls=1)\n if error is not None:result['error']=error\n else:\n  values={r['id']:dict(target=r['target'],resolution=r['resolution'])for r in conn.execute('SELECT i.id,f.path AS target,i.resolution FROM ci_imports i LEFT JOIN ci_files f ON f.id=i.to_file_id')}\n  result['results']=[values[r['id']]for r in imports]\n if identity in observed:\n  existing=observed[identity]\n  if {k:v for k,v in result.items()if k not in ('tests','calls')}!={k:v for k,v in existing.items()if k not in ('tests','calls')}:raise ValueError('nondeterministic original resolution')\n  existing['calls']+=1\n  if active_test and active_test not in existing['tests']:existing['tests'].append(active_test)\n else:observed[identity]=result\n if error is not None:raise RuntimeError('observed original resolution error: '+str(error))\nindexer._resolve_internal_imports=resolve\n\nclass Plugin:\n def pytest_collection_finish(self,session):discovered.extend(item.nodeid for item in session.items)\n def pytest_runtest_setup(self,item):\n  global active_test\n  active_test=item.nodeid\n def pytest_runtest_logreport(self,report):\n  if report.when=='call'or report.failed or report.skipped:states.append(dict(nodeid=report.nodeid,when=report.when,outcome=report.outcome))\nexit_code=0\nactive_test=None\nfor definition in request['supplements']:\n with tempfile.TemporaryDirectory(prefix='ken-original-import-')as directory:\n  project=pathlib.Path(directory)\n  for path,raw in (definition['configs']or{}).items():\n   target=project/path;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(bytes.fromhex(raw))\n  conn=sqlite3.connect(':memory:');conn.row_factory=sqlite3.Row\n  conn.executescript('CREATE TABLE ci_files(id INTEGER PRIMARY KEY,path TEXT,language TEXT); CREATE TABLE ci_imports(id INTEGER PRIMARY KEY,from_file_id INTEGER,to_module TEXT,to_file_id INTEGER,resolution TEXT);')\n  languages={r['source_path']:r['language']for r in definition['imports']}\n  for i,path in enumerate(definition['files'],1):conn.execute('INSERT INTO ci_files VALUES(?,?,?)',(i,path,languages.get(path)))\n  ids={r['path']:r['id']for r in conn.execute('SELECT id,path FROM ci_files')}\n  for i,row in enumerate(definition['imports'],1):conn.execute('INSERT INTO ci_imports(id,from_file_id,to_module)VALUES(?,?,?)',(i,ids[row['source_path']],row['module']))\n  try:resolve(conn,None if definition['configs']is None else project)\n  except RuntimeError:pass\n  conn.close()\nresult=dict(format='ken-import-reference/1',cases=list(observed.values()),calls=calls,discovered=discovered,test_states=states,original_test_exit=exit_code,runtime=dict(system=platform.system(),machine=platform.machine(),python=platform.python_version()))\npathlib.Path(request['result']).write_text(json.dumps(result,ensure_ascii=True)+'\\n')\nsys.exit(exit_code)\n",
+  "execution": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": "",
+    "observations": "{\"format\": \"ken-import-reference/1\", \"cases\": [{\"id\": \"28807e5223357963c74a2dc0aad7120d3640e36a7ce6718d6de6b151527c49f1\", \"input\": {\"files\": [\"src/main.ts\", \"tsconfig.json\"], \"configs\": {\"tsconfig.json\": \"7b22636f6d70696c65724f7074696f6e73223a7b227061746873223a7b224076616c7565223a225c7564383030227d7d7d\"}, \"imports\": [{\"module\": \"@value\", \"source_path\": \"src/main.ts\", \"language\": \"typescript\"}]}, \"structural_targets\": [null], \"tests\": [], \"calls\": 1, \"results\": [{\"target\": null, \"resolution\": \"unresolved\"}]}, {\"id\": \"90dd2c7ddeb1ddd72a41468c906d41f571cf9c6fbac2957d4aa8da57ae2209ec\", \"input\": {\"files\": [\"src/main.ts\", \"tsconfig.json\"], \"configs\": {\"tsconfig.json\": \"7b22636f6d70696c65724f7074696f6e73223a7b226261736555726c223a225c7564383030222c227061746873223a7b224076616c7565223a5b226f6e65225d7d7d7d\"}, \"imports\": [{\"module\": \"@value\", \"source_path\": \"src/main.ts\", \"language\": \"typescript\"}]}, \"structural_targets\": [null], \"tests\": [], \"calls\": 1, \"results\": [{\"target\": null, \"resolution\": \"unresolved\"}]}], \"calls\": 2, \"discovered\": [], \"test_states\": [], \"original_test_exit\": 0, \"runtime\": {\"system\": \"Darwin\", \"machine\": \"arm64\", \"python\": \"3.12.9\"}}\n"
+  },
+  "definitions": [
+    {
+      "files": [
+        "src/main.ts",
+        "tsconfig.json"
+      ],
+      "configs": {
+        "tsconfig.json": "7b22636f6d70696c65724f7074696f6e73223a7b227061746873223a7b224076616c7565223a225c7564383030227d7d7d"
+      },
+      "imports": [
+        {
+          "module": "@value",
+          "source_path": "src/main.ts",
+          "language": "typescript"
+        }
+      ]
+    },
+    {
+      "files": [
+        "src/main.ts",
+        "tsconfig.json"
+      ],
+      "configs": {
+        "tsconfig.json": "7b22636f6d70696c65724f7074696f6e73223a7b226261736555726c223a225c7564383030222c227061746873223a7b224076616c7565223a5b226f6e65225d7d7d7d"
+      },
+      "imports": [
+        {
+          "module": "@value",
+          "source_path": "src/main.ts",
+          "language": "typescript"
+        }
+      ]
+    }
+  ]
+}
