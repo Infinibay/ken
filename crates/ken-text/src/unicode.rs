@@ -25,6 +25,45 @@ pub fn word(c: char) -> bool {
 pub fn decimal(c: char) -> bool {
     contains(&table().decimal_ranges, c)
 }
+#[derive(Deserialize)]
+struct QueryUnicode {
+    identifier_start: Vec<[u32; 2]>,
+    identifier_continue: Vec<[u32; 2]>,
+    query_literal_fold: BTreeMap<String, String>,
+}
+fn query_table() -> &'static QueryUnicode {
+    static TABLE: OnceLock<QueryUnicode> = OnceLock::new();
+    TABLE.get_or_init(|| {
+        serde_json::from_str(include_str!("query_unicode15.json")).expect("frozen query Unicode15")
+    })
+}
+pub fn identifier(text: &str) -> bool {
+    let mut chars = text.chars();
+    chars
+        .next()
+        .is_some_and(|c| contains(&query_table().identifier_start, c))
+        && chars.all(|c| contains(&query_table().identifier_continue, c))
+}
+/// Single-character equivalences for the ASCII/Spanish literals of query patterns.
+pub fn query_literal_fold(c: char) -> char {
+    query_table()
+        .query_literal_fold
+        .get(&u32::from(c).to_string())
+        .and_then(|s| s.chars().next())
+        .unwrap_or(c)
+}
+/// Unicode15 word ranges as literal regex character-class content.
+pub fn word_class_content() -> String {
+    let mut result = String::new();
+    for &[start, end] in &table().word_ranges {
+        result.push(char::from_u32(start).expect("word scalar"));
+        if end != start {
+            result.push('-');
+            result.push(char::from_u32(end).expect("word scalar"));
+        }
+    }
+    result
+}
 pub fn whitespace(c: char) -> bool {
     c.is_whitespace() || matches!(c, '\x1c'..='\x1f')
 }
