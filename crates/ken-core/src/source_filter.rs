@@ -42,6 +42,8 @@ pub enum SourceError {
     },
     #[error("source path escapes project root: {path}")]
     OutsideRoot { path: PathBuf },
+    #[error("source directory cycle: {path}")]
+    Cycle { path: PathBuf },
     #[error(transparent)]
     Project(#[from] crate::project::ProjectError),
 }
