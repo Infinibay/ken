@@ -11,7 +11,7 @@ def capture(tmp_path_factory):
     if supplied:return Path(supplied)
     import sys
     root=tmp_path_factory.mktemp('index-evidence');system='macos'if sys.platform=='darwin'else'linux'
-    with tarfile.open(REPO/f'docs/validation/rust-migration-2026-10-23/m3-index/{system}-capture.tar.gz')as archive:archive.extractall(root,filter='data')
+    with tarfile.open(REPO/f'docs/validation/rust-migration-2026-10-23/m3-index-review/{system}-capture.tar.gz')as archive:archive.extractall(root,filter='data')
     return root
 
 def test_actual_native_complete_capture_passes(capture):
@@ -64,9 +64,9 @@ def gate_sample(tmp_path):
     """Synthetic verifier unit inputs; never credited as execution evidence."""
     import xml.etree.ElementTree as ET
     root=tmp_path/'synthetic-gates';root.mkdir()
-    names=['synthetic_case_'+str(i)for i in range(43)]
+    names=['synthetic_case_'+str(i)for i in range(47)]
     (root/'rust-list.log').write_text('\n'.join(n+': test'for n in names))
-    (root/'rust-tests.log').write_text('\n'.join('test '+n+' ... ok'for n in names)+'\ntest result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out;\n')
+    (root/'rust-tests.log').write_text('\n'.join('test '+n+' ... ok'for n in names)+'\ntest result: ok. 47 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out;\n')
     names=['synthetic_'+str(i)for i in range(43)]
     (root/'python-list.log').write_text('\n'.join('tests/rust_migration/test_index_evidence.py::'+n for n in names))
     xml=ET.Element('testsuite')

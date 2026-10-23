@@ -232,7 +232,24 @@ pub fn encode_texts(
         .filter(|s| seen.insert(s.as_str()))
         .cloned()
         .collect();
+    if unique.is_empty() {
+        return Ok(HashMap::new());
+    }
+    let dimension = encoder.dim()?;
+    if dimension == 0 {
+        return Err(RetrievalError::Invalid(
+            "encoder dimension must be positive".into(),
+        ));
+    }
     let mut by_text = embedding_store::cached_embeddings(conn, view.as_str(), revision, &unique)?;
+    for vector in by_text.values() {
+        embedding_store::validated_norm(vector, Some(dimension)).map_err(|_| {
+            RetrievalError::Version(
+                "cached embedding dimensions differ from encoder; rebuild retrieval embeddings"
+                    .into(),
+            )
+        })?;
+    }
     let missing: Vec<_> = unique
         .iter()
         .filter(|s| !by_text.contains_key(*s))
@@ -246,6 +263,9 @@ pub fn encode_texts(
                 "encoder returned a different number of embeddings".into(),
             ));
         }
+        for vector in &vectors {
+            embedding_store::validated_norm(vector, Some(dimension))?;
+        }
         by_text.extend(missing.into_iter().zip(vectors));
     }
     Ok(by_text)
@@ -258,6 +278,7 @@ pub fn index_embeddings(
 ) -> Result<()> {
     profile.validate()?;
     let snapshot = embedding_store::retrieval_snapshot(db.connection())?;
+    let expected_profile = stored_profile(db.connection())?;
     let passages = storage::load_passage_map(db.connection(), None)?;
     let source_generation = snapshot.generation;
     snapshot.finish()?;
@@ -279,13 +300,13 @@ pub fn index_embeddings(
             })
             .collect::<Result<Vec<_>>>()?;
         let revision = profile.vector_revision(view.as_str(), &legacy)?;
+        let raw: Vec<_> = texts.iter().map(|(_, s)| s.clone()).collect();
+        let encoded = encode_texts(db.connection(), view, &revision, &raw, encoder.as_ref())?;
         let texts =
             embedding_store::pending_texts(db.connection(), view.as_str(), &revision, &texts)?;
         if texts.is_empty() {
             continue;
         }
-        let raw: Vec<_> = texts.iter().map(|(_, s)| s.clone()).collect();
-        let encoded = encode_texts(db.connection(), view, &revision, &raw, encoder.as_ref())?;
         let entries = texts
             .into_iter()
             .map(|(id, text)| EmbeddingInput {
@@ -300,6 +321,11 @@ pub fn index_embeddings(
     if storage::generation(tx.connection())? != source_generation {
         return Err(RetrievalError::Version(
             "source changed while encoding; retry indexing".into(),
+        ));
+    }
+    if stored_profile(tx.connection())? != expected_profile {
+        return Err(RetrievalError::Version(
+            "retrieval profile changed while encoding; retry indexing".into(),
         ));
     }
     for (view, revision, entries) in &prepared {

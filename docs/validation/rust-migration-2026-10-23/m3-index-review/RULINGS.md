@@ -1,0 +1,26 @@
+# Decisions and their costs
+
+
+Pre-flight: Tasks 2/3→4 transaction ownership stays caller-side, projection preparation outside writer. Ruling: DocumentEncoder lives in ken-retrieval from its first use and ken-index reexports it — avoids dependency cycle — cost if wrong: adapter API adjustment, no runtime fallback.
+
+Ruling: Preserve M2 rollback-safe copy-on-write legacy allocation rather than Python's unsafe in-place file vector overwrite — committed readers and rollback retain old values; physical addresses may differ and are audited — cost if wrong: externally inspecting vec_slot addresses sees changed addresses, but format and vector values remain compatible.
+
+Ruling: Existing approved migration and latest explicit no-confirmation instruction authorize this subsystem design/plan; no new approval round — scope and behavior remain original-equivalent — cost if wrong: user may request a different internal decomposition.
+
+Task 1: Ruling: fixtures serialize scalar astral characters literally while escaping isolated surrogates — existing PythonText intentionally preserves raw escaped codepoints, so ensure_ascii-only fixture serialization would conflate scalar characters and surrogate pairs — cost if wrong: fixture encoding transport ambiguity; original capture remains intact, independent JSON decoded values unchanged. No oracle suite rerun.
+
+Task 3: Ruling: legacy vector physical writes remain M2's allocator contract (committed-owner/rollback protection and bounded recycling); immutable long-lived MVCC retrieval views are Task 4. Arbitrary legacy readers holding old slots across multiple later index commits need coordinated reader lifetime in M4/M7, not a claim supplied by M2's allocator — cost if wrong: legacy asynchronous readers without coordination can see a recycled slot, as in the original; global snapshot/cutover acceptance remains pending.
+
+Task 4: Ruling: compare encoded vectors as their declared F32 type rather than JSON Value f64 — serde_json's default f64 parser differed by one f64 ULP for an exact F32 decimal, while all F32 bits are identical — cost if wrong: a sub-F32 transport difference is not classified as a vector difference; raw JSON retained.
+
+Task 4: Ruling: normalized artifact blobs use the pre-existing M2 storage tolerance (spec 2026-10-19 lines148/188, plan Global Constraints abs1e-6+rel1e-6), not the overstrict byte comparison initially used here — native scalar and NumPy/BLAS reductions yield a one-F32-ULP renormalization difference; same fixed pre-implementation storage contract applies — cost if wrong: byte identity is not guaranteed after normalized arithmetic, as already declared in M2. Exact raw encoder/inline bytes, IDs, dimensions, revisions, hashes, links/order remain checked and raw artifacts retained. No new tolerance introduced.
+
+Task 4: Ruling: real Potion smoke checks unit norm after F32 storage normalization, not on raw accepted model output — Potion's original FP16 mean/norm rounding intentionally yields slightly non-unit raw vectors; the first smoke exposed an invalid test assumption, no model algorithm changed — cost if wrong: raw model unit-norm assumption is not imposed on an already accepted FP16 backend; raw and stored vectors both retained.
+
+Task 5: Ruling: add SourceFileReader and shared source_handles in ken-core because existing source walker held directory handles but offered no public file reader — reuse one descriptor-relative/no-follow authority rather than duplicate path confinement in indexer — cost if wrong: shared low-level source access could affect enumeration; six existing walk roots re-executed with accepted original fixtures, all pass, no original suite recapture.
+
+Task 5: Ruling: fix reference observer's missing chunk-size control, not native batching — actual native comparison exposed original observer using128 while input requested2. Preserve first capture as invalid history evidence; reuse only its27 genuine passed tests (same original owners/script test section). New HISTORY_SCRIPT executes histories without tests and records original_test_exit=None, empty discovery/states and a hashed explicit suite_reuse reference. Chunk validator RED→GREEN rejects ignored controls. Cost if wrong: reuse provenance could misattribute test execution; raw first suite/XML/source kept and separately verified in matrix.
+
+Final: Ruling: legacy readers spanning multiple later commits remain a required M4/M7 integration constraint — M3 exposes publication and rollback-safe ownership; Rust public legacy consumers do not yet exist. M4 must materialize owned legacy rows/vectors while preventing writer recycling, or introduce coordinated reader lifetime, before any public/native cutover; SQL immutable retrieval views already have MVCC — cost if wrong: a consumer holding physical slots across later commits can observe recycled vectors. Global acceptance stays false; unrestricted reader safety is not credited here.
+
+Final: Ruling: end-to-end native search/runtime cutover is assessed by M4–M8, not the index publication receipt — the approved capability map assigns those actual consumers/transports to later stages — cost if wrong: public capability parity would be overstated; installed command remains Python and migration_complete=false.

@@ -516,3 +516,119 @@ fn malformed_cached_vectors_and_dimension_changes_reject() {
     }
     assert!(load_vectors(db.connection(), "behavior", "different-revision").is_err());
 }
+
+#[test]
+fn projection_preparation_validates_fresh_and_cached_encoder_dimensions() {
+    use ken_retrieval::projections::encode_texts;
+    struct FaultEncoder {
+        dimension: usize,
+        vector: Vec<f32>,
+    }
+    impl DocumentEncoder for FaultEncoder {
+        fn dim(&self) -> Result<usize> {
+            Ok(self.dimension)
+        }
+        fn token_count(&self, text: &str) -> Result<usize> {
+            LexicalCounter.count(text)
+        }
+        fn embed_passages(&self, texts: &[&str]) -> Result<Vec<Vec<f32>>> {
+            Ok(vec![self.vector.clone(); texts.len()])
+        }
+    }
+    let c = first();
+    let (_dir, mut db) = database(&c);
+    let load = loader(false);
+    let indexer = populate(&mut db, &c, load.clone());
+    for (dimension, vector) in [
+        (3, vec![1., 0.]),
+        (3, vec![f32::NAN, 0., 1.]),
+        (3, vec![0.; 3]),
+        (3, vec![f32::MAX, 0., 0.]),
+        (0, vec![]),
+    ] {
+        assert!(
+            encode_texts(
+                db.connection(),
+                View::Behavior,
+                "fresh-review-revision",
+                &["new uncached document".into()],
+                &FaultEncoder { dimension, vector }
+            )
+            .is_err(),
+            "invalid vectors must fail during preparation"
+        );
+    }
+    let tx = db.immediate().unwrap();
+    tx.connection()
+        .execute(
+            "UPDATE ci_retrieval_embeddings SET dimension=2,embedding=x'0000803f00000000'",
+            [],
+        )
+        .unwrap();
+    let calls = load.encoder.calls.borrow().len();
+    assert!(
+        indexer
+            .prepare(tx.connection(), &[&c.input.passages])
+            .is_err(),
+        "cached metadata and bytes can agree while violating encoder dimension"
+    );
+    assert_eq!(
+        load.encoder.calls.borrow().len(),
+        calls,
+        "cache-hit validation must not perform inference"
+    );
+    drop(tx);
+    db.connection()
+        .execute(
+            "UPDATE ci_retrieval_embeddings SET dimension=2,embedding=x'0000803f00000000'",
+            [],
+        )
+        .unwrap();
+    assert!(
+        index_embeddings(&mut db, indexer.profile.clone(), runtime(), load).is_err(),
+        "complete existing links must also validate encoder dimension"
+    );
+}
+
+#[test]
+fn bulk_profile_races_preserve_concurrent_metadata() {
+    for key in ["retrieval_profile", "retrieval_profile_fingerprint"] {
+        let c = first();
+        let (dir, mut db) = database(&c);
+        let load = loader(false);
+        let indexer = populate(&mut db, &c, load.clone());
+        db.connection()
+            .execute("DELETE FROM ci_passage_vectors WHERE view='behavior'", [])
+            .unwrap();
+        db.connection()
+            .execute(
+                "DELETE FROM ci_retrieval_embeddings WHERE view='behavior'",
+                [],
+            )
+            .unwrap();
+        let before = tables(db.connection());
+        let epoch = generation(db.connection()).unwrap();
+        let path = dir.path().join("index.db");
+        *load.encoder.action.borrow_mut() = Some(Box::new(move || {
+            ProjectDatabase::open(&path)
+                .unwrap()
+                .set_meta(key, "concurrent-profile-value")
+                .unwrap();
+        }));
+        let result = index_embeddings(&mut db, indexer.profile.clone(), runtime(), load);
+        assert!(
+            result.is_err(),
+            "bulk preparation must reject a changed profile tuple"
+        );
+        assert!(result.unwrap_err().to_string().contains("profile changed"));
+        assert_eq!(tables(db.connection()), before);
+        assert_eq!(generation(db.connection()).unwrap(), epoch);
+        assert_eq!(
+            db.connection()
+                .query_row("SELECT value FROM meta WHERE key=?1", [key], |r| r
+                    .get::<_, String>(0))
+                .unwrap(),
+            "concurrent-profile-value"
+        );
+    }
+}

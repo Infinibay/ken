@@ -384,3 +384,122 @@ fn prepared_profile_is_published_with_source_and_rolls_back_as_unit() {
     assert!(IndexWriter::publish(&mut db, &file, &options).is_err());
     assert_eq!(snapshot(db.connection()), before);
 }
+
+#[test]
+fn file_vector_ownership_follows_inline_and_unencoded_edits() {
+    let c = fixture()
+        .cases
+        .into_iter()
+        .find(|c| c.input.language.is_none())
+        .unwrap();
+    let (dir, mut db) = database();
+    let stores = LegacyStores::open(
+        &dir.path().join("vectors"),
+        3,
+        Some("provided-deterministic"),
+    )
+    .unwrap();
+    let policy = PassagePolicy::default();
+    let stops = BTreeSet::new();
+    let mapped = WriterOptions {
+        stores: Some(&stores),
+        stopwords: &stops,
+        policy: &policy,
+        now_ms: &|| 1700000000000,
+        parser_version: 10,
+    };
+    let inline = WriterOptions {
+        stores: None,
+        ..mapped
+    };
+    let mut file = prepare(&c.input);
+    encode_pending(std::slice::from_mut(&mut file), &Encoder::default()).unwrap();
+    IndexWriter::publish(&mut db, &file, &mapped).unwrap();
+    let old_slot: i64 = db
+        .connection()
+        .query_row("SELECT vec_slot FROM ci_files", [], |r| r.get(0))
+        .unwrap();
+    file.vectors.insert(DocumentTarget::File, vec![0., 1., 0.]);
+    let before = snapshot(db.connection());
+    let mut invalid = file.clone();
+    invalid.passages[0].source_hash = "mixed generation".into();
+    assert!(IndexWriter::publish(&mut db, &invalid, &inline).is_err());
+    assert_eq!(
+        snapshot(db.connection()),
+        before,
+        "failed inline replacement restores mapped ownership"
+    );
+    IndexWriter::publish(&mut db, &file, &inline).unwrap();
+    let (slot, blob): (Option<i64>, Vec<u8>) = db
+        .connection()
+        .query_row("SELECT vec_slot,embedding FROM ci_files", [], |r| {
+            Ok((r.get(0)?, r.get(1)?))
+        })
+        .unwrap();
+    assert_eq!(
+        slot, None,
+        "inline publication must retire the old mapped authority"
+    );
+    assert_eq!(
+        blob,
+        [0f32, 1., 0.]
+            .iter()
+            .flat_map(|n| n.to_le_bytes())
+            .collect::<Vec<_>>()
+    );
+    assert!(
+        db.connection()
+            .query_row(
+                "SELECT EXISTS(SELECT 1 FROM ci_vec_free WHERE space='ci_files' AND slot=?1)",
+                [old_slot],
+                |r| r.get::<_, bool>(0)
+            )
+            .unwrap()
+    );
+    IndexWriter::publish(&mut db, &file, &mapped).unwrap();
+    let current: i64 = db
+        .connection()
+        .query_row("SELECT vec_slot FROM ci_files", [], |r| r.get(0))
+        .unwrap();
+    assert_eq!(
+        stores.get(VectorSpace::Files).read(&[current]).unwrap(),
+        vec![vec![0., 1., 0.]]
+    );
+    file.vectors.clear();
+    IndexWriter::publish(&mut db, &file, &mapped).unwrap();
+    assert!(
+        db.connection()
+            .query_row(
+                "SELECT vec_slot IS NULL AND embedding IS NULL FROM ci_files",
+                [],
+                |r| r.get::<_, bool>(0)
+            )
+            .unwrap(),
+        "an unencoded edit cannot retain a stale vector"
+    );
+    assert!(high_water(db.connection(), VectorSpace::Files).unwrap() <= 2);
+    assert!(
+        !ken_index::changes::is_unchanged(
+            db.connection(),
+            &file.source.path,
+            &file.source.content_hash,
+            true,
+            10,
+            &policy
+        )
+        .unwrap()
+    );
+    encode_pending(std::slice::from_mut(&mut file), &Encoder::default()).unwrap();
+    IndexWriter::publish(&mut db, &file, &mapped).unwrap();
+    assert!(
+        ken_index::changes::is_unchanged(
+            db.connection(),
+            &file.source.path,
+            &file.source.content_hash,
+            true,
+            10,
+            &policy
+        )
+        .unwrap()
+    );
+}

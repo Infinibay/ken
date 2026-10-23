@@ -42,6 +42,25 @@ fn decode(blob: &[u8], dimension: i64) -> Result<Vec<f32>> {
     }
     Ok(v)
 }
+pub(crate) fn validated_norm(vector: &[f32], dimension: Option<usize>) -> Result<f32> {
+    if vector.is_empty() || vector.iter().any(|n| !n.is_finite()) {
+        return Err(RetrievalError::Invalid(
+            "embedding must be a finite, nonempty vector".into(),
+        ));
+    }
+    if dimension.is_some_and(|expected| expected != vector.len()) {
+        return Err(RetrievalError::Invalid(
+            "embedding dimensions differ from encoder".into(),
+        ));
+    }
+    let norm = vector.iter().fold(0f32, |sum, n| sum + n * n).sqrt();
+    if norm <= 0. || !norm.is_finite() {
+        return Err(RetrievalError::Invalid(
+            "embedding must have a positive finite norm".into(),
+        ));
+    }
+    Ok(norm)
+}
 pub fn put_embeddings(
     tx: &WriteTransaction<'_>,
     view: &str,
@@ -64,17 +83,7 @@ pub fn put_embeddings(
             ));
         }
         let vector = &entry.vector;
-        if vector.is_empty() || vector.iter().any(|n| !n.is_finite()) {
-            return Err(RetrievalError::Invalid(
-                "embedding must be a finite, nonempty vector".into(),
-            ));
-        }
-        let norm = vector.iter().fold(0f32, |sum, n| sum + n * n).sqrt();
-        if norm <= 0. || !norm.is_finite() {
-            return Err(RetrievalError::Invalid(
-                "embedding must have a positive finite norm".into(),
-            ));
-        }
+        let norm = validated_norm(vector, None)?;
         if dimension.is_some_and(|n| n != vector.len()) {
             return Err(RetrievalError::Invalid("mixed embedding dimensions".into()));
         }
@@ -189,12 +198,8 @@ pub fn cached_embeddings(
             let (hash, dim, bytes) = row?;
             let vector = decode(&bytes, dim)
                 .map_err(|_| error("invalid cached artifact; rebuild retrieval embeddings"))?;
-            let norm = vector.iter().fold(0f32, |sum, n| sum + n * n).sqrt();
-            if norm <= 0. || !norm.is_finite() {
-                return Err(error(
-                    "invalid cached artifact; rebuild retrieval embeddings",
-                ));
-            }
+            validated_norm(&vector, None)
+                .map_err(|_| error("invalid cached artifact; rebuild retrieval embeddings"))?;
             out.insert(by_hash[&hash].clone(), vector);
         }
     }

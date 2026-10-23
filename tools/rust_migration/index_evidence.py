@@ -32,7 +32,7 @@ def verify_index_capture(out:Path,reference:dict,sources:dict|None=None,native_s
 def verify_index_gates(gates:Path)->list[str]:
     try:
         listed=(gates/'rust-list.log').read_text();output=(gates/'rust-tests.log').read_text()
-        require(not rust_gate_errors(listed,output)and len(re.findall(r'^([^\n]+): test$',listed,re.M))==43,'complete43affected Rust roots required')
+        require(not rust_gate_errors(listed,output)and len(re.findall(r'^([^\n]+): test$',listed,re.M))==47,'complete47affected Rust roots required')
         discovery={path[:-3].replace('/','.')+'::'+name for path,name in re.findall(r'^(tests/rust_migration/test_index_(?:reference|validate|probe|evidence)\.py)::(.+)$',(gates/'python-list.log').read_text(),re.M)};states=junit_states(gates/'python.xml')
         require(len(discovery)==TOOLING_TESTS and set(states)==discovery and set(states.values())=={'passed'},'complete affected tooling inventory/execution required')
         clippy=(gates/'clippy.log').read_text();require('Finished `dev` profile'in clippy and'error:'not in clippy and'warning:'not in clippy,'affected clippy failed/missing')
@@ -106,6 +106,12 @@ def aggregate_index_matrix(directory:Path,repo:Path,*,snapshot:Path,current:bool
         require(index['sources']==source_identity(snapshot/'native-sources'),'indexing source snapshot differs')
         if current:require(index['sources']==source_identity(repo),'current indexing sources differ')
         for name,expected in index['tooling'].items():require(not Path(name).is_absolute()and'..'not in Path(name).parts and identity(snapshot/'validation-sources'/name)==expected,'indexing validation source differs')
+        review=index.get('review')
+        if review:
+            initial=repo/'docs/validation/rust-migration-2026-10-23/m3-index'
+            require(identity(initial/'FILES.json')['sha256']==review['initial_evidence_sha256']and not _manifest_errors(initial),'initial indexing evidence changed')
+            require(review['range']==['632d35fc','86493ebc']and review['important_findings']==3 and review['minor_findings']==0,'final indexing review identity differs')
+            require((directory/'REVIEW.md').is_file()and(directory/'RULINGS.md').is_file(),'final review decisions missing')
         require(set(index['platforms'])=={'macos','linux'},'both actual indexing platforms required')
         for system in ('macos','linux'):
             platform=index['platforms'][system]
@@ -117,6 +123,11 @@ def aggregate_index_matrix(directory:Path,repo:Path,*,snapshot:Path,current:bool
                 execution=load(raw/'native/execution.json');require((execution['system'],execution['machine'])==(system,'arm64'if system=='macos'else'aarch64'),'actual native indexing platform differs')
                 inputs=load(raw/'native/inputs.json');runtime=load(snapshot/f'native-sources/crates/ken-models/tests/fixtures/profile-identity/{system}.json')['legacy_runtime'];require(inputs['legacy_runtime']==runtime and Path(inputs['grammar_manifest']).name=='manifest.json'and Path(inputs['grammar_manifest']).parent.name=='sdk-'+system,'native runtime/grammar resource selection differs')
                 require(not verify_index_gates(raw/'gates'),'complete affected indexing gates differ');verify_model_smoke(raw/'model-smoke.json')
-        result.update(passed=True,M3e_accepted=True,per_platform=dict(Rust=43,Python=TOOLING_TESTS,original_tests=49,vocabulary_inputs=195,passages=496,storage_histories=26,publication_histories=31,projection_histories=93,index_histories=12))
+                if review:
+                    roots=set(re.findall(r'^([^\n]+): test$',(raw/'gates/rust-list.log').read_text(),re.M))
+                    require({'file_vector_ownership_follows_inline_and_unencoded_edits','projection_preparation_validates_fresh_and_cached_encoder_dimensions','later_invalid_projection_aborts_before_any_chunk_publication','bulk_profile_races_preserve_concurrent_metadata'}<=roots,'review regressions missing')
+                    with tarfile.open(initial/(system+'-capture.tar.gz'))as archive:
+                        require(same_value(load(raw/'model-smoke.json'),json.loads(archive.extractfile('model-smoke.json').read())),'accepted unchanged model smoke reuse differs')
+        result.update(passed=True,M3e_accepted=True,M3_accepted=bool(review),per_platform=dict(Rust=47,Python=TOOLING_TESTS,original_tests=49,vocabulary_inputs=195,passages=496,storage_histories=26,publication_histories=31,projection_histories=93,index_histories=12))
     except(OSError,ValueError,KeyError,TypeError,IndexError,tarfile.TarError)as error:result['errors'].append(str(error))
     return result

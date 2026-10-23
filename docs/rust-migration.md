@@ -36,14 +36,19 @@ cierra dos diferencias con249entradas por plataforma,33pruebas Rust y38pruebas d
 herramientas. M3b está aceptado tras una única revisión y pasada de reparación. Los originales permanecen intactos.
 
 M3c (imports) y M3d (modelo común) también están aceptados tras sus revisiones.
-M3e implementa la indexación incremental completa, con publicación transaccional,
-vocabulario, pasajes y dos vistas de recuperación. La [matriz nativa](validation/rust-migration-2026-10-23/m3-index/README.md)
-pasa43pruebas Rust y43de validación en cada plataforma; compara195entradas de
-vocabulario,496pasajes,26historias de almacenamiento,31de publicación,93de
-proyección y12de indexación completa contra procesos originales aislados.
-Se reutilizan las suites anteriores sin recapturar modelos. La revisión final
-M3e sigue pendiente; M3 completo aún no se declara cerrado. M4–M8 siguen pendientes.
-Los originales permanecen intactos y el comando instalado conserva Python.
+M3e ya tiene [aceptación revisada](validation/rust-migration-2026-10-23/m3-index-review/README.md):
+indexación incremental completa, publicación transaccional, vocabulario, pasajes y
+dos vistas de recuperación. La única revisión encontró3fallos importantes, todos
+corregidos con pruebas RED→GREEN. Cada plataforma pasa47pruebas Rust y43de
+validación;12historias nativas completas coinciden con el original. Las suites
+anteriores y la inferencia ya aceptada se reutilizan con sus identidades.
+
+M0–M3 están aceptados para sus capacidades documentadas. Ahora sigue M4 (búsqueda),
+y quedan M5 (IR/KQL), M6 (memoria/checks), M7 (daemon/integraciones) y M8 (entrega).
+La coordinación de lectores de slots antiguos entre varios commits sigue siendo
+una condición explícita de M4/M7 antes del cambio público. Los originales siguen
+intactos y la aplicación instalada conserva Python. No se declara la migración
+completa ni se calcula avance por líneas traducidas.
 
 Los recibos históricos describen sus propias fuentes. Para reproducir el bloque
 de fuentes después de cambios posteriores, el agregador usa la copia pequeña de

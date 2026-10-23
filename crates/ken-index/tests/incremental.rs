@@ -501,3 +501,54 @@ fn active_profile_is_lazy_and_file_source_races_reject() {
     );
     assert_eq!(load_passage_map(db.connection(), None).unwrap(), old);
 }
+
+#[test]
+fn later_invalid_projection_aborts_before_any_chunk_publication() {
+    struct InvalidEncoder;
+    impl DocumentEncoder for InvalidEncoder {
+        fn dim(&self) -> Result<usize> {
+            Ok(3)
+        }
+        fn token_count(&self, text: &str) -> Result<usize> {
+            LexicalCounter.count(text)
+        }
+        fn embed_passages(&self, texts: &[&str]) -> Result<Vec<Vec<f32>>> {
+            Ok(vec![vec![f32::NAN, 0., 1.]; texts.len()])
+        }
+    }
+    struct InvalidLoader;
+    impl EncoderLoader for InvalidLoader {
+        fn load(&self, _: &EncoderSpec) -> Result<Rc<dyn DocumentEncoder>> {
+            Ok(Rc::new(InvalidEncoder))
+        }
+    }
+    let (root, paths, mut db) = project();
+    write(root.path(), "a.txt", "");
+    write(root.path(), "b.txt", "later source owns a passage");
+    let parsers = registry();
+    let index = Indexer::new(&parsers);
+    let options = IndexOptions {
+        retrieval_profile: Some(profile()),
+        retrieval_loader: Some(Rc::new(InvalidLoader)),
+        legacy_runtime: Some(runtime()),
+        ..Default::default()
+    };
+    assert!(
+        index
+            .index_files(
+                &mut db,
+                &paths,
+                &files(&["a.txt", "b.txt"]),
+                &options,
+                &mut quiet
+            )
+            .is_err()
+    );
+    assert_eq!(
+        count(&db, "ci_files"),
+        0,
+        "even the empty earlier file must remain unpublished"
+    );
+    assert_eq!(count(&db, "ci_passages"), 0);
+    assert_eq!(count(&db, "ci_retrieval_embeddings"), 0);
+}

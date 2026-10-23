@@ -45,15 +45,20 @@ pub(crate) fn file_vector(
     file_id: i64,
     file: &PreparedFile,
 ) -> Result<()> {
-    let Some(stores) = stores else { return Ok(()) };
-    let Some(vector) = file.vectors.get(&DocumentTarget::File) else {
-        return Ok(());
-    };
     let previous: Option<i64> = tx.connection().query_row(
         "SELECT vec_slot FROM ci_files WHERE id=?1",
         [file_id],
         |r| r.get(0),
     )?;
+    let replacement = stores.zip(file.vectors.get(&DocumentTarget::File));
+    let Some((stores, vector)) = replacement else {
+        tx.connection()
+            .execute("UPDATE ci_files SET vec_slot=NULL WHERE id=?1", [file_id])?;
+        if let Some(previous) = previous {
+            release(tx, VectorSpace::Files, &[previous])?;
+        }
+        return Ok(());
+    };
     let slot = allocate(tx, VectorSpace::Files, 1)?[0];
     stores
         .get(VectorSpace::Files)
