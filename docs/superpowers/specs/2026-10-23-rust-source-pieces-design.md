@@ -1,0 +1,44 @@
+# Authenticated source pieces and presentation (M4c2)
+
+## Purpose and boundary
+
+Turn ranked canonical owners into the requested class, module, symbol or physical file, rank those complete pieces, and quote only faithful current source within the original budgets. Continue the approved full migration in native inline execution, without further approval handoffs. Keep every original and all accepted receipts. M4c1 is accepted; its FILES pin is9058d60199da6ef080991203bf0b6351361a5c27c2d5e6358bf31c3f3e4d1a6e at docs/validation/rust-migration-2026-10-23/m4-numeric-owner.
+
+M4c2 owns physical source/catalog containment, piece assembly/features/forest ranking, fixed requested-piece cards, source-evidence completion/refinement and both owner/card presentation. M4d owns neural/symbol/public search orchestration, prepared source-view pools and actual CLI/MCP acceptance. M5–M8 remain required. No capability is deleted or called globally migrated by this slice.
+
+## Concepts and public use
+
+`SourceAuthority` owns a confined root handle and authenticates current regular-file bytes using the accepted ken-core SourceFileReader. `SourceSnapshot` owns one strict UTF8 physical source version, its SHA256 and Python-compatible splitlines. `SourceCatalog` binds immutable canonical owner passages and lexical containment to those snapshots. `PieceCandidate` binds one requested unit to its complete members and retrieved support. `PieceAssembler` owns generation-bound description reuse. `PieceFeatures` projects the pinned262-feature schema using accepted coverage. `PieceReranker` owns requested-piece forest order. `PieceCard` owns the measured requested-piece-card-v102 input projection and excerpt provenance. Source evidence selection owns faithful bounded windows. Presentation owns public output, stale-source reporting and whole-line character trimming.
+
+Representative caller, before neural/public composition:
+
+```rust,ignore
+let source = Arc::new(SourceAuthority::new(&project_paths)?);
+let catalog = Arc::new(SourceCatalog::new(source.clone(), owners)?);
+let mut assembler = PieceAssembler::new(catalog.clone());
+let pieces = assembler.assemble(&matches, requested_piece_kind(&request), 10)?;
+let ranked = piece_ranker.rank(&request, &pieces, Some(&expanded))?;
+let cards = build_piece_cards(&matches, kind, &expanded, &catalog, 20)?;
+let response = present_cards(&cards, &request, &catalog, profile_version)?;
+```
+
+The assembler is bound to its catalog generation; an immutable catalog cannot silently accept a foreign/stale description cache. Public presentation reopens source through the same confined authority and verifies hashes. Snapshot containment does not claim physical mmap/vector-reader lifetime safety: M4d/M7 must still copy rows/vectors under writer exclusion or introduce reader coordination.
+
+## Compatibility contract
+
+- Reuse Rust1.95, accepted Unicode15/Python3.12.9/NumPy2.4.4 behavior, native matrices/forests/word encoder/English stems, descriptions1, source extractor8/parser10, passage256/code-lexical-v1/representation3. Add only a path dependency on existing ken-core if needed; no external dependency/version change.
+- Read/stat the same confined regular source handle through SourceFileReader; do not replace it with an unchecked canonicalize-then-fs::read sequence. Strict UTF8 and Python splitlines preserve CRLF, trailing blanks, Unicode separators and empty files. Recheck bytes at quote time; stale/unreadable/outside/invalid UTF8 yields empty evidence and an honest warning, never fresh-looking old text.
+- Preserve catalog insertion order, exact canonical entity JSON ordering and nearest lexical class/callable selection, including ambiguous equal extents. Extents describe identity; only owned ranges authorize quotes, including nested gaps. Scope completeness checks every nonblank physical line, not only retrieved passages. Reuse source_locator::module_name rather than fork its policy.
+- Catalog/piece admission rejects mixed owner identities/source versions and out-of-range ownership before encoding or quoting. Preserve stricter source guards accepted in M4b/M4c1; capture and explicitly identify any inherited unsafe original behavior rather than reproducing it.
+- Preserve piece group proposal order and limit10; cards limit20. Class members are the declaration plus nearest-class members; file/module include physical-file owners; symbols retain callable/const/constant identity, including C++ constructors/destructors. Complete canonical passages replace partial retrieval support; retrieved score order is stable. Description reuse is catalog-owned and immutable to callers.
+- PIECE_FEATURES has262 names in the exact original order:18scalars,4requested kinds,8declaration kinds and three coverage projections. Original query has no stemming; expanded whole-piece and expanded declaration use stems. Query terms128, field terms4096, vocabulary blocks4096. Preserve document field order/deduplication, encoder/stem calls, first proposed piece's first match as relative prior, top-three stable means, missing declarations and resolved request purpose. Symbol piece ranking bypasses optional numeric work; other kinds sort named path, exact support, model score, stable proposals.
+- Preserve exact registered piece forest1280trees/262features/fingerprint62846d51f58e5da1cf27ad444073d14341bdc6368f8552a7bb1c30e8d6e7d9b9. Reuse accepted loader/static model resources; no training/catalog recapture. Feature arithmetic may use fixed F64 abs1e-12+rel1e-12; actual static composition retains upstream fixed F32 abs1e-6+rel1e-6 only in feature inputs. Paths, leaf bits, scores, order, evidence, identity, diagnostics and calls are exact.
+- Fixed card projection requested-piece-card-v102: at most64physical lines/4excerpts/12000Python characters in compact sorted ensure_ascii=false JSON. Preserve declaration/documentation/implementation roles, query term policy, first36/second16line implementation windows,12line declaration/docs, canonical ties and deduplication of physical lines. card_text is byte-for-byte original for scalar text. Validate provenance, containment, exact content and current hash before quoting; display formatting cannot change measured cards.
+- Owner evidence uses at most40total lines; completion at most3owned regions; relevance refinement defaults1owner/6window candidates/3fragments, allows1–4fragments and requires one finite judge score per proposed bundle. A supplied RelevanceJudge receives actual candidate documents/purpose; this slice does not instantiate a neural runtime. Lexical source refinement uses at most24windows and1/2/3fragment bundles, distinct cue coverage and stable earliest ties. Cue masks must support arbitrarily many query terms, not silently truncate to a machine word. Bypass identity/exact as original and preserve ranking/membership.
+- Owner and card presentation retain their distinct original behavior, including file deduplication, exact declarations, selected-window fragments, stale warnings, explain fields and omitted/truncated flags. Card display has16lines normally/64when explaining; owner display40lines. Compact response length counts Python characters, including JSON escapes, not UTF8 bytes. Trim only whole physical lines/fragments and lower-priority hits, preserving returned identities/order. If the empty response envelope itself exceeds an extremely small budget, preserve the original honest envelope rather than inventing content or dropping required metadata.
+
+## Validation and completion
+
+Capture only new disjoint actual-original observations and the corresponding scoped suites once per platform, immediately before implementation of each concept. Record scripts/requests/raw results/exit/JUnit/owner hashes and exact discovery; supplemental observations reuse suite evidence. Preserve all861M4c1 numeric and758M4b selection observations and prior model receipts without recapturing originals. Public usage tests cover nested ownership, invalid ranges, cross-generation caches, live-file replacement/symlink escape, multibyte/escaped JSON budgets, stable priors/calls/bypass and production tree paths. No skipped/filtered roots or weakened assertions.
+
+An input-only native piece probe constructs disposable test sources only within its own temporary scenario directories and runs outside the checkout with empty PATH/HOME, verified owned resources, native loader/exec/connect auditing and measured time/RSS. Accept both actual macOSarm64/Linuxaarch64 runs, source/binary/raw/resource authentication, complete native/tooling suites and strict fmt/clippy. Capture current-source native rechecks of prior observations only when shared source/boundary changes justify them. One whole-plan fresh review and one Important/Critical TDD fix pass; archive all rulings/minors, verify archived-source receipt independently, commit/push and clean only this plan's scratch/build debris.
