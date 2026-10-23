@@ -200,3 +200,53 @@ def capture_publication_reference(reference:Reference,out:Path,source:Path,repo:
     (out/'publication-stdout').write_bytes(proc.stdout);(out/'publication-stderr').write_bytes(proc.stderr)
     if proc.returncode:raise ValueError(proc.stderr.decode(errors='replace')[-3000:])
     value=json.loads(target.read_bytes());value.update(script_sha256=hashlib.sha256(PUBLICATION_SCRIPT.encode()).hexdigest(),execution=dict(exit=proc.returncode,stdout_sha256=hashlib.sha256(proc.stdout).hexdigest(),stderr_sha256=hashlib.sha256(proc.stderr).hexdigest()));target.write_bytes((json.dumps(value,ensure_ascii=False)+'\n').encode('utf-8',errors='backslashreplace'));return value
+
+PROJECTION_SCRIPT=r'''
+import dataclasses,hashlib,json,pathlib,platform,sys
+import numpy as np
+from ken.db import connect,init_schema
+from ken.retrieval.model import Passage,EntityKey,Span
+from ken.retrieval.profile import EncoderSpec,RetrievalProfile
+from ken.retrieval.indexing import ProjectionIndexer,source_policy_key
+from ken.retrieval.storage import replace_file_passages
+from ken.retrieval.passages import PassagePolicy,lexical_token_count
+from ken.retrieval.embedding_store import load_vectors,cached_embeddings
+request=json.loads(pathlib.Path(sys.argv[1]).read_bytes());root=pathlib.Path(request['root'])
+import ken.retrieval.indexing as owner
+if not pathlib.Path(owner.__file__).resolve().is_relative_to(root.resolve()):raise ValueError('wrong original projection owner')
+class Encoder:
+ dim=3
+ def __init__(self,counter):self.calls=[];self.counter=counter
+ def token_count(self,text):return len(text)if self.counter=='characters'else lexical_token_count(text)
+ def embed_passages(self,texts):
+  self.calls.append(list(texts));out=[]
+  for text in texts:
+   data=text.encode();v=np.array([sum(data)%31+1,len(data)%23+1,sum((i+1)*b for i,b in enumerate(data))%19+1],dtype=np.float32);out.append(v/np.linalg.norm(v))
+  return out
+cases=[]
+for row in json.loads(pathlib.Path(request['source']).read_bytes())['cases']:
+ for counter,sequence,budget in [('lexical',512,128),('characters',64,8),('characters',38,8)]:
+  conn=connect(pathlib.Path(':memory:'));init_schema(conn);data=row['input'];spec=EncoderSpec('provided','a'*40,'provided',sequence_length=sequence);profile=RetrievalProfile(spec,spec,max_tokens=budget,passage_tokenizer='behavior-model'if counter=='characters'else'code-lexical-v1')
+  conn.execute("INSERT INTO meta(key,value)VALUES('retrieval_profile',?)",(json.dumps(profile.to_dict(),sort_keys=True),));conn.execute("INSERT INTO meta(key,value)VALUES('retrieval_profile_fingerprint',?)",(profile.fingerprint,))
+  conn.execute("INSERT INTO ci_files(path,language,content_hash,mtime,indexed_at)VALUES(?,?,x'00',0,0)",(data['path'],data['language']))
+  for s in (data['parsed']or{}).get('symbols',[]):conn.execute('INSERT INTO ci_symbols(file_id,kind,name,qualname,line_start,line_end,docstring)VALUES(1,?,?,?,?,?,?)',(s['kind'],s['name'],s['qualname'],s['line_start'],s['line_end'],s['docstring']))
+  passages=[Passage(**{**p,'entity':EntityKey(**p['entity']),'span':Span(**p['span']),'entity_span':Span(**p['entity_span'])})for p in data['passages']]
+  encoder=Encoder(counter);indexer=ProjectionIndexer(conn,profile,encoders={'identity':encoder,'behavior':encoder});prepared=indexer.prepare([passages,passages])
+  conn.execute('BEGIN IMMEDIATE');ids=replace_file_passages(conn,1,passages,source_hash=data['source_hash']);prepared[0].publish(conn,ids);conn.commit()
+  cached=indexer.prepare([passages]);views={view:dict(texts=prepared[0].views[view][0],vectors=[v.tolist()for v in prepared[0].views[view][1]],revision=profile.vector_revision(view))for view in('identity','behavior')}
+  tables={table:[[{'blob_hex':v.hex()}if isinstance(v,bytes)else v for v in r]for r in conn.execute('SELECT * FROM '+table+' ORDER BY '+order)]for table,order in [('ci_retrieval_embeddings','id'),('ci_passage_vectors','passage_id,view')]}
+  result=dict(ids=ids,views=views,tables=tables,calls=encoder.calls,policy=source_policy_key(profile),fingerprint=profile.fingerprint,stored_profile=json.dumps(profile.to_dict(),sort_keys=True))
+  value=dict(input=dict(profile=profile.to_dict(),passages=data['passages'],symbols=(data['parsed']or{}).get('symbols',[]),path=data['path'],language=data['language'],source_hash=data['source_hash'],counter=counter),result=result)
+  value['id']=hashlib.sha256(json.dumps(value['input'],ensure_ascii=True,separators=(',',':')).encode()).hexdigest();cases.append(value);conn.close()
+result=dict(format='ken-index-projection-reference/1',cases=cases,runtime=dict(system=platform.system(),python=platform.python_version()),source_sha256=hashlib.sha256(pathlib.Path(request['source']).read_bytes()).hexdigest())
+pathlib.Path(request['result']).write_text(json.dumps(result,ensure_ascii=True)+'\n')
+'''
+def capture_projection_reference(reference:Reference,out:Path,source:Path)->dict:
+    target=out/'projection-reference.json'
+    if target.exists():return json.loads(target.read_bytes())
+    out.mkdir(parents=True,exist_ok=True);request=dict(root=str(reference.root),source=str(source),result=str(target))
+    (out/'projection-request.json').write_text(json.dumps(request));(out/'projection-capture.py').write_text(PROJECTION_SCRIPT)
+    proc=subprocess.run([str(reference.python),str(out/'projection-capture.py'),str(out/'projection-request.json')],cwd=reference.root,env=reference_env(reference,out/'environment'),capture_output=True)
+    (out/'projection-stdout').write_bytes(proc.stdout);(out/'projection-stderr').write_bytes(proc.stderr)
+    if proc.returncode:raise ValueError(proc.stderr.decode(errors='replace')[-3000:])
+    value=json.loads(target.read_bytes());value.update(script_sha256=hashlib.sha256(PROJECTION_SCRIPT.encode()).hexdigest(),execution=dict(exit=proc.returncode,stdout_sha256=hashlib.sha256(proc.stdout).hexdigest(),stderr_sha256=hashlib.sha256(proc.stderr).hexdigest()));target.write_bytes((json.dumps(value,ensure_ascii=False)+'\n').encode('utf-8',errors='backslashreplace'));return value

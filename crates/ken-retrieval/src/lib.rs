@@ -10,6 +10,8 @@ pub use passages::{
 pub use roles::classify_role;
 #[derive(Debug, thiserror::Error)]
 pub enum RetrievalError {
+    #[error(transparent)]
+    Model(#[from] ken_models::ModelError),
     #[error("{0}")]
     Invalid(String),
     #[error("{0}")]
@@ -17,11 +19,17 @@ pub enum RetrievalError {
     #[error(transparent)]
     Sql(#[from] rusqlite::Error),
     #[error(transparent)]
+    Store(#[from] ken_store::StoreError),
+    #[error(transparent)]
     Json(#[from] serde_json::Error),
 }
 pub type Result<T> = std::result::Result<T, RetrievalError>;
 
 pub mod storage;
 
-mod encoder;
+pub mod encoder;
 pub use encoder::{DocumentEncoder, EncoderCounter};
+
+pub mod embedding_store;
+pub mod projections;
+pub mod representations;

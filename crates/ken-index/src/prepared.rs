@@ -20,6 +20,7 @@ pub struct PreparedFile {
     pub intent_texts: Vec<String>,
     pub documents: Vec<Document>,
     pub vectors: BTreeMap<DocumentTarget, Vec<f32>>,
+    pub projection: Option<ken_retrieval::projections::PreparedProjection>,
 }
 impl PreparedFile {
     pub fn new(
@@ -68,6 +69,7 @@ impl PreparedFile {
             intent_texts,
             documents: vec![],
             vectors: BTreeMap::new(),
+            projection: None,
         };
         file.documents = documents::for_file(&file);
         Ok(file)

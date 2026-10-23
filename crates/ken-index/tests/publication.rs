@@ -318,3 +318,69 @@ fn legacy_vectors_survive_rollback_and_reuse_bounded_slots() {
         0
     );
 }
+#[test]
+fn prepared_profile_is_published_with_source_and_rolls_back_as_unit() {
+    use ken_models::{EncoderSpec, LegacyRuntimeIdentity, RetrievalProfile};
+    use ken_retrieval::{
+        encoder::EncoderLoader,
+        projections::{ProjectionIndexer, View},
+    };
+    use std::rc::Rc;
+    struct Loader(Rc<Encoder>);
+    impl EncoderLoader for Loader {
+        fn load(&self, _: &EncoderSpec) -> ken_retrieval::Result<Rc<dyn DocumentEncoder>> {
+            Ok(self.0.clone())
+        }
+    }
+    let c = fixture()
+        .cases
+        .into_iter()
+        .find(|c| c.input.language.as_deref() == Some("python"))
+        .unwrap();
+    let (_dir, mut db) = database();
+    let mut file = prepare(&c.input);
+    let profile=RetrievalProfile::from_json(&json!({"identity":{"model_id":"provided","revision":"a".repeat(40),"backend":"provided"},"behavior":{"model_id":"provided","revision":"a".repeat(40),"backend":"provided"}}).to_string()).unwrap();
+    let runtime: Value = serde_json::from_str(include_str!(
+        "../../ken-models/tests/fixtures/profile-identity/macos.json"
+    ))
+    .unwrap();
+    let runtime = LegacyRuntimeIdentity::from_json(&runtime["legacy_runtime"].to_string()).unwrap();
+    let indexer = ProjectionIndexer::new(
+        db.connection(),
+        profile,
+        runtime,
+        Rc::new(Loader(Rc::new(Encoder::default()))),
+    )
+    .unwrap();
+    file.projection = Some(
+        indexer
+            .prepare(db.connection(), &[&file.passages])
+            .unwrap()
+            .remove(0),
+    );
+    let policy = PassagePolicy::default();
+    let stops = BTreeSet::new();
+    let options = WriterOptions {
+        stores: None,
+        stopwords: &stops,
+        policy: &policy,
+        now_ms: &|| 1700000000000,
+        parser_version: 10,
+    };
+    IndexWriter::publish(&mut db, &file, &options).unwrap();
+    let count: i64 = db
+        .connection()
+        .query_row("SELECT count(*) FROM ci_passage_vectors", [], |r| r.get(0))
+        .unwrap();
+    assert_eq!(count as usize, 2 * file.passages.len());
+    let before = snapshot(db.connection());
+    file.projection
+        .as_mut()
+        .unwrap()
+        .views
+        .get_mut(&View::Behavior)
+        .unwrap()
+        .vectors[0][0] = f32::NAN;
+    assert!(IndexWriter::publish(&mut db, &file, &options).is_err());
+    assert_eq!(snapshot(db.connection()), before);
+}

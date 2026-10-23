@@ -181,13 +181,25 @@ impl IndexWriter {
                 )?;
             }
         }
-        replace_file_passages(
+        let retired = if file.projection.is_some() {
+            let mut query=tx.connection().prepare("SELECT DISTINCT v.embedding_id FROM ci_passage_vectors v JOIN ci_passages p ON p.id=v.passage_id WHERE p.file_id=?1")?;
+            query
+                .query_map([file_id], |r| r.get::<_, i64>(0))?
+                .collect::<rusqlite::Result<Vec<_>>>()?
+        } else {
+            vec![]
+        };
+        let passage_ids = replace_file_passages(
             &tx,
             file_id,
             &file.passages,
             Some(&file.source_sha256),
             options.policy,
         )?;
+        if let Some(projection) = &file.projection {
+            projection.publish(&tx, &passage_ids)?;
+            ken_retrieval::embedding_store::reclaim_retired(&tx, Some(&retired))?;
+        }
         tx.commit()?;
         Ok(file_id)
     }

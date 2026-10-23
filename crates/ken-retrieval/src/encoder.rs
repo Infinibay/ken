@@ -11,3 +11,9 @@ impl TokenCounter for EncoderCounter<'_> {
         self.0.token_count(text)
     }
 }
+
+use ken_models::EncoderSpec;
+use std::rc::Rc;
+pub trait EncoderLoader {
+    fn load(&self, spec: &EncoderSpec) -> Result<Rc<dyn DocumentEncoder>>;
+}
