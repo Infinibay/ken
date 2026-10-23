@@ -23,3 +23,8 @@ where
 
 mod types;
 pub use types::{TypeRef, parse_type, split_types};
+
+mod attributes;
+mod kinds;
+mod normalize;
+pub use normalize::normalize_syntax;
