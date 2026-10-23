@@ -70,12 +70,12 @@ impl ProjectSources {
             .collect();
         ancestry.reverse();
         let mut walk = SourceWalk::empty(root, filter);
-        walk.root_handle = Some(
-            fs::File::open(&walk.root).map_err(|source| SourceError::Io {
+        walk.root_handle = Some(crate::source_handles::open_root(&walk.root).map_err(
+            |source| SourceError::Io {
                 path: walk.root.clone(),
                 source,
-            })?,
-        );
+            },
+        )?);
         walk.pending.push(Directory {
             path: target,
             ancestry,

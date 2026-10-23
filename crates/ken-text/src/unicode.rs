@@ -62,3 +62,13 @@ pub fn splitlines(text: &str) -> Vec<&str> {
     }
     out
 }
+
+/// Decimal value from the frozen Nd blocks, including adjacent ten-digit scripts.
+pub fn decimal_digit(c: char) -> Option<u32> {
+    let code = u32::from(c);
+    let ranges = &table().decimal_ranges;
+    ranges
+        .get(ranges.partition_point(|r| r[1] < code))
+        .filter(|r| r[0] <= code)
+        .map(|r| (code - r[0]) % 10)
+}

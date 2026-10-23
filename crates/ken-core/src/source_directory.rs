@@ -4,31 +4,10 @@ use std::{ffi::OsString, fs::File, io, path::Path};
 #[cfg(unix)]
 pub(crate) fn read_names(root: &File, relative: &Path) -> io::Result<Vec<OsString>> {
     use std::{
-        ffi::{CStr, CString},
-        os::{
-            fd::{AsRawFd, FromRawFd, IntoRawFd},
-            unix::ffi::{OsStrExt, OsStringExt},
-        },
+        ffi::CStr,
+        os::{fd::IntoRawFd, unix::ffi::OsStringExt},
     };
-    let mut handle = root.try_clone()?;
-    for component in relative.components() {
-        let name = CString::new(component.as_os_str().as_bytes())?;
-        // SAFETY: both the borrowed descriptor and nul-terminated name are valid.
-        // Each component is opened relative to the preceding held directory;
-        // symlink replacements cannot redirect openat to an external directory.
-        let fd = unsafe {
-            libc::openat(
-                handle.as_raw_fd(),
-                name.as_ptr(),
-                libc::O_RDONLY | libc::O_DIRECTORY | libc::O_NOFOLLOW | libc::O_CLOEXEC,
-            )
-        };
-        if fd < 0 {
-            return Err(io::Error::last_os_error());
-        }
-        // SAFETY: openat returned a new descriptor exclusively owned here.
-        handle = unsafe { File::from_raw_fd(fd) };
-    }
+    let handle = crate::source_handles::open(root, relative, true)?;
     // fdopendir takes descriptor ownership only on success.
     let fd = handle.into_raw_fd();
     let stream = unsafe { libc::fdopendir(fd) };

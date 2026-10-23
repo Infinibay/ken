@@ -7,3 +7,6 @@ pub mod source_filter;
 mod source_patterns;
 pub mod source_walk;
 pub mod status;
+
+mod source_handles;
+pub mod source_reader;

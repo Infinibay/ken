@@ -12,6 +12,12 @@ pub use writer::{IndexWriter, LegacyStores, WriterOptions, delete_file, delete_p
 #[derive(Debug, thiserror::Error)]
 pub enum IndexError {
     #[error(transparent)]
+    Io(#[from] std::io::Error),
+    #[error(transparent)]
+    Parse(#[from] ken_syntax::ParseError),
+    #[error(transparent)]
+    Import(#[from] ken_core::imports::ImportError),
+    #[error(transparent)]
     Retrieval(#[from] ken_retrieval::RetrievalError),
     #[error(transparent)]
     Store(#[from] ken_store::StoreError),
@@ -25,3 +31,9 @@ pub type Result<T> = std::result::Result<T, IndexError>;
 mod legacy;
 
 pub mod encoder;
+
+pub mod changes;
+mod imports;
+mod indexer;
+pub mod parse_batch;
+pub use indexer::{IndexOptions, IndexStats, Indexer, PARSER_VERSION, Progress, VectorStorage};
