@@ -3,11 +3,13 @@ from __future__ import annotations
 import hashlib,json,subprocess
 from pathlib import Path
 from .reference import Reference,reference_env
+from .numeric_stem_reference import SCRIPT as STEM_SCRIPT
+from .snowball_provenance import capture_original as capture_stem_dependency
 from .native_json import load,identity
 from .selection_reference import owners
 from .retrieval_reference import digest
 ROOT=Path(__file__).resolve().parents[2]
-SUITES={'forest':['tests/retrieval/test_numeric_ranker.py']}
+SUITES={'forest':['tests/retrieval/test_numeric_ranker.py'],'stems':['tests/retrieval/test_stem_reuse.py']}
 SCRIPT=r'''
 import importlib,json,math,pathlib,platform,sys,unicodedata,warnings
 import numpy as np,pytest
@@ -53,7 +55,7 @@ value=dict(format='ken-numeric-reference/1',family=request['family'],cases=recor
 pathlib.Path(request['result']).write_text(json.dumps(value,ensure_ascii=True,allow_nan=False)+'\n');sys.exit(exit_code)
 '''
 EDGES_SCRIPT=SCRIPT.replace("exit_code=pytest.main(['-o','addopts=','--rootdir='+str(root),'-q',*request['suite'],'--junitxml='+request['junit']],plugins=[Plugin()])","cached=json.loads(pathlib.Path(request['cached_suite']).read_bytes());discovered=cached['discovered'];states=cached['test_states'];exit_code=cached['original_test_exit']")
-SCRIPTS={'forest':SCRIPT,'forest-edges':EDGES_SCRIPT}
+SCRIPTS={'forest':SCRIPT,'forest-edges':EDGES_SCRIPT,'stems':STEM_SCRIPT}
 def definitions(family:str,repo:Path=ROOT):return load(repo/f'crates/ken-retrieval/tests/fixtures/numeric-inputs-{family}.json')['cases']
 def validate_reference(value:dict,family:str,repo:Path=ROOT):
  try:
@@ -75,6 +77,7 @@ def capture(reference:Reference,out:Path,repo:Path=ROOT,family:str='forest',cach
  if(out/'reference.json').exists():
   value=load(out/'reference.json');errors=validate_reference(value,family,repo)
   if errors or value['owners']!=expected:raise ValueError(errors or'original numeric owner inventory differs')
+  if family=='stems':capture_stem_dependency(reference,out)
   return value
  out.mkdir(parents=True,exist_ok=False);(out/'capture.py').write_text(SCRIPTS[family])
  request=dict(root=str(reference.root),family=family,cases=definitions(family,repo),suite=SUITES.get(family,[]),junit=str(out/'original-tests.xml'),result=str(out/'observations.json'))
@@ -91,4 +94,6 @@ def capture(reference:Reference,out:Path,repo:Path=ROOT,family:str='forest',cach
  if family=='forest-edges':value['reused_suite']=dict(path=str(cached_suite),sha256=identity(cached_suite)['sha256'])
  value['corpus_sha256']=digest(value['cases']);errors=validate_reference(value,family,repo)
  if errors:raise ValueError(errors)
- (out/'reference.json').write_text(json.dumps(value,ensure_ascii=True,allow_nan=False)+'\n');return value
+ (out/'reference.json').write_text(json.dumps(value,ensure_ascii=True,allow_nan=False)+'\n')
+ if family=='stems':capture_stem_dependency(reference,out)
+ return value

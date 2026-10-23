@@ -1,0 +1,206 @@
+{
+  "format": "ken-snowball-native/1",
+  "version": "3.0.1",
+  "repository": "https://github.com/snowballstem/snowball",
+  "commit": "e4b3efb449ccb994d39230eb6e8440d267471f4a",
+  "archive": {
+    "bytes": 256153,
+    "sha256": "79d3dbe7e3f9e8e93ffecfe8754cecb28694bb4662d0f7d76a0e9015d936372c"
+  },
+  "source_files": {
+    "COPYING": {
+      "bytes": 1655,
+      "sha256": "f6f9e4c0e737728ca980de8595ded046d5e077017c1bb0ee05dc794a01434dae"
+    },
+    "GNUmakefile": {
+      "bytes": 28161,
+      "sha256": "00d01da2c90b2400983d5dee1a8010b4d7287ee38aa77d7e510ae32ed7bced5e"
+    },
+    "algorithms/english.sbl": {
+      "bytes": 5777,
+      "sha256": "442c915507eb23acab6809edad5860aa6309e3144acdfb2bf7513b2a94fa0180"
+    },
+    "compiler/analyser.c": {
+      "bytes": 61993,
+      "sha256": "55938d85390680292d1b94841ab057786ef59cc85f8e4554a43bcf024a4aec30"
+    },
+    "compiler/driver.c": {
+      "bytes": 20697,
+      "sha256": "079331e329e674d90e727db57510a19f4a2195ebcf758bfa2bea5d5d4c7f74f4"
+    },
+    "compiler/generator.c": {
+      "bytes": 66371,
+      "sha256": "daf2f81f28c21a17ec50e35a3ff9437f2aff2a8fc22a36ee170833a8ec8bcb4a"
+    },
+    "compiler/generator_ada.c": {
+      "bytes": 51992,
+      "sha256": "99522e0dfba154e4d23f59e7bbd805f905c57859e451621c8351ab57ddd9a1cc"
+    },
+    "compiler/generator_csharp.c": {
+      "bytes": 39899,
+      "sha256": "a284348c3802025a3eff90eeefdda07d6cc8b8b0baa08bdff35198e8c9b4f1f4"
+    },
+    "compiler/generator_go.c": {
+      "bytes": 40060,
+      "sha256": "d310d51b286750dd2c30cf1d80bebd5e97a5f5b7300b0dd53334e754f2855364"
+    },
+    "compiler/generator_java.c": {
+      "bytes": 40395,
+      "sha256": "a0d698a6f228744f5d175a9c91505c8c3cd77cd5d2f1be9d1103b8d261a8ae26"
+    },
+    "compiler/generator_js.c": {
+      "bytes": 42338,
+      "sha256": "d1284a0d741d75303c8a8e32dbcc042b1d3d60e51e2f54246de54608523c17f1"
+    },
+    "compiler/generator_pascal.c": {
+      "bytes": 45341,
+      "sha256": "759a9d7aea8e596440d3af8c18e3b306c4a6f01acc84dba913b6f0f73953b611"
+    },
+    "compiler/generator_python.c": {
+      "bytes": 41386,
+      "sha256": "2cfe298ef98b3a57a5d59d4106da2f1fb39ec7954007c668d245439282ef5803"
+    },
+    "compiler/generator_rust.c": {
+      "bytes": 44791,
+      "sha256": "48fcccc2b57aafca67e8d0678f8ba8c9568ad85289046761d429ef6bf75ec793"
+    },
+    "compiler/header.h": {
+      "bytes": 15552,
+      "sha256": "f4809ce2031571c68b5f11e65f31965ec137b477161830835460a49263ca61de"
+    },
+    "compiler/space.c": {
+      "bytes": 8888,
+      "sha256": "53f8b38cebb7f5832e7e133f240efe39b3e5ff51fa3476026c520a9d542e4c13"
+    },
+    "compiler/syswords.h": {
+      "bytes": 4173,
+      "sha256": "9f8ed329a0040d3f6a14f747a48047f9303801dfb7f569d539f9ce83a2b0c1f0"
+    },
+    "compiler/tokeniser.c": {
+      "bytes": 20081,
+      "sha256": "ce8f6d255aa3748a0d078c8b86b131dfd1fac319804d27e59aaadb2b0a4d6506"
+    },
+    "libstemmer/mkalgorithms.pl": {
+      "bytes": 1892,
+      "sha256": "139495dba33859d6e0452ad02edae9085c80f86cb618f7a1bdbfb129591f3173"
+    },
+    "libstemmer/modules.txt": {
+      "bytes": 3575,
+      "sha256": "98b12ceb453204d7a86f199f25df069dced6c20f22d42ef9bc46a211c142fa4a"
+    },
+    "python/snowballstemmer/among.py": {
+      "bytes": 404,
+      "sha256": "ebed9da6bee0a46b48be26c92714a09d2d903e40a3006e70f2c90fdccf41e7eb"
+    },
+    "python/snowballstemmer/basestemmer.py": {
+      "bytes": 8164,
+      "sha256": "40b1347f08eafdca080bb8358c4c56f94f06af63d4610fde84e64f17ba34d0ec"
+    },
+    "rust/src/snowball/among.rs": {
+      "bytes": 253,
+      "sha256": "80170d02614011ab3d53bf280c9f8b6c300d74bf1af02bc3e01614bc7445612e"
+    },
+    "rust/src/snowball/snowball_env.rs": {
+      "bytes": 15671,
+      "sha256": "9453302f82afafe90472b2961bc619d7ac9699ea22bd39b987e47651558e9793"
+    }
+  },
+  "generation": {
+    "commands": [
+      "make -j2 snowball",
+      "./snowball algorithms/english.sbl -rust -o ../english-generated",
+      "./snowball algorithms/english.sbl -py -o ../english_stemmer"
+    ],
+    "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+    "compiler_binary": {
+      "bytes": 352184,
+      "sha256": "9cce8756d63a835e2accedd311f065e0f6b2bf5a83907e1902b8217ccbd074e5"
+    },
+    "rust": {
+      "bytes": 28555,
+      "sha256": "3e09e660b19e78ed5bb4866f1f1b3568d0655aa69920f1482248e13e1cb1b84e"
+    },
+    "python": {
+      "bytes": 23731,
+      "sha256": "5a70f664d5bcc3a3f0e241d63dc00aa2c8e6549f8d002fa5f8bc4ed45e239130"
+    },
+    "python_matches_original": true,
+    "patch_replayed_exactly": true
+  },
+  "original": {
+    "distribution": "3.0.1",
+    "factory": {
+      "bytes": 2932,
+      "path": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/source-transformers-t9-work/.venv/lib/python3.12/site-packages/snowballstemmer/__init__.py",
+      "sha256": "c49181c971ec472ca30d6bb1cfa1ab4507c52a69d6bf7e5d9d587eb313a0e261"
+    },
+    "files": {
+      "among.py": {
+        "bytes": 404,
+        "sha256": "ebed9da6bee0a46b48be26c92714a09d2d903e40a3006e70f2c90fdccf41e7eb"
+      },
+      "basestemmer.py": {
+        "bytes": 8164,
+        "sha256": "40b1347f08eafdca080bb8358c4c56f94f06af63d4610fde84e64f17ba34d0ec"
+      },
+      "english_stemmer.py": {
+        "bytes": 23731,
+        "sha256": "5a70f664d5bcc3a3f0e241d63dc00aa2c8e6549f8d002fa5f8bc4ed45e239130"
+      }
+    },
+    "format": "ken-original-snowball/2",
+    "python": "3.12.9",
+    "runtime": {
+      "machine": "arm64",
+      "system": "Darwin"
+    },
+    "script_sha256": "0c788a9a21f648d75df66703a5db077c7533e2517d6a3fdffc719c6b17b5223a",
+    "execution": {
+      "exit": 0,
+      "files": {
+        "snowball-capture.py": {
+          "bytes": 695,
+          "sha256": "0c788a9a21f648d75df66703a5db077c7533e2517d6a3fdffc719c6b17b5223a"
+        },
+        "snowball-stdout.json": {
+          "bytes": 751,
+          "sha256": "bc6e29adebf16846d7860fcab5eb59c57c0bff119865b713c69949db50f26985"
+        },
+        "snowball-stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snowball-exit.json": {
+          "bytes": 11,
+          "sha256": "bfdedf06596faa2042b0fedd9653ec1023d2e96ed56dc40b607985bc8438c1d5"
+        }
+      }
+    }
+  },
+  "integration_patch": {
+    "bytes": 33376,
+    "sha256": "14c2b2a165a11f600317756a2ab01c6c16d4b5aefc0c4da95e0e96663177b875"
+  },
+  "outputs": {
+    "english.rs": {
+      "bytes": 27233,
+      "sha256": "64d20186f2b1e6c86373fe6d40493a02650c467af0885082f46375f1497944aa"
+    },
+    "runtime.rs": {
+      "bytes": 13263,
+      "sha256": "d8cf924728355916e211583597d9a1da48cd2178397c00367823756432c52854"
+    },
+    "among.rs": {
+      "bytes": 228,
+      "sha256": "dd49bf487d2724d089a0f166ca80ab827820faf7f5044dc60601a9020c049776"
+    },
+    "mod.rs": {
+      "bytes": 318,
+      "sha256": "d367bd236c95cd1cf0df3ebe136d488e8058eb6bc3a8f77e0872e7a60c51608a"
+    }
+  },
+  "license": {
+    "bytes": 1655,
+    "sha256": "f6f9e4c0e737728ca980de8595ded046d5e077017c1bb0ee05dc794a01434dae"
+  }
+}

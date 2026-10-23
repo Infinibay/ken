@@ -58,3 +58,6 @@ mod text_patterns;
 pub mod matrix;
 pub mod numeric_ranker;
 mod rank_json;
+
+mod snowball;
+pub mod stemming;

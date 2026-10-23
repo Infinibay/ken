@@ -4,7 +4,7 @@ from pathlib import Path
 from tools.rust_migration.numeric_reference import definitions,validate_reference
 ROOT=Path(__file__).resolve().parents[2]
 def test_numeric_original_families_accept_only_their_complete_observations():
-    for family,count in [('forest',318),('forest-edges',28)]:
+    for family,count in [('forest',318),('forest-edges',28),('stems',74)]:
         value=json.loads((ROOT/f'crates/ken-retrieval/tests/fixtures/numeric-reference-{family}.json').read_bytes())
         assert len(value['cases'])==count
         assert not validate_reference(value,family)
