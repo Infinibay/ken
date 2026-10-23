@@ -78,3 +78,6 @@ pub mod word_encoder;
 
 pub mod json_transport;
 pub mod rank_models;
+
+pub mod source_catalog;
+pub mod source_snapshot;
