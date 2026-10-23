@@ -63,3 +63,10 @@ mod snowball;
 pub mod stemming;
 
 pub mod alignment;
+
+pub mod contextual_features;
+pub mod coverage;
+pub mod evidence_features;
+pub mod feature_matrix;
+mod reductions;
+pub mod word_encoder;

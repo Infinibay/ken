@@ -220,3 +220,13 @@ pub fn code_terms(text: &str, limit: Option<usize>) -> Vec<String> {
     }
     out
 }
+
+/// Lossless Python text uses non-word barriers for isolated surrogate code points.
+pub fn code_terms_python(text: &ken_text::PythonText, limit: Option<usize>) -> Vec<String> {
+    let scalar: String = text
+        .codepoints()
+        .iter()
+        .map(|&p| char::from_u32(p).unwrap_or('\0'))
+        .collect();
+    code_terms(&scalar, limit)
+}

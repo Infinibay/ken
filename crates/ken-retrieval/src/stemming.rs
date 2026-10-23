@@ -9,6 +9,9 @@ const CAPACITY: usize = 32768;
 const MAX_CACHED_POINTS: usize = 128;
 pub trait WordStemmer: Send + Sync {
     fn stem(&self, word: &PythonText) -> Result<PythonText>;
+    fn stem_words(&self, words: &[PythonText]) -> Result<Vec<PythonText>> {
+        words.iter().map(|word| self.stem(word)).collect()
+    }
 }
 struct EnglishAlgorithm;
 impl WordStemmer for EnglishAlgorithm {
@@ -111,7 +114,7 @@ impl EnglishStems {
         }
     }
     pub fn stem_words(&self, words: &[PythonText]) -> Result<Vec<PythonText>> {
-        words.iter().map(|word| self.stem(word)).collect()
+        WordStemmer::stem_words(self, words)
     }
     pub fn cached_words(&self) -> usize {
         self.cache.lock().expect("English cache").entries.len()
