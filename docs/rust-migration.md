@@ -30,9 +30,11 @@ La [revisión y reparación](validation/rust-migration-2026-10-23/m3-source-revi
 cierra sus seis hallazgos con34pruebas Rust y24pruebas de herramientas por
 plataforma. Se comparan702decisiones y134recorridos originales, preservando
 patrones Unicode, prioridades, orden y scopes. Los directorios pendientes se
-abren mediante un descriptor confinado. M3a está aceptado; parsers, modelo común
-e indexación incremental siguen pendientes, al igual que M4–M8. Los originales
-permanecen intactos.
+abren mediante un descriptor confinado. M3a está aceptado. M3b implementa los19analizadores con20gramáticas y44extensiones;
+[su evidencia](validation/rust-migration-2026-10-23/m3-parsers/README.md) compara239entradas
+por plataforma,31pruebas Rust y38pruebas de herramientas. La revisión final de M3b
+está en curso. Modelo común, resolución de imports e indexación incremental siguen
+pendientes en M3, al igual que M4–M8. Los originales permanecen intactos.
 
 Los recibos históricos describen sus propias fuentes. Para reproducir el bloque
 de fuentes después de cambios posteriores, el agregador usa la copia pequeña de

@@ -1,0 +1,46 @@
+    Finished `test` profile [unoptimized] target(s) in 0.21s
+     Running unittests src/lib.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/ken_syntax-2b155e39bb1b03da)
+0 tests, 0 benchmarks
+     Running tests/detection.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/detection-f27aa03283ee4aff)
+all_original_extensions_and_unknown_names_are_preserved: test
+header_detection_uses_structural_evidence_and_ignores_literal_words: test
+missing_optional_cpp_grammar_keeps_header_fallback_and_direct_errors: test
+
+3 tests, 0 benchmarks
+     Running tests/grammar.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/grammar-f232026e77b9d4be)
+all_twenty_grammars_preserve_complete_original_syntax_shapes: test
+corrupt_or_missing_optional_grammar_only_fails_its_own_consumer: test
+dynamic_tree_survives_catalog_drop_and_concurrent_callers_are_independent: test
+unsafe_duplicate_or_wrong_platform_manifest_is_rejected: test
+
+4 tests, 0 benchmarks
+     Running tests/parsers.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/parsers-dc0f16eae74aa951)
+bash_complete_results_match_original: test
+c_complete_results_match_original: test
+c_macro_digits_match_the_original_python_unicode_version: test
+cpp_complete_results_match_original: test
+csharp_complete_results_match_original: test
+css_complete_results_match_original: test
+dart_complete_results_match_original: test
+go_complete_results_match_original: test
+graphql_complete_results_match_original: test
+html_complete_results_match_original: test
+invalid_utf8_static_method_names_preserve_original_failure_instead_of_partial_results: test
+java_complete_results_match_original: test
+javascript_complete_results_match_original: test
+kotlin_complete_results_match_original: test
+php_complete_results_match_original: test
+powershell_complete_results_match_original: test
+python_complete_outline_scopes_imports_and_documentation_match_original: test
+python_full_literal_forms_match_original: test
+ruby_complete_results_match_original: test
+rust_complete_outline_scopes_imports_and_documentation_match_original: test
+rust_crlf_documentation_matches_original: test
+sql_complete_results_match_original: test
+typescript_complete_results_match_original: test
+
+23 tests, 0 benchmarks
+   Doc-tests ken_syntax
+crates/ken-syntax/src/syntax.rs - syntax::SyntaxNode<'tree>::kind (line 84): test
+
+1 test, 0 benchmarks
