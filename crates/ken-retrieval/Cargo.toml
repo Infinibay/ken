@@ -12,7 +12,7 @@ ken-text = { path = "../ken-text" }
 ken-syntax = { path = "../ken-syntax" }
 ken-store = { path = "../ken-store" }
 serde.workspace = true
-serde_json.workspace = true
+serde_json = { workspace = true, features = ["float_roundtrip"] }
 thiserror.workspace = true
 regex.workspace = true
 onig.workspace = true

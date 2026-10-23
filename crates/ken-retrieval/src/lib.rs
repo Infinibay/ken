@@ -54,3 +54,7 @@ pub mod ranking;
 pub mod source_locator;
 pub mod source_views;
 mod text_patterns;
+
+pub mod matrix;
+pub mod numeric_ranker;
+mod rank_json;
