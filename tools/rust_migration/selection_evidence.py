@@ -11,7 +11,7 @@ from .integration_validate import _manifest_errors,rust_gate_errors
 from .receipts import junit_states
 PREDECESSOR=dict(path='docs/validation/rust-migration-2026-10-23/m4-kernels-review',sha256='b7143128a6959650bb4bc28d0b94c21e3a12d061627ecdfc40d81745762f644e')
 ORIGINAL_ROOTS=dict(text=92,owners=2,selection=8,context=14,context_selection=1,ranking=5)
-RUST_ROOTS=41
+RUST_ROOTS=43
 PYTHON_ROOTS=38
 SCOPE='native request parsing, SQL scenario preparation and complete selection/ranking, before output serialization'
 

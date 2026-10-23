@@ -1,0 +1,27 @@
+# Rulings in chronological order
+
+Ruling: continue approved full migration without design approval menus, builder reviews or implementation subagents — explicit user instruction supersedes optional workflow handoffs — cost if wrong: implementation choices may need the one final-review fix pass; capabilities/tests are never waived.
+
+Ruling: use existing pinned onig6.5.3 for the original lookaround patterns, with frozen Unicode15 classes and one-character query-literal re.I mapping — Rust regex lacks the required lookarounds and native Unicode versions can change authority — cost if wrong: a query edge could choose an exact shortcut; full actual intent/locator corpus and final Review Focus cover this boundary. No new external version/package.
+
+Task1: Ruling: capture original evidence as disjoint task-owned families immediately before each capability is implemented (text/locator now; owner+SQL inTask3; contextual inTask4; ranking inTask5), each with immutable observer bytes, explicit input inventory and its scoped original suites; final matrix authenticates their union — this avoids inventing the entire stateful probe before its caller contracts are exercised and never reruns an unchanged original family — cost if wrong: a missing family could be overlooked; Task6 requires all family manifests/cases/discovery and compares their union. Original task brief's capture-all-first bullet is narrowed accordingly; no behavioral acceptance requirement is removed.
+
+Ruling: reuse the final actual green affected-suite logs for task completion instead of re-executing identical tests solely for task-done bookkeeping — explicit user instruction avoids repeating validated work, and no source changed after those runs — cost if wrong: stale evidence could be reused; each next source change requires its affected tests and final source/binary-pinned matrix.
+
+Task3: Ruling: private query_patterns helper is now text_patterns when reused for owner-source lexical calls/comments/return boundaries — both behaviors require the same frozen Python regex classes and original-codepoint captures; duplicate engines/tables would drift — cost if wrong: changes to matching affect both intent and descriptions, so both complete original corpora remain affected regression gates. Public APIs and shared legacy PythonText codec remain unchanged.
+
+Task3: Ruling: score/ranking observations are pinned per original supported platform — original Accelerate/OpenBLAS reductions can choose different owners for a near cutoff; equality means matching the original on that same platform — cost if wrong: cross-platform comparisons could hide a regression; each native execution must use its corresponding captured oracle and complete ordered data. No numerical bound changed.
+
+Ruling: user now explicitly requests periodic commit and push — push completed up through a57c0b90 to origin/codex/rust-migration; the first auto-review rejected unverified remote trust, so verified gh repo view reports public Infinibay/ken with ADMIN permission, then the same non-force push was approved and succeeded — no main merge or originals/user dirt staged. Future validated blocks continue committing/pushing on this same branch.
+
+Task6: Ruling: the112captured ranking inputs contain one intentionally preserved repeated occurrence of the same input/id (base scenario also reached by the query-purpose loop). Keep all original112observations and raw bytes, assign combined wire IDs as family/occurrence/original-id — this preserves the complete758observation inventory while satisfying the probe's unique-ID rule; no denominator, observation or expected result is removed or recaptured — cost if wrong: occurrence mapping could misalign a comparison, so requests, responses and final original aggregation derive the same ordered mapping and tamper tests pin complete inventory/order.
+
+Final: Ruling: fitted forests/features/stemming and piece/fresh evidence declined by reviewer are retained M4c obligations — this plan's explicit source-selection boundary is independently usable and tested — cost if wrong: public ranking/evidence remains incomplete until the retained stage passes, so M4/global stay false.
+
+Final: Ruling: production channels, real CLI/MCP and quality/resource acceptance declined by reviewer remain M4d — these adapters are not credited by a library/probe proof — cost if wrong: installed search still uses Python and cannot be called migrated before the public gates pass.
+
+Final: Ruling: BLAS acquisition/distribution declined by reviewer remains M7/M8 — native runtime identity/loading is proven here, delivery is a separate capability — cost if wrong: a packaged binary could miss its verified native resources; delivery gates must install and execute them autonomously.
+
+Final: Ruling: unchanged M0–M3/M4a/model catalogs declined by reviewer reuse their sealed accepted predecessors — new source changes run their affected regressions, not unchanged inference — cost if wrong: an undeclared cross-boundary dependency could escape; explicit source/predecessor pins and final global matrix remain required.
+
+Final: Ruling: finishing-a-development-branch was consulted; this coherent plan is closed but the user's migration branch remains active for M4c–M8 — retain the existing branch and publish validated commits under the user's explicit periodic-push authorization, with no merge/PR menu or pause — cost if wrong: a long-lived branch may diverge; global integration and release acceptance still require the remaining milestones.

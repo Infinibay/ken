@@ -1,0 +1,29 @@
+   Compiling ken-retrieval v0.18.0 (/Users/andres/Projects/ken/crates/ken-retrieval)
+    Finished `test` profile [unoptimized] target(s) in 1.20s
+     Running tests/contextual_freshness.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/contextual_freshness-42810c6790d9f2e2)
+
+running 2 tests
+test contextual_proposals_revalidate_the_complete_current_owner_source ... FAILED
+test standalone_source_view_enrichment_rejects_stale_foreign_and_empty_evidence_before_measurement ... FAILED
+
+failures:
+
+---- contextual_proposals_revalidate_the_complete_current_owner_source stdout ----
+
+thread 'contextual_proposals_revalidate_the_complete_current_owner_source' (14414674) panicked at crates/ken-retrieval/tests/contextual_freshness.rs:41:67:
+called `Result::unwrap_err()` on an `Ok` value: [Candidate { entity: EntityKey { path: "source.py", kind: "function", qualname: Some("operation_0"), owner: None, definition_ordinal: 0 }, passages: [Passage { entity: EntityKey { path: "source.py", kind: "function", qualname: Some("operation_0"), owner: None, definition_ordinal: 0 }, span: Span { start_line: 1, end_line: 3 }, fields: PassageFields { identity: PythonText { codepoints: [102, 117, 110, 99, 116, 105, 111, 110, 32, 111, 112, 101, 114, 97, 116, 105, 111, 110, 95, 48] }, signature: PythonText { codepoints: [100, 101, 102, 32, 111, 112, 101, 114, 97, 116, 105, 111, 110, 95, 48, 40, 41, 58] }, documentation: PythonText { codepoints: [82, 101, 97, 100, 32, 115, 116, 111, 114, 101, 100, 32, 115, 111, 117, 114, 99, 101, 46] }, body: PythonText { codepoints: [100, 101, 102, 32, 111, 112, 101, 114, 97, 116, 105, 111, 110, 95, 48, 40, 41, 58, 10, 32, 32, 32, 32, 114, 101, 116, 117, 114, 110, 32, 49, 10] }, path: PythonText { codepoints: [115, 111, 117, 114, 99, 101, 46, 112, 121] } }, source_hash: "new-version", entity_span: Span { start_line: 1, end_line: 3 }, language: "python", role: "definition", split_reason: None, signals: {}, implementation_start_line: Some(2) }], signals: {"cosine_code": 1.0}, owned_regions: [Span { start_line: 1, end_line: 3 }] }, Candidate { entity: EntityKey { path: "source.py", kind: "function", qualname: Some("operation_2"), owner: None, definition_ordinal: 0 }, passages: [Passage { entity: EntityKey { path: "source.py", kind: "function", qualname: Some("operation_2"), owner: None, definition_ordinal: 0 }, span: Span { start_line: 7, end_line: 9 }, fields: PassageFields { identity: PythonText { codepoints: [102, 117, 110, 99, 116, 105, 111, 110, 32, 111, 112, 101, 114, 97, 116, 105, 111, 110, 95, 50] }, signature: PythonText { codepoints: [100, 101, 102, 32, 111, 112, 101, 114, 97, 116, 105, 111, 110, 95, 50, 40, 41, 58] }, documentation: PythonText { codepoints: [82, 101, 97, 100, 32, 115, 116, 111, 114, 101, 100, 32, 115, 111, 117, 114, 99, 101, 46] }, body: PythonText { codepoints: [100, 101, 102, 32, 111, 112, 101, 114, 97, 116, 105, 111, 110, 95, 50, 40, 41, 58, 10, 32, 32, 32, 32, 114, 101, 116, 117, 114, 110, 32, 49, 10] }, path: PythonText { codepoints: [115, 111, 117, 114, 99, 101, 46, 112, 121] } }, source_hash: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", entity_span: Span { start_line: 7, end_line: 9 }, language: "python", role: "definition", split_reason: None, signals: {}, implementation_start_line: Some(8) }], signals: {"cosine_code": 0.6000000238418579}, owned_regions: [Span { start_line: 7, end_line: 9 }] }, Candidate { entity: EntityKey { path: "source.py", kind: "function", qualname: Some("operation_1"), owner: None, definition_ordinal: 0 }, passages: [Passage { entity: EntityKey { path: "source.py", kind: "function", qualname: Some("operation_1"), owner: None, definition_ordinal: 0 }, span: Span { start_line: 4, end_line: 6 }, fields: PassageFields { identity: PythonText { codepoints: [102, 117, 110, 99, 116, 105, 111, 110, 32, 111, 112, 101, 114, 97, 116, 105, 111, 110, 95, 49] }, signature: PythonText { codepoints: [100, 101, 102, 32, 111, 112, 101, 114, 97, 116, 105, 111, 110, 95, 49, 40, 41, 58] }, documentation: PythonText { codepoints: [82, 101, 97, 100, 32, 115, 116, 111, 114, 101, 100, 32, 115, 111, 117, 114, 99, 101, 46] }, body: PythonText { codepoints: [100, 101, 102, 32, 111, 112, 101, 114, 97, 116, 105, 111, 110, 95, 49, 40, 41, 58, 10, 32, 32, 32, 32, 114, 101, 116, 117, 114, 110, 32, 49, 10] }, path: PythonText { codepoints: [115, 111, 117, 114, 99, 101, 46, 112, 121] } }, source_hash: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", entity_span: Span { start_line: 4, end_line: 6 }, language: "python", role: "definition", split_reason: None, signals: {}, implementation_start_line: Some(5) }], signals: {"cosine_code": 0.0}, owned_regions: [Span { start_line: 4, end_line: 6 }] }]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- standalone_source_view_enrichment_rejects_stale_foreign_and_empty_evidence_before_measurement stdout ----
+
+thread 'standalone_source_view_enrichment_rejects_stale_foreign_and_empty_evidence_before_measurement' (14414675) panicked at crates/ken-retrieval/tests/contextual_freshness.rs:26:91:
+called `Result::unwrap_err()` on an `Ok` value: ()
+
+
+failures:
+    contextual_proposals_revalidate_the_complete_current_owner_source
+    standalone_source_view_enrichment_rejects_stale_foreign_and_empty_evidence_before_measurement
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p ken-retrieval --test contextual_freshness`

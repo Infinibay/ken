@@ -2,6 +2,7 @@
 use crate::{
     EntityKey, Passage, Result, RetrievalError,
     dense_math::DenseMath,
+    model::evidence_matches,
     normalized_matrix::NormalizedMatrix,
     query::{Candidate, merge_spans},
     query_encoder::QueryEncoder,
@@ -143,11 +144,7 @@ impl ContextualRetriever {
         }
         for (entity, hash) in self.source.owners.iter().zip(&self.source.hashes) {
             let passages = owners[entity];
-            if passages.is_empty()
-                || passages
-                    .iter()
-                    .any(|p| p.entity != *entity || p.source_hash != *hash)
-            {
+            if !evidence_matches(entity, hash, passages) {
                 return Err(RetrievalError::Version(
                     "contextual owner source changed; reindex owner vectors".into(),
                 ));
@@ -217,6 +214,18 @@ impl ContextualScores {
             ));
         }
         let owners: BTreeMap<_, _> = owners.iter().map(|(k, ps)| (k, ps)).collect();
+        if owners.keys().copied().collect::<BTreeSet<_>>() != self.source.owners.iter().collect()
+            || self
+                .source
+                .owners
+                .iter()
+                .zip(&self.source.hashes)
+                .any(|(entity, hash)| !evidence_matches(entity, hash, owners[entity]))
+        {
+            return Err(RetrievalError::Version(
+                "contextual candidate source changed; reindex owner vectors".into(),
+            ));
+        }
         let peaks: Vec<_> = self
             .original
             .iter()
@@ -265,11 +274,11 @@ impl ContextualScores {
                 )
             };
             let &index = lookup.get(&candidate.entity).ok_or_else(invalid)?;
-            if candidate.passages.is_empty()
-                || candidate.passages.iter().any(|p| {
-                    p.entity != candidate.entity || p.source_hash != self.source.hashes[index]
-                })
-            {
+            if !evidence_matches(
+                &candidate.entity,
+                &self.source.hashes[index],
+                &candidate.passages,
+            ) {
                 return Err(invalid());
             }
             let (a, b) = (self.original[index] as f64, self.expanded[index] as f64);

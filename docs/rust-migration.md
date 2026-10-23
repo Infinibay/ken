@@ -680,3 +680,18 @@ también está aceptado: consultas, candidatos, BM25F/SQL, búsqueda densa y fus
 Cada plataforma pasa44pruebas Rust afectadas/46de validación,292casos originales
 y cuatro regresiones nuevas. Las dos incidencias importantes de M4a están
 corregidas. M4 completo y M5–M8 siguen pendientes; los1066originales se conservan.
+
+[M4b](validation/rust-migration-2026-10-23/m4-selection-review/README.md) está aceptado
+tras una revisión y una pasada de corrección: intención/identidad de consultas,
+selección SQL y vectorial, propietarios completos, vistas contextuales y ranking
+de entidades/pasajes. Ambas plataformas coinciden con758observaciones originales
+y conservan122pruebas originales ejecutadas una vez; pasan43pruebas Rust y38de
+verificación por plataforma. Las dos entradas públicas de snapshots rechazan
+ahora evidencia vacía, de otro propietario o de otra versión. Esta guarda cierra
+un hueco heredado del original; las comparaciones válidas mantienen su paridad.
+M4c conserva modelos numéricos/features, piezas y evidencia fresca/presentación;
+M4d conserva canales y aceptación pública CLI/MCP. M4 completo y M5–M8 siguen
+pendientes. Se conservaron los1066originales y se limpiaron221.5MiB/319.5MiB de
+artefactos regenerables de ken-index en los targets macOS/Linux. Los commits
+validados se suben periódicamente a `origin/codex/rust-migration` por petición
+del usuario; el gate local no certifica una ejecución de CI remota.

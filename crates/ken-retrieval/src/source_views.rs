@@ -1,7 +1,8 @@
 //! Source projections contribute only after the combined owner pool is known.
 use crate::{
     EntityKey, Result, RetrievalError, contextual::consistent_versions,
-    description::OwnerDescription, normalized_matrix::NormalizedMatrix, query::Candidate,
+    description::OwnerDescription, model::evidence_matches, normalized_matrix::NormalizedMatrix,
+    query::Candidate,
 };
 use ken_models::EncoderSpec;
 use ken_text::PythonText;
@@ -133,11 +134,17 @@ impl SourceViewSnapshot {
         let indexes = candidates
             .iter()
             .map(|c| {
-                lookup.get(&c.entity).copied().ok_or_else(|| {
+                let index = lookup.get(&c.entity).copied().ok_or_else(|| {
                     RetrievalError::Version(
                         "source view candidate is outside its source owners".into(),
                     )
-                })
+                })?;
+                if !evidence_matches(&c.entity, &self.hashes[index], &c.passages) {
+                    return Err(RetrievalError::Version(
+                        "source view candidate source changed; reindex source views".into(),
+                    ));
+                }
+                Ok(index)
             })
             .collect::<Result<Vec<_>>>()?;
         for name in SOURCE_VIEW_NAMES {

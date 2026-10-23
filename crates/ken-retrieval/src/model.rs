@@ -86,3 +86,15 @@ pub struct Passage {
     pub signals: BTreeMap<String, f64>,
     pub implementation_start_line: Option<usize>,
 }
+
+/// Scores may cross an API boundary only with evidence from their pinned owner/source.
+pub(crate) fn evidence_matches(
+    entity: &EntityKey,
+    source_hash: &str,
+    passages: &[Passage],
+) -> bool {
+    !passages.is_empty()
+        && passages
+            .iter()
+            .all(|p| p.entity == *entity && p.source_hash == source_hash)
+}
