@@ -174,3 +174,27 @@ def capture_program_reference(reference:Reference,out:Path,*,repo:Path|None=None
     value['corpus_sha256']=_hash({k:value[k]for k in ('programs','types','codecs','vocabulary')});errors=validate_program_reference(value)
     if errors:raise ValueError(str(errors)+'\n'+result.stdout.decode()[-3000:]+result.stderr.decode()[-3000:])
     destination.write_text(json.dumps(value,indent=2)+'\n');return value
+
+
+REVIEW_SCRIPT=SCRIPT[:SCRIPT.index('class Plugin:')]+"""
+for data in request['inputs']:
+ try:observed_normalize(IR.from_dict(data))
+ except Exception:pass
+result=dict(format='ken-program-review-reference/1',programs=list(programs.values()),runtime=dict(system=platform.system(),machine=platform.machine(),python=platform.python_version()))
+pathlib.Path(request['result']).write_text(json.dumps(result,ensure_ascii=True)+'\\n')
+"""
+
+def validate_program_review_reference(value:dict)->list[str]:
+ try:
+  def require(ok,message):
+   if not ok:raise ValueError(message)
+  require(value['format']=='ken-program-review-reference/1'and value['script']==REVIEW_SCRIPT and value['execution']['exit']==0,'wrong original annotation capture')
+  require(len(value['programs'])==len(value['definitions'])==28 and len({r['id']for r in value['programs']})==28,'complete annotation regression inventory required')
+  for row,definition in zip(value['programs'],value['definitions'],strict=True):
+   expected={**definition,'relations':definition.get('relations',[]),'view':definition.get('view','source')}
+   require(row['input']==expected and row['id']==_hash(row['input'])and(('error'in row)^('result'in row)),'annotation input/result differs')
+   if'error'in row:require(row['error']['type']=='AttributeError','original annotation failure class differs')
+   else:require(all(k in row for k in ('prebinding','bodies','lookups')),'incomplete annotation original result')
+  require(sum('error'in r for r in value['programs'])==10,'original annotation failures lost')
+  return []
+ except(ValueError,KeyError,TypeError)as error:return[str(error)]

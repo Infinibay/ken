@@ -256,19 +256,20 @@ pub fn normalize_syntax(ir: &StructuralIr) -> Result<Program, ProgramError> {
         }
         .into();
         let type_kind = if let Some(entity) = entity {
-            let annotation = attr::text(
-                &entity.attrs,
-                if kind == "callable" {
-                    "native_return_type"
-                } else {
-                    "native_type"
-                },
-                "",
-            )?;
-            if annotation.is_empty() {
-                "unknown".into()
+            let field = if kind == "callable" {
+                "native_return_type"
             } else {
-                parse_type(&annotation, &ir.language).kind
+                "native_type"
+            };
+            match attr::get(&entity.attrs, field)? {
+                None => "unknown".into(),
+                Some(value) if !attr::truth_value(&value) => "unknown".into(),
+                Some(serde_json::Value::String(annotation)) => {
+                    parse_type(&annotation, &ir.language).kind
+                }
+                Some(_) => {
+                    return Err(ProgramError::Invalid("type annotation must be a string"));
+                }
             }
         } else if kind == "literal" {
             literal_type(&op.native_kind, &text).into()

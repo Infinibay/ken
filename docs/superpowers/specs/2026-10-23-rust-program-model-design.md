@@ -95,3 +95,18 @@ missing platforms, dropped errors/cases and false gate summaries. All1066origina
 hashes stay intact. One fresh whole-plan review, one Important/Critical TDD fix
 pass, archive ledger/rulings/minors and clean only this completed workspace.
 Acceptance is M3d only; indexing/M3 and M4–M8 remain pending.
+
+## Final review amendment
+
+Normalization checks raw annotation truthiness before parsing: null/false/zero
+and empty containers mean unknown; truthy nonstring values fail explicitly.
+Declaration binding separately preserves its original explicit str() conversion.
+The review repair compares28actual class/callable inputs and10original failures.
+
+Known Minor boundary: arbitrary dynamic attrs retain approximate Python spelling
+for object key order and exponent padding; string-valued tokens differ from the
+producer's normal token arrays. Declared Rust codec field types define the native
+representability boundary; permissive handcrafted Python bool-as-number or
+nonstrings-in-string-fields payloads are outside it. Original normalizer-produced
+records and their actual validation/default/error corpus remain preserved. These
+limits are recorded explicitly, not counted as perfect arbitrary-Python parity.

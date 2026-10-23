@@ -23,7 +23,7 @@ def aggregate_program_matrix(directory:Path,repo:Path,*,snapshot:Path,current:bo
  import json,re,tarfile,tempfile
  from .integration_validate import _manifest_errors,rust_gate_errors
  from .program_validate import source_identity,program_cases
- from .program_reference import validate_program_reference,program_owner_hashes
+ from .program_reference import validate_program_reference,validate_program_review_reference,program_owner_hashes
  from .native_json import identity
  from .receipts import junit_states
  from .reference import verify_reference
@@ -32,7 +32,7 @@ def aggregate_program_matrix(directory:Path,repo:Path,*,snapshot:Path,current:bo
   def require(ok,message):
    if not ok:raise ValueError(message)
   errors=_manifest_errors(directory);require(not errors,'; '.join(errors))
-  index=load(directory/'INDEX.json');require(index['format']=='ken-program-matrix/1','wrong program matrix protocol')
+  index=load(directory/'INDEX.json');require(index['format']=='ken-program-review-repair/1','wrong program matrix protocol')
   require(index['sources']==source_identity(snapshot/'native-sources'),'native common-model snapshot differs')
   if current:require(index['sources']==source_identity(repo),'current common-model sources differ')
   for name,expected in index['tooling'].items():require(not Path(name).is_absolute()and'..'not in Path(name).parts and identity(snapshot/'validation-sources'/name)==expected,'program validation source differs')
@@ -40,7 +40,7 @@ def aggregate_program_matrix(directory:Path,repo:Path,*,snapshot:Path,current:bo
   require(index['predecessor']==predecessor and identity(repo/predecessor['path']/'FILES.json')['sha256']==predecessor['sha256']and not _manifest_errors(repo/predecessor['path']),'closed import predecessor changed')
   require(not verify_reference(repo,repo/'docs/validation/rust-migration-2026-10-18/baseline.json'),'original1066files changed')
   require(set(index['platforms'])=={'macos','linux'},'both actual native platforms required')
-  cases=program_cases(snapshot/'native-sources');require(len(cases)==320 and len({c['id']for c in cases})==320 and sum('error'in c['expected']for c in cases)==14,'complete original program corpus required')
+  cases=program_cases(snapshot/'native-sources');require(len(cases)==348 and len({c['id']for c in cases})==348 and sum('error'in c['expected']for c in cases)==24,'complete original program corpus required')
   originals=[]
   for system in ('macos','linux'):
    platform=index['platforms'][system];expected=('Darwin','arm64')if system=='macos'else('Linux','aarch64')
@@ -55,10 +55,14 @@ def aggregate_program_matrix(directory:Path,repo:Path,*,snapshot:Path,current:bo
     discovery={node.split('::',1)[0][:-3].replace('/','.')+'::'+node.split('::',1)[1]for node in reference['discovered']};states=junit_states(raw/'original/original-tests.xml')
     require(set(states)==discovery and set(states.values())=={'passed'},'actual original model test execution differs')
     originals.append(reference)
+    review=load(raw/'review/reference.json');require(not validate_program_review_reference(review)and review['owners']==program_owner_hashes(repo),'invalid original annotation regression capture')
+    require(review['runtime']==reference['runtime']and review['programs']==load(snapshot/'native-sources/crates/ken-program/tests/fixtures/program-review.json')['programs'],'independent original annotation cases differ')
+    for name,key in [('stdout.log','stdout_sha256'),('stderr.log','stderr_sha256'),('original-observations.json','observations_sha256')]:require(identity(raw/'review'/name)['sha256']==review['execution'][key],'raw original annotation process changed')
+    require(all(review[k]==v for k,v in load(raw/'review/original-observations.json').items()),'raw original annotation results differ')
     errors=verify_program_capture(raw/'native',cases,index['sources'],platform['native_sha256']);require(not errors,'; '.join(errors))
     execution=load(raw/'native/execution.json');require((execution['system'],execution['machine'])==(system,expected[1]),'native common-model platform differs')
     gates=raw/'gates';listed=(gates/'rust-list.log').read_text();output=(gates/'rust-tests.log').read_text()
-    require(not rust_gate_errors(listed,output)and len(re.findall(r'^([^\n]+): test$',listed,re.M))==7,'complete7native root cases required')
+    require(not rust_gate_errors(listed,output)and len(re.findall(r'^([^\n]+): test$',listed,re.M))==8,'complete8native root cases required')
     discovered={path[:-3].replace('/','.')+'::'+name for path,name in re.findall(r'^(tests/rust_migration/test_program_(?:reference|validate|evidence)\.py)::(.+)$',(gates/'python-list.log').read_text(),re.M)};states=junit_states(gates/'python.xml')
     require(len(discovered)==28 and set(states)==discovered and set(states.values())=={'passed'},'complete28affected tooling cases required')
     clippy=(gates/'clippy.log').read_text();require('Finished `dev` profile'in clippy and'error:'not in clippy and'warning:'not in clippy,'clippy missing/failed')
@@ -75,6 +79,6 @@ def aggregate_program_matrix(directory:Path,repo:Path,*,snapshot:Path,current:bo
   for fixture in (program_fixture,type_fixture,vocabulary):require(fixture['owners']==program_owner_hashes(repo)and fixture['original_corpus_sha256']==[v['corpus_sha256']for v in originals],'native original fixture provenance differs')
   compiled=load(snapshot/'native-sources/crates/ken-program/src/kinds.json');require(compiled=={k:vocabulary['vocabulary'][k]for k in ('native','operations')},'native kind mapping differs from actual original')
   unicode=load(snapshot/'native-sources/crates/ken-program/src/unicode15.json');require(unicode['word_ranges']==vocabulary['vocabulary']['word_ranges']and unicode['unicode_version']==vocabulary['vocabulary']['unicode_version']=='15.0.0','native annotation word properties differ')
-  result.update(passed=True,M3d_accepted=True,per_platform=dict(Rust=7,Python=28,program_inputs=90,type_inputs=204,codecs=26,lookups=1240,original_tests=135))
+  result.update(passed=True,M3d_accepted=True,per_platform=dict(Rust=8,Python=28,program_inputs=118,type_inputs=204,codecs=26,lookups=1366,original_tests=135))
  except(OSError,ValueError,KeyError,TypeError,IndexError,tarfile.TarError)as error:result['errors'].append(str(error))
  return result

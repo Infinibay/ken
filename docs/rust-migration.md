@@ -657,3 +657,10 @@ representación Unicode. Las2incidencias importantes de revisión están corregi
 MINORS documenta límites de JSON profundo/enteros enormes. Modelo común e
 indexación incremental siguen pendientes de M3; M4–M8 aún no están aceptadas.
 Los originales y todos los recibos anteriores se conservan.
+
+M3d también tiene [aceptación revisada](validation/rust-migration-2026-10-23/m3-program-review/README.md):
+modelo common-ast/1, tipos, scopes, binding y consultas léxicas nativos. Ambos
+sistemas pasan8pruebas Rust/28de tooling,348casos y1366lookups. La incidencia de
+truthiness de annotations quedó corregida; MINORS/RULINGS documentan los límites
+restantes. El siguiente bloque es indexación incremental; M3 completo y M4–M8
+continúan pendientes. Los1066originales siguen intactos.

@@ -43,6 +43,27 @@ fn every_complete_original_program_and_binding_failure_matches() {
         }
     }
 }
+
+#[test]
+fn reviewed_annotations_preserve_raw_truthiness_and_original_failures() {
+    let corpus: Corpus =
+        serde_json::from_str(include_str!("fixtures/program-review.json")).unwrap();
+    assert_eq!(corpus.programs.len(), 28);
+    for row in corpus.programs {
+        let ir = StructuralIr::from_json(row.input.get()).unwrap();
+        let actual = normalize(&ir);
+        if row.error.is_some() {
+            assert!(actual.is_err(), "invalid annotation accepted {}", row.id);
+        } else {
+            assert_eq!(
+                actual.unwrap(),
+                row.result.unwrap(),
+                "annotation {}",
+                row.id
+            );
+        }
+    }
+}
 #[test]
 fn original_lexical_lookups_preserve_status_availability_reason_and_errors() {
     let mut count = 0;

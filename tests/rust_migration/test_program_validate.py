@@ -23,8 +23,8 @@ def expected_observations(cases):
 
 def test_full_corpus_original_errors_and_input_only_requests():
  cases=program_cases(REPO)
- assert len(cases)==320 and len({c['id']for c in cases})==320
- assert sum('error'in c['expected']for c in cases)==14
+ assert len(cases)==348 and len({c['id']for c in cases})==348
+ assert sum('error'in c['expected']for c in cases)==24
  assert compare_program_observations(cases,expected_observations(cases))==[]
  request=requests(cases)
  assert all('expected'not in row for row in request['cases'])

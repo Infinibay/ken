@@ -5,7 +5,7 @@ import pytest
 from tools.rust_migration.program_evidence import aggregate_program_matrix
 from tools.rust_migration.native_json import identity
 REPO=Path(__file__).resolve().parents[2]
-PROOF=REPO/'docs/validation/rust-migration-2026-10-23/m3-program'
+PROOF=REPO/'docs/validation/rust-migration-2026-10-23/m3-program-review'
 def seal(folder):
  rows=[dict(path=p.name,**identity(p))for p in sorted(folder.iterdir())if p.is_file()and p.name!='FILES.json']
  (folder/'FILES.json').write_text(json.dumps(dict(files=rows)))
@@ -16,7 +16,7 @@ def replay(proof,tmp_path,current=False):
 def test_actual_matrix_accepts_only_common_program_model(tmp_path):
  result=replay(PROOF,tmp_path,current=True);assert result['passed'],result
  assert result['M3d_accepted']and not result['M3_accepted']and not result['migration_complete']
-@pytest.mark.parametrize('mutation',['platform','source','request','stdout','original','gate'])
+@pytest.mark.parametrize('mutation',['platform','source','request','stdout','original','review','gate'])
 def test_resealed_compressed_proof_rejects_lost_or_changed_evidence(tmp_path,mutation):
  out=tmp_path/'proof';shutil.copytree(PROOF,out);index=json.loads((out/'INDEX.json').read_bytes())
  if mutation=='platform':index['platforms'].pop('linux')
@@ -25,8 +25,8 @@ def test_resealed_compressed_proof_rejects_lost_or_changed_evidence(tmp_path,mut
   raw=tmp_path/'raw';raw.mkdir()
   with tarfile.open(out/'linux-capture.tar.gz')as archive:archive.extractall(raw,filter='data')
   if mutation=='gate':(raw/'gates/rust-tests.log').write_text('test result: ok. 7 passed; 0 failed; 0 ignored;\n')
-  elif mutation=='original':
-   p=raw/'original/original-observations.json';value=json.loads(p.read_bytes());value['programs'].pop();p.write_text(json.dumps(value))
+  elif mutation in ('original','review'):
+   p=raw/('original'if mutation=='original'else'review')/'original-observations.json';value=json.loads(p.read_bytes());value['programs'].pop();p.write_text(json.dumps(value))
   else:
    file='inputs.json'if mutation=='request'else'stdout.json';p=raw/'native'/file;value=json.loads(p.read_bytes())
    if mutation=='request':value['cases'][0]['expected']={}

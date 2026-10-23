@@ -13,7 +13,7 @@ pub(crate) fn text(attrs: &Attributes, key: &str, default: &str) -> Result<Strin
 pub(crate) fn truth(attrs: &Attributes, key: &str) -> Result<bool, ProgramError> {
     Ok(get(attrs, key)?.is_some_and(|v| truth_value(&v)))
 }
-fn truth_value(v: &Value) -> bool {
+pub(crate) fn truth_value(v: &Value) -> bool {
     match v {
         Value::Null => false,
         Value::Bool(v) => *v,

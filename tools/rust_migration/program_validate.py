@@ -12,6 +12,8 @@ def program_cases(repo:Path)->list[dict]:
  corpus=load(folder/'program-reference.json')
  for group,kind,prefix in [('programs','normalize','program'),('codecs','codec','codec')]:
   for row in corpus[group]:cases.append(dict(id=prefix+':'+row['id'],kind=kind,input=row['input'],expected={k:v for k,v in row.items()if k not in ('id','input','tests','calls')}))
+ for row in load(folder/'program-review.json')['programs']:
+  cases.append(dict(id='review:'+row['id'],kind='normalize',input=row['input'],expected={k:v for k,v in row.items()if k not in ('id','input','tests','calls')}))
  for row in load(folder/'type-reference.json')['types']:cases.append(dict(id='type:'+row['id'],kind='type',input=row['input'],expected=dict(result=row['result'])))
  return cases
 
@@ -30,7 +32,7 @@ def compare_program_observations(cases:list[dict],actual:dict)->list[str]:
   def require(value,message):
    if not value:raise ValueError(message)
   def error(original,native):
-   require(original['type']in ('ValueError','TypeError')and set(native)=={'kind','message'}and native['kind']=='invalid_program'and type(native['message'])is str and bool(native['message']),'original program failure differs/swallowed')
+   require(original['type']in ('ValueError','TypeError','AttributeError')and set(native)=={'kind','message'}and native['kind']=='invalid_program'and type(native['message'])is str and bool(native['message']),'original program failure differs/swallowed')
   require(set(actual)=={'format','cases'}and actual['format']=='ken-program-observation/1','wrong program observation protocol')
   require(len(actual['cases'])==len(cases),'missing/duplicate program cases')
   for case,row in zip(cases,actual['cases'],strict=True):
