@@ -48,7 +48,7 @@
 
 ### Task 2: Parsed model, common scopes, Python and Rust
 
-**Files:** Create `crates/ken-syntax/src/{model.rs,registry.rs,helpers.rs,scopes.rs,python.rs,rust.rs}`, `crates/ken-syntax/tests/parsers.rs`, `crates/ken-syntax/tests/fixtures/reference.json`; modify lib exports.
+**Files:** Create `crates/ken-syntax/src/{model.rs,registry.rs,helpers.rs,scopes.rs,python.rs,python_literal.rs,python_names_delta.json,rust.rs}`, `crates/ken-syntax/tests/parsers.rs`, `crates/ken-syntax/tests/fixtures/reference.json`; modify lib exports.
 
 **Interfaces:**
 - Consumes Task1 `Language/GrammarCatalog/SyntaxTree` and complete original captures.
@@ -132,3 +132,12 @@ from native consumption and final distribution is reserved for M8. Native inline
 execution and no approval pauses are the user's continuing selected method.
 
 Task1 source verification amendment: Python binding0.25.2 vendors C engine0.25.10 at da6fe9be. All42original C/header inputs match Rust0.25.10 exactly; the compiled lock records this evidence. The initial Rust0.25.2 corpus happened to pass all215inputs, but matching the actual engine avoids untested runtime behavior differences. No original capture or model inference was repeated.
+
+Task2 model refinement: PythonStringLiteral owns full docstring decoding; py_literal
+alone does not decode the captured triple-quoted docs or raw/Unicode-name forms.
+The native adapter normalizes delimiters/line breaks and preserves raw/u/bytes/f
+behavior. Pinned unicode_names2=1.2.0 supplies formal names, with a reproducible
+original-Unicode15 filter (627new15.1codepoints excluded,473original aliases).
+Its derived dataset carries Unicode-DFS-2016 attribution/license. A separate
+19case original corpus tests these forms and CRLF comments without rerunning the
+124original tests. Shared text splitting treats CRLF as one boundary.

@@ -4,7 +4,7 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 publish.workspace = true
-license.workspace = true
+license = "MIT AND Unicode-DFS-2016"
 
 [dependencies]
 serde.workspace = true
@@ -12,6 +12,9 @@ serde_json.workspace = true
 thiserror.workspace = true
 sha2.workspace = true
 libloading.workspace = true
+regex.workspace = true
+py_literal.workspace = true
+unicode_names2.workspace = true
 
 tree-sitter.workspace = true
 tree-sitter-language.workspace = true
