@@ -1,0 +1,80 @@
+"""One bounded native JSON process with reusable outside-checkout execution audit."""
+from __future__ import annotations
+import hashlib,json,os,platform,re,shutil,signal,subprocess,tempfile
+from pathlib import Path
+from .fastembed_process import _distinct,_nonfinite
+
+LIMIT=16*1024*1024
+def identity(path:Path)->dict:
+    with path.open('rb')as stream:return dict(bytes=path.stat().st_size,sha256=hashlib.file_digest(stream,'sha256').hexdigest())
+def load(path:Path):
+    with path.open('rb')as stream:raw=stream.read(LIMIT+1)
+    if len(raw)>LIMIT:raise ValueError('native JSON exceeds16MiB')
+    return json.loads(raw,object_pairs_hook=_distinct,parse_constant=_nonfinite)
+def tree(root:Path)->dict:
+    return {str(p.relative_to(root)):identity(p)for p in sorted(root.rglob('*'))if p.is_file()}
+
+class NativeJsonCapture:
+    def __init__(self,probe:Path,out:Path,*,repo:Path,prefix:str):
+        self.probe,self.out,self.repo,self.prefix=probe.resolve(),out.resolve(),repo.resolve(),prefix
+    def __enter__(self):
+        with self.probe.open('rb')as stream:magic=stream.read(4)
+        if magic not in (b'\x7fELF',b'\xcf\xfa\xed\xfe',b'\xfe\xed\xfa\xcf',b'\xca\xfe\xba\xbe')or not os.access(self.probe,os.X_OK):raise ValueError('native executable required; interpreter scripts rejected')
+        self.out.mkdir(parents=True,exist_ok=False)
+        self.temporary=tempfile.TemporaryDirectory(prefix=self.prefix);self.root=Path(self.temporary.name).resolve()
+        try:
+            if self.root.is_relative_to(self.repo):raise ValueError('native process must run outside checkout')
+            self.native=self.root/'native-probe';shutil.copy2(self.probe,self.native)
+            self.binary=identity(self.probe)
+            (self.root/'empty-path').mkdir();(self.root/'home').mkdir()
+            return self
+        except BaseException:self.temporary.cleanup();raise
+    def run(self,request:dict)->dict:
+        raw=(json.dumps(request,ensure_ascii=True,allow_nan=False)+'\n').encode()
+        if len(raw)>8*1024*1024:raise ValueError('native request exceeds8MiB')
+        (self.out/'inputs.json').write_bytes(raw);before=tree(self.root)
+        env=dict(PATH=str(self.root/'empty-path'),HOME=str(self.root/'home'),LANG='C.UTF-8',LC_ALL='C.UTF-8')
+        system='macos'if platform.system()=='Darwin'else'linux'
+        command=[str(self.native)]
+        if system=='linux':
+            tracer=shutil.which('strace')
+            if not tracer:raise ValueError('actual Linux exec/connect audit required')
+            command=[tracer,'--seccomp-bpf','-f','-e','trace=execve,execveat,connect','-o',str(self.out/'exec.trace'),*command];env['LD_DEBUG']='libs'
+        else:env['DYLD_PRINT_LIBRARIES']='1'
+        with(self.out/'stdout.json').open('wb')as stdout,(self.out/'stderr.log').open('wb')as stderr:
+            process=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=stdout,stderr=stderr,cwd=self.root,env=env,start_new_session=True)
+            try:process.communicate(raw,timeout=60)
+            except BaseException:
+                try:os.killpg(process.pid,signal.SIGKILL)
+                except ProcessLookupError:pass
+                process.wait();raise
+        receipt=dict(format='ken-native-json-execution/1',command=command,cwd=str(self.root),env=env,system=system,machine=platform.machine(),exit=process.returncode,timeout_s=60,native_sha256=self.binary['sha256'],request_sha256=identity(self.out/'inputs.json')['sha256'],stdout_sha256=identity(self.out/'stdout.json')['sha256'],stderr_sha256=identity(self.out/'stderr.log')['sha256'],owned_before=before,owned_after=tree(self.root))
+        (self.out/'execution.json').write_text(json.dumps(receipt,indent=2)+'\n')
+        if identity(self.probe)!=self.binary or identity(self.native)!=self.binary:raise ValueError('native executable changed during execution')
+        errors=verify_native_json(self.out,self.prefix)
+        if errors:raise ValueError(errors)
+        return load(self.out/'stdout.json')
+    def __exit__(self,*args):self.temporary.cleanup()
+
+def verify_native_json(out:Path,prefix:str)->list[str]:
+    try:
+        def require(value,message):
+            if not value:raise ValueError(message)
+        receipt=load(out/'execution.json');root=Path(receipt['cwd']);command=receipt['command'];env=receipt['env']
+        require(set(receipt)=={'format','command','cwd','env','system','machine','exit','timeout_s','native_sha256','request_sha256','stdout_sha256','stderr_sha256','owned_before','owned_after'},'unexpected execution fields/fabricated passing summary')
+        require(receipt['format']=='ken-native-json-execution/1'and receipt['exit']==0 and receipt['timeout_s']==60,'native exit/timeout/protocol differs')
+        require(root.is_absolute()and root.name.startswith(prefix)and command[-1]==str(root/'native-probe'),'native executable not copied outside checkout')
+        require(env['PATH']==str(root/'empty-path')and env['HOME']==str(root/'home'),'native isolated environment differs')
+        require(receipt['owned_before']==receipt['owned_after']and receipt['owned_before']['native-probe']['sha256']==receipt['native_sha256'],'native wrote/changed owned files')
+        for name,key in [('inputs.json','request_sha256'),('stdout.json','stdout_sha256'),('stderr.log','stderr_sha256')]:require(identity(out/name)['sha256']==receipt[key],'raw native execution bytes differ')
+        loader=(out/'stderr.log').read_bytes()
+        require(len(loader)<=LIMIT and b'libpython'not in loader and b'libtorch_python'not in loader,'forbidden native linkage/oversized loader log')
+        if receipt['system']=='linux':
+            require(len(command)==8 and Path(command[0]).name=='strace'and command[1:5]==['--seccomp-bpf','-f','-e','trace=execve,execveat,connect'],'actual exec/connect audit command differs')
+            trace=(out/'exec.trace').read_text()
+            require(len(re.findall(r'\bexecve(?:at)?\(',trace))==1 and command[-1]in trace and not re.search(r'\bconnect\(',trace),'unexpected native subprocess/network')
+            require(env['LD_DEBUG']=='libs'and b'calling init:'in loader,'actual Linux loader audit missing')
+        else:require(receipt['system']=='macos'and command==[str(root/'native-probe')]and env['DYLD_PRINT_LIBRARIES']=='1'and b'dyld['in loader,'actual macOS loader audit missing')
+        load(out/'inputs.json');load(out/'stdout.json')
+        return []
+    except(OSError,ValueError,KeyError,TypeError,IndexError)as error:return[str(error)]

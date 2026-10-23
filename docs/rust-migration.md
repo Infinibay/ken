@@ -36,6 +36,12 @@ cierra dos diferencias con249entradas por plataforma,33pruebas Rust y38pruebas d
 herramientas. M3b está aceptado tras una única revisión y pasada de reparación. Modelo común, resolución de imports e indexación incremental siguen
 pendientes en M3, al igual que M4–M8. Los originales permanecen intactos.
 
+M3c añade resolución nativa de imports y lectura de configuraciones reales.
+[Su matriz](validation/rust-migration-2026-10-23/m3-imports/README.md) compara91datasets
+en dos modos por plataforma:182casos/184solicitudes,44pruebas raíz Rust y33pruebas
+de herramientas. La revisión final de M3c está en curso. Modelo común e indexación
+incremental siguen pendientes; la aplicación instalada conserva Python.
+
 Los recibos históricos describen sus propias fuentes. Para reproducir el bloque
 de fuentes después de cambios posteriores, el agregador usa la copia pequeña de
 `native-sources` incluida en el recibo; no atribuye una ejecución vieja al código

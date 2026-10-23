@@ -10,6 +10,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use thiserror::Error;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ImportRequest {
     pub module: String,
     pub source_path: String,
