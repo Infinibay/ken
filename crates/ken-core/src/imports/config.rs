@@ -7,7 +7,7 @@ pub(super) enum ConfigValue {
     Object(Vec<(Option<String>, ConfigValue)>),
     Array(Vec<ConfigValue>),
     Text(Option<String>),
-    Other { truth: bool },
+    Other { truth: bool, spelling: String },
     Null,
 }
 impl ConfigValue {
@@ -36,13 +36,73 @@ impl ConfigValue {
             Self::Object(v) => !v.is_empty(),
             Self::Array(v) => !v.is_empty(),
             Self::Text(v) => v.as_ref().is_none_or(|s| !s.is_empty()),
-            Self::Other { truth } => *truth,
+            Self::Other { truth, .. } => *truth,
             Self::Null => false,
         }
     }
     pub fn is_null(&self) -> bool {
         matches!(self, Self::Null)
     }
+    pub fn python_string(&self) -> Option<String> {
+        match self {
+            Self::Text(value) => value.clone(),
+            Self::Null => Some("None".into()),
+            Self::Other { spelling, .. } => Some(spelling.clone()),
+            Self::Array(values) => Some(format!(
+                "[{}]",
+                values
+                    .iter()
+                    .map(Self::python_repr)
+                    .collect::<Option<Vec<_>>>()?
+                    .join(", ")
+            )),
+            Self::Object(values) => Some(format!(
+                "{{{}}}",
+                values
+                    .iter()
+                    .map(|(key, value)| Some(format!(
+                        "{}: {}",
+                        quote(key.as_deref()?),
+                        value.python_repr()?
+                    )))
+                    .collect::<Option<Vec<_>>>()?
+                    .join(", ")
+            )),
+        }
+    }
+    fn python_repr(&self) -> Option<String> {
+        if let Self::Text(value) = self {
+            Some(quote(value.as_deref()?))
+        } else {
+            self.python_string()
+        }
+    }
+}
+fn quote(value: &str) -> String {
+    let delimiter = if value.contains('\'') && !value.contains('"') {
+        '"'
+    } else {
+        '\''
+    };
+    let mut result = delimiter.to_string();
+    for c in value.chars() {
+        match c {
+            '\\' => result.push_str("\\\\"),
+            '\n' => result.push_str("\\n"),
+            '\r' => result.push_str("\\r"),
+            '\t' => result.push_str("\\t"),
+            _ if c == delimiter => {
+                result.push('\\');
+                result.push(c);
+            }
+            _ if c.is_control() && (c as u32) <= 0xff => {
+                result.push_str(&format!("\\x{:02x}", c as u32))
+            }
+            _ => result.push(c),
+        }
+    }
+    result.push(delimiter);
+    result
 }
 pub(super) fn jsonc(bytes: &[u8]) -> Option<ConfigValue> {
     let text = String::from_utf8_lossy(bytes);
@@ -209,16 +269,53 @@ impl Parser<'_> {
         let raw = &self.text[start..self.position];
         match raw {
             "null" => Some(ConfigValue::Null),
-            "true" => Some(ConfigValue::Other { truth: true }),
-            "false" => Some(ConfigValue::Other { truth: false }),
-            "NaN" | "Infinity" | "-Infinity" => Some(ConfigValue::Other { truth: true }),
+            "true" => Some(ConfigValue::Other {
+                truth: true,
+                spelling: "True".into(),
+            }),
+            "false" => Some(ConfigValue::Other {
+                truth: false,
+                spelling: "False".into(),
+            }),
+            "NaN" => Some(ConfigValue::Other {
+                truth: true,
+                spelling: "nan".into(),
+            }),
+            "Infinity" => Some(ConfigValue::Other {
+                truth: true,
+                spelling: "inf".into(),
+            }),
+            "-Infinity" => Some(ConfigValue::Other {
+                truth: true,
+                spelling: "-inf".into(),
+            }),
             _ => {
                 serde_json::from_str::<Box<RawValue>>(raw).ok()?;
                 let number: f64 = raw.parse().ok()?;
                 Some(ConfigValue::Other {
                     truth: number != 0.0,
+                    spelling: if raw.contains(['.', 'e', 'E']) {
+                        float_spelling(number)
+                    } else if number == 0.0 {
+                        "0".into()
+                    } else {
+                        raw.into()
+                    },
                 })
             }
         }
+    }
+}
+fn float_spelling(number: f64) -> String {
+    let text = format!("{number:?}");
+    if let Some((base, exponent)) = text.split_once('e') {
+        let value: i32 = exponent.parse().expect("native float exponent");
+        format!(
+            "{base}e{}{number:02}",
+            if value < 0 { '-' } else { '+' },
+            number = value.unsigned_abs()
+        )
+    } else {
+        text
     }
 }

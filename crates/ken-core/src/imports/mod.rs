@@ -1,6 +1,8 @@
 //! Resolve indexed import edges from explicit ordered project inputs.
 mod aliases;
+mod classification;
 mod config;
+mod languages;
 mod paths;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
@@ -26,8 +28,6 @@ pub struct ImportResolution {
 }
 #[derive(Debug, Error)]
 pub enum ImportError {
-    #[error("import resolution stage pending: {0}")]
-    Pending(&'static str),
     #[error("invalid import config {path}: {reason}")]
     Config { path: String, reason: String },
 }
@@ -36,22 +36,25 @@ pub struct ImportCatalog {
     files: BTreeSet<String>,
     python_suffixes: BTreeMap<String, Vec<String>>,
     aliases: aliases::AliasResolver,
+    languages: languages::LanguageModules,
 }
 impl ImportCatalog {
     pub fn from_inputs(
         files: Vec<String>,
         configs: Option<BTreeMap<String, Vec<u8>>>,
     ) -> Result<Self, ImportError> {
-        let aliases = if let Some(configs) = configs {
-            aliases::AliasResolver::from_inputs(&files, &configs)?
+        let aliases = if let Some(configs) = &configs {
+            aliases::AliasResolver::from_inputs(&files, configs)?
         } else {
             aliases::AliasResolver::default()
         };
         let python_suffixes = paths::python_suffixes(&files);
+        let languages = languages::LanguageModules::from_inputs(&files, configs.as_ref())?;
         Ok(Self {
             files: files.into_iter().collect(),
             python_suffixes,
             aliases,
+            languages,
         })
     }
     /// The original language-independent structural phase; ambiguity is absence.
@@ -65,31 +68,35 @@ impl ImportCatalog {
                 resolution: Resolution::Internal,
             });
         }
+        let mut target = None;
         if matches!(
             request.language.as_deref(),
             Some("typescript" | "javascript")
         ) {
-            let target = self
+            target = self
                 .aliases
                 .resolve(&request.module, &request.source_path, &self.files);
-            let module = paths::trim(
-                paths::trim(&request.module)
-                    .trim_matches('"')
-                    .trim_matches('\'')
-                    .trim_end_matches(';'),
-            );
-            let resolution = if target.is_some() {
-                Resolution::Internal
-            } else if module.starts_with("./")
-                || module.starts_with("../")
-                || self.aliases.is_internal_shape(module, &request.source_path)
-            {
-                Resolution::Unresolved
-            } else {
-                Resolution::External
-            };
-            return Ok(ImportResolution { target, resolution });
         }
-        Err(ImportError::Pending("language policies and classification"))
+        if target.is_none() {
+            target = self.languages.resolve(
+                &request.module,
+                &request.source_path,
+                request.language.as_deref(),
+                &self.files,
+            );
+        }
+        let resolution = if target.is_some() {
+            Resolution::Internal
+        } else {
+            classification::classify(
+                &request.module,
+                request.language.as_deref(),
+                &request.source_path,
+                &self.aliases,
+                &self.languages,
+                &self.files,
+            )
+        };
+        Ok(ImportResolution { target, resolution })
     }
 }

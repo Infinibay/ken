@@ -62,6 +62,59 @@ fn original_alias_workspace_order_duplicates_and_inherited_bases_match() {
 fn original_non_scalar_alias_targets_keep_internal_shape() {
     compare_javascript(include_str!("fixtures/import-alias-surrogates.json"), 2);
 }
+
+#[test]
+fn all_original_languages_preserve_full_resolution_and_failure_boundaries() {
+    let mut compared = 0;
+    for corpus in [
+        include_str!("fixtures/import-reference.json"),
+        include_str!("fixtures/import-alias-edges.json"),
+        include_str!("fixtures/import-alias-surrogates.json"),
+        include_str!("fixtures/import-language-edges.json"),
+    ] {
+        let reference: Value = serde_json::from_str(corpus).unwrap();
+        for row in reference["cases"].as_array().unwrap() {
+            let files = serde_json::from_value(row["input"]["files"].clone()).unwrap();
+            let configs = row["input"]["configs"].as_object().map(|cfg| {
+                cfg.iter()
+                    .map(|(name, value)| {
+                        let hex = value.as_str().unwrap();
+                        (
+                            name.clone(),
+                            (0..hex.len())
+                                .step_by(2)
+                                .map(|i| u8::from_str_radix(&hex[i..i + 2], 16).unwrap())
+                                .collect(),
+                        )
+                    })
+                    .collect()
+            });
+            let requests: Vec<ImportRequest> =
+                serde_json::from_value(row["input"]["imports"].clone()).unwrap();
+            compared += requests.len();
+            let catalog = ImportCatalog::from_inputs(files, configs);
+            if row.get("error").is_some() {
+                assert!(
+                    matches!(catalog, Err(ImportError::Config { .. })),
+                    "original config failure lost: {}",
+                    row["id"]
+                );
+                continue;
+            }
+            let catalog = catalog.unwrap();
+            for (request, expected) in requests.iter().zip(row["results"].as_array().unwrap()) {
+                let actual = catalog.resolve(request).unwrap();
+                assert_eq!(
+                    serde_json::to_value(actual).unwrap(),
+                    *expected,
+                    "case={} request={request:?}",
+                    row["id"]
+                );
+            }
+        }
+    }
+    assert!(compared >= 92, "lost original resolution requests");
+}
 fn compare_javascript(corpus: &str, minimum: usize) {
     let reference: Value = serde_json::from_str(corpus).unwrap();
     let mut queries = 0;
