@@ -61,3 +61,5 @@ mod rank_json;
 
 mod snowball;
 pub mod stemming;
+
+pub mod alignment;

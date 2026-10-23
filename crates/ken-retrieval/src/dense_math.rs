@@ -6,25 +6,45 @@ use crate::{Result, RetrievalError};
 type BlasInt = i32;
 #[cfg(target_os = "linux")]
 type BlasInt = i64;
-type Dot = unsafe extern "C" fn(BlasInt, *const f32, BlasInt, *const f32, BlasInt) -> f32;
-type Gemv = unsafe extern "C" fn(
+type Dot<T> = unsafe extern "C" fn(BlasInt, *const T, BlasInt, *const T, BlasInt) -> T;
+type Gemv<T> = unsafe extern "C" fn(
     i32,
     i32,
     BlasInt,
     BlasInt,
-    f32,
-    *const f32,
+    T,
+    *const T,
     BlasInt,
-    *const f32,
+    *const T,
     BlasInt,
-    f32,
-    *mut f32,
+    T,
+    *mut T,
+    BlasInt,
+);
+type Gemm<T> = unsafe extern "C" fn(
+    i32,
+    i32,
+    i32,
+    BlasInt,
+    BlasInt,
+    BlasInt,
+    T,
+    *const T,
+    BlasInt,
+    *const T,
+    BlasInt,
+    T,
+    *mut T,
     BlasInt,
 );
 
 pub(crate) struct DenseMath {
-    dot: Dot,
-    gemv: Gemv,
+    dot: Dot<f32>,
+    gemv: Gemv<f32>,
+    dot64: Dot<f64>,
+    gemv64: Gemv<f64>,
+    gemm: Gemm<f32>,
+    gemm64: Gemm<f64>,
     #[cfg(target_os = "linux")]
     _library: libloading::Library,
 }
@@ -47,6 +67,54 @@ unsafe extern "C" {
         y: *mut f32,
         iy: BlasInt,
     );
+    fn cblas_ddot(n: BlasInt, x: *const f64, ix: BlasInt, y: *const f64, iy: BlasInt) -> f64;
+    fn cblas_dgemv(
+        order: i32,
+        trans: i32,
+        m: BlasInt,
+        n: BlasInt,
+        alpha: f64,
+        a: *const f64,
+        lda: BlasInt,
+        x: *const f64,
+        ix: BlasInt,
+        beta: f64,
+        y: *mut f64,
+        iy: BlasInt,
+    );
+    fn cblas_sgemm(
+        order: i32,
+        ta: i32,
+        tb: i32,
+        m: BlasInt,
+        n: BlasInt,
+        k: BlasInt,
+        alpha: f32,
+        a: *const f32,
+        lda: BlasInt,
+        b: *const f32,
+        ldb: BlasInt,
+        beta: f32,
+        c: *mut f32,
+        ldc: BlasInt,
+    );
+    fn cblas_dgemm(
+        order: i32,
+        ta: i32,
+        tb: i32,
+        m: BlasInt,
+        n: BlasInt,
+        k: BlasInt,
+        alpha: f64,
+        a: *const f64,
+        lda: BlasInt,
+        b: *const f64,
+        ldb: BlasInt,
+        beta: f64,
+        c: *mut f64,
+        ldc: BlasInt,
+    );
+
 }
 
 impl DenseMath {
@@ -59,6 +127,10 @@ impl DenseMath {
         let math = Self {
             dot: cblas_sdot,
             gemv: cblas_sgemv,
+            dot64: cblas_ddot,
+            gemv64: cblas_dgemv,
+            gemm: cblas_sgemm,
+            gemm64: cblas_dgemm,
         };
         #[cfg(target_os = "linux")]
         let math = Self::load(&runtime_directory()?)?;
@@ -188,23 +260,207 @@ impl DenseMath {
     fn load(directory: &std::path::Path) -> Result<Self> {
         verify_dense_runtime(directory)?;
         let path = directory.join(manifest().library);
-        // SAFETY: only the exact pinned native ELF is loaded; its two public ILP64
+        // SAFETY: only the exact pinned native ELF is loaded; its typed public ILP64
         // CBLAS signatures are retained with their owning library for process lifetime.
         unsafe {
             let library = libloading::Library::new(path).map_err(|e| {
                 RetrievalError::Invalid(format!("cannot load dense BLAS runtime: {e}"))
             })?;
             let dot = *library
-                .get::<Dot>(b"scipy_cblas_sdot64_\0")
+                .get::<Dot<f32>>(b"scipy_cblas_sdot64_\0")
                 .map_err(|e| RetrievalError::Invalid(e.to_string()))?;
             let gemv = *library
-                .get::<Gemv>(b"scipy_cblas_sgemv64_\0")
+                .get::<Gemv<f32>>(b"scipy_cblas_sgemv64_\0")
+                .map_err(|e| RetrievalError::Invalid(e.to_string()))?;
+            let dot64 = *library
+                .get::<Dot<f64>>(b"scipy_cblas_ddot64_\0")
+                .map_err(|e| RetrievalError::Invalid(e.to_string()))?;
+            let gemv64 = *library
+                .get::<Gemv<f64>>(b"scipy_cblas_dgemv64_\0")
+                .map_err(|e| RetrievalError::Invalid(e.to_string()))?;
+            let gemm = *library
+                .get::<Gemm<f32>>(b"scipy_cblas_sgemm64_\0")
+                .map_err(|e| RetrievalError::Invalid(e.to_string()))?;
+            let gemm64 = *library
+                .get::<Gemm<f64>>(b"scipy_cblas_dgemm64_\0")
                 .map_err(|e| RetrievalError::Invalid(e.to_string()))?;
             Ok(Self {
                 dot,
                 gemv,
+                dot64,
+                gemv64,
+                gemm,
+                gemm64,
                 _library: library,
             })
         }
     }
+}
+
+impl DenseMath {
+    pub(crate) fn dot32(x: &[f32], y: &[f32]) -> Result<f32> {
+        if x.len() != y.len() {
+            return Err(RetrievalError::Invalid(
+                "compatible dot vectors required".into(),
+            ));
+        }
+        if x.is_empty() {
+            return Ok(0.);
+        }
+        let n = size(x.len())?;
+        let math = Self::platform()?;
+        // SAFETY: both immutable slices have exactly n elements and unit stride.
+        Ok(unsafe { (math.dot)(n, x.as_ptr(), 1, y.as_ptr(), 1) })
+    }
+    pub(crate) fn dot64(x: &[f64], y: &[f64]) -> Result<f64> {
+        if x.len() != y.len() {
+            return Err(RetrievalError::Invalid(
+                "compatible dot vectors required".into(),
+            ));
+        }
+        if x.is_empty() {
+            return Ok(0.);
+        }
+        let n = size(x.len())?;
+        let math = Self::platform()?;
+        // SAFETY: same checked lengths/strides as dot32, with the pinned f64 ABI.
+        Ok(unsafe { (math.dot64)(n, x.as_ptr(), 1, y.as_ptr(), 1) })
+    }
+    /// Multiply owned C rows by the transpose of another owned C row matrix.
+    /// Dispatch follows NumPy2.4.4 matmul.c.src, including single-axis cases.
+    pub(crate) fn product32(
+        a: &[f32],
+        rows: usize,
+        width: usize,
+        b: &[f32],
+        columns: usize,
+    ) -> Result<Vec<f32>> {
+        let mut out = product_output(a, rows, width, b, columns)?;
+        if rows == 0 || columns == 0 || width == 0 {
+            return Ok(out);
+        }
+        let (m, n, k) = (size(rows)?, size(columns)?, size(width)?);
+        if width == 1 {
+            for i in 0..rows {
+                for j in 0..columns {
+                    out[i * columns + j] = a[i] * b[j];
+                }
+            }
+            return Ok(out);
+        }
+        let math = Self::platform()?;
+        if rows == 1 {
+            return math.scores(b, columns, a);
+        }
+        if columns == 1 {
+            return math.scores(a, rows, b);
+        }
+        // SAFETY: rectangular lengths and product allocation are checked above;
+        // dimensions/leading dimensions fit the ABI, output is distinct from inputs.
+        unsafe {
+            (math.gemm)(
+                101,
+                111,
+                112,
+                m,
+                n,
+                k,
+                1.,
+                a.as_ptr(),
+                k,
+                b.as_ptr(),
+                k,
+                0.,
+                out.as_mut_ptr(),
+                n,
+            )
+        };
+        Ok(out)
+    }
+    pub(crate) fn product64(
+        a: &[f64],
+        rows: usize,
+        width: usize,
+        b: &[f64],
+        columns: usize,
+    ) -> Result<Vec<f64>> {
+        let mut out = product_output(a, rows, width, b, columns)?;
+        if rows == 0 || columns == 0 || width == 0 {
+            return Ok(out);
+        }
+        let (m, n, k) = (size(rows)?, size(columns)?, size(width)?);
+        if width == 1 {
+            for i in 0..rows {
+                for j in 0..columns {
+                    out[i * columns + j] = a[i] * b[j];
+                }
+            }
+            return Ok(out);
+        }
+        let math = Self::platform()?;
+        if rows == 1 && columns == 1 {
+            out[0] = Self::dot64(a, b)?;
+        } else if rows == 1 || columns == 1 {
+            let (matrix, vector, count) = if rows == 1 { (b, a, n) } else { (a, b, m) };
+            // SAFETY: complete C rows, unit-stride vector/output, checked dimensions.
+            unsafe {
+                (math.gemv64)(
+                    102,
+                    112,
+                    k,
+                    count,
+                    1.,
+                    matrix.as_ptr(),
+                    k,
+                    vector.as_ptr(),
+                    1,
+                    0.,
+                    out.as_mut_ptr(),
+                    1,
+                )
+            };
+        } else {
+            // SAFETY: same rectangular/ownership guards as product32, with f64 values.
+            unsafe {
+                (math.gemm64)(
+                    101,
+                    111,
+                    112,
+                    m,
+                    n,
+                    k,
+                    1.,
+                    a.as_ptr(),
+                    k,
+                    b.as_ptr(),
+                    k,
+                    0.,
+                    out.as_mut_ptr(),
+                    n,
+                )
+            };
+        }
+        Ok(out)
+    }
+}
+fn product_output<T: Default + Clone>(
+    a: &[T],
+    rows: usize,
+    width: usize,
+    b: &[T],
+    columns: usize,
+) -> Result<Vec<T>> {
+    if rows.checked_mul(width) != Some(a.len()) || columns.checked_mul(width) != Some(b.len()) {
+        return Err(RetrievalError::Invalid(
+            "rectangular product inputs required".into(),
+        ));
+    }
+    let count = rows.checked_mul(columns).ok_or_else(|| {
+        RetrievalError::Invalid("term alignment output dimensions overflow".into())
+    })?;
+    let mut out = Vec::new();
+    out.try_reserve_exact(count)
+        .map_err(|e| RetrievalError::Invalid(format!("term alignment output allocation: {e}")))?;
+    out.resize(count, T::default());
+    Ok(out)
 }

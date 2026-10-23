@@ -4,12 +4,13 @@ import hashlib,json,subprocess
 from pathlib import Path
 from .reference import Reference,reference_env
 from .numeric_stem_reference import SCRIPT as STEM_SCRIPT
+from .numeric_alignment_reference import SCRIPT as ALIGNMENT_SCRIPT
 from .snowball_provenance import capture_original as capture_stem_dependency
 from .native_json import load,identity
 from .selection_reference import owners
 from .retrieval_reference import digest
 ROOT=Path(__file__).resolve().parents[2]
-SUITES={'forest':['tests/retrieval/test_numeric_ranker.py'],'stems':['tests/retrieval/test_stem_reuse.py']}
+SUITES={'forest':['tests/retrieval/test_numeric_ranker.py'],'stems':['tests/retrieval/test_stem_reuse.py'],'alignment':['tests/retrieval/test_term_alignment.py']}
 SCRIPT=r'''
 import importlib,json,math,pathlib,platform,sys,unicodedata,warnings
 import numpy as np,pytest
@@ -55,7 +56,8 @@ value=dict(format='ken-numeric-reference/1',family=request['family'],cases=recor
 pathlib.Path(request['result']).write_text(json.dumps(value,ensure_ascii=True,allow_nan=False)+'\n');sys.exit(exit_code)
 '''
 EDGES_SCRIPT=SCRIPT.replace("exit_code=pytest.main(['-o','addopts=','--rootdir='+str(root),'-q',*request['suite'],'--junitxml='+request['junit']],plugins=[Plugin()])","cached=json.loads(pathlib.Path(request['cached_suite']).read_bytes());discovered=cached['discovered'];states=cached['test_states'];exit_code=cached['original_test_exit']")
-SCRIPTS={'forest':SCRIPT,'forest-edges':EDGES_SCRIPT,'stems':STEM_SCRIPT}
+ALIGNMENT_EDGES_SCRIPT=ALIGNMENT_SCRIPT.replace("family='alignment'","family=request['family']").replace("exit_code=pytest.main(['-o','addopts=','--rootdir='+str(root),'-q',*request['suite'],'--junitxml='+request['junit']],plugins=[Plugin()])","cached=json.loads(pathlib.Path(request['cached_suite']).read_bytes());discovered=cached['discovered'];states=cached['test_states'];exit_code=cached['original_test_exit']")
+SCRIPTS={'forest':SCRIPT,'forest-edges':EDGES_SCRIPT,'stems':STEM_SCRIPT,'alignment':ALIGNMENT_SCRIPT,'alignment-edges':ALIGNMENT_EDGES_SCRIPT}
 def definitions(family:str,repo:Path=ROOT):return load(repo/f'crates/ken-retrieval/tests/fixtures/numeric-inputs-{family}.json')['cases']
 def validate_reference(value:dict,family:str,repo:Path=ROOT):
  try:
@@ -81,17 +83,17 @@ def capture(reference:Reference,out:Path,repo:Path=ROOT,family:str='forest',cach
   return value
  out.mkdir(parents=True,exist_ok=False);(out/'capture.py').write_text(SCRIPTS[family])
  request=dict(root=str(reference.root),family=family,cases=definitions(family,repo),suite=SUITES.get(family,[]),junit=str(out/'original-tests.xml'),result=str(out/'observations.json'))
- if family=='forest-edges':
+ if family in ('forest-edges','alignment-edges'):
   if cached_suite is None:raise ValueError('original numeric suite predecessor required')
   cached_suite=cached_suite.resolve();previous=load(cached_suite)
-  if validate_reference(previous,'forest',repo):raise ValueError('original numeric suite predecessor invalid')
+  if validate_reference(previous,'forest'if family=='forest-edges'else'alignment',repo):raise ValueError('original numeric suite predecessor invalid')
   request['cached_suite']=str(cached_suite)
  (out/'request.json').write_text(json.dumps(request,ensure_ascii=True))
  proc=subprocess.run([str(reference.python),str(out/'capture.py'),str(out/'request.json')],cwd=reference.root,env=reference_env(reference,out/'environment'),capture_output=True)
  (out/'stdout.log').write_bytes(proc.stdout);(out/'stderr.log').write_bytes(proc.stderr);(out/'process-exit.json').write_text(json.dumps(dict(exit=proc.returncode)))
  if proc.returncode:raise ValueError('original numeric capture failed: '+proc.stdout.decode(errors='replace')[-2500:]+proc.stderr.decode(errors='replace')[-1000:])
- value=load(out/'observations.json');value.update(owners=expected,script_sha256=hashlib.sha256(SCRIPTS[family].encode()).hexdigest(),execution=dict(exit=proc.returncode,files={name:identity(out/name)for name in('capture.py','request.json','observations.json','stdout.log','stderr.log','process-exit.json')+(()if family=='forest-edges'else('original-tests.xml',))}))
- if family=='forest-edges':value['reused_suite']=dict(path=str(cached_suite),sha256=identity(cached_suite)['sha256'])
+ value=load(out/'observations.json');value.update(owners=expected,script_sha256=hashlib.sha256(SCRIPTS[family].encode()).hexdigest(),execution=dict(exit=proc.returncode,files={name:identity(out/name)for name in('capture.py','request.json','observations.json','stdout.log','stderr.log','process-exit.json')+(()if family in ('forest-edges','alignment-edges')else('original-tests.xml',))}))
+ if family in ('forest-edges','alignment-edges'):value['reused_suite']=dict(path=str(cached_suite),sha256=identity(cached_suite)['sha256'])
  value['corpus_sha256']=digest(value['cases']);errors=validate_reference(value,family,repo)
  if errors:raise ValueError(errors)
  (out/'reference.json').write_text(json.dumps(value,ensure_ascii=True,allow_nan=False)+'\n')
