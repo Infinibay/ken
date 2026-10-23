@@ -4,6 +4,7 @@ mod classification;
 mod config;
 mod languages;
 mod paths;
+mod project_inputs;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 use thiserror::Error;
@@ -48,8 +49,25 @@ impl ImportCatalog {
         } else {
             aliases::AliasResolver::default()
         };
+        Self::prepared(files, configs.as_ref(), aliases)
+    }
+    pub fn from_project(
+        root: Option<&std::path::Path>,
+        files: Vec<String>,
+    ) -> Result<Self, ImportError> {
+        let Some(root) = root else {
+            return Self::from_inputs(files, None);
+        };
+        let inputs = project_inputs::ProjectImportInputs::read(root, &files)?;
+        Self::prepared(files, Some(&inputs.bytes), inputs.aliases)
+    }
+    fn prepared(
+        files: Vec<String>,
+        configs: Option<&BTreeMap<String, Vec<u8>>>,
+        aliases: aliases::AliasResolver,
+    ) -> Result<Self, ImportError> {
         let python_suffixes = paths::python_suffixes(&files);
-        let languages = languages::LanguageModules::from_inputs(&files, configs.as_ref())?;
+        let languages = languages::LanguageModules::from_inputs(&files, configs)?;
         Ok(Self {
             files: files.into_iter().collect(),
             python_suffixes,

@@ -20,15 +20,22 @@ impl AliasResolver {
         files: &[String],
         bytes: &BTreeMap<String, Vec<u8>>,
     ) -> Result<Self, ImportError> {
+        let mut load = |file: &str| bytes.get(file).cloned();
+        Self::from_loader(files, &mut load)
+    }
+    pub fn from_loader(
+        files: &[String],
+        load: &mut dyn FnMut(&str) -> Option<Vec<u8>>,
+    ) -> Result<Self, ImportError> {
         let mut resolver = Self::default();
         for file in files {
             let (directory, name) = file.rsplit_once('/').unwrap_or(("", file));
             if matches!(name, "tsconfig.json" | "jsconfig.json") {
-                if let Some(config) = read_config(file, directory, bytes, 0)? {
+                if let Some(config) = read_config(file, directory, load, 0)? {
                     resolver.configs.push(config);
                 }
             } else if name == "package.json"
-                && let Some(value) = bytes.get(file).and_then(|b| config::jsonc(b))
+                && let Some(value) = load(file).and_then(|b| config::jsonc(&b))
                 && let Some(name) = value.get("name").and_then(ConfigValue::text)
             {
                 if let Some(existing) = resolver.packages.iter_mut().find(|(key, _)| key == name) {
@@ -173,12 +180,11 @@ fn clean_paths(value: Option<&ConfigValue>) -> Vec<(String, Vec<String>)> {
 fn read_config(
     file: &str,
     directory: &str,
-    bytes: &BTreeMap<String, Vec<u8>>,
+    load: &mut dyn FnMut(&str) -> Option<Vec<u8>>,
     depth: usize,
 ) -> Result<Option<Config>, ImportError> {
-    let Some(data) = bytes
-        .get(file)
-        .and_then(|b| config::jsonc(b))
+    let Some(data) = load(file)
+        .and_then(|b| config::jsonc(&b))
         .filter(|v| v.object().is_some())
     else {
         return Ok(None);
@@ -205,7 +211,7 @@ fn read_config(
             parent.push_str(".json");
         }
         let parent_dir = parent.rsplit_once('/').map_or("", |(d, _)| d);
-        if let Some(parent) = read_config(&parent, parent_dir, bytes, depth + 1)? {
+        if let Some(parent) = read_config(&parent, parent_dir, load, depth + 1)? {
             let base = if let Some(base) = base {
                 path(directory, base, file)?
             } else {

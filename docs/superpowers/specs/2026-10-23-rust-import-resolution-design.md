@@ -28,7 +28,7 @@ assert_eq!(edge.resolution, Resolution::Internal);
 `files: Vec<String>` preserves original SQLite row order. `config_bytes` is an
 ordered-file-addressed map of exact bytes for indexed tsconfig/jsconfig/package,
 go.mod and composer inputs, or None when the original has no project root.
-Preparation errors remain explicit when malformed config shapes crash the original;
+The config map includes referenced extends parents even when those parent files are not indexed. Preparation errors remain explicit when malformed config shapes crash the original;
 missing/unreadable/invalid-JSON configs retain the original tolerant behavior.
 No heuristic invents a target for an ambiguous import.
 

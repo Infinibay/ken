@@ -69,7 +69,7 @@
 
 **Files:** Create `crates/ken-core/src/imports/project_inputs.rs`; extend imports public API and tests.
 
-**Interfaces:** `ImportCatalog::from_project(root:Option<&Path>,files:Vec<String>)->Result<Self,ImportError>` reads only indexed config paths, with original UTF8/error tolerance, then delegates pure construction. None means no project configs. The filesystem adapter never chooses import targets.
+**Interfaces:** `ImportCatalog::from_project(root:Option<&Path>,files:Vec<String>)->Result<Self,ImportError>` reads indexed root config paths plus their actually referenced extends parents, with original UTF8/error tolerance, then delegates pure construction. None means no project configs. The filesystem adapter never chooses import targets.
 
 - [ ] Write real temporary-project tests for indexed/unindexed configs, missing/unreadable files, JSONC UTF8 replacement versus PHP strict decoding, wrong shapes, optional root and config changes between separately constructed catalogs.
 - [ ] Run new public caller tests: expect missing from_project RED.
