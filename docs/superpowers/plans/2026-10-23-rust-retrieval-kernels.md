@@ -26,7 +26,7 @@
 4. Dense owner maxima ties, evidence beyond the early top rows, negative slicing and invalid vector shapes must preserve ordering or explicit failure.
 5. Unicode15 whitespace/query tokens, invalid budgets and nonfinite arithmetic must retain validation and diagnostic behavior rather than disappear.
 
-### Task1: Request identities and original numerical corpus
+### Task 1: Request identities and original numerical corpus
 
 **Files:** Create `ken-retrieval/src/query.rs`, tests/query.rs and fixtures/kernel-reference.json; tools/rust_migration/retrieval_reference.py plus tests/rust_migration/test_retrieval_reference.py; extend EntityKey with Hash/Ord where consumers require it.
 
@@ -37,7 +37,7 @@
 - [ ] Implement complete validated models and shared spans; no empty service or schema scaffolding.
 - [ ] Run the query tests and existing retrieval roots; Expected all PASS; fmt/clippy. Commit `feat(retrieval): define validated source search requests and candidates`.
 
-### Task2: Fielded lexical retrieval over native snapshots
+### Task 2: Fielded lexical retrieval over native snapshots
 
 **Files:** Create ken-retrieval/src/lexical.rs and tests/lexical.rs.
 
@@ -48,7 +48,7 @@
 - [ ] Implement native f64 arithmetic and SQL matching/statistics within retrieval_snapshot. Prefer uncached per-snapshot aggregate SQL initially; cache only with measured need and full provenance. Preserve original grouping and deterministic ordering.
 - [ ] Run all affected retrieval/index roots; Expected PASS; fmt/clippy. Commit `feat(retrieval): search current source postings with fielded BM25`.
 
-### Task3: Immutable grouped dense retrieval
+### Task 3: Immutable grouped dense retrieval
 
 **Files:** Create ken-retrieval/src/dense.rs and tests/dense.rs.
 
@@ -59,7 +59,7 @@
 - [ ] Implement finite normalization, ordered F32 dot products, per-owner peaks and stable selected-owner/evidence sorting with four passages each. Preserve immutable snapshot ownership and index-version failures.
 - [ ] Run all affected retrieval/index roots; Expected PASS with exact ranking and fixed numerical bounds; fmt/clippy. Commit `feat(retrieval): rank immutable dense views by canonical source owner`.
 
-### Task4: Proposal fusion preserving owner evidence
+### Task 4: Proposal fusion preserving owner evidence
 
 **Files:** Create ken-retrieval/src/proposals.rs and tests/proposals.rs.
 
@@ -70,7 +70,7 @@
 - [ ] Implement distinct-owner channel voting, max measurements, stable evidence and exact-priority sorting; reject inconsistent evidence before returning results.
 - [ ] Run all affected retrieval/index roots; Expected PASS; fmt/clippy. Commit `feat(retrieval): fuse owner proposals without duplicate votes`.
 
-### Task5: Cross-platform kernel parity and final review
+### Task 5: Cross-platform kernel parity and final review
 
 **Files:** Create ken-retrieval/examples/retrieval_kernel_probe.rs, tools/rust_migration/retrieval_{validate,evidence}.py, tests/rust_migration/test_retrieval_{probe,validate,evidence}.py; docs/validation/rust-migration-2026-10-23/m4-kernels/ and capability documentation.
 

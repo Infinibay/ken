@@ -33,3 +33,5 @@ pub use encoder::{DocumentEncoder, EncoderCounter};
 pub mod embedding_store;
 pub mod projections;
 pub mod representations;
+
+pub mod query;
