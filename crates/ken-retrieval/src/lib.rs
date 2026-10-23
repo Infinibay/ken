@@ -20,3 +20,5 @@ pub enum RetrievalError {
     Json(#[from] serde_json::Error),
 }
 pub type Result<T> = std::result::Result<T, RetrievalError>;
+
+pub mod storage;

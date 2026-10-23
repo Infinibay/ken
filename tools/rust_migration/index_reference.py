@@ -83,3 +83,56 @@ if __name__=='__main__':
     value=capture_source_reference(Reference.load(Path(os.environ['KEN_RUST_REFERENCE'])),out,root)
     (root/'crates/ken-retrieval/tests/fixtures/source-reference.json').write_bytes((json.dumps(value,ensure_ascii=False)+'\n').encode('utf-8',errors='backslashreplace'))
     print(json.dumps(dict(vocabulary=len(value['vocabulary']),passages=len(value['passages']),tests=len(value['discovered']),unicode=value['unicode_version'])))
+
+STORAGE_SCRIPT=r'''
+import dataclasses,hashlib,json,pathlib,platform,sys
+from ken.db import connect,init_schema
+from ken.retrieval.model import Passage,EntityKey,Span
+from ken.retrieval.storage import replace_file_passages,load_passage_map
+from ken.retrieval.passages import PassagePolicy
+request=json.loads(pathlib.Path(sys.argv[1]).read_bytes());root=pathlib.Path(request['root'])
+import ken.retrieval.storage as owner
+if not pathlib.Path(owner.__file__).resolve().is_relative_to(root.resolve()):raise ValueError('wrong original storage')
+sources=json.loads(pathlib.Path(request['source']).read_bytes())['passages'];chosen=[];languages=set()
+for row in sources:
+ if not row['result']:continue
+ language=row['input']['language']
+ if language not in languages or row['input']['path'] in ('tests/owner.rs','docs/input.txt'):
+  chosen.append(row);languages.add(language)
+def snapshot(conn):
+ tables={table:[list(r)for r in conn.execute('SELECT * FROM '+table+' ORDER BY '+order)]for table,order in [('ci_passages','id'),('ci_passage_terms','passage_id,field,term'),('ci_passage_lengths','passage_id,field'),('ci_retrieval_files','file_id')]}
+ return dict(tables=tables,loaded=[[pid,dataclasses.asdict(p)]for pid,p in load_passage_map(conn).items()])
+cases=[]
+for row in chosen:
+ conn=connect(pathlib.Path(':memory:'));init_schema(conn)
+ data=row['input'];parsed=data['parsed'];symbols=list(parsed['symbols']);known={(s['kind'],s['qualname'],s['line_start'])for s in symbols}
+ for scope in parsed['scopes']:
+  s=scope['symbol'];key=(s['kind'],s['qualname'],s['line_start'])
+  if key not in known:symbols.append(s);known.add(key)
+ symbols.sort(key=lambda s:(s['line_start'],-s['line_end']))
+ conn.execute("INSERT INTO ci_files(path,language,content_hash,mtime,indexed_at)VALUES(?,?,x'00',0,0)",(data['path'],data['language']))
+ for s in symbols:conn.execute('INSERT INTO ci_symbols(file_id,kind,name,qualname,line_start,line_end,docstring)VALUES(1,?,?,?,?,?,?)',(s['kind'],s['name'],s['qualname'],s['line_start'],s['line_end'],s['docstring']))
+ passages=[Passage(**{**p,'entity':EntityKey(**p['entity']),'span':Span(**p['span']),'entity_span':Span(**p['entity_span'])})for p in row['result']]
+ case=dict(id=row['id'],input=dict(path=data['path'],language=data['language'],symbols=symbols,passages=row['result'],source_hash=hashlib.sha256(bytes.fromhex(data['source_hex'])).hexdigest(),max_tokens=data['max_tokens'],tokenizer_version=data['tokenizer_version']),steps=[])
+ for action in ('replace','repeat','delete'):
+  conn.execute('BEGIN IMMEDIATE')
+  try:
+   if action=='delete':conn.execute('DELETE FROM ci_files WHERE id=1');ids=[]
+   else:ids=replace_file_passages(conn,1,passages,source_hash=case['input']['source_hash'],policy=PassagePolicy(data['max_tokens'],tokenizer_version=data['tokenizer_version']))
+   conn.commit();result=dict(ids=ids,**snapshot(conn))
+  except Exception as error:conn.rollback();result=dict(error=dict(type=type(error).__name__,message=str(error)),**snapshot(conn))
+  case['steps'].append(dict(action=action,**result))
+ cases.append(case);conn.close()
+value=dict(format='ken-index-storage-reference/1',cases=cases,runtime=dict(system=platform.system(),python=platform.python_version()),source_sha256=hashlib.sha256(pathlib.Path(request['source']).read_bytes()).hexdigest())
+pathlib.Path(request['result']).write_text(json.dumps(value,ensure_ascii=True)+'\n')
+'''
+def capture_storage_reference(reference:Reference,out:Path,source:Path)->dict:
+    target=out/'storage-reference.json'
+    if target.exists():return json.loads(target.read_bytes())
+    out.mkdir(parents=True,exist_ok=True)
+    request=dict(root=str(reference.root),source=str(source),result=str(target))
+    (out/'storage-request.json').write_text(json.dumps(request));(out/'storage-capture.py').write_text(STORAGE_SCRIPT)
+    proc=subprocess.run([str(reference.python),str(out/'storage-capture.py'),str(out/'storage-request.json')],cwd=reference.root,env=reference_env(reference,out/'environment'),capture_output=True)
+    (out/'storage-stdout').write_bytes(proc.stdout);(out/'storage-stderr').write_bytes(proc.stderr)
+    if proc.returncode:raise ValueError(proc.stderr.decode(errors='replace'))
+    value=json.loads(target.read_bytes());value.update(script_sha256=hashlib.sha256(STORAGE_SCRIPT.encode()).hexdigest(),execution=dict(exit=proc.returncode,stdout_sha256=hashlib.sha256(proc.stdout).hexdigest(),stderr_sha256=hashlib.sha256(proc.stderr).hexdigest()));target.write_bytes((json.dumps(value,ensure_ascii=False)+'\n').encode('utf-8',errors='backslashreplace'));return value
