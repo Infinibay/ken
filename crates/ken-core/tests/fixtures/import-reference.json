@@ -1,0 +1,1979 @@
+{
+  "format": "ken-import-reference/1",
+  "cases": [
+    {
+      "id": "7a74137b70ecf46be4b692d8f0896c5b940841bc94e49166d4a54a512e558b92",
+      "input": {
+        "files": [
+          "mod.py"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "os",
+            "source_path": "mod.py",
+            "language": "python"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_index_files_persists_symbols_and_imports"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": null,
+          "resolution": "external"
+        }
+      ]
+    },
+    {
+      "id": "f31c6052ed6c5e0878bdceaa02a6e47c2eaa8db19ec6feaa24a5137f0cdca9d1",
+      "input": {
+        "files": [
+          "main.py",
+          "pkg/util.py"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "pkg.util",
+            "source_path": "main.py",
+            "language": "python"
+          }
+        ]
+      },
+      "structural_targets": [
+        "pkg/util.py"
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_index_files_resolves_internal_python_import"
+      ],
+      "calls": 2,
+      "results": [
+        {
+          "target": "pkg/util.py",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "e3d4ef66cd9cd674c611edc942de746cefe48f17334f1d3a48a95000ad76277e",
+      "input": {
+        "files": [
+          "src/app.ts",
+          "src/lib.ts"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./lib",
+            "source_path": "src/app.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/lib.ts"
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_index_files_resolves_ts_relative_import"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/lib.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "5f2205f63cc64bef6622def0ba01b1b2e0be24944b33e25d1ea58c4b24d2ac42",
+      "input": {
+        "files": [
+          "src/cache.ts",
+          "src/use.ts"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./cache.js",
+            "source_path": "src/use.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/cache.ts"
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_index_files_resolves_ts_esm_js_extension"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/cache.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "e3ca2e0d996659d1206bf1498a954e9020c83901f339b1582aa291044f9b410c",
+      "input": {
+        "files": [
+          "src/app.ts",
+          "src/comp/index.ts"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./comp",
+            "source_path": "src/app.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/comp/index.ts"
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_index_files_resolves_relative_index_file"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/comp/index.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "4d1b243347fd1b9f78e99b75184f211b12128e39bb182001dbcdf43220907cad",
+      "input": {
+        "files": [
+          "app/src/main.ts",
+          "app/src/utils/debug.ts",
+          "app/tsconfig.json"
+        ],
+        "configs": {
+          "app/tsconfig.json": "7b0a20202f2f206a736f6e6320636f6d6d656e740a202022636f6d70696c65724f7074696f6e73223a207b0a20202020226261736555726c223a20222e222c0a20202020227061746873223a207b2022402f2a223a205b227372632f2a225d207d2c0a20207d0a7d0a"
+        },
+        "imports": [
+          {
+            "module": "@/utils/debug",
+            "source_path": "app/src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_index_files_resolves_tsconfig_path_alias"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "app/src/utils/debug.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "65dc8987f0692bff8c5a4a030ea6b2ee3a6233edb4c618a52aa21db073941054",
+      "input": {
+        "files": [
+          "app/src/use.ts",
+          "packages/shared/package.json",
+          "packages/shared/src/index.ts"
+        ],
+        "configs": {
+          "packages/shared/package.json": "7b226e616d65223a20224061636d652f736861726564227d0a"
+        },
+        "imports": [
+          {
+            "module": "@acme/shared/src/index",
+            "source_path": "app/src/use.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_index_files_resolves_workspace_package"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "packages/shared/src/index.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "1f1ac87afbca87e08bf038b8e1a85f4cc7da29692ece4b4697173cac9da8e144",
+      "input": {
+        "files": [
+          "src/main/java/com/acme/App.java",
+          "src/main/java/com/acme/Helper.java"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "com.acme.Helper",
+            "source_path": "src/main/java/com/acme/App.java",
+            "language": "java"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_index_files_resolves_java_package_import"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/main/java/com/acme/Helper.java",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "3ad8a3d37b3cfed88fe5832947ff1583b28ddb7cc1a210e094f2beb441c9c956",
+      "input": {
+        "files": [
+          "Cargo.toml",
+          "src/lib.rs",
+          "src/machine.rs"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "crate::machine::Machine",
+            "source_path": "src/lib.rs",
+            "language": "rust"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_index_files_resolves_rust_crate_path"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/machine.rs",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "26336a14f3f9dc38d451672522de971ed072a9c91a4b480972e41394c87bff2b",
+      "input": {
+        "files": [
+          "Cargo.toml",
+          "src/commands/mod.rs",
+          "src/lib.rs"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "crate::commands",
+            "source_path": "src/lib.rs",
+            "language": "rust"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_index_files_resolves_rust_mod_dir"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/commands/mod.rs",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "1faadcca78857feedfba019309e3c4cddbe715cff883081af00cf36a0bc45f72",
+      "input": {
+        "files": [
+          "go.mod",
+          "internal/store/store.go",
+          "main.go"
+        ],
+        "configs": {
+          "go.mod": "6d6f64756c65206769746875622e636f6d2f61636d652f70726f6a0a0a676f20312e32310a"
+        },
+        "imports": [
+          {
+            "module": "github.com/acme/proj/internal/store",
+            "source_path": "main.go",
+            "language": "go"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_index_files_resolves_go_module_path"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "internal/store/store.go",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "a420ca216af9a42ca2f1cff75f1ef92f4ea87eed43cd1b8136fc8918c68b2324",
+      "input": {
+        "files": [
+          "app.rb",
+          "lib/util.rb"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./lib/util",
+            "source_path": "app.rb",
+            "language": "ruby"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_resolves_ruby_require_relative"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "lib/util.rb",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "12d4050f525e9b10b5bc11732ee667d873aff4549ef3784b5cb92a32592ace58",
+      "input": {
+        "files": [
+          "inc/helper.hpp",
+          "main.cpp"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "\"inc/helper.hpp\"",
+            "source_path": "main.cpp",
+            "language": "cpp"
+          },
+          {
+            "module": "vector",
+            "source_path": "main.cpp",
+            "language": "cpp"
+          }
+        ]
+      },
+      "structural_targets": [
+        "inc/helper.hpp",
+        null
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_resolves_cpp_quoted_include"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "inc/helper.hpp",
+          "resolution": "internal"
+        },
+        {
+          "target": null,
+          "resolution": "external"
+        }
+      ]
+    },
+    {
+      "id": "034c62100d87111ff85ae2f331322d948632a5b6a77c6f474f9648b23e2d8394",
+      "input": {
+        "files": [
+          "com/app.kt",
+          "com/foo/models.kt"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "com.foo.Baz",
+            "source_path": "com/app.kt",
+            "language": "kotlin"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_resolves_kotlin_package_import"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "com/foo/models.kt",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "1521cda655564e30a6e57c7e5bd427d74ab63fc60eda322e62366a54421da398",
+      "input": {
+        "files": [
+          "src/Models/User.php",
+          "src/Service.php"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "App\\Models\\User",
+            "source_path": "src/Service.php",
+            "language": "php"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_resolves_php_psr4_import"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/Models/User.php",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "679cd6377d2971ed2f977ef4c968cca6f5f308de0c08babc8aa7eef016567220",
+      "input": {
+        "files": [
+          "src/calc.rs",
+          "src/lib.rs"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "super::*",
+            "source_path": "src/calc.rs",
+            "language": "rust"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [
+        "tests/test_indexer.py::test_resolves_rust_super_glob_to_own_file"
+      ],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/calc.rs",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "031f7ef224cdc9ceeb9ba9df68b6d1179b17acdb880514370dfd2e1f98ce0682",
+      "input": {
+        "files": [
+          "main.py",
+          "a/util.py",
+          "b/util.py"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "util",
+            "source_path": "main.py",
+            "language": "python"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": null,
+          "resolution": "unresolved"
+        }
+      ]
+    },
+    {
+      "id": "b4e870e7c01e817545d38fd93cc567889f878ebf9b39c3696080ff43321fb6f0",
+      "input": {
+        "files": [
+          "main.py",
+          "a/caf\u00e9.py"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "\u001ccaf\u00e9\u001f",
+            "source_path": "main.py",
+            "language": "python"
+          }
+        ]
+      },
+      "structural_targets": [
+        "a/caf\u00e9.py"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "a/caf\u00e9.py",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "f7af834a51f9764c87c534c42ee95aed2f824f0dfacab91059a3a3c21bfbd09b",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value.ts"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value.js",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value.ts"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "356633f0ff11d53809b9a075351edcecafcd5f3a0b9b66f35a4b8505a0f076d4",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value.ts",
+          "src/value.js"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value.js",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value.js"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value.js",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "9f6b5cb36cca27a08c7c9999a7d49ad1e45e4f9fff0654323a09c14344c4f5e1",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value.ts"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value.ts"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "1e5e355f5928cb5d47df5ad8b1ea8a356e0a0d7833a1d8c92386257dd09cea65",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value/index.ts"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value/index.ts"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value/index.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "9b5547db8b789de8302f558abb23005f5824d1869546a03a7e2ff300552a16f0",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value.tsx"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value.tsx"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value.tsx",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "fbf3521b9532b8480de0ed5902fd50d97c9ad8efa997f4b22774333abee8868c",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value/index.tsx"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value/index.tsx"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value/index.tsx",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "f53f289e389ac4fa3747fc71a63e763c53d1c6eee590ce0b8250521481cababc",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value.d.ts"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value.d.ts"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value.d.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "2e92f7116e7cf48943cb42838cb29a861d1a341ebba05086268ba22f8f511384",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value/index.d.ts"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value/index.d.ts"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value/index.d.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "597ff91908855de3226656742bbd77da74a807395c7751ba23e6e6c46441beb8",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value.js"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value.js"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value.js",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "62cd90d8672ab3f54a4d3558711295de811c9c1ccff3e2ec224973cb411a7a0c",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value/index.js"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value/index.js"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value/index.js",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "ffe032a37848dbb734f0e8f792c597a6fda946d608dbe621252ed70b9fd1dfb5",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value.jsx"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value.jsx"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value.jsx",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "523c6ce0a38676a125ba369d38fd4c2f5d8dc01454a6821c0ea67ce7ab74ccaf",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value/index.jsx"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value/index.jsx"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value/index.jsx",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "a29f52ad1cfd567e6226781297bf9358f834cbc9895958a9ad34ef56e1bd12cf",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value.mjs"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value.mjs"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value.mjs",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "7a68eccd32d1ac7c552cb33093695dba00309ba3965952ca9330143d253dab4e",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value/index.mjs"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value/index.mjs"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value/index.mjs",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "eafd8a63fe46f4dfbc63d265c36deee791e6b4ee1d1fe374a619a229a71c10d4",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value.cjs"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value.cjs"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value.cjs",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "cef12cdf7604442b31fd73c20f406bc479cedc2cc2e47ffa50079e0cf4ce8c45",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "src/value/index.cjs"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "src/value/index.cjs"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value/index.cjs",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "c12f80e229aa25659d90a3ffbae1b3ef270f3b08a4d4f411edeb0985514421e0",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "asset.json"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "../../asset.json",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        "asset.json"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "asset.json",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "df494afe8ffa3951808ffb2ed16094b2b9ab7c73458e11d77a9c1936a66eaf9a",
+      "input": {
+        "files": [
+          "main"
+        ],
+        "configs": null,
+        "imports": [
+          {
+            "module": ".missing",
+            "source_path": "main",
+            "language": null
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": null,
+          "resolution": "unresolved"
+        }
+      ]
+    },
+    {
+      "id": "d38bbe37907b6248eba0f547b9c31e2b195e127c18bdab6389d2db409dbe5ff9",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "pkg/value.ts",
+          "src/value.ts"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "@app/value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": null,
+          "resolution": "external"
+        }
+      ]
+    },
+    {
+      "id": "511a5bf099fc29163ff460d0c8e6c14de1d7a4ae37df70dc7393971752ca94a9",
+      "input": {
+        "files": [
+          "child/main.ts",
+          "tsconfig.json",
+          "child/tsconfig.json",
+          "shared/value.ts"
+        ],
+        "configs": {
+          "tsconfig.json": "7b22636f6d70696c65724f7074696f6e73223a7b227061746873223a7b224076616c7565223a5b227368617265642f76616c7565225d7d7d7d",
+          "child/tsconfig.json": "7b22636f6d70696c65724f7074696f6e73223a7b227061746873223a7b224076616c7565223a5b226d697373696e67225d7d7d7d"
+        },
+        "imports": [
+          {
+            "module": "@value",
+            "source_path": "child/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "shared/value.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "0eac1116a57441e1a1aecccf11b3340f5315697ed3f140a7508713d4c7a3173e",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "tsconfig.json",
+          "shared/value.ts"
+        ],
+        "configs": {
+          "tsconfig.json": "7b22657874656e6473223a222e2f62617365227d",
+          "base.json": "2f2f20696e6865726974656420636f6e6669670a7b22636f6d70696c65724f7074696f6e73223a7b226261736555726c223a222e222c227061746873223a7b224076616c7565223a5b227368617265642f76616c7565222c5d2c7d2c7d2c7d"
+        },
+        "imports": [
+          {
+            "module": "@value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "shared/value.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "8b88b4420991348b87f4171a4acb976d8a9b1cbe902ca1270f5edb085a4aace0",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "tsconfig.json"
+        ],
+        "configs": {
+          "tsconfig.json": "7b22657874656e6473223a222e2f7473636f6e666967222c22636f6d70696c65724f7074696f6e73223a7b227061746873223a7b22406d697373696e67223a5b226e6f6e65225d7d7d7d"
+        },
+        "imports": [
+          {
+            "module": "@missing",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": null,
+          "resolution": "unresolved"
+        }
+      ]
+    },
+    {
+      "id": "1a841674b527e7ebed01aa1e580f04d3a650480e88698513fb6f71d14f02e5ee",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "tsconfig.json",
+          "src/value.ts",
+          "pkg/value.ts"
+        ],
+        "configs": {
+          "tsconfig.json": "7b22636f6d70696c65724f7074696f6e73223a7b227061746873223a7b224076616c7565223a5b22706b672f76616c7565225d2c224076616c7565223a5b227372632f76616c7565225d7d7d7d"
+        },
+        "imports": [
+          {
+            "module": "@value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "999a2d86425a0b6d289dfda3739b27ff15fe65e015b437f8470f72c4e2f417e3",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "tsconfig.json",
+          "src/value.ts"
+        ],
+        "configs": {
+          "tsconfig.json": "7b22636f6d70696c65724f7074696f6e73223a7b227061746873223a7b224076616c7565223a5b227372632f76616c7565225d7d7d2c22756e75736564223a31653939397d"
+        },
+        "imports": [
+          {
+            "module": "@value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "720f20f435b6adccf36b36d22ac26b5f2392adcfc2ef0938c8d816ea14d27e5d",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "tsconfig.json",
+          "src/value.ts"
+        ],
+        "configs": {
+          "tsconfig.json": "7b22636f6d70696c65724f7074696f6e73223a7b227061746873223a7b224076616c7565223a5b227372632f76616c7565225d7d7d2c22756e75736564223a4e614e7d"
+        },
+        "imports": [
+          {
+            "module": "@value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/value.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "d614d4d314ff3c65f19e02be695e114af050a8849be74c2f69d9881b50196cc1",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "tsconfig.json"
+        ],
+        "configs": {
+          "tsconfig.json": "7b22636f6d70696c65724f7074696f6e73223a5b315d7d"
+        },
+        "imports": [
+          {
+            "module": "@value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "error": {
+        "type": "AttributeError",
+        "message": "'list' object has no attribute 'get'"
+      }
+    },
+    {
+      "id": "59c45ebb6a7858b0c3ed093e6a8e76b3bba7d0aa385f679b44ca11fe58ac5010",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "tsconfig.json"
+        ],
+        "configs": {
+          "tsconfig.json": "7b22636f6d70696c65724f7074696f6e73223a5b5d7d"
+        },
+        "imports": [
+          {
+            "module": "@value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": null,
+          "resolution": "external"
+        }
+      ]
+    },
+    {
+      "id": "feb17b809c720394af579f14b35920ad5185657a92eb81171e7c6b0f3d6ae083",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "tsconfig.json"
+        ],
+        "configs": {
+          "tsconfig.json": "7b2062726f6b656e206a736f6e"
+        },
+        "imports": [
+          {
+            "module": "@value",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": null,
+          "resolution": "external"
+        }
+      ]
+    },
+    {
+      "id": "9520c04df97b5a783086f14c38546e8321b1279e7782126acf1d67ac6b02033e",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "pkg/package.json",
+          "pkg/index.ts"
+        ],
+        "configs": {
+          "pkg/package.json": "7b226e616d65223a224073636f70652f706b67227d"
+        },
+        "imports": [
+          {
+            "module": "@scope/pkg",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "pkg/index.ts",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "6a8a38da73ed18567bc70e9297875dc94bdd1992b0b0f05d70909e9610a76d15",
+      "input": {
+        "files": [
+          "src/main.ts",
+          "pkg/package.json",
+          "pkg/index.ts"
+        ],
+        "configs": null,
+        "imports": [
+          {
+            "module": "@scope/pkg",
+            "source_path": "src/main.ts",
+            "language": "typescript"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": null,
+          "resolution": "external"
+        }
+      ]
+    },
+    {
+      "id": "ecf2b53cf754638ccc4aa025e1796401cb5d16bf865b17b1e5933bc6fc933cc2",
+      "input": {
+        "files": [
+          "crate/src/main.rs",
+          "crate/Cargo.toml",
+          "crate/src/config.rs"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "crate::config::Value",
+            "source_path": "crate/src/main.rs",
+            "language": "rust"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "crate/src/config.rs",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "d24ad93fd6f67f4e796f13f1d312179eb772dc1709e5034f881109c23d07883d",
+      "input": {
+        "files": [
+          "src/main.rs",
+          "Cargo.toml"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "super::*",
+            "source_path": "src/main.rs",
+            "language": "rust"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/main.rs",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "2396f83ca619923a645796d91d32665a176630f4c475ba82deb687bcc10ef7fb",
+      "input": {
+        "files": [
+          "main.go",
+          "go.mod",
+          "internal/a_test.go",
+          "internal/z.go",
+          "internal/b.go"
+        ],
+        "configs": {
+          "go.mod": "6d6f64756c65206578616d706c652e746573742f6170700a"
+        },
+        "imports": [
+          {
+            "module": "example.test/app/internal",
+            "source_path": "main.go",
+            "language": "go"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "internal/b.go",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "7e5a286678f9c3d5e7273e3d253bec43b80e2b753c65a52378a9ab1d897a4227",
+      "input": {
+        "files": [
+          "src/main.rb",
+          "src/util.rb"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "./util",
+            "source_path": "src/main.rb",
+            "language": "ruby"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/util.rb",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "c42ab12a90f82c97b22966c2dd1e3b56f4de61331786707e2bb54a91a3841b9a",
+      "input": {
+        "files": [
+          "main.java",
+          "one/pkg/Value.java",
+          "two/pkg/Value.java"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "pkg.Value",
+            "source_path": "main.java",
+            "language": "java"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": null,
+          "resolution": "unresolved"
+        }
+      ]
+    },
+    {
+      "id": "b8c23c066d7d6b7d561aca3e6b0efebbfa6f268f648d2183ad0270c7b16ee79b",
+      "input": {
+        "files": [
+          "main.java",
+          "src/pkg/Value.java"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "pkg.Value.member",
+            "source_path": "main.java",
+            "language": "java"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "src/pkg/Value.java",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "1786870916a371b0c9e28ffee223de19f3baeb53cb96139f80de486c0e42d65b",
+      "input": {
+        "files": [
+          "one/main.cpp",
+          "one/shared.hpp",
+          "two/shared.hpp"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "\"shared.hpp\"",
+            "source_path": "one/main.cpp",
+            "language": "cpp"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "one/shared.hpp",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "f4d2e7511b675ced8363b0a7ac657aa0d97145bfc580e4718840e04ff88c215b",
+      "input": {
+        "files": [
+          "main.cpp",
+          "vector.py"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "vector",
+            "source_path": "main.cpp",
+            "language": "cpp"
+          }
+        ]
+      },
+      "structural_targets": [
+        "vector.py"
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "vector.py",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "20cee5177e62a9288b507fe9e2ef1f2cf4b577d89a20795fc684d147888481f3",
+      "input": {
+        "files": [
+          "main.kt",
+          "src/pkg/A.kt",
+          "src/pkg/B.kt"
+        ],
+        "configs": {},
+        "imports": [
+          {
+            "module": "pkg.Value",
+            "source_path": "main.kt",
+            "language": "kotlin"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": null,
+          "resolution": "unresolved"
+        }
+      ]
+    },
+    {
+      "id": "dacae383088196680c4b0c0dff4d2f74ecd8a67bf96adac30cd55289de004cc7",
+      "input": {
+        "files": [
+          "main.php",
+          "composer.json",
+          "lib/Value.php"
+        ],
+        "configs": {
+          "composer.json": "7b226175746f6c6f6164223a7b227073722d34223a7b224170705c5c223a226c69622f227d7d7d"
+        },
+        "imports": [
+          {
+            "module": "App\\Value",
+            "source_path": "main.php",
+            "language": "php"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "results": [
+        {
+          "target": "lib/Value.php",
+          "resolution": "internal"
+        }
+      ]
+    },
+    {
+      "id": "fcb840a209d9a406f17a87d1d3fee51d71fd72f56b9da997d28e827d98e38fed",
+      "input": {
+        "files": [
+          "main.php",
+          "composer.json"
+        ],
+        "configs": {
+          "composer.json": "7b226175746f6c6f6164223a5b315d7d"
+        },
+        "imports": [
+          {
+            "module": "App\\Value",
+            "source_path": "main.php",
+            "language": "php"
+          }
+        ]
+      },
+      "structural_targets": [
+        null
+      ],
+      "tests": [],
+      "calls": 1,
+      "error": {
+        "type": "AttributeError",
+        "message": "'list' object has no attribute 'get'"
+      }
+    }
+  ],
+  "calls": 60,
+  "discovered": [
+    "tests/test_indexer.py::test_hash_is_deterministic",
+    "tests/test_indexer.py::test_index_files_skips_too_large",
+    "tests/test_indexer.py::test_index_files_persists_symbols_and_imports",
+    "tests/test_indexer.py::test_index_files_resolves_internal_python_import",
+    "tests/test_indexer.py::test_index_files_resolves_ts_relative_import",
+    "tests/test_indexer.py::test_index_files_resolves_ts_esm_js_extension",
+    "tests/test_indexer.py::test_index_files_resolves_relative_index_file",
+    "tests/test_indexer.py::test_index_files_resolves_tsconfig_path_alias",
+    "tests/test_indexer.py::test_index_files_resolves_workspace_package",
+    "tests/test_indexer.py::test_index_files_resolves_java_package_import",
+    "tests/test_indexer.py::test_index_files_resolves_rust_crate_path",
+    "tests/test_indexer.py::test_index_files_resolves_rust_mod_dir",
+    "tests/test_indexer.py::test_index_files_resolves_go_module_path",
+    "tests/test_indexer.py::test_index_files_skips_unchanged_on_rerun",
+    "tests/test_indexer.py::test_is_unchanged_requires_embedding_when_asked",
+    "tests/test_indexer.py::test_index_files_with_embedder_populates_embedding",
+    "tests/test_indexer.py::test_index_files_with_embedder_populates_plain_text_intent",
+    "tests/test_indexer.py::test_index_files_persists_docstring_intent_sources",
+    "tests/test_indexer.py::test_delete_file_cascades_to_symbols",
+    "tests/test_indexer.py::test_delete_file_returns_false_when_missing",
+    "tests/test_indexer.py::test_delete_path_removes_indexed_subtree",
+    "tests/test_indexer.py::test_resolves_ruby_require_relative",
+    "tests/test_indexer.py::test_resolves_cpp_quoted_include",
+    "tests/test_indexer.py::test_resolves_kotlin_package_import",
+    "tests/test_indexer.py::test_resolves_php_psr4_import",
+    "tests/test_indexer.py::test_resolves_rust_super_glob_to_own_file",
+    "tests/test_indexer.py::test_chunk_size_does_not_change_a_vector",
+    "tests/test_indexer.py::test_worker_count_gates_on_size_and_env",
+    "tests/test_indexer.py::test_parse_falls_back_to_serial_when_the_pool_breaks",
+    "tests/test_indexer.py::test_progress_is_reported_in_walk_order",
+    "tests/test_indexer.py::test_legacy_rust_index_is_reparsed_when_new_trait_owners_are_available",
+    "tests/test_indexer.py::test_cpp_header_language_reaches_serial_parser_and_database",
+    "tests/test_indexer.py::test_cpp_header_reindexes_unchanged_source_after_parser_upgrade"
+  ],
+  "test_states": [
+    {
+      "nodeid": "tests/test_indexer.py::test_hash_is_deterministic",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_skips_too_large",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_persists_symbols_and_imports",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_resolves_internal_python_import",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_resolves_ts_relative_import",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_resolves_ts_esm_js_extension",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_resolves_relative_index_file",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_resolves_tsconfig_path_alias",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_resolves_workspace_package",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_resolves_java_package_import",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_resolves_rust_crate_path",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_resolves_rust_mod_dir",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_resolves_go_module_path",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_skips_unchanged_on_rerun",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_is_unchanged_requires_embedding_when_asked",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_with_embedder_populates_embedding",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_with_embedder_populates_plain_text_intent",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_index_files_persists_docstring_intent_sources",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_delete_file_cascades_to_symbols",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_delete_file_returns_false_when_missing",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_delete_path_removes_indexed_subtree",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_resolves_ruby_require_relative",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_resolves_cpp_quoted_include",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_resolves_kotlin_package_import",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_resolves_php_psr4_import",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_resolves_rust_super_glob_to_own_file",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_chunk_size_does_not_change_a_vector",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_worker_count_gates_on_size_and_env",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_parse_falls_back_to_serial_when_the_pool_breaks",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_progress_is_reported_in_walk_order",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_legacy_rust_index_is_reparsed_when_new_trait_owners_are_available",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_cpp_header_language_reaches_serial_parser_and_database",
+      "when": "call",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_indexer.py::test_cpp_header_reindexes_unchanged_source_after_parser_upgrade",
+      "when": "call",
+      "outcome": "passed"
+    }
+  ],
+  "original_test_exit": 0,
+  "runtime": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "python": "3.12.9"
+  },
+  "owners": {
+    "src/ken/indexer.py": "430dab7bec2d643a17a1cf3a616434b3c4efd0ffe07ea93a279146950377cbd4",
+    "src/ken/jsresolve.py": "228919f225dffc74d193d6e24cab7fe093aed4ec7c8d507e722b3079169efd0a",
+    "tests/conftest.py": "e350ce30ebaf2ee1d2861e1e737c96957478b498a9fcaa8a59f04a5e91933986",
+    "tests/test_indexer.py": "17badc54c148fbfec50db43e35dd1fd0ab8c0914cba8e2bc1a1fd64711e88121"
+  },
+  "script_sha256": "402cb354fc55489afd3b9386e7981ebfd6e5f45d6e104c399908d29d32a27c49",
+  "supplements_sha256": "90c1f165e92522f50c6a6a878899d1ff1dfaf3c9c14709d021d0832b13b18506",
+  "cases_sha256": "dcff83f7cf16241c9cff12af4b7f8dc960983d073d0bb3156fb7582f7d2f7671",
+  "test_execution": {
+    "exit": 0,
+    "python": "/Users/andres/Projects/ken/.venv/bin/python",
+    "cwd": "/Users/andres/Projects/ken/.ken/rust-migration/m2-optional/reference-final-t9",
+    "stdout_sha256": "f94c6c1d339436e4b15545cc8b6dbd973c2a2e35b44255841d6b22c5739be072",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "observations_sha256": "fb3d580bdaac7b3bbcdbc21abe8614de311b4a557a3637c75d69a25912adf0a4",
+    "timeout_s": 120
+  }
+}
