@@ -1,6 +1,6 @@
 //! Shared source scopes, comments and attributes from the existing syntax tree.
 use crate::{
-    SyntaxNode,
+    ParseError, SyntaxNode,
     helpers::{lines, text, trim, trim_end},
     model::{ParsedFile, ParsedScope, ParsedSymbol},
 };
@@ -10,19 +10,24 @@ use std::{
     sync::OnceLock,
 };
 
-pub(crate) fn enrich(source: &[u8], root: SyntaxNode<'_>, parsed: &mut ParsedFile) {
+pub(crate) fn enrich(
+    source: &[u8],
+    root: SyntaxNode<'_>,
+    parsed: &mut ParsedFile,
+) -> Result<(), ParseError> {
     parsed.scopes.extend(
-        indexed(source, root, &parsed.symbols)
+        indexed(source, root, &parsed.symbols)?
             .into_iter()
             .map(|(_, scope)| scope),
     );
+    Ok(())
 }
 
 pub(crate) fn indexed(
     source: &[u8],
     root: SyntaxNode<'_>,
     symbols: &[ParsedSymbol],
-) -> Vec<(usize, ParsedScope)> {
+) -> Result<Vec<(usize, ParsedScope)>, ParseError> {
     let mut result = Vec::new();
     let mut spans: BTreeMap<(usize, usize), Vec<SyntaxNode<'_>>> = BTreeMap::new();
     let mut pending = vec![root];
@@ -55,10 +60,10 @@ pub(crate) fn indexed(
             .iter()
             .min_by_key(|n| n.end_byte() - n.start_byte())
         {
-            result.push((index, scope(source, *node, symbol.clone(), None)));
+            result.push((index, scope(source, *node, symbol.clone(), None)?));
         }
     }
-    result
+    Ok(result)
 }
 
 pub(crate) fn scope(
@@ -66,7 +71,7 @@ pub(crate) fn scope(
     node: SyntaxNode<'_>,
     symbol: ParsedSymbol,
     body: Option<SyntaxNode<'_>>,
-) -> ParsedScope {
+) -> Result<ParsedScope, ParseError> {
     let body = body.or_else(|| node.field("body")).or_else(|| {
         node.field("value")
             .or_else(|| node.field("right"))
@@ -75,7 +80,7 @@ pub(crate) fn scope(
     let end = body.map_or(node.end_byte(), |n| n.start_byte());
     let signature = String::from_utf8_lossy(&source[node.start_byte()..end]);
     let mut signature = trim_end(&signature).to_owned();
-    let annotations = annotations(source, node);
+    let annotations = annotations(source, node)?;
     let prefix: Vec<_> = annotations
         .iter()
         .filter(|a| !signature.contains(a.as_str()))
@@ -161,10 +166,10 @@ pub(crate) fn scope(
             .find(|n| !n.kind().contains("comment"))
             .map_or(symbol.line_start, |n| n.start_point()[0] + 1),
     );
-    ParsedScope {
+    Ok(ParsedScope {
         symbol,
         signature,
-        documentation,
+        documentation: documentation.map(Into::into),
         owner,
         statements: statements
             .iter()
@@ -172,10 +177,10 @@ pub(crate) fn scope(
             .collect(),
         implementation_start_line,
         annotations,
-    }
+    })
 }
 
-fn annotations(source: &[u8], node: SyntaxNode<'_>) -> Vec<String> {
+fn annotations(source: &[u8], node: SyntaxNode<'_>) -> Result<Vec<String>, ParseError> {
     let mut items = Vec::new();
     let mut current = Some(node);
     while let Some(node) = current {
@@ -185,7 +190,12 @@ fn annotations(source: &[u8], node: SyntaxNode<'_>) -> Vec<String> {
                 previous_node.kind(),
                 "attribute_item" | "decorator" | "annotation"
             ) {
-                items.push(text(previous_node, source));
+                items.push(
+                    std::str::from_utf8(
+                        &source[previous_node.start_byte()..previous_node.end_byte()],
+                    )?
+                    .to_owned(),
+                );
             } else if !previous_node.kind().contains("comment") {
                 break;
             }
@@ -194,9 +204,9 @@ fn annotations(source: &[u8], node: SyntaxNode<'_>) -> Vec<String> {
         current = node.parent();
     }
     let mut seen = BTreeSet::new();
-    items
+    Ok(items
         .into_iter()
         .rev()
         .filter(|item| seen.insert(item.clone()))
-        .collect()
+        .collect())
 }

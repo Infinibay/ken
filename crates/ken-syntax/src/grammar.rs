@@ -62,6 +62,8 @@ impl Language {
 
 #[derive(Debug, Error)]
 pub enum ParseError {
+    #[error("invalid utf-8 in source annotation: {0}")]
+    AnnotationEncoding(#[from] std::str::Utf8Error),
     #[error("invalid native grammar manifest: {0}")]
     Manifest(String),
     #[error("{language} grammar unavailable: {reason}")]

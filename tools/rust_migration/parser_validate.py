@@ -40,6 +40,10 @@ def parser_cases(repo: Path) -> list[dict]:
     for row in load(folder / 'parser-errors.json')['cases']:
         request = dict(language=row['language'], hint='error.ts', source_hex=row['source_hex'])
         cases.append(dict(id=case_id(request), input=request, error=row['error']))
+    if (folder / 'review-cases.json').is_file():
+        for row in load(folder / 'review-cases.json')['cases']:
+            cases.append(dict(id=case_id(row['input']), input=row['input'],
+                **({'parsed': json.loads(row['parsed_json'])} if 'parsed_json' in row else {'error': row['error']})))
     if len(cases) != len({c['id'] for c in cases}): raise ValueError('duplicate original parser input')
     return cases
 

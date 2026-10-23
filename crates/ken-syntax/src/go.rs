@@ -1,16 +1,16 @@
 //! Go declarations and grouped imports retain receiver and source-line rules.
 use crate::{
-    SyntaxNode,
+    ParseError, SyntaxNode,
     helpers::{child_text, line_doc, symbol, text, trim},
     model::{ParsedFile, ParsedImport},
     scopes,
 };
 
-pub(crate) fn extract(source: &[u8], root: SyntaxNode<'_>) -> ParsedFile {
+pub(crate) fn extract(source: &[u8], root: SyntaxNode<'_>) -> Result<ParsedFile, ParseError> {
     let mut out = ParsedFile::default();
     walk(root, source, &mut out);
-    scopes::enrich(source, root, &mut out);
-    out
+    scopes::enrich(source, root, &mut out)?;
+    Ok(out)
 }
 fn walk(node: SyntaxNode<'_>, source: &[u8], out: &mut ParsedFile) {
     for child in node.children() {

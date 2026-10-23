@@ -1,7 +1,6 @@
 //! Bounded external consumer; requests contain inputs only, never expectations.
-use ken_syntax::{GrammarCatalog, Language, ParserRegistry};
-use serde::Deserialize;
-use serde_json::json;
+use ken_syntax::{GrammarCatalog, Language, ParsedFile, ParserRegistry, SyntaxRecord};
+use serde::{Deserialize, Serialize};
 use std::{
     collections::BTreeSet,
     io::{self, Read},
@@ -20,6 +19,24 @@ struct Case {
     language: Language,
     hint: String,
     source_hex: String,
+}
+#[derive(Serialize)]
+#[serde(untagged)]
+enum Observation {
+    Parsed {
+        id: String,
+        parsed: ParsedFile,
+        syntax: Vec<SyntaxRecord>,
+    },
+    Error {
+        id: String,
+        error: String,
+    },
+}
+#[derive(Serialize)]
+struct Response {
+    format: &'static str,
+    cases: Vec<Observation>,
 }
 fn main() -> Result<(), String> {
     let mut input = Vec::new();
@@ -67,9 +84,16 @@ fn main() -> Result<(), String> {
                 let tree = catalog
                     .syntax(case.language, &source, &case.hint)
                     .map_err(|e| e.to_string())?;
-                json!({"id":case.id,"parsed":parsed,"syntax":tree.snapshot()})
+                Observation::Parsed {
+                    id: case.id,
+                    parsed,
+                    syntax: tree.snapshot(),
+                }
             }
-            Err(error) => json!({"id":case.id,"error":error.to_string()}),
+            Err(error) => Observation::Error {
+                id: case.id,
+                error: error.to_string(),
+            },
         };
         budget += serde_json::to_vec(&row).map_err(|e| e.to_string())?.len();
         if budget > 32 * 1024 * 1024 - 4096 {
@@ -79,7 +103,11 @@ fn main() -> Result<(), String> {
     }
     println!(
         "{}",
-        json!({"format":"ken-parser-observation/1","cases":rows})
+        serde_json::to_string(&Response {
+            format: "ken-parser-observation/1",
+            cases: rows
+        })
+        .map_err(|e| e.to_string())?
     );
     Ok(())
 }

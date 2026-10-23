@@ -19,7 +19,7 @@ pub struct ParsedImport {
 pub struct ParsedScope {
     pub symbol: ParsedSymbol,
     pub signature: String,
-    pub documentation: Option<String>,
+    pub documentation: Option<crate::PythonText>,
     pub owner: Option<String>,
     pub statements: Vec<(usize, usize)>,
     pub implementation_start_line: Option<usize>,

@@ -1,7 +1,8 @@
 //! Python docstring literals and full original escape interpretation.
+use crate::PythonText;
 use crate::python_unicode::named_character;
 
-pub(crate) fn decode(raw: &str) -> Option<String> {
+pub(crate) fn decode(raw: &str) -> Option<PythonText> {
     if raw.contains('\0') {
         return None;
     }
@@ -24,11 +25,12 @@ pub(crate) fn decode(raw: &str) -> Option<String> {
     let body = &quoted[delimiter.len()..quoted.len() - delimiter.len()];
     let body = body.replace("\r\n", "\n").replace('\r', "\n");
     if prefix == "r" {
-        return Some(body);
+        return Some(body.into());
     }
     // py_literal's short-string parser is reliable; normalize the delimiter and
     // literal line breaks before invoking it. Preserve original escape pairs.
     let mut encoded = String::from("\"");
+    let mut points = Vec::new();
     let mut chars = body.chars().peekable();
     while let Some(character) = chars.next() {
         match character {
@@ -37,7 +39,20 @@ pub(crate) fn decode(raw: &str) -> Option<String> {
                 if next == '\n' {
                     continue;
                 }
-                if next == 'N' {
+                if matches!(next, 'u' | 'U') {
+                    let count = if next == 'u' { 4 } else { 8 };
+                    let digits: String = chars.by_ref().take(count).collect();
+                    if digits.len() != count || !digits.bytes().all(|b| b.is_ascii_hexdigit()) {
+                        return None;
+                    }
+                    let point = u32::from_str_radix(&digits, 16).ok()?;
+                    if (0xd800..=0xdfff).contains(&point) {
+                        flush(&mut encoded, &mut points)?;
+                        points.push(point);
+                    } else {
+                        encoded.push_str(&format!("\\U{point:08x}"));
+                    }
+                } else if next == 'N' {
                     if chars.next() != Some('{') {
                         return None;
                     }
@@ -65,9 +80,16 @@ pub(crate) fn decode(raw: &str) -> Option<String> {
             _ => encoded.push(character),
         }
     }
+    flush(&mut encoded, &mut points)?;
+    PythonText::from_codepoints(points)
+}
+fn flush(encoded: &mut String, points: &mut Vec<u32>) -> Option<()> {
     encoded.push('"');
-    match encoded.parse::<py_literal::Value>().ok()? {
-        py_literal::Value::String(value) => Some(value),
-        _ => None,
-    }
+    let py_literal::Value::String(value) = encoded.parse().ok()? else {
+        return None;
+    };
+    points.extend(value.chars().map(u32::from));
+    encoded.clear();
+    encoded.push('"');
+    Some(())
 }

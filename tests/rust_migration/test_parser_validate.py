@@ -17,10 +17,10 @@ def native(cases):
         for row in cases]}
 
 def test_all_languages_and_original_encoding_failures_are_in_the_inventory(original):
-    assert len(original) == 239
+    assert len(original) == 249
     assert len({c['input']['language'] for c in original}) == 19
     assert len([c for c in original if 'syntax' in c]) == 215
-    assert len([c for c in original if 'error' in c]) == 2
+    assert len([c for c in original if 'error' in c]) == 4
     assert compare_parser_observations(original, native(original)) == []
 
 @pytest.mark.parametrize('mutation', ['missing', 'duplicate', 'reorder', 'range', 'kind', 'docs', 'scope', 'annotations', 'syntax', 'error', 'format'])

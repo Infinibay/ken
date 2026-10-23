@@ -66,20 +66,23 @@ def aggregate_parser_matrix(directory: Path, repo: Path, *, current: bool = Fals
             if not value: raise ValueError(message)
         errors = _manifest_errors(directory); require(not errors, '; '.join(errors))
         index = load(directory / 'INDEX.json')
-        require(index['format'] == 'ken-parser-matrix/1', 'wrong parser matrix protocol')
+        require(index['format'] in ('ken-parser-matrix/1', 'ken-parser-review-repair/1'), 'wrong parser matrix protocol')
+        repaired = index['format'] == 'ken-parser-review-repair/1'
         snapshot = directory / 'native-sources'
         require(index['sources'] == source_identity(snapshot), 'native source snapshot differs')
         if current: require(index['sources'] == source_identity(repo), 'current parser source differs')
         for name, expected in index['tooling'].items():
             require(not Path(name).is_absolute() and '..' not in Path(name).parts and identity(directory / 'validation-sources' / name) == expected, 'validation source differs')
         predecessor = dict(path='docs/validation/rust-migration-2026-10-23/m3-source-review', sha256='3a9448aa7489e9c9a99bbf80b6e70e0ed61f1beaf063208f4944443b0340caa9')
+        if repaired:
+            predecessor = dict(path='docs/validation/rust-migration-2026-10-23/m3-parsers', sha256='263308848530d463d8c807d15d79dbedd586b25eb10fb6968ae3fa24aa7d4edd')
         require(index['predecessor'] == predecessor, 'accepted source discovery predecessor differs')
         require(identity(repo / predecessor['path'] / 'FILES.json')['sha256'] == predecessor['sha256'], 'source discovery receipt changed')
         require(not _manifest_errors(repo / predecessor['path']), 'source discovery artifact changed')
         require(not verify_reference(repo, repo / 'docs/validation/rust-migration-2026-10-18/baseline.json'), 'original files changed')
         require(set(index['platforms']) == {'macos', 'linux'}, 'both actual platforms required')
         cases = parser_cases(snapshot)
-        require(len(cases) == 239 and len({c['input']['language'] for c in cases}) == 19, 'complete original case inventory required')
+        require(len(cases) == (249 if repaired else 239) and len({c['input']['language'] for c in cases}) == 19, 'complete original case inventory required')
         fixtures = snapshot / 'crates/ken-syntax/tests/fixtures'
         for name in ('parser-edges', 'parser-errors', 'c-macro-digits'):
             supplemental = load(fixtures / (name + '.json'))
@@ -90,6 +93,15 @@ def aggregate_parser_matrix(directory: Path, repo: Path, *, current: bool = Fals
                 observed.extend(json.loads(execution['execution']['stdout'])['cases'])
             require(observed == supplemental['cases'], 'supplemental original raw observations differ')
             if 'owners' in supplemental: require(supplemental['owners'] == parser_owner_hashes(repo), 'supplemental original owners differ')
+        if repaired:
+            supplemental = load(fixtures / 'review-cases.json')
+            require(supplemental['owners'] == parser_owner_hashes(repo) and supplemental['execution']['exit'] == 0 and bool(supplemental['script']), 'review original owner/execution differs')
+            require(json.loads(supplemental['execution']['stdout'])['cases'] == supplemental['cases'] and len(supplemental['cases']) == 10, 'review raw original observations differ')
+            linux_review = load(directory / 'research/original-review-linux.json')
+            require(linux_review['execution']['exit'] == 0 and bool(linux_review['script']), 'original Linux review execution missing/failed')
+            observed = json.loads(linux_review['execution']['stdout'])
+            require(observed['cases'] == supplemental['cases'] and observed['runtime'] == {'system': 'Linux', 'machine': 'aarch64'}, 'original Linux review inputs/platform differ')
+            require(observed['owners'] == {k: v for k, v in parser_owner_hashes(repo).items() if k.startswith('src/ken/parsers/')}, 'actual original Linux module origins differ')
         original_cases = None
         for system, platform in index['platforms'].items():
             with tempfile.TemporaryDirectory(prefix='ken-parser-replay-') as temporary:
@@ -115,13 +127,13 @@ def aggregate_parser_matrix(directory: Path, repo: Path, *, current: bool = Fals
                 require(load(raw / 'native/execution.json')['system'] == system, 'native platform differs')
             gates = directory / 'gates' / system
             require(not parser_rust_gate_errors((gates / 'rust-list.log').read_text(), (gates / 'rust-tests.log').read_text()), 'native syntax regression suite differs')
-            require(len(re.findall(r'^([^\n]+): test$', (gates / 'rust-list.log').read_text(), re.M)) == 31, 'complete native syntax tests required')
+            require(len(re.findall(r'^([^\n]+): test$', (gates / 'rust-list.log').read_text(), re.M)) == (33 if repaired else 31), 'complete native syntax tests required')
             states = junit_states(gates / 'python.xml')
             discovered = {path[:-3].replace('/', '.') + '::' + name for path, name in re.findall(r'^(tests/rust_migration/test_(?:parser_[^:\n]+|grammar_prepare)\.py)::(.+)$', (gates / 'python-list.log').read_text(), re.M)}
             require(len(discovered) == 38 and set(states) == discovered and set(states.values()) == {'passed'}, 'complete affected tooling suite required')
             clippy = (gates / 'clippy.log').read_text()
             require('Finished `dev` profile' in clippy and 'error:' not in clippy and 'warning:' not in clippy, 'clippy failed/missing')
             require((gates / 'fmt.log').read_bytes() == b'', 'format failed')
-        result.update(passed=True, M3b_accepted=True, per_platform=dict(Rust=31, Python=38, cases=239, grammar_shapes=215))
+        result.update(passed=True, M3b_accepted=True, per_platform=dict(Rust=33 if repaired else 31, Python=38, cases=249 if repaired else 239, grammar_shapes=215))
     except (OSError, ValueError, KeyError, TypeError, IndexError, tarfile.TarError) as error: result['errors'].append(str(error))
     return result

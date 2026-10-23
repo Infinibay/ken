@@ -36,7 +36,7 @@ fn outline(node: SyntaxNode<'_>, source: &[u8], owner: &str, parsed: &mut Parsed
                 } else {
                     "method"
                 };
-                let item = symbol(child, kind, name, owner, doc(child, source, false));
+                let item = symbol(child, kind, name, owner, doc(child, source));
                 let qualname = item.qualname.clone();
                 parsed.symbols.push(item);
                 if class && let Some(body) = child.field("body") {
@@ -105,7 +105,7 @@ fn collect_scopes(
         let item = existing
             .get(&(node.start_point()[0] + 1))
             .cloned()
-            .unwrap_or_else(|| symbol(node, kind, name, owner, doc(node, source, false)));
+            .unwrap_or_else(|| symbol(node, kind, name, owner, doc(node, source)));
         let body = node.field("body");
         let end = body.map_or(node.end_byte(), |n| n.start_byte());
         let signature =
@@ -127,7 +127,7 @@ fn collect_scopes(
         parsed.scopes.push(ParsedScope {
             symbol: item,
             signature,
-            documentation: doc(node, source, true),
+            documentation: full_doc(node, source),
             owner: (!owner.is_empty()).then(|| owner.to_owned()),
             statements: statements
                 .iter()
@@ -168,12 +168,12 @@ fn clean(raw: &str) -> Option<String> {
 fn module_doc(root: SyntaxNode<'_>, source: &[u8]) -> Option<String> {
     initial_literal(root, source).and_then(|raw| clean(&raw))
 }
-fn doc(node: SyntaxNode<'_>, source: &[u8], full: bool) -> Option<String> {
+fn doc(node: SyntaxNode<'_>, source: &[u8]) -> Option<String> {
     let raw = initial_literal(node.field("body")?, source)?;
-    if !full {
-        return clean(&raw);
-    }
-    let value = crate::python_literal::decode(&raw)?;
-    let value = trim(&value);
-    (!value.is_empty()).then(|| value.to_owned())
+    clean(&raw)
+}
+fn full_doc(node: SyntaxNode<'_>, source: &[u8]) -> Option<crate::PythonText> {
+    let raw = initial_literal(node.field("body")?, source)?;
+    let value = crate::python_literal::decode(&raw)?.trimmed();
+    (!value.is_empty()).then_some(value)
 }

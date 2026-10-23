@@ -47,7 +47,7 @@ pub(crate) fn enrich(
         .enumerate()
         .map(|(i, s)| ((s.name.clone(), s.line_start, s.line_end), i))
         .collect();
-    let scope_map = scopes::indexed(source, root, &out.symbols)
+    let scope_map = scopes::indexed(source, root, &out.symbols)?
         .into_iter()
         .collect();
     let mut bindings = Bindings {
@@ -152,7 +152,7 @@ impl Bindings<'_> {
                 (index, item)
             };
             self.scopes
-                .insert(index, scopes::scope(self.source, carrier, item, body));
+                .insert(index, scopes::scope(self.source, carrier, item, body)?);
             if let Some(body) = body {
                 for child in body.named_children() {
                     self.walk(child, &qualified, Some(kind))?;

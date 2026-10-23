@@ -1,16 +1,16 @@
 //! Rust items retain the original method/trait/impl and import identities.
 use crate::{
-    SyntaxNode,
+    ParseError, SyntaxNode,
     helpers::{child_text, line_doc, qualified, symbol, text, trim},
     model::{ParsedFile, ParsedImport},
     scopes,
 };
 
-pub(crate) fn extract(source: &[u8], root: SyntaxNode<'_>) -> ParsedFile {
+pub(crate) fn extract(source: &[u8], root: SyntaxNode<'_>) -> Result<ParsedFile, ParseError> {
     let mut parsed = ParsedFile::default();
     walk(root, source, "", false, &mut parsed);
-    scopes::enrich(source, root, &mut parsed);
-    parsed
+    scopes::enrich(source, root, &mut parsed)?;
+    Ok(parsed)
 }
 fn walk(node: SyntaxNode<'_>, source: &[u8], owner: &str, in_type: bool, parsed: &mut ParsedFile) {
     let mut pending = node.children();

@@ -1,6 +1,6 @@
 //! C function definitions and known kernel macros keep original byte coordinates.
 use crate::{
-    SyntaxNode,
+    ParseError, SyntaxNode,
     helpers::{qualified, text},
     model::{ParsedFile, ParsedSymbol},
     scopes,
@@ -12,20 +12,20 @@ pub(crate) fn conditional(kind: &str) -> bool {
         "preproc_if" | "preproc_ifdef" | "preproc_else" | "preproc_elif" | "preproc_elifdef"
     )
 }
-pub(crate) fn extract(source: &[u8], root: SyntaxNode<'_>) -> ParsedFile {
+pub(crate) fn extract(source: &[u8], root: SyntaxNode<'_>) -> Result<ParsedFile, ParseError> {
     let mut out = ParsedFile::default();
-    definitions(root, source, &mut out, None);
-    out
+    definitions(root, source, &mut out, None)?;
+    Ok(out)
 }
 fn definitions(
     container: SyntaxNode<'_>,
     source: &[u8],
     out: &mut ParsedFile,
     owner: Option<&str>,
-) {
+) -> Result<(), ParseError> {
     for node in container.named_children() {
         if conditional(node.kind()) {
-            definitions(node, source, out, owner);
+            definitions(node, source, out, owner)?;
             continue;
         }
         let (body, name) = match node.kind() {
@@ -51,7 +51,7 @@ fn definitions(
             }
             _ => {
                 if owner.is_some() {
-                    definitions(node, source, out, owner);
+                    definitions(node, source, out, owner)?;
                 }
                 continue;
             }
@@ -68,10 +68,11 @@ fn definitions(
             };
             out.symbols.push(symbol.clone());
             out.scopes
-                .push(scopes::scope(source, node, symbol, Some(body)));
-            definitions(body, source, out, Some(&qualname));
+                .push(scopes::scope(source, node, symbol, Some(body))?);
+            definitions(body, source, out, Some(&qualname))?;
         }
     }
+    Ok(())
 }
 fn function_name(mut node: Option<SyntaxNode<'_>>, source: &[u8]) -> Option<String> {
     let mut callable = false;

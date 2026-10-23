@@ -111,3 +111,15 @@ un pase con pruebas. Los temporales propios se limpian tras archivar el ledger.
 Referencias primarias: [tree-sitter0.25.10](https://docs.rs/tree-sitter/0.25.10/tree_sitter/),
 [coordenadas y nodos](https://tree-sitter.github.io/tree-sitter/using-parsers/2-basic-parsing.html),
 [catálogo1.8.1 fijado](https://github.com/xberg-io/tree-sitter-language-pack/blob/33602ce7d17edd24cc00a1a9fe7129a61138f8ef/sources/language_definitions.json).
+
+## Final-review representation correction
+
+The original Python literal decoder admits surrogate code points in full scope
+documentation. Scalar-only Rust String cannot express these values. ParsedScope
+therefore uses `documentation: Option<PythonText>`, with lossless code points,
+explicit UTF8 conversion and JSON-escape serialization. Compact outline docs keep
+the original raw spelling. The native probe serializes typed results directly;
+conversion through serde_json::Value would reject isolated surrogates. Shared
+annotations decode strictly and propagate a typed encoding error, matching the
+original failure boundary. Ten additional independent original inputs and direct
+code-point/serialization regressions verify these two final-review corrections.

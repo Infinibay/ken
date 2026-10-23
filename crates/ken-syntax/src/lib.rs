@@ -30,6 +30,8 @@ mod kotlin;
 mod php;
 mod powershell;
 mod python_literal;
+mod python_text;
+pub use python_text::PythonText;
 mod python_unicode;
 mod ruby;
 mod sql;

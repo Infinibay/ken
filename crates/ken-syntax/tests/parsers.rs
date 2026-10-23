@@ -156,3 +156,72 @@ fn graphql_complete_results_match_original() {
 fn sql_complete_results_match_original() {
     original("sql", include_str!("fixtures/reference.json"), 5);
 }
+
+#[test]
+fn invalid_utf8_annotations_preserve_direct_and_inherited_original_errors() {
+    let path = PathBuf::from(std::env::var_os("KEN_GRAMMAR_MANIFEST").unwrap());
+    let parsers = ParserRegistry::new(GrammarCatalog::prepared(&path).unwrap());
+    let reference: Value =
+        serde_json::from_str(include_str!("fixtures/review-cases.json")).unwrap();
+    for case in reference["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|c| c.get("error").is_some())
+    {
+        assert_eq!(case["error"]["type"], "UnicodeDecodeError");
+        let hex = case["input"]["source_hex"].as_str().unwrap();
+        let bytes: Vec<_> = (0..hex.len())
+            .step_by(2)
+            .map(|i| u8::from_str_radix(&hex[i..i + 2], 16).unwrap())
+            .collect();
+        let error = parsers
+            .parse(Language::Rust, &bytes, "review.rs")
+            .unwrap_err();
+        assert!(error.to_string().contains("utf-8"), "{error}");
+    }
+}
+
+#[test]
+fn python_documentation_preserves_original_surrogate_codepoints_and_serialization() {
+    let path = PathBuf::from(std::env::var_os("KEN_GRAMMAR_MANIFEST").unwrap());
+    let parsers = ParserRegistry::new(GrammarCatalog::prepared(&path).unwrap());
+    let reference: Value =
+        serde_json::from_str(include_str!("fixtures/review-cases.json")).unwrap();
+    for case in reference["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|c| c.get("parsed_json").is_some())
+    {
+        let hex = case["input"]["source_hex"].as_str().unwrap();
+        let bytes: Vec<_> = (0..hex.len())
+            .step_by(2)
+            .map(|i| u8::from_str_radix(&hex[i..i + 2], 16).unwrap())
+            .collect();
+        let parsed = parsers
+            .parse(Language::Python, &bytes, "review.py")
+            .unwrap();
+        assert!(
+            parsed.scopes[0].documentation.is_some(),
+            "valid Python documentation was dropped: {case}"
+        );
+        let codepoints: Vec<u32> = case["documentation_codepoints"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| v.as_u64().unwrap() as u32)
+            .collect();
+        assert_eq!(
+            parsed.scopes[0]
+                .documentation
+                .as_ref()
+                .unwrap()
+                .codepoints(),
+            codepoints
+        );
+        let encoded = serde_json::to_string(&parsed).unwrap();
+        let decoded: ken_syntax::ParsedFile = serde_json::from_str(&encoded).unwrap();
+        assert_eq!(decoded, parsed);
+    }
+}

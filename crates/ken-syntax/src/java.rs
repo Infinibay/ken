@@ -1,16 +1,16 @@
 //! Java type ownership, members and textual import rules.
 use crate::{
-    SyntaxNode,
+    ParseError, SyntaxNode,
     helpers::{block_doc, child_text, symbol, text, trim},
     model::{ParsedFile, ParsedImport},
     scopes,
 };
 
-pub(crate) fn extract(source: &[u8], root: SyntaxNode<'_>) -> ParsedFile {
+pub(crate) fn extract(source: &[u8], root: SyntaxNode<'_>) -> Result<ParsedFile, ParseError> {
     let mut out = ParsedFile::default();
     walk(root, source, "", &mut out);
-    scopes::enrich(source, root, &mut out);
-    out
+    scopes::enrich(source, root, &mut out)?;
+    Ok(out)
 }
 fn type_kind(node: SyntaxNode<'_>) -> Option<&'static str> {
     match node.kind() {

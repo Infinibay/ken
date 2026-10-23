@@ -8,7 +8,7 @@ from tools.rust_migration.parser_evidence import aggregate_parser_matrix
 from tools.rust_migration.parser_validate import identity
 
 REPO = Path(__file__).resolve().parents[2]
-PROOF = REPO / 'docs/validation/rust-migration-2026-10-23/m3-parsers'
+PROOF = REPO / 'docs/validation/rust-migration-2026-10-23/m3-parsers-review'
 
 def seal(folder):
     rows = [dict(path=str(p.relative_to(folder)), **identity(p)) for p in sorted(folder.rglob('*')) if p.is_file() and p.name != 'FILES.json']
