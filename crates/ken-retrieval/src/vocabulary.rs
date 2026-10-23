@@ -188,6 +188,15 @@ pub fn code_tokens(text: &str) -> Vec<String> {
         .flat_map(identifier)
         .collect()
 }
+/// Surrogates are non-word normalization barriers, like NUL, in Python's vocabulary.
+pub fn code_tokens_python(text: &ken_text::PythonText) -> Vec<String> {
+    let scalar: String = text
+        .codepoints()
+        .iter()
+        .map(|&p| char::from_u32(p).unwrap_or('\0'))
+        .collect();
+    code_tokens(&scalar)
+}
 pub fn code_terms(text: &str, limit: Option<usize>) -> Vec<String> {
     if limit == Some(0) {
         return vec![];

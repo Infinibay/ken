@@ -35,3 +35,5 @@ pub mod projections;
 pub mod representations;
 
 pub mod query;
+
+pub mod lexical;
