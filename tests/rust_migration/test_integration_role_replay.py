@@ -39,3 +39,25 @@ def test_deleting_actual_onnx_mapping_from_loader_output_rejects(tmp_path):
     directory=tmp_path/'context';shutil.copytree(FIXTURE.parent/'linux-context',directory)
     path=directory/'stderr.log';path.write_text('\n'.join(line for line in path.read_text().splitlines()if 'calling init:'not in line))
     assert replay_role(directory,REPO,'linux','context','offline')
+
+
+@pytest.mark.parametrize('system', ['macos', 'linux'])
+@pytest.mark.parametrize('phase', ['public', 'offline'])
+@pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+    source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+    directory = tmp_path / 'capture'
+    shutil.copytree(source, directory)
+    assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+    path = directory / 'stdout.json'
+    actual = json.loads(path.read_bytes())
+    row = actual['rows'][0]
+    trace = row['preparation']['trace']
+    if mutation == 'prepared': row['prepared'] = False
+    elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+    elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+    elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+    elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+    elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+    path.write_text(json.dumps(actual))
+    assert replay_role(directory, REPO, system, 'fastembed', phase), mutation

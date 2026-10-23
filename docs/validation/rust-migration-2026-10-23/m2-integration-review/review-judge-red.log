@@ -1,0 +1,22 @@
+   Compiling ken-models v0.18.0 (/Users/andres/Projects/ken/crates/ken-models)
+    Finished `test` profile [unoptimized] target(s) in 2.22s
+     Running tests/model_factory.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/model_factory-4f7b5819f393990a)
+
+running 1 test
+test cold_judge_rejects_crossed_runtime_declarations ... FAILED
+
+failures:
+
+---- cold_judge_rejects_crossed_runtime_declarations stdout ----
+
+thread 'cold_judge_rejects_crossed_runtime_declarations' (13729251) panicked at crates/ken-models/tests/model_factory.rs:295:56:
+crossed runtime must fail cold
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    cold_judge_rejects_crossed_runtime_declarations
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p ken-models --test model_factory`

@@ -147,6 +147,12 @@ impl ArtifactCache {
             .ensure_capacity(bytes)
             .map_err(|e| io_error("model free space plus3GiB reserve", e))
     }
+    pub(crate) fn capacity_path(&self) -> Result<PathBuf, ModelError> {
+        self.root
+            .unchanged()
+            .map_err(|e| io_error("cache root", e))?;
+        Ok(self.root.path.clone())
+    }
     pub fn new(root: &Path) -> Result<Self, ModelError> {
         Ok(Self {
             root: CacheDirectory::root(root).map_err(|e| io_error("cache root", e))?,

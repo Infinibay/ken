@@ -1,0 +1,96 @@
+   Compiling ken-models v0.18.0 (/Users/andres/Projects/ken/crates/ken-models)
+error[E0425]: cannot find type `FilesystemSpace` in this scope
+   --> crates/ken-models/src/model_sources.rs:363:56
+    |
+363 |         let measure = |path: &Path| -> std::io::Result<FilesystemSpace> {
+    |                                                        ^^^^^^^^^^^^^^^ not found in this scope
+    |
+help: you might be missing a type parameter
+    |
+359 |     fn capacity_combines_shared_filesystems_and_checks_separate_destinations<FilesystemSpace>() {
+    |                                                                             +++++++++++++++++
+
+error[E0422]: cannot find struct, variant or union type `FilesystemSpace` in this scope
+   --> crates/ken-models/src/model_sources.rs:364:16
+    |
+364 |             Ok(FilesystemSpace { device: if path == Path::new("runtime") { 2 } else { 1 },
+    |                ^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0422]: cannot find struct, variant or union type `FilesystemSpace` in this scope
+   --> crates/ken-models/src/model_sources.rs:370:16
+    |
+370 |             Ok(FilesystemSpace {device: if path == Path::new("private") {2} else {1},
+    |                ^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0422]: cannot find struct, variant or union type `FilesystemSpace` in this scope
+   --> crates/ken-models/src/model_sources.rs:375:16
+    |
+375 |             Ok(FilesystemSpace {device: 1, available: reserve + 7})
+    |                ^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0599]: no method named `capacity_allocations` found for struct `model_sources::ModelSources` in the current scope
+   --> crates/ken-models/src/model_sources.rs:347:28
+    |
+ 85 | pub(crate) struct ModelSources {
+    | ------------------------------ method `capacity_allocations` not found for this struct
+...
+347 |         assert_eq!(sources.capacity_allocations(&model, 5, 7).unwrap(), vec![
+    |                            ^^^^^^^^^^^^^^^^^^^^ method not found in `model_sources::ModelSources`
+
+error[E0599]: no method named `capacity_allocations` found for struct `model_sources::ModelSources` in the current scope
+   --> crates/ken-models/src/model_sources.rs:350:28
+    |
+ 85 | pub(crate) struct ModelSources {
+    | ------------------------------ method `capacity_allocations` not found for this struct
+...
+350 |         assert_eq!(sources.capacity_allocations(&model, 5, 7).unwrap(), vec![
+    |                            ^^^^^^^^^^^^^^^^^^^^ method not found in `model_sources::ModelSources`
+
+error[E0599]: no method named `capacity_allocations` found for struct `model_sources::ModelSources` in the current scope
+   --> crates/ken-models/src/model_sources.rs:353:28
+    |
+ 85 | pub(crate) struct ModelSources {
+    | ------------------------------ method `capacity_allocations` not found for this struct
+...
+353 |         assert_eq!(sources.capacity_allocations(&model, 5, 0).unwrap(), vec![(expected_private, 5)]);
+    |                            ^^^^^^^^^^^^^^^^^^^^ method not found in `model_sources::ModelSources`
+
+error[E0425]: cannot find function `check_capacity_allocations` in this scope
+   --> crates/ken-models/src/model_sources.rs:367:9
+    |
+367 |         check_capacity_allocations(&allocations, measure).unwrap();
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `check_capacity_allocations` in this scope
+   --> crates/ken-models/src/model_sources.rs:369:21
+    |
+369 |         let error = check_capacity_allocations(&allocations, |path| {
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `check_capacity_allocations` in this scope
+   --> crates/ken-models/src/model_sources.rs:374:21
+    |
+374 |         let error = check_capacity_allocations(&allocations, |_| {
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `check_capacity_allocations` in this scope
+   --> crates/ken-models/src/model_sources.rs:378:17
+    |
+378 |         assert!(check_capacity_allocations(&[(PathBuf::from("overflow"), u64::MAX)], measure).is_err());
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `filesystem_space` in this scope
+   --> crates/ken-models/src/model_sources.rs:385:24
+    |
+385 |         let measured = filesystem_space(&destination).unwrap();
+    |                        ^^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `filesystem_space` in this scope
+   --> crates/ken-models/src/model_sources.rs:386:22
+    |
+386 |         let parent = filesystem_space(root.path()).unwrap();
+    |                      ^^^^^^^^^^^^^^^^ not found in this scope
+
+Some errors have detailed explanations: E0422, E0425, E0599.
+For more information about an error, try `rustc --explain E0422`.
+error: could not compile `ken-models` (lib test) due to 13 previous errors

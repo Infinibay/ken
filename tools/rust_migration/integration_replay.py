@@ -161,6 +161,13 @@ def replay_role(directory:Path,repo:Path,system:str,name:str,phase:str)->list[st
         elif name=='fastembed':
             model='sentence-transformers/all-MiniLM-L6-v2';require(request['selection']=={'kind':'legacy_encoder','name':model},'wrong legacy model')
             require(actual['selection']=={'role':'encoder','family':'fast_embed','name':model,'requested_device':'cpu'},'wrong FastEmbed family')
+            import gzip
+            direct_record=json.loads(gzip.decompress(recipe['reference'].read_bytes()),object_pairs_hook=_distinct,parse_constant=_nonfinite)
+            direct=next(frame for frame in decode_frames(direct_record['stdout'])if frame['id'].endswith(':mixed_passages'))
+            require(rows[0]['prepared']is True and rows[0]['before_prepared']is False
+                and actual['after_empty_prepared']is False,'actual FastEmbed preparation lifecycle differs')
+            require(rows[0]['preparation']=={'family':'fast_embed','trace':direct['preparation']},
+                'actual FastEmbed model/artifact/runtime/provider preparation differs')
             vectors(rows[0]['result']['vectors'],expected['vectors'])
         runtime=actual['runtime'];require(set(runtime)=={'onnx','torch','mlx'},'incomplete runtime declaration')
         require(runtime['torch']is None and runtime['mlx']is None,'unselected optional tensor core loaded')

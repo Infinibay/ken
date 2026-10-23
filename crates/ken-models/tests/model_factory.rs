@@ -258,3 +258,73 @@ fn judge_selection_is_cold_and_its_original_load_error_happens_on_score() {
     assert!(owner.score("hello", &[], "implementation").is_err());
     assert!(owner.preparation().unwrap().is_none());
 }
+
+#[test]
+fn cold_judge_rejects_crossed_runtime_declarations() {
+    use ken_models::NativeTransformerRuntime;
+    let pairs = if cfg!(target_os = "macos") {
+        vec![("mlx", "torch"), ("sentence-transformers", "mlx")]
+    } else {
+        vec![("mlx", "torch")]
+    };
+    for (profile_backend, runtime_backend) in pairs {
+        let temp = tempfile::tempdir().unwrap();
+        let mut resources = PreparedModelResources::new(
+            &temp.path().join("owned"),
+            &temp.path().join("absent.npz"),
+        )
+        .unwrap();
+        let declaration = json!({"format":"ken-native-transformer/1","backend":runtime_backend,"runtimes":[{
+            "os":std::env::consts::OS,"arch":std::env::consts::ARCH,
+            "core_version":if runtime_backend=="mlx" {"0.32.3"} else {"2.9.0"},
+            "module":{"bytes":1,"sha256":"0".repeat(64)},
+            "libraries":{"lib/core":{"bytes":1,"sha256":"0".repeat(64)}}
+        }]});
+        let runtime = NativeTransformerRuntime::from_json(
+            &declaration.to_string(),
+            &temp.path().join("absent-module"),
+            &temp.path().join("absent-core"),
+        )
+        .unwrap();
+        if profile_backend == "mlx" {
+            resources.mlx = Some(runtime.clone());
+        } else {
+            resources.torch = Some(runtime.clone());
+        }
+        let catalog: Value =
+            serde_json::from_str(include_str!("../resources/transformer-catalog.json")).unwrap();
+        let model = catalog["models"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|m| m["role"] == "judge")
+            .unwrap();
+        let spec = EncoderSpec::from_json(
+            &json!({"model_id":model["name"],
+            "revision":model["assets"]["revision"],"backend":profile_backend})
+            .to_string(),
+        )
+        .unwrap();
+        let original = if profile_backend == "mlx" {
+            include_str!("fixtures/profile-identity/macos-mlx.json")
+        } else {
+            include_str!("fixtures/profile-identity/macos-torch.json")
+        };
+        let capture: Value = serde_json::from_str(original).unwrap();
+        let legacy =
+            LegacyRuntimeIdentity::from_json(&capture["legacy_runtime"].to_string()).unwrap();
+        let factory = ModelFactory::new(
+            ModelCatalog::built_in().unwrap(),
+            ArtifactCache::new(&temp.path().join("cache")).unwrap(),
+            resources,
+            AcquisitionPolicy::Offline,
+        );
+        let error = factory
+            .judge(&spec, &legacy)
+            .err()
+            .expect("crossed runtime must fail cold");
+        assert!(error.to_string().contains("runtime backend"), "{error}");
+        assert!(runtime.loaded_identity().unwrap().is_none());
+        assert!(!temp.path().join("owned").exists());
+    }
+}

@@ -128,6 +128,16 @@ impl ModelFactory {
             let runtime = runtime.ok_or_else(|| {
                 crate::profile::invalid("explicit judge runtime preparation required")
             })?;
+            let backend = if spec.backend == EncoderBackend::Mlx {
+                "mlx"
+            } else {
+                "torch"
+            };
+            if runtime.backend() != backend {
+                return Err(crate::profile::invalid(
+                    "judge runtime backend differs from selected profile",
+                ));
+            }
             let provider = self.sources.preparation_provider(
                 crate::model_sources::asset_bytes(model.assets())?,
                 runtime.private_copy_bytes()?,

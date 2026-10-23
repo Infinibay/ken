@@ -1,0 +1,747 @@
+FFFFFFFFFFFFFFFFFFFFFFFF                                                 [100%]
+=================================== FAILURES ===================================
+_ test_fastembed_actual_preparation_identity_is_required[prepared-public-macos] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat0')
+system = 'macos', phase = 'public', mutation = 'prepared'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: prepared
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat0/capture'), PosixPath('/Users/andres/Projects/ken'), 'macos', 'fastembed', 'public')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[prepared-public-linux] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat1')
+system = 'linux', phase = 'public', mutation = 'prepared'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: prepared
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat1/capture'), PosixPath('/Users/andres/Projects/ken'), 'linux', 'fastembed', 'public')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[prepared-offline-macos] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat2')
+system = 'macos', phase = 'offline', mutation = 'prepared'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: prepared
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat2/capture'), PosixPath('/Users/andres/Projects/ken'), 'macos', 'fastembed', 'offline')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[prepared-offline-linux] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat3')
+system = 'linux', phase = 'offline', mutation = 'prepared'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: prepared
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat3/capture'), PosixPath('/Users/andres/Projects/ken'), 'linux', 'fastembed', 'offline')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+__ test_fastembed_actual_preparation_identity_is_required[model-public-macos] __
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat4')
+system = 'macos', phase = 'public', mutation = 'model'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: model
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat4/capture'), PosixPath('/Users/andres/Projects/ken'), 'macos', 'fastembed', 'public')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+__ test_fastembed_actual_preparation_identity_is_required[model-public-linux] __
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat5')
+system = 'linux', phase = 'public', mutation = 'model'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: model
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat5/capture'), PosixPath('/Users/andres/Projects/ken'), 'linux', 'fastembed', 'public')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[model-offline-macos] __
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat6')
+system = 'macos', phase = 'offline', mutation = 'model'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: model
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat6/capture'), PosixPath('/Users/andres/Projects/ken'), 'macos', 'fastembed', 'offline')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[model-offline-linux] __
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat7')
+system = 'linux', phase = 'offline', mutation = 'model'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: model
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat7/capture'), PosixPath('/Users/andres/Projects/ken'), 'linux', 'fastembed', 'offline')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[declared-public-macos] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat8')
+system = 'macos', phase = 'public', mutation = 'declared'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: declared
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat8/capture'), PosixPath('/Users/andres/Projects/ken'), 'macos', 'fastembed', 'public')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[declared-public-linux] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat9')
+system = 'linux', phase = 'public', mutation = 'declared'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: declared
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat9/capture'), PosixPath('/Users/andres/Projects/ken'), 'linux', 'fastembed', 'public')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[declared-offline-macos] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat10')
+system = 'macos', phase = 'offline', mutation = 'declared'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: declared
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat10/capture'), PosixPath('/Users/andres/Projects/ken'), 'macos', 'fastembed', 'offline')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[declared-offline-linux] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat11')
+system = 'linux', phase = 'offline', mutation = 'declared'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: declared
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat11/capture'), PosixPath('/Users/andres/Projects/ken'), 'linux', 'fastembed', 'offline')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[verified-public-macos] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat12')
+system = 'macos', phase = 'public', mutation = 'verified'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: verified
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat12/capture'), PosixPath('/Users/andres/Projects/ken'), 'macos', 'fastembed', 'public')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[verified-public-linux] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat13')
+system = 'linux', phase = 'public', mutation = 'verified'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: verified
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat13/capture'), PosixPath('/Users/andres/Projects/ken'), 'linux', 'fastembed', 'public')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[verified-offline-macos] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat14')
+system = 'macos', phase = 'offline', mutation = 'verified'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: verified
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat14/capture'), PosixPath('/Users/andres/Projects/ken'), 'macos', 'fastembed', 'offline')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[verified-offline-linux] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat15')
+system = 'linux', phase = 'offline', mutation = 'verified'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: verified
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat15/capture'), PosixPath('/Users/andres/Projects/ken'), 'linux', 'fastembed', 'offline')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[providers-public-macos] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat16')
+system = 'macos', phase = 'public', mutation = 'providers'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: providers
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat16/capture'), PosixPath('/Users/andres/Projects/ken'), 'macos', 'fastembed', 'public')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[providers-public-linux] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat17')
+system = 'linux', phase = 'public', mutation = 'providers'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: providers
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat17/capture'), PosixPath('/Users/andres/Projects/ken'), 'linux', 'fastembed', 'public')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[providers-offline-macos] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat18')
+system = 'macos', phase = 'offline', mutation = 'providers'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: providers
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat18/capture'), PosixPath('/Users/andres/Projects/ken'), 'macos', 'fastembed', 'offline')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[providers-offline-linux] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat19')
+system = 'linux', phase = 'offline', mutation = 'providers'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: providers
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat19/capture'), PosixPath('/Users/andres/Projects/ken'), 'linux', 'fastembed', 'offline')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[runtime-public-macos] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat20')
+system = 'macos', phase = 'public', mutation = 'runtime'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: runtime
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat20/capture'), PosixPath('/Users/andres/Projects/ken'), 'macos', 'fastembed', 'public')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[runtime-public-linux] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat21')
+system = 'linux', phase = 'public', mutation = 'runtime'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: runtime
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat21/capture'), PosixPath('/Users/andres/Projects/ken'), 'linux', 'fastembed', 'public')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[runtime-offline-macos] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat22')
+system = 'macos', phase = 'offline', mutation = 'runtime'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: runtime
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat22/capture'), PosixPath('/Users/andres/Projects/ken'), 'macos', 'fastembed', 'offline')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+_ test_fastembed_actual_preparation_identity_is_required[runtime-offline-linux] _
+
+tmp_path = PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat23')
+system = 'linux', phase = 'offline', mutation = 'runtime'
+
+    @pytest.mark.parametrize('system', ['macos', 'linux'])
+    @pytest.mark.parametrize('phase', ['public', 'offline'])
+    @pytest.mark.parametrize('mutation', ['prepared', 'model', 'declared', 'verified', 'providers', 'runtime'])
+    def test_fastembed_actual_preparation_identity_is_required(tmp_path, system, phase, mutation):
+        source = REPO / 'docs/validation/rust-migration-2026-10-21/m2-integration' / system / 'roles' / ('fastembed-' + phase)
+        directory = tmp_path / 'capture'
+        shutil.copytree(source, directory)
+        assert replay_role(directory, REPO, system, 'fastembed', phase) == []
+        path = directory / 'stdout.json'
+        actual = json.loads(path.read_bytes())
+        row = actual['rows'][0]
+        trace = row['preparation']['trace']
+        if mutation == 'prepared': row['prepared'] = False
+        elif mutation == 'model': trace['model_fingerprint'] = 'f' * 64
+        elif mutation == 'declared': trace['declared_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'verified': trace['verified_artifacts_fingerprint'] = 'f' * 64
+        elif mutation == 'providers': trace['attempts'][0]['providers'] = ['CUDAExecutionProvider']
+        elif mutation == 'runtime': trace['runtime']['sha256'] = 'f' * 64
+        path.write_text(json.dumps(actual))
+>       assert replay_role(directory, REPO, system, 'fastembed', phase), mutation
+E       AssertionError: runtime
+E       assert []
+E        +  where [] = replay_role(PosixPath('/private/var/folders/35/r0y9sb516yqcycv3n7ls6y_c0000gn/T/pytest-of-andres/pytest-1195/test_fastembed_actual_preparat23/capture'), PosixPath('/Users/andres/Projects/ken'), 'linux', 'fastembed', 'offline')
+
+tests/rust_migration/test_integration_role_replay.py:63: AssertionError
+=========================== short test summary info ============================
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[prepared-public-macos]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[prepared-public-linux]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[prepared-offline-macos]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[prepared-offline-linux]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[model-public-macos]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[model-public-linux]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[model-offline-macos]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[model-offline-linux]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[declared-public-macos]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[declared-public-linux]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[declared-offline-macos]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[declared-offline-linux]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[verified-public-macos]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[verified-public-linux]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[verified-offline-macos]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[verified-offline-linux]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[providers-public-macos]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[providers-public-linux]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[providers-offline-macos]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[providers-offline-linux]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[runtime-public-macos]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[runtime-public-linux]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[runtime-offline-macos]
+FAILED tests/rust_migration/test_integration_role_replay.py::test_fastembed_actual_preparation_identity_is_required[runtime-offline-linux]
