@@ -25,7 +25,7 @@ pub fn entity_id(key: &EntityKey) -> String {
     ]);
     serde_json::to_string(&fields).expect("scalar entity identity")
 }
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum PieceIdentity {
     Entity(EntityKey),
     Path(String),
@@ -136,6 +136,9 @@ impl SourceCatalog {
     }
     pub fn owners(&self) -> &[(EntityKey, Vec<Passage>)] {
         &self.owners
+    }
+    pub fn passages(&self, key: &EntityKey) -> SourceResult<&[Passage]> {
+        Ok(&self.owners[self.index(key)?].1)
     }
     pub fn by_path(&self) -> &BTreeMap<String, Vec<EntityKey>> {
         &self.by_path

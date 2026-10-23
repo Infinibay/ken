@@ -7,7 +7,7 @@ from .selection_reference import owners
 from .retrieval_reference import digest
 from .native_json import identity,load
 ROOT=Path(__file__).resolve().parents[2]
-SUITES={'catalog':['tests/retrieval/test_piece_catalog.py']}
+SUITES={'catalog':['tests/retrieval/test_piece_catalog.py'],'assembly':['tests/retrieval/test_piece_candidates.py']}
 CATALOG_SCRIPT=r'''
 import hashlib,importlib,json,pathlib,platform,sys,tempfile,unicodedata
 import pytest
@@ -45,7 +45,46 @@ exit_code=pytest.main(['-o','addopts=','--rootdir='+str(root),'-q',*request['sui
 value=dict(format='ken-piece-reference/1',family=request['family'],cases=records,runtime=dict(system=platform.system(),machine=platform.machine(),python=platform.python_version(),unicode=unicodedata.unidata_version),discovered=discovered,test_states=states,original_test_exit=exit_code)
 pathlib.Path(request['result']).write_text(json.dumps(value,ensure_ascii=True,allow_nan=False)+'\n');sys.exit(exit_code)
 '''
-SCRIPTS={'catalog':CATALOG_SCRIPT}
+ASSEMBLY_SCRIPT=CATALOG_SCRIPT.split('records=[]')[0]+r'''
+import dataclasses,importlib.metadata
+import tree_sitter_language_pack as pack
+grammar=request['grammar'];library=pathlib.Path(grammar['cache'])/grammar['file']
+if importlib.metadata.version('tree-sitter-language-pack')!='1.8.1' or len(library.read_bytes())!=grammar['bytes']or hashlib.sha256(library.read_bytes()).hexdigest()!=grammar['sha256']:raise ValueError('original piece grammar differs')
+pack.configure({'cache_dir':grammar['cache']})
+from ken.retrieval.model import CodeMatch
+from ken.retrieval.description import describe_owner
+from ken.retrieval.piece_candidates import assemble_pieces
+from ken.retrieval.piece_ranking import PieceCandidate
+def match(v):return CodeMatch(EntityKey(**v['entity']),v['score'],[passage(p)for p in v['evidence']],v['source_hash'],v.get('signals',{}),tuple(Span(**s)for s in v.get('owned_regions',[])))
+def clean(v):
+ if dataclasses.is_dataclass(v):return clean(dataclasses.asdict(v))
+ if isinstance(v,dict):return{k:clean(x)for k,x in v.items()}
+ if isinstance(v,(list,tuple)):return[clean(x)for x in v]
+ return v
+records=[]
+for case in request['cases']:
+ data=case['input'];physical=data['catalog']
+ with tempfile.TemporaryDirectory(prefix='ken-original-piece-')as temporary:
+  base=pathlib.Path(temporary);project=base/'project';project.mkdir()
+  for name,content in physical['files'].items():
+   p=project/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(bytes(content))
+  try:
+   catalog=SourceCatalog(project,{EntityKey(**o['key']):[passage(p)for p in o['passages']]for o in physical['owners']})
+   matches=[match(v)for v in data['matches']]
+   if case['kind']=='piece_constructor':
+    direct=data['direct'];members=[describe_owner(catalog.owners[list(catalog.owners)[i]])for i in direct['members']]
+    for index,updates in direct.get('overrides',{}).items():
+     members[int(index)]=dataclasses.replace(members[int(index)],**{k:EntityKey(**v)if k=='entity'else v for k,v in updates.items()})
+    p=PieceCandidate(direct['kind'],direct['path'],EntityKey(**direct['entity'])if direct.get('entity')else None,tuple(members),tuple(matches))
+    result=dict(piece=p,declaration=p.declaration)
+   else:
+    descriptions={};pieces=assemble_pieces(matches,data['piece_kind'],catalog,descriptions,limit=data.get('limit',10))
+    again=assemble_pieces(matches,data['piece_kind'],catalog,descriptions,limit=data.get('limit',10))
+    result=dict(pieces=pieces,declarations=[p.declaration for p in pieces],cache_size=len(descriptions),reused=all(a is b for p,q in zip(pieces,again,strict=True)for a,b in zip(p.members,q.members,strict=True)),unchanged=clean(matches)==data['matches'])
+   records.append(dict(**case,result=clean(result)))
+  except Exception as error:records.append(dict(**case,error=dict(type=type(error).__name__,message=str(error).replace(str(project),'{project}').replace(str(base),'{scenario}'))))
+'''+ 'discovered=[];states=[]'+CATALOG_SCRIPT.split('discovered=[];states=[]')[1]
+SCRIPTS={'catalog':CATALOG_SCRIPT,'assembly':ASSEMBLY_SCRIPT}
 def definitions(family:str,repo:Path=ROOT):return load(repo/f'crates/ken-retrieval/tests/fixtures/piece-inputs-{family}.json')['cases']
 def validate_reference(value:dict,family:str,repo:Path=ROOT):
  try:
@@ -70,6 +109,12 @@ def capture(reference:Reference,out:Path,repo:Path=ROOT,family:str='catalog'):
   return value
  out.mkdir(parents=True,exist_ok=False);(out/'capture.py').write_text(SCRIPTS[family])
  request=dict(root=str(reference.root),family=family,cases=definitions(family,repo),suite=SUITES[family],junit=str(out/'original-tests.xml'),result=str(out/'observations.json'))
+ if family=='assembly':
+  import sys
+  sdk=repo/'.ken/rust-migration/m3-parsers'/('sdk-macos'if sys.platform=='darwin'else'sdk-linux')
+  manifest=load(sdk/'manifest.json');cpp=next(r for r in manifest['libraries']if r['language']=='cpp')
+  if identity(sdk/cpp['file'])!={k:cpp[k]for k in('bytes','sha256')}:raise ValueError('prepared original cpp grammar changed')
+  request['grammar']=dict(cache=str(sdk),**cpp)
  (out/'request.json').write_text(json.dumps(request,ensure_ascii=True))
  proc=subprocess.run([str(reference.python),str(out/'capture.py'),str(out/'request.json')],cwd=reference.root,env=reference_env(reference,out/'environment'),capture_output=True)
  (out/'stdout.log').write_bytes(proc.stdout);(out/'stderr.log').write_bytes(proc.stderr);(out/'process-exit.json').write_text(json.dumps(dict(exit=proc.returncode)))
