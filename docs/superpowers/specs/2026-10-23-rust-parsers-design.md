@@ -27,7 +27,10 @@ No se instala ni reemplaza todavía el comando `ken`.
 
 ## Gramáticas y recursos
 
-Rust tree-sitter0.25.2 conserva la versión del runtime original. Los seis paquetes
+El binding Python0.25.2 incluye el motor C0.25.10, revisión
+`da6fe9beb4f7f67beb75914ca8e0d48ae48d6406`. Rust usa tree-sitter0.25.10:
+los42fuentes C/headers del motor original coinciden byte por byte con ese crate.
+El número0.25.2 del binding no identifica la versión del motor C. Los seis paquetes
 con gramáticas directas conservan versiones: Python0.25.0, Rust0.24.2,
 JavaScript0.25.0, TypeScript/TSX0.23.2, Go0.25.0, Java0.23.5. Se usan sus crates
 oficiales nativos, comprobando sus `parser.c` contra los sdists autenticados por
@@ -105,6 +108,6 @@ ni toda la suite Python para un cambio de parser. Los originales1066siguen intac
 Un único review final revisa el plan entero; sus Important/Critical se reparan en
 un pase con pruebas. Los temporales propios se limpian tras archivar el ledger.
 
-Referencias primarias: [tree-sitter0.25.2](https://docs.rs/tree-sitter/0.25.2/tree_sitter/),
+Referencias primarias: [tree-sitter0.25.10](https://docs.rs/tree-sitter/0.25.10/tree_sitter/),
 [coordenadas y nodos](https://tree-sitter.github.io/tree-sitter/using-parsers/2-basic-parsing.html),
 [catálogo1.8.1 fijado](https://github.com/xberg-io/tree-sitter-language-pack/blob/33602ce7d17edd24cc00a1a9fe7129a61138f8ef/sources/language_definitions.json).

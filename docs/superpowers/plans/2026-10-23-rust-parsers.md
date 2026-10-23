@@ -6,7 +6,7 @@
 
 **Architecture:** `GrammarCatalog` owns verified native grammar lifetimes; `ParserRegistry` chooses language and delegates extraction; language modules own their syntax decisions, sharing comment/scope helpers. Frozen-original captures supply every expected field.
 
-**Tech Stack:** Rust1.95, tree-sitter0.25.2, six pinned official grammar crates, thirteen pinned language-pack1.8.1 C modules, existing serde/sha2/libloading.
+**Tech Stack:** Rust1.95, tree-sitter0.25.10, six pinned official grammar crates, thirteen pinned language-pack1.8.1 C modules, existing serde/sha2/libloading.
 
 **Spec:** `docs/superpowers/specs/2026-10-23-rust-parsers-design.md`
 
@@ -31,7 +31,7 @@
 
 ### Task 1: Native grammar catalog and independent syntax reference
 
-**Files:** Create `crates/ken-syntax/{Cargo.toml,src/lib.rs,src/grammar.rs,src/syntax.rs,tests/grammar.rs}`, `tools/rust_migration/{grammar_prepare.py,parser_reference.py}`, `tests/rust_migration/{test_grammar_prepare.py,test_parser_reference.py}`, `tools/rust_migration/grammars.lock.json`. Modify workspace Cargo manifests/lock only for pinned new dependencies.
+**Files:** Create `crates/ken-syntax/{Cargo.toml,src/lib.rs,src/grammar.rs,src/syntax.rs,tests/grammar.rs}`, `tools/rust_migration/{grammar_prepare.py,parser_reference.py}`, `tests/rust_migration/{test_grammar_prepare.py,test_parser_reference.py}`, `crates/ken-syntax/grammars.lock.json`. Modify workspace Cargo manifests/lock only for pinned new dependencies.
 
 **Interfaces:**
 - Consumes frozen `Reference/reference_env`, baseline1066owner hashes; original parser entrypoints and direct grammar sdists in `uv.lock`.
@@ -130,3 +130,5 @@ scope interfaces before language groups; detection follows available C++ extract
 Every review-focus condition has a boundary test. Preparation remains separate
 from native consumption and final distribution is reserved for M8. Native inline
 execution and no approval pauses are the user's continuing selected method.
+
+Task1 source verification amendment: Python binding0.25.2 vendors C engine0.25.10 at da6fe9be. All42original C/header inputs match Rust0.25.10 exactly; the compiled lock records this evidence. The initial Rust0.25.2 corpus happened to pass all215inputs, but matching the actual engine avoids untested runtime behavior differences. No original capture or model inference was repeated.
