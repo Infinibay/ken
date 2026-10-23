@@ -187,3 +187,15 @@ fn numeric_json_reads_the_original_f64_bits() {
         literal.parse::<f64>().unwrap().to_bits()
     );
 }
+
+#[test]
+fn python_shortest_decimal_ties_neighbors_and_full_exponent_range() {
+    let corpus: Value =
+        serde_json::from_str(include_str!("fixtures/numeric-review-regressions.json")).unwrap();
+    assert!(corpus["values"].as_u64().unwrap() >= 32_768);
+    for entry in corpus["models"].as_array().unwrap() {
+        let model = NumericRanker::from_json(&entry["model"].to_string()).unwrap();
+        assert_eq!(model.to_json().unwrap(), entry["canonical"]);
+        assert_eq!(model.fingerprint().unwrap(), entry["fingerprint"]);
+    }
+}

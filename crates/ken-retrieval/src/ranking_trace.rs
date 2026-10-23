@@ -201,14 +201,11 @@ impl RankingTrace {
             }
             let mut flat = Vec::new();
             for owner in owners {
-                flat.extend(
-                    owner["feature_values"]
-                        .as_array()
-                        .ok_or_else(|| invalid("ranking trace feature values are invalid"))?
-                        .iter()
-                        .map(number)
-                        .collect::<Result<Vec<_>>>()?,
-                );
+                let row = owner["feature_values"]
+                    .as_array()
+                    .filter(|row| row.len() == model.features().len())
+                    .ok_or_else(|| invalid("ranking trace feature values are invalid"))?;
+                flat.extend(row.iter().map(number).collect::<Result<Vec<_>>>()?);
             }
             let values = Matrix::new(owners.len(), model.features().len(), flat)?;
             let scores = model.predict(&values)?;

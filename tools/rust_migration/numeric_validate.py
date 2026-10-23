@@ -10,14 +10,24 @@ PREFIX='ken-numeric-native-'
 SCOPE='native input parsing, bounded numerical/feature/ranking operations and registered resource loading, before output serialization'
 INTEGER_FIELDS={'schema','feature_version','evidence_version','attempt','rank','proposal_index','definition_ordinal','start_line','end_line','implementation_start_line','feature_index','tree_index','rows','columns','trees','entries','capacity','compressed_bytes','decoded_bytes'}
 def bound(case,path):
-    if case['kind']=='production_compose'and 'feature_values'in path:return 1e-6
-    if case.get('family','').startswith('alignment'):
+    """Only complete declared arithmetic projections receive a tolerance."""
+    p=tuple('*'if type(v)is int else v for v in path)
+    family=case.get('family','');kind=case['kind']
+    if kind=='production_compose'and p==('result','trace','owners','*','feature_values','*'):return 1e-6
+    if family=='owner-ranking'and len(p)==6 and p[0]=='result'and p[1]in('trace','with_query','restored')and p[2:]==('owners','*','feature_values','*'):return 1e-12
+    if family in('features','features-edges','features-math-edges'):
+        if kind in('evidence','feature_context')and p==('result','values','*','*'):return 1e-12
+        if kind in('base','coverage')and len(p)==3 and p[:2]==('result','*'):return 1e-12
+    summaries={'mean','minimum','quartile','weighted'}
+    arithmetic=(kind in('similarities','coverage')and(p==('result','values','*')or len(p)==3 and p[:2]==('result','coverage')and p[-1]in summaries)
+                or kind=='summarize'and len(p)==2 and p[0]=='result'and p[-1]in summaries
+                or kind=='maxima'and len(p)==3 and p[:2]==('result','*')and p[-1]in summaries)
+    if family in('alignment','alignment-edges')and arithmetic:
         data=case['input'];kind=case['kind'];numbers=data.get('documents')if kind in('similarities','coverage')else data.get('similarities',data.get('maxima',{}))
         dtype='float32'if kind in('similarities','coverage')and data['query']['dtype']==numbers['dtype']=='float32'else numbers.get('dtype')if kind not in('similarities','coverage')else'float64'
-        if path[-1]in('above50','above70'):return 0
         if path[-1]=='weighted'and data['weights']['dtype']!='float32':return 1e-12
-        if dtype=='float32':return 1e-6
-    return 1e-12
+        return 1e-6 if dtype=='float32'else 1e-12
+    return None
 def equal(a,b,case,path=()):
     if isinstance(a,dict):
         require(isinstance(b,dict)and a.keys()==b.keys(),'numeric fields differ: '+str(path))
@@ -29,7 +39,9 @@ def equal(a,b,case,path=()):
         require(type(b)in(int,float)and math.isfinite(a)and math.isfinite(b),'numeric category differs: '+str(path))
         if path and path[-1]in INTEGER_FIELDS:require(type(a)is type(b)and a==b,'numeric metadata differs: '+str(path))
         else:
-            tolerance=bound(case,path);require(abs(a-b)<=tolerance+tolerance*abs(a),'numeric value exceeds fixed bound: '+str(path))
+            tolerance=bound(case,path)
+            if tolerance is None:require(a==b and(a!=0 or math.copysign(1,a)==math.copysign(1,b)),'exact numeric outcome differs: '+str(path))
+            else:require(abs(a-b)<=tolerance+tolerance*abs(a),'numeric value exceeds fixed bound: '+str(path))
     else:require(type(a)is type(b)and a==b,'numeric identity/category differs: '+str(path))
 def compare_case(expected,actual):
     try:

@@ -40,9 +40,10 @@ pub(crate) fn quote(text: &PythonText) -> String {
     out
 }
 pub(crate) fn float(value: f64) -> String {
-    // Both runtimes use shortest round-trip digits; Python chooses fixed form
-    // at decimal exponents -4..15 and always writes a decimal point for integers.
-    let raw = format!("{:?}", value.abs());
+    // The locked JSON writer rounds shortest-decimal ties to even, as Python
+    // does. Rust Debug can choose the other equidistant round-trip spelling.
+    // Only presentation changes below: Python uses fixed exponents -4..15.
+    let raw = serde_json::to_string(&value.abs()).expect("finite model number");
     let (mantissa, exponent) = raw
         .split_once('e')
         .map_or((raw.as_str(), 0), |(a, b)| (a, b.parse::<i32>().unwrap()));

@@ -14,7 +14,7 @@ from .retrieval_reference import digest
 PREDECESSOR=dict(path='docs/validation/rust-migration-2026-10-23/m4-selection-review',sha256='502522eb0af6e3136be30114c5509314593785e94604ff1c70303f721a33a10b')
 COUNTS={'forest':318,'forest-edges':28,'stems':74,'alignment':245,'alignment-edges':22,'features':76,'features-edges':7,'features-math-edges':3,'owner-ranking':70,'production':16,'production-paths':2}
 ORIGINAL_ROOTS={'forest':4,'stems':5,'alignment':2,'features':11,'owner-ranking':12,'production':1}
-RUST_ROOTS=78
+RUST_ROOTS=80
 def expected_owners(repo,family):
     expected=owners(repo)
     if family=='production':
@@ -86,7 +86,7 @@ def verify_capture(out:Path,reference:dict,sources:dict|None=None,native_sha256:
         require(not compare_observations(reference,actual),'complete numeric native results/calls differ');return[]
     except(OSError,KeyError,TypeError,ValueError,IndexError)as error:return[str(error)]
 
-PYTHON_ROOTS=83
+PYTHON_ROOTS=92
 TEST_FILES=['tests/rust_migration/test_'+name+'.py'for name in ['numeric_reference','numeric_validate','numeric_probe','numeric_evidence','selection_reference','selection_validate','selection_probe','selection_evidence','snowball_provenance']]
 def verify_gates(gates:Path):
     try:

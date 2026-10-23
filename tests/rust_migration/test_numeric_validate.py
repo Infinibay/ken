@@ -31,3 +31,33 @@ def test_request_inventory_contains_only_inputs():
     a,b=pair();r=requests(dict(cases=[dict(a,family='owner-ranking')]),{})
     assert r['format']==FORMAT and set(r['cases'][0])=={'id','family','kind','input'}
     assert compare_observations(dict(cases=[a]),dict(format=FORMAT,cases=[]))
+
+@pytest.mark.parametrize('target',['prediction','ranked-score','trace-score','evidence-signal','explanation'])
+def test_one_ulp_drift_in_exact_outcomes_rejects(target):
+    import math
+    a,b=pair()
+    if target=='prediction':
+        a=dict(id='exact',family='forest',kind='predict',input={},result=dict(scores=[1.],unchanged=True))
+        b={k:deepcopy(v)for k,v in a.items()if k!='input'}
+        value=b['result']['scores'];key=0
+    elif target=='ranked-score':value=b['result']['matches'][0];key='score'
+    elif target=='trace-score':value=b['result']['trace']['owners'][0];key='score'
+    elif target=='evidence-signal':value=b['result']['matches'][0]['signals'];key=next(iter(value))
+    else:value=b['result']['pair']['numeric'];key='margin'
+    if isinstance(value,dict):assert key in value
+    value[key]=math.nextafter(value[key],math.inf)
+    assert compare_case(a,b),target
+
+@pytest.mark.parametrize('mode',['feature-bound','production-feature-bound','outside-bound','evidence-named-feature_values'])
+def test_only_declared_feature_paths_receive_fixed_bounds(mode):
+    a,b=pair()
+    for c in [a,b]:c['family']='owner-ranking'
+    if mode=='evidence-named-feature_values':
+        for c in [a,b]:c['result']['matches'][0]['signals']['feature_values']=1.
+        b['result']['matches'][0]['signals']['feature_values']+=1e-13
+    else:
+        if mode=='production-feature-bound':
+            for c in [a,b]:c['kind']='production_compose';c['family']='production'
+        v=b['result']['trace']['owners'][0]['feature_values']
+        v[0]+=1e-7 if mode=='production-feature-bound'else .1 if mode=='outside-bound'else 1e-13
+    assert bool(compare_case(a,b))==(mode in('outside-bound','evidence-named-feature_values'))
