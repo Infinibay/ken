@@ -108,3 +108,22 @@ pub(crate) fn line_doc(node: SyntaxNode<'_>, source: &[u8], prefix: &str) -> Opt
     }
     comments.into_iter().rev().find(|s| !s.is_empty())
 }
+
+pub(crate) fn block_doc(node: SyntaxNode<'_>, source: &[u8]) -> Option<String> {
+    let mut previous = start_sibling(node);
+    while let Some(comment) = previous {
+        if !matches!(comment.kind(), "comment" | "block_comment" | "line_comment") {
+            break;
+        }
+        let raw = text(comment, source);
+        if let Some(inner) = raw.strip_prefix("/**") {
+            let inner = inner.strip_suffix("*/").unwrap_or(inner);
+            return lines(inner)
+                .map(|line| trim(trim(line).trim_start_matches('*')))
+                .find(|line| !line.is_empty() && !line.starts_with('@'))
+                .map(str::to_owned);
+        }
+        previous = comment.previous_named_sibling();
+    }
+    None
+}

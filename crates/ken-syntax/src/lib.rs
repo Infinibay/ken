@@ -12,4 +12,8 @@ mod rust;
 mod scopes;
 pub use model::{ParsedFile, ParsedImport, ParsedScope, ParsedSymbol};
 pub use registry::ParserRegistry;
+mod ecmascript;
+mod ecmascript_scopes;
+mod go;
+mod java;
 mod python_literal;

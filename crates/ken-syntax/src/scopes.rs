@@ -11,6 +11,19 @@ use std::{
 };
 
 pub(crate) fn enrich(source: &[u8], root: SyntaxNode<'_>, parsed: &mut ParsedFile) {
+    parsed.scopes.extend(
+        indexed(source, root, &parsed.symbols)
+            .into_iter()
+            .map(|(_, scope)| scope),
+    );
+}
+
+pub(crate) fn indexed(
+    source: &[u8],
+    root: SyntaxNode<'_>,
+    symbols: &[ParsedSymbol],
+) -> Vec<(usize, ParsedScope)> {
+    let mut result = Vec::new();
     let mut spans: BTreeMap<(usize, usize), Vec<SyntaxNode<'_>>> = BTreeMap::new();
     let mut pending = vec![root];
     while let Some(node) = pending.pop() {
@@ -20,7 +33,7 @@ pub(crate) fn enrich(source: &[u8], root: SyntaxNode<'_>, parsed: &mut ParsedFil
             .push(node);
         pending.extend(node.named_children());
     }
-    for symbol in &parsed.symbols {
+    for (index, symbol) in symbols.iter().enumerate() {
         let Some(nodes) = spans.get(&(symbol.line_start, symbol.line_end)) else {
             continue;
         };
@@ -42,11 +55,10 @@ pub(crate) fn enrich(source: &[u8], root: SyntaxNode<'_>, parsed: &mut ParsedFil
             .iter()
             .min_by_key(|n| n.end_byte() - n.start_byte())
         {
-            parsed
-                .scopes
-                .push(scope(source, *node, symbol.clone(), None));
+            result.push((index, scope(source, *node, symbol.clone(), None)));
         }
     }
+    result
 }
 
 pub(crate) fn scope(

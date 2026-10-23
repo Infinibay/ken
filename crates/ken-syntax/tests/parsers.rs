@@ -54,3 +54,40 @@ fn python_full_literal_forms_match_original() {
 fn rust_crlf_documentation_matches_original() {
     original("rust", include_str!("fixtures/parser-edges.json"), 1);
 }
+
+#[test]
+fn javascript_complete_results_match_original() {
+    original("javascript", include_str!("fixtures/reference.json"), 5);
+}
+#[test]
+fn typescript_complete_results_match_original() {
+    original("typescript", include_str!("fixtures/reference.json"), 5);
+}
+#[test]
+fn go_complete_results_match_original() {
+    original("go", include_str!("fixtures/reference.json"), 5);
+}
+#[test]
+fn java_complete_results_match_original() {
+    original("java", include_str!("fixtures/reference.json"), 5);
+}
+
+#[test]
+fn invalid_utf8_static_method_names_preserve_original_failure_instead_of_partial_results() {
+    let path =
+        PathBuf::from(std::env::var_os("KEN_GRAMMAR_MANIFEST").expect("prepared grammar manifest"));
+    let parsers = ParserRegistry::new(GrammarCatalog::prepared(&path).unwrap());
+    let reference: Value =
+        serde_json::from_str(include_str!("fixtures/parser-errors.json")).unwrap();
+    for case in reference["cases"].as_array().unwrap() {
+        assert_eq!(case["error"]["type"], "UnicodeDecodeError");
+        let text = case["source_hex"].as_str().unwrap();
+        let source: Vec<_> = (0..text.len())
+            .step_by(2)
+            .map(|i| u8::from_str_radix(&text[i..i + 2], 16).unwrap())
+            .collect();
+        let language = serde_json::from_value(case["language"].clone()).unwrap();
+        let error = parsers.parse(language, &source, "error.ts").unwrap_err();
+        assert!(error.to_string().contains("utf-8"), "{error}");
+    }
+}
