@@ -22,3 +22,6 @@ pub enum RetrievalError {
 pub type Result<T> = std::result::Result<T, RetrievalError>;
 
 pub mod storage;
+
+mod encoder;
+pub use encoder::{DocumentEncoder, EncoderCounter};

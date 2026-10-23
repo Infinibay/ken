@@ -136,3 +136,67 @@ def capture_storage_reference(reference:Reference,out:Path,source:Path)->dict:
     (out/'storage-stdout').write_bytes(proc.stdout);(out/'storage-stderr').write_bytes(proc.stderr)
     if proc.returncode:raise ValueError(proc.stderr.decode(errors='replace'))
     value=json.loads(target.read_bytes());value.update(script_sha256=hashlib.sha256(STORAGE_SCRIPT.encode()).hexdigest(),execution=dict(exit=proc.returncode,stdout_sha256=hashlib.sha256(proc.stdout).hexdigest(),stderr_sha256=hashlib.sha256(proc.stderr).hexdigest()));target.write_bytes((json.dumps(value,ensure_ascii=False)+'\n').encode('utf-8',errors='backslashreplace'));return value
+
+PUBLICATION_SCRIPT=r'''
+import dataclasses,hashlib,json,pathlib,platform,shutil,sys,tempfile
+import numpy as np
+import tree_sitter_language_pack as pack
+request=json.loads(pathlib.Path(sys.argv[1]).read_bytes());root=pathlib.Path(request['root']);pack.configure({'cache_dir':request['grammar_cache']})
+from ken.db import connect,init_schema
+import ken.indexer as ix
+if not pathlib.Path(ix.__file__).resolve().is_relative_to(root.resolve()):raise ValueError('wrong original indexer')
+ix.time.time=lambda:1700000000.0
+class Encoder:
+ dim=3
+ def __init__(self):self.calls=[]
+ def embed_passages(self,texts):
+  self.calls.append(list(texts));out=[]
+  for text in texts:
+   data=text.encode();v=np.array([sum(data)%31+1,len(data)%23+1,sum((i+1)*b for i,b in enumerate(data))%19+1],dtype=np.float32);out.append(v/np.linalg.norm(v))
+  return out
+sources=json.loads(pathlib.Path(request['source']).read_bytes())['passages'];chosen=[];languages=set()
+for row in sources:
+ if row['input']['language']not in languages and row['input']['language']!='text'and row['result']:
+  chosen.append((row['input']['path'],bytes.fromhex(row['input']['source_hex'])));languages.add(row['input']['language'])
+plain=[('README.md',b'# IndexProject\n\nInstall a cache.\n# Usage\nRead a value.\n'),('docs/guide.rst',b'# Guide\nA cache in memory.\n'),('deep/docs/README.md',b'# Nested ignored intent\n'),('settings.json',b'{\n"cache": true,\n"text": "\\u00f1"\n}\n'),('project.toml',b'# heading\n[tool.cache]\nsize=3\n'),('input.unknown','plain unicode ni\u00f1o\r\nsecond\n'.encode()),('NOTES.txt',b'<!-- hidden -->\n// hidden\n# text\n'),('broken.txt',b'\xffa\xc3b\xe2\x82c'),('LONG.md',('\n'.join('# Part '+str(i)+'\n'+'x'*1500 for i in range(12))).encode()),('LONG.txt',('x'*5000+'\nignored').encode()),('.hidden.txt',b' # ## \n'),('empty.txt',b'')]
+chosen+=plain
+cases=[]
+def rows(conn):
+ tables={}
+ for table,order in [('ci_files','id'),('ci_symbols','id'),('ci_imports','id'),('ci_intent_sources','id'),('ci_name_tokens','kind,token,row_id'),('ci_passages','id'),('ci_passage_terms','passage_id,field,term'),('ci_passage_lengths','passage_id,field'),('ci_retrieval_files','file_id'),('meta','key')]:
+  tables[table]=[[{'blob_hex':v.hex()}if isinstance(v,bytes)else v for v in row]for row in conn.execute('SELECT * FROM '+table+' ORDER BY '+order)]
+ return tables
+for rel,source in chosen:
+ folder=pathlib.Path(tempfile.mkdtemp(dir=request['scratch']));path=folder/rel;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(source)
+ import os
+ os.utime(path,ns=(1234567890000000000,1234567890000000000))
+ conn=connect(folder/'index.db');init_schema(conn);encoder=Encoder();stats=ix.IndexStats();events=[]
+ pending=ix._prepare_chunk(conn,folder,[pathlib.Path(rel)],1024*1024,encoder,stats,events,None,{'index','project'})
+ if not pending:raise ValueError('original preparation skipped '+rel)
+ item=pending[0];texts=list(item.texts);destinations=[list(s)for s in item.slots]
+ data=dict(path=rel,source_hex=source.hex(),language=item.language,parsed=dataclasses.asdict(item.parsed)if item.parsed else None,content_hash_hex=item.content_hash.hex(),mtime_ns=item.mtime_ns,source_hash=item.source_sha256,passages=[dataclasses.asdict(p)for p in item.passages],intent_texts=item.intent_texts or [],documents=[dict(target=target,text=text)for target,text in zip(destinations,texts)],extra_stopwords=['index','project'])
+ ix._embed_pending(pending,encoder,None);steps=[]
+ for action in ('publish','repeat','rebuild','delete'):
+  if action in ('publish','repeat'):(ix._write_plain if item.language is None else ix._write_parsed)(conn,item,None)
+  elif action=='rebuild':ix.rebuild_name_tokens(conn,pathlib.Path('IndexProject'))
+  else:ix.delete_file(conn,rel)
+  steps.append(dict(action=action,tables=rows(conn)))
+ key=hashlib.sha256(json.dumps(data,ensure_ascii=True,separators=(',',':')).encode()).hexdigest();cases.append(dict(id=key,input=data,encoder_calls=encoder.calls,steps=steps));conn.close();shutil.rmtree(folder)
+intents=[]
+for rel in ('script.sh','SETTINGS.JSON','a/b/long.yml','a/one.yaml','weird.bin','.config.json'):
+ for text in ('#!/bin/sh\n# comment\n// skip\n<!-- skip -->\n# value\n[\n]\n{\n}\nend\n','\u1c89\u200b\x1c','é'*4100):
+  source=text.encode();intents.append(dict(path=rel,source_hex=source.hex(),result=ix._plain_text_intents(rel,source)))
+value=dict(format='ken-index-publication-reference/1',cases=cases,intents=intents,runtime=dict(system=platform.system(),python=platform.python_version()),source_sha256=hashlib.sha256(pathlib.Path(request['source']).read_bytes()).hexdigest())
+pathlib.Path(request['result']).write_text(json.dumps(value,ensure_ascii=True)+'\n')
+'''
+def capture_publication_reference(reference:Reference,out:Path,source:Path,repo:Path)->dict:
+    target=out/'publication-reference.json'
+    if target.exists():return json.loads(target.read_bytes())
+    out.mkdir(parents=True,exist_ok=True);scratch=out/'publication-scratch';scratch.mkdir(exist_ok=True)
+    sdk=repo/('.ken/rust-migration/m3-parsers/sdk-macos'if sys.platform=='darwin'else'.ken/rust-migration/m3-parsers/sdk-linux')
+    request=dict(root=str(reference.root),source=str(source),result=str(target),scratch=str(scratch),grammar_cache=str(sdk))
+    (out/'publication-request.json').write_text(json.dumps(request));(out/'publication-capture.py').write_text(PUBLICATION_SCRIPT)
+    proc=subprocess.run([str(reference.python),str(out/'publication-capture.py'),str(out/'publication-request.json')],cwd=reference.root,env=reference_env(reference,out/'environment'),capture_output=True)
+    (out/'publication-stdout').write_bytes(proc.stdout);(out/'publication-stderr').write_bytes(proc.stderr)
+    if proc.returncode:raise ValueError(proc.stderr.decode(errors='replace')[-3000:])
+    value=json.loads(target.read_bytes());value.update(script_sha256=hashlib.sha256(PUBLICATION_SCRIPT.encode()).hexdigest(),execution=dict(exit=proc.returncode,stdout_sha256=hashlib.sha256(proc.stdout).hexdigest(),stderr_sha256=hashlib.sha256(proc.stderr).hexdigest()));target.write_bytes((json.dumps(value,ensure_ascii=False)+'\n').encode('utf-8',errors='backslashreplace'));return value
