@@ -126,3 +126,33 @@ fn dart_complete_results_match_original() {
 fn php_complete_results_match_original() {
     original("php", include_str!("fixtures/reference.json"), 5);
 }
+
+#[test]
+fn bash_complete_results_match_original() {
+    original("bash", include_str!("fixtures/reference.json"), 5);
+}
+
+#[test]
+fn powershell_complete_results_match_original() {
+    original("powershell", include_str!("fixtures/reference.json"), 5);
+}
+
+#[test]
+fn css_complete_results_match_original() {
+    original("css", include_str!("fixtures/reference.json"), 5);
+}
+
+#[test]
+fn html_complete_results_match_original() {
+    original("html", include_str!("fixtures/reference.json"), 5);
+}
+
+#[test]
+fn graphql_complete_results_match_original() {
+    original("graphql", include_str!("fixtures/reference.json"), 5);
+}
+
+#[test]
+fn sql_complete_results_match_original() {
+    original("sql", include_str!("fixtures/reference.json"), 5);
+}

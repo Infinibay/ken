@@ -2,7 +2,9 @@
 use crate::{
     GrammarCatalog, Language, ParseError, ecmascript, go, java, model::ParsedFile, python, rust,
 };
-use crate::{c, cpp, csharp, dart, detection, kotlin, php, ruby};
+use crate::{
+    bash, c, cpp, csharp, css, dart, detection, graphql, html, kotlin, php, powershell, ruby, sql,
+};
 
 pub struct ParserRegistry {
     catalog: GrammarCatalog,
@@ -41,10 +43,12 @@ impl ParserRegistry {
             Language::Kotlin => Ok(kotlin::extract(source, tree.root())),
             Language::Dart => Ok(dart::extract(source, tree.root())),
             Language::Php => Ok(php::extract(source, tree.root())),
-            _ => Err(ParseError::Parse {
-                language: language.as_str().into(),
-                reason: "frontend migration pending".into(),
-            }),
+            Language::Bash => Ok(bash::extract(source, tree.root())),
+            Language::PowerShell => Ok(powershell::extract(source, tree.root())),
+            Language::Css => Ok(css::extract(source, tree.root())),
+            Language::Html => Ok(html::extract(source, tree.root())),
+            Language::GraphQL => Ok(graphql::extract(source, tree.root())),
+            Language::Sql => Ok(sql::extract(source, tree.root())),
         }
     }
 }
