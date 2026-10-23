@@ -1,11 +1,11 @@
 """Replay kernel results with exact ordered ownership and fixed arithmetic bounds."""
 from __future__ import annotations
-import copy,math
+import copy,math,os,shutil,sys
 from pathlib import Path
 from .index_validate import same_value,require,source_identity
 from .native_json import NativeJsonCapture,identity,load
 FORMAT='ken-retrieval-kernel-probe/1'
-ERROR_KINDS={'ValueError':'invalid','IndexVersionError':'index_version','KeyError':'invalid','TypeError':'invalid'}
+ERROR_KINDS={'ValueError':'invalid','IndexVersionError':'index_version','KeyError':'invalid','TypeError':'invalid','ZeroDivisionError':'invalid'}
 def close(left,right,absolute,relative):
     if isinstance(left,dict)or isinstance(right,dict):require(same_value(left,right),'nonfinite numeric categories differ');return
     require(type(left)in(int,float)and type(right)is type(left)and math.isfinite(left)and math.isfinite(right),'numeric type/finite category differs')
@@ -52,9 +52,22 @@ def requests(cases:list[dict])->dict:
 
 def run_capture(repo:Path,binary:Path,reference:dict,out:Path)->dict:
     sources=source_identity(repo)
-    with NativeJsonCapture(binary,out,repo=repo,prefix='ken-retrieval-native-')as capture:actual=capture.run(requests(reference['cases']))
+    with NativeJsonCapture(binary,out,repo=repo,prefix='ken-retrieval-native-')as capture:
+        prepare_runtime(capture)
+        actual=capture.run(requests(reference['cases']))
     (out/'SOURCES.json').write_text(__import__('json').dumps(sources,indent=2)+'\n')
     (out/'BUILD.json').write_text(__import__('json').dumps(dict(format='ken-retrieval-build/1',sources=sources,native_sha256=identity(binary)['sha256']),indent=2)+'\n')
     errors=compare_observations(reference,actual)
     if errors:raise ValueError(errors)
     return actual
+
+def runtime_files(repo:Path)->dict:
+    return load(repo/'crates/ken-retrieval/resources/dense-runtime.json')['files']
+
+def prepare_runtime(capture):
+    if sys.platform!='linux':return
+    source=Path(os.environ.get('KEN_DENSE_BLAS_DIR',capture.probe.parent/'dense-blas'))
+    target=capture.root/'dense-blas';target.mkdir()
+    for name,record in runtime_files(capture.repo).items():
+        require(identity(source/name)==record,'prepared pure-native dense runtime differs')
+        shutil.copy2(source/name,target/name)

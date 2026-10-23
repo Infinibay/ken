@@ -39,5 +39,8 @@ pub mod query;
 pub mod lexical;
 
 pub mod dense;
+mod dense_math;
+#[cfg(target_os = "linux")]
+pub use dense_math::verify_dense_runtime;
 
 pub mod proposals;

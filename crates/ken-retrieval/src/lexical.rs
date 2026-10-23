@@ -56,6 +56,9 @@ pub fn bm25f_score(
         } else {
             1.
         };
+        if norm == 0. {
+            return Err(RetrievalError::Invalid("float division by zero".into()));
+        }
         tf += weights.and_then(|w| w.get(name)).copied().unwrap_or(1.) * frequency / norm;
     }
     if tf <= 0. {
@@ -64,7 +67,11 @@ pub fn bm25f_score(
     let idf = ((documents as f64 - document_frequency as f64 + 0.5)
         / (document_frequency as f64 + 0.5))
         .ln_1p();
-    Ok(idf * (k1 + 1.) * tf / (k1 + tf))
+    let denominator = k1 + tf;
+    if denominator == 0. {
+        return Err(RetrievalError::Invalid("float division by zero".into()));
+    }
+    Ok(idf * (k1 + 1.) * tf / denominator)
 }
 pub fn score_postings(
     rows: &[Posting],

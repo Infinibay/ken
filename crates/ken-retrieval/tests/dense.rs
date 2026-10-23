@@ -24,6 +24,100 @@ struct Input {
 fn fixture() -> Fixture {
     serde_json::from_str(include_str!("fixtures/kernel-reference.json")).unwrap()
 }
+#[test]
+fn cancellation_preserves_owner_cutoff_and_same_owner_evidence_order() {
+    let case = fixture()
+        .cases
+        .into_iter()
+        .find(|c| c.kind == "dense")
+        .unwrap();
+    let input: Input = serde_json::from_str(case.input.get()).unwrap();
+    let first = input.passages[0].1.clone();
+    let mut second = first.clone();
+    second.entity.qualname = Some("second".into());
+    second.span = ken_retrieval::Span::new(10, 12).unwrap();
+    let e = 2f32.powi(-26);
+    let rows = vec![
+        vec![0.5, e, -0.5, e, 0.5, 0., -0.5, 0.],
+        vec![e, 0., 0., -0.5, 0.5, 0.5, -0.5, e],
+    ];
+    for same_owner in [false, true] {
+        let mut other = second.clone();
+        if same_owner {
+            other.entity = first.entity.clone();
+        }
+        let view = DenseView::new(
+            vec![(1, first.clone()), (2, other)],
+            VectorView {
+                ids: vec![1, 2],
+                matrix: rows.clone(),
+                model_revision: "provided-input-matrix".into(),
+            },
+        )
+        .unwrap();
+        let found = view.search(&[1.; 8], "identity", 1).unwrap();
+        assert_eq!(found[0].entity, first.entity, "exact owner cutoff");
+        assert_eq!(
+            found[0].passages[0].span, first.span,
+            "exact evidence order"
+        );
+        if same_owner {
+            assert_eq!(found[0].passages[1].span, second.span);
+        }
+    }
+}
+#[test]
+fn native_math_dispatch_and_runtime_boundaries_are_verified() {
+    let case = fixture()
+        .cases
+        .into_iter()
+        .find(|c| c.kind == "dense")
+        .unwrap();
+    let input: Input = serde_json::from_str(case.input.get()).unwrap();
+    let a = input.passages[0].1.clone();
+    for rows in [vec![vec![1., 0.]], vec![vec![1.], vec![-1.]]] {
+        let dimension = rows[0].len();
+        let ids: Vec<_> = (1..=rows.len() as i64).collect();
+        let view = DenseView::new(
+            ids.iter().map(|id| (*id, a.clone())).collect(),
+            VectorView {
+                ids,
+                matrix: rows,
+                model_revision: "r".into(),
+            },
+        )
+        .unwrap();
+        let mut query = vec![0.; dimension];
+        query[0] = 1.;
+        assert_eq!(
+            view.search(&query, "identity", 1).unwrap()[0].signals["cosine_identity"],
+            1.
+        );
+    }
+    #[cfg(target_os = "linux")]
+    {
+        let missing = tempfile::tempdir().unwrap();
+        assert!(
+            ken_retrieval::verify_dense_runtime(missing.path())
+                .unwrap_err()
+                .to_string()
+                .contains("prepare dense BLAS")
+        );
+        std::fs::write(
+            missing
+                .path()
+                .join("libgfortran-daac5196-038a5e3c.so.5.0.0"),
+            b"changed ELF",
+        )
+        .unwrap();
+        assert!(
+            ken_retrieval::verify_dense_runtime(missing.path())
+                .unwrap_err()
+                .to_string()
+                .contains("integrity differs")
+        );
+    }
+}
 fn vector(v: &[Value]) -> Vec<f32> {
     v.iter()
         .map(|x| match x.as_str() {

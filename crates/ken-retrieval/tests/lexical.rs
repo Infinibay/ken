@@ -49,6 +49,30 @@ fn close(a: f64, b: f64) {
     );
 }
 #[test]
+fn scalar_zero_divisors_report_original_arithmetic_failure() {
+    for (field, lengths, averages, k1) in [
+        ("identity", BTreeMap::new(), BTreeMap::new(), -1.),
+        (
+            "body",
+            BTreeMap::from([("body".into(), -1.)]),
+            BTreeMap::from([("body".into(), 3.)]),
+            1.2,
+        ),
+    ] {
+        let error = bm25f_score(
+            &BTreeMap::from([(field.into(), 1.)]),
+            &lengths,
+            &averages,
+            1,
+            2,
+            k1,
+            None,
+        )
+        .unwrap_err();
+        assert!(error.to_string().contains("float division by zero"));
+    }
+}
+#[test]
 fn scalar_and_shared_postings_match_original() {
     let mut counts = [0, 0];
     for c in fixture().cases {

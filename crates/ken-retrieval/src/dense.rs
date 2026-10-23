@@ -7,7 +7,7 @@ use crate::{
 use std::collections::{HashMap, HashSet};
 pub struct DenseView {
     passages: Vec<Passage>,
-    matrix: Vec<Vec<f32>>,
+    matrix: Vec<f32>,
     entities: Vec<EntityKey>,
     labels: Vec<usize>,
     dimension: usize,
@@ -46,7 +46,7 @@ impl DenseView {
         }
         Ok(Self {
             passages: owned,
-            matrix: vectors.matrix,
+            matrix: vectors.matrix.into_iter().flatten().collect(),
             entities,
             labels,
             dimension,
@@ -58,22 +58,20 @@ impl DenseView {
                 "query/vector dimensions differ; reindex the retrieval profile".into(),
             ));
         }
-        let norm = query.iter().fold(0f32, |sum, n| sum + n * n).sqrt();
-        if query.iter().any(|n| !n.is_finite()) || norm <= 0. {
+        if query.iter().any(|n| !n.is_finite()) {
+            return Err(RetrievalError::Invalid(
+                "encoder returned an invalid query vector".into(),
+            ));
+        }
+        let math = crate::dense_math::DenseMath::platform()?;
+        let norm = math.norm(query)?;
+        if norm <= 0. {
             return Err(RetrievalError::Invalid(
                 "encoder returned an invalid query vector".into(),
             ));
         }
         let normalized: Vec<_> = query.iter().map(|n| n / norm).collect();
-        let scores: Vec<f32> = self
-            .matrix
-            .iter()
-            .map(|row| {
-                row.iter()
-                    .zip(&normalized)
-                    .fold(0., |sum, (a, b)| sum + a * b)
-            })
-            .collect();
+        let scores = math.scores(&self.matrix, self.passages.len(), &normalized)?;
         let mut peaks = vec![f32::NEG_INFINITY; self.entities.len()];
         for (&label, &score) in self.labels.iter().zip(&scores) {
             peaks[label] = peaks[label].max(score)

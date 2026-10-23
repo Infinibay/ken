@@ -672,3 +672,11 @@ sistemas pasan8pruebas Rust/28de tooling,348casos y1366lookups. La incidencia de
 truthiness de annotations quedó corregida; MINORS/RULINGS documentan los límites
 restantes. El siguiente bloque es indexación incremental; M3 completo y M4–M8
 continúan pendientes. Los1066originales siguen intactos.
+
+Actualización posterior2026-10-23: [M3 completo](validation/rust-migration-2026-10-23/m3-index-review/README.md)
+está aceptado, incluida indexación incremental y las tres correcciones importantes
+de su revisión. [M4a](validation/rust-migration-2026-10-23/m4-kernels-review/README.md)
+también está aceptado: consultas, candidatos, BM25F/SQL, búsqueda densa y fusión.
+Cada plataforma pasa44pruebas Rust afectadas/46de validación,292casos originales
+y cuatro regresiones nuevas. Las dos incidencias importantes de M4a están
+corregidas. M4 completo y M5–M8 siguen pendientes; los1066originales se conservan.

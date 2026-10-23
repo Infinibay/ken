@@ -4,17 +4,20 @@ import hashlib,json,math,re,tarfile,tempfile
 from pathlib import Path
 from .native_json import identity,load,verify_native_json
 from .retrieval_reference import SCRIPT,definitions,owners,validate_reference
-from .retrieval_validate import FORMAT,requests,compare_observations,source_identity,ERROR_KINDS
+from .retrieval_validate import FORMAT,requests,compare_observations,source_identity,ERROR_KINDS,runtime_files
 from .index_validate import same_value,require
 from .integration_validate import _manifest_errors,rust_gate_errors
 from .receipts import junit_states
 PREDECESSOR=dict(path='docs/validation/rust-migration-2026-10-23/m3-index-review',sha256='5216c937b4537dd940f3d43c71181e7ce44c4b2987b53d6e6d2699877f7414a9')
-RUST_ROOTS=41
-PYTHON_ROOTS=40
+RUST_ROOTS=44
+PYTHON_ROOTS=46
 
-def verify_capture(out:Path,reference:dict,sources:dict|None=None,native_sha256:str|None=None)->list[str]:
+def verify_capture(out:Path,reference:dict,sources:dict|None=None,native_sha256:str|None=None,*,supplemental=False,runtime_repo:Path|None=None)->list[str]:
     try:
-        require(not validate_reference(reference),'invalid original kernel reference')
+        if not supplemental:require(not validate_reference(reference),'invalid original kernel reference')
+        else:
+            from .retrieval_review import definitions as review_definitions
+            require(reference['format']=='ken-retrieval-review-reference/1'and[{k:c[k]for k in('id','kind','input')}for c in reference['cases']]==review_definitions(),'invalid supplemental kernel reference')
         require(not verify_native_json(out,'ken-retrieval-native-'),'invalid actual native kernel execution')
         build=load(out/'BUILD.json');execution=load(out/'execution.json');actual=load(out/'stdout.json')
         require(set(build)=={'format','sources','native_sha256'}and build['format']=='ken-retrieval-build/1'and build['sources']==load(out/'SOURCES.json'),'native retrieval source inputs differ')
@@ -22,12 +25,26 @@ def verify_capture(out:Path,reference:dict,sources:dict|None=None,native_sha256:
         require(build['native_sha256']==execution['native_sha256'],'retrieval executable differs')
         if native_sha256 is not None:require(build['native_sha256']==native_sha256,'pinned retrieval executable differs')
         require(same_value(load(out/'inputs.json'),requests(reference['cases'])),'actual retrieval input inventory rewritten/contains answers')
-        require(execution['owned_before']=={'native-probe':execution['owned_before']['native-probe']},'unexpected native retrieval resource')
+        owned={'native-probe':execution['owned_before']['native-probe']}
+        if execution['system']=='linux':
+            files=runtime_files(runtime_repo or Path(__file__).resolve().parents[2])
+            owned.update({'dense-blas/'+name:record for name,record in files.items()})
+            require(str(Path(execution['cwd'])/'dense-blas'/'libscipy_openblas64_-7220728c.so')in(out/'stderr.log').read_text(),'isolated pinned dense runtime was not loaded')
+        require(execution['owned_before']==owned,'unexpected native retrieval resource')
         require(set(actual)=={'format','platform','cases','metrics'}and actual['platform']==execution['system'],'native retrieval platform/shape differs')
         metrics=actual['metrics'];require(set(metrics)=={'elapsed_s','max_rss_bytes','scope'}and metrics['scope']=='native request parsing and all kernels, before output serialization','kernel measurement scope differs')
         require(type(metrics['elapsed_s'])in(int,float)and math.isfinite(metrics['elapsed_s'])and metrics['elapsed_s']>=0 and type(metrics['max_rss_bytes'])is int and metrics['max_rss_bytes']>0,'invalid kernel timing/RSS')
         errors=compare_observations(reference,actual);require(not errors,'; '.join(errors));return []
     except(OSError,ValueError,KeyError,TypeError,IndexError)as error:return[str(error)]
+
+def verify_review(root:Path,repo:Path,system:str,*,snapshot:Path|None=None,native_sha256:str|None=None):
+    from .retrieval_review import verify_original as review_original
+    value=review_original(root/'original-review',repo,system)
+    native_repo=snapshot or repo
+    fixture=load(native_repo/'crates/ken-retrieval/tests/fixtures/kernel-review-reference.json')
+    require(same_value(value['cases'],fixture[system]),'supplemental original/native fixture differs')
+    require(not verify_capture(root/'native-review',value,source_identity(native_repo),native_sha256,supplemental=True,runtime_repo=native_repo),'supplemental native proof differs')
+    return value
 
 def verify_gates(gates:Path)->list[str]:
     try:
@@ -66,7 +83,7 @@ def aggregate_matrix(directory:Path,repo:Path,*,snapshot:Path,current:bool=False
     result=dict(passed=False,M4a_accepted=False,M4_accepted=False,migration_complete=False,errors=[])
     try:
         require(not _manifest_errors(directory),'retrieval evidence file manifest differs');index=load(directory/'INDEX.json')
-        require(index['format']=='ken-retrieval-kernel-matrix/1'and index['predecessor']==PREDECESSOR,'kernel matrix/predecessor differs')
+        require(index['format']=='ken-retrieval-kernel-matrix/2'and index['predecessor']==PREDECESSOR,'kernel matrix/predecessor differs')
         require(identity(repo/PREDECESSOR['path']/'FILES.json')['sha256']==PREDECESSOR['sha256']and not _manifest_errors(repo/PREDECESSOR['path']),'accepted M3 source-index predecessor changed')
         require(not verify_reference(repo,repo/'docs/validation/rust-migration-2026-10-18/baseline.json'),'preserved1066originals changed')
         require(index['sources']==source_identity(snapshot/'native-sources'),'retrieval source snapshot differs')
@@ -79,9 +96,10 @@ def aggregate_matrix(directory:Path,repo:Path,*,snapshot:Path,current:bool=False
                 raw=Path(temporary)
                 with tarfile.open(directory/(system+'-capture.tar.gz'))as archive:archive.extractall(raw,filter='data')
                 original=verify_original(raw/'original',repo,system,snapshot/'native-sources')
-                require(not verify_capture(raw/'native',original,index['sources'],platform['native_sha256']),'actual native kernel results/provenance differ')
+                require(not verify_capture(raw/'native',original,index['sources'],platform['native_sha256'],runtime_repo=snapshot/'native-sources'),'actual native kernel results/provenance differ')
+                verify_review(raw,repo,system,snapshot=snapshot/'native-sources',native_sha256=platform['native_sha256'])
                 execution=load(raw/'native/execution.json');require((execution['system'],execution['machine'])==(system,'arm64'if system=='macos'else'aarch64'),'actual native kernel platform differs')
                 require(not verify_gates(raw/'gates'),'complete affected kernel gates differ')
-        result.update(passed=True,M4a_accepted=True,per_platform=dict(Rust=RUST_ROOTS,Python=PYTHON_ROOTS,original_tests=13,kernel_cases=292))
+        result.update(passed=True,M4a_accepted=True,per_platform=dict(Rust=RUST_ROOTS,Python=PYTHON_ROOTS,original_tests=13,kernel_cases=292,review_cases=4))
     except(OSError,ValueError,KeyError,TypeError,IndexError,tarfile.TarError)as error:result['errors'].append(str(error))
     return result

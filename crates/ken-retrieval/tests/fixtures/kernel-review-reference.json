@@ -1,0 +1,794 @@
+{
+  "macos": [
+    {
+      "id": "review:zero-divisor:identity",
+      "kind": "bm25f",
+      "input": {
+        "frequencies": {
+          "identity": 1
+        },
+        "lengths": {},
+        "averages": {},
+        "document_frequency": 1,
+        "documents": 2,
+        "k1": -1.0
+      },
+      "error": {
+        "type": "ZeroDivisionError",
+        "message": "float division by zero"
+      }
+    },
+    {
+      "id": "review:zero-divisor:body",
+      "kind": "bm25f",
+      "input": {
+        "frequencies": {
+          "body": 1
+        },
+        "lengths": {
+          "body": -1
+        },
+        "averages": {
+          "body": 3.0
+        },
+        "document_frequency": 1,
+        "documents": 2,
+        "k1": 1.2
+      },
+      "error": {
+        "type": "ZeroDivisionError",
+        "message": "float division by zero"
+      }
+    },
+    {
+      "id": "review:dense:cutoff",
+      "kind": "dense",
+      "input": {
+        "passages": [
+          [
+            1,
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "first",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "fields": {
+                "identity": "function first",
+                "signature": "def first():",
+                "documentation": "Read stored source.",
+                "body": "def first():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {},
+              "implementation_start_line": 2
+            }
+          ],
+          [
+            2,
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "second",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 10,
+                "end_line": 12
+              },
+              "fields": {
+                "identity": "function second",
+                "signature": "def second():",
+                "documentation": "Read stored source.",
+                "body": "def second():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 10,
+                "end_line": 12
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {},
+              "implementation_start_line": 11
+            }
+          ]
+        ],
+        "ids": [
+          1,
+          2
+        ],
+        "matrix": [
+          [
+            0.5,
+            1.4901161193847656e-08,
+            -0.5,
+            1.4901161193847656e-08,
+            0.5,
+            0,
+            -0.5,
+            0
+          ],
+          [
+            1.4901161193847656e-08,
+            0,
+            0,
+            -0.5,
+            0.5,
+            0.5,
+            -0.5,
+            1.4901161193847656e-08
+          ]
+        ],
+        "query": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "view": "identity",
+        "limit": 1
+      },
+      "result": [
+        {
+          "entity": {
+            "path": "client.py",
+            "kind": "function",
+            "qualname": "first",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "passages": [
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "first",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "fields": {
+                "identity": "function first",
+                "signature": "def first():",
+                "documentation": "Read stored source.",
+                "body": "def first():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {
+                "cosine_identity": 1.053671194739536e-08
+              },
+              "implementation_start_line": 2
+            }
+          ],
+          "signals": {
+            "cosine_identity": 1.053671194739536e-08
+          },
+          "owned_regions": []
+        }
+      ]
+    },
+    {
+      "id": "review:dense:evidence",
+      "kind": "dense",
+      "input": {
+        "passages": [
+          [
+            1,
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "first",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "fields": {
+                "identity": "function first",
+                "signature": "def first():",
+                "documentation": "Read stored source.",
+                "body": "def first():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {},
+              "implementation_start_line": 2
+            }
+          ],
+          [
+            2,
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "first",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 10,
+                "end_line": 12
+              },
+              "fields": {
+                "identity": "function first",
+                "signature": "def first():",
+                "documentation": "Read stored source.",
+                "body": "def first():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 10,
+                "end_line": 12
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {},
+              "implementation_start_line": 11
+            }
+          ]
+        ],
+        "ids": [
+          1,
+          2
+        ],
+        "matrix": [
+          [
+            0.5,
+            1.4901161193847656e-08,
+            -0.5,
+            1.4901161193847656e-08,
+            0.5,
+            0,
+            -0.5,
+            0
+          ],
+          [
+            1.4901161193847656e-08,
+            0,
+            0,
+            -0.5,
+            0.5,
+            0.5,
+            -0.5,
+            1.4901161193847656e-08
+          ]
+        ],
+        "query": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "view": "identity",
+        "limit": 1
+      },
+      "result": [
+        {
+          "entity": {
+            "path": "client.py",
+            "kind": "function",
+            "qualname": "first",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "passages": [
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "first",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "fields": {
+                "identity": "function first",
+                "signature": "def first():",
+                "documentation": "Read stored source.",
+                "body": "def first():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {
+                "cosine_identity": 1.053671194739536e-08
+              },
+              "implementation_start_line": 2
+            },
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "first",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 10,
+                "end_line": 12
+              },
+              "fields": {
+                "identity": "function first",
+                "signature": "def first():",
+                "documentation": "Read stored source.",
+                "body": "def first():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 10,
+                "end_line": 12
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {
+                "cosine_identity": 0.0
+              },
+              "implementation_start_line": 11
+            }
+          ],
+          "signals": {
+            "cosine_identity": 1.053671194739536e-08
+          },
+          "owned_regions": []
+        }
+      ]
+    }
+  ],
+  "linux": [
+    {
+      "id": "review:zero-divisor:identity",
+      "kind": "bm25f",
+      "input": {
+        "frequencies": {
+          "identity": 1
+        },
+        "lengths": {},
+        "averages": {},
+        "document_frequency": 1,
+        "documents": 2,
+        "k1": -1.0
+      },
+      "error": {
+        "type": "ZeroDivisionError",
+        "message": "float division by zero"
+      }
+    },
+    {
+      "id": "review:zero-divisor:body",
+      "kind": "bm25f",
+      "input": {
+        "frequencies": {
+          "body": 1
+        },
+        "lengths": {
+          "body": -1
+        },
+        "averages": {
+          "body": 3.0
+        },
+        "document_frequency": 1,
+        "documents": 2,
+        "k1": 1.2
+      },
+      "error": {
+        "type": "ZeroDivisionError",
+        "message": "float division by zero"
+      }
+    },
+    {
+      "id": "review:dense:cutoff",
+      "kind": "dense",
+      "input": {
+        "passages": [
+          [
+            1,
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "first",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "fields": {
+                "identity": "function first",
+                "signature": "def first():",
+                "documentation": "Read stored source.",
+                "body": "def first():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {},
+              "implementation_start_line": 2
+            }
+          ],
+          [
+            2,
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "second",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 10,
+                "end_line": 12
+              },
+              "fields": {
+                "identity": "function second",
+                "signature": "def second():",
+                "documentation": "Read stored source.",
+                "body": "def second():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 10,
+                "end_line": 12
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {},
+              "implementation_start_line": 11
+            }
+          ]
+        ],
+        "ids": [
+          1,
+          2
+        ],
+        "matrix": [
+          [
+            0.5,
+            1.4901161193847656e-08,
+            -0.5,
+            1.4901161193847656e-08,
+            0.5,
+            0,
+            -0.5,
+            0
+          ],
+          [
+            1.4901161193847656e-08,
+            0,
+            0,
+            -0.5,
+            0.5,
+            0.5,
+            -0.5,
+            1.4901161193847656e-08
+          ]
+        ],
+        "query": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "view": "identity",
+        "limit": 1
+      },
+      "result": [
+        {
+          "entity": {
+            "path": "client.py",
+            "kind": "function",
+            "qualname": "first",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "passages": [
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "first",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "fields": {
+                "identity": "function first",
+                "signature": "def first():",
+                "documentation": "Read stored source.",
+                "body": "def first():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {
+                "cosine_identity": 1.053671194739536e-08
+              },
+              "implementation_start_line": 2
+            }
+          ],
+          "signals": {
+            "cosine_identity": 1.053671194739536e-08
+          },
+          "owned_regions": []
+        }
+      ]
+    },
+    {
+      "id": "review:dense:evidence",
+      "kind": "dense",
+      "input": {
+        "passages": [
+          [
+            1,
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "first",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "fields": {
+                "identity": "function first",
+                "signature": "def first():",
+                "documentation": "Read stored source.",
+                "body": "def first():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {},
+              "implementation_start_line": 2
+            }
+          ],
+          [
+            2,
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "first",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 10,
+                "end_line": 12
+              },
+              "fields": {
+                "identity": "function first",
+                "signature": "def first():",
+                "documentation": "Read stored source.",
+                "body": "def first():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 10,
+                "end_line": 12
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {},
+              "implementation_start_line": 11
+            }
+          ]
+        ],
+        "ids": [
+          1,
+          2
+        ],
+        "matrix": [
+          [
+            0.5,
+            1.4901161193847656e-08,
+            -0.5,
+            1.4901161193847656e-08,
+            0.5,
+            0,
+            -0.5,
+            0
+          ],
+          [
+            1.4901161193847656e-08,
+            0,
+            0,
+            -0.5,
+            0.5,
+            0.5,
+            -0.5,
+            1.4901161193847656e-08
+          ]
+        ],
+        "query": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "view": "identity",
+        "limit": 1
+      },
+      "result": [
+        {
+          "entity": {
+            "path": "client.py",
+            "kind": "function",
+            "qualname": "first",
+            "owner": null,
+            "definition_ordinal": 0
+          },
+          "passages": [
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "first",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "fields": {
+                "identity": "function first",
+                "signature": "def first():",
+                "documentation": "Read stored source.",
+                "body": "def first():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 1,
+                "end_line": 3
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {
+                "cosine_identity": 1.053671194739536e-08
+              },
+              "implementation_start_line": 2
+            },
+            {
+              "entity": {
+                "path": "client.py",
+                "kind": "function",
+                "qualname": "first",
+                "owner": null,
+                "definition_ordinal": 0
+              },
+              "span": {
+                "start_line": 10,
+                "end_line": 12
+              },
+              "fields": {
+                "identity": "function first",
+                "signature": "def first():",
+                "documentation": "Read stored source.",
+                "body": "def first():\n    return 1\n",
+                "path": "client.py"
+              },
+              "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "entity_span": {
+                "start_line": 10,
+                "end_line": 12
+              },
+              "language": "python",
+              "role": "definition",
+              "split_reason": null,
+              "signals": {
+                "cosine_identity": 5.26835597369768e-09
+              },
+              "implementation_start_line": 11
+            }
+          ],
+          "signals": {
+            "cosine_identity": 1.053671194739536e-08
+          },
+          "owned_regions": []
+        }
+      ]
+    }
+  ]
+}
