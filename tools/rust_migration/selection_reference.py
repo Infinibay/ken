@@ -9,10 +9,17 @@ from .selection_owner_reference import SCRIPT as OWNERS_SCRIPT
 from .selection_sql_reference import SCRIPT as SELECTION_SCRIPT
 from .selection_context_reference import SCRIPT as CONTEXT_SCRIPT
 from .selection_context_sql_reference import SCRIPT as CONTEXT_SELECTION_SCRIPT
+from .selection_ranking_reference import SCRIPT as RANKING_SCRIPT
 ROOT=Path(__file__).resolve().parents[2]
 SUITES={'text':['tests/retrieval/test_intent.py','tests/retrieval/test_qualified_locator.py'],'owners':['tests/retrieval/test_owner_description.py'],'selection':['tests/retrieval/test_candidates.py']}
 SUITES['context']=['tests/retrieval/test_contextual_retrieval.py','tests/retrieval/test_contextual_source_views.py']
 SUITES['context_selection']=['tests/retrieval/test_contextual_search.py']
+SUITES['ranking']=['tests/retrieval/test_ranking.py::'+name for name in (
+    'test_joint_ranker_orders_behavior_and_never_counts_duplicate_passages_as_votes',
+    'test_test_purpose_reaches_joint_ranker_and_exact_identity_stays_first',
+    'test_joint_ranker_rejects_nonfinite_scores',
+    'test_implementation_comparison_does_not_treat_description_as_executable_source',
+    'test_passage_judgments_choose_owner_and_retain_decisive_evidence_score')]
 
 def owners(repo:Path):
     value=kernel_owners(repo)
@@ -75,6 +82,7 @@ pathlib.Path(request['result']).write_text(json.dumps(value,ensure_ascii=True,al
 SCRIPTS={'text':TEXT_SCRIPT,'owners':OWNERS_SCRIPT,'selection':SELECTION_SCRIPT}
 SCRIPTS['context']=CONTEXT_SCRIPT
 SCRIPTS['context_selection']=CONTEXT_SELECTION_SCRIPT
+SCRIPTS['ranking']=RANKING_SCRIPT
 
 def validate_reference(value:dict,family:str,repo:Path=ROOT):
     try:

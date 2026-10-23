@@ -146,6 +146,15 @@ pub struct Candidate {
     #[serde(default)]
     pub owned_regions: Vec<Span>,
 }
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct CodeMatch {
+    pub entity: EntityKey,
+    pub score: f64,
+    pub evidence: Vec<Passage>,
+    pub source_hash: String,
+    pub signals: Signals,
+    pub owned_regions: Vec<Span>,
+}
 pub fn merge_spans(spans: &[Span]) -> Vec<Span> {
     let mut ordered = spans.to_vec();
     ordered.sort_unstable();

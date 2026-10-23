@@ -50,6 +50,7 @@ pub mod intent;
 mod normalized_matrix;
 pub mod proposals;
 pub mod query_encoder;
+pub mod ranking;
 pub mod source_locator;
 pub mod source_views;
 mod text_patterns;
