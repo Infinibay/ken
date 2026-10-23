@@ -185,7 +185,7 @@ fn permission_fixture() {
     }
     file(temp.path(), ".gitignore", b"ignored/\n");
     for name in ["blocked", "ignored", "sibling"] {
-        fs::set_permissions(temp.path().join(name), fs::Permissions::from_mode(0)).unwrap();
+        fs::set_permissions(temp.path().join(name), fs::Permissions::from_mode(0o0)).unwrap();
     }
     let owner = sources(temp.path());
     let scoped = ordered(&owner, "pkg/src");
