@@ -1,5 +1,13 @@
 # Migración Rust
 
+**Para retomar en otra máquina:** leer el [traspaso del 23 de octubre](rust-migration-handoff.md).
+Incluye estado actualizado, pendientes hasta M8, comandos de reconstrucción del
+oráculo original, progreso M4c2 y riesgos conocidos. M0–M3 y M4a/M4b/M4c1 están
+aceptados; M4c2 tiene catálogo y ensamblado implementados y probados, y el siguiente
+paso es implementar su ranking de piezas (Task 3). La aplicación completa todavía
+no está migrada. El traspaso conserva las capturas y generadores que antes sólo
+existían en directorios ignorados.
+
 La rama `codex/rust-migration` añade un ejecutable temporal, `ken-rs`.
 La implementación Python, sus datos y sus integraciones siguen activos.
 La primera entrega implementa exclusivamente `status`; las siguientes etapas

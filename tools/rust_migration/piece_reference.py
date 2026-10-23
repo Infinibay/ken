@@ -6,8 +6,9 @@ from .reference import Reference,reference_env
 from .selection_reference import owners
 from .retrieval_reference import digest
 from .native_json import identity,load
+from .piece_ranking_reference import SCRIPT as RANKING_SCRIPT
 ROOT=Path(__file__).resolve().parents[2]
-SUITES={'catalog':['tests/retrieval/test_piece_catalog.py'],'assembly':['tests/retrieval/test_piece_candidates.py']}
+SUITES={'catalog':['tests/retrieval/test_piece_catalog.py'],'assembly':['tests/retrieval/test_piece_candidates.py'],'ranking':['tests/retrieval/test_piece_ranking.py']}
 CATALOG_SCRIPT=r'''
 import hashlib,importlib,json,pathlib,platform,sys,tempfile,unicodedata
 import pytest
@@ -84,7 +85,7 @@ for case in request['cases']:
    records.append(dict(**case,result=clean(result)))
   except Exception as error:records.append(dict(**case,error=dict(type=type(error).__name__,message=str(error).replace(str(project),'{project}').replace(str(base),'{scenario}'))))
 '''+ 'discovered=[];states=[]'+CATALOG_SCRIPT.split('discovered=[];states=[]')[1]
-SCRIPTS={'catalog':CATALOG_SCRIPT,'assembly':ASSEMBLY_SCRIPT}
+SCRIPTS={'catalog':CATALOG_SCRIPT,'assembly':ASSEMBLY_SCRIPT,'ranking':RANKING_SCRIPT}
 def definitions(family:str,repo:Path=ROOT):return load(repo/f'crates/ken-retrieval/tests/fixtures/piece-inputs-{family}.json')['cases']
 def validate_reference(value:dict,family:str,repo:Path=ROOT):
  try:
@@ -99,7 +100,7 @@ def validate_reference(value:dict,family:str,repo:Path=ROOT):
   require({s['nodeid']for s in states}==set(found)and all(s['when']=='call'and s['outcome']=='passed'for s in states),'original piece suite incomplete')
   return[]
  except(KeyError,ValueError,TypeError)as error:return[str(error)]
-def capture(reference:Reference,out:Path,repo:Path=ROOT,family:str='catalog'):
+def capture(reference:Reference,out:Path,repo:Path=ROOT,family:str='catalog',cached_suite:Path|None=None):
  expected=owners(repo)
  for name,sha in expected.items():
   if identity(reference.root/name)['sha256']!=sha:raise ValueError('original piece owner changed: '+name)
@@ -115,11 +116,16 @@ def capture(reference:Reference,out:Path,repo:Path=ROOT,family:str='catalog'):
   manifest=load(sdk/'manifest.json');cpp=next(r for r in manifest['libraries']if r['language']=='cpp')
   if identity(sdk/cpp['file'])!={k:cpp[k]for k in('bytes','sha256')}:raise ValueError('prepared original cpp grammar changed')
   request['grammar']=dict(cache=str(sdk),**cpp)
+ if cached_suite is not None:
+  previous=load(cached_suite);prior=load(cached_suite.parent/'request.json')
+  if family!='ranking'or prior['suite']!=SUITES[family]or previous['owners']!=expected or previous['original_test_exit']!=0 or len(previous['discovered'])!=9 or any(s['when']!='call'or s['outcome']!='passed'for s in previous['test_states'])or identity(cached_suite.parent/'capture.py')['sha256']!=previous['script_sha256']:raise ValueError('invalid prior piece ranking suite')
+  request['cached_suite']=str(cached_suite.resolve())
  (out/'request.json').write_text(json.dumps(request,ensure_ascii=True))
  proc=subprocess.run([str(reference.python),str(out/'capture.py'),str(out/'request.json')],cwd=reference.root,env=reference_env(reference,out/'environment'),capture_output=True)
  (out/'stdout.log').write_bytes(proc.stdout);(out/'stderr.log').write_bytes(proc.stderr);(out/'process-exit.json').write_text(json.dumps(dict(exit=proc.returncode)))
  if proc.returncode:raise ValueError('original piece capture failed: '+proc.stdout.decode(errors='replace')[-2000:]+proc.stderr.decode(errors='replace')[-1000:])
- value=load(out/'observations.json');value.update(owners=expected,script_sha256=hashlib.sha256(SCRIPTS[family].encode()).hexdigest(),execution=dict(exit=proc.returncode,files={name:identity(out/name)for name in('capture.py','request.json','observations.json','stdout.log','stderr.log','process-exit.json','original-tests.xml')}))
+ value=load(out/'observations.json');value.update(owners=expected,script_sha256=hashlib.sha256(SCRIPTS[family].encode()).hexdigest(),execution=dict(exit=proc.returncode,files={name:identity(out/name)for name in('capture.py','request.json','observations.json','stdout.log','stderr.log','process-exit.json')+(()if cached_suite is not None else('original-tests.xml',))}))
+ if cached_suite is not None:value['reused_suite']=dict(path=str(cached_suite.resolve()),sha256=identity(cached_suite)['sha256'])
  value['corpus_sha256']=digest(value['cases']);errors=validate_reference(value,family,repo)
  if errors:raise ValueError(errors)
  (out/'reference.json').write_text(json.dumps(value,ensure_ascii=True,allow_nan=False)+'\n');return value
