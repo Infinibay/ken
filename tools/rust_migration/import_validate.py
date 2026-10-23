@@ -3,11 +3,11 @@ from __future__ import annotations
 import hashlib,json
 from pathlib import Path
 from .native_json import NativeJsonCapture,identity,load
-FIXTURES=('import-reference','import-alias-edges','import-alias-surrogates','import-language-edges')
+FIXTURES=('import-reference','import-alias-edges','import-alias-surrogates','import-language-edges','import-review-regressions')
 
 def source_identity(repo:Path)->dict:
     files=[repo/p for p in ('Cargo.toml','Cargo.lock','rust-toolchain.toml')]
-    files+=sorted(p for p in(repo/'crates/ken-core').rglob('*')if p.is_file())
+    files+=sorted(p for crate in ('ken-core','ken-text') for p in(repo/'crates'/crate).rglob('*')if p.is_file())
     return {str(p.relative_to(repo)):identity(p)for p in files}
 
 def import_cases(repo:Path)->list[dict]:

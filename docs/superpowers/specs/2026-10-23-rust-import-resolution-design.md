@@ -115,3 +115,19 @@ Acceptance is M3c only. Common AST normalization, incremental writes, full M3,
 M4–M8 and application cutover remain pending until their own real gates pass.
 
 Closed M3b predecessor: `docs/validation/rust-migration-2026-10-23/m3-parsers-review`; FILES.json SHA256 `c1541177be2a0716ff52276d7cfe042ae4ff5acea75d3f4c90d4a3452ab48ff8`, repaired commit03400e2b. Its immutable proof is reused; no124parser-suite/model recapture.
+
+## Final review amendment
+
+JSONC acquisition includes Python's universal-newline decoding before comment
+stripping. Config paths retain every Python code point until complete lexical
+normalization, including inherited bases and extends. A surrogate component can
+disappear through `..`; representability is checked only after normalization.
+The existing lossless PythonText moves to lightweight ken-text, reexported by
+ken-syntax; no third-party versions change. Native parser regressions verify its
+249 accepted reference inputs after this shared-code extraction.
+
+Deferred Minor compatibility limit: the custom config parser rejects unused
+values nested beyond1000 levels whereas the observed Python decoder accepts1100;
+it accepts an unused5000-digit integer whereas Python's4300-digit limit makes the
+original ignore that config. These unusual config acceptance boundaries remain
+explicitly pending; neither changes the verified ordinary import results.

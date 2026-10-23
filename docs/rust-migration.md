@@ -647,3 +647,13 @@ de Linux. Las pruebas usan procesos nativos reales que dejan de leer, envían un
 línea parcial o producen salida excesiva.
 
 La [aceptación posterior a la revisión](validation/rust-migration-2026-10-20/m2-fastembed-final-acceptance/IMPLEMENTATION.md) conserva los recibos actuales de34controles/33huellas en ambos sistemas,30modelos y cinco familias de propiedad. Cada sistema pasó15.844tests Python y221ejecuciones Rust; las93pruebas por procesos terminaron en211,010s/macOS y449,871s/Linux, sin ampliar el plazo de600s. El comando de matriz aislado conNumPy2.4.4 también pasó. La [revisión original](validation/rust-migration-2026-10-20/m2-fastembed-final-acceptance/REVIEW.md), las [decisiones y el menor diferido](validation/rust-migration-2026-10-20/m2-fastembed-final-acceptance/DECISIONS.md) y las medidas de recursos permanecen junto a los registros completos. Los recibos anteriores permanecen intactos; M2 continúa abierto para los modelos e integraciones restantes.
+
+Actualización2026-10-23: M2 cerró en la integración revisada (`m2-integration-review`).
+M3a descubrimiento, M3b parsers y M3c imports tienen recibos revisados separados.
+La [aceptación M3c](validation/rust-migration-2026-10-23/m3-imports-review/README.md)
+verifica79pruebas Rust y33de tooling por plataforma,107entradas originales en
+ambos modos de adquisición y249regresiones del parser después de compartir la
+representación Unicode. Las2incidencias importantes de revisión están corregidas;
+MINORS documenta límites de JSON profundo/enteros enormes. Modelo común e
+indexación incremental siguen pendientes de M3; M4–M8 aún no están aceptadas.
+Los originales y todos los recibos anteriores se conservan.

@@ -4,11 +4,12 @@ use super::{
     config::{self, ConfigValue},
     paths,
 };
+use ken_text::PythonText;
 use std::collections::{BTreeMap, BTreeSet};
 struct Config {
     directory: String,
-    base: Option<String>,
-    paths: Vec<(String, Vec<String>)>,
+    base: PythonText,
+    paths: Vec<(String, Vec<PythonText>)>,
 }
 #[derive(Default)]
 pub(super) struct AliasResolver {
@@ -56,9 +57,7 @@ impl AliasResolver {
             if !contains(&config.directory, directory) {
                 continue;
             }
-            let Some(base) = &config.base else {
-                continue;
-            };
+            let base = &config.base;
             for (pattern, targets) in &config.paths {
                 let rest = if let Some(prefix) = pattern.strip_suffix('*') {
                     module.strip_prefix(prefix)
@@ -69,12 +68,17 @@ impl AliasResolver {
                     continue;
                 };
                 for target in targets {
-                    let target = if pattern.ends_with('*') {
-                        target.strip_suffix('*').unwrap_or(target).to_owned() + rest
-                    } else {
-                        target.clone()
-                    };
-                    if let Some(found) = paths::match_js_module(&norm_join(base, &target), files) {
+                    let mut target = target.codepoints().to_vec();
+                    if pattern.ends_with('*') {
+                        if target.last() == Some(&u32::from('*')) {
+                            target.pop();
+                        }
+                        target.extend(rest.chars().map(u32::from));
+                    }
+                    let target = PythonText::from_codepoints(target).expect("existing code points");
+                    if let Some(target) = norm_path(base, &target).to_utf8()
+                        && let Some(found) = paths::match_js_module(&target, files)
+                    {
                         return Some(found);
                     }
                 }
@@ -129,32 +133,43 @@ fn contains(base: &str, directory: &str) -> bool {
             .is_some_and(|s| s.starts_with('/'))
 }
 pub(super) fn norm_join(base: &str, relative: &str) -> String {
-    let mut parts: Vec<String> = base
-        .split('/')
-        .filter(|s| !s.is_empty())
-        .map(str::to_owned)
+    norm_path(&base.into(), &relative.into())
+        .to_utf8()
+        .expect("scalar path inputs")
+}
+fn norm_path(base: &PythonText, relative: &PythonText) -> PythonText {
+    let mut parts: Vec<Vec<u32>> = base
+        .codepoints()
+        .split(|&p| p == 47)
+        .filter(|p| !p.is_empty())
+        .map(<[u32]>::to_vec)
         .collect();
-    for part in relative.replace('\\', "/").split('/') {
+    let relative: Vec<u32> = relative
+        .codepoints()
+        .iter()
+        .map(|&p| if p == 92 { 47 } else { p })
+        .collect();
+    for part in relative.split(|&p| p == 47) {
         match part {
-            "" | "." => {}
-            ".." => {
+            [] | [46] => {}
+            [46, 46] => {
                 parts.pop();
             }
-            _ => parts.push(part.into()),
+            _ => parts.push(part.to_vec()),
         }
     }
-    parts.join("/")
+    PythonText::from_codepoints(parts.join(&47)).expect("existing code points")
 }
-fn path(base: &str, value: &ConfigValue, file: &str) -> Result<Option<String>, ImportError> {
-    match value {
-        ConfigValue::Text(value) => Ok(value.as_ref().map(|v| norm_join(base, v))),
-        _ => Err(ImportError::Config {
+fn path(base: &str, value: &ConfigValue, file: &str) -> Result<PythonText, ImportError> {
+    value
+        .path_text()
+        .map(|v| norm_path(&base.into(), v))
+        .ok_or_else(|| ImportError::Config {
             path: file.into(),
             reason: "baseUrl must support string path replacement".into(),
-        }),
-    }
+        })
 }
-fn clean_paths(value: Option<&ConfigValue>) -> Vec<(String, Vec<String>)> {
+fn clean_paths(value: Option<&ConfigValue>) -> Vec<(String, Vec<PythonText>)> {
     value
         .and_then(ConfigValue::object)
         .map_or_else(Vec::new, |values| {
@@ -163,12 +178,11 @@ fn clean_paths(value: Option<&ConfigValue>) -> Vec<(String, Vec<String>)> {
                 .filter_map(|(key, value)| {
                     let key = key.clone()?;
                     let targets = match value {
-                        ConfigValue::Text(Some(value)) => vec![value.clone()],
-                        ConfigValue::Text(None) => vec![],
+                        ConfigValue::Text(value) => vec![value.points.clone()],
                         ConfigValue::Array(values) => values
                             .iter()
-                            .filter_map(ConfigValue::text)
-                            .map(str::to_owned)
+                            .filter_map(ConfigValue::path_text)
+                            .cloned()
                             .collect(),
                         _ => return None,
                     };
@@ -204,9 +218,9 @@ fn read_config(
         .filter(|v| !v.is_null());
     if (base.is_none() || paths.is_none())
         && depth < 3
-        && let Some(extends) = data.get("extends").and_then(ConfigValue::text)
+        && let Some(extends) = data.get("extends").and_then(ConfigValue::path_text)
+        && let Some(mut parent) = norm_path(&directory.into(), extends).to_utf8()
     {
-        let mut parent = norm_join(directory, extends);
         if !parent.ends_with(".json") {
             parent.push_str(".json");
         }
@@ -235,7 +249,7 @@ fn read_config(
     let base = if let Some(base) = base.filter(|v| v.truth()) {
         path(directory, base, file)?
     } else {
-        Some(directory.into())
+        directory.into()
     };
     Ok(Some(Config {
         directory: directory.into(),

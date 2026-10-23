@@ -5,7 +5,7 @@ import pytest
 from tools.rust_migration.import_evidence import aggregate_import_matrix
 from tools.rust_migration.native_json import identity
 REPO=Path(__file__).resolve().parents[2]
-PROOF=REPO/'docs/validation/rust-migration-2026-10-23/m3-imports'
+PROOF=REPO/'docs/validation/rust-migration-2026-10-23/m3-imports-review'
 def seal(folder):
     rows=[dict(path=str(p.relative_to(folder)),**identity(p))for p in sorted(folder.iterdir())if p.is_file()and p.name!='FILES.json']
     (folder/'FILES.json').write_text(json.dumps(dict(files=rows),indent=2)+'\n')

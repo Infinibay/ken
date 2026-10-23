@@ -10,6 +10,7 @@ fn project_acquisition_matches_all_original_inputs_and_config_failures() {
         include_str!("fixtures/import-alias-edges.json"),
         include_str!("fixtures/import-alias-surrogates.json"),
         include_str!("fixtures/import-language-edges.json"),
+        include_str!("fixtures/import-review-regressions.json"),
     ] {
         let reference: Value = serde_json::from_str(corpus).unwrap();
         for row in reference["cases"].as_array().unwrap() {

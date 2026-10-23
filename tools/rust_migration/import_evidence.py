@@ -40,7 +40,11 @@ def aggregate_import_matrix(directory:Path,repo:Path,*,snapshot:Path,current:boo
             if not value:raise ValueError(message)
         errors=_manifest_errors(directory);require(not errors,'; '.join(errors))
         index=load(directory/'INDEX.json')
-        require(index['format']=='ken-import-matrix/1','wrong import matrix protocol')
+        require(index['format']=='ken-import-review-repair/1','wrong import matrix protocol')
+        from .parser_validate import source_identity as parser_source_identity,parser_cases
+        from .parser_evidence import verify_parser_capture,parser_rust_gate_errors
+        require(index['parser_sources']==parser_source_identity(snapshot/'native-sources'),'shared text parser snapshot differs')
+        if current:require(index['parser_sources']==parser_source_identity(repo),'current shared text parser sources differ')
         require(index['sources']==source_identity(snapshot/'native-sources'),'native import source snapshot differs')
         if current:require(index['sources']==source_identity(repo),'current import sources differ')
         for name,expected in index['tooling'].items():
@@ -50,7 +54,7 @@ def aggregate_import_matrix(directory:Path,repo:Path,*,snapshot:Path,current:boo
         require(identity(repo/predecessor['path']/'FILES.json')['sha256']==predecessor['sha256']and not _manifest_errors(repo/predecessor['path']),'parser receipt changed')
         require(not verify_reference(repo,repo/'docs/validation/rust-migration-2026-10-18/baseline.json'),'original1066files changed')
         require(set(index['platforms'])=={'macos','linux'},'both actual platforms required')
-        cases=import_cases(snapshot/'native-sources');require(len(cases)==91 and len({c['id']for c in cases})==91 and sum(len(c['input']['imports'])for c in cases)==92,'complete import inventory required')
+        cases=import_cases(snapshot/'native-sources');require(len(cases)==107 and len({c['id']for c in cases})==107 and sum(len(c['input']['imports'])for c in cases)==108,'complete import inventory required')
         fixtures=snapshot/'native-sources/crates/ken-core/tests/fixtures'
         supplements={name:load(fixtures/(name+'.json'))for name in FIXTURES[1:]}
         direct_script='\n'.join('exit_code=0'if line.startswith('exit_code=pytest.main(')else line for line in SCRIPT.splitlines())+'\n'
@@ -76,16 +80,19 @@ def aggregate_import_matrix(directory:Path,repo:Path,*,snapshot:Path,current:boo
                     extra=load(raw/'supplements'/(name+'.json'))
                     require(extra['cases']==value['cases']and(extra['runtime']['system'],extra['runtime']['machine'])==expected and extra['runtime']['python']=='3.12.9','independent original supplements differ')
                 errors=verify_import_capture(raw/'native',cases,index['sources'],platform['native_sha256']);require(not errors,'; '.join(errors))
+                parser_inputs=parser_cases(snapshot/'native-sources')
+                require(len(parser_inputs)==249,'complete shared text parser regression inventory required')
+                errors=verify_parser_capture(raw/'parser',parser_inputs,index['parser_sources'],platform['parser_sha256'],load(snapshot/'native-sources/crates/ken-syntax/grammars.lock.json'));require(not errors,'; '.join(errors))
                 execution=load(raw/'native/execution.json')
                 require(execution['system']==system and execution['machine']==expected[1],'native platform differs')
                 gates=raw/'gates'
-                require(not rust_gate_errors((gates/'rust-list.log').read_text(),(gates/'rust-tests.log').read_text()),'complete native tests differ')
-                require(len(re.findall(r'^([^\n]+): test$',(gates/'rust-list.log').read_text(),re.M))==44,'complete44native root cases required')
+                require(not parser_rust_gate_errors((gates/'rust-list.log').read_text(),(gates/'rust-tests.log').read_text()),'complete native tests differ')
+                require(len(re.findall(r'^([^\n]+): test$',(gates/'rust-list.log').read_text(),re.M))==79,'complete79native root cases required')
                 states=junit_states(gates/'python.xml')
                 discovered={path[:-3].replace('/','.')+'::'+name for path,name in re.findall(r'^(tests/rust_migration/test_import_(?:reference|validate|evidence)\.py)::(.+)$',(gates/'python-list.log').read_text(),re.M)}
                 require(len(discovered)==33 and set(states)==discovered and set(states.values())=={'passed'},'complete33affected tooling cases required')
                 clippy=(gates/'clippy.log').read_text();require('Finished `dev` profile'in clippy and'error:'not in clippy and'warning:'not in clippy,'clippy failed/missing')
                 require((gates/'fmt.log').read_bytes()==b'','format failed')
-        result.update(passed=True,M3c_accepted=True,per_platform=dict(Rust=44,Python=33,original_inputs=91,native_cases=182,import_requests=184))
+        result.update(passed=True,M3c_accepted=True,per_platform=dict(Rust=79,Python=33,original_inputs=107,native_cases=214,import_requests=216,parser_inputs=249))
     except(OSError,ValueError,KeyError,TypeError,IndexError,tarfile.TarError)as error:result['errors'].append(str(error))
     return result

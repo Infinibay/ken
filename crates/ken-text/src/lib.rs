@@ -20,8 +20,10 @@ impl PythonText {
     pub fn to_utf8(&self) -> Option<String> {
         self.codepoints.iter().map(|&c| char::from_u32(c)).collect()
     }
-    pub(crate) fn trimmed(mut self) -> Self {
-        let whitespace = |c: &u32| char::from_u32(*c).is_some_and(crate::helpers::whitespace);
+    pub fn trimmed(mut self) -> Self {
+        let whitespace = |c: &u32| {
+            char::from_u32(*c).is_some_and(|c| c.is_whitespace() || matches!(c, '\x1c'..='\x1f'))
+        };
         let start = self
             .codepoints
             .iter()

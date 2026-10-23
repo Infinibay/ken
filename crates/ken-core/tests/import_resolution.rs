@@ -64,6 +64,31 @@ fn original_non_scalar_alias_targets_keep_internal_shape() {
 }
 
 #[test]
+fn reviewed_jsonc_newlines_match_original() {
+    compare_javascript(&review_corpus(true), 3);
+}
+
+#[test]
+fn reviewed_lossless_paths_match_original() {
+    compare_javascript(&review_corpus(false), 13);
+}
+
+fn review_corpus(newlines: bool) -> String {
+    let mut corpus: Value =
+        serde_json::from_str(include_str!("fixtures/import-review-regressions.json")).unwrap();
+    let cases = corpus["cases"].as_array_mut().unwrap();
+    *cases = cases
+        .iter()
+        .filter(|row| {
+            let raw = row["input"]["configs"]["tsconfig.json"].as_str().unwrap();
+            raw.starts_with("2f2f") == newlines
+        })
+        .cloned()
+        .collect();
+    serde_json::to_string(&corpus).unwrap()
+}
+
+#[test]
 fn all_original_languages_preserve_full_resolution_and_failure_boundaries() {
     let mut compared = 0;
     for corpus in [

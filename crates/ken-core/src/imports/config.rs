@@ -1,4 +1,5 @@
 //! Ordered config values retain Python JSON's numeric and string tolerance.
+use ken_text::PythonText;
 use regex::Regex;
 use serde_json::value::RawValue;
 use std::sync::OnceLock;
@@ -6,9 +7,42 @@ use std::sync::OnceLock;
 pub(super) enum ConfigValue {
     Object(Vec<(Option<String>, ConfigValue)>),
     Array(Vec<ConfigValue>),
-    Text(Option<String>),
+    Text(ConfigText),
     Other { truth: bool, spelling: String },
     Null,
+}
+/// Config paths retain non-scalar code points until lexical normalization.
+#[derive(Clone, Debug)]
+pub(super) struct ConfigText {
+    scalar: Option<String>,
+    pub points: PythonText,
+}
+impl ConfigText {
+    fn parse(raw: &str) -> Option<Self> {
+        let scalar: Option<String> = serde_json::from_str(raw).ok();
+        let points = if let Some(value) = &scalar {
+            PythonText::from(value.as_str())
+        } else {
+            let text: PythonText = serde_json::from_str(raw).ok()?;
+            // Python's JSON decoder combines adjacent escaped surrogate pairs,
+            // while PythonText's generic codec preserves individual code points.
+            let mut points = Vec::new();
+            let mut source = text.codepoints().iter().copied().peekable();
+            while let Some(high) = source.next() {
+                if (0xd800..=0xdbff).contains(&high)
+                    && let Some(&low) = source.peek()
+                    && (0xdc00..=0xdfff).contains(&low)
+                {
+                    source.next();
+                    points.push(0x10000 + ((high - 0xd800) << 10) + low - 0xdc00);
+                } else {
+                    points.push(high);
+                }
+            }
+            PythonText::from_codepoints(points)?
+        };
+        Some(Self { scalar, points })
+    }
 }
 impl ConfigValue {
     pub fn get(&self, key: &str) -> Option<&Self> {
@@ -26,7 +60,14 @@ impl ConfigValue {
     }
     pub fn text(&self) -> Option<&str> {
         if let Self::Text(value) = self {
-            value.as_deref()
+            value.scalar.as_deref()
+        } else {
+            None
+        }
+    }
+    pub fn path_text(&self) -> Option<&PythonText> {
+        if let Self::Text(value) = self {
+            Some(&value.points)
         } else {
             None
         }
@@ -35,7 +76,7 @@ impl ConfigValue {
         match self {
             Self::Object(v) => !v.is_empty(),
             Self::Array(v) => !v.is_empty(),
-            Self::Text(v) => v.as_ref().is_none_or(|s| !s.is_empty()),
+            Self::Text(v) => !v.points.is_empty(),
             Self::Other { truth, .. } => *truth,
             Self::Null => false,
         }
@@ -45,7 +86,7 @@ impl ConfigValue {
     }
     pub fn python_string(&self) -> Option<String> {
         match self {
-            Self::Text(value) => value.clone(),
+            Self::Text(value) => value.scalar.clone(),
             Self::Null => Some("None".into()),
             Self::Other { spelling, .. } => Some(spelling.clone()),
             Self::Array(values) => Some(format!(
@@ -72,7 +113,7 @@ impl ConfigValue {
     }
     fn python_repr(&self) -> Option<String> {
         if let Self::Text(value) = self {
-            Some(quote(value.as_deref()?))
+            Some(quote(value.scalar.as_deref()?))
         } else {
             self.python_string()
         }
@@ -105,7 +146,9 @@ fn quote(value: &str) -> String {
     result
 }
 pub(super) fn jsonc(bytes: &[u8]) -> Option<ConfigValue> {
-    let text = String::from_utf8_lossy(bytes);
+    let text = String::from_utf8_lossy(bytes)
+        .replace("\r\n", "\n")
+        .replace('\r', "\n");
     let source = text.as_bytes();
     let mut output = Vec::new();
     let mut i = 0;
@@ -182,7 +225,7 @@ impl Parser<'_> {
         self.position += 1;
         true
     }
-    fn string(&mut self) -> Option<Option<String>> {
+    fn string(&mut self) -> Option<ConfigText> {
         self.whitespace();
         let start = self.position;
         if !self.consume(b'"') {
@@ -195,9 +238,7 @@ impl Parser<'_> {
             } else if byte == b'"' {
                 let raw = &self.text[start..self.position];
                 serde_json::from_str::<Box<RawValue>>(raw).ok()?;
-                // A non-scalar Python string cannot match a UTF8 inventory path,
-                // but an unrelated config field must not invalidate other keys.
-                return Some(serde_json::from_str(raw).ok());
+                return ConfigText::parse(raw);
             }
         }
         None
@@ -216,7 +257,7 @@ impl Parser<'_> {
                     return Some(ConfigValue::Object(values));
                 }
                 loop {
-                    let key = self.string()?;
+                    let key = self.string()?.scalar;
                     if !self.consume(b':') {
                         return None;
                     }

@@ -19,7 +19,7 @@ def observed(cases):
     return dict(format='ken-import-observation/1',cases=rows)
 
 def test_complete_original_inventory_and_both_native_modes(cases):
-    assert len(cases)==91 and sum(len(c['input']['imports'])for c in cases)==92
+    assert len(cases)==107 and sum(len(c['input']['imports'])for c in cases)==108
     assert len([c for c in cases if'error'in c])==2
     assert compare_import_observations(cases,observed(cases))==[]
 
@@ -42,3 +42,6 @@ def test_source_identity_includes_input_assets_and_actual_filesystem_owner():
     sources=source_identity(REPO)
     assert 'crates/ken-core/tests/fixtures/import-alias-surrogates.json'in sources
     assert 'crates/ken-core/src/imports/project_inputs.rs'in sources
+    assert 'crates/ken-text/src/lib.rs'in sources
+    from tools.rust_migration.parser_validate import source_identity as parser_identity
+    assert 'crates/ken-text/src/lib.rs'in parser_identity(REPO)

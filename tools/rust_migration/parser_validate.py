@@ -24,7 +24,7 @@ def load(path: Path):
 
 def source_identity(repo: Path) -> dict:
     paths = [repo / name for name in ('Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml')]
-    paths += sorted(p for p in (repo / 'crates/ken-syntax').rglob('*') if p.is_file())
+    paths += sorted(p for crate in ('ken-syntax', 'ken-text') for p in (repo / 'crates' / crate).rglob('*') if p.is_file())
     return {str(p.relative_to(repo)): identity(p) for p in paths}
 
 def case_id(request: dict) -> str:

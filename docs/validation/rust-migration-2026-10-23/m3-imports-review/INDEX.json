@@ -1,0 +1,715 @@
+{
+  "format": "ken-import-review-repair/1",
+  "sources": {
+    "Cargo.toml": {
+      "bytes": 2038,
+      "sha256": "bdc2a1403e1e3c63c2a1b76dcc1e52df92244f9db7cf1d7cbe26b9dbc6545c96"
+    },
+    "Cargo.lock": {
+      "bytes": 58120,
+      "sha256": "46f9bf49a01a46e1fb68b3f07eac6b36fb7f5adbe0a2e110a953f86b3f765ce1"
+    },
+    "rust-toolchain.toml": {
+      "bytes": 86,
+      "sha256": "7d21c66a15f41bad66b82ed06a289f5dc8a6e3751951d2696bbf20ce296f2b0f"
+    },
+    "crates/ken-core/Cargo.toml": {
+      "bytes": 488,
+      "sha256": "eac2e2a6d5fe00e440b2e86e95b54f70924c0cb5dedeb23644171d5c2630f01c"
+    },
+    "crates/ken-core/examples/import_probe.rs": {
+      "bytes": 4138,
+      "sha256": "b9a4aa6f7cd1a1e51f8a345f3c94e02008bc82c0c75acf65eb08eaf4ed4bcde2"
+    },
+    "crates/ken-core/examples/source_probe.rs": {
+      "bytes": 3348,
+      "sha256": "7ff81197d3d7d4182decadf044477606795376830c2430c845fe39621b6260ad"
+    },
+    "crates/ken-core/licenses/pathspec-MPL-2.0.txt": {
+      "bytes": 16725,
+      "sha256": "1f256ecad192880510e84ad60474eab7589218784b9a50bc7ceee34c2b91f1d5"
+    },
+    "crates/ken-core/src/health.rs": {
+      "bytes": 2050,
+      "sha256": "5e35b9c1a2134d4f99c0aac9fdf60fdcbc1a93ac07b013cd33fd0e451722ca12"
+    },
+    "crates/ken-core/src/imports/aliases.rs": {
+      "bytes": 9180,
+      "sha256": "c18b7aafe98513c0d972e5f33dec20e209da1f5a454f709cd4a74bc738b0fc9a"
+    },
+    "crates/ken-core/src/imports/classification.rs": {
+      "bytes": 3855,
+      "sha256": "1ae85ba3795831e41a22b042e44855c4b456afc52385db5d579b620f3aa87b9b"
+    },
+    "crates/ken-core/src/imports/config.rs": {
+      "bytes": 11726,
+      "sha256": "567b0d0776f6667d0202d28d29088c1e24ed3cd7c0bc8e9f9e15ed9650091641"
+    },
+    "crates/ken-core/src/imports/languages.rs": {
+      "bytes": 12867,
+      "sha256": "c5f932c151328dbf222990d335fa3d8387eafa50be0b6361e7d4ad6fa5f92e52"
+    },
+    "crates/ken-core/src/imports/mod.rs": {
+      "bytes": 4003,
+      "sha256": "cf0dd16442d97e4e63688f376ca6962f22a4be9284b51667d98f113cee1623b1"
+    },
+    "crates/ken-core/src/imports/paths.rs": {
+      "bytes": 3290,
+      "sha256": "8b792ea6f55e8fcf94a176f0a083c2689275c07f7d6d12268d667465d67fcaaa"
+    },
+    "crates/ken-core/src/imports/project_inputs.rs": {
+      "bytes": 1042,
+      "sha256": "5aca07f98b8359e92ca534c694f7f3b425116b234f6e206668dadc3a6a261845"
+    },
+    "crates/ken-core/src/lib.rs": {
+      "bytes": 219,
+      "sha256": "b142229ec87d794b2ebfdfcb37820d0f3ecb16c9124ed942a61636b914d4db17"
+    },
+    "crates/ken-core/src/project.rs": {
+      "bytes": 8620,
+      "sha256": "b669c8dc857efeae55ad5f1bb595c4f6ea9db259a2f5f09b30e3958d1f38d727"
+    },
+    "crates/ken-core/src/source_directory.rs": {
+      "bytes": 2793,
+      "sha256": "6fab845774ec482621add6012c42e84c3164df19b258bcfd08424acb8acf0b2f"
+    },
+    "crates/ken-core/src/source_filter.rs": {
+      "bytes": 4319,
+      "sha256": "246ec7fe47008e08e8524653be18a8db0ed74ceff0237458a1497b65ff5648e0"
+    },
+    "crates/ken-core/src/source_patterns.rs": {
+      "bytes": 7364,
+      "sha256": "ffaa01551eca63d0048a15e49309264b604afcef9789594c154d90f400bf50cd"
+    },
+    "crates/ken-core/src/source_walk.rs": {
+      "bytes": 7188,
+      "sha256": "58b29e459aeab35ef4ae80a1712aac52a8f8c3415e188253706ff03221e5d9dd"
+    },
+    "crates/ken-core/src/status/model.rs": {
+      "bytes": 1731,
+      "sha256": "18eab502970f8bd769fca80ed5b3e0c357878de3cbcc5706ed97302d40a01d40"
+    },
+    "crates/ken-core/src/status/reader.rs": {
+      "bytes": 5058,
+      "sha256": "0cbc804d30e438bbf70ec3447eca17a9276aa1a90ade118f4b052f51cfb8e990"
+    },
+    "crates/ken-core/src/status/rules.rs": {
+      "bytes": 3308,
+      "sha256": "c0afe23ddf53d722519b672fd5b8912fbfebef1f676417c4bf5afce5edf93308"
+    },
+    "crates/ken-core/src/status.rs": {
+      "bytes": 1131,
+      "sha256": "489d271eeb971a1b28b68b856b47b75bb3678e375591338a1693ab8417566485"
+    },
+    "crates/ken-core/tests/fixtures/import-alias-edges.json": {
+      "bytes": 25740,
+      "sha256": "a5585c1f272b6f230a33848aa5175a48312374590d52ab14a49b0d5897b0e08a"
+    },
+    "crates/ken-core/tests/fixtures/import-alias-surrogates.json": {
+      "bytes": 9420,
+      "sha256": "bf231ebddb59458f4ce8393782d78635dc16a9eb669277f3a1734a5b056c6a6e"
+    },
+    "crates/ken-core/tests/fixtures/import-language-edges.json": {
+      "bytes": 35342,
+      "sha256": "3ae9b612a41e96411653d3577afadaf8dbe8489f328da12c6ba63631f2a41ab0"
+    },
+    "crates/ken-core/tests/fixtures/import-reference.json": {
+      "bytes": 48932,
+      "sha256": "3a75348978be412abbb6d7b4abc49785acb8d186ee33ac3246c767cc52b4e936"
+    },
+    "crates/ken-core/tests/fixtures/import-review-regressions.json": {
+      "bytes": 36106,
+      "sha256": "5b1198b16969bea74f34374f8fdbed8be7ce3643157d891f8b8ee391b49ef175"
+    },
+    "crates/ken-core/tests/fixtures/source-discovery/reference-review.json": {
+      "bytes": 165229,
+      "sha256": "ae684857de1b6bfd15ec713e445544506412cf0c6467631dad00e4295afd7cb6"
+    },
+    "crates/ken-core/tests/fixtures/source-discovery/reference.json": {
+      "bytes": 104312,
+      "sha256": "b8d7c4e79a532e02f38cc84e7484592ceaaa59984c7042052411073ea2f62ccc"
+    },
+    "crates/ken-core/tests/health.rs": {
+      "bytes": 7886,
+      "sha256": "12dbab109dcddf5058c56d8e6e361d4297e27c45c57577addb2cf02284aaffe6"
+    },
+    "crates/ken-core/tests/import_project.rs": {
+      "bytes": 6274,
+      "sha256": "28754910ae6423a4e239910d482f632b7cfa71784545422a4650328d6077690e"
+    },
+    "crates/ken-core/tests/import_resolution.rs": {
+      "bytes": 7449,
+      "sha256": "de608665115970b0f12fce407bcd335e1a37703302ce275ccdb0e46a4e0cebd8"
+    },
+    "crates/ken-core/tests/project.rs": {
+      "bytes": 6228,
+      "sha256": "28fe05b5f6d0e027ae55c4b17d7a9337d819ef745c7b3afd3e0611cd2419a652"
+    },
+    "crates/ken-core/tests/source_filter.rs": {
+      "bytes": 6481,
+      "sha256": "a1fe30b210fc25a0edd042a2de33575fd90612c3ab6f147234d1c9f2e5ab1fba"
+    },
+    "crates/ken-core/tests/source_walk.rs": {
+      "bytes": 9987,
+      "sha256": "bd6afbb1fdc6ae3ec4930b6f089f453e8da16639f30dcdb5dd1eb092c352a050"
+    },
+    "crates/ken-core/tests/status.rs": {
+      "bytes": 10072,
+      "sha256": "c5464929f4e4a251047faee1f63d7be341ae78f97cf75e40d4506b64b903876f"
+    },
+    "crates/ken-text/Cargo.toml": {
+      "bytes": 225,
+      "sha256": "dd9790139f40d98bda5f2510ebba4676cc5c7e751e47fa744ec78a8b0f691a6f"
+    },
+    "crates/ken-text/src/lib.rs": {
+      "bytes": 4122,
+      "sha256": "eedebf374fa76e8795d6bdd8bfbda91b47dda0dd1f6040c574271129b68cbd09"
+    }
+  },
+  "parser_sources": {
+    "Cargo.toml": {
+      "bytes": 2038,
+      "sha256": "bdc2a1403e1e3c63c2a1b76dcc1e52df92244f9db7cf1d7cbe26b9dbc6545c96"
+    },
+    "Cargo.lock": {
+      "bytes": 58120,
+      "sha256": "46f9bf49a01a46e1fb68b3f07eac6b36fb7f5adbe0a2e110a953f86b3f765ce1"
+    },
+    "rust-toolchain.toml": {
+      "bytes": 86,
+      "sha256": "7d21c66a15f41bad66b82ed06a289f5dc8a6e3751951d2696bbf20ce296f2b0f"
+    },
+    "crates/ken-syntax/Cargo.toml": {
+      "bytes": 765,
+      "sha256": "8db7f23373d1879f0ab0c5991b25b659d588229fb12869f39778d7677ceb1260"
+    },
+    "crates/ken-syntax/examples/parser_probe.rs": {
+      "bytes": 3560,
+      "sha256": "a41ca057076289db5dc3b9d117f7335803ec7c94c2940bd07e7752db2dde579d"
+    },
+    "crates/ken-syntax/grammars.lock.json": {
+      "bytes": 60294,
+      "sha256": "2bfbb583b428a2357c978f802c9d6d4bb34418abee22a438c43997740cdebd15"
+    },
+    "crates/ken-syntax/licenses/UNICODE-NOTICE.txt": {
+      "bytes": 674,
+      "sha256": "52f44b1afb7481e1f5b2464116b2ac064dc1e850e2dce2238787d6136aa5d24e"
+    },
+    "crates/ken-syntax/licenses/Unicode-DFS-2016.txt": {
+      "bytes": 2858,
+      "sha256": "1a33fc12a3abb0b3eb14db70e36ef1d0af51c93b1cc1f80f022c3bd406e9b874"
+    },
+    "crates/ken-syntax/src/bash.rs": {
+      "bytes": 2064,
+      "sha256": "daa2a6125edfebb67c9df4ce889f8ccb83a59fa9209783d6ffbb7c5ed8621dd5"
+    },
+    "crates/ken-syntax/src/c.rs": {
+      "bytes": 4476,
+      "sha256": "edb8b94eb604a40a39a96ce2eb7b2328ebbf63372397f57038e2d5818fd2f6bc"
+    },
+    "crates/ken-syntax/src/cpp.rs": {
+      "bytes": 12157,
+      "sha256": "91c3f27cfc3b7ad17979cf71e8f0c8eee6c904c0f5399b5ad44c2e55f2b89326"
+    },
+    "crates/ken-syntax/src/cpp_declarator.rs": {
+      "bytes": 1414,
+      "sha256": "51539247d6c8b4d249e2e0784357172524841ef0e9dbcd9cee42dd60e9722ade"
+    },
+    "crates/ken-syntax/src/csharp.rs": {
+      "bytes": 4023,
+      "sha256": "40ea8b3254e47016519e8d82c2627dc49d9fd552c83183d4d504fa2d24fe4257"
+    },
+    "crates/ken-syntax/src/css.rs": {
+      "bytes": 3935,
+      "sha256": "8af02b977e3bf66605df48ae6736290be799a78410198cd4597bd99d7d412de7"
+    },
+    "crates/ken-syntax/src/dart.rs": {
+      "bytes": 6863,
+      "sha256": "37d23ff989ccdbeacec2fc85770181f09fb417f59e12d50d3fce16baea2a2003"
+    },
+    "crates/ken-syntax/src/detection.rs": {
+      "bytes": 1739,
+      "sha256": "ebbc06e0faac1291c81cc5ae1ce636c8c84df0268a74fa158baf764e6ed60b31"
+    },
+    "crates/ken-syntax/src/ecmascript.rs": {
+      "bytes": 4222,
+      "sha256": "f07a3df79962d751f3a34e98a83fe8387153d7160ef0b961f9f319d170c51804"
+    },
+    "crates/ken-syntax/src/ecmascript_scopes.rs": {
+      "bytes": 5732,
+      "sha256": "dd0ab9646b598ad2e1450474c60865f7a11a82d3fe8460c137c6719219b2eafe"
+    },
+    "crates/ken-syntax/src/go.rs": {
+      "bytes": 4576,
+      "sha256": "66a02d530e09cb9ec360dd268c561afa8f406a83262ffc7107e7ec97b232f155"
+    },
+    "crates/ken-syntax/src/grammar.rs": {
+      "bytes": 9017,
+      "sha256": "4a46b090118256d8017ebebc828f79de4f604241e22f1eccc2abe0852f2b5592"
+    },
+    "crates/ken-syntax/src/graphql.rs": {
+      "bytes": 5027,
+      "sha256": "c35857293b76ee5e913107db3fd14e5a4460822fe9580dc1b1f870ad7f6f6b0f"
+    },
+    "crates/ken-syntax/src/helpers.rs": {
+      "bytes": 4040,
+      "sha256": "33e95304a38d73f8d3091293955e790f5a44b5acc28ee61a8924df41f8d57214"
+    },
+    "crates/ken-syntax/src/html.rs": {
+      "bytes": 4751,
+      "sha256": "dffa9c4fb7118aae9f63db718710125998212dea56797347afc0c6deeba63bcd"
+    },
+    "crates/ken-syntax/src/java.rs": {
+      "bytes": 3217,
+      "sha256": "9993d68cdd62abac17bd8fc26b08b33b81dc4b0fb7a2c0520940d1c0ac4f98d8"
+    },
+    "crates/ken-syntax/src/kotlin.rs": {
+      "bytes": 5074,
+      "sha256": "11a255f28e32c56660bd6a12cb0d9c32525f4ea67026983b4c2a6b9a11161f5a"
+    },
+    "crates/ken-syntax/src/lib.rs": {
+      "bytes": 684,
+      "sha256": "00864af91dbfebcef172072665d7c7086b3d7013c7e1f267aadbb305a3f33c7c"
+    },
+    "crates/ken-syntax/src/model.rs": {
+      "bytes": 1092,
+      "sha256": "35d7f13351e47610774d672c0378430337bc4db8ad8855c741f3ef8767b46315"
+    },
+    "crates/ken-syntax/src/php.rs": {
+      "bytes": 4838,
+      "sha256": "240893f94452157b9deb61b1a72a03f4402f341b92e9d107a4c7f59aa9fe6c66"
+    },
+    "crates/ken-syntax/src/powershell.rs": {
+      "bytes": 5366,
+      "sha256": "6e284a09658e705d9c3be8149e7a0cc71d2270923f6a3f941838898f0a3edc85"
+    },
+    "crates/ken-syntax/src/python.rs": {
+      "bytes": 6716,
+      "sha256": "c99130209817c4146330559913c9e5b101542d382cbf15a04bdd62cddb080999"
+    },
+    "crates/ken-syntax/src/python_literal.rs": {
+      "bytes": 3519,
+      "sha256": "ba79d07f7ac4e13ded94345eaad91622a6b50d8e1ca17d3a413dcc75a5ede1d6"
+    },
+    "crates/ken-syntax/src/python_unicode.rs": {
+      "bytes": 1514,
+      "sha256": "350d57993e053961769e787b45bbf401b5008b2ad97ff3a43967ea56f61bd1a7"
+    },
+    "crates/ken-syntax/src/python_unicode15.json": {
+      "bytes": 13593,
+      "sha256": "7c2c20b6ec386babd41324d73728f817066bd6e84285d6ca1618daf90443ec41"
+    },
+    "crates/ken-syntax/src/registry.rs": {
+      "bytes": 2382,
+      "sha256": "531ae8aa8bb235df2b72de65581174a20c45ef0228bf88839d7e8eb5c1b084fc"
+    },
+    "crates/ken-syntax/src/ruby.rs": {
+      "bytes": 3700,
+      "sha256": "27e60cf94fc59ba2a195cae9cd84c40cba846cda7f8ff4604e54bbc5c7b4aa07"
+    },
+    "crates/ken-syntax/src/rust.rs": {
+      "bytes": 3791,
+      "sha256": "27a8894d69b8f47a2c66be6db276b270aa08d4639da8d42b2b53eccf3cfbd258"
+    },
+    "crates/ken-syntax/src/scopes.rs": {
+      "bytes": 6987,
+      "sha256": "8b8bdc4c13ab30556abf6559576169a9c5ac29bb26a9203b5e06d46b2997fa8a"
+    },
+    "crates/ken-syntax/src/sql.rs": {
+      "bytes": 2999,
+      "sha256": "342d0e184725234a804a054f1af0bce40f064ddd41d4411612f29a2f23203175"
+    },
+    "crates/ken-syntax/src/syntax.rs": {
+      "bytes": 4122,
+      "sha256": "6214d235a7e0a6b114382007710bfc61c68e79a6f84b7c258abd3a0b5d4a1809"
+    },
+    "crates/ken-syntax/tests/detection.rs": {
+      "bytes": 4494,
+      "sha256": "139ac2e521549739411021a2dc3dc694643fbd9d70cf2f0e03e489119f865249"
+    },
+    "crates/ken-syntax/tests/fixtures/c-macro-digits.json": {
+      "bytes": 4930,
+      "sha256": "cbf9a6558ba952d8f3015e64b2e261da46e9cfd008daba5896bc792af5595f6c"
+    },
+    "crates/ken-syntax/tests/fixtures/parser-edges.json": {
+      "bytes": 48478,
+      "sha256": "807e036e4fe9c6e5778692f602dfb91ef8dd25c47f9bfd9a2bab05a84d8484a2"
+    },
+    "crates/ken-syntax/tests/fixtures/parser-errors.json": {
+      "bytes": 7185,
+      "sha256": "3f11d8d44bd899e0b0383b6fc5a74aa0c0ca0e5a1af5a358e581addff0fadc53"
+    },
+    "crates/ken-syntax/tests/fixtures/reference.json": {
+      "bytes": 4353188,
+      "sha256": "956f41567cc23f37edd40e17851a28611704b7ea7097a5edd315dd92c545e7d2"
+    },
+    "crates/ken-syntax/tests/fixtures/review-cases.json": {
+      "bytes": 23712,
+      "sha256": "5ca8ef45bd3ae63e352804823cb5e66861c8c6136a15d1345aa39a606a05dd04"
+    },
+    "crates/ken-syntax/tests/grammar.rs": {
+      "bytes": 5318,
+      "sha256": "efd0adb9a46722bc60b55949989f9ffb92b9adb828dfbd514809d6865e483e97"
+    },
+    "crates/ken-syntax/tests/parsers.rs": {
+      "bytes": 7799,
+      "sha256": "cc2db15822c79ed06926b3cf7b9bf64c117418d56715d03c3f21b71f12684a1c"
+    },
+    "crates/ken-text/Cargo.toml": {
+      "bytes": 225,
+      "sha256": "dd9790139f40d98bda5f2510ebba4676cc5c7e751e47fa744ec78a8b0f691a6f"
+    },
+    "crates/ken-text/src/lib.rs": {
+      "bytes": 4122,
+      "sha256": "eedebf374fa76e8795d6bdd8bfbda91b47dda0dd1f6040c574271129b68cbd09"
+    }
+  },
+  "tooling": {
+    "tools/__init__.py": {
+      "bytes": 80,
+      "sha256": "cc672f1041e449e9b702bb93a3bbcdc9383641556543ef3be576fa0a95e71047"
+    },
+    "tools/rust_migration/measure.py": {
+      "bytes": 4552,
+      "sha256": "0ffb80a1648467cd00cb45400b3c815b6cca0d5760a47ccb2309fcf85450e4d2"
+    },
+    "tools/rust_migration/storage_compare.py": {
+      "bytes": 11148,
+      "sha256": "8f8baa860d35236e227fa3176b5bad1aff670c9b0cc29a2feb3ccaaec246aab4"
+    },
+    "tools/rust_migration/parser_reference.py": {
+      "bytes": 12621,
+      "sha256": "00fbc24a7d18bb2c88449f6e77563526a831fe7c4b4124d6eb376fd82bf9c2e2"
+    },
+    "tools/rust_migration/import_validate.py": {
+      "bytes": 4443,
+      "sha256": "ef286d465fa526eb3dc4153a3aa739f7ffd01481fd3bf9f67768535a45056990"
+    },
+    "tools/rust_migration/policy_evidence.py": {
+      "bytes": 8303,
+      "sha256": "91632eb4d04323b7c95c74d2b17b6f8aeeeccba2b74cabc313f70ff3fd2c6571"
+    },
+    "tools/rust_migration/model_reference.py": {
+      "bytes": 8957,
+      "sha256": "56b63cb387a431188ef713660e67bc19f5ad964448aef17ea772a1466d85de58"
+    },
+    "tools/rust_migration/receipts.py": {
+      "bytes": 4788,
+      "sha256": "4280b58613e563bd20d0d7e0311928fca08747f4a39611a05123e8960cf0fb4d"
+    },
+    "tools/rust_migration/context_compare.py": {
+      "bytes": 12247,
+      "sha256": "c79f4a4db8e89db39f7289917305f596b76174f248e73a3c29ab5af454be68c3"
+    },
+    "tools/rust_migration/source_validate.py": {
+      "bytes": 9003,
+      "sha256": "d972011b403909d6dbef5403dab8f2c89798011d54f86bf0b31f1f25333bd898"
+    },
+    "tools/rust_migration/table_compare.py": {
+      "bytes": 9106,
+      "sha256": "8c76825717c1297246aa9d70735b280e903700ca5458bbee6b0d04d2164bb2f6"
+    },
+    "tools/rust_migration/translation_build.py": {
+      "bytes": 14992,
+      "sha256": "da7724c9f34f71eebf109c81ec21325747f017c75e637f995d1311a0863b21fe"
+    },
+    "tools/rust_migration/model_validate.py": {
+      "bytes": 17597,
+      "sha256": "ab4bfb85df0ff842bd785142e31c9fbbbf05d7e1043bf2ab9921b422f824fb1e"
+    },
+    "tools/rust_migration/fastembed_evidence.py": {
+      "bytes": 13071,
+      "sha256": "127df1f0b403b6a049b9a68d2fd5f0d663cab9f24546baade377119239e1315b"
+    },
+    "tools/rust_migration/translation_reference.py": {
+      "bytes": 9303,
+      "sha256": "fc5706535d48c5a8d53c425d43bedcaaaec39b8d2a15cec3320644e026d57e2c"
+    },
+    "tools/rust_migration/integration_compare.py": {
+      "bytes": 3367,
+      "sha256": "b2b401485b6eee7809992ebe6ce255563a230b81e65b7f14ed5f47b20276d4bc"
+    },
+    "tools/rust_migration/fastembed_ownership.py": {
+      "bytes": 12036,
+      "sha256": "65503f469595730e165b259d2a42d1dcc5cd0cd4b2d0031360eec08618108f20"
+    },
+    "tools/rust_migration/table_reference.py": {
+      "bytes": 7243,
+      "sha256": "e059ad45e1ae8612501f65847ccd9faf4caa6525d50f058a732b367ca35065bd"
+    },
+    "tools/rust_migration/fastembed_validate.py": {
+      "bytes": 13542,
+      "sha256": "1f3b31cc98beeb2b67650ef93807394dc4220f88321e6b809a10456f47c9a066"
+    },
+    "tools/rust_migration/source_evidence.py": {
+      "bytes": 9387,
+      "sha256": "46033e2566a072a96b0af3f88c4a1fca4e3222452ce7ea3e6877fddbe1856501"
+    },
+    "tools/rust_migration/integration_capture.py": {
+      "bytes": 7215,
+      "sha256": "e1a7ab5625a946d3580ca2011c9406b79589b754d0c98e9d63d0459268ee1849"
+    },
+    "tools/rust_migration/source_reference.py": {
+      "bytes": 8114,
+      "sha256": "c5137cb4b8af0b028807bfa99a54b76036d7402a1379baf94e3849c010ff515d"
+    },
+    "tools/rust_migration/fastembed_catalog.py": {
+      "bytes": 3797,
+      "sha256": "978facf54488ca13af21e70bc62225c9e9276be5732a3b735dfec40dd6d7ca61"
+    },
+    "tools/rust_migration/policy_compare.py": {
+      "bytes": 11297,
+      "sha256": "dbb43260a806be82e6bea187dc0ada76bd264313e113d109cd346b7807d54b6a"
+    },
+    "tools/rust_migration/storage_reference_child.py": {
+      "bytes": 14232,
+      "sha256": "8502c57da0317d6e08abfbd221f4cd5f328944254e09bb723d182ddd32959c49"
+    },
+    "tools/rust_migration/integration_process.py": {
+      "bytes": 398,
+      "sha256": "95186012bf42a40b2646e460a28fd2866a5ed0ee67c3f5ee224f2150febb2c91"
+    },
+    "tools/rust_migration/transformer_reference.py": {
+      "bytes": 19647,
+      "sha256": "a21cfe9481dcf0812d50ee1ccb18546c9d3bc1380012953195c892dfc2052196"
+    },
+    "tools/rust_migration/translation_compare.py": {
+      "bytes": 16407,
+      "sha256": "51f4222da2281bf23858df1682d1100204a830654e38801a8ec544e65da68a85"
+    },
+    "tools/rust_migration/__init__.py": {
+      "bytes": 74,
+      "sha256": "dc1e069b6b8053078e6b87958f7b61434fad0a26be01ce854c1d6e25926b7224"
+    },
+    "tools/rust_migration/storage_recovery_child.py": {
+      "bytes": 3813,
+      "sha256": "f554b37c01145a12448abf5491b9e2a3d169d68b83384b7b103c71889ad8f3e7"
+    },
+    "tools/rust_migration/integration_reference.py": {
+      "bytes": 7475,
+      "sha256": "697f0a8c0f2d6c52c860ff55883f9d83726d51aac49d17dabc7ebe6020025901"
+    },
+    "tools/rust_migration/import_reference.py": {
+      "bytes": 14008,
+      "sha256": "98c8a2e053012a99d6c516db492c44021faefbd9956762143cabafcb22841f6f"
+    },
+    "tools/rust_migration/model_compare.py": {
+      "bytes": 11890,
+      "sha256": "411447128758f71b7fdfd7cf348c4b5bdf390bea4d8321ff3581674a0836c13f"
+    },
+    "tools/rust_migration/policy_validate.py": {
+      "bytes": 12193,
+      "sha256": "fdd3ac0cc55c6fb2e59b8e6b2e2220b8c750f531b6dab00cbd906c9478affdcd"
+    },
+    "tools/rust_migration/ettin_reference.py": {
+      "bytes": 9049,
+      "sha256": "8922f83f2bfa2870827d9bf17e6352a17d377533974d41491a37002ce27c0c3d"
+    },
+    "tools/rust_migration/import_evidence.py": {
+      "bytes": 9319,
+      "sha256": "c9e4f32fb4bdd40f99c116e684f3211277f55e0f0b7fd20362c2f598509e0b7d"
+    },
+    "tools/rust_migration/integration_roles.py": {
+      "bytes": 10580,
+      "sha256": "930e821854514f538aa9f92b9c9d089495dc3a61eb01f2f5a52d2657314719d2"
+    },
+    "tools/rust_migration/storage_recovery.py": {
+      "bytes": 12926,
+      "sha256": "b9936ed48dba949f8116f6baaa7dddfce6c9e55a91a6779a137841d32454722b"
+    },
+    "tools/rust_migration/translation_fixtures.py": {
+      "bytes": 2621,
+      "sha256": "e014f47f2ef1771fe8aa19e77947a5db047b1cb3ad33fa1a7c048caa44d27c05"
+    },
+    "tools/rust_migration/integration_replay.py": {
+      "bytes": 16530,
+      "sha256": "98b144039e0ac79c20fcf7a104eef2809de83c2fa45e5da052d18696ecec69b7"
+    },
+    "tools/rust_migration/fastembed_reference.py": {
+      "bytes": 20650,
+      "sha256": "c844e16dc9d76c11cb30c6068de9625d0e7ec3fe6c309ef893b48b8017b29730"
+    },
+    "tools/rust_migration/ettin_validate.py": {
+      "bytes": 11635,
+      "sha256": "f99904a8fd1edcf43d2bcd8b12c583ace1118eba5b1277934b506821f90b0c11"
+    },
+    "tools/rust_migration/transformer_capture_judge.py": {
+      "bytes": 12140,
+      "sha256": "970a8c6d437f3169e0b5b1b8cf53c2197c08955ac181a12f99c70fa7c3cdb639"
+    },
+    "tools/rust_migration/validate.py": {
+      "bytes": 16891,
+      "sha256": "fb0548ade14f66c4c35ef58fa229febb769d09841135ded64b7cba9eecc9a51f"
+    },
+    "tools/rust_migration/parser_evidence.py": {
+      "bytes": 12972,
+      "sha256": "6a72d7735636ac2779e9d538c10fd8d5e36cde9062bcfa016a9ec044911138d0"
+    },
+    "tools/rust_migration/grammar_prepare.py": {
+      "bytes": 5582,
+      "sha256": "f2d84b8950610967b40a5eea38ce72eb5dcf76bd95a108c2db5590f4a499666b"
+    },
+    "tools/rust_migration/transformer_prepare.py": {
+      "bytes": 10086,
+      "sha256": "12e632618ef2e980d3a48e42e1b8af07d343b2aa3cc34f01d276153366b0d023"
+    },
+    "tools/rust_migration/context_fixtures.py": {
+      "bytes": 8262,
+      "sha256": "e19549dd9b20986d787718ea3c32d95ba0e1fa3f58db2faf27af92a8f27bbb27"
+    },
+    "tools/rust_migration/transformer_evidence.py": {
+      "bytes": 10832,
+      "sha256": "f5494d035340c0fe8d3beded260b6d9f54d55e3734effee79937edaaf7d54f9a"
+    },
+    "tools/rust_migration/transformer_compare.py": {
+      "bytes": 10449,
+      "sha256": "b91cf5de5b7fe8fa411b2cad78ff82e46f20ba0777ee0fded5a3741391cc0d38"
+    },
+    "tools/rust_migration/policy_reference.py": {
+      "bytes": 8761,
+      "sha256": "66684bbaa2d522141f1d3fef4bd1bb58b4b45bf0d1d53d0371819ef1b67b01b4"
+    },
+    "tools/rust_migration/fastembed_reference_child.py": {
+      "bytes": 6713,
+      "sha256": "35396d72619b149eff28ded5b8c1f46ec802471fca5a501d4d9af9a684d8d051"
+    },
+    "tools/rust_migration/integration_validate.py": {
+      "bytes": 14461,
+      "sha256": "72615ba984d350ebd05e80a128d254f3291b1b64c65749d20c2bf3c140ef1469"
+    },
+    "tools/rust_migration/translation_unicode.py": {
+      "bytes": 6616,
+      "sha256": "73f219750c4a9d7abc0418801de3452c6a62fd255faa28aebbe40475c960f77a"
+    },
+    "tools/rust_migration/storage_evidence.py": {
+      "bytes": 4153,
+      "sha256": "fb0c6f342c86b7f781bcbc4041e48ab30d4a04cae497e02468db292fd8294a0c"
+    },
+    "tools/rust_migration/reference.py": {
+      "bytes": 5539,
+      "sha256": "3380a0cc6fcd0124207d63754b0b065676a67855dfd6df45a4f8a7633a78a219"
+    },
+    "tools/rust_migration/fastembed_compare.py": {
+      "bytes": 18274,
+      "sha256": "26298f05630b81de055cfbc3933b4007b15ad0622a7048ba491a4ceeade27b52"
+    },
+    "tools/rust_migration/native_json.py": {
+      "bytes": 6489,
+      "sha256": "300208e9dbf5c7c1a41c6896a0b8f13b51f5b2d5f1aea08dc60133ac0e6ce949"
+    },
+    "tools/rust_migration/table_fixtures.py": {
+      "bytes": 3822,
+      "sha256": "98c835d95bebea06d1da416798f1f4390e628635f0d775599d223016ddd3677d"
+    },
+    "tools/rust_migration/fastembed_sources.py": {
+      "bytes": 5870,
+      "sha256": "0ef3aeed831d7438d13b925a35e03d0dbd5475e0631d202205c79b4faf318ea8"
+    },
+    "tools/rust_migration/table_validate.py": {
+      "bytes": 8354,
+      "sha256": "3f1c620b74d9c54509c0f6c8b7c795e839861e29ecfd503abc6c36c612dc8d78"
+    },
+    "tools/rust_migration/transformer_process.py": {
+      "bytes": 6824,
+      "sha256": "f8bd0a2053be6c70fc3a95ed348b8524e1194b4f49d708a1a16b43d39cd2a13f"
+    },
+    "tools/rust_migration/storage_validate.py": {
+      "bytes": 14279,
+      "sha256": "59806a810c4298064fd688966c14c70e506060d45b3b8af3debc64a61398c054"
+    },
+    "tools/rust_migration/context_reference.py": {
+      "bytes": 10064,
+      "sha256": "4d3b0e4ddcba14d5790b2632358b9b04984c812a9bb7350194ddd2795fa37b5c"
+    },
+    "tools/rust_migration/transformer_sources.py": {
+      "bytes": 3826,
+      "sha256": "8111f58ce8a35e6bc0ec6db4527ffeb15602fe640419a3a0e89f3ccd535f497f"
+    },
+    "tools/rust_migration/context_validate.py": {
+      "bytes": 10861,
+      "sha256": "deba39ee07ad21512fa252348dadd176808880341457d5cf4505766cce8aaf52"
+    },
+    "tools/rust_migration/compare.py": {
+      "bytes": 9999,
+      "sha256": "6dab072d0845e823878fe33d5d11beb7439933e8513c2cd306d1bfc51fe14778"
+    },
+    "tools/rust_migration/storage_reference.py": {
+      "bytes": 6514,
+      "sha256": "9b3094147813a470a6265676d230a5f52f765c83ca4a5e0d801099ffeb69e0ff"
+    },
+    "tools/rust_migration/fastembed_process.py": {
+      "bytes": 10007,
+      "sha256": "7f7a8b09760903cfe80a7f1db38593ba81bb7955be3c59f8e8998ba596b5e79e"
+    },
+    "tools/rust_migration/transformer_validate.py": {
+      "bytes": 9968,
+      "sha256": "fca3431505a352bc306b855b1bf845153d64360ea9e2a524ca3e14db8ac79486"
+    },
+    "tools/rust_migration/preparation.py": {
+      "bytes": 9837,
+      "sha256": "2961392ca86803839724608070d349bd4de8416807d4df2d2196cac2e4e261c8"
+    },
+    "tools/rust_migration/ettin_compare.py": {
+      "bytes": 15945,
+      "sha256": "a81d3c4ac156d9891413aa7623417a5bcb9cc5d642970e0a3a4575c31eec9853"
+    },
+    "tools/rust_migration/fixtures.py": {
+      "bytes": 12730,
+      "sha256": "9b2bdbeefb81d8924d9d2650f9f1789a6ae09a6901128220b6c946b195316158"
+    },
+    "tools/rust_migration/ettin_fixtures.py": {
+      "bytes": 8546,
+      "sha256": "9d755cdd2400ccd30874dab1429d9e6cb0e946d88ddef8c6f41d005f09a01786"
+    },
+    "tools/rust_migration/translation_validate.py": {
+      "bytes": 13752,
+      "sha256": "2882f6858e3a6dd1224e6d26bd9ff620bb7183815de448e960e3566d111d498e"
+    },
+    "tools/rust_migration/parser_validate.py": {
+      "bytes": 6883,
+      "sha256": "05cb721e6ec707c33cc4c82a655ecff92ad3bea40ee11d0676d94063744f680b"
+    },
+    "tools/rust_migration/inventory.py": {
+      "bytes": 7966,
+      "sha256": "34c1e8514fa3b29f263a88cf9b5644beee5380215cbc00e88cdd36494cce47bd"
+    },
+    "tools/rust_migration/transformer_execution.py": {
+      "bytes": 10238,
+      "sha256": "3c213d2a3609f7774e3cb170ac707e542759bf2ba8c26c5ebad82b5f924c769e"
+    },
+    "tests/rust_migration/test_import_matrix.py": {
+      "bytes": 2989,
+      "sha256": "2991bbb03373a5fc2075b5207dc5a5f5dff4919984d289332c4ad10ecceed2af"
+    },
+    "tests/rust_migration/test_import_reference.py": {
+      "bytes": 2063,
+      "sha256": "25805e6d0bda4212bc250c6c9c0b75bdfbf0a4e34b0a010f32308827c42c05b8"
+    },
+    "tests/rust_migration/test_import_validate.py": {
+      "bytes": 2439,
+      "sha256": "b065b6bd7cf5e6dfcdee2231524cc4bcf813fa3a55112068d892c25ec1819b62"
+    },
+    "tests/rust_migration/test_import_evidence.py": {
+      "bytes": 3376,
+      "sha256": "38da989730ee6a078b78a61ccccb1994c6a59536c15d219f46dee98809228ed7"
+    }
+  },
+  "platforms": {
+    "macos": {
+      "native_sha256": "6671b7204baa4769bf00235d902ff778fcb9ad519853a14f6370e99c3dc3a7bc",
+      "parser_sha256": "da3c43086ba927e1a4b0e12c4b89e9daf5f91f220532ade9dc89dc8d52de7ff4"
+    },
+    "linux": {
+      "native_sha256": "f30280442b7535bbc72c835716a4559a56af7e5c92fdcbeaff0577b8c8c9d0de",
+      "parser_sha256": "db1cac958e740f84d65e7148da2aa6793a885828b29dd19f26b009398b84d9c9"
+    }
+  },
+  "predecessor": {
+    "path": "docs/validation/rust-migration-2026-10-23/m3-parsers-review",
+    "sha256": "c1541177be2a0716ff52276d7cfe042ae4ff5acea75d3f4c90d4a3452ab48ff8"
+  },
+  "repair_of": {
+    "path": "docs/validation/rust-migration-2026-10-23/m3-imports",
+    "sha256": "946e5b685df39c7baadd048ebc5ac26dd881fea205c9df7b221291237ab28dbb"
+  }
+}

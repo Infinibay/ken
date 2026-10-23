@@ -755,6 +755,7 @@ dependencies = [
 name = "ken-core"
 version = "0.18.0"
 dependencies = [
+ "ken-text",
  "libc",
  "regex",
  "rusqlite",
@@ -824,6 +825,7 @@ dependencies = [
 name = "ken-syntax"
 version = "0.18.0"
 dependencies = [
+ "ken-text",
  "libloading",
  "py_literal",
  "regex",
@@ -841,6 +843,14 @@ dependencies = [
  "tree-sitter-rust",
  "tree-sitter-typescript",
  "unicode_names2",
+]
+
+[[package]]
+name = "ken-text"
+version = "0.18.0"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
