@@ -27,4 +27,9 @@ pub use types::{TypeRef, parse_type, split_types};
 mod attributes;
 mod kinds;
 mod normalize;
-pub use normalize::normalize_syntax;
+pub use normalize::{normalize, normalize_syntax};
+
+mod environment;
+pub use environment::{Environment, Resolution};
+
+mod bindings;

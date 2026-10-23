@@ -558,3 +558,11 @@ fn argument_metadata(
     }
     Ok(())
 }
+
+/// Complete source model: structural normalization followed by shared lexical policy.
+pub fn normalize(ir: &StructuralIr) -> Result<Program, ProgramError> {
+    let mut program = normalize_syntax(ir)?;
+    crate::bindings::bind(ir, &mut program)?;
+    program.validate()?;
+    Ok(program)
+}
