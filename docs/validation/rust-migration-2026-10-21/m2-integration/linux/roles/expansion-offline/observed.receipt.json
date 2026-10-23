@@ -1,0 +1,50 @@
+{
+  "native_sha256": "23b0bca170dfd3609b4752142301ac732132033b1b23857b8f7977779a485ed8",
+  "native_exit": 0,
+  "native_children": [],
+  "outside_checkout": true,
+  "owned_after_exit": [],
+  "command": [
+    "/usr/bin/strace",
+    "--seccomp-bpf",
+    "-f",
+    "-e",
+    "trace=execve,execveat,connect",
+    "-o",
+    "/app/.ken/rust-migration/m2-optional/integration-task5/factory-roles-linux/expansion-offline/exec.trace",
+    "/tmp/ken-transformer-process-23t6xxml/probe",
+    "--factory",
+    "/tmp/ken-transformer-process-23t6xxml/request.json"
+  ],
+  "execution_audit": true,
+  "exec_attempts": 1,
+  "execution_audit_syscalls": [
+    "execve",
+    "execveat",
+    "connect"
+  ],
+  "prepared_cache_files": {
+    "models/translation/1af342f7677e9f51477171000e5aa6e6527590a715f064bd64679c1aa491a9f0/c96e2c5399ebfae4fc43d9669556b9afa74bb69d/config.json": {
+      "bytes": 223,
+      "sha256": "8f6496adfc930cbfecbe8281112197705c488fab47d34b4829b06d7f478909af"
+    },
+    "models/translation/1af342f7677e9f51477171000e5aa6e6527590a715f064bd64679c1aa491a9f0/c96e2c5399ebfae4fc43d9669556b9afa74bb69d/model.bin": {
+      "bytes": 79567635,
+      "sha256": "44c5adc2c680f27c14c991e5ab7f74f38b41597153f7123bc8f6455f09a3b38b"
+    },
+    "models/translation/1af342f7677e9f51477171000e5aa6e6527590a715f064bd64679c1aa491a9f0/c96e2c5399ebfae4fc43d9669556b9afa74bb69d/shared_vocabulary.json": {
+      "bytes": 1276136,
+      "sha256": "040e48c9d00734f48506e052695837720bd1f6aa01c70636cde83038362baf19"
+    },
+    "models/translation/1af342f7677e9f51477171000e5aa6e6527590a715f064bd64679c1aa491a9f0/c96e2c5399ebfae4fc43d9669556b9afa74bb69d/source.spm": {
+      "bytes": 825924,
+      "sha256": "e236ee6d866b635c0142114f8647f39831f9d92534aa2aad75c942f6a78ad0e3"
+    },
+    "models/translation/1af342f7677e9f51477171000e5aa6e6527590a715f064bd64679c1aa491a9f0/c96e2c5399ebfae4fc43d9669556b9afa74bb69d/target.spm": {
+      "bytes": 801636,
+      "sha256": "4dd547c24816a335e7b0b2e63376a8f1b3cbfc671eda5ab808dd44fdadaa8791"
+    }
+  },
+  "fixed_deadline_s": 600,
+  "elapsed_s": 0.567843458004063
+}

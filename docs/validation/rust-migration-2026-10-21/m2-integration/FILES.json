@@ -1,0 +1,2485 @@
+{
+  "format": "ken-model-integration-artifacts/1",
+  "files": [
+    {
+      "path": "CONTROLLER.py",
+      "bytes": 5195,
+      "sha256": "ee2ef2531c89411751596b98d9b693ad7a583b51da144144b60ae5b921546e49"
+    },
+    {
+      "path": "CONTROLS.json",
+      "bytes": 3228,
+      "sha256": "45be5629d1e3e85a459aef38016caba43269fc525cf506f97c749e6ca79c3ac1"
+    },
+    {
+      "path": "CONTROLS.py",
+      "bytes": 3755,
+      "sha256": "45004491e085222923ec60028bbe468453bb2db089f98988571aa03a76b5c0d9"
+    },
+    {
+      "path": "INDEX.json",
+      "bytes": 73922,
+      "sha256": "c9498cd2cf29f768bee7d1399a7613f2f01239334c93426142d7fe2d7368cf83"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2767,
+      "sha256": "6c7fbacd0ec3c78ff3157a268b7b1eca9967ab9a80c3690bafb17f6b914fb620"
+    },
+    {
+      "path": "diagnostics/task-5-all-integration-tests-macos.log",
+      "bytes": 99,
+      "sha256": "1f37d33739fd23f958aed25af6ae0ff2836d5b6b93beacd367a5a2bcbb533f9d"
+    },
+    {
+      "path": "diagnostics/task-5-audit-command-red.log",
+      "bytes": 1801,
+      "sha256": "6b74d555c2292fc2be3ec288c5e5f7dd2085282284c9ec2ffc28dab21cda2eb4"
+    },
+    {
+      "path": "diagnostics/task-5-linux-process-red.log",
+      "bytes": 3107,
+      "sha256": "5d8486b93fa63b282b7ca8c0e5ddf03c00a554f3adffa5d34018fd7006a27f30"
+    },
+    {
+      "path": "diagnostics/task-5-rust-gate-red.log",
+      "bytes": 1343,
+      "sha256": "3b90e2840bd602f682e4d8cd120002a1dd98592a9b53cc88935c0c7032a20bef"
+    },
+    {
+      "path": "initial-tooling-sources/tests/rust_migration/test_integration_gates.py",
+      "bytes": 1753,
+      "sha256": "21a2c1b4cc2f000c996f3df0a44461ff2671ba8a062c9255aa508a49572c3867"
+    },
+    {
+      "path": "initial-tooling-sources/tests/rust_migration/test_integration_process.py",
+      "bytes": 1483,
+      "sha256": "e58ff4d6664980cbe4a71cbb7ed969c1a187b721216d9e6c676669fa091d8e42"
+    },
+    {
+      "path": "initial-tooling-sources/tools/rust_migration/integration_replay.py",
+      "bytes": 15383,
+      "sha256": "3709d50c05f08ca02ba761912a018a6a2b3edbc6cb91496a2539736eb2929f0b"
+    },
+    {
+      "path": "initial-tooling-sources/tools/rust_migration/integration_validate.py",
+      "bytes": 10246,
+      "sha256": "8c3c5ec780646f9984201ac62c117c3afbd3f70d4549a86c0ad49a14a2559f66"
+    },
+    {
+      "path": "linux/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/gates/build.log",
+      "bytes": 420,
+      "sha256": "2a3fd866ea372010a0a9c7dfe26808826b1eae4a63cae2a587205e631430a99b"
+    },
+    {
+      "path": "linux/gates/capacity.json",
+      "bytes": 908,
+      "sha256": "150f414231ef05ec550f0d7731a652e6262707d20d4903e2014dde1574b7cde4"
+    },
+    {
+      "path": "linux/gates/clippy.log",
+      "bytes": 532,
+      "sha256": "db57bcf23ccd97c213d841bc6a6608861dea5153715c142fcf8375c8a64dbe9a"
+    },
+    {
+      "path": "linux/gates/commands.json",
+      "bytes": 788,
+      "sha256": "73fa8fe476ddfdec18a410c77efa52ddbe21bf9735461d8fe1299e6ae96da16c"
+    },
+    {
+      "path": "linux/gates/fmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/initial-tooling.json",
+      "bytes": 25874,
+      "sha256": "84b945439c2564491835391934af9f42310bae82a3808db44dbc3f9fab1a6fb3"
+    },
+    {
+      "path": "linux/gates/python-full-initial.xml",
+      "bytes": 2516301,
+      "sha256": "c137433aad6c4b26ec35d6a0e1028aac025c43ffc1348c76b7b61e10586bf66d"
+    },
+    {
+      "path": "linux/gates/python-full.log",
+      "bytes": 20906,
+      "sha256": "207668f430f348014221dcc8c5c7bf3d9841bbaaa0228fe42a4928b71759f6bd"
+    },
+    {
+      "path": "linux/gates/python-full.xml",
+      "bytes": 2513984,
+      "sha256": "66885655c547f20ef613e7c662ad67ee1a92c06bf1fb74d96469c93ee897f0cd"
+    },
+    {
+      "path": "linux/gates/python-supplement.log",
+      "bytes": 98,
+      "sha256": "fab45554e8874500361e7be564756efb4843fb7fbb6f63f1cf21d4151a2f45ab"
+    },
+    {
+      "path": "linux/gates/python-supplement.xml",
+      "bytes": 1382,
+      "sha256": "b411aae6fcda22529bf456ef356a221e33148fddfae7a3038b17bf55675d1b9f"
+    },
+    {
+      "path": "linux/gates/rust-list.log",
+      "bytes": 28964,
+      "sha256": "ef9b3f09731258f63a072ef94e879f52039edd27219a340f6421678b0612eed8"
+    },
+    {
+      "path": "linux/gates/rust-tests.log",
+      "bytes": 37792,
+      "sha256": "5c3b4a3e1461f713086591d0ac5138f87d32433f21e416a3d556db0d9e35af45"
+    },
+    {
+      "path": "linux/gates/storage-recovery/binding.json",
+      "bytes": 19586,
+      "sha256": "b6cbfa0287054f9606d2bea2954af908d3b9eef84af4cb5e101ec21f3d9448b6"
+    },
+    {
+      "path": "linux/gates/storage-recovery/cargo-tree.log",
+      "bytes": 2482,
+      "sha256": "0b2602ef877bc0c4a901b2d48ad8d401295dd8bf8e5863d91ce18d6e76ed9f81"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/interrupted.execution.json",
+      "bytes": 430,
+      "sha256": "9187aa8641464b42c87d3bb449c11ec66711461a52222071e1e54762fbfbfa7f"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/interrupted.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/interrupted.stdout.log",
+      "bytes": 280,
+      "sha256": "a0c69d784a529ccd139331e7576a73fc3fc6792b51e25e4eef67b52a395c70f2"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/interrupted.trace",
+      "bytes": 214,
+      "sha256": "d9eb2068a019f57819e271f789b07e966acbfa843edbe8895b0b892f5b86a068"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/original.after.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/original.after.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/original.before.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/original.before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/original.final.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/original.final.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/original.repeat.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/original.repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/recover.execution.json",
+      "bytes": 113,
+      "sha256": "6b8845a1cce0ca300560a2dd25c3b72b40484f7c33f186081f6e04e7c8d82a10"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/recover.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/recover.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/recover.trace",
+      "bytes": 235,
+      "sha256": "0290a9ce2d77f4a373bae601d439fbc1407facf5c62e31e323ffde87989cae60"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/repeat.execution.json",
+      "bytes": 112,
+      "sha256": "8b615ebfddfeb8a71353a2c18304661a9d9a94ac6e9af5088f2cbd4e09b0476e"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/repeat.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-backup_renamed/repeat.trace",
+      "bytes": 235,
+      "sha256": "3934658abd8f10eb389071f02e4a904aeb7d0a9eaf28e28090a32b7e9c39b3c0"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/interrupted.execution.json",
+      "bytes": 497,
+      "sha256": "c7b1507f1c028b5016186fc7062b3dfb84746093d81b2652980d7d2fcd6d059e"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/interrupted.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/interrupted.stdout.log",
+      "bytes": 337,
+      "sha256": "0ff58887ad3a585fabd0dd13e62ad8b66e8c091563c9608471e48202a6bc3177"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/interrupted.trace",
+      "bytes": 218,
+      "sha256": "c986b0e4691b9614d1d3a3e1df88f1d540c5bab774fee41e6cbc9f360241f8dd"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/original.after.json",
+      "bytes": 1263,
+      "sha256": "a5a599638d9ef250ed5f6d706469974244bdea38594306750815a59cc64e9378"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/original.after.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/original.before.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/original.before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/original.final.json",
+      "bytes": 1263,
+      "sha256": "a5a599638d9ef250ed5f6d706469974244bdea38594306750815a59cc64e9378"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/original.final.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/original.repeat.json",
+      "bytes": 1263,
+      "sha256": "a5a599638d9ef250ed5f6d706469974244bdea38594306750815a59cc64e9378"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/original.repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/recover.execution.json",
+      "bytes": 113,
+      "sha256": "6b8845a1cce0ca300560a2dd25c3b72b40484f7c33f186081f6e04e7c8d82a10"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/recover.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/recover.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/recover.trace",
+      "bytes": 235,
+      "sha256": "601ae9873dcfd846e1e8d193facae721fe6ccdd5a35839c2f1635de4dba00a30"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/repeat.execution.json",
+      "bytes": 112,
+      "sha256": "8b615ebfddfeb8a71353a2c18304661a9d9a94ac6e9af5088f2cbd4e09b0476e"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/repeat.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-database_committed/repeat.trace",
+      "bytes": 235,
+      "sha256": "091cbc73cc927e4b8f2fcd7b807a75e04ab7a56aa041c1b86d04460b3e5f7550"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/interrupted.execution.json",
+      "bytes": 398,
+      "sha256": "5721419d1ad36760bb12817b760742ae0edc71e5e691eaefe30b4dc2b417f263"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/interrupted.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/interrupted.stdout.log",
+      "bytes": 253,
+      "sha256": "bdf11dd7183a71f59254e9f7a1c41538917a04fc2280a06bef53adb16c5abc1d"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/interrupted.trace",
+      "bytes": 217,
+      "sha256": "707bacd37eed583ce13c4002aeb30d9b06ca138199965afd4814324b14510ee9"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/original.after.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/original.after.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/original.before.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/original.before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/original.final.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/original.final.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/original.repeat.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/original.repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/recover.execution.json",
+      "bytes": 113,
+      "sha256": "6b8845a1cce0ca300560a2dd25c3b72b40484f7c33f186081f6e04e7c8d82a10"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/recover.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/recover.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/recover.trace",
+      "bytes": 235,
+      "sha256": "6bf5a079e77d375a80c249e6599f1e70cb9975f45ddd7d4c32b347379b214b70"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/repeat.execution.json",
+      "bytes": 112,
+      "sha256": "8b615ebfddfeb8a71353a2c18304661a9d9a94ac6e9af5088f2cbd4e09b0476e"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/repeat.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-journal_published/repeat.trace",
+      "bytes": 235,
+      "sha256": "9bbb7c77a383cf62558d697b3e4f5956532ec541242d3ed8089b9b1204e8b3a5"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/interrupted.execution.json",
+      "bytes": 461,
+      "sha256": "3f6a37d4635921a8964afef71dd49b917992847c03f7ec581f89f1270ba2f201"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/interrupted.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/interrupted.stdout.log",
+      "bytes": 306,
+      "sha256": "a1dc395c361ce64022fcd0ef492b01fd37f1a47531e0ab01cece6f0df350c808"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/interrupted.trace",
+      "bytes": 213,
+      "sha256": "4c8f4d52a41002e17766845a839ea22f9a122bda4883aa26d3ad34657a2d9226"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/original.after.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/original.after.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/original.before.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/original.before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/original.final.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/original.final.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/original.repeat.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/original.repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/recover.execution.json",
+      "bytes": 113,
+      "sha256": "6b8845a1cce0ca300560a2dd25c3b72b40484f7c33f186081f6e04e7c8d82a10"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/recover.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/recover.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/recover.trace",
+      "bytes": 235,
+      "sha256": "42a1ec29cecd06659f0349a7858067a649f2ac55db2ffb0bde352e98b6df1190"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/repeat.execution.json",
+      "bytes": 112,
+      "sha256": "8b615ebfddfeb8a71353a2c18304661a9d9a94ac6e9af5088f2cbd4e09b0476e"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/repeat.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "linux/gates/storage-recovery/compact-new_published/repeat.trace",
+      "bytes": 235,
+      "sha256": "139b3719daf21962a4cbd0c8882a15b704339a39f26a557c84886d74c10a283d"
+    },
+    {
+      "path": "linux/gates/storage-recovery/dependencies.log",
+      "bytes": 299,
+      "sha256": "c45126b79a65db54caeb79d6cb8abb8b7cd31892ac4e62bdd93a8df3d76dc448"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/interrupted.execution.json",
+      "bytes": 157,
+      "sha256": "e14c946694c2100d9fa3b7b81af90060d5c2696de19f29529eb96c38c534d7d3"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/interrupted.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/interrupted.stdout.log",
+      "bytes": 50,
+      "sha256": "427edd1a4d8e490f54233fb119de2a6b5d33077ab0c98c61bff76847fd6b40d8"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/interrupted.trace",
+      "bytes": 208,
+      "sha256": "af5c7e408e27d0887aaec04553c44466690d0374484a2e9c4abef6e06b8034c0"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/original.after.json",
+      "bytes": 1084,
+      "sha256": "fd4946cf86e19a7420724a59076bcf3eb9292a2a932bb35303c4308b2da14092"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/original.after.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/original.before.json",
+      "bytes": 1095,
+      "sha256": "b58ec3414eaaccadd43796ce621918b79356925d6c986e50bc7b87ccaf063d13"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/original.before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/original.final.json",
+      "bytes": 1073,
+      "sha256": "28d383a56bc06cad94d7a832a7221374135c779fca3fc0875e4f7493fa5503df"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/original.final.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/original.repeat.json",
+      "bytes": 1073,
+      "sha256": "28d383a56bc06cad94d7a832a7221374135c779fca3fc0875e4f7493fa5503df"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/original.repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/recover.execution.json",
+      "bytes": 113,
+      "sha256": "6b8845a1cce0ca300560a2dd25c3b72b40484f7c33f186081f6e04e7c8d82a10"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/recover.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/recover.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/recover.trace",
+      "bytes": 235,
+      "sha256": "e222a4e5c40e33cc46fe241fc7b578b64414e3f5130c52d6c88f22408a44c5ff"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/repeat.execution.json",
+      "bytes": 112,
+      "sha256": "8b615ebfddfeb8a71353a2c18304661a9d9a94ac6e9af5088f2cbd4e09b0476e"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/repeat.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/repeat.trace",
+      "bytes": 235,
+      "sha256": "d173b6da109a2bebacbe09c8099eb0de156414892c5848b4856c1f129bae0bcf"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/resume.execution.json",
+      "bytes": 173,
+      "sha256": "ed19154e4dab972ad7fcb228b0435a8d65276c20c712feab10a97334c9dbfcc9"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/resume.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/resume.stdout.log",
+      "bytes": 69,
+      "sha256": "dc510a84a224cf3fd17d0ecdce688d1d5638bf509e9ac254ebd11cbc2b16c722"
+    },
+    {
+      "path": "linux/gates/storage-recovery/inline-first-batch/resume.trace",
+      "bytes": 242,
+      "sha256": "217d589caff61d6dabfd9d7a514cc431fb0ead832586d36a014367e199579d28"
+    },
+    {
+      "path": "linux/gates/storage-recovery/summary.json",
+      "bytes": 36373,
+      "sha256": "8cb1674fe39957b9f7661c59be5d2fa2b498a000254e64acf521adb65e620af4"
+    },
+    {
+      "path": "linux/gates/toolchain.log",
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    {
+      "path": "linux/roles/context-offline/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/roles/context-offline/exec.trace",
+      "bytes": 243,
+      "sha256": "cc4b0bb8e10865a4b95c310bdb3c1597538c377a4e10646c83650e88d44c8f6d"
+    },
+    {
+      "path": "linux/roles/context-offline/inputs.json",
+      "bytes": 1251,
+      "sha256": "9467d73fe4bd46623ab5258b52dc946497308e926a67616a4a6093e5e0c70656"
+    },
+    {
+      "path": "linux/roles/context-offline/observed.receipt.json",
+      "bytes": 776,
+      "sha256": "1b60dff600bea5ce77ad383d844644e82a01e8f5b99fe518d3582cafc4742adc"
+    },
+    {
+      "path": "linux/roles/context-offline/stderr.log",
+      "bytes": 5787,
+      "sha256": "f56ba57c4105d24ffa83d924f1dbec4e967b65ed21c12c7aa7da994facb1736b"
+    },
+    {
+      "path": "linux/roles/context-offline/stdout.json",
+      "bytes": 15836,
+      "sha256": "8c8684461a33008e048d80fc870fcdd9ecb1a2ecd27074fb18289fcc206cfe39"
+    },
+    {
+      "path": "linux/roles/expansion-offline/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/roles/expansion-offline/exec.trace",
+      "bytes": 299,
+      "sha256": "854214f6d5bae0b6591e1135dade9d469320540f8d3f6ec9b28cec992305c477"
+    },
+    {
+      "path": "linux/roles/expansion-offline/inputs.json",
+      "bytes": 850,
+      "sha256": "668f955d870c591967e2ed027742e4a93efee717d249c716e83182c222f918c8"
+    },
+    {
+      "path": "linux/roles/expansion-offline/observed.receipt.json",
+      "bytes": 2081,
+      "sha256": "eedcd2b20afdabac30789d9eba0ccf29af647d24d266f4af7fee03bde5ca48e8"
+    },
+    {
+      "path": "linux/roles/expansion-offline/stderr.log",
+      "bytes": 2876,
+      "sha256": "80764c6a5f8fed67a41c8dc4ca96994a201a4a8f8e4dc8aca1082d25affbaa5e"
+    },
+    {
+      "path": "linux/roles/expansion-offline/stdout.json",
+      "bytes": 1247,
+      "sha256": "721b26572dc1c16cb53050d9bb6a57a2f99ef629b73415e973be180644691c19"
+    },
+    {
+      "path": "linux/roles/fastembed-offline/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/roles/fastembed-offline/exec.trace",
+      "bytes": 467,
+      "sha256": "8477b0fdfe6923b1051d23c2a7765aaca68271408b9fcc66a83c50e541c32ec0"
+    },
+    {
+      "path": "linux/roles/fastembed-offline/inputs.json",
+      "bytes": 1303,
+      "sha256": "1c2299c663cd94a7eb5b4662e77bf704f15d4f0c219f98757f275ad51d6424bc"
+    },
+    {
+      "path": "linux/roles/fastembed-offline/observed.receipt.json",
+      "bytes": 778,
+      "sha256": "7035fd9418bc33b1b0d9ea02db0eeb07fbcd043b58fee484724ee0b9389e04d6"
+    },
+    {
+      "path": "linux/roles/fastembed-offline/stderr.log",
+      "bytes": 5787,
+      "sha256": "bbf0f64c87dc8d4aa6ea73c6dcc630481963158371d484fced010b86bfcf40fa"
+    },
+    {
+      "path": "linux/roles/fastembed-offline/stdout.json",
+      "bytes": 65763,
+      "sha256": "b219352dbb20b53099a120535cc6806aa2c8a5d1139138227b1083aafd556b32"
+    },
+    {
+      "path": "linux/roles/fastembed-public/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/roles/fastembed-public/exec.trace",
+      "bytes": 14786,
+      "sha256": "fc0ca69fcbca24f2e0f9af8d1a67666ad065675a10bd2ea2de0b84cf986626a0"
+    },
+    {
+      "path": "linux/roles/fastembed-public/inputs.json",
+      "bytes": 1302,
+      "sha256": "a62bd46a23c6e56064399d9422dab9c73a26c244d1d5d8bfb0fb6f3a96b65f71"
+    },
+    {
+      "path": "linux/roles/fastembed-public/observed.receipt.json",
+      "bytes": 775,
+      "sha256": "af855a7a465fcd077142799b227377fb04a838da6e9474b423bceba965d78877"
+    },
+    {
+      "path": "linux/roles/fastembed-public/stderr.log",
+      "bytes": 5787,
+      "sha256": "f07a4ea9c7e31fecfd7440567388555512b7fd6025eaf9588219c8805789326f"
+    },
+    {
+      "path": "linux/roles/fastembed-public/stdout.json",
+      "bytes": 65762,
+      "sha256": "a4475e1da6b238b2aefd993902bdf5d86c3bf184c1129f1cfcfdf08773ae9c49"
+    },
+    {
+      "path": "linux/roles/potion-offline/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/roles/potion-offline/exec.trace",
+      "bytes": 439,
+      "sha256": "891c8ec52011b6851783dd242225e9a12149fb53601387bc10d917ffb9dccdc6"
+    },
+    {
+      "path": "linux/roles/potion-offline/inputs.json",
+      "bytes": 1959,
+      "sha256": "ca1ebadd3223e85f2e9929fe34467ec7e27fc2f7eb8b7ce793ae51a1bb6080ba"
+    },
+    {
+      "path": "linux/roles/potion-offline/observed.receipt.json",
+      "bytes": 775,
+      "sha256": "6cfbae18ffccc634ac65eb55efed368d2d0d22652bda6e1f004a0afd57abeb17"
+    },
+    {
+      "path": "linux/roles/potion-offline/stderr.log",
+      "bytes": 2876,
+      "sha256": "6d62996cdfe737c4afc66917e31e200c7d01f8fbf7cc274149a74296368bd4ea"
+    },
+    {
+      "path": "linux/roles/potion-offline/stdout.json",
+      "bytes": 42636,
+      "sha256": "5214f85e64ebfcc71e0f902236ad3f1b31f0d2304de24bedf4da5e04cbcb5cb2"
+    },
+    {
+      "path": "linux/roles/reranker-offline/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/roles/reranker-offline/exec.trace",
+      "bytes": 299,
+      "sha256": "6f9523bae86fdba6e5f930424d8f3572269706c9d10d6dbbadff684d8f35a264"
+    },
+    {
+      "path": "linux/roles/reranker-offline/inputs.json",
+      "bytes": 1329,
+      "sha256": "7f3f910cdae72ece4120cff9625cddcbea1214b506902c2c7b71f950748cf482"
+    },
+    {
+      "path": "linux/roles/reranker-offline/observed.receipt.json",
+      "bytes": 1814,
+      "sha256": "d68d8160a09afab82abf645eb53c7b50e55d87f5e2295152c37aec2027e508b6"
+    },
+    {
+      "path": "linux/roles/reranker-offline/stderr.log",
+      "bytes": 5787,
+      "sha256": "ea07969398bf7f8a9f895d3434eff3a28de5e4abe22db52ead29936ed8b0f00f"
+    },
+    {
+      "path": "linux/roles/reranker-offline/stdout.json",
+      "bytes": 653,
+      "sha256": "c56f3c648c6bedd2465376aaa1d8ff85527e9045b5d1d7f3db47d38498d80cbb"
+    },
+    {
+      "path": "linux/roles/static-offline/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/roles/static-offline/exec.trace",
+      "bytes": 439,
+      "sha256": "044e7c6b3b5f26544bfd2e8eaaadd1abf99af8f2bdfa2aa6ce4753b9e0654923"
+    },
+    {
+      "path": "linux/roles/static-offline/inputs.json",
+      "bytes": 1868,
+      "sha256": "069efe9a154d73e08008459779b201c78359e670bfb094fdc167aebe3f2f9d57"
+    },
+    {
+      "path": "linux/roles/static-offline/observed.receipt.json",
+      "bytes": 775,
+      "sha256": "b374b54f05b81335672967f1907d050437897661093139cb59fdac0ef6b5d620"
+    },
+    {
+      "path": "linux/roles/static-offline/stderr.log",
+      "bytes": 2876,
+      "sha256": "7db02ba0450c67e38246c5c04512e612de86d132dcf07577690fae4f1efe2516"
+    },
+    {
+      "path": "linux/roles/static-offline/stdout.json",
+      "bytes": 196467,
+      "sha256": "bcd20afe18e43d898a8cedaeff3111b42e451e7199104e33c7adc4bf2dfd13cd"
+    },
+    {
+      "path": "linux/transformers/profiles/00/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/transformers/profiles/00/exec.trace",
+      "bytes": 271,
+      "sha256": "6b954a9f58c1c5b257be26a363ecb3eb42c4874f78a56202d6a24da3af56d65b"
+    },
+    {
+      "path": "linux/transformers/profiles/00/inputs.json",
+      "bytes": 3516,
+      "sha256": "78dfcfa68d023fed0d27101271c07be7556618eac74554c2db9339746019afd7"
+    },
+    {
+      "path": "linux/transformers/profiles/00/observed.receipt.json",
+      "bytes": 779,
+      "sha256": "efec6fe9397521afe2722830a0299a61279efd6eccbc3e279500749be3d8353b"
+    },
+    {
+      "path": "linux/transformers/profiles/00/stderr.log",
+      "bytes": 14703,
+      "sha256": "9111e9473e5ce9843ce9e7ef3a19ae7cfc55a7adeb11716fd1297efdc569051b"
+    },
+    {
+      "path": "linux/transformers/profiles/00/stdout.json",
+      "bytes": 177704,
+      "sha256": "259e60b510ba3a5fa553a41ee936ed9ac305b09ee54ff0a0fc3e6cf503eab7d5"
+    },
+    {
+      "path": "linux/transformers/profiles/01/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/transformers/profiles/01/exec.trace",
+      "bytes": 271,
+      "sha256": "e5e47689f8a344c787f84c6c4eef72ac6d2654029196940b97506e6bf3f75129"
+    },
+    {
+      "path": "linux/transformers/profiles/01/inputs.json",
+      "bytes": 3515,
+      "sha256": "eb205017a58fc406a4c0bfb7f8a4d6769fb676ae11216e22874cc518905eb0c0"
+    },
+    {
+      "path": "linux/transformers/profiles/01/observed.receipt.json",
+      "bytes": 780,
+      "sha256": "d3109497cbc2823cd104cea335d411552300bf24c4d1e896abfbc5457095fc5a"
+    },
+    {
+      "path": "linux/transformers/profiles/01/stderr.log",
+      "bytes": 14703,
+      "sha256": "6aa5272067b6e45d00a49408899469cf61f60f2f76983c82fcfcda0ac2ef415c"
+    },
+    {
+      "path": "linux/transformers/profiles/01/stdout.json",
+      "bytes": 177684,
+      "sha256": "66631d1ed4a0a4ba11dcfb50f136897991e6c3b68cefcf67c9bb92e12b3c1a17"
+    },
+    {
+      "path": "linux/transformers/profiles/02/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/transformers/profiles/02/exec.trace",
+      "bytes": 32527,
+      "sha256": "172a80db93f84d34e12ee03b373227046bbe781a284ead34fe92b2f78c349c7e"
+    },
+    {
+      "path": "linux/transformers/profiles/02/inputs.json",
+      "bytes": 3515,
+      "sha256": "7627ac2cc6e7f1f83026add2401d558c3aa62425a5c80ab182a06c4d67a35c20"
+    },
+    {
+      "path": "linux/transformers/profiles/02/observed.receipt.json",
+      "bytes": 777,
+      "sha256": "412bd76a1e99edb8e22398df31f9cdc0695a6b1ded375d17718d0404e691fbd4"
+    },
+    {
+      "path": "linux/transformers/profiles/02/stderr.log",
+      "bytes": 14703,
+      "sha256": "80a4b216eaf7e00e9591195a345b8a085890c4856b405b9cc81b25925daa452d"
+    },
+    {
+      "path": "linux/transformers/profiles/02/stdout.json",
+      "bytes": 177701,
+      "sha256": "baba8f872ffca509a19ac24bf4f8a3ee1516cfa3087ce8e44f0db6e2d4d2a413"
+    },
+    {
+      "path": "linux/transformers/profiles/03/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/transformers/profiles/03/exec.trace",
+      "bytes": 271,
+      "sha256": "57bb9db35eef929090d523af4c269ed8f5547f5da532c6df2eab172d7c083f23"
+    },
+    {
+      "path": "linux/transformers/profiles/03/inputs.json",
+      "bytes": 3558,
+      "sha256": "328e7f07a9fd2a1155ff4d9f2ec7e9cbbe57b5daef7bbe8becea2b33d2daa122"
+    },
+    {
+      "path": "linux/transformers/profiles/03/observed.receipt.json",
+      "bytes": 779,
+      "sha256": "52be27d06d43f33cc1e6405fa2318647f06ad101a31d4aa8637c20ffb79f93e6"
+    },
+    {
+      "path": "linux/transformers/profiles/03/stderr.log",
+      "bytes": 14703,
+      "sha256": "ecc3f27b930fb9758d84bb02b768698194813f3ed4393c700824f28d5e72c512"
+    },
+    {
+      "path": "linux/transformers/profiles/03/stdout.json",
+      "bytes": 177074,
+      "sha256": "62259b04e0b016a9ad42f0fcb43a7ebe1d031484f54149d7e06203a78a6d4149"
+    },
+    {
+      "path": "linux/transformers/profiles/04/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/transformers/profiles/04/exec.trace",
+      "bytes": 271,
+      "sha256": "24c0c8073f0cbac1841c730c77f3221361fbb336751c1de81948bd7eb87bbf38"
+    },
+    {
+      "path": "linux/transformers/profiles/04/inputs.json",
+      "bytes": 3557,
+      "sha256": "df30cd58067b6ddcec3885a32f66cce61a561daab0af030e2f8b3a5dc0006a58"
+    },
+    {
+      "path": "linux/transformers/profiles/04/observed.receipt.json",
+      "bytes": 780,
+      "sha256": "0967c0973cb781b53b9165394a0efd36887d4cb8a4fb3eb59b5a11f2fb87043f"
+    },
+    {
+      "path": "linux/transformers/profiles/04/stderr.log",
+      "bytes": 14703,
+      "sha256": "a012c26c906e1be5f946077a2713af39eb98033605f367fb928851ddb857665c"
+    },
+    {
+      "path": "linux/transformers/profiles/04/stdout.json",
+      "bytes": 177432,
+      "sha256": "656490fb15c2ae8e8b0e7d75d02ac1eb0aa7d2174c422742ea19412917a40c2d"
+    },
+    {
+      "path": "linux/transformers/profiles/05/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/transformers/profiles/05/exec.trace",
+      "bytes": 44175,
+      "sha256": "3c478acf9cac2e2e7176a569be18e603e798ba15da5b08510db2b9a2802cf92f"
+    },
+    {
+      "path": "linux/transformers/profiles/05/inputs.json",
+      "bytes": 3557,
+      "sha256": "a4b3f2ae7aa004aca9fe657a079c7b8b9850af7557b0a207d791370cee173bbf"
+    },
+    {
+      "path": "linux/transformers/profiles/05/observed.receipt.json",
+      "bytes": 778,
+      "sha256": "3766c5acc5f203facfb17025d06109b852e43ccfaa6f64ef92c5e3fbfba2631f"
+    },
+    {
+      "path": "linux/transformers/profiles/05/stderr.log",
+      "bytes": 14703,
+      "sha256": "81002f915beb66079b66295d15d94bb657a59c83d4376072f978300d4e819804"
+    },
+    {
+      "path": "linux/transformers/profiles/05/stdout.json",
+      "bytes": 177442,
+      "sha256": "a5b55638f0f07d8c44273538b996eb1c0857558276b1b34844c7666b12f4771a"
+    },
+    {
+      "path": "linux/transformers/profiles/06/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/transformers/profiles/06/exec.trace",
+      "bytes": 271,
+      "sha256": "717e016079fc66f2cff41a671996ff2f321a9200aa6608df491c6ec796767091"
+    },
+    {
+      "path": "linux/transformers/profiles/06/inputs.json",
+      "bytes": 3632,
+      "sha256": "74c52efdd501637e6a1182299c78525cfd4730cca0ff9fe62b71dc023a9ae0f8"
+    },
+    {
+      "path": "linux/transformers/profiles/06/observed.receipt.json",
+      "bytes": 780,
+      "sha256": "12fad04b1fde405c53a88e6762c0a66f22cb5283a8b5ba9145b173873ea9bcc7"
+    },
+    {
+      "path": "linux/transformers/profiles/06/stderr.log",
+      "bytes": 14703,
+      "sha256": "aec6e6d994abafa061c7f509f71ab55861d1dfdebecdfd215b3fa0fe88a74e6c"
+    },
+    {
+      "path": "linux/transformers/profiles/06/stdout.json",
+      "bytes": 5378,
+      "sha256": "5360c0b0bb227a7f7512befc02e0d4e23b34ebd73318d41fc5812cf2642f8f5b"
+    },
+    {
+      "path": "linux/transformers/profiles/07/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/transformers/profiles/07/exec.trace",
+      "bytes": 271,
+      "sha256": "f39e174bb56648faad80d52575b45af2171a57732a0a40cd67b5bb34d2eac781"
+    },
+    {
+      "path": "linux/transformers/profiles/07/inputs.json",
+      "bytes": 3631,
+      "sha256": "a755d2168f77e666ea858cd1b2c69aff106021f207f3a0c0dd46f2dda5d08b93"
+    },
+    {
+      "path": "linux/transformers/profiles/07/observed.receipt.json",
+      "bytes": 779,
+      "sha256": "eeb64bdb87c74d286883efe621c27f712536cb3422efb5f0db646fd5da62111a"
+    },
+    {
+      "path": "linux/transformers/profiles/07/stderr.log",
+      "bytes": 14703,
+      "sha256": "a971d47972eb8d81774d3cbee0a50313d8a0d21a9a3845464f6d946145746fe0"
+    },
+    {
+      "path": "linux/transformers/profiles/07/stdout.json",
+      "bytes": 5375,
+      "sha256": "f4bb92387efbba26fbfb0ddcf846eb1ced918e082a6469aad8dcc3356e07e0fa"
+    },
+    {
+      "path": "linux/transformers/profiles/08/BUILD.json",
+      "bytes": 47539,
+      "sha256": "014fb24320351030e09feefe07e61adbeac289fb9207fd207ed86b4c4e8f36bc"
+    },
+    {
+      "path": "linux/transformers/profiles/08/exec.trace",
+      "bytes": 44175,
+      "sha256": "7df41c6fa66561fcdd3aa5e692c03607ce80e7dcdd966f057eb3f297b3b6f239"
+    },
+    {
+      "path": "linux/transformers/profiles/08/inputs.json",
+      "bytes": 3631,
+      "sha256": "ca0e2e89e9e250d15f1893eb9d98e95d889bb6e82268879aa3c29cb1391c55cc"
+    },
+    {
+      "path": "linux/transformers/profiles/08/observed.receipt.json",
+      "bytes": 778,
+      "sha256": "becaacf6cc7e279ac07dd7c08bb75d2bb07af9e591651f157d3daf3620ef9779"
+    },
+    {
+      "path": "linux/transformers/profiles/08/stderr.log",
+      "bytes": 14703,
+      "sha256": "376e2f429963bc11c643d46b053a15b155f1ed7ded1c7813a487f6faaf8eaf04"
+    },
+    {
+      "path": "linux/transformers/profiles/08/stdout.json",
+      "bytes": 5375,
+      "sha256": "7509aab4f870ed44a5a7388c8fcf86348763f6a654bc51688acf4f9d58b45a9e"
+    },
+    {
+      "path": "macos/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/gates/build.log",
+      "bytes": 294,
+      "sha256": "c87bd5c08619314d1f968b0c9f2452225681bf435e9b943f858aa866942537c8"
+    },
+    {
+      "path": "macos/gates/capacity.json",
+      "bytes": 1268,
+      "sha256": "a1f9790761243243d8b68e36f88c39690a16ab4c30c587ad6b2b83edcff370e2"
+    },
+    {
+      "path": "macos/gates/clippy.log",
+      "bytes": 285,
+      "sha256": "e997cf5a8b997bb1277f80c225e7968fe485502ce52f464d888d7efa8b88c9ce"
+    },
+    {
+      "path": "macos/gates/commands.json",
+      "bytes": 788,
+      "sha256": "1dc8d4c0676f6067ac43ca7b2de5a8f89ddf75ce94d8fcbef26c87d33c5218e2"
+    },
+    {
+      "path": "macos/gates/fmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/initial-tooling.json",
+      "bytes": 25874,
+      "sha256": "84b945439c2564491835391934af9f42310bae82a3808db44dbc3f9fab1a6fb3"
+    },
+    {
+      "path": "macos/gates/python-full-initial.xml",
+      "bytes": 2513558,
+      "sha256": "571397f204de0614491c362193874d94269c5315da0b0c51cf58105db0b003f0"
+    },
+    {
+      "path": "macos/gates/python-full.log",
+      "bytes": 17886,
+      "sha256": "f172ce85cc4ce6baaeca6902a7da11726d0501af7c0c63c01f837b581ad6fe88"
+    },
+    {
+      "path": "macos/gates/python-full.xml",
+      "bytes": 2513983,
+      "sha256": "c93db9bd961329dbe6cb722eb1545c00ad9b8fab0bd5db82509454d969970c19"
+    },
+    {
+      "path": "macos/gates/python-supplement.log",
+      "bytes": 98,
+      "sha256": "55493507b7aa18a8cc82091b1ff98b8c42bd6ab2fff3e518139c9c364bccb147"
+    },
+    {
+      "path": "macos/gates/python-supplement.xml",
+      "bytes": 1380,
+      "sha256": "931f5ff69bf73d2a069b0418d90d72e94a45ab704ebb5012aadb47ec105d3710"
+    },
+    {
+      "path": "macos/gates/rust-list.log",
+      "bytes": 32594,
+      "sha256": "e2e23acdab004243e85d652dd46ccde7a37a9c7fe2eb3956ce3e9727286e855a"
+    },
+    {
+      "path": "macos/gates/rust-tests.log",
+      "bytes": 41201,
+      "sha256": "1f19e2bb164a4aa4136f6ebd4980e9e1a56fd4707a663fb0c78bce5ffe8d1efd"
+    },
+    {
+      "path": "macos/gates/storage-recovery/binding.json",
+      "bytes": 19586,
+      "sha256": "80b4f6537e7c5997fefc7f285ba2c342b3b4a595761f58f6618c2320d23b4c9c"
+    },
+    {
+      "path": "macos/gates/storage-recovery/cargo-tree.log",
+      "bytes": 2464,
+      "sha256": "37470ee62cc73285593f6740135c5409f5a3adc4f8e100ffb6586ad438f40df4"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/interrupted.execution.json",
+      "bytes": 433,
+      "sha256": "41daf1873a4e91df3582ef0c1f1fabaa019e000ae37ba9b06bb111a927764351"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/interrupted.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/interrupted.stdout.log",
+      "bytes": 280,
+      "sha256": "a0c69d784a529ccd139331e7576a73fc3fc6792b51e25e4eef67b52a395c70f2"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/original.after.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/original.after.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/original.before.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/original.before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/original.final.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/original.final.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/original.repeat.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/original.repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/recover.execution.json",
+      "bytes": 116,
+      "sha256": "97a250b935adfbb8cd30c341d2a29c73afaee109847dde830bf153a379aff894"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/recover.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/recover.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/repeat.execution.json",
+      "bytes": 115,
+      "sha256": "5cfb440cb75dfd8c2ded34f3a60372b18f97c0f6cc9aa01e3bf2a9afaa7e1b6b"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-backup_renamed/repeat.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/interrupted.execution.json",
+      "bytes": 500,
+      "sha256": "6fad695f5f1546fc6f216516c97c7cb035d26b958f9deef21e41d0851794a49e"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/interrupted.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/interrupted.stdout.log",
+      "bytes": 337,
+      "sha256": "0ff58887ad3a585fabd0dd13e62ad8b66e8c091563c9608471e48202a6bc3177"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/original.after.json",
+      "bytes": 1263,
+      "sha256": "a5a599638d9ef250ed5f6d706469974244bdea38594306750815a59cc64e9378"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/original.after.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/original.before.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/original.before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/original.final.json",
+      "bytes": 1263,
+      "sha256": "a5a599638d9ef250ed5f6d706469974244bdea38594306750815a59cc64e9378"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/original.final.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/original.repeat.json",
+      "bytes": 1263,
+      "sha256": "a5a599638d9ef250ed5f6d706469974244bdea38594306750815a59cc64e9378"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/original.repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/recover.execution.json",
+      "bytes": 116,
+      "sha256": "97a250b935adfbb8cd30c341d2a29c73afaee109847dde830bf153a379aff894"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/recover.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/recover.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/repeat.execution.json",
+      "bytes": 115,
+      "sha256": "5cfb440cb75dfd8c2ded34f3a60372b18f97c0f6cc9aa01e3bf2a9afaa7e1b6b"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-database_committed/repeat.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/interrupted.execution.json",
+      "bytes": 401,
+      "sha256": "6764a9b280470d56c8267b54652918d6192dbedcebc35233b07f984a15e1d78f"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/interrupted.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/interrupted.stdout.log",
+      "bytes": 253,
+      "sha256": "bdf11dd7183a71f59254e9f7a1c41538917a04fc2280a06bef53adb16c5abc1d"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/original.after.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/original.after.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/original.before.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/original.before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/original.final.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/original.final.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/original.repeat.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/original.repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/recover.execution.json",
+      "bytes": 116,
+      "sha256": "97a250b935adfbb8cd30c341d2a29c73afaee109847dde830bf153a379aff894"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/recover.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/recover.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/repeat.execution.json",
+      "bytes": 115,
+      "sha256": "5cfb440cb75dfd8c2ded34f3a60372b18f97c0f6cc9aa01e3bf2a9afaa7e1b6b"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-journal_published/repeat.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/interrupted.execution.json",
+      "bytes": 464,
+      "sha256": "61212c4a969cae275191bf5bcc48651c13e79f6978dcefae0d1f78d5e6e1513f"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/interrupted.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/interrupted.stdout.log",
+      "bytes": 306,
+      "sha256": "a1dc395c361ce64022fcd0ef492b01fd37f1a47531e0ab01cece6f0df350c808"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/original.after.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/original.after.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/original.before.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/original.before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/original.final.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/original.final.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/original.repeat.json",
+      "bytes": 1263,
+      "sha256": "3d9c0cc1acdbde59614353a22af13ab5a3abb73d3cde5d27f4d790164f03c4fb"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/original.repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/recover.execution.json",
+      "bytes": 116,
+      "sha256": "97a250b935adfbb8cd30c341d2a29c73afaee109847dde830bf153a379aff894"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/recover.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/recover.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/repeat.execution.json",
+      "bytes": 115,
+      "sha256": "5cfb440cb75dfd8c2ded34f3a60372b18f97c0f6cc9aa01e3bf2a9afaa7e1b6b"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/compact-new_published/repeat.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "macos/gates/storage-recovery/dependencies.log",
+      "bytes": 282,
+      "sha256": "36cf130afe81dbad91af9cc570e402a35ff06b0ca193cabe91c0006f0c23e54a"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/interrupted.execution.json",
+      "bytes": 160,
+      "sha256": "c4a05fb2762d82fcaeee36893973b3a00d903a1f7e686db2d2da514cb4ba5b06"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/interrupted.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/interrupted.stdout.log",
+      "bytes": 50,
+      "sha256": "427edd1a4d8e490f54233fb119de2a6b5d33077ab0c98c61bff76847fd6b40d8"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/original.after.json",
+      "bytes": 1084,
+      "sha256": "fd4946cf86e19a7420724a59076bcf3eb9292a2a932bb35303c4308b2da14092"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/original.after.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/original.before.json",
+      "bytes": 1095,
+      "sha256": "b58ec3414eaaccadd43796ce621918b79356925d6c986e50bc7b87ccaf063d13"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/original.before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/original.final.json",
+      "bytes": 1073,
+      "sha256": "28d383a56bc06cad94d7a832a7221374135c779fca3fc0875e4f7493fa5503df"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/original.final.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/original.repeat.json",
+      "bytes": 1073,
+      "sha256": "28d383a56bc06cad94d7a832a7221374135c779fca3fc0875e4f7493fa5503df"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/original.repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/recover.execution.json",
+      "bytes": 116,
+      "sha256": "97a250b935adfbb8cd30c341d2a29c73afaee109847dde830bf153a379aff894"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/recover.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/recover.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/repeat.execution.json",
+      "bytes": 115,
+      "sha256": "5cfb440cb75dfd8c2ded34f3a60372b18f97c0f6cc9aa01e3bf2a9afaa7e1b6b"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/repeat.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/repeat.stdout.log",
+      "bytes": 19,
+      "sha256": "833c49c7ebd333e9a3a146537402b7bb6a049fba9e38dbbdf221878c71f397aa"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/resume.execution.json",
+      "bytes": 176,
+      "sha256": "1589188ea7b6df0593c35152b3708d387342ada950160b3833985470d86d4b40"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/resume.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "macos/gates/storage-recovery/inline-first-batch/resume.stdout.log",
+      "bytes": 69,
+      "sha256": "dc510a84a224cf3fd17d0ecdce688d1d5638bf509e9ac254ebd11cbc2b16c722"
+    },
+    {
+      "path": "macos/gates/storage-recovery/summary.json",
+      "bytes": 36420,
+      "sha256": "1c276ee36dd834a7b85b47cb28014f63568718f1182bc02e98e106a80cc1f64f"
+    },
+    {
+      "path": "macos/gates/toolchain.log",
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    {
+      "path": "macos/roles/context-offline/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/roles/context-offline/inputs.json",
+      "bytes": 1348,
+      "sha256": "2438b5244be702472895336d803b1dca0617b108215d44d9e25eb748ad0e5782"
+    },
+    {
+      "path": "macos/roles/context-offline/observed.receipt.json",
+      "bytes": 599,
+      "sha256": "931b455c7cdc938c4645dfd327a417eee4c98cbefcb703c3a71b57e25d9a9bfa"
+    },
+    {
+      "path": "macos/roles/context-offline/stderr.log",
+      "bytes": 88572,
+      "sha256": "fc187dd6eda83edb8219af39534faa8556fbc1f7b9247033761daa2bcbe8c5b0"
+    },
+    {
+      "path": "macos/roles/context-offline/stdout.json",
+      "bytes": 15841,
+      "sha256": "210d7c59dc5de8284df8e605296035783d3481e22983f9509d5905c7a0b109c3"
+    },
+    {
+      "path": "macos/roles/expansion-offline/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/roles/expansion-offline/inputs.json",
+      "bytes": 957,
+      "sha256": "46c7841d4c367277333b620eec2594ed25d4280455a76a430a3453c61b8d7aae"
+    },
+    {
+      "path": "macos/roles/expansion-offline/observed.receipt.json",
+      "bytes": 1904,
+      "sha256": "5923211d3843a823e05f75df79e78b0fe1252ad04172db79d718e1c837d47fcf"
+    },
+    {
+      "path": "macos/roles/expansion-offline/stderr.log",
+      "bytes": 87584,
+      "sha256": "259c06eb28b4e141c15e0e0648fcc33eb3393c0b9f0cfb694866f6730836a3b1"
+    },
+    {
+      "path": "macos/roles/expansion-offline/stdout.json",
+      "bytes": 1243,
+      "sha256": "f2815ac9a82bfbf2996b947fd161b0825854c2dfa81404accc1ea0e309f19f51"
+    },
+    {
+      "path": "macos/roles/fastembed-offline/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/roles/fastembed-offline/inputs.json",
+      "bytes": 1365,
+      "sha256": "da59725ad016c63fd5322f686376df623a7a3ea4edac77a6dba402105cbf00d1"
+    },
+    {
+      "path": "macos/roles/fastembed-offline/observed.receipt.json",
+      "bytes": 600,
+      "sha256": "1d1d1d4eac2ba5dc828fc6ea53c787369c0dd08b892119100713daa9fa8f173a"
+    },
+    {
+      "path": "macos/roles/fastembed-offline/stderr.log",
+      "bytes": 88572,
+      "sha256": "2f85b8988cfaed9e00c86e53a1eb2455da4a54c60008e3a92f3e0f40c6ee39c9"
+    },
+    {
+      "path": "macos/roles/fastembed-offline/stdout.json",
+      "bytes": 65763,
+      "sha256": "5c5a889c3e547175eca794c149407f3c4edd6b0010958cb06adbeadf01b6ac74"
+    },
+    {
+      "path": "macos/roles/fastembed-public/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/roles/fastembed-public/inputs.json",
+      "bytes": 1364,
+      "sha256": "3e2c6c940b0e2ed4a1eb000be5c68aaca8cbaf3c36b11871f8b8aec324b78acd"
+    },
+    {
+      "path": "macos/roles/fastembed-public/observed.receipt.json",
+      "bytes": 599,
+      "sha256": "233d8ed3ad3b4a3802a55fdb60421f78a4f2742e52834ccae340f537abc853b4"
+    },
+    {
+      "path": "macos/roles/fastembed-public/stderr.log",
+      "bytes": 88572,
+      "sha256": "9270fda71703d9d11df78a197c8ae3ca27fabb5ad8cb7f8e233b401c544263ce"
+    },
+    {
+      "path": "macos/roles/fastembed-public/stdout.json",
+      "bytes": 65762,
+      "sha256": "c639a2038cabe4b73507717980cf9c23e4a77aa277a90405d988c2855cbe872b"
+    },
+    {
+      "path": "macos/roles/potion-offline/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/roles/potion-offline/inputs.json",
+      "bytes": 2061,
+      "sha256": "879fd37ff311022094e52e0573867b2d012104f2e54eee71db39b786566b841d"
+    },
+    {
+      "path": "macos/roles/potion-offline/observed.receipt.json",
+      "bytes": 600,
+      "sha256": "b6d41cd7f4e324fe0a27bb3b8b21ed601b25e32cc6457e982e63ce7693a791e2"
+    },
+    {
+      "path": "macos/roles/potion-offline/stderr.log",
+      "bytes": 87584,
+      "sha256": "b147674cc0d24aa83a741f19fc9b5ab9f4bc5c597cd2780f0029cdd22d7f4f0a"
+    },
+    {
+      "path": "macos/roles/potion-offline/stdout.json",
+      "bytes": 42636,
+      "sha256": "5214f85e64ebfcc71e0f902236ad3f1b31f0d2304de24bedf4da5e04cbcb5cb2"
+    },
+    {
+      "path": "macos/roles/reranker-offline/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/roles/reranker-offline/inputs.json",
+      "bytes": 1496,
+      "sha256": "10ece19cd2794dbb658be5ea6af05be6b26f4b6c54bf1c1f3a799abf465e899e"
+    },
+    {
+      "path": "macos/roles/reranker-offline/observed.receipt.json",
+      "bytes": 1636,
+      "sha256": "d4da807ae512eb1d11727716087b02ac7c1a628e51294b994200e8c44f3fa6ae"
+    },
+    {
+      "path": "macos/roles/reranker-offline/stderr.log",
+      "bytes": 88572,
+      "sha256": "6d6a0c0d1c1e64c6981f38016dba1b818e9edcc590a85320c069ceddd8a7e9c1"
+    },
+    {
+      "path": "macos/roles/reranker-offline/stdout.json",
+      "bytes": 642,
+      "sha256": "95b3cf5affdce37631c0ce1502d71eda3a7181ee88c68c2965fe47f4892a3417"
+    },
+    {
+      "path": "macos/roles/static-offline/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/roles/static-offline/inputs.json",
+      "bytes": 1893,
+      "sha256": "e9b15a24a4c6a09d53ee93b785cdfcf2e856eaef6495bb29a837a40598a7ee06"
+    },
+    {
+      "path": "macos/roles/static-offline/observed.receipt.json",
+      "bytes": 600,
+      "sha256": "2b525e00adc2d1b55744707b7014de62d18c1f56facb4ddbd7c2e5b1b064cb60"
+    },
+    {
+      "path": "macos/roles/static-offline/stderr.log",
+      "bytes": 87584,
+      "sha256": "6ba7894b208df9acecf1cb3a5c679dfeeac2e0838cde2028015666f66e675b33"
+    },
+    {
+      "path": "macos/roles/static-offline/stdout.json",
+      "bytes": 196467,
+      "sha256": "bcd20afe18e43d898a8cedaeff3111b42e451e7199104e33c7adc4bf2dfd13cd"
+    },
+    {
+      "path": "macos/transformers/profiles/00/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/00/inputs.json",
+      "bytes": 3060,
+      "sha256": "570f934e77a06a6d92594e73d24ff0c6d251c5bbbea90aadee2b3d8df6127523"
+    },
+    {
+      "path": "macos/transformers/profiles/00/observed.receipt.json",
+      "bytes": 600,
+      "sha256": "cfe07b992d54477a79b24af01d0af39bceef8f3a90b1a271eedde3d3fcd790fd"
+    },
+    {
+      "path": "macos/transformers/profiles/00/stderr.log",
+      "bytes": 88988,
+      "sha256": "f4c88ad1d2ba16887a6f9939f1edb415c519ce66cd61bbe7acc514a6fa5078ee"
+    },
+    {
+      "path": "macos/transformers/profiles/00/stdout.json",
+      "bytes": 176486,
+      "sha256": "32f0a9497e6ca9419840c5b09b52d7da691eae09ef0e1c70e9f646c575b0774e"
+    },
+    {
+      "path": "macos/transformers/profiles/01/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/01/inputs.json",
+      "bytes": 3059,
+      "sha256": "20c09b79a966b3ce620bd8a53fe11bbc4d56bac2b40d593ff33d7bb3a8bdc750"
+    },
+    {
+      "path": "macos/transformers/profiles/01/observed.receipt.json",
+      "bytes": 599,
+      "sha256": "132839dcd21918a9eac3db7835287bca40058425435a9f72a2cd395cdec6f9d1"
+    },
+    {
+      "path": "macos/transformers/profiles/01/stderr.log",
+      "bytes": 88988,
+      "sha256": "d2d59f4547cedfdf66e7521e024f5cd631c91fb52b599b1cab0ee5bdacc552af"
+    },
+    {
+      "path": "macos/transformers/profiles/01/stdout.json",
+      "bytes": 176673,
+      "sha256": "8bc97577842f65030541b84196e0cd33310e93505a0852dde380bbb6cae1e1b0"
+    },
+    {
+      "path": "macos/transformers/profiles/02/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/02/inputs.json",
+      "bytes": 3059,
+      "sha256": "3569d17ddbccef340321c2df28e6756fe04036f6062ea318e1bf113174af4b5a"
+    },
+    {
+      "path": "macos/transformers/profiles/02/observed.receipt.json",
+      "bytes": 598,
+      "sha256": "c7b583343b4003243045cd54ee5574d9df326a6b65a45b73c7e585b18c0c5dee"
+    },
+    {
+      "path": "macos/transformers/profiles/02/stderr.log",
+      "bytes": 88988,
+      "sha256": "e60a2b09f0d15e5e159e4722468f6ccaff7bbc74559eb24a56d19a4ef3c86fc8"
+    },
+    {
+      "path": "macos/transformers/profiles/02/stdout.json",
+      "bytes": 176652,
+      "sha256": "1cb4cb8583217196eedace082585ec65d411aa67a98a94d5b6547ade1b910146"
+    },
+    {
+      "path": "macos/transformers/profiles/03/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/03/inputs.json",
+      "bytes": 3060,
+      "sha256": "ba832a32b66563834b81af9716a88feae24191cf643a39d7ffe86ce25995d48c"
+    },
+    {
+      "path": "macos/transformers/profiles/03/observed.receipt.json",
+      "bytes": 597,
+      "sha256": "8190902520873ab8510d826b2f9ee169129bb8ec5c3bbd53c7640ebe366dfe07"
+    },
+    {
+      "path": "macos/transformers/profiles/03/stderr.log",
+      "bytes": 89234,
+      "sha256": "80d8d777f72ed0d4b31f6aee5d0414b927b795c47711b873d68f6f86e5141e77"
+    },
+    {
+      "path": "macos/transformers/profiles/03/stdout.json",
+      "bytes": 176494,
+      "sha256": "9da8c71c959e6b46a335d0bbb32d3c8af17711d79290e5b4c53cf413ef7378b7"
+    },
+    {
+      "path": "macos/transformers/profiles/04/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/04/inputs.json",
+      "bytes": 3059,
+      "sha256": "b44f8f96ad1ced970829e848bf2154fc341ed9983868b06c48cb7660ab48953e"
+    },
+    {
+      "path": "macos/transformers/profiles/04/observed.receipt.json",
+      "bytes": 598,
+      "sha256": "c8ad2300cbb4ce62a2bc7bc8c514c17ff48f4da1826b7d4d96b12f9e0c1f9d30"
+    },
+    {
+      "path": "macos/transformers/profiles/04/stderr.log",
+      "bytes": 89234,
+      "sha256": "153dff2749cf7b4d8a1b41c1afc1a11ff1a718d1e756fa4ed6a5c9b7b7275eb0"
+    },
+    {
+      "path": "macos/transformers/profiles/04/stdout.json",
+      "bytes": 176599,
+      "sha256": "f4523b00213edaf85f7d00d286d7222f76f42e7e7e035993050694dfa64edf79"
+    },
+    {
+      "path": "macos/transformers/profiles/05/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/05/inputs.json",
+      "bytes": 3059,
+      "sha256": "0e57e12f4bc24988d303b9b1c5f3e1feca59b7b9656a11dce4b1b6b3b763d530"
+    },
+    {
+      "path": "macos/transformers/profiles/05/observed.receipt.json",
+      "bytes": 598,
+      "sha256": "ebf7ce419f5c1323bfd3174ed72fc76cc9f30cceb62628ec51e4f205cbd208ca"
+    },
+    {
+      "path": "macos/transformers/profiles/05/stderr.log",
+      "bytes": 89234,
+      "sha256": "04e0100b10ae12e97aa20a21829ff95175e21f5e072c8eff62f83f4c752b0a15"
+    },
+    {
+      "path": "macos/transformers/profiles/05/stdout.json",
+      "bytes": 176639,
+      "sha256": "10e50790e4df4f1f62d104f94e7a8b089c0b55a38107aba56d48228f243b778b"
+    },
+    {
+      "path": "macos/transformers/profiles/06/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/06/inputs.json",
+      "bytes": 3102,
+      "sha256": "9c181fdf1e4528ba465c347f184bfa5ff44f774da44e37c8dfe52ccd147acaf3"
+    },
+    {
+      "path": "macos/transformers/profiles/06/observed.receipt.json",
+      "bytes": 598,
+      "sha256": "a75bb8df6f131638d78549a2f9de37a775317406c661715dc2c7207474bece42"
+    },
+    {
+      "path": "macos/transformers/profiles/06/stderr.log",
+      "bytes": 88988,
+      "sha256": "22aaab33ce602728faa634dc585fb4d65b20542b279d4e46329022da12db04de"
+    },
+    {
+      "path": "macos/transformers/profiles/06/stdout.json",
+      "bytes": 175966,
+      "sha256": "8d71f448141d97e5a48f36e32275428376198fb1e1092208ddcdae7665b0f4b8"
+    },
+    {
+      "path": "macos/transformers/profiles/07/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/07/inputs.json",
+      "bytes": 3101,
+      "sha256": "514aec24f703625507208deb9fb512d8932c7dad49fb3cac9802c67c1c50ccd9"
+    },
+    {
+      "path": "macos/transformers/profiles/07/observed.receipt.json",
+      "bytes": 600,
+      "sha256": "c055b89b406e033b22eb7e474bec2f1bc0a01d8e768bc92e6ac757b4f922bdb6"
+    },
+    {
+      "path": "macos/transformers/profiles/07/stderr.log",
+      "bytes": 88988,
+      "sha256": "5d74a584d329daebc85f2e04d98a743ccb0fa120aa86865ffde0462f44d7fb17"
+    },
+    {
+      "path": "macos/transformers/profiles/07/stdout.json",
+      "bytes": 176380,
+      "sha256": "7338184f6b23936904aa0803572012ee73c1cb3ccfac3d1d860e5d6be843688f"
+    },
+    {
+      "path": "macos/transformers/profiles/08/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/08/inputs.json",
+      "bytes": 3101,
+      "sha256": "d871db60dec4b5f6b6954e2f3ffd9006a65c4847f9d650cd1515a19d7a53010a"
+    },
+    {
+      "path": "macos/transformers/profiles/08/observed.receipt.json",
+      "bytes": 598,
+      "sha256": "f458815f895c17c82e7d816fd37301386076471023dad80da8cbb43387ea1daa"
+    },
+    {
+      "path": "macos/transformers/profiles/08/stderr.log",
+      "bytes": 88988,
+      "sha256": "d0c52a4a7568bf4ac64379b2fae27e2078bf5ef9bca57e1f30116e9cdcef49da"
+    },
+    {
+      "path": "macos/transformers/profiles/08/stdout.json",
+      "bytes": 176284,
+      "sha256": "2f94a2aab81b0847d064ff0e4002ae716cd85738da2d6f46b6b8f6161eec2d62"
+    },
+    {
+      "path": "macos/transformers/profiles/09/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/09/inputs.json",
+      "bytes": 3102,
+      "sha256": "b35c93b3995d2595c06038f3532baea95faf26efb2757dfddc0aa2b8edfbb134"
+    },
+    {
+      "path": "macos/transformers/profiles/09/observed.receipt.json",
+      "bytes": 598,
+      "sha256": "56bbf8b4079c62203f1140e14130898539b3eb9c75d8bf15405415f885f19213"
+    },
+    {
+      "path": "macos/transformers/profiles/09/stderr.log",
+      "bytes": 89234,
+      "sha256": "aae90660664d508fff077f28f9d3ea7a45afa1723b560fc7eabfaede266c522a"
+    },
+    {
+      "path": "macos/transformers/profiles/09/stdout.json",
+      "bytes": 176403,
+      "sha256": "fe47381e6da3c62d135da689eeb903b21928d8d9616cfdfd5a70d0f86b3b6647"
+    },
+    {
+      "path": "macos/transformers/profiles/10/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/10/inputs.json",
+      "bytes": 3101,
+      "sha256": "aec867cc8db8c45bb93e86ae67c2059bac11b1bfd2b4a6c64aa03a68fe7f8dd2"
+    },
+    {
+      "path": "macos/transformers/profiles/10/observed.receipt.json",
+      "bytes": 598,
+      "sha256": "d8ba95380065a3bd976292d4be7a3ab2c18d564bec87586158ed47ec9e59bba9"
+    },
+    {
+      "path": "macos/transformers/profiles/10/stderr.log",
+      "bytes": 89234,
+      "sha256": "fd42c090fa6976ac8e81c4a43d74229ad1980be527327bfdb9eb6f5163dd3d86"
+    },
+    {
+      "path": "macos/transformers/profiles/10/stdout.json",
+      "bytes": 176279,
+      "sha256": "69be191b9a567ad129a4565029d4f1c83a527cfa5c3d8eea892c04588e1bcff4"
+    },
+    {
+      "path": "macos/transformers/profiles/11/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/11/inputs.json",
+      "bytes": 3101,
+      "sha256": "448039bbebe98720328fe5a738ab2941039cc5829008cc83f0dc84e7d6c8c35b"
+    },
+    {
+      "path": "macos/transformers/profiles/11/observed.receipt.json",
+      "bytes": 599,
+      "sha256": "57c8d1e58c6433aa081244dd54ac235f52a31ab6b9a7d058432a4c9ef8611f46"
+    },
+    {
+      "path": "macos/transformers/profiles/11/stderr.log",
+      "bytes": 89234,
+      "sha256": "cd32e3b99f4f694ebba0225b4f58e49eaa9a00c312662fb6be668081067324db"
+    },
+    {
+      "path": "macos/transformers/profiles/11/stdout.json",
+      "bytes": 176353,
+      "sha256": "3fe8ef027cb5fcd20785cb0cd683cbbd9c5ab3bd74f4b4bee888e980e68b5825"
+    },
+    {
+      "path": "macos/transformers/profiles/12/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/12/inputs.json",
+      "bytes": 2748,
+      "sha256": "119d3c65c0c9e02b3d590b6c36ffc962811cd1d0985bb947f76edd1f87c1000e"
+    },
+    {
+      "path": "macos/transformers/profiles/12/observed.receipt.json",
+      "bytes": 598,
+      "sha256": "26ff9e73d1e44450aea6ea15094e0ce9230cf1fc137410c0bf09f2b37a610a59"
+    },
+    {
+      "path": "macos/transformers/profiles/12/stderr.log",
+      "bytes": 88385,
+      "sha256": "cd91721bdb55c813c62947dccfc4b991bbf717611621d03c85f848fa24a36084"
+    },
+    {
+      "path": "macos/transformers/profiles/12/stdout.json",
+      "bytes": 175430,
+      "sha256": "9d4b4c72c2d6ab5b084e10fcd5990ba1d3d0d55a57cf0a49feef3e6b406e8fd0"
+    },
+    {
+      "path": "macos/transformers/profiles/13/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/13/inputs.json",
+      "bytes": 2747,
+      "sha256": "65beb3b49fd88b45e3145d535458b8af52650f192642bcb1f579a9a5ee9d43e6"
+    },
+    {
+      "path": "macos/transformers/profiles/13/observed.receipt.json",
+      "bytes": 599,
+      "sha256": "805aec7e2cacfc39a8385309ef86337da8447ebe143cbe21a5525c247fcfc667"
+    },
+    {
+      "path": "macos/transformers/profiles/13/stderr.log",
+      "bytes": 88385,
+      "sha256": "1e2423bbdcbf341ad85353d33ae12d147637a2a582e9f6e6fce69142bc249e60"
+    },
+    {
+      "path": "macos/transformers/profiles/13/stdout.json",
+      "bytes": 175458,
+      "sha256": "48b999dc7ce8b3a1f42d3551cca31a4495a52d5d01960ba549edf519b5350b23"
+    },
+    {
+      "path": "macos/transformers/profiles/14/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/14/inputs.json",
+      "bytes": 2747,
+      "sha256": "17abe2c43e994362d0a4411f131ef041d24a78b9b03669f9a31cb5d11d5db747"
+    },
+    {
+      "path": "macos/transformers/profiles/14/observed.receipt.json",
+      "bytes": 598,
+      "sha256": "341290a8a702a6721997384f2f83465274e5818043c53aaeab2d87d0aeb1afc8"
+    },
+    {
+      "path": "macos/transformers/profiles/14/stderr.log",
+      "bytes": 88385,
+      "sha256": "e00a8e4d359025eeceff97dd7ad209c56759caab2fb6f19b4a5eb503c659faab"
+    },
+    {
+      "path": "macos/transformers/profiles/14/stdout.json",
+      "bytes": 175530,
+      "sha256": "f53af23353b3f1847b4696b5252a5e135019ad590adbe34ba96b62f2ed2a36f5"
+    },
+    {
+      "path": "macos/transformers/profiles/15/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/15/inputs.json",
+      "bytes": 2822,
+      "sha256": "8b5fe5f3e4035eb85bb0163f1bb6b692f65b67e00d9ca088792aabd1d15766c1"
+    },
+    {
+      "path": "macos/transformers/profiles/15/observed.receipt.json",
+      "bytes": 598,
+      "sha256": "a04e39353cda9524eff41560d6227d1509823106205f903c6b358ce35d0078ed"
+    },
+    {
+      "path": "macos/transformers/profiles/15/stderr.log",
+      "bytes": 88385,
+      "sha256": "f16f2496c022c2223677893a430c9b9eaab2bd351addfc718c4bac8f5f347c90"
+    },
+    {
+      "path": "macos/transformers/profiles/15/stdout.json",
+      "bytes": 2727,
+      "sha256": "6a4de4b72c7c1349b5cec3a9c4383a17107b5313cfd223da70ce4307acd68d4a"
+    },
+    {
+      "path": "macos/transformers/profiles/16/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/16/inputs.json",
+      "bytes": 2821,
+      "sha256": "323801e33f884372a177b24be0154b73e6f19e764824ed5aaf30822c10b47a7f"
+    },
+    {
+      "path": "macos/transformers/profiles/16/observed.receipt.json",
+      "bytes": 597,
+      "sha256": "a40a9bfe1e55109d8daf9bc5099cdf557cd1cc94b78ef289fd368d9cd93590d4"
+    },
+    {
+      "path": "macos/transformers/profiles/16/stderr.log",
+      "bytes": 88385,
+      "sha256": "cfd153bbe79bae6e3dd03ce537a663abdd2533147d5f3e299713c0566ecf6136"
+    },
+    {
+      "path": "macos/transformers/profiles/16/stdout.json",
+      "bytes": 2725,
+      "sha256": "0be4140abaa700dba878f0f7654ff14bb9d19ade089cc40e52255ef79e45fc15"
+    },
+    {
+      "path": "macos/transformers/profiles/17/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/17/inputs.json",
+      "bytes": 2821,
+      "sha256": "203694c960aa278764adb121ee4468e5473d76f16b430af975e633da19dcba15"
+    },
+    {
+      "path": "macos/transformers/profiles/17/observed.receipt.json",
+      "bytes": 599,
+      "sha256": "909fc010ac1e3bea99c56c777bfa802bb00f582e95d8c53f2c35c5ec423075d2"
+    },
+    {
+      "path": "macos/transformers/profiles/17/stderr.log",
+      "bytes": 88385,
+      "sha256": "0490dc8d27c3c77f592bd1da3d6dc1a5684cff0076e27d2750f94fd6addf4c3b"
+    },
+    {
+      "path": "macos/transformers/profiles/17/stdout.json",
+      "bytes": 2725,
+      "sha256": "9f9cd13b9206a2ac8ff1d4ae7bd4bdf1f471212fa6eab7d95088abebdb112b51"
+    },
+    {
+      "path": "macos/transformers/profiles/18/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/18/inputs.json",
+      "bytes": 3176,
+      "sha256": "81fe474b6bb18040125fcecd40567d3d981b413982fd6924e14fc38be4f665fa"
+    },
+    {
+      "path": "macos/transformers/profiles/18/observed.receipt.json",
+      "bytes": 599,
+      "sha256": "b673069148ffeb4a204d89b305b02a6f47220a9091a7b51d6205ecd2d87d5127"
+    },
+    {
+      "path": "macos/transformers/profiles/18/stderr.log",
+      "bytes": 88988,
+      "sha256": "78e44bc85291ad09b6b5f5bdb82da7d2d5079d8cf8e4daf4c1defa3a8e6a4846"
+    },
+    {
+      "path": "macos/transformers/profiles/18/stdout.json",
+      "bytes": 3800,
+      "sha256": "ece2b87e093335f4b6e7f11be0912ca77f8ea3031e5109325ebaaa8dd9d30539"
+    },
+    {
+      "path": "macos/transformers/profiles/19/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/19/inputs.json",
+      "bytes": 3175,
+      "sha256": "6b826c10004fec5a62d755767479a57610c7da6dbf08044cd91e98ca63d54bc5"
+    },
+    {
+      "path": "macos/transformers/profiles/19/observed.receipt.json",
+      "bytes": 599,
+      "sha256": "c61fa12e135e86590d266362132d0318213a95fb4e15785779820c9440066127"
+    },
+    {
+      "path": "macos/transformers/profiles/19/stderr.log",
+      "bytes": 88988,
+      "sha256": "819445185bccba33ab3847847277cf2f00d401d57875e56bec893bc244e95369"
+    },
+    {
+      "path": "macos/transformers/profiles/19/stdout.json",
+      "bytes": 3797,
+      "sha256": "2ac79ea85769b4b2be1563023bac32ba49b9dc5d8bf0ab0574f9a4b9c998ef2e"
+    },
+    {
+      "path": "macos/transformers/profiles/20/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/20/inputs.json",
+      "bytes": 3175,
+      "sha256": "609da0afb1d0edce326d72cb0f6c4b8126b235eee70147ffcb3d873d847ecd86"
+    },
+    {
+      "path": "macos/transformers/profiles/20/observed.receipt.json",
+      "bytes": 599,
+      "sha256": "9456597075a284ae6583369d063fed904ee20fbd9266ce5563eda8f863899d7c"
+    },
+    {
+      "path": "macos/transformers/profiles/20/stderr.log",
+      "bytes": 88988,
+      "sha256": "b894fb93088a6e4d8c52809a9c98e3919dd24c9e53f93580237a052eef0b46e4"
+    },
+    {
+      "path": "macos/transformers/profiles/20/stdout.json",
+      "bytes": 3797,
+      "sha256": "de6d1537389454452572624bd3cbfd6e46df3f38cdc1a563e9ec1bdd2d75169d"
+    },
+    {
+      "path": "macos/transformers/profiles/21/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/21/inputs.json",
+      "bytes": 3176,
+      "sha256": "a984517833a0ba5f63059d580ea217e744e8e7cc4b1bc7eb1312b9e88cee517b"
+    },
+    {
+      "path": "macos/transformers/profiles/21/observed.receipt.json",
+      "bytes": 598,
+      "sha256": "487ca45fb47c6cab1f6902eacbf6aac0ed7082d24dacc24ecde07c77da09c801"
+    },
+    {
+      "path": "macos/transformers/profiles/21/stderr.log",
+      "bytes": 89234,
+      "sha256": "21751c703717a6b4eb391618d6657a5a3fcdda2904b680088fc72c9b82075904"
+    },
+    {
+      "path": "macos/transformers/profiles/21/stdout.json",
+      "bytes": 3800,
+      "sha256": "078bd0ecd5c6c8b6a5414368e894f8a69470945bf9cfa81be428673d3dca2337"
+    },
+    {
+      "path": "macos/transformers/profiles/22/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/22/inputs.json",
+      "bytes": 3175,
+      "sha256": "5f9029258a0c285e9b6ef2de48e60cc971679c50db520cd005f114ffb391893d"
+    },
+    {
+      "path": "macos/transformers/profiles/22/observed.receipt.json",
+      "bytes": 598,
+      "sha256": "61894cd60ae2313397f6b38808baad95e224d9083ef4968313826ab485f071c4"
+    },
+    {
+      "path": "macos/transformers/profiles/22/stderr.log",
+      "bytes": 89234,
+      "sha256": "8f4f38078a95441a21b304bee622653eb728d0fd1a03e24bfb358da536dbc251"
+    },
+    {
+      "path": "macos/transformers/profiles/22/stdout.json",
+      "bytes": 3797,
+      "sha256": "b3fd4fda680bff5e2a72b0859066f12c262b755cb00f4e275dfbd027ea6f9fe6"
+    },
+    {
+      "path": "macos/transformers/profiles/23/BUILD.json",
+      "bytes": 47539,
+      "sha256": "843d22c8c4832ee6ef633d861b3d195570dbebd0ccdd505b87818c0ee977fed2"
+    },
+    {
+      "path": "macos/transformers/profiles/23/inputs.json",
+      "bytes": 3175,
+      "sha256": "c999832fd06714141c4ec9f934a6f51aa59c3fbef0ca658b7c494635ffa6bf44"
+    },
+    {
+      "path": "macos/transformers/profiles/23/observed.receipt.json",
+      "bytes": 598,
+      "sha256": "46fa3e28deb79cbce2932357bc99f23161665f4852d64db2acce923b59c113d1"
+    },
+    {
+      "path": "macos/transformers/profiles/23/stderr.log",
+      "bytes": 89234,
+      "sha256": "3ae1351ccfbd46744a6668a4da1a3b57f9d61cf856bc85a76d06ec07b02e3656"
+    },
+    {
+      "path": "macos/transformers/profiles/23/stdout.json",
+      "bytes": 3797,
+      "sha256": "d7fe400d3303e690b44b7caf1811b9a88661d0a3ff83a78493cb4d342bacc6a6"
+    },
+    {
+      "path": "matrix-numpy244.json",
+      "bytes": 331,
+      "sha256": "fc7e1b20e141a82cc1b0804616c509c850eef67ad8b56b34d639a6e668c09b9a"
+    },
+    {
+      "path": "matrix.json",
+      "bytes": 146,
+      "sha256": "4bc2e9c4b8c61c2904c97c4aa4a302672c26c93d60c18eac638af58b21b22244"
+    }
+  ]
+}

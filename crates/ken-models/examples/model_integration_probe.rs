@@ -1,4 +1,6 @@
-//! External acquisition consumer; later factory calls extend this same driver.
+//! External acquisition and public factory consumer.
+#[path = "support/factory.rs"]
+mod factory;
 use ken_models::{
     AcquisitionPolicy, ArtifactCache, ArtifactRequest, ArtifactTransport, ModelAssets, ModelError,
     PublicModelTransport,
@@ -31,6 +33,9 @@ impl ArtifactTransport for NoNetwork {
 
 fn run() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<_> = std::env::args().skip(1).collect();
+    if args.len() == 2 && args[0] == "--factory" {
+        return factory::run(&factory::read(Path::new(&args[1]))?);
+    }
     if args.len() != 3
         || !matches!(args[2].as_str(), "public" | "offline")
         || args[..2].iter().any(|s| !Path::new(s).is_absolute())
@@ -75,5 +80,38 @@ fn main() {
     if let Err(error) = run() {
         eprintln!("{error}");
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::factory;
+    use serde_json::json;
+    #[test]
+    fn factory_protocol_is_bounded_explicit_and_rejects_expected_outputs() {
+        let request = json!({"format":"ken-model-factory-request/1","policy":"offline",
+            "cache_root":"/tmp/cache","private_parent":"/tmp/private","bundled_npz":"/tmp/model.npz",
+            "source_overrides":{},"device":{"kind":"cpu"},"fastembed_device":"cpu",
+            "selection":{"kind":"legacy_encoder","name":"ken/static-qwen3-r512-v2"},
+            "cases":[{"id":"empty","call":{"operation":"passages","texts":[]}}]});
+        assert!(factory::parse(&serde_json::to_vec(&request).unwrap()).is_ok());
+        let mut bad = request.clone();
+        bad["expected"] = json!([1., 0.]);
+        assert!(factory::parse(&serde_json::to_vec(&bad).unwrap()).is_err());
+        let mut bad = request.clone();
+        bad["cases"][0]["call"]["expected"] = json!([]);
+        assert!(factory::parse(&serde_json::to_vec(&bad).unwrap()).is_err());
+        let mut bad = request.clone();
+        bad["cache_root"] = json!("relative");
+        assert!(factory::parse(&serde_json::to_vec(&bad).unwrap()).is_err());
+        let mut bad = request.clone();
+        bad["cases"][0]["call"] = json!({"operation":"concurrent_query","text":"x","workers":9});
+        assert!(factory::parse(&serde_json::to_vec(&bad).unwrap()).is_err());
+        let mut bad = request.clone();
+        bad["cases"]
+            .as_array_mut()
+            .unwrap()
+            .push(request["cases"][0].clone());
+        assert!(factory::parse(&serde_json::to_vec(&bad).unwrap()).is_err());
     }
 }

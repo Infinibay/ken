@@ -1,0 +1,29 @@
+{
+  "native_sha256": "23b0bca170dfd3609b4752142301ac732132033b1b23857b8f7977779a485ed8",
+  "native_exit": 0,
+  "native_children": [],
+  "outside_checkout": true,
+  "owned_after_exit": [],
+  "command": [
+    "/usr/bin/strace",
+    "--seccomp-bpf",
+    "-f",
+    "-e",
+    "trace=execve,execveat,connect",
+    "-o",
+    "/app/.ken/rust-migration/m2-optional/integration-task5/factory-transformers-linux/profiles/03/exec.trace",
+    "/tmp/ken-transformer-process-jnqwz9e9/probe",
+    "--factory",
+    "/tmp/ken-transformer-process-jnqwz9e9/request.json"
+  ],
+  "execution_audit": true,
+  "exec_attempts": 1,
+  "execution_audit_syscalls": [
+    "execve",
+    "execveat",
+    "connect"
+  ],
+  "prepared_cache_files": {},
+  "fixed_deadline_s": 1463,
+  "elapsed_s": 16.55571388200042
+}

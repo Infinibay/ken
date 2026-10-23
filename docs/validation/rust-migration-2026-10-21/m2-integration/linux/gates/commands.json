@@ -1,0 +1,49 @@
+{
+  "invocations": {
+    "rust": [
+      "cargo",
+      "test",
+      "--offline",
+      "--locked",
+      "--workspace",
+      "--all-targets"
+    ],
+    "python": [
+      "python",
+      "-m",
+      "pytest"
+    ],
+    "python_supplement": [
+      "python",
+      "-m",
+      "pytest",
+      "tests/rust_migration/test_integration_gates.py",
+      "tests/rust_migration/test_integration_process.py"
+    ],
+    "fmt": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "clippy": [
+      "cargo",
+      "clippy",
+      "--offline",
+      "--locked",
+      "--workspace",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ]
+  },
+  "exits": {
+    "rust": 0,
+    "clippy": 0,
+    "fmt": 0,
+    "python": 1,
+    "python_supplement": 0
+  }
+}

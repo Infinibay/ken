@@ -9,7 +9,8 @@ RAW_LIMIT = 16 * 1024 * 1024
 
 
 def run_transformer(probe: Path, request: dict, out: Path, *, deadline_s: float,
-                    audit: bool = True) -> dict:
+                    audit: bool = True, argument_prefix: tuple[str, ...] = (),
+                    trace_network: bool = False, prepared_model_cache: bool = False) -> dict:
     if type(deadline_s) not in (int, float) or not math.isfinite(deadline_s) or deadline_s <= 0:
         raise ValueError('positive finite transformer deadline required')
     if not probe.is_absolute() or not probe.is_file() or not os.access(probe, os.X_OK):
@@ -38,14 +39,15 @@ def run_transformer(probe: Path, request: dict, out: Path, *, deadline_s: float,
                        {'LD_LIBRARY_PATH', 'DYLD_LIBRARY_PATH', 'DYLD_INSERT_LIBRARIES', 'PYTHONPATH'}}
         environment.update(PATH=str(root/'sentinel'), HOME=str(root/'home'), TMPDIR=str(root),
                            TOKENIZERS_PARALLELISM='false', HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1')
-        command = [str(binary), str(inputs)]
+        command = [str(binary), *argument_prefix, str(inputs)]
+        syscalls = ['execve', 'execveat'] + (['connect'] if trace_network else [])
         if platform.system() == 'Darwin':
             environment['DYLD_PRINT_LIBRARIES'] = '1'
         elif audit:
             tracer = shutil.which('strace')
             if tracer is None:
                 raise ValueError('Linux execve and execveat audit required')
-            command = [tracer, '--seccomp-bpf', '-f', '-e', 'trace=execve,execveat',
+            command = [tracer, '--seccomp-bpf', '-f', '-e', 'trace='+','.join(syscalls),
                        '-o', str(out/'exec.trace'), *command]
             environment['LD_DEBUG'] = 'libs'
         total = [0, 0]
@@ -86,7 +88,14 @@ def run_transformer(probe: Path, request: dict, out: Path, *, deadline_s: float,
                 attempts = len(lines)
                 if attempts != 1 or str(binary) not in lines[0]:
                     raise ValueError('only initial native exec allowed')
-            if list(private.iterdir()):
+            prepared_files = {}
+            remaining = list(private.iterdir())
+            cache = private/'models'
+            if prepared_model_cache and cache in remaining and cache.is_dir() and not cache.is_symlink():
+                prepared_files = {str(p.relative_to(private)): {'bytes': p.stat().st_size, 'sha256': digest(p)}
+                                  for p in sorted(cache.rglob('*')) if p.is_file()}
+                remaining.remove(cache)
+            if remaining:
                 raise ValueError('native transformer left owned model/core files')
             if digest(binary) != identity or digest(probe) != identity:
                 raise ValueError('native transformer executable changed')
@@ -94,7 +103,8 @@ def run_transformer(probe: Path, request: dict, out: Path, *, deadline_s: float,
                 'native_sha256': identity, 'native_exit': 0, 'native_children': [],
                 'outside_checkout': True, 'owned_after_exit': [], 'command': command,
                 'execution_audit': audit, 'exec_attempts': attempts,
-                'execution_audit_syscalls': ['execve', 'execveat'] if attempts is not None else [],
+                'execution_audit_syscalls': syscalls if attempts is not None else [],
+                'prepared_cache_files': prepared_files,
                 'fixed_deadline_s': deadline_s, 'elapsed_s': time.monotonic()-started}}
         finally:
             if process is not None:

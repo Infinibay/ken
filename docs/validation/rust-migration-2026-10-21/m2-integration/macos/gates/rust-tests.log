@@ -1,0 +1,740 @@
+    Finished `test` profile [unoptimized] target(s) in 0.28s
+     Running unittests src/lib.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/ken_cli-ff628e83f7a4d67c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/ken_rs-87185fe828edd37c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/status_cli.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/status_cli-86f5e130d23b2752)
+
+running 6 tests
+test argument_errors_exit_two ... ok
+test corrupt_input_has_no_success_stdout ... ok
+test installed_text_omits_inventory_json_keeps_it ... ok
+test json_preserves_types_and_all_keys ... ok
+test metadata_only_and_missing_project_have_correct_streams ... ok
+test shared_symlink_targets_resolve_in_bounded_time ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.67s
+
+     Running unittests src/lib.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/ken_core-18b44e9ec0737009)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/health.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/health-4463f0f8cc5386a9)
+
+running 6 tests
+test empty_body_or_object_is_stopped ... ok
+test ignores_inherited_proxy_and_redirect ... 
+running 1 test
+test ignores_inherited_proxy_and_redirect ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+ok
+test invalid_payload_and_http_error_are_stopped ... ok
+test missing_port_does_not_require_auth_token ... ok
+test sends_bearer_only_to_loopback ... ok
+test slow_body_hits_global_deadline ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.05s
+
+     Running tests/project.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/project-fae5158910bb3906)
+
+running 7 tests
+test cyclic_marker_is_not_a_file_and_ancestor_discovery_continues ... ok
+test empty_override_uses_start ... ok
+test invalid_override_has_no_fallback ... ok
+test nearest_root_wins ... ok
+test rejects_sibling_prefix_and_symlink_escape ... ok
+test symlink_parent_order_and_missing_tail ... ok
+test tilde_and_named_user_match_python ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/status.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/status-98bfa382117b81db)
+
+running 9 tests
+test all_fifteen_counts_include_inline_and_slots ... ok
+test corrupt_or_old_incompatible_schema_fails ... ok
+test counts_and_paths_share_one_snapshot ... ok
+test indexed_symlink_loops_are_reported_as_stale ... ok
+test missing_database_is_not_created ... ok
+test readonly_directory_does_not_need_write_access ... ok
+test rules_and_rounding_match_python ... ok
+test unencodable_indexed_path_is_reported_as_stale ... ok
+test wal_commit_visible_without_checkpoint ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
+
+     Running unittests src/lib.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/ken_models-502a810fe80e3441)
+
+running 49 tests
+test fastembed_session::tests::actual_gpu_registration_failure_rebuilds_cpu_and_cpu_failures_propagate ... ok
+test file_assets::tests::interrupted_real_copy_cleans_staging_before_publishing ... ok
+test mlx_encoder::tests::actual_mlx_is_lazy_count_only_then_owns_sources_and_moves_between_calling_threads ... ok
+test mlx_encoder::tests::actual_mlx_late_failure_returns_no_partial_list_and_keeps_gpu_state ... ok
+test mlx_encoder::tests::actual_zero_hidden_states_return_error_without_cpu_fallback ... ok
+test model_catalog::tests::actual_concurrent_potion_first_use_shares_one_adapter_and_owned_results ... ok
+test model_catalog::tests::actual_static_table_loads_lazily_and_survives_removal_of_its_npz ... ok
+test model_catalog::tests::actual_torch_factory_forwards_the_profile_and_keeps_owned_weights_after_source_removal ... ok
+test model_catalog::tests::deferred_context_retries_then_retains_its_authenticated_graph_and_tokenizer ... ok
+test model_catalog::tests::deferred_expansion_prepares_real_ct2_only_for_translation ... ok
+test model_catalog::tests::deferred_judge_preserves_actual_empty_loading_and_owned_score_policy ... ok
+test model_catalog::tests::deferred_reranker_uses_native_preparation_and_owns_its_published_graph ... ok
+test model_catalog::tests::factory_potion_retries_missing_and_corrupt_files_then_owns_original_vectors ... ok
+test model_catalog::tests::factory_rejects_wrong_native_module_and_core_then_retries_the_same_encoder_after_repair ... ok
+test model_sources::tests::a_relative_private_parent_is_rejected_before_network_or_directory_creation ... ok
+test model_sources::tests::acquiring_data_never_depends_on_an_unselected_optional_core ... ok
+test model_sources::tests::overflow_and_unavailable_disk_budget_fail_before_opening_any_stream ... ok
+test model_transport::tests::a_stalled_body_times_out_but_active_reads_can_outlive_one_inactivity_interval ... ok
+test model_transport::tests::production_agent_refuses_http_before_connecting ... ok
+test model_transport::tests::real_chunked_response_streams_into_a_verified_cache_with_exact_anonymous_request ... ok
+test model_transport::tests::real_redirect_loop_stops_after_ten_and_never_publishes ... ok
+test model_transport::tests::status_length_chunking_encoding_and_excess_bytes_cannot_publish_partial_data ... ok
+test model_transport::tests::total_deadline_still_bounds_a_continuously_progressing_body ... ok
+test python_unicode::tests::whole_scalar_contract_matches_independent_python_unicode15_digest ... ok
+test query_expansion::tests::actual_native_core_matches_all_pre_product_original_raw_histories ... ok
+test relevance_judge::tests::actual_cpu_loads_even_for_empty_then_scores_raw_batches_and_keeps_its_owned_source ... ok
+test relevance_judge::tests::actual_mlx_empty_and_budget_errors_keep_the_original_gpu_and_dtype ... ok
+test relevance_judge::tests::actual_mps_empty_keeps_gpu_but_budget_failure_converts_resident_weights_to_cpu_float32 ... ok
+test relevance_judge::tests::concurrent_first_use_serializes_one_owned_judge ... ok
+test relevance_judge::tests::conversion_failure_keeps_gpu_and_cpu_retry_failure_remains_cpu_without_second_retry ... ok
+test relevance_judge::tests::cpu_late_failure_and_nonfinite_return_no_partial_scores_without_retry ... ok
+test relevance_judge::tests::mlx_late_failure_and_nonfinite_propagate_without_cpu_conversion ... ok
+test relevance_judge::tests::mps_late_failure_and_nonfinite_convert_once_and_retry_all_batches ... ok
+test sentence_encoder::tests::actual_concurrent_first_use_shares_one_session_and_source_copy ... ok
+test sentence_encoder::tests::actual_cpu_late_batch_failure_returns_error_then_recovers ... ok
+test sentence_encoder::tests::actual_mps_failure_rebuilds_cpu_atomically_and_retries_whole_request ... ok
+test sentence_encoder::tests::actual_tiny_cpu_is_lazy_counts_without_weights_then_loads_repeats_and_owns_sources ... ok
+test sentence_encoder::tests::failed_actual_cpu_rebuild_keeps_previous_mps_and_successful_rebuild_commits_before_retry ... ok
+test sentence_encoder::tests::unavailable_explicit_cuda_falls_back_to_actual_cpu ... ok
+test transformer_client::tests::buffers_close_before_model_and_module_and_execution_can_change_thread ...     Finished `dev` profile [unoptimized] target(s) in 0.03s
+
+thread '<unnamed>' (13665175) panicked at src/lib.rs:265:21:
+controlled contract-fixture panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+ok
+test transformer_order::tests::sentence_order_matches_original_numpy_including_equal_keys_and_depth_fallback ... ok
+test transformer_tokens::tests::actual_mlx_feeds_use_stable_token_length_order_and_raw_counts ... ok
+test transformer_tokens::tests::lowercasing_is_only_for_prepared_text_and_composes_with_default_prompt ... ok
+test transformer_tokens::tests::mlx_ignores_st_lowercase_default_prompt_and_lower_limit_and_overrides_left_padding ... ok
+test transformer_tokens::tests::real_original_feeds_and_raw_counts_require_only_tokenizer_data ... ok
+test transformer_tokens::tests::token_metadata_is_authenticated_and_lower_requested_limit_is_kept ... ok
+test verified_file::tests::an_interrupted_regular_file_read_is_retried ... ok
+test verified_file::tests::real_file_writes_retry_interruptions_and_propagate_storage_failure ... ok
+test verified_file::tests::streaming_hash_preserves_sha256_across_partial_blocks ... ok
+
+test result: ok. 49 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 76.80s
+
+     Running tests/artifact_cache.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/artifact_cache-1905b4ae56122786)
+
+running 8 tests
+test a_failed_concurrent_download_cleans_only_its_stage_and_preserves_the_winner ... ok
+test concurrent_publishers_reverify_and_share_the_complete_winner ... ok
+test dot_model_components_cannot_escape_and_cache_symlink_substitutions_are_rejected ... ok
+test missing_offline_and_corrupt_existing_data_never_call_transport_or_delete_the_snapshot ... ok
+test publication_is_complete_nested_zero_length_verified_and_reused_without_transport ... ok
+test stage_swapped_for_a_symlink_cannot_write_or_clean_unrelated_files ... ok
+test streaming_stops_at_first_excess_byte_and_retries_only_real_interrupted_reads ... ok
+test truncated_wrong_digest_overlong_or_failed_writes_never_publish_and_clean_their_stage ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s
+
+     Running tests/assets.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/assets-cce2e78da339087c)
+
+running 8 tests
+test accepts_huggingface_blob_symlinks ... ok
+test fifo_artifact_verification_does_not_wait_for_a_writer ... ok
+test fifo_verification_child ... ok
+test fingerprint_matches_python_ascii_sorted_identity ... ok
+test maximal_declared_size_returns_error_without_allocation ... ok
+test rejects_ambiguous_or_unsafe_registrations ... ok
+test rejects_nonregular_device_even_when_size_and_hash_match ... ok
+test verified_snapshot_owns_the_accredited_bytes ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/context_encoder.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/context_encoder-134d3f42b1ef8944)
+
+running 7 tests
+test empty_passages_need_no_runtime_and_results_are_independent_under_concurrency ... ok
+test first_query_is_lazy_and_missing_runtime_is_an_error_in_clean_processes ... ok
+test frozen_fixture_preserves_prefix_specials_raw_output_and_serialized_policy_override ... ok
+test lazy_context_child ... ok
+test malformed_graphs_and_outputs_return_errors_including_hidden_extra_rows ... ok
+test registered_context_matches_all_twenty_local_frozen_histories ... ok
+test snapshot_must_accredit_the_context_models_exact_artifacts ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.43s
+
+     Running tests/embedding_pool.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/embedding_pool-7c3081decb01e491)
+
+running 4 tests
+test cls_sentence_and_raw_preserve_their_distinct_recipes ... ok
+test invalid_shapes_nonfinite_data_and_overflowed_norms_cannot_become_zero_vectors ... ok
+test masked_mean_promotes_before_accumulation_and_casts_only_at_the_end ... ok
+test normalized_mean_matches_frozen_original_final_cast_bits ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/fastembed_encoder.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/fastembed_encoder-e3ddea79021a67c0)
+
+running 5 tests
+test batch257_is_chunked_before_padding_and_details_match_vectors_only ... ok
+test concurrent_first_use_and_owned_results_keep_whole_requests_separate ... ok
+test construction_and_empty_batches_need_neither_models_nor_runtime ... ok
+test failure_in_second_native_batch_never_returns_a_partial_request ... ok
+test lexical_diagnostic_loads_only_configs_and_cpu_preparation_can_retry_real_repairs ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.83s
+
+     Running tests/fastembed_model.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/fastembed_model-59c7391377fc5fcf)
+
+running 3 tests
+test all_original_models_are_registered_with_distinct_source_identity ... ok
+test invalid_recipes_and_ambiguous_json_are_rejected_before_use ... ok
+test requested_case_alias_keeps_original_prompt_and_notice_spelling ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/fastembed_session.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/fastembed_session-cc96282429d2961a)
+
+running 3 tests
+test actual_cpu_inference_owns_rows_and_declared_files_through_session_drop ... ok
+test graph_inputs_are_exact_with_optional_zero_types_and_scalar_task_one ... ok
+test incompatible_graph_inputs_outputs_and_malformed_token_batches_are_errors ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.98s
+
+     Running tests/fastembed_tokens.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/fastembed_tokens-1ca06791a4ce481d)
+
+running 7 tests
+test ambiguous_special_dictionary_fields_are_rejected ... ok
+test config_bounds_override_old_truncation_without_loading_weights ... ok
+test existing_fixed_padding_and_special_insertion_order_are_preserved ... ok
+test malformed_config_types_and_selected_limits_are_rejected ... ok
+test texts_are_chunked_before_padding_and_empty_batches_stay_empty ... ok
+test tokenizer_can_use_owned_verified_files_after_source_removal ... ok
+test unselected_huge_numeric_bounds_and_ignored_special_values_need_no_float_conversion ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/file_assets.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/file_assets-dd87c58f3d1a28da)
+
+running 7 tests
+test device_source_is_rejected_even_for_empty_matching_bytes ... ok
+test explicit_absolute_paths_and_registered_revision_are_required ... ok
+test failed_partial_copy_does_not_publish_or_leave_a_directory ... ok
+test fifo_copy_child ... ok
+test fifo_copy_does_not_wait_for_a_writer ... 
+running 1 test
+test fifo_copy_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+ok
+test private_copy_survives_source_replacement_and_drops_its_files ... ok
+test source_blob_symlinks_are_copied_as_independent_regular_files ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/model2vec.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/model2vec-9905af3dc4c6f749)
+
+running 9 tests
+test batch_boundary_1024_is_preserved ... ok
+test cache_byte_budget_evicts_before_the_entry_limit ... ok
+test cache_entry_budget_evicts_least_recent_term ... ok
+test cache_is_safe_for_concurrent_queries ... ok
+test cache_matches_call_history_and_returns_independent_values ... ok
+test corrupt_shapes_and_nonfinite_weights_fail ... ok
+test empty_row_promotes_its_batch ... ok
+test mean_and_norm_match_weight_dtype ... ok
+test real_registered_potion_matches_all_frozen_calls ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.27s
+
+     Running tests/model_factory.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/model_factory-4f7b5819f393990a)
+
+running 8 tests
+test a_corrupt_bundled_table_never_becomes_a_prepared_encoder ... ok
+test cold_registered_profiles_require_neither_sources_nor_optional_sdks ... ok
+test concurrent_profile_requests_share_one_owner_and_the_fifth_evicts_only_factory_references ... ok
+test every_registered_legacy_name_selects_its_family_and_never_the_judge ... ok
+test invalid_profile_identity_and_unaccredited_runtime_fail_before_loading_weights ... ok
+test judge_selection_is_cold_and_its_original_load_error_happens_on_score ... ok
+test original_potion_profile_fingerprint_is_distinct_from_its_upstream_commit ... ok
+test role_accessors_and_empty_or_english_calls_do_not_acquire_sources_or_load_sdks ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/model_policy.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/model_policy-a0ecc09a04e41ac3)
+
+running 5 tests
+test exact_original_prompts_preserve_prefixes_case_and_whitespace ... ok
+test forced_and_environment_overrides_do_not_leak_between_threads ... ok
+test frozen_original_histories_match_model_and_initial_pin_decisions ... ok
+test known_vector_presence_never_gets_a_fresh_pin ... ok
+test policy_snapshots_and_results_are_owned_and_independent ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests/model_transport.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/model_transport-bd061ec03c68b541)
+
+running 1 test
+test invalid_public_identifiers_revisions_and_paths_fail_before_connecting ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/native_onnx.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/native_onnx-efc0e993bde7c4a8)
+
+running 4 tests
+test authenticated_runtime_reuses_identity_and_verifies_new_aliases ... ok
+test declaration_is_lazy_and_rejects_ambiguous_or_unsupported_pins ... ok
+test malformed_native_apis_and_foreign_initialization_fail_in_clean_processes ... ok
+test runtime_child ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.52s
+
+     Running tests/observed_peak.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/observed_peak-017981f5190acd25)
+
+running 2 tests
+test observed_peak_retains_every_reported_sample_and_its_exact_running_maximum ... ok
+test zero_report_is_an_error_and_does_not_reset_the_observed_peak ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/onnx_dependencies.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/onnx_dependencies-dd39c3c92acf7117)
+
+running 5 tests
+test ambiguous_external_metadata_and_invalid_ranges_are_rejected ... ok
+test every_tensor_carrier_is_audited ... ok
+test malformed_wire_and_structural_budgets_are_rejected ... ok
+test nested_external_references_cannot_escape_owned_artifacts ... ok
+test registered_graph_relative_file_ranges_are_validated ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.05s
+
+     Running tests/onnx_providers.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/onnx_providers-c200cc72b22a9b5c)
+
+running 2 tests
+test device_ids_retain_validation_and_empty_list_without_claiming_application ... ok
+test preference_normalization_and_targeted_provider_order_match_original ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/onnx_reranker.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/onnx_reranker-7070cb951c34f167)
+
+running 15 tests
+test concurrent_first_use_and_owned_results_do_not_cross_queries ... ok
+test empty_pool_and_top11_do_not_load_and_model_failure_precedes_query_guard ... ok
+test explicit_pair_policy_overrides_serialized_padding_truncation_and_accepts_content_token ... ok
+test first_lazy_score_initializes_native_api_in_a_cold_process ... ok
+test invalid_model_limits_and_padding_types_cannot_silently_select_a_policy ... ok
+test malformed_published_policy_and_nonfinite_or_wrong_count_outputs_fail ... ok
+test native_head_prepares_lazily_without_python_built_cache ... ok
+test non_f32_output_is_an_explicit_integrity_error ... ok
+test only_document_truncates_and_unicode_character_guard_is_not_byte_count ... ok
+test options_reject_zero_nonintegers_and_thread_budget_wraparound ... ok
+test positive_budgets_smaller_than_special_tokens_return_errors_without_panicking ... ok
+test prepared_model_provenance_and_owned_bytes_survive_path_changes ... ok
+test raw_pair_scores_preserve_order_padding_and_remainder_batches ... ok
+test registered_ettin_matches_all23_frozen_platform_histories ... ok
+test session_policy_is_available_only_after_successful_cpu_load ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.42s
+
+     Running tests/profile_identity.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/profile_identity-eba4adebb8ebfee6)
+
+running 5 tests
+test captured_nested_profiles_keep_exact_python_serialization_and_all_revisions ... ok
+test captured_original_encoder_keys_tokenizers_and_defaults_match_on_both_platforms ... ok
+test declared_runtime_and_nested_configuration_changes_invalidate_compatible_identity ... ok
+test original_invalid_specs_and_nested_relationships_fail_without_loading_a_model ... ok
+test runtime_declarations_require_all_original_ordered_packages_and_no_duplicates ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/published_head.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/published_head-edf7692ce40d0111)
+
+running 6 tests
+test compilation_keeps_owned_source_after_original_paths_change ... ok
+test corrupt_wire_is_bounded_and_never_panics ... ok
+test malformed_published_heads_return_errors ... ok
+test published_head_matches_every_original_preparation_byte ... ok
+test published_namespace_collision_is_an_explicit_error ... ok
+test real_ettin_assembly_matches_registered_graph_without_python_cache ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.75s
+
+     Running tests/query_expansion.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/query_expansion-60359eb594ac6bb8)
+
+running 7 tests
+test all_original_histories_preserve_actual_tokens_hypotheses_text_errors_and_lazy_state ... ok
+test english_and_repeated_single_spanish_word_need_no_assets_or_runtime ... ok
+test failed_inference_attempt_owns_the_actual_input_before_error_and_keeps_lazy_recovery ... ok
+test failed_loading_is_retryable_and_english_remains_lazy_after_failure ... ok
+test loaded_native_data_and_returned_traces_are_owned_after_cache_replacement ... ok
+test long_unmatched_identifier_attempt_reaches_normal_error_and_english_recovery ... ok
+test simultaneous_first_calls_use_one_replica_without_crossing_queries_or_results ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.43s
+
+     Running tests/query_policy.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/query_policy-5a1980b8a21e203b)
+
+running 5 tests
+test every_original_lexicon_member_counts_once_and_casefolds_before_the_decision ... ok
+test long_failed_identifier_matches_preserve_original_text_without_panicking ... ok
+test original_query_decisions_and_exact_matches_survive_unicode_and_regex_boundaries ... ok
+test query_plans_are_independent_and_restoration_is_sequential_without_trimming_output ... ok
+test restoration_preserves_original_whitespace_case_collisions_and_literal_replacements ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/relevance_judge.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/relevance_judge-8d3b9248e37c0b42)
+
+running 1 test
+test all_original_purposes_query_limits_budgets_empty_errors_and_order_match ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.03s
+
+     Running tests/reranker_preparation.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/reranker_preparation-838ebf134f9cf7ea)
+
+running 6 tests
+test concurrent_preparers_reverify_the_published_winner ... ok
+test failed_derivation_never_publishes_partial_cache ... ok
+test nested_graph_layout_is_verified_by_the_same_artifact_owner ... ok
+test nested_source_duplicate_artifacts_do_not_bypass_shared_validation ... ok
+test prepared_cache_is_owned_verified_and_reused_without_source ... ok
+test published_files_and_directory_follow_the_ordinary_umask ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests/static_table.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/static_table-76b3bc7a2851cd1d)
+
+running 16 tests
+test bundled_table_matches_all_frozen_case_outputs ... ok
+test cancellation_uses_frozen_float32_reduction ... ok
+test corrupt_tables_fail_without_panicking_or_executing_pickle ... ok
+test duplicate_npy_dtype_is_rejected_even_when_identical ... ok
+test duplicate_npy_order_is_rejected_even_when_identical ... ok
+test duplicate_npy_shape_returns_error_before_unchecked_reader ... ok
+test float16_is_converted_before_pooling ... ok
+test float32_sum_projection_empty_and_long_batches ... ok
+test float64_is_cast_to_float32_before_inference ... ok
+test fortran_and_big_endian_keep_matrix_coordinates ... ok
+test int8_uses_individual_row_scales ... ok
+test negative_lut_indexes_from_the_end ... ok
+test overflowing_array_header_returns_error ... ok
+test overflowing_norm_returns_error_but_empty_input_remains_zero ... ok
+test results_are_independent_owned_vectors ... ok
+test serialized_padding_truncation_unknown_and_count_are_preserved ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.62s
+
+     Running tests/tokenization.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/tokenization-8316e09e566d6501)
+
+running 5 tests
+test bounded_encode_preserves_character_prefix_and_unknown_policy ... ok
+test corrupt_or_sparse_vocabulary_is_rejected ... ok
+test count_has_no_hidden_limit ... ok
+test matches_reference_tokens ... ok
+test unicode_length_is_not_utf8_bytes ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+
+     Running tests/transformer_model.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/transformer_model-82d91ad5c171ef65)
+
+running 5 tests
+test authenticated_prompt_exclusion_and_malformed_prompt_policies_are_rejected ... ok
+test authenticated_prompt_inclusive_mean_pooling_retains_the_original_default ... ok
+test invalid_or_unregistered_transformer_configuration_is_rejected ... ok
+test original_registrations_have_exact_architecture_weights_and_pooling_without_files ... ok
+test unset_dtype_means_original_float32_and_zero_limits_are_errors ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/transformer_runtime.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/transformer_runtime-adba233ccdc16470)
+
+running 5 tests
+test cold_declarations_do_not_load_optional_cores ... ok
+test duplicate_library_names_are_rejected_before_filesystem_access ... ok
+test invalid_platform_module_and_core_declarations_fail_before_loading ... ok
+test typed_session_owns_private_files_and_checks_actual_preparation_and_results ...     Finished `dev` profile [unoptimized] target(s) in 0.02s
+ok
+test verified_module_aliases_and_concurrent_first_use_share_only_matching_code ...     Finished `dev` profile [unoptimized] target(s) in 0.01s
+ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.19s
+
+     Running tests/translation_preparation.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/translation_preparation-40e540f03511f618)
+
+running 13 tests
+test concurrent_publishers_return_the_same_verified_cache ... ok
+test declared_empty_device_is_rejected_instead_of_published_as_model_data ... ok
+test failed_derivation_does_not_publish_a_partial_directory_or_leave_stages ... ok
+test missing_extra_or_unknown_recipe_declarations_fail_before_use ... ok
+test nested_non_ascii_array_metadata_keeps_the_original_python_recipe_hash ... ok
+test ordered_nested_json_uses_python_ascii_escaping_without_sorting ... ok
+test original_full_recipe_and_both_runtime_compatibility_revisions_are_exact ... ok
+test published_files_and_revision_directory_keep_the_ordinary_umask ... ok
+test registered_real_source_prepares_all_five_exact_derived_artifacts ... ok
+test registration_rejects_ambiguous_keys_and_enforces_the_explicit_json_byte_limit ... ok
+test tiny_preparation_matches_original_bytes_and_keeps_verified_owned_snapshots ... ok
+test unsupported_json_is_rejected_for_its_content_before_derived_hash_check ... ok
+test wrong_revision_is_rejected_even_for_an_otherwise_valid_existing_cache ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+     Running unittests examples/context_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/context_probe-b12b8a5f8e9db53e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/ettin_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/ettin_probe-fccc31e478734c3c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/fastembed_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/fastembed_probe-501f3c037bbcabf5)
+
+running 3 tests
+test tests::command_line_requires_explicit_absolute_paths_and_exact_five_flags ... ok
+test tests::producer_covers_every_compiled_model_source ... ok
+test tests::protocol_rejects_unknown_fields_types_operations_and_duplicate_ids ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running unittests examples/mlx_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/mlx_probe-1ef7935df4438dd8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/model_integration_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/model_integration_probe-f7018b2d0b00f1e5)
+
+running 1 test
+test tests::factory_protocol_is_bounded_explicit_and_rejects_expected_outputs ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/model_policy_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/model_policy_probe-94b430ba8795429b)
+
+running 2 tests
+test tests::probe_executes_every_frozen_history_without_expected_values_in_request ... ok
+test tests::probe_rejects_missing_fields_wrong_types_duplicate_ids_and_expected_injection ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running unittests examples/model_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/model_probe-74fef4c752e69b93)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/relevance_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/relevance_probe-33f52a44ea439e7e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/sentence_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/sentence_probe-94a16c509bdd82e5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/table_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/table_probe-d65d8bb2d1b05846)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/transformer_diagnostic.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/transformer_diagnostic-05d82fb4554220e9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/transformer_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/transformer_probe-c31388e30952a425)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/translation_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/translation_probe-862446ba1093d9c2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/ken_native_model_api-3937db398350a660)
+
+running 12 tests
+test tests::backend_buffers_validate_ownership_and_release_exactly_once ... ok
+test tests::batch_requires_rectangular_bounded_right_padded_real_tokens ... ok
+test tests::guarded_operation_returns_error_instead_of_unwinding ... ok
+test tests::model_wire_schemas_distinguish_requested_and_actual_state ... ok
+test tests::native_result_requires_exact_shape_complete_finite_values ... ok
+test tests::null_and_oversized_spans_are_rejected_before_reading_memory ... ok
+test tests::opaque_model_handles_are_not_reused_and_own_values_until_close ... ok
+test tests::open_weights_are_distinct_snapshot_relative_names ... ok
+test tests::projection_requires_two_distinct_registered_token_ids ... ok
+test tests::short_foreign_header_is_rejected_before_reading_function_slots ... ok
+test tests::typed_json_rejects_duplicate_unknown_and_invalid_fields ... ok
+test tests::versioned_table_rejects_wrong_version_backend_and_missing_function ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/ffi_boundary.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/ffi_boundary-771b5aa67a495f1a)
+
+running 1 test
+test actual_native_boundary_rejects_bad_handles_catches_panics_and_releases_buffers ...     Finished `dev` profile [unoptimized] target(s) in 0.02s
+
+thread '<unnamed>' (13667720) panicked at src/lib.rs:265:21:
+controlled contract-fixture panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+
+     Running tests/parameter_header.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/parameter_header-9542946d4c6ea6f7)
+
+running 1 test
+test bounded_headers_reject_duplicate_names_offsets_and_unsupported_tensor_data ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/qwen_contract.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/qwen_contract-0253b0cdeb8f2163)
+
+running 1 test
+test qwen_dimensions_and_parameter_names_have_one_tensor_independent_owner ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/transformer_control.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/transformer_control-deb99ccb1501c564)
+
+running 1 test
+test cpu_conversion_is_an_explicit_control_without_a_fabricated_tensor_batch ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/ken_store-b3f3c6c62186216a)
+
+running 2 tests
+test segments::tests::a_write_finishing_after_a_flush_retains_a_new_dirty_mark ... ok
+test segments::tests::flush_ownership_swap_preserves_marks_made_during_a_flush ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/database.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/database-d1f2594d13ef7c3d)
+
+running 3 tests
+test fresh_and_legacy_schema_preserve_objects_rows_and_cascade_slot_reclamation ... ok
+test initialization_reports_sql_errors_and_rolls_back_partial_schema ... ok
+test unique_slots_allow_multiple_nulls_and_metadata_preserves_raw_strings ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/maintenance.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/maintenance-3eb0feaeb7c16072)
+
+running 4 tests
+test compaction_cleans_readonly_backups_without_changing_live_or_symlink_targets ... ok
+test compaction_preserves_all_three_spaces_and_reuses_a_dense_prefix ... ok
+test compaction_preserves_nested_private_directory_permissions ... 
+running 1 test
+test compaction_preserves_nested_private_directory_permissions ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.08s
+
+ok
+test inline_migration_is_batched_restartable_and_preserves_foreign_dimensions ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.62s
+
+     Running tests/model_state.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/model_state-04855b15ccbe20ab)
+
+running 3 tests
+test a_failed_document_marker_cannot_leave_a_partial_model_pin ... ok
+test model_facts_and_initial_pin_preserve_marker_and_vector_boundaries ... ok
+test sql_failure_never_becomes_proven_empty_state_or_a_new_pin ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/recovery.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/recovery-6148fc4ab3f6eef2)
+
+running 6 tests
+test killed_compaction_recovers_before_project_data_is_exposed ... ok
+test killed_inline_migration_keeps_committed_batches_and_resumes ... ok
+test killed_recovery_cleanup_resumes_after_its_internal_owner_receipt_is_deleted ... ok
+test malformed_recovery_journal_cannot_touch_unrelated_paths ... ok
+test null_commit_marker_never_reinterprets_committed_rows_as_rollback ... ok
+test recovery_process ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.46s
+
+     Running tests/slots.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/slots-99df502ff7b682b3)
+
+running 5 tests
+test a_corrupt_free_list_cannot_reallocate_a_slot_still_owned_by_a_row ... ok
+test immediate_slot_allocations_reuse_freed_slots_and_rollback ... ok
+test invalid_slot_ranges_and_unknown_spaces_fail_without_mutating_allocator ... ok
+test writer_process ... ok
+test writers_serialize_slot_ownership ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.24s
+
+     Running tests/transaction_vectors.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/transaction_vectors-59f519311070fec8)
+
+running 4 tests
+test deleting_or_cascading_then_writing_and_rolling_back_preserves_committed_vectors ... ok
+test killing_a_replacement_writer_preserves_deleted_and_cascaded_owners ... ok
+test missing_or_lowered_counters_reject_allocation_without_touching_owned_bytes ... ok
+test replacement_process ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.45s
+
+     Running tests/vector_integrity.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/vector_integrity-71d4330c64ce1e1a)
+
+running 5 tests
+test flush_and_reads_remain_safe_during_concurrent_writes ... ok
+test invalid_vector_inputs_fail_before_any_referenced_bytes_change ... ok
+test sparse_verification_does_not_walk_the_high_water_address_space ... ok
+test sparse_verifier_process ... ok
+test verification_and_live_scores_preserve_slot_accounting ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s
+
+     Running tests/vectors.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/deps/vectors-6d21ce6deaacb714)
+
+running 3 tests
+test python_segments_and_native_segments_are_cross_readable ... ok
+test segment_creation_never_exposes_partial_capacity_or_resizes_existing_maps ... ok
+test segment_creator_process ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+     Running unittests examples/storage_probe.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/storage_probe-82b55e90d85f2dd8)
+
+running 2 tests
+test tests::storage_probe_executes_frozen_inputs_without_expected_payloads ... ok
+test tests::storage_probe_rejects_unknown_operations_fields_types_and_duplicate_ids ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.24s
+
+     Running unittests examples/storage_recovery_driver.rs (.ken/rust-migration/m2-fastembed/target-final-ci/debug/examples/storage_recovery_driver-2c3bb7d672180804)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

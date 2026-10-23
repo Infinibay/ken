@@ -1,0 +1,20 @@
+...F                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_native_child_harness_and_interleaved_build_output_keep_parent_case_accounting _
+
+    def test_native_child_harness_and_interleaved_build_output_keep_parent_case_accounting():
+        discovery='parent: test\nhelper: test\n'
+        actual=('test parent ... \nrunning 1 test\ntest helper ... ok\n'
+            'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.0s\n'
+            'ok\ntest helper ...     Finished `dev` profile\nok\n'
+            'test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.1s\n')
+>       assert rust_gate_errors(discovery,actual)==[]
+E       AssertionError: assert ['missing, du...ult counters'] == []
+E         
+E         Left contains 3 more items, first extra item: 'missing, duplicate or unexpected executed Rust cases'
+E         Use -v to get more diff
+
+tests/rust_migration/test_integration_gates.py:41: AssertionError
+=========================== short test summary info ============================
+FAILED tests/rust_migration/test_integration_gates.py::test_native_child_harness_and_interleaved_build_output_keep_parent_case_accounting
+1 failed, 3 passed in 0.14s

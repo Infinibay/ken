@@ -1,0 +1,493 @@
+{
+  "source_files": {
+    "Cargo.lock": {
+      "bytes": 52688,
+      "sha256": "d68844f13776f0ba36dd7d9aa245286775b12c40eb371c11e9507590ae73fa0c"
+    },
+    "Cargo.toml": {
+      "bytes": 1709,
+      "sha256": "420fbad4c3ddc303035300df87c70597ef0fa9e455b7d33cbefa8b08c156a3fc"
+    },
+    "crates/ken-cli/Cargo.toml": {
+      "bytes": 404,
+      "sha256": "03beb123ab458c9f84d12ac0c8b7b0cf9afbc5256720527b1c800ef93ac870e7"
+    },
+    "crates/ken-cli/src/args.rs": {
+      "bytes": 761,
+      "sha256": "33f91190de4a7479c393b666b996bee1f7e1521be636367009c1a04397c032d0"
+    },
+    "crates/ken-cli/src/lib.rs": {
+      "bytes": 95,
+      "sha256": "de0ca0a638deb2b10e6c64626dfd99a9496471992eac13a5327648ca0936e731"
+    },
+    "crates/ken-cli/src/main.rs": {
+      "bytes": 1298,
+      "sha256": "221ffe4c4b7da3026b212d90b6ab5dc06a001ef712e44ba7a74d7cdaa1540bda"
+    },
+    "crates/ken-cli/src/status.rs": {
+      "bytes": 4442,
+      "sha256": "a4ed1f26051db71bc13c0e13269d402cd500cf5090554bd6dcffd11d9a5d6fb5"
+    },
+    "crates/ken-core/Cargo.toml": {
+      "bytes": 426,
+      "sha256": "c92cff9f3ebcdb3c6ef21305eea2dec47bf284bf86cd00f8da8b2c46c59d16ad"
+    },
+    "crates/ken-core/src/health.rs": {
+      "bytes": 2050,
+      "sha256": "5e35b9c1a2134d4f99c0aac9fdf60fdcbc1a93ac07b013cd33fd0e451722ca12"
+    },
+    "crates/ken-core/src/lib.rs": {
+      "bytes": 115,
+      "sha256": "bae4bafb494a5d7ab457bdc8c16fbe2caae33a22e645f1a60dd481ca3eab490b"
+    },
+    "crates/ken-core/src/project.rs": {
+      "bytes": 8620,
+      "sha256": "b669c8dc857efeae55ad5f1bb595c4f6ea9db259a2f5f09b30e3958d1f38d727"
+    },
+    "crates/ken-core/src/status/model.rs": {
+      "bytes": 1731,
+      "sha256": "18eab502970f8bd769fca80ed5b3e0c357878de3cbcc5706ed97302d40a01d40"
+    },
+    "crates/ken-core/src/status/reader.rs": {
+      "bytes": 5058,
+      "sha256": "0cbc804d30e438bbf70ec3447eca17a9276aa1a90ade118f4b052f51cfb8e990"
+    },
+    "crates/ken-core/src/status/rules.rs": {
+      "bytes": 3308,
+      "sha256": "c0afe23ddf53d722519b672fd5b8912fbfebef1f676417c4bf5afce5edf93308"
+    },
+    "crates/ken-core/src/status.rs": {
+      "bytes": 1131,
+      "sha256": "489d271eeb971a1b28b68b856b47b75bb3678e375591338a1693ab8417566485"
+    },
+    "crates/ken-models/Cargo.toml": {
+      "bytes": 1106,
+      "sha256": "bd90f039bdae5cb7e86ba3aab9a80e7cce1ba71bae95fca5b11d08dbc8b92a6f"
+    },
+    "crates/ken-models/examples/context_probe.rs": {
+      "bytes": 3993,
+      "sha256": "cad0ddad8b3c2d8e9e9de615c7453c6ee5ab26b885ca8df8f439e68fef634bf1"
+    },
+    "crates/ken-models/examples/ettin_probe.rs": {
+      "bytes": 7287,
+      "sha256": "629ffe09b30fe31107c9d2253440fdf55e4a63693f80779a147dd8490b2f3a8b"
+    },
+    "crates/ken-models/examples/fastembed_probe.rs": {
+      "bytes": 20966,
+      "sha256": "ecb6dc40b3c5b72942d68a69a7666eafce1f8472337079ee885e3c9879c78d5d"
+    },
+    "crates/ken-models/examples/mlx_probe.rs": {
+      "bytes": 3783,
+      "sha256": "3348e84f63884d0542de4a812f46f5ca069d0b7009beb8f2dcec5077b0437530"
+    },
+    "crates/ken-models/examples/model_integration_probe.rs": {
+      "bytes": 4389,
+      "sha256": "8424f5f48384f1d9ec111d54e27eee4f2fa0d1c31a696d57ce223535c172c4b8"
+    },
+    "crates/ken-models/examples/model_policy_probe.rs": {
+      "bytes": 8045,
+      "sha256": "fbf78f136bfcdc09ab3eca96c5207ab410b38a85bb1bb10990ad223a8e1d8c3c"
+    },
+    "crates/ken-models/examples/model_probe.rs": {
+      "bytes": 4283,
+      "sha256": "88c2ac9b07b5845dc52f91180100e5462ecf5c6197ef1f09d5c465bbbb597470"
+    },
+    "crates/ken-models/examples/relevance_probe.rs": {
+      "bytes": 4528,
+      "sha256": "f92eee2c944c8abd237c74b9f5858b594f9be173fea1e62bdd6f806d65030433"
+    },
+    "crates/ken-models/examples/sentence_probe.rs": {
+      "bytes": 3927,
+      "sha256": "f645bc467ffc7e1cd441d0661fcbd257ac1fb759f7c3911f7fcd55372d923007"
+    },
+    "crates/ken-models/examples/support/factory.rs": {
+      "bytes": 12590,
+      "sha256": "61f2b2f718ae4ccf7081c047afeda4643fcd9e1a87166677e2e4ef7dbd20366c"
+    },
+    "crates/ken-models/examples/support/mod.rs": {
+      "bytes": 1128,
+      "sha256": "1eca11505162a53510c774d43bf9227f2042bac5c3e61d21783ce145fec40b6e"
+    },
+    "crates/ken-models/examples/support/observed_peak.rs": {
+      "bytes": 774,
+      "sha256": "78c4677e1b9186edc31cf7dbc561e52ffd913e8a84ea1d29b4115fe14f56135e"
+    },
+    "crates/ken-models/examples/table_probe.rs": {
+      "bytes": 3306,
+      "sha256": "dde6d06f0b6674da6d68f8f187c5aeb7ead68e7bdf21354132f71a334ea6371e"
+    },
+    "crates/ken-models/examples/transformer_diagnostic.rs": {
+      "bytes": 3390,
+      "sha256": "202ccc769123363af2ee67860ee4b9a3b1482fc98b85b8e441111fb97efccafa"
+    },
+    "crates/ken-models/examples/transformer_probe.rs": {
+      "bytes": 2881,
+      "sha256": "7ae0d0de09cde741c6b823b22284e286d1f06ae0f9eeb2c63d8bc22f792a1413"
+    },
+    "crates/ken-models/examples/translation_probe.rs": {
+      "bytes": 9860,
+      "sha256": "2fcaa6408bc309eb61b4ae15bb0fb4edc88c9f2dee58e857d4bd8dcfffe0388f"
+    },
+    "crates/ken-models/licenses/numpy-sort-LICENSE.txt": {
+      "bytes": 46826,
+      "sha256": "649a589ab31076e79e9ce62ba24eae9959598124176640dbc95f87bd10f34fcf"
+    },
+    "crates/ken-models/resources/code-context-int8.json": {
+      "bytes": 613,
+      "sha256": "4fd47b6170f98e0cd7652b39af01e9f25ba207b9261bbe21141d38377286aa9d"
+    },
+    "crates/ken-models/resources/es-en-ct2-int8.json": {
+      "bytes": 2106,
+      "sha256": "612f88756b8b8b17e0f675a2d444dd99d797dd77298ccc02aff059fa18890253"
+    },
+    "crates/ken-models/resources/ettin-68m-fp32.json": {
+      "bytes": 2791,
+      "sha256": "8967138122550d4aad2ad534cef1d3a1da0d6b19ecc8734fd9607c8079f3c3c3"
+    },
+    "crates/ken-models/resources/fastembed-catalog.json": {
+      "bytes": 39856,
+      "sha256": "09afbff147e38b81ca2f18407efcaa6b2fb6873f8f9de046d9eaf6970acc20d9"
+    },
+    "crates/ken-models/resources/judge-policy.json": {
+      "bytes": 860,
+      "sha256": "5bfabb6b2a005c6317e198f5d52febf7cfabc78fd980883615c963cae4f9a806"
+    },
+    "crates/ken-models/resources/legacy-compatibility.json": {
+      "bytes": 2158,
+      "sha256": "af92882bd9678d2c8f605c602173a35e5d9028d0e124956df5a669c34cf747d4"
+    },
+    "crates/ken-models/resources/potion-code-16M-v2.json": {
+      "bytes": 690,
+      "sha256": "d2cb2be7a0b8a0b6682ae215539a1e92d7ccec598cbbcbdf960201e718b534d5"
+    },
+    "crates/ken-models/resources/transformer-catalog.json": {
+      "bytes": 38283,
+      "sha256": "e6dfcc1cd076446b488dfb6125d3cc508664ff5207c172cb5036518fb9c11250"
+    },
+    "crates/ken-models/src/artifact_cache.rs": {
+      "bytes": 8422,
+      "sha256": "426bd46860f9a7a7032fc26778154d2d6b3abdba61d05cd7cccd97aea6363e44"
+    },
+    "crates/ken-models/src/assets.rs": {
+      "bytes": 9213,
+      "sha256": "d349a2812fcbb300f0dc724d2d10a58f4ce69214ee7c2581ecc9c9e9e665bd00"
+    },
+    "crates/ken-models/src/cache_directory.rs": {
+      "bytes": 5679,
+      "sha256": "19cbcb9285d09ed7cba29ea875ef85d7b87c43964231cd9d90c6c04e5e14263a"
+    },
+    "crates/ken-models/src/context_encoder.rs": {
+      "bytes": 7159,
+      "sha256": "751958366d92c64f92ba0dbac66fd9bd46c531b14e9861891108513f5e33bf3c"
+    },
+    "crates/ken-models/src/context_model.rs": {
+      "bytes": 2597,
+      "sha256": "6ee76239ecbe6762b6b8f94f0f276f3cc669adf0f2b3a2c46308248dfee407fb"
+    },
+    "crates/ken-models/src/data/python-unicode15.json": {
+      "bytes": 37883,
+      "sha256": "64f1ee6a97c6c3938b6e743ea8d0f3b0fd2c53073647ce19de8b2c689e3cc242"
+    },
+    "crates/ken-models/src/embedding_pool.rs": {
+      "bytes": 3885,
+      "sha256": "5aa54d1dcc62532e95ebabf4d66e535112653b920f5dee1c8ef9230b5de066c0"
+    },
+    "crates/ken-models/src/fastembed_encoder.rs": {
+      "bytes": 4519,
+      "sha256": "86fe021a7a4fde40cff1f154df2ffd16cb5833219f8cdc9a43b4988aec7a11da"
+    },
+    "crates/ken-models/src/fastembed_model.rs": {
+      "bytes": 6496,
+      "sha256": "54ce79186cca08d5d1ac94f379c471ef2a9b32ec1f01cb072cd4598ac870faf0"
+    },
+    "crates/ken-models/src/fastembed_session.rs": {
+      "bytes": 15557,
+      "sha256": "a9d61af761dd3cd0a69fcf9657c40d25373176ca8d0889b13bd7e28def554344"
+    },
+    "crates/ken-models/src/fastembed_tokens.rs": {
+      "bytes": 10060,
+      "sha256": "a245dd28ebad08186b47b20a874460b27382ecd853525cd3b4d1b6ae0343ec07"
+    },
+    "crates/ken-models/src/file_assets.rs": {
+      "bytes": 8662,
+      "sha256": "d857cff90561edbf2faa8560ccd9221916cf2fa4d603bf66a4bd558461181c9f"
+    },
+    "crates/ken-models/src/judge_tokens.rs": {
+      "bytes": 7024,
+      "sha256": "bdb456ff9b01a710204c9a76356c101348956000c176225f93f2bdbc2b38b245"
+    },
+    "crates/ken-models/src/lib.rs": {
+      "bytes": 4857,
+      "sha256": "1f69ead544218ef4d2764331646bc45c66b178c459ba85101c5db430624279bf"
+    },
+    "crates/ken-models/src/managed_encoder.rs": {
+      "bytes": 12374,
+      "sha256": "4ec242686d54e43dd0423eb05a2100075c6baeb220fac688d52f2348104b17d2"
+    },
+    "crates/ken-models/src/mlx_encoder.rs": {
+      "bytes": 10610,
+      "sha256": "437d71eabfad4662f5b7a0c47147ac0dfa32f1422e5c48b8cf934327e6f4a03b"
+    },
+    "crates/ken-models/src/model2vec.rs": {
+      "bytes": 6811,
+      "sha256": "b2efe6fbb0dfb677b41bbe5ea0f488483cd18851c602f7bcc61993dc8d65ae55"
+    },
+    "crates/ken-models/src/model_catalog.rs": {
+      "bytes": 29519,
+      "sha256": "2eec321119f5c30ce732d8ce6ed1a949b7dc80b65b6e7a8d6c59cfeddef11991"
+    },
+    "crates/ken-models/src/model_factory.rs": {
+      "bytes": 8129,
+      "sha256": "5aabefa0c288ddd4ffb05ed7d1c0169754aabc0f12c8e05dbfa4fc0b093a8e8e"
+    },
+    "crates/ken-models/src/model_policy.rs": {
+      "bytes": 4607,
+      "sha256": "32975c2c33c09e75bca5a69d940115f1d4b9c661fb3140c2ac446d515577326f"
+    },
+    "crates/ken-models/src/model_sources.rs": {
+      "bytes": 12094,
+      "sha256": "0a9140c6620020474f16034922d9eedcba35c238e5f5723a88b396f8a866bc4d"
+    },
+    "crates/ken-models/src/model_transport.rs": {
+      "bytes": 14447,
+      "sha256": "a3e4850dae62071b9de35123858af489914b6780a96d9766586b799752f8d331"
+    },
+    "crates/ken-models/src/native_onnx.rs": {
+      "bytes": 8481,
+      "sha256": "d4fc45eee12429ec5a0bea50f9129be8d47273a9ffd364858544de94af1b32e0"
+    },
+    "crates/ken-models/src/onnx_dependencies.rs": {
+      "bytes": 5995,
+      "sha256": "75f456903179d020a98460c861067caf9104e1ea92ef201f5fbbe6dc3addc98d"
+    },
+    "crates/ken-models/src/onnx_providers.rs": {
+      "bytes": 2480,
+      "sha256": "c7e4a62d5b65fdc2a45e5d28de8a635e37f7dcdb35508698fd6cd16d2cc228e1"
+    },
+    "crates/ken-models/src/onnx_reranker.rs": {
+      "bytes": 10272,
+      "sha256": "7806663fd1a43041532a5b1ce53cb3442614b949b7dc41649a44785e21df0d53"
+    },
+    "crates/ken-models/src/onnx_wire.rs": {
+      "bytes": 9820,
+      "sha256": "c9013ec7563b6006214040aaa6c7995f583e1f5599c4ad642bee2c9785e7890e"
+    },
+    "crates/ken-models/src/profile.rs": {
+      "bytes": 9532,
+      "sha256": "227e1463b021a32dbfbcb1909529b986f3aa135ecdef036bc9c592d053375551"
+    },
+    "crates/ken-models/src/profile_identity.rs": {
+      "bytes": 6001,
+      "sha256": "cf19414896e7533d3d18acf15804400169aa485600657f1866af3baa385a20f2"
+    },
+    "crates/ken-models/src/published_head.rs": {
+      "bytes": 8172,
+      "sha256": "91f852c3a407aaa18c0dd0dee370815db0d4cba26674b6b3b9fe4b1c35a3f101"
+    },
+    "crates/ken-models/src/python_unicode.rs": {
+      "bytes": 3088,
+      "sha256": "caca4929078ce3c253191c68fa0d6fe26de559762204572674976a8186a47117"
+    },
+    "crates/ken-models/src/query_expansion.rs": {
+      "bytes": 13599,
+      "sha256": "c7cf8c427dfdda9c70f964b4050446ac56e1759f5d7c292bcb70448e57d26e22"
+    },
+    "crates/ken-models/src/query_policy.rs": {
+      "bytes": 5518,
+      "sha256": "840f2db6032f293340b9db3b760a7e1c9d59b5e19a272f8eabdd9a17c80b60be"
+    },
+    "crates/ken-models/src/relevance_judge.rs": {
+      "bytes": 20111,
+      "sha256": "7d9b239b7df0055d647fddfd95fe0bee4edf1ecf9fffe94e8dece126c21aeec8"
+    },
+    "crates/ken-models/src/reranker_model.rs": {
+      "bytes": 4019,
+      "sha256": "50cd95f7bbe16a58c88f3737b08f4d3ed866cddd658538cf6d1ebfd4c6d055d4"
+    },
+    "crates/ken-models/src/reranker_preparation.rs": {
+      "bytes": 3001,
+      "sha256": "dacccdf1d5d63aab3281d57e89924c0bc0013958e16c27148df1e50ce6ba0605"
+    },
+    "crates/ken-models/src/reranker_tokens.rs": {
+      "bytes": 6092,
+      "sha256": "d53302a5fb7cf2b9cc63c2a7e72263dfe88448aab116efd9b8cf7592db7cc5fb"
+    },
+    "crates/ken-models/src/sentence_encoder.rs": {
+      "bytes": 19006,
+      "sha256": "aec91ce87cdc42ad778252acd9851b5efbc1c1a9d8e51e333c47776760eefa85"
+    },
+    "crates/ken-models/src/static_table.rs": {
+      "bytes": 4755,
+      "sha256": "be75b296bcb988014af30bfdb375128a7a0c6f29b35f722d7766dc568c845765"
+    },
+    "crates/ken-models/src/table_npz.rs": {
+      "bytes": 10058,
+      "sha256": "5bd18b6e039f35799c03181e8f6c2cbccde098d22b39efcc83ece6fa21eec0a6"
+    },
+    "crates/ken-models/src/term_cache.rs": {
+      "bytes": 2029,
+      "sha256": "5a0e9790ba0504aa80a2e522b5825fe1ffab537ee47a0aca31f4480c64bdc061"
+    },
+    "crates/ken-models/src/tokenization.rs": {
+      "bytes": 2810,
+      "sha256": "eca9f869b8e8112165171622dfbfebb2043ca033366c1831980ecd57a60eba9c"
+    },
+    "crates/ken-models/src/transformer_client.rs": {
+      "bytes": 9326,
+      "sha256": "3546ab322efb4e659cfc31b4638937d10726a7c2acf68013d6804841d05d12a8"
+    },
+    "crates/ken-models/src/transformer_model.rs": {
+      "bytes": 8931,
+      "sha256": "41f2a1ba6d387d6e5e7d90b26f2e77aadb2b56ce5992811535fe5ca13959b019"
+    },
+    "crates/ken-models/src/transformer_order.rs": {
+      "bytes": 3955,
+      "sha256": "52a82b591687d0473151639978bbe43780814f264c773ec27c3c3800543e8fb2"
+    },
+    "crates/ken-models/src/transformer_runtime.rs": {
+      "bytes": 10574,
+      "sha256": "a1047c016e1bf12985aee6f8e04c53c07422398111b2b2ce7f57f0181d2876f1"
+    },
+    "crates/ken-models/src/transformer_session.rs": {
+      "bytes": 8243,
+      "sha256": "a14095316e9920b723c4c108e94a8e511c547ff4603710440b5d49cadcac4b64"
+    },
+    "crates/ken-models/src/transformer_test_support.rs": {
+      "bytes": 6377,
+      "sha256": "a3ce2f784c511a96041b38fd526b17aa63e0048aea15664c607c679f63e3a9e7"
+    },
+    "crates/ken-models/src/transformer_tokens.rs": {
+      "bytes": 23374,
+      "sha256": "1c1ae0fdfd9047cc57097c32dc10f455596f3e943478896f3617442a72e6caee"
+    },
+    "crates/ken-models/src/translation_json.rs": {
+      "bytes": 5567,
+      "sha256": "0894cd29ef316d3ff49add797c5918246172e8527fa495e92741004174663549"
+    },
+    "crates/ken-models/src/translation_model.rs": {
+      "bytes": 4118,
+      "sha256": "64aab2d739c4bee80c97d55351570f1f05262f4f2fb96eb17925f6906e8083e1"
+    },
+    "crates/ken-models/src/translation_preparation.rs": {
+      "bytes": 2881,
+      "sha256": "57f10477d87b207032187c615a93ca405ae6a77e35af25d58fe1ec66aa14c8bf"
+    },
+    "crates/ken-models/src/verified_file.rs": {
+      "bytes": 6726,
+      "sha256": "7d87b948fdaa3b593e84c8bf8f39b1b7156949bcc9376b7b4de03464860312b7"
+    },
+    "crates/ken-native-model-api/Cargo.toml": {
+      "bytes": 338,
+      "sha256": "ca39d7d1277576f117c9a9aa95963dcd5fe83b352a3580db3429333768ebdb8b"
+    },
+    "crates/ken-native-model-api/src/control.rs": {
+      "bytes": 923,
+      "sha256": "9759c1878eac4f42375f71f2b3f640129b611b402463c4019357a480c28d57d1"
+    },
+    "crates/ken-native-model-api/src/lib.rs": {
+      "bytes": 13001,
+      "sha256": "3f9fa2cfbb1a2d7d815f0e1c476ff1836f088355ee0e51025ce96c5941e9bcf2"
+    },
+    "crates/ken-native-model-api/src/parameter_header.rs": {
+      "bytes": 3104,
+      "sha256": "e5a9d1a03a3cdbddda894673c4bc66add9153cf8af2dded5cf0eb1de21c6443e"
+    },
+    "crates/ken-native-model-api/src/qwen3.rs": {
+      "bytes": 4713,
+      "sha256": "518029fe6f3dcd0728ea059da2030266aadfa1986b1812ccaf00b8b0570afde7"
+    },
+    "crates/ken-native-model-api/src/registry.rs": {
+      "bytes": 3319,
+      "sha256": "b5970787ef951b594910f1544ac130bd5ee33b381aa44d6a88418dc9c48fb102"
+    },
+    "crates/ken-native-model-api/src/request.rs": {
+      "bytes": 7780,
+      "sha256": "bd0ddd4aaa26dc3741ba058b5838f8ba0f9f9baa07dcfefb27c2c15bec66dfcf"
+    },
+    "crates/ken-native-model-api/src/validation.rs": {
+      "bytes": 3923,
+      "sha256": "90382cb2960a74f5995a7bdb47c156d4408f1dee1ecc41d3080885768663d32c"
+    },
+    "crates/ken-native-model-api/src/wire.rs": {
+      "bytes": 1993,
+      "sha256": "83156223fba2ee12a79cf81258fd713089bdc00761de90504c080804cc125904"
+    },
+    "crates/ken-store/Cargo.toml": {
+      "bytes": 405,
+      "sha256": "7162d3d6b603cfb82d9d17e8d75ac4e6c891526a5e3c93f2a9ce6b7e84e81567"
+    },
+    "crates/ken-store/examples/storage_probe/history.rs": {
+      "bytes": 19747,
+      "sha256": "449443b1bfacb83b1eadb0aef8be2484bc62ea9dd899f769f50022825522e497"
+    },
+    "crates/ken-store/examples/storage_probe/schema.rs": {
+      "bytes": 2169,
+      "sha256": "686f65da53d30eb810d486e3c8eeec16bd4ad7b5d72d95b3f91f31ef06128166"
+    },
+    "crates/ken-store/examples/storage_probe.rs": {
+      "bytes": 6798,
+      "sha256": "7ea018c08478388b94c7e9cceb2ee92b284d1e500e80d1736aac5cdaddc349d1"
+    },
+    "crates/ken-store/examples/storage_recovery_driver.rs": {
+      "bytes": 1628,
+      "sha256": "d0545630429910018fa9295e0183553fae6371864dc88351ae1ad2d912b46dbb"
+    },
+    "crates/ken-store/src/database.rs": {
+      "bytes": 2848,
+      "sha256": "d2083f29802f43edb6cd4caeb815c678bacb385ae9e58cc9d454a5c591502567"
+    },
+    "crates/ken-store/src/error.rs": {
+      "bytes": 1512,
+      "sha256": "01b6be6f306efba40df4a144cb99230eaa301e295b8659e49cb2e34d047d81d9"
+    },
+    "crates/ken-store/src/lib.rs": {
+      "bytes": 706,
+      "sha256": "c3607e53f25014608857933d9799d8d95d2fcd21897f3d3ea0dd5d7ba0356ef7"
+    },
+    "crates/ken-store/src/maintenance.rs": {
+      "bytes": 10445,
+      "sha256": "7056928a3022ff96df8d23ec9e912720c2a33ab6cc0578fe6a8f056eaf12b4fe"
+    },
+    "crates/ken-store/src/manifest.rs": {
+      "bytes": 4028,
+      "sha256": "3f960f036d1cb54d80b6da6ef362374fffa1e3c91cc8ebff7cc1919b33336a51"
+    },
+    "crates/ken-store/src/model_state.rs": {
+      "bytes": 1009,
+      "sha256": "cc441b3377bd806c7972e42fb6586fae990746eaf38ad3a7f09fdb4683550990"
+    },
+    "crates/ken-store/src/project.rs": {
+      "bytes": 1420,
+      "sha256": "fbaa2ba8a68389b4ce3eb22e4c74c6fa86a10a264016d263d6ad651a582275e3"
+    },
+    "crates/ken-store/src/recovery.rs": {
+      "bytes": 15433,
+      "sha256": "4a2f1945cf10333ed7f3608f5b755dfbf157990b5300851483f98d9af1919e3b"
+    },
+    "crates/ken-store/src/schema.rs": {
+      "bytes": 2000,
+      "sha256": "6ee78abc61cbbe28c0296313b5d23d6daa743526792dbbae726508c051975eb7"
+    },
+    "crates/ken-store/src/segments.rs": {
+      "bytes": 8382,
+      "sha256": "f62cac6c3de7ea6d8a7731da678680668c504eaae36a5d4ef256a63baa17de4c"
+    },
+    "crates/ken-store/src/slots.rs": {
+      "bytes": 6158,
+      "sha256": "0f0539feca953503e3ba572856233984fffb376e6058311f5ede9ccb728d13c0"
+    },
+    "crates/ken-store/src/transaction.rs": {
+      "bytes": 1875,
+      "sha256": "f2165463ea6d793485b55aec696df0b3b330443851c2c7868050aa535e3cf25a"
+    },
+    "crates/ken-store/src/vectors.rs": {
+      "bytes": 9978,
+      "sha256": "a15d7a8d5a9be9ebf64618d636e8d0d2c8529532702894fd83255d638443e474"
+    },
+    "rust-toolchain.toml": {
+      "bytes": 86,
+      "sha256": "7d21c66a15f41bad66b82ed06a289f5dc8a6e3751951d2696bbf20ce296f2b0f"
+    }
+  },
+  "driver_sha256": "8cd171ba5caed407c44ccadc137cfafff7271ea1c18668941da01fb65bf5e1a8"
+}

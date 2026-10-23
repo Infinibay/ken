@@ -5,6 +5,27 @@ use crate::{
 };
 use std::sync::{Arc, Mutex};
 
+/// Read-only evidence of the adapter that actually completed preparation.
+#[derive(Clone, Debug, serde::Serialize)]
+#[serde(tag = "family", rename_all = "snake_case")]
+pub enum EncoderPreparation {
+    StaticTable {
+        sha256: String,
+    },
+    Potion {
+        assets_fingerprint: String,
+    },
+    FastEmbed {
+        trace: crate::FastEmbedPreparation,
+    },
+    SentenceTransformer {
+        trace: crate::TransformerPreparation,
+    },
+    Mlx {
+        trace: crate::TransformerPreparation,
+    },
+}
+
 enum Adapter {
     Static(StaticTableEncoder),
     Potion(Model2VecEncoder),
@@ -40,6 +61,45 @@ impl ManagedEncoder {
 
     pub fn family(&self) -> EncoderFamily {
         self.definition.family()
+    }
+
+    pub fn preparation(&self) -> Result<Option<EncoderPreparation>, ModelError> {
+        let slot = self
+            .adapter
+            .lock()
+            .map_err(|_| crate::profile::invalid("managed encoder lock poisoned"))?;
+        let Some(adapter) = slot.as_ref() else {
+            return Ok(None);
+        };
+        if !adapter.is_prepared()? {
+            return Ok(None);
+        }
+        Ok(match (&self.definition, adapter.as_ref()) {
+            (EncoderDefinition::Static(model), Adapter::Static(_)) => {
+                Some(EncoderPreparation::StaticTable {
+                    sha256: model.sha256.clone(),
+                })
+            }
+            (EncoderDefinition::Potion(assets), Adapter::Potion(_)) => {
+                Some(EncoderPreparation::Potion {
+                    assets_fingerprint: assets.fingerprint(),
+                })
+            }
+            (_, Adapter::FastEmbed(encoder)) => Some(EncoderPreparation::FastEmbed {
+                trace: encoder.preparation()?,
+            }),
+            (_, Adapter::Sentence(encoder)) => encoder
+                .preparation()?
+                .map(|trace| EncoderPreparation::SentenceTransformer { trace }),
+            (_, Adapter::Mlx(encoder)) => encoder
+                .preparation()?
+                .map(|trace| EncoderPreparation::Mlx { trace }),
+            _ => {
+                return Err(crate::profile::invalid(
+                    "managed encoder definition/adapter mismatch",
+                ));
+            }
+        })
     }
 
     pub fn is_prepared(&self) -> Result<bool, ModelError> {

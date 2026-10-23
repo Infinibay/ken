@@ -35,6 +35,8 @@ fn cold_registered_profiles_require_neither_sources_nor_optional_sdks() {
         let encoder = factory.encoder(&spec, &original_runtime()).unwrap();
         assert_eq!(encoder.family(), family);
         assert!(!encoder.is_prepared().unwrap());
+        let preparation: Option<ken_models::EncoderPreparation> = encoder.preparation().unwrap();
+        assert!(preparation.is_none());
         assert!(encoder.embed_passages(&[]).unwrap().is_empty());
         assert!(!encoder.is_prepared().unwrap());
     }

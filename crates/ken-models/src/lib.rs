@@ -60,7 +60,7 @@ pub use ken_native_model_api::{
     TransformerArchitecture, TransformerBatch, TransformerDevice, TransformerDeviceRequest,
     TransformerDtype, TransformerOutput, TransformerPooling, TransformerWeightLayout,
 };
-pub use managed_encoder::ManagedEncoder;
+pub use managed_encoder::{EncoderPreparation, ManagedEncoder};
 pub use model_catalog::{EncoderFamily, ModelCatalog};
 pub use model_factory::ModelFactory;
 pub use model_sources::PreparedModelResources;
