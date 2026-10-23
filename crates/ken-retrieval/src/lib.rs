@@ -43,6 +43,7 @@ mod dense_math;
 #[cfg(target_os = "linux")]
 pub use dense_math::verify_dense_runtime;
 
+pub mod candidates;
 pub mod intent;
 pub mod proposals;
 mod query_patterns;
