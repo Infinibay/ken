@@ -2,7 +2,7 @@
 use crate::{
     GrammarCatalog, Language, ParseError, ecmascript, go, java, model::ParsedFile, python, rust,
 };
-use crate::{c, cpp, csharp, detection};
+use crate::{c, cpp, csharp, dart, detection, kotlin, php, ruby};
 
 pub struct ParserRegistry {
     catalog: GrammarCatalog,
@@ -37,6 +37,10 @@ impl ParserRegistry {
                 self.catalog.syntax(Language::Cpp, header, "namespace.hpp")
             }),
             Language::CSharp => Ok(csharp::extract(source, tree.root())),
+            Language::Ruby => Ok(ruby::extract(source, tree.root())),
+            Language::Kotlin => Ok(kotlin::extract(source, tree.root())),
+            Language::Dart => Ok(dart::extract(source, tree.root())),
+            Language::Php => Ok(php::extract(source, tree.root())),
             _ => Err(ParseError::Parse {
                 language: language.as_str().into(),
                 reason: "frontend migration pending".into(),

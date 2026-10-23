@@ -109,3 +109,20 @@ fn csharp_complete_results_match_original() {
 fn c_macro_digits_match_the_original_python_unicode_version() {
     original("c", include_str!("fixtures/c-macro-digits.json"), 3);
 }
+
+#[test]
+fn ruby_complete_results_match_original() {
+    original("ruby", include_str!("fixtures/reference.json"), 5);
+}
+#[test]
+fn kotlin_complete_results_match_original() {
+    original("kotlin", include_str!("fixtures/reference.json"), 5);
+}
+#[test]
+fn dart_complete_results_match_original() {
+    original("dart", include_str!("fixtures/reference.json"), 5);
+}
+#[test]
+fn php_complete_results_match_original() {
+    original("php", include_str!("fixtures/reference.json"), 5);
+}
