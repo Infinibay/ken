@@ -2,12 +2,12 @@
   "format": "ken-numeric-matrix/1",
   "platforms": {
     "linux": {
-      "native_sha256": "27087020a79afb1563a395a0e2f3ec82b1f434d4e1c10464bf4796540a8b3ecc",
-      "selection_sha256": "4549582b9a2dd973beb5d93e19efeffe819d8a59204a4a3ecf4ede852016ebae"
+      "native_sha256": "1fdc3133e393836c660e855573a2fbdc35fdfcf1d706611cc1f3d1b569e2a82c",
+      "selection_sha256": "81a1156e633fda9554e1588c6b3e8e90c865c2160443a3a42074b577830aa621"
     },
     "macos": {
-      "native_sha256": "821ab90960f19428427ec5f7e09019f02a4a3e283c8f7967526ef0a0a9a68706",
-      "selection_sha256": "662dd97dc66678d6ad49bc09f2dbff089fe0ac9d30145e5817e2b62ba19234d7"
+      "native_sha256": "ed23b3d3729564624acbc98f1e0d162186e0eb32e040b0aae4447319315db018",
+      "selection_sha256": "0e01f7ce7544d753ba8f72bd8174dbb1303eab07614a0d1b35d962c0803c0411"
     }
   },
   "predecessor": {
@@ -15,7 +15,10 @@
     "sha256": "502522eb0af6e3136be30114c5509314593785e94604ff1c70303f721a33a10b"
   },
   "review": {
-    "status": "pending"
+    "critical_remaining": 0,
+    "important_remaining": 0,
+    "report_sha256": "35c0de3478140041b1a74e9cadbda12e19d9af2d028d451ba172b5e5e9a9d6da",
+    "status": "complete"
   },
   "sources": {
     "Cargo.lock": {
@@ -2219,8 +2222,8 @@
       "sha256": "40a3899c2c60b979d0007977f0da7a32075d951577b6a1dce7c273531bdb2ae1"
     },
     "crates/ken-retrieval/src/rank_json.rs": {
-      "bytes": 9301,
-      "sha256": "425b8660b95fe444072b0f0f14b2e206b4b1cd52902c8268c3ae0bae77649cda"
+      "bytes": 9408,
+      "sha256": "fbd366d8d68ab7cbe3ca77a44bab081febe5c993c96554f0e8f735b04e13f0a1"
     },
     "crates/ken-retrieval/src/rank_models.rs": {
       "bytes": 5962,
@@ -2231,8 +2234,8 @@
       "sha256": "b5bd3f5c733e7fb858ba3f711722346fb32df9f9e39bd399d9b17ba108e3539b"
     },
     "crates/ken-retrieval/src/ranking_trace.rs": {
-      "bytes": 13274,
-      "sha256": "20ffc47bf9e294d2d44ce45775f829f3386c3ae0a6e692fc1930362d29d09159"
+      "bytes": 13254,
+      "sha256": "c47adf016f3e51da1538c0588e5c04b7ef5d423aa7ef00ed85d6026daebb52bb"
     },
     "crates/ken-retrieval/src/reductions.rs": {
       "bytes": 821,
@@ -2474,6 +2477,10 @@
       "bytes": 569655,
       "sha256": "8ed73d519d54df80773adb5f224a9a11206ca1316122642b17c1745ced3384a6"
     },
+    "crates/ken-retrieval/tests/fixtures/numeric-review-regressions.json": {
+      "bytes": 2241025,
+      "sha256": "d8406de53f8c0483020335904fd59a667308475dce935464e6eb8ee2f4550ecc"
+    },
     "crates/ken-retrieval/tests/fixtures/projection-reference.json": {
       "bytes": 642030,
       "sha256": "335efdf2f0c182896d6a55a3b92369d9eae7b4990d82744c0ccace9659ec3c4f"
@@ -2527,8 +2534,8 @@
       "sha256": "36a8afdc0931f67997081aabe1708aa095abb91bb555e2625a759884d2d7bf27"
     },
     "crates/ken-retrieval/tests/numeric_ranker.rs": {
-      "bytes": 6907,
-      "sha256": "e38b01eeb80bf858bd3746e93158e14d752b36e3d277df98ecd3202ee333b490"
+      "bytes": 7452,
+      "sha256": "9d4393d07fa55d9420264bf7f03f0f7c893d6bcbd6e8fae48d16949f8980fdde"
     },
     "crates/ken-retrieval/tests/owner_ranking.rs": {
       "bytes": 290,
@@ -2563,8 +2570,8 @@
       "sha256": "048f0cb3bb9e33af3590d63dd950d66b42ff5e6a911c164cd697f3f3dd9c4371"
     },
     "crates/ken-retrieval/tests/ranking_trace.rs": {
-      "bytes": 289,
-      "sha256": "0c60b5e3d8978c67172a6ae14da613f52025f99effd9b8461a97ca279d6324bc"
+      "bytes": 807,
+      "sha256": "84d0c9ccd459529c99c29515c5bdfd5ea2782b9694337a21cc13cba70223a149"
     },
     "crates/ken-retrieval/tests/source_locator.rs": {
       "bytes": 2728,
@@ -3065,8 +3072,8 @@
       "sha256": "44a9a87da4f738918108c575999f2d2bb399ee88a5352ed38dbc8743398a9944"
     },
     "tests/rust_migration/test_numeric_validate.py": {
-      "bytes": 2059,
-      "sha256": "de47e240d5f787ec6c95205e065aaf27c7f613ae9765994ff26d69085b0e3c23"
+      "bytes": 3795,
+      "sha256": "b7bdde1f32ea260baf6d90d713f32bb8b7bcae45d6dcd2914dcaa98660cdbe68"
     },
     "tests/rust_migration/test_parser_evidence.py": {
       "bytes": 2981,
@@ -3422,7 +3429,7 @@
     },
     "tools/rust_migration/numeric_evidence.py": {
       "bytes": 13704,
-      "sha256": "dc08bfe7d5ddcda4e7c3bc6cd7f5cf9db54a92949ff617855361e8608a2f8a71"
+      "sha256": "c76336fb29ff6bd2bc7afe814dac0178530ac4a8cc04d909aea7c0e6efe63224"
     },
     "tools/rust_migration/numeric_feature_reference.py": {
       "bytes": 4789,
@@ -3445,8 +3452,8 @@
       "sha256": "2811c5b6f80a8465925e17fdbb585b44b36c112a0dcf68d5166f9e177a993ec8"
     },
     "tools/rust_migration/numeric_validate.py": {
-      "bytes": 4713,
-      "sha256": "6da8a92b17058bd340cb6f3ff94ff9d0411f23acf1a8b406d383d2e9dcd46731"
+      "bytes": 5853,
+      "sha256": "b955287ff68f9c5530cfd7d79baae3f94ab596ac7d11d30869246a2416e99f08"
     },
     "tools/rust_migration/parser_evidence.py": {
       "bytes": 12972,
