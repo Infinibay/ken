@@ -91,3 +91,21 @@ fn invalid_utf8_static_method_names_preserve_original_failure_instead_of_partial
         assert!(error.to_string().contains("utf-8"), "{error}");
     }
 }
+
+#[test]
+fn c_complete_results_match_original() {
+    original("c", include_str!("fixtures/reference.json"), 5);
+}
+#[test]
+fn cpp_complete_results_match_original() {
+    original("cpp", include_str!("fixtures/reference.json"), 5);
+}
+#[test]
+fn csharp_complete_results_match_original() {
+    original("csharp", include_str!("fixtures/reference.json"), 5);
+}
+
+#[test]
+fn c_macro_digits_match_the_original_python_unicode_version() {
+    original("c", include_str!("fixtures/c-macro-digits.json"), 3);
+}

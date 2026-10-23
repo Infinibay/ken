@@ -1,0 +1,111 @@
+{
+  "cases": [
+    {
+      "input": {
+        "language": "c",
+        "hint": "macro.c",
+        "source_hex": "53595343414c4c5f444546494e453128726561645f76616c756529207b2072657475726e20313b207d0a"
+      },
+      "parsed": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "__read_value",
+            "qualname": "__read_value",
+            "line_start": 1,
+            "line_end": 1,
+            "docstring": null
+          }
+        ],
+        "imports": [],
+        "docstring": null,
+        "scopes": [
+          {
+            "symbol": {
+              "kind": "function",
+              "name": "__read_value",
+              "qualname": "__read_value",
+              "line_start": 1,
+              "line_end": 1,
+              "docstring": null
+            },
+            "signature": "SYSCALL_DEFINE1(read_value)",
+            "documentation": null,
+            "owner": null,
+            "statements": [
+              [
+                1,
+                1
+              ]
+            ],
+            "implementation_start_line": 1,
+            "annotations": []
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "language": "c",
+        "hint": "macro.c",
+        "source_hex": "53595343414c4c5f444546494e45d9a128726561645f76616c756529207b2072657475726e20313b207d0a"
+      },
+      "parsed": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "__read_value",
+            "qualname": "__read_value",
+            "line_start": 1,
+            "line_end": 1,
+            "docstring": null
+          }
+        ],
+        "imports": [],
+        "docstring": null,
+        "scopes": [
+          {
+            "symbol": {
+              "kind": "function",
+              "name": "__read_value",
+              "qualname": "__read_value",
+              "line_start": 1,
+              "line_end": 1,
+              "docstring": null
+            },
+            "signature": "SYSCALL_DEFINE\u0661(read_value)",
+            "documentation": null,
+            "owner": null,
+            "statements": [
+              [
+                1,
+                1
+              ]
+            ],
+            "implementation_start_line": 1,
+            "annotations": []
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "language": "c",
+        "hint": "macro.c",
+        "source_hex": "53595343414c4c5f444546494e45f090b58128726561645f76616c756529207b2072657475726e20313b207d0a"
+      },
+      "parsed": {
+        "symbols": [],
+        "imports": [],
+        "docstring": null,
+        "scopes": []
+      }
+    }
+  ],
+  "script": "import tree_sitter_language_pack as pack\npack.configure({'cache_dir': '/Users/andres/Projects/ken/.ken/rust-migration/m3-parsers/sdk-macos'})\nimport dataclasses,json\nfrom ken.parsers.c import parse_c_file\nrows=[]\nfor digit in ['1','\\u0661','\\U00010d41']:\n source=('SYSCALL_DEFINE'+digit+'(read_value) { return 1; }\\n').encode()\n rows.append(dict(input=dict(language='c',hint='macro.c',source_hex=source.hex()),parsed=dataclasses.asdict(parse_c_file(source,'macro.c'))))\nprint(json.dumps(dict(cases=rows)))\n",
+  "execution": {
+    "exit": 0,
+    "stdout": "{\"cases\": [{\"input\": {\"language\": \"c\", \"hint\": \"macro.c\", \"source_hex\": \"53595343414c4c5f444546494e453128726561645f76616c756529207b2072657475726e20313b207d0a\"}, \"parsed\": {\"symbols\": [{\"kind\": \"function\", \"name\": \"__read_value\", \"qualname\": \"__read_value\", \"line_start\": 1, \"line_end\": 1, \"docstring\": null}], \"imports\": [], \"docstring\": null, \"scopes\": [{\"symbol\": {\"kind\": \"function\", \"name\": \"__read_value\", \"qualname\": \"__read_value\", \"line_start\": 1, \"line_end\": 1, \"docstring\": null}, \"signature\": \"SYSCALL_DEFINE1(read_value)\", \"documentation\": null, \"owner\": null, \"statements\": [[1, 1]], \"implementation_start_line\": 1, \"annotations\": []}]}}, {\"input\": {\"language\": \"c\", \"hint\": \"macro.c\", \"source_hex\": \"53595343414c4c5f444546494e45d9a128726561645f76616c756529207b2072657475726e20313b207d0a\"}, \"parsed\": {\"symbols\": [{\"kind\": \"function\", \"name\": \"__read_value\", \"qualname\": \"__read_value\", \"line_start\": 1, \"line_end\": 1, \"docstring\": null}], \"imports\": [], \"docstring\": null, \"scopes\": [{\"symbol\": {\"kind\": \"function\", \"name\": \"__read_value\", \"qualname\": \"__read_value\", \"line_start\": 1, \"line_end\": 1, \"docstring\": null}, \"signature\": \"SYSCALL_DEFINE\\u0661(read_value)\", \"documentation\": null, \"owner\": null, \"statements\": [[1, 1]], \"implementation_start_line\": 1, \"annotations\": []}]}}, {\"input\": {\"language\": \"c\", \"hint\": \"macro.c\", \"source_hex\": \"53595343414c4c5f444546494e45f090b58128726561645f76616c756529207b2072657475726e20313b207d0a\"}, \"parsed\": {\"symbols\": [], \"imports\": [], \"docstring\": null, \"scopes\": []}}]}\n",
+    "stderr": ""
+  }
+}

@@ -135,4 +135,7 @@ impl<'tree> SyntaxNode<'tree> {
     pub fn previous_named_sibling(self) -> Option<Self> {
         self.raw.prev_named_sibling().map(|n| self.wrap(n))
     }
+    pub fn next_named_sibling(self) -> Option<Self> {
+        self.raw.next_named_sibling().map(|node| self.wrap(node))
+    }
 }
