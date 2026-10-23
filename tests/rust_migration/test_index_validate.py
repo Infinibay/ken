@@ -13,7 +13,7 @@ def sample():
     return original,native,dict(id='synthetic',operations=[dict(op='index',paths=['a.py'])])
 def test_declared_timing_changes_preserve_complete_semantics():
     original,native,definition=sample();assert compare_case(original,native,definition)==[]
-@pytest.mark.parametrize('mutation',['stat','progress','source','calls','loaded','missing_step','slot','generation','warning'])
+@pytest.mark.parametrize('mutation',['stat','progress','source','calls','loaded','missing_step','slot','generation','warning','stat_type','id_type'])
 def test_changed_results_and_side_effects_reject(mutation):
     original,native,definition=sample();step=native['steps'][0]
     if mutation=='stat':step['result']['stats']['parsed']=0
@@ -24,6 +24,8 @@ def test_changed_results_and_side_effects_reject(mutation):
     elif mutation=='missing_step':native['steps']=[]
     elif mutation=='slot':step['snapshot']['tables']['ci_files'][0][7]=42
     elif mutation=='generation':step['snapshot']['tables']['meta']=[['retrieval_generation','2']]
+    elif mutation=='stat_type':step['result']['stats']['parsed']=True
+    elif mutation=='id_type':step['snapshot']['tables']['ci_files'][0][0]=True;step['snapshot']['legacy_vectors']['ci_files'][0]['id']=True
     else:step['result']['warnings']=['unexplained warning']
     assert compare_case(original,native,definition)
 def test_exception_category_and_reason_remain_checked():

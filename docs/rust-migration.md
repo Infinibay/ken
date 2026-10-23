@@ -33,14 +33,17 @@ patrones Unicode, prioridades, orden y scopes. Los directorios pendientes se
 abren mediante un descriptor confinado. M3a está aceptado. M3b implementa los19analizadores con20gramáticas y44extensiones;
 [su revisión y reparación](validation/rust-migration-2026-10-23/m3-parsers-review/README.md)
 cierra dos diferencias con249entradas por plataforma,33pruebas Rust y38pruebas de
-herramientas. M3b está aceptado tras una única revisión y pasada de reparación. Modelo común, resolución de imports e indexación incremental siguen
-pendientes en M3, al igual que M4–M8. Los originales permanecen intactos.
+herramientas. M3b está aceptado tras una única revisión y pasada de reparación. Los originales permanecen intactos.
 
-M3c añade resolución nativa de imports y lectura de configuraciones reales.
-[Su matriz](validation/rust-migration-2026-10-23/m3-imports/README.md) compara91datasets
-en dos modos por plataforma:182casos/184solicitudes,44pruebas raíz Rust y33pruebas
-de herramientas. La revisión final de M3c está en curso. Modelo común e indexación
-incremental siguen pendientes; la aplicación instalada conserva Python.
+M3c (imports) y M3d (modelo común) también están aceptados tras sus revisiones.
+M3e implementa la indexación incremental completa, con publicación transaccional,
+vocabulario, pasajes y dos vistas de recuperación. La [matriz nativa](validation/rust-migration-2026-10-23/m3-index/README.md)
+pasa43pruebas Rust y43de validación en cada plataforma; compara195entradas de
+vocabulario,496pasajes,26historias de almacenamiento,31de publicación,93de
+proyección y12de indexación completa contra procesos originales aislados.
+Se reutilizan las suites anteriores sin recapturar modelos. La revisión final
+M3e sigue pendiente; M3 completo aún no se declara cerrado. M4–M8 siguen pendientes.
+Los originales permanecen intactos y el comando instalado conserva Python.
 
 Los recibos históricos describen sus propias fuentes. Para reproducir el bloque
 de fuentes después de cambios posteriores, el agregador usa la copia pequeña de

@@ -10,6 +10,12 @@ ABS=REL=1e-6
 ERROR_KINDS={'IndexVersionError':'index_version','RuntimeError':'model','ValueError':'invalid','UnicodeEncodeError':'invalid','OperationalError':'sqlite','IntegrityError':'sqlite','FileNotFoundError':'io','PermissionError':'io'}
 def require(condition,message):
     if not condition:raise ValueError(message)
+def same_value(left,right):
+    """JSON equality preserves scalar types (Python's True equals integer 1)."""
+    if type(left)is not type(right):return False
+    if isinstance(left,dict):return left.keys()==right.keys()and all(same_value(value,right[key])for key,value in left.items())
+    if isinstance(left,list):return len(left)==len(right)and all(same_value(a,b)for a,b in zip(left,right,strict=True))
+    return left==right
 def f32_blob(value):
     require(isinstance(value,dict)and set(value)=={'blob_hex'},'invalid vector blob shape')
     raw=bytes.fromhex(value['blob_hex']);require(len(raw)%4==0,'invalid F32 bytes')
@@ -85,7 +91,7 @@ def compare_case(original:dict,native:dict,definition:dict)->list[str]:
                     x['slot']=y['slot']=None;x['value']=y['value']=None
             had_mapped|=mapped
             ta['ci_vec_alloc']=tb['ci_vec_alloc']=None;ta['ci_vec_free']=tb['ci_vec_free']=None
-            require(a==b,f'complete operation {number} result/effects differ')
+            require(same_value(a,b),f'complete operation {number} result/effects differ')
         return []
     except(KeyError,TypeError,ValueError,IndexError,struct.error)as error:return[str(error)]
 
@@ -97,3 +103,14 @@ def compare_scenarios(original:dict,native:dict)->list[str]:
         for expected,actual,definition in zip(original['cases'],native['cases'],original['definitions'],strict=True):errors.extend(definition['id']+': '+error for error in compare_case(expected,actual,definition))
         return errors
     except(KeyError,TypeError,ValueError)as error:return[str(error)]
+
+def source_identity(repo:Path)->dict:
+    from .native_json import identity
+    files=[repo/name for name in ('Cargo.toml','Cargo.lock','rust-toolchain.toml')]
+    for crate in ('ken-index','ken-retrieval','ken-core','ken-syntax','ken-text','ken-program','ken-store','ken-models','ken-native-model-api'):
+        files.extend(p for p in sorted((repo/'crates'/crate).rglob('*'))if p.is_file())
+    return {str(p.relative_to(repo)):identity(p)for p in files}
+
+def requests(definitions:list[dict],legacy_runtime:dict,grammar_manifest:Path)->dict:
+    for case in definitions:require(set(case)=={'id','operations'},'input-only case required')
+    return dict(format='ken-index-probe/1',grammar_manifest=str(grammar_manifest),legacy_runtime=legacy_runtime,cases=definitions)
