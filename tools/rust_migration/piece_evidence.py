@@ -12,6 +12,8 @@ from .retrieval_validate import runtime_manifest
 from .selection_reference import owners
 from .integration_validate import rust_gate_errors
 COUNTS={'catalog':38,'assembly':45,'ranking':84,'ranking-edges':13,'ranking-empty-declaration':1,'cards':60,'evidence':86,'evidence-edges':2,'presentation':117}
+# Root discovery excludes the health test's nested child-harness execution.
+NATIVE_ROOTS={'Linux':124,'Darwin':123}
 ROOTS={'catalog':4,'assembly':3,'ranking':9,'cards':3,'evidence':19,'presentation':9}
 PARENTS={'ranking-edges':'ranking','ranking-empty-declaration':'ranking','evidence-edges':'evidence'}
 PREDECESSOR=dict(path='docs/validation/rust-migration-2026-10-23/m4-numeric-owner',sha256='9058d60199da6ef080991203bf0b6351361a5c27c2d5e6358bf31c3f3e4d1a6e')
@@ -117,7 +119,7 @@ def verify_platform(packet:Path,repo:Path):
         for family in COUNTS:
             errors=verify_capture(packet/'native'/family,references[family],repo=repo,sources=sources,native_sha256=binary['sha256'])
             require(not errors,family+': '+str(errors))
-        system=preparation['runtime']['system'];require(not verify_gates(packet/'gates',rust_roots=125 if system=='Linux' else 124,python_roots=164),'complete source-piece gates failed')
+        system=preparation['runtime']['system'];require(not verify_gates(packet/'gates',rust_roots=NATIVE_ROOTS[system],python_roots=165),'complete source-piece gates failed')
         return[]
     except(OSError,KeyError,TypeError,ValueError,IndexError)as error:return[str(error)]
 def aggregate_matrix(directory:Path,repo:Path,*,review:Path|None=None):

@@ -78,3 +78,17 @@ def test_unsafe_or_changed_source_archives_never_escape_or_overwrite(tmp_path,ch
     with pytest.raises((ValueError,OSError)):extract_snapshot(packet,destination)
     assert outside.read_bytes()==b'unchanged'
     if change=='existing':assert(destination/'keep').read_bytes()==b'keep'
+
+def test_actual_complete_native_discovery_excludes_nested_health_harness():
+    import platform,re
+    from tools.rust_migration.integration_validate import rust_gate_errors
+    from tools.rust_migration.piece_evidence import NATIVE_ROOTS
+    native=Path(os.environ.get('KEN_PIECE_NATIVE_DIR',ROOT/'.superpowers/sdd/2026-10-23-rust-source-pieces/native-x86-probe-audit'))
+    gates=native.parent/'gates'
+    listed=(gates/'rust-list.log').read_text();output=(gates/'rust-tests.log').read_text()
+    assert not rust_gate_errors(listed,output)
+    discovered=len(re.findall(r'^([^\n]+): test$',listed,re.M))
+    assert discovered==NATIVE_ROOTS[platform.system()]
+    # The health suite reexecutes one root in its own filtered child harness.
+    raw_passed=sum(map(int,re.findall(r'test result: ok\. (\d+) passed',output)))
+    assert raw_passed==discovered+1
