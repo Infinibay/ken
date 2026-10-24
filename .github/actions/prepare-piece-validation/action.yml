@@ -1,0 +1,121 @@
+name: Prepare source-piece validation
+description: Prepare the frozen oracle and native build without unrelated model profiles.
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/restore-validation-fixtures
+    - name: Prepare the pinned development runtimes
+      shell: bash
+      run: |
+        export UV_PYTHON_INSTALL_DIR="$GITHUB_WORKSPACE/.ken/rust-migration/validation-python"
+        printf 'UV_PYTHON_INSTALL_DIR=%s\n' "$UV_PYTHON_INSTALL_DIR" >> "$GITHUB_ENV"
+        uv python install 3.12.9 --no-bin
+        uv venv --python 3.12.9 --managed-python .venv
+        uv pip install --python .venv/bin/python \
+          pytest==9.1.1 numpy==2.4.4 snowballstemmer==3.0.1 tokenizers==0.22.2 \
+          huggingface-hub==0.36.2 tree-sitter==0.25.2 tree-sitter-language-pack==1.8.1 \
+          tree-sitter-python==0.25.0 tree-sitter-rust==0.24.2 \
+          tree-sitter-javascript==0.25.0 tree-sitter-typescript==0.23.2 \
+          tree-sitter-go==0.25.0 tree-sitter-java==0.23.5 pathspec==1.1.1 regex==2026.9.29 \
+          cmake==3.31.10
+        rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+        printf '%s\n' 'CARGO_INCREMENTAL=0' 'CARGO_BUILD_JOBS=2' 'RUST_TEST_THREADS=1' \
+          'CARGO_PROFILE_DEV_DEBUG=0' 'CARGO_PROFILE_TEST_DEBUG=0' 'CMAKE_PARALLEL=2' >> "$GITHUB_ENV"
+    - name: Build the authenticated private Linux BLAS
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        mkdir -p .ken/rust-migration/translation-build
+        curl --fail --location --silent --show-error \
+          https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.26/OpenBLAS-0.3.26.tar.gz \
+          --output .ken/rust-migration/translation-build/OpenBLAS-0.3.26.tar.gz
+        .venv/bin/python -m tools.rust_migration.translation_build prepare-openblas \
+          --archive "$PWD/.ken/rust-migration/translation-build/OpenBLAS-0.3.26.tar.gz" \
+          --destination "$PWD/.ken/rust-migration/translation-build/openblas"
+    - name: Prepare platform-specific native libraries
+      shell: bash
+      run: |
+        .venv/bin/python - <<'PY'
+        import cmake, numpy, os, platform, shutil
+        from pathlib import Path
+        from tools.rust_migration.native_json import identity
+        from tools.rust_migration.preparation import PreparedTranslationBuild
+        from tools.rust_migration.retrieval_validate import runtime_files
+        root = Path.cwd()
+        assert (platform.python_version(), numpy.__version__) == ('3.12.9', '2.4.4')
+        system, machine = platform.system(), platform.machine()
+        assert (system, machine) in {('Darwin', 'arm64'), ('Linux', 'aarch64')}, (system, machine)
+        prefix = root / '.ken/rust-migration/translation-build/openblas' if system == 'Linux' else None
+        values = PreparedTranslationBuild(Path(cmake.__file__).parent / 'data/bin/cmake', prefix).environment()
+        if system == 'Linux':
+            source = Path(numpy.__file__).parent.parent / 'numpy.libs'
+            target = root / '.ken/rust-migration/dense-blas'
+            target.mkdir(parents=True, exist_ok=True)
+            for name, record in runtime_files(root, machine).items():
+                assert identity(source / name) == record, name
+                shutil.copy2(source / name, target / name)
+            values['KEN_DENSE_BLAS_DIR'] = str(target)
+        with open(os.environ['GITHUB_ENV'], 'a') as stream:
+            for name, value in values.items():
+                stream.write(f'{name}={value}\n')
+        PY
+        cargo fetch --locked
+    - name: Restore previously captured originals for unchanged inputs
+      id: originals
+      uses: actions/cache/restore@v6
+      with:
+        path: .ken/rust-migration/piece-platform/originals
+        key: piece-originals-v1-${{ runner.os }}-${{ runner.arch }}-3129-244-${{ hashFiles('crates/ken-retrieval/tests/fixtures/piece-inputs-*.json', 'tools/rust_migration/piece_*reference.py', 'tools/rust_migration/numeric_feature_reference.py') }}
+        restore-keys: |
+          piece-originals-v1-${{ runner.os }}-${{ runner.arch }}-3129-244-
+    - name: Restore the oracle and capture only missing original families
+      shell: bash
+      run: |
+        .venv/bin/python - <<'PY'
+        from pathlib import Path
+        import importlib.metadata, json, os, platform, subprocess, sys, unicodedata
+        from tools.rust_migration.native_json import identity, load, tree
+        from tools.rust_migration.piece_reference import capture
+        from tools.rust_migration.portable_reference import restore_portable
+        from tools.rust_migration.reference import Reference, verify_reference
+        root = Path.cwd()
+        output = root / '.ken/rust-migration/piece-platform'
+        saved = output / 'originals'
+        saved.mkdir(parents=True, exist_ok=True)
+        capsule = root / 'docs/validation/rust-migration-2026-10-23/handoff'
+        restored = saved / 'reference'
+        if not restored.exists():
+            restore_portable(root, capsule, reference=restored, progress=saved/'preserved-progress', python=Path(sys.executable))
+        reference = Reference.load(restored)
+        assert not verify_reference(reference.root, root/'docs/validation/rust-migration-2026-10-18/baseline.json')
+        assert reference.python == Path(sys.executable).absolute()
+        runtime = dict(system=platform.system(), machine=platform.machine(), python=platform.python_version(), unicode=unicodedata.unidata_version, numpy=importlib.metadata.version('numpy'))
+        base = saved/'preserved-progress/original-macos-ranking' if runtime['system'] == 'Darwin' else saved/'ranking'
+        corpus = output/'corpora'
+        corpus.mkdir(exist_ok=True)
+        families = {}
+        for family in ('ranking', 'ranking-edges', 'ranking-empty-declaration'):
+            destination = base if family == 'ranking' else saved/family
+            value = capture(reference, destination, repo=root, family=family,
+                            cached_suite=None if family == 'ranking' else base/'reference.json')
+            assert value['runtime'] == runtime, value['runtime']
+            for name, record in value['execution']['files'].items():
+                assert identity(destination/name) == record, (family, name)
+            (corpus/f'piece-reference-{family}.json').write_text(json.dumps(value, ensure_ascii=True, allow_nan=False)+'\n')
+            families[family] = dict(path=str(destination.relative_to(root)), reference=identity(destination/'reference.json'), cases=len(value['cases']))
+        preparation = dict(format='ken-piece-platform-preparation/1', runtime=runtime,
+            commit=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip(),
+            capsule=identity(capsule/'PORTABLE.json'), reference_fingerprint=reference.fingerprint,
+            packages={name:importlib.metadata.version(name) for name in ('pytest','numpy','tokenizers','snowballstemmer','tree-sitter','tree-sitter-language-pack','cmake')},
+            originals=families, files=tree(saved), M4c2_accepted=False, M4_accepted=False, migration_complete=False)
+        output.mkdir(exist_ok=True)
+        (output/'PREPARATION.json').write_text(json.dumps(preparation, indent=2)+'\n')
+        with open(os.environ['GITHUB_ENV'], 'a') as stream:
+            stream.write(f'KEN_PIECE_REFERENCE_DIR={corpus}\n')
+        PY
+    - name: Preserve the originals before compiling or executing native tests
+      if: steps.originals.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v6
+      with:
+        path: .ken/rust-migration/piece-platform/originals
+        key: ${{ steps.originals.outputs.cache-primary-key }}

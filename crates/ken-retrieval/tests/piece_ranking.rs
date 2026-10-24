@@ -195,7 +195,18 @@ fn decompress(bytes: &[u8]) -> String {
         .unwrap();
     raw
 }
+fn platform_fixture(family: &str) -> Option<String> {
+    std::env::var_os("KEN_PIECE_REFERENCE_DIR").map(|directory| {
+        std::fs::read_to_string(
+            std::path::PathBuf::from(directory).join(format!("piece-reference-{family}.json")),
+        )
+        .expect("prepared platform piece reference")
+    })
+}
 fn ranking_fixture() -> String {
+    if let Some(raw) = platform_fixture("ranking") {
+        return raw;
+    }
     #[cfg(target_os = "linux")]
     let raw = decompress(include_bytes!(
         "fixtures/piece-reference-ranking-linux.json.gz"
@@ -207,12 +218,16 @@ fn ranking_fixture() -> String {
 #[test]
 fn piece_feature_columns_calls_and_stable_order() {
     let raw = ranking_fixture();
-    let edges = decompress(include_bytes!(
-        "fixtures/piece-reference-ranking-edges-linux.json.gz"
-    ));
-    let empty = decompress(include_bytes!(
-        "fixtures/piece-reference-ranking-empty-declaration-linux.json.gz"
-    ));
+    let edges = platform_fixture("ranking-edges").unwrap_or_else(|| {
+        decompress(include_bytes!(
+            "fixtures/piece-reference-ranking-edges-linux.json.gz"
+        ))
+    });
+    let empty = platform_fixture("ranking-empty-declaration").unwrap_or_else(|| {
+        decompress(include_bytes!(
+            "fixtures/piece-reference-ranking-empty-declaration-linux.json.gz"
+        ))
+    });
     let cases: Vec<_> = [raw, edges, empty]
         .iter()
         .flat_map(|raw| {
