@@ -95,8 +95,12 @@ runs:
         corpus = output/'corpora'
         corpus.mkdir(exist_ok=True)
         families = {}
-        for family in ('ranking', 'ranking-edges', 'ranking-empty-declaration', 'cards', 'evidence', 'evidence-edges', 'presentation'):
-            destination = base if family == 'ranking' else saved/family
+        for family in ('catalog', 'assembly', 'ranking', 'ranking-edges', 'ranking-empty-declaration', 'cards', 'evidence', 'evidence-edges', 'presentation'):
+            if family in ('catalog', 'assembly'):
+                legacy = 'macos' if runtime['system'] == 'Darwin' else 'linux'
+                destination = saved/f'preserved-progress/original-{legacy}-{family}'
+            else:
+                destination = base if family == 'ranking' else saved/family
             value = capture(reference, destination, repo=root, family=family,
                             cached_suite=(base/'reference.json' if family.startswith('ranking-') else
                                           saved/'evidence/reference.json' if family == 'evidence-edges' else None))
@@ -117,7 +121,7 @@ runs:
         preparation = dict(format='ken-piece-platform-preparation/1', runtime=runtime,
             commit=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip(),
             capsule=identity(capsule/'PORTABLE.json'), reference_fingerprint=reference.fingerprint,
-            packages={name:importlib.metadata.version(name) for name in ('pytest','numpy','tokenizers','snowballstemmer','tree-sitter','tree-sitter-language-pack','cmake')},
+            packages={name:importlib.metadata.version(name) for name in ('pytest','numpy','tokenizers','snowballstemmer','tree-sitter','tree-sitter-language-pack','cmake','onnx')},
             originals=families, files=tree(saved), M4c2_accepted=False, M4_accepted=False, migration_complete=False)
         output.mkdir(exist_ok=True)
         (output/'PREPARATION.json').write_text(json.dumps(preparation, indent=2)+'\n')

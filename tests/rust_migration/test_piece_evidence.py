@@ -1,0 +1,42 @@
+"""Raw process evidence remains bound after apparent checksum resealing."""
+from pathlib import Path
+from copy import deepcopy
+import gzip,json,os,shutil
+import pytest
+from tools.rust_migration.native_json import identity,load
+from tools.rust_migration.piece_evidence import verify_capture
+ROOT=Path(__file__).resolve().parents[2]
+@pytest.fixture
+def packet(tmp_path):
+    source=Path(os.environ.get('KEN_PIECE_NATIVE_DIR',ROOT/'.superpowers/sdd/2026-10-23-rust-source-pieces/native-x86-probe-audit'))/'cards'
+    assert source.is_dir(),'run the actual source-piece native captures before evidence gates'
+    destination=tmp_path/'capture';shutil.copytree(source,destination)
+    ref=Path(os.environ['KEN_PIECE_REFERENCE_DIR'])/'piece-reference-cards.json'if'KEN_PIECE_REFERENCE_DIR'in os.environ else ROOT/'crates/ken-retrieval/tests/fixtures/piece-reference-cards-linux-x86_64.json.gz'
+    reference=json.loads(gzip.decompress(ref.read_bytes())if ref.suffix=='.gz'else ref.read_bytes())
+    return destination,reference
+def test_actual_input_only_capture_and_loader_audit_verify(packet):
+    out,reference=packet;assert not verify_capture(out,reference,repo=ROOT)
+@pytest.mark.parametrize('change',['raw','resealed-source','input-answer','missing','schema','platform','source-map','binary','extra','scope','exec','resource'])
+def test_resealed_or_incomplete_native_evidence_rejects(packet,change):
+    out,reference=packet;execution=load(out/'execution.json')
+    if change in('raw','resealed-source','schema','platform','extra','scope'):
+        value=load(out/'stdout.json')
+        if change in('raw','resealed-source'):value['cases'][0]['result']['cards'][0]['excerpts'][0]['content']+=' fabricated'
+        elif change=='schema':value['cases'].pop()
+        elif change=='platform':value['machine']='wrong'
+        elif change=='extra':value['passed']=True
+        else:value['metrics']['scope']='public end-to-end search'
+        (out/'stdout.json').write_text(json.dumps(value)+'\n')
+        if change!='raw':execution['stdout_sha256']=identity(out/'stdout.json')['sha256']
+    elif change=='input-answer':
+        value=load(out/'inputs.json');value['cases'][0]['result']={};(out/'inputs.json').write_text(json.dumps(value)+'\n');execution['request_sha256']=identity(out/'inputs.json')['sha256']
+    elif change=='missing':(out/'stderr.log').unlink()
+    elif change=='source-map':
+        value=load(out/'SOURCES.json');value.pop(next(iter(value)));(out/'SOURCES.json').write_text(json.dumps(value)+'\n')
+    elif change=='binary':execution['native_sha256']='0'*64
+    elif change=='exec':
+        if execution['system']=='linux':(out/'exec.trace').write_text('execve("python", [], []) = 0\nconnect(1, {}, 0) = 0\n')
+        else:(out/'stderr.log').write_text('libpython3.12.dylib\n')
+    else:execution['owned_before']['static.npz']['sha256']='0'*64;execution['owned_after']=deepcopy(execution['owned_before'])
+    (out/'execution.json').write_text(json.dumps(execution)+'\n')
+    assert verify_capture(out,reference,repo=ROOT)

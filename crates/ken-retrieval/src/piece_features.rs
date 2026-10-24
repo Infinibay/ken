@@ -243,7 +243,7 @@ pub fn piece_features(
                     let key = format!("{field}_{stat}");
                     let value = stats
                         .get(&key)
-                        .ok_or_else(|| RetrievalError::Invalid(format!("'{prefix}_{key}'")))?;
+                        .ok_or_else(|| RetrievalError::MissingField(format!("{prefix}_{key}")))?;
                     values.push(*value);
                 }
             }

@@ -16,6 +16,8 @@ pub enum RetrievalError {
     Model(#[from] ken_models::ModelError),
     #[error("{0}")]
     Invalid(String),
+    #[error("'{0}'")]
+    MissingField(String),
     #[error("{0}")]
     Version(String),
     #[error(transparent)]

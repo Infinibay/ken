@@ -10,6 +10,7 @@ on:
       - 'crates/ken-core/**'
       - 'tools/rust_migration/piece*'
       - 'tools/rust_migration/portable_reference.py'
+      - 'tests/rust_migration/test_piece*'
   workflow_dispatch:
 
 permissions:
@@ -35,6 +36,10 @@ jobs:
         with:
           enable-cache: true
       - uses: ./.github/actions/prepare-piece-validation
+      - name: Prepare the actual Linux process audit
+        if: runner.os == 'Linux'
+        shell: bash
+        run: sudo apt-get update && sudo apt-get install --yes strace
       - name: Execute the complete affected native suites
         shell: bash
         run: |
@@ -42,6 +47,28 @@ jobs:
           mkdir -p "$output"
           cargo test --locked --offline -p ken-core -p ken-retrieval --all-targets -- --list > "$output/rust-list.log" 2>&1
           cargo test --locked --offline -p ken-core -p ken-retrieval --all-targets --no-fail-fast > "$output/rust-tests.log" 2>&1
+          cargo build --locked --offline -p ken-retrieval --example source_piece_probe > "$output/probe-build.log" 2>&1
+      - name: Capture the isolated input-only native piece boundary
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import json, shutil
+          from tools.rust_migration.native_json import load, identity
+          from tools.rust_migration.piece_validate import run_capture
+          from tools.rust_migration.piece_evidence import COUNTS, verify_capture
+          root=Path.cwd(); packet=root/'.ken/rust-migration/piece-platform'
+          binary=root/'target/debug/examples/source_piece_probe'
+          copies=packet/'bin'; copies.mkdir(exist_ok=True)
+          shutil.copy2(binary,copies/binary.name)
+          for family,count in COUNTS.items():
+              reference=load(packet/f'corpora/piece-reference-{family}.json')
+              assert len(reference['cases'])==count
+              destination=packet/'native'/family
+              run_capture(root,binary,reference,destination)
+              assert not verify_capture(destination,reference,repo=root)
+          (packet/'PROBE.json').write_text(json.dumps(identity(binary),indent=2)+'\n')
+          PY
       - name: Execute all affected tooling and preserve discovery
         shell: bash
         run: |
@@ -54,10 +81,15 @@ jobs:
             tests/rust_migration/test_dense_runtime.py
             tests/rust_migration/test_translation_build.py
             tests/rust_migration/test_piece_reference.py
+            tests/rust_migration/test_piece_validate.py
+            tests/rust_migration/test_piece_probe.py
+            tests/rust_migration/test_piece_evidence.py
             tests/rust_migration/test_retrieval_validate.py
             tests/rust_migration/test_retrieval_evidence.py
             tests/rust_migration/test_selection_evidence.py
           )
+          export KEN_SOURCE_PIECE_PROBE="$PWD/target/debug/examples/source_piece_probe"
+          export KEN_PIECE_NATIVE_DIR="$PWD/.ken/rust-migration/piece-platform/native"
           .venv/bin/python -m pytest -o addopts= --collect-only -q "${tests[@]}" > "$output/python-list.log" 2>&1
           .venv/bin/python -m pytest -o addopts= -q "${tests[@]}" --junitxml="$output/python.xml" > "$output/python-tests.log" 2>&1
       - name: Require formatting and strict native lint
@@ -71,13 +103,32 @@ jobs:
         run: |
           .venv/bin/python - <<'PY'
           from pathlib import Path
-          import json, os
+          import json, os, tarfile
           from tools.rust_migration.index_validate import source_identity
           from tools.rust_migration.native_json import identity
           root=Path.cwd(); output=root/'.ken/rust-migration/piece-platform'
           (output/'SOURCES.json').write_text(json.dumps(source_identity(root),indent=2)+'\n')
           binaries={str(p.relative_to(root)):identity(p) for p in (root/'target/debug/deps').glob('*') if p.is_file() and os.access(p,os.X_OK)}
           (output/'BINARIES.json').write_text(json.dumps(binaries,indent=2)+'\n')
+          validation=[p for parent in ('tools/rust_migration','tests/rust_migration') for p in (root/parent).glob('*.py')]
+          validation.extend(root/p for p in ('.github/actions/prepare-piece-validation/action.yml','.github/workflows/rust-pieces.yml'))
+          (output/'VALIDATION-SOURCES.json').write_text(json.dumps({str(p.relative_to(root)):identity(p) for p in sorted(validation)},indent=2)+'\n')
+          supporting=[
+              'src/ken/embedder/data/ken__static-qwen3-r512-v2.npz',
+              'docs/validation/rust-migration-2026-10-18/baseline.json',
+              'docs/validation/rust-migration-2026-10-23/handoff/PORTABLE.json',
+              'docs/validation/rust-migration-2026-10-23/m4-numeric-owner/FILES.json',
+              'docs/superpowers/specs/2026-10-18-rust-migration-design.md',
+              'docs/superpowers/specs/2026-10-23-rust-source-pieces-design.md',
+              'docs/superpowers/plans/2026-10-23-rust-source-pieces.md',
+          ]
+          snapshot=dict(source_identity(root))
+          snapshot.update({str(p.relative_to(root)):identity(p) for p in validation})
+          snapshot.update({p:identity(root/p) for p in supporting})
+          with tarfile.open(output/'source-snapshot.tar.gz','w:gz') as archive:
+              for name in sorted(snapshot):
+                  archive.add(root/name,arcname=name,recursive=False)
+          (output/'SNAPSHOT.json').write_text(json.dumps(snapshot,indent=2)+'\n')
           PY
       - uses: actions/upload-artifact@v7
         if: always()

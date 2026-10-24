@@ -174,7 +174,7 @@ pub fn number(value: &Value) -> f64 {
         })
 }
 
-fn matrix(
+pub(crate) fn matrix(
     value: &ken_retrieval::feature_matrix::FeatureMatrix,
 ) -> ken_retrieval::Result<Box<RawValue>> {
     #[derive(Serialize)]

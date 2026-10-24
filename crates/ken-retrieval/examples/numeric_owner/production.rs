@@ -20,7 +20,7 @@ struct Input {
     role: String,
     rows: Option<usize>,
 }
-struct StaticWords {
+pub(crate) struct StaticWords {
     table: StaticTableEncoder,
     spec: EncoderSpec,
     calls: RefCell<Vec<f::Call>>,
@@ -56,6 +56,11 @@ impl WordEncoder for StaticWords {
             .embed_passages(&texts.iter().map(String::as_str).collect::<Vec<_>>())?)
     }
 }
+impl StaticWords {
+    pub(crate) fn take_calls(&self) -> Vec<f::Call> {
+        self.calls.take()
+    }
+}
 impl<'a> Runtime<'a> {
     pub fn new(resources: &'a Resources) -> Self {
         Self {
@@ -64,7 +69,7 @@ impl<'a> Runtime<'a> {
             words: RefCell::new(None),
         }
     }
-    fn model(&self, role: &str) -> Result<Arc<NumericRanker>> {
+    pub(crate) fn model(&self, role: &str) -> Result<Arc<NumericRanker>> {
         let mut models = self.models.borrow_mut();
         if models.is_none() {
             *models = Some(ProductionRankModels::open(
@@ -81,7 +86,7 @@ impl<'a> Runtime<'a> {
             _ => Err(invalid("unknown registered forest role")),
         }
     }
-    fn words(&self) -> Result<Rc<StaticWords>> {
+    pub(crate) fn words(&self) -> Result<Rc<StaticWords>> {
         let mut words = self.words.borrow_mut();
         if let Some(words) = &*words {
             return Ok(words.clone());
@@ -181,7 +186,7 @@ impl<'a> Runtime<'a> {
                     json!({"matches":matches,"trace":trace,"static_sha256":STATIC_SHA,"word_spec":words.spec()}),
                 )
             })();
-            calls = words.calls.take();
+            calls = words.take_calls();
             stem_calls = stems
                 .calls
                 .lock()
